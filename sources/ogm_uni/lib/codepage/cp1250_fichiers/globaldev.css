@@ -1,0 +1,102 @@
+H1 {
+	MARGIN-TOP: 1em; FONT-SIZE: 1.3em; MARGIN-BOTTOM: 0.5em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H2 {
+	FONT-SIZE: 1.1em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H2.codepage {
+	FONT-WEIGHT: bold; FONT-SIZE: 1.3em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H3 {
+	FONT-SIZE: 0.8em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H3.api {
+	MARGIN-TOP: 2em; FONT-SIZE: 1em; MARGIN-BOTTOM: -1.3em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H3.question {
+	MARGIN-BOTTOM: -1.3em; COLOR: #000000
+}
+H3.subapi {
+	FONT-SIZE: 0.8em; MARGIN-BOTTOM: -1.5em; COLOR: black
+}
+H3.apicalls {
+	FONT-SIZE: 0.8em; MARGIN-BOTTOM: -1.5em; COLOR: #000000
+}
+H4 {
+	FONT-SIZE: 0.8em; MARGIN-BOTTOM: -1.5em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+H4.subtitle {
+	FONT-SIZE: 0.7em; MARGIN-BOTTOM: 1em; COLOR: #000000; FONT-FAMILY: Verdana,Arial, Helvetica
+}
+PRE {
+	FONT-SIZE: 0.7em; MARGIN-BOTTOM: -1em; MARGIN-LEFT: 15px; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+.rtcolumn {
+	MARGIN-TOP: 1.5em; FONT-SIZE: 0.7em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+.menu2 {
+	MARGIN-TOP: 1.5em; FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+P {
+	FONT-SIZE: 0.8em; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+BLOCKQUOTE {
+	FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+UL {
+	FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+UL UL {
+	FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+OL {
+	FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+UL.normal {
+	FONT-SIZE: 100%; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+0L.normal {
+	FONT-SIZE: 100%; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+A:hover {
+	COLOR: #ff0000
+}
+A:link {
+	COLOR: #0000ff
+}
+A:visited {
+	COLOR: #800080
+}
+A:active {
+	COLOR: #ff0000
+}
+BODY {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 20px; BACKGROUND-COLOR: #ffffff
+}
+H5 {
+	MARGIN-TOP: 1.5em; FONT-SIZE: 0.7em; FONT-FAMILY: Verdana, Arial, Helvetica; font-color: #000000
+}
+.keyLink {
+	CURSOR: hand; COLOR: #336666
+}
+.upgrade {
+	FONT-SIZE: 0.8em; FONT-FAMILY: Verdana, Arial, Helvetica; BACKGROUND-COLOR: #ffffff
+}
+.tablehead {
+	FONT-WEIGHT: bold; FONT-SIZE: 0.8em; COLOR: white; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+.Caption {
+	MARGIN-TOP: 3px; FONT-WEIGHT: bold; FONT-SIZE: 0.75em; FONT-FAMILY: Verdana, Arial, Helvetica
+}
+.insidetable {
+	FONT-SIZE: 0.75em; FONT-FAMILY: Verdana, Arial, Helvetica; BACKGROUND-COLOR: #ffffff; cell-padding: 3
+}
+.tablerow {
+	FONT-SIZE: 0.75em; FONT-FAMILY: Verdana, Arial, Helvetica; BACKGROUND-COLOR: #b0c4de; cell-padding: 3
+}
+.aracode {
+	MARGIN-TOP: 3px; FONT-SIZE: 0.7em; MARGIN-BOTTOM: 16px; MARGIN-LEFT: 20px; COLOR: #800000; DIRECTION: ltr; FONT-FAMILY: Andale Mono, Courier New, Tahoma, Helvetica; unicode-bidi: embed
+}
+.scode {
+	FONT-SIZE: 0.8em; MARGIN-BOTTOM: -1.5em; COLOR: #000000
+}

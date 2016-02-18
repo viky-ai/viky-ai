@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources_manifest SYSTEM "rmanifest.dtd">
+<resources_manifest>
+  <resource   name="morphology/pt" doc="see readme.txt" info="Dictionnaire de formes portuguais"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource   name="morphology/it" doc="see readme.txt" info="Dictionnaire de formes italien"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource   name="morphology/pl" doc="see readme.txt" info="Dictionnaire de formes polonais"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource   name="morphology/fi" doc="see readme.txt" info="Dictionnaire de formes finlandais"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource   name="morphology/fr" doc="see readme.txt" info="Dictionnaire de formes francais"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource   name="morphology/en" doc="see readme.txt" info="Dictionnaire de formes anglais"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/es" doc="see readme.txt" info="Dictionnaire de formes espagnol"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/ja" doc="see readme.txt" info="Dictionnaires de formes japonais"  support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/ru" doc="see readme.txt" info="Dictionnaire de formes russe"  support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/zh" doc="see readme.txt" info="Dictionnaires de formes chinois simplifié et traditionnel"  support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/de" doc="see readme.txt" info="Dictionnaire de formes allemandes"   support="lois.rigouste@pertimm.com" parallel="false"/>
+  <resource 	name="morphology/ro" doc="see readme.txt" info="Dictionnaire de formes roumaines"   support="nicolas.pipet@pertimm.com" parallel="false"/>
+
+  <resource 	name="translation/ar_en" doc="see readme.txt" info="Dictionnaire arabe-anglais"    support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/en_es" doc="see readme.txt" info="Dictionnaire espagnol-anglais" support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/en_fr" doc="see readme.txt" info="Dictionnaire francais-anglais" support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/en_ja" doc="see readme.txt" info="Dictionnaire japonais-anglais" support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/en_ru" doc="see readme.txt" info="Dictionnaire russe-anglais"    support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/en_zh" doc="see readme.txt" info="Dictionnaire chinois-anglais"  support="lois.rigouste@pertimm.com"/>
+  <resource 	name="translation/fi_fr" doc="see readme.txt" info="Dictionnaire finnois-français"  support="lois.rigouste@pertimm.com"/>
+</resources_manifest>

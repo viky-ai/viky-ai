@@ -1,0 +1,19 @@
+<!ELEMENT components_manifest (factory_config, component*)>
+<!ELEMENT factory_config (highlight_msg , hide_msg)>
+<!ELEMENT highlight_msg (msg*)>
+<!ELEMENT hide_msg (msg*)>
+<!ELEMENT msg (#PCDATA)>
+<!ATTLIST msg
+   type        CDATA          #IMPLIED
+   color       CDATA          #IMPLIED
+>
+<!ELEMENT component (#PCDATA)>
+<!ATTLIST component
+   name         CDATA         #REQUIRED
+   info         CDATA         #REQUIRED
+   doc          CDATA         #REQUIRED
+   flags        CDATA         #IMPLIED
+   support      CDATA         #IMPLIED
+   parallel     (true|false)  #IMPLIED
+> 
+

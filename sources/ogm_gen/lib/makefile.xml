@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>lib</type>
+  <project_name>ogm_gen</project_name>
+  <sources>
+    <file>alias.c</file>
+    <file>argdate.c</file>
+    <file>argsize.c</file>
+    <file>bignum.c</file>
+    <file>bundled.c</file>
+    <file>chdate.c</file>
+    <file>cptfile.c</file>
+    <file>cputime.c</file>
+    <file>delfiles.c</file>
+    <file>delfix.c</file>
+    <file>diralias.c</file>
+    <file>dos2ansi.c</file>
+    <file>except.c</file>
+    <file>filelog.c</file>
+    <file>fltrocea.c</file>
+    <file>htm2code.c</file>
+    <file>iso3166.c</file>
+    <file>iso639.c</file>
+    <file>iso639_3166.c</file>
+    <file>log.c</file>
+    <file>memerr.c</file>
+    <file>mess_log.c</file>
+    <file>messagebox.c</file>
+    <file>messagelog.c</file>
+    <file>mime.c</file>
+    <file>mkdir.c</file>
+    <file>ntoc.c</file>
+    <file>ogchset.c</file>
+    <file>ogconf.c</file>
+    <file>ogconfli.c</file>
+    <file>ogcpfile.c</file>
+    <file>ogcrypt.c</file>
+    <file>ogdate.c</file>
+    <file>ogendian.c</file>
+    <file>ogerr.c</file>
+    <file>ogfindfile.c</file>
+    <file>oggdfs.c</file>
+    <file>oggetvar.c</file>
+    <file>oggnum.c</file>
+    <file>oggsdate.c</file>
+    <file>oghaver.c</file>
+    <file>ogio.c</file>
+    <file>ogistag.c</file>
+    <file>oglocali.c</file>
+    <file>ogmem.c</file>
+    <file>ogmess.c</file>
+    <file>ogocc.c</file>
+    <file>ogon.c</file>
+    <file>ogpid.c</file>
+    <file>ogpidw.c</file>
+    <file>ogpnum.c</file>
+    <file>ogpsa.c</file>
+    <file>ogrand.c</file>
+    <file>ogreal.c</file>
+    <file>ogretag.c</file>
+    <file>ogretagu.c</file>
+    <file>ogscandir.c</file>
+    <file>ogspace.c</file>
+    <file>ogstat.c</file>
+    <file>ogstring.c</file>
+    <file>ogtag.c</file>
+    <file>ogtime.c</file>
+    <file>ogtld.c</file>
+    <file>pclat.c</file>
+    <file>period.c</file>
+    <file>scandirex.c</file>
+    <file>select.c</file>
+    <file>spafile.c</file>
+    <file>syserr.c</file>
+    <file>toksgml.c</file>
+    <file>unicode.c</file>
+    <file>util.c</file>
+    <file>utoa.c</file>
+    <file>vfname.c</file>
+    <file>vsfind.c</file>
+    <file>wfile.c</file>
+    <file>pipe.c</file>
+    <file>ogmisc.c</file>
+    <file>pmutex.c</file>
+    <file>mutex.c</file>
+    <file>utf8.c</file>
+  </sources>
+  <platforms>
+    <platform name="win">
+      <option name="NAME">ogm_gen</option>
+      <option name="ADD_INC"/>
+      <option name="ADD_LIBR">glib-2.0.lib</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+      <sources>
+        <file>diskid32.c</file>
+        <file>editbox.c</file>
+        <file>ogdiskid.c</file>
+        <file>oglongfn.c</file>
+        <file>ogpidnam.c</file>
+        <file>getopt.c</file>
+        <file>getopt_long.c</file>
+      </sources>
+    </platform>
+    <platform name="linux">
+      <option name="NAME">oggen</option>
+      <option name="ADD_CFLAGS"/>
+      <sources>
+        <file>unixarch.c</file>
+      </sources>
+      <option name="ADD_LIBR">-lglib-2.0</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+  </platforms>
+</makefile>

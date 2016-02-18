@@ -1,0 +1,200 @@
+#
+# Global definitions for Makefile
+#
+
+#------------------------------------------------------------------------#
+#  Generic locations, 1 environment variables must be set:               #
+#  OG_REPO_PATH is the location of the repository root (ex: trunk) #
+#------------------------------------------------------------------------#
+
+# Default compilation language
+LANG=C.UTF-8
+LANGUAGE=en
+
+# Compilation Tree definition
+# Release tree
+RBUILDPATH=$(OG_REPO_PATH)/build/release
+RBINPATH=$(RBUILDPATH)/bin
+RLIBPATH=$(RBUILDPATH)/bin
+RLINKPATH=$(RBUILDPATH)/link
+
+# Debug tree
+DBUILDPATH=$(OG_REPO_PATH)/build/debug
+DBINPATH=$(DBUILDPATH)/bin
+DLIBPATH=$(DBUILDPATH)/bin
+DLINKPATH=$(DBUILDPATH)/link
+
+# Profile tree
+PBUILDPATH=$(OG_REPO_PATH)/build/profile
+PBINPATH=$(PBUILDPATH)/bin
+PLIBPATH=$(PBUILDPATH)/bin
+PLINKPATH=$(PBUILDPATH)/link
+
+# Obj tree
+LOBJ  = obj
+ROBJ  = $(LOBJ)/release
+DOBJ  = $(LOBJ)/debug
+POBJ  = $(LOBJ)/profile
+
+SRCPATH=$(OG_REPO_PATH)/sources
+LOGPATH=$(OG_REPO_PATH)/build/log
+INCLUDES= -I$(SRCPATH)/include -I$(SRCPATH)/include/glib-2.0 $(INCLUDE)
+
+GCC_VERSION_GE_v40 := $(shell expr 4.0 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v44 := $(shell expr 4.4 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v46 := $(shell expr 4.6 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v48 := $(shell expr 4.8 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v49 := $(shell expr 4.9 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v51 := $(shell expr 5.1 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v52 := $(shell expr 5.2 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+
+
+# select best GCC avaiable
+ifeq "$(GCC_VERSION_GE_v40)" "1"
+	ifeq "$(GCC_VERSION_GE_v44)" "1"
+		CC = gcc
+		CPP = gcc
+	else
+		# RH5 workaround
+		GCC44FOUND := $(shell which gcc44 2>/dev/null)
+		ifneq ($(strip $(GCC44FOUND)),)
+			CC = gcc44
+			CPP = gcc44
+		else
+       $(error Could not find GCC >= 4.4)
+		endif
+	endif
+else
+	# RH4 workaround
+	GCC4FOUND := $(shell which gcc4 2>/dev/null)
+	ifneq ($(strip $(GCC4FOUND)),)
+		CC = gcc4
+		CPP = gcc4
+	else
+    $(error Could not find GCC >= 4)
+	endif
+endif
+
+
+# The linker and its options.
+LD = ld
+LIBS = -lpthread -lm -lz -ldl -lrt
+
+# The archiver and its options.
+AR = ar ru
+RANLIB = ranlib
+
+
+
+# The compiler and its options.  Options utilisées
+#  http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+
+# General compile flags
+DEBUG_GCC_FLAGS += -g
+ADDITIONAL_WARNING_ERROR_FLAG += -Wall -Wshadow -Wpointer-arith
+
+ifeq "$(GCC_VERSION_GE_v44)" "1"
+
+  # These warning are not very critical but there is a hudge of them, therefore they hide real problem
+  # See doc to check them : http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+  DISABLED_WARNING += -Wno-pointer-sign -Wno-unused-parameter -Wno-ignored-qualifiers
+
+  # Addtional GCC 4.4 warning
+  ADDITIONAL_WARNING_ERROR_FLAG += -Wunused -Wextra -Wparentheses -Wmissing-declarations -Wmissing-field-initializers -Wuninitialized -Wimplicit-function-declaration -Wformat-security
+
+  # Addtional GCC 4.4 debug flag : nm -l lib.so
+  DEBUG_GCC_FLAGS += -ggdb -fdebug-prefix-map=$(OG_REPO_PATH)=ogmios
+
+endif
+
+ifeq "$(GCC_VERSION_GE_v48)" "1"
+
+  # Add debug and optimisze compatible flag
+  #
+  # A new general optimization level, -Og, has been introduced. It addresses the need for fast compilation and a superior debugging experience
+  # while providing a reasonable level of runtime performance.
+  # Overall experience for development should be better than the default optimization level -O0.
+  # DEBUG_GCC_FLAGS += -Og
+
+  # Use address-sanitizer :
+  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer
+  # DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address -DDOG_HEAP_FORCE_RESET
+  # LIBS += -lasan
+
+endif
+
+ifeq "$(GCC_VERSION_GE_v49)" "1"
+
+  # Add debug and optimisze compatible flag
+  #
+  # A new general optimization level, -Og, has been introduced. It addresses the need for fast compilation and a superior debugging experience
+  # while providing a reasonable level of runtime performance.
+  # Overall experience for development should be better than the default optimization level -O0.
+  #DEBUG_GCC_FLAGS += -Og
+
+  # Use address-sanitizer :
+  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
+  #DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address #-DDOG_HEAP_FORCE_RESET
+  #LIBS += -lasan -llsan -lubsan
+  #
+  # Run with :
+  # export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:detect_stack_use_after_return=1:debug=1
+endif
+
+
+
+CFLAGS  = -std=gnu99 -fPIC $(ADDITIONAL_WARNING_ERROR_FLAG) $(DISABLED_WARNING) -D_REENTRANT -DDPcCompiler=DPcCompilerGcc -DDPcSystem=DPcSystemUnix  -DDPcArch=DPcArchlinux -D_LARGEFILE_SOURCE `getconf LFS_CFLAGS` $(INCLUDES)
+CFLAGSR = -O2 -L$(RBINPATH) $(CFLAGS) -DNDEBUG
+CFLAGSD =     -L$(DBINPATH) $(CFLAGS) $(DEBUG_GCC_FLAGS)
+CFLAGSP = -pg -L$(PBINPATH) $(CFLAGS) $(DEBUG_GCC_FLAGS)
+
+# Pertimm-only compile flags
+CFLAGSR_INTERNAL = $(CFLAGSR)
+CFLAGSD_INTERNAL = $(CFLAGSD)
+CFLAGSP_INTERNAL = $(CFLAGSP)
+
+# Pertimm-only link flags
+LFLAGSR_INTERNAL = -Wl,-rpath-link,$(RBINPATH)
+LFLAGSD_INTERNAL = -Wl,-rpath-link,$(DBINPATH)
+LFLAGSP_INTERNAL = -Wl,-rpath-link,$(PBINPATH)
+
+RPATH_LIB = -Wl,-rpath,'$$ORIGIN'
+RPATH_PROG = -Wl,-rpath,'$$ORIGIN:$$ORIGIN/lib/linux:$$ORIGIN/private/bin'
+
+
+# Makes the output builds directories
+$(RBINPATH):
+	@if test ! -d $(RBINPATH) ; then mkdir -p $(RBINPATH) ; fi
+
+#$(RLIBPATH):
+#	@if test ! -d $(RLIBPATH) ; then mkdir -p $(RLIBPATH) ; fi
+
+$(RLINKPATH):
+	@if test ! -d $(RLINKPATH) ; then mkdir -p $(RLINKPATH) ; fi
+
+
+$(DBINPATH):
+	@if test ! -d $(DBINPATH) ; then mkdir -p $(DBINPATH) ; fi
+
+#$(DLIBPATH):
+#	@if test ! -d $(DLIBPATH) ; then mkdir -p $(DLIBPATH) ; fi
+
+$(DLINKPATH):
+	@if test ! -d $(DLINKPATH) ; then mkdir -p $(DLINKPATH) ; fi
+
+
+$(PBINPATH):
+	@if test ! -d $(PBINPATH) ; then mkdir -p $(PBINPATH) ; fi
+
+#$(PLIBPATH):
+#	@if test ! -d $(PLIBPATH) ; then mkdir -p $(PLIBPATH) ; fi
+
+$(PLINKPATH):
+	@if test ! -d $(PLINKPATH) ; then mkdir -p $(PLINKPATH) ; fi
+
+$(LOGPATH) :
+	@if test ! -d $(LOGPATH); then mkdir $(LOGPATH); fi
+	cp $(OG_REPO_PATH)/tools/buildReport2html.xsl $(LOGPATH)
+
+
+
