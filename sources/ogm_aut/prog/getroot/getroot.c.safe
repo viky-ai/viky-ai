@@ -1,0 +1,179 @@
+/*
+ *  Works on frall.auf or enall.auf and creates a source file
+ *	for an automaton that contains only root extrations.
+ *	Copyright (c) 1998	Ogmios by Patrick Constant
+ *	Dev : September 1998
+ *	Version 1.0
+*/
+#include <stdio.h>
+#include <lpcerr.h>
+#include <lpcaut.h>
+#include <string.h>
+
+
+int ShowMes(pr(char *));
+void DoExit(pr(int));
+
+
+int main(argc,argv)
+int argc;
+char *argv[];
+{
+FILE *fd;
+int inewout=0,ioldout=0;
+int inewform=0,ioldform=0;
+int ifemsing=0,ifemplur=0;
+unsigned char femsing[512];
+unsigned char newform[512],oldform[512];
+unsigned char out[512],newout[512],oldout[512],termi[100];
+int i,j,ha,retour,len,automat_type,iout,end_entry;
+oindex states[256]; int nstate0,nstate1;
+char name_automat[512], dump_name[512];
+int newsyncat,syncat=0,offset;
+
+if (argc < 2)
+  { printf("Usage : %s <lexique>.<aut|auz|auf>\n",argv[0]); exit(0); }
+
+IF(ha=PcAutInit(0)) DoExit(ha);
+PcAutSetFprint(ha,ShowMes);
+
+strcpy(name_automat,argv[1]); len=strlen(name_automat);
+if (!strcmp(name_automat+len-4,".aut")) automat_type=1;
+else if (!strcmp(name_automat+len-4,".aum")) automat_type=1;
+else if (!strcmp(name_automat+len-4,".auz")) automat_type=2;
+else if (!strcmp(name_automat+len-4,".auf")) automat_type=3;
+else automat_type=0;
+
+oldout[0]=0;
+memcpy(dump_name,name_automat,len-4);
+strcpy(dump_name+len-4,".dmp");
+if ((fd=fopen(dump_name,"wb"))==0) {
+  printf("Impossible to open '%s'\n",dump_name);
+  DoExit(ha);
+  }
+
+switch (automat_type) {
+  case 1 :
+    IF(PcAutRead(ha,name_automat)) DoExit(ha);
+    if ((retour=PcAutScanf(ha,-1,"",&iout,out,&nstate0,&nstate1,states))) {
+      do { IF(retour) DoExit(ha); out[iout++]='\r'; out[iout++]='\n'; fwrite(out,1,iout,fd); }
+      while((retour=PcAutScann(ha,&iout,out,nstate0,&nstate1,states)));
+      }
+    break;
+  case 2 :
+    IF(PcAuzRead(ha,name_automat)) DoExit(ha);
+    if ((retour=PcAuzScanf(ha,-1,"",&iout,out,&nstate0,&nstate1,states))) {
+      do { IF(retour) DoExit(ha); out[iout++]='\r'; out[iout++]='\n'; fwrite(out,1,iout,fd); }
+      while((retour=PcAuzScann(ha,&iout,out,nstate0,&nstate1,states)));
+      }
+    break;
+  case 3 :
+    IF(PcAufRead(ha,name_automat)) DoExit(ha);
+    if ((retour=PcAufScanf(ha,-1,"",&iout,out,&nstate0,&nstate1,states))) {
+      do {
+		IF(retour) DoExit(ha);
+		for (i=0; i<iout; i++) {
+		  if (!memcmp(out+i,":cs:",4)) break;
+		  }
+		if (i>=iout) continue;
+		end_entry=i;
+		/** On ne garde pas les racines verbales **/
+		/** si une racine nominale existe **/
+		newsyncat=0;
+		for (j=i; j<iout; j++) {
+		  if (out[j]=='+')
+		    if (out[j+1]=='N') { newsyncat=1; break; }
+		    else if (out[j+1]=='V') { newsyncat=2; break; }
+		  }
+		/** On garde la forme féminin singulier en memoire **/
+		/** pour la racine des formes féminin (francais) **/
+		if (!strcmp(out+iout-2,"fs")) {
+		  memcpy(femsing,out,end_entry); femsing[end_entry]=0; ifemsing=end_entry;
+		  }
+		else ifemsing=0;
+		if (!strcmp(out+iout-2,"fp"))
+		  ifemplur=end_entry;
+		else ifemplur=0;
+
+		memcpy(newform,out,end_entry); newform[end_entry]=0; inewform=end_entry;
+		/** Lorsque la forme est identique, on ne rentre pas la forme si c'est **/
+		/** une forme verbale et si il existe une forme nominale (francais) **/
+		if (inewform==ioldform && !memcmp(newform,oldform,inewform)) {
+		  if (newsyncat==2) if (syncat&1) continue;
+		  syncat|=newsyncat;
+		  }
+        else syncat=newsyncat;
+		ioldform=inewform; memcpy(oldform,newform,inewform); oldform[ioldform]=0;
+
+		if (!memcmp(out+i+4,"0+",2)) continue;
+		for (; i<iout; i++) {
+			if (out[i]=='+') break;
+		  }
+		if (i>=iout) continue;
+        sprintf(newout,"%s:",newform);
+		if (ifemsing || ifemplur) {
+		  ifemsing=strlen(femsing);
+		  for (i=0; i<ifemsing && i<end_entry; i++) {
+		    if (newout[i]!=femsing[i]) break;
+		    }
+		  if (i<end_entry) offset=end_entry-i; else offset=0;
+		  if (i<ifemsing) strcpy(termi,femsing+i); else strcpy(termi,"");
+		  sprintf(newout+end_entry+1,"%d%s\r\n",offset,termi);
+		  inewout=strlen(newout);
+		  }
+		else {
+          memcpy(newout+end_entry+1,out+end_entry+4,i-(end_entry+4));
+		  strcpy(newout+1+i-4,"\r\n"); inewout=1+i-4+2;
+		  }
+
+
+		/** deduplication, automaton is naturally sorted **/
+		if (inewout==ioldout && !memcmp(newout,oldout,inewout)) continue;
+		fwrite(newout,1,inewout,fd);
+		ioldout=inewout; memcpy(oldout,newout,inewout);
+	    }
+      while((retour=PcAufScann(ha,&iout,out,nstate0,&nstate1,states)));
+      }
+    break;
+  default :
+    printf("`%s' bad extension (choose .aut, .auz or .auf)\n",name_automat);
+  }
+
+fclose(fd);
+DoExit(ha);
+return(0);
+}
+
+
+
+/*
+ *	Fonction passed as argument of PcAutSetFprint. this
+ *	function handles printing messages coming from Genau.
+*/
+
+int ShowMes(ch)
+char *ch;
+{
+printf("%s",ch);
+fflush(stdout);
+return(0);
+}
+
+
+/*
+ *	Exit from program. Prints errors and does the flushing of 
+ *	the memory when necessary (function PcAutFlush).
+*/
+
+void DoExit(ha)
+int ha;
+{
+int h,is_error=0;
+char erreur[DPcSzErr]; PcAutFlush(ha);
+while(PcErrDiag(&h,erreur)) { printf("%s\n",erreur); is_error=1; }
+if (is_error) { printf("Press return.\n"); gets(erreur); }
+exit(0);
+}
+
+
+

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>prog</type>
+  <project_name>ogucis</project_name>
+  <sources/>
+  <platforms>
+    <platform name="win">
+      <option name="NAME">ogucis.exe</option>
+      <option name="ADD_LIBR">ogm_uci.lib ogm_addr.lib ogm_sock.lib ogm_thr.lib ogm_gen.lib</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+      <sources>
+        <file>ogucis.c</file>
+        <file>ucisrun.c</file>
+        <file>ucisserv.c</file>
+      </sources>
+    </platform>
+  </platforms>
+</makefile>

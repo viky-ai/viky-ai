@@ -1,0 +1,10 @@
+<!ELEMENT resources_manifest (resource*)>
+<!ELEMENT resource (#PCDATA)>
+<!ATTLIST resource
+   name         CDATA         #REQUIRED
+   info         CDATA         #REQUIRED
+   doc          CDATA         #REQUIRED
+   support      CDATA         #IMPLIED
+   parallel     (true|false)  #IMPLIED
+> 
+

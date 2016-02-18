@@ -1,0 +1,30 @@
+#include <winver.h>
+
+1 VERSIONINFO
+ FILEVERSION 1,70,0,0
+ PRODUCTVERSION 2,40
+ FILEFLAGSMASK 0x0L
+ FILEFLAGS 0x0L
+ FILEOS VOS__WINDOWS32
+ FILETYPE VFT_DLL
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Pertimm, Inc.\0"
+            VALUE "FileDescription", "Library for socket handling\0"
+            VALUE "FileVersion", "1, 70, 0, 0\0"
+            VALUE "InternalName", "sock\0"
+            VALUE "LegalCopyright", "Copyright © 2004-2008 Pertimm, Inc.\0"
+            VALUE "LegalTrademarks", "Pertimm (TM)\0"
+            VALUE "OriginalFilename", "ogm_sock.dll\0"
+            VALUE "ProductName", "Pertimm API\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
