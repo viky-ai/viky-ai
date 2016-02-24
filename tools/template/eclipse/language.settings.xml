@@ -6,6 +6,19 @@
                                 <language id="org.eclipse.cdt.core.gcc">
                                         <resource project-relative-path="">
                                               ____INCLUDES____
+
+                                              <entry kind="macro" name="_REENTRANT " value="">
+                                                <flag value="BUILTIN"/>
+                                              </entry>
+                                              <entry kind="macro" name="DPcCompiler" value="DPcCompilerGcc">
+                                                <flag value="BUILTIN"/>
+                                              </entry>
+                                              <entry kind="macro" name="DPcArch" value="DPcArchlinux">
+                                                <flag value="BUILTIN"/>
+                                              </entry>
+                                              <entry kind="macro" name="DPcSystem" value="DPcSystemUnix">
+                                                <flag value="BUILTIN"/>
+                                              </entry>
                                         </resource>
                                 </language>
                         </provider>
