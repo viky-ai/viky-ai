@@ -368,26 +368,26 @@ PUBLIC(int) OgSysiFlush(ogsysi_rwlock handle)
  */
 struct timespec OgSysiComputeTimeout(long timeout_ms)
 {
+  // constant conversion
+  const long msec_in_a_sec = 1E3;
+  const long nsec_in_a_usec = 1E3;
+  const long nsec_in_a_msec = 1E6;
+  const long nsec_in_a_sec = 1E9;
+
   // get current time
   struct timeval tv[1];
   gettimeofday(tv, NULL);
-
-  // constant conversion
-  long msec_in_a_sec = 1E3;
-  long nsec_in_a_usec = 1E3;
-  long nsec_in_a_msec = 1E6;
-  long nsec_in_a_sec = 1E9;
 
   // add timeout_ms to current time
   struct timespec abstime[1];
   abstime->tv_sec = tv->tv_sec + timeout_ms / msec_in_a_sec;
   abstime->tv_nsec = tv->tv_usec * nsec_in_a_usec + ((timeout_ms % msec_in_a_sec) * nsec_in_a_msec);
 
-  // check nano sec are over 1 seconds
+  // check nano sec are under 1 seconds
   if (abstime->tv_nsec >= nsec_in_a_sec)
   {
-    abstime->tv_sec += abstime->tv_nsec - nsec_in_a_sec;
-    abstime->tv_nsec++;
+    abstime->tv_nsec = abstime->tv_nsec - nsec_in_a_sec;
+    abstime->tv_sec++;
   }
 
   return abstime[0];
