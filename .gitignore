@@ -2,7 +2,9 @@
 ################
 # generic
 /**/core
+/**/*.bak
 /**/log
+/**/*.log
 /**/logs
 /**/obj
 /**/makefile.linux64
