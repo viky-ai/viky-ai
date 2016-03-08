@@ -183,7 +183,7 @@ DEFPUBLIC(int) OgAutNumber(void *handle);
 DEFPUBLIC(int) OgAutFree(pr(void *));
 /** Free the 'auf' part of the automaton, leaving the 'aut' part operational **/
 DEFPUBLIC(int) OgAufFree(pr(void *));
-DEFPUBLIC(int) OgAutResize(void *handle,size_t max_size);
+DEFPUBLIC(int) OgAutResize(void *handle, int max_state_number);
 
 DEFPUBLIC(int) OgAutEndian(pr(void *));
 
