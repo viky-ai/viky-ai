@@ -323,6 +323,11 @@ PUBLIC(size_t) OgHeapShardedGetAllocatedMemory(og_heap_sharded handle)
 {
   struct og_ctrl_heap_sharded *ctrl_heap = handle;
 
+  if (ctrl_heap == NULL)
+  {
+    return 0;
+  }
+
   size_t size = sizeof(struct og_ctrl_heap);
   size += sizeof(og_heap *) * ctrl_heap->nb_sub_heaps;
   for (int i = 0; i < ctrl_heap->nb_sub_heaps; i++)

@@ -142,6 +142,11 @@ PUBLIC(og_status) OgHeapSetTrace(og_heap ctrl_heap, int trace)
  **/
 PUBLIC(size_t) OgHeapGetAllocatedMemory(og_heap ctrl_heap)
 {
+  if (ctrl_heap == NULL)
+  {
+    return 0;
+  }
+
   if (ctrl_heap->type == DOgHeapTypeSliced)
   {
     return HeapSliceAllocatedMemory(ctrl_heap);
