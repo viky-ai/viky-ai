@@ -55,7 +55,10 @@ m->total_module = m->ctrl_aut
                 + m->Lstmin;
 
 m->total += m->total_module;
-
+if (must_log)
+{
+  OgMessageLog(DOgMlogInLog, ctrl_aut->loginfo->where, 0, "%s%s:\t%s\t%zu", header, "ogaut_mem", ctrl_aut->name, m->total_module);
+}
 DOgShowMem(m->total_module    ,"total_module aut"," ");
 DOgShowMem(m->ctrl_aut        ,"ctrl_aut","         ");
 DOgShowMem(m->State           ,"State","            ");
