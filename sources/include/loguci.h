@@ -1,8 +1,8 @@
 /*
- *	Header for library ogm_uci.dll
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : July,August,September 2006, January,May,August 2007
- *	Version 1.5
+ *  Header for library ogm_uci.dll
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : July,August,September 2006, January,May,August 2007
+ *  Version 1.5
 */
 #ifndef _LOGUCIALIVE_
 #include <loggen.h>
@@ -37,7 +37,7 @@ struct og_uci_server_param {
   struct og_loginfo loginfo;
   int socket_buffer_size;
   int header_mandatory;
-  }; 
+  };
 
 struct og_ucisr_input {
   int hsocket,timeout;
@@ -58,6 +58,8 @@ struct og_ucisw_input {
   unsigned char *content;
   int content_length;
   unsigned char *content_type;
+  int http_status;
+  unsigned char *http_status_message;
   };
 
 
