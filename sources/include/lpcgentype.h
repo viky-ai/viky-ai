@@ -44,6 +44,22 @@ typedef int og_status;
 typedef unsigned og_bitfield;
 
 /**
+ * 64 bits Bitfield type (use for matrices).
+ *
+ * @code
+ * og_bitfield_long flags = 0x100 + 0x10 + 0x1;
+ * @endcode
+ *
+ * @ingroup generic
+ */
+typedef unsigned long long og_bitfield_long;
+
+/**
+ * Number of bits (not bytes !!!) that can be used in og_bitfield_long (at least 64 bits)
+ */
+#define DOgBitfieldLongBitSize (sizeof(og_bitfield_long))
+
+/**
  * Boolean type, with additional error status.
  *
  * Values: 1 (true), 0 (false), -1 (error).
