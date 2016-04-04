@@ -56,6 +56,10 @@ IF(OgMsgTuneInherit(ctrl_addr->hmsg,param->hmsg)) return(0);
 if (ctrl_addr->loginfo->trace & DOgAddrTraceGhbn) ghbn_trace=DOgGhbnTraceMinimal;
 IFn(ctrl_addr->ghbn=OgGetHostByNameInit(ghbn_trace,ctrl_addr->loginfo->where)) return(0);
 
+IFn(ctrl_addr->sockets = OgHeapSliceInit(ctrl_addr->hmsg, "addr_sockets", sizeof(struct og_socket_info), 256, 64)) return NULL;
+IFn(ctrl_addr->error_messages = OgHeapSliceInit(ctrl_addr->hmsg, "addr_error_messages", sizeof(unsigned char), 256, 64)) return NULL;
+
+
 return((void *)ctrl_addr);
 }
 
@@ -76,6 +80,9 @@ for (i=0; i<ctrl_addr->AsoUsed; i++) {
   if (aso->hsocket == DOgSocketError) continue;
   OgCloseSocket(aso->hsocket);
   }
+
+OgHeapFlush(ctrl_addr->sockets);
+OgHeapFlush(ctrl_addr->error_messages);
 
 IFE(OgGetHostByNameFlush(ctrl_addr->ghbn));
 

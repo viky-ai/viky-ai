@@ -110,6 +110,7 @@
   <component 	name="ogm_grab/lib" info="Grabbing components" doc="" />
   <component 	name="ogm_son/lib" info="Handles names for sockets" doc="" />
   <component 	name="ogm_addr/lib" info="Handles listening to multiple IP/ports" doc="" />
+  <component  name="ogm_addr/prog/ogaddr" info="" doc="" />
   <component 	name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" doc="" />
   <component 	name="ogm_xpt/lib" info="Experimental, handles exceptions" doc="" />
   <component 	name="ogm_pho/lib" info="Phonetizer" doc="" />

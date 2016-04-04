@@ -1,11 +1,13 @@
 /*
- *	Internal header for handling listening to several IP addresses
- *	Copyright (c) 2005 Pertimm, Inc. by Patrick Constant
- *	Dev : March 2005
- *	Version 1.0
+ *  Internal header for handling listening to several IP addresses
+ *  Copyright (c) 2005 Pertimm, Inc. by Patrick Constant
+ *  Dev : March 2005
+ *  Version 1.0
 */
 
 #include <logaddr.h>
+#include <glib.h>
+#include <logheap.h>
 
 
 #define DOgAsoNumber    0x400
@@ -24,20 +26,29 @@ struct aso {
   };
 
 
-struct og_ctrl_addr {
-  void *herr,*hmsg; ogmutex_t *hmutex;
+struct og_ctrl_addr
+{
+  void *herr, *hmsg;
+  ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
-  
-  int AsoNumber,AsoUsed,FreeAso;
+  struct og_loginfo *loginfo;
+
+  int AsoNumber, AsoUsed, FreeAso;
   struct aso *Aso;
-  
+
   /** Buffer for all operations **/
   unsigned char *Ba;
-  int BaSize,BaUsed;  
+  int BaSize, BaUsed;
 
   void *ghbn;
-  };
+
+  GAsyncQueue *async_socket_queue;
+  ogthread_t thread;
+
+  og_heap sockets;
+  og_heap error_messages;
+
+};
 
 
 
@@ -50,5 +61,9 @@ int OgAddrAppendBa(pr_(struct og_ctrl_addr *) pr_(int) pr(unsigned char *));
 int OgAddrTestReallocBa(pr_(struct og_ctrl_addr *) pr(int));
 int OgAddrReallocBa(pr_(struct og_ctrl_addr *) pr(int));
 
+/** addsocketqueue.c **/
+og_status OgAddrSocketQueue(void *ptr);
 
+/** addrutils.c **/
+og_status AddrSendStatusCodeServiceUnavailable(struct og_ctrl_addr *ctrl_addr, int socket);
 

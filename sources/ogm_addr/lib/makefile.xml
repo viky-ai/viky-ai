@@ -8,20 +8,15 @@
     <file>addraso.c</file>
     <file>addrba.c</file>
     <file>addrloop.c</file>
+    <file>addrsocketqueue.c</file>
+    <file>addrutils.c</file>
     <file>iaddr.c</file>
   </sources>
   <platforms>
-    <platform name="win">
-      <option name="NAME">ogm_addr</option>
-      <option name="ADD_INC"/>
-      <option name="ADD_LIBR">ogm_ghbn.lib ogm_sock.lib ogm_thr.lib ogm_msg.lib ogm_gen.lib</option>
-      <option name="ADD_LIBD">$(ADD_LIBR)</option>
-      <option name="ADD_LIBP">$(ADD_LIBR)</option>
-    </platform>
     <platform name="linux">
       <option name="NAME">ogaddr</option>
-      <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-loggen -logghbn -logsock -logmsg -logthr</option>
+      <option name="ADD_CFLAGS">-I$(OG_REPO_PATH)/sources/include/glib-2.0</option>
+      <option name="ADD_LIBR">-lglib-2.0 -loggen -logghbn -logsock -logmsg -logthr -logheap</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>
