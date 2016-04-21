@@ -26,8 +26,12 @@ memset(ctrl_addr,0,sizeof(struct og_ctrl_addr));
 
 ctrl_addr->herr = param->herr;
 ctrl_addr->hmutex = param->hmutex;
-ctrl_addr->cloginfo = param->loginfo;
-ctrl_addr->loginfo = &ctrl_addr->cloginfo;
+ctrl_addr->loginfo[0] = param->loginfo;
+ctrl_addr->backlog_max_pending_requests = param->backlog_max_pending_requests;
+ctrl_addr->backlog_timeout = param->backlog_timeout;
+ctrl_addr->must_stop_func = param->must_stop_func;
+ctrl_addr->send_error_status_func = param->send_error_status_func;
+ctrl_addr->func_context = param->func_context;
 
 ctrl_addr->BaSize = DOgBaSize;
 size = ctrl_addr->BaSize*sizeof(unsigned char);
@@ -57,8 +61,8 @@ if (ctrl_addr->loginfo->trace & DOgAddrTraceGhbn) ghbn_trace=DOgGhbnTraceMinimal
 IFn(ctrl_addr->ghbn=OgGetHostByNameInit(ghbn_trace,ctrl_addr->loginfo->where)) return(0);
 
 IFn(ctrl_addr->sockets = OgHeapSliceInit(ctrl_addr->hmsg, "addr_sockets", sizeof(struct og_socket_info), 256, 64)) return NULL;
-IFn(ctrl_addr->error_messages = OgHeapSliceInit(ctrl_addr->hmsg, "addr_error_messages", sizeof(unsigned char), 256, 64)) return NULL;
 
+IF(OgSemaphoreInit(ctrl_addr->hsem,0)) return (0);
 
 return((void *)ctrl_addr);
 }
@@ -82,7 +86,6 @@ for (i=0; i<ctrl_addr->AsoUsed; i++) {
   }
 
 OgHeapFlush(ctrl_addr->sockets);
-OgHeapFlush(ctrl_addr->error_messages);
 
 IFE(OgGetHostByNameFlush(ctrl_addr->ghbn));
 

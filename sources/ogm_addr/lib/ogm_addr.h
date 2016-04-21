@@ -30,8 +30,10 @@ struct og_ctrl_addr
 {
   void *herr, *hmsg;
   ogmutex_t *hmutex;
-  struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo;
+  struct og_loginfo loginfo[1];
+
+  int backlog_max_pending_requests;
+  int backlog_timeout;
 
   int AsoNumber, AsoUsed, FreeAso;
   struct aso *Aso;
@@ -46,7 +48,16 @@ struct og_ctrl_addr
   ogthread_t thread;
 
   og_heap sockets;
-  og_heap error_messages;
+
+  int (*answer_func)(void *answer_func_context, struct og_socket_info *info);
+  void *answer_func_context;
+  int (*must_stop_func)(void *func_context);
+  int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status);
+  void *func_context;
+  int must_stop;
+  ogsem_t hsem[1];
+
+
 
 };
 

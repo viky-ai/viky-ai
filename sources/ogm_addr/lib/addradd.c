@@ -1,8 +1,8 @@
 /*
- *	Adding an address in the list of addresses
- *	Copyright (c) 2005 Pertimm by Patrick Constant
- *	Dev : March 2005
- *	Version 1.0
+ *  Adding an address in the list of addresses
+ *  Copyright (c) 2005 Pertimm by Patrick Constant
+ *  Dev : March 2005
+ *  Version 1.0
 */
 #include "ogm_addr.h"
 
@@ -20,8 +20,7 @@
  *  In the last case <port> is chosen instead of the 'port' parameter.
 */
 
-PUBLIC(int) OgAddrAdd(handle,hostname,port)
-void *handle; char *hostname; int port;
+PUBLIC(int) OgAddrAdd(void *handle, char *hostname, int port)
 {
 struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *)handle;
 int ihn; char hn[DPcPathSize];
@@ -30,7 +29,7 @@ struct og_hostent hostent;
 struct aso *aso;
 int timeout=30;
 
-strcpy(hn,hostname); 
+strcpy(hn,hostname);
 ihn=strlen(hn);
 
 for (i=0; i<ihn; i++) {
@@ -53,7 +52,7 @@ IF(OgGetHostByName(ctrl_addr->ghbn,hn,&hostent,timeout)) {
     ,DOgErrLogFlagNoSystemError+DOgErrLogFlagNotInErr);
 
   DONE;
-  }  
+  }
 
 if (ctrl_addr->loginfo->trace & DOgAddrTraceAdding) {
   unsigned long addr;
@@ -65,10 +64,10 @@ if (ctrl_addr->loginfo->trace & DOgAddrTraceAdding) {
 
 IFE(GetAso(ctrl_addr,&aso));
 
-aso->addr_start = ctrl_addr->BaUsed; 
+aso->addr_start = ctrl_addr->BaUsed;
 IFE(OgAddrAppendBa(ctrl_addr,ihn,hn));
 ctrl_addr->Ba[ctrl_addr->BaUsed++]=0;
-aso->addr_length = ihn; 
+aso->addr_length = ihn;
 aso->hostent = hostent;
 aso->port=hport;
 

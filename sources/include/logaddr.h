@@ -31,28 +31,24 @@ struct og_socket_info
   struct sockaddr_in socket_in;
   char sremote_addr[DPcPathSize];
   int hsocket_service;
-
-  //socket function
-  int (*func)(void *, struct og_socket_info *info);
-
-  //socket context
-  void *ptr;
-
   int time_start;
-  int timeout;
 };
 
 struct og_addr_param {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo loginfo;
+  int backlog_max_pending_requests;
+  int backlog_timeout;
+  int (*must_stop_func)(void *func_context);
+  int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status);
+  void *func_context;
   };
 
 
 DEFPUBLIC(void *) OgAddrInit(pr(struct og_addr_param *));
-DEFPUBLIC(int) OgAddrAdd(pr_(void *) pr_(char *) pr(int));
+DEFPUBLIC(int) OgAddrAdd(void *handle, char *hostname, int port);
+DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *ptr);
 DEFPUBLIC(int) OgAddrFlush(pr(void *));
-DEFPUBLIC(int) OgAddrLoop(void *handle, int timeout, int queue_max_length, int (*func)(void *, struct og_socket_info *info), void *ptr);
-DEFPUBLIC(int) OgAddrSocketQueue(void *ptr);
 
 #define _LOGADDRALIVE_
 #endif

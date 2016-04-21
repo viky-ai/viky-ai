@@ -9,7 +9,6 @@
     <file>addrba.c</file>
     <file>addrloop.c</file>
     <file>addrsocketqueue.c</file>
-    <file>addrutils.c</file>
     <file>iaddr.c</file>
   </sources>
   <platforms>
