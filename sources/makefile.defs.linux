@@ -31,10 +31,10 @@ PLIBPATH=$(PBUILDPATH)/bin
 PLINKPATH=$(PBUILDPATH)/link
 
 # Obj tree
-LOBJ  = obj
-ROBJ  = $(LOBJ)/release
-DOBJ  = $(LOBJ)/debug
-POBJ  = $(LOBJ)/profile
+LOBJ= obj
+ROBJ= $(LOBJ)/release
+DOBJ= $(LOBJ)/debug
+POBJ= $(LOBJ)/profile
 
 SRCPATH=$(OG_REPO_PATH)/sources
 LOGPATH=$(OG_REPO_PATH)/build/log
@@ -75,6 +75,13 @@ else
 	endif
 endif
 
+# use gdb relative path, check it with : nm -l lib.so
+ifeq "$(OG_PSE_GDB_RELATIVE_PATH)" "1"
+  DEBUG_GDB_RELATIVE_PATH = -fdebug-prefix-map=$(OG_REPO_PATH)=pse
+else
+  DEBUG_GDB_RELATIVE_PATH =
+endif
+
 
 # The linker and its options.
 LD = ld
@@ -103,7 +110,7 @@ ifeq "$(GCC_VERSION_GE_v44)" "1"
   ADDITIONAL_WARNING_ERROR_FLAG += -Wunused -Wextra -Wparentheses -Wmissing-declarations -Wmissing-field-initializers -Wuninitialized -Wimplicit-function-declaration -Wformat-security
 
   # Addtional GCC 4.4 debug flag : nm -l lib.so
-  DEBUG_GCC_FLAGS += -ggdb -fdebug-prefix-map=$(OG_REPO_PATH)=ogmios
+  DEBUG_GCC_FLAGS += -ggdb $(DEBUG_GDB_RELATIVE_PATH)
 
 endif
 
