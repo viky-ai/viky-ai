@@ -63,7 +63,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       if ((ctrl_addr->backlog_max_pending_requests > 0) && (queue_length >= ctrl_addr->backlog_max_pending_requests))
       {
         // do not push the request we just received, because we have too many requests
-        OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, ctrl_addr->loginfo->where, 0, "OgAddrLoop: request dropped on socket %d because too many requests in the queue (%d >= %d)",
+        OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: request dropped on socket %d because too many requests in the queue (%d >= %d)",
             info->hsocket_service, queue_length, ctrl_addr->backlog_max_pending_requests);
         IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context,info,503));
       }
@@ -79,7 +79,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
 
     if (ctrl_addr->must_stop)
     {
-      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, ctrl_addr->loginfo->where, 0, "OgAddrLoop: must stop service");
+      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: must stop service");
       break;
     }
 
@@ -88,7 +88,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
   IFE(OgSemaphoreWait(ctrl_addr->hsem));
   g_async_queue_unref(ctrl_addr->async_socket_queue);
   DPcFree(fdset);
-  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, ctrl_addr->loginfo->where, 0, "OgAddrLoop: finished");
+  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: finished");
 
   DONE;
 }
@@ -176,8 +176,6 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
         erreur);
     CONT;
   }
-
-  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, ctrl_addr->loginfo->where, 0, "socket %d accepted", info->hsocket_service);
 
   /** Here we get the IP address of the calling program through the socket **/
   IFE(OgGetRemoteAddrSocket(&info->socket_in.sin_addr, info->sremote_addr, 0));
