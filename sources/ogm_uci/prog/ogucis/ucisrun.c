@@ -29,7 +29,7 @@ memset(addr_param,0,sizeof(struct og_addr_param));
 addr_param->herr = ucis_ctrl->herr;
 addr_param->hmsg = ucis_ctrl->hmsg;
 addr_param->hmutex = ucis_ctrl->hmutex;
-addr_param->loginfo.trace = DOgAddrTraceMinimal+DOgAddrTraceMemory; 
+addr_param->loginfo.trace = DOgAddrTraceMinimal+DOgAddrTraceMemory;
 addr_param->loginfo.where = ucis_ctrl->loginfo->where;
 IFn(ucis_ctrl->haddr=OgAddrInit(addr_param)) DPcErr;
 
@@ -115,7 +115,7 @@ if (ucis_ctrl->loginfo->trace & DOgUciServerTraceMinimal) {
 /** Now we read the request and answer the request as an answer **/
 memset(input,0,sizeof(struct og_ucisr_input));
 input->hsocket = info->hsocket_service;
-input->timeout = 30;
+input->timeout = 30000;
 
 IFE(OgUciServerRead(ucis_ctrl->hucis,input,output));
 

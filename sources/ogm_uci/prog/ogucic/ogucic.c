@@ -14,7 +14,7 @@
 
 #define DOgDefaultTrace     (DOgUciClientTraceMinimal+DOgUciClientTraceMemory+DOgUciClientTraceSocket+DOgUciClientTraceSocketSize)
 #define DOgDefaultListTrace (DOgUciClientTraceMinimal+DOgUciClientTraceMemory)
-#define DOgUcicTimeout      3600
+#define DOgUcicTimeout      3600000
 #define DOgUcicSleepPeriod  0
 #define DOgUciBufferSize    0x800000 /* 8mb */
 #define DOgUciNbRequestsPerLog      100
@@ -115,7 +115,7 @@ for (i=1; i<argc; i++) {
 while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
 #endif
 #endif
-  
+
   sprintf(cmd+strlen(cmd)," %s",cmd_param);
   if (!strcmp(cmd_param,"-v")) {
     OgMessageBox(0,DOgUciBanner,param->loginfo.where,DOgMessageBoxInformation);
@@ -173,9 +173,9 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
 
 if (must_exit) exit(0);
 
-IF(OgCheckOrCreateDir(DOgDirLog,0,param->loginfo.where)) { 
+IF(OgCheckOrCreateDir(DOgDirLog,0,param->loginfo.where)) {
   OgMessageLog(DOgMlogInLog+DOgMlogInErr,param->loginfo.where,0
-    ,"Can't create directory '%s'",DOgDirLog);    
+    ,"Can't create directory '%s'",DOgDirLog);
   exit(1);
   }
 
@@ -347,18 +347,18 @@ while(fgets(B,sB,fd)) {
   IF(OgUciClientRequest(info->hucic,request,answer)) {
 
     if (info->param->loginfo.trace & DOgUciClientTraceMinimal) {
-      int max_log_size=request->request_length,truncated=0; buffer[0]=0; stimeout[0]=0; 
+      int max_log_size=request->request_length,truncated=0; buffer[0]=0; stimeout[0]=0;
       if (max_log_size>DOgMlogMaxMessageSize/2) {
         max_log_size=DOgMlogMaxMessageSize/2; truncated=1;
         sprintf(buffer," (log truncated)");
         }
-      if (answer->timed_out) sprintf(stimeout," (timed out with timeout %d seconds)",request->timeout); 
+      if (answer->timed_out) sprintf(stimeout," (timed out with timeout %d seconds)",request->timeout);
       OgMessageLog(DOgMlogInLog,info->param->loginfo.where,0
         , "UciClientList: error%s on request is%s:[\n%.*s]"
         , stimeout, buffer, max_log_size, request->request);
       OgMessageLog(DOgMlogInLog,info->param->loginfo.where,0
         , "UciClientList: if the error is \"buffer full\", try -s option of ogucic to get a larger buffer");
-      }  
+      }
 
     OgErrLog(info->param->herr,info->param->loginfo.where,0,0,0,0);
     if (nb_errors >= DOgNbErrorsBeforeStopping) {
@@ -425,7 +425,7 @@ if (!first) {
     ,"%6d: min=%s mean=%s max=%s (at %d)"
     ,n-1, v1, v2, v3, n_max_elapsed);
   }
-  
+
 if (info->list_filename_output[0]) {
   fclose(fdout);
   }
@@ -483,7 +483,7 @@ sprintf(buffer+strlen(buffer),"  -t<n>: trace options for logging (default %x)\n
 sprintf(buffer+strlen(buffer),"    <n> has a combined hexadecimal value of:\n");
 sprintf(buffer+strlen(buffer),"    0x1: minimal, 0x2: memory, 0x4: socket, 0x8: socket size\n");
 sprintf(buffer+strlen(buffer),"  -v gives version number of the program\n");
-sprintf(buffer+strlen(buffer),"  -w<timeout in seconds> (default %d)\n", DOgUcicTimeout);
+sprintf(buffer+strlen(buffer),"  -w<timeout in milli-seconds> (default %d)\n", DOgUcicTimeout);
 
 #if ( DPcSystem == DPcSystemWin32)
 for (j=k=0; buffer[j]; j++) {
@@ -515,7 +515,7 @@ is_error=OgErrLog(herr,where,0,0,0,0);
 time(&ltime);
 OgMessageLog(DOgMlogInLog,where,0,"\nProgram %s.exe exiting on error at %.24s\n",where,OgGmtime(&ltime));
 exit(1);
-} 
+}
 
 
 

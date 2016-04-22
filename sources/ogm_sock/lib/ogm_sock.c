@@ -220,8 +220,8 @@ int n;
 
 FD_ZERO(&read_fds);
 FD_SET(hsocket, &read_fds);
-tv.tv_sec = timeout; /* seconds */
-tv.tv_usec = 0; /* milli-seconds */
+tv.tv_sec = timeout/1000; /* seconds */
+tv.tv_usec = (timeout%1000)*1000; /* milli-seconds */
 
 *timed_out = 0;
 
