@@ -1,8 +1,8 @@
 /*
- *	Initialization for ogm_uci functions
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : July,September 2006, January,March 2007
- *	Version 1.3
+ *  Initialization for ogm_uci functions
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : July,September 2006, January,March 2007
+ *  Version 1.3
 */
 #include "ogm_uci.h"
 #include <limits.h>
@@ -64,7 +64,7 @@ while(1) {
   if (timed_out) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
       OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
-        ,"OgUciRead: Timed-out while reading request");
+        ,"OgUciRead: Timed-out while reading request with timeout=%d milli-seconds",input->timeout);
       }
     output->timed_out=1;
     DPcErr;
@@ -73,7 +73,7 @@ while(1) {
    * this is unlikely to occur if your application protocol is
    * well defined, and unnecessary if you have registered for
    * FD_CLOSE, but nonetheless you might want handle it. */
-  IFn(read_length) { 
+  IFn(read_length) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
       OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
         ,"OgUciRead: Nothing to read anymore");
@@ -187,7 +187,7 @@ int *pitlt; unsigned char *tlt;
 int i,c,state=1,found=0,start=0,itlt=0;
 
 for (i=0; i<is; i++) {
-  c=s[i]; 
+  c=s[i];
   switch(state) {
     case 1:
       if (i+5<=is && !Ogmemicmp(s+i,"<?xml",5)) state=2;
@@ -199,10 +199,10 @@ for (i=0; i<is; i++) {
       if (c=='<') { state=4; start=i+1; }
       break;
     case 4:
-      if (c=='>' || PcIsspace(c)) { 
-        itlt=i-start; 
+      if (c=='>' || PcIsspace(c)) {
+        itlt=i-start;
         if (itlt<DOgMaxTopLevelTagSize) {
-          memcpy(tlt,s+start,itlt); tlt[itlt]=0; 
+          memcpy(tlt,s+start,itlt); tlt[itlt]=0;
           found=1; goto endGetTopLevelTag;
           }
         }

@@ -50,6 +50,7 @@ IFn(ctrl_ucis->Ba=(unsigned char *)malloc(size)) {
   }
 
 memset(uci_param,0,sizeof(struct og_uci_param));
+uci_param->hmsg=ctrl_ucis->hmsg;
 uci_param->herr=ctrl_ucis->herr;
 uci_param->hmsg=ctrl_ucis->hmsg;
 uci_param->hmutex=ctrl_ucis->hmutex;

@@ -50,6 +50,7 @@ struct og_ucisr_output {
   unsigned char *content;
   int content_length;
   int header_length;
+  int timed_out;
   };
 
 struct og_ucisw_input {
