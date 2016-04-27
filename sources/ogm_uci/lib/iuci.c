@@ -49,6 +49,7 @@ IFn(ctrl_uci->Ba=(unsigned char *)malloc(size)) {
 ctrl_uci->header_mandatory = param->header_mandatory;
 
 memset(http_param,0,sizeof(struct og_http_param));
+http_param->hmsg=ctrl_uci->hmsg;
 http_param->herr=ctrl_uci->herr;
 http_param->hmutex=ctrl_uci->hmutex;
 http_param->loginfo.trace = DOgHttpTraceMinimal+DOgHttpTraceMemory;

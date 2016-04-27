@@ -7,11 +7,18 @@
 #include "ogm_uci.h"
 #include <limits.h>
 
+struct og_scan_expect
+{
+    struct og_ctrl_uci *ctrl_uci;
+    struct og_ucir_input *input;
+};
+
 
 STATICF(int) GetTopLevelTag(pr_(struct og_ctrl_uci *) pr_(int) pr_(unsigned char *) pr_(int *) pr(unsigned char *));
 STATICF(int) GetEndingTopLevelTag(pr_(struct og_ctrl_uci *) pr_(int) pr_(unsigned char *) pr_(int) pr(unsigned char *));
 STATICF(int) RemoveChunk(pr_(struct og_ctrl_uci *) pr(struct og_ucir_output *));
-STATICF(int) HhScan(pr_(void *) pr_(int) pr(unsigned char *));
+static int HhScanLineTransferEncoding(void *ptr, int ivalue, unsigned char *value);
+static int HhScanExpect(void *ptr, int ivalue, unsigned char *value);
 
 
 
@@ -100,7 +107,14 @@ while(1) {
           ,"OgUciRead: header length 2 = %d",output->hh.header_length);
         OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
           ,"OgUciRead: content length = %d",output->hh.content_length);
+        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+          ,"OgUciRead: current header: [%.*s]",isocket_buffer,socket_buffer);
+        IFE(OgHttpHeader2Log(ctrl_uci->hhttp,&output->hh));
         }
+      struct og_scan_expect expect_info[1];
+      expect_info->ctrl_uci = ctrl_uci;
+      expect_info->input = input;
+      IFE(OgHttpHeaderScanValues(ctrl_uci->hhttp,&output->hh,DOgHttpHeaderLineExpect,HhScanExpect,expect_info));
       if (output->hh.content_length != SIZE_MAX) {
         max_buffer_size_to_read = output->hh.header_length + output->hh.content_length;
         state=2;
@@ -148,7 +162,7 @@ output->content=socket_buffer;
 output->content_length=isocket_buffer;
 
 ctrl_uci->chunked=0;
-IFE(OgHttpHeaderScanValues(ctrl_uci->hhttp,&output->hh,DOgHttpHeaderLineTransferEncoding,HhScan,ctrl_uci));
+IFE(OgHttpHeaderScanValues(ctrl_uci->hhttp,&output->hh,DOgHttpHeaderLineTransferEncoding,HhScanLineTransferEncoding,ctrl_uci));
 if (ctrl_uci->chunked) {
   IFE(RemoveChunk(ctrl_uci,output));
   }
@@ -301,10 +315,7 @@ DONE;
 
 
 
-
-
-STATICF(int) HhScan(ptr,ivalue,value)
-void *ptr; int ivalue; unsigned char *value;
+static int HhScanLineTransferEncoding(void *ptr, int ivalue, unsigned char *value)
 {
 struct og_ctrl_uci *ctrl_uci = (struct og_ctrl_uci *)ptr;
 if (!Ogstricmp(value,"chunked")) {
@@ -316,6 +327,31 @@ return(0);
 
 
 
+static int HhScanExpect(void *ptr, int ivalue, unsigned char *value)
+{
+  struct og_scan_expect *expect_info = (struct og_scan_expect *) ptr;
+  struct og_ctrl_uci *ctrl_uci = expect_info->ctrl_uci;
+  struct og_ucir_input *input = expect_info->input;
 
+  if (ctrl_uci->loginfo->trace & DOgUciTraceSocket)
+  {
+    OgMsg(ctrl_uci->hmsg, "", DOgMlogInLog, "HhScanExpect: Expect value '%.*s'", ivalue, value);
+  }
 
+  if (!Ogstricmp(value, "100-continue"))
+  {
+    int string_length;
+    char *string = "HTTP/1.1 100 Continue\r\n\r\n";
+    string_length = strlen(string);
+    if (ctrl_uci->loginfo->trace & DOgUciTraceSocket)
+    {
+    OgMsg(ctrl_uci->hmsg, "", DOgMlogInLog,
+        "HhScanExpect: 100-continue value found, sending a 100 Continue instruction to client");
+    }
+    // Sending HTTP/1.1 100 Continue\r\n\r\n information to client
+    IFE(OgSendSocket(ctrl_uci->herr, input->hsocket, string, string_length));
+    return (1);
+  }
+  return (0);
+}
 

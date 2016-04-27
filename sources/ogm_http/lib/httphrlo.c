@@ -58,7 +58,7 @@ oindex states[DPcAutMaxBufferSize+9];
 int iout,retour,nstate0,nstate1;
 char b[DOgHttpHeaderLineSize];
 
-OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"  %s (raw)",hh->first_line);
+OgMsg(ctrl_http->hmsg,"",DOgMlogInLog,"  %s (raw)",hh->first_line);
 if (hh->request_method > 0) {
   sprintf(b,"%s %s HTTP/%d.%d",OgHttpHeaderRequestMethodString(hh->request_method)
     , hh->request_uri, hh->major, hh->minor);
@@ -66,7 +66,7 @@ if (hh->request_method > 0) {
 else {
   sprintf(b,"HTTP/%d.%d %d", hh->major, hh->minor, hh->status);
   }
-OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"  %s (calculated)",b);
+OgMsg(ctrl_http->hmsg,"",DOgMlogInLog,"  %s (calculated)",b);
 
 if ((retour=OgAutScanf(hh->ha_header,-1,"",&iout,out,&nstate0,&nstate1,states))) {
   do {
@@ -76,7 +76,7 @@ if ((retour=OgAutScanf(hh->ha_header,-1,"",&iout,out,&nstate0,&nstate1,states)))
   while((retour=OgAutScann(hh->ha_header,&iout,out,nstate0,&nstate1,states)));
   }
 
-OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0
+OgMsg(ctrl_http->hmsg,"",DOgMlogInLog
   ,"  Header Length is %d",hh->header_length);
 
 DONE;
@@ -101,19 +101,19 @@ for (i=0; i<is; i++) {
   }
 if (colon<0) DONE;
 attr=atoi(b);
-OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0
+OgMsg(ctrl_http->hmsg,"",DOgMlogInLog
   ,"  %s: %s",OgHttpHeaderLineString(attr),b+colon+1);
 
 switch (attr) {
   case DOgHttpHeaderLineContentLength:
-    OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"  Content-Length: %d (calculated)",hh->content_length);
+    OgMsg(ctrl_http->hmsg,"",DOgMlogInLog,"  Content-Length: %d (calculated)",hh->content_length);
     break;
   case DOgHttpHeaderLineLastModified:
     gmt = gmtime(&hh->last_modified);
     /** RFC 2616 prefered format: Sun, 06 Nov 1994 08:49:37 GMT **/
     strftime(last_modified,128,"%a, %d %b %Y %H:%M:%S GMT",gmt);
-    if (gmt) OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"  Last-Modified: %s  (calculated)",last_modified);
-    else OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"  Last-Modified: %x GMT  (calculated)",hh->last_modified);
+    if (gmt) OgMsg(ctrl_http->hmsg,"",DOgMlogInLog,"  Last-Modified: %s  (calculated)",last_modified);
+    else OgMsg(ctrl_http->hmsg,"",DOgMlogInLog,"  Last-Modified: %x GMT  (calculated)",hh->last_modified);
     break;
   }
 

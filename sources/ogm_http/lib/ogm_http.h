@@ -1,8 +1,8 @@
 /*
- *	Internal header for handling http protocol
- *	Copyright (c) 2006 Pertimm, Inc. by Patrick Constant
- *	Dev : August 2006
- *	Version 1.0
+ *  Internal header for handling http protocol
+ *  Copyright (c) 2006 Pertimm, Inc. by Patrick Constant
+ *  Dev : August 2006
+ *  Version 1.0
 */
 #include <loghttp.h>
 #include <logaut.h>
@@ -24,10 +24,10 @@ extern struct og_http_header_type OgHttpHeaderType[];
 
 
 struct og_ctrl_http {
-  void *herr; ogmutex_t *hmutex;
+  void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
-  
+  struct og_loginfo *loginfo;
+
   void *ha_header;
 
   /** Buffer for all operations **/

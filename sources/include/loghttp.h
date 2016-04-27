@@ -1,12 +1,13 @@
 /*
- *	Header for library ogm_http.dll
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : August, December 2006, September 2007
- *	Version 1.3
+ *  Header for library ogm_http.dll
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : August, December 2006, September 2007
+ *  Version 1.3
 */
 #ifndef _LOGHTTPALIVE_
 #include <loggen.h>
 #include <logthr.h>
+#include <logmsg.h>
 
 
 #define DOgHttpBanner  "ogm_http V1.09, Copyright (c) 2006-2007 Pertimm, Inc."
@@ -22,17 +23,17 @@
 
 
 struct og_http_param {
-  void *herr; ogmutex_t *hmutex;
+  void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo loginfo;
-  }; 
+  };
 
 struct og_http_header2 {
   void *ha_header;
-  int request_method; 
+  int request_method;
   char request_uri[DOgHttpHeaderLineSize];
   char first_line[DOgHttpHeaderLineSize];
   int major,minor,status;
-  size_t content_length; 
+  size_t content_length;
   time_t last_modified;
   int header_length;
   };
