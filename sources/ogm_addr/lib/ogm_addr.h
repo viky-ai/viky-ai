@@ -32,6 +32,8 @@ struct og_ctrl_addr
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
 
+  og_char_buffer addr_name[DPcPathSize];
+
   int backlog_max_pending_requests;
   int backlog_timeout;
 

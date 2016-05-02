@@ -26,6 +26,7 @@ memset(ctrl_addr,0,sizeof(struct og_ctrl_addr));
 ctrl_addr->herr = param->herr;
 ctrl_addr->hmutex = param->hmutex;
 ctrl_addr->loginfo[0] = param->loginfo;
+snprintf(ctrl_addr->addr_name, DPcPathSize, "%s", param->addr_name);
 ctrl_addr->backlog_max_pending_requests = param->backlog_max_pending_requests;
 ctrl_addr->backlog_timeout = param->backlog_timeout;
 ctrl_addr->must_stop_func = param->must_stop_func;

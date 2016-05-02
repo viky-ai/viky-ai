@@ -37,6 +37,8 @@ struct og_socket_info
 struct og_addr_param {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo loginfo;
+  og_char_buffer addr_name[DPcPathSize];
+
   int backlog_max_pending_requests;
   int backlog_timeout;
   int (*must_stop_func)(void *func_context);

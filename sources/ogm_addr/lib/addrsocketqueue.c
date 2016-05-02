@@ -9,11 +9,16 @@
 og_status OgAddrSocketQueue(void *ptr)
 {
   struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) ptr;
-  struct og_socket_info *info;
+
+  // set thread name to identify it in debug
+  if (ctrl_addr->addr_name[0])
+  {
+  	IFE(OgThreadSetCurrentName(ctrl_addr->addr_name));
+  }
 
   while (1)
   {
-    info = (struct og_socket_info *) g_async_queue_pop(ctrl_addr->async_socket_queue);
+    struct og_socket_info *info = (struct og_socket_info *) g_async_queue_pop(ctrl_addr->async_socket_queue);
 
     if (ctrl_addr->must_stop)
     {
@@ -44,9 +49,10 @@ og_status OgAddrSocketQueue(void *ptr)
 
   }
 
-// Closes all the unprocessed requests
+  // Closes all the unprocessed requests
   if (ctrl_addr->must_stop)
   {
+    struct og_socket_info *info = NULL;
     while ((info = (struct og_socket_info *) g_async_queue_try_pop(ctrl_addr->async_socket_queue)))
     {
       OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrSocketQueue: remaining request dropped on socket %d because service is stopping", info->hsocket_service);
