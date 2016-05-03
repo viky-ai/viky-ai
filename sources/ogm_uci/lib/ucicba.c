@@ -1,8 +1,8 @@
 /*
- *	Buffer for all operation handling
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : August 2006
- *	Version 1.0
+ *  Buffer for all operation handling
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : August 2006
+ *  Version 1.0
 */
 #include "ogm_uci.h"
 
@@ -46,7 +46,7 @@ unsigned a, a1, b; unsigned char *og_buffer;
 char erreur[DOgErrorSize];
 
 if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMemory) {
-  OgMsg(ctrl_ucic->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucic->hmsg, "", DOgMsgDestInLog
     , "UcicReallocBa: max Ba size (%d) reached, added_size=%d"
     , ctrl_ucic->BaSize,added_size);
   }
@@ -61,7 +61,7 @@ DPcFree(ctrl_ucic->Ba); ctrl_ucic->Ba = og_buffer;
 ctrl_ucic->BaSize = b;
 
 if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMemory) {
-  OgMsg(ctrl_ucic->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucic->hmsg, "", DOgMsgDestInLog
     , "UcicReallocBa: new Ba size is %d", ctrl_ucic->BaSize);
   }
 

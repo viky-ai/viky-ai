@@ -136,7 +136,7 @@ static og_status AddrWaitConnection(struct og_ctrl_addr *ctrl_addr, struct aso *
     int nerr = OgSysErrMes(DOgSocketErrno, DOgErrorSize, sys_erreur);
     if (nerr == DOgErrorEINTR)
     {
-      OgMsg(ctrl_addr->hmsg, "", DOgMlogInLog + DOgMlogInErr, "OgAddrLoop: caught %d error: %s (going on)", nerr,
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "OgAddrLoop: caught %d error: %s (going on)", nerr,
           sys_erreur);
     }
     else
@@ -171,7 +171,7 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
   {
     char erreur[DOgErrorSize];
     OgErrLast(ctrl_addr->herr, erreur, 0);
-    OgMsg(ctrl_addr->hmsg, "", DOgMlogInLog + DOgMlogInErr,
+    OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
         "OgAddrLoop: failed to connect with the client '%s:%d' \n%s", ctrl_addr->Ba + aso->addr_start, aso->port,
         erreur);
     CONT;

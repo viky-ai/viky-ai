@@ -51,7 +51,7 @@ IFE(UcicAppendBa(ctrl_ucic,iheader,header));
 IFE(UcicAppendBa(ctrl_ucic,request->request_length,request->request));
 
 if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocket) {
-  OgMsg(ctrl_ucic->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucic->hmsg, "", DOgMsgDestInLog
     , "OgUciClientRequest: sending %d bytes to socket", ctrl_ucic->BaUsed);
   }
 
@@ -61,7 +61,7 @@ IF(nb_sent_chars=OgSendSocket(ctrl_ucic->herr,ctrl_ucic->hsocket,ctrl_ucic->Ba,c
   }
 
 if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocket) {
-  OgMsg(ctrl_ucic->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucic->hmsg, "", DOgMsgDestInLog
     , "OgUciClientRequest: sent %d bytes to socket", nb_sent_chars);
   }
 
@@ -70,7 +70,7 @@ input->hsocket=ctrl_ucic->hsocket;
 input->timeout=request->timeout;
 
 if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocket) {
-  OgMsg(ctrl_ucic->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucic->hmsg, "", DOgMsgDestInLog
     , "OgUciClientRequest: reading answer with timeout %d seconds", input->timeout);
   }
 

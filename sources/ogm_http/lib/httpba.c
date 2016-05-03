@@ -1,8 +1,8 @@
 /*
- *	Buffer for all operation handling
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : July 2006
- *	Version 1.0
+ *  Buffer for all operation handling
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : July 2006
+ *  Version 1.0
 */
 #include "ogm_http.h"
 
@@ -46,9 +46,8 @@ unsigned a, a1, b; unsigned char *og_buffer;
 char erreur[DPcSzErr];
 
 if (ctrl_http->loginfo->trace & DOgHttpTraceMemory) {
-  OgMessageLog( DOgMlogInLog, ctrl_http->loginfo->where, 0
-              , "HttpReallocBa: max Ba size (%d) reached"
-              , ctrl_http->BaSize);
+  OgMsg(ctrl_http->hmsg,"",DOgMsgDestInLog
+    , "HttpReallocBa: max Ba size (%d) reached", ctrl_http->BaSize);
   }
 a = ctrl_http->BaSize; a1 = a+added_size; b = a1 + (a1>>2) + 1;
 IFn(og_buffer=(unsigned char *)malloc(b*sizeof(unsigned char))) {
@@ -61,8 +60,8 @@ DPcFree(ctrl_http->Ba); ctrl_http->Ba = og_buffer;
 ctrl_http->BaSize = b;
 
 if (ctrl_http->loginfo->trace & DOgHttpTraceMemory) {
-  OgMessageLog( DOgMlogInLog, ctrl_http->loginfo->where, 0
-              , "HttpReallocBa: new Ba size is %d\n", ctrl_http->BaSize);
+  OgMsg(ctrl_http->hmsg,"",DOgMsgDestInLog
+    , "HttpReallocBa: new Ba size is %d\n", ctrl_http->BaSize);
   }
 
 #ifdef DOgNoMainBufferReallocation

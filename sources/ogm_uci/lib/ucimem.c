@@ -7,7 +7,7 @@
 #include "ogm_uci.h"
 
 
-#define DOgShowMem(x,y,z) { if (must_log) { Og64FormatThousand(x,v,1); OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog,"%s%s:%s %16s",header,y,z,v); } }
+#define DOgShowMem(x,y,z) { if (must_log) { Og64FormatThousand(x,v,1); OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog,"%s%s:%s %16s",header,y,z,v); } }
 
 
 struct og_uci_memory {

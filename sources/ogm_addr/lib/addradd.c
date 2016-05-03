@@ -46,7 +46,7 @@ else if (dp>0) {
   }
 
 IF(OgGetHostByName(ctrl_addr->ghbn,hn,&hostent,timeout)) {
-  OgMsg(ctrl_addr->hmsg,"",DOgMlogInLog
+  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog
     ,"OgAddrAdd: OgGetHostByName error on url '%.180s':", ihn, hn);
   OgMsgErr(ctrl_addr->hmsg,"OgAddrAdd",0,0,0,DOgMsgSeverityError
     ,DOgErrLogFlagNoSystemError+DOgErrLogFlagNotInErr);
@@ -57,7 +57,7 @@ IF(OgGetHostByName(ctrl_addr->ghbn,hn,&hostent,timeout)) {
 if (ctrl_addr->loginfo->trace & DOgAddrTraceAdding) {
   unsigned long addr;
   memcpy((char*)&addr,(char*)&hostent.sin_addr,sizeof(long));
-  OgMsg(ctrl_addr->hmsg,"",DOgMlogInLog
+  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog
     ,"OgAddrAdd: adding listening socket on '%s' at port %d, IP is %ld.%ld.%ld.%ld"
     , hn, hport, (addr&0xff), ((addr>>8)&0xff), ((addr>>16)&0xff), ((addr>>24)&0xff));
   }

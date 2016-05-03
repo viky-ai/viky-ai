@@ -7,7 +7,7 @@
 #include "ogm_http.h"
 
 
-#define DOgShowMem(x,y,z) { if (must_log) { Og64FormatThousand(x,v,1); OgMessageLog(DOgMlogInLog,ctrl_http->loginfo->where,0,"%s%s:%s %16s",header,y,z,v); } }
+#define DOgShowMem(x,y,z) { if (must_log) { Og64FormatThousand(x,v,1); OgMsg(ctrl_http->hmsg,"",DOgMsgDestInLog,"%s%s:%s %16s",header,y,z,v); } }
 
 
 struct og_http_memory {

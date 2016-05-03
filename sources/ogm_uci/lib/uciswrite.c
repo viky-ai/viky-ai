@@ -51,7 +51,7 @@ IF(OgSendSocket(ctrl_ucis->herr,input->hsocket, ctrl_ucis->Ba, ctrl_ucis->BaUsed
    * data sent will be refused, so we decide to stop sending anything. */
   OgMsgErr(ctrl_ucis->hmsg,"OgUciServerWrite",0,0,0,DOgMsgSeverityError
     ,DOgErrLogFlagNoSystemError+DOgErrLogFlagNotInErr);
-  OgMsg(ctrl_ucis->hmsg,"",DOgMlogInLog+DOgMlogInErr+DOgMlogDateIn
+  OgMsg(ctrl_ucis->hmsg,"",DOgMsgDestInLog+DOgMsgDestInErr+DOgMsgParamLogDate
     ,"OgUciServerWrite: error sending [\n%.*s] hsocket=%d",limited_content_length,input->content,input->hsocket);
   DPcErr;
   }
@@ -59,7 +59,7 @@ IF(OgSendSocket(ctrl_ucis->herr,input->hsocket, ctrl_ucis->Ba, ctrl_ucis->BaUsed
 if (ctrl_ucis->loginfo->trace & DOgUciServerTraceSocket) {
   limited_content_length=input->content_length;
   if (limited_content_length>max_content_length) limited_content_length=max_content_length;
-  OgMsg(ctrl_ucis->hmsg, "", DOgMlogInLog
+  OgMsg(ctrl_ucis->hmsg, "", DOgMsgDestInLog
     , "OgUciServerWrite: sending [\n%.*s]", limited_content_length, input->content);
   }
 

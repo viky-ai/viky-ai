@@ -1,8 +1,8 @@
 /*
- *	Handling addresses and corresponding sockets
- *	Copyright (c) 2005 Pertimm by Patrick Constant
- *	Dev : March 2005
- *	Version 1.0
+ *  Handling addresses and corresponding sockets
+ *  Copyright (c) 2005 Pertimm by Patrick Constant
+ *  Dev : March 2005
+ *  Version 1.0
 */
 #include "ogm_addr.h"
 
@@ -21,7 +21,7 @@ beginGetAso:
 
 if (ctrl_addr->FreeAso == -1) {
   if (ctrl_addr->AsoUsed < ctrl_addr->AsoNumber) {
-    i = ctrl_addr->AsoUsed++; 
+    i = ctrl_addr->AsoUsed++;
     aso = ctrl_addr->Aso + i;
     }
   }
@@ -35,7 +35,7 @@ if (i == ctrl_addr->AsoNumber) {
   char erreur[DOgErrorSize];
   unsigned a, b; struct aso *og_aso;
   if (ctrl_addr->loginfo->trace & DOgAddrTraceMemory) {
-    OgMsg(ctrl_addr->hmsg, "",DOgMlogInLog
+    OgMsg(ctrl_addr->hmsg, "",DOgMsgDestInLog
       , "GetAso: max aso number (%d) reached"
       , ctrl_addr->AsoNumber);
     }
@@ -45,12 +45,12 @@ if (i == ctrl_addr->AsoNumber) {
     OgErr(ctrl_addr->herr,erreur); DPcErr;
     }
   memcpy( og_aso, ctrl_addr->Aso, a*sizeof(struct aso));
-  
+
   DPcFree(ctrl_addr->Aso); ctrl_addr->Aso = og_aso;
   ctrl_addr->AsoNumber = b;
 
   if (ctrl_addr->loginfo->trace & DOgAddrTraceMemory) {
-    OgMsg(ctrl_addr->hmsg, "",DOgMlogInLog
+    OgMsg(ctrl_addr->hmsg, "",DOgMsgDestInLog
       , "GetAso: new aso number is %d", ctrl_addr->AsoNumber);
     }
 
@@ -71,7 +71,7 @@ memset(aso,0,sizeof(struct aso));
 aso->hsocket = DOgSocketError;
 
 if (paso) *paso = aso;
-return(i);  
+return(i);
 }
 
 

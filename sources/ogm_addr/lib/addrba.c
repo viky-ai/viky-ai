@@ -1,8 +1,8 @@
 /*
- *	Buffer for all operation handling
- *	Copyright (c) 2004 Pertimm by Patrick Constant
- *	Dev : January 2004
- *	Version 1.0
+ *  Buffer for all operation handling
+ *  Copyright (c) 2004 Pertimm by Patrick Constant
+ *  Dev : January 2004
+ *  Version 1.0
 */
 #include "ogm_addr.h"
 
@@ -46,7 +46,7 @@ unsigned a, a1, b; unsigned char *og_buffer;
 char erreur[DOgErrorSize];
 
 if (ctrl_addr->loginfo->trace & DOgAddrTraceMemory) {
-  OgMsg(ctrl_addr->hmsg, "",DOgMlogInLog
+  OgMsg(ctrl_addr->hmsg, "",DOgMsgDestInLog
               , "OgAddrReallocBa from ogm_url: max Ba size (%d) reached, added_size=%d"
               , ctrl_addr->BaSize,added_size);
   }
@@ -61,7 +61,7 @@ DPcFree(ctrl_addr->Ba); ctrl_addr->Ba = og_buffer;
 ctrl_addr->BaSize = b;
 
 if (ctrl_addr->loginfo->trace & DOgAddrTraceMemory) {
-  OgMsg(ctrl_addr->hmsg, "",DOgMlogInLog
+  OgMsg(ctrl_addr->hmsg, "",DOgMsgDestInLog
               , "OgAddrReallocBa from ogm_url: new Ba size is %d", ctrl_addr->BaSize);
   }
 

@@ -63,14 +63,14 @@ while(1) {
       ,DOgErrLogFlagNoSystemError+DOgErrLogFlagNotInErr);
 
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
-      OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog+DOgMlogInErr+DOgMlogDateIn
+      OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog+DOgMsgDestInErr+DOgMsgParamDateIn
         ,"OgUciRead: error reading socket hsocket=%d",input->hsocket);
       }
     DPcErr;
     }
   if (timed_out) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
-      OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+      OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
         ,"OgUciRead: Timed-out while reading request with timeout=%d milli-seconds",input->timeout);
       }
     output->timed_out=1;
@@ -82,14 +82,14 @@ while(1) {
    * FD_CLOSE, but nonetheless you might want handle it. */
   IFn(read_length) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
-      OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+      OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
         ,"OgUciRead: Nothing to read anymore");
       }
     break;
     }
   isocket_buffer += read_length;
   if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-    OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+    OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
       ,"OgUciRead: read_length=%d read_total=%d",read_length,isocket_buffer);
     }
 
@@ -98,16 +98,16 @@ while(1) {
     IFE(found_header=OgHttpHeaderLength(ctrl_uci->hhttp,isocket_buffer,socket_buffer,&output->header_length));
     if (found_header) {
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: header length 1 = %d",output->header_length);
         }
       IFE(OgHttpHeaderRead(ctrl_uci->hhttp,isocket_buffer,socket_buffer,&output->hh));
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: header length 2 = %d",output->hh.header_length);
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: content length = %d",output->hh.content_length);
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: current header: [%.*s]",isocket_buffer,socket_buffer);
         IFE(OgHttpHeader2Log(ctrl_uci->hhttp,&output->hh));
         }
@@ -128,7 +128,7 @@ while(1) {
   if (state==2) {
     if (isocket_buffer >= max_buffer_size_to_read) {
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: reached content length (read %d, max %d)"
           , isocket_buffer, max_buffer_size_to_read);
         }
@@ -149,7 +149,7 @@ while(1) {
     IFE(found_ending_tlt=GetEndingTopLevelTag(ctrl_uci,isocket_buffer,socket_buffer,itlt,tlt));
     if (found_ending_tlt) {
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-        OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: found ending top level tag '%s'",tlt);
         }
       break;
@@ -174,12 +174,12 @@ if (ctrl_uci->loginfo->trace & DOgUciTraceSocket) {
     max_log_size=DOgMlogMaxMessageSize/2;
     sprintf(buffer,", log truncated");
     }
-  OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+  OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
     ,"OgUciRead: socket_buffer (%d%s) [\n%.*s|%.*s]"
     , output->content_length, buffer, output->header_length
     , socket_buffer, max_log_size, socket_buffer+output->header_length);
   if (found_header) {
-    OgMsg(ctrl_uci->hmsg,"",DOgMlogInLog
+    OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
       ,"OgUciRead: header found:");
     IFE(OgHttpHeader2Log(ctrl_uci->hhttp,&output->hh));
     }
@@ -335,7 +335,7 @@ static int HhScanExpect(void *ptr, int ivalue, unsigned char *value)
 
   if (ctrl_uci->loginfo->trace & DOgUciTraceSocket)
   {
-    OgMsg(ctrl_uci->hmsg, "", DOgMlogInLog, "HhScanExpect: Expect value '%.*s'", ivalue, value);
+    OgMsg(ctrl_uci->hmsg, "", DOgMsgDestInLog, "HhScanExpect: Expect value '%.*s'", ivalue, value);
   }
 
   if (!Ogstricmp(value, "100-continue"))
@@ -345,7 +345,7 @@ static int HhScanExpect(void *ptr, int ivalue, unsigned char *value)
     string_length = strlen(string);
     if (ctrl_uci->loginfo->trace & DOgUciTraceSocket)
     {
-    OgMsg(ctrl_uci->hmsg, "", DOgMlogInLog,
+    OgMsg(ctrl_uci->hmsg, "", DOgMsgDestInLog,
         "HhScanExpect: 100-continue value found, sending a 100 Continue instruction to client");
     }
     // Sending HTTP/1.1 100 Continue\r\n\r\n information to client
