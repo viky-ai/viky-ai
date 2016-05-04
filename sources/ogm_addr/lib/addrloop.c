@@ -69,7 +69,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
         OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop: request dropped on socket %d because"
             " too many requests in the queue (%d >= %d) at %.24s UTC", info->hsocket_service, queue_length,
             ctrl_addr->backlog_max_pending_requests, OgGmtime(error_time));
-        IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+        IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (queue full)"));
       }
       else
       {

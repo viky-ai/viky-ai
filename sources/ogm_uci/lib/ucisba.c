@@ -12,7 +12,7 @@
 
 int UcisAppendBa(ctrl_ucis,is,s)
 struct og_ctrl_ucis *ctrl_ucis;
-int is; unsigned char *s;
+int is; og_string s;
 {
 if (is<=0) DONE;
 IFE(UcisTestReallocBa(ctrl_ucis,is));

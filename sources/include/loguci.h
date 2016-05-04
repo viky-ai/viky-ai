@@ -5,6 +5,7 @@
  *  Version 1.5
 */
 #ifndef _LOGUCIALIVE_
+#include <lpcgentype.h>
 #include <loggen.h>
 #include <logthn.h>
 #include <logsock.h>
@@ -56,11 +57,11 @@ struct og_ucisr_output {
 struct og_ucisw_input {
   int hsocket,socket_buffer_size;
   struct og_http_header2 hh;
-  unsigned char *content;
+  og_string content;
   int content_length;
-  unsigned char *content_type;
+  og_string content_type;
   int http_status;
-  unsigned char *http_status_message;
+  og_string http_status_message;
   };
 
 

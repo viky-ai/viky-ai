@@ -1,8 +1,8 @@
 /*
- *	Internal header for handling uci (upper communication interface)
- *	Copyright (c) 2006-2007 Pertimm, Inc. by Patrick Constant
- *	Dev : July 2006, May 2007
- *	Version 1.1
+ *  Internal header for handling uci (upper communication interface)
+ *  Copyright (c) 2006-2007 Pertimm, Inc. by Patrick Constant
+ *  Dev : July 2006, May 2007
+ *  Version 1.1
 */
 #include <loguci.h>
 
@@ -23,7 +23,7 @@ struct og_uci_param {
   struct og_loginfo loginfo;
   int socket_buffer_size;
   int header_mandatory;
-  }; 
+  };
 
 struct og_ucir_input {
   int hsocket,timeout;
@@ -42,38 +42,38 @@ struct og_ucir_output {
 struct og_ctrl_uci {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
   int header_mandatory;
   void *hhttp;
   int chunked;
   /** Buffer for all operations **/
   unsigned char *Ba;
-  int BaSize,BaUsed;  
+  int BaSize,BaUsed;
   };
 
 
 struct og_ctrl_ucis {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
   int connection_closed;
   void *huci;
   /** Buffer for all operations **/
   unsigned char *Ba;
-  int BaSize,BaUsed;  
+  int BaSize,BaUsed;
   };
 
 
 struct og_ctrl_ucic {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
   void *huci;
   struct og_ucic_request *request;
   int hsocket;
   /** Buffer for all operations **/
   unsigned char *Ba;
-  int BaSize,BaUsed;  
+  int BaSize,BaUsed;
   };
 
 
@@ -85,17 +85,17 @@ int OgUciFlush(pr(void *));
 int OgUciRead(pr_(void *) pr_(struct og_ucir_input *) pr(struct og_ucir_output *));
 
 /** uciba.c **/
-int UciAppendBa(pr_(struct og_ctrl_uci *) pr_(int) pr(unsigned char *));
+int UciAppendBa(pr_(struct og_ctrl_uci *) pr_(int) pr(unsigned char const *));
 int UciTestReallocBa(pr_(struct og_ctrl_uci *) pr(int));
 int UciReallocBa(pr_(struct og_ctrl_uci *) pr(int));
 
 /** ucicba.c **/
-int UcicAppendBa(pr_(struct og_ctrl_ucic *) pr_(int) pr(unsigned char *));
+int UcicAppendBa(pr_(struct og_ctrl_ucic *) pr_(int) pr(unsigned char const *));
 int UcicTestReallocBa(pr_(struct og_ctrl_ucic *) pr(int));
 int UcicReallocBa(pr_(struct og_ctrl_ucic *) pr(int));
 
 /** ucisba.c **/
-int UcisAppendBa(pr_(struct og_ctrl_ucis *) pr_(int) pr(unsigned char *));
+int UcisAppendBa(pr_(struct og_ctrl_ucis *) pr_(int) pr(unsigned char const *));
 int UcisTestReallocBa(pr_(struct og_ctrl_ucis *) pr(int));
 int UcisReallocBa(pr_(struct og_ctrl_ucis *) pr(int));
 

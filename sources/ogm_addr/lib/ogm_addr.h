@@ -53,7 +53,7 @@ struct og_ctrl_addr
   int (*answer_func)(void *answer_func_context, struct og_socket_info *info);
   void *answer_func_context;
   int (*must_stop_func)(void *func_context);
-  int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status);
+  int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status, og_string message);
   void *func_context;
   int must_stop;
   ogsem_t hsem[1];

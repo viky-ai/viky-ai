@@ -12,7 +12,7 @@
 
 int UcicAppendBa(ctrl_ucic,is,s)
 struct og_ctrl_ucic *ctrl_ucic;
-int is; unsigned char *s;
+int is; unsigned char const *s;
 {
 if (is<=0) DONE;
 IFE(UcicTestReallocBa(ctrl_ucic,is));

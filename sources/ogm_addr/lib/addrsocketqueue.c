@@ -36,7 +36,7 @@ og_status OgAddrSocketQueue(void *ptr)
       OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: request dropped on socket %d because "
           "service stopping at %.24s UTC", info->hsocket_service, OgGmtime(error_time));
 
-      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (stopping)"));
 
       break;
     }
@@ -53,7 +53,7 @@ og_status OgAddrSocketQueue(void *ptr)
           "timeout (%d >= %d) at %.24s UTC)", info->hsocket_service, time_already_passed, timeout,
           OgGmtime(error_time));
 
-      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (timeout)"));
 
     }
     else
@@ -81,7 +81,7 @@ og_status OgAddrSocketQueue(void *ptr)
       OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: remaining request dropped on socket %d because"
           " service is stopping at %.24s UTC", info->hsocket_service, OgGmtime(error_time));
 
-      og_status status = ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503);
+      og_status status = ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (stopping)");
 
       // free stored info
       g_slice_free(struct og_socket_info, info);
