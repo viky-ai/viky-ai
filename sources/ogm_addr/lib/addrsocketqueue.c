@@ -13,7 +13,7 @@ og_status OgAddrSocketQueue(void *ptr)
   // set thread name to identify it in debug
   if (ctrl_addr->addr_name[0])
   {
-  	IFE(OgThreadSetCurrentName(ctrl_addr->addr_name));
+    IFE(OgThreadSetCurrentName(ctrl_addr->addr_name));
   }
 
   while (1)
