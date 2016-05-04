@@ -62,8 +62,6 @@ IFn(ctrl_addr->Aso=(struct aso *)malloc(ctrl_addr->AsoNumber*sizeof(struct aso))
 if (ctrl_addr->loginfo->trace & DOgAddrTraceGhbn) ghbn_trace=DOgGhbnTraceMinimal;
 IFn(ctrl_addr->ghbn=OgGetHostByNameInit(ghbn_trace,ctrl_addr->loginfo->where)) return(0);
 
-IFn(ctrl_addr->sockets = OgHeapSliceInit(ctrl_addr->hmsg, "addr_sockets", sizeof(struct og_socket_info), 256, 64)) return NULL;
-
 IF(OgSemaphoreInit(ctrl_addr->hsem,0)) return (0);
 
 return((void *)ctrl_addr);
@@ -74,28 +72,30 @@ return((void *)ctrl_addr);
 
 
 
-PUBLIC(int) OgAddrFlush(handle)
-void *handle;
+PUBLIC(int) OgAddrFlush(void *handle)
 {
-struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *)handle;
-struct aso *aso;
-int i;
+  struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) handle;
 
-for (i=0; i<ctrl_addr->AsoUsed; i++) {
-  aso = ctrl_addr->Aso + i;
-  if (aso->hsocket == DOgSocketError) continue;
-  OgCloseSocket(aso->hsocket);
+  for (int i = 0; i < ctrl_addr->AsoUsed; i++)
+  {
+    struct aso *aso = ctrl_addr->Aso + i;
+    if (aso->hsocket == DOgSocketError) continue;
+    OgCloseSocket(aso->hsocket);
   }
 
-OgHeapFlush(ctrl_addr->sockets);
+  if (ctrl_addr->async_socket_queue != NULL)
+  {
+    g_async_queue_ref(ctrl_addr->async_socket_queue);
+    ctrl_addr->async_socket_queue = NULL;
+  }
 
-IFE(OgGetHostByNameFlush(ctrl_addr->ghbn));
+  IFE(OgGetHostByNameFlush(ctrl_addr->ghbn));
 
-IFE(OgMsgFlush(ctrl_addr->hmsg));
-DPcFree(ctrl_addr->Aso);
-DPcFree(ctrl_addr->Ba);
-DPcFree(ctrl_addr);
-DONE;
+  IFE(OgMsgFlush(ctrl_addr->hmsg));
+  DPcFree(ctrl_addr->Aso);
+  DPcFree(ctrl_addr->Ba);
+  DPcFree(ctrl_addr);
+  DONE;
 }
 
 

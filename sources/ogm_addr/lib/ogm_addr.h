@@ -46,10 +46,9 @@ struct og_ctrl_addr
 
   void *ghbn;
 
+  /** AsyncQueue of (struct og_socket_info *) */
   GAsyncQueue *async_socket_queue;
   ogthread_t thread;
-
-  og_heap sockets;
 
   int (*answer_func)(void *answer_func_context, struct og_socket_info *info);
   void *answer_func_context;

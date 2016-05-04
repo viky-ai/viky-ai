@@ -73,10 +73,14 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       }
       else
       {
-        info->time_start = OgMilliClock();
-        struct og_socket_info *info_to_store = OgHeapNewCell(ctrl_addr->sockets, NULL);
+
+        // copy socket info on sliced heap
+        struct og_socket_info *info_to_store = g_slice_new(struct og_socket_info);
         memcpy(info_to_store, info, sizeof(struct og_socket_info));
+
+        // push that socket in the queue to be porcessed later
         g_async_queue_push(ctrl_addr->async_socket_queue, info_to_store);
+
       }
 
     }
@@ -95,6 +99,15 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
   OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: finished");
 
   DONE;
+}
+
+static void AddrLoopAsyncSocketQueueDestroyNotify(gpointer p_og_socket_info)
+{
+  if (p_og_socket_info != NULL)
+  {
+    // free remainding stored info
+    g_slice_free(struct og_socket_info, p_og_socket_info);
+  }
 }
 
 static og_status AddrLoopInit(struct og_ctrl_addr *ctrl_addr, struct aso *aso, fd_set **fdset, int *maxfd)
@@ -116,7 +129,7 @@ static og_status AddrLoopInit(struct og_ctrl_addr *ctrl_addr, struct aso *aso, f
     return (0);
   }
 
-  ctrl_addr->async_socket_queue = g_async_queue_new();
+  ctrl_addr->async_socket_queue = g_async_queue_new_full(AddrLoopAsyncSocketQueueDestroyNotify);
   IFE(OgCreateThread(&ctrl_addr->thread, OgAddrSocketQueue, ctrl_addr));
 
   DONE;
@@ -180,6 +193,9 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
         erreur);
     CONT;
   }
+
+  // set start time
+  info->time_start = OgMilliClock();
 
   /** Here we get the IP address of the calling program through the socket **/
   IFE(OgGetRemoteAddrSocket(&info->socket_in.sin_addr, info->sremote_addr, 0));
