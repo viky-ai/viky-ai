@@ -62,10 +62,14 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       int queue_length = g_async_queue_length(ctrl_addr->async_socket_queue);
       if ((ctrl_addr->backlog_max_pending_requests > 0) && (queue_length >= ctrl_addr->backlog_max_pending_requests))
       {
+        time_t error_time[1];
+        time(error_time);
+
         // do not push the request we just received, because we have too many requests
-        OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: request dropped on socket %d because too many requests in the queue (%d >= %d)",
-            info->hsocket_service, queue_length, ctrl_addr->backlog_max_pending_requests);
-        IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context,info,503));
+        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop: request dropped on socket %d because"
+            " too many requests in the queue (%d >= %d) at %.24s UTC", info->hsocket_service, queue_length,
+            ctrl_addr->backlog_max_pending_requests, OgGmtime(error_time));
+        IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
       }
       else
       {

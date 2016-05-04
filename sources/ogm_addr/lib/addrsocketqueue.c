@@ -22,8 +22,14 @@ og_status OgAddrSocketQueue(void *ptr)
 
     if (ctrl_addr->must_stop)
     {
-      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrSocketQueue: request dropped on socket %d because service stopping", info->hsocket_service);
-      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context,info,503));
+      time_t error_time[1];
+      time(error_time);
+
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: request dropped on socket %d because "
+          "service stopping at %.24s UTC", info->hsocket_service, OgGmtime(error_time));
+
+      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+
       break;
     }
 
@@ -32,17 +38,23 @@ og_status OgAddrSocketQueue(void *ptr)
     int timeout = ctrl_addr->backlog_timeout;
     if ((timeout > 0) && (time_already_passed >= timeout))
     {
-      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrSocketQueue: request dropped on socket %d because timeout (%d >= %d)"
-           , info->hsocket_service, time_already_passed,  timeout);
-      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context,info,503));
+      time_t error_time[1];
+      time(error_time);
+
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: request dropped on socket %d because "
+          "timeout (%d >= %d) at %.24s UTC)", info->hsocket_service, time_already_passed, timeout,
+          OgGmtime(error_time));
+
+      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+
     }
     else
     {
-      og_status must_stop;
-      IFE(must_stop = ctrl_addr->answer_func(ctrl_addr->answer_func_context, info));
+      og_status must_stop = ctrl_addr->answer_func(ctrl_addr->answer_func_context, info);
+      IFE(must_stop);
       if (must_stop)
       {
-        OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrSocketQueue: must_stop request received");
+        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: must_stop request received");
         break;
       }
     }
@@ -55,10 +67,18 @@ og_status OgAddrSocketQueue(void *ptr)
     struct og_socket_info *info = NULL;
     while ((info = (struct og_socket_info *) g_async_queue_try_pop(ctrl_addr->async_socket_queue)))
     {
-      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrSocketQueue: remaining request dropped on socket %d because service is stopping", info->hsocket_service);
-      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context,info,503));
+      time_t error_time[1];
+      time(error_time);
+
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue: remaining request dropped on socket %d because"
+          " service is stopping at %.24s UTC", info->hsocket_service, OgGmtime(error_time));
+
+      IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503));
+
     }
+
     IFE(OgSemaphorePost(ctrl_addr->hsem));
+
   }
   DONE;
 }
