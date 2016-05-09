@@ -47,10 +47,11 @@ struct og_addr_param {
   };
 
 
-DEFPUBLIC(void *) OgAddrInit(pr(struct og_addr_param *));
+DEFPUBLIC(void *) OgAddrInit(struct og_addr_param *params);
 DEFPUBLIC(int) OgAddrAdd(void *handle, char *hostname, int port);
 DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *ptr);
-DEFPUBLIC(int) OgAddrFlush(pr(void *));
+DEFPUBLIC(int) OgAddrClose(void *handle);
+DEFPUBLIC(int) OgAddrFlush(void *handle);
 
 #define _LOGADDRALIVE_
 #endif

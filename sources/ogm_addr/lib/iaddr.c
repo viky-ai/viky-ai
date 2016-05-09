@@ -64,28 +64,42 @@ IFn(ctrl_addr->ghbn=OgGetHostByNameInit(ghbn_trace,ctrl_addr->loginfo->where)) r
 
 IF(OgSemaphoreInit(ctrl_addr->hsem,0)) return (0);
 
+ctrl_addr->closed = FALSE;
+
 return((void *)ctrl_addr);
 }
 
 
+PUBLIC(int) OgAddrClose(void *handle)
+{
+  struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) handle;
 
+  if (!ctrl_addr->closed)
+  {
 
+    for (int i = 0; i < ctrl_addr->AsoUsed; i++)
+    {
+      struct aso *aso = ctrl_addr->Aso + i;
+      if (aso->hsocket == DOgSocketError) continue;
+      OgCloseSocket(aso->hsocket);
+    }
+
+    ctrl_addr->closed = TRUE;
+  }
+
+  DONE;
+}
 
 
 PUBLIC(int) OgAddrFlush(void *handle)
 {
   struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) handle;
 
-  for (int i = 0; i < ctrl_addr->AsoUsed; i++)
-  {
-    struct aso *aso = ctrl_addr->Aso + i;
-    if (aso->hsocket == DOgSocketError) continue;
-    OgCloseSocket(aso->hsocket);
-  }
+  IFE(OgAddrClose(ctrl_addr));
 
   if (ctrl_addr->async_socket_queue != NULL)
   {
-    g_async_queue_ref(ctrl_addr->async_socket_queue);
+    g_async_queue_unref(ctrl_addr->async_socket_queue);
     ctrl_addr->async_socket_queue = NULL;
   }
 

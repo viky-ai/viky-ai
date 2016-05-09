@@ -58,7 +58,7 @@ struct og_ctrl_addr
   int must_stop;
   ogsem_t hsem[1];
 
-
+  og_bool closed;
 
 };
 

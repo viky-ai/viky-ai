@@ -94,7 +94,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
   }
 
   IFE(OgSemaphoreWait(ctrl_addr->hsem));
-  g_async_queue_unref(ctrl_addr->async_socket_queue);
+
   DPcFree(fdset);
   OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: finished");
 
