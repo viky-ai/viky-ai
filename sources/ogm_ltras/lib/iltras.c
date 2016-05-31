@@ -572,6 +572,14 @@ int attribute_number,language,frequency;
 oindex states[DPcAutMaxBufferSize+9];
 int retour,nstate0,nstate1,iout;
 
+if (ctrl_ltras->hltras_to_inherit)
+{
+  struct og_ctrl_ltras *ctrl_ltras_parent = (struct og_ctrl_ltras *) ctrl_ltras->hltras_to_inherit;
+  ctrl_ltras->max_word_frequency_log10 = ctrl_ltras_parent->max_word_frequency_log10;
+
+  DONE;
+}
+
 /** 10 is minimum value to avoid a null, negative or infinite log10 **/
 ctrl_ltras->max_word_frequency=10;
 if ((retour=OgAufScanf(ctrl_ltras->ha_base,-1,"",&iout,out,&nstate0,&nstate1,states))) {
