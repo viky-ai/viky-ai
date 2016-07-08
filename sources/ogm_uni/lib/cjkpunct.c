@@ -8,17 +8,11 @@
 
 PUBLIC(int) OgUniCjkIsPunct(int c)
 {
-  /** CJK style punctuation **/
-  if ((0x3000 <= c && c <= 0x303f) || (0xfe30 <= c && c <= 0xfe4f))
-  {
-    return (1);
-  }
-
   switch (c)
   {
-
     /** <!--http://www.unicode.org/charts/PDF/U3000.pdf--> */
 
+    case 0x3000: /** IDEOGRAPHIC SPACE 　*/
     case 0x3001: /** IDEOGRAPHIC COMMA 、*/
     case 0x3002: /** IDEOGRAPHIC FULL STOP 。 */
     case 0x3003: /** DITTO MARK 〃 */
