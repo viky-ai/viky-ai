@@ -39,6 +39,9 @@
 /resources/morphology/pl/plroot
 /resources/morphology/pt/ptform
 /resources/morphology/pt/ptroot
+/resources/morphology/zh/zhtemp*
+/resources/morphology/zh/zhtradparse
+/resources/morphology/zh/zhsimpparse
 /sources/glib/glib-2.42.1
 /sources/glib/share/
 /sources/include/curl
