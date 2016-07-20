@@ -7,7 +7,7 @@
                                         <resource project-relative-path="">
                                               ____INCLUDES____
 
-                                              <entry kind="macro" name="_REENTRANT " value="">
+                                              <entry kind="macro" name="_REENTRANT" value="">
                                                 <flag value="BUILTIN"/>
                                               </entry>
                                               <entry kind="macro" name="DPcCompiler" value="DPcCompilerGcc">

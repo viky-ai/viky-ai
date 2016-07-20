@@ -191,6 +191,8 @@ sub genNBP ($) {
     print Dumper($projectName);
     print "- sources\n";
     print Dumper(@sourceList);
+    print "- includes\n";
+    print Dumper(@includeList);
   }
 
   if($projectType ne "lib" && $projectType ne "prog") {

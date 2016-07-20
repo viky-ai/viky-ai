@@ -25,7 +25,7 @@ ctrl_aut->herr = param->herr;
 ctrl_aut->hmutex = param->hmutex;
 ctrl_aut->cloginfo = param->loginfo;
 ctrl_aut->loginfo = &ctrl_aut->cloginfo;
-strcpy(ctrl_aut->name,param->name);
+snprintf(ctrl_aut->name, DOgAutNameSize, "%s", param->name);
 
 ctrl_aut->StateUsed = 0;
 ctrl_aut->StartFreeState = (-1);
