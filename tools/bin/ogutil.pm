@@ -136,6 +136,9 @@ our %STRINGS_ARCH = (
   ARCH_X86_64() => "x86_64"
 );
 
+our $arch_cache_sysOs;
+our $arch_cache_sysArch;
+
 use constant CYGPATH_UNKNOWN => 0;
 use constant CYGPATH_UNIX    => 1;
 use constant CYGPATH_WINDOWS => 2;
@@ -161,8 +164,19 @@ sub OgPathIsAbsolute($)
 #
 sub OgCheckPlatform ()
 {
-  my $sysOs   = `uname -s`;    #FIXME: perl
-  my $sysArch = `uname -m`;    #FIXME: perl
+  my $sysOs = $::arch_cache_sysOs;
+  if (!defined($sysOs))
+  {
+    $::arch_cache_sysOs = `uname -s`;
+    $sysOs = $::arch_cache_sysOs;
+  }
+
+  my $sysArch = $::arch_cache_sysArch;
+  if (!defined($sysArch))
+  {
+    $::arch_cache_sysArch = `uname -m`;
+    $sysArch = $::arch_cache_sysArch;
+  }
   my ( $os, $arch );
 
   chomp($sysOs);
@@ -282,10 +296,13 @@ sub OgOsVersion ($)
   }
   else {
     if ( system("which lsb_release >/dev/null 2>&1") == 0 ) {
+
+      my @lsb_out = split( /\n/, `lsb_release -i -r -c`, 3 );
+
       # LSB compliant system, easy !
-      my ( undef, $distrib ) = split( /:/, `lsb_release -i`, 2 );
-      my ( undef, $release ) = split( /:/, `lsb_release -r`, 2 );
-      my ( undef, $codename ) = split( /:/, `lsb_release -c`, 2 );
+      my ( undef, $distrib )  = split( /:/, $lsb_out[0], 2 );
+      my ( undef, $release )  = split( /:/, $lsb_out[1], 2 );
+      my ( undef, $codename ) = split( /:/, $lsb_out[2], 2 );
 
       $distrib = OgStringTrim( $distrib );
       $release = OgStringTrim( $release );
