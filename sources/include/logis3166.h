@@ -259,8 +259,23 @@
 #define DOgCountryYE 247 /* Yemen */
 #define DOgCountryZM 248 /* Zambia */
 #define DOgCountryZW 249 /* Zimbabwe */
-#define DOgCountryEmpty 250 /* EMPTY */
-#define DOgCountryMax   251
+
+/* Code element restricts */
+#define DOgCountryAC 250 /* Ascension Island */
+#define DOgCountryIC 251 /* Canary Islands */
+#define DOgCountryEA 252 /* Ceuta and Melilla */
+#define DOgCountryCP 253 /* Clipperton Island */
+#define DOgCountryDG 254 /* Diego Garcia */
+#define DOgCountryEU 255 /* European Union */
+#define DOgCountryEZ 256 /* International negotiable securities */
+#define DOgCountryFX 257 /* Metropolitan France */
+#define DOgCountrySU 258 /* Soviet Union */
+#define DOgCountryTA 259 /* Tristan da Cunha */
+#define DOgCountryUK 260 /* United Kingdom */
+#define DOgCountryUN 261 /* United Nations */
+
+#define DOgCountryEmpty 262 /* EMPTY */
+#define DOgCountryMax   263
 
 DEFPUBLIC(unsigned char *) OgIso3166ToCode(int country);
 DEFPUBLIC(unsigned char *) OgIso3166ToEn(int country);

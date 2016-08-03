@@ -295,6 +295,21 @@ static int OgInitNameIso3166NoSync(void)
   n->code="YE"; n->en="Yemen"; n++;
   n->code="ZM"; n->en="Zambia"; n++;
   n->code="ZW"; n->en="Zimbabwe"; n++;
+
+  /* Tag restricts */
+  n->code="AC"; n->en="Ascension Island"; n++;
+  n->code="IC"; n->en="Canary Islands"; n++;
+  n->code="EA"; n->en="Ceuta and Melilla"; n++;
+  n->code="CP"; n->en="Clipperton Island"; n++;
+  n->code="DG"; n->en="Diego Garcia"; n++;
+  n->code="EU"; n->en="European Union"; n++;
+  n->code="EZ"; n->en="International negotiable securities"; n++;
+  n->code="FX"; n->en="Metropolitan France"; n++;
+  n->code="SU"; n->en="Soviet Union"; n++;
+  n->code="TA"; n->en="Tristan da Cunha"; n++;
+  n->code="UK"; n->en="United Kingdom"; n++;
+  n->code="UN"; n->en="United Nations"; n++;
+
   n->code=""; n->en="";
 
   NameIso3166Initialized = 1;
