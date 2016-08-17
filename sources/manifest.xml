@@ -211,6 +211,7 @@
   <component 	name="ogm_stopword/prog/ogstopword" info="test program for stop words management" doc="" />
   <component  name="ogm_interpret/lib" info="Natural language interpretation of requests" doc="" />
   <component  name="ogm_interpret_parser/lib" info="Natural language interpretation of requests, parser for functions" doc="" />
+  <component  name="ogm_interpret_parser/prog/ogm_interpret_parser" info="Using interpret parser library" doc="" />
   <component 	name="ogm_interpret/prog/oginterpret" info="Using interpret library" doc="" />
   <component  name="ogm_attribute/lib" info="Attribute and attribute number, synchronized for multi-threaded indexation and search" doc="" />
   <component  name="ogm_req_counter/lib" info="Persitent request counter Lib" doc="" />
