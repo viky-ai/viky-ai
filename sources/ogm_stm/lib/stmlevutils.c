@@ -12,35 +12,31 @@ double StmGetMaxLevenshteinDistance(void *hstm, struct og_stm_levenshtein_input_
 
   // Get the maximum cost of all the costs
   double cost_max = lev_input_params->accents_substitution_cost;
-  if (lev_input_params->case_cost)
+  if (lev_input_params->case_cost > cost_max)
   {
     cost_max = lev_input_params->case_cost;
   }
-  if (lev_input_params->deletion_cost)
+  if (lev_input_params->deletion_cost > cost_max)
   {
     cost_max = lev_input_params->deletion_cost;
   }
-  if (lev_input_params->insertion_cost)
+  if (lev_input_params->insertion_cost > cost_max)
   {
     cost_max = lev_input_params->insertion_cost;
   }
-  if (lev_input_params->same_letter_deletion_cost)
+  if (lev_input_params->same_letter_deletion_cost > cost_max)
   {
     cost_max = lev_input_params->same_letter_deletion_cost;
   }
-  if (lev_input_params->same_letter_insertion_cost)
+  if (lev_input_params->same_letter_insertion_cost > cost_max)
   {
     cost_max = lev_input_params->same_letter_insertion_cost;
   }
-  if (lev_input_params->space_cost)
-  {
-    cost_max = lev_input_params->space_cost;
-  }
-  if (lev_input_params->substitution_cost)
+  if (lev_input_params->substitution_cost > cost_max)
   {
     cost_max = lev_input_params->substitution_cost;
   }
-  if (lev_input_params->swap_cost)
+  if (lev_input_params->swap_cost > cost_max)
   {
     cost_max = lev_input_params->swap_cost;
   }

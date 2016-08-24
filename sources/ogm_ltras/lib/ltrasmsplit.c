@@ -6,12 +6,11 @@
  */
 #include "ltrasmsplit.h"
 
-static int LtrasModuleSplit1(struct og_ltra_module_input *module_input
-    , struct og_ltra_trfs *trfs, int nb_splits);
-static int LtrasModuleSplit2(struct og_ltra_module_input *module_input
-    , struct og_ltra_trfs *trfs, int nb_splits, int Itrf);
-static og_status getStartAndLengthPositions(struct og_ctrl_split *ctrl_split, struct og_ltra_trfs *trfs, struct og_ltra_trf *trf,
-    struct og_ltra_add_trf_word *word, int start);
+static int LtrasModuleSplit1(struct og_ltra_module_input *module_input, struct og_ltra_trfs *trfs, int nb_splits);
+static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct og_ltra_trfs *trfs, int nb_splits,
+    int Itrf);
+static og_status getStartAndLengthPositions(struct og_ctrl_split *ctrl_split, struct og_ltra_trfs *trfs,
+    struct og_ltra_trf *trf, struct og_ltra_add_trf_word *word, int start);
 
 void *OgLtrasModuleSplitInit(struct og_ltra_module_param *param)
 {
@@ -22,7 +21,7 @@ void *OgLtrasModuleSplitInit(struct og_ltra_module_param *param)
   char erreur[DOgErrorSize];
   char *WorkingDirectory;
 
-  IFn(ctrl_split=(struct og_ctrl_split *)malloc(sizeof(struct og_ctrl_split)))
+  IFn(ctrl_split = (struct og_ctrl_split *) malloc(sizeof(struct og_ctrl_split)))
   {
     sprintf(erreur, "OgLtrasInit: malloc error on ctrl_split");
     OgErr(param->herr, erreur);
@@ -42,8 +41,10 @@ void *OgLtrasModuleSplitInit(struct og_ltra_module_param *param)
   msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
   msg_param->loginfo.where = ctrl_split->loginfo->where;
   msg_param->module_name = "ltra_module_split";
-  IFn(ctrl_split->hmsg=OgMsgInit(msg_param)) return (0);
-  IF(OgMsgTuneInherit(ctrl_split->hmsg,param->hmsg)) return (0);
+  IFn(ctrl_split->hmsg = OgMsgInit(msg_param))
+  return (0);
+  IF(OgMsgTuneInherit(ctrl_split->hmsg, param->hmsg))
+  return (0);
 
   memset(aut_param, 0, sizeof(struct og_aut_param));
   aut_param->herr = ctrl_split->herr;
@@ -52,15 +53,18 @@ void *OgLtrasModuleSplitInit(struct og_ltra_module_param *param)
   aut_param->loginfo.where = ctrl_split->loginfo->where;
   aut_param->state_number = 0x1000;
   sprintf(aut_param->name, "ltras_module_cut");
-  IFn(ctrl_split->ha_split=OgAutInit(aut_param)) return (0);
+  IFn(ctrl_split->ha_split = OgAutInit(aut_param))
+  return (0);
   ctrl_split->max_small_word_length = 3;
   WorkingDirectory = OgLtrasWorkingDirectory(ctrl_split->hltras);
   if (WorkingDirectory[0]) sprintf(ltras_split, "%s/ling/ltras_cut.xml", WorkingDirectory);
   else strcpy(ltras_split, "ling/ltras_cut.xml");
-  IF(LtrasModuleSplitReadConf(ctrl_split,ltras_split)) return (0);
+  IF (LtrasModuleSplitReadConf( ctrl_split, ltras_split))
+  return (0);
 
   ctrl_split->hstm = OgLtrasHstm(ctrl_split->hltras);
-  IF(OgLtrasGetLevenshteinCosts(ctrl_split->hltras, ctrl_split->levenshtein_costs)) return (0);
+  IF(OgLtrasGetLevenshteinCosts(ctrl_split->hltras, ctrl_split->levenshtein_costs))
+  return (0);
 
   return ((void *) ctrl_split);
 }
@@ -73,8 +77,8 @@ int OgLtrasModuleSplitFlush(void *handle)
   DONE;
 }
 
-int OgLtrasModuleSplit(struct og_ltra_module_input *module_input
-    , struct og_ltra_trfs *input, struct og_ltra_trfs **output, ogint64_t *elapsed)
+int OgLtrasModuleSplit(struct og_ltra_module_input *module_input, struct og_ltra_trfs *input,
+    struct og_ltra_trfs **output, ogint64_t *elapsed)
 {
   struct og_ctrl_split *ctrl_split = (struct og_ctrl_split *) module_input->handle;
   void *hltras = ctrl_split->hltras;
@@ -85,7 +89,7 @@ int OgLtrasModuleSplit(struct og_ltra_module_input *module_input
   ogint64_t micro_clock_start = OgMicroClock();
 
   ctrl_split->max_nb_splits = 1;
-  IFE(found=OgLtrasGetParameterValue(ctrl_split->hltras,"split_max_nb_splits",DPcPathSize,buffer));
+  IFE(found = OgLtrasGetParameterValue(ctrl_split->hltras, "split_max_nb_splits", DPcPathSize, buffer));
   if (found)
   {
     ctrl_split->max_nb_splits = atoi(buffer);
@@ -109,8 +113,7 @@ int OgLtrasModuleSplit(struct og_ltra_module_input *module_input
   DONE;
 }
 
-static int LtrasModuleSplit1(struct og_ltra_module_input *module_input
-    , struct og_ltra_trfs *trfs, int nb_splits)
+static int LtrasModuleSplit1(struct og_ltra_module_input *module_input, struct og_ltra_trfs *trfs, int nb_splits)
 {
   struct og_ctrl_split *ctrl_split = (struct og_ctrl_split *) module_input->handle;
   int i, start_trf, TrfUsed;
@@ -127,8 +130,8 @@ static int LtrasModuleSplit1(struct og_ltra_module_input *module_input
   DONE;
 }
 
-static int LtrasModuleSplit2(struct og_ltra_module_input *module_input
-    , struct og_ltra_trfs *trfs, int nb_splits, int Itrf)
+static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct og_ltra_trfs *trfs, int nb_splits,
+    int Itrf)
 {
   struct og_ctrl_split *ctrl_split = (struct og_ctrl_split *) module_input->handle;
   struct og_ltra_add_trf_word *new_word, *previous_new_word;
@@ -144,7 +147,7 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input
   unsigned char origin[DPcPathSize];
   int origin_length = 0;
   void *hltras = ctrl_split->hltras;
-  IFE(OgLtrasTrfGetOriginalString(hltras,trfs, Itrf, origin, DPcPathSize, &origin_length));
+  IFE(OgLtrasTrfGetOriginalString(hltras, trfs, Itrf, origin, DPcPathSize, &origin_length));
 
   words_length = 0;
   memset(tinput, 0, sizeof(struct og_ltra_add_trf_input));
@@ -232,9 +235,9 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input
           tranformed_length += 2;
         }
       }
-      double dlevenshtein_distance;
-      IFE(dlevenshtein_distance = OgStmLevenshteinFast(ctrl_split->hstm, tranformed_length, tranformed, origin_length,
-          origin, ctrl_split->levenshtein_costs));
+      double dlevenshtein_distance = OgStmLevenshteinFast(ctrl_split->hstm, origin_length, origin, tranformed_length,
+          tranformed, ctrl_split->levenshtein_costs);
+      IFE(dlevenshtein_distance);
       tinput->score = 1.0 - dlevenshtein_distance;
       IFE(OgLtrasTrfAdd(hltras, trfs, tinput, 0));
     }
@@ -253,12 +256,13 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input
 
 // Fill start and length positions. If previous trf is a paste transformation, we use the transposition heap to
 //compute start_position (start in the original string) and length_position (length in the original string)
-static og_status getStartAndLengthPositions(struct og_ctrl_split *ctrl_split, struct og_ltra_trfs *trfs, struct og_ltra_trf *trf,
-    struct og_ltra_add_trf_word *word, int start)
+static og_status getStartAndLengthPositions(struct og_ctrl_split *ctrl_split, struct og_ltra_trfs *trfs,
+    struct og_ltra_trf *trf, struct og_ltra_add_trf_word *word, int start)
 {
   int transposition_used = OgHeapGetCellsUsed(trfs->htransposition);
   int *transposition = OgHeapGetCell(trfs->htransposition, trf->start_transposition);
-  IFn(transposition) DPcErr;
+  IFn (transposition)
+  DPcErr;
 
   int end_position = word->start_position + word->length_position - 2;
   if (trf->length_transposition > 0)
@@ -266,8 +270,8 @@ static og_status getStartAndLengthPositions(struct og_ctrl_split *ctrl_split, st
     if ((end_position / 2) > transposition_used)
     {
       char erreur[DOgErrorSize];
-      sprintf(erreur, "getStartAndLengthPositions: end_position %d is greater than transposition_used %d",
-          end_position, transposition_used);
+      sprintf(erreur, "getStartAndLengthPositions: end_position %d is greater than transposition_used %d", end_position,
+          transposition_used);
       OgErr(ctrl_split->herr, erreur);
       DPcErr;
     }

@@ -3,7 +3,7 @@
  *  Copyright (c) 2009 Pertimm by Lo�s Rigouste
  *  Dev : January 2009
  *  Version 1.0
-*/
+ */
 #ifndef _LOGSTMALIVE_
 #include <lpcgentype.h>
 #include <loggen.h>
@@ -11,10 +11,8 @@
 #include <logmsg.h>
 #include <loguni.h>
 
-
 #define DOgStmBanner  "ogm_stm V1.0, Copyright (c) 2009 Pertimm, Inc."
 #define DOgStmVersion 100
-
 
 /** Trace levels **/
 #define DOgStmTraceMinimal          0x1
@@ -24,40 +22,41 @@
 
 #define DOgStmMaxWordLength         80
 
-struct og_stm_param {
-  void *herr, *hmsg; ogmutex_t *hmutex;
+#define DOgStmSpaceCostLength     256
+
+struct og_stm_param
+{
+  void *herr, *hmsg;
+  ogmutex_t *hmutex;
   struct og_loginfo loginfo;
   char WorkingDirectory[DPcPathSize];
-  };
+};
 
-typedef enum {
-  same,
-  insertion,
-  deletion,
-  substitution,
-  swap
-  } LEV_OPERATION;
+typedef enum
+{
+  same, insertion, deletion, substitution, swap
+} LEV_OPERATION;
 
 struct og_stm_levenshtein_input_param
 {
-  double insertion_cost;                      /**< cht => chat */
-  double same_letter_insertion_cost;          /**< cht => chtt */
-  double deletion_cost;                       /**< chait => chat */
-  double same_letter_deletion_cost;           /**< chaat => chat */
-  double substitution_cost;                   /**< chot => chat */
-  double accents_substitution_cost;           /**< chât => chat */
-  double swap_cost;                           /**< caht => chat */
-  double space_cost;                          /**< chat => ch at or ch at => chat */
-  double case_cost;                           /**< Chat => chat */
-  double punctuation_cost;                    /**< chat, => chat */
+  double insertion_cost; /**< cht => chat */
+  double same_letter_insertion_cost; /**< cht => chtt */
+  double deletion_cost; /**< chait => chat */
+  double same_letter_deletion_cost; /**< chaat => chat */
+  double substitution_cost; /**< chot => chat */
+  double accents_substitution_cost; /**< chât => chat */
+  double swap_cost; /**< caht => chat */
+  double case_cost; /**< Chat => chat */
+  double punctuation_cost; /**< chat, => chat */
 };
 
-struct og_stm_levenshtein_output_param {
-  double score[DOgStmMaxWordLength+9][DOgStmMaxWordLength+9];
-  int length1, length2;  /**< score is of size length1+1 x length2+1 (last cell is [length1][length2] */
-  LEV_OPERATION levenshtein_path[DOgStmMaxWordLength+9];
+struct og_stm_levenshtein_output_param
+{
+  double score[DOgStmMaxWordLength + 9][DOgStmMaxWordLength + 9];
+  int length1, length2; /**< score is of size length1+1 x length2+1 (last cell is [length1][length2] */
+  LEV_OPERATION levenshtein_path[DOgStmMaxWordLength + 9];
   int path_length;
-  };
+};
 
 DEFPUBLIC(void *) OgStmInit(struct og_stm_param *param);
 DEFPUBLIC(int) OgStmFlush(void *hstm);
@@ -71,6 +70,37 @@ DEFPUBLIC(int) OgStmFlush(void *hstm);
  */
 DEFPUBLIC(og_status) OgStmInitDefaultCosts(void *hstm, struct og_stm_levenshtein_input_param *lev_param);
 
+/**
+ * Init the space_insertion_costs and space_deletion_costs
+ *
+ * @param hstm handle for stm
+ * @param is_insertion a boolean for insertion or deletion. If true insertion, otherwise, deletion.
+ * @return DONE
+ */
+DEFPUBLIC(og_status) StmInitDefaultSpaceCost(void *hstm, og_bool is_insertion);
+
+/**
+ * add a space_insertion_cost or a space_deletion_cost
+ *
+ * @param hstm handle for stm
+ * @param occurence the occurence for the space cost
+ * @param cost the cost
+ * @param is_insertion a boolean for insertion or deletion. If true insertion, otherwise, deletion.
+ * @return DONE
+ */
+DEFPUBLIC(og_status) OgStmAddSpaceCost(void *hstm, int occurence, double cost, og_bool is_insertion);
+
+
+/**
+ * get a space_insertion_cost or a space_deletion_cost
+ *
+ * @param hstm handle for stm
+ * @param occurence the occurence for the space cost
+ * @param is_insertion a boolean for insertion or deletion. If true insertion, otherwise, deletion.
+ * @param space_cost the space_insertion_cost or a space_deletion_cost returned
+ * @return DONE or ERROR
+ */
+DEFPUBLIC(og_status) OgStmGetSpaceCost(void *hstm, int occurence, og_bool is_insertion, double *space_cost);
 
 /**
  * Create and save an entry for two equivalent letters with their cost
@@ -98,7 +128,9 @@ DEFPUBLIC(og_status) OgStmInitCreateEquivalentLetterEntry(void *hstm, int letter
  * @param lev_output_params Levenstein output params
  * @return Levenstein distance
  */
-DEFPUBLIC(double) OgStmLevenshtein(void *hstm, int ustring1, unsigned char *string1, int ustring2, unsigned char *string2, struct og_stm_levenshtein_input_param *lev_input_params,struct og_stm_levenshtein_output_param *lev_output_params);
+DEFPUBLIC(double) OgStmLevenshtein(void *hstm, int ustring1, unsigned char *string1, int ustring2,
+    unsigned char *string2, struct og_stm_levenshtein_input_param *lev_input_params,
+    struct og_stm_levenshtein_output_param *lev_output_params);
 
 /**
  * Fast Levenstein version : do not compute the path
@@ -111,7 +143,8 @@ DEFPUBLIC(double) OgStmLevenshtein(void *hstm, int ustring1, unsigned char *stri
  * @param lev_input_params Levenstein input params
  * @return Levenstein distance
  */
-DEFPUBLIC(double) OgStmLevenshteinFast(void *hstm, int ustring1, unsigned char *string1, int ustring2, unsigned char *string2, struct og_stm_levenshtein_input_param *lev_params);
+DEFPUBLIC(double) OgStmLevenshteinFast(void *hstm, int ustring1, unsigned char *string1, int ustring2,
+    unsigned char *string2, struct og_stm_levenshtein_input_param *lev_params);
 
 /**
  * Levenstein version with default cost values
@@ -123,7 +156,8 @@ DEFPUBLIC(double) OgStmLevenshteinFast(void *hstm, int ustring1, unsigned char *
  * @param string1 unicode string to compare with string1
  * @return Levenstein distance
  */
-DEFPUBLIC(double) OgStmLevenshteinFastDefaultParams(void *hstm, int ustring1, unsigned char *string1, int ustring2, unsigned char *string2);
+DEFPUBLIC(double) OgStmLevenshteinFastDefaultParams(void *hstm, int ustring1, unsigned char *string1, int ustring2,
+    unsigned char *string2);
 
 /**
  * Similar to OgStmLevenshteinFast with an additional parameter specifying max distance allowed:
@@ -138,10 +172,9 @@ DEFPUBLIC(double) OgStmLevenshteinFastDefaultParams(void *hstm, int ustring1, un
  * @param lev_input_params Levenstein input params
  * @return Levenstein distance
  */
-DEFPUBLIC(double) OgStmLevenshteinFastWithMax(void *hstm, int ustring1, unsigned char *string1, int ustring2, unsigned char *string2, struct og_stm_levenshtein_input_param *lev_params, double *max);
-
+DEFPUBLIC(double) OgStmLevenshteinFastWithMax(void *hstm, int ustring1, unsigned char *string1, int ustring2,
+    unsigned char *string2, struct og_stm_levenshtein_input_param *lev_params, double *max);
 
 #define _LOGSTMALIVE_
 #endif
-
 

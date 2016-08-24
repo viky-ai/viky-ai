@@ -140,6 +140,8 @@ struct og_ctrl_ltras
   double minimum_score[DOgLtrasMinimumScoreLength];
   double minimum_final_score[DOgLtrasMinimumScoreLength];
   int maximum_transformation[DOgLtrasMaximumTransformationLength];
+  double space_insertion_cost[DOgStmSpaceCostLength];
+  double space_deletion_cost[DOgStmSpaceCostLength];
 
   void *ha_param;
   struct og_stm_levenshtein_input_param levenshtein_costs[1];

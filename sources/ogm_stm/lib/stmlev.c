@@ -113,6 +113,8 @@ PUBLIC(double) OgStmLevenshteinFastDefaultParams(void *hstm, int ustring1, unsig
   double return_value;
 
   IFE(OgStmInitDefaultCosts(hstm, lev_params));
+  IFE(StmInitDefaultSpaceCost(hstm, TRUE));
+  IFE(StmInitDefaultSpaceCost(hstm, FALSE));
   IFE(return_value = OgStmLevenshteinFast(hstm, ustring1, string1, ustring2, string2, lev_params));
 
   return return_value;

@@ -16,8 +16,8 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
   {
     struct og_stm_levenshtein_input_param *lc = ctrl_ltras->levenshtein_costs;
 
-    /** Default value for insertion cost is 0.1 **/
-    lc->insertion_cost = 0.1;
+    IFE(OgStmInitDefaultCosts(ctrl_ltras->hstm,lc));
+
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"insertion_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -26,8 +26,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->insertion_cost < 0.0) lc->insertion_cost = 0.0;
     }
 
-    /** Default value for insertion cost with same adjacent letter is 0.02 **/
-    lc->same_letter_insertion_cost = 0.02;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"same_letter_insertion_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -36,8 +34,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->same_letter_insertion_cost < 0.0) lc->same_letter_insertion_cost = 0.0;
     }
 
-    /** Default value for deletion cost is 0.1 **/
-    lc->deletion_cost = 0.1;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"deletion_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -46,8 +42,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->deletion_cost < 0.0) lc->deletion_cost = 0.0;
     }
 
-    /** Default value for deletion cost with same adjacent letter is 0.02 **/
-    lc->same_letter_deletion_cost = 0.02;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"same_letter_deletion_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -56,8 +50,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->same_letter_deletion_cost < 0.0) lc->same_letter_deletion_cost = 0.0;
     }
 
-    /** Default value for substitution cost is 0.1 **/
-    lc->substitution_cost = 0.1;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"substitution_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -66,8 +58,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->substitution_cost < 0.0) lc->substitution_cost = 0.0;
     }
 
-    /** Default value for substitution cost for a difference of only an accent is 0.01 **/
-    lc->accents_substitution_cost = 0.01;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"accents_substitution_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -76,8 +66,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->accents_substitution_cost < 0.0) lc->accents_substitution_cost = 0.0;
     }
 
-    /** Default value for swap cost is 0.1 **/
-    lc->swap_cost = 0.1;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"swap_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -86,18 +74,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->swap_cost < 0.0) lc->swap_cost = 0.0;
     }
 
-    /** Default value for space cost is 0.005 **/
-    lc->space_cost = 0.005;
-    IF(found=OgLtrasGetParameterValue(ctrl_ltras,"space_cost",DPcPathSize,buffer)) return (0);
-    if (found)
-    {
-      lc->space_cost = atof(buffer);
-      if (lc->space_cost > 1.0) lc->space_cost = 1.0;
-      else if (lc->space_cost < 0.0) lc->space_cost = 0.0;
-    }
-
-    /** Default value for case cost is 0.001 **/
-    lc->case_cost = 0.001;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"case_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -106,8 +82,6 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->case_cost < 0.0) lc->case_cost = 0.0;
     }
 
-    /** Default value for punctuation cost is 0.000 **/
-    lc->punctuation_cost = 0.000;
     IF(found=OgLtrasGetParameterValue(ctrl_ltras,"punctuation_cost",DPcPathSize,buffer)) return (0);
     if (found)
     {
@@ -116,6 +90,19 @@ PUBLIC(int) OgLtrasGetLevenshteinCosts(void *handle, struct og_stm_levenshtein_i
       else if (lc->punctuation_cost < 0.0) lc->punctuation_cost = 0.0;
     }
 
+  }
+
+  double space_cost = 0;
+  IFE(OgStmGetSpaceCost(ctrl_ltras->hstm, 0, TRUE, &space_cost));
+  if(space_cost == (-1))
+  {
+    StmInitDefaultSpaceCost(ctrl_ltras->hstm, TRUE);
+  }
+
+  IFE(OgStmGetSpaceCost(ctrl_ltras->hstm, 0, FALSE, &space_cost));
+  if(space_cost == (-1))
+  {
+    StmInitDefaultSpaceCost(ctrl_ltras->hstm, FALSE);
   }
 
   memcpy(levenshtein_costs, ctrl_ltras->levenshtein_costs, sizeof(struct og_stm_levenshtein_input_param));

@@ -93,7 +93,10 @@ IFn(ctrl_cut->hltrap=OgLtrapInit(ltrap_param)) return(0);
 
 ctrl_cut->hstm = OgLtrasHstm(ctrl_cut->hltras);
 IF(OgLtrasGetLevenshteinCosts(ctrl_cut->hltras, ctrl_cut->levenshtein_costs)) return(0);
-ctrl_cut->cut_cost = ctrl_cut->levenshtein_costs->space_cost;
+
+// needed for ltrap but not used after for levenshtein*
+
+IF(OgStmGetSpaceCost(ctrl_cut->hstm, 0, TRUE, &ctrl_cut->cut_cost)) return(0);
 
 return ctrl_cut;
 }
@@ -228,7 +231,7 @@ input->max_solutions = ctrl_cut->max_nb_solutions;
 /** Do we need to control that parameter at a higher level? **/
 input->min_swap_word_length = DOgLtrapMinSwapWordLength;
 input->score_factor = OgLtrasScoreFactor(ctrl_cut->hltras);
-input->cut_cost = ctrl_cut->levenshtein_costs->space_cost;
+input->cut_cost = ctrl_cut->cut_cost;
 
 ctrl_cut->iuni = input->iuni;
 ctrl_cut->uni = input->uni;
