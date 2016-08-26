@@ -6,6 +6,7 @@
  *  Version 1.7
 */
 #ifndef _LOGLIPALIVE_
+#include <lpcgentype.h>
 #include <loggen.h>
 #include <logthr.h>
 #include <logmsg.h>
@@ -133,6 +134,7 @@ DEFPUBLIC(int) OgLipConfLog(void *hmsg, const unsigned char *message, struct og_
 DEFPUBLIC(int) OgLipResize(void *handle, size_t max_size);
 DEFPUBLIC(int) OgLipInitConfWithDefault(void *hmsg, struct og_lip_conf *conf);
 
+DEFPUBLIC(og_bool) OgLipIsEmptyString(void *handle, unsigned char *string, int string_length);
 DEFPUBLIC(int) OgLipIsPunctuation(struct og_lip_conf *conf, int c);
 DEFPUBLIC(int) OgLipIsSeparator(struct og_lip_conf *conf, int c);
 DEFPUBLIC(int) OgLipIsPunctuationWord(struct og_lip_conf *conf, int is, unsigned char *s, int *plength);

@@ -246,6 +246,24 @@ DONE;
 }
 
 
+PUBLIC(og_bool) OgLipIsEmptyString(void *handle, unsigned char *string, int string_length)
+{
+  struct og_ctrl_lip *ctrl_lip = (struct og_ctrl_lip *) handle;
+
+  og_bool is_empty = TRUE;
+  for (int i = 0; i < string_length; i += 2)
+  {
+    int c = (string[i] << 8) + string[i + 1];
+    if(!OgLipIsPunctuation(ctrl_lip->conf, c) && !OgLipIsSeparator(ctrl_lip->conf, c) && (c!=32))
+    {
+      is_empty = FALSE;
+      break;
+    }
+  }
+
+  return is_empty;
+
+}
 
 PUBLIC(int) OgLipIsPunctuation(struct og_lip_conf *conf, int c)
 {

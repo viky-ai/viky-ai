@@ -6,111 +6,118 @@
 */
 #include "ogm_lip.h"
 
-PUBLIC(void *) OgLipInit(struct og_lip_param *param)
+PUBLIC(void *)
+OgLipInit(struct og_lip_param *param)
 {
-struct og_entity_param centity_param, *entity_param=&centity_param;
-struct og_msg_param cmsg_param,*msg_param=&cmsg_param;
-struct og_aut_param caut_param,*aut_param=&caut_param;
-struct og_ctrl_lip *ctrl_lip;
-char erreur[DOgErrorSize];
-int size;
+  struct og_entity_param centity_param, *entity_param = &centity_param;
+  struct og_msg_param cmsg_param, *msg_param = &cmsg_param;
+  struct og_aut_param caut_param, *aut_param = &caut_param;
+  struct og_ctrl_lip *ctrl_lip;
+  char erreur[DOgErrorSize];
+  int size;
 
-
-IFn(ctrl_lip=(struct og_ctrl_lip *)malloc(sizeof(struct og_ctrl_lip))) {
-  sprintf(erreur,"OgLipInit: malloc error on ctrl_lip");
-  OgErr(param->herr,erreur); return(0);
-  }
-memset(ctrl_lip,0,sizeof(struct og_ctrl_lip));
-
-ctrl_lip->herr = param->herr;
-ctrl_lip->hmutex = param->hmutex;
-ctrl_lip->cloginfo = param->loginfo;
-ctrl_lip->loginfo = &ctrl_lip->cloginfo;
-
-memset(msg_param,0,sizeof(struct og_msg_param));
-msg_param->herr=param->herr;
-msg_param->hmutex=param->hmutex;
-msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory;
-msg_param->loginfo.where = param->loginfo.where;
-msg_param->module_name="ogm_lip";
-IFn(ctrl_lip->hmsg=OgMsgInit(msg_param)) return(0);
-IF(OgMsgTuneInherit(ctrl_lip->hmsg,param->hmsg)) return(0);
-
-ctrl_lip->PawoNumber = DOgPawoNumber;
-size = ctrl_lip->PawoNumber*sizeof(struct pawo);
-IFn(ctrl_lip->Pawo=(struct pawo *)malloc(size)) {
-  sprintf(erreur,"OgLipInit: malloc error on Pawo (%d bytes)",size);
-  OgErr(ctrl_lip->herr,erreur); return(0);
-  }
-
-memset(entity_param,0,sizeof(struct og_entity_param));
-entity_param->herr=ctrl_lip->herr;
-entity_param->hmutex=ctrl_lip->hmutex;
-entity_param->loginfo.trace = DOgAutaTraceMinimal+DOgAutaTraceMemory;
-entity_param->loginfo.where = ctrl_lip->loginfo->where;
-IFn(ctrl_lip->hentity=OgEntityInit(entity_param)) return(0);
-
-// if a lip_conf pointer is used outside in another library, it is specified. Otherwise, we use default lip conf
-struct og_lip_conf *conf;
-if(param->conf)
-{
-  conf = param->conf;
-}
-else
-{
-  conf = &ctrl_lip->default_conf;
-}
-
-// If a punctuation file is specified, we get the conf from this file. Otherwise, we get default conf
-if (param->filename[0])
-{
-  if (OgFileExists(param->filename))
+  IFn(ctrl_lip = (struct og_ctrl_lip *) malloc(sizeof(struct og_ctrl_lip)))
   {
+    sprintf(erreur, "OgLipInit: malloc error on ctrl_lip");
+    OgErr(param->herr, erreur);
+    return (0);
+  }
+  memset(ctrl_lip, 0, sizeof(struct og_ctrl_lip));
+
+  ctrl_lip->herr = param->herr;
+  ctrl_lip->hmutex = param->hmutex;
+  ctrl_lip->cloginfo = param->loginfo;
+  ctrl_lip->loginfo = &ctrl_lip->cloginfo;
+
+  memset(msg_param, 0, sizeof(struct og_msg_param));
+  msg_param->herr = param->herr;
+  msg_param->hmutex = param->hmutex;
+  msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
+  msg_param->loginfo.where = param->loginfo.where;
+  msg_param->module_name = "ogm_lip";
+  IFn(ctrl_lip->hmsg = OgMsgInit(msg_param))
+  return (0);
+  IF(OgMsgTuneInherit(ctrl_lip->hmsg, param->hmsg))
+  return (0);
+
+  ctrl_lip->PawoNumber = DOgPawoNumber;
+  size = ctrl_lip->PawoNumber * sizeof(struct pawo);
+  IFn(ctrl_lip->Pawo = (struct pawo *) malloc(size))
+  {
+    sprintf(erreur, "OgLipInit: malloc error on Pawo (%d bytes)", size);
+    OgErr(ctrl_lip->herr, erreur);
+    return (0);
+  }
+
+  memset(entity_param, 0, sizeof(struct og_entity_param));
+  entity_param->herr = ctrl_lip->herr;
+  entity_param->hmutex = ctrl_lip->hmutex;
+  entity_param->loginfo.trace = DOgAutaTraceMinimal + DOgAutaTraceMemory;
+  entity_param->loginfo.where = ctrl_lip->loginfo->where;
+  IFn(ctrl_lip->hentity = OgEntityInit(entity_param))
+  return (0);
+
+  // if a lip_conf pointer is used outside in another library, it is specified. Otherwise, we use default lip conf
+  if (param->conf)
+  {
+    ctrl_lip->conf = param->conf;
+  }
+  else
+  {
+    ctrl_lip->conf = &ctrl_lip->default_conf;
+  }
+
+  // If a punctuation file is specified, we get the conf from this file. Otherwise, we get default conf
+  if (param->filename[0] && OgFileExists(param->filename))
+  {
+
     if (ctrl_lip->loginfo->trace & DOgLipTraceXMLScan)
     {
-      OgMsg(ctrl_lip->hmsg,"",DOgMsgDestInLog,"OgLipInit: reading configuration file '%s'",param->filename);
+      OgMsg(ctrl_lip->hmsg, "", DOgMsgDestInLog, "OgLipInit: reading configuration file '%s'", param->filename);
     }
 
     // xsd validation
-    IF(OgLipXsdValidatePunctFile((void *)ctrl_lip, param->filename, NULL)) return (0);
+    IF(OgLipXsdValidatePunctFile((void *) ctrl_lip, param->filename, NULL))
+    return (0);
 
     // xml parse
-    IF(OgLipReadPunctConf((void *)ctrl_lip, param->filename, conf)) return(0);
+    IF(OgLipReadPunctConf((void *) ctrl_lip, param->filename, ctrl_lip->conf))
+    return (0);
+
   }
   else
   {
     // Init lip_conf default value
-    OgLipInitConfWithDefault(ctrl_lip->hmsg, conf);
+    OgLipInitConfWithDefault(ctrl_lip->hmsg, ctrl_lip->conf);
   }
-}
-else
-{
-  // Init lip_conf default value
-  OgLipInitConfWithDefault(ctrl_lip->hmsg, &ctrl_lip->default_conf);
-}
 
-if (param->language_dictionary[0]) {
-  if (OgFileExists(param->language_dictionary)) {
-    memset(aut_param,0,sizeof(struct og_aut_param));
-    aut_param->herr=ctrl_lip->herr;
-    aut_param->hmutex=ctrl_lip->hmutex;
-    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-    aut_param->loginfo.where = ctrl_lip->loginfo->where;
-    aut_param->state_number = 0;
-    sprintf(aut_param->name,"lip languages");
-    IFn(ctrl_lip->ha_lang=OgAutInit(aut_param)) return(0);
-    IF(OgAufRead(ctrl_lip->ha_lang,param->language_dictionary)) return(0);
+  if (param->language_dictionary[0])
+  {
+    if (OgFileExists(param->language_dictionary))
+    {
+      memset(aut_param, 0, sizeof(struct og_aut_param));
+      aut_param->herr = ctrl_lip->herr;
+      aut_param->hmutex = ctrl_lip->hmutex;
+      aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
+      aut_param->loginfo.where = ctrl_lip->loginfo->where;
+      aut_param->state_number = 0;
+      sprintf(aut_param->name, "lip languages");
+      IFn(ctrl_lip->ha_lang = OgAutInit(aut_param))
+      return (0);
+      IF(OgAufRead(ctrl_lip->ha_lang, param->language_dictionary))
+      return (0);
     }
-  else {
-    if (ctrl_lip->loginfo->trace & DOgLipTraceMinimal) {
-      OgMsg(ctrl_lip->hmsg,"",DOgMsgDestInLog+DOgMsgSeverityWarning
-        ,"OgLipInit: language file '%s' does not exist, language recognition disabled"
-        ,param->language_dictionary);
+    else
+    {
+      if (ctrl_lip->loginfo->trace & DOgLipTraceMinimal)
+      {
+        OgMsg(ctrl_lip->hmsg, "", DOgMsgDestInLog + DOgMsgSeverityWarning,
+            "OgLipInit: language file '%s' does not exist, language recognition disabled", param->language_dictionary);
       }
     }
   }
 
-return((void *)ctrl_lip);
+  return ((void *) ctrl_lip);
 }
 
 
