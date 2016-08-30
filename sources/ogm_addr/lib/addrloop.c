@@ -66,9 +66,9 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
         time(error_time);
 
         // do not push the request we just received, because we have too many requests
-        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop: request dropped on socket %d because"
-            " too many requests in the queue (%d >= %d) at %.24s UTC", info->hsocket_service, queue_length,
-            ctrl_addr->backlog_max_pending_requests, OgGmtime(error_time));
+        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: request dropped on socket %d because"
+            " too many requests in the queue (%d >= %d) at %.24s UTC", ctrl_addr->addr_name, info->hsocket_service,
+            queue_length, ctrl_addr->backlog_max_pending_requests, OgGmtime(error_time));
         IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (queue full)"));
       }
       else
@@ -78,7 +78,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
         struct og_socket_info *info_to_store = g_slice_new(struct og_socket_info);
         memcpy(info_to_store, info, sizeof(struct og_socket_info));
 
-        // push that socket in the queue to be porcessed later
+        // push that socket in the queue to be processed later
         g_async_queue_push(ctrl_addr->async_socket_queue, info_to_store);
 
       }
@@ -87,16 +87,17 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
 
     if (ctrl_addr->must_stop)
     {
-      OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: must stop service");
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: must stop service", ctrl_addr->addr_name);
       break;
     }
 
   }
 
+  // ajouter un timeout sur le wait si besoins
   IFE(OgSemaphoreWait(ctrl_addr->hsem));
 
   DPcFree(fdset);
-  OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrLoop: finished");
+  OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: finished", ctrl_addr->addr_name);
 
   DONE;
 }
@@ -124,7 +125,7 @@ static og_status AddrLoopInit(struct og_ctrl_addr *ctrl_addr, struct aso *aso, f
   IFn(*fdset=(fd_set *)malloc(size))
   {
     char erreur[DOgErrorSize];
-    sprintf(erreur, "OgAddrLoop: malloc error on fdset (%d bytes)", size);
+    sprintf(erreur, "OgAddrLoop %s: malloc error on fdset (%d bytes)", ctrl_addr->addr_name, size);
     OgErr(ctrl_addr->herr, erreur);
     return (0);
   }
@@ -153,8 +154,8 @@ static og_status AddrWaitConnection(struct og_ctrl_addr *ctrl_addr, struct aso *
     int nerr = OgSysErrMes(DOgSocketErrno, DOgErrorSize, sys_erreur);
     if (nerr == DOgErrorEINTR)
     {
-      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "OgAddrLoop: caught %d error: %s (going on)", nerr,
-          sys_erreur);
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "OgAddrLoop %s: caught %d error: %s (going on)",
+          ctrl_addr->addr_name, nerr, sys_erreur);
     }
     else
     {
@@ -189,8 +190,8 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
     char erreur[DOgErrorSize];
     OgErrLast(ctrl_addr->herr, erreur, 0);
     OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
-        "OgAddrLoop: failed to connect with the client '%s:%d' \n%s", ctrl_addr->Ba + aso->addr_start, aso->port,
-        erreur);
+        "OgAddrLoop %s: failed to connect with the client '%s:%d' \n%s", ctrl_addr->Ba + aso->addr_start, aso->port,
+        erreur, ctrl_addr->addr_name);
     CONT;
   }
 
