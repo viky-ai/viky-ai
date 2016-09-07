@@ -162,6 +162,7 @@
   <component 	name="ogm_sort/prog/bpat" info="pattern builder for language recognition" doc="" />
   <component 	name="ogm_sort/prog/cpat" info="test program for language recognition" doc="" />
   <component 	name="ogm_aut/prog/ogaut" info="Automaton generic use program" doc="" />
+  <component 	name="ogm_aut/prog/ogdict" info="Dictionary processing program" doc="" />
   <component 	name="ogm_aut/prog/gettoklex" info="Create toklex automatons" doc="" />
   <component 	name="ogm_aut/prog/getroot" info="Create root and form automatons" doc="" />
   <component 	name="ogm_aut/prog/ogacp" info="Auto completion prepare program" doc="" />

@@ -1,5 +1,5 @@
 /*
- * Fonction qui analyse un fichier et construit l'automate 
+ * Fonction qui analyse un fichier et construit l'automate
  * de base (non compress\'e et non minimis\'e). Le fichier
  * contient des informations linguistiques sous un format particulier.
  * Copyright (c) 1997-2008 Pertimm by Patrick Constant
@@ -10,13 +10,13 @@
 
 
 /*
- *	Fonction qui analyse le ficher 'file' et qui construit
- *	un automate non compress\'e et non minimis\'e. Le fichier
- *	contient des informations linguistiques sous un format particulier.
- *	'ha' est un handle d'automate renvoy\'e par PcAutInit();
- *	Utiliser PcAum(ha) pour minimiser, PcAuz(ha) pour compresser
- *	et PcAuf(ha) pour obtenir un automate rapide.
- *	Voir lpcaut.h pour les valeurs/significations des flags.
+ *  Fonction qui analyse le ficher 'file' et qui construit
+ *  un automate non compress\'e et non minimis\'e. Le fichier
+ *  contient des informations linguistiques sous un format particulier.
+ *  'ha' est un handle d'automate renvoy\'e par PcAutInit();
+ *  Utiliser PcAum(ha) pour minimiser, PcAuz(ha) pour compresser
+ *  et PcAuf(ha) pour obtenir un automate rapide.
+ *  Voir lpcaut.h pour les valeurs/significations des flags.
 */
 
 PUBLIC(int) OgAul(handle,file,nocharcase,flags)
@@ -37,7 +37,7 @@ ctrl_aut->aul_nocharcase=nocharcase;
 
 IFn(fd=fopen(file,"r")) {
   DPcSprintf(erreur,"OgAul : impossible to open `%s'",file);
-  OgErr(ctrl_aut->herr,erreur); DPcErr; 
+  OgErr(ctrl_aut->herr,erreur); DPcErr;
   }
 
 /** On enl\`eve l'extension .aus si elle existe pour avoir le nom de base **/
@@ -53,7 +53,9 @@ while(fgets(in,DPcMaxSizeDecl,fd)) {
     }
   for (i=0; buffer[i][0]!=0; i++) {
     for (j=0; buffer[i][j]!=0; j++) out[j]=buffer[i][j]; out[j]=(-1);
-    if (flags&DPcAulDirect) { IFE(AutAline2(ctrl_aut,out)); }
+    if (flags&DPcAulDirect) {
+      IFE(AutAline2(ctrl_aut,out));
+    }
     else if (flags>=DPcAulFile) {
       if (!opened_filei) {
         opened_filei=1; sprintf(filei,"%si.aus",basefile);
@@ -72,7 +74,7 @@ if (opened_filei) fclose(fd_filei);
 
 if (empty) {
   DPcSprintf(erreur,"OgAul : file empty `%s'",file);
-  OgErr(ctrl_aut->herr,erreur); DPcErr; 
+  OgErr(ctrl_aut->herr,erreur); DPcErr;
   }
 
 fclose(fd);

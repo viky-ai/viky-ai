@@ -1,12 +1,12 @@
 /*
- *	Ajout linguistique d'une ligne de caract\`eres dans l'automate.
- *	Copyright (c) 1997-2008 Pertimm by Patrick Constant
- *	Dev: Janvier,F\'evrier,Mai 1997, July 2008
- *	Version 1.3
+ *  Ajout linguistique d'une ligne de caract\`eres dans l'automate.
+ *  Copyright (c) 1997-2008 Pertimm by Patrick Constant
+ *  Dev: Janvier,F\'evrier,Mai 1997, July 2008
+ *  Version 1.3
 */
 #include "ogm_aut.h"
 
-#define DPcMaxNbSurface		10
+#define DPcMaxNbSurface    10
 
 struct decl_surface {
   unsigned char ch[DPcMaxSizeWord];
@@ -23,36 +23,36 @@ struct decl_all {
 
 STATICF(int) AulDeclClean(pr(struct decl_all *));
 STATICF(int) AulDeclDelete(pr_(struct og_ctrl_aut *) pr_(int) pr_(unsigned char *)
-	pr(struct decl_all *));
+  pr(struct decl_all *));
 STATICF(int) AulDeclSimple(pr_(struct og_ctrl_aut *) pr_(int) pr_(unsigned char *)
-	pr(struct decl_all *));
+  pr(struct decl_all *));
 STATICF(int) AulDeclNormal(pr_(struct og_ctrl_aut *) pr_(int) pr_(unsigned char *)
-	pr(struct decl_all *));
+  pr(struct decl_all *));
 STATICF(int) AulDeclEqual(pr_(struct og_ctrl_aut *) pr_(int) pr_(unsigned char *)
-	pr(struct decl_all *));
+  pr(struct decl_all *));
 STATICF(int) AulDeclUpper(pr_(struct og_ctrl_aut *) pr_(struct decl_all *) pr_(int) pr(int));
 STATICF(int) AulDeclUpperBuild(pr_(unsigned char *) pr(unsigned char *));
 STATICF(int) AulDeclUpperAdd(pr_(struct decl_all *) pr_(int) pr_(int)
-	pr(unsigned char *));
+  pr(unsigned char *));
 STATICF(int) AulDeclLower(pr_(struct og_ctrl_aut *) pr(struct decl_all *));
 STATICF(int) AulDeclTiret(pr_(struct decl_all *) pr(int));
 STATICF(int) AulDeclDelTiret(pr(struct decl_all *));
 STATICF(int) AulDeclMin(pr_(struct og_ctrl_aut *) pr_(int) pr_(unsigned char *)
-	pr(struct decl_all *));
+  pr(struct decl_all *));
 STATICF(int) AulDeclMin1(pr_(unsigned char *) pr_(unsigned char *)
-	pr(unsigned char *));
+  pr(unsigned char *));
 STATICF(int) AulDeclKill(pr(struct decl_all *));
 
 
 
 /*
- *	Lecture et compilation d'une d\'eclaration linguistique d'un mot.
- *	Les ':' sp\'ecifient des s\'eparations de champ.
- *	Renvoit 0 si tout va bien et (-1) sinon.
+ *  Lecture et compilation d'une d\'eclaration linguistique d'un mot.
+ *  Les ':' sp\'ecifient des s\'eparations de champ.
+ *  Renvoit 0 si tout va bien et (-1) sinon.
 */
 
 int AulDecl(ctrl_aut,n,in,out,nb_out)
-struct og_ctrl_aut *ctrl_aut; 
+struct og_ctrl_aut *ctrl_aut;
 int n; unsigned char *in;
 unsigned char out[][DPcMaxSizeDecl];
 int nb_out;
@@ -65,7 +65,7 @@ memset(&declaration,0,sizeof(struct decl_all));
 for (i=0; in[i]!=0; i++) {
   switch(state) {
 
-    case 1 :	/** au tout d\'ebut **/
+    case 1 :  /** au tout d\'ebut **/
       if (in[i]==':') {
         DPcSprintf(erreur,"line %d (%.30s) start with ':'",n,in);
         OgErr(ctrl_aut->herr,erreur); DPcErr; }
@@ -76,7 +76,7 @@ for (i=0; in[i]!=0; i++) {
         OgErr(ctrl_aut->herr,erreur); DPcErr; }
       state=2; break;
 
-    case 2 :	/** \`a l'int\'erieur du champ **/
+    case 2 :  /** \`a l'int\'erieur du champ **/
       if (in[i]==':') {
         declaration.nb_surface++;
         declaration.surface[declaration.nb_surface].sep[
@@ -90,7 +90,7 @@ for (i=0; in[i]!=0; i++) {
         OgErr(ctrl_aut->herr,erreur); DPcErr; }
       state=2; break;
 
-    case 3 :	/** dans le s\'eparateur **/
+    case 3 :  /** dans le s\'eparateur **/
       if (in[i]==':') {
         if (declaration.surface[declaration.nb_surface].nsep<2) {
           declaration.surface[declaration.nb_surface].sep[
@@ -148,10 +148,10 @@ DONE;
 
 
 /*
- *	Fonction de nettoyage des champs :
- *	  suppression des blancs au d\'ebut et \`a la fin ;
- *	  une suite de blancs est r\'eduite \`a un blanc ;
- *	  les blancs autour du tiret ('-') sont supprim\'e.
+ *  Fonction de nettoyage des champs :
+ *    suppression des blancs au d\'ebut et \`a la fin ;
+ *    une suite de blancs est r\'eduite \`a un blanc ;
+ *    les blancs autour du tiret ('-') sont supprim\'e.
 */
 
 STATICF(int) AulDeclClean(declaration)
@@ -193,18 +193,18 @@ DONE;
 
 
 /*
- *	Les d\'eclarations que l'on veut supprimer se terminent
- *	toutes par le champ ":-". On a deux cas :
- *	  une d\'eclaration normale ou simplifi\'ee qui se termine par ":-"
- *	  une entr\'ee qui est suivie de ":-".
- *	Cette fonction remplie le champ 'delete' de declaration comme suit :
- *	  si on est dans le premier cas : delete=1
- *	  sinon si on est dans le second cas : delete=2
- *	  sinon delete=0
+ *  Les d\'eclarations que l'on veut supprimer se terminent
+ *  toutes par le champ ":-". On a deux cas :
+ *    une d\'eclaration normale ou simplifi\'ee qui se termine par ":-"
+ *    une entr\'ee qui est suivie de ":-".
+ *  Cette fonction remplie le champ 'delete' de declaration comme suit :
+ *    si on est dans le premier cas : delete=1
+ *    sinon si on est dans le second cas : delete=2
+ *    sinon delete=0
 */
 
 STATICF(int) AulDeclDelete(ctrl_aut,n,in,declaration)
-struct og_ctrl_aut *ctrl_aut; 
+struct og_ctrl_aut *ctrl_aut;
 int n; unsigned char *in;
 struct decl_all *declaration;
 {
@@ -249,16 +249,16 @@ DONE;
 
 
 /*
- *	Traitement des d\'eclarations simplifi\'ees.
- *	Les  d\'eclarations simplifi\'ees sont repr\'esent\'es par
- *	le fait qu'il y a deux ':' sur le deuxi\`eme champ.
- *	On ne traite pas les d\'eclarations normales ':'
- *	dans cette fonction. Renvoit ERREUR lorsque la ligne
- *	ne peut \^etre prise en compte. Dans ce cas, un warning
- *	est \'emis. Un warning peut aussi \^etre \'emis sans
- *	que la fonction renvoie ERREUR. Dans ce cas, la ligne est 
- *	trait\'ee. Le message indique si la ligne est ignor\'ee ou non.
- *	Renvoit CORRECT si tout s'est bien pass\'e.
+ *  Traitement des d\'eclarations simplifi\'ees.
+ *  Les  d\'eclarations simplifi\'ees sont repr\'esent\'es par
+ *  le fait qu'il y a deux ':' sur le deuxi\`eme champ.
+ *  On ne traite pas les d\'eclarations normales ':'
+ *  dans cette fonction. Renvoit ERREUR lorsque la ligne
+ *  ne peut \^etre prise en compte. Dans ce cas, un warning
+ *  est \'emis. Un warning peut aussi \^etre \'emis sans
+ *  que la fonction renvoie ERREUR. Dans ce cas, la ligne est
+ *  trait\'ee. Le message indique si la ligne est ignor\'ee ou non.
+ *  Renvoit CORRECT si tout s'est bien pass\'e.
 */
 
 STATICF(int) AulDeclSimple(ctrl_aut,n,in,declaration)
@@ -271,7 +271,7 @@ char erreur[DPcSzErr];
 struct decl_normal *normal,*first_normal;
 if (declaration->surface[1].nsep<=1) DONE;
 if (declaration->delete>=2) DONE;
-if (declaration->nb_surface<2) { 
+if (declaration->nb_surface<2) {
   DPcSprintf(erreur,"Warning line %d ignored (%.30s), too few fields",n,in);
   OgErr(ctrl_aut->herr,erreur); DPcErr; }
 
@@ -384,16 +384,16 @@ DONE;
 
 
 /*
- *	Cr\'eation des d\'eclarations normales \`a partir de la d\'eclaration
- *	de surface. Les d\'eclarations normales sont repr\'esent\'es par
- *	le fait qu'il n'y a qu'un ':' sur le deuxi\`eme champ.
- *	On ne traite pas les d\'eclarations simplifi\'ees ('::')
- *	dans cette fonction. Renvoit ERREUR lorsque la ligne
- *	ne peut \^etre prise en compte. Dans ce cas, un warning
- *	est \'emis. Un warning peut aussi \^etre \'emis sans
- *	que la fonction renvoie ERREUR. Dans ce cas, la ligne est 
- *	trait\'ee. Le message indique si la ligne est ignor\'ee ou non.
- *	Renvoit CORRECT si tout s'est bien pass\'e.
+ *  Cr\'eation des d\'eclarations normales \`a partir de la d\'eclaration
+ *  de surface. Les d\'eclarations normales sont repr\'esent\'es par
+ *  le fait qu'il n'y a qu'un ':' sur le deuxi\`eme champ.
+ *  On ne traite pas les d\'eclarations simplifi\'ees ('::')
+ *  dans cette fonction. Renvoit ERREUR lorsque la ligne
+ *  ne peut \^etre prise en compte. Dans ce cas, un warning
+ *  est \'emis. Un warning peut aussi \^etre \'emis sans
+ *  que la fonction renvoie ERREUR. Dans ce cas, la ligne est
+ *  trait\'ee. Le message indique si la ligne est ignor\'ee ou non.
+ *  Renvoit CORRECT si tout s'est bien pass\'e.
 */
 
 STATICF(int) AulDeclNormal(ctrl_aut,n,in,declaration)
@@ -444,7 +444,7 @@ DONE;
 
 
 /*
- *	Calcul du type de l'attribut.
+ *  Calcul du type de l'attribut.
 */
 
 int AulDeclAttribut(normal)
@@ -470,10 +470,10 @@ DONE;
 
 
 /*
- *	Construit les chaines des diff\'erentes composantes
- *	du terme complexe. Le champ 'ncomposante_entry'
- *	donne le nombre de composantes de l'entr\'ee.
- *	Ce champ est \`a un pour les termes simples.
+ *  Construit les chaines des diff\'erentes composantes
+ *  du terme complexe. Le champ 'ncomposante_entry'
+ *  donne le nombre de composantes de l'entr\'ee.
+ *  Ce champ est \`a un pour les termes simples.
 */
 
 int AulDeclComposante(normal)
@@ -513,14 +513,14 @@ DONE;
 
 
 /*
- *	Traitement de la d\'eclaration d'attribut '='
- *	il s'agit d'aller chercher par la fonction AulScan
- *	toutes les informations associ\'ees \`a la valeur de l'attribut
- *	consid\'er\'e comme une entr\'ee en matchant un maximum de lettres
- *	\`a la fin. Exemples : turber:=:danser fait une \'equivalence
- *	entre 'turb' et 'dans' et cr\'ee toutes les formes correspondantes.
- *	Cette fonction renvoit 1 si elle a trait\'e une d\'eclaration '='
- *	elle renvoit 0 sinon.
+ *  Traitement de la d\'eclaration d'attribut '='
+ *  il s'agit d'aller chercher par la fonction AulScan
+ *  toutes les informations associ\'ees \`a la valeur de l'attribut
+ *  consid\'er\'e comme une entr\'ee en matchant un maximum de lettres
+ *  \`a la fin. Exemples : turber:=:danser fait une \'equivalence
+ *  entre 'turb' et 'dans' et cr\'ee toutes les formes correspondantes.
+ *  Cette fonction renvoit 1 si elle a trait\'e une d\'eclaration '='
+ *  elle renvoit 0 sinon.
 */
 
 STATICF(int) AulDeclEqual(ctrl_aut,n,in,declaration)
@@ -554,7 +554,9 @@ memcpy(hentry,normal->entry,ihentry); hentry[ihentry]=0;
 strcpy(value_plus,normal->value);
 value_plus[nvalue]='+'; value_plus[nvalue+1]=0;
 strcpy(lower_value,normal->value);
-for (i=0; lower_value[i]!=0; i++) lower_value[i]=PcTolower(lower_value[i]);
+if (!ctrl_aut->aul_nocharcase) {
+  for (i=0; lower_value[i]!=0; i++) lower_value[i]=PcTolower(lower_value[i]);
+  }
 IFE(OgAulScan((void *)ctrl_aut,DPcAttribut_all,lower_value,out1,70));
 for (i=0; out1[i].type_attribut!=0; i++) {
 
@@ -597,7 +599,7 @@ for (i=0; out1[i].type_attribut!=0; i++) {
         /** \`a la racine qui est demand\'ee (normal->value) **/
         if (out2[j].type_attribut==DPcAttribut_cs)
           if (memcmp(value_plus,out2[j].value,nvalue+1)) continue;
-  
+
 #ifdef DEVERMINE
         printf(">>    %s%s:%s:%s%s\n",
           hentry,out2[j].entry+ihvalue,
@@ -613,7 +615,7 @@ for (i=0; out1[i].type_attribut!=0; i++) {
         cnormal->nattribut=strlen(cnormal->attribut);
         cnormal->nvalue=strlen(cnormal->value);
         declaration->nb_normal++;
-  
+
         }
       }
     }
@@ -652,19 +654,19 @@ return(1);
 
 
 /*
- *	Traitement des majuscules. Les r\`egles sont les suivantes :
- *	Pour les entr\'ees simples :
- *	  si la d\'eclaration est 'cs', l'attribut 'u' se met en +u
- *	  si la d\'eclaration est 'c' ou 's' on rajoute un attribut 'u'
- *	  sinon on ne fait rien.
- *	Pour les entr\'ees complexes :
- *	  on rajoute un attribut 'u' dans tous les cas.
- *	le traitement des majuscules ne met rien en minuscule,
- *	c'est la fonction AulDeclLower qui fait ce travail.
+ *  Traitement des majuscules. Les r\`egles sont les suivantes :
+ *  Pour les entr\'ees simples :
+ *    si la d\'eclaration est 'cs', l'attribut 'u' se met en +u
+ *    si la d\'eclaration est 'c' ou 's' on rajoute un attribut 'u'
+ *    sinon on ne fait rien.
+ *  Pour les entr\'ees complexes :
+ *    on rajoute un attribut 'u' dans tous les cas.
+ *  le traitement des majuscules ne met rien en minuscule,
+ *  c'est la fonction AulDeclLower qui fait ce travail.
 */
 
 STATICF(int) AulDeclUpper(ctrl_aut,declaration,inormal,ibuild)
-struct og_ctrl_aut *ctrl_aut; 
+struct og_ctrl_aut *ctrl_aut;
 struct decl_all *declaration;
 int inormal,ibuild;
 {
@@ -706,8 +708,8 @@ DONE;
 
 
 /*
- *	Fabrique la cha\^ine de caract\`eres correspondant
- *	\`a la valeur du champ 'u' et la mets dans 'upper'
+ *  Fabrique la cha\^ine de caract\`eres correspondant
+ *  \`a la valeur du champ 'u' et la mets dans 'upper'
 */
 
 STATICF(int) AulDeclUpperBuild(entry,upper)
@@ -748,16 +750,16 @@ DONE;
 
 
 /*
- *	Fonction qui met en minuscule les cha\^ines suivantes :
- *	  l'entr\'ee ;
- *	  la valeur des champs 'c', 'f' ;
- *	  la premi\`ere partie du champ 'cs' ;
- *	Le passage en minuscule s'effectue sur les d\'eclarations normales.
- *	On effectue aussi le passage en minuscule pour les composantes.
+ *  Fonction qui met en minuscule les cha\^ines suivantes :
+ *    l'entr\'ee ;
+ *    la valeur des champs 'c', 'f' ;
+ *    la premi\`ere partie du champ 'cs' ;
+ *  Le passage en minuscule s'effectue sur les d\'eclarations normales.
+ *  On effectue aussi le passage en minuscule pour les composantes.
 */
 
 STATICF(int) AulDeclLower(ctrl_aut,declaration)
-struct og_ctrl_aut *ctrl_aut; 
+struct og_ctrl_aut *ctrl_aut;
 struct decl_all *declaration;
 {
 int i,j,k;
@@ -777,7 +779,7 @@ for (i=0; i<declaration->nb_normal; i++) {
   for(j=0; j<normal->ncomposante_entry; j++)
     for (k=0; normal->composante_entry[j][k]!=0; k++)
       normal->composante_entry[j][k]=PcTolower(normal->composante_entry[j][k]);
- 
+
   for(j=0; j<normal->ncomposante_value; j++)
     for (k=0; normal->composante_value[j][k]!=0; k++)
       normal->composante_value[j][k]=PcTolower(normal->composante_value[j][k]);
@@ -788,12 +790,12 @@ DONE;
 
 
 /*
- *	Traitement des tiret. On rajoute un attribut 't' sur les entr\'ee
- *	dans tout les cas o\`u il y a un tiret.
- *	On supprime le tiret dans les cha\^ines suivantes :
- *	  l'entr\'ee ;
- *	  la valeur des champs 'c', 'f' ;
- *	  la premi\`ere partie du champ 'cs'
+ *  Traitement des tiret. On rajoute un attribut 't' sur les entr\'ee
+ *  dans tout les cas o\`u il y a un tiret.
+ *  On supprime le tiret dans les cha\^ines suivantes :
+ *    l'entr\'ee ;
+ *    la valeur des champs 'c', 'f' ;
+ *    la premi\`ere partie du champ 'cs'
 */
 
 STATICF(int) AulDeclTiret(declaration,inormal)
@@ -825,7 +827,7 @@ DONE;
 
 
 /*
- *	Suppression de tous les tirets
+ *  Suppression de tous les tirets
 */
 
 STATICF(int) AulDeclDelTiret(declaration)
@@ -849,14 +851,14 @@ DONE;
 
 
 /*
- *	Traitement des minimisations des repr\'esentations
- *	cha\^ines de caract\`eres dan les zones suivantes :
- *	  la valeur des champs 'c', 'f' ;
- *	  la premi\`ere partie du champ 'cs'
- *	Pour l'instant on va consid\'erer qui si le nombre 
- *	de composante est diff\'erent entre l'entr\'ee
- *	et la valeur, un warning est \'emis, mais la d\'eclaration
- *	est gard\'ee telle quelle.
+ *  Traitement des minimisations des repr\'esentations
+ *  cha\^ines de caract\`eres dan les zones suivantes :
+ *    la valeur des champs 'c', 'f' ;
+ *    la premi\`ere partie du champ 'cs'
+ *  Pour l'instant on va consid\'erer qui si le nombre
+ *  de composante est diff\'erent entre l'entr\'ee
+ *  et la valeur, un warning est \'emis, mais la d\'eclaration
+ *  est gard\'ee telle quelle.
 */
 
 STATICF(int) AulDeclMin(ctrl_aut,n,in,declaration)
@@ -914,9 +916,9 @@ DONE;
 
 
 /*
- *	Marquage des d\'eclarations normales en double.
- *	le champ 'killed' est mis \`a 1.
- *	Cela ne concerne que les attributs 'u' et 't'.
+ *  Marquage des d\'eclarations normales en double.
+ *  le champ 'killed' est mis \`a 1.
+ *  Cela ne concerne que les attributs 'u' et 't'.
 */
 
 STATICF(int) AulDeclKill(declaration)
