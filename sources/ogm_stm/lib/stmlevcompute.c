@@ -61,12 +61,12 @@ og_status StmInitBorderScores(struct og_ctrl_stm *ctrl_stm, unsigned char *strin
  * for insertion and deletion.
  */
 static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsigned char *string, int is_an_insertion,
-    int length,
-    struct og_stm_levenshtein_input_param *lev_params)
+    int length, struct og_stm_levenshtein_input_param *lev_params)
 {
   int c, prev;
   c = prev = 0;
 
+  int spaces = 0;
   for (int i = 0; i <= length; i++)
   {
     if (i != 0)
@@ -89,12 +89,12 @@ static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsig
         }
 
         // Init for insertion of a space
-        if (lev_params->space_cost > 0)
+        if (OgUniIsspace(c))
         {
-          if (OgUniIsspace(c))
-          {
-            ctrl_stm->score[0][i] = lev_params->space_cost + ctrl_stm->score[0][i - 1];
-          }
+          double space_cost = 0;
+          IFE(StmGetSpaceCost(ctrl_stm, spaces, TRUE, &space_cost));
+          ctrl_stm->score[0][i] = space_cost + ctrl_stm->score[0][i - 1];
+          spaces++;
         }
 
         // Init for insertion of a punctuation
@@ -124,13 +124,14 @@ static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsig
         }
 
         // Init for deletion of a space
-        if (lev_params->space_cost > 0)
+        if (OgUniIsspace(c))
         {
-          if (OgUniIsspace(c))
-          {
-            ctrl_stm->score[i][0] = lev_params->space_cost + ctrl_stm->score[i - 1][0];
-          }
+          double space_cost = 0;
+          IFE(StmGetSpaceCost(ctrl_stm, spaces, FALSE, &space_cost));
+          ctrl_stm->score[i][0] = space_cost + ctrl_stm->score[i - 1][0];
+          spaces++;
         }
+
       }
 
       // Init for deletion of a punctuation
@@ -204,8 +205,7 @@ static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsig
  *  We can see that vertical path indicates insertion, horizontal path deletion and diagonal path substitution.
  *
  */
-og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char *string1,
-    unsigned char *string2,
+og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char *string1, unsigned char *string2,
     struct og_stm_levenshtein_input_param *lev_params)
 {
   /* Applying Levenshtein iterative rule to determine
@@ -215,6 +215,9 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
   double insertion_cost, deletion_cost, substitution_cost;
   c1 = c2 = prev1 = prev2 = 0;
   int prof = 0;
+
+  int space_deletions = -1;
+
   for (int i = 1; i <= ctrl_stm->length1; i++)
   {
     //Get character of first string
@@ -222,6 +225,14 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
     if (i < ctrl_stm->length1) next1 = (string1[i * 2] << 8) + string1[i * 2 + 1];
     else next1 = 0;
     c1 = (string1[(i - 1) * 2] << 8) + string1[(i - 1) * 2 + 1];
+
+    int space_insertions = 0;
+
+    //if character in string1 is a space to delete
+    if (OgUniIsspace(c1))
+    {
+      space_deletions++;
+    }
 
     for (int j = 1; j <= ctrl_stm->length2; j++)
     {
@@ -237,8 +248,8 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
       if (lev_params->same_letter_insertion_cost > 0)
       {
         if (((prev2 && prev2 == c2) || (next2 && next2 == c2))
-            && ((prev1 && prev1 == c2) || (next1 && next1 == c2) || (c1 == c2)))
-        insertion_cost = lev_params->same_letter_insertion_cost;
+            && ((prev1 && prev1 == c2) || (next1 && next1 == c2) || (c1 == c2))) insertion_cost =
+            lev_params->same_letter_insertion_cost;
       }
 
       // If a same letter has been deleted (we need to check letters before and after)
@@ -246,14 +257,14 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
       if (lev_params->same_letter_deletion_cost > 0)
       {
         if (((prev1 && prev1 == c1) || (next1 && next1 == c1))
-            && ((prev2 && prev2 == c1) || (next2 && next2 == c1) || (c2 == c1)))
-        deletion_cost = lev_params->same_letter_deletion_cost;
+            && ((prev2 && prev2 == c1) || (next2 && next2 == c1) || (c2 == c1))) deletion_cost =
+            lev_params->same_letter_deletion_cost;
       }
 
       //if an accentuated character has been replaced by the same with no accent
       substitution_cost = lev_params->substitution_cost;
 
-      if(ctrl_stm->has_equivalent_letters)
+      if (ctrl_stm->has_equivalent_letters)
       {
         IFE(StmGetSubstitutionCost(ctrl_stm, c1, c2, &substitution_cost));
       }
@@ -264,7 +275,7 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
         int unaccc2 = OgUniUnaccent(c2);
         if (unaccc1 == unaccc2)
         {
-          if(substitution_cost > lev_params->accents_substitution_cost)
+          if (substitution_cost > lev_params->accents_substitution_cost)
           {
             substitution_cost = lev_params->accents_substitution_cost;
           }
@@ -283,25 +294,25 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
           }
         }
       }
-      if (lev_params->space_cost > 0)
+
+      //if character in string1 is a space to delete
+      if (OgUniIsspace(c1))
       {
-        //if character in string1 is a space to delete
-        if (OgUniIsspace(c1))
-        {
-          deletion_cost = lev_params->space_cost;
-        }
-        //if character in string2 is a space to insert in string1
-        if (OgUniIsspace(c2))
-        {
-          insertion_cost = lev_params->space_cost;
-        }
+        IFE(StmGetSpaceCost(ctrl_stm, space_deletions, FALSE, &deletion_cost));
       }
+      //if character in string2 is a space to insert in string1
+      if (OgUniIsspace(c2))
+      {
+        IFE(StmGetSpaceCost(ctrl_stm, space_insertions, TRUE, &insertion_cost));
+        space_insertions++;
+      }
+
       if (lev_params->punctuation_cost > 0)
       {
         //if character is a punctuation taken from punctuation conf file
         if (StmIsPunctuation(ctrl_stm, c1) && StmIsPunctuation(ctrl_stm, c2))
         {
-          if(lev_params->punctuation_cost < substitution_cost)
+          if (lev_params->punctuation_cost < substitution_cost)
           {
             substitution_cost = lev_params->punctuation_cost;
           }
@@ -372,8 +383,8 @@ static og_bool StmIsPunctuation(struct og_ctrl_stm *ctrl_stm, int c)
 {
   og_bool is_punctuation = OgLipIsPunctuation(&ctrl_stm->lip_conf, c);
   char buffer[2];
-  buffer[0] = (char)(c >> 8);
-  buffer[1] = (char)(c & 0x00ff);
+  buffer[0] = (char) (c >> 8);
+  buffer[1] = (char) (c & 0x00ff);
   int length;
   og_bool is_punctuation_word = OgLipIsPunctuationWord(&ctrl_stm->lip_conf, 2, buffer, &length);
   return (is_punctuation || is_punctuation_word);
@@ -388,9 +399,9 @@ static og_status StmGetSubstitutionCost(struct og_ctrl_stm *ctrl_stm, int c1, in
   equivalent_letter->letter2 = c2;
 
   double *pcost = (double *) g_hash_table_lookup(ctrl_stm->equivalent_letters_hash, equivalent_letter);
-  if(pcost != NULL)
+  if (pcost != NULL)
   {
-    if(*pcost < *substitution_cost)
+    if (*pcost < *substitution_cost)
     {
       *substitution_cost = *pcost;
     }
