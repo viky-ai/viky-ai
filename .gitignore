@@ -23,6 +23,9 @@
 /resources/morphology/**/*total.*
 /resources/morphology/**/*total_*
 /resources/morphology/**/*total_*.*
+/resources/morphology/cs/cstotal
+/resources/morphology/cs/csform
+/resources/morphology/cs/csroot
 /resources/morphology/de/deform
 /resources/morphology/de/deroot
 /resources/morphology/fi/fi
