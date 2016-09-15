@@ -77,8 +77,9 @@ OgLipInit(struct og_lip_param *param)
     }
 
     // xsd validation
-    IF(OgLipXsdValidatePunctFile((void *) ctrl_lip, param->filename, NULL))
-    return (0);
+    og_status status = OgXmlXsdValidateFile(ctrl_lip->hmsg, ctrl_lip->herr, NULL,
+        param->filename, "conf/xsd/punct.xsd");
+    IF(status) return (0);
 
     // xml parse
     IF(OgLipReadPunctConf((void *) ctrl_lip, param->filename, ctrl_lip->conf))

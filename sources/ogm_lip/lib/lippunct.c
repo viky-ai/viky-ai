@@ -68,54 +68,6 @@ struct og_tree_xml_tag LipXmlReadTag[] =  {
 
 
 /**
-* Validate conf again XSD.
-*
-* @param handle LIP handle
-* @param xsd_dir xsd_dir
-* @param xml_file xml_file
-* @return function status
-*
-**/
-PUBLIC(int) OgLipXsdValidatePunctFile(void *handle, unsigned char *xml_file, unsigned char *working_dir)
-{
-  struct og_ctrl_lip *ctrl_lip = (struct og_ctrl_lip *) handle;
-  unsigned char xsd_file[DPcPathSize];
-
-  if (working_dir != NULL && working_dir[0])
-  {
-    sprintf(xsd_file, "%s/conf/xsd/punct.xsd", working_dir);
-  }
-  else
-  {
-    sprintf(xsd_file, "conf/xsd/punct.xsd");
-  }
-
-  if (!OgFileExists(xml_file))
-  {
-    // no such file do nothing
-  }
-  else if (OgFileExists(xsd_file))
-  {
-    int good_format;
-    IFE(good_format = OgXmlCheckXsd(ctrl_lip->hmsg, xsd_file, xml_file));
-    if (!good_format)
-    {
-      unsigned char erreur[DPcPathSize];
-      sprintf(erreur, "OgLipValidatePunctFile: file '%s' is not validated by '%s'", xml_file, xsd_file);
-      OgErr(ctrl_lip->herr, erreur);
-      DPcErr;
-    }
-  }
-  else
-  {
-    OgMsg(ctrl_lip->hmsg, "", DOgMsgDestInLog,
-        "OgLipValidatePunctFile: warning: file '%s' does not exist, could not check '%s'", xsd_file, xml_file);
-  }
-
-  DONE;
-}
-
-/**
 * Reading XML configuration file (conf/lip_conf.xml). Can be a file or a buffer.
 *
 * @param handle LIP handle

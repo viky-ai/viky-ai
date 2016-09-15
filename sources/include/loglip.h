@@ -125,7 +125,6 @@ DEFPUBLIC(int) OgLipGetNbWords(void *handle);
 DEFPUBLIC(int) OgLipFlush(void *handle);
 DEFPUBLIC(int) OgLipMem(void *handle, int must_log, int module_level, ogint64_t *pmem);
 DEFPUBLIC(int) OgLipGetLanguages(void *handle, struct og_lip_lang *lang);
-DEFPUBLIC(int) OgLipXsdValidatePunctFile(void *handle, unsigned char *xml_file, unsigned char *working_dir);
 DEFPUBLIC(int) OgLipReadPunctConf(void *handle, char *filename, struct og_lip_conf *conf);
 DEFPUBLIC(int) OgLipConfAddPunctuation(void *hmsg, struct og_lip_conf *conf, int unicode_char, int is_separator);
 DEFPUBLIC(int) OgLipConfAddPunctuationIndivisible(void *hmsg, struct og_lip_conf *conf, int unicode_char_open, int unicode_char_close);

@@ -114,3 +114,40 @@ PUBLIC(int) OgXmlCheckXsd(void *hmsg, og_string xsd, og_string xml)
   return is_valid;
 }
 
+PUBLIC(og_status) OgXmlXsdValidateFile(void *hmsg, void *herr, char *working_directory, char *xml_file, char *xsd_path)
+{
+
+  unsigned char xsd_file[DPcPathSize];
+
+  if ((working_directory == NULL) || (strlen(working_directory) == 0))
+  {
+    sprintf(xsd_file, "%s", xsd_path);
+  }
+  else
+  {
+    sprintf(xsd_file, "%s/%s", working_directory, xsd_path);
+  }
+
+  if (OgFileExists(xml_file))
+  {
+    // Valid XML only if XSD existing
+    if (OgFileExists(xsd_file))
+    {
+      int good_format;
+      IFE(good_format = OgXmlCheckXsd(hmsg, xsd_file, xml_file));
+      if (!good_format)
+      {
+        unsigned char erreur[DPcPathSize];
+        sprintf(erreur, "OgXmlXsdValidateFile: file '%s' is not validated by '%s'", xml_file, xsd_file);
+        OgErr(herr, erreur);
+        DPcErr;
+      }
+    }
+    else
+    {
+      OgMsg(hmsg, "", DOgMsgDestInLog, "OgXmlXsdValidateFile: warning: file '%s' does not exist, could not check '%s'",
+          xsd_file, xml_file);
+    }
+  }
+  DONE;
+}

@@ -14,87 +14,109 @@ static int LtrasModuleExcept1(struct og_ltra_module_input *module_input
 
 void *OgLtrasModuleExceptInit(struct og_ltra_module_param *param)
 {
-struct og_ctrl_except *inheriting_except=(struct og_ctrl_except *)param->hmodule_to_inherit;
-struct og_msg_param cmsg_param,*msg_param=&cmsg_param;
-struct og_aut_param caut_param,*aut_param=&caut_param;
-struct og_ctrl_except *ctrl_except;
-char ltras_except[DPcPathSize];
-char erreur[DOgErrorSize];
-char buffer[DPcPathSize];
-char *WorkingDirectory;
-int size,found;
-
-IFn(ctrl_except=(struct og_ctrl_except *)malloc(sizeof(struct og_ctrl_except))) {
-  sprintf(erreur,"OgLtrasInit: malloc error on ctrl_except");
-  OgErr(param->herr,erreur); return(0);
+  struct og_ctrl_except *ctrl_except = (struct og_ctrl_except *) malloc(sizeof(struct og_ctrl_except));
+  IFn(ctrl_except)
+  {
+    char erreur[DOgErrorSize];
+    sprintf(erreur, "OgLtrasInit: malloc error on ctrl_except");
+    OgErr(param->herr, erreur);
+    return (0);
   }
-memset(ctrl_except,0,sizeof(struct og_ctrl_except));
+  memset(ctrl_except, 0, sizeof(struct og_ctrl_except));
 
-ctrl_except->herr = param->herr;
-ctrl_except->hltras = param->hltras;
-ctrl_except->hmutex = param->hmutex;
-ctrl_except->cloginfo = param->loginfo;
-ctrl_except->loginfo = &ctrl_except->cloginfo;
+  ctrl_except->herr = param->herr;
+  ctrl_except->hltras = param->hltras;
+  ctrl_except->hmutex = param->hmutex;
+  ctrl_except->cloginfo = param->loginfo;
+  ctrl_except->loginfo = &ctrl_except->cloginfo;
 
-memset(msg_param,0,sizeof(struct og_msg_param));
-msg_param->herr=ctrl_except->herr;
-msg_param->hmutex=ctrl_except->hmutex;
-msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory;
-msg_param->loginfo.where = ctrl_except->loginfo->where;
-msg_param->module_name="ltra_module_except";
-IFn(ctrl_except->hmsg=OgMsgInit(msg_param)) return(0);
-IF(OgMsgTuneInherit(ctrl_except->hmsg,param->hmsg)) return(0);
+  struct og_msg_param msg_param[1];
+  memset(msg_param, 0, sizeof(struct og_msg_param));
+  msg_param->herr = ctrl_except->herr;
+  msg_param->hmutex = ctrl_except->hmutex;
+  msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
+  msg_param->loginfo.where = ctrl_except->loginfo->where;
+  msg_param->module_name = "ltra_module_except";
+  IFn(ctrl_except->hmsg = OgMsgInit(msg_param))
+  return (0);
+  IF(OgMsgTuneInherit(ctrl_except->hmsg, param->hmsg))
+  return (0);
 
-ctrl_except->BaSize = DOgLtrasExceptBaSize;
-size = ctrl_except->BaSize*sizeof(unsigned char);
-IFn(ctrl_except->Ba=(unsigned char *)malloc(size)) {
-  sprintf(erreur,"OgLtrasInit: malloc error on Ba (%d bytes)",size);
-  OgErr(ctrl_except->herr,erreur); return(0);
-  }
-
-ctrl_except->hpho = OgLtrasHpho(ctrl_except->hltras);
-ctrl_except->hstm = OgLtrasHstm(ctrl_except->hltras);
-
-if (param->hmodule_to_inherit) {
-  ctrl_except->is_inherited=1;
-  ctrl_except->ha_except=inheriting_except->ha_except;
-  }
-else {
-  memset(aut_param,0,sizeof(struct og_aut_param));
-  aut_param->herr=ctrl_except->herr;
-  aut_param->hmutex=ctrl_except->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-  aut_param->loginfo.where = ctrl_except->loginfo->where;
-  aut_param->state_number = 0x1000;
-  sprintf(aut_param->name,"ltras_module_except");
-  IFn(ctrl_except->ha_except=OgAutInit(aut_param)) return(0);
-  WorkingDirectory = OgLtrasWorkingDirectory(ctrl_except->hltras);
-  if (WorkingDirectory[0]) sprintf(ltras_except,"%s/ling/ltras_except.xml",WorkingDirectory);
-  else strcpy(ltras_except,"ling/ltras_except.xml");
-  IF(LtrasModuleExceptReadConf(ctrl_except,ltras_except)) return(0);
+  ctrl_except->BaSize = DOgLtrasExceptBaSize;
+  int size = ctrl_except->BaSize * sizeof(unsigned char);
+  IFn(ctrl_except->Ba = (unsigned char *) malloc(size))
+  {
+    char erreur[DOgErrorSize];
+    sprintf(erreur, "OgLtrasInit: malloc error on Ba (%d bytes)", size);
+    OgErr(ctrl_except->herr, erreur);
+    return (0);
   }
 
+  ctrl_except->hpho = OgLtrasHpho(ctrl_except->hltras);
+  ctrl_except->hstm = OgLtrasHstm(ctrl_except->hltras);
 
-/** Default value for exception score is 0.99 **/
-ctrl_except->exc_score = 0.99;
-IF(found=OgLtrasGetParameterValue(ctrl_except->hltras,"exc_score",DPcPathSize,buffer)) return(0);
-if (found) {
-  ctrl_except->exc_score=atof(buffer);
-  if (ctrl_except->exc_score > 1.0) ctrl_except->exc_score = 1.0;
-  else if (ctrl_except->exc_score < 0.0) ctrl_except->exc_score = 0.0;
+  if (param->hmodule_to_inherit)
+  {
+    struct og_ctrl_except *inheriting_except = (struct og_ctrl_except *) param->hmodule_to_inherit;
+    ctrl_except->is_inherited = 1;
+    ctrl_except->ha_except = inheriting_except->ha_except;
+  }
+  else
+  {
+    struct og_aut_param aut_param[1];
+    memset(aut_param, 0, sizeof(struct og_aut_param));
+    aut_param->herr = ctrl_except->herr;
+    aut_param->hmutex = ctrl_except->hmutex;
+    aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
+    aut_param->loginfo.where = ctrl_except->loginfo->where;
+    aut_param->state_number = 0x1000;
+    sprintf(aut_param->name, "ltras_module_except");
+    IFn(ctrl_except->ha_except = OgAutInit(aut_param))
+    return (0);
+    char *WorkingDirectory = OgLtrasWorkingDirectory(ctrl_except->hltras);
+
+    char ltras_except[DPcPathSize];
+    if (WorkingDirectory[0]) sprintf(ltras_except, "%s/ling/ltras_except.xml", WorkingDirectory);
+    else strcpy(ltras_except, "ling/ltras_except.xml");
+
+    og_status status = OgXmlXsdValidateFile(ctrl_except->hmsg, ctrl_except->herr, WorkingDirectory, ltras_except,
+        "ling/xsd/ltras_except.xsd");
+    IF (status)
+    return (0);
+
+    IF (LtrasModuleExceptReadConf( ctrl_except, ltras_except))
+    return (0);
   }
 
-ctrl_except->exc_phonetic_cost_reduction_ratio = 0.5;
-IF(found=OgLtrasGetParameterValue(ctrl_except->hltras,"exc_phonetic_cost_reduction_ratio",DPcPathSize,buffer)) return(0);
-if (found) {
-  ctrl_except->exc_phonetic_cost_reduction_ratio=atof(buffer);
-  if (ctrl_except->exc_phonetic_cost_reduction_ratio > 1.0) ctrl_except->exc_phonetic_cost_reduction_ratio = 1.0;
-  else if (ctrl_except->exc_phonetic_cost_reduction_ratio < 0.0) ctrl_except->exc_phonetic_cost_reduction_ratio = 0.0;
+  /** Default value for exception score is 0.99 **/
+  ctrl_except->exc_score = 0.99;
+  char buffer[DPcPathSize];
+  og_bool found = OgLtrasGetParameterValue(ctrl_except->hltras, "exc_score", DPcPathSize, buffer);
+  IF (found)
+  return (0);
+  if (found)
+  {
+    ctrl_except->exc_score = atof(buffer);
+    if (ctrl_except->exc_score > 1.0) ctrl_except->exc_score = 1.0;
+    else if (ctrl_except->exc_score < 0.0) ctrl_except->exc_score = 0.0;
   }
 
-IF(OgLtrasGetLevenshteinCosts(ctrl_except->hltras, ctrl_except->levenshtein_costs)) return(0);
+  ctrl_except->exc_phonetic_cost_reduction_ratio = 0.5;
+  found = OgLtrasGetParameterValue(ctrl_except->hltras, "exc_phonetic_cost_reduction_ratio", DPcPathSize,
+      buffer);
+  IF (found)
+  return (0);
+  if (found)
+  {
+    ctrl_except->exc_phonetic_cost_reduction_ratio = atof(buffer);
+    if (ctrl_except->exc_phonetic_cost_reduction_ratio > 1.0) ctrl_except->exc_phonetic_cost_reduction_ratio = 1.0;
+    else if (ctrl_except->exc_phonetic_cost_reduction_ratio < 0.0) ctrl_except->exc_phonetic_cost_reduction_ratio = 0.0;
+  }
 
-return((void *)ctrl_except);
+  IF(OgLtrasGetLevenshteinCosts(ctrl_except->hltras, ctrl_except->levenshtein_costs))
+  return (0);
+
+  return ((void *) ctrl_except);
 }
 
 
