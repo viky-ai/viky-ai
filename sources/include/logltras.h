@@ -280,6 +280,15 @@ DEFPUBLIC(void *) OgLtrasHstm(void *hltras);
  */
 DEFPUBLIC(double) OgLtrasScoreFactor(void *hltras);
 
+
+/**
+ * Get frequency ratio
+ *
+ * @param hltras handle for ltras
+ * @return frequency ratio.
+ */
+DEFPUBLIC(double) OgLtrasFrequencyRatio(void *handle);
+
 /**
  * Get information if position log is activated. If yes, start_position and length_position will be printed in result
  * for each corrected word

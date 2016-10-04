@@ -431,6 +431,12 @@ struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
 return(ctrl_ltras->input->score_factor);
 }
 
+PUBLIC(double) OgLtrasFrequencyRatio(void *handle)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  return (ctrl_ltras->input->frequency_ratio);
+}
+
 PUBLIC(og_bool) OgLtrasScoreFactorIsLogPosActivated(void *handle)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
