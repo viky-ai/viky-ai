@@ -379,6 +379,7 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
     }
     DONE;
   }
+  og_bool found = 0;
 
   if (!ctrl_term->check_words_in_dictionary) goto endLtrasModuleTerm1;
 
@@ -395,8 +396,6 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
 
   memset(frequencies, 0, MaxNbWords * sizeof(int));
 
-
-  og_bool found = 0;
   for (int i = 0; i < trf->nb_words; i++)
   {
     int ibuffer;
