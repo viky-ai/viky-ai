@@ -381,117 +381,118 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
   }
   og_bool found = 0;
 
-  if (!ctrl_term->check_words_in_dictionary) goto endLtrasModuleTerm1;
-
-  if (trf->nb_words > MaxNbWords)
+  if (ctrl_term->check_words_in_dictionary)
   {
-    if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation)
+
+    if (trf->nb_words > MaxNbWords)
     {
-      OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
-          "LtrasModuleTerm1: number of words in transformation too big : %d (max allowed: %d)", trf->nb_words,
-          MaxNbWords);
-    }
-    goto endLtrasModuleTerm1;
-  }
-
-  memset(frequencies, 0, MaxNbWords * sizeof(int));
-
-  for (int i = 0; i < trf->nb_words; i++)
-  {
-    int ibuffer;
-    unsigned char buffer[DPcPathSize * 2];
-    found = 0;
-    struct og_ltra_word *word = input->Word + trf->start_word + i;
-    unsigned char *in = input->Ba + word->start;
-    int iin = word->length;
-
-    if (!trf->basic)
-    {
-      void *hltras = ctrl_term->hltras;
-      og_bool is_false = OgLtrasIsFalseTransformation(hltras, word->length_position, trfs->Ba + word->start_position,
-          iin, in);
-      IFE(is_false);
-      if (is_false) break;
-    }
-
-    ibuffer = OgStrCpySized(buffer, (DPcPathSize * 2) - 2, in, iin);
-    if (ibuffer < iin)
-    {
-      if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+      if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation)
       {
         OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
-            "LtrasModuleTerm1: in string has been truncated (form size %d to %d)", iin, ibuffer);
-        IFE(OgLtrasTrfLog(ctrl_term->hltras, input, Itrf));
+            "LtrasModuleTerm1: number of words in transformation too big : %d (max allowed: %d)", trf->nb_words,
+            MaxNbWords);
       }
     }
-
-    // add automation suffix
-    buffer[ibuffer++] = 0;
-    buffer[ibuffer++] = 1;
-
-    unsigned char *p;
-    unsigned char out[DPcAutMaxBufferSize + 9];
-    int iout = -1;
-    oindex states[DPcAutMaxBufferSize + 9];
-    int retour, nstate0, nstate1;
-    if ((retour = OgAufScanf(ctrl_term->ha_base, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+    else
     {
-      do
+      memset(frequencies, 0, MaxNbWords * sizeof(int));
+
+      for (int i = 0; i < trf->nb_words; i++)
       {
-        IFE(retour);
-        p = out;
+        int ibuffer;
+        unsigned char buffer[DPcPathSize * 2];
+        found = 0;
+        struct og_ltra_word *word = input->Word + trf->start_word + i;
+        unsigned char *in = input->Ba + word->start;
+        int iin = word->length;
 
-        int attribute_number = -1;
-        IFE(DOgPnin4(ctrl_term->herr,&p,&attribute_number));
+        if (!trf->basic)
+        {
+          void *hltras = ctrl_term->hltras;
+          og_bool is_false = OgLtrasIsFalseTransformation(hltras, word->length_position,
+              trfs->Ba + word->start_position, iin, in);
+          IFE(is_false);
+          if (is_false) break;
+        }
 
-        int language_code = -1;
-        IFE(DOgPnin4(ctrl_term->herr,&p,&language_code));
-
-        int frequency = -1;
-        IFE(DOgPnin4(ctrl_term->herr,&p,&frequency));
-        /* function OgLtrasTrfCalculateGlobal calculates the frequency of a trf
-         * as the minimum of each frequency, thus we use that property to avoid
-         * any trf with frequency less than the minimum frequency. This is because
-         * any combination with that trf will lead to a solution with that same
-         * frequency or lower */
-        if (frequency < ctrl_term->min_frequency)
+        ibuffer = OgStrCpySized(buffer, (DPcPathSize * 2) - 2, in, iin);
+        if (ibuffer < iin)
         {
           if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
           {
             OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
-                "LtrasModuleTerm1: frequency (%d) < min_frequency (%d) for transformation:", frequency,
-                ctrl_term->min_frequency);
+                "LtrasModuleTerm1: in string has been truncated (form size %d to %d)", iin, ibuffer);
             IFE(OgLtrasTrfLog(ctrl_term->hltras, input, Itrf));
           }
-          continue;
         }
-        frequencies[i] += frequency;
-        found = 1;
+
+        // add automation suffix
+        buffer[ibuffer++] = 0;
+        buffer[ibuffer++] = 1;
+
+        unsigned char *p;
+        unsigned char out[DPcAutMaxBufferSize + 9];
+        int iout = -1;
+        oindex states[DPcAutMaxBufferSize + 9];
+        int retour, nstate0, nstate1;
+        if ((retour = OgAufScanf(ctrl_term->ha_base, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+        {
+          do
+          {
+            IFE(retour);
+            p = out;
+
+            int attribute_number = -1;
+            IFE(DOgPnin4(ctrl_term->herr,&p,&attribute_number));
+
+            int language_code = -1;
+            IFE(DOgPnin4(ctrl_term->herr,&p,&language_code));
+
+            int frequency = -1;
+            IFE(DOgPnin4(ctrl_term->herr,&p,&frequency));
+            /* function OgLtrasTrfCalculateGlobal calculates the frequency of a trf
+             * as the minimum of each frequency, thus we use that property to avoid
+             * any trf with frequency less than the minimum frequency. This is because
+             * any combination with that trf will lead to a solution with that same
+             * frequency or lower */
+            if (frequency < ctrl_term->min_frequency)
+            {
+              if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+              {
+                OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
+                    "LtrasModuleTerm1: frequency (%d) < min_frequency (%d) for transformation:", frequency,
+                    ctrl_term->min_frequency);
+                IFE(OgLtrasTrfLog(ctrl_term->hltras, input, Itrf));
+              }
+              continue;
+            }
+            frequencies[i] += frequency;
+            found = 1;
+          }
+          while ((retour = OgAufScann(ctrl_term->ha_base, &iout, out, nstate0, &nstate1, states)));
+        }
+        if (!found)
+        {
+          break;
+        }
       }
-      while ((retour = OgAufScann(ctrl_term->ha_base, &iout, out, nstate0, &nstate1, states)));
-    }
-    if (!found)
-    {
-      break;
+
+      if (found)
+      {
+        // all words in trf found
+        int Itrfn = OgLtrasTrfCopy(ctrl_term->hltras, input, Itrf, trfs, 1);
+        IFE(Itrfn);
+        trfn = trfs->Trf + Itrfn;
+        trfn->final = 1;
+        for (int i = 0; i < trf->nb_words; i++)
+        {
+          struct og_ltra_word * wordn = trfs->Word + trfn->start_word + i;
+          wordn->frequency = frequencies[i];
+        }
+        if (trf->basic) trfn->basic = 1;
+      }
     }
   }
-
-  if (found)
-  {
-    // all words in trf found
-    int Itrfn = OgLtrasTrfCopy(ctrl_term->hltras, input, Itrf, trfs, 1);
-    IFE(Itrfn);
-    trfn = trfs->Trf + Itrfn;
-    trfn->final = 1;
-    for (int i = 0; i < trf->nb_words; i++)
-    {
-      struct og_ltra_word * wordn = trfs->Word + trfn->start_word + i;
-      wordn->frequency = frequencies[i];
-    }
-    if (trf->basic) trfn->basic = 1;
-  }
-
-  endLtrasModuleTerm1:
 
   if (!found && trf->basic)
   {
