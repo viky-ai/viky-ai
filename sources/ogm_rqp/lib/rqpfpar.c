@@ -101,9 +101,19 @@ int RqpFirstParse(struct og_ctrl_rqp *ctrl_rqp)
         end_of_word = 0;
         if (c == '(')
         {
+          unsigned char *subtree_name_uni = "\0s\0u\0b\0t\0r\0e\0e";
+          int isubtree_name_uni = 14;
+          unsigned char *without_subtree_name_uni = "\0w\0i\0t\0h\0o\0u\0t\0_\0s\0u\0b\0t\0r\0e\0e";
+          int iwithout_subtree_name_uni = 30;
+
+          og_bool is_subtree = (((i - start) == isubtree_name_uni)
+              && !Ogmemicmp(subtree_name_uni, s + start, isubtree_name_uni));
+
+          og_bool is_without_subtree = (((i - start) == iwithout_subtree_name_uni)
+              && !Ogmemicmp(without_subtree_name_uni, s + start, iwithout_subtree_name_uni));
+
           /** format is tree(name, subtree) we want to be equivalent to (subtree) **/
-          if (i - start == ctrl_rqp->subtree_function_name_length
-              && !Ogmemicmp(ctrl_rqp->subtree_function_name, s + start, ctrl_rqp->subtree_function_name_length))
+          if (is_subtree || is_without_subtree)
           {
             for (coma = 0, in_quotes = 0, j = i + 2; j < is; j++)
             {
@@ -138,7 +148,9 @@ int RqpFirstParse(struct og_ctrl_rqp *ctrl_rqp)
             depth++; /** same operation as if in state 1 to erase the tree function **/
             current_subtree_number++;
             subtree_number = current_subtree_number;
-            IFE(RqpSubtreeAddId(ctrl_rqp, subtree_number, uni_tree_id_length, uni_tree_id));
+            og_status status = RqpSubtreeAddId(ctrl_rqp, subtree_number, uni_tree_id_length, uni_tree_id,
+                (is_without_subtree ? DOgRqpSubtreeTypeWithout : DOgRqpSubtreeTypeNormal));
+            IFE(status);
             tree_min_depth[tree_depth].subtree_number = subtree_number;
             tree_min_depth[tree_depth].depth = depth;
             tree_depth++;

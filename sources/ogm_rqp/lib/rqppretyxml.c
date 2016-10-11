@@ -1,8 +1,8 @@
 /*
- *	Logging a boolean tree in a tree fashion (pretty print) as XML
- *	Copyright (c) 2010 Pertimm by Patrick Constant
- *	Dev : May 2010
- *	Version 1.0
+ *  Logging a boolean tree in a tree fashion (pretty print) as XML
+ *  Copyright (c) 2010 Pertimm by Patrick Constant
+ *  Dev : May 2010
+ *  Version 1.0
 */
 #include "ogm_rqp.h"
 
@@ -16,36 +16,33 @@ static int RqpXmlPrettyNode(struct og_ctrl_rqp *ctrl_rqp, int Inode, int print_o
 
 
 
-PUBLIC(int) OgRqpXmlPrettyTree(void *handle 
-  , int global_print_offset, int *buffer_length, unsigned char **buffer
-  , int (*func)(void *context, int print_offset, int node_id, int in_length, unsigned char *in, int *out_length, unsigned char **out)
-  , void *context)
+PUBLIC(int) OgRqpXmlPrettyTree(void *handle, int global_print_offset, int *buffer_length, unsigned char **buffer,
+    rqp_xml_pretty_func func, void *context)
 {
-struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
-IFE(OgRqpXmlPrettySubtree(handle,ctrl_rqp->Iroot_node,global_print_offset,buffer_length,buffer,func,context));
-DONE;
+  struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *) handle;
+  IFE(OgRqpXmlPrettySubtree(handle, ctrl_rqp->Iroot_node, global_print_offset, buffer_length, buffer, func, context));
+  DONE;
 }
 
 
 
 
 
-PUBLIC(int) OgRqpXmlPrettySubtree(void *handle, int Inode
-  , int global_print_offset, int *buffer_length, unsigned char **buffer
-  , int (*func)(void *context, int print_offset, int node_id, int in_length, unsigned char *in, int *out_length, unsigned char **out)
-  , void *context)
+PUBLIC(int) OgRqpXmlPrettySubtree(void *handle, int Inode, int global_print_offset, int *buffer_length,
+    unsigned char **buffer, rqp_xml_pretty_func func, void *context)
 {
-struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
-*buffer=0; *buffer_length=0; 
-if (ctrl_rqp->Iroot_node < 0) DONE;
-ctrl_rqp->BxUsed=0;
-ctrl_rqp->xml_pretty_func = func;
-ctrl_rqp->xml_pretty_context = context;
-IFE(RqpXmlPrettySubtree(handle,Inode,global_print_offset));
-IFE(RqpAppendBx(ctrl_rqp,1,"")); /* append zero at end */
-*buffer=ctrl_rqp->Bx;
-*buffer_length=ctrl_rqp->BxUsed-1; /* -1 because of appended zero at end */
-DONE;
+  struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *) handle;
+  *buffer = 0;
+  *buffer_length = 0;
+  if (ctrl_rqp->Iroot_node < 0) DONE;
+  ctrl_rqp->BxUsed = 0;
+  ctrl_rqp->xml_pretty_func = func;
+  ctrl_rqp->xml_pretty_context = context;
+  IFE(RqpXmlPrettySubtree(handle, Inode, global_print_offset));
+  IFE(RqpAppendBx(ctrl_rqp, 1, "")); /* append zero at end */
+  *buffer = ctrl_rqp->Bx;
+  *buffer_length = ctrl_rqp->BxUsed - 1; /* -1 because of appended zero at end */
+  DONE;
 }
 
 
@@ -96,11 +93,13 @@ for (i=0; i<print_offset; i++) {
   }
 
 stree[0]=0;
-if (node->subtree_number >= 0) {
-  IFE(found=RqpSubtreeNumberToId(ctrl_rqp,node->subtree_number,subtree_id));
+if (node->subtree_number >= 0 && node->is_subtree_root) {
+  og_rqp_subtree_type type = DOgRqpSubtreeTypeNormal;
+  IFE(found=RqpSubtreeNumberToId(ctrl_rqp,node->subtree_number,subtree_id, &type));
+  char *subtree_type = ((type == DOgRqpSubtreeTypeWithout) ? "without_subtree" : "subtree");
   if (found) {
-    sprintf(stree," subtree_number=\"%d\" subtree_id=\"%s\"%s", node->subtree_number, subtree_id
-      , node->is_subtree_root?" subtree_root=\"yes\"":"");
+    sprintf(stree," subtree_number=\"%d\" subtree_id=\"%s\" type=\"%s\"", node->subtree_number, subtree_id
+      , subtree_type);
     }
   else {
     sprintf(stree," subtree_number=\"%d\"",node->subtree_number);
@@ -115,7 +114,7 @@ if (node->boolean_operator.name==DOgBooleanNil) {
   if (ctrl_rqp->xml_pretty_func) {
     IFE(RqpAppendBx(ctrl_rqp,strlen(offset),offset));
     IFE((*ctrl_rqp->xml_pretty_func)(ctrl_rqp->xml_pretty_context
-      , print_offset, Inode ,ixmllabel, xmllabel, &iout, &out));
+      , print_offset, Inode ,ixmllabel, xmllabel, stree, &iout, &out));
     IFE(RqpAppendBx(ctrl_rqp,iout,out));
     }
   else {

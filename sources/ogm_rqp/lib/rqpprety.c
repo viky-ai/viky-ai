@@ -1,8 +1,8 @@
 /*
- *	Logging a boolean tree in a tree fashion (pretty print)
- *	Copyright (c) 2006-2010 Pertimm by Patrick Constant
- *	Dev : July,August,November 2006, August 2008, September 2010
- *	Version 1.4
+ *  Logging a boolean tree in a tree fashion (pretty print)
+ *  Copyright (c) 2006-2010 Pertimm by Patrick Constant
+ *  Dev : July,August,November 2006, August 2008, September 2010
+ *  Version 1.4
 */
 #include "ogm_rqp.h"
 
@@ -27,7 +27,6 @@ DONE;
 
 PUBLIC(int) OgRqpLogPrettySubtree(void *handle, int Inode)
 {
-struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
 IFE(RqpPrettySubtree(handle,Inode,0,0));
 DONE;
 }
@@ -109,7 +108,9 @@ else {
 
 stree[0]=0;
 if (node->subtree_number >= 0) {
-  IFE(found=RqpSubtreeNumberToId(ctrl_rqp,node->subtree_number,subtree_id));
+  og_rqp_subtree_type type = DOgRqpSubtreeTypeNormal;
+  IFE(found=RqpSubtreeNumberToId(ctrl_rqp,node->subtree_number,subtree_id, &type));
+  //char *subtree_type = ((type == DOgRqpSubtreeTypeWithout) ? "without_subtree" : "subtree");
   if (found) {
     sprintf(stree,",%d:%s%s", node->subtree_number, subtree_id, node->is_subtree_root?":root":"");
     }
@@ -122,10 +123,10 @@ sprintf(buffer, "%s%s (%d%s)\n", offset, label, Inode, stree);
 if (in_buffer) {
   IFE(RqpAppendBx(ctrl_rqp,strlen(buffer),buffer));
   }
-else {  
+else {
   OgMsg(ctrl_rqp->hmsg, "", DOgMsgDestInLog, "%s", buffer);
   }
-  
+
 DONE;
 }
 

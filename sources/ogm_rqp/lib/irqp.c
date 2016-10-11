@@ -1,8 +1,8 @@
 /*
- *	Initialization for ogm_rqp functions
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : May 2006
- *	Version 1.0
+ *  Initialization for ogm_rqp functions
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : May 2006
+ *  Version 1.0
 */
 #include "ogm_rqp.h"
 
@@ -31,9 +31,9 @@ ctrl_rqp->cloginfo = param->loginfo;
 ctrl_rqp->loginfo = &ctrl_rqp->cloginfo;
 
 memset(msg_param,0,sizeof(struct og_msg_param));
-msg_param->herr=ctrl_rqp->herr; 
+msg_param->herr=ctrl_rqp->herr;
 msg_param->hmutex=ctrl_rqp->hmutex;
-msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory; 
+msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory;
 msg_param->loginfo.where = ctrl_rqp->loginfo->where;
 msg_param->module_name="rqp";
 IFn(ctrl_rqp->hmsg=OgMsgInit(msg_param)) return(0);
@@ -51,25 +51,23 @@ size = ctrl_rqp->BaSize*sizeof(unsigned char);
 IFn(ctrl_rqp->Ba=(unsigned char *)malloc(size)) {
   sprintf(erreur,"OgRqpInit: malloc error on Ba (%d bytes)",size);
   OgErr(ctrl_rqp->herr,erreur); return(0);
-  } 
+  }
 
 ctrl_rqp->BxSize = DOgBxSize;
 size = ctrl_rqp->BxSize*sizeof(unsigned char);
 IFn(ctrl_rqp->Bx=(unsigned char *)malloc(size)) {
   sprintf(erreur,"OgRqpInit: malloc error on Bx (%d bytes)",size);
   OgErr(ctrl_rqp->herr,erreur); return(0);
-  } 
+  }
 
 memset(aut_param,0,sizeof(struct og_aut_param));
-aut_param->herr=ctrl_rqp->herr; 
+aut_param->herr=ctrl_rqp->herr;
 aut_param->hmutex=ctrl_rqp->hmutex;
-aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory; 
+aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
 aut_param->loginfo.where = ctrl_rqp->loginfo->where;
 aut_param->state_number = 0x1000;
 sprintf(aut_param->name,"subtree id");
 IFn(ctrl_rqp->ha_subtree_id=OgAutInit(aut_param)) return(0);
-
-IF(OgRqpSubtreeSetFunctionName(ctrl_rqp,"subtree")) return(0);
 
 IF(OgRqpReset(ctrl_rqp)) return(0);
 
@@ -119,7 +117,7 @@ PUBLIC(char *) OgRqpBanner(void)
 {
 return(DOgRqpBanner);
 }
- 
+
 
 
 

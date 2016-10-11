@@ -36,7 +36,7 @@ DONE;
 
 int RqpApplyPriorities1(struct og_ctrl_rqp *ctrl_rqp, int boolean_operator, int has_proximity)
 {
-int i,end=0,start=0,depth,min_depth,current_depth=(-1);
+int i,depth,min_depth,current_depth=(-1);
 
 while(1) {
   min_depth=0x7fffffff;

@@ -1,8 +1,8 @@
 /*
- *	Internal header for parsing requests with parenthesis
- *	Copyright (c) 2006-2010 Pertimm, Inc. by Patrick Constant
- *	Dev : May,June,December 2006, November 2008, May 2010
- *	Version 1.4
+ *  Internal header for parsing requests with parenthesis
+ *  Copyright (c) 2006-2010 Pertimm, Inc. by Patrick Constant
+ *  Dev : May,June,December 2006, November 2008, May 2010
+ *  Version 1.4
 */
 #include <logrqp.h>
 #include <loguni.h>
@@ -33,9 +33,9 @@ struct node {
 struct og_ctrl_rqp {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
 
-  int request_length; 
+  int request_length;
   unsigned char *request;
 
   int Iroot_node;
@@ -53,12 +53,10 @@ struct og_ctrl_rqp {
   unsigned char *Bx;
   int BxSize,BxUsed;
 
-  int (*xml_pretty_func)(void *context, int print_offset, int node_id, int in_length, unsigned char *in, int *out_length, unsigned char **out);
+  rqp_xml_pretty_func xml_pretty_func;
   void *xml_pretty_context;
-  
+
   void *ha_subtree_id;
-  unsigned char subtree_function_name[DPcPathSize];
-  int subtree_function_name_length;
   };
 
 
@@ -67,10 +65,10 @@ struct og_ctrl_rqp {
 int RqpReset(struct og_ctrl_rqp *);
 
 /** rqpfpar.c **/
-int RqpFirstParse(struct og_ctrl_rqp *); 
+int RqpFirstParse(struct og_ctrl_rqp *);
 
 /** rqpnode.c **/
-int RqpAddNode(struct og_ctrl_rqp *, struct og_boolean_operator *, int, int, int, int, int, int, int); 
+int RqpAddNode(struct og_ctrl_rqp *, struct og_boolean_operator *, int, int, int, int, int, int, int);
 
 /** rqplog.c **/
 char *RqpOperatorString(int);
@@ -109,6 +107,8 @@ int RqpTestReallocBx(struct og_ctrl_rqp *, int);
 int RqpReallocBx(struct og_ctrl_rqp *, int);
 
 /** rqptreeid.c **/
-int RqpSubtreeAddId(struct og_ctrl_rqp *ctrl_rqp, int tree_number, int uni_tree_id_length, unsigned char *uni_tree_id);
-int RqpSubtreeNumberToId(struct og_ctrl_rqp *ctrl_rqp, int tree_number, unsigned char *tree_id);
+int RqpSubtreeAddId(struct og_ctrl_rqp *ctrl_rqp, int subtree_number, int uni_subtree_id_length,
+    unsigned char *uni_subtree_id, og_rqp_subtree_type type);
+int RqpSubtreeNumberToId(struct og_ctrl_rqp *ctrl_rqp, int subtree_number, unsigned char *subtree_id,
+    og_rqp_subtree_type *type);
 

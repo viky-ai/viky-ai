@@ -74,7 +74,8 @@ static int RqpReparenthesizeSubtree(struct og_ctrl_rqp *ctrl_rqp, int Inode, int
 
   if (node->is_subtree_root)
   {
-    IFE(found = RqpSubtreeNumberToId(ctrl_rqp, node->subtree_number, subtree_id));
+    og_rqp_subtree_type type = DOgRqpSubtreeTypeNormal;
+    IFE(found = RqpSubtreeNumberToId(ctrl_rqp, node->subtree_number, subtree_id, &type));
     if (!found)
     {
       sprintf(erreur, "RqpReparenthesizeSubtree: could not find subtree_id from subtree_number=%d",
@@ -85,8 +86,23 @@ static int RqpReparenthesizeSubtree(struct og_ctrl_rqp *ctrl_rqp, int Inode, int
     IFE(
         OgCpToUni(strlen(subtree_id), subtree_id, DPcPathSize, &iuni_subtree_id, uni_subtree_id, DOgCodePageUTF8, 0, 0));
     ibuffer = 0;
-    memcpy(buffer + ibuffer, ctrl_rqp->subtree_function_name, ctrl_rqp->subtree_function_name_length);
-    ibuffer += ctrl_rqp->subtree_function_name_length;
+
+    unsigned char *subtree_function_name = "";
+    int isubtree_function_name = 0;
+
+    if(type == DOgRqpSubtreeTypeNormal)
+    {
+      subtree_function_name = "\0s\0u\0b\0t\0r\0e\0e";
+      isubtree_function_name = 14;
+    }
+    else if(type == DOgRqpSubtreeTypeWithout)
+    {
+      subtree_function_name = "\0w\0i\0t\0h\0o\0u\0t\0_\0s\0u\0b\0t\0r\0e\0e";
+      isubtree_function_name = 30;
+    }
+
+    memcpy(buffer + ibuffer, subtree_function_name, isubtree_function_name);
+    ibuffer += isubtree_function_name;
     memcpy(buffer + ibuffer, "\0(", 2);
     ibuffer += 2;
     memcpy(buffer + ibuffer, uni_subtree_id, iuni_subtree_id);
