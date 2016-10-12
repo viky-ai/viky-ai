@@ -11,8 +11,6 @@
 static int RqpSubtreeIdToNumber(struct og_ctrl_rqp *ctrl_rqp, unsigned char *subtree_id, int *psubtree_number);
 
 
-
-
 PUBLIC(int) OgRqpSubtreeNumberToId(void *handle, int subtree_number, unsigned char *subtree_id)
 {
 struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;

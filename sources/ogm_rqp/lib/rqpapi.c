@@ -1,8 +1,8 @@
 /*
- *	API navigation functions
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : July,October 2006
- *	Version 1.1
+ *  API navigation functions
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : July,October 2006
+ *  Version 1.1
 */
 #include "ogm_rqp.h"
 
@@ -37,7 +37,7 @@ node->depth=inode->depth;
 node->is_function=inode->is_function;
 node->name_length=inode->length;
 node->name=ctrl_rqp->request+inode->start;
-node->new_name_length=inode->nlength; 
+node->new_name_length=inode->nlength;
 node->new_name=ctrl_rqp->Ba+inode->nstart;
 node->boolean_operator=inode->boolean_operator;
 node->structure=inode->structure;
@@ -163,3 +163,8 @@ DONE;
 
 
 
+PUBLIC(og_status) OgRqpNodeAddSubtree(void *handle, int Inode, unsigned char *subtree_name)
+{
+  struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
+
+}
