@@ -66,6 +66,7 @@ struct og_boolean_operator {
   };
 
 struct og_rqp_node {
+  int Inode;
   int depth,is_function;
   int name_length;  unsigned char *name;
   int new_name_length;  unsigned char *new_name;

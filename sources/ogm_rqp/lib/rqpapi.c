@@ -33,6 +33,7 @@ PUBLIC(int) OgRqpNodeInformation(void *handle, int Inode, struct og_rqp_node *no
 struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
 struct node *inode = ctrl_rqp->Node + Inode;
 
+node->Inode=Inode;
 node->depth=inode->depth;
 node->is_function=inode->is_function;
 node->name_length=inode->length;
@@ -163,8 +164,3 @@ DONE;
 
 
 
-PUBLIC(og_status) OgRqpNodeAddSubtree(void *handle, int Inode, unsigned char *subtree_name)
-{
-  struct og_ctrl_rqp *ctrl_rqp = (struct og_ctrl_rqp *)handle;
-
-}
