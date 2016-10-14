@@ -46,7 +46,7 @@ static int LtrasModuleTermClean(struct og_ltra_module_input *module_input
 static int LtrasModuleTermClean1(struct og_ltra_module_input *module_input
   , struct og_ltra_trfs *trfs, int Itrf_basic, int Itrf, int *pnb_solutions);
 static int LtrasModuleTerm3(struct og_ltra_module_input *module_input
-  , struct og_ltra_trfs *trfs, int span_start_trf);
+  , struct og_ltra_trfs *trfs, int span_start_trf, int *counter_for_safety);
 static int LtrasModuleTermIsFalse(struct og_ltra_module_input *module_input
   , struct og_ltra_trfs *trfs, struct og_ltra_add_trf_input *input);
 static int LtrasModuleTermStopExplosion(struct og_ctrl_term *ctrl_term);
@@ -323,7 +323,8 @@ int OgLtrasModuleTerm(struct og_ltra_module_input *module_input
     ctrl_term->TrfUsed = trfs->TrfUsed;
     for (i = 0; i < trfs->TrfUsed; i++)
       trfs->Trf[i].history_trf = 0;
-    IFE(LtrasModuleTerm3(module_input, trfs, 0));
+    int counter_for_safety = 0;
+    IFE(LtrasModuleTerm3(module_input, trfs, 0, &counter_for_safety));
     if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
     {
       OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog
@@ -718,7 +719,7 @@ DONE;
 
 
 static int LtrasModuleTerm3(struct og_ltra_module_input *module_input
-  , struct og_ltra_trfs *trfs, int span_start_trf)
+  , struct og_ltra_trfs *trfs, int span_start_trf, int *counter_for_safety)
 {
 struct og_ctrl_term *ctrl_term = (struct og_ctrl_term *)module_input->handle;
 struct og_ltra_add_trf_input ctinput,*tinput=&ctinput;
@@ -733,6 +734,11 @@ int nb_scores; double score;
 struct og_ltra_word *word;
 int i,j,Iotrf,Itrf,Intrf;
 int is_false;
+
+// Sometimes there is a bug and it loop infinitely (bug has not been understood)
+// So we have a counter to avoid infinity loops
+*counter_for_safety = *counter_for_safety + 1;
+if(*counter_for_safety >= 2000) return(1);
 
 IFn(ctrl_term->TrfUsed) return(0);
 
@@ -835,7 +841,7 @@ for (i=0; i<ctrl_term->TrfUsed; i++) {
   for (j=0; j<trf->span_nb_trfs; j++) {
     trfs->Trf[span_start_trf+j].history_trf = i;
     }
-  IFE(stopped=LtrasModuleTerm3(module_input,trfs,trf->span_start_trf+trf->span_nb_trfs));
+  IFE(stopped=LtrasModuleTerm3(module_input,trfs,trf->span_start_trf+trf->span_nb_trfs, counter_for_safety));
   if (stopped) return(1);
   }
 return(0);
