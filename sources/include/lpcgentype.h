@@ -57,7 +57,7 @@ typedef unsigned long long og_bitfield_long;
 /**
  * Number of bits (not bytes !!!) that can be used in og_bitfield_long (at least 64 bits)
  */
-#define DOgBitfieldLongBitSize (sizeof(og_bitfield_long) * 8)
+#define DOgBitfieldLongBitSize (sizeof(og_bitfield_long) * CHAR_BIT)
 
 /**
  * Boolean type, with additional error status.
