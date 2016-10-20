@@ -45,7 +45,7 @@ PUBLIC(int) OgRqpSubtreeScan(void *handle,
       int type = DOgRqpSubtreeTypeNormal;
       char subtree_id[DOgRqpSubtreeMaxNameSize];
       int subtree_number = 0;
-      sscanf(out, "%d\1%d\1%256s", &subtree_number, &type, subtree_id);
+      sscanf(out, "%d\1%d\1%s", &subtree_number, &type, subtree_id);
       IFE(func(context, subtree_number, subtree_id, (og_rqp_subtree_type)type));
     }
     while ((retour = OgAutScann(ctrl_rqp->ha_subtree_id, &iout, out, nstate0, &nstate1, states)));
