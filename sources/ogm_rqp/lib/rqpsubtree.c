@@ -73,8 +73,17 @@ int RqpSubtreeAddId(struct og_ctrl_rqp *ctrl_rqp, int subtree_number, int uni_su
   }
 
   unsigned char subtree_id[DOgRqpSubtreeMaxNameSize];
+  og_bool truncated = FALSE;
   int subtree_id_length = 0;
-  IFE(OgUniToCp(uni_subtree_id_length,uni_subtree_id,DOgRqpSubtreeMaxNameSize,&subtree_id_length,subtree_id,DOgCodePageUTF8,0,0));
+  IFE(OgUniToCp(uni_subtree_id_length, uni_subtree_id, DOgRqpSubtreeMaxNameSize, &subtree_id_length, subtree_id, DOgCodePageUTF8, 0, &truncated));
+
+  if (truncated)
+  {
+    char erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "RqpAddSubtreeId: subtree name '%s' is too long, max name size is 256.", subtree_id);
+    OgErr(ctrl_rqp->herr, erreur);
+    DPcErr;
+  }
 
   int tmp_subtree_number = 0;
   int found = RqpSubtreeIdToNumber(ctrl_rqp, subtree_id, &tmp_subtree_number);
@@ -82,9 +91,8 @@ int RqpSubtreeAddId(struct og_ctrl_rqp *ctrl_rqp, int subtree_number, int uni_su
   if (found)
   {
     char erreur[DOgErrorSize];
-    sprintf(erreur,
-        "RqpAddSubtreeId: duplicate subtree_id '%s', request should have a different tree id for each named tree",
-        subtree_id);
+    sprintf(erreur, "RqpAddSubtreeId: duplicate subtree_id '%s',"
+        " request should have a different tree id for each named tree", subtree_id);
     OgErr(ctrl_rqp->herr, erreur);
     DPcErr;
   }
