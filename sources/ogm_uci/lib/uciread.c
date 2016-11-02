@@ -77,15 +77,13 @@ while(1) {
     DPcErr;
     }
   /* if recv() returns 0, then the other end closed connection.
-   * this is unlikely to occur if your application protocol is
-   * well defined, and unnecessary if you have registered for
-   * FD_CLOSE, but nonetheless you might want handle it. */
+   * thus we go on error */
   IFn(read_length) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
       OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
-        ,"OgUciRead: Nothing to read anymore");
+        ,"OgUciRead: Nothing to read anymore or server is down");
       }
-    break;
+    DPcErr;
     }
   isocket_buffer += read_length;
   if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
