@@ -45,8 +45,8 @@
 /resources/morphology/zh/zhtemp*
 /resources/morphology/zh/zhtradparse
 /resources/morphology/zh/zhsimpparse
-/resources/morphology/nl/nlroot
-/resources/morphology/nl/nlform
+/resources/morphology/nl/nlroot*
+/resources/morphology/nl/nlform*
 /resources/morphology/nl/dutch-clean.aff
 /resources/morphology/nl/dutch-clean.dic
 /sources/glib/glib-2.42.1
