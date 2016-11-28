@@ -1,8 +1,8 @@
 /*
- *	Internal header for phonetizer
- *	Copyright (c) 2008 Pertimm, Inc. by Patrick Constant
- *	Dev : November 2006, April 2008
- *	Version 1.1
+ *  Internal header for phonetizer
+ *  Copyright (c) 2008 Pertimm, Inc. by Patrick Constant
+ *  Dev : November 2006, April 2008
+ *  Version 1.1
 */
 
 #include <logpho.h>
@@ -48,14 +48,15 @@ struct char_class {
 struct og_ctrl_pho {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
-  
+  struct og_loginfo *loginfo;
+
   /* config */
-  
+
   int max_steps;
-  
+
   unsigned char space_character[2];
   int non_alpha_to_space;
+  og_bool keep_digit;
   unsigned char appending_characters[2*DOgMaxAppendingCharacters];
   int appending_characters_number;
 
@@ -68,12 +69,12 @@ struct og_ctrl_pho {
   unsigned char *BaClass;
   int BaClassSize,BaClassUsed;
   int is_inherited;
-  
+
   /* process */
-  
+
   unsigned char input[DPcPathSize*4];
   int iinput;
-  
+
   unsigned char bufferIn[DPcPathSize*4+10];
   int ibufferIn;
 
@@ -91,7 +92,7 @@ struct og_xml_info {
   int end_tag, auto_tag, ixml_path, xml_path[DOgMaxXmlPath];
 
   int option_type;
-  
+
   int step;
   char left[DPcPathSize];int ileft;
   char key[DPcPathSize];int ikey;
@@ -103,7 +104,7 @@ struct og_xml_info {
   };
 
 struct og_tree_xml_tag {
-  int value, iname; char *name; 
+  int value, iname; char *name;
   };
 
 
@@ -123,7 +124,7 @@ int RulesLog(pr_(struct og_ctrl_pho *) pr(char *));
 int AllocRule(pr_(struct og_ctrl_pho *) pr(struct rule **));
 
 /** phoforma.c **/
-int PhoFormatClean(pr(struct og_ctrl_pho *));
+og_status PhoFormatClean(pr(struct og_ctrl_pho *));
 int PhoFormatAppendingCharAdd(pr_(struct og_ctrl_pho *) pr_(int) pr(unsigned char *));
 
 /** phomatch.c **/

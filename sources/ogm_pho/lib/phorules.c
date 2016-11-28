@@ -1,5 +1,5 @@
 /*
- *	Rules automaton for ogm_pho functions
+ *  Rules automaton for ogm_pho functions
  *  Copyright (c) 2006 Pertimm by P.Constant,G.Logerot and L.Rigouste
  *  Dev : November 2006
  *  Version 1.0
@@ -46,7 +46,7 @@ memcpy(word+iword,rule->right,rule->iright); iword += rule->iright;
 
 if (ctrl_pho->loginfo->trace & DOgPhoTraceRules) {
   IFE(OgUniToCp(iword,word,DPcPathSize,&iB1,B1,DOgCodePageANSI,0,0));
-  OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoRulesRuleAdd: Expanding context [[%.*s]]",iB1,B1);
+  OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoRulesRuleAdd: Irule = '%d', Expanding context [[%.*s]]",Irule,iB1,B1);
   }
 
 IFE(PhoRulesRuleAddExpense(ctrl_pho,iword,word,0,Irule));
@@ -86,7 +86,7 @@ for(i=nstate0-1;i>iunibansi;i--) {
 
   if ((retour=OgAufScanf(ctrl_pho->ha_rules,i+2,buffer,&iout,out,&nstate0,&nstate1,states))) {
     do {
-      IFE(retour); 
+      IFE(retour);
       if(retour) {
         p=out;
         Irule=OggNin4(&p);

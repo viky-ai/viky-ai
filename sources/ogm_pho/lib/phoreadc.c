@@ -1,5 +1,5 @@
 /*
- *	Reading conf program for Phonet function
+ *  Reading conf program for Phonet function
  *  Copyright (c) 2006 Pertimm by P.Constant,G.Logerot and L.Rigouste
  *  Dev : November 2006
  *  Version 1.0
@@ -22,6 +22,7 @@
 #define DOgPhoReadConfOptionAppendingCharacter   1
 #define DOgPhoReadConfOptionNonAlphaToSpace      2
 #define DOgPhoReadConfOptionSpaceCharacter       3
+#define DOgPhoReadConfKeepDigit                  4
 
 
 STATICF(int) PhoReadConf1(pr_(void *) pr_(int) pr_(int) pr(unsigned char *));
@@ -124,18 +125,16 @@ DONE;
 
 
 
-STATICF(int) PhoReadConf1RuleReset(info)
-struct og_xml_info *info;
+STATICF(int) PhoReadConf1RuleReset(struct og_xml_info *info)
 {
-struct og_ctrl_pho *ctrl_pho=info->ctrl_pho;
 
-info->ileft=0;
-info->ikey=0;
-info->iright=0;
-info->iphonetic=0;
-info->replace=0;
+  info->ileft = 0;
+  info->ikey = 0;
+  info->iright = 0;
+  info->iphonetic = 0;
+  info->replace = 0;
 
-DONE;
+  DONE;
 }
 
 
@@ -143,176 +142,253 @@ DONE;
 
 
 
-STATICF(int) PhoReadConf1(ptr,type,ib,b)
-void *ptr; int type; int ib; unsigned char *b;
+STATICF(int) PhoReadConf1(void *ptr, int type, int ib, unsigned char *b)
 {
-struct og_xml_info *info = (struct og_xml_info *)ptr;
-struct og_ctrl_pho *ctrl_pho=info->ctrl_pho;
-char buffer[DPcPathSize],B[DPcPathSize];
-int i,iB,value,iname_tag;
+  struct og_xml_info *info = (struct og_xml_info *) ptr;
+  struct og_ctrl_pho *ctrl_pho = info->ctrl_pho;
 
-if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail) {
-  IFE(OgUniToCp(ib,b,DPcPathSize,&iB,B,DOgCodePageANSI,0,0));
-  buffer[0]=0;
-  for (i=0; i<info->ixml_path; i++) {
-    sprintf(buffer+strlen(buffer),"%d ",info->xml_path[i]); }
-  OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoReadConf1: xml_path: %s type = %d [[%.*s]]", buffer, type, iB, B);
+  if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+  {
+    char B[DPcPathSize];
+    int iB;
+    IFE(OgUniToCp(ib,b,DPcPathSize,&iB,B,DOgCodePageANSI,0,0));
+    char buffer[DPcPathSize];
+    buffer[0] = 0;
+    for (int i = 0; i < info->ixml_path; i++)
+    {
+      sprintf(buffer + strlen(buffer), "%d ", info->xml_path[i]);
+    }
+
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1: xml_path: %s type = %d [[%.*s]]", buffer, type, iB, B);
   }
 
-if (type==DOgParseXmlTag) {
-  value=DOgPhoReadConfTagNil;
-  if (b[ib-2]==0 && b[ib-1]=='/') {info->auto_tag=1; info->end_tag=0; }
-  else {
-    info->auto_tag=0;
-    if (b[0]==0 && b[1]=='/') info->end_tag=1; else info->end_tag=0;
+  if (type == DOgParseXmlTag)
+  {
+    int value = DOgPhoReadConfTagNil;
+    if (b[ib - 2] == 0 && b[ib - 1] == '/')
+    {
+      info->auto_tag = 1;
+      info->end_tag = 0;
     }
-  for (i=0; i<ib; i+=2) { if (OgUniIsspace((b[i]<<8)+b[i+1])) break;} iname_tag=i;
-  OgUniStrlwr(iname_tag,b,b);
-  for (i=0; PhoReadConfTag[i].value; i++) {
-    if (PhoReadConfTag[i].iname==iname_tag-2*info->end_tag 
-        && !memcmp(PhoReadConfTag[i].name, b+2*info->end_tag, iname_tag-2*info->end_tag)) {
-      value=PhoReadConfTag[i].value; break;
+    else
+    {
+      info->auto_tag = 0;
+      if (b[0] == 0 && b[1] == '/') info->end_tag = 1;
+      else info->end_tag = 0;
+    }
+    int i = 0;
+    for (i = 0; i < ib; i += 2)
+    {
+      if (OgUniIsspace((b[i] << 8) + b[i + 1])) break;
+    }
+    int iname_tag = i;
+    OgUniStrlwr(iname_tag, b, b);
+    for (i = 0; PhoReadConfTag[i].value; i++)
+    {
+      if (PhoReadConfTag[i].iname == iname_tag - 2 * info->end_tag
+          && !memcmp(PhoReadConfTag[i].name, b + 2 * info->end_tag, iname_tag - 2 * info->end_tag))
+      {
+        value = PhoReadConfTag[i].value;
+        break;
       }
     }
-  if (value!=DOgPhoReadConfTagNil) {
-    if (!info->end_tag) { if (info->ixml_path < DOgMaxXmlPath-1) info->xml_path[info->ixml_path++]=value; }
+    if (value != DOgPhoReadConfTagNil)
+    {
+      if (!info->end_tag)
+      {
+        if (info->ixml_path < DOgMaxXmlPath - 1) info->xml_path[info->ixml_path++] = value;
+      }
     }
 
-  if (value==DOgPhoReadConfTag_rules) {
-    IFE(OgReadTagUni(ib,b,b-info->B,PhoReadConf1TagAttribute,info));
+    if (value == DOgPhoReadConfTag_rules)
+    {
+      IFE(OgReadTagUni(ib, b, b - info->B, PhoReadConf1TagAttribute, info));
     }
-  if (value==DOgPhoReadConfTag_rule) {
-    IFE(OgReadTagUni(ib,b,b-info->B,PhoReadConf1TagAttribute,info));
-    IFE(PhoRulesRuleAdd(info));
-    IFE(PhoReadConf1RuleReset(info));
-    }
-
-  if (value==DOgPhoReadConfTag_class && !info->end_tag) {
-    IFE(OgReadTagUni(ib,b,b-info->B,PhoReadConf1TagAttribute,info));
-    }
-    
-  if (value==DOgPhoReadConfTag_option) {
-    IFE(OgReadTagUni(ib,b,b-info->B,PhoReadConf1TagAttribute,info));
+    if (value == DOgPhoReadConfTag_rule)
+    {
+      IFE(OgReadTagUni(ib, b, b - info->B, PhoReadConf1TagAttribute, info));
+      IFE(PhoRulesRuleAdd(info));
+      IFE(PhoReadConf1RuleReset(info));
     }
 
-  if (value!=DOgPhoReadConfTagNil) {
-    if (info->auto_tag || info->end_tag) { if (info->ixml_path > 0) info->ixml_path--; }
+    if (value == DOgPhoReadConfTag_class && !info->end_tag)
+    {
+      IFE(OgReadTagUni(ib, b, b - info->B, PhoReadConf1TagAttribute, info));
+    }
+
+    if (value == DOgPhoReadConfTag_option)
+    {
+      IFE(OgReadTagUni(ib, b, b - info->B, PhoReadConf1TagAttribute, info));
+    }
+
+    if (value != DOgPhoReadConfTagNil)
+    {
+      if (info->auto_tag || info->end_tag)
+      {
+        if (info->ixml_path > 0) info->ixml_path--;
+      }
     }
 
   }
-else if (type==DOgParseXmlContent) {
-  value=info->xml_path[info->ixml_path-1];
+  else if (type == DOgParseXmlContent)
+  {
+    int value = info->xml_path[info->ixml_path - 1];
 
-  if (value==DOgPhoReadConfTag_c) {
-    IFE(ClassAddC(ctrl_pho,info->Ichar_class,b));
+    if (value == DOgPhoReadConfTag_c)
+    {
+      IFE(ClassAddC(ctrl_pho, info->Ichar_class, b));
     }
-  
-  if(info->option_type) {
-    switch(info->option_type) {
-      case DOgPhoReadConfOptionAppendingCharacter:
-        IFE(PhoFormatAppendingCharAdd(ctrl_pho,ib,b));
-        break;
-      case DOgPhoReadConfOptionNonAlphaToSpace:
-        if(ib>1 && !memcmp(b+1,"1",1)) {
-          ctrl_pho->non_alpha_to_space=1;
+
+    if (info->option_type)
+    {
+      switch (info->option_type)
+      {
+        case DOgPhoReadConfOptionAppendingCharacter:
+          IFE(PhoFormatAppendingCharAdd(ctrl_pho, ib, b));
+          break;
+        case DOgPhoReadConfOptionNonAlphaToSpace:
+          if (ib > 1 && !memcmp(b + 1, "1", 1))
+          {
+            ctrl_pho->non_alpha_to_space = 1;
           }
-        break;
-      case DOgPhoReadConfOptionSpaceCharacter:
-        memcpy(ctrl_pho->space_character,b,2*sizeof(unsigned char));
-        break;
+          break;
+        case DOgPhoReadConfOptionSpaceCharacter:
+          memcpy(ctrl_pho->space_character, b, 2 * sizeof(unsigned char));
+          break;
+        case DOgPhoReadConfKeepDigit:
+          if (ib > 1 && !memcmp(b + 1, "1", 1))
+          {
+            ctrl_pho->keep_digit = TRUE;
+          }
+          break;
       }
-    info->option_type=DOgPhoReadConfOptionNil;
+      info->option_type = DOgPhoReadConfOptionNil;
     }
 
   }
 
-return(0);
+  return (0);
 }
 
 
 
 
 
-STATICF(int) PhoReadConf1TagAttribute(ptr,rt)
-void *ptr; struct og_read_tag *rt;
+STATICF(int) PhoReadConf1TagAttribute(ptr, rt)
+  void *ptr;struct og_read_tag *rt;
 {
-struct og_xml_info *info = (struct og_xml_info *)ptr;
-struct og_ctrl_pho *ctrl_pho=info->ctrl_pho;
-char B1[DPcPathSize],B2[DPcPathSize];
-int iB1=0,iB2=0;
+  struct og_xml_info *info = (struct og_xml_info *) ptr;
+  struct og_ctrl_pho *ctrl_pho = info->ctrl_pho;
 
-if(rt->iattr<2) DONE;
-if(rt->ivalue<2) DONE;
+  if (rt->iattr < 2) DONE;
+  if (rt->ivalue < 2) DONE;
 
-OgUniStrlwr(rt->iattr,rt->attr,rt->attr);
+  OgUniStrlwr(rt->iattr, rt->attr, rt->attr);
 
-if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail) {
-  IFE(OgUniToCp(rt->iattr,rt->attr,DPcPathSize,&iB1,B1,DOgCodePageANSI,0,0));
-  IFE(OgUniToCp(rt->ivalue,rt->value,DPcPathSize,&iB2,B2,DOgCodePageANSI,0,0));
-  OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoReadConf1TagAttribute: Reading Tag attr=%.*s value=%.*s", iB1, B1, iB2, B2);
-  }
-
-if (rt->closing_tag) DONE;
-
-if (info->xml_path[info->ixml_path-1]==DOgPhoReadConfTag_option) {
-  if (rt->iattr==8 && !Ogmemicmp("\0n\0a\0m\0e",rt->attr,8)) { /* name (4) */
-    /* appending character (19) */
-    if (rt->ivalue==38 && !Ogmemicmp("\0a\0p\0p\0e\0n\0d\0i\0n\0g\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r",rt->value,38)) {
-      info->option_type=DOgPhoReadConfOptionAppendingCharacter;
-      if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail) {
-        OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoReadConf1TagAttribute: Appending Character detected");
-        }
-      }
-    /* non-alpha character to space (28) */
-    if (rt->ivalue==56 && !Ogmemicmp("\0n\0o\0n\0-\0a\0l\0p\0h\0a\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r\0 \0t\0o\0 \0s\0p\0a\0c\0e",rt->value,56)) {
-      info->option_type=DOgPhoReadConfOptionNonAlphaToSpace;
-      if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail) {
-        OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoReadConf1TagAttribute: Non Alpha To Space Parameter detected");
-        }
-      }
-    /* space character (15) */
-    if (rt->ivalue==30 && !Ogmemicmp("\0s\0p\0a\0c\0e\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r",rt->value,30)) {
-      info->option_type=DOgPhoReadConfOptionSpaceCharacter;
-      if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail) {
-        OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoReadConf1TagAttribute: Space Character detected");
-        }
-      }
-    }
-  }
-
-if (info->xml_path[info->ixml_path-1]==DOgPhoReadConfTag_rules) {
-  if (rt->iattr==8 && !Ogmemicmp("\0s\0t\0e\0p",rt->attr,8)) { /* step (4) */
+  if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+  {
+    char B1[DPcPathSize];
+    char B2[DPcPathSize];
+    int iB1 = 0, iB2 = 0;
+    IFE(OgUniToCp(rt->iattr,rt->attr,DPcPathSize,&iB1,B1,DOgCodePageANSI,0,0));
     IFE(OgUniToCp(rt->ivalue,rt->value,DPcPathSize,&iB2,B2,DOgCodePageANSI,0,0));
-    B2[iB2]=0;
-    info->step=atoi(B2);
-    if(info->step > ctrl_pho->max_steps) ctrl_pho->max_steps = info->step;
-    }
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1TagAttribute: Reading Tag attr=%.*s value=%.*s", iB1, B1,
+        iB2, B2);
   }
-if (info->xml_path[info->ixml_path-1]==DOgPhoReadConfTag_rule) {
-  if (rt->iattr==8 && !Ogmemicmp("\0l\0e\0f\0t",rt->attr,8)) {/* left (4) */
-    memcpy(info->left,rt->value,rt->ivalue);
-    info->ileft=rt->ivalue;
-    }
-  if (rt->iattr==6 && !Ogmemicmp("\0k\0e\0y",rt->attr,6)) {/* key (3) */
-    memcpy(info->key,rt->value,rt->ivalue);
-    info->ikey=rt->ivalue;
-    info->replace=rt->ivalue;
-    }
-  if (rt->iattr==10 && !Ogmemicmp("\0r\0i\0g\0h\0t",rt->attr,10)) {/* right (5) */
-    memcpy(info->right,rt->value,rt->ivalue);
-    info->iright=rt->ivalue;
-    }
-  if (rt->iattr==16 && !Ogmemicmp("\0p\0h\0o\0n\0e\0t\0i\0c",rt->attr,16)) {/* phonetic (8) */
-    memcpy(info->phonetic,rt->value,rt->ivalue);
-    info->iphonetic=rt->ivalue;
-    }
-  }
-if (info->xml_path[info->ixml_path-1]==DOgPhoReadConfTag_class) {
-  if (rt->iattr==18 && !Ogmemicmp("\0c\0h\0a\0r\0a\0c\0t\0e\0r",rt->attr,18)) { /* character (9) */
-    IFE(info->Ichar_class=ClassCreate(ctrl_pho,rt->value));
+
+  if (rt->closing_tag) DONE;
+
+  if (info->xml_path[info->ixml_path - 1] == DOgPhoReadConfTag_option)
+  {
+    if (rt->iattr == 8 && !Ogmemicmp("\0n\0a\0m\0e", rt->attr, 8))
+    { /* name (4) */
+      /* appending character (19) */
+      if (rt->ivalue == 38 && !Ogmemicmp("\0a\0p\0p\0e\0n\0d\0i\0n\0g\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r", rt->value, 38))
+      {
+        info->option_type = DOgPhoReadConfOptionAppendingCharacter;
+        if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+        {
+          OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1TagAttribute: Appending Character detected");
+        }
+      }
+      /* non-alpha character to space (28) */
+      if (rt->ivalue == 56
+          && !Ogmemicmp("\0n\0o\0n\0-\0a\0l\0p\0h\0a\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r\0 \0t\0o\0 \0s\0p\0a\0c\0e",
+              rt->value, 56))
+      {
+        info->option_type = DOgPhoReadConfOptionNonAlphaToSpace;
+        if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+        {
+          OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1TagAttribute: Non Alpha To Space Parameter detected");
+        }
+      }
+      /* keep_digit (10) */
+      if (rt->ivalue == 20
+          && !Ogmemicmp("\0k\0e\0e\0p\0_\0d\0i\0g\0i\0t",
+              rt->value, 20))
+      {
+        info->option_type = DOgPhoReadConfKeepDigit;
+        if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+        {
+          OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1TagAttribute: keep_digit Parameter detected");
+        }
+      }
+      /* space character (15) */
+      if (rt->ivalue == 30 && !Ogmemicmp("\0s\0p\0a\0c\0e\0 \0c\0h\0a\0r\0a\0c\0t\0e\0r", rt->value, 30))
+      {
+        info->option_type = DOgPhoReadConfOptionSpaceCharacter;
+        if (ctrl_pho->loginfo->trace & DOgPhoTracePhoReadConfDetail)
+        {
+          OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoReadConf1TagAttribute: Space Character detected");
+        }
+      }
     }
   }
 
-DONE;
+  if (info->xml_path[info->ixml_path - 1] == DOgPhoReadConfTag_rules)
+  {
+    if (rt->iattr == 8 && !Ogmemicmp("\0s\0t\0e\0p", rt->attr, 8))
+    { /* step (4) */
+      char B2[DPcPathSize];
+      int iB2 = 0;
+      IFE(OgUniToCp(rt->ivalue,rt->value,DPcPathSize,&iB2,B2,DOgCodePageANSI,0,0));
+      B2[iB2] = 0;
+      info->step = atoi(B2);
+      if (info->step > ctrl_pho->max_steps) ctrl_pho->max_steps = info->step;
+    }
+  }
+  if (info->xml_path[info->ixml_path - 1] == DOgPhoReadConfTag_rule)
+  {
+    if (rt->iattr == 8 && !Ogmemicmp("\0l\0e\0f\0t", rt->attr, 8))
+    {/* left (4) */
+      memcpy(info->left, rt->value, rt->ivalue);
+      info->ileft = rt->ivalue;
+    }
+    if (rt->iattr == 6 && !Ogmemicmp("\0k\0e\0y", rt->attr, 6))
+    {/* key (3) */
+      memcpy(info->key, rt->value, rt->ivalue);
+      info->ikey = rt->ivalue;
+      info->replace = rt->ivalue;
+    }
+    if (rt->iattr == 10 && !Ogmemicmp("\0r\0i\0g\0h\0t", rt->attr, 10))
+    {/* right (5) */
+      memcpy(info->right, rt->value, rt->ivalue);
+      info->iright = rt->ivalue;
+    }
+    if (rt->iattr == 16 && !Ogmemicmp("\0p\0h\0o\0n\0e\0t\0i\0c", rt->attr, 16))
+    {/* phonetic (8) */
+      memcpy(info->phonetic, rt->value, rt->ivalue);
+      info->iphonetic = rt->ivalue;
+    }
+  }
+  if (info->xml_path[info->ixml_path - 1] == DOgPhoReadConfTag_class)
+  {
+    if (rt->iattr == 18 && !Ogmemicmp("\0c\0h\0a\0r\0a\0c\0t\0e\0r", rt->attr, 18))
+    { /* character (9) */
+      IFE(info->Ichar_class = ClassCreate(ctrl_pho, rt->value));
+    }
+  }
+
+  DONE;
 }
 
