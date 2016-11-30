@@ -36,6 +36,7 @@ static og_status OgAddrSocketQueueLoop(struct og_ctrl_addr *ctrl_addr)
     int current_clock = OgMilliClock();
     int time_already_passed = current_clock - info->time_start;
     int timeout = ctrl_addr->backlog_timeout;
+    int down_timeout = ctrl_addr->down_timeout;
     if ((timeout > 0) && (time_already_passed >= timeout))
     {
       time_t error_time[1];
@@ -47,6 +48,19 @@ static og_status OgAddrSocketQueueLoop(struct og_ctrl_addr *ctrl_addr)
 
       IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (timeout)"));
 
+    }
+    else if ((down_timeout > 0) && (time_already_passed >= down_timeout))
+    {
+      time_t error_time[1];
+      time(error_time);
+
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrSocketQueue %s: request dropped on socket %d because "
+          "a search_unavailable has been send and down_timeout is reached at %.24s UTC)", ctrl_addr->addr_name,
+          info->hsocket_service, OgGmtime(error_time));
+
+      og_status status = ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503,
+          "Service Unavailable (parameter search unavailable activated)");
+      IFE(status);
     }
     else
     {

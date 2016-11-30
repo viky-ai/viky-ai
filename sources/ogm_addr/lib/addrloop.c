@@ -24,7 +24,7 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
  *  the loop must break.
  */
 
-PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *answer_func_context)
+PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *answer_func_context, og_bool called_from_indexing)
 {
   struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) handle;
   ctrl_addr->answer_func = answer_func;
@@ -54,6 +54,44 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       og_status status = AddrAcceptConnection(ctrl_addr, addr_ctx, i);
       IFE(status);
       if (status == CONTINUE) continue;
+
+
+      if(!called_from_indexing)
+      {
+        if((ctrl_addr->search_unavailable_func == NULL) || (ctrl_addr->search_unavailable_ongoing_func == NULL))
+        {
+          char erreur[DOgErrorSize];
+          sprintf(erreur, "OgAddrLoop: search_unavailable_func and  search_unavailable_ongoing_func cannot be null \n");
+          OgErr(ctrl_addr->herr, erreur);
+          DPcErr;
+        }
+
+        ctrl_addr->search_unavailable = ctrl_addr->search_unavailable_func(ctrl_addr->func_context);
+        IFE(ctrl_addr->search_unavailable);
+
+        ctrl_addr->search_unavailable_ongoing = ctrl_addr->search_unavailable_ongoing_func(ctrl_addr->func_context);
+        IFE(ctrl_addr->search_unavailable_ongoing);
+
+        if (ctrl_addr->search_unavailable)
+        {
+          status = ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503,
+              "Service Unavailable (parameter search unavailable activated)");
+          IFE(status);
+        }
+
+        // We wait for down_timeout to be reached
+        if(ctrl_addr->search_unavailable_ongoing)
+        {
+          og_bool search_unavailable_timed_out = ctrl_addr->search_unavailable_timed_out_func(ctrl_addr->func_context);
+          IFE(search_unavailable_timed_out);
+          if(search_unavailable_timed_out)
+          {
+            status = ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503,
+                "Service Unavailable (parameter search unavailable activated)");
+            IFE(status);
+          }
+        }
+      }
 
       // g_async_queue_length returns the number of data items in the queue minus the number of waiting threads,
       // so a negative value means waiting threads, and a positive value means available entries in the queue .

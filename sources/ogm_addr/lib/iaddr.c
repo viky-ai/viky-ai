@@ -29,7 +29,11 @@ ctrl_addr->loginfo[0] = param->loginfo;
 snprintf(ctrl_addr->addr_name, DPcPathSize, "%s", param->addr_name);
 ctrl_addr->backlog_max_pending_requests = param->backlog_max_pending_requests;
 ctrl_addr->backlog_timeout = param->backlog_timeout;
+ctrl_addr->down_timeout = param->down_timeout;
 ctrl_addr->must_stop_func = param->must_stop_func;
+ctrl_addr->search_unavailable_func = param->search_unavailable_func;
+ctrl_addr->search_unavailable_ongoing_func = param->search_unavailable_ongoing_func;
+ctrl_addr->search_unavailable_timed_out_func = param->search_unavailable_timed_out_func;
 ctrl_addr->send_error_status_func = param->send_error_status_func;
 ctrl_addr->func_context = param->func_context;
 
