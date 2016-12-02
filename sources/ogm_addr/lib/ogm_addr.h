@@ -54,18 +54,13 @@ struct og_ctrl_addr
   int (*answer_func)(void *answer_func_context, struct og_socket_info *info);
   void *answer_func_context;
   int (*must_stop_func)(void *func_context);
-  og_bool (*search_unavailable_func)(void *func_context);
-  og_bool (*search_unavailable_ongoing_func)(void *func_context);
-  og_bool (*search_unavailable_timed_out_func)(void *func_context);
+  og_bool (*search_unavailable_state_func)(void *func_context);
   int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status, og_string message);
   void *func_context;
   int must_stop;
   ogsem_t hsem[1];
 
   og_bool closed;
-
-  og_bool search_unavailable;
-  og_bool search_unavailable_ongoing;
 
 };
 

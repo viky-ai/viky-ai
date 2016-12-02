@@ -23,7 +23,6 @@
 #define DOgAddrTraceAdding              0x4
 #define DOgAddrTraceGhbn                0x8
 
-
 struct og_socket_info
 {
   char *address;
@@ -43,22 +42,17 @@ struct og_addr_param
 
   int backlog_max_pending_requests;
   int backlog_timeout;
-  int down_timeout;
 
   int (*must_stop_func)(void *func_context);
   int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status, og_string message);
   void *func_context;
-
-  og_bool (*search_unavailable_func)(void *func_context);
-  og_bool (*search_unavailable_ongoing_func)(void *func_context);
-  og_bool (*search_unavailable_timed_out_func)(void *func_context);
 
 };
 
 
 DEFPUBLIC(void *) OgAddrInit(struct og_addr_param *params);
 DEFPUBLIC(int) OgAddrAdd(void *handle, char *hostname, int port);
-DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *answer_func_context, og_bool called_from_indexing);
+DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *answer_func_context);
 DEFPUBLIC(int) OgAddrClose(void *handle);
 DEFPUBLIC(int) OgAddrFlush(void *handle);
 
