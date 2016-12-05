@@ -28,7 +28,7 @@ ctrl_addr->hmutex = param->hmutex;
 ctrl_addr->loginfo[0] = param->loginfo;
 snprintf(ctrl_addr->addr_name, DPcPathSize, "%s", param->addr_name);
 ctrl_addr->backlog_max_pending_requests = param->backlog_max_pending_requests;
-ctrl_addr->backlog_timeout = param->backlog_timeout;
+ctrl_addr->get_backlog_timeout_func = param->get_backlog_timeout_func;
 ctrl_addr->must_stop_func = param->must_stop_func;
 ctrl_addr->send_error_status_func = param->send_error_status_func;
 ctrl_addr->func_context = param->func_context;
@@ -43,7 +43,6 @@ IFn(ctrl_addr->hmsg=OgMsgInit(msg_param)) return(0);
 IF(OgMsgTuneInherit(ctrl_addr->hmsg,param->hmsg)) return(0);
 
 OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrInit: backlog_max_pending_requests=%d", ctrl_addr->backlog_max_pending_requests);
-OgMsg(ctrl_addr->hmsg,"",DOgMsgDestInLog, "OgAddrInit: backlog_timeout=%d", ctrl_addr->backlog_timeout);
 
 ctrl_addr->BaSize = DOgBaSize;
 size = ctrl_addr->BaSize*sizeof(unsigned char);

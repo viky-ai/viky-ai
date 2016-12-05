@@ -35,7 +35,9 @@ static og_status OgAddrSocketQueueLoop(struct og_ctrl_addr *ctrl_addr)
 
     int current_clock = OgMilliClock();
     int time_already_passed = current_clock - info->time_start;
-    int timeout = ctrl_addr->backlog_timeout;
+
+    // We need to use a function since backlog_timeout can change in ssrv at real time
+    int timeout = ctrl_addr->get_backlog_timeout_func(ctrl_addr->func_context);
     if ((timeout > 0) && (time_already_passed >= timeout))
     {
       time_t error_time[1];
