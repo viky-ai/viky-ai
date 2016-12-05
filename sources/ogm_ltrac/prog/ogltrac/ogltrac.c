@@ -305,47 +305,55 @@ return(0);
 
 
 STATICF(int) Ltrac(info)
-struct og_info *info;
+  struct og_info *info;
 {
-int i;
 
-IFn(info->input->min_frequency_swap) {
-  /* Since swap is 10 times bigger than base or phon and is necessary only for the 'add'
-   * module, it is a good idea to reduce the size of the swap dictionary, by reducing
-   * its minimum frequency */
-  int frequency_swap_ratio = 2;
-  info->input->min_frequency_swap = frequency_swap_ratio*info->input->min_frequency;
-  if (info->input->dictionaries_to_export == DOgLtracDictionaryTypeSwap) {
-    info->input->min_frequency_swap = info->input->min_frequency;
+  IFn(info->input->min_frequency_swap)
+  {
+    if (info->input->dictionaries_to_export == DOgLtracDictionaryTypeSwap)
+    {
+      info->input->min_frequency_swap = info->input->min_frequency;
     }
   }
 
-IFn(info->hltrac=OgLtracInit(info->param)) DPcErr;
+  IFn(info->hltrac=OgLtracInit(info->param)) DPcErr;
 
-if (info->dictionaries_to_scan) {
-  if (info->dictionaries_to_scan & DOgLtracDictionaryTypeBase) {
-    IFE(OgLtracDicBaseLog(info->hltrac));
+  if (info->dictionaries_to_scan)
+  {
+    if (info->dictionaries_to_scan & DOgLtracDictionaryTypeBase)
+    {
+      IFE(OgLtracDicBaseLog(info->hltrac));
     }
-  if (info->dictionaries_to_scan & DOgLtracDictionaryTypeSwap) {
-    IFE(OgLtracDicSwapLog(info->hltrac));
+    if (info->dictionaries_to_scan & DOgLtracDictionaryTypeSwap)
+    {
+      IFE(OgLtracDicSwapLog(info->hltrac));
     }
-  if (info->dictionaries_to_scan & DOgLtracDictionaryTypePhon) {
-    IFE(OgLtracDicPhonLog(info->hltrac));
+    if (info->dictionaries_to_scan & DOgLtracDictionaryTypePhon)
+    {
+      IFE(OgLtracDicPhonLog(info->hltrac));
     }
   }
-else {
-  if (info->negative_attributes) { IFE(OgLtracAddAttributeInit(info->hltrac,0)); }
-  else { IFE(OgLtracAddAttributeInit(info->hltrac,1)); }
-  for (i=0; i<info->attribute_number; i++) {
-    IFE(OgLtracAddAttribute(info->hltrac, info->attribute[i].attribute_string));
+  else
+  {
+    if (info->negative_attributes)
+    {
+      IFE(OgLtracAddAttributeInit(info->hltrac, 0));
+    }
+    else
+    {
+      IFE(OgLtracAddAttributeInit(info->hltrac, 1));
+    }
+    for (int i = 0; i < info->attribute_number; i++)
+    {
+      IFE(OgLtracAddAttribute(info->hltrac, info->attribute[i].attribute_string));
     }
 
-  IFE(OgLtrac(info->hltrac,info->input));
+    IFE(OgLtrac(info->hltrac, info->input));
   }
 
-IFE(OgLtracFlush(info->hltrac));
+  IFE(OgLtracFlush(info->hltrac));
 
-DONE;
+  DONE;
 }
 
 

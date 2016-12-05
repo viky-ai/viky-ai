@@ -12,68 +12,81 @@ int FilterDict(struct og_ctrl_ltrac *);
 
 
 
-int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input)
+int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
-struct og_ltrac_input *input = ctrl_ltrac->input;
-unsigned char out[DPcAutMaxBufferSize+9];
-oindex states[DPcAutMaxBufferSize+9];
-char string[2*DPcPathSize];
-char buffer[DPcPathSize];
-int nstate0,nstate1,iout;
-int ibuffer,retour;
-int length;
 
-if (ctrl_ltrac->ha_filter) {
-  memcpy(string,dic_input->value,dic_input->value_length);
-  string[dic_input->value_length]=0;
-  string[dic_input->value_length+1]='|';
-  length=dic_input->value_length+2;
-  if (ctrl_ltrac->ha_seen) {
-    IFE(OgAutAdd(ctrl_ltrac->ha_seen,length,string));
+  int length = 0;
+  if (ctrl_ltrac->ha_filter)
+  {
+    char string[2 * DPcPathSize];
+    memcpy(string, dic_input->value, dic_input->value_length);
+    string[dic_input->value_length] = 0;
+    string[dic_input->value_length + 1] = '|';
+    length = dic_input->value_length + 2;
+    if (ctrl_ltrac->ha_seen)
+    {
+      IFE(OgAutAdd(ctrl_ltrac->ha_seen, length, string));
     }
   }
 
-if (dic_input->frequency < input->min_frequency) DONE;
+  struct og_ltrac_input *input = ctrl_ltrac->input;
+  if (dic_input->frequency < input->min_frequency) DONE;
 
-if (ctrl_ltrac->ha_filter) {
-  if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd) {
-    IFE(OgUniToCp(length,string,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-    OgMsg(ctrl_ltrac->hmsg,"",DOgMsgDestInLog,"LtracDicAdd: looking for %s", buffer);
+  if (ctrl_ltrac->ha_filter)
+  {
+    char string[2 * DPcPathSize];
+    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
+    {
+      char buffer[DPcPathSize];
+      int ibuffer = 0;
+      IFE(OgUniToCp(length,string,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicAdd: looking for %s", buffer);
     }
 
-  IFE(retour=OgAutScanf(ctrl_ltrac->ha_filter,length,string,&iout,out,&nstate0,&nstate1,states));
-  if (!retour) DONE;
+    unsigned char out[DPcAutMaxBufferSize + 9];
+    oindex states[DPcAutMaxBufferSize + 9];
+    int nstate0, nstate1, iout;
+    og_status retour = OgAutScanf(ctrl_ltrac->ha_filter, length, string, &iout, out, &nstate0, &nstate1, states);
+    IFE(retour);
+    if (!retour) DONE;
   }
 
-if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd) {
-  char attribute_string[DPcPathSize];
-  IFE(ctrl_ltrac->OgSidxAttributeNumberToString(ctrl_ltrac->hsidx,dic_input->attribute_number,attribute_string));
-  IFE(OgUniToCp(dic_input->value_length,dic_input->value,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-  OgMsg(ctrl_ltrac->hmsg,"",DOgMsgDestInLog
-    , "LtracAttributesAdd: adding %d=%s '%s' with frequency %d"
-    ,dic_input->attribute_number,attribute_string,buffer,dic_input->frequency);
+  if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
+  {
+    char buffer[DPcPathSize];
+    int ibuffer = 0;
+    char attribute_string[DPcPathSize];
+    IFE(ctrl_ltrac->OgSidxAttributeNumberToString(ctrl_ltrac->hsidx, dic_input->attribute_number, attribute_string));
+    IFE(OgUniToCp(dic_input->value_length,dic_input->value,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAttributesAdd: adding %d=%s '%s' with frequency %d",
+        dic_input->attribute_number, attribute_string, buffer, dic_input->frequency);
   }
 
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase) {
-  /* word | attribute_number language_code frequency **/
-  IFE(LtracDicBaseAdd(ctrl_ltrac,dic_input));
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
+  {
+    /* word | attribute_number language_code frequency **/
+    IFE(LtracDicBaseAdd(ctrl_ltrac, dic_input));
   }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap) {
-  if (dic_input->frequency < input->min_frequency_swap) DONE;
-  /* word_less_1_letter | attribute_number language_code position frequency word */
-  IFE(LtracDicSwapAdd(ctrl_ltrac,dic_input));
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
+  {
+    if (dic_input->frequency >= input->min_frequency_swap)
+    {
+      /* word_less_1_letter | attribute_number language_code position frequency word */
+      IFE(LtracDicSwapAdd(ctrl_ltrac, dic_input));
+    }
   }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon) {
-  /* phonetic_form | attribute_number language_code frequency **/
-  IFE(LtracDicPhonAdd(ctrl_ltrac,dic_input));
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
+  {
+    /* phonetic_form | attribute_number language_code frequency **/
+    IFE(LtracDicPhonAdd(ctrl_ltrac, dic_input));
   }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeAspell) {
-  /** One word per line in a flat file **/
-  IFE(LtracDicAspellAdd(ctrl_ltrac,dic_input));
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeAspell)
+  {
+    /** One word per line in a flat file **/
+    IFE(LtracDicAspellAdd(ctrl_ltrac, dic_input));
   }
 
-
-DONE;
+  DONE;
 }
 
 
