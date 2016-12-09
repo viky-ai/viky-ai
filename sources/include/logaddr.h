@@ -34,12 +34,15 @@ struct og_socket_info
   int time_start;
 };
 
-struct og_addr_param {
-  void *herr,*hmsg; ogmutex_t *hmutex;
+struct og_addr_param
+{
+  void *herr, *hmsg;
+  ogmutex_t *hmutex;
   struct og_loginfo loginfo;
   og_char_buffer addr_name[DPcPathSize];
 
   int backlog_max_pending_requests;
+  int backlog_timeout;
   int (*must_stop_func)(void *func_context);
   int (*get_backlog_timeout_func)(void *func_context);
   int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status, og_string message);
@@ -49,7 +52,7 @@ struct og_addr_param {
 
 DEFPUBLIC(void *) OgAddrInit(struct og_addr_param *params);
 DEFPUBLIC(int) OgAddrAdd(void *handle, char *hostname, int port);
-DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *ptr);
+DEFPUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket_info *info), void *answer_func_context);
 DEFPUBLIC(int) OgAddrClose(void *handle);
 DEFPUBLIC(int) OgAddrFlush(void *handle);
 

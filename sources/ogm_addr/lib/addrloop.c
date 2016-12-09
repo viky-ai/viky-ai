@@ -55,6 +55,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       IFE(status);
       if (status == CONTINUE) continue;
 
+
       // g_async_queue_length returns the number of data items in the queue minus the number of waiting threads,
       // so a negative value means waiting threads, and a positive value means available entries in the queue .
       // A return value of 0 could mean n entries in the queue and n threads waiting.
