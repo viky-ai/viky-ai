@@ -32,6 +32,7 @@ ctrl_addr->get_backlog_timeout_func = param->get_backlog_timeout_func;
 ctrl_addr->must_stop_func = param->must_stop_func;
 ctrl_addr->send_error_status_func = param->send_error_status_func;
 ctrl_addr->func_context = param->func_context;
+ctrl_addr->async_socket_queue = g_async_queue_new_full(AddrLoopAsyncSocketQueueDestroyNotify);
 
 memset(msg_param,0,sizeof(struct og_msg_param));
 msg_param->herr=ctrl_addr->herr;
@@ -61,7 +62,7 @@ IFn(ctrl_addr->Aso=(struct aso *)malloc(ctrl_addr->AsoNumber*sizeof(struct aso))
 if (ctrl_addr->loginfo->trace & DOgAddrTraceGhbn) ghbn_trace=DOgGhbnTraceMinimal;
 IFn(ctrl_addr->ghbn=OgGetHostByNameInit(ghbn_trace,ctrl_addr->loginfo->where)) return(0);
 
-IF(OgSemaphoreInit(ctrl_addr->hsem,0)) return (0);
+IF(OgSemaphoreInit(ctrl_addr->hsem, 0)) return (0);
 
 ctrl_addr->closed = FALSE;
 

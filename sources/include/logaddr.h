@@ -26,6 +26,7 @@
 
 struct og_socket_info
 {
+  og_bool nil_socket;
   char *address;
   int port;
   struct sockaddr_in socket_in;

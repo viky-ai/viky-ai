@@ -49,16 +49,15 @@ struct og_ctrl_addr
 
   /** AsyncQueue of (struct og_socket_info *) */
   GAsyncQueue *async_socket_queue;
-  ogthread_t thread;
+  ogthread_t backlog_thread[1];
+  ogthread_t maintenance_thread[1];
 
   int (*answer_func)(void *answer_func_context, struct og_socket_info *info);
   void *answer_func_context;
   int (*must_stop_func)(void *func_context);
   int (*get_backlog_timeout_func)(void *func_context);
-  og_bool (*search_unavailable_state_func)(void *func_context);
   int (*send_error_status_func)(void *func_context, struct og_socket_info *info, int error_status, og_string message);
   void *func_context;
-  int must_stop;
   ogsem_t hsem[1];
 
   og_bool closed;
@@ -76,8 +75,12 @@ int OgAddrAppendBa(pr_(struct og_ctrl_addr *) pr_(int) pr(unsigned char *));
 int OgAddrTestReallocBa(pr_(struct og_ctrl_addr *) pr(int));
 int OgAddrReallocBa(pr_(struct og_ctrl_addr *) pr(int));
 
-/** addsocketqueue.c **/
-og_status OgAddrSocketQueue(void *ptr);
+/** addrsloop.c **/
+void AddrLoopAsyncSocketQueueDestroyNotify(gpointer p_og_socket_info);
+
+/** addrsocketqueue.c **/
+og_status OgAddrSocketQueue(struct og_ctrl_addr *ctrl_addr);
+og_status OgAddrSocketQueueStop(struct og_ctrl_addr *ctrl_addr);
 
 /** addrutils.c **/
 og_status AddrSendStatusCodeServiceUnavailable(struct og_ctrl_addr *ctrl_addr, int socket);

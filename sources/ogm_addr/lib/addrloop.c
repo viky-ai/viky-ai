@@ -13,6 +13,7 @@ struct addr_context
   struct og_socket_info *info;
 };
 
+static og_status OgAddrLoopThread(void *ctx);
 static og_status AddrLoopInit(struct og_ctrl_addr *ctrl_addr, struct aso *aso, fd_set **fdset, int *maxfd);
 static og_status AddrWaitConnection(struct og_ctrl_addr *ctrl_addr, struct aso *aso, fd_set *fdset, int maxfd);
 static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct addr_context *addr_ctx, int i);
@@ -30,6 +31,30 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
   ctrl_addr->answer_func = answer_func;
   ctrl_addr->answer_func_context = answer_func_context;
 
+  // thread to put new socket in queue
+  IFE(OgCreateThread(ctrl_addr->backlog_thread, OgAddrLoopThread, ctrl_addr));
+
+  // consume the queue
+  IFE(OgAddrSocketQueue(ctrl_addr));
+
+  // wait for threads completion
+  // 2 thread OgAddrLoopThread && OgAddrSocketQueueMaintenanceLoop => 2 OgSemaphoreWait
+  IFE(OgSemaphoreWait(ctrl_addr->hsem));
+  IFE(OgSemaphoreWait(ctrl_addr->hsem));
+
+  DONE;
+}
+
+static og_status OgAddrLoopThread(void *ctx)
+{
+  struct og_ctrl_addr *ctrl_addr = (struct og_ctrl_addr *) ctx;
+
+  // set thread name to identify it in debug
+  if (ctrl_addr->addr_name[0])
+  {
+    IFE(OgThreadSetCurrentName(ctrl_addr->addr_name));
+  }
+
   int maxfd = 0;
   struct aso *aso = NULL;
   fd_set *fdset = NULL;
@@ -39,7 +64,8 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
   {
     IFE(AddrWaitConnection(ctrl_addr, aso, fdset, maxfd));
 
-    IFE(ctrl_addr->must_stop = ctrl_addr->must_stop_func(ctrl_addr->func_context));
+    og_bool must_stop = ctrl_addr->must_stop_func(ctrl_addr->func_context);
+    IFE(must_stop);
 
     for (int i = 0; i < ctrl_addr->AsoUsed; i++)
     {
@@ -55,7 +81,6 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
       IFE(status);
       if (status == CONTINUE) continue;
 
-
       // g_async_queue_length returns the number of data items in the queue minus the number of waiting threads,
       // so a negative value means waiting threads, and a positive value means available entries in the queue .
       // A return value of 0 could mean n entries in the queue and n threads waiting.
@@ -67,7 +92,7 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
         time(error_time);
 
         // do not push the request we just received, because we have too many requests
-        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: request dropped on socket %d because"
+        OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoopThread %s: request dropped on socket %d because"
             " too many requests in the queue (%d >= %d) at %.24s UTC", ctrl_addr->addr_name, info->hsocket_service,
             queue_length, ctrl_addr->backlog_max_pending_requests, OgGmtime(error_time));
         IFE(ctrl_addr->send_error_status_func(ctrl_addr->func_context, info, 503, "Service Unavailable (queue full)"));
@@ -86,24 +111,27 @@ PUBLIC(int) OgAddrLoop(void *handle, int (*answer_func)(void *, struct og_socket
 
     }
 
-    if (ctrl_addr->must_stop)
+    if (must_stop)
     {
-      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: must stop service", ctrl_addr->addr_name);
+      OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoopThread %s: must stop service", ctrl_addr->addr_name);
+
+      OgAddrSocketQueueStop(ctrl_addr);
+
       break;
     }
 
   }
 
-  // ajouter un timeout sur le wait si besoins
-  IFE(OgSemaphoreWait(ctrl_addr->hsem));
+  IFE(OgSemaphorePost(ctrl_addr->hsem));
 
   DPcFree(fdset);
-  OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoop %s: finished", ctrl_addr->addr_name);
+  OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoopThread %s: finished", ctrl_addr->addr_name);
 
   DONE;
 }
 
-static void AddrLoopAsyncSocketQueueDestroyNotify(gpointer p_og_socket_info)
+
+void AddrLoopAsyncSocketQueueDestroyNotify(gpointer p_og_socket_info)
 {
   if (p_og_socket_info != NULL)
   {
@@ -126,13 +154,10 @@ static og_status AddrLoopInit(struct og_ctrl_addr *ctrl_addr, struct aso *aso, f
   IFn(*fdset=(fd_set *)malloc(size))
   {
     char erreur[DOgErrorSize];
-    sprintf(erreur, "OgAddrLoop %s: malloc error on fdset (%d bytes)", ctrl_addr->addr_name, size);
+    sprintf(erreur, "AddrLoopInit %s: malloc error on fdset (%d bytes)", ctrl_addr->addr_name, size);
     OgErr(ctrl_addr->herr, erreur);
-    return (0);
+    DPcErr;
   }
-
-  ctrl_addr->async_socket_queue = g_async_queue_new_full(AddrLoopAsyncSocketQueueDestroyNotify);
-  IFE(OgCreateThread(&ctrl_addr->thread, OgAddrSocketQueue, ctrl_addr));
 
   DONE;
 }
@@ -161,10 +186,10 @@ static og_status AddrWaitConnection(struct og_ctrl_addr *ctrl_addr, struct aso *
     else
     {
       char erreur[DOgErrorSize];
-      sprintf(erreur, "OgAddrLoop: select: (%d) %s\n", nerr, sys_erreur);
+      snprintf(erreur, DOgErrorSize, "OgAddrLoopThread : AddrWaitConnection : select: (%d) %s\n", nerr, sys_erreur);
       OgErr(ctrl_addr->herr, erreur);
 
-      //main_is_on_error
+      // main_is_on_error
       DPcErr;
     }
   }
@@ -191,8 +216,8 @@ static og_status AddrAcceptConnection(struct og_ctrl_addr *ctrl_addr, struct add
     char erreur[DOgErrorSize];
     OgErrLast(ctrl_addr->herr, erreur, 0);
     OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
-        "OgAddrLoop %s: failed to connect with the client '%s:%d' \n%s", ctrl_addr->Ba + aso->addr_start, aso->port,
-        erreur, ctrl_addr->addr_name);
+        "OgAddrLoopThread : AddrAcceptConnection: %s: failed to connect with the client '%s:%d' \n%s",
+        ctrl_addr->Ba + aso->addr_start, aso->port, erreur, ctrl_addr->addr_name);
     CONT;
   }
 
