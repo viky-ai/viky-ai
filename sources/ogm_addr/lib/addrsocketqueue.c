@@ -256,8 +256,8 @@ og_status OgAddrSocketQueue(struct og_ctrl_addr *ctrl_addr)
         ctrl_addr->addr_name);
   }
 
-//  // Closes all the unprocessed requests
-//  IFE(OgAddrSocketQueueStop(ctrl_addr));
+  // Closes all the unprocessed requests
+  IFE(OgAddrSocketQueueStop(ctrl_addr));
 
   return status;
 }
