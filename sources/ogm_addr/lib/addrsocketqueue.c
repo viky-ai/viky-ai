@@ -154,8 +154,7 @@ static og_status OgAddrSocketQueueMaintenanceLoop(void *void_ctrl_addr)
     if (keep_info)
     {
       // re push socket at top of queue
-      // TODO use g_async_queue_push_front () instead
-      g_async_queue_push(ctrl_addr->async_socket_queue, stored_info);
+      g_async_queue_push_front(ctrl_addr->async_socket_queue, stored_info);
 
       int wait = 0;
       while (wait <= time_before_timeout)
