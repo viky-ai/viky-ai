@@ -126,8 +126,7 @@ static og_status OgAddrSocketQueueMaintenanceLoop(void *void_ctrl_addr)
 
     if (stored_info->nil_socket)
     {
-      // free stored info
-      g_slice_free(struct og_socket_info, stored_info);
+      g_async_queue_push(ctrl_addr->async_socket_queue, stored_info);
 
       break;
     }
@@ -148,7 +147,7 @@ static og_status OgAddrSocketQueueMaintenanceLoop(void *void_ctrl_addr)
       OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
           "OgAddrSocketQueueLoopMaintenance %s: OgAddrSocketQueueLoopCheck failed on socket %d.", ctrl_addr->addr_name,
           info->hsocket_service);
-
+      IFE(OgSemaphorePost(ctrl_addr->hsem));
       DPcErr;
     }
 
@@ -158,8 +157,23 @@ static og_status OgAddrSocketQueueMaintenanceLoop(void *void_ctrl_addr)
       // TODO use g_async_queue_push_front () instead
       g_async_queue_push(ctrl_addr->async_socket_queue, stored_info);
 
-      // for next timeout
-      OgSleep(time_before_timeout + 1);
+      int wait = 0;
+      while (wait <= time_before_timeout)
+      {
+        int wait_iteration = 50;
+
+        // for next timeout
+        OgSleep(wait_iteration);
+
+        og_bool must_stop = ctrl_addr->must_stop_func(ctrl_addr->func_context);
+        if (must_stop)
+        {
+          break;
+        }
+
+        wait += wait_iteration;
+      }
+
     }
     else
     {
