@@ -300,6 +300,7 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
       {
         IFE(StmGetSpaceCost(ctrl_stm, space_deletions, FALSE, &deletion_cost));
       }
+
       //if character in string2 is a space to insert in string1
       if (OgUniIsspace(c2))
       {
@@ -307,25 +308,32 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
         space_insertions++;
       }
 
-      if (lev_params->punctuation_cost > 0)
+      if (lev_params->punctuation_cost > 0.0)
       {
-        //if character is a punctuation taken from punctuation conf file
-        if (StmIsPunctuation(ctrl_stm, c1) && StmIsPunctuation(ctrl_stm, c2))
+        og_bool c1_punct = StmIsPunctuation(ctrl_stm, c1);
+        og_bool c2_punct = StmIsPunctuation(ctrl_stm, c2);
+
+        // if character is a punctuation taken from punctuation conf file
+        if (c1_punct && c2_punct)
         {
           if (lev_params->punctuation_cost < substitution_cost)
           {
             substitution_cost = lev_params->punctuation_cost;
           }
         }
-        if (StmIsPunctuation(ctrl_stm, c1))
+
+        if (c1_punct)
         {
           deletion_cost = lev_params->punctuation_cost;
         }
-        if (StmIsPunctuation(ctrl_stm, c2))
+
+        if (c2_punct)
         {
           insertion_cost = lev_params->punctuation_cost;
         }
+
       }
+
       if (c1 == c2)
       {
         ctrl_stm->score[i][j] = ctrl_stm->score[i - 1][j - 1];
@@ -382,12 +390,14 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
 static og_bool StmIsPunctuation(struct og_ctrl_stm *ctrl_stm, int c)
 {
   og_bool is_punctuation = OgLipIsPunctuation(&ctrl_stm->lip_conf, c);
+  if (is_punctuation) return TRUE;
+
   char buffer[2];
   buffer[0] = (char) (c >> 8);
   buffer[1] = (char) (c & 0x00ff);
-  int length;
+  int length = 0;
   og_bool is_punctuation_word = OgLipIsPunctuationWord(&ctrl_stm->lip_conf, 2, buffer, &length);
-  return (is_punctuation || is_punctuation_word);
+  return is_punctuation_word;
 }
 
 // Change the substitution cost only if the letters are equivalents and the new substitution cost is lower

@@ -21,7 +21,7 @@
 #define DOgStmDefaultSameLetterInsertionCost  0.02
 #define DOgStmDefaultSpaceCost  0.005
 #define DOgStmDefaultCaseCost  0.001
-#define DOgStmDefaultPunctuationCost  0.001
+#define DOgStmDefaultPunctuationCost  0.0
 
 #define DOgStmSpaceCostLength 256
 

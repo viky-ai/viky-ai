@@ -267,13 +267,11 @@ PUBLIC(og_bool) OgLipIsEmptyString(void *handle, unsigned char *string, int stri
 
 PUBLIC(int) OgLipIsPunctuation(struct og_lip_conf *conf, int c)
 {
-  int i;
-
   // all control chars should be ignored
   // and considered as punctuation, thus word separators
   if (c < 32 && !OgUniIsspace(c)) return TRUE;
 
-  for (i = 0; i < conf->punctuation_length; i++)
+  for (int i = 0; i < conf->punctuation_length; i++)
   {
     if (c == conf->punctuation[i])
     {
