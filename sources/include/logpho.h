@@ -1,5 +1,5 @@
 /*
- *	Header for library ogm_pho.dll
+ *  Header for library ogm_pho.dll
  *  Copyright (c) 2006-2007 Pertimm by P.Constant,G.Logerot and L.Rigouste
  *  Dev : November 2006, June,July 2007, May,June 2008
  *  Version 1.3
@@ -26,25 +26,29 @@
 
 #define DOgPhoTracePhonet               0x1000
 
+#define DOgPhoConfigurationDirectory     "conf/phonetic"
+
 struct og_pho_param {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo loginfo;
   char conf[DPcPathSize];
   void *hpho_to_inherit;
-  }; 
+  };
 
-struct og_pho_input {
+struct og_pho_input
+{
   int iB;
   unsigned char *B;
-  };
+  int lang;
+};
 
 struct og_pho_output {
   int iB;
   unsigned char *B;
   };
 
-DEFPUBLIC(void *) OgPhoInit(pr(struct og_pho_param *));
-DEFPUBLIC(int) OgPhoFlush(pr(void *));
+DEFPUBLIC(void *) OgPhoInit(struct og_pho_param *param);
+DEFPUBLIC(int) OgPhoFlush(void *handle);
 
 DEFPUBLIC(int) OgPhonet(pr_(void *) pr_(struct og_pho_input *) pr(struct og_pho_output *));
 DEFPUBLIC(int) OgPhoMem(void *,int,int,ogint64_t *);

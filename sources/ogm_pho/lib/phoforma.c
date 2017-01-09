@@ -8,46 +8,48 @@
 
 
 
-og_status PhoFormatClean(struct og_ctrl_pho *ctrl_pho)
+og_status PhoFormatClean(struct lang_context *lang_context)
 {
-  OgUniStrlwr(ctrl_pho->iinput, ctrl_pho->input, ctrl_pho->input);
+  struct og_ctrl_pho *ctrl_pho = lang_context->ctrl_pho;
+
+  OgUniStrlwr(lang_context->iinput, lang_context->input, lang_context->input);
 
   if (ctrl_pho->loginfo->trace & DOgPhoTraceMain)
   {
-    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "OgPhonet: non_alpha_to_space = %d", ctrl_pho->non_alpha_to_space);
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "OgPhonet: non_alpha_to_space = %d", lang_context->non_alpha_to_space);
   }
 
-  for (int i = 0; i < ctrl_pho->iinput; i += 2)
+  for (int i = 0; i < lang_context->iinput; i += 2)
   {
 
-    for (int k = 0; k < ctrl_pho->appending_characters_number; k++)
+    for (int k = 0; k < lang_context->appending_characters_number; k++)
     {
-      if (ctrl_pho->input[i] == ctrl_pho->appending_characters[k * 2]
-          && ctrl_pho->input[i + 1] == ctrl_pho->appending_characters[k * 2 + 1])
+      if (lang_context->input[i] == lang_context->appending_characters[k * 2]
+          && lang_context->input[i + 1] == lang_context->appending_characters[k * 2 + 1])
       {
-        for (int j = i; j < ctrl_pho->iinput - 2; j++)
+        for (int j = i; j < lang_context->iinput - 2; j++)
         {
-          ctrl_pho->input[j] = ctrl_pho->input[j + 2];
+          lang_context->input[j] = lang_context->input[j + 2];
         }
-        ctrl_pho->iinput -= 2;
+        lang_context->iinput -= 2;
       }
     }
 
-    unsigned char c = (ctrl_pho->input[i] << 8) + ctrl_pho->input[i + 1];
+    unsigned char c = (lang_context->input[i] << 8) + lang_context->input[i + 1];
 
     // We replace some characters by a space character
-    if (ctrl_pho->non_alpha_to_space)
+    if (lang_context->non_alpha_to_space)
     {
       if(OgUniIsdigit(c))
       {
-        if(!ctrl_pho->keep_digit)
+        if(!lang_context->keep_digit)
         {
-          memcpy(ctrl_pho->input + i, ctrl_pho->space_character, 2);
+          memcpy(lang_context->input + i, lang_context->space_character, 2);
         }
       }
       else if(!OgUniIsalpha(c))
       {
-        memcpy(ctrl_pho->input + i, ctrl_pho->space_character, 2);
+        memcpy(lang_context->input + i, lang_context->space_character, 2);
       }
     }
 
@@ -57,26 +59,17 @@ og_status PhoFormatClean(struct og_ctrl_pho *ctrl_pho)
 }
 
 
-
-
-
-int PhoFormatAppendingCharAdd(ctrl_pho,ib,b)
-struct og_ctrl_pho *ctrl_pho;
-int ib;
-unsigned char *b;
+og_status PhoFormatAppendingCharAdd(struct lang_context *lang_context, int ib, unsigned char *b)
 {
-if(ib<2) {
+  if (ib < 2)
+  {
+
+    DONE;
+  }
+
+  memcpy(lang_context->appending_characters + lang_context->appending_characters_number * 2, b, 2);
+  lang_context->appending_characters_number++;
 
   DONE;
-  }
-
-if(ib>2) {
-
-  }
-
-memcpy(ctrl_pho->appending_characters+ctrl_pho->appending_characters_number*2,b,2);
-ctrl_pho->appending_characters_number++;
-
-DONE;
 }
 

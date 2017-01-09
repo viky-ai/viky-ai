@@ -1,43 +1,42 @@
 /*
- *	Rules expansion
+ *  Rules expansion
  *  Copyright (c) 2008 Pertimm by G.Logerot
  *  Dev : May 2008
  *  Version 1.0
 */
 #include "ogm_pho.h"
 
-
-
-int PhoRulesRuleAddExpense(ctrl_pho,iword,word,indice,Irule)
-struct og_ctrl_pho *ctrl_pho;
-int iword;
-char *word;
-int indice,Irule;
+og_status PhoRulesRuleAddExpense(struct lang_context *lang_context, int iword, char *word, int indice, int Irule)
 {
-struct char_class *char_class;
-char buffer[DPcPathSize*2];
-int i,j,k,expanded=0;
 
-memcpy(buffer,word,iword);
+  char buffer[DPcPathSize * 2];
+  memcpy(buffer, word, iword);
 
-for(i=indice;i<iword && !expanded;i+=2) {
-  for(j=0;j<ctrl_pho->Char_classUsed;j++) {
-    char_class = ctrl_pho->Char_class + j;
-    if(!memcmp(char_class->character,word+i,2)) {
-      for(k=0;k<char_class->number;k++) {
-        memcpy(buffer+i,ctrl_pho->BaClass+char_class->start+k*2,2);
-        IFE(PhoRulesRuleAddExpense(ctrl_pho,iword,buffer,i+2,Irule));
-        expanded=1;
+  int expanded = 0;
+  int i = 0;
+  for (i = indice; i < iword && !expanded; i += 2)
+  {
+    for (int j = 0; j < lang_context->Char_classUsed; j++)
+    {
+      struct char_class *char_class = lang_context->Char_class + j;
+      if (!memcmp(char_class->character, word + i, 2))
+      {
+        for (int k = 0; k < char_class->number; k++)
+        {
+          memcpy(buffer + i, lang_context->BaClass + char_class->start + k * 2, 2);
+          IFE(PhoRulesRuleAddExpense(lang_context, iword, buffer, i + 2, Irule));
+          expanded = 1;
         }
-      break;
+        break;
       }
     }
   }
 
-if(i>=iword && !expanded) {
-  IFE(PhoRulesAutRuleAdd(ctrl_pho,iword,word,Irule));
-  DONE;
+  if (i >= iword && !expanded)
+  {
+    IFE(PhoRulesAutRuleAdd(lang_context, iword, word, Irule));
+    DONE;
   }
 
-DONE;
+  DONE;
 }

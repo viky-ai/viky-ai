@@ -4,10 +4,13 @@
  *  Dev : November 2006, April 2008
  *  Version 1.1
 */
-
+#include <lpcgentype.h>
 #include <logpho.h>
 #include <logaut.h>
 #include <logxml.h>
+#include <logheap.h>
+
+#include <glib.h>
 
 
 #define DOgMaxRuleStringSize        0x0100 /* 256 */
@@ -34,7 +37,7 @@ struct rule {
   };
 
 struct matching {
-  struct og_ctrl_pho *ctrl_pho;
+  struct lang_context *lang_context;
   int offset;
   int Irule;
   int selected;
@@ -45,10 +48,10 @@ struct char_class {
   int start,number;
   };
 
-struct og_ctrl_pho {
-  void *herr,*hmsg; ogmutex_t *hmutex;
-  struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo;
+
+struct lang_context
+{
+  struct og_ctrl_pho *ctrl_pho;
 
   /* config */
 
@@ -57,37 +60,60 @@ struct og_ctrl_pho {
   unsigned char space_character[2];
   int non_alpha_to_space;
   og_bool keep_digit;
-  unsigned char appending_characters[2*DOgMaxAppendingCharacters];
+  unsigned char appending_characters[2 * DOgMaxAppendingCharacters];
   int appending_characters_number;
 
+  // Rule info
   void *ha_rules;
   struct rule *Rule;
-  int RuleNumber,RuleUsed;
+  int RuleNumber;
+  int RuleUsed;
 
+  // Class info
   struct char_class *Char_class;
-  int Char_classNumber,Char_classUsed;
+  int Char_classNumber;
+  int Char_classUsed;
   unsigned char *BaClass;
-  int BaClassSize,BaClassUsed;
-  int is_inherited;
+  int BaClassSize;
+  int BaClassUsed;
 
   /* process */
 
-  unsigned char input[DPcPathSize*4];
+  unsigned char input[DPcPathSize * 4];
   int iinput;
 
-  unsigned char bufferIn[DPcPathSize*4+10];
+  unsigned char bufferIn[DPcPathSize * 4 + 10];
   int ibufferIn;
 
   struct matching *Matching;
-  int MatchingNumber,MatchingUsed;
+  int MatchingNumber;
+  int MatchingUsed;
 
   unsigned char *Ba;
   int BaSize;
   int BaUsed;
-  };
+
+};
+
+struct og_ctrl_pho
+{
+  void *herr, *hmsg;
+  ogmutex_t *hmutex;
+  struct og_loginfo cloginfo;
+  struct og_loginfo *loginfo;
+
+  int is_inherited;
+
+  char conf_directory[DPcPathSize];
+
+  GHashTable *lang_context_map;
+  og_heap lang_context_heap;
+};
 
 struct og_xml_info {
   struct og_ctrl_pho *ctrl_pho;
+  struct lang_context *lang_context;
+
   int iB; unsigned char *B;
   int end_tag, auto_tag, ixml_path, xml_path[DOgMaxXmlPath];
 
@@ -109,43 +135,47 @@ struct og_tree_xml_tag {
 
 
 /** phoreadc.c **/
-int PhoReadConf(pr_(struct og_ctrl_pho *) pr(char *));
+og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho, unsigned char *conf_directory);
 
 /** phoaut.c **/
 int PhoRulesAutExceptionAdd(pr_(struct og_ctrl_pho *) pr_(char *) pr(char *));
-int PhoRulesAutRuleAdd(pr_(struct og_ctrl_pho *) pr_(int) pr_(char *) pr(int));
+og_status PhoRulesAutRuleAdd(struct lang_context *lang_context, int iword, char *word, int Irule);
 
 /** phorules.c **/
-int PhoRulesRuleAdd(pr(struct og_xml_info *));
-int PhoRulesRuleGet(pr_(struct og_ctrl_pho *) pr_(int) pr(int));
-int RulesLog(pr_(struct og_ctrl_pho *) pr(char *));
+og_status PhoRulesRuleAdd(pr(struct og_xml_info *));
+og_status PhoRulesRuleGet(struct lang_context *lang_context, int offset, int step);
+og_status RulesLog(struct lang_context *lang_context, char *filename);
 
 /** phorule.c **/
-int AllocRule(pr_(struct og_ctrl_pho *) pr(struct rule **));
+int AllocRule(struct lang_context *lang_context, struct rule **prule);
 
 /** phoforma.c **/
-og_status PhoFormatClean(pr(struct og_ctrl_pho *));
-int PhoFormatAppendingCharAdd(pr_(struct og_ctrl_pho *) pr_(int) pr(unsigned char *));
+og_status PhoFormatClean(struct lang_context *lang_context);
+og_status PhoFormatAppendingCharAdd(struct lang_context *lang_context, int ib, unsigned char *b);
 
 /** phomatch.c **/
-int PhoMatchingRules(pr_(struct og_ctrl_pho *) pr(int));
-int PhoMatchingAdd(pr_(struct og_ctrl_pho *) pr_(int) pr(int));
-int MatchingLog(pr_(struct og_ctrl_pho *) pr(int));
+og_status PhoMatchingRules(struct lang_context *lang_context, int step);
+og_status PhoMatchingAdd(struct lang_context *lang_context, int offset, int Irule);
+og_status MatchingLog(struct lang_context *lang_context, int step);
 
 /** phoba.c **/
-int PhoAppendBa(pr_(struct og_ctrl_pho *) pr_(int) pr(unsigned char *));
-int PhoAppendBaClass(pr_(struct og_ctrl_pho *) pr_(int) pr(unsigned char *));
+og_status PhoAppendBa(struct lang_context *lang_context, int is, unsigned char *s);
+og_status PhoAppendBaClass(struct lang_context *lang_context, int is, unsigned char *s);
 
 /** phoanaly.c **/
-int PhoAnalysing(pr(struct og_ctrl_pho *));
+og_status PhoAnalysing(struct lang_context *lang_context);
 
 /** phowrite.c **/
-int PhoWriting(pr(struct og_ctrl_pho *));
+og_status PhoWriting(struct lang_context *lang_context);
 
 /** phoexp.c **/
-int PhoRulesRuleAddExpense(pr_(struct og_ctrl_pho *) pr_(int) pr_(char *) pr_(int) pr(int));
+og_status PhoRulesRuleAddExpense(struct lang_context *lang_context, int iword, char *word, int indice, int Irule);
 
-/** phoclass.c ***/
-int ClassCreate(pr_(struct og_ctrl_pho *) pr(unsigned char *));
-int ClassAddC(pr_(struct og_ctrl_pho *) pr_(int) pr(unsigned char *));
-int ClassLog(pr_(struct og_ctrl_pho *) pr(char *));
+/** phoclass.c **/
+int ClassCreate(struct lang_context *lang_context, unsigned char *b);
+og_status ClassAddC(struct lang_context *lang_context, int Ichar_class, unsigned char *b);
+og_status ClassLog(struct lang_context *lang_context, char *filename);
+
+/** ipho.c **/
+void PhoLangContextDestroy(struct lang_context *lang_context);
+og_status PhoInitLangContext(struct og_ctrl_pho *ctrl_pho, struct lang_context *lang_context);

@@ -1,60 +1,66 @@
 /*
- *	Rules allocation for ogm_rule functions
+ *  Rules allocation for ogm_rule functions
  *  Copyright (c) 2006 Pertimm by P.Constant,G.Logerot and L.Rigouste
  *  Dev : December 2006
  *  Version 1.0
-*/
+ */
 #include "ogm_pho.h"
 
-
-
-
-
-int AllocRule(ctrl_pho,prule)
-struct og_ctrl_pho *ctrl_pho;
-struct rule **prule;
+int AllocRule(struct lang_context *lang_context, struct rule **prule)
 {
-char erreur[DOgErrorSize];
-struct rule *rule = 0;
-int i=ctrl_pho->RuleNumber;
 
-beginAllocRule:
+  struct og_ctrl_pho *ctrl_pho = lang_context->ctrl_pho;
 
-if (ctrl_pho->RuleUsed < ctrl_pho->RuleNumber) {
-  i = ctrl_pho->RuleUsed++; 
+  struct rule *rule = 0;
+  int i = lang_context->RuleNumber;
+
+  beginAllocRule:
+
+  if (lang_context->RuleUsed < lang_context->RuleNumber)
+  {
+    i = lang_context->RuleUsed++;
   }
 
-if (i == ctrl_pho->RuleNumber) {
-  unsigned a, b; struct rule *og_l;
+  if (i == lang_context->RuleNumber)
+  {
+    unsigned a, b;
+    struct rule *og_l;
 
-  if (ctrl_pho->loginfo->trace & DOgPhoTraceMemory) {
-    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"AllocRule: max Rule number (%d) reached", ctrl_pho->RuleNumber);
+    if (ctrl_pho->loginfo->trace & DOgPhoTraceMemory)
+    {
+      OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "AllocRule: max Rule number (%d) reached", lang_context->RuleNumber);
     }
-  a = ctrl_pho->RuleNumber; b = a + (a>>2) + 1;
-  IFn(og_l=(struct rule *)malloc(b*sizeof(struct rule))) {
-    sprintf(erreur,"AllocRule: malloc error on Rule");
-    OgErr(ctrl_pho->herr,erreur); DPcErr;
+    a = lang_context->RuleNumber;
+    b = a + (a >> 2) + 1;
+    IFn(og_l=(struct rule *)malloc(b*sizeof(struct rule)))
+    {
+      char erreur[DOgErrorSize];
+      sprintf(erreur, "AllocRule: malloc error on Rule");
+      OgErr(ctrl_pho->herr, erreur);
+      DPcErr;
     }
 
-  memcpy( og_l, ctrl_pho->Rule, a*sizeof(struct rule));
-  DPcFree(ctrl_pho->Rule); ctrl_pho->Rule = og_l;
-  ctrl_pho->RuleNumber = b;
+    memcpy(og_l, lang_context->Rule, a * sizeof(struct rule));
+    DPcFree(lang_context->Rule);
+    lang_context->Rule = og_l;
+    lang_context->RuleNumber = b;
 
-  if (ctrl_pho->loginfo->trace & DOgPhoTraceMemory) {
-    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"AllocRule: new Rule number is %d\n", ctrl_pho->RuleNumber);
+    if (ctrl_pho->loginfo->trace & DOgPhoTraceMemory)
+    {
+      OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "AllocRule: new Rule number is %d\n", lang_context->RuleNumber);
     }
 
 #ifdef DOgNoMainBufferReallocation
-  sprintf(erreur,"AllocRule: RuleNumber reached (%d)",ctrl_pho->RuleNumber);
-  OgErr(ctrl_pho->herr,erreur); DPcErr;
+    sprintf(erreur,"AllocRule: RuleNumber reached (%d)",lang_context->RuleNumber);
+    OgErr(ctrl_pho->herr,erreur); DPcErr;
 #endif
 
-  goto beginAllocRule;
+    goto beginAllocRule;
   }
 
-rule = ctrl_pho->Rule + i;
-memset(rule,0,sizeof(struct rule));
+  rule = lang_context->Rule + i;
+  memset(rule, 0, sizeof(struct rule));
 
-if (prule) *prule = rule;
-return(i);
+  if (prule) *prule = rule;
+  return (i);
 }

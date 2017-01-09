@@ -1,5 +1,5 @@
 /*
- *	Automaton for ogm_pho functions
+ *  Automaton for ogm_pho functions
  *  Copyright (c) 2006 Pertimm by P.Constant,G.Logerot and L.Rigouste
  *  Dev : November 2006
  *  Version 1.0
@@ -11,25 +11,23 @@
 
 
 
-int PhoRulesAutRuleAdd(ctrl_pho,iword,word,Irule)
-struct og_ctrl_pho *ctrl_pho;
-char *word;
-int Irule;
+og_status PhoRulesAutRuleAdd(struct lang_context *lang_context, int iword, char *word, int Irule)
 {
-char buffer[DPcPathSize*2],*p;
-struct rule *rule=ctrl_pho->Rule+Irule;
-int ibuffer=0,iB=0;
+  struct rule *rule = lang_context->Rule + Irule;
 
-/* step:word:Irule tout en Unicode */
-p=buffer;
-OggNout(rule->step,&p);
-memcpy(p,word,iword); p+=iword;
-*p++=0;
-*p++=1;
-OggNout(Irule,&p);
-ibuffer = p-buffer;
-IFE(OgAutAdd(ctrl_pho->ha_rules,ibuffer,buffer));
+  /* step:word:Irule tout en Unicode */
+  unsigned char buffer[DPcPathSize * 2];
+  int ibuffer = 0;
+  unsigned char *p = buffer;
+  OggNout(rule->step, &p);
+  memcpy(p, word, iword);
+  p += iword;
+  *p++ = 0;
+  *p++ = 1;
+  OggNout(Irule, &p);
+  ibuffer = p - buffer;
+  IFE(OgAutAdd(lang_context->ha_rules, ibuffer, buffer));
 
-DONE;
+  DONE;
 }
 
