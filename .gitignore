@@ -23,6 +23,7 @@
 /resources/morphology/**/*total.*
 /resources/morphology/**/*total_*
 /resources/morphology/**/*total_*.*
+/resources/morphology/**/bundle_install.ok
 /resources/morphology/cs/cstotal
 /resources/morphology/cs/csform
 /resources/morphology/cs/csroot
@@ -36,6 +37,8 @@
 /resources/morphology/fr/frroot
 /resources/morphology/fr/frroot_pj
 /resources/morphology/fr/frroot_pj
+/resources/morphology/hu/hu*
+/resources/morphology/hu/hu*
 /resources/morphology/it/itform
 /resources/morphology/it/itroot
 /resources/morphology/pl/plform
