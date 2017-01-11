@@ -171,9 +171,17 @@ struct og_ltras_param *param;
   pho_param->hmutex=ctrl_ltras->hmutex;
   pho_param->loginfo.trace = DOgPhoTraceMinimal+DOgPhoTraceMemory;
   pho_param->loginfo.where = ctrl_ltras->loginfo->where;
-  if (ctrl_ltras->WorkingDirectory[0]) sprintf(pho_param->conf,"%s/conf/phonet_ltra_conf.xml",ctrl_ltras->WorkingDirectory);
-  else strcpy(pho_param->conf,"conf/phonet_ltra_conf.xml");
-  if (OgFileExists(pho_param->conf))
+  if (ctrl_ltras->WorkingDirectory[0])
+  {
+    sprintf(pho_param->conf_directory, "%s/conf/phonetic", ctrl_ltras->WorkingDirectory);
+    sprintf(pho_param->conf_filename, "phonet_ltra_conf.xml");
+  }
+  else
+  {
+    sprintf(pho_param->conf_directory, "conf/phonetic");
+    sprintf(pho_param->conf_filename, "phonet_ltra_conf.xml");
+  }
+  if (OgFileExists(pho_param->conf_directory))
   {
     if (ctrl_ltras->hltras_to_inherit)
     {
@@ -185,7 +193,7 @@ struct og_ltras_param *param;
   else
   {
     OgMsg(ctrl_ltras->hmsg,"",DOgMsgDestInLog
-        , "OgLtrasInit: impossible to open '%s'",pho_param->conf);
+        , "OgLtrasInit: impossible to open '%s'",pho_param->conf_filename);
   }
 
   struct og_ldi_param ldi_param[1];

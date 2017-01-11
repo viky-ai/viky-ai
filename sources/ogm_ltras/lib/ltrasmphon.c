@@ -212,6 +212,10 @@ static int LtrasModulePhon1(struct og_ltra_module_input *module_input
      * we iterate to the next word of the string. */
     input->iB = iin;
     input->B = in;
+
+    //changer quand on gère les langues
+    input->lang = 34;// fr
+
     IFE(OgPhonet(ctrl_phon->hpho, input, output));
     if (output->iB < min_post_phonetisation_char_number * 2) continue;
 

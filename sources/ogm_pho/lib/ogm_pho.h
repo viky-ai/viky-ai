@@ -105,6 +105,7 @@ struct og_ctrl_pho
   int is_inherited;
 
   char conf_directory[DPcPathSize];
+  char conf_filename[DPcPathSize];
 
   GHashTable *lang_context_map;
   og_heap lang_context_heap;

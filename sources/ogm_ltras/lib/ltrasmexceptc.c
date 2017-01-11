@@ -1,8 +1,8 @@
 /*
- *	Reads exception parameter file
- *	Copyright (c) 2010 Pertimm by Patrick Constant
- *	Dev : Febuary 2010
- *	Version 1.0
+ *  Reads exception parameter file
+ *  Copyright (c) 2010 Pertimm by Patrick Constant
+ *  Dev : Febuary 2010
+ *  Version 1.0
 */
 #include "ltrasmexcept.h"
 
@@ -33,7 +33,7 @@ struct og_ltras_except_xml_info {
 
 
 struct og_tree_xml_tag {
-  int value, iname; char *name; 
+  int value, iname; char *name;
   };
 
 
@@ -55,7 +55,7 @@ static int LtrasModuleExceptReallocBa(struct og_ctrl_except *ctrl_except,int add
 
 
 
-/* 
+/*
  * Read an XML configuration file, whose format is as follows :
  * <?xml version="1.0" encoding="UTF-8" ?>
  * <ltras>
@@ -66,7 +66,7 @@ static int LtrasModuleExceptReallocBa(struct og_ctrl_except *ctrl_except,int add
  *     <target>estheticienne</target>
  *   </exception>
  * </exceptions>
- * </ltras> 
+ * </ltras>
 */
 int LtrasModuleExceptReadConf(struct og_ctrl_except *ctrl_except, char *filename)
 {
@@ -134,7 +134,7 @@ if (type==DOgParseXmlTag) {
     }
   for (i=0; i<ib; i++) { if (PcIsspace(b[i])) break;} iname_tag=i;
   for (i=0; ExceptXmlReadTag[i].value; i++) {
-    if (ExceptXmlReadTag[i].iname==iname_tag-info->end_tag 
+    if (ExceptXmlReadTag[i].iname==iname_tag-info->end_tag
         && !memcmp(ExceptXmlReadTag[i].name, b+info->end_tag, iname_tag-info->end_tag)) {
       value=ExceptXmlReadTag[i].value; break;
       }
@@ -157,7 +157,7 @@ if (type==DOgParseXmlTag) {
 else {
   if (type==DOgParseXmlContent) {
     if (info->ixml_path<2) return(0);
-    value=info->xml_path[info->ixml_path-1];    
+    value=info->xml_path[info->ixml_path-1];
     valuep=info->xml_path[info->ixml_path-2];
     if (valuep != DLtrasModuleExceptReadConfTag_exception) return(0);
     ibuffer=ib; if (ibuffer>DPcPathSize-1) ibuffer=DPcPathSize-1;
@@ -226,7 +226,7 @@ ibuffer=0;
 buffer[ibuffer++]=0; buffer[ibuffer++]='f';
 buffer[ibuffer++]=0; buffer[ibuffer++]=':';
 memcpy(buffer+ibuffer,form,iform); ibuffer+=iform;
-buffer[ibuffer++]=0; buffer[ibuffer++]=1; 
+buffer[ibuffer++]=0; buffer[ibuffer++]=1;
 memcpy(buffer+ibuffer,target,itarget); ibuffer+=itarget;
 IFE(OgAutAdd(ctrl_except->ha_except,ibuffer,buffer));
 
@@ -241,10 +241,14 @@ if (iform >= DOgStmMaxWordLength) DONE;
 
 /* We do not phonetize names with digits */
 for (i=0; i<iform; i+=2) {
-  c=(form[i]<<8) + form[i+1]; 
+  c=(form[i]<<8) + form[i+1];
   if (OgUniIsdigit(c)) DONE;
   }
 input->iB = iform; input->B = form;
+
+//changer quand on gère les langues
+input->lang = 34;// fr
+
 IFE(OgPhonet(ctrl_except->hpho,input,output));
 if (output->iB < min_post_phonetisation_char_number*2) DONE;
 
@@ -252,7 +256,7 @@ ibuffer=0;
 buffer[ibuffer++]=0; buffer[ibuffer++]='p';
 buffer[ibuffer++]=0; buffer[ibuffer++]=':';
 memcpy(buffer+ibuffer,output->B,output->iB); ibuffer+=output->iB;
-buffer[ibuffer++]=0; buffer[ibuffer++]=1; 
+buffer[ibuffer++]=0; buffer[ibuffer++]=1;
 memcpy(buffer+ibuffer,target,itarget); ibuffer+=itarget;
 IFE(OgAutAdd(ctrl_except->ha_except,ibuffer,buffer));
 

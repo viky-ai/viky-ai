@@ -72,7 +72,8 @@ PUBLIC(void *) OgPhoInit(struct og_pho_param *param)
     return((void *)ctrl_pho);
   }
 
-  IF(PhoReadConfFiles(ctrl_pho, param->conf)) return(0);
+  sprintf(ctrl_pho->conf_filename, "%s", param->conf_filename);
+  IF(PhoReadConfFiles(ctrl_pho, param->conf_directory)) return(0);
 
   return((void *)ctrl_pho);
 }

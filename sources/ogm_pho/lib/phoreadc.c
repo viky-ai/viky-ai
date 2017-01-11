@@ -141,7 +141,7 @@ static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsi
   *pfilelang = filelang;
 
 
-  if (Ogstricmp("phonet_conf.xml",name))
+  if (Ogstricmp(ctrl_pho->conf_filename,name))
   {
     OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoConfFileValidNameAndGetLang: filename='%s' is not valid : wrong name '%s' should be phonet_conf.xml", filename, name);
     return FALSE;

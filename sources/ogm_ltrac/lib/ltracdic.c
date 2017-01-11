@@ -196,14 +196,24 @@ if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon) {
   pho_param->hmutex=ctrl_ltrac->hmutex;
   pho_param->loginfo.trace = DOgPhoTraceMinimal+DOgPhoTraceMemory;
   pho_param->loginfo.where = ctrl_ltrac->loginfo->where;
-  if(ctrl_ltrac->WorkingDirectory[0]) sprintf(pho_param->conf,"%s/conf/phonet_ltra_conf.xml",ctrl_ltrac->WorkingDirectory);
-  else strcpy(pho_param->conf,"conf/phonet_ltra_conf.xml");
-  if (OgFileExists(pho_param->conf)) {
+
+  if (ctrl_ltrac->WorkingDirectory[0])
+  {
+    sprintf(pho_param->conf_directory, "%s/%s", ctrl_ltrac->WorkingDirectory, DOgPhoConfigurationDirectory);
+    sprintf(pho_param->conf_filename, "phonet_ltra_conf.xml");
+  }
+  else
+  {
+    sprintf(pho_param->conf_directory, DOgPhoConfigurationDirectory);
+    sprintf(pho_param->conf_filename, "phonet_ltra_conf.xml");
+  }
+
+  if (OgFileExists(pho_param->conf_directory)) {
      IFn(ctrl_ltrac->hpho=OgPhoInit(pho_param)) DPcErr;
      }
   else {
     OgMsg(ctrl_ltrac->hmsg,"",DOgMsgDestInLog
-      , "LtracDicInit: impossible to open '%s' phonetic dictionary will not be created",pho_param->conf);
+      , "LtracDicInit: impossible to open '%s' phonetic dictionary will not be created",pho_param->conf_filename);
     }
   }
 if (input->dictionaries_to_export & DOgLtracDictionaryTypeAspell) {

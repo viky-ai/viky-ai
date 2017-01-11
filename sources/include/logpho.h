@@ -27,11 +27,13 @@
 #define DOgPhoTracePhonet               0x1000
 
 #define DOgPhoConfigurationDirectory     "conf/phonetic"
+#define DOgPhoConfigurationFile          "phonet_conf.xml"
 
 struct og_pho_param {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo loginfo;
-  char conf[DPcPathSize];
+  char conf_directory[DPcPathSize];
+  char conf_filename[DPcPathSize];
   void *hpho_to_inherit;
   };
 

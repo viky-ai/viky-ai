@@ -288,6 +288,10 @@ static int LtrasModuleExcept1(struct og_ltra_module_input *module_input
   }
   input->iB = words_length;
   input->B = words;
+
+  //changer quand on gère les langues
+  input->lang = 34;// fr
+
   IFE(OgPhonet(ctrl_except->hpho, input, output));
   if (output->iB < min_post_phonetisation_char_number * 2) DONE;
 
