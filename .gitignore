@@ -52,6 +52,7 @@
 /resources/morphology/nl/nlform*
 /resources/morphology/nl/dutch-clean.aff
 /resources/morphology/nl/dutch-clean.dic
+/resources/morphology/tmp/
 /sources/glib/glib-2.42.1
 /sources/glib/share/
 /sources/include/curl
