@@ -24,6 +24,14 @@ typedef struct
   size_t cell;
 } og_heap_sharded_index;
 
+
+typedef struct
+{
+  void *mem;
+  size_t nb_cells_allocated;
+  size_t nb_bytes_allocated;
+} og_heap_allocated_memory;
+
 /**
  *  og_heap lib handle
  */
@@ -39,6 +47,7 @@ DEFPUBLIC(size_t) OgHeapAddCell(og_heap handle);
 DEFPUBLIC(size_t) OgHeapAddCells(og_heap handle, int nb_cells);
 DEFPUBLIC(void *) OgHeapNewCell(og_heap handle, size_t *p_cell_index);
 DEFPUBLIC(void *) OgHeapGetCell(og_heap handle, size_t cell_index);
+DEFPUBLIC(og_heap_allocated_memory) OgHeapGetFullAllocatedMemory(og_heap handle);
 DEFPUBLIC(void *) OgHeapGetBufferNew(og_heap ctrl_heap, size_t buffer_cell_number);
 DEFPUBLIC(void *) OgHeapGetBufferReuse(og_heap ctrl_heap, size_t buffer_cell_number);
 DEFPUBLIC(og_status) OgHeapAppend(og_heap handle, size_t nb_cells, void const *cells);
@@ -71,18 +80,6 @@ DEFPUBLIC(void *) OgHeapShardedGetCell(og_heap_sharded handle, og_heap_sharded_i
 DEFPUBLIC(size_t) OgHeapShardedGetCellsUsed(og_heap_sharded sharded_ctrl_heap, int sub_heap);
 DEFPUBLIC(size_t) OgHeapShardedGetAllocatedMemory(og_heap_sharded handle);
 DEFPUBLIC(og_status) OgHeapShardedReset(og_heap_sharded handle);
-
-// Deprecated function
-
-// Some time actual usage is very difficult to replace due to design, so warn is disable for now
-// OG_DEPRECATED_FOR(OgHeapAddCells or OgHeapGetBufferNew)
-DEFPUBLIC(og_status) OgHeapTestRealloc(og_heap handle, size_t nb_added_cells);
-
-OG_DEPRECATED_FOR(OgHeapAddCells or OgHeapGetBufferNew or OgHeapTestRealloc)
-DEFPUBLIC(og_status) OgHeapRealloc(og_heap handle, size_t new_cells_number);
-
-OG_DEPRECATED_FOR(OgHeapGetBufferReuse)
-DEFPUBLIC(void *) OgHeapGet(og_heap handle, size_t nb_added_cells);
 
 #define _LOGHEAPALIVE_
 #endif

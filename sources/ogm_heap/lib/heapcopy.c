@@ -39,10 +39,16 @@ PUBLIC(size_t) OgHeapCopy(og_heap heap_from, og_heap heap_to)
     DPcErr;
   }
 
-  if (ctrl_heap_to->normal_cells_number < ctrl_heap_from->cells_used)
+  if (ctrl_heap_to->normal_cells_number < ctrl_heap_from->cells_used || ctrl_heap_to->normal_cells_number == 0)
   {
     IFE(OgHeapReallocNormal(heap_to, ctrl_heap_from->cells_used));
   }
+
+  // set used cells to default value
+  memset(ctrl_heap_to->normal_heap + (ctrl_heap_to->cell_size * ctrl_heap_from->cells_used),
+      ctrl_heap_to->default_mem_set_value,
+      (ctrl_heap_to->normal_cells_number - ctrl_heap_from->cells_used) * ctrl_heap_to->cell_size);
+
   memcpy(ctrl_heap_to->normal_heap, ctrl_heap_from->normal_heap,
       ctrl_heap_from->cell_size * ctrl_heap_from->cells_used);
   ctrl_heap_to->cells_used = ctrl_heap_from->cells_used;

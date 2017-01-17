@@ -22,11 +22,6 @@ static og_status OgHeapReallocSliced(struct og_ctrl_heap *ctrl_heap, size_t new_
  * \param new_cells_number new total number of cells
  * \return 0 if ok or -1 on error
  **/
-PUBLIC(og_status) OgHeapRealloc(og_heap ctrl_heap, size_t new_cells_number)
-{
-  return OgHeapReallocInternal(ctrl_heap, new_cells_number);
-}
-
 og_status OgHeapReallocInternal(og_heap ctrl_heap, size_t new_cells_number)
 {
   if (new_cells_number < ctrl_heap->cells_used)
@@ -89,7 +84,11 @@ og_status OgHeapReallocNormal(struct og_ctrl_heap *ctrl_heap, size_t new_cells_n
   if (new_cells_number == 0)
   {
     ctrl_heap->normal_cells_number = 0;
-    DPcFree(ctrl_heap->normal_heap);
+    if (ctrl_heap->normal_heap != NULL)
+    {
+      DPcFree(ctrl_heap->normal_heap);
+      ctrl_heap->normal_heap = NULL;
+    }
   }
   else
   {
@@ -186,19 +185,6 @@ static og_status OgHeapReallocSliced(struct og_ctrl_heap *ctrl_heap, size_t new_
  * \param nb_added_cells number of cells in the cells array
  * \return 0 if ok or -1 on error
  **/
-PUBLIC(og_status) OgHeapTestRealloc(og_heap ctrl_heap, size_t nb_added_cells)
-{
-  og_status status = OgHeapTestReallocInternal(ctrl_heap, nb_added_cells);
-
-  // update max cell used, because nb_added_cells will be use by caller anyway
-  if (ctrl_heap->cells_used + nb_added_cells > ctrl_heap->max_cells_used)
-  {
-    ctrl_heap->max_cells_used = ctrl_heap->cells_used + nb_added_cells;
-  }
-
-  return status;
-}
-
 og_status OgHeapTestReallocInternal(og_heap ctrl_heap, size_t nb_added_cells)
 {
 

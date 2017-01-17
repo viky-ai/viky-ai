@@ -9,6 +9,9 @@
 // print backtrace
 #include <execinfo.h>
 
+#define OGHEAP_LOG_BACKTRACE(hmsg, str_error_message)  { void *DPT_trace[255]; int DPT_trace_size = backtrace(DPT_trace, sizeof(DPT_trace)); char **DPT_messages = backtrace_symbols(DPT_trace, DPT_trace_size); printf("%s, backtrace :\n", str_error_message); OgLogCritical(hmsg, "%s, backtrace :", str_error_message); for (int DPT_i = 0; DPT_i < DPT_trace_size; DPT_i++) { printf("\t%s\n", DPT_messages[DPT_i]); OgLogCritical(hmsg, "\t%s", DPT_messages[DPT_i]); } printf("\t%s\n\n", "..."); OgLogCritical(hmsg, "\t%s\n", "..."); free(DPT_messages); }
+
+
 /**
  * Getting a buffer : pointer to the <b>last used position</b> of the heap, makes sure the heap
  * is big enough to accomodate nb_added_cells cells.
@@ -88,6 +91,39 @@ PUBLIC(void *) OgHeapGetBufferReuse(og_heap ctrl_heap, size_t nb_added_cells)
  * OgHeapGetCell(handle,cell_index)
  *
  * \param handle handle to a memory heap API
+ **/
+PUBLIC(og_heap_allocated_memory) OgHeapGetFullAllocatedMemory(og_heap handle)
+{
+  struct og_ctrl_heap *ctrl_heap = (struct og_ctrl_heap *)handle;
+
+  og_heap_allocated_memory result[1];
+  memset(result, 0, sizeof(og_heap_allocated_memory));
+
+  if (ctrl_heap->type == DOgHeapTypeNormal)
+  {
+    result->mem = (void *) ctrl_heap->normal_heap;
+    result->nb_cells_allocated = ctrl_heap->normal_cells_number;
+    result->nb_bytes_allocated = ctrl_heap->normal_cells_number * ctrl_heap->cell_size;
+  }
+  else
+  {
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapGetFullAllocatedMemory on '%s': function not yet implemented for heap type (%d)",
+        ctrl_heap->name, ctrl_heap->type);
+    OgErr(ctrl_heap->herr, erreur);
+    OGHEAP_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+  }
+
+  return *result;
+}
+
+
+
+/**
+ * Getting a pointer to the cell whose index is cell_index
+ * OgHeapGetCell(handle,cell_index)
+ *
+ * \param handle handle to a memory heap API
  * \param cell_index cell index
  * \return the pointer to the cell, and 0 on error
  **/
@@ -101,7 +137,7 @@ PUBLIC(void *) OgHeapGetCell(og_heap handle, size_t cell_index)
   {
     snprintf(erreur, DOgErrorSize, "OgHeapGetCell on '%s': cell_index == -1", ctrl_heap->name);
     OgErr(ctrl_heap->herr, erreur);
-    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    OGHEAP_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
 
     return NULL;
   }
@@ -111,18 +147,15 @@ PUBLIC(void *) OgHeapGetCell(og_heap handle, size_t cell_index)
     snprintf(erreur, DOgErrorSize, "OgHeapGetCell on '%s': cell_index (%ld) >= OgHeapGetCellsNumber (%ld)",
         ctrl_heap->name, cell_index, OgHeapGetCellsNumber(ctrl_heap));
     OgErr(ctrl_heap->herr, erreur);
-    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    OGHEAP_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
 
     return NULL;
   }
-
-  // TODO OgHeapGetCell change to >= , it may crash a lot of test
-  else if (cell_index != 0 && cell_index > ctrl_heap->cells_used)
+  else if (cell_index != 0 && cell_index >= ctrl_heap->cells_used)
   {
     snprintf(erreur, DOgErrorSize, "OgHeapGetCell on '%s': cell_index (%ld) >= ctrl_heap->cells_used (%ld)",
         ctrl_heap->name, cell_index, ctrl_heap->cells_used);
-    OgErr(ctrl_heap->herr, erreur);
-    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    OGHEAP_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
 
     return NULL;
   }
@@ -140,7 +173,7 @@ PUBLIC(void *) OgHeapGetCell(og_heap handle, size_t cell_index)
     snprintf(erreur, DOgErrorSize, "OgHeapGetCell on '%s': function not yet implemented for heap type (%d)",
         ctrl_heap->name, ctrl_heap->type);
     OgErr(ctrl_heap->herr, erreur);
-    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    OGHEAP_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
 
     return NULL;
   }
@@ -162,6 +195,11 @@ inline void *HeapSliceGetCell(struct og_ctrl_heap *ctrl_heap, size_t cell_index)
 inline void *HeapNormalGetCell(struct og_ctrl_heap *ctrl_heap, size_t cell_index)
 {
   size_t cell_start = cell_index * ctrl_heap->cell_size;
+  if (ctrl_heap->normal_heap == NULL)
+  {
+    return NULL;
+  }
+
   return ((void *) (ctrl_heap->normal_heap + cell_start));
 }
 

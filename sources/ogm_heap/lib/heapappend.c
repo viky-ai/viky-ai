@@ -31,7 +31,7 @@ PUBLIC(og_status) OgHeapAppend(og_heap ctrl_heap, size_t nb_added_cells, void co
   {
 
     // Optimization : test before function call
-    if (ctrl_heap->cells_used + nb_added_cells > ctrl_heap->normal_cells_number)
+    if (ctrl_heap->cells_used + nb_added_cells > ctrl_heap->normal_cells_number || ctrl_heap->normal_cells_number == 0)
     {
       IFE(OgHeapTestReallocInternal(ctrl_heap, nb_added_cells));
     }

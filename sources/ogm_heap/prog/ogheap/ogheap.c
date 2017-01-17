@@ -261,7 +261,7 @@ size_t secondary_heap_used;
 IFn(info->hsecondary_heap=OgHeapInit(info->hmsg,"secondary_heap",sizeof(struct heap1),20)) DPcErr;
 IFE(ReadHeap1(info,ReadHeap1SecondaryAppend));
 IFn(secondary_heap_used=OgHeapGetCellsUsed(info->hsecondary_heap)) DPcErr;
-IFE(OgHeapTestRealloc(info->hheap,secondary_heap_used));
+IFE(OgHeapAddCells(info->hheap,secondary_heap_used));
 IFn(secondary_heap=OgHeapGetCell(info->hsecondary_heap,0)) DPcErr;
 IFn(heap1=OgHeapGetCell(info->hheap,0)) DPcErr;
 memcpy(heap1,secondary_heap,secondary_heap_used*sizeof(struct heap1));
