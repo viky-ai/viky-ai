@@ -331,8 +331,9 @@ new_word->string = output->content;
 new_word->string_length = output->content_length;
 new_word->start_position = trf->start;
 new_word->length_position = trf->length;
+new_word->language = trf->language;
 if (ctrl_tra->check_words_in_dictionary) {
-  IFE(found=OgLtrasTrfCalculateFrequency(ctrl_tra->hltras,new_word->string_length,new_word->string,&new_word->frequency));
+  IFE(found=OgLtrasTrfCalculateFrequency(ctrl_tra->hltras, new_word->string_length, new_word->string, new_word->language, &new_word->frequency));
   if (!found) DONE;
   }
 else {

@@ -8,7 +8,6 @@
 #include <logaut.h>
 #include <logstm.h>
 
-
 struct og_ctrl_add {
   void *herr,*hmsg,*hltras; ogmutex_t *hmutex;
   struct og_loginfo cloginfo,*loginfo;
@@ -125,6 +124,17 @@ static int LtrasModuleAdd1(struct og_ltra_module_input *module_input
     int string_length;
     unsigned char *string;
     struct og_ltra_add_trf_word *new_word = tinput->word + i;
+
+    int language = DOgLangNil;
+    if (module_input->language_code != 0)
+    {
+      language = module_input->language_code;
+    }
+    else if (new_word->language != 0)
+    {
+      language = new_word->language;
+    }
+
     string_length = new_word->string_length;
     string = new_word->string;
 
@@ -144,11 +154,20 @@ static int LtrasModuleAdd1(struct og_ltra_module_input *module_input
       {
         IFE(retour);
         unsigned char *p = out;
-        int attribute_number, language, position, frequency;
+        int attribute_number, language_code, position, frequency;
         IFE(DOgPnin4(ctrl_add->herr,&p,&attribute_number));
-        IFE(DOgPnin4(ctrl_add->herr,&p,&language));
+        IFE(DOgPnin4(ctrl_add->herr,&p,&language_code));
         IFE(DOgPnin4(ctrl_add->herr,&p,&position));
         IFE(DOgPnin4(ctrl_add->herr,&p,&frequency));
+
+        // check language frequency
+        int language_lang = OgIso639_3166ToLang(language);
+        if (language_lang != 0 && language_code != 0 && language_lang != language_code)
+        {
+          continue;
+        }
+
+        new_word->language = language;
         new_word->frequency = frequency;
         struct og_ltra_trf *trf = trfs->Trf + Itrf;
         struct og_ltra_word *word = trfs->Word + trf->start_word + i;

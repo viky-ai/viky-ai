@@ -323,6 +323,7 @@ static int LtrasModuleReference3(struct og_ltra_module_input *module_input, stru
           new_word->string_length = i - start;
           new_word->frequency = ctrl_reference->no_dictionary_frequency;
           new_word->base_frequency = ctrl_reference->no_dictionary_frequency;
+          new_word->language = trf->language;
           new_word->start_position = position[start / 2];
           new_word->length_position = position[i / 2] - position[start / 2];
           if (new_word->length_position < 0) new_word->length_position = 0;
@@ -341,6 +342,7 @@ static int LtrasModuleReference3(struct og_ltra_module_input *module_input, stru
           new_word->string_length = i - start;
           new_word->frequency = ctrl_reference->no_dictionary_frequency;
           new_word->base_frequency = ctrl_reference->no_dictionary_frequency;
+          new_word->language = trf->language;
           new_word->start_position = position[start / 2];
           new_word->length_position = position[i / 2] - position[start / 2];
           if (new_word->length_position < 0) new_word->length_position = 0;

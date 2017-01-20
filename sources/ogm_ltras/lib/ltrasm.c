@@ -396,7 +396,7 @@ PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, i
   DONE;
 }
 
-PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int *pfrequency)
+PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
   int iout;
@@ -436,6 +436,14 @@ PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsign
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&language_code));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
+
+      // check language frequency
+      int language_lang = OgIso639_3166ToLang(language);
+      if (language_lang != 0 && language_code != 0 && language_lang != language_code)
+      {
+        continue;
+      }
+
       *pfrequency += frequency;
       found = 1;
     }
@@ -823,6 +831,7 @@ PUBLIC(int) OgLtrasTrfInitTinput(struct og_ltra_trfs *trfs, int Itrf, struct og_
     new_word->base_frequency = word->base_frequency;
     new_word->start_position = word->start_position;
     new_word->length_position = word->length_position;
+    new_word->language = word->language;
     tinput->nb_words++;
   }
 

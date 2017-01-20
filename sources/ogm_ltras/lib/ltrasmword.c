@@ -1,8 +1,8 @@
 /*
- *	Handling trf structures
- *	Copyright (c) 2009-2010 Pertimm by Patrick Constant
- *	Dev: November 2009, February 2010
- *	Version 1.0
+ *  Handling trf structures
+ *  Copyright (c) 2009-2010 Pertimm by Patrick Constant
+ *  Dev: November 2009, February 2010
+ *  Version 1.0
 */
 #include "ogm_ltras.h"
 
@@ -52,7 +52,7 @@ int i=trfs->WordNumber;
 beginAllocWord:
 
 if (trfs->WordUsed < trfs->WordNumber) {
-  i = trfs->WordUsed++; 
+  i = trfs->WordUsed++;
   }
 
 if (i == trfs->WordNumber) {

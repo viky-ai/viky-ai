@@ -5,7 +5,7 @@
  *  Version 1.1
 */
 #include "ogm_pho.h"
-
+#include <logis639_3166.h>
 
 
 static int PhoResultSendClean(struct lang_context *lang_context, struct og_pho_output *output, int step);
@@ -27,8 +27,9 @@ PUBLIC(int) OgPhonet(void *handle, struct og_pho_input *input, struct og_pho_out
     DONE;
   }
 
-  struct lang_context *lang_context = g_hash_table_lookup(ctrl_pho->lang_context_map, GINT_TO_POINTER(input->lang));
-  unsigned char *lang = OgIso639ToCode(input->lang);
+  int language = OgIso639_3166ToLang(input->lang);
+  struct lang_context *lang_context = g_hash_table_lookup(ctrl_pho->lang_context_map, GINT_TO_POINTER(language));
+  unsigned char *lang = OgIso639ToCode(language);
   IFn(lang_context)
   {
     OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "OgPhonet: phonet has no conf for language %s, nothing done.", lang);

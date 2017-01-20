@@ -84,7 +84,7 @@ DONE;
 static int LtrasFcbLeaf(struct og_ctrl_ltras *ctrl_ltras
   ,struct og_ltra_trfs *input, struct og_ltra_trfs **output,int Irqp_node)
 {
-struct og_ltra_module_input cmodule_input,*module_input=&cmodule_input;
+struct og_ltra_module_input module_input[1];
 int ifullmodule; unsigned char fullmodule[DPcPathSize];
 int argc; char *argv[DOgLtrasFlowChartMaxNbArgvs];
 struct og_rqp_node crqp_node,*rqp_node=&crqp_node;
@@ -95,6 +95,7 @@ struct module *module;
 
 *output=0;
 
+module_input->language_code = ctrl_ltras->input->language_code;
 module_input->argv=argv;
 IFE(OgRqpNodeInformation(ctrl_ltras->hrqp,Irqp_node,rqp_node));
 IFE(OgUniToCp(rqp_node->name_length,rqp_node->name,DPcPathSize,&ifullmodule,fullmodule,DOgCodePageUTF8,0,0));

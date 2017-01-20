@@ -372,9 +372,10 @@ static int LtrasModuleLem12(void *handle, struct og_ldi_output *output)
   new_word->string_length = output->content_length;
   new_word->start_position = trf->start;
   new_word->length_position = trf->length;
+  new_word->language = output->language;
   if (ctrl_lem1->check_words_in_dictionary)
   {
-    og_bool found = OgLtrasTrfCalculateFrequency(ctrl_lem1->hltras, new_word->string_length, new_word->string,
+    og_bool found = OgLtrasTrfCalculateFrequency(ctrl_lem1->hltras, new_word->string_length, new_word->string, new_word->language,
             &new_word->frequency);
     IFE(found);
     if (!found) DONE;
@@ -384,7 +385,6 @@ static int LtrasModuleLem12(void *handle, struct og_ldi_output *output)
     new_word->frequency = ctrl_lem1->no_dictionary_frequency;
   }
   new_word->base_frequency = word->base_frequency;
-  new_word->language = output->language;
   tinput->nb_words++;
   tinput->module_id = info->module_input->id;
   tinput->language = output->language;

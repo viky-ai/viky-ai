@@ -19,6 +19,7 @@
     <file>ltrasmcost.c</file>
     <file>ltrasmcut.c</file>
     <file>ltrasmcutc.c</file>
+    <file>ltrasmcompound.c</file>
     <file>ltrasmdel.c</file>
     <file>ltrasmem.c</file>
     <file>ltrasmexcept.c</file>

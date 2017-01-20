@@ -23,6 +23,7 @@ struct og_info {
   double frequency_ratio;
   double score_factor;
   int codepage;
+  int lang;
   void *hltras;
   };
 
@@ -137,6 +138,9 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     }
   else if (!memcmp(cmd_param,"-o",2)) {
     strcpy(param->output_file,cmd_param+2);
+    }
+  else if (!memcmp(cmd_param,"-l",2)) {
+    info->lang = OgCodeToIso639(cmd_param + 2);
     }
   else if (cmd_param[0] != '-') {
     strcpy(info->filename,cmd_param);
@@ -271,6 +275,7 @@ while(fgets(line,DPcPathSize,fd)){
       }
     }
   memset(input,0,sizeof(struct og_ltras_input));
+  input->language_code = info->lang;
   input->request_length=iuni_request; input->request=uni_request;
   input->frequency_ratio=info->frequency_ratio;
   input->score_factor=info->score_factor;

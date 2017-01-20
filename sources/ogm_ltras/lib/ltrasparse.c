@@ -71,9 +71,27 @@ tinput->length = w->length;
 new_word = tinput->word+tinput->nb_words;
 new_word->string = w->input->content + w->start;
 new_word->string_length = w->length;
+
+// choose best scored lang by lip
+double best_lang_score = 0.0;
+int lang = info->ctrl_ltras->input->language_code;
+if(lang == 0)
+{
+  for (int i = 0; i < w->lang.nb_languages; i++)
+  {
+    struct og_lip_lang_score *lip_lang_score = w->lang.language + i;
+    if (lip_lang_score->score > best_lang_score)
+    {
+      best_lang_score = lip_lang_score->score;
+      lang = lip_lang_score->lang;
+    }
+  }
+}
+new_word->language = lang;
+
 /** A zero frequency ratio means we want all solutions, thus we do not calculate base frequency **/
 if (ctrl_ltras->input->frequency_ratio > 0) {
-  IFE(OgLtrasTrfCalculateFrequency(ctrl_ltras, new_word->string_length, new_word->string, &new_word->base_frequency));
+  IFE(OgLtrasTrfCalculateFrequency(ctrl_ltras, new_word->string_length, new_word->string, new_word->language, &new_word->base_frequency));
   }
 new_word->frequency = 0;
 new_word->start_position = w->start;

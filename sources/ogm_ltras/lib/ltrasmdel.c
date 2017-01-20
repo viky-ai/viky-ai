@@ -184,6 +184,7 @@ static int LtrasModuleDelete2(struct og_ltra_module_input *module_input
     new_word->base_frequency = word->base_frequency;
     new_word->start_position = word->start_position;
     new_word->length_position = word->length_position;
+    new_word->language = word->language;
     words_length += word->length;
     tinput->nb_words++;
   }

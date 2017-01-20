@@ -97,6 +97,7 @@ int OgLtrasModuleTest(struct og_ltra_module_input *module_input, struct og_ltra_
       new_word->string_length = 12;
       new_word->start_position = trf->start;
       new_word->length_position = trf->length;
+      new_word->language = trf->language;
       new_word->frequency = 0;
       new_word->base_frequency = word->base_frequency;
       tinput->nb_words++;

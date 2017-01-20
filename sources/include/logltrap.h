@@ -1,5 +1,5 @@
 /*
- *	Header for library ogm_ltrap.dll
+ *  Header for library ogm_ltrap.dll
  *  Copyright (c) 2010 Pertimm by P.Constant
  *  Dev : November 2010
  *  Version 1.0
@@ -33,9 +33,10 @@
 
 #define DOgLtrapModuleConfiguration   "conf/ltrap_conf.xml"
 
-#define DOgLtrapLexiconTypeBase   1
-#define DOgLtrapLexiconTypeSwap   2
-#define DOgLtrapLexiconTypePhon   3
+#define DOgLtrapLexiconTypeBase      1
+#define DOgLtrapLexiconTypeSwap      2
+#define DOgLtrapLexiconTypePhon      3
+#define DOgLtrapLexiconTypeCompound  4
 
 
 struct og_ltrap_param {
@@ -43,7 +44,7 @@ struct og_ltrap_param {
   struct og_loginfo loginfo;
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
-  int max_word_frequency; 
+  int max_word_frequency;
   void *ha_base,*ha_swap,*ha_phon;
   int max_small_word_length;
   void *ha_small_words;
@@ -66,6 +67,7 @@ struct og_ltrap_input {
   double score_factor;
   double cut_cost;
   void *context;
+  void *haut_external_dictionary;
   };
 
 DEFPUBLIC(void *) OgLtrapInit(pr(struct og_ltrap_param *));

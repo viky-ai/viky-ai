@@ -12,6 +12,7 @@
 #include <logmsg.h>
 #include <logstm.h>
 #include <logheap.h>
+#include <logis639_3166.h>
 
 
 #define DOgLtrasBanner  "ogm_ltras V1.00, Copyright (c) 2009-2010 Pertimm, Inc."
@@ -35,6 +36,7 @@
 #define DOgLtrasTraceModuleLem            0x8000
 #define DOgLtrasTraceModuleTra            0x10000
 #define DOgLtrasTraceModuleRef            0x20000
+#define DOgLtrasTraceModuleCompound       0x40000
 
 #define DOgLtrasModuleConfiguration   "conf/ltras_conf.xml"
 #define DOgLtrasOutputFile            "log/ogltras.xml"
@@ -129,8 +131,10 @@ struct og_ltra_add_trf_input {
   };
 
 /** External parameters to initialize ltras library*/
-struct og_ltras_param {
-  void *herr,*hmsg; ogmutex_t *hmutex;
+struct og_ltras_param
+{
+  void *herr, *hmsg;
+  ogmutex_t *hmutex;
   struct og_loginfo loginfo;
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
@@ -138,7 +142,8 @@ struct og_ltras_param {
   char caller_label[DPcPathSize];
   char output_file[DPcPathSize];
   void *hltras_to_inherit;
-  };
+  int phonetic_default_language;
+};
 
 /** Input of an ltras module (for instance input of module del)*/
 struct og_ltras_input {
@@ -164,6 +169,7 @@ struct og_ltra_module_param {
 /** Input parameters of a module. It is a callback context since the module is called as a callback*/
 struct og_ltra_module_input {
   void *handle; int id;
+  int language_code;
   int argc; char **argv;
   };
 
@@ -306,6 +312,14 @@ DEFPUBLIC(og_bool) OgLtrasScoreFactorIsLogPosActivated(void *handle);
  * @return maximum frequency.
  */
 DEFPUBLIC(int) OgLtrasMaxWordFrequency(void *hltras);
+
+/**
+ * Get the phonetic default language used for module phon when no language is specified
+ *
+ * @param hltras handle for ltras
+ * @return phonetic default language.
+ */
+DEFPUBLIC(int) OgLtrasGetPhoneticDefaultLanguage(void *handle);
 
 /**
  * Get current working directory
@@ -472,11 +486,12 @@ DEFPUBLIC(og_status) OgLtrasTrfCalculateGlobal(void *hltras, struct og_ltra_trfs
  * @param hltras handle for ltras
  * @param string_length size of the word
  * @param string the word to get the frequency
+ * @param language_code code of the current language
  * @param pfrequency frequency of the word. If the word appears more than once in the automaton,
  * the frequencies are added.
  * @return function status : TRUE, else FALSE if word is not found, else ERREUR
  */
-DEFPUBLIC(og_bool) OgLtrasTrfCalculateFrequency(void *hltras, int string_length, unsigned char *string, int *pfrequency);
+DEFPUBLIC(og_bool) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language_code, int *pfrequency);
 
 /**
  * Get the start position and end position in the original string of the tranformation
@@ -681,6 +696,11 @@ DEFPUBLIC(int) OgLtrasMem(void *hltras, int must_log, int module_level, ogint64_
 DEFPUBLIC(void *) OgLtrasModuleAddInit(struct og_ltra_module_param *param);
 DEFPUBLIC(int) OgLtrasModuleAddFlush(void *handle);
 DEFPUBLIC(int) OgLtrasModuleAdd(struct og_ltra_module_input *module_input, struct og_ltra_trfs *input,  struct og_ltra_trfs **output, ogint64_t *elapsed);
+
+/** compound module **/
+DEFPUBLIC(void *) OgLtrasModuleCompoundInit(struct og_ltra_module_param *param);
+DEFPUBLIC(int) OgLtrasModuleCompoundFlush(void *handle);
+DEFPUBLIC(int) OgLtrasModuleCompound(struct og_ltra_module_input *module_input, struct og_ltra_trfs *input,  struct og_ltra_trfs **output, ogint64_t *elapsed);
 
 /** cut module **/
 DEFPUBLIC(void *) OgLtrasModuleCutInit(struct og_ltra_module_param *param);

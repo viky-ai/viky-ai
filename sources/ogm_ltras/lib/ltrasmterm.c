@@ -505,7 +505,7 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
     /** We need to calculate the basic word frequency so that they are sorted correctly **/
     if (ctrl_term->check_words_in_dictionary)
     {
-      IFE(OgLtrasTrfCalculateFrequency(ctrl_term->hltras, word->length, trfs->Ba + word->start, &word->frequency));
+      IFE(OgLtrasTrfCalculateFrequency(ctrl_term->hltras, word->length, trfs->Ba + word->start, word->language, &word->frequency));
     }
     else
     {
@@ -779,6 +779,7 @@ if (span_start_trf == trfs->TrfBasicUsed) {
       new_word->base_frequency = word->base_frequency;
       new_word->start_position = word->start_position;
       new_word->length_position = word->length_position;
+      new_word->language = word->language;
       words_length+=word->length;
       if (tinput->nb_words >= DOgLtrasAddTrfMaxNbWords) {
         if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation) {

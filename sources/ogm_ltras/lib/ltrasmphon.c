@@ -34,8 +34,8 @@ struct LtrasModulePhonAddTransformationCtx
 static int LtrasModulePhon1(struct og_ltra_module_input *module_input
   , struct og_ltra_trfs *trfs, int Itrf);
 
-static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, struct og_ltra_trfs *trfs, int Itrf,
-    struct LtrasModulePhonAddTransformationCtx *ctx);
+static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, int language, struct og_ltra_trfs *trfs,
+    int Itrf, struct LtrasModulePhonAddTransformationCtx *ctx);
 
 
 
@@ -213,8 +213,21 @@ static int LtrasModulePhon1(struct og_ltra_module_input *module_input
     input->iB = iin;
     input->B = in;
 
-    //changer quand on gère les langues
-    input->lang = 34;// fr
+    int language = DOgLangNil;
+    if (module_input->language_code != 0)
+    {
+      language = module_input->language_code;
+    }
+    else if (new_word->language != 0)
+    {
+      language = new_word->language;
+    }
+    else
+    {
+      language = OgLtrasGetPhoneticDefaultLanguage(ctrl_phon->hltras);
+    }
+
+    input->lang = language;
 
     IFE(OgPhonet(ctrl_phon->hpho, input, output));
     if (output->iB < min_post_phonetisation_char_number * 2) continue;
@@ -240,7 +253,7 @@ static int LtrasModulePhon1(struct og_ltra_module_input *module_input
     struct og_ltra_add_trf_word *previous_word = tinput->word + i;
     unsigned char *string = previous_word->string;
     int string_length = previous_word->string_length;
-    LtrasModulePhonAddTransformation(ctrl_phon,trfs,Itrf,ctx);
+    IFE(LtrasModulePhonAddTransformation(ctrl_phon, language, trfs, Itrf, ctx));
     /** We have changed tinput->word + i (string and string_length) to create transformation.
      * We have to put it back when we iterate to i+1 */
     previous_word->string = string;
@@ -249,7 +262,8 @@ static int LtrasModulePhon1(struct og_ltra_module_input *module_input
   DONE;
 }
 
-static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, struct og_ltra_trfs *trfs, int Itrf, struct LtrasModulePhonAddTransformationCtx *ctx)
+static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, int language, struct og_ltra_trfs *trfs,
+    int Itrf, struct LtrasModulePhonAddTransformationCtx *ctx)
 {
 
   /** we put results with Levenshtein distance inside the automaton ha_results and the frequency
@@ -269,6 +283,14 @@ static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, stru
       IFE(DOgPnin4(ctrl_phon->herr,&p,&attribute_number));
       IFE(DOgPnin4(ctrl_phon->herr,&p,&language_code));
       IFE(DOgPnin4(ctrl_phon->herr,&p,&frequency));
+
+      // check language frequency
+      int language_lang = OgIso639_3166ToLang(language);
+      if (language_lang != 0 && language_code != 0 && language_lang != language_code)
+      {
+        continue;
+      }
+
       int real_string_length = iout - (p - out);
       unsigned char *real_string = p;
       if (real_string_length >= DOgStmMaxWordLength) continue;

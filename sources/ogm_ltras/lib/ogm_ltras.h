@@ -12,6 +12,7 @@
 #include <logaut.h>
 #include <logpho.h>
 #include <logldi.h>
+#include <logis639_3166.h>
 
 
 #define DOgLtrasSuggestionSize    100
@@ -99,6 +100,8 @@ struct og_ctrl_ltras
 
   double max_word_frequency_log10;
   int max_word_frequency;
+
+  int phonetic_default_language;
 
   char caller_label[DPcPathSize];
   char output_file[DPcPathSize];

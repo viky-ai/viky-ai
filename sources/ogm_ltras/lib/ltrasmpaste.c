@@ -249,6 +249,7 @@ static int LtrasModulePaste3(struct og_ltra_module_input *module_input
   new_word->base_frequency = base_frequency;
   new_word->start_position = start;
   new_word->length_position = length;
+  new_word->language = word->language;
   tinput->nb_words++;
 
   tinput->module_id = module_input->id;

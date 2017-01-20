@@ -255,6 +255,8 @@ struct og_ltras_param *param;
   ctrl_ltras->statistics.min_elapsed=0x7fffffff;
   ctrl_ltras->statistics.max_elapsed=0;
 
+  ctrl_ltras->phonetic_default_language = param->phonetic_default_language;
+
   return((void *)ctrl_ltras);
 }
 
@@ -459,6 +461,19 @@ return(ctrl_ltras->max_word_frequency);
 }
 
 
+PUBLIC(int) OgLtrasGetPhoneticDefaultLanguage(void *handle)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  if(ctrl_ltras->phonetic_default_language == DOgLangNil)
+  {
+    return DOgLangFR;
+  }
+  else
+  {
+    return (ctrl_ltras->phonetic_default_language);
+  }
+
+}
 
 
 PUBLIC(char *) OgLtrasWorkingDirectory(void *handle)

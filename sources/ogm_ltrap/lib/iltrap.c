@@ -1,8 +1,8 @@
 /*
- *	Initialisation functions for Linguistic Trf search library
- *	Copyright (c) 2010 Pertimm by Patrick Constant
- *	Dev : January 2010
- *	Version 1.0
+ *  Initialisation functions for Linguistic Trf search library
+ *  Copyright (c) 2010 Pertimm by Patrick Constant
+ *  Dev : January 2010
+ *  Version 1.0
 */
 #include "ogm_ltrap.h"
 
@@ -13,7 +13,6 @@ PUBLIC(void *) OgLtrapInit(param)
 struct og_ltrap_param *param;
 {
 struct og_msg_param cmsg_param,*msg_param=&cmsg_param;
-struct og_aut_param caut_param,*aut_param=&caut_param;
 struct og_ctrl_ltrap *ctrl_ltrap;
 char erreur[DOgErrorSize];
 int size;
@@ -37,9 +36,9 @@ IFn(ctrl_ltrap->configuration_file[0]) {
   }
 
 memset(msg_param,0,sizeof(struct og_msg_param));
-msg_param->herr=ctrl_ltrap->herr; 
+msg_param->herr=ctrl_ltrap->herr;
 msg_param->hmutex=ctrl_ltrap->hmutex;
-msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory; 
+msg_param->loginfo.trace = DOgMsgTraceMinimal+DOgMsgTraceMemory;
 msg_param->loginfo.where = ctrl_ltrap->loginfo->where;
 msg_param->module_name="ogm_ltrap";
 IFn(ctrl_ltrap->hmsg=OgMsgInit(msg_param)) return(0);
@@ -84,23 +83,62 @@ ctrl_ltrap->max_word_frequency = param->max_word_frequency;
 ctrl_ltrap->max_word_frequency_log10=log10(ctrl_ltrap->max_word_frequency);
 
 IFn(param->ha_base) {
+
+  struct og_aut_param aut_param[1];
+  memset(aut_param, 0, sizeof(struct og_aut_param));
+
+  aut_param->herr=ctrl_ltrap->herr;
+  aut_param->hmutex=ctrl_ltrap->hmutex;
+  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+  aut_param->loginfo.where = ctrl_ltrap->loginfo->where;
+
   sprintf(aut_param->name,"ltra_base");
   IFn(ctrl_ltrap->ha_base=OgAutInit(aut_param)) return(0);
-  IF(OgAufRead(ctrl_ltrap->ha_base,"ling/ltra_base.auf")) return(0);
+    unsigned char* ha_name = "ling/ltra_base.auf";
+    if (OgFileExists(ha_name))
+    {
+      IF(OgAufRead(ctrl_ltrap->ha_base, ha_name)) return(0);
+    }
   }
 else ctrl_ltrap->ha_base = param->ha_base;
 
 IFn(param->ha_swap) {
+
+  struct og_aut_param aut_param[1];
+  memset(aut_param, 0, sizeof(struct og_aut_param));
+
+  aut_param->herr=ctrl_ltrap->herr;
+  aut_param->hmutex=ctrl_ltrap->hmutex;
+  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+  aut_param->loginfo.where = ctrl_ltrap->loginfo->where;
+
   sprintf(aut_param->name,"ltra_swap");
   IFn(ctrl_ltrap->ha_swap=OgAutInit(aut_param)) return(0);
-  IF(OgAufRead(ctrl_ltrap->ha_swap,"ling/ltra_swap.auf")) return(0);
+    unsigned char* ha_name = "ling/ltra_swap.auf";
+    if (OgFileExists(ha_name))
+    {
+      IF(OgAufRead(ctrl_ltrap->ha_swap, ha_name)) return(0);
+    }
   }
 else ctrl_ltrap->ha_swap = param->ha_swap;
 
 IFn(param->ha_phon) {
+
+  struct og_aut_param aut_param[1];
+  memset(aut_param, 0, sizeof(struct og_aut_param));
+
+  aut_param->herr=ctrl_ltrap->herr;
+  aut_param->hmutex=ctrl_ltrap->hmutex;
+  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+  aut_param->loginfo.where = ctrl_ltrap->loginfo->where;
+
   sprintf(aut_param->name,"ltra_phon");
   IFn(ctrl_ltrap->ha_phon=OgAutInit(aut_param)) return(0);
-  IF(OgAufRead(ctrl_ltrap->ha_phon,"ling/ltra_phon.auf")) return(0);
+    unsigned char* ha_name = "ling/ltra_phon.auf";
+    if (OgFileExists(ha_name))
+    {
+      IF(OgAufRead(ctrl_ltrap->ha_phon, ha_name)) return(0);
+    }
   }
 else ctrl_ltrap->ha_phon = param->ha_phon;
 

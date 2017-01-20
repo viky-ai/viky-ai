@@ -264,6 +264,7 @@ static int LtrasModuleExcept1(struct og_ltra_module_input *module_input
       new_word->base_frequency = word->base_frequency;
       new_word->start_position = trf->start;
       new_word->length_position = trf->length;
+      new_word->language = word->language;
       tinput->nb_words++;
       tinput->module_id = module_input->id;
       //combined score with previous module global score
@@ -289,8 +290,15 @@ static int LtrasModuleExcept1(struct og_ltra_module_input *module_input
   input->iB = words_length;
   input->B = words;
 
-  //changer quand on gère les langues
-  input->lang = 34;// fr
+  //  int language_code = DOgLangNil;
+  //  if (module_input->language_code != 0)
+  //  {
+  //    language_code = module_input->language_code;
+  //  }
+  //  else if (word->language != 0)
+  //  {
+  //    language_code = word->language;
+  //  }
 
   IFE(OgPhonet(ctrl_except->hpho, input, output));
   if (output->iB < min_post_phonetisation_char_number * 2) DONE;

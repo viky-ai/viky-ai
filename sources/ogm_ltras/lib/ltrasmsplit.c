@@ -134,16 +134,20 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct o
     int Itrf)
 {
   struct og_ctrl_split *ctrl_split = (struct og_ctrl_split *) module_input->handle;
-  struct og_ltra_add_trf_word *new_word, *previous_new_word;
   struct og_ltra_add_trf_input ctinput, *tinput = &ctinput;
   int words_length;
   unsigned char words[DPcPathSize];
   struct og_ltra_trf *trf = trfs->Trf + Itrf;
-  struct og_ltra_word *word;
   int i, j, retour;
 
-  //Keep original string of trfs to compare with transmormation string and
-  //to calculate a levenchtein score
+  int language_code = 0;
+  if (module_input->language_code != 0)
+  {
+    language_code = module_input->language_code;
+  }
+
+  // Keep original string of trfs to compare with transmormation string and
+  // to calculate a levenchtein score
   unsigned char origin[DPcPathSize];
   int origin_length = 0;
   void *hltras = ctrl_split->hltras;
@@ -160,8 +164,13 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct o
       break;
     }
 
-    word = trfs->Word + trf->start_word + i;
-    new_word = tinput->word + tinput->nb_words;
+    struct og_ltra_word *word = trfs->Word + trf->start_word + i;
+    if (language_code == 0)
+    {
+      language_code = word->language;
+    }
+
+    struct og_ltra_add_trf_word *new_word = tinput->word + tinput->nb_words;
     memcpy(words + words_length, trfs->Ba + word->start, word->length);
     new_word->string = words + words_length;
     new_word->string_length = word->length;
@@ -169,6 +178,7 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct o
     new_word->base_frequency = word->base_frequency;
     new_word->start_position = word->start_position;
     new_word->length_position = word->length_position;
+    new_word->language = language_code;
     words_length += word->length;
     tinput->nb_words++;
   }
@@ -180,13 +190,11 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct o
 
   for (i = 1; i < tinput->nb_words; i++)
   {
-    int string_length, start;
-    unsigned char *string;
-    previous_new_word = tinput->word + i - 1;
-    new_word = tinput->word + i;
-    start = new_word->start_position;
-    string_length = new_word->string_length;
-    string = new_word->string;
+    struct og_ltra_add_trf_word *previous_new_word = tinput->word + i - 1;
+    struct og_ltra_add_trf_word *new_word = tinput->word + i;
+    int start = new_word->start_position;
+    int string_length = new_word->string_length;
+    unsigned char * string = new_word->string;
     memcpy(tinput->word + i - 1, tinput->word + i, sizeof(struct og_ltra_add_trf_word));
     for (j = 2; j < string_length; j += 2)
     {
@@ -197,6 +205,7 @@ static int LtrasModuleSplit2(struct og_ltra_module_input *module_input, struct o
       previous_new_word->string_length = j;
       previous_new_word->start_position = 0;
       previous_new_word->length_position = j;
+      previous_new_word->language = language_code;
 
       IFE(getStartAndLengthPositions(ctrl_split, trfs, trf, previous_new_word, start));
 

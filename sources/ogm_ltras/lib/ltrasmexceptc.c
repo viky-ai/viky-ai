@@ -199,74 +199,96 @@ DONE;
 
 static int LtrasModuleExceptAdd1(struct og_ltras_except_xml_info *info, int Iform)
 {
-struct og_ctrl_except *ctrl_except=info->ctrl_except;
-int ibuffer; unsigned char buffer[DPcPathSize*2];
-int itarget; unsigned char target[DPcPathSize];
-struct og_pho_output coutput,*output=&coutput;
-int iform; unsigned char form[DPcPathSize];
-int ibuf; unsigned char buf[DPcPathSize*2];
-struct og_pho_input cinput,*input=&cinput;
-int min_post_phonetisation_char_number=2;
-int min_phonetisation_char_number=3;
-int i,c;
+  struct og_ctrl_except *ctrl_except = info->ctrl_except;
+  int ibuffer;
+  unsigned char buffer[DPcPathSize * 2];
+  int itarget;
+  unsigned char target[DPcPathSize];
+  struct og_pho_output coutput, *output = &coutput;
+  int iform;
+  unsigned char form[DPcPathSize];
+  int ibuf;
+  unsigned char buf[DPcPathSize * 2];
+  struct og_pho_input cinput, *input = &cinput;
+  int min_post_phonetisation_char_number = 2;
+  int min_phonetisation_char_number = 3;
+  int i, c;
 
-if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc) {
-  OgMsg(ctrl_except->hmsg,"",DOgMsgDestInLog
-    , "LtrasModuleExceptAdd1: adding form='%s' target='%s'"
-    , ctrl_except->Ba+info->form[Iform].start, info->target);
+  if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc)
+  {
+    OgMsg(ctrl_except->hmsg, "", DOgMsgDestInLog, "LtrasModuleExceptAdd1: adding form='%s' target='%s'",
+        ctrl_except->Ba + info->form[Iform].start, info->target);
   }
 
-IFE(OgCpToUni(info->form[Iform].length, ctrl_except->Ba+info->form[Iform].start
-  , DPcPathSize, &iform, form, DOgCodePageUTF8, 0, 0));
+  IFE(
+      OgCpToUni(info->form[Iform].length, ctrl_except->Ba+info->form[Iform].start , DPcPathSize, &iform, form, DOgCodePageUTF8, 0, 0));
 
-IFE(OgCpToUni(strlen(info->target), info->target
-  , DPcPathSize, &itarget, target, DOgCodePageUTF8, 0, 0));
+  IFE(OgCpToUni(strlen(info->target), info->target , DPcPathSize, &itarget, target, DOgCodePageUTF8, 0, 0));
 
-ibuffer=0;
-buffer[ibuffer++]=0; buffer[ibuffer++]='f';
-buffer[ibuffer++]=0; buffer[ibuffer++]=':';
-memcpy(buffer+ibuffer,form,iform); ibuffer+=iform;
-buffer[ibuffer++]=0; buffer[ibuffer++]=1;
-memcpy(buffer+ibuffer,target,itarget); ibuffer+=itarget;
-IFE(OgAutAdd(ctrl_except->ha_except,ibuffer,buffer));
+  ibuffer = 0;
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = 'f';
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = ':';
+  memcpy(buffer + ibuffer, form, iform);
+  ibuffer += iform;
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = 1;
+  memcpy(buffer + ibuffer, target, itarget);
+  ibuffer += itarget;
+  IFE(OgAutAdd(ctrl_except->ha_except, ibuffer, buffer));
 
-if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc) {
-  IFE(OgUniToCp(ibuffer,buffer,DPcPathSize,&ibuf,buf,DOgCodePageUTF8,0,0));
-  OgMsg(ctrl_except->hmsg,"",DOgMsgDestInLog
-    , "LtrasModuleExceptAdd1: adding entry '%s'", buf);
+  if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc)
+  {
+    IFE(OgUniToCp(ibuffer,buffer,DPcPathSize,&ibuf,buf,DOgCodePageUTF8,0,0));
+    OgMsg(ctrl_except->hmsg, "", DOgMsgDestInLog, "LtrasModuleExceptAdd1: adding entry '%s'", buf);
   }
 
-if (iform < min_phonetisation_char_number*2) DONE;
-if (iform >= DOgStmMaxWordLength) DONE;
+  if (iform < min_phonetisation_char_number * 2) DONE;
+  if (iform >= DOgStmMaxWordLength) DONE;
 
-/* We do not phonetize names with digits */
-for (i=0; i<iform; i+=2) {
-  c=(form[i]<<8) + form[i+1];
-  if (OgUniIsdigit(c)) DONE;
+  /* We do not phonetize names with digits */
+  for (i = 0; i < iform; i += 2)
+  {
+    c = (form[i] << 8) + form[i + 1];
+    if (OgUniIsdigit(c)) DONE;
   }
-input->iB = iform; input->B = form;
+  input->iB = iform;
+  input->B = form;
 
-//changer quand on gère les langues
-input->lang = 34;// fr
+//  int language_code = DOgLangNil;
+//  if (module_input->language_code != 0)
+//  {
+//    language_code = module_input->language_code;
+//  }
+//  else if (word->language != 0)
+//  {
+//    language_code = word->language;
+//  }
 
-IFE(OgPhonet(ctrl_except->hpho,input,output));
-if (output->iB < min_post_phonetisation_char_number*2) DONE;
+  IFE(OgPhonet(ctrl_except->hpho, input, output));
+  if (output->iB < min_post_phonetisation_char_number * 2) DONE;
 
-ibuffer=0;
-buffer[ibuffer++]=0; buffer[ibuffer++]='p';
-buffer[ibuffer++]=0; buffer[ibuffer++]=':';
-memcpy(buffer+ibuffer,output->B,output->iB); ibuffer+=output->iB;
-buffer[ibuffer++]=0; buffer[ibuffer++]=1;
-memcpy(buffer+ibuffer,target,itarget); ibuffer+=itarget;
-IFE(OgAutAdd(ctrl_except->ha_except,ibuffer,buffer));
+  ibuffer = 0;
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = 'p';
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = ':';
+  memcpy(buffer + ibuffer, output->B, output->iB);
+  ibuffer += output->iB;
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = 1;
+  memcpy(buffer + ibuffer, target, itarget);
+  ibuffer += itarget;
+  IFE(OgAutAdd(ctrl_except->ha_except, ibuffer, buffer));
 
-if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc) {
-  IFE(OgUniToCp(ibuffer,buffer,DPcPathSize,&ibuf,buf,DOgCodePageUTF8,0,0));
-  OgMsg(ctrl_except->hmsg,"",DOgMsgDestInLog
-    , "LtrasModuleExceptAdd1: adding entry '%s'", buf);
+  if (ctrl_except->loginfo->trace & DOgLtrasTraceModuleExc)
+  {
+    IFE(OgUniToCp(ibuffer,buffer,DPcPathSize,&ibuf,buf,DOgCodePageUTF8,0,0));
+    OgMsg(ctrl_except->hmsg, "", DOgMsgDestInLog, "LtrasModuleExceptAdd1: adding entry '%s'", buf);
   }
 
-DONE;
+  DONE;
 }
 
 

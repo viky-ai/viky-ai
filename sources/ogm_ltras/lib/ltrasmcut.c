@@ -299,6 +299,7 @@ new_word->frequency = token->frequency;
 new_word->base_frequency = word->base_frequency;
 new_word->start_position = token->position;
 new_word->length_position = token->length;
+new_word->language = word->language;
 
 IFE(getStartAndLengthPositions(ctrl_cut, trfs, trf, new_word, word->start_position));
 
