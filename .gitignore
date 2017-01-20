@@ -23,11 +23,14 @@
 /resources/morphology/**/*total.*
 /resources/morphology/**/*total_*
 /resources/morphology/**/*total_*.*
+/resources/morphology/**/*split_*
 /resources/morphology/**/bundle_install.ok
 /resources/morphology/cs/cstotal
 /resources/morphology/cs/csform
+/resources/morphology/cs/csfreq*
 /resources/morphology/cs/csroot
 /resources/morphology/de/deform
+/resources/morphology/de/defreq*
 /resources/morphology/de/deroot
 /resources/morphology/fi/fi
 /resources/morphology/fi/fi.fform
@@ -49,6 +52,7 @@
 /resources/morphology/zh/zhtradparse
 /resources/morphology/zh/zhsimpparse
 /resources/morphology/nl/nlroot*
+/resources/morphology/nl/nlfreq*
 /resources/morphology/nl/nlform*
 /resources/morphology/nl/dutch-clean.aff
 /resources/morphology/nl/dutch-clean.dic

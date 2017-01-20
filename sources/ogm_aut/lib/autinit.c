@@ -71,6 +71,11 @@ struct og_ctrl_aut *ctrl_aut = (struct og_ctrl_aut *)handle;
 return(ctrl_aut->StateNumber);
 }
 
+PUBLIC(og_string) OgAutName(void *handle)
+{
+struct og_ctrl_aut *ctrl_aut = (struct og_ctrl_aut *)handle;
+return(ctrl_aut->name);
+}
 
 
 

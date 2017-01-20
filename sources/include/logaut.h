@@ -10,6 +10,7 @@
 */
 
 #ifndef _LOGAUTALIVE_
+#include <lpcgentype.h>
 #include <loggen.h>
 #include <logthr.h>
 
@@ -179,6 +180,7 @@ DEFPUBLIC(int) OgAutMemory(void *handle, struct aut_memory *memory);
 DEFPUBLIC(int) OgAutSize(void *handle);
 DEFPUBLIC(int) OgAutUsed(void *handle);
 DEFPUBLIC(int) OgAutNumber(void *handle);
+DEFPUBLIC(og_string) OgAutName(void *handle);
 /** Free the 'aut' part of the automaton, leaving the 'auf' part operational **/
 DEFPUBLIC(int) OgAutFree(pr(void *));
 /** Free the 'auf' part of the automaton, leaving the 'aut' part operational **/

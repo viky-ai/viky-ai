@@ -5,6 +5,7 @@
  *  Version 1.1
 */
 #include <logaut.h>
+#include <lpcmcr.h>
 
 
 /** Simplifications pour les d\'eplacements sur les \'etats **/
