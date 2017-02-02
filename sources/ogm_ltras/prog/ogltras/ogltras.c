@@ -317,6 +317,7 @@ sprintf(buffer+strlen(buffer),"    -fc<flow_chart> default is '%s'\n",info->flow
 sprintf(buffer+strlen(buffer),"    -fr<frequency ratio> value from 0 to 1 default is '%f'\n",DOgLtrasDefaultFrequencyRatio);
 sprintf(buffer+strlen(buffer),"    -sf<score factor> value from 0 to 1 default is '%f'\n",DOgLtrasDefaultScoreFactor);
 sprintf(buffer+strlen(buffer),"    -h prints this message\n");
+sprintf(buffer+strlen(buffer),"    -l<lang> lang (fr)\n");
 sprintf(buffer+strlen(buffer),"    -noresult does not send results except timings\n");
 sprintf(buffer+strlen(buffer),"    -nolog does not log results\n");
 sprintf(buffer+strlen(buffer),"    -pos log positions in original string of each corrected word\n");

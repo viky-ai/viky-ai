@@ -407,6 +407,16 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
         unsigned char *in = input->Ba + word->start;
         int iin = word->length;
 
+        int language = DOgLangNil;
+        if (module_input->language_code != 0)
+        {
+          language = module_input->language_code;
+        }
+        else if (word->language != 0)
+        {
+          language = word->language;
+        }
+
         if (!trf->basic)
         {
           void *hltras = ctrl_term->hltras;
@@ -448,6 +458,13 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
 
             int language_code = -1;
             IFE(DOgPnin4(ctrl_term->herr,&p,&language_code));
+
+            // check language frequency
+            int language_lang = OgIso639_3166ToLang(language);
+            if (language_lang != 0 && language_code != 0 && language_lang != language_code)
+            {
+              continue;
+            }
 
             int frequency = -1;
             IFE(DOgPnin4(ctrl_term->herr,&p,&frequency));
