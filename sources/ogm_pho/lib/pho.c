@@ -30,9 +30,14 @@ PUBLIC(int) OgPhonet(void *handle, struct og_pho_input *input, struct og_pho_out
   int language = OgIso639_3166ToLang(input->lang);
   struct lang_context *lang_context = g_hash_table_lookup(ctrl_pho->lang_context_map, GINT_TO_POINTER(language));
   unsigned char *lang = OgIso639ToCode(language);
-  IFn(lang_context)
+  if (lang_context == 0)
   {
-    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "OgPhonet: phonet has no conf for language %s, nothing done.", lang);
+    if (!ctrl_pho->dict_loaded_msg[language])
+    {
+      ctrl_pho->dict_loaded_msg[language] = TRUE;
+
+      OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "OgPhonet: phonet has no conf for language %s, nothing done.", lang);
+    }
     DONE;
   }
 

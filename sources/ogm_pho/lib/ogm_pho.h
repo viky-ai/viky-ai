@@ -109,6 +109,8 @@ struct og_ctrl_pho
 
   GHashTable *lang_context_map;
   og_heap lang_context_heap;
+
+  og_bool dict_loaded_msg[DOgLangMax];
 };
 
 struct og_xml_info {
