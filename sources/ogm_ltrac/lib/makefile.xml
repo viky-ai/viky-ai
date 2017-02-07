@@ -14,17 +14,10 @@
     <file>ltracdicp.c</file>
   </sources>
   <platforms>
-    <platform name="win">
-      <option name="NAME">libogltrac</option>
-      <option name="ADD_INC"/>
-      <option name="ADD_LIBR">ogm_pho.lib ogm_aut.lib ogm_msg.lib ogm_uni.lib ogm_thr.lib ogm_gen.lib</option>
-      <option name="ADD_LIBD">$(ADD_LIBR)</option>
-      <option name="ADD_LIBP">$(ADD_LIBR)</option>
-    </platform>
     <platform name="linux">
       <option name="NAME">ogltrac</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni</option>
+      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -logattribute -logsidx</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

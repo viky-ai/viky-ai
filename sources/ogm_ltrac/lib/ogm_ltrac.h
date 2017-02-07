@@ -9,6 +9,7 @@
 #include <loglip.h>
 #include <logaut.h>
 #include <logpho.h>
+#include <logattribute.h>
 
 
 
@@ -31,7 +32,6 @@ struct ltrac_dic_input {
 struct og_ctrl_ltrac {
   void *herr,*hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo,*loginfo;
-  struct og_ltrac_input *input;
 
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
@@ -52,32 +52,22 @@ struct og_ctrl_ltrac {
   void *hpho;
 
   /** Used to scan the attributes **/
-  DOgHinstance hlibogsidx; void *hsidx; int authorized;
-  void * (*OgSidxInit)(pr_(struct og_sidx_param *) pr_(void **) pr(int *));
-  char * (*OgSidxAuthorizationMessage)(void *);
-  int (*OgSidxScan)(pr_(void *) pr(struct og_sidx_scan_input *));
-  int (*OgSidxAttributeNumberToString)(void *handle, int attribute_number, char *attribute_string);
-  int (*OgSidxAttributeStringToNumber)(void *handle, char *attribute_string, int *pattribute_number);
-  int (*OgSidxScanAtvamat)(void *handle, int (*scan)(void *context,struct og_attval *attval, int frequency), void *context);
-  int (*OgSidxLtracScan)(void *handle,int (*func)(void *context, struct og_sidx_ltrac_scan *scan), void *context);
-  int (*OgSidxFeedInit)(pr_(void *) pr(struct og_sidx_handle *));
-  int (*OgSidxItemIsStopped)(pr_(void *) pr(int));
-  int (*OgSidxHasLtraDirectory)(pr(unsigned char *));
-  int (*OgSidxFlush)(pr(void *));
+  og_bool must_ltrac;
+  void *hsidx;
+  og_attribute_handle hattribute;
 
   };
 
 
 /** ltraca.c **/
-int LtracAttributesPlugInit(struct og_ctrl_ltrac *ctrl_ltrac);
-int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac);
+int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
 
 /** ltracdic.c **/
-int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);
-int LtracDicInit(struct og_ctrl_ltrac *ctrl_ltrac);
-int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac);
-int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac);
-int LtracDicAddFilterWords(struct og_ctrl_ltrac *ctrl_ltra);
+int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, struct ltrac_dic_input *dic_input);
+int LtracDicInit(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
+int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
+int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
+int LtracDicAddFilterWords(struct og_ctrl_ltrac *ctrl_ltra, struct og_ltrac_input *input);
 
 /** ltracdica.c **/
 int LtracDicAspellAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);

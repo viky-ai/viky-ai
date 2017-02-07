@@ -175,7 +175,6 @@ static og_status LtracDicSwapAddOrigin(struct og_ctrl_ltrac *ctrl_ltrac, struct 
 PUBLIC(int) OgLtracDicSwapLog(void *handle)
 {
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
-  struct og_sidx_param csidx_param, *sidx_param = &csidx_param;
   struct og_aut_param caut_param, *aut_param = &caut_param;
   int attribute_number, language_code, position, frequency;
   int iout;
@@ -185,7 +184,6 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
   int iword;
   unsigned char word[DPcPathSize];
   oindex states[DPcAutMaxBufferSize + 9];
-  char attribute_string[DPcPathSize];
   int retour, nstate0, nstate1;
   char erreur[DOgErrorSize];
   void *ha_swap;
@@ -210,19 +208,6 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
     DPcErr;
   }
 
-  IFE(LtracAttributesPlugInit(ctrl_ltrac));
-
-  memset(sidx_param, 0, sizeof(struct og_sidx_param));
-  sidx_param->herr = ctrl_ltrac->herr;
-  sidx_param->hmsg = ctrl_ltrac->hmsg;
-  sidx_param->hmutex = ctrl_ltrac->hmutex;
-  sidx_param->loginfo.trace = DOgSidxTraceMinimal + DOgSidxTraceMemory;
-  sidx_param->loginfo.where = ctrl_ltrac->loginfo->where;
-  strcpy(sidx_param->WorkingDirectory, ctrl_ltrac->WorkingDirectory);
-  strcpy(sidx_param->configuration_file, ctrl_ltrac->configuration_file);
-  strcpy(sidx_param->data_directory, ctrl_ltrac->data_directory);
-  strcpy(sidx_param->import_directory, "");
-  IFn(ctrl_ltrac->OgSidxInit(sidx_param,&ctrl_ltrac->hsidx,&ctrl_ltrac->authorized)) DPcErr;
 
   if ((retour = OgAufScanf(ha_swap, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {
@@ -251,8 +236,17 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
       {
         IFE(OgUniToCp(iout-(p-out),p,DPcPathSize,&iword,word,DOgCodePageUTF8,0,0));
       }
-      IFE(ctrl_ltrac->OgSidxAttributeNumberToString(ctrl_ltrac->hsidx, attribute_number, attribute_string));
-      fprintf(fd, "%s | %d=%s %d %d %d %s\n", buffer, attribute_number, attribute_string, language_code, position,
+
+      og_string attribute_name = "0";
+      struct og_attribute_info ai[1];
+      og_bool found = OgAttributeGetInfoFromAttributeNumber(ctrl_ltrac->hattribute, ctrl_ltrac->herr, attribute_number,
+          ai);
+      IFE(found);
+      if (found)
+      {
+        attribute_name = ai->attribute_name;
+      }
+      fprintf(fd, "%s | %d=%s %d %d %d %s\n", buffer, attribute_number, attribute_name, language_code, position,
           frequency, word);
 
     }
@@ -261,7 +255,6 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
 
   fclose(fd);
   IFE(OgAutFlush(ha_swap));
-  IFE(ctrl_ltrac->OgSidxFlush(ctrl_ltrac->hsidx));
 
   DONE;
 }

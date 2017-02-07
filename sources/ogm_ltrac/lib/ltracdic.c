@@ -8,11 +8,11 @@
 
 
 
-int FilterDict(struct og_ctrl_ltrac *);
+static int FilterDict(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
 
 
 
-int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
+int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, struct ltrac_dic_input *dic_input)
 {
 
   int length = 0;
@@ -29,7 +29,6 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_in
     }
   }
 
-  struct og_ltrac_input *input = ctrl_ltrac->input;
   if (dic_input->frequency < input->min_frequency) DONE;
 
   if (ctrl_ltrac->ha_filter)
@@ -55,11 +54,15 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_in
   {
     char buffer[DPcPathSize];
     int ibuffer = 0;
-    char attribute_string[DPcPathSize];
-    IFE(ctrl_ltrac->OgSidxAttributeNumberToString(ctrl_ltrac->hsidx, dic_input->attribute_number, attribute_string));
-    IFE(OgUniToCp(dic_input->value_length,dic_input->value,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAttributesAdd: adding %d=%s '%s' with frequency %d",
-        dic_input->attribute_number, attribute_string, buffer, dic_input->frequency);
+
+    struct og_attribute_info ai[1];
+    og_bool found = OgAttributeGetInfoFromAttributeNumber(ctrl_ltrac->hattribute, ctrl_ltrac->herr, dic_input->attribute_number, ai);
+    IFE(found);
+    if (found) {
+      IFE(OgUniToCp(dic_input->value_length,dic_input->value,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAttributesAdd: adding %d=%s '%s' with frequency %d",
+          ai->attribute_number, ai->attribute_name, buffer, dic_input->frequency);
+    }
   }
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
@@ -92,10 +95,9 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_in
 
 
 
-int LtracDicAddFilterWords(struct og_ctrl_ltrac *ctrl_ltrac)
+int LtracDicAddFilterWords(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
 struct ltrac_dic_input cdic_input, *dic_input=&cdic_input;
-struct og_ltrac_input *input = ctrl_ltrac->input;
 unsigned char out1[DPcAutMaxBufferSize+9];
 unsigned char out2[DPcAutMaxBufferSize+9];
 int retour1,nstate0_1,nstate1_1,iout1;
@@ -147,11 +149,10 @@ DONE;
 
 
 
-int LtracDicInit(struct og_ctrl_ltrac *ctrl_ltrac)
+int LtracDicInit(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
 struct og_aut_param caut_param,*aut_param=&caut_param;
 struct og_pho_param cpho_param,*pho_param=&cpho_param;
-struct og_ltrac_input *input = ctrl_ltrac->input;
 char erreur[DOgErrorSize];
 struct stat filestat;
 
@@ -175,7 +176,7 @@ if (input->filter_dict[0]) {
     OgErr(ctrl_ltrac->herr,erreur); DPcErr;
     }
   else{
-    IFE(FilterDict(ctrl_ltrac));
+    IFE(FilterDict(ctrl_ltrac, input));
     }
   }
 
@@ -229,9 +230,8 @@ DONE;
 
 
 
-int FilterDict(struct og_ctrl_ltrac *ctrl_ltrac)
+static int FilterDict(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
-struct og_ltrac_input *input = ctrl_ltrac->input;
 unsigned char uni[2*DPcPathSize];
 char erreur[DPcPathSize];
 char string[DPcPathSize];
@@ -274,9 +274,8 @@ DONE;
 
 
 
-int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac)
+int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
-struct og_ltrac_input *input = ctrl_ltrac->input;
 if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase) {
   if (input->dictionaries_minimization & DOgLtracDictionaryTypeBase) {
     IFE(OgAum(ctrl_ltrac->ha_base));
@@ -309,9 +308,8 @@ DONE;
 
 
 
-int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac)
+int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
-struct og_ltrac_input *input = ctrl_ltrac->input;
 
 if(input->filter_dict[0]){
   IFE(OgAutFlush(ctrl_ltrac->ha_filter));
