@@ -23,6 +23,8 @@
 #define OG_POINTER_TO_INT(p)  ((int)  (long) (p))
 #define OG_INT_TO_POINTER(i)  ((void *) (long) (i))
 
+#define DOGSYSI_MAX_RECUSIVE_LOCK 15
+
 struct og_ctrl_sysi_lock
 {
   og_bool is_initialized;

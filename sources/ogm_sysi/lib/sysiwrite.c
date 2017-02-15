@@ -140,6 +140,14 @@ PUBLIC(og_status) OgSysiWriteLockWithTimeout(ogsysi_rwlock handle, int timeout_m
 #endif
 
   }
+  else if (write_lock_number > DOGSYSI_MAX_RECUSIVE_LOCK)
+  {
+    og_char_buffer error[DPcPathSize];
+    snprintf(error, DPcPathSize, "OgSysiWriteLockWithTimeout: too many recursive lock"
+        " read_lock_number=%d, write_lock_number=%d", read_lock_number, write_lock_number);
+    IFE(OgSysiLogError(ctrl_sysi, error, EDEADLK));
+    DPcErr;
+  }
 
 #ifdef OGM_SYSI_DEBUG
   else
@@ -213,11 +221,13 @@ PUBLIC(og_status) OgSysiWriteUnLock(ogsysi_rwlock handle)
   else if (write_lock_number == 0 && read_lock_number == 0)
   {
     IFE(OgSysiLogError(ctrl_sysi, "OgSysiWriteUnLock: releasing previously stolen Write access on rw_lock", 0));
+    DPcErr;
   }
   else if (write_lock_number == 0 && read_lock_number > 0)
   {
     IFE(OgSysiLogError(ctrl_sysi, "OgSysiWriteUnLock: you try release Write access on rw_lock,"
         " but you own a Read access, check your lock/unlock sequence", 0));
+    DPcErr;
   }
 
 #ifdef OGM_SYSI_DEBUG
@@ -230,6 +240,17 @@ PUBLIC(og_status) OgSysiWriteUnLock(ogsysi_rwlock handle)
   if (write_lock_number > 0)
   {
     IFE(SysiSetCurrentThreadWriteLockNumberOwned(ctrl_sysi, write_lock_number - 1));
+
+    if (write_lock_number > DOGSYSI_MAX_RECUSIVE_LOCK)
+    {
+      og_char_buffer error[DPcPathSize];
+      snprintf(error, DPcPathSize,
+          "OgSysiWriteUnLock: too many recursive lock read_lock_number=%d, write_lock_number=%d", read_lock_number - 1,
+          write_lock_number);
+      IFE(OgSysiLogError(ctrl_sysi, error, EDEADLK));
+      DPcErr;
+    }
+
   }
 
   DONE;

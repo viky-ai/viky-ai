@@ -128,6 +128,14 @@ PUBLIC(og_status) OgSysiReadLockWithTimeout(ogsysi_rwlock handle, int timeout_ms
     }
 
   }
+  else if (read_lock_number > DOGSYSI_MAX_RECUSIVE_LOCK || write_lock_number > DOGSYSI_MAX_RECUSIVE_LOCK)
+  {
+    og_char_buffer error[DPcPathSize];
+    snprintf(error, DPcPathSize, "OgSysiReadLockWithTimeout: too many recursive lock"
+        " read_lock_number=%d, write_lock_number=%d", read_lock_number, write_lock_number);
+    IFE(OgSysiLogError(ctrl_sysi, error, EDEADLK));
+    DPcErr;
+  }
 
 #ifdef OGM_SYSI_DEBUG
   else
@@ -204,6 +212,17 @@ PUBLIC(og_status) OgSysiReadUnLock(ogsysi_rwlock handle)
   if (read_lock_number > 0)
   {
     IFE(SysiSetCurrentThreadReadLockNumberOwned(ctrl_sysi, read_lock_number - 1));
+
+    if ((read_lock_number - 1) > DOGSYSI_MAX_RECUSIVE_LOCK)
+    {
+      og_char_buffer error[DPcPathSize];
+      snprintf(error, DPcPathSize,
+          "OgSysiReadUnLock: too many recursive lock read_lock_number=%d, write_lock_number=%d", read_lock_number - 1,
+          write_lock_number);
+      IFE(OgSysiLogError(ctrl_sysi, error, EDEADLK));
+      DPcErr;
+    }
+
   }
 
   DONE;
