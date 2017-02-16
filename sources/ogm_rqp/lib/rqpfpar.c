@@ -29,7 +29,9 @@ int RqpFirstParse(struct og_ctrl_rqp *ctrl_rqp)
 {
   int uni_tree_id_length;
   unsigned char uni_tree_id[DPcPathSize];
-  int in_dquote = 0, in_func_dquote = 0, start_dquote = 1;
+  int in_dquote = 0;
+  int in_func_dquote = 0;
+  int start_dquote = 1;
   struct og_boolean_operator cbo, *bo = &cbo;
   int i, c, cbefore = 0, end = 0, state = 1, start = 0;
   unsigned char *s = ctrl_rqp->request;
@@ -231,7 +233,7 @@ int RqpFirstParse(struct og_ctrl_rqp *ctrl_rqp)
         {
           if (in_func_dquote)
           {
-            if (!(i > 0 && s[i - 1] == '\\')) in_func_dquote = 0;
+            in_func_dquote = 0;
           }
           else in_func_dquote = 1;
         }

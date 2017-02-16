@@ -1,15 +1,15 @@
 /*
- *	Parsing function leaves
- *	Copyright (c) 2006-2008 Pertimm by Patrick Constant
- *	Dev : October 2006, March 2007, May 2008
- *	Version 1.2
+ *  Parsing function leaves
+ *  Copyright (c) 2006-2008 Pertimm by Patrick Constant
+ *  Dev : October 2006, March 2007, May 2008
+ *  Version 1.2
 */
 #include "ogm_rqp.h"
 
 
 //#define DEVERMINE
 
-static int AddArg(struct og_ctrl_rqp *, int, int *, struct og_rqp_arg *, 
+static int AddArg(struct og_ctrl_rqp *, int, int *, struct og_rqp_arg *,
                     unsigned char *, int, int);
 
 
@@ -39,7 +39,9 @@ OgMsg(ctrl_rqp->hmsg,"",DOgMsgDestInLog
 
 *parg_length=0;
 
+int cbefore = 0;
 for (i=0; !end; i+=2) {
+  cbefore = c;
   if (i>=is) { c=','; end=1; }
   else c=(s[i]<<8)+s[i+1];
   switch (state) {
@@ -67,10 +69,10 @@ for (i=0; !end; i+=2) {
           if (!added) goto endOgRqpParseFunction;
           if (c==',') state=3;
           else goto endOgRqpParseFunction;
-          break;          
+          break;
           }
         if (c=='"') in_dquote=1; else in_dquote=0;
-        start=i; state=4; 
+        start=i; state=4;
         }
       break;
     /** in argument **/
@@ -85,10 +87,10 @@ for (i=0; !end; i+=2) {
           else goto endOgRqpParseFunction;
           }
         }
-      else if (c=='"') {
+      else if (cbefore != '\\' && c=='"') {
         if (in_dquote) {
-          if (!(i>0 && s[i-1]=='\\')) in_dquote=0; 
-          } 
+          in_dquote=0;
+          }
         else in_dquote=1;
         }
       break;
@@ -115,7 +117,7 @@ if (length > 0) {
   c2=(s[last]<<8)+s[last+1];
   if (c1=='"' && c2=='"') offset=2;
   }
-  
+
 arg[arg_length].length=length-offset*2;
 arg[arg_length].start=start+offset;
 
