@@ -24,8 +24,38 @@ static int LtracScanAtvamat(void *context,struct og_attval *attval, int frequenc
 static int LtracAttributesAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, struct ltrac_dic_input *dic_input);
 static int LtracAddAttributeNumber(struct og_ctrl_ltrac *ctrl_ltrac);
 
+static og_status SidxProcessLtracRequests(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
+static og_status SidxLtracAddExpressions(void *context, struct og_sidx_ltrac_scan *scan);
+static og_status SidxLtracIsFound(void *context, struct og_sidx_ltrac_scan *scan);
+static og_status SidxLtracMergeFrequency(void *context, struct og_sidx_ltrac_scan *scan);
+static og_status SidxLtracGetBestFrequencyForWord(void *context, struct og_sidx_ltrac_scan *scan);
 
 
+struct merge_frequency_context
+{
+    struct og_ctrl_ltrac *ctrl_ltrac;
+    int min_frequency;
+};
+
+struct add_expressions_context
+{
+    struct og_ctrl_ltrac *ctrl_ltrac;
+};
+
+
+struct best_frequency_context
+{
+    struct og_ctrl_ltrac *ctrl_ltrac;
+    int language_code;
+    int best_frequency;
+};
+
+struct is_found_context
+{
+    struct og_ctrl_ltrac *ctrl_ltrac;
+    int language_code;
+    og_bool found;
+};
 
 PUBLIC(int) OgLtracAddAttributeInit(void *handle, int positive)
 {
@@ -144,6 +174,10 @@ int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *inp
 
   if (ctrl_ltrac->must_ltrac)
   {
+    if(ctrl_ltrac->has_ltraf_requests)
+    {
+      IFE(SidxProcessLtracRequests(ctrl_ltrac, input->min_frequency));
+    }
     IFE(OgSidxLtracScan(ctrl_ltrac->hsidx, SidxLtracScan, info));
   }
   else
@@ -177,6 +211,170 @@ int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *inp
 
 
 
+static og_status SidxProcessLtracRequests(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
+{
+
+  struct merge_frequency_context merge_context[1];
+  memset(merge_context, 0, sizeof(struct merge_frequency_context));
+  merge_context->ctrl_ltrac = ctrl_ltrac;
+  merge_context->min_frequency = min_frequency;
+
+  IFE(OgSidxLtracScan(ctrl_ltrac->hsidx, SidxLtracMergeFrequency, merge_context));
+
+
+  struct add_expressions_context expr_context[1];
+  memset(expr_context, 0, sizeof(struct add_expressions_context));
+  expr_context->ctrl_ltrac = ctrl_ltrac;
+
+  IFE(OgSidxLtracRequestsScan(ctrl_ltrac->hsidx, SidxLtracAddExpressions, expr_context));
+
+  // Apply changes stored in a temp automaton in ha_ltrac
+  IFE(OgSidxLtracApply(ctrl_ltrac->hsidx));
+
+  DONE;
+}
+
+
+static og_status SidxLtracAddExpressions(void *context, struct og_sidx_ltrac_scan *scan)
+{
+  struct add_expressions_context *expr_context = (struct add_expressions_context *) context;
+  struct og_ctrl_ltrac *ctrl_ltrac = expr_context->ctrl_ltrac;
+
+  if (ctrl_ltrac->nb_attrnum > 0)
+  {
+    og_bool exists = LtracAttributeExists(ctrl_ltrac, scan->attribute_number);
+    IFE(exists);
+    if (ctrl_ltrac->is_attrnum_positive && !exists) CONT;
+    if (!ctrl_ltrac->is_attrnum_positive && exists) CONT;
+  }
+
+  og_bool found = TRUE;
+  int start = 0;
+  for (int i = 0; i < scan->iword; i += 2)
+  {
+    int c = (scan->word[i] << 8) + scan->word[i + 1];
+    if (c == ' ')
+    {
+
+      start = i;
+      int length = i-start;
+
+      char buffer[DPcAutMaxBufferSize];
+      memcpy(buffer, scan->word + start, length);
+      int ibuffer = length;
+      buffer[ibuffer++] = 0;
+
+
+      struct is_found_context found_ctx[1];
+      memset(found_ctx, 0, sizeof(struct is_found_context));
+      found_ctx->ctrl_ltrac = ctrl_ltrac;
+      found_ctx->language_code = scan->language_code;
+
+      IFE(OgSidxLtracScanWord(ctrl_ltrac->hsidx, SidxLtracIsFound, ibuffer, buffer, found_ctx));
+
+      if (!found_ctx->found)
+      {
+        found = FALSE;
+        break;
+      }
+    }
+  }
+
+  //TODO nettoyer la chaine
+
+  if (found)
+  {
+
+    IFE(OgSidxLtracAddEntry(ctrl_ltrac->hsidx, scan));
+
+  }
+
+  DONE;
+}
+
+
+static og_status SidxLtracIsFound(void *context, struct og_sidx_ltrac_scan *scan)
+{
+  struct is_found_context *found_context = (struct is_found_context *) context;
+  struct og_ctrl_ltrac *ctrl_ltrac = found_context->ctrl_ltrac;
+
+  if (ctrl_ltrac->nb_attrnum > 0)
+  {
+    og_bool exists = LtracAttributeExists(ctrl_ltrac, scan->attribute_number);
+    IFE(exists);
+    if (ctrl_ltrac->is_attrnum_positive && !exists) CONT;
+    if (!ctrl_ltrac->is_attrnum_positive && exists) CONT;
+  }
+
+  if(found_context->language_code != scan->language_code) CONT;
+
+  found_context->found = TRUE;
+
+  DONE;
+}
+
+
+static og_status SidxLtracMergeFrequency(void *context, struct og_sidx_ltrac_scan *scan)
+{
+  struct merge_frequency_context *merge_context = (struct merge_frequency_context *) context;
+  struct og_ctrl_ltrac *ctrl_ltrac = merge_context->ctrl_ltrac;
+
+  if (ctrl_ltrac->nb_attrnum > 0)
+  {
+    og_bool exists = LtracAttributeExists(ctrl_ltrac, scan->attribute_number);
+    IFE(exists);
+    if (ctrl_ltrac->is_attrnum_positive && !exists) CONT;
+    if (!ctrl_ltrac->is_attrnum_positive && exists) CONT;
+  }
+
+
+  struct best_frequency_context ctx[1];
+  memset(ctx, 0, sizeof(struct best_frequency_context));
+  ctx->ctrl_ltrac = ctrl_ltrac;
+  ctx->language_code = scan->language_code;
+
+
+  IFE(OgSidxLtracRequestsScanWord(ctrl_ltrac->hsidx, SidxLtracGetBestFrequencyForWord, scan->iword, scan->word, ctx));
+
+  if(ctx->best_frequency != 0)
+  {
+    scan->frequency = ctx->best_frequency;
+  }
+  else
+  {
+    scan->frequency = merge_context->min_frequency;
+  }
+
+  IFE(OgSidxLtracAddEntryForceFrequency(ctrl_ltrac->hsidx, scan));
+
+
+  DONE;
+}
+
+
+
+static og_status SidxLtracGetBestFrequencyForWord(void *context, struct og_sidx_ltrac_scan *scan)
+{
+  struct best_frequency_context *ctx = (struct best_frequency_context *) context;
+  struct og_ctrl_ltrac *ctrl_ltrac = ctx->ctrl_ltrac;
+
+  if (ctrl_ltrac->nb_attrnum > 0)
+  {
+    og_bool exists = LtracAttributeExists(ctrl_ltrac, scan->attribute_number);
+    IFE(exists);
+    if (ctrl_ltrac->is_attrnum_positive && !exists) CONT;
+    if (!ctrl_ltrac->is_attrnum_positive && exists) CONT;
+  }
+
+  if (ctx->language_code != scan->language_code) CONT;
+
+  if (scan->frequency > ctx->best_frequency)
+  {
+    ctx->best_frequency = scan->frequency;
+  }
+
+  DONE;
+}
 
 
 static int SidxLtracScan(void *context, struct og_sidx_ltrac_scan *scan)

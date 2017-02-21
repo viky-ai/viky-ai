@@ -53,6 +53,8 @@ struct og_ctrl_ltrac {
 
   /** Used to scan the attributes **/
   og_bool must_ltrac;
+  og_bool has_ltraf_requests;
+
   void *hsidx;
   og_attribute_handle hattribute;
 

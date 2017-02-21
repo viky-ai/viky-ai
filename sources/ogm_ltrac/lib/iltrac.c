@@ -125,7 +125,7 @@ else {
   // avoid matrix autoloading which use a lot of memory
   sidx_param->dont_load_matrix_on_feed_init = 1;
 
-  if (OgSidxHasLtraDirectory(sidx_param->data_directory))
+  if (OgSidxHasLtrafFile(sidx_param->data_directory))
   {
     ctrl_ltrac->must_ltrac = TRUE;
   }
@@ -136,7 +136,14 @@ else {
         sidx_param->data_directory, DOgSidxLtraDirectory);
     OgMsg(ctrl_ltrac->hmsg, "[WARN]", DOgMsgDestInLog + DOgMsgSeverityWarning, msgBuffer);
   }
+
+  if(OgSidxHasLtrafFrequencyFile(sidx_param->data_directory))
+  {
+    ctrl_ltrac->has_ltraf_requests = TRUE;
+  }
+
   sidx_param->must_ltrac = ctrl_ltrac->must_ltrac;
+  sidx_param->has_ltraf_requests = ctrl_ltrac->has_ltraf_requests;
 
   struct og_sidx_handle sh[1];
   int authorized = FALSE;
