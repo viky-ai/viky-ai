@@ -255,8 +255,6 @@ static og_status SidxLtracAddExpressions(void *context, struct og_sidx_ltrac_sca
     int c = (scan->word[i] << 8) + scan->word[i + 1];
     if (c == ' ')
     {
-
-      start = i;
       int length = i-start;
 
       char buffer[DPcAutMaxBufferSize];
@@ -277,6 +275,7 @@ static og_status SidxLtracAddExpressions(void *context, struct og_sidx_ltrac_sca
         found = FALSE;
         break;
       }
+      start = i;
     }
   }
 

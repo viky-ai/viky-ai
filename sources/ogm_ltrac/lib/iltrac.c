@@ -137,7 +137,7 @@ else {
     OgMsg(ctrl_ltrac->hmsg, "[WARN]", DOgMsgDestInLog + DOgMsgSeverityWarning, msgBuffer);
   }
 
-  if(OgSidxHasLtrafFrequencyFile(sidx_param->data_directory))
+  if(OgSidxHasLtrafRequestsFile(sidx_param->data_directory))
   {
     ctrl_ltrac->has_ltraf_requests = TRUE;
   }
