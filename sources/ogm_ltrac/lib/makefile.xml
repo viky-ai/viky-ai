@@ -12,6 +12,7 @@
     <file>ltracdicb.c</file>
     <file>ltracdics.c</file>
     <file>ltracdicp.c</file>
+    <file>ltracread.c</file>    
   </sources>
   <platforms>
     <platform name="linux">

@@ -51,6 +51,13 @@ IFn(ctrl_ltrac->ha_attrstr=OgAutInit(aut_param)) return(0);
 sprintf(aut_param->name,"ltrac attrnum");
 IFn(ctrl_ltrac->ha_attrnum=OgAutInit(aut_param)) return(0);
 
+sprintf(aut_param->name, "expressions");
+IFn(ctrl_ltrac->ha_expressions=OgAutInit(aut_param)) return(0);
+
+sprintf(aut_param->name, "ltrac");
+IFn(ctrl_ltrac->ha_ltrac=OgAutInit(aut_param)) return(0);
+
+
 if(ctrl_ltrac->WorkingDirectory[0]) sprintf(ctrl_ltrac->configuration_file,"%s/conf/ogm_ssi.txt",ctrl_ltrac->WorkingDirectory);
 else strcpy(ctrl_ltrac->configuration_file,"conf/ogm_ssi.txt");
 
@@ -125,24 +132,12 @@ else {
   // avoid matrix autoloading which use a lot of memory
   sidx_param->dont_load_matrix_on_feed_init = 1;
 
-  if (OgSidxHasLtrafFile(sidx_param->data_directory))
-  {
-    ctrl_ltrac->must_ltrac = TRUE;
-  }
-  else
-  {
-    unsigned char msgBuffer[DPcPathSize];
-    snprintf(msgBuffer, DPcPathSize, "LtracAttributes : no such %s/%s/ltraf.txt, full ssi will be scanned.",
-        sidx_param->data_directory, DOgSidxLtraDirectory);
-    OgMsg(ctrl_ltrac->hmsg, "[WARN]", DOgMsgDestInLog + DOgMsgSeverityWarning, msgBuffer);
-  }
 
   if(OgSidxHasLtrafRequestsFile(sidx_param->data_directory))
   {
     ctrl_ltrac->has_ltraf_requests = TRUE;
   }
 
-  sidx_param->must_ltrac = ctrl_ltrac->must_ltrac;
   sidx_param->has_ltraf_requests = ctrl_ltrac->has_ltraf_requests;
 
   struct og_sidx_handle sh[1];

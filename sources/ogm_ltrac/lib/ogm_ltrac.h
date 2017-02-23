@@ -27,7 +27,10 @@ struct ltrac_dic_input {
   int language_code,frequency;
   };
 
-
+struct ltraf
+{
+  int frequency;
+};
 
 struct og_ctrl_ltrac {
   void *herr,*hmsg; ogmutex_t *hmutex;
@@ -52,14 +55,28 @@ struct og_ctrl_ltrac {
   void *hpho;
 
   /** Used to scan the attributes **/
-  og_bool must_ltrac;
   og_bool has_ltraf_requests;
+
+  void *ha_ltrac;
+  void *ha_expressions;
+
+  int LtrafNumber;
+  int LtrafUsed;
+  struct ltraf *Ltraf;
 
   void *hsidx;
   og_attribute_handle hattribute;
 
   };
 
+struct og_ltrac_scan
+{
+  int iword;
+  unsigned char *word;
+  int attribute_number;
+  int language_code;
+  int Iltraf;
+};
 
 /** ltraca.c **/
 int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
@@ -83,5 +100,8 @@ int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic
 /** ltracdicp.c **/
 int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);
 
-
-
+/** ltracread.c **/
+og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
+og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
+og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context, struct og_ltrac_scan *scan),
+    void *context);
