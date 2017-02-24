@@ -43,7 +43,7 @@ static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, stru
   unsigned char *p, entry[DPcPathSize];
   int ibuffer;
   unsigned char buffer[DPcPathSize];
-  unsigned char *s = dic_input->value;
+  og_string s = dic_input->value;
   int is = dic_input->value_length;
 
   memcpy(buffer, s, index);
@@ -74,7 +74,7 @@ static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, str
   unsigned char *p, entry[DPcPathSize];
   int ibuffer;
   unsigned char buffer[DPcPathSize];
-  unsigned char *s = dic_input->value;
+  og_string s = dic_input->value;
   int is = dic_input->value_length;
 
   memcpy(buffer, s, index);
@@ -106,7 +106,7 @@ static og_status LtracDicSwapAddTwoSameLetters(struct og_ctrl_ltrac *ctrl_ltrac,
   unsigned char *p, entry[DPcPathSize];
   int ibuffer;
   unsigned char buffer[DPcPathSize];
-  unsigned char *s = dic_input->value;
+  og_string s = dic_input->value;
   int is = dic_input->value_length;
 
   if(index > 0)

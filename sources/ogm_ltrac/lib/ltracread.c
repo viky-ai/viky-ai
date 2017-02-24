@@ -37,7 +37,7 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct og_
 static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, void *automaton, struct og_ltrac_entry *ltrac_entry,
     og_bool replace);
 static og_status LtracUpdateFrequency(void *context, struct og_ltrac_scan *scan);
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int ibuffer, char *buffer,
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context);
 static og_status LtracIsFound(void *context, struct og_ltrac_scan *scan);
 
@@ -65,17 +65,17 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
     DPcErr;
   }
 
-  unsigned char utf8[DPcAutMaxBufferSize + 9];
+  unsigned char utf8[DOgLtracMaxWordsSize];
 
   int frequency = 0;
   int language_code = DOgLangNil;
-  unsigned char buffer[DPcAutMaxBufferSize + 9];
+  unsigned char buffer[DOgLtracMaxWordsSize];
 
   OgTrimString(utf8, utf8);
   int iutf8 = strlen(utf8);
 
   int i, n, c, start, end, start_word;
-  while (fgets(utf8, DPcAutMaxBufferSize, fd))
+  while (fgets(utf8, DOgLtracMaxWordsSize, fd))
   {
     OgTrimString(utf8, utf8);
     iutf8 = strlen(utf8);
@@ -111,9 +111,9 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
     if (start_word < 0) continue;
     if (frequency < min_frequency) continue;
 
-    unsigned char entry[DPcAutMaxBufferSize + 9];
+    unsigned char entry[DOgLtracMaxWordsSize];
     int ientry;
-    IFE(OgCpToUni(iutf8-start_word,utf8+start_word,DPcAutMaxBufferSize,&ientry,entry,DOgCodePageUTF8,0,0));
+    IFE(OgCpToUni(iutf8-start_word,utf8+start_word,DOgLtracMaxWordsSize,&ientry,entry,DOgCodePageUTF8,0,0));
 
     struct og_ltrac_entry ltrac_entry[1];
     memset(ltrac_entry, 0, sizeof(struct og_ltrac_entry));
@@ -145,24 +145,7 @@ static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, void *automaton
     og_bool replace)
 {
 
-  //TODO gestion de la mémoire!!!
-//  if (!ctrl_sidx->max_ltrac_memory_reached)
-//  {
-//    if (ctrl_sidx->conf->max_ltrac_memory > 0)
-//    {
-//      struct aut_memory aut_memory[1];
-//      IFE(OgAutMemory(ctrl_sidx->ha_ltrac, aut_memory));
-//      ogint64_t ltrac_memory = aut_memory->aut_used * aut_memory->aut_size_cell;
-//      if (ltrac_memory > ctrl_sidx->conf->max_ltrac_memory)
-//      {
-//        OgMsg(ctrl_sidx->hmsg, "", DOgMsgDestInLog
-//            , "LtracAddEntry:  ltrac_memory (%ld) > max_ltrac_memory (%ld), stop adding words in dictionary"
-//            , ltrac_memory, ctrl_sidx->conf->max_ltrac_memory);
-//      }
-//    }
-//  }
-
-  unsigned char entry[DPcPathSize];
+  unsigned char entry[DOgLtracMaxWordsSize];
   memcpy(entry, ltrac_entry->word, ltrac_entry->iword);
   unsigned char *p = entry + ltrac_entry->iword;
   *p++ = 0;
@@ -213,8 +196,8 @@ static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, void *automaton
 
 static og_bool LtracGetLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int ientry, unsigned char *entry, int *pIltraf)
 {
-  unsigned char *p, out[DPcAutMaxBufferSize + 9];
-  oindex states[DPcAutMaxBufferSize + 9];
+  unsigned char *p, out[DOgLtracMaxWordsSize];
+  oindex states[DOgLtracMaxWordsSize];
   int retour, nstate0, nstate1, iout;
 
   *pIltraf = (-1);
@@ -305,17 +288,17 @@ og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_freque
     DPcErr;
   }
 
-  unsigned char utf8[DPcAutMaxBufferSize + 9];
+  unsigned char utf8[DOgLtracMaxWordsSize];
 
   int frequency = 0;
   int language_code = DOgLangNil;
-  unsigned char buffer[DPcAutMaxBufferSize + 9];
+  unsigned char buffer[DOgLtracMaxWordsSize];
 
   OgTrimString(utf8, utf8);
   int iutf8 = strlen(utf8);
 
   int i, n, c, start, end, start_word;
-  while (fgets(utf8, DPcAutMaxBufferSize, fd))
+  while (fgets(utf8, DOgLtracMaxWordsSize, fd))
   {
     OgTrimString(utf8, utf8);
     iutf8 = strlen(utf8);
@@ -348,12 +331,12 @@ og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_freque
     if (start_word < 0) continue;
     if (frequency < min_frequency) continue;
 
-    unsigned char word[DPcAutMaxBufferSize + 9];
+    unsigned char word[DOgLtracMaxWordsSize];
     int iword;
-    IFE(OgCpToUni(iutf8-start_word,utf8+start_word,DPcAutMaxBufferSize,&iword,word,DOgCodePageUTF8,0,0));
+    IFE(OgCpToUni(iutf8-start_word,utf8+start_word,DOgLtracMaxWordsSize,&iword,word,DOgCodePageUTF8,0,0));
 
-    unsigned char word_norm[DPcAutMaxBufferSize + 9];
-    int iword_norm;
+    unsigned char word_norm[DOgLtracMaxWordsSize];
+    int iword_norm = 0;
     IFE(LtracNormalise(ctrl_ltrac, iword, word, &iword_norm, word_norm));
 
     if (!LtracIsExpression(ctrl_ltrac, iword_norm, word_norm))
@@ -384,24 +367,35 @@ og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_freque
   DONE;
 }
 
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int ibuffer, char *buffer,
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context)
 {
-  oindex states[DPcAutMaxBufferSize + 9];
+  oindex states[DOgLtracMaxWordsSize];
   int retour, nstate0, nstate1, iout;
-  unsigned char out[DPcAutMaxBufferSize + 9];
-  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+  unsigned char out[DOgLtracMaxWordsSize];
+  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, iword, (char *)word, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
       IFE(retour);
-      unsigned char *p = out;
+      int sep = (-1);
+      for (int i = 0; i < iout; i += 2)
+      {
+        int c = (out[i] << 8) + out[i + 1];
+        if (c == DOgLtracExtStringSeparator)
+        {
+          sep = i;
+          break;
+        }
+      }
+      if (sep < 0) continue;
+      unsigned char *p = out + sep + 2;
 
       struct og_ltrac_scan scan[1];
       memset(scan, 0, sizeof(struct og_ltrac_scan));
 
-      scan->iword = iout;
-      scan->word = out;
+      scan->iword = iword;
+      scan->word = word;
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->language_code));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->Iltraf));
 
@@ -416,9 +410,9 @@ static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int ibuffer, ch
 og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context, struct og_ltrac_scan *scan),
     void *context)
 {
-  oindex states[DPcAutMaxBufferSize + 9];
+  oindex states[DOgLtracMaxWordsSize];
   int retour, nstate0, nstate1, iout;
-  unsigned char out[DPcAutMaxBufferSize + 9];
+  unsigned char out[DOgLtracMaxWordsSize];
   if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, (-1), "", &iout, out, &nstate0, &nstate1, states)))
   {
     do
@@ -486,23 +480,21 @@ static og_status LtracNormalise(struct og_ctrl_ltrac *ctrl_ltrac, int iword, cha
 {
   OgUniStrlwr(iword, word, word);
 
-  int ibuffer_trim = 0;
-  char buffer_trim[DPcPathSize];
-  IFE(OgTrimUnicode(iword, word, &ibuffer_trim, buffer_trim));
+  IFE(OgTrimUnicode(iword, word, &iword, word));
 
   og_bool space = FALSE;
   int start = 0;
   int length = 0;
-  for (int i = 0; i < ibuffer_trim; i += 2)
+  for (int i = 0; i < iword; i += 2)
   {
-    int c = (buffer_trim[i] << 8) + buffer_trim[i + 1];
-    length = i - start;
+    int c = (word[i] << 8) + word[i + 1];
+    length = i - start + 2;
 
     if ((c == ' ') && !space)
     {
       space = TRUE;
+      memcpy(out + *iout, word + start, length);
       *iout = *iout + length;
-      memcpy(out, buffer_trim + start, length);
     }
 
     if (space && (c != ' '))
@@ -513,8 +505,8 @@ static og_status LtracNormalise(struct og_ctrl_ltrac *ctrl_ltrac, int iword, cha
   }
   if (!space)
   {
+    memcpy(out + *iout, word + start, length);
     *iout = *iout + length;
-    memcpy(out, buffer_trim + start, length);
   }
 
   DONE;
@@ -525,17 +517,18 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct og_
 
   og_bool found = TRUE;
   int start = 0;
+
+
   for (int i = 0; i < ltrac_entry->iword; i += 2)
   {
-    int c = (ltrac_entry->word[i] << 8) + ltrac_entry->word[i + 1];
+    og_string entry_word = ltrac_entry->word;
+    int c = (entry_word[i] << 8) + entry_word[i + 1];
     if (c == ' ')
     {
       int length = i - start;
 
-      char word[DPcAutMaxBufferSize];
-      memcpy(word, ltrac_entry->word + start, length);
+      og_string word = entry_word + start;
       int iword = length;
-      word[iword++] = 0;
 
       struct og_ltrac_found_context found_ctx[1];
       memset(found_ctx, 0, sizeof(struct og_ltrac_found_context));
@@ -543,14 +536,14 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct og_
       found_ctx->language_code = ltrac_entry->language_code;
       found_ctx->found = FALSE;
 
-      IFE(LtracScanWord(ctrl_ltrac->ha_ltrac, iword, word, LtracIsFound, found_ctx));
+      IFE(LtracScanWord(ctrl_ltrac, iword, word, LtracIsFound, found_ctx));
 
       if (!found_ctx->found)
       {
         found = FALSE;
         break;
       }
-      start = i;
+      start = i + 2;
     }
   }
 

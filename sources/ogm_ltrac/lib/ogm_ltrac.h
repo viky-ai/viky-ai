@@ -19,10 +19,10 @@
  * because they are 4 times smaller than normal automations (.aut)
 */
 #define DOgLtracExtStringSeparator  1
-
+#define DOgLtracMaxWordsSize 300
 
 struct ltrac_dic_input {
-  int value_length; unsigned char *value;
+  int value_length; og_string value;
   int attribute_number;
   int language_code,frequency;
   };
@@ -72,7 +72,7 @@ struct og_ctrl_ltrac {
 struct og_ltrac_scan
 {
   int iword;
-  unsigned char *word;
+  og_string word;
   int attribute_number;
   int language_code;
   int Iltraf;
@@ -105,3 +105,7 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
 og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
 og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context, struct og_ltrac_scan *scan),
     void *context);
+
+/** ltraclog.c **/
+og_status LtracLogLtrac(struct og_ctrl_ltrac *ctrl_ltrac);
+og_status LtracLogLtracRequests(struct og_ctrl_ltrac *ctrl_ltrac);

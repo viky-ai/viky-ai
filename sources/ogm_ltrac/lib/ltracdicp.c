@@ -18,7 +18,7 @@ struct og_pho_input cinput,*input=&cinput;
 int min_post_phonetisation_char_number=2;
 int min_phonetisation_char_number=3;
 int i,c,iin=dic_input->value_length;
-unsigned char *in=dic_input->value;
+og_string in=dic_input->value;
 
 IFn(ctrl_ltrac->hpho) DONE;
 if (iin < min_phonetisation_char_number*2) DONE;
@@ -29,7 +29,7 @@ for (i=0; i<iin; i+=2) {
   if (OgUniIsdigit(c)) DONE;
   }
 
-input->iB = iin; input->B = in;
+input->iB = iin; input->B = (char *)in;
 
 // TODO changer quand on gère les langues!
 input->lang = 34; //fr

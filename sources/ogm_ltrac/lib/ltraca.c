@@ -157,6 +157,11 @@ int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *inp
   if (ctrl_ltrac->has_ltraf_requests)
   {
     IFE(LtracReadLtrafRequest(ctrl_ltrac, input->min_frequency));
+    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
+    {
+      IFE(LtracLogLtrac(ctrl_ltrac));
+      IFE(LtracLogLtracRequests(ctrl_ltrac));
+    }
   }
   IFE(LtracScan(ctrl_ltrac, LtracAddInDictionary, info));
 
