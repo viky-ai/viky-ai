@@ -48,7 +48,13 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
 
   char ltraf_file[DPcPathSize];
   sprintf(ltraf_file, "%s/ltraf.txt", ltrac_dir);
-  if (!OgFileExists(ltraf_file)) DONE;
+  if (!OgFileExists(ltraf_file))
+  {
+    char erreur[DOgErrorSize];
+    sprintf(erreur, "LtracRead: file '%s' does not exist. Run ogm_sidx with option -ltrac or add a 'ltraf.txt' file", ltraf_file);
+    OgErr(ctrl_ltrac->herr, erreur);
+    DPcErr;
+  }
 
   FILE *fd = fopen(ltraf_file, "rb");
   IFn(fd)
