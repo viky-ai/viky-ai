@@ -543,10 +543,10 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
   {
     entry_word = dic_input->value;
     int c = (entry_word[i] << 8) + entry_word[i + 1];
+    length = i - start;
+
     if (c == ' ')
     {
-      length = i - start;
-
       og_string word = entry_word + start;
       int iword = length;
 

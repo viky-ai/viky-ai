@@ -611,12 +611,12 @@ static int trf_cmp(const void *ptr1, const void *ptr2)
   struct og_ltra_trf *trf1 = (struct og_ltra_trf *) ptr1;
   struct og_ltra_trf *trf2 = (struct og_ltra_trf *) ptr2;
 
-  if((trf1->nb_words > 1) && (trf2->nb_words > 1))
-  {
-    if(!trf1->is_expression && trf2->is_expression) return (1);
-
-    if(trf1->is_expression && !trf2->is_expression) return (-1);
-  }
+//  if((trf1->nb_words > 1) && (trf2->nb_words > 1))
+//  {
+//    if(!trf1->is_expression && trf2->is_expression) return (1);
+//
+//    if(trf1->is_expression && !trf2->is_expression) return (-1);
+//  }
 
   if((trf1->nb_words > 1) && (trf2->nb_words == 1) && !trf1->is_expression) return (1);
   if((trf2->nb_words > 1) && (trf1->nb_words == 1) && !trf2->is_expression) return (-1);
