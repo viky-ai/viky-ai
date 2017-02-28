@@ -10,44 +10,60 @@
 
 
 
-int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input)
+int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
-int ientry; unsigned char *p,entry[DPcPathSize];
-struct og_pho_output coutput,*output=&coutput;
-struct og_pho_input cinput,*input=&cinput;
-int min_post_phonetisation_char_number=2;
-int min_phonetisation_char_number=3;
-int i,c,iin=dic_input->value_length;
-og_string in=dic_input->value;
 
-IFn(ctrl_ltrac->hpho) DONE;
-if (iin < min_phonetisation_char_number*2) DONE;
+  if (dic_input->is_expression) DONE;
 
-/* We do not phonetize names with digits */
-for (i=0; i<iin; i+=2) {
-  c=(in[i]<<8) + in[i+1];
-  if (OgUniIsdigit(c)) DONE;
+  int ientry;
+  unsigned char *p, entry[DPcPathSize];
+  struct og_pho_output coutput, *output = &coutput;
+  struct og_pho_input cinput, *input = &cinput;
+  int min_post_phonetisation_char_number = 2;
+  int min_phonetisation_char_number = 3;
+  int i, c, iin = dic_input->value_length;
+  og_string in = dic_input->value;
+
+  IFn(ctrl_ltrac->hpho) DONE;
+  if (iin < min_phonetisation_char_number * 2) DONE;
+
+  /* We do not phonetize names with digits */
+  for (i = 0; i < iin; i += 2)
+  {
+    c = (in[i] << 8) + in[i + 1];
+    if (OgUniIsdigit(c)) DONE;
   }
 
-input->iB = iin; input->B = (char *)in;
+  input->iB = iin;
+  input->B = (char *) in;
 
-// TODO changer quand on gère les langues!
-input->lang = 34; //fr
+  if (dic_input->language_code == DOgLangNil)
+  {
+    //TODO gérer de façon plus propre avec uen variable commune pour tout le monde issue du ogm_ssi.txt
+    input->lang = DOgLangFR;
+  }
+  else
+  {
+    input->lang = dic_input->language_code;
+  }
 
-IFE(OgPhonet(ctrl_ltrac->hpho,input,output));
-if (output->iB < min_post_phonetisation_char_number*2) DONE;
+  IFE(OgPhonet(ctrl_ltrac->hpho, input, output));
+  if (output->iB < min_post_phonetisation_char_number * 2) DONE;
 
-/* phonetic_form | attribute_number language_code frequency **/
-memcpy(entry,output->B,output->iB);
-p=entry+output->iB; *p++=0; *p++=DOgLtracExtStringSeparator;
-OggNout(dic_input->attribute_number,&p);
-OggNout(dic_input->language_code,&p);
-OggNout(dic_input->frequency,&p);
-memcpy(p,in,iin); p+=iin;
-ientry=p-entry;
-IFE(OgAutAdd(ctrl_ltrac->ha_phon,ientry,entry));
+  /* phonetic_form | attribute_number language_code frequency **/
+  memcpy(entry, output->B, output->iB);
+  p = entry + output->iB;
+  *p++ = 0;
+  *p++ = DOgLtracExtStringSeparator;
+  OggNout(dic_input->attribute_number, &p);
+  OggNout(dic_input->language_code, &p);
+  OggNout(dic_input->frequency, &p);
+  memcpy(p, in, iin);
+  p += iin;
+  ientry = p - entry;
+  IFE(OgAutAdd(ctrl_ltrac->ha_phon, ientry, entry));
 
-DONE;
+  DONE;
 }
 
 

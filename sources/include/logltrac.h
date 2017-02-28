@@ -20,10 +20,11 @@
 #define DOgLtracTraceAdd            0x4
 
 
-#define DOgLtracDictionaryTypeBase    0x1
-#define DOgLtracDictionaryTypeSwap    0x2
-#define DOgLtracDictionaryTypePhon    0x4
-#define DOgLtracDictionaryTypeAspell  0x8
+#define DOgLtracDictionaryTypeBase         0x1
+#define DOgLtracDictionaryTypeSwap         0x2
+#define DOgLtracDictionaryTypePhon         0x4
+#define DOgLtracDictionaryTypeAspell       0x8
+#define DOgLtracDictionaryTypeExpressions  0x10
 
 #define DOgLtracInputTypeWords       0x1 /* BU1 */
 #define DOgLtracInputTypeAttributes  0x2 /* BU2 */
@@ -60,6 +61,7 @@ DEFPUBLIC(int) OgLtracFlush(pr(void *));
 DEFPUBLIC(int) OgLtracDicBaseLog(void *handle);
 DEFPUBLIC(int) OgLtracDicSwapLog(void *handle);
 DEFPUBLIC(int) OgLtracDicPhonLog(void *handle);
+DEFPUBLIC(int) OgLtracDicExpressionsLog(void *handle);
 
 
 #define _LOGLTRACALIVE_

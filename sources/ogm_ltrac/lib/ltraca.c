@@ -154,14 +154,9 @@ int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *inp
   info->input = input;
 
   IFE(LtracReadLtraf(ctrl_ltrac, input->min_frequency));
-  if (ctrl_ltrac->has_ltraf_requests)
+  if (ctrl_ltrac->has_ltraf_requests && (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions))
   {
     IFE(LtracReadLtrafRequest(ctrl_ltrac, input->min_frequency));
-    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
-    {
-      IFE(LtracLogLtrac(ctrl_ltrac));
-      IFE(LtracLogLtracRequests(ctrl_ltrac));
-    }
   }
   IFE(LtracScan(ctrl_ltrac, LtracAddInDictionary, info));
 
@@ -182,6 +177,7 @@ dic_input->value_length = scan->iword;
 dic_input->value = scan->word;
 dic_input->attribute_number = scan->attribute_number;
 dic_input->language_code = scan->language_code;
+dic_input->is_expression = scan->is_expression;
 
 struct ltraf *ltraf = ctrl_ltrac->Ltraf + scan->Iltraf;
 dic_input->frequency = ltraf->frequency;

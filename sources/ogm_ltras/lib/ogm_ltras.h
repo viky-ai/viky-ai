@@ -93,8 +93,8 @@ struct og_ctrl_ltras
   struct og_ltras_input *input;
 
   void *hltras_to_inherit;
-  int ha_base_accessed, ha_swap_accessed, ha_phon_accessed;
-  void *ha_base, *ha_swap, *ha_phon;
+  int ha_base_accessed, ha_swap_accessed, ha_phon_accessed, ha_expressions_accessed;
+  void *ha_base, *ha_swap, *ha_phon, *ha_expressions;
   void *hpho, *hldi, *hstm;
   void *ha_false;
 

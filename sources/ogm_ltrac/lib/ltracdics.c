@@ -14,6 +14,8 @@ static og_status LtracDicSwapAddOrigin(struct og_ctrl_ltrac *ctrl_ltrac, struct 
 
 int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
+  if(dic_input->is_expression) DONE;
+
   int is = dic_input->value_length;
 
   if (is <= 2) DONE;

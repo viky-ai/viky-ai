@@ -65,6 +65,8 @@ struct og_ltra_trf {
   /** transposition start and length in the heap htransposition of all trf. It is used after a paste tranformation
    * to keep the corresponding start and length of each word of the original string inside the created pasted string*/
   int start_transposition, length_transposition;
+
+  og_bool is_expression;
   };
 
 struct og_ltra_word {
@@ -228,6 +230,14 @@ DEFPUBLIC(og_status) OgLtrasFlowChart(void *hltras, struct og_ltras_input *input
  * @return handle of base automaton.
  */
 DEFPUBLIC(void *) OgLtrasHaBase(void *hltras);
+
+/**
+ * Initialize handle of expressions automaton
+ *
+ * @param hltras handle for ltras
+ * @return handle of expressions automaton.
+ */
+DEFPUBLIC(void *) OgLtrasHaExpressions(void *hltras);
 
 /**
  * Initialize handle of swap automaton
@@ -472,13 +482,15 @@ DEFPUBLIC(og_status) OgLtrasTrfCopy(void *hltras, struct og_ltra_trfs *trfs1, in
  * @param trfs the transformations structure where to extract the desired transformation
  * @param Itrf position of the transformation to compute scores and frequency
  * @param pglobal_frequency global frequency of the transformation :
- * if there is more than one word in the transformation, global frequency is the frequency of the least frequent word.
+ * if there is more than one word in the transformation, if it is an expression, we get the expression frequency and flag
+ * trf as an expression, otherwise, global frequency is the frequency of the least frequent word.
  * @param pglobal_score levenshtein score of the transformation
  * @param pfinal_score calculated according to global score, global frequency normalized and score factor
  * @return function status : CORRECT else ERREUR.
  */
 DEFPUBLIC(og_status) OgLtrasTrfCalculateGlobal(void *hltras, struct og_ltra_trfs *trfs, int Itrf
   , int *pglobal_frequency, double *pglobal_score, double *pfinal_score);
+
 
 /**
  * Get frequency of a word inside base automaton ha_base
@@ -492,6 +504,19 @@ DEFPUBLIC(og_status) OgLtrasTrfCalculateGlobal(void *hltras, struct og_ltra_trfs
  * @return function status : TRUE, else FALSE if word is not found, else ERREUR
  */
 DEFPUBLIC(og_bool) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language_code, int *pfrequency);
+
+
+/**
+ * Get frequency of an expression inside expressions automaton ha_expressions
+ *
+ * @param hltras handle for ltras
+ * @param string_length size of the word
+ * @param string the expressions to get the frequency
+ * @param language_code code of the current language
+ * @param pfrequency frequency of the expression.
+ * @return function status : TRUE, else FALSE if word is not found, else ERREUR
+ */
+PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency);
 
 /**
  * Get the start position and end position in the original string of the tranformation

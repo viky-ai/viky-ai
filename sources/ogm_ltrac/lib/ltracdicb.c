@@ -10,20 +10,25 @@
 
 
 
-int LtracDicBaseAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input)
+int LtracDicBaseAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
-int ientry; unsigned char *p,entry[DPcPathSize];
+  if(dic_input->is_expression) DONE;
 
-/* word | attribute_number language_code frequency **/
-memcpy(entry,dic_input->value,dic_input->value_length);
-p=entry+dic_input->value_length; *p++=0; *p++=DOgLtracExtStringSeparator;
-OggNout(dic_input->attribute_number,&p);
-OggNout(dic_input->language_code,&p);
-OggNout(dic_input->frequency,&p);
-ientry=p-entry;
-IFE(OgAutAdd(ctrl_ltrac->ha_base,ientry,entry));
+  int ientry;
+  unsigned char *p, entry[DPcPathSize];
 
-DONE;
+  /* word | attribute_number language_code frequency **/
+  memcpy(entry, dic_input->value, dic_input->value_length);
+  p = entry + dic_input->value_length;
+  *p++ = 0;
+  *p++ = DOgLtracExtStringSeparator;
+  OggNout(dic_input->attribute_number, &p);
+  OggNout(dic_input->language_code, &p);
+  OggNout(dic_input->frequency, &p);
+  ientry = p - entry;
+  IFE(OgAutAdd(ctrl_ltrac->ha_base, ientry, entry));
+
+  DONE;
 }
 
 

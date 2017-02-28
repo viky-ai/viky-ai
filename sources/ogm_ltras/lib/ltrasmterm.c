@@ -608,47 +608,66 @@ return(trf_cmp(ptr1,ptr2));
 
 static int trf_cmp(const void *ptr1, const void *ptr2)
 {
-struct og_ltra_trf *trf1 = (struct og_ltra_trf *)ptr1;
-struct og_ltra_trf *trf2 = (struct og_ltra_trf *)ptr2;
-int isword1; unsigned char sword1[DPcPathSize];
-int isword2; unsigned char sword2[DPcPathSize];
-struct og_ltra_word *word;
-int i,iswordmin,cmp;
-double dcmp;
+  struct og_ltra_trf *trf1 = (struct og_ltra_trf *) ptr1;
+  struct og_ltra_trf *trf2 = (struct og_ltra_trf *) ptr2;
 
-dcmp = trf2->final_score - trf1->final_score;
-if (dcmp > 0) return(1);
-else if (dcmp < 0) return(-1);
+  if((trf1->nb_words > 1) && (trf2->nb_words > 1))
+  {
+    if(!trf1->is_expression && trf2->is_expression) return (1);
 
-dcmp = trf2->global_score - trf1->global_score;
-if (dcmp > 0) return(1);
-else if (dcmp < 0) return(-1);
-
-cmp = trf2->global_frequency - trf1->global_frequency;
-if (cmp) return(cmp);
-
-/* This is to make sure we are always in the same order
- * Is it not too costly, because it is only done when
- * scoring and frequency are the same */
-for (isword1=0,i=0; i<trf1->nb_words; i++) {
-  word = trf1->trfs->Word + trf1->start_word + i;
-  memcpy(sword1+isword1,trf1->trfs->Ba+word->start,word->length);
-  isword1 += word->length;
+    if(trf1->is_expression && !trf2->is_expression) return (-1);
   }
-for (isword2=0,i=0; i<trf2->nb_words; i++) {
-  word = trf2->trfs->Word + trf2->start_word + i;
-  memcpy(sword2+isword2,trf2->trfs->Ba+word->start,word->length);
-  isword2 += word->length;
+
+  if((trf1->nb_words > 1) && (trf2->nb_words == 1) && !trf1->is_expression) return (1);
+  if((trf2->nb_words > 1) && (trf1->nb_words == 1) && !trf2->is_expression) return (-1);
+
+
+  double dcmp = trf2->final_score - trf1->final_score;
+  if (dcmp > 0) return (1);
+  else if (dcmp < 0) return (-1);
+
+  dcmp = trf2->global_score - trf1->global_score;
+  if (dcmp > 0) return (1);
+  else if (dcmp < 0) return (-1);
+
+  int cmp = trf2->global_frequency - trf1->global_frequency;
+  if (cmp) return (cmp);
+
+
+
+  /* This is to make sure we are always in the same order
+   * Is it not too costly, because it is only done when
+   * scoring and frequency are the same */
+  int isword1 = 0;
+  int i = 0;
+  unsigned char sword1[DPcPathSize];
+  for (isword1 = 0, i = 0; i < trf1->nb_words; i++)
+  {
+    struct og_ltra_word *word = trf1->trfs->Word + trf1->start_word + i;
+    memcpy(sword1 + isword1, trf1->trfs->Ba + word->start, word->length);
+    isword1 += word->length;
   }
-if (isword1<isword2) iswordmin=isword1;
-else iswordmin=isword2;
 
-cmp=Ogmemicmp(sword1,sword2,iswordmin);
-if (cmp) return(cmp);
+  int isword2 = 0;
+  unsigned char sword2[DPcPathSize];
+  for (isword2 = 0, i = 0; i < trf2->nb_words; i++)
+  {
+    struct og_ltra_word *word = trf2->trfs->Word + trf2->start_word + i;
+    memcpy(sword2 + isword2, trf2->trfs->Ba + word->start, word->length);
+    isword2 += word->length;
+  }
+  int iswordmin = isword2;
+  if (isword1 < isword2)
+  {
+    iswordmin = isword1;
+  }
 
-cmp=isword1-isword2;
+  cmp = Ogmemicmp(sword1, sword2, iswordmin);
+  if (cmp) return (cmp);
 
-return(cmp);
+  cmp = isword1 - isword2;
+
+  return (cmp);
 }
 
 
@@ -735,134 +754,169 @@ DONE;
 
 
 
-static int LtrasModuleTerm3(struct og_ltra_module_input *module_input
-  , struct og_ltra_trfs *trfs, int span_start_trf, int *counter_for_safety)
+static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og_ltra_trfs *trfs, int span_start_trf,
+    int *counter_for_safety)
 {
-struct og_ctrl_term *ctrl_term = (struct og_ctrl_term *)module_input->handle;
-struct og_ltra_add_trf_input ctinput,*tinput=&ctinput;
-int words_length; unsigned char words[DPcPathSize];
-struct og_ltra_add_trf_word *new_word;
-unsigned char string[DPcPathSize*5];
-unsigned char buffer[DPcPathSize];
-void *hltras = ctrl_term->hltras;
-int stopped,added,all_basic_trf;
-struct og_ltra_trf *trf,*ntrf;
-int nb_scores; double score;
-struct og_ltra_word *word;
-int i,j,Iotrf,Itrf,Intrf;
-int is_false;
+  struct og_ctrl_term *ctrl_term = (struct og_ctrl_term *) module_input->handle;
 
-// Sometimes there is a bug and it loop infinitely (bug has not been understood)
-// So we have a counter to avoid infinity loops
-*counter_for_safety = *counter_for_safety + 1;
-if(*counter_for_safety >= 2000) return(1);
+  // Sometimes there is a bug and it loop infinitely (bug has not been understood)
+  // So we have a counter to avoid infinity loops
+  *counter_for_safety = *counter_for_safety + 1;
+  if (*counter_for_safety >= 2000) return (1);
 
-IFn(ctrl_term->TrfUsed) return(0);
+  IFn(ctrl_term->TrfUsed) return (0);
 
-if (span_start_trf == trfs->TrfBasicUsed) {
-  /* We have a solution, we use span_nb_trfs to store the current list
-   * of ordered trfs that are the building trfs of the solution */
-  if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm) {
-    buffer[0]=0;
-    for (i=0; i<trfs->TrfBasicUsed; i++) {
-      sprintf(buffer+strlen(buffer),"%s%d",i?" ":"",trfs->Trf[i].span_nb_trfs);
+  if (span_start_trf == trfs->TrfBasicUsed)
+  {
+    /* We have a solution, we use span_nb_trfs to store the current list
+     * of ordered trfs that are the building trfs of the solution */
+    if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+    {
+      unsigned char buffer[DPcPathSize];
+      buffer[0] = 0;
+      for (int i = 0; i < trfs->TrfBasicUsed; i++)
+      {
+        sprintf(buffer + strlen(buffer), "%s%d", i ? " " : "", trfs->Trf[i].span_nb_trfs);
       }
-    OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-      , "LtrasModuleTerm3: found solution [%s]", buffer);
+      OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog, "LtrasModuleTerm3: found solution [%s]", buffer);
     }
-  if (LtrasModuleTermStopExplosion(ctrl_term)) return(1);
-  score=0.0; nb_scores=0; words_length=0;
-  memset(tinput,0,sizeof(struct og_ltra_add_trf_input));
-  all_basic_trf=1;
-  for (Iotrf=(-1),i=0; i<trfs->TrfBasicUsed; i++) {
-    Itrf=trfs->Trf[i].history_trf;
-    if (Itrf==Iotrf) continue;
+    if (LtrasModuleTermStopExplosion(ctrl_term)) return (1);
+
+    double score = 0.0;
+    int nb_scores = 0;
+    int words_length = 0;
+
+    struct og_ltra_add_trf_input tinput[1];
+    memset(tinput, 0, sizeof(struct og_ltra_add_trf_input));
+    int all_basic_trf = 1;
+    int Itrf = -1;
+    int i = 0;
+
+    for (int Iotrf = (-1); i < trfs->TrfBasicUsed; i++)
+    {
+      Itrf = trfs->Trf[i].history_trf;
+      if (Itrf == Iotrf) continue;
+      struct og_ltra_trf *trf = trfs->Trf + Itrf;
+      if (!trf->basic) all_basic_trf = 0;
+      for (int j = 0; j < trf->nb_words; j++)
+      {
+        struct og_ltra_word *word = trfs->Word + trf->start_word + j;
+        struct og_ltra_add_trf_word *new_word = tinput->word + tinput->nb_words;
+        if (words_length + word->length >= DPcPathSize / 2)
+        {
+          if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation)
+          {
+            OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
+                "LtrasModuleTerm3: solution too long (>=%d), discarding solution", DPcPathSize / 2);
+          }
+          return (0);
+        }
+
+        unsigned char words[DPcPathSize];
+        memcpy(words + words_length, trfs->Ba + word->start, word->length);
+        new_word->string = words + words_length;
+        new_word->string_length = word->length;
+        new_word->frequency = word->frequency;
+        new_word->base_frequency = word->base_frequency;
+        new_word->start_position = word->start_position;
+        new_word->length_position = word->length_position;
+        new_word->language = word->language;
+        words_length += word->length;
+        if (tinput->nb_words >= DOgLtrasAddTrfMaxNbWords)
+        {
+          if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation)
+          {
+            OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
+                "LtrasModuleTerm3: tinput->nb_words (%d) >= DOgLtrasAddTrfMaxNbWords (%d), discarding solution",
+                tinput->nb_words, DOgLtrasAddTrfMaxNbWords);
+          }
+          return (0);
+        }
+        tinput->nb_words++;
+      }
+      score += (1 - trf->global_score);
+      nb_scores++;
+      Iotrf = Itrf;
+
+      if((trf->nb_words > 1))
+      {
+        IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras, trfs, Itrf, &trf->global_frequency, &trf->global_score,
+            &trf->final_score));
+      }
+    }
+    if (all_basic_trf)
+    {
+      if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+      {
+        unsigned char string[DPcPathSize * 5];
+        IFE(OgLtrasInputTrfString(ctrl_term->hltras, tinput, DPcPathSize*5, string));
+        OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog, "LtrasModuleTerm3: discarding solution because it is basic: '%s'",
+            string);
+      }
+      return (0);
+    }
+    struct og_ltra_trf *trf = trfs->Trf + trfs->Trf[0].history_trf;
+    tinput->start = trf->start;
     trf = trfs->Trf + Itrf;
-    if (!trf->basic) all_basic_trf=0;
-    for (j=0; j<trf->nb_words; j++) {
-      word = trfs->Word + trf->start_word + j;
-      new_word = tinput->word+tinput->nb_words;
-      if (words_length+word->length >= DPcPathSize/2) {
-        if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation) {
-          OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-            , "LtrasModuleTerm3: solution too long (>=%d), discarding solution", DPcPathSize/2);
-          }
-        return(0);
-        }
-      memcpy(words+words_length,trfs->Ba+word->start,word->length);
-      new_word->string = words+words_length;
-      new_word->string_length = word->length;
-      new_word->frequency = word->frequency;
-      new_word->base_frequency = word->base_frequency;
-      new_word->start_position = word->start_position;
-      new_word->length_position = word->length_position;
-      new_word->language = word->language;
-      words_length+=word->length;
-      if (tinput->nb_words >= DOgLtrasAddTrfMaxNbWords) {
-        if (ctrl_term->loginfo->trace & DOgLtrasTraceInformation) {
-          OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-            , "LtrasModuleTerm3: tinput->nb_words (%d) >= DOgLtrasAddTrfMaxNbWords (%d), discarding solution"
-            , tinput->nb_words, DOgLtrasAddTrfMaxNbWords);
-          }
-        return(0);
-        }
-      tinput->nb_words++;
+    tinput->length = trf->start + trf->length - tinput->start;
+    tinput->module_id = module_input->id;
+    tinput->score = (1 - score);
+    tinput->from_trf = trfs->Trf[0].history_trf;
+    tinput->final = 1;
+    tinput->total = 1;
+
+    /** Checks for false expression **/
+    og_bool is_false = LtrasModuleTermIsFalse(module_input, trfs, tinput);
+    IFE(is_false);
+    if (is_false)
+    {
+      if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+      {
+        unsigned char string[DPcPathSize * 5];
+        IFE(OgLtrasInputTrfString(ctrl_term->hltras, tinput, DPcPathSize*5, string));
+        OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog, "LtrasModuleTerm3: discarding solution because it is false: '%s'",
+            string);
       }
-    score+= (1-trf->global_score); nb_scores++;
-    Iotrf=Itrf;
+      return (0);
     }
-  if (all_basic_trf) {
-    if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm) {
-      IFE(OgLtrasInputTrfString(hltras, tinput, DPcPathSize*5, string));
-      OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-        , "LtrasModuleTerm3: discarding solution because it is basic: '%s'", string);
-      }
-    return(0);
-    }
-  trf = trfs->Trf + trfs->Trf[0].history_trf;
-  tinput->start = trf->start;
-  trf = trfs->Trf + Itrf;
-  tinput->length = trf->start + trf->length - tinput->start;
-  tinput->module_id = module_input->id;
-  tinput->score = (1-score);
-  tinput->from_trf = trfs->Trf[0].history_trf;
-  tinput->final = 1; tinput->total = 1;
-  /** Checks for false expression **/
-  IFE(is_false=LtrasModuleTermIsFalse(module_input,trfs,tinput));
-  if (is_false) {
-    if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm) {
-      IFE(OgLtrasInputTrfString(hltras, tinput, DPcPathSize*5, string));
-      OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-        , "LtrasModuleTerm3: discarding solution because it is false: '%s'", string);
-      }
-    return(0);
-    }
-  IFE(added=OgLtrasTrfAdd(hltras,trfs,tinput,&Intrf));
-  if (added) {
-    ntrf = trfs->Trf + Intrf;
-    ntrf->span_start_trf=trfs->Trf[0].history_trf;
-    ntrf->span_nb_trfs=trfs->TrfBasicUsed;
-    IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras,trfs,Intrf
-      ,&ntrf->global_frequency, &ntrf->global_score, &ntrf->final_score));
-    if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm) {
-      IFE(OgLtrasInputTrfString(hltras, tinput, DPcPathSize*5, string));
-      OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-        , "LtrasModuleTerm3: solution added: '%s'", string);
+
+    int Intrf = -1;
+    og_bool added = OgLtrasTrfAdd(ctrl_term->hltras, trfs, tinput, &Intrf);
+    IFE(added);
+    if (added)
+    {
+      struct og_ltra_trf *ntrf = trfs->Trf + Intrf;
+      ntrf->span_start_trf = trfs->Trf[0].history_trf;
+      ntrf->span_nb_trfs = trfs->TrfBasicUsed;
+
+      IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras, trfs, Intrf, &ntrf->global_frequency, &ntrf->global_score,
+                  &ntrf->final_score));
+
+      if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+      {
+        unsigned char string[DPcPathSize * 5];
+        IFE(OgLtrasInputTrfString(ctrl_term->hltras, tinput, DPcPathSize*5, string));
+        OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog, "LtrasModuleTerm3: solution added: '%s'", string);
       }
     }
-  return(0);
+
+    return (0);
   }
 
-for (i=0; i<ctrl_term->TrfUsed; i++) {
-  trf = trfs->Trf + i;
-  if (trf->span_start_trf != span_start_trf) continue;
-  for (j=0; j<trf->span_nb_trfs; j++) {
-    trfs->Trf[span_start_trf+j].history_trf = i;
+  for (int i = 0; i < ctrl_term->TrfUsed; i++)
+  {
+    struct og_ltra_trf *trf = trfs->Trf + i;
+    if (trf->span_start_trf != span_start_trf) continue;
+    for (int j = 0; j < trf->span_nb_trfs; j++)
+    {
+      trfs->Trf[span_start_trf + j].history_trf = i;
     }
-  IFE(stopped=LtrasModuleTerm3(module_input,trfs,trf->span_start_trf+trf->span_nb_trfs, counter_for_safety));
-  if (stopped) return(1);
+
+    og_bool stopped = LtrasModuleTerm3(module_input, trfs, trf->span_start_trf + trf->span_nb_trfs, counter_for_safety);
+    IFE(stopped);
+    if (stopped) return (1);
   }
-return(0);
+  return (0);
 }
 
 

@@ -181,7 +181,8 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-mall",5)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypeBase
                                             + DOgLtracDictionaryTypeSwap
-                                            + DOgLtracDictionaryTypePhon;
+                                            + DOgLtracDictionaryTypePhon
+                                            + DOgLtracDictionaryTypeExpressions;
     }
   else if (!memcmp(cmd_param,"-mbase",6)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypeBase;
@@ -192,11 +193,15 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-mphon",6)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypePhon;
     }
+  else if (!memcmp(cmd_param,"-mexpressions",13)) {
+    info->input->dictionaries_minimization |= DOgLtracDictionaryTypeExpressions;
+    }
   else if (!memcmp(cmd_param,"-oall",5)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase
                                          + DOgLtracDictionaryTypeSwap
                                          + DOgLtracDictionaryTypePhon
-                                         + DOgLtracDictionaryTypeAspell;
+                                         + DOgLtracDictionaryTypeAspell
+                                         + DOgLtracDictionaryTypeExpressions;
     }
   else if (!memcmp(cmd_param,"-obase",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase;
@@ -206,6 +211,9 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     }
   else if (!memcmp(cmd_param,"-ophon",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypePhon;
+    }
+  else if (!memcmp(cmd_param,"-oexpressions",13)) {
+    info->input->dictionaries_to_export |= DOgLtracDictionaryTypeExpressions;
     }
   else if (!memcmp(cmd_param,"-oaspell",8)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeAspell;
@@ -219,10 +227,14 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-sphon",6)) {
     info->dictionaries_to_scan |= DOgLtracDictionaryTypePhon;
     }
+  else if (!memcmp(cmd_param,"-sexpressions",13)) {
+    info->dictionaries_to_scan |= DOgLtracDictionaryTypeExpressions;
+    }
   else if (!memcmp(cmd_param,"-sall",5)) {
     info->dictionaries_to_scan |= DOgLtracDictionaryTypeBase
                                + DOgLtracDictionaryTypeSwap
-                               + DOgLtracDictionaryTypePhon;
+                               + DOgLtracDictionaryTypePhon
+                               + DOgLtracDictionaryTypeExpressions;
     }
   else if (!memcmp(cmd_param,"-ssi=",5)) {
     strcpy(info->param->data_directory,cmd_param+5);
@@ -332,6 +344,10 @@ STATICF(int) Ltrac(info)
     {
       IFE(OgLtracDicPhonLog(info->hltrac));
     }
+    if (info->dictionaries_to_scan & DOgLtracDictionaryTypeExpressions)
+    {
+      IFE(OgLtracDicExpressionsLog(info->hltrac));
+    }
   }
   else
   {
@@ -385,15 +401,18 @@ sprintf(buffer+strlen(buffer),"    -h prints this message\n");
 sprintf(buffer+strlen(buffer),"    -mbase: minimizes ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mswap: minimizes ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mphon: minimizes ltra_phon.auf automaton\n");
+sprintf(buffer+strlen(buffer),"    -mexpressions: minimizes ltra_expressions.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mall: minimizes all 3 above automatons\n");
 sprintf(buffer+strlen(buffer),"    -obase: extracts ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -oswap: extracts ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -ophon: extracts ltra_phon.auf automaton\n");
+sprintf(buffer+strlen(buffer),"    -oexpressions: extracts ltra_expressions.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -oaspell: extracts aspell source dictionary\n");
 sprintf(buffer+strlen(buffer),"    -oall: extracts all 4 above automatons or source dictionary\n");
 sprintf(buffer+strlen(buffer),"    -sbase: scans ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sswap: scans ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sphon: scans ltra_phon.auf automaton\n");
+sprintf(buffer+strlen(buffer),"    -sexpressions: scans ltra_expressions.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sall: scans all 3 above automatons\n");
 sprintf(buffer+strlen(buffer),"    -filter<list_of_words.txt>: keep only words in vocabulary list_of_words.txt\n");
 sprintf(buffer+strlen(buffer),"    -add_filter_words: active only with -filter, besides words present in the\n");

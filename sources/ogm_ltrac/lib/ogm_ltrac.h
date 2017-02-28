@@ -21,11 +21,15 @@
 #define DOgLtracExtStringSeparator  1
 #define DOgLtracMaxWordsSize 300
 
-struct ltrac_dic_input {
-  int value_length; og_string value;
+struct ltrac_dic_input
+{
+  int value_length;
+  og_string value;
   int attribute_number;
-  int language_code,frequency;
-  };
+  int language_code;
+  int frequency;
+  og_bool is_expression;
+};
 
 struct ltraf
 {
@@ -46,10 +50,12 @@ struct og_ctrl_ltrac {
   char name_base[DPcPathSize];
   char name_swap[DPcPathSize];
   char name_phon[DPcPathSize];
+  char name_expressions[DPcPathSize];
   char name_aspell[DPcPathSize];
   char log_base[DPcPathSize];
   char log_swap[DPcPathSize];
   char log_phon[DPcPathSize];
+  char log_expressions[DPcPathSize];
   void *ha_base,*ha_swap,*ha_phon,*ha_filter,*ha_seen;
   FILE *fd_aspell;
   void *hpho;
@@ -76,6 +82,7 @@ struct og_ltrac_scan
   int attribute_number;
   int language_code;
   int Iltraf;
+  og_bool is_expression;
 };
 
 /** ltraca.c **/
@@ -96,6 +103,9 @@ int LtracDicBaseAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic
 
 /** ltracdics.c **/
 int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);
+
+/** ltracdicexpressions.c **/
+og_status LtracDicExpressionAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input);
 
 /** ltracdicp.c **/
 int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);

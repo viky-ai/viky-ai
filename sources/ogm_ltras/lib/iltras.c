@@ -313,6 +313,52 @@ return(ctrl_ltras->ha_base);
 }
 
 
+PUBLIC(void *) OgLtrasHaExpressions(void *handle)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+
+  if (ctrl_ltras->ha_expressions_accessed) return(ctrl_ltras->ha_expressions);
+  ctrl_ltras->ha_expressions_accessed=1;
+
+  if (ctrl_ltras->hltras_to_inherit)
+  {
+    ctrl_ltras->ha_expressions=OgLtrasHaExpressions(ctrl_ltras->hltras_to_inherit);
+  }
+  else
+  {
+    struct og_aut_param aut_param[1];
+    memset(aut_param,0,sizeof(struct og_aut_param));
+    aut_param->herr=ctrl_ltras->herr;
+    aut_param->hmutex=ctrl_ltras->hmutex;
+    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
+    aut_param->state_number = 0;
+    sprintf(aut_param->name,"ltra_expressions");
+    IFn(ctrl_ltras->ha_expressions=OgAutInit(aut_param)) return(0);
+    char ha_name[DPcPathSize];
+    if (ctrl_ltras->dictionaries_directory[0])
+    {
+      sprintf(ha_name,"%s/ltra_expressions.auf",ctrl_ltras->dictionaries_directory);
+    }
+    else
+    {
+      strcpy(ha_name,"ling/ltra_expressions.auf");
+    }
+
+    if (!OgFileExists(ha_name))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaExpressions : impossible to open '%s'", ha_name);
+      OgAutFlush(ctrl_ltras->ha_expressions);
+      ctrl_ltras->ha_expressions = NULL;
+      return NULL;
+    }
+
+    IF(OgAufRead(ctrl_ltras->ha_expressions, ha_name)) return NULL;
+
+  }
+
+  return(ctrl_ltras->ha_expressions);
+}
 
 
 PUBLIC(void *) OgLtrasHaSwap(void *handle)

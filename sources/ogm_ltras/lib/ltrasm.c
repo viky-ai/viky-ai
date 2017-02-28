@@ -359,35 +359,71 @@ PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, i
     double *pglobal_score, double *pfinal_score)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
-  double score_factor = ctrl_ltras->input->score_factor;
-  struct og_ltra_trf *trf = trfs->Trf + Itrf;
-  double global_frequency_log10;
-  double normalized_frequency;
-  int global_frequency;
-  double global_score;
-  double final_score;
-  int i;
 
-  global_frequency = 0;
-  for (i = 0; i < trf->nb_words; i++)
+  struct og_ltra_trf *trf = trfs->Trf + Itrf;
+
+  char buffer[DPcPathSize];
+  int ibuffer = 0;
+  int freq = 0;
+  int global_frequency = 0;
+  og_bool same_lang = TRUE;
+  int language_code = DOgLangNil;
+  for (int i = 0; i < trf->nb_words; i++)
   {
     struct og_ltra_word *word = trfs->Word + trf->start_word + i;
-    if (i == 0) global_frequency = word->frequency;
-    else if (global_frequency > word->frequency) global_frequency = word->frequency;
+
+    memcpy(buffer + ibuffer, trfs->Ba + word->start, word->length);
+    ibuffer += word->length;
+
+    if (i != (trf->nb_words - 1))
+    {
+      buffer[ibuffer++] = '\0';
+      buffer[ibuffer++] = ' ';
+    }
+
+    if((language_code != word->language) && (language_code != DOgLangNil))
+    {
+      same_lang = FALSE;
+    }
+    language_code = word->language;
+
+    if (i == 0)
+    {
+      freq = word->frequency;
+    }
+    else if (freq > word->frequency)
+    {
+      freq = word->frequency;
+    }
   }
 
-  global_score = trf->global_score;
-
-  if (global_frequency < 1)
+  og_bool found = FALSE;
+  if(same_lang)
   {
-    normalized_frequency = 0;
+    found = OgLtrasTrfCalculateExpressionFrequency(handle, ibuffer, buffer, language_code, &global_frequency);
+  }
+
+  if(found)
+  {
+    trf->is_expression = TRUE;
   }
   else
   {
-    global_frequency_log10 = log10(global_frequency);
+    global_frequency = freq;
+  }
+
+
+  double global_score = trf->global_score;
+  double normalized_frequency = 0;
+
+  if(global_frequency > 1)
+  {
+    double global_frequency_log10 = log10(global_frequency);
     normalized_frequency = global_frequency_log10 / ctrl_ltras->max_word_frequency_log10;
   }
-  final_score = score_factor * global_score + (1 - score_factor) * normalized_frequency;
+
+  double score_factor = ctrl_ltras->input->score_factor;
+  double final_score = score_factor * global_score + (1 - score_factor) * normalized_frequency;
 
   if (pglobal_frequency) *pglobal_frequency = global_frequency;
   if (pglobal_score) *pglobal_score = global_score;
@@ -395,6 +431,7 @@ PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, i
 
   DONE;
 }
+
 
 PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
 {
@@ -452,6 +489,68 @@ PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsign
 
   return (found);
 }
+
+
+PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+
+  *pfrequency = 0;
+
+  /** checks and, if necessary, initializes the base automaton **/
+  IFn(OgLtrasHaExpressions(handle)) return (0);
+
+  unsigned char buffer[DPcPathSize * 2];
+  int ibuffer = OgStrCpySized(buffer, (DPcPathSize * 2) - 2, string, string_length);
+  if (ibuffer < string_length)
+  {
+    if (ctrl_ltras->loginfo->trace & DOgLtrasTraceModuleTerm)
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasTrfCalculateExpressionFrequency: in string has been truncated"
+          " (form size %d to %d)", string_length, ibuffer);
+    }
+  }
+
+  // add automation suffix
+  buffer[ibuffer++] = 0;
+  buffer[ibuffer++] = 1;
+
+  int iout;
+  unsigned char out[DPcAutMaxBufferSize + 9];
+  oindex states[DPcAutMaxBufferSize + 9];
+  int retour, nstate0, nstate1;
+  og_bool found  = FALSE;
+  if ((retour = OgAufScanf(ctrl_ltras->ha_expressions, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+  {
+    do
+    {
+      IFE(retour);
+      unsigned char *p = out;
+      int attribute_number = -1;
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
+
+      int language_code = DOgLangNil;
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&language_code));
+
+      int frequency = 0;
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
+
+      // check language frequency
+      int language_lang = OgIso639_3166ToLang(language);
+      if (language_lang != 0 && language_code != 0 && language_lang != language_code)
+      {
+        continue;
+      }
+
+      *pfrequency += frequency;
+      found = TRUE;
+    }
+    while ((retour = OgAufScann(ctrl_ltras->ha_expressions, &iout, out, nstate0, &nstate1, states)));
+  }
+
+  return (found);
+}
+
 
 static int LtrasGetStringLengthFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_add_trf_input *input)
 {

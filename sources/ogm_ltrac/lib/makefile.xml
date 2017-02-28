@@ -10,9 +10,9 @@
     <file>ltracdic.c</file>
     <file>ltracdica.c</file>
     <file>ltracdicb.c</file>
+    <file>ltracdicexpressions.c</file>
     <file>ltracdics.c</file>
     <file>ltracdicp.c</file>
-    <file>ltraclog.c</file>    
     <file>ltracread.c</file>    
   </sources>
   <platforms>
