@@ -73,6 +73,7 @@ struct og_ctrl_ltrac {
   void *hsidx;
   og_attribute_handle hattribute;
 
+  og_bool has_expression;
   };
 
 struct og_ltrac_scan

@@ -386,6 +386,7 @@ PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, i
       same_lang = FALSE;
     }
     language_code = word->language;
+    global_frequency = word->frequency;
 
     if (i == 0)
     {
@@ -397,20 +398,27 @@ PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, i
     }
   }
 
-  og_bool found = FALSE;
-  if(same_lang)
-  {
-    found = OgLtrasTrfCalculateExpressionFrequency(handle, ibuffer, buffer, language_code, &global_frequency);
-  }
-
-  if(found)
-  {
-    trf->is_expression = TRUE;
-  }
-  else
+  // No expressions
+  if(OgLtrasHaExpressions(handle) == NULL)
   {
     global_frequency = freq;
   }
+  else
+  {
+    if(trf->nb_words > 1)
+    {
+      og_bool found = FALSE;
+      if(same_lang)
+      {
+        found = OgLtrasTrfCalculateExpressionFrequency(handle, ibuffer, buffer, language_code, &global_frequency);
+      }
+      if(!found)
+      {
+        global_frequency = 0;
+      }
+    }
+  }
+
 
 
   double global_score = trf->global_score;
@@ -497,7 +505,7 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
 
   *pfrequency = 0;
 
-  /** checks and, if necessary, initializes the base automaton **/
+  /** checks and, if necessary, initializes the expressions automaton **/
   IFn(OgLtrasHaExpressions(handle)) return (0);
 
   unsigned char buffer[DPcPathSize * 2];

@@ -582,6 +582,7 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
     if (found_ctx->found)
     {
       IFE(LtracAddEntry(ctrl_ltrac, dic_input, TRUE));
+      ctrl_ltrac->has_expression = TRUE;
     }
   }
   else

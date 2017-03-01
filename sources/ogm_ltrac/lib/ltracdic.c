@@ -295,7 +295,7 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFE(OgAuf(ctrl_ltrac->ha_base, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_base, ctrl_ltrac->name_base));
   }
-  if (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions)
+  if ((input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions) && ctrl_ltrac->has_expression)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeExpressions)
     {
