@@ -78,17 +78,8 @@ if ((retour=OgAufScanf(ha_base,0,"",&iout,out,&nstate0,&nstate1,states))) {
     IFE(DOgPnin4(ctrl_ltrac->herr,&p,&frequency));
     IFE(OgUniToCp(sep,out,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
 
-      og_string attribute_name = "0";
-      struct og_attribute_info ai[1];
-      og_bool found = OgAttributeGetInfoFromAttributeNumber(ctrl_ltrac->hattribute, ctrl_ltrac->herr, attribute_number,
-          ai);
-      IFE(found);
-      if (found)
-      {
-        attribute_name = ai->attribute_name;
-      }
 
-      fprintf(fd, "%s | %d=%s %d %d\n", buffer, attribute_number, attribute_name, language_code, frequency);
+      fprintf(fd, "%s | %d %d\n", buffer, language_code, frequency);
 
     }
   while((retour=OgAufScann(ha_base,&iout,out,nstate0,&nstate1,states)));

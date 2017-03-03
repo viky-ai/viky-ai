@@ -239,16 +239,7 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
         IFE(OgUniToCp(iout-(p-out),p,DPcPathSize,&iword,word,DOgCodePageUTF8,0,0));
       }
 
-      og_string attribute_name = "0";
-      struct og_attribute_info ai[1];
-      og_bool found = OgAttributeGetInfoFromAttributeNumber(ctrl_ltrac->hattribute, ctrl_ltrac->herr, attribute_number,
-          ai);
-      IFE(found);
-      if (found)
-      {
-        attribute_name = ai->attribute_name;
-      }
-      fprintf(fd, "%s | %d=%s %d %d %d %s\n", buffer, attribute_number, attribute_name, language_code, position,
+      fprintf(fd, "%s | %d %d %d %s\n", buffer, language_code, position,
           frequency, word);
 
     }
