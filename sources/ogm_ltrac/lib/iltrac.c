@@ -98,20 +98,17 @@ IF(OgCheckOrCreateDir(dictionaries_directory,0,ctrl_ltrac->loginfo->where)) retu
 sprintf(ctrl_ltrac->name_base,"%s/ltra_base.auf",dictionaries_directory);
 sprintf(ctrl_ltrac->name_swap,"%s/ltra_swap.auf",dictionaries_directory);
 sprintf(ctrl_ltrac->name_phon,"%s/ltra_phon.auf",dictionaries_directory);
-sprintf(ctrl_ltrac->name_expressions,"%s/ltra_expressions.auf",dictionaries_directory);
 sprintf(ctrl_ltrac->name_aspell,"%s/ltra_aspell.txt",dictionaries_directory);
 
 if(ctrl_ltrac->WorkingDirectory[0]) {
   sprintf(ctrl_ltrac->log_base,"%s/log/ltra_base.log",ctrl_ltrac->WorkingDirectory);
   sprintf(ctrl_ltrac->log_swap,"%s/log/ltra_swap.log",ctrl_ltrac->WorkingDirectory);
   sprintf(ctrl_ltrac->log_phon,"%s/log/ltra_phon.log",ctrl_ltrac->WorkingDirectory);
-  sprintf(ctrl_ltrac->log_expressions,"%s/log/ltra_expressions.log",ctrl_ltrac->WorkingDirectory);
   }
 else {
   strcpy(ctrl_ltrac->log_base,"log/ltra_base.log");
   strcpy(ctrl_ltrac->log_swap,"log/ltra_swap.log");
   strcpy(ctrl_ltrac->log_phon,"log/ltra_phon.log");
-  strcpy(ctrl_ltrac->log_expressions,"log/ltra_expressions.log");
   }
 
   // init sidx

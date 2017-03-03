@@ -53,6 +53,10 @@ struct og_ltra_trf {
   /** used only in the term module */
   int span_start_trf,span_nb_trfs,history_trf;
   int global_frequency;
+
+  int word_frequency;
+  int expression_frequency;
+
   double global_score;
   int final,total;
   double final_score;
@@ -231,13 +235,6 @@ DEFPUBLIC(og_status) OgLtrasFlowChart(void *hltras, struct og_ltras_input *input
  */
 DEFPUBLIC(void *) OgLtrasHaBase(void *hltras);
 
-/**
- * Initialize handle of expressions automaton
- *
- * @param hltras handle for ltras
- * @return handle of expressions automaton.
- */
-DEFPUBLIC(void *) OgLtrasHaExpressions(void *hltras);
 
 /**
  * Initialize handle of swap automaton
@@ -340,10 +337,11 @@ DEFPUBLIC(int) OgLtrasGetPhoneticDefaultLanguage(void *handle);
 DEFPUBLIC(char *) OgLtrasWorkingDirectory(void *hltras);
 
 /**
- * Get frequency from normalized frequency with log10
+ * Get word frequency from normalized frequency. We assume expression frequency and word frequency are the same,
+ * that is to say the expression contains only one word
  *
  * @param hltras handle for ltras
- * @param normalized_frequency normalized frequency with log10
+ * @param normalized_frequency normalized frequency
  * @param pfrequency reverse of the normalized frequency
  * @return working directory.
  */
@@ -481,15 +479,15 @@ DEFPUBLIC(og_status) OgLtrasTrfCopy(void *hltras, struct og_ltra_trfs *trfs1, in
  * @param hltras handle for ltras
  * @param trfs the transformations structure where to extract the desired transformation
  * @param Itrf position of the transformation to compute scores and frequency
- * @param pglobal_frequency global frequency of the transformation :
- * if there is more than one word in the transformation, if it is an expression, we get the expression frequency and flag
- * trf as an expression, otherwise, global frequency is the frequency of the least frequent word.
+ * @param check_words_in_dictionary if we check the expression in dictionary to get the frequency
+ * @param pword_frequency min frequency of all the words in the expression
+ * @param pexpression_frequency frequency of the expression. Can be zero of expression does not exist
  * @param pglobal_score levenshtein score of the transformation
- * @param pfinal_score calculated according to global score, global frequency normalized and score factor
+ * @param pfinal_score calculated according to global score, word frequency and expression frequency normalized and score factor
  * @return function status : CORRECT else ERREUR.
  */
-DEFPUBLIC(og_status) OgLtrasTrfCalculateGlobal(void *hltras, struct og_ltra_trfs *trfs, int Itrf
-  , int *pglobal_frequency, double *pglobal_score, double *pfinal_score);
+DEFPUBLIC(int) OgLtrasTrfCalculateScoresFromTrf(void *handle, struct og_ltra_trfs *trfs, int Itrf, og_bool check_words_in_dictionary, int *pword_frequency,
+    int *pexpression_frequency, double *pglobal_score, double *pfinal_score);
 
 
 /**

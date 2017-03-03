@@ -358,8 +358,8 @@ static int LtrasModuleLem22(void *handle, struct og_ldi_output *output)
     ntrf = trfs->Trf + Intrf;
     ntrf->span_start_trf = Itrf_basic;
     ntrf->span_nb_trfs = 1;
-    IFE(OgLtrasTrfCalculateGlobal(ctrl_lem2->hltras, trfs, Intrf
-        , &ntrf->global_frequency, &ntrf->global_score, &ntrf->final_score));
+    IFE(OgLtrasTrfCalculateScoresFromTrf(ctrl_lem2->hltras, trfs, Intrf, ctrl_lem2->check_words_in_dictionary
+        , &ntrf->word_frequency, &ntrf->expression_frequency, &ntrf->global_score, &ntrf->final_score));
   }
 
   DONE;

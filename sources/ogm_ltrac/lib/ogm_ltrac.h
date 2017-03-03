@@ -50,12 +50,10 @@ struct og_ctrl_ltrac {
   char name_base[DPcPathSize];
   char name_swap[DPcPathSize];
   char name_phon[DPcPathSize];
-  char name_expressions[DPcPathSize];
   char name_aspell[DPcPathSize];
   char log_base[DPcPathSize];
   char log_swap[DPcPathSize];
   char log_phon[DPcPathSize];
-  char log_expressions[DPcPathSize];
   void *ha_base,*ha_swap,*ha_phon,*ha_filter,*ha_seen;
   FILE *fd_aspell;
   void *hpho;
@@ -64,7 +62,6 @@ struct og_ctrl_ltrac {
   og_bool has_ltraf_requests;
 
   void *ha_ltrac;
-  void *ha_expressions;
 
   int LtrafNumber;
   int LtrafUsed;
@@ -72,8 +69,6 @@ struct og_ctrl_ltrac {
 
   void *hsidx;
   og_attribute_handle hattribute;
-
-  og_bool has_expression;
   };
 
 struct og_ltrac_scan

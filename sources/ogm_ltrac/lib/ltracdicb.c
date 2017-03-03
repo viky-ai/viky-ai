@@ -12,7 +12,6 @@
 
 int LtracDicBaseAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
-  if(dic_input->is_expression) DONE;
 
   int ientry;
   unsigned char *p, entry[DPcPathSize];

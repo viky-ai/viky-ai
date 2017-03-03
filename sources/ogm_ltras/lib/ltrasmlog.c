@@ -74,8 +74,8 @@ slanguage[0]=0; if (trf->language) sprintf(slanguage,"%s ",OgIso639ToCode(word->
 
 sterm[0]=0;
 if (trf->span_start_trf >= 0) {
-  sprintf(sterm," [%d-%d %.4f %.4f %d]", trf->span_start_trf
-    , trf->span_nb_trfs, trf->final_score, trf->global_score, trf->global_frequency);
+  sprintf(sterm," [%d-%d %.4f %.4f %d %d]", trf->span_start_trf
+    , trf->span_nb_trfs, trf->final_score, trf->global_score, trf->expression_frequency, trf->word_frequency);
   }
 
 stransposition[0]=0;

@@ -34,8 +34,7 @@ static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf 
 static og_status LtracNormalise(struct og_ctrl_ltrac *ctrl_ltrac, int iword, char *word, int *iout, char *out);
 static og_bool LtracIsExpression(struct og_ctrl_ltrac *ctrl_ltrac, int iword, char *word);
 static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input);
-static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
-    og_bool replace);
+static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool replace);
 static og_status LtracUpdateFrequency(void *context, struct og_ltrac_scan *scan);
 static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context);
@@ -51,7 +50,8 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
   if (!OgFileExists(ltraf_file))
   {
     char erreur[DOgErrorSize];
-    sprintf(erreur, "LtracRead: file '%s' does not exist. Run ogm_sidx with option -ltrac or add a 'ltraf.txt' file", ltraf_file);
+    sprintf(erreur, "LtracRead: file '%s' does not exist. Run ogm_sidx with option -ltrac or add a 'ltraf.txt' file",
+        ltraf_file);
     OgErr(ctrl_ltrac->herr, erreur);
     DPcErr;
   }
@@ -109,7 +109,7 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
       }
     }
     if (start_word < 0) continue;
-    if (frequency < min_frequency) continue;
+    if ((frequency < min_frequency) || (frequency <= 0)) continue;
 
     unsigned char entry[DOgLtracMaxWordsSize];
     int ientry;
@@ -142,8 +142,7 @@ og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency)
   DONE;
 }
 
-static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
-    og_bool replace)
+static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool replace)
 {
 
   unsigned char entry[DOgLtracMaxWordsSize];
@@ -378,7 +377,7 @@ static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_s
   oindex states[DOgLtracMaxWordsSize];
   int retour, nstate0, nstate1, iout;
   unsigned char out[DOgLtracMaxWordsSize];
-  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, iword, (char *)word, &iout, out, &nstate0, &nstate1, states)))
+  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, iword, (char *) word, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
@@ -582,7 +581,6 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
     if (found_ctx->found)
     {
       IFE(LtracAddEntry(ctrl_ltrac, dic_input, TRUE));
-      ctrl_ltrac->has_expression = TRUE;
     }
   }
   else

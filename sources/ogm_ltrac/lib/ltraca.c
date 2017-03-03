@@ -154,7 +154,7 @@ int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *inp
   info->input = input;
 
   IFE(LtracReadLtraf(ctrl_ltrac, input->min_frequency));
-  if (ctrl_ltrac->has_ltraf_requests && (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions))
+  if (ctrl_ltrac->has_ltraf_requests)
   {
     IFE(LtracReadLtrafRequest(ctrl_ltrac, input->min_frequency));
   }

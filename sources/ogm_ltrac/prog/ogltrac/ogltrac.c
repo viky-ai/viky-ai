@@ -181,8 +181,7 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-mall",5)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypeBase
                                             + DOgLtracDictionaryTypeSwap
-                                            + DOgLtracDictionaryTypePhon
-                                            + DOgLtracDictionaryTypeExpressions;
+                                            + DOgLtracDictionaryTypePhon;
     }
   else if (!memcmp(cmd_param,"-mbase",6)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypeBase;
@@ -193,15 +192,11 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-mphon",6)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypePhon;
     }
-  else if (!memcmp(cmd_param,"-mexpressions",13)) {
-    info->input->dictionaries_minimization |= DOgLtracDictionaryTypeExpressions;
-    }
   else if (!memcmp(cmd_param,"-oall",5)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase
                                          + DOgLtracDictionaryTypeSwap
                                          + DOgLtracDictionaryTypePhon
-                                         + DOgLtracDictionaryTypeAspell
-                                         + DOgLtracDictionaryTypeExpressions;
+                                         + DOgLtracDictionaryTypeAspell;
     }
   else if (!memcmp(cmd_param,"-obase",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase;
@@ -211,9 +206,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     }
   else if (!memcmp(cmd_param,"-ophon",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypePhon;
-    }
-  else if (!memcmp(cmd_param,"-oexpressions",13)) {
-    info->input->dictionaries_to_export |= DOgLtracDictionaryTypeExpressions;
     }
   else if (!memcmp(cmd_param,"-oaspell",8)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeAspell;
@@ -227,14 +219,10 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-sphon",6)) {
     info->dictionaries_to_scan |= DOgLtracDictionaryTypePhon;
     }
-  else if (!memcmp(cmd_param,"-sexpressions",13)) {
-    info->dictionaries_to_scan |= DOgLtracDictionaryTypeExpressions;
-    }
   else if (!memcmp(cmd_param,"-sall",5)) {
     info->dictionaries_to_scan |= DOgLtracDictionaryTypeBase
                                + DOgLtracDictionaryTypeSwap
-                               + DOgLtracDictionaryTypePhon
-                               + DOgLtracDictionaryTypeExpressions;
+                               + DOgLtracDictionaryTypePhon;
     }
   else if (!memcmp(cmd_param,"-ssi=",5)) {
     strcpy(info->param->data_directory,cmd_param+5);
@@ -343,10 +331,6 @@ STATICF(int) Ltrac(info)
     if (info->dictionaries_to_scan & DOgLtracDictionaryTypePhon)
     {
       IFE(OgLtracDicPhonLog(info->hltrac));
-    }
-    if (info->dictionaries_to_scan & DOgLtracDictionaryTypeExpressions)
-    {
-      IFE(OgLtracDicExpressionsLog(info->hltrac));
     }
   }
   else

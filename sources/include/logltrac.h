@@ -24,7 +24,6 @@
 #define DOgLtracDictionaryTypeSwap         0x2
 #define DOgLtracDictionaryTypePhon         0x4
 #define DOgLtracDictionaryTypeAspell       0x8
-#define DOgLtracDictionaryTypeExpressions  0x10
 
 #define DOgLtracInputTypeWords       0x1 /* BU1 */
 #define DOgLtracInputTypeAttributes  0x2 /* BU2 */

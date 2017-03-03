@@ -60,9 +60,14 @@ struct node {
   int Irqp_node;
   };
 
-struct statistics_range {
-  double final_score,score; int frequency,nb_trfs;
-  };
+struct statistics_range
+{
+  double final_score;
+  double score;
+  int word_frequency;
+  int expression_frequency;
+  int nb_trfs;
+};
 
 struct statistics {
   ogint64_t global_start,global_elapsed; int nb_requests,nb_trfs;
@@ -77,7 +82,8 @@ struct suggestion {
   int nb_propositions;
   double mean_final_score;
   double mean_score;
-  double mean_frequency;
+  double mean_word_frequency;
+  double mean_expression_frequency;
   int operations[DOgLtrasMaxNbOperations];
   };
 
@@ -93,12 +99,11 @@ struct og_ctrl_ltras
   struct og_ltras_input *input;
 
   void *hltras_to_inherit;
-  int ha_base_accessed, ha_swap_accessed, ha_phon_accessed, ha_expressions_accessed;
-  void *ha_base, *ha_swap, *ha_phon, *ha_expressions;
+  int ha_base_accessed, ha_swap_accessed, ha_phon_accessed;
+  void *ha_base, *ha_swap, *ha_phon;
   void *hpho, *hldi, *hstm;
   void *ha_false;
 
-  double max_word_frequency_log10;
   int max_word_frequency;
 
   int phonetic_default_language;

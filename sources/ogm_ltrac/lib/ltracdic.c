@@ -89,11 +89,6 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, 
     IFE(LtracDicAspellAdd(ctrl_ltrac, dic_input));
   }
 
-  if (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions)
-  {
-    IFE(LtracDicExpressionAdd(ctrl_ltrac, dic_input));
-  }
-
 
   DONE;
 }
@@ -189,10 +184,6 @@ if (input->filter_dict[0]) {
 if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase) {
   sprintf(aut_param->name,"ltrac base");
   IFn(ctrl_ltrac->ha_base=OgAutInit(aut_param)) DPcErr;
-  }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions) {
-  sprintf(aut_param->name,"ltrac expressions");
-  IFn(ctrl_ltrac->ha_expressions=OgAutInit(aut_param)) DPcErr;
   }
 if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap) {
   sprintf(aut_param->name,"ltrac swap");
@@ -295,15 +286,6 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFE(OgAuf(ctrl_ltrac->ha_base, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_base, ctrl_ltrac->name_base));
   }
-  if ((input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions) && ctrl_ltrac->has_expression)
-  {
-    if (input->dictionaries_minimization & DOgLtracDictionaryTypeExpressions)
-    {
-      IFE(OgAum(ctrl_ltrac->ha_expressions));
-    }
-    IFE(OgAuf(ctrl_ltrac->ha_expressions, 0));
-    IFE(OgAufWrite(ctrl_ltrac->ha_expressions, ctrl_ltrac->name_expressions));
-  }
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeSwap)
@@ -349,9 +331,6 @@ if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap) {
   }
 if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon) {
   IFE(OgAutFlush(ctrl_ltrac->ha_phon));
-  }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeExpressions) {
-  IFE(OgAutFlush(ctrl_ltrac->ha_expressions));
   }
 if (input->dictionaries_to_export & DOgLtracDictionaryTypeAspell) {
   fclose(ctrl_ltrac->fd_aspell);

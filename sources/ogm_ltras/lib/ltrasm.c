@@ -6,11 +6,26 @@
  */
 #include "ogm_ltras.h"
 
+struct ltraf_score_ctx
+{
+    int ibuffer;
+    og_string buffer;
+    og_bool same_lang;
+    int language;
+
+    int Fword;
+    int Fexpr;
+    double final_score;
+    double global_score;
+};
+
+
 static int LtrasGetStringLengthFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_add_trf_input *input);
 static int LtrasTrfSameAsRequest(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs,
     struct og_ltra_add_trf_input *input);
-static int LtrasTrfCalculateGlobalFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs,
-    struct og_ltra_add_trf_input *input, int *pglobal_frequency, double *pglobal_score, double *pfinal_score);
+static int LtrasTrfCalculateScoresFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs,
+    struct og_ltra_add_trf_input *input, og_bool check_words_in_dictionary, int *pword_frequency,
+    int *pexpression_frequency, double *pglobal_score, double *pfinal_score);
 static int LtrasTrfGet(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs, struct og_ltra_add_trf_input *input,
     int *pItrf);
 static int LtrasTrfEqual(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs, int Itrf,
@@ -20,6 +35,7 @@ static int LtrasTrfMerge(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *
     int Itrf);
 static int LtrasTrfMergeScores(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs1, int Itrf1,
     struct og_ltra_trfs *trfs2, int Itrf2);
+static int LtrasTrfCalculateScores(struct og_ctrl_ltras *ctrl_ltras, struct ltraf_score_ctx *ctx, og_bool check_words_in_dictionary);
 
 PUBLIC(og_status) OgLtrasTrfsCreate(void *handle, struct og_ltra_trfs **ptrfs)
 {
@@ -195,7 +211,7 @@ PUBLIC(int) OgLtrasTrfAdd(void *handle, struct og_ltra_trfs *trfs, struct og_ltr
     /* Normally, we add the scores that come from input->from_trf, but when
      * it is Itrf, we reset it with LtrasResetTrf, thus, we need to anticipate
      * this reset */
-    IFE(LtrasTrfCalculateGlobalFromInput(ctrl_ltras, trfs, input, 0, 0, &new_final_score));
+    IFE(LtrasTrfCalculateScoresFromInput(ctrl_ltras, trfs, input, TRUE, 0, 0, 0, &new_final_score));
     if (new_final_score < ctrl_ltras->minimum_final_score[string_length])
     {
       if (ctrl_ltras->loginfo->trace & DOgLtrasTraceSelection)
@@ -217,12 +233,12 @@ PUBLIC(int) OgLtrasTrfAdd(void *handle, struct og_ltra_trfs *trfs, struct og_ltr
     if (pIntrf) *pIntrf = Itrf;
     if (input->total) trf->total = 1;
     if (trf->basic) return (0);
-    IFE(OgLtrasTrfCalculateGlobal(ctrl_ltras, trfs, Itrf, 0, 0, &original_final_score));
+    IFE(OgLtrasTrfCalculateScoresFromTrf(ctrl_ltras, trfs, Itrf, TRUE, 0, 0, 0, &original_final_score));
     /* Normally, we add the scores that come from input->from_trf, but when
      * it is Itrf, we reset it with LtrasResetTrf, thus, we need to anticipate
      * this reset */
     if (input->from_trf == Itrf) input->from_trf = (-1);
-    IFE(LtrasTrfCalculateGlobalFromInput(ctrl_ltras, trfs, input, 0, 0, &new_final_score));
+    IFE(LtrasTrfCalculateScoresFromInput(ctrl_ltras, trfs, input, TRUE, 0, 0, 0, &new_final_score));
     if (new_final_score <= original_final_score)
     {
       if (ctrl_ltras->loginfo->trace & DOgLtrasTraceSelection)
@@ -355,91 +371,6 @@ PUBLIC(int) OgLtrasTrfCopy(void *handle, struct og_ltra_trfs *trfs1, int Itrf1, 
   return (Itrf2);
 }
 
-PUBLIC(int) OgLtrasTrfCalculateGlobal(void *handle, struct og_ltra_trfs *trfs, int Itrf, int *pglobal_frequency,
-    double *pglobal_score, double *pfinal_score)
-{
-  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
-
-  struct og_ltra_trf *trf = trfs->Trf + Itrf;
-
-  char buffer[DPcPathSize];
-  int ibuffer = 0;
-  int freq = 0;
-  int global_frequency = 0;
-  og_bool same_lang = TRUE;
-  int language_code = DOgLangNil;
-  for (int i = 0; i < trf->nb_words; i++)
-  {
-    struct og_ltra_word *word = trfs->Word + trf->start_word + i;
-
-    memcpy(buffer + ibuffer, trfs->Ba + word->start, word->length);
-    ibuffer += word->length;
-
-    if (i != (trf->nb_words - 1))
-    {
-      buffer[ibuffer++] = '\0';
-      buffer[ibuffer++] = ' ';
-    }
-
-    if((language_code != word->language) && (language_code != DOgLangNil))
-    {
-      same_lang = FALSE;
-    }
-    language_code = word->language;
-    global_frequency = word->frequency;
-
-    if (i == 0)
-    {
-      freq = word->frequency;
-    }
-    else if (freq > word->frequency)
-    {
-      freq = word->frequency;
-    }
-  }
-
-  // No expressions
-  if(OgLtrasHaExpressions(handle) == NULL)
-  {
-    global_frequency = freq;
-  }
-  else
-  {
-    if(trf->nb_words > 1)
-    {
-      og_bool found = FALSE;
-      if(same_lang)
-      {
-        found = OgLtrasTrfCalculateExpressionFrequency(handle, ibuffer, buffer, language_code, &global_frequency);
-      }
-      if(!found)
-      {
-        global_frequency = 0;
-      }
-    }
-  }
-
-
-
-  double global_score = trf->global_score;
-  double normalized_frequency = 0;
-
-  if(global_frequency > 1)
-  {
-    double global_frequency_log10 = log10(global_frequency);
-    normalized_frequency = global_frequency_log10 / ctrl_ltras->max_word_frequency_log10;
-  }
-
-  double score_factor = ctrl_ltras->input->score_factor;
-  double final_score = score_factor * global_score + (1 - score_factor) * normalized_frequency;
-
-  if (pglobal_frequency) *pglobal_frequency = global_frequency;
-  if (pglobal_score) *pglobal_score = global_score;
-  if (pfinal_score) *pfinal_score = final_score;
-
-  DONE;
-}
-
 
 PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
 {
@@ -505,8 +436,6 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
 
   *pfrequency = 0;
 
-  /** checks and, if necessary, initializes the expressions automaton **/
-  IFn(OgLtrasHaExpressions(handle)) return (0);
 
   unsigned char buffer[DPcPathSize * 2];
   int ibuffer = OgStrCpySized(buffer, (DPcPathSize * 2) - 2, string, string_length);
@@ -528,7 +457,7 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1;
   og_bool found  = FALSE;
-  if ((retour = OgAufScanf(ctrl_ltras->ha_expressions, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+  if ((retour = OgAufScanf(ctrl_ltras->ha_base, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
@@ -553,7 +482,7 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
       *pfrequency += frequency;
       found = TRUE;
     }
-    while ((retour = OgAufScann(ctrl_ltras->ha_expressions, &iout, out, nstate0, &nstate1, states)));
+    while ((retour = OgAufScann(ctrl_ltras->ha_base, &iout, out, nstate0, &nstate1, states)));
   }
 
   return (found);
@@ -605,44 +534,164 @@ static int LtrasTrfSameAsRequest(struct og_ctrl_ltras *ctrl_ltras, struct og_ltr
   return (1);
 }
 
-static int LtrasTrfCalculateGlobalFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs,
-    struct og_ltra_add_trf_input *input, int *pglobal_frequency, double *pglobal_score, double *pfinal_score)
+
+PUBLIC(int) OgLtrasTrfCalculateScoresFromTrf(void *handle, struct og_ltra_trfs *trfs, int Itrf, og_bool check_words_in_dictionary, int *pword_frequency,
+    int *pexpression_frequency, double *pglobal_score, double *pfinal_score)
 {
-  double score_factor = ctrl_ltras->input->score_factor;
-  struct og_ltra_add_trf_word *new_word;
-  double global_frequency_log10;
-  double normalized_frequency;
-  int global_frequency;
-  double global_score;
-  double final_score;
-  int i;
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
 
-  global_frequency = 0;
-  for (i = 0; i < input->nb_words; i++)
+  struct og_ltra_trf *trf = trfs->Trf + Itrf;
+  char buffer[DPcPathSize];
+  int ibuffer = 0;
+  int Fword = 0;
+  og_bool same_lang = TRUE;
+  int language_code = DOgLangNil;
+
+  for (int i = 0; i < trf->nb_words; i++)
   {
-    new_word = input->word + i;
-    if (i == 0) global_frequency = new_word->frequency;
-    else if (global_frequency > new_word->frequency) global_frequency = new_word->frequency;
+    struct og_ltra_word *word = trfs->Word + trf->start_word + i;
+
+    memcpy(buffer + ibuffer, trfs->Ba + word->start, word->length);
+
+    ibuffer += word->length;
+
+    if (i != (trf->nb_words - 1))
+    {
+      buffer[ibuffer++] = '\0';
+      buffer[ibuffer++] = ' ';
+    }
+
+    if((language_code != word->language) && (language_code != DOgLangNil))
+    {
+      same_lang = FALSE;
+    }
+    language_code = word->language;
+
+    if (i == 0)
+    {
+      Fword = word->frequency;
+    }
+    else if (Fword > word->frequency)
+    {
+      Fword = word->frequency;
+    }
   }
 
-  global_score = input->score;
+  struct ltraf_score_ctx ctx[1];
+  memset(ctx, 0, sizeof(struct ltraf_score_ctx));
+  ctx->global_score = trf->global_score;
+  ctx->buffer = buffer;
+  ctx->ibuffer = ibuffer;
+  ctx->same_lang = same_lang;
+  ctx->language = language_code;
+  ctx->Fword = Fword;
 
-  if (global_frequency < 1)
-  {
-    normalized_frequency = 0;
-  }
-  else
-  {
-    global_frequency_log10 = log10(global_frequency);
-    normalized_frequency = global_frequency_log10 / ctrl_ltras->max_word_frequency_log10;
-  }
-  final_score = score_factor * global_score + (1 - score_factor) * normalized_frequency;
+  LtrasTrfCalculateScores(ctrl_ltras, ctx, check_words_in_dictionary);
 
-  if (pglobal_frequency) *pglobal_frequency = global_frequency;
-  if (pglobal_score) *pglobal_score = global_score;
-  if (pfinal_score) *pfinal_score = final_score;
+  if (pword_frequency) *pword_frequency = Fword;
+  if (pexpression_frequency) *pexpression_frequency = ctx->Fexpr;
+  if (pglobal_score) *pglobal_score = trf->global_score;
+  if (pfinal_score) *pfinal_score = ctx->final_score;
 
   DONE;
+}
+
+
+
+static int LtrasTrfCalculateScoresFromInput(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs,
+    struct og_ltra_add_trf_input *input, og_bool check_words_in_dictionary, int *pword_frequency,
+    int *pexpression_frequency, double *pglobal_score, double *pfinal_score)
+{
+  char buffer[DPcPathSize];
+  int ibuffer = 0;
+  int Fword = 0;
+  og_bool same_lang = TRUE;
+  int language_code = DOgLangNil;
+
+  for (int i = 0; i < input->nb_words; i++)
+  {
+    struct og_ltra_add_trf_word *new_word = input->word + i;
+    memcpy(buffer + ibuffer, new_word->string, new_word->string_length);
+    ibuffer += new_word->string_length;
+
+    if (i != (input->nb_words - 1))
+    {
+      buffer[ibuffer++] = '\0';
+      buffer[ibuffer++] = ' ';
+    }
+
+    if((language_code != new_word->language) && (language_code != DOgLangNil))
+    {
+      same_lang = FALSE;
+    }
+    language_code = new_word->language;
+
+    if (i == 0)
+    {
+      Fword = new_word->frequency;
+    }
+    else if (Fword > new_word->frequency)
+    {
+      Fword = new_word->frequency;
+    }
+  }
+
+  struct ltraf_score_ctx ctx[1];
+  memset(ctx, 0, sizeof(struct ltraf_score_ctx));
+  ctx->global_score = input->score;
+  ctx->buffer = buffer;
+  ctx->ibuffer = ibuffer;
+  ctx->same_lang = same_lang;
+  ctx->language = language_code;
+  ctx->Fword = Fword;
+
+  LtrasTrfCalculateScores(ctrl_ltras, ctx, check_words_in_dictionary);
+
+  if (pword_frequency) *pword_frequency = Fword;
+  if (pexpression_frequency) *pexpression_frequency = ctx->Fexpr;
+  if (pglobal_score) *pglobal_score = input->score;
+  if (pfinal_score) *pfinal_score = ctx->final_score;
+
+  DONE;
+}
+
+
+
+static int LtrasTrfCalculateScores(struct og_ctrl_ltras *ctrl_ltras, struct ltraf_score_ctx *ctx, og_bool check_words_in_dictionary)
+{
+    int Fexpr = 0;
+    og_bool found = FALSE;
+    if(ctx->same_lang && check_words_in_dictionary)
+    {
+      found = OgLtrasTrfCalculateFrequency(ctrl_ltras, ctx->ibuffer, (unsigned char *)ctx->buffer, ctx->language, &Fexpr);
+    }
+    if(!found)
+    {
+      Fexpr = 0;
+    }
+
+   double normalized_frequency = 0;
+
+   if ((Fexpr != 0) || (ctx->Fword != 0))
+   {
+     //We use double type, otherwise following operations have interger type and can exceed integer
+     //max number, then we have a log10 of a negative number which is not possible and we obtain a nan
+     double Fmax = ctrl_ltras->max_word_frequency;
+
+     double Ftotal = log10((double)Fexpr * (Fmax + 1) + ctx->Fword);
+     double Fmax_norm = log10(Fmax * (Fmax + 1) + Fmax);
+
+     normalized_frequency = Ftotal / Fmax_norm;
+   }
+
+   double score_factor = ctrl_ltras->input->score_factor;
+   double global_score = ctx->global_score;
+   double final_score = score_factor * global_score + (1 - score_factor) * normalized_frequency;
+
+   ctx->Fexpr = Fexpr;
+   ctx->final_score = final_score;
+
+   DONE;
 }
 
 static int LtrasTrfGet(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_trfs *trfs, struct og_ltra_add_trf_input *input,

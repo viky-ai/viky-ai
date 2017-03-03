@@ -357,14 +357,28 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
   {
     if (ctrl_term->min_frequency > 0)
     {
-      int global_frequency;
-      IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras, input, Itrf, &global_frequency, 0, 0));
-      if (global_frequency < ctrl_term->min_frequency)
+      int word_frequency = 0;
+      int expression_frequency = 0;
+      og_status status = OgLtrasTrfCalculateScoresFromTrf(ctrl_term->hltras, input, Itrf, ctrl_term->check_words_in_dictionary,
+          &word_frequency, &expression_frequency, 0, 0);
+      IFE(status);
+      if (word_frequency < ctrl_term->min_frequency)
       {
         if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
         {
           OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
-              "LtrasModuleTerm1: global_frequency (%d) < min_frequency (%d) for transformation:", global_frequency,
+              "LtrasModuleTerm1: word_frequency (%d) < min_frequency (%d) for transformation:", word_frequency,
+              ctrl_term->min_frequency);
+          IFE(OgLtrasTrfLog(ctrl_term->hltras, input, Itrf));
+        }
+        DONE;
+      }
+      if (expression_frequency < ctrl_term->min_frequency)
+      {
+        if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
+        {
+          OgMsg(ctrl_term->hmsg, "", DOgMsgDestInLog,
+              "LtrasModuleTerm1: expression_frequency (%d) < min_frequency (%d) for transformation:", expression_frequency,
               ctrl_term->min_frequency);
           IFE(OgLtrasTrfLog(ctrl_term->hltras, input, Itrf));
         }
@@ -537,8 +551,9 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
     trfn->final = ctrl_term->no_dictionary_frequency;
     struct og_ltra_word *word = trfs->Word + trfn->start_word;
     word->frequency = 1;
-    og_status status = OgLtrasTrfCalculateGlobal(ctrl_term->hltras, trfs, Itrfn, &trfn->global_frequency,
-        &trfn->global_score, &trfn->final_score);
+    og_status status = OgLtrasTrfCalculateScoresFromTrf(ctrl_term->hltras, trfs, Itrfn,
+        ctrl_term->check_words_in_dictionary, &trfn->word_frequency, &trfn->expression_frequency, &trfn->global_score,
+        &trfn->final_score);
     IFE(status);
   }
   DONE;
@@ -571,8 +586,9 @@ for (first=1,i=0; i<trfs->TrfBasicUsed; i++) {
     }
   }
 
-IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras,trfs,Itrf
-  ,&trf->global_frequency, &trf->global_score, &trf->final_score));
+  og_status status = OgLtrasTrfCalculateScoresFromTrf(ctrl_term->hltras, trfs, Itrf, ctrl_term->check_words_in_dictionary,
+      &trf->word_frequency, &trf->expression_frequency, &trf->global_score, &trf->final_score);
+  IFE(status);
 
 DONE;
 }
@@ -630,7 +646,10 @@ static int trf_cmp(const void *ptr1, const void *ptr2)
   if (dcmp > 0) return (1);
   else if (dcmp < 0) return (-1);
 
-  int cmp = trf2->global_frequency - trf1->global_frequency;
+  int cmp = trf2->expression_frequency - trf1->expression_frequency;
+    if (cmp) return (cmp);
+
+  cmp = trf2->word_frequency - trf1->word_frequency;
   if (cmp) return (cmp);
 
 
@@ -838,11 +857,6 @@ static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og
       nb_scores++;
       Iotrf = Itrf;
 
-      if((trf->nb_words > 1))
-      {
-        IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras, trfs, Itrf, &trf->global_frequency, &trf->global_score,
-            &trf->final_score));
-      }
     }
     if (all_basic_trf)
     {
@@ -889,8 +903,10 @@ static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og
       ntrf->span_start_trf = trfs->Trf[0].history_trf;
       ntrf->span_nb_trfs = trfs->TrfBasicUsed;
 
-      IFE(OgLtrasTrfCalculateGlobal(ctrl_term->hltras, trfs, Intrf, &ntrf->global_frequency, &ntrf->global_score,
-                  &ntrf->final_score));
+      og_status status = OgLtrasTrfCalculateScoresFromTrf(ctrl_term->hltras, trfs, Intrf,
+          ctrl_term->check_words_in_dictionary, &ntrf->word_frequency, &ntrf->expression_frequency, &ntrf->global_score,
+          &ntrf->final_score);
+      IFE(status);
 
       if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
       {

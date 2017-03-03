@@ -351,8 +351,8 @@ if (added) {
   ntrf = trfs->Trf + Intrf;
   ntrf->span_start_trf=Itrf_basic;
   ntrf->span_nb_trfs=1;
-  IFE(OgLtrasTrfCalculateGlobal(ctrl_tra->hltras,trfs,Intrf
-    ,&ntrf->global_frequency, &ntrf->global_score, &ntrf->final_score));
+  IFE(OgLtrasTrfCalculateScoresFromTrf(ctrl_tra->hltras,trfs,Intrf, ctrl_tra->check_words_in_dictionary
+    ,&ntrf->word_frequency, &ntrf->expression_frequency, &ntrf->global_score, &ntrf->final_score));
   }
 
 DONE;

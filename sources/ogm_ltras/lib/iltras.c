@@ -247,7 +247,6 @@ struct og_ltras_param *param;
    * automaton exists and as soon as it is loaded
    * We use a 10 value so that log10(10)=1; */
   ctrl_ltras->max_word_frequency=10;
-  ctrl_ltras->max_word_frequency_log10=log10(ctrl_ltras->max_word_frequency);
 
   IF(LtrasAddModules(ctrl_ltras)) return(0);
 
@@ -312,53 +311,6 @@ IF(LtrasGetMaxWordFrequency(ctrl_ltras)) return(0);
 return(ctrl_ltras->ha_base);
 }
 
-
-PUBLIC(void *) OgLtrasHaExpressions(void *handle)
-{
-  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-
-  if (ctrl_ltras->ha_expressions_accessed) return(ctrl_ltras->ha_expressions);
-  ctrl_ltras->ha_expressions_accessed=1;
-
-  if (ctrl_ltras->hltras_to_inherit)
-  {
-    ctrl_ltras->ha_expressions=OgLtrasHaExpressions(ctrl_ltras->hltras_to_inherit);
-  }
-  else
-  {
-    struct og_aut_param aut_param[1];
-    memset(aut_param,0,sizeof(struct og_aut_param));
-    aut_param->herr=ctrl_ltras->herr;
-    aut_param->hmutex=ctrl_ltras->hmutex;
-    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-    aut_param->state_number = 0;
-    sprintf(aut_param->name,"ltra_expressions");
-    IFn(ctrl_ltras->ha_expressions=OgAutInit(aut_param)) return(0);
-    char ha_name[DPcPathSize];
-    if (ctrl_ltras->dictionaries_directory[0])
-    {
-      sprintf(ha_name,"%s/ltra_expressions.auf",ctrl_ltras->dictionaries_directory);
-    }
-    else
-    {
-      strcpy(ha_name,"ling/ltra_expressions.auf");
-    }
-
-    if (!OgFileExists(ha_name))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaExpressions : impossible to open '%s'", ha_name);
-      OgAutFlush(ctrl_ltras->ha_expressions);
-      ctrl_ltras->ha_expressions = NULL;
-      return NULL;
-    }
-
-    IF(OgAufRead(ctrl_ltras->ha_expressions, ha_name)) return NULL;
-
-  }
-
-  return(ctrl_ltras->ha_expressions);
-}
 
 
 PUBLIC(void *) OgLtrasHaSwap(void *handle)
@@ -531,15 +483,16 @@ return(ctrl_ltras->WorkingDirectory);
 
 
 
-PUBLIC(og_status) OgLtrasGetFrequencyFromNormalizedFrequency(void *handle, double normalized_frequency, double *pfrequency)
+PUBLIC(og_status) OgLtrasGetFrequencyFromNormalizedFrequency(void *handle, double normalized_frequency,
+    double *pfrequency)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-double frequency_log10;
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
 
-frequency_log10 = normalized_frequency * ctrl_ltras->max_word_frequency_log10;
-*pfrequency = pow(10,frequency_log10);
+  double Fmax = ctrl_ltras->max_word_frequency;
+  double to_pow = normalized_frequency * log10((Fmax + 1) * Fmax + Fmax);
+  *pfrequency = pow(10, to_pow) / (Fmax + 2);
 
-DONE;
+  DONE;
 }
 
 
@@ -615,40 +568,50 @@ static int LtrasAddModules(struct og_ctrl_ltras *ctrl_ltras)
 
 static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras)
 {
-unsigned char *p,out[DPcAutMaxBufferSize+9];
-int attribute_number,language,frequency;
-oindex states[DPcAutMaxBufferSize+9];
-int retour,nstate0,nstate1,iout;
+  unsigned char *p, out[DPcAutMaxBufferSize + 9];
+  int attribute_number, language, frequency;
+  oindex states[DPcAutMaxBufferSize + 9];
+  int retour, nstate0, nstate1, iout;
 
-if (ctrl_ltras->hltras_to_inherit)
-{
-  struct og_ctrl_ltras *ctrl_ltras_parent = (struct og_ctrl_ltras *) ctrl_ltras->hltras_to_inherit;
-  ctrl_ltras->max_word_frequency_log10 = ctrl_ltras_parent->max_word_frequency_log10;
+  if (ctrl_ltras->hltras_to_inherit)
+  {
+    struct og_ctrl_ltras *ctrl_ltras_parent = (struct og_ctrl_ltras *) ctrl_ltras->hltras_to_inherit;
 
-  DONE;
-}
+    ctrl_ltras->max_word_frequency = ctrl_ltras_parent->max_word_frequency;
 
-/** 10 is minimum value to avoid a null, negative or infinite log10 **/
-ctrl_ltras->max_word_frequency=10;
-if ((retour=OgAufScanf(ctrl_ltras->ha_base,-1,"",&iout,out,&nstate0,&nstate1,states))) {
-  do {
-    int i,c,sep=(-1);
-    IFE(retour);
-    for (i=0; i<iout; i+=2) {
-      c = (out[i]<<8)+out[i+1];
-      if (c==1) { sep=i; break; }
-      }
-    if (sep<0) continue;
-    p=out+sep+2;
-    IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
-    IFE(DOgPnin4(ctrl_ltras->herr,&p,&language));
-    IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
-    if (ctrl_ltras->max_word_frequency < frequency) ctrl_ltras->max_word_frequency = frequency;
-    }
-  while((retour=OgAufScann(ctrl_ltras->ha_base,&iout,out,nstate0,&nstate1,states)));
+    DONE;
   }
-ctrl_ltras->max_word_frequency_log10=log10(ctrl_ltras->max_word_frequency);
-DONE;
+
+  /** 10 is minimum value to avoid a null, negative or infinite log10 **/
+  ctrl_ltras->max_word_frequency = 10;
+  if ((retour = OgAufScanf(ctrl_ltras->ha_base, -1, "", &iout, out, &nstate0, &nstate1, states)))
+  {
+    do
+    {
+      int i, c, sep = (-1);
+      IFE(retour);
+      for (i = 0; i < iout; i += 2)
+      {
+        c = (out[i] << 8) + out[i + 1];
+        if (c == 1)
+        {
+          sep = i;
+          break;
+        }
+      }
+      if (sep < 0) continue;
+      p = out + sep + 2;
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&language));
+      IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
+      if (ctrl_ltras->max_word_frequency < frequency)
+      {
+        ctrl_ltras->max_word_frequency = frequency;
+      }
+    }
+    while ((retour = OgAufScann(ctrl_ltras->ha_base, &iout, out, nstate0, &nstate1, states)));
+  }
+  DONE;
 }
 
 

@@ -93,7 +93,8 @@ static int OgLtrasTrfsAddResult1(struct og_ctrl_ltras *ctrl_ltras, struct og_ltr
 
   ctrl_ltras->statistics.mean_range.final_score += trf->final_score;
   ctrl_ltras->statistics.mean_range.score += trf->global_score;
-  ctrl_ltras->statistics.mean_range.frequency += trf->global_frequency;
+  ctrl_ltras->statistics.mean_range.word_frequency += trf->word_frequency;
+  ctrl_ltras->statistics.mean_range.expression_frequency += trf->expression_frequency;
   ctrl_ltras->statistics.nb_trfs++;
 
   int max = DOgLtrasScorePrecision;
@@ -102,7 +103,8 @@ static int OgLtrasTrfsAddResult1(struct og_ctrl_ltras *ctrl_ltras, struct og_ltr
   if (0 <= iglobal_score && iglobal_score <= max)
   {
     ctrl_ltras->statistics.range[iglobal_score].nb_trfs += 1;
-    ctrl_ltras->statistics.range[iglobal_score].frequency += trf->global_frequency;
+    ctrl_ltras->statistics.range[iglobal_score].word_frequency += trf->word_frequency;
+    ctrl_ltras->statistics.range[iglobal_score].expression_frequency += trf->expression_frequency;
   }
 
   iunitext = 0;
@@ -137,7 +139,8 @@ static int OgLtrasTrfsAddResult1(struct og_ctrl_ltras *ctrl_ltras, struct og_ltr
         ctrl_ltras->suggestion[ctrl_ltras->current_trf].nb_propositions++;
         ctrl_ltras->suggestion[ctrl_ltras->current_trf].mean_final_score += trf->final_score;
         ctrl_ltras->suggestion[ctrl_ltras->current_trf].mean_score += trf->global_score;
-        ctrl_ltras->suggestion[ctrl_ltras->current_trf].mean_frequency += trf->global_frequency;
+        ctrl_ltras->suggestion[ctrl_ltras->current_trf].mean_word_frequency += trf->word_frequency;
+        ctrl_ltras->suggestion[ctrl_ltras->current_trf].mean_expression_frequency += trf->expression_frequency;
         ctrl_ltras->suggestion[ctrl_ltras->current_trf].operations[ctrl_ltras->current_op]++;
         ctrl_ltras->nb_suggestion_levels++;
         ctrl_ltras->suggestion_found = 1;
@@ -155,8 +158,8 @@ static int OgLtrasTrfsAddResult1(struct og_ctrl_ltras *ctrl_ltras, struct og_ltr
   if (!send_result) DONE;
 
   fprintf(ctrl_ltras->fdout,
-      "    <proposition %sfinal_score=\"%.4f\" score=\"%.4f\" frequency=\"%d\"%s>\n"
-      , slanguage, trf->final_score, trf->global_score, trf->global_frequency, ssuggestion);
+      "    <proposition %sfinal_score=\"%.4f\" score=\"%.4f\" expression_frequency=\"%d\" word_frequency=\"%d\"%s>\n"
+      , slanguage, trf->final_score, trf->global_score, trf->expression_frequency, trf->word_frequency, ssuggestion);
 
   fprintf(ctrl_ltras->fdout,
       "      <text>%s</text>\n", text);
@@ -249,7 +252,7 @@ return(found);
 PUBLIC(og_status) OgLtrasTrfsConsolidateResults(void *handle, int send_result)
 {
 struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-double score,mean_score,mean_final_score; int mean_frequency;
+double score,mean_score,mean_final_score;
 char output_file_tmp[DPcPathSize];
 unsigned char line[DPcPathSize];
 int i;
@@ -314,21 +317,23 @@ fprintf(fd,
 IFx(ctrl_ltras->statistics.nb_trfs) {
   mean_final_score = ctrl_ltras->statistics.mean_range.final_score / ctrl_ltras->statistics.nb_trfs;
   mean_score = ctrl_ltras->statistics.mean_range.score / ctrl_ltras->statistics.nb_trfs;
-  mean_frequency = ctrl_ltras->statistics.mean_range.frequency / ctrl_ltras->statistics.nb_trfs;
+  int mean_word_frequency = ctrl_ltras->statistics.mean_range.word_frequency / ctrl_ltras->statistics.nb_trfs;
+  int mean_expression_frequency = ctrl_ltras->statistics.mean_range.expression_frequency / ctrl_ltras->statistics.nb_trfs;
 
   fprintf(fd,
-    "  <ranges mean_final_score=\"%.4f\" mean_score=\"%.4f\" mean_frequency=\"%d\" nb_trfs=\"%d\">\n"
-    , mean_final_score, mean_score, mean_frequency,ctrl_ltras->statistics.nb_trfs);
+    "  <ranges mean_final_score=\"%.4f\" mean_score=\"%.4f\" mean_expression_frequency=\"%d\" mean_word_frequency=\"%d\" nb_trfs=\"%d\">\n"
+    , mean_final_score, mean_score, mean_expression_frequency, mean_word_frequency, ctrl_ltras->statistics.nb_trfs);
 
   int max = DOgLtrasScorePrecision;
   for (i=max; i>=0; i--) {
-    if (!ctrl_ltras->statistics.range[i].frequency) continue;
+    if (!ctrl_ltras->statistics.range[i].word_frequency) continue;
     int nb_trfs = (int)ctrl_ltras->statistics.range[i].nb_trfs;
-    mean_frequency = ctrl_ltras->statistics.range[i].frequency / nb_trfs;
+    mean_word_frequency = ctrl_ltras->statistics.range[i].word_frequency / nb_trfs;
+    mean_expression_frequency = ctrl_ltras->statistics.range[i].expression_frequency / nb_trfs;
     score = i; score /= max;
     fprintf(fd,
-      "    <range total_trfs=\"%d\" score=\"%.4f\" mean_frequency=\"%d\"/>\n"
-      , nb_trfs, score, mean_frequency);
+      "    <range total_trfs=\"%d\" score=\"%.4f\" mean_expression_frequency=\"%d\" mean_word_frequency=\"%d\"/>\n"
+      , nb_trfs, score, mean_expression_frequency, mean_word_frequency);
     }
   fprintf(fd,
     "  </ranges>\n");
@@ -344,11 +349,12 @@ if (ctrl_ltras->nb_suggestion_levels>0) {
     cumul_nb_propositions += ctrl_ltras->suggestion[i].nb_propositions;
     benchmark = cumul_nb_propositions*100; benchmark /= ctrl_ltras->statistics.nb_requests;
     fprintf(fd,
-      "    <suggestion position=\"%d\" benchmark=\"%.2f\" nb_propositions=\"%d\" mean_final_score=\"%.4f\" mean_score=\"%.4f\" mean_frequency=\"%.2f\">\n"
+      "    <suggestion position=\"%d\" benchmark=\"%.2f\" nb_propositions=\"%d\" mean_final_score=\"%.4f\" mean_score=\"%.4f\" mean_expression_frequency=\"%.2f\" mean_word_frequency=\"%.2f\">\n"
         , i, benchmark, ctrl_ltras->suggestion[i].nb_propositions
         , ctrl_ltras->suggestion[i].mean_final_score / ctrl_ltras->suggestion[i].nb_propositions
         , ctrl_ltras->suggestion[i].mean_score / ctrl_ltras->suggestion[i].nb_propositions
-        , ctrl_ltras->suggestion[i].mean_frequency / ctrl_ltras->suggestion[i].nb_propositions);
+        , ctrl_ltras->suggestion[i].mean_expression_frequency / ctrl_ltras->suggestion[i].nb_propositions
+        , ctrl_ltras->suggestion[i].mean_word_frequency / ctrl_ltras->suggestion[i].nb_propositions);
 
     memset(buffer,0,DPcPathSize);
     ibuffer=0;
