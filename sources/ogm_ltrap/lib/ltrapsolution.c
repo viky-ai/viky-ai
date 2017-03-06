@@ -1,8 +1,8 @@
 /*
- *	Handling solutions
- *	Copyright (c) 2009 Pertimm by Patrick Constant
- *	Dev : October 2009
- *	Version 1.0
+ *  Handling solutions
+ *  Copyright (c) 2009 Pertimm by Patrick Constant
+ *  Dev : October 2009
+ *  Version 1.0
 */
 #include "ogm_ltrap.h"
 
@@ -329,7 +329,7 @@ static int LtrapMarkSpan(struct og_ctrl_ltrap *ctrl_ltrap, int Isol)
 struct sol *sol = ctrl_ltrap->Sol + Isol;
 struct spansol *spansol;
 struct span *span;
-int i,weight=0;
+int i;
 
 for (i=0; i<sol->length_spansol; i++) {
   spansol = ctrl_ltrap->Spansol + sol->start_spansol + i;

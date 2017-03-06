@@ -23,11 +23,6 @@
 #define DOgLtracDictionaryTypeBase         0x1
 #define DOgLtracDictionaryTypeSwap         0x2
 #define DOgLtracDictionaryTypePhon         0x4
-#define DOgLtracDictionaryTypeAspell       0x8
-
-#define DOgLtracInputTypeWords       0x1 /* BU1 */
-#define DOgLtracInputTypeAttributes  0x2 /* BU2 */
-#define DOgLtracInputTypeTextuals    0x4 /* BU3 */
 
 
 struct og_ltrac_input {
@@ -36,8 +31,6 @@ struct og_ltrac_input {
   int dictionaries_minimization;
   int min_frequency;
   int min_frequency_swap;
-  char filter_dict[DPcPathSize];
-  int add_filter_words;
   int codepage;
   };
 
@@ -52,8 +45,6 @@ struct og_ltrac_param {
 
 
 DEFPUBLIC(void *) OgLtracInit(pr(struct og_ltrac_param *));
-DEFPUBLIC(int) OgLtracAddAttributeInit(void *handle, int positive);
-DEFPUBLIC(int) OgLtracAddAttribute(void *handle, char *attribute_string);
 DEFPUBLIC(int) OgLtrac(void *handle,struct og_ltrac_input *input);
 DEFPUBLIC(int) OgLtracFlush(pr(void *));
 

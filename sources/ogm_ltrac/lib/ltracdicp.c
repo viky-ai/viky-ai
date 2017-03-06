@@ -5,7 +5,7 @@
  *  Version 1.0
 */
 #include "ogm_ltrac.h"
-
+#include <logis639_3166.h>
 
 
 
@@ -50,12 +50,11 @@ int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
   IFE(OgPhonet(ctrl_ltrac->hpho, input, output));
   if (output->iB < min_post_phonetisation_char_number * 2) DONE;
 
-  /* phonetic_form | attribute_number language_code frequency **/
+  /* phonetic_form | language_code frequency **/
   memcpy(entry, output->B, output->iB);
   p = entry + output->iB;
   *p++ = 0;
   *p++ = DOgLtracExtStringSeparator;
-  OggNout(dic_input->attribute_number, &p);
   OggNout(dic_input->language_code, &p);
   OggNout(dic_input->frequency, &p);
   memcpy(p, in, iin);
@@ -77,7 +76,7 @@ struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *)handle;
 struct og_aut_param caut_param,*aut_param=&caut_param;
 int iout; unsigned char *p,out[DPcAutMaxBufferSize+9];
 int ibuffer; unsigned char buffer[DPcPathSize];
-int attribute_number,language_code,frequency;
+int language_code,frequency;
 int iword; unsigned char word[DPcPathSize];
 oindex states[DPcAutMaxBufferSize+9];
 int retour,nstate0,nstate1;
@@ -113,7 +112,6 @@ if ((retour=OgAufScanf(ha_phon,0,"",&iout,out,&nstate0,&nstate1,states))) {
     if (sep<0) continue;
     p=out+sep+2;
     IFE(OgUniToCp(sep,out,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-    IFE(DOgPnin4(ctrl_ltrac->herr,&p,&attribute_number));
     IFE(DOgPnin4(ctrl_ltrac->herr,&p,&language_code));
     IFE(DOgPnin4(ctrl_ltrac->herr,&p,&frequency));
     word[0]=0;
@@ -122,7 +120,9 @@ if ((retour=OgAufScanf(ha_phon,0,"",&iout,out,&nstate0,&nstate1,states))) {
       }
 
 
-      fprintf(fd, "%s | %d %d %s\n", buffer, language_code, frequency, word);
+    char slang_country[DPcPathSize];
+
+      fprintf(fd, "%s | %s %d %s\n", buffer, OgIso639_3166ToCode(language_code, slang_country), frequency, word);
     }
   while((retour=OgAufScann(ha_phon,&iout,out,nstate0,&nstate1,states)));
   }

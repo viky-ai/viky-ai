@@ -5,6 +5,7 @@
  *  Version 1.0
  */
 #include "ogm_ltrac.h"
+#include <logis639_3166.h>
 
 static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index);
 static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index);
@@ -57,7 +58,6 @@ static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, stru
   p += ibuffer;
   *p++ = 0;
   *p++ = DOgLtracExtStringSeparator;
-  OggNout(dic_input->attribute_number, &p);
   OggNout(dic_input->language_code, &p);
   OggNout(index, &p);
   OggNout(dic_input->frequency, &p);
@@ -88,7 +88,6 @@ static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, str
   p += ibuffer;
   *p++ = 0;
   *p++ = DOgLtracExtStringSeparator;
-  OggNout(dic_input->attribute_number, &p);
   OggNout(dic_input->language_code, &p);
   OggNout(index, &p);
   OggNout(dic_input->frequency, &p);
@@ -131,13 +130,12 @@ static og_status LtracDicSwapAddTwoSameLetters(struct og_ctrl_ltrac *ctrl_ltrac,
           memcpy(buffer + *index_double1, s + *index_double1 + 2, index_double2 - *index_double1 - 2);
           memcpy(buffer + index_double2 - 2, s + index_double2 + 2, is - index_double2 - 2);
           ibuffer = is - 4;
-          /* word_less_1_letter | attribute_number language_code position frequency word */
+          /* word_less_1_letter | language_code position frequency word */
           p = entry;
           memcpy(p, buffer, ibuffer);
           p += ibuffer;
           *p++ = 0;
           *p++ = DOgLtracExtStringSeparator;
-          OggNout(dic_input->attribute_number, &p);
           OggNout(dic_input->language_code, &p);
           OggNout(index, &p);
           OggNout(dic_input->frequency, &p);
@@ -163,7 +161,6 @@ static og_status LtracDicSwapAddOrigin(struct og_ctrl_ltrac *ctrl_ltrac, struct 
   p += dic_input->value_length;
   *p++ = 0;
   *p++ = DOgLtracExtStringSeparator;
-  OggNout(dic_input->attribute_number, &p);
   OggNout(dic_input->language_code, &p);
   OggNout(0, &p);
   OggNout(dic_input->frequency, &p);
@@ -178,7 +175,7 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
 {
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
   struct og_aut_param caut_param, *aut_param = &caut_param;
-  int attribute_number, language_code, position, frequency;
+  int language_code, position, frequency;
   int iout;
   unsigned char *p, out[DPcAutMaxBufferSize + 9];
   int ibuffer;
@@ -229,7 +226,6 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
       if (sep < 0) continue;
       p = out + sep + 2;
       IFE(OgUniToCp(sep,out,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-      IFE(DOgPnin4(ctrl_ltrac->herr,&p,&attribute_number));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&language_code));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&position));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&frequency));
@@ -239,7 +235,8 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
         IFE(OgUniToCp(iout-(p-out),p,DPcPathSize,&iword,word,DOgCodePageUTF8,0,0));
       }
 
-      fprintf(fd, "%s | %d %d %d %s\n", buffer, language_code, position,
+      char slang_country[DPcPathSize];
+      fprintf(fd, "%s | %s %d %d %s\n", buffer, OgIso639_3166ToCode(language_code, slang_country), position,
           frequency, word);
 
     }

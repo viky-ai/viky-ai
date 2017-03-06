@@ -379,7 +379,7 @@ PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsign
   unsigned char *p, out[DPcAutMaxBufferSize + 9];
   int ibuffer;
   unsigned char buffer[DPcPathSize * 2];
-  int attribute_number, language_code, frequency;
+  int language_code, frequency;
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1;
   int found = 0;
@@ -409,7 +409,6 @@ PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsign
     {
       IFE(retour);
       p = out;
-      IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&language_code));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
 
@@ -463,8 +462,6 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
     {
       IFE(retour);
       unsigned char *p = out;
-      int attribute_number = -1;
-      IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
 
       int language_code = DOgLangNil;
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&language_code));

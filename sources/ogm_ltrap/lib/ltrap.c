@@ -82,7 +82,7 @@ static int OgLtrapAddSpan(struct og_ctrl_ltrap *ctrl_ltrap, struct og_ltrap_inpu
     int icurrent)
 {
 
-  int attribute_number = 0, language = 0, position = 0, frequency = 1;
+  int language = 0, position = 0, frequency = 1;
   int overlapped = 0, end;
 
   ctrl_ltrap->offset_small_word = 0;
@@ -138,7 +138,6 @@ static int OgLtrapAddSpan(struct og_ctrl_ltrap *ctrl_ltrap, struct og_ltrap_inpu
         unsigned char *p = out;
         if (lexicon_type != DOgLtrapLexiconTypeCompound)
         {
-          IFE(DOgPnin4(ctrl_ltrap->herr,&p,&attribute_number));
           IFE(DOgPnin4(ctrl_ltrap->herr,&p,&language));
           if (lexicon_type == DOgLtrapLexiconTypeSwap)
           {
@@ -210,7 +209,6 @@ static int OgLtrapAddSpan(struct og_ctrl_ltrap *ctrl_ltrap, struct og_ltrap_inpu
             unsigned char *p = out + i + 2;
             if (lexicon_type != DOgLtrapLexiconTypeCompound)
             {
-              IFE(DOgPnin4(ctrl_ltrap->herr,&p,&attribute_number));
               IFE(DOgPnin4(ctrl_ltrap->herr,&p,&language));
               if (lexicon_type == DOgLtrapLexiconTypeSwap)
               {

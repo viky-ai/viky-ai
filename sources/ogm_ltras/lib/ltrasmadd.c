@@ -154,8 +154,7 @@ static int LtrasModuleAdd1(struct og_ltra_module_input *module_input
       {
         IFE(retour);
         unsigned char *p = out;
-        int attribute_number, language_code, position, frequency;
-        IFE(DOgPnin4(ctrl_add->herr,&p,&attribute_number));
+        int language_code, position, frequency;
         IFE(DOgPnin4(ctrl_add->herr,&p,&language_code));
         IFE(DOgPnin4(ctrl_add->herr,&p,&position));
         IFE(DOgPnin4(ctrl_add->herr,&p,&frequency));

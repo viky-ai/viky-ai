@@ -569,7 +569,7 @@ static int LtrasAddModules(struct og_ctrl_ltras *ctrl_ltras)
 static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras)
 {
   unsigned char *p, out[DPcAutMaxBufferSize + 9];
-  int attribute_number, language, frequency;
+  int language, frequency;
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
@@ -601,7 +601,6 @@ static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras)
       }
       if (sep < 0) continue;
       p = out + sep + 2;
-      IFE(DOgPnin4(ctrl_ltras->herr,&p,&attribute_number));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&language));
       IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
       if (ctrl_ltras->max_word_frequency < frequency)

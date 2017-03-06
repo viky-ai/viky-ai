@@ -279,8 +279,7 @@ static int LtrasModulePhonAddTransformation(struct og_ctrl_phon *ctrl_phon, int 
     {
       IFE(retour);
       unsigned char *p = out;
-      int attribute_number, language_code, frequency;
-      IFE(DOgPnin4(ctrl_phon->herr,&p,&attribute_number));
+      int language_code, frequency;
       IFE(DOgPnin4(ctrl_phon->herr,&p,&language_code));
       IFE(DOgPnin4(ctrl_phon->herr,&p,&frequency));
 

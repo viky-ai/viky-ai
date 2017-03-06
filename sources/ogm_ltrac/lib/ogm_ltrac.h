@@ -25,7 +25,6 @@ struct ltrac_dic_input
 {
   int value_length;
   og_string value;
-  int attribute_number;
   int language_code;
   int frequency;
   og_bool is_expression;
@@ -44,9 +43,6 @@ struct og_ctrl_ltrac {
   char configuration_file[DPcPathSize];
   char data_directory[DPcPathSize];
 
-  int is_attrnum_positive,nb_attrnum;
-  void *ha_attrnum,*ha_attrstr;
-
   char name_base[DPcPathSize];
   char name_swap[DPcPathSize];
   char name_phon[DPcPathSize];
@@ -55,7 +51,6 @@ struct og_ctrl_ltrac {
   char log_swap[DPcPathSize];
   char log_phon[DPcPathSize];
   void *ha_base,*ha_swap,*ha_phon,*ha_filter,*ha_seen;
-  FILE *fd_aspell;
   void *hpho;
 
   /** Used to scan the attributes **/
@@ -67,29 +62,34 @@ struct og_ctrl_ltrac {
   int LtrafUsed;
   struct ltraf *Ltraf;
 
-  void *hsidx;
-  og_attribute_handle hattribute;
   };
 
 struct og_ltrac_scan
 {
   int iword;
   og_string word;
-  int attribute_number;
   int language_code;
   int Iltraf;
   og_bool is_expression;
 };
 
+struct read_ltraf_context
+{
+    int ientry;
+    og_string entry;
+    int language_code;
+    int frequency;
+    int min_frequency;
+};
+
 /** ltraca.c **/
-int LtracAttributes(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
+int LtracAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
 
 /** ltracdic.c **/
 int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, struct ltrac_dic_input *dic_input);
 int LtracDicInit(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
 int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
 int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input);
-int LtracDicAddFilterWords(struct og_ctrl_ltrac *ctrl_ltra, struct og_ltrac_input *input);
 
 /** ltracdica.c **/
 int LtracDicAspellAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);
@@ -107,10 +107,11 @@ og_status LtracDicExpressionAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_d
 int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac,struct ltrac_dic_input *dic_input);
 
 /** ltracread.c **/
-og_status LtracReadLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
-og_status LtracReadLtrafRequest(struct og_ctrl_ltrac *ctrl_ltrac, int min_frequency);
+og_status LtracReadLtrafs(struct og_ctrl_ltrac *ctrl_ltrac, og_string filename, int min_frequency, int (*func)(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx));
 og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context, struct og_ltrac_scan *scan),
     void *context);
+og_status LtracAddLtrafEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx);
+og_status LtracAddLtrafRequestEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx);
 
 /** ltraclog.c **/
 og_status LtracLogLtrac(struct og_ctrl_ltrac *ctrl_ltrac);

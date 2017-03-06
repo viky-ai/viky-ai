@@ -137,9 +137,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     OgMsg(param->hmsg,"",DOgMsgDestMBox,DOgLtracBanner);
     must_exit=1;
     }
-  else if (!memcmp(cmd_param,"-filter",7)){
-    strcpy(input->filter_dict,cmd_param+7);
-    }
   else if (!memcmp(cmd_param,"-fswap",6)) {
     input->min_frequency_swap=OgArgSize(cmd_param+6);
     }
@@ -150,16 +147,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     OgUse(info,hInstance,nCmdShow);
     must_exit=1;
     }
-  else if (!memcmp(cmd_param,"-na",3)) {
-    info->negative_attributes=1;
-    }
-  else if (!memcmp(cmd_param,"-add_filter_words",17)){
-    input->add_filter_words=1;
-    }
-  else if (!memcmp(cmd_param,"-a",2)) {
-    strcpy(info->attribute[info->attribute_number].attribute_string,cmd_param+2);
-    info->attribute_number++;
-    }
   else if (!memcmp(cmd_param,"-cp",3)) {
     strcpy(codepage_string,cmd_param+3);
     }
@@ -168,15 +155,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     }
   else if (!memcmp(cmd_param,"-t",2)) {
     param->loginfo.trace = strtol(cmd_param+2,&nil,16);
-    }
-  else if (!memcmp(cmd_param,"-iw",3)) {
-    info->input->input_type |= DOgLtracInputTypeWords;
-    }
-  else if (!memcmp(cmd_param,"-ia",3)) {
-    info->input->input_type |= DOgLtracInputTypeAttributes;
-    }
-  else if (!memcmp(cmd_param,"-it",3)) {
-    info->input->input_type |= DOgLtracInputTypeTextuals;
     }
   else if (!memcmp(cmd_param,"-mall",5)) {
     info->input->dictionaries_minimization |= DOgLtracDictionaryTypeBase
@@ -195,8 +173,7 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!memcmp(cmd_param,"-oall",5)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase
                                          + DOgLtracDictionaryTypeSwap
-                                         + DOgLtracDictionaryTypePhon
-                                         + DOgLtracDictionaryTypeAspell;
+                                         + DOgLtracDictionaryTypePhon;
     }
   else if (!memcmp(cmd_param,"-obase",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypeBase;
@@ -206,9 +183,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
     }
   else if (!memcmp(cmd_param,"-ophon",6)) {
     info->input->dictionaries_to_export |= DOgLtracDictionaryTypePhon;
-    }
-  else if (!memcmp(cmd_param,"-oaspell",8)) {
-    info->input->dictionaries_to_export |= DOgLtracDictionaryTypeAspell;
     }
   else if (!memcmp(cmd_param,"-sbase",6)) {
     info->dictionaries_to_scan |= DOgLtracDictionaryTypeBase;
@@ -335,19 +309,6 @@ STATICF(int) Ltrac(info)
   }
   else
   {
-    if (info->negative_attributes)
-    {
-      IFE(OgLtracAddAttributeInit(info->hltrac, 0));
-    }
-    else
-    {
-      IFE(OgLtracAddAttributeInit(info->hltrac, 1));
-    }
-    for (int i = 0; i < info->attribute_number; i++)
-    {
-      IFE(OgLtracAddAttribute(info->hltrac, info->attribute[i].attribute_string));
-    }
-
     IFE(OgLtrac(info->hltrac, info->input));
   }
 
@@ -371,11 +332,6 @@ int j,k;
 
 sprintf(buffer,               "Usage : ogltrac [-v] [-h] [options]\n");
 sprintf(buffer+strlen(buffer),"options are:\n");
-sprintf(buffer+strlen(buffer),"    -a[attribute_name]: specifies an attribute (only with option -ia)\n");
-sprintf(buffer+strlen(buffer),"    -na: specified attributes are removed, remaining are kept\n");
-sprintf(buffer+strlen(buffer),"    -iw[ords]: reads all words from bu1 repository\n");
-sprintf(buffer+strlen(buffer),"    -ia[ttributes]: reads all words from bu2 repository\n");
-sprintf(buffer+strlen(buffer),"    -it[extuals]: reads all words from bu3 repository\n");
 sprintf(buffer+strlen(buffer),"    -f<frequency> minimum frequency (default 0)\n");
 sprintf(buffer+strlen(buffer),"    -fswap<frequency> minimum frequency for swap dictionary(default 2*frequency)\n");
 sprintf(buffer+strlen(buffer),"    -d<directory>: creates the dictionaries in <directory> (default is 'ling')\n");
@@ -385,36 +341,21 @@ sprintf(buffer+strlen(buffer),"    -h prints this message\n");
 sprintf(buffer+strlen(buffer),"    -mbase: minimizes ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mswap: minimizes ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mphon: minimizes ltra_phon.auf automaton\n");
-sprintf(buffer+strlen(buffer),"    -mexpressions: minimizes ltra_expressions.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mall: minimizes all 3 above automatons\n");
 sprintf(buffer+strlen(buffer),"    -obase: extracts ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -oswap: extracts ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -ophon: extracts ltra_phon.auf automaton\n");
-sprintf(buffer+strlen(buffer),"    -oexpressions: extracts ltra_expressions.auf automaton\n");
-sprintf(buffer+strlen(buffer),"    -oaspell: extracts aspell source dictionary\n");
 sprintf(buffer+strlen(buffer),"    -oall: extracts all 4 above automatons or source dictionary\n");
 sprintf(buffer+strlen(buffer),"    -sbase: scans ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sswap: scans ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sphon: scans ltra_phon.auf automaton\n");
-sprintf(buffer+strlen(buffer),"    -sexpressions: scans ltra_expressions.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sall: scans all 3 above automatons\n");
-sprintf(buffer+strlen(buffer),"    -filter<list_of_words.txt>: keep only words in vocabulary list_of_words.txt\n");
-sprintf(buffer+strlen(buffer),"    -add_filter_words: active only with -filter, besides words present in the\n");
-sprintf(buffer+strlen(buffer),"      index and filter list, add words only in filter list, with frequency of 1\n");
 sprintf(buffer+strlen(buffer),"    -cp<encoding>: encoding of list_of_words.txt for filter option, default windows-1252\n");
 sprintf(buffer+strlen(buffer),"    -t<n>: trace options for logging (default 0x%x)\n",info->param->loginfo.trace);
 sprintf(buffer+strlen(buffer),"      <n> has a combined hexadecimal value of:\n");
 sprintf(buffer+strlen(buffer),"        0x1: minimal, 0x2: memory, 0x4: adding\n");
 sprintf(buffer+strlen(buffer),"    -v gives version number of the program\n");
 sprintf(buffer+strlen(buffer),"\n");
-sprintf(buffer+strlen(buffer),"    Example of use of the filter option:\n");
-sprintf(buffer+strlen(buffer),"    ogaspell -dump > default_aspell_dict.txt: get default Aspell dictionary\n");
-sprintf(buffer+strlen(buffer),"    ogm_sidx (needed only if no ssi exists)\n");
-sprintf(buffer+strlen(buffer),"    ogltrac -ia -apjvintitule -oall -filterdefault_aspell_dict.txt -cputf-8 -add_filter_words\n");
-sprintf(buffer+strlen(buffer),"      use default_aspell_dict.txt words with frequencies taken from pjvintitule (or 1 if words do not exist in pjvintitule)\n");
-
-sprintf(buffer+strlen(buffer),"    alternatively: ogltrac -ia -apjvintitule -oall -filterdefault_aspell_dict.txt -cputf-8\n");
-sprintf(buffer+strlen(buffer),"      use only words in common between pjvintitule and default_aspell_dict.txt\n");
 
 
 #if ( DPcSystem == DPcSystemWin32)

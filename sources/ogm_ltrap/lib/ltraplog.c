@@ -1,8 +1,8 @@
 /*
- *	Handling log functions.
- *	Copyright (c) 2009 Pertimm by Patrick Constant
- *	Dev : October 2009
- *	Version 1.0
+ *  Handling log functions.
+ *  Copyright (c) 2009 Pertimm by Patrick Constant
+ *  Dev : October 2009
+ *  Version 1.0
 */
 #include "ogm_ltrap.h"
 
@@ -25,14 +25,14 @@ int ib1,ib2; unsigned char b1[DPcPathSize],b2[DPcPathSize],b3[DPcPathSize];
 struct sol *sol = ctrl_ltrap->Sol + Isol;
 struct spansol *spansol;
 struct span *span;
-int i,weight=0;
+int i;
 
 sprintf(b1,"%.2f",sol->weight);
 sprintf(b2,"%.2f",sol->global_score);
 
 OgMsg(ctrl_ltrap->hmsg,"",DOgMsgDestInLog
   , "Sol %d (weight=%s global_score=%s global_frequency=%d complete=%d):"
-  , Isol, b1, b2, sol->global_frequency, sol->complete);    
+  , Isol, b1, b2, sol->global_frequency, sol->complete);
 
 for (i=0; i<sol->length_spansol; i++) {
   spansol = ctrl_ltrap->Spansol + sol->start_spansol + i;

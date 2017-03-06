@@ -467,9 +467,6 @@ static int LtrasModuleTerm1(struct og_ltra_module_input *module_input, struct og
             IFE(retour);
             p = out;
 
-            int attribute_number = -1;
-            IFE(DOgPnin4(ctrl_term->herr,&p,&attribute_number));
-
             int language_code = -1;
             IFE(DOgPnin4(ctrl_term->herr,&p,&language_code));
 
