@@ -37,6 +37,7 @@ static int LtrasTrfMergeScores(struct og_ctrl_ltras *ctrl_ltras, struct og_ltra_
     struct og_ltra_trfs *trfs2, int Itrf2);
 static int LtrasTrfCalculateScores(struct og_ctrl_ltras *ctrl_ltras, struct ltraf_score_ctx *ctx, og_bool check_words_in_dictionary);
 
+
 PUBLIC(og_status) OgLtrasTrfsCreate(void *handle, struct og_ltra_trfs **ptrfs)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
@@ -372,17 +373,13 @@ PUBLIC(int) OgLtrasTrfCopy(void *handle, struct og_ltra_trfs *trfs1, int Itrf1, 
 }
 
 
-PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
+/** Get expression frequency */
+PUBLIC(og_bool) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
-  int iout;
-  unsigned char *p, out[DPcAutMaxBufferSize + 9];
+
   int ibuffer;
   unsigned char buffer[DPcPathSize * 2];
-  int language_code, frequency;
-  oindex states[DPcAutMaxBufferSize + 9];
-  int retour, nstate0, nstate1;
-  int found = 0;
 
   *pfrequency = 0;
 
@@ -399,54 +396,6 @@ PUBLIC(int) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsign
     }
   }
 
-// add automation suffix
-  buffer[ibuffer++] = 0;
-  buffer[ibuffer++] = 1;
-
-  if ((retour = OgAufScanf(ctrl_ltras->ha_base, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
-  {
-    do
-    {
-      IFE(retour);
-      p = out;
-      IFE(DOgPnin4(ctrl_ltras->herr,&p,&language_code));
-      IFE(DOgPnin4(ctrl_ltras->herr,&p,&frequency));
-
-      // check language frequency
-      int language_lang = OgIso639_3166ToLang(language);
-      if (language_lang != 0 && language_code != 0 && language_lang != language_code)
-      {
-        continue;
-      }
-
-      *pfrequency += frequency;
-      found = 1;
-    }
-    while ((retour = OgAufScann(ctrl_ltras->ha_base, &iout, out, nstate0, &nstate1, states)));
-  }
-
-  return (found);
-}
-
-
-PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency)
-{
-  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
-
-  *pfrequency = 0;
-
-
-  unsigned char buffer[DPcPathSize * 2];
-  int ibuffer = OgStrCpySized(buffer, (DPcPathSize * 2) - 2, string, string_length);
-  if (ibuffer < string_length)
-  {
-    if (ctrl_ltras->loginfo->trace & DOgLtrasTraceModuleTerm)
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasTrfCalculateExpressionFrequency: in string has been truncated"
-          " (form size %d to %d)", string_length, ibuffer);
-    }
-  }
-
   // add automation suffix
   buffer[ibuffer++] = 0;
   buffer[ibuffer++] = 1;
@@ -455,7 +404,7 @@ PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_leng
   unsigned char out[DPcAutMaxBufferSize + 9];
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1;
-  og_bool found  = FALSE;
+  og_bool found = FALSE;
   if ((retour = OgAufScanf(ctrl_ltras->ha_base, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
   {
     do

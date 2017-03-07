@@ -52,7 +52,6 @@ struct og_ltra_trf {
   int nb_modules,start_module;
   /** used only in the term module */
   int span_start_trf,span_nb_trfs,history_trf;
-  int global_frequency;
 
   int word_frequency;
   int expression_frequency;
@@ -491,30 +490,18 @@ DEFPUBLIC(int) OgLtrasTrfCalculateScoresFromTrf(void *handle, struct og_ltra_trf
 
 
 /**
- * Get frequency of a word inside base automaton ha_base
+ * Get frequency of a word or an expression inside base automaton ha_base
  *
  * @param hltras handle for ltras
  * @param string_length size of the word
  * @param string the word to get the frequency
  * @param language_code code of the current language
- * @param pfrequency frequency of the word. If the word appears more than once in the automaton,
+ * @param pfrequency frequency of the expression. If the expression appears more than once in the automaton,
  * the frequencies are added.
  * @return function status : TRUE, else FALSE if word is not found, else ERREUR
  */
 DEFPUBLIC(og_bool) OgLtrasTrfCalculateFrequency(void *handle, int string_length, unsigned char *string, int language_code, int *pfrequency);
 
-
-/**
- * Get frequency of an expression inside expressions automaton ha_expressions
- *
- * @param hltras handle for ltras
- * @param string_length size of the word
- * @param string the expressions to get the frequency
- * @param language_code code of the current language
- * @param pfrequency frequency of the expression.
- * @return function status : TRUE, else FALSE if word is not found, else ERREUR
- */
-PUBLIC(int) OgLtrasTrfCalculateExpressionFrequency(void *handle, int string_length, unsigned char *string, int language, int *pfrequency);
 
 /**
  * Get the start position and end position in the original string of the tranformation
