@@ -157,6 +157,7 @@ struct og_ltras_input {
   unsigned char *flow_chart;
   double frequency_ratio;
   double score_factor;
+  int max_nb_solutions;
 
   /** activate logs of start_position and length_position for each word corrected */
   og_bool log_pos;
@@ -283,6 +284,14 @@ DEFPUBLIC(void *) OgLtrasHldi(void *hltras);
  */
 DEFPUBLIC(void *) OgLtrasHstm(void *hltras);
 
+
+/**
+ * Get max_nb_solutions
+ *
+ * @param hltras handle for ltras
+ * @return max_nb_solutions.
+ */
+DEFPUBLIC(int) OgLtrasMaxNbSolutions(void *handle);
 
 /**
  * Get score factor

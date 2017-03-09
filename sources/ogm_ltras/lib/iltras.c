@@ -445,6 +445,13 @@ PUBLIC(double) OgLtrasFrequencyRatio(void *handle)
   return (ctrl_ltras->input->frequency_ratio);
 }
 
+PUBLIC(int) OgLtrasMaxNbSolutions(void *handle)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  return (ctrl_ltras->input->max_nb_solutions);
+}
+
+
 PUBLIC(og_bool) OgLtrasScoreFactorIsLogPosActivated(void *handle)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;

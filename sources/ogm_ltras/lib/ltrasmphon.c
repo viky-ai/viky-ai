@@ -135,6 +135,11 @@ int OgLtrasModulePhon(struct og_ltra_module_input *module_input
   {
     ctrl_phon->max_nb_solutions = atoi(module_input->argv[2]);
   }
+  int max_nb_solutions = OgLtrasMaxNbSolutions(ctrl_phon->hltras);
+  if(max_nb_solutions > 0)
+  {
+    ctrl_phon->max_nb_solutions = max_nb_solutions;
+  }
 
   ctrl_phon->max_dlevenshtein_distance = 1.0;
   if (module_input->argc > 3)

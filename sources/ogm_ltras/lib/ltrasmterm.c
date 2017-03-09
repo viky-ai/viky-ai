@@ -158,6 +158,12 @@ int OgLtrasModuleTerm(struct og_ltra_module_input *module_input
     ctrl_term->max_nb_solutions = atoi(module_input->argv[1]);
   }
 
+  int max_nb_solutions = OgLtrasMaxNbSolutions(ctrl_term->hltras);
+  if(max_nb_solutions > 0)
+  {
+    ctrl_term->max_nb_solutions = max_nb_solutions;
+  }
+
   /* Checking words in basic dictionary for found solutions
    * when check is enabled, if words are found, solutions are validated
    * else solutions are always validated */

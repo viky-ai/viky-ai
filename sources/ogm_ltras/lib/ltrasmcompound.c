@@ -243,7 +243,14 @@ static int LtrasModuleCompound1(struct og_ltra_module_input *module_input, struc
     input->context = ctx;
     input->synchronization_length = DOgLtrapSynchronizationLength;
     input->max_candidates = ctrl_compound->max_nb_candidates;
+
     input->max_solutions = ctrl_compound->max_nb_solutions;
+    int max_nb_solutions = OgLtrasMaxNbSolutions(ctrl_compound->hltras);
+    if(max_nb_solutions > 0)
+    {
+      ctrl_compound->max_nb_solutions = max_nb_solutions;
+    }
+
     input->score_factor = OgLtrasScoreFactor(ctrl_compound->hltras);
     input->cut_cost = ctrl_compound->cut_cost;
 
