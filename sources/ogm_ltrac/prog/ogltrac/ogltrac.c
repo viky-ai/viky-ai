@@ -22,8 +22,6 @@ struct arg_attribute {
 struct og_info {
   struct og_ltrac_param *param;
   struct og_ltrac_input *input;
-  struct arg_attribute attribute[DOgMaxAttributeNumber];
-  int attribute_number,negative_attributes;
   char filename[DPcPathSize];
   int dictionaries_to_scan;
   char output[DPcPathSize];
@@ -58,12 +56,11 @@ char *argv0=0;
 #endif
 #endif
 
-char cwd[DPcPathSize],cmd[DPcPathSize],cmd_param[DPcPathSize],msg[DPcPathSize];
+char cwd[DPcPathSize],cmd[DPcPathSize],cmd_param[DPcPathSize];
 struct og_charset_param ccharset_param,*charset_param=&ccharset_param;
 struct og_ltrac_param cparam, *param=&cparam;
 struct og_ltrac_input cinput, *input=&cinput;
 char working_directory[DPcPathSize],*DOgPIPE;
-unsigned char charset[DPcPathSize];
 struct og_info cinfo,*info=&cinfo;
 char codepage_string[DPcPathSize];
 char prior_messages[DPcPathSize];
@@ -241,19 +238,6 @@ charset_param->loginfo.trace = DOgAutaTraceMinimal+DOgAutaTraceMemory;
 charset_param->loginfo.where = param->loginfo.where;
 IFn(hcharset=OgCharsetInit(charset_param)) return(0);
 
-IF(found=OgCharsetGetCode(hcharset,codepage_string,&input->codepage)) {
-  OgExit(info); return(1);
-  }
-if (!found) {
-  input->codepage=DOgLtracDefaultCharset;
-  IF(OgCharsetGetString(hcharset,input->codepage,charset)) {
-    OgExit(info); return(1);
-    }
-  sprintf(msg,"OgLtrac: Input charset '%s' not found defaults to '%s'"
-                 , codepage_string, charset);
-  OgMsg(param->hmsg,"",DOgMsgDestInLog, "%s", msg);
-  }
-
 IF(Ltrac(info)) {
   OgExit(info); return(1);
   }
@@ -350,7 +334,6 @@ sprintf(buffer+strlen(buffer),"    -sbase: scans ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sswap: scans ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sphon: scans ltra_phon.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sall: scans all 3 above automatons\n");
-sprintf(buffer+strlen(buffer),"    -cp<encoding>: encoding of list_of_words.txt for filter option, default windows-1252\n");
 sprintf(buffer+strlen(buffer),"    -t<n>: trace options for logging (default 0x%x)\n",info->param->loginfo.trace);
 sprintf(buffer+strlen(buffer),"      <n> has a combined hexadecimal value of:\n");
 sprintf(buffer+strlen(buffer),"        0x1: minimal, 0x2: memory, 0x4: adding\n");

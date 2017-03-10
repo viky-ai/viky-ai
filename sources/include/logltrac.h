@@ -31,7 +31,6 @@ struct og_ltrac_input {
   int dictionaries_minimization;
   int min_frequency;
   int min_frequency_swap;
-  int codepage;
   };
 
 struct og_ltrac_param {
