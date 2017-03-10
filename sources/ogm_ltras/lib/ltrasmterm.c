@@ -900,6 +900,13 @@ static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og
           &ntrf->final_score);
       IFE(status);
 
+      //TODO if expression_frequency is 0, we can check for expression frequency for subgroups of words.
+      // Par exemple, boucle sur les trf->word avec des fenêtres et on garde celle qui a le plus de mots et le meilleur score
+      // A voir si on ajoute quelque chose dans le score concernant la taille de la tranformation
+      // A vérifier mais formule : nb_mots*(fmax + 1)^2 + fexpr*(fmax + 1) + fmot
+      // pour le nombre de mots à voir avec les découpages et les collages qui font que le nombre change.
+      // il faut peut-être un ratio de nombre de mots.
+
       if (ctrl_term->loginfo->trace & DOgLtrasTraceModuleTerm)
       {
         unsigned char string[DPcPathSize * 5];
