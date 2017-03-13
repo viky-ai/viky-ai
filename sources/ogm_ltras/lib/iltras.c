@@ -284,34 +284,42 @@ if (ctrl_ltras->hltras_to_inherit) {
   }
 else {
   memset(aut_param,0,sizeof(struct og_aut_param));
-  aut_param->herr=ctrl_ltras->herr;
-  aut_param->hmutex=ctrl_ltras->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-  aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-  aut_param->state_number = 0;
-  sprintf(aut_param->name,"ltra_base");
-  IFn(ctrl_ltras->ha_base=OgAutInit(aut_param)) return(0);
-  if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_base.auf",ctrl_ltras->dictionaries_directory);
-  else strcpy(ha_name,"ling/ltra_base.auf");
+    aut_param->herr=ctrl_ltras->herr;
+    aut_param->hmutex=ctrl_ltras->hmutex;
+    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
+    aut_param->state_number = 0;
+    sprintf(aut_param->name,"ltra_base");
+    IFn(ctrl_ltras->ha_base=OgAutInit(aut_param)) return(0);
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_base.auf",ctrl_ltras->dictionaries_directory);
+    else strcpy(ha_name,"ling/ltra_base.auf");
 
-  if (!OgFileExists(ha_name))
-  {
-    OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaBase : impossible to open '%s'", ha_name);
-    OgAutFlush(ctrl_ltras->ha_base);
-    ctrl_ltras->ha_base = NULL;
-    return NULL;
-  }
+    if (!OgFileExists(ha_name))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaBase : impossible to open '%s'", ha_name);
+      OgAutFlush(ctrl_ltras->ha_base);
+      ctrl_ltras->ha_base = NULL;
+      return NULL;
+    }
 
-  IF(OgAufRead(ctrl_ltras->ha_base, ha_name)) return NULL;
+    char version_file[DPcPathSize];
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
+    else strcpy(version_file,"ling/ltraf_version.txt");
 
+    if (!OgFileExists(version_file))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaBase : old version of dictionaries still with attribute_numbers, dictionary won't be loaded");
+    }
+    else
+    {
+      IF(OgAufRead(ctrl_ltras->ha_base, ha_name)) return NULL;
+    }
   }
 /** Needs to be calculated as soon as the ha_base automaton is loaded **/
 IF(LtrasGetMaxWordFrequency(ctrl_ltras)) return(0);
 
 return(ctrl_ltras->ha_base);
 }
-
-
 
 PUBLIC(void *) OgLtrasHaSwap(void *handle)
 {
@@ -326,27 +334,38 @@ if (ctrl_ltras->hltras_to_inherit) {
   ctrl_ltras->ha_swap=OgLtrasHaSwap(ctrl_ltras->hltras_to_inherit);
   }
 else {
-  memset(aut_param,0,sizeof(struct og_aut_param));
-  aut_param->herr=ctrl_ltras->herr;
-  aut_param->hmutex=ctrl_ltras->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-  aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-  aut_param->state_number = 0;
-  sprintf(aut_param->name,"ltra_swap");
-  IFn(ctrl_ltras->ha_swap=OgAutInit(aut_param)) return(0);
-  if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_swap.auf",ctrl_ltras->dictionaries_directory);
-  else strcpy(ha_name,"ling/ltra_swap.auf");
+    memset(aut_param,0,sizeof(struct og_aut_param));
+    aut_param->herr=ctrl_ltras->herr;
+    aut_param->hmutex=ctrl_ltras->hmutex;
+    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
+    aut_param->state_number = 0;
+    sprintf(aut_param->name,"ltra_swap");
+    IFn(ctrl_ltras->ha_swap=OgAutInit(aut_param)) return(0);
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_swap.auf",ctrl_ltras->dictionaries_directory);
+    else strcpy(ha_name,"ling/ltra_swap.auf");
 
-  if (!OgFileExists(ha_name))
-  {
-    OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaSwap : impossible to open '%s'", ha_name);
-    OgAutFlush(ctrl_ltras->ha_swap);
-    ctrl_ltras->ha_swap = NULL;
-    return NULL;
-  }
+    if (!OgFileExists(ha_name))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaSwap : impossible to open '%s'", ha_name);
+      OgAutFlush(ctrl_ltras->ha_swap);
+      ctrl_ltras->ha_swap = NULL;
+      return NULL;
+    }
 
-  IF(OgAufRead(ctrl_ltras->ha_swap, ha_name)) return NULL;
+    char version_file[DPcPathSize];
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
+    else strcpy(version_file,"ling/ltraf_version.txt");
 
+
+    if (!OgFileExists(version_file))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaSwap : old version of dictionaries still with attribute_numbers, dictionary won't be laoded");
+    }
+    else
+    {
+      IF(OgAufRead(ctrl_ltras->ha_swap, ha_name)) return NULL;
+    }
   }
 
 return(ctrl_ltras->ha_swap);
@@ -368,27 +387,38 @@ if (ctrl_ltras->hltras_to_inherit) {
   ctrl_ltras->ha_phon=OgLtrasHaPhon(ctrl_ltras->hltras_to_inherit);
   }
 else {
-  memset(aut_param,0,sizeof(struct og_aut_param));
-  aut_param->herr=ctrl_ltras->herr;
-  aut_param->hmutex=ctrl_ltras->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-  aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-  aut_param->state_number = 0;
-  sprintf(aut_param->name,"ltra_phon");
-  IFn(ctrl_ltras->ha_phon=OgAutInit(aut_param)) return(0);
-  if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_phon.auf",ctrl_ltras->dictionaries_directory);
-  else strcpy(ha_name,"ling/ltra_phon.auf");
+    memset(aut_param,0,sizeof(struct og_aut_param));
+    aut_param->herr=ctrl_ltras->herr;
+    aut_param->hmutex=ctrl_ltras->hmutex;
+    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
+    aut_param->state_number = 0;
+    sprintf(aut_param->name,"ltra_phon");
+    IFn(ctrl_ltras->ha_phon=OgAutInit(aut_param)) return(0);
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_phon.auf",ctrl_ltras->dictionaries_directory);
+    else strcpy(ha_name,"ling/ltra_phon.auf");
 
-  if (!OgFileExists(ha_name))
-  {
-    OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaPhon : impossible to open '%s'", ha_name);
-    OgAutFlush(ctrl_ltras->ha_phon);
-    ctrl_ltras->ha_phon = NULL;
-    return NULL;
-  }
+    if (!OgFileExists(ha_name))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaPhon : impossible to open '%s'", ha_name);
+      OgAutFlush(ctrl_ltras->ha_phon);
+      ctrl_ltras->ha_phon = NULL;
+      return NULL;
+    }
 
-    IF(OgAufRead(ctrl_ltras->ha_phon, ha_name)) return NULL;
+    char version_file[DPcPathSize];
+    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
+    else strcpy(version_file,"ling/ltraf_version.txt");
 
+
+    if (!OgFileExists(version_file))
+    {
+      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaPhon : old version of dictionaries still with attribute_numbers, dictionary won't be laoded");
+    }
+    else
+    {
+      IF(OgAufRead(ctrl_ltras->ha_phon, ha_name)) return NULL;
+    }
   }
 
 return(ctrl_ltras->ha_phon);

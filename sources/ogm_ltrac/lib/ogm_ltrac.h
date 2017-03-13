@@ -43,6 +43,7 @@ struct og_ctrl_ltrac {
   char configuration_file[DPcPathSize];
   char data_directory[DPcPathSize];
 
+  char name_version_file[DPcPathSize];
   char name_base[DPcPathSize];
   char name_swap[DPcPathSize];
   char name_phon[DPcPathSize];

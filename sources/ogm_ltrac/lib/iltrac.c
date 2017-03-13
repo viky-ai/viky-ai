@@ -94,6 +94,8 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
 
   IF(OgCheckOrCreateDir(dictionaries_directory,0,ctrl_ltrac->loginfo->where)) return(0);
 
+  sprintf(ctrl_ltrac->name_version_file, "%s/ltraf_version.txt",dictionaries_directory);
+
   sprintf(ctrl_ltrac->name_base,"%s/ltra_base.auf",dictionaries_directory);
   sprintf(ctrl_ltrac->name_swap,"%s/ltra_swap.auf",dictionaries_directory);
   sprintf(ctrl_ltrac->name_phon,"%s/ltra_phon.auf",dictionaries_directory);

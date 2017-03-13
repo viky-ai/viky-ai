@@ -139,6 +139,26 @@ DONE;
 
 int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
+  //TODO virer quand tous les clients seront à la nouvelle version
+  if ((input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
+      || (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
+      || (input->dictionaries_to_export & DOgLtracDictionaryTypePhon))
+  {
+
+    FILE *fd = fopen(ctrl_ltrac->name_version_file, "wb");
+    IFn(fd)
+    {
+      char erreur[DOgErrorSize];
+      sprintf(erreur, "LtracDicWrite: Impossible to open '%s' for writing", ctrl_ltrac->name_version_file);
+      OgErr(ctrl_ltrac->herr, erreur);
+      DPcErr;
+    }
+
+    fprintf(fd,"version 2.0");
+
+    fclose(fd);
+
+  }
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeBase)
