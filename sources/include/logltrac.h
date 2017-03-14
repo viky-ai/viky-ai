@@ -11,8 +11,8 @@
 #include <logmsg.h>
 
 
-#define DOgLtracBanner  "ogm_ltrac V1.00, Copyright (c) 2009 Pertimm, Inc."
-#define DOgLtracVersion 100
+#define DOgLtracBanner  "ogm_ltrac V2.00, Copyright (c) 2017 Pertimm, Inc."
+#define DOgLtracVersion 200
 
 /** Trace levels **/
 #define DOgLtracTraceMinimal        0x1

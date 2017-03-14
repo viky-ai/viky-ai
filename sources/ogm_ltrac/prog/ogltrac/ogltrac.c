@@ -9,20 +9,9 @@
 #include <logauta.h>
 #include <loguni.h>
 
-#define DOgLtracDefaultCharset               DOgCharset_windows_1252
-
-#define DOgMaxAttributeNumber         1000
-#define DOgMaxAttributeStringLength   128
-
-struct arg_attribute {
-  char attribute_string[DOgMaxAttributeStringLength];
-  };
-
-
 struct og_info {
   struct og_ltrac_param *param;
   struct og_ltrac_input *input;
-  char filename[DPcPathSize];
   int dictionaries_to_scan;
   char output[DPcPathSize];
   void *hltrac;
@@ -201,9 +190,6 @@ while(OgGetCmdParameter(sCmdParameters,cmd_param,&pos)) {
   else if (!strcmp(cmd_param,"-output_in_ssi")) {
     info->param->dictionaries_in_data_directory=1;
     }
-  else if (cmd_param[0] != '-') {
-    strcpy(info->filename,cmd_param);
-    }
   }
 
 if (must_exit) return(0);
@@ -320,8 +306,10 @@ sprintf(buffer+strlen(buffer),"    -f<frequency> minimum frequency (default 0)\n
 sprintf(buffer+strlen(buffer),"    -fswap<frequency> minimum frequency for swap dictionary(default 2*frequency)\n");
 sprintf(buffer+strlen(buffer),"    -d<directory>: creates the dictionaries in <directory> (default is 'ling')\n");
 sprintf(buffer+strlen(buffer),"    -output_in_ssi: creates the dictionaries in the ssi directory\n");
+
 sprintf(buffer+strlen(buffer),"    -ssi=<ssi_dir> uses this specific ssi directory\n");
-sprintf(buffer+strlen(buffer),"    -h prints this message\n");
+sprintf(buffer+strlen(buffer),"    -output_in_ssi: creates the dictionaries in the ssi directory\n");
+
 sprintf(buffer+strlen(buffer),"    -mbase: minimizes ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mswap: minimizes ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -mphon: minimizes ltra_phon.auf automaton\n");
@@ -329,7 +317,7 @@ sprintf(buffer+strlen(buffer),"    -mall: minimizes all 3 above automatons\n");
 sprintf(buffer+strlen(buffer),"    -obase: extracts ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -oswap: extracts ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -ophon: extracts ltra_phon.auf automaton\n");
-sprintf(buffer+strlen(buffer),"    -oall: extracts all 4 above automatons or source dictionary\n");
+sprintf(buffer+strlen(buffer),"    -oall: extracts all 3 above automatons or source dictionary\n");
 sprintf(buffer+strlen(buffer),"    -sbase: scans ltra_base.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sswap: scans ltra_swap.auf automaton\n");
 sprintf(buffer+strlen(buffer),"    -sphon: scans ltra_phon.auf automaton\n");
@@ -338,6 +326,7 @@ sprintf(buffer+strlen(buffer),"    -t<n>: trace options for logging (default 0x%
 sprintf(buffer+strlen(buffer),"      <n> has a combined hexadecimal value of:\n");
 sprintf(buffer+strlen(buffer),"        0x1: minimal, 0x2: memory, 0x4: adding\n");
 sprintf(buffer+strlen(buffer),"    -v gives version number of the program\n");
+sprintf(buffer+strlen(buffer),"    -h prints this message\n");
 sprintf(buffer+strlen(buffer),"\n");
 
 

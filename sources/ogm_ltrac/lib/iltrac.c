@@ -99,7 +99,6 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
   sprintf(ctrl_ltrac->name_base,"%s/ltra_base.auf",dictionaries_directory);
   sprintf(ctrl_ltrac->name_swap,"%s/ltra_swap.auf",dictionaries_directory);
   sprintf(ctrl_ltrac->name_phon,"%s/ltra_phon.auf",dictionaries_directory);
-  sprintf(ctrl_ltrac->name_aspell,"%s/ltra_aspell.txt",dictionaries_directory);
 
   if(ctrl_ltrac->WorkingDirectory[0])
   {

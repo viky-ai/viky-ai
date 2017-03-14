@@ -139,7 +139,7 @@ DONE;
 
 int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
-  //TODO virer quand tous les clients seront à la nouvelle version
+  // TODO virer le fichier de version quand tous les clients seront à la nouvelle version
   if ((input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
       || (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
       || (input->dictionaries_to_export & DOgLtracDictionaryTypePhon))
@@ -149,16 +149,26 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFn(fd)
     {
       char erreur[DOgErrorSize];
-      sprintf(erreur, "LtracDicWrite: Impossible to open '%s' for writing", ctrl_ltrac->name_version_file);
+      sprintf(erreur, "LtracDicWrite: Impossible to open '%s' for writing : %s", ctrl_ltrac->name_version_file,
+          strerror(errno));
       OgErr(ctrl_ltrac->herr, erreur);
       DPcErr;
     }
 
-    fprintf(fd,"version 2.0");
+    fprintf(fd, "version 2.0");
 
-    fclose(fd);
+    int close_status = fclose(fd);
+    if (close_status != 0)
+    {
+      char erreur[DOgErrorSize];
+      sprintf(erreur, "LtracDicWrite: Impossible to close '%s' for writing : %s", ctrl_ltrac->name_version_file,
+          strerror(errno));
+      OgErr(ctrl_ltrac->herr, erreur);
+      DPcErr;
+    }
 
   }
+
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeBase)
@@ -168,6 +178,7 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFE(OgAuf(ctrl_ltrac->ha_base, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_base, ctrl_ltrac->name_base));
   }
+
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeSwap)
@@ -177,6 +188,7 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFE(OgAuf(ctrl_ltrac->ha_swap, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_swap, ctrl_ltrac->name_swap));
   }
+
   if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
   {
     if (input->dictionaries_minimization & DOgLtracDictionaryTypePhon)
@@ -187,6 +199,7 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     IFE(OgAufWrite(ctrl_ltrac->ha_phon, ctrl_ltrac->name_phon));
     IFE(OgPhoFlush(ctrl_ltrac->hpho));
   }
+
   DONE;
 }
 

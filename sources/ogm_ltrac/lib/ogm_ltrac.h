@@ -47,7 +47,6 @@ struct og_ctrl_ltrac {
   char name_base[DPcPathSize];
   char name_swap[DPcPathSize];
   char name_phon[DPcPathSize];
-  char name_aspell[DPcPathSize];
   char log_base[DPcPathSize];
   char log_swap[DPcPathSize];
   char log_phon[DPcPathSize];
