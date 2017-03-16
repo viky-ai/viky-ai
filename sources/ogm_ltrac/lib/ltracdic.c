@@ -60,6 +60,7 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, 
     /* word | language_code frequency **/
     IFE(LtracDicBaseAdd(ctrl_ltrac, dic_input));
   }
+
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
   {
     if (dic_input->frequency >= input->min_frequency_swap)
@@ -68,6 +69,7 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input, 
       IFE(LtracDicSwapAdd(ctrl_ltrac, dic_input));
     }
   }
+
   if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
   {
     /* phonetic_form | language_code frequency **/
@@ -177,16 +179,8 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     }
     IFE(OgAuf(ctrl_ltrac->ha_base, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_base, ctrl_ltrac->name_base));
-  }
-
-  if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
-  {
-    if (input->dictionaries_minimization & DOgLtracDictionaryTypeSwap)
-    {
-      IFE(OgAum(ctrl_ltrac->ha_swap));
-    }
-    IFE(OgAuf(ctrl_ltrac->ha_swap, 0));
-    IFE(OgAufWrite(ctrl_ltrac->ha_swap, ctrl_ltrac->name_swap));
+    IFE(OgAutFlush(ctrl_ltrac->ha_base));
+    ctrl_ltrac->ha_base = NULL;
   }
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
@@ -197,7 +191,21 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
     }
     IFE(OgAuf(ctrl_ltrac->ha_phon, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_phon, ctrl_ltrac->name_phon));
+    IFE(OgAutFlush(ctrl_ltrac->ha_phon));
+    ctrl_ltrac->ha_phon = NULL;
     IFE(OgPhoFlush(ctrl_ltrac->hpho));
+  }
+
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
+  {
+    if (input->dictionaries_minimization & DOgLtracDictionaryTypeSwap)
+    {
+      IFE(OgAum(ctrl_ltrac->ha_swap));
+    }
+    IFE(OgAuf(ctrl_ltrac->ha_swap, 0));
+    IFE(OgAufWrite(ctrl_ltrac->ha_swap, ctrl_ltrac->name_swap));
+    IFE(OgAutFlush(ctrl_ltrac->ha_swap));
+    ctrl_ltrac->ha_swap = NULL;
   }
 
   DONE;
@@ -210,16 +218,21 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
 int LtracDicFlush(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input)
 {
 
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase) {
-  IFE(OgAutFlush(ctrl_ltrac->ha_base));
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
+  {
+    IFE(OgAutFlush(ctrl_ltrac->ha_base));
   }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap) {
-  IFE(OgAutFlush(ctrl_ltrac->ha_swap));
+
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
+  {
+    IFE(OgAutFlush(ctrl_ltrac->ha_swap));
   }
-if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon) {
-  IFE(OgAutFlush(ctrl_ltrac->ha_phon));
+
+  if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
+  {
+    IFE(OgAutFlush(ctrl_ltrac->ha_phon));
   }
-DONE;
+  DONE;
 }
 
 
