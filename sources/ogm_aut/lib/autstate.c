@@ -74,22 +74,20 @@ if (i == ctrl_aut->StateNumber) {
                 ,ctrl_aut->name , ctrl_aut->StateNumber);
     }
   a = ctrl_aut->StateNumber; b = a + (a>>2) + 1;
-  IFn(og_state=(struct state *)malloc(b*sizeof(struct state))) {
+  IFn(og_state=(struct state *)realloc(ctrl_aut->State, b*sizeof(struct state))) {
     sprintf(erreur,"AllocState (%s): malloc error on State (%ld bytes)",ctrl_aut->name,b*sizeof(struct state));
     OgErr(ctrl_aut->herr,erreur); DPcErr;
     }
-  memcpy( og_state, ctrl_aut->State, a*sizeof(struct state));
-  DPcFree(ctrl_aut->State); ctrl_aut->State = og_state;
+  ctrl_aut->State = og_state;
   ctrl_aut->StateNumber = b;
 
   IFx(ctrl_aut->FreeState) {
     struct free_state *og_free_state;
-    IFn(og_free_state=(struct free_state *)malloc(b*sizeof(struct free_state))) {
+    IFn(og_free_state=(struct free_state *)realloc(ctrl_aut->FreeState, b*sizeof(struct free_state))) {
       sprintf(erreur,"AllocState (%s): malloc error on FreeState (%ld bytes)",ctrl_aut->name,b*sizeof(struct free_state));
       OgErr(ctrl_aut->herr,erreur); DPcErr;
       }
-    memcpy( og_free_state, ctrl_aut->FreeState, a*sizeof(struct free_state));
-    DPcFree(ctrl_aut->FreeState); ctrl_aut->FreeState = og_free_state;
+    ctrl_aut->FreeState = og_free_state;
     }
 
   if (ctrl_aut->loginfo->trace & DOgAutTraceMemory) {

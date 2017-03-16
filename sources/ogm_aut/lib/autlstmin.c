@@ -1,8 +1,8 @@
 /*
- *	Handling of 
- *	Copyright (c) 2000-2006 Pertimm by Patrick Constant
- *	Dev : May 2000, February 2006
- *	Version 1.1
+ *  Handling of
+ *  Copyright (c) 2000-2006 Pertimm by Patrick Constant
+ *  Dev : May 2000, February 2006
+ *  Version 1.1
 */
 #include "ogm_aut.h"
 
@@ -24,25 +24,28 @@ if (ctrl_aut->LstminUsed < ctrl_aut->LstminNumber) {
     memset(lstmin,0,sizeof(struct lstmin));
     ctrl_aut->LstminUsed++;
     }
-  i = ctrl_aut->LstminUsed++; 
+  i = ctrl_aut->LstminUsed++;
   }
 
 if (i == ctrl_aut->LstminNumber) {
-  unsigned a, b; struct lstmin *og_lstmin;
-
   if (ctrl_aut->loginfo->trace & DOgAutTraceMinimization) {
     OgMessageLog( DOgMlogInLog, ctrl_aut->loginfo->where, 0
                 , "AllocLstmin (%s): max Lstmin number (%d) reached"
                 ,ctrl_aut->name , ctrl_aut->LstminNumber);
     }
-  a = ctrl_aut->LstminNumber; b = a + (a>>2) + 1;
-  IFn(og_lstmin=(struct lstmin *)malloc(b*sizeof(struct lstmin))) {
-    sprintf(erreur,"AllocLstmin (%s): malloc error on Lstmin",ctrl_aut->name);
-    OgErr(ctrl_aut->herr,erreur); DPcErr;
-    }
+  unsigned a = ctrl_aut->LstminNumber;
+  size_t b = (a * 1.1) + 1;
 
-  memcpy( og_lstmin, ctrl_aut->Lstmin, a*sizeof(struct lstmin));
-  DPcFree(ctrl_aut->Lstmin); ctrl_aut->Lstmin = og_lstmin;
+  // use a temporary pointer to avoid realloc error
+  struct lstmin *og_lstmin = (struct lstmin *) realloc(ctrl_aut->Lstmin, b*sizeof(struct lstmin));
+  IFn(og_lstmin)
+  {
+    snprintf(erreur, DOgErrorSize, "AllocLstmin on '%s': realloc error with"
+        " new_size=%zu bytes (LstminNumber=%zu)", ctrl_aut->name, b*sizeof(struct lstmin), b);
+    OgErr(ctrl_aut->herr, erreur);
+    DPcErr;
+  }
+  ctrl_aut->Lstmin = og_lstmin;
   ctrl_aut->LstminNumber = b;
 
   if (ctrl_aut->loginfo->trace & DOgAutTraceMinimization) {

@@ -1,8 +1,8 @@
 /*
- *	Construction de l'automate rapide.
- *	Copyright (c) 1996-2006 Pertimm by Patrick Constant
- *	Dev : D\'ecembre 1996, Janvier 1997, March 2006
- *	Version 1.2
+ *  Construction de l'automate rapide.
+ *  Copyright (c) 1996-2006 Pertimm by Patrick Constant
+ *  Dev : D\'ecembre 1996, Janvier 1997, March 2006
+ *  Version 1.2
 */
 
 #include "ogm_aut.h"
@@ -19,13 +19,10 @@ oindex *posi;
 
 IFn(ctrl_aut->StateUsed) DONE;
 
-if (ctrl_aut->FstateAllocated) {
-  DPcFree(ctrl_aut->Fstate);
-  }
 ctrl_aut->FstateAllocated=1;
 ctrl_aut->FstateUsed=ctrl_aut->StateUsed;
-IFn(af=(struct fstate *)malloc(ctrl_aut->FstateUsed*sizeof(struct fstate))) {
-  sprintf(erreur,"OgAuf (%s): malloc error on af",ctrl_aut->name);
+IFn(af=(struct fstate *)realloc(ctrl_aut->Fstate, ctrl_aut->FstateUsed*sizeof(struct fstate))) {
+  sprintf(erreur,"OgAuf (%s): realloc error on af",ctrl_aut->name);
   OgErr(ctrl_aut->herr,erreur); DPcErr;
   }
 /** We need to set only the first cell **/
