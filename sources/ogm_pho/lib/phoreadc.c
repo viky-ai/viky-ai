@@ -33,7 +33,7 @@ static int PhoReadConf(struct lang_context *lang_context, char *conf_file, int f
 static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, char *filename);
 static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsigned char *filename, int *pfilelang);
 static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, unsigned char *filename);
-
+static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, char *filename, int lang);
 
 struct og_tree_xml_tag PhoReadConfTag[] =  {
                                                   /* phonet_configuration (20)*/
@@ -56,20 +56,12 @@ struct og_tree_xml_tag PhoReadConfTag[] =  {
 
 og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho, unsigned char *conf_directory)
 {
-  unsigned char old_configuration_file[DPcPathSize];
+  snprintf(ctrl_pho->conf_directory, DPcPathSize, "%s", conf_directory);
+  IFE(OgScanDir(conf_directory, PhoReadConfFile, (void * ) ctrl_pho, ctrl_pho->loginfo->where));
 
-  sprintf(old_configuration_file, "%s.xml", conf_directory);
-  if (OgFileExists(old_configuration_file))
-  {
-    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog,
-        "PhoReadConfFiles: old configuration file '%s' detected and deprecated : it will not be processed, use new configuration",
-        old_configuration_file);
-  }
-  else
-  {
-    sprintf(ctrl_pho->conf_directory, "%s", conf_directory);
-    IFE(OgScanDir(conf_directory, PhoReadConfFile, (void * ) ctrl_pho, ctrl_pho->loginfo->where));
-  }
+  unsigned char configuration_file[DPcPathSize];
+  snprintf(configuration_file, DPcPathSize, "%s/%s", conf_directory, ctrl_pho->conf_filename);
+  IFE(PhoReadConfFileLang(ctrl_pho, configuration_file, DOgLangNil));
 
   DONE;
 }
@@ -90,20 +82,30 @@ static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, cha
   og_bool valid = FALSE;
   IFE(valid = PhoConfFileValidNameAndGetLang(ctrl_pho, filename, &filelang));
   if (!valid) DONE;
+
+  IFE(PhoReadConfFileLang(ctrl_pho, filename, filelang));
+
+  DONE;
+}
+
+
+static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, char *filename, int filelang)
+{
+  if (!OgFileExists(filename)) DONE;
   IFE(PhoConfFileValidXsd(ctrl_pho, filename));
 
   size_t Ilang_context_heap = 0;
-  struct lang_context *lang_context = (struct lang_context *) OgHeapNewCell(ctrl_pho->lang_context_heap, &Ilang_context_heap);
+  struct lang_context *lang_context = (struct lang_context *) OgHeapNewCell(ctrl_pho->lang_context_heap,
+      &Ilang_context_heap);
 
   g_hash_table_insert(ctrl_pho->lang_context_map, GINT_TO_POINTER(filelang), lang_context);
 
-  IFE(PhoInitLangContext(ctrl_pho,lang_context));
+  IFE(PhoInitLangContext(ctrl_pho, lang_context));
 
   IFE(PhoReadConf(lang_context, filename, filelang));
 
   DONE;
 }
-
 
 static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsigned char *filename, int *pfilelang)
 {
