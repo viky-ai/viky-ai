@@ -142,7 +142,7 @@ struct og_tree_xml_tag {
 
 
 /** phoreadc.c **/
-og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho, unsigned char *conf_directory);
+og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho);
 
 /** phoaut.c **/
 int PhoRulesAutExceptionAdd(pr_(struct og_ctrl_pho *) pr_(char *) pr(char *));

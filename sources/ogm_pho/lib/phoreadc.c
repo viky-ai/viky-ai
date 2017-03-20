@@ -54,13 +54,13 @@ struct og_tree_xml_tag PhoReadConfTag[] =  {
   };
 
 
-og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho, unsigned char *conf_directory)
+og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho)
 {
-  snprintf(ctrl_pho->conf_directory, DPcPathSize, "%s", conf_directory);
-  IFE(OgScanDir(conf_directory, PhoReadConfFile, (void * ) ctrl_pho, ctrl_pho->loginfo->where));
+
+  IFE(OgScanDir(ctrl_pho->conf_directory, PhoReadConfFile, (void * ) ctrl_pho, ctrl_pho->loginfo->where));
 
   unsigned char configuration_file[DPcPathSize];
-  snprintf(configuration_file, DPcPathSize, "%s/%s", conf_directory, ctrl_pho->conf_filename);
+  snprintf(configuration_file, DPcPathSize, "%s/%s", ctrl_pho->conf_directory, ctrl_pho->conf_filename);
   IFE(PhoReadConfFileLang(ctrl_pho, configuration_file, DOgLangNil));
 
   DONE;

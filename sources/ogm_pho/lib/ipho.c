@@ -38,8 +38,6 @@ PUBLIC(void *) OgPhoInit(struct og_pho_param *param)
   IFn(ctrl_pho->hmsg=OgMsgInit(msg_param)) return(0);
   IF(OgMsgTuneInherit(ctrl_pho->hmsg,param->hmsg)) return(0);
 
-  IF(PhoParseOgmSsiConf(ctrl_pho)) return NULL;
-
   ctrl_pho->lang_context_map = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GCacheDestroyFunc) PhoLangContextDestroy);
   IFN(ctrl_pho->lang_context_map)
   {
@@ -75,8 +73,12 @@ PUBLIC(void *) OgPhoInit(struct og_pho_param *param)
     return((void *)ctrl_pho);
   }
 
-  sprintf(ctrl_pho->conf_filename, "%s", param->conf_filename);
-  IF(PhoReadConfFiles(ctrl_pho, param->conf_directory)) return(0);
+  snprintf(ctrl_pho->conf_directory, DPcPathSize, "%s", param->conf_directory);
+  snprintf(ctrl_pho->conf_filename, DPcPathSize, "%s", param->conf_filename);
+
+  IF(PhoParseOgmSsiConf(ctrl_pho)) return NULL;
+
+  IF(PhoReadConfFiles(ctrl_pho)) return(0);
 
   return((void *)ctrl_pho);
 }

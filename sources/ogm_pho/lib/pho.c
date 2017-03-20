@@ -28,6 +28,11 @@ PUBLIC(int) OgPhonet(void *handle, struct og_pho_input *input, struct og_pho_out
   }
 
   int language = OgIso639_3166ToLang(input->lang);
+  if (language == DOgLangNil)
+  {
+    language = ctrl_pho->phonetic_default_language;
+  }
+
   struct lang_context *lang_context = g_hash_table_lookup(ctrl_pho->lang_context_map, GINT_TO_POINTER(language));
   if (lang_context == 0)
   {
