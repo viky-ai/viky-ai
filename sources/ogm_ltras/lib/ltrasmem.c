@@ -34,7 +34,11 @@ if (pmem) *pmem=0;
 IFn(hltras) DONE;
 
 if (must_log) {
-  for (i=0; i<module_level; i++) header[i]=' '; header[i]=0;
+    for (i = 0; i < module_level; i++)
+    {
+      header[i] = ' ';
+    }
+    header[i] = 0;
   }
 memset(m,0,sizeof(struct og_ltras_memory));
 

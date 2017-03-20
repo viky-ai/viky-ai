@@ -34,18 +34,9 @@ int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
     if (OgUniIsdigit(c)) DONE;
   }
 
+  input->lang = dic_input->language_code;
   input->iB = iin;
   input->B = (char *) in;
-
-  if (dic_input->language_code == DOgLangNil)
-  {
-    //TODO gérer de façon plus propre avec uen variable commune pour tout le monde issue du ogm_ssi.txt
-    input->lang = DOgLangFR;
-  }
-  else
-  {
-    input->lang = dic_input->language_code;
-  }
 
   IFE(OgPhonet(ctrl_ltrac->hpho, input, output));
   if (output->iB < min_post_phonetisation_char_number * 2) DONE;

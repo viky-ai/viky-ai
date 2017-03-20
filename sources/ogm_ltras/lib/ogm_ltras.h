@@ -106,8 +106,6 @@ struct og_ctrl_ltras
 
   int max_word_frequency;
 
-  int phonetic_default_language;
-
   char caller_label[DPcPathSize];
   char output_file[DPcPathSize];
   int first_added_result;

@@ -227,10 +227,6 @@ static int LtrasModulePhon1(struct og_ltra_module_input *module_input
     {
       language = new_word->language;
     }
-    else
-    {
-      language = OgLtrasGetPhoneticDefaultLanguage(ctrl_phon->hltras);
-    }
 
     input->lang = language;
 

@@ -147,7 +147,6 @@ struct og_ltras_param
   char caller_label[DPcPathSize];
   char output_file[DPcPathSize];
   void *hltras_to_inherit;
-  int phonetic_default_language;
 };
 
 /** Input of an ltras module (for instance input of module del)*/
@@ -327,14 +326,6 @@ DEFPUBLIC(og_bool) OgLtrasScoreFactorIsLogPosActivated(void *handle);
  * @return maximum frequency.
  */
 DEFPUBLIC(int) OgLtrasMaxWordFrequency(void *hltras);
-
-/**
- * Get the phonetic default language used for module phon when no language is specified
- *
- * @param hltras handle for ltras
- * @return phonetic default language.
- */
-DEFPUBLIC(int) OgLtrasGetPhoneticDefaultLanguage(void *handle);
 
 /**
  * Get current working directory

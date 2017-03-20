@@ -8,6 +8,7 @@
 
 #define DOgRulesNumber            0xf000  /** 60k **/
 
+static og_status PhoParseOgmSsiConf(struct og_ctrl_pho *ctrl_pho);
 static og_status PhoCopyLangContext(struct lang_context *lang_context_to_copy, struct lang_context *new_lang_context);
 
 PUBLIC(void *) OgPhoInit(struct og_pho_param *param)
@@ -36,6 +37,8 @@ PUBLIC(void *) OgPhoInit(struct og_pho_param *param)
   msg_param->module_name="ogm_pho";
   IFn(ctrl_pho->hmsg=OgMsgInit(msg_param)) return(0);
   IF(OgMsgTuneInherit(ctrl_pho->hmsg,param->hmsg)) return(0);
+
+  IF(PhoParseOgmSsiConf(ctrl_pho)) return NULL;
 
   ctrl_pho->lang_context_map = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, (GCacheDestroyFunc) PhoLangContextDestroy);
   IFN(ctrl_pho->lang_context_map)
@@ -200,6 +203,34 @@ og_status PhoInitLangContext(struct og_ctrl_pho *ctrl_pho, struct lang_context *
 
 }
 
+
+static og_status PhoParseOgmSsiConf(struct og_ctrl_pho *ctrl_pho)
+{
+  og_char_buffer conf_file[DPcPathSize];
+
+  // conf directory is conf/phonetic/
+  snprintf(conf_file, DPcPathSize, "%s/../%s", ctrl_pho->conf_directory, DOgOgmSsiTxt);
+
+  og_char_buffer value[DPcPathSize];
+  og_bool found = OgDipperConfGetVar(conf_file, "phonetic_default_language", value, DPcPathSize);
+  IFE(found);
+  if (found)
+  {
+    OgTrimString(value, value);
+    ctrl_pho->phonetic_default_language = OgCodeToIso639(value);
+    if (ctrl_pho->loginfo->trace & DOgPhoTraceMinimal)
+    {
+      OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "phonetic_default_language: %s", value);
+    }
+  }
+  else
+  {
+    ctrl_pho->phonetic_default_language = DOgPhoneticDefaultLanguage;
+  }
+
+
+  DONE;
+}
 
 void PhoLangContextDestroy(struct lang_context *lang_context)
 {

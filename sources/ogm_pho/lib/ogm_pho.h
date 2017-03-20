@@ -26,6 +26,8 @@
 
 #define DOgMaxAppendingCharacters   0x0200 /* 512 */
 
+#define DOgPhoneticDefaultLanguage      34 // fr
+
 struct rule {
   char left[DOgMaxRuleStringSize];int ileft;
   char key[DOgMaxRuleStringSize];int ikey;
@@ -106,6 +108,8 @@ struct og_ctrl_pho
 
   char conf_directory[DPcPathSize];
   char conf_filename[DPcPathSize];
+
+  int phonetic_default_language;
 
   GHashTable *lang_context_map;
   og_heap lang_context_heap;
