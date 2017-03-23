@@ -173,39 +173,58 @@ int LtracDicWrite(struct og_ctrl_ltrac *ctrl_ltrac, struct og_ltrac_input *input
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeBase)
   {
+
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: base ...");
+
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeBase)
     {
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: base minimize ...");
       IFE(OgAum(ctrl_ltrac->ha_base));
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: base minimize DONE");
     }
     IFE(OgAuf(ctrl_ltrac->ha_base, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_base, ctrl_ltrac->name_base));
     IFE(OgAutFlush(ctrl_ltrac->ha_base));
     ctrl_ltrac->ha_base = NULL;
+
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: base DONE");
   }
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypePhon)
   {
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: phon ...");
+
     if (input->dictionaries_minimization & DOgLtracDictionaryTypePhon)
     {
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: phon minimize ...");
       IFE(OgAum(ctrl_ltrac->ha_phon));
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: phon minimize DONE");
     }
     IFE(OgAuf(ctrl_ltrac->ha_phon, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_phon, ctrl_ltrac->name_phon));
     IFE(OgAutFlush(ctrl_ltrac->ha_phon));
     ctrl_ltrac->ha_phon = NULL;
     IFE(OgPhoFlush(ctrl_ltrac->hpho));
+
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: phon DONE");
   }
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
   {
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: swap ...");
+
     if (input->dictionaries_minimization & DOgLtracDictionaryTypeSwap)
     {
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: swap minimize ...");
       IFE(OgAum(ctrl_ltrac->ha_swap));
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: swap minimize DONE");
     }
     IFE(OgAuf(ctrl_ltrac->ha_swap, 0));
     IFE(OgAufWrite(ctrl_ltrac->ha_swap, ctrl_ltrac->name_swap));
     IFE(OgAutFlush(ctrl_ltrac->ha_swap));
     ctrl_ltrac->ha_swap = NULL;
+
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracDicWrite: swap DONE");
   }
 
   DONE;
