@@ -17,7 +17,7 @@
     <platform name="linux">
       <option name="NAME">ogltrac</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -logattribute -logsidx</option>
+      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -logattribute -logsidx -loglip</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

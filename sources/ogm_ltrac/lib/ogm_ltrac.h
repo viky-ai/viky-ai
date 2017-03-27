@@ -54,6 +54,9 @@ struct og_ctrl_ltrac {
   void *ha_base,*ha_swap,*ha_phon,*ha_filter,*ha_seen;
   void *hpho;
 
+  void *hlip;
+  struct og_lip_conf lip_conf;
+
   /** Used to scan the attributes **/
   og_bool has_ltraf_requests;
 

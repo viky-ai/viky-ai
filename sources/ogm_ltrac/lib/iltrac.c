@@ -44,6 +44,26 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
   sprintf(aut_param->name, "ltrac");
   IFn(ctrl_ltrac->ha_ltrac=OgAutInit(aut_param)) return(0);
 
+  struct og_lip_param lip_param[1];
+  memset(lip_param,0,sizeof(struct og_lip_param));
+  lip_param->herr=ctrl_ltrac->herr;
+  lip_param->hmsg=ctrl_ltrac->hmsg;
+  lip_param->hmutex=ctrl_ltrac->hmutex;
+  lip_param->loginfo.trace = DOgLipTraceMinimal+DOgLipTraceMemory;
+  lip_param->loginfo.where = ctrl_ltrac->loginfo->where;
+  lip_param->conf = &ctrl_ltrac->lip_conf;
+
+  if (ctrl_ltrac->WorkingDirectory[0])
+  {
+    sprintf(lip_param->filename, "%s/conf/%s", ctrl_ltrac->WorkingDirectory, DOgLipConfPunctuationFileName);
+  }
+  else
+  {
+    sprintf(lip_param->filename, "conf/%s", DOgLipConfPunctuationFileName);
+  }
+  IFn(ctrl_ltrac->hlip=OgLipInit(lip_param)) return(0);
+
+
   if(ctrl_ltrac->WorkingDirectory[0]) sprintf(ctrl_ltrac->configuration_file,"%s/conf/ogm_ssi.txt",ctrl_ltrac->WorkingDirectory);
   else strcpy(ctrl_ltrac->configuration_file,"conf/ogm_ssi.txt");
 
@@ -126,6 +146,8 @@ PUBLIC(int) OgLtracFlush(handle)
 {
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
   IFn(handle) DONE;
+
+  IFE(OgLipFlush(ctrl_ltrac->hlip));
 
   DPcFree(ctrl_ltrac);
   DONE;
