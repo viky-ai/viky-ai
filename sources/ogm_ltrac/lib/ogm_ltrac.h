@@ -33,6 +33,7 @@ struct ltrac_dic_input
 struct ltraf
 {
   int frequency;
+  og_bool original_frequency;
 };
 
 struct og_ctrl_ltrac {

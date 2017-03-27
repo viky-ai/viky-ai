@@ -29,19 +29,18 @@ struct og_ltrac_found_context
   og_bool found;
 };
 
-
 static og_bool LtracGetLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int ientry, unsigned char *entry, int *pIltraf);
 static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf **pltraf);
 static og_status LtracNormalise(struct og_ctrl_ltrac *ctrl_ltrac, int iword, char *word, int *iout, char *out);
 static og_bool LtracIsExpression(struct og_ctrl_ltrac *ctrl_ltrac, int iword, char *word);
 static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input);
-static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool replace);
-static og_status LtracUpdateFrequency(void *context, struct og_ltrac_scan *scan);
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
+static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool is_ltraf);
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word, int language_code,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context);
 static og_status LtracIsFound(void *context, struct og_ltrac_scan *scan);
 
-og_status LtracReadLtrafs(struct og_ctrl_ltrac *ctrl_ltrac, og_string filename, int min_frequency, int (*func)(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx))
+og_status LtracReadLtrafs(struct og_ctrl_ltrac *ctrl_ltrac, og_string filename, int min_frequency,
+    int (*func)(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx))
 {
   char ltrac_dir[DPcPathSize];
   sprintf(ltrac_dir, "%s/%s", ctrl_ltrac->data_directory, "ltra");
@@ -51,8 +50,7 @@ og_status LtracReadLtrafs(struct og_ctrl_ltrac *ctrl_ltrac, og_string filename, 
   if (!OgFileExists(ltraf_file))
   {
     char erreur[DOgErrorSize];
-    sprintf(erreur, "LtracReadLtrafs: file '%s' does not exist.",
-        ltraf_file);
+    sprintf(erreur, "LtracReadLtrafs: file '%s' does not exist.", ltraf_file);
     OgErr(ctrl_ltrac->herr, erreur);
     DPcErr;
   }
@@ -129,7 +127,6 @@ og_status LtracReadLtrafs(struct og_ctrl_ltrac *ctrl_ltrac, og_string filename, 
   DONE;
 }
 
-
 og_status LtracAddLtrafEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx)
 {
   struct ltrac_dic_input dic_input[1];
@@ -139,7 +136,6 @@ og_status LtracAddLtrafEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf
   dic_input->language_code = ctx->language_code;
   dic_input->is_expression = FALSE;
 
-  og_bool replace = TRUE;
   if (ctrl_ltrac->has_ltraf_requests)
   {
     dic_input->frequency = ctx->min_frequency;
@@ -147,47 +143,33 @@ og_status LtracAddLtrafEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf
   else
   {
     dic_input->frequency = ctx->frequency;
-    replace = FALSE;
   }
 
-  IFE(LtracAddEntry(ctrl_ltrac, dic_input, replace));
+  IFE(LtracAddEntry(ctrl_ltrac, dic_input, TRUE));
 
   DONE;
 }
-
 
 og_status LtracAddLtrafRequestEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx)
 {
   unsigned char word_norm[DOgLtracMaxWordsSize];
   int iword_norm = 0;
-  IFE(LtracNormalise(ctrl_ltrac, ctx->ientry, (char *)ctx->entry, &iword_norm, word_norm));
+  IFE(LtracNormalise(ctrl_ltrac, ctx->ientry, (char * )ctx->entry, &iword_norm, word_norm));
 
-  if (!LtracIsExpression(ctrl_ltrac, iword_norm, word_norm))
-  {
-    // Test si mot unique
-    struct og_ltrac_update_context update_ctx[1];
-    memset(update_ctx, 0, sizeof(struct og_ltrac_update_context));
-    update_ctx->ctrl_ltrac = ctrl_ltrac;
-    update_ctx->language_code = ctx->language_code;
-    update_ctx->frequency = ctx->frequency;
-    IFE(LtracScanWord(ctrl_ltrac, iword_norm, word_norm, LtracUpdateFrequency, update_ctx));
-  }
-  else
-  {
-    struct ltrac_dic_input dic_input[1];
-    memset(dic_input, 0, sizeof(struct ltrac_dic_input));
-    dic_input->value_length = iword_norm;
-    dic_input->value = word_norm;
-    dic_input->language_code = ctx->language_code;
-    dic_input->frequency = ctx->frequency;
-    dic_input->is_expression = TRUE;
-    IFE(LtracAddExpression(ctrl_ltrac, dic_input));
-  }
+  struct ltrac_dic_input dic_input[1];
+  memset(dic_input, 0, sizeof(struct ltrac_dic_input));
+  dic_input->value_length = iword_norm;
+  dic_input->value = word_norm;
+  dic_input->language_code = ctx->language_code;
+  dic_input->frequency = ctx->frequency;
+  dic_input->is_expression = LtracIsExpression(ctrl_ltrac, iword_norm, word_norm);
+  IFE(dic_input->is_expression);
+  IFE(LtracAddExpression(ctrl_ltrac, dic_input));
 
   DONE;
 }
 
-static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool replace)
+static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool is_ltraf)
 {
 
   unsigned char entry[DOgLtracMaxWordsSize];
@@ -203,40 +185,37 @@ static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_di
   int Iltraf;
   og_bool found = LtracGetLtraf(ctrl_ltrac, ientry, entry, &Iltraf);
   IFE(found);
+
+  struct ltraf *ltraf = NULL;
   if (found)
   {
-    struct ltraf *ltraf = ctrl_ltrac->Ltraf + Iltraf;
+    ltraf = ctrl_ltrac->Ltraf + Iltraf;
+  }
+  else
+  {
+    Iltraf = LtracAllocLtraf(ctrl_ltrac, &ltraf);
+    IFE(Iltraf);
 
-    if (replace)
+    OggNout(Iltraf, &p);
+    OggNout(dic_input->is_expression, &p);
+
+    ientry = p - entry;
+    IFE(OgAutAdd(ctrl_ltrac->ha_ltrac, ientry, entry));
+  }
+
+  if (ltraf->original_frequency)
+  {
+    ltraf->frequency = dic_input->frequency;
+    if (!is_ltraf)
     {
-      ltraf->frequency = dic_input->frequency;
-    }
-    else
-    {
-      ltraf->frequency += dic_input->frequency;
+      ltraf->original_frequency = FALSE;
     }
   }
   else
   {
-    struct ltraf *ltraf;
-    Iltraf = LtracAllocLtraf(ctrl_ltrac, &ltraf);
-    IFE(Iltraf);
-
-    if (replace)
-    {
-      ltraf->frequency = dic_input->frequency;
-    }
-    else
-    {
-      ltraf->frequency += dic_input->frequency;
-    }
+    ltraf->frequency += dic_input->frequency;
   }
 
-  OggNout(Iltraf, &p);
-  OggNout(dic_input->is_expression, &p);
-
-  ientry = p - entry;
-  IFE(OgAutAdd(ctrl_ltrac->ha_ltrac, ientry, entry));
   DONE;
 }
 
@@ -312,34 +291,35 @@ static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf 
   ltraf = ctrl_ltrac->Ltraf + i;
   memset(ltraf, 0, sizeof(struct ltraf));
 
+  ltraf->original_frequency = TRUE;
+
   if (pltraf) *pltraf = ltraf;
   return (i);
 }
 
-
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word, int language_code,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context)
 {
   oindex states[DOgLtracMaxWordsSize];
   int retour, nstate0, nstate1, iout;
   unsigned char out[DOgLtracMaxWordsSize];
-  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, iword, (char *) word, &iout, out, &nstate0, &nstate1, states)))
+
+  unsigned char entry[DOgLtracMaxWordsSize];
+  memcpy(entry, word, iword);
+  unsigned char *p = entry + iword;
+  *p++ = 0;
+  *p++ = DOgLtracExtStringSeparator;
+
+  OggNout(language_code, &p);
+
+  int ientry = p - entry;
+
+  if ((retour = OgAutScanf(ctrl_ltrac->ha_ltrac, ientry, entry, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
       IFE(retour);
-      int sep = (-1);
-      for (int i = 0; i < iout; i += 2)
-      {
-        int c = (out[i] << 8) + out[i + 1];
-        if (c == DOgLtracExtStringSeparator)
-        {
-          sep = i;
-          break;
-        }
-      }
-      if (sep < 0) continue;
-      unsigned char *p = out + sep + 2;
+      p = out;
 
       struct og_ltrac_scan scan[1];
       memset(scan, 0, sizeof(struct og_ltrac_scan));
@@ -347,7 +327,7 @@ static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_s
       scan->iword = iword;
       scan->word = word;
 
-      IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->language_code));
+      scan->language_code = language_code;
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->Iltraf));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->is_expression));
 
@@ -396,29 +376,6 @@ og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context,
       IFE(func(context, scan));
     }
     while ((retour = OgAutScann(ctrl_ltrac->ha_ltrac, &iout, out, nstate0, &nstate1, states)));
-  }
-
-  DONE;
-}
-
-static og_status LtracUpdateFrequency(void *context, struct og_ltrac_scan *scan)
-{
-  struct og_ltrac_update_context *ctx = (struct og_ltrac_update_context *) context;
-  struct og_ctrl_ltrac *ctrl_ltrac = ctx->ctrl_ltrac;
-
-  if ((ctx->language_code == scan->language_code) || (scan->language_code == DOgLangNil))
-  {
-    struct ltraf *ltraf = ctrl_ltrac->Ltraf + scan->Iltraf;
-    ltraf->frequency = ctx->frequency;
-
-    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
-    {
-      char buffer[DPcPathSize];
-      int ibuffer = 0;
-      IFE(OgUniToCp(scan->iword,scan->word,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracUpdateFrequency: frequency %d updated for word '%s'",
-          ltraf->frequency, buffer);
-    }
   }
 
   DONE;
@@ -499,7 +456,7 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
       found_ctx->language_code = dic_input->language_code;
       found_ctx->found = FALSE;
 
-      IFE(LtracScanWord(ctrl_ltrac, iword, word, LtracIsFound, found_ctx));
+      IFE(LtracScanWord(ctrl_ltrac, iword, word, found_ctx->language_code, LtracIsFound, found_ctx));
 
       if (!found_ctx->found)
       {
@@ -513,7 +470,7 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
   if (found)
   {
     og_string word = entry_word + start;
-    int iword = length;
+    int iword = length + 2;
 
     struct og_ltrac_found_context found_ctx[1];
     memset(found_ctx, 0, sizeof(struct og_ltrac_found_context));
@@ -521,10 +478,10 @@ static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltr
     found_ctx->language_code = dic_input->language_code;
     found_ctx->found = FALSE;
 
-    IFE(LtracScanWord(ctrl_ltrac, iword, word, LtracIsFound, found_ctx));
+    IFE(LtracScanWord(ctrl_ltrac, iword, word, found_ctx->language_code, LtracIsFound, found_ctx));
     if (found_ctx->found)
     {
-      IFE(LtracAddEntry(ctrl_ltrac, dic_input, TRUE));
+      IFE(LtracAddEntry(ctrl_ltrac, dic_input, FALSE));
     }
   }
   else
