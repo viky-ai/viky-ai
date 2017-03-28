@@ -116,6 +116,7 @@ static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsi
 
   int start = 0;
   unsigned char lang[DPcPathSize];
+  lang[0] = 0;
   int i = 0;
   // en/phonet_conf.xml
   for(i=0; i < reduced_filename_length; i++)
@@ -133,19 +134,11 @@ static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsi
   memcpy(name,reduced_filename+start,i-start);
   name[i-start]=0;
 
+  *pfilelang = OgCodeToIso639(lang);
 
-  int filelang = OgCodeToIso639(lang);
-  if(filelang == 0)
+  if (Ogstricmp(ctrl_pho->conf_filename, name) != 0)
   {
-    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoConfFileValidNameAndGetLang: filename='%s' is not valid, language code '%s' is not correct", filename, lang);
-    return FALSE;
-  }
-  *pfilelang = filelang;
-
-
-  if (Ogstricmp(ctrl_pho->conf_filename,name))
-  {
-    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoConfFileValidNameAndGetLang: filename='%s' is not valid : wrong name '%s' should be phonet_conf.xml", filename, name);
+    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoConfFileValidNameAndGetLang: filename='%s' is not valid : wrong name '%s' should be '%s'", filename, name, ctrl_pho->conf_filename);
     return FALSE;
   }
 
