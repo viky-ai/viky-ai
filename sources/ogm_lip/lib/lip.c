@@ -13,7 +13,6 @@ static int OgLip1(struct og_ctrl_lip *handle, int Ipawo);
 PUBLIC(int) OgLip(void *handle, struct og_lip_input *input)
 {
   struct og_ctrl_lip *ctrl_lip = (struct og_ctrl_lip *) handle;
-  struct og_lip_conf *conf = input->conf;
   int i, c, state = 1, end = 0, start = 0, start_after_dot = 0;
   int Iexpression = 0, isIndivisibleExpression = FALSE, is_next_expression = FALSE;
   struct og_lip_conf_separator *currentSeparator = NULL;
@@ -21,12 +20,11 @@ PUBLIC(int) OgLip(void *handle, struct og_lip_input *input)
   int is = 0, pw_length = 0;
   unsigned char *s;
 
-
-  if (conf == NULL )
+  if (input->conf == NULL )
   {
-    conf = &ctrl_lip->default_conf;
+    input->conf = ctrl_lip->conf;
   }
-  ctrl_lip->conf = conf;
+  struct og_lip_conf *conf = input->conf;
   ctrl_lip->input = input;
 
   ctrl_lip->PawoUsed = 0;
@@ -254,7 +252,7 @@ PUBLIC(og_bool) OgLipIsEmptyString(void *handle, unsigned char *string, int stri
   for (int i = 0; i < string_length; i += 2)
   {
     int c = (string[i] << 8) + string[i + 1];
-    if(!OgLipIsPunctuation(ctrl_lip->conf, c) && !OgLipIsSeparator(ctrl_lip->conf, c) && (c!=32))
+    if(!OgLipIsPunctuation(ctrl_lip->input->conf, c) && !OgLipIsSeparator(ctrl_lip->input->conf, c) && (c!=32))
     {
       is_empty = FALSE;
       break;

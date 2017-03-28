@@ -31,7 +31,11 @@ IFn(hlip) DONE;
 
 if (pmem) *pmem=0;
 if (must_log) {
-  for (i=0; i<module_level; i++) header[i]=' '; header[i]=0;
+  for (i=0; i<module_level; i++)
+  {
+    header[i]=' ';
+  }
+  header[i]=0;
   }
 memset(m,0,sizeof(struct og_lip_memory));
 
