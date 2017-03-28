@@ -249,13 +249,11 @@ static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_di
     IFE(OgAutAdd(ctrl_ltrac->ha_ltrac, ientry, entry));
   }
 
-  if (ltraf->original_frequency)
+  if (!is_ltraf && ltraf->original_frequency)
   {
+    // ltraf_request.txt override freq
     ltraf->frequency = dic_input->frequency;
-    if (!is_ltraf)
-    {
-      ltraf->original_frequency = FALSE;
-    }
+    ltraf->original_frequency = FALSE;
   }
   else
   {
