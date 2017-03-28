@@ -252,7 +252,7 @@ PUBLIC(og_bool) OgLipIsEmptyString(void *handle, unsigned char *string, int stri
   for (int i = 0; i < string_length; i += 2)
   {
     int c = (string[i] << 8) + string[i + 1];
-    if(!OgLipIsPunctuation(ctrl_lip->input->conf, c) && !OgLipIsSeparator(ctrl_lip->input->conf, c) && (c!=32))
+    if(!OgLipIsPunctuation(ctrl_lip->conf, c) && !OgLipIsSeparator(ctrl_lip->conf, c) && (c!=32))
     {
       is_empty = FALSE;
       break;
