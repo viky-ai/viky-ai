@@ -29,11 +29,23 @@ struct og_ltrac_found_context
   og_bool found;
 };
 
+struct og_ltrac_lip_ctx
+{
+  struct og_ctrl_ltrac *ctrl_ltrac;
+  struct read_ltraf_context *ltraf_ctx;
+
+  og_bool is_expression;
+  og_bool missing_expression_part;
+
+  int inormalize_expression;
+  unsigned char normalize_expression[DPcPathSize];
+};
+
 static og_bool LtracGetLtraf(struct og_ctrl_ltrac *ctrl_ltrac, int ientry, unsigned char *entry, int *pIltraf);
 static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf **pltraf);
-static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input);
+static int LtracAddExpressionLipCallback(void *context, int Ilip_word);
 static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool is_ltraf);
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word, int language_code,
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context);
 static og_status LtracIsFound(void *context, struct og_ltrac_scan *scan);
 
@@ -150,16 +162,57 @@ og_status LtracAddLtrafEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf
 
 og_status LtracAddLtrafRequestEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct read_ltraf_context *ctx)
 {
-  struct ltrac_dic_input dic_input[1];
-  memset(dic_input, 0, sizeof(struct ltrac_dic_input));
-  dic_input->value_length = ctx->ientry;
-  dic_input->value = ctx->entry;
-  dic_input->language_code = ctx->language_code;
-  dic_input->frequency = ctx->frequency;
-  IFE(dic_input->is_expression);
-  IFE(LtracAddExpression(ctrl_ltrac, dic_input));
+  struct og_ltrac_lip_ctx lip_ctx[1];
+  memset(lip_ctx, 0, sizeof(struct og_ltrac_lip_ctx));
+  lip_ctx->ctrl_ltrac = ctrl_ltrac;
+  lip_ctx->ltraf_ctx = ctx;
+
+  struct og_lip_input lip_input[1];
+  memset(lip_input, 0, sizeof(struct og_lip_input));
+  lip_input->content_length = ctx->ientry;
+  lip_input->content = (unsigned char *) ctx->entry;
+  lip_input->word_func = LtracAddExpressionLipCallback;
+  lip_input->context = lip_ctx;
+
+  IFE(OgLip(ctrl_ltrac->hlip, lip_input));
+
+  if (!lip_ctx->missing_expression_part)
+  {
+    // use normalized value instead
+    struct ltrac_dic_input dic_input[1];
+    memset(dic_input, 0, sizeof(struct ltrac_dic_input));
+    dic_input->language_code = ctx->language_code;
+    dic_input->frequency = ctx->frequency;
+    dic_input->value = lip_ctx->normalize_expression;
+    dic_input->value_length = lip_ctx->inormalize_expression;
+    dic_input->is_expression = lip_ctx->is_expression;
+
+    IFE(LtracAddEntry(ctrl_ltrac, dic_input, FALSE));
+  }
+  else
+  {
+    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
+    {
+      int ibuffer = 0;
+      unsigned char buffer[DPcPathSize];
+
+      int inormalize_buffer = 0;
+      unsigned char normalize_buffer[DPcPathSize];
+      unsigned char lang[3];
+
+      OgIso639_3166ToCode(ctx->language_code, lang);
+
+      IFE(OgUniToCp(ctx->ientry, ctx->entry, DPcPathSize, &ibuffer, buffer, DOgCodePageUTF8, 0, 0));
+      IFE(
+          OgUniToCp(lip_ctx->inormalize_expression, lip_ctx->normalize_expression, DPcPathSize, &inormalize_buffer, normalize_buffer, DOgCodePageUTF8, 0, 0));
+
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog,
+          "LtracAddExpression: expression \"%s\" in %s normalize in \"%s\" discarded", buffer, lang, normalize_buffer);
+    }
+  }
 
   DONE;
+
 }
 
 static og_status LtracAddEntry(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, og_bool is_ltraf)
@@ -290,7 +343,7 @@ static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf 
   return (i);
 }
 
-static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word, int language_code,
+static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_string word,
     int (*func)(void *context, struct og_ltrac_scan *scan), void *context)
 {
   oindex states[DOgLtracMaxWordsSize];
@@ -302,8 +355,6 @@ static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_s
   unsigned char *p = entry + iword;
   *p++ = 0;
   *p++ = DOgLtracExtStringSeparator;
-
-  OggNout(language_code, &p);
 
   int ientry = p - entry;
 
@@ -320,7 +371,7 @@ static og_status LtracScanWord(struct og_ctrl_ltrac *ctrl_ltrac, int iword, og_s
       scan->iword = iword;
       scan->word = word;
 
-      scan->language_code = language_code;
+      IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->language_code));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->Iltraf));
       IFE(DOgPnin4(ctrl_ltrac->herr,&p,&scan->is_expression));
 
@@ -374,19 +425,6 @@ og_status LtracScan(struct og_ctrl_ltrac *ctrl_ltrac, int (*func)(void *context,
   DONE;
 }
 
-
-struct og_ltrac_lip_ctx
-{
-  struct og_ctrl_ltrac *ctrl_ltrac;
-  struct ltrac_dic_input *dic_input;
-
-  og_bool is_expression;
-  og_bool missing_expression_part;
-
-  int inormalize_expression;
-  unsigned char normalize_expression[DPcPathSize];
-};
-
 static int LtracAddExpressionLipCallback(void *context, int Ilip_word)
 {
   struct og_ltrac_lip_ctx *lip_ctx = (struct og_ltrac_lip_ctx *) context;
@@ -405,14 +443,19 @@ static int LtracAddExpressionLipCallback(void *context, int Ilip_word)
   struct og_ltrac_found_context found_ctx[1];
   memset(found_ctx, 0, sizeof(struct og_ltrac_found_context));
   found_ctx->ctrl_ltrac = ctrl_ltrac;
-  found_ctx->language_code = lip_ctx->dic_input->language_code;
+  found_ctx->language_code = lip_ctx->ltraf_ctx->language_code;
   found_ctx->found = FALSE;
 
-  IFE(LtracScanWord(ctrl_ltrac, iword, word, found_ctx->language_code, LtracIsFound, found_ctx));
+  IFE(LtracScanWord(ctrl_ltrac, iword, word, LtracIsFound, found_ctx));
   if (!found_ctx->found)
   {
     lip_ctx->missing_expression_part = TRUE;
-    return TRUE;
+
+    // continue to build expression with trace enable to log it later
+    if (!(ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd))
+    {
+      return TRUE;
+    }
   }
 
   // cat each lip word to build a normalize expresssion
@@ -429,45 +472,6 @@ static int LtracAddExpressionLipCallback(void *context, int Ilip_word)
 
   DONE;
 
-}
-
-static og_status LtracAddExpression(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
-{
-  struct og_ltrac_lip_ctx lip_ctx[1];
-  memset(lip_ctx, 0, sizeof(struct og_ltrac_lip_ctx));
-  lip_ctx->ctrl_ltrac = ctrl_ltrac;
-  lip_ctx->dic_input = dic_input;
-
-  struct og_lip_input lip_input[1];
-  memset(lip_input, 0, sizeof(struct og_lip_input));
-  lip_input->content_length = dic_input->value_length;
-  lip_input->content = (unsigned char *) dic_input->value;
-  lip_input->word_func = LtracAddExpressionLipCallback;
-  lip_input->context = lip_ctx;
-
-  IFE(OgLip(ctrl_ltrac->hlip, lip_input));
-
-  if (!lip_ctx->missing_expression_part)
-  {
-    // use normalized value instead
-    dic_input->value = lip_ctx->normalize_expression;
-    dic_input->value_length = lip_ctx->inormalize_expression;
-    dic_input->is_expression = lip_ctx->is_expression;
-
-    IFE(LtracAddEntry(ctrl_ltrac, dic_input, FALSE));
-  }
-  else
-  {
-    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceAdd)
-    {
-      char buffer[DPcPathSize];
-      int ibuffer = 0;
-      IFE(OgUniToCp(dic_input->value_length,dic_input->value,DPcPathSize,&ibuffer,buffer,DOgCodePageUTF8,0,0));
-      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAddExpression: expression %s discarded", buffer);
-    }
-  }
-
-  DONE;
 }
 
 static og_status LtracIsFound(void *context, struct og_ltrac_scan *scan)
