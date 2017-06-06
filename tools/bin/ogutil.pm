@@ -1070,7 +1070,13 @@ sub OgPlatformPath ($) {
     ARCH_X86_64() => "x86-64"  # We must use x86-64, not x86_64
   });
 
-  return(dir($path, $osTag, $archTag));
+  my $platfromDir = dir($path, $osTag, $archTag);
+  unless (-d $platfromDir)
+  {
+    $platfromDir = dir($path, $osTag);
+  }
+
+  return $platfromDir;
 }
 
 sub OgIsPathInGitRepo ($)

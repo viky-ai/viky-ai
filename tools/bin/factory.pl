@@ -1030,14 +1030,12 @@ sub parseShipTree ($$$$$$)
         if ( $platform eq "" || $platform eq "all" || $platform eq OgOsString($os) ) {
           print("LHP $lhpName $lhpSource $lhpArgs \n");
 
-          my $toolpath = OgPlatformPath(dir($OgToolPath, "bin"));
-          unless (defined($toolpath)) {
-            die("\e[0;31m platform-specific tool path not found \e[0m\n");
-          }
-          $lhpCmd = file($toolpath, "lhp");
+          my $toolpath = dir($OgToolPath, "bin");
+          $lhpCmd = file($toolpath, "lhp.sh");
           my $currentdir = `pwd`;
           chdir($path);
-          my $res = `$lhpCmd -e "$lhpArgs" -o $lhpName $lhpSource`;
+
+          my $res = `$lhpCmd "$lhpArgs" $lhpName $lhpSource`;
 
           #  printf("[%s][$?]\n",$res);
           if ( $? != 0 ) {
