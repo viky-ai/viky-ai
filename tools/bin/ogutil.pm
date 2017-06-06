@@ -1062,10 +1062,6 @@ sub OgPlatformPath ($) {
     # This will work on older branches that don't have OS-specific paths
     $osTag = undef;
     $osTag = "linux" if ($os == OS_LINUX   && -d dir($path, "linux"));
-    $osTag = "win"   if ($os == OS_WINDOWS && -d dir($path, "win"));
-    if (defined($osTag)) {
-      print "Warning: using non OS specific path (this is OK if you're using an older branch)\n";
-    }
   }
   return(undef) unless defined($osTag);
 
