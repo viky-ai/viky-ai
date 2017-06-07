@@ -59,14 +59,16 @@ if ($os == ogutil::OS_NONE || $arch == ogutil::ARCH_NONE) {
 }
 
 my $buildpath = dir($ENV{OG_REPO_PATH}, "build");
+
+OgVerbose("- OG_REPO_PATH = '$OG_REPO_PATH'\n");
+OgVerbose("- buildpath    = '$buildpath'\n");
+
 my $privatepath = OgPlatformPath(dir($ENV{OG_REPO_PATH}, "sources", "private"));
 unless (defined($privatepath) && -d $privatepath) {
   print "Error: Invalid private path : $privatepath.\n";
   exit(1);
 }
 
-OgVerbose("- OG_REPO_PATH = '$OG_REPO_PATH'\n");
-OgVerbose("- buildpath    = '$buildpath'\n");
 OgVerbose("- privatepath  = '$privatepath'\n");
 OgVerbose("- update       = $update\n");
 

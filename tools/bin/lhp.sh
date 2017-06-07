@@ -20,13 +20,13 @@ then
 fi
 
 # list variables already here
-LHP_VARIABLES_BEFORE=`compgen -v`
+LHP_VARIABLES_BEFORE=`compgen -v | sort -u`
 
 # load variables
 source /dev/stdin <<< "${LHP_VARIABLES_SET}"
 
 # list all variables
-LHP_VARIABLES_AFTER=`compgen -v`
+LHP_VARIABLES_AFTER=`compgen -v | sort -u`
 
 # diff to find new variables
 LHP_VARIABLES_PARSED=`comm <(echo "$LHP_VARIABLES_AFTER" | grep -v "LHP_VARIABLES_") <(echo "$LHP_VARIABLES_BEFORE" | grep -v "LHP_VARIABLES_") -3`
