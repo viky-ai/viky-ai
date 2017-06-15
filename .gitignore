@@ -56,6 +56,11 @@
 /resources/morphology/nl/nlform*
 /resources/morphology/nl/dutch-clean.aff
 /resources/morphology/nl/dutch-clean.dic
+/resources/morphology/ru/ruroot*
+/resources/morphology/ru/rufreq*
+/resources/morphology/ru/ruform*
+/resources/morphology/ru/ru.aff
+/resources/morphology/ru/ru.dic
 /resources/morphology/tmp/
 /sources/glib/glib-2.42.1
 /sources/glib/share/
