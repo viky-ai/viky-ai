@@ -59,8 +59,9 @@
 /resources/morphology/ru/ruroot*
 /resources/morphology/ru/rufreq*
 /resources/morphology/ru/ruform*
-/resources/morphology/ru/ru.aff
-/resources/morphology/ru/ru.dic
+/resources/morphology/ru/ru.*
+/resources/morphology/ru/ru_*
+/resources/morphology/ru/verbs*
 /resources/morphology/tmp/
 /sources/glib/glib-2.42.1
 /sources/glib/share/
