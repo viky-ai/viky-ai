@@ -81,9 +81,9 @@ while(1) {
   IFn(read_length) {
     if (ctrl_uci->loginfo->trace & DOgUciTraceMinimal) {
       OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
-        ,"OgUciRead: Nothing to read anymore or server is down");
+        ,"OgUciRead: Nothing to read anymore, TCP (%d) connection already closed", input->hsocket);
       }
-    DPcErr;
+    break;
     }
   isocket_buffer += read_length;
   if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
