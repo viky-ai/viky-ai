@@ -164,23 +164,7 @@ sub genNBP ($) {
     return(0);
   }
 
-  $projectBranch = "git";
-  if($OG_REPO_PATH =~ /\/trunk\/ogmios$/g)
-  {
-    $projectBranch = "trunk";
-  }
-  elsif($OG_REPO_PATH =~ /\/stable\/ogmios$/g)
-  {
-    $projectBranch = "stable";
-  }
-  elsif($OG_REPO_PATH =~ /\/branch\/ogmios$/g)
-  {
-    $projectBranch = "branch";
-  }
-  elsif($OG_REPO_PATH =~ /\/apps\/pse$/g)
-  {
-    $projectBranch = "git";
-  }
+  $projectBranch = "voqal";
 
   print("Gen ${projectName}_${projectType}_${projectBranch} ($projectDir_new) : Eclipse CDT config.\n");
   # Debug
