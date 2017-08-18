@@ -125,8 +125,10 @@
                 support="philippe.boinot@pertimm.com"/>
   <component 	name="ogm_sidx/prog/cmpsidxscan" info="Helps compares sidxcan.log files" doc="" />
   <component 	name="ogm_ssrv/lib" info="Simple Server" doc="" />
-  <component 	name="ogm_ssrv/prog/ogm_ssrv" info="Simple Server program" doc="" />
+  <component  name="ogm_ssrv/prog/ogm_ssrv" info="Simple Server program" doc="" />
   <component 	name="ogm_ssrv/prog/ssrv_test" info="Ssrv test program" doc="" />
+  <component  name="ogm_nls/lib" info="Natural Language Server" doc="" />
+  <component  name="ogm_nls/prog/ogm_nls" info="Natural Language Server program" doc="" />
   <component 	name="ogm_sig/lib" info="Signals" doc="" />
   <component 	name="ogm_ldi/lib" info="Linguistic Dictionaries" doc="" />
   <component 	name="ogm_ldi/prog/ogldi" info="Linguistic dictionnaries query program" doc=""/>
