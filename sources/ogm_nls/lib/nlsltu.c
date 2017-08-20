@@ -121,10 +121,9 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
 #define TEST_SOCKETS
 #ifdef TEST_SOCKETS
   winput->content =
-  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-  "<ssi_control_answers>\n"
-  "  <control_answer name=\"test\">test answer successful</control_answer>\n"
-  "</ssi_control_answers>\n";
+  "{\n"
+  "  \"answer\": \"cela fonctionne bien\"\n"
+  "}\n";
   winput->content_length = strlen(winput->content);
 #else
 
