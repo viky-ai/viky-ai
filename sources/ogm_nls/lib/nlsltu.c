@@ -11,12 +11,11 @@
 //#define TEST_SOCKETS
 
 
-static int OgListeningReceivedStop(struct og_listening_thread *,
-  struct og_ucisr_output *, unsigned char *);
+static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output);
 static int OgListeningAnswerStop(struct og_listening_thread *, int);
 static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output, og_bool is_ssi_control_commands);
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
-    struct og_ucisr_output *output, unsigned char *top_tag);
+    struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input, struct og_ucisr_output *output);
 /*
  *  Returns 1 if server must stop, 0 otherwise
@@ -52,19 +51,8 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 
   lt->t1 = OgMicroClock();
 
-  unsigned char top_tag[DPcPathSize];
-  og_bool top_tag_found = OgXmlTopTag(lt->herr, output->content_length - output->header_length,
-      output->content + output->header_length, DPcPathSize - 1, top_tag);
-  IFE(top_tag_found);
-
-  if(!top_tag_found)
-  {
-    NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request failed, no xml top_tag found.");
-    DPcErr;
-  }
-
   // Test for stopping
-  og_bool must_stop = OgListeningReceivedStop(lt, output, top_tag);
+  og_bool must_stop = OgListeningReceivedStop(lt, output);
   IFE(must_stop);
   if (must_stop)
   {
@@ -83,7 +71,7 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   winput->hsocket = input->hsocket;
 
   og_bool is_ssi_control_commands = FALSE;
-  IFE(OgListeningProcessSearchRequest(lt, winput, output, top_tag));
+  IFE(OgListeningProcessSearchRequest(lt, winput, output));
 
   return OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
 }
@@ -127,7 +115,7 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
 }
 
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
-    struct og_ucisr_output *output, unsigned char *top_tag)
+    struct og_ucisr_output *output)
 {
 
 #define TEST_SOCKETS
@@ -190,6 +178,7 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
 
 
 /*
+ * TODO : parsing a JSON stop message and use it.
  *  The stop message can be anything, for example:
  *    <?xml version="1.0" encoding="UTF-8"?>
  *    <control_commands>
@@ -197,25 +186,14 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
  *    </control_commands>
  *  The UCI api does not handle this as lt should
  *  not understand the content of the XML buffer.
+ *  return 1 is the server must stop
 */
 
-static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output,
-    unsigned char *top_tag)
+static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output)
 {
   int is = output->content_length - output->header_length;
   unsigned char *s = output->content + output->header_length;
-  unsigned char *stop = "<control_command name=\"stop\"/>";
-  int istop = sizeof("<control_command name=\"stop\"/>") - 1;
-  int i;
-
-  /** We check the top level tag to make avoid confusion with other request types **/
-  if (Ogstricmp(top_tag, "ssi_control_commands")) return (0);
-
-  for (i = 0; i < is; i++)
-  {
-    if (i + istop < is && !Ogmemicmp(s + i, stop, istop)) return (1);
-  }
-
+  // TODO JSON parsing of the 's' string to check if it is a stop message
   return (0);
 }
 
