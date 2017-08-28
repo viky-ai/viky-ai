@@ -228,6 +228,9 @@ static og_status OgAddrSocketQueueProcessingLoop(struct og_ctrl_addr *ctrl_addr)
     {
       // delegate processing
       og_status must_stop = ctrl_addr->answer_func(ctrl_addr->answer_func_context, info);
+
+      g_slice_free(struct og_socket_info, stored_info);
+
       IFE(must_stop);
       if (must_stop)
       {
