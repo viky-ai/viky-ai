@@ -3,24 +3,23 @@
  *  Copyright (c) 2006-2008 Pertimm by Patrick Constant
  *  Dev : September 2006, February 2008
  *  Version 1.1
-*/
+ */
 #include "ogm_nls.h"
-
-
 
 //#define TEST_SOCKETS
 
-
 static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output);
 static int OgListeningAnswerStop(struct og_listening_thread *, int);
-static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output, og_bool is_ssi_control_commands);
+static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
+    struct og_ucisr_output *output, og_bool is_ssi_control_commands);
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output);
-static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input, struct og_ucisr_output *output);
+static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
+    struct og_ucisr_output *output);
 /*
  *  Returns 1 if server must stop, 0 otherwise
  *  Returns -1 on error.
-*/
+ */
 
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 {
@@ -76,42 +75,42 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   return OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
 }
 
-
-static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input, struct og_ucisr_output *output)
+static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
+    struct og_ucisr_output *output)
 {
-    IF(OgUciServerRead(lt->hucis,input,output))
+  IF(OgUciServerRead(lt->hucis,input,output))
+  {
+    int waited_time = (OgMicroClock() - lt->t0) / 1000;
+    if (output->timed_out)
     {
-      int waited_time = (OgMicroClock() - lt->t0) / 1000;
-      if (output->timed_out)
-      {
-        NlsThrowError(lt,
-            "OgListeningThreadAnswerUci: timed-out in OgUciServerRead after %d milli-seconds, with timeout=%d milli-seconds",
-            waited_time, input->timeout);
-        DPcErr;
-      }
-      else
-      {
-        OgMsgErr(lt->hmsg, "OgUciRead", 0, 0, 0, DOgMsgSeverityError, DOgErrLogFlagNoSystemError + DOgErrLogFlagNotInErr);
-        NlsThrowError(lt,
-            "OgListeningThreadAnswerUci: error in OgUciServerRead after %d milli-seconds, if the error is related to \"buffer full\", set max_request_size to a larger value",
-            waited_time);
-        DPcErr;
-      }
-    }
-
-    if (output->hh.request_method > 0 && output->hh.request_method != DOgHttpHeaderTypePost)
-    {
-      NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request is not an HTTP POST Request.");
+      NlsThrowError(lt,
+          "OgListeningThreadAnswerUci: timed-out in OgUciServerRead after %d milli-seconds, with timeout=%d milli-seconds",
+          waited_time, input->timeout);
       DPcErr;
     }
-
-    if (output->content_length <= 0 || (output->content_length - output->header_length) <= 1)
+    else
     {
-      NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request body is empty.");
+      OgMsgErr(lt->hmsg, "OgUciRead", 0, 0, 0, DOgMsgSeverityError, DOgErrLogFlagNoSystemError + DOgErrLogFlagNotInErr);
+      NlsThrowError(lt,
+          "OgListeningThreadAnswerUci: error in OgUciServerRead after %d milli-seconds, if the error is related to \"buffer full\", set max_request_size to a larger value",
+          waited_time);
       DPcErr;
     }
+  }
 
-    DONE;
+  if (output->hh.request_method > 0 && output->hh.request_method != DOgHttpHeaderTypePost)
+  {
+    NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request is not an HTTP POST Request.");
+    DPcErr;
+  }
+
+  if (output->content_length <= 0 || (output->content_length - output->header_length) <= 1)
+  {
+    NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request body is empty.");
+    DPcErr;
+  }
+
+  DONE;
 }
 
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
@@ -120,38 +119,38 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
 
 #define TEST_SOCKETS
 #ifdef TEST_SOCKETS
-  winput->content =
-  "{\n"
-  "  \"answer\": \"cela fonctionne bien\"\n"
-  "}\n";
+  winput->content = "{\n"
+      "  \"answer\": \"cela fonctionne bien\"\n"
+      "}\n";
   winput->content_length = strlen(winput->content);
 #else
 
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
-    IFE(OgListeningThreadProcessAnswerUci(lt, output, top_tag));
+  IFE(OgListeningThreadProcessAnswerUci(lt, output, top_tag));
 
-    if (lt->request_in_error)
-    {
-      winput->http_status = 500;
-      winput->http_status_message = "Internal Server Error";
-    }
+  if (lt->request_in_error)
+  {
+    winput->http_status = 500;
+    winput->http_status_message = "Internal Server Error";
+  }
 
-    // If JSON set content type
-    if (NlsJsonIsEnable(lt))
-    {
-      winput->content_type = "application/json";
-    }
+  // If JSON set content type
+  if (NlsJsonIsEnable(lt))
+  {
+    winput->content_type = "application/json";
+  }
 
-    // XML and JSON output
-    winput->content_length = OgHeapGetCellsUsed(lt->hbn);
-    IFn(winput->content = OgHeapGetCell(lt->hbn, 0)) DPcErr;
+  // XML and JSON output
+  winput->content_length = OgHeapGetCellsUsed(lt->hbn);
+  IFn(winput->content = OgHeapGetCell(lt->hbn, 0)) DPcErr;
 
 #endif
 
   DONE;
 }
 
-static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output, og_bool is_ssi_control_commands)
+static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
+    struct og_ucisr_output *output, og_bool is_ssi_control_commands)
 {
   lt->t2 = OgMicroClock();
 
@@ -174,8 +173,6 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   return FALSE;
 }
 
-
-
 /*
  * TODO : parsing a JSON stop message and use it.
  *  The stop message can be anything, for example:
@@ -186,7 +183,7 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
  *  The UCI api does not handle this as lt should
  *  not understand the content of the XML buffer.
  *  return 1 is the server must stop
-*/
+ */
 
 static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output)
 {
@@ -196,35 +193,29 @@ static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_uci
   return (0);
 }
 
-
-
 static int OgListeningAnswerStop(struct og_listening_thread *lt, int hsocket)
 {
-struct og_ucisw_input cwinput,*winput=&cwinput;
-unsigned char *answer =
-   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-   "<ssi_control_answers>\n"
-   "  <control_answer name=\"stop\">ok</control_answer>\n"
-   "</ssi_control_answers>\n";
-int ianswer=strlen(answer);
+  struct og_ucisw_input cwinput, *winput = &cwinput;
+  unsigned char *answer = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+      "<ssi_control_answers>\n"
+      "  <control_answer name=\"stop\">ok</control_answer>\n"
+      "</ssi_control_answers>\n";
+  int ianswer = strlen(answer);
 
-memset(winput,0,sizeof(struct og_ucisw_input));
-winput->content_length=ianswer;
-winput->content=answer;
-winput->hsocket=hsocket;
+  memset(winput, 0, sizeof(struct og_ucisw_input));
+  winput->content_length = ianswer;
+  winput->content = answer;
+  winput->hsocket = hsocket;
 
-IF(OgUciServerWrite(lt->hucis,winput)) {
-  if (lt->loginfo->trace & DOgNlsTraceMinimal) {
-    OgMsg(lt->hmsg,"",DOgMsgDestInLog+DOgMsgDestInErr
-      ,"OgUciServerWrite: connexion was prematurely closed by client on a stop command, giving up");
+  IF(OgUciServerWrite(lt->hucis,winput))
+  {
+    if (lt->loginfo->trace & DOgNlsTraceMinimal)
+    {
+      OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
+          "OgUciServerWrite: connexion was prematurely closed by client on a stop command, giving up");
     }
   }
 
-DONE;
+  DONE;
 }
-
-
-
-
-
 

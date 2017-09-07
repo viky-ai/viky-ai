@@ -3,43 +3,39 @@
  *  Copyright (c) 2007 Pertimm by Patrick Constant
  *  Dev : September 2007
  *  Version 1.0
-*/
+ */
 #include "ogm_nls.h"
-
-
 
 static int NlsOnEmergency1(struct og_ctrl_nls *, int);
 
-
-
 /*
  *  We logs all the current requests.
-*/
+ */
 
 int NlsOnEmergency(struct og_ctrl_nls *ctrl_nls)
 {
-int i;
+  int i;
 
-if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal) {
-  OgMsg(ctrl_nls->hmsg,"",DOgMsgDestInLog,"NlsOnEmergency: starting");
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
+  {
+    OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "NlsOnEmergency: starting");
   }
 
-if (ctrl_nls->LtNumber > 0) {
-  for (i=0; i<ctrl_nls->LtNumber; i++) {
-    IFE(NlsOnEmergency1(ctrl_nls,i));
+  if (ctrl_nls->LtNumber > 0)
+  {
+    for (i = 0; i < ctrl_nls->LtNumber; i++)
+    {
+      IFE(NlsOnEmergency1(ctrl_nls, i));
     }
   }
 
-if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal) {
-  OgMsg(ctrl_nls->hmsg,"",DOgMsgDestInLog,"NlsOnEmergency: finished");
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
+  {
+    OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "NlsOnEmergency: finished");
   }
 
-DONE;
+  DONE;
 }
-
-
-
-
 
 static int NlsOnEmergency1(struct og_ctrl_nls *ctrl_nls, int Ilt)
 {
@@ -60,6 +56,4 @@ static int NlsOnEmergency1(struct og_ctrl_nls *ctrl_nls, int Ilt)
   }
   DONE;
 }
-
-
 

@@ -82,7 +82,7 @@ struct og_listening_thread
   ogsem_t csem, *hsem;
   int must_stop;
 
-  ogint64_t t0,t1,t2,t3,ot3;
+  ogint64_t t0, t1, t2, t3, ot3;
 
 };
 
@@ -146,9 +146,4 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 
 /** nlsonem.c **/
 int NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
-
-
-
-
-
 

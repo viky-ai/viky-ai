@@ -3,11 +3,9 @@
  *  Copyright (c) 2006 Pertimm by Patrick Constant
  *  Dev : August, December 2006
  *  Version 1.1
-*/
+ */
 #include "ogm_nls.h"
 #include <stdio.h>
-
-
 
 #define DOgNlsLogTruncatedBufferSize 64
 #define DOgNlsLogLabelBufferSize     64
@@ -24,7 +22,6 @@ int NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_st
 
   og_char_buffer label_buffer[DOgNlsLogTruncatedBufferSize];
   label_buffer[0] = 0;
-
 
   int max_log_size = is;
 
@@ -44,7 +41,6 @@ int NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_st
 
   DONE;
 }
-
 
 /**
  * Add Error to error stack and log it
