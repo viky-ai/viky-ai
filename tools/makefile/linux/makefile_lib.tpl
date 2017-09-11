@@ -29,6 +29,10 @@ EOBJO = $(SRC:%.c=$(ROBJ)/%.o)  $(SRC:%.cpp=$(ROBJ)/%.o)
 EOBJD = $(SRC:%.c=$(DOBJ)/%.o)  $(SRC:%.cpp=$(DOBJ)/%.o)
 EOBJP = $(SRC:%.c=$(POBJ)/%.o)  $(SRC:%.cpp=$(POBJ)/%.o)
 
+debug_copy: debug
+  cp -f $(DLIBPATH)/lib$(NAME).so $(OG_REPO_PATH)/ship/debug/lib/linux/
+
+
 build: $(RLINKPATH)/lib$(NAME).a $(RLIBPATH)/lib$(NAME).so $(RLIBPATH)/is_debug_enable.conf
 
 debug: $(DLINKPATH)/lib$(NAME).a $(DLIBPATH)/lib$(NAME).so $(DLIBPATH)/is_debug_enable.conf
