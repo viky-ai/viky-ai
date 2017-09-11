@@ -11,6 +11,10 @@
 #include <logthr.h>
 #include <logheap.h>
 #include <logxml.h>
+#include <yajl/yajl_gen.h>
+#include <yajl/yajl_parse.h>
+#include <yajl/yajl_tree.h>
+#include <string.h>
 
 typedef struct og_listening_thread og_listening_thread;
 
@@ -51,6 +55,18 @@ struct og_nls_conf
 
 };
 
+
+struct json_object
+{
+  yajl_gen yajl_gen;
+
+  og_bool error_detected;
+
+  /**  Yajl Json json buffer **/
+  og_heap hb_json_buffer;
+
+};
+
 /** data structure for a listening thread **/
 struct og_listening_thread
 {
@@ -83,6 +99,8 @@ struct og_listening_thread
   int must_stop;
 
   ogint64_t t0, t1, t2, t3, ot3;
+
+  struct json_object json[1];
 
 };
 
@@ -147,3 +165,23 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 /** nlsonem.c **/
 int NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 
+/** lns_json **/
+og_status OgNLSJsonInit(struct og_listening_thread *lt);
+og_status OgNLSJsonReset(struct og_listening_thread *lt);
+og_status OgNLSJsonFlush(struct og_listening_thread *lt);
+og_status OgNLSJsonGenInteger(struct og_listening_thread *lt, long long int number);
+og_status OgNLSJsonGenDouble(struct og_listening_thread *lt, double number);
+og_status OgNLSJsonGenNumber(struct og_listening_thread *lt, og_string number, int len);
+og_status OgNLSJsonGenBool(struct og_listening_thread *lt, og_bool boolean);
+og_status OgNLSJsonGenString(struct og_listening_thread *lt, og_string string);
+og_status OgNLSJsonGenStringSized(struct og_listening_thread *lt, og_string string, int length);
+og_status OgNLSJsonGenKeyValueString(struct og_listening_thread *lt, og_string key, og_string value_string);
+og_status OgNLSJsonGenKeyValueStringSized(struct og_listening_thread *lt, og_string key, og_string value_string, int length);
+og_status OgNLSJsonGenKeyValueInteger(struct og_listening_thread *lt, og_string key, int number);
+og_status OgNLSJsonGenKeyValueDouble(struct og_listening_thread *lt, og_string key, double number);
+og_status OgNLSJsonGenNull(struct og_listening_thread *lt);
+og_status OgNLSJsonGenArrayOpen(struct og_listening_thread *lt);
+og_status OgNLSJsonGenArrayClose(struct og_listening_thread *lt);
+og_status OgNLSJsonGenMapOpen(struct og_listening_thread *lt);
+og_status OgNLSJsonGenMapClose(struct og_listening_thread *lt);
+og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size_t json_size);

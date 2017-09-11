@@ -116,35 +116,42 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output)
 {
+  IFE(OgNLSJsonReset(lt));
 
-#define TEST_SOCKETS
-#ifdef TEST_SOCKETS
-  winput->content = "{\n"
-      "  \"answer\": \"cela fonctionne bien\"\n"
-      "}\n";
-  winput->content_length = strlen(winput->content);
-#else
+  int headerSize = output->header_length;
+  int contentSize = output->content_length - headerSize;
 
-  struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
-  IFE(OgListeningThreadProcessAnswerUci(lt, output, top_tag));
+  // lecture json
+  char contentString[5000];
+  char errBuf[500];
 
-  if (lt->request_in_error)
+  // ecriture json
+  char answer[500];
+
+
+  snprintf(contentString, contentSize + 1, "%s", output->content + headerSize);
+
+  yajl_val node = yajl_tree_parse(contentString, errBuf, 500);
+
+  const char * path[] = { "name", (const char *) 0 };
+  yajl_val v = yajl_tree_get(node, path, yajl_t_string);
+  if (v)
   {
-    winput->http_status = 500;
-    winput->http_status_message = "Internal Server Error";
-  }
+    char* answer_name = YAJL_GET_STRING(v);
 
-  // If JSON set content type
-  if (NlsJsonIsEnable(lt))
+    sprintf(answer, "Hello %s", answer_name);
+    IFE(OgNLSJsonGenMapOpen(lt));
+    IFE(OgNLSJsonGenKeyValueString(lt, "answer", answer));
+    IFE(OgNLSJsonGenMapClose(lt));
+  }
+  else
   {
-    winput->content_type = "application/json";
+    IFE(OgNLSJsonGenMapOpen(lt));
+    IFE(OgNLSJsonGenKeyValueString(lt, "answer", "Greuh !!!"));
+    IFE(OgNLSJsonGenMapClose(lt));
   }
-
-  // XML and JSON output
-  winput->content_length = OgHeapGetCellsUsed(lt->hbn);
-  IFn(winput->content = OgHeapGetCell(lt->hbn, 0)) DPcErr;
-
-#endif
+  winput->content_length = OgHeapGetCellsUsed(lt->json->hb_json_buffer);
+  winput->content = OgHeapGetCell(lt->json->hb_json_buffer, 0);
 
   DONE;
 }
@@ -187,9 +194,9 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
 
 static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output)
 {
-  int is = output->content_length - output->header_length;
-  unsigned char *s = output->content + output->header_length;
-  // TODO JSON parsing of the 's' string to check if it is a stop message
+//  int is = output->content_length - output->header_length;
+//  unsigned char *s = output->content + output->header_length;
+// TODO JSON parsing of the 's' string to check if it is a stop message
   return (0);
 }
 
