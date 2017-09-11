@@ -55,7 +55,6 @@ struct og_nls_conf
 
 };
 
-
 struct json_object
 {
   yajl_gen yajl_gen;
@@ -136,6 +135,16 @@ struct og_ctrl_nls
 
 };
 
+struct jsonValuesContext
+{
+  char mapKey[DPcPathSize];
+  char stringValue[DPcPathSize];
+  int intValue;
+  double doubleValue;
+  int booleanValue;
+  struct og_listening_thread *lt;
+};
+
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
 int NlsWaitForListeningThreads(char *label, struct og_ctrl_nls *ctrl_nls);
@@ -176,7 +185,8 @@ og_status OgNLSJsonGenBool(struct og_listening_thread *lt, og_bool boolean);
 og_status OgNLSJsonGenString(struct og_listening_thread *lt, og_string string);
 og_status OgNLSJsonGenStringSized(struct og_listening_thread *lt, og_string string, int length);
 og_status OgNLSJsonGenKeyValueString(struct og_listening_thread *lt, og_string key, og_string value_string);
-og_status OgNLSJsonGenKeyValueStringSized(struct og_listening_thread *lt, og_string key, og_string value_string, int length);
+og_status OgNLSJsonGenKeyValueStringSized(struct og_listening_thread *lt, og_string key, og_string value_string,
+    int length);
 og_status OgNLSJsonGenKeyValueInteger(struct og_listening_thread *lt, og_string key, int number);
 og_status OgNLSJsonGenKeyValueDouble(struct og_listening_thread *lt, og_string key, double number);
 og_status OgNLSJsonGenNull(struct og_listening_thread *lt);
@@ -185,3 +195,16 @@ og_status OgNLSJsonGenArrayClose(struct og_listening_thread *lt);
 og_status OgNLSJsonGenMapOpen(struct og_listening_thread *lt);
 og_status OgNLSJsonGenMapClose(struct og_listening_thread *lt);
 og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size_t json_size);
+og_status OgNLSJsonAnswer(struct og_listening_thread *lt, og_string json, size_t json_size);
+
+int get_null(void * ctx);
+int get_boolean(void * ctx, int boolean);
+int get_integer(void * ctx, long long integerVal);
+int get_double(void * ctx, double doubleVal);
+int get_number(void * ctx, const char * numberVal, size_t l);
+int get_string(void * ctx, const unsigned char * stringVal, size_t stringLen);
+int get_map_key(void * ctx, const unsigned char * stringVal, size_t stringLen);
+int get_start_map(void * ctx);
+int get_end_map(void * ctx);
+int get_start_array(void * ctx);
+int get_end_array(void * ctx);

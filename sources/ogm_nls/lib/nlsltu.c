@@ -116,40 +116,11 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output)
 {
-  IFE(OgNLSJsonReset(lt));
-
   int headerSize = output->header_length;
   int contentSize = output->content_length - headerSize;
 
-  // lecture json
-  char contentString[5000];
-  char errBuf[500];
+  IFE(OgNLSJsonAnswer(lt, output->content + headerSize, contentSize));
 
-  // ecriture json
-  char answer[500];
-
-
-  snprintf(contentString, contentSize + 1, "%s", output->content + headerSize);
-
-  yajl_val node = yajl_tree_parse(contentString, errBuf, 500);
-
-  const char * path[] = { "name", (const char *) 0 };
-  yajl_val v = yajl_tree_get(node, path, yajl_t_string);
-  if (v)
-  {
-    char* answer_name = YAJL_GET_STRING(v);
-
-    sprintf(answer, "Hello %s", answer_name);
-    IFE(OgNLSJsonGenMapOpen(lt));
-    IFE(OgNLSJsonGenKeyValueString(lt, "answer", answer));
-    IFE(OgNLSJsonGenMapClose(lt));
-  }
-  else
-  {
-    IFE(OgNLSJsonGenMapOpen(lt));
-    IFE(OgNLSJsonGenKeyValueString(lt, "answer", "Greuh !!!"));
-    IFE(OgNLSJsonGenMapClose(lt));
-  }
   winput->content_length = OgHeapGetCellsUsed(lt->json->hb_json_buffer);
   winput->content = OgHeapGetCell(lt->json->hb_json_buffer, 0);
 

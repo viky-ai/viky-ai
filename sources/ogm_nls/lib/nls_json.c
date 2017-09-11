@@ -348,7 +348,6 @@ og_status OgNLSJsonGenMapClose(struct og_listening_thread *lt)
   DONE;
 }
 
-
 /**
  * Generate error from yajl status
  *
@@ -395,7 +394,7 @@ static og_status yajlGenErrorManagement(struct og_listening_thread *lt, og_strin
           " enabled and an invalid was passed by client code.";
       break;
     default:
-      buffer = "unknow error";
+      buffer = "unknown error";
       break;
   }
 
@@ -503,6 +502,104 @@ static int reformat_end_array(void * ctx)
   return s == yajl_gen_status_ok;
 }
 
+// =====================================================================
+//
+// Getting JSON data
+//
+// =====================================================================
+
+int get_null(void * ctx)
+{
+
+  return TRUE;
+}
+
+int get_boolean(void * ctx, int boolean)
+{
+
+  return TRUE;
+}
+
+int get_integer(void * ctx, long long integerVal)
+{
+
+  return TRUE;
+}
+
+int get_double(void * ctx, double doubleVal)
+{
+
+  return TRUE;
+}
+
+int get_number(void * ctx, const char * numberVal, size_t l)
+{
+
+  return TRUE;
+}
+
+int get_string(void * ctx, const unsigned char * stringVal, size_t stringLen)
+{
+  struct jsonValuesContext *jsonCtx = ctx;
+  int iStringLen = (int) stringLen;
+  if (strcmp(jsonCtx->mapKey, "name") == 0)
+  {
+    snprintf(jsonCtx->stringValue, DPcPathSize, "%.*s", iStringLen, stringVal);
+  }
+
+  if (strcmp(jsonCtx->mapKey, "name") == 0)
+  {
+    og_char_buffer tmpString[DPcPathSize];
+    if (strcmp(jsonCtx->stringValue, "Zorglub") == 0)
+    {
+      snprintf(tmpString, DPcPathSize, "Eviv Bulgroz!");
+    }
+    else
+    {
+      snprintf(tmpString, DPcPathSize, "Hello %.*s", iStringLen, jsonCtx->stringValue);
+    }
+    IFE(OgNLSJsonGenKeyValueString(jsonCtx->lt, "answer", tmpString));
+  }
+  else
+  {
+    IFE(OgNLSJsonGenKeyValueString(jsonCtx->lt, "answer", "Greuh !!!"));
+  }
+
+  return TRUE;
+}
+
+int get_map_key(void * ctx, const unsigned char * stringVal, size_t stringLen)
+{
+  struct jsonValuesContext *jsonCtx = ctx;
+  int iStringLen = (int) stringLen;
+  snprintf(jsonCtx->mapKey, DPcPathSize, "%.*s", iStringLen, stringVal);
+  return TRUE;
+}
+
+int get_start_map(void * ctx)
+{
+
+  return TRUE;
+}
+
+int get_end_map(void * ctx)
+{
+
+  return TRUE;
+}
+
+int get_start_array(void * ctx)
+{
+
+  return TRUE;
+}
+
+int get_end_array(void * ctx)
+{
+
+  return TRUE;
+}
+
 /**
  * Generate error from yajl status
  *
@@ -551,11 +648,15 @@ static yajl_callbacks parser_callbacks = { reformat_null, reformat_boolean, refo
     reformat_number, reformat_string, reformat_start_map, reformat_map_key, reformat_end_map, reformat_start_array,
     reformat_end_array };
 
+static yajl_callbacks get_callbacks = { get_null, get_boolean, get_integer, get_double, get_number, get_string,
+    get_start_map, get_map_key, get_end_map, get_start_array, get_end_array };
+
 /**
  * Refomat json
  */
 og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size_t json_size)
 {
+
   yajl_handle parser = yajl_alloc(&parser_callbacks, NULL, lt->json->yajl_gen);
 
   yajl_status yajl_parser_status = yajl_parse(parser, json, json_size);
@@ -571,3 +672,32 @@ og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size
   return status;
 }
 
+/**
+ * Getting data from JSon
+ */
+og_status OgNLSJsonAnswer(struct og_listening_thread *lt, og_string json, size_t json_size)
+{
+  IFE(OgNLSJsonReset(lt));
+
+  IFE(OgNLSJsonGenMapOpen(lt));
+
+  struct jsonValuesContext jsonCtx;
+  jsonCtx.lt = lt;
+
+  yajl_handle parser = yajl_alloc(&get_callbacks, NULL, &jsonCtx);
+
+  yajl_status yajl_parser_status = yajl_parse(parser, json, json_size);
+  og_status status = yajlParseErrorManagement(lt, parser, yajl_parser_status, json, json_size);
+
+  NIF(status)
+  {
+    yajl_parser_status = yajl_complete_parse(parser);
+    status = yajlParseErrorManagement(lt, parser, yajl_parser_status, json, json_size);
+  }
+
+  IFE(OgNLSJsonGenMapClose(lt));
+
+  yajl_free(parser);
+
+  return status;
+}
