@@ -1,9 +1,46 @@
 <section>
-  <h2>Input</h2>
-
-  <h3>Base</h3>
+  <h2>Form</h2>
+  <p>
+     When combining several form elements, use the <code>field</code> class as a container, to keep the spacing consistent.
+  </p>
 
   <%= highlight_html do %>
-    <input type="text" />
+<div class="field">
+  <label for="username">Username</label>
+  <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+</div>
+<div class="field">
+  <label for="password">Password</label>
+  <input type="password" name="password" id="password" />
+  <div class="help">This is a help text</div>
+</div>
+<div class="field">
+  <input type="checkbox" id="rememberme">
+  <label class="checkbox" for="rememberme">Remember me</label>
+</div>
+<div class="field">
+  <input type="submit" value="Log in" class="btn btn--primary" />
+  <a href="#" class="btn btn--plain">Cancel</a>
+</div>
   <% end %>
+
+  <h3>Help variants</h3>
+  <%= highlight_html do %>
+<div class="field">
+  <label for="password-a">Password</label>
+  <input type="password" name="password" id="password-a" />
+  <div class="help">Choose your password, at least 8 characters.</div>
+</div>
+<div class="field">
+  <label for="password-b">Password</label>
+  <input type="password" name="password" id="password-b" />
+  <div class="help help--success">Yeah ! Your password has at least 8 characters.</div>
+</div>
+<div class="field">
+  <label for="password-c">Password</label>
+  <input type="password" name="password" id="password-c" />
+  <div class="help help--error">Password must have at least 8 characters.</div>
+</div>
+  <% end %>
+
 </section>

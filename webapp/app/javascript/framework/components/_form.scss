@@ -1,0 +1,70 @@
+.field{
+  position: relative;
+
+  &:not(:last-child){
+    margin-bottom: 1em;
+  }
+
+  label{
+    font-weight: 400;
+    margin-bottom: .5em;
+    line-height: 1.5;
+    display: inline-block;
+    cursor: pointer;
+    &.checkbox{
+      width: auto;
+      cursor: pointer;
+      font-weight: 300;
+    }
+  }
+
+  input[type='checkbox']{
+    cursor: pointer;
+  }
+
+  input[type='text'],
+  input[type='password']{
+    width: 100%;
+    line-height: 1.5;
+    font-weight: 300;
+    vertical-align: top;
+
+    padding: calc(.375em - 1px) .5em;
+
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    border-top: 1px solid #bbb;
+    box-shadow: 0 1px 0 rgba(black, .05) inset;
+    &:focus{
+      border-color: $focus_color;
+      box-shadow: 0 0 0 2px rgba($focus_color, .25);
+    }
+  }
+  input::-webkit-input-placeholder{
+    opacity: .3;
+  }
+  input::-moz-placeholder{
+    opacity: .3;
+  }
+  input:-ms-input-placeholder{
+    opacity: .3;
+  }
+
+  .checkbox{
+
+  }
+
+  .help{
+    line-height: 1.5em;
+    margin-top: 0.25em;
+    font-size: .875em;
+    &.help--success{
+      color: $success_color;
+    }
+    &.help--error{
+      color: $error_color;
+    }
+  }
+
+}
+
