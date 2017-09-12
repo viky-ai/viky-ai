@@ -1,0 +1,85 @@
+.btn{
+  @include unselectable();
+  display: inline-block;
+  line-height: 1.5em;
+  padding: .25em .75em;
+
+  font-size: 1em;
+  font-weight: 300;
+  text-decoration: none;
+
+  color: #000;
+
+  border: 1px solid #ddd;
+  border-radius: 2px;
+
+  background: linear-gradient(to bottom, #fff 0%, #f5f5f5 100%);
+  cursor: pointer;
+
+  &:hover,
+  &:focus{
+    background: linear-gradient(to bottom, #fff 0%, darken(#eee, 4%) 100%);
+  }
+  &:active{
+    transform: translateY(1px);
+  }
+
+  &.btn--primary{
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(black, .2);
+    background: linear-gradient(
+      to bottom,
+      darken($primary_color, 0%) 0%,
+      darken($primary_color, 4%) 100%
+    );
+    border-color: darken($primary_color, 4%);
+    &:hover{
+      background: linear-gradient(
+        to bottom,
+        darken($primary_color, 4%) 0%,
+        darken($primary_color, 8%) 100%
+      );
+      border-color: darken($primary_color, 8%);
+    }
+  }
+  &.btn--destructive{
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(black, .2);
+    background: linear-gradient(
+      to bottom,
+      darken($destructive_color, 0%) 0%,
+      darken($destructive_color, 4%) 100%
+    );
+    border-color: darken($destructive_color, 4%);
+    &:hover{
+      background: linear-gradient(
+        to bottom,
+        darken($destructive_color, 4%) 0%,
+        darken($destructive_color, 8%) 100%
+      );
+      border-color: darken($destructive_color, 8%);
+    }
+  }
+  &.btn--plain{
+    background: none;
+    border-color: transparent;
+    text-decoration: underline;
+    color: darken($primary_color, 22%);
+    &:hover, &:focus{
+      color: darken($primary_color, 30%);
+    }
+  }
+
+  &.btn--small{
+    font-size: .8em;
+  }
+  &.btn--large{
+    font-size: 1.2em;
+  }
+
+  &.btn--full{
+    width: 100%;
+    text-align: center;
+  }
+
+}

@@ -1,0 +1,39 @@
+<section>
+  <h2>Buttons</h2>
+  <p>
+     The <code>.btn</code> class can be used on:
+  </p>
+  <ul>
+    <li><code>&lt;a&gt;</code> anchors links</li>
+    <li><code>&lt;button&gt;</code> form buttons</li>
+    <li><code>&lt;input type="submit"&gt;</code> submit inputs</li>
+    <li><code>&lt;input type="reset"&gt;</code> reset inputs</li>
+  </ul>
+
+  <%= highlight_html do %>
+<a href="#" class="btn">Anchor</a>
+<button class="btn">Button</button>
+<input type="submit" value="Submit input" class="btn" />
+<input type="reset" value="Submit reset" class="btn" />
+  <% end %>
+
+  <h3>Roles variants</h3>
+  <%= highlight_html do %>
+<a href="#" class="btn">Default</a>
+<a href="#" class="btn btn--primary">Primary</a>
+<a href="#" class="btn btn--destructive">Destructive</a>
+<a href="#" class="btn btn--plain">Plain</a>
+  <% end %>
+
+  <h3>Scale variants</h3>
+  <%= highlight_html do %>
+<a href="#" class="btn btn--small">Small</a>
+<a href="#" class="btn">Normal</a>
+<a href="#" class="btn btn--large">Large</a>
+  <% end %>
+
+  <h3>Full width variant</h3>
+  <%= highlight_html do %>
+<a href="#" class="btn btn--full">Full width</a>
+  <% end %>
+</section>
