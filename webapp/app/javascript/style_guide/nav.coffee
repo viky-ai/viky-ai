@@ -1,4 +1,4 @@
-$ = require('jQuery');
+$ = require('jquery');
 
 class StyleGuideMenu
   constructor: ->
