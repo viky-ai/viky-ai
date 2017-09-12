@@ -1,0 +1,42 @@
+#
+# Extrenal lib Makfile
+#
+
+CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+
+include $(OG_REPO_PATH)/sources/makefile.defs.linux
+
+
+EXTERNALS_LIB = jansson libmicrohttpd ulfius
+
+.PHONY: $(EXTERNALS_LIB) fullclean clean debug build redebug rebuild all
+
+jansson:
+	$(MAKE) -f jansson.makefile $(MAKECMDGOALS) 2>&1 | tee jansson.log
+
+libmicrohttpd: jansson
+	$(MAKE) -f libmicrohttpd.makefile $(MAKECMDGOALS) 2>&1 | tee libmicrohttpd.log
+
+ulfius: libmicrohttpd jansson
+	$(MAKE) -f ulfius.makefile $(MAKECMDGOALS) 2>&1 | tee ulfius.log
+
+glib:
+	$(MAKE) -f glib.makefile $(MAKECMDGOALS) 2>&1 | tee glib.log
+
+fullclean: $(EXTERNALS_LIB)
+
+clean: $(EXTERNALS_LIB)
+
+debug: $(EXTERNALS_LIB)
+
+build: $(EXTERNALS_LIB)
+
+redebug: $(EXTERNALS_LIB)
+
+rebuild: $(EXTERNALS_LIB)
+
+release: $(EXTERNALS_LIB)
+
+all: $(EXTERNALS_LIB)
+
+

@@ -2,25 +2,28 @@
 <!DOCTYPE components_manifest SYSTEM "cmanifest.dtd">
 <components_manifest>
   <factory_config>
-	<highlight_msg>
-		<msg type="warning" color="0;31m"><![CDATA[: warning]]></msg>
-	</highlight_msg>
-	<hide_msg>
-		<msg type="warning" color="0;31m"><![CDATA[: warning LNK4001: no object files specified; libraries used]]></msg>
-		<msg type="warning" color="0;31m"><![CDATA[: warning C4996:]]></msg><!-- deprecated -->
-		<msg type="warning" color="0;31m"><![CDATA[: warning C4996: '_snprintf':]]></msg>
-		<msg type="warning" color="0;31m"><![CDATA[: warning C4996: 'strncpy':]]></msg>
-		<msg type="warning" color="0;31m"><![CDATA[: warning C4996: 'strncat':]]></msg>
+  <highlight_msg>
+    <msg type="warning" color="0;31m"><![CDATA[: warning]]></msg>
+  </highlight_msg>
+  <hide_msg>
+    <msg type="warning" color="0;31m"><![CDATA[: warning LNK4001: no object files specified; libraries used]]></msg>
+    <msg type="warning" color="0;31m"><![CDATA[: warning C4996:]]></msg><!-- deprecated -->
+    <msg type="warning" color="0;31m"><![CDATA[: warning C4996: '_snprintf':]]></msg>
+    <msg type="warning" color="0;31m"><![CDATA[: warning C4996: 'strncpy':]]></msg>
+    <msg type="warning" color="0;31m"><![CDATA[: warning C4996: 'strncat':]]></msg>
                 <msg type="warning" color="0;31m"><![CDATA[: warning: 'rcsid' defined but not used]]></msg>
                 <msg type="warning" color="0;31m"><![CDATA[: warning C4005: 'DPcInDll' : macro redefinition]]></msg>
-	</hide_msg>
+  </hide_msg>
   </factory_config>
-  <component 	name="libxml2"       flags="NO_WARN"  doc="http://www.xmlsoft.org/" info="3wc xml implementation" support="philippe.boinot@pertimm.com" parallel="true"/>
-  <component 	name="openssl"       flags="NO_WARN"  doc="http://www.openssl.org/" info="Open Source toolkit implementing the Secure Sockets Layer and Transport Layer Security" support="philippe.boinot@pertimm.com" parallel="false"/>
-  <component 	name="libcurl"       flags="NO_WARN"  doc="http://curl.haxx.se/libcurl" info="Multiprotocol file transfert library" support="philippe.boinot@pertimm.com" parallel="false" />
-  <component 	name="net-snmp"       flags="NO_WARN"  doc="http://net-snmp.sourceforge.net" info="Simple Network Management Protocol" support="philippe.boinot@pertimm.com" parallel="false" />
-  <component 	name="net-snmp/modules/pdba"       flags="NO_WARN"  doc="TODO" info="netsnmp pdba" support="philippe.boinot@pertimm.com"/>
-<component 	name="net-snmp/modules/test"       flags="NO_WARN"  doc="TODO" info="netsnmp pdba" support="philippe.boinot@pertimm.com"/>
+
+
+  <component  name="external_dependencies" flags="NO_WARN"  doc="TODO" info="TODO" support="brice.ruzand@pertimm.com" parallel="true"/>
+  <component   name="libxml2"       flags="NO_WARN"  doc="http://www.xmlsoft.org/" info="3wc xml implementation" support="philippe.boinot@pertimm.com" parallel="true"/>
+  <component   name="openssl"       flags="NO_WARN"  doc="http://www.openssl.org/" info="Open Source toolkit implementing the Secure Sockets Layer and Transport Layer Security" support="philippe.boinot@pertimm.com" parallel="false"/>
+  <component   name="libcurl"       flags="NO_WARN"  doc="http://curl.haxx.se/libcurl" info="Multiprotocol file transfert library" support="philippe.boinot@pertimm.com" parallel="false" />
+  <component   name="net-snmp"       flags="NO_WARN"  doc="http://net-snmp.sourceforge.net" info="Simple Network Management Protocol" support="philippe.boinot@pertimm.com" parallel="false" />
+  <component   name="net-snmp/modules/pdba"       flags="NO_WARN"  doc="TODO" info="netsnmp pdba" support="philippe.boinot@pertimm.com"/>
+<component   name="net-snmp/modules/test"       flags="NO_WARN"  doc="TODO" info="netsnmp pdba" support="philippe.boinot@pertimm.com"/>
 
   <component    name="uriparser"     flags="NO_WARN"  doc="http://uriparser.sourceforge.net/" info="strictly RFC 3986 compliant URI parsing" support="philippe.boinot@pertimm.com"/>
   <component    name="uftp"     flags="NO_WARN"  doc="http://www.tcnj.edu/~bush/uftp.html" info="multicast file transfer program" support="philippe.boinot@pertimm.com"/>
@@ -31,19 +34,19 @@
   <component    name="yajl"     flags="NO_WARN"  doc="http://lloyd.github.com/yajl/" info="Yet Another JSON Library" support="brice.ruzand@pertimm.com" parallel="false"/>
   <component    name="xpdf"      flags="NO_WARN"  doc="http://www.foolabs.com/xpdf/" info="Deprecated (use pdftohtml)" support="philippe.boinot@pertimm.com"/>
   <component    name="pdftohtml" flags="NO_WARN"  doc="http://www.foolabs.com/xpdf/" info="Xpdf is an open source viewer for PDF" support="philippe.boinot@pertimm.com"/>
-  <component 	name="ogm_misc/lib"  info="Philippe's generic function. This components must be merged with ogm_gen" doc="" support="philippe.boinot@pertimm.com"/>
-  <component 	name="ogm_misc/prog/miscmain"  info="Philippe's generic function. This components must be merged with ogm_gen" doc="" support="philippe.boinot@pertimm.com"/>
-  <component 	name="ogm_sam/lib" info="StAble Memory library" doc=""                                                      support="philippe.boinot@pertimm.com"/>
+  <component   name="ogm_misc/lib"  info="Philippe's generic function. This components must be merged with ogm_gen" doc="" support="philippe.boinot@pertimm.com"/>
+  <component   name="ogm_misc/prog/miscmain"  info="Philippe's generic function. This components must be merged with ogm_gen" doc="" support="philippe.boinot@pertimm.com"/>
+  <component   name="ogm_sam/lib" info="StAble Memory library" doc=""                                                      support="philippe.boinot@pertimm.com"/>
   <component    name="ogm_sam/prog/ogsam" info="test program" doc="" support="philippe.boinot@pertimm.com"/>
-  <component 	name="lua"         info="Lua Virtual Machine" doc="www.lua.org" flags="NO_WARN"                             support="philippe.boinot@pertimm.com" parallel="false" />
- <component 	name="lua/lhp"     info="Lua HyperText Preprocessor" doc="TODO" flags="NO_WARN"                             support="philippe.boinot@pertimm.com" parallel="false" />
-  <component 	name="lua/lib"         info="lua add on" doc="TODO" support="philippe.boinot@pertimm.com" parallel="false" />
-  <component 	name="spread"      info="FIFO/CAUSAL/SAFE messages protocol for distributed system" doc="www.spread.org" flags="NO_WARN" support="philippe.boinot@pertimm.com" parallel="true"/>
-  <component 	name="ogm_psync/lib" info="Process Synchronization tools. This library implements thread/mutex/semaphore and process Manager to control execution of processes"	doc="TODO" support="philippe.boinot@pertimm.com" />
-  <component 	name="ogm_psync/prog/nilProcess" info="Stupid 'nil' process for testing psync" doc="" support="philippe.boinot@pertimm.com" />
-  <component 	name="ogm_psync/prog/ogpsync" info="" doc="" support="philippe.boinot@pertimm.com" />
+  <component   name="lua"         info="Lua Virtual Machine" doc="www.lua.org" flags="NO_WARN"                             support="philippe.boinot@pertimm.com" parallel="false" />
+ <component   name="lua/lhp"     info="Lua HyperText Preprocessor" doc="TODO" flags="NO_WARN"                             support="philippe.boinot@pertimm.com" parallel="false" />
+  <component   name="lua/lib"         info="lua add on" doc="TODO" support="philippe.boinot@pertimm.com" parallel="false" />
+  <component   name="spread"      info="FIFO/CAUSAL/SAFE messages protocol for distributed system" doc="www.spread.org" flags="NO_WARN" support="philippe.boinot@pertimm.com" parallel="true"/>
+  <component   name="ogm_psync/lib" info="Process Synchronization tools. This library implements thread/mutex/semaphore and process Manager to control execution of processes"  doc="TODO" support="philippe.boinot@pertimm.com" />
+  <component   name="ogm_psync/prog/nilProcess" info="Stupid 'nil' process for testing psync" doc="" support="philippe.boinot@pertimm.com" />
+  <component   name="ogm_psync/prog/ogpsync" info="" doc="" support="philippe.boinot@pertimm.com" />
   <component    name="ogm_psync/prog/testPmanager" info="" doc="" support="philippe.boinot@pertimm.com" />
-  <component 	name="ogm_heart/prog/ogheart" info="Synchronization core for distributed system" doc="$OG_REPO_PATH/sources/ogm_heart/doc/ogm_heart-ManuelUtilisateur.odt" />
+  <component   name="ogm_heart/prog/ogheart" info="Synchronization core for distributed system" doc="$OG_REPO_PATH/sources/ogm_heart/doc/ogm_heart-ManuelUtilisateur.odt" />
   <component    name="ogm_psync/prog/nilprocess"   info="" doc="" support="philippe.boinot@pertimm.com" />
   <component    name="ogm_heart/lib"               info="ogHeart Connector" doc="cf ogm_heart/prog/ogheart" support="philippe.boinot@pertimm.com"/>
   <component    name="ogm_heart/prog/ogheartCnt"  info="Sample programm to interface C with ogHeart" doc="TODO" />
@@ -57,165 +60,165 @@
   <component    name="ogm_service/lib"              info="Generic wrapper for Pertimm Products" doc="TODO" support="philippe.boinot@evidian.com"/>
   <component    name="ogm_service/prog/ogwrapper"   info="Generic wrapper for Pertimm Products" doc="TODO" support="philippe.boinot@evidian.com"/>
   <component    name="ogm_service/prog/ogadmin"     info="Generic admin daemon for Pertimm Products" doc="TODO" support="philippe.boinot@evidian.com"/>
-  <component    name="ogm_gen/lib"                info="historical Pertimm 'generic libs'"	doc="" />
-  <component    name="ogm_gena/lib"               info="generic libs applications"	doc="" />
+  <component    name="ogm_gen/lib"                info="historical Pertimm 'generic libs'"  doc="" />
+  <component    name="ogm_gena/lib"               info="generic libs applications"  doc="" />
   <component    name="ogm_spider/prog/ogharvester" info="harvester component" doc="TODO" />
   <component    name="ogm_gen/prog/ogmisc" info="philippe patch test program" doc=""/>
   <component    name="ogm_gen/prog/testPipe" info="philippe patch test program" doc=""/>
-  <component 	name="ogm_rich/lib" info="Request Enrichment Module" doc="" />
-  <component 	name="ogm_rich/prog/ogric" info="RICH compilation program" doc="" />
-  <component 	name="ogm_rich/prog/ogris" info="RICH Search program" doc="" />
-  <component 	name="ogm_msg/lib"         info="Messages Handling" doc="" />
+  <component   name="ogm_rich/lib" info="Request Enrichment Module" doc="" />
+  <component   name="ogm_rich/prog/ogric" info="RICH compilation program" doc="" />
+  <component   name="ogm_rich/prog/ogris" info="RICH Search program" doc="" />
+  <component   name="ogm_msg/lib"         info="Messages Handling" doc="" />
   <component    name="ogm_msg/prog/ogmsg"  info="Example msg program" doc=""/>
-  <component 	name="ogm_thr/lib"         info="Threads, Semaphores and Mutex handling" doc="" />
-  <component 	name="ogm_xml/lib"         info="XML tools" doc="" />
-  <component 	name="ogm_sidx/prog/ogcheckxml" info="Checking an xml file with an xsd file" doc="" />
-  <component 	name="ogm_uni/lib"         info="Unicode tools" doc="" />
-  <component 	name="ogm_uni/prog/oguc"   info="Encoding conversion program" doc="" />
-  <component 	name="ogm_auta/lib" info="" doc="" />
-  <component 	name="ogm_mas/lib" info="Associative Memory (repository)" doc="" />
-  <component 	name="ogm_mas/prog/ogmas" info="Basic functions (repository)" doc="" />
-  <component 	name="ogm_cksum/lib" info="Cheksum tools" doc="" />
-  <component 	name="ogm_rqp/lib" info="Request Parsing tools" doc="" />
-  <component 	name="ogm_rqp/prog/ogrqp" info="ogm_rqp example program" doc="" />
-  <component 	name="ogm_shm/lib" info="" doc="" />
-  <component 	name="ogm_rms/lib" info="Request Management Server module for SSRV (TRENDS project)" doc="" />
-  <component 	name="ogm_tis/lib" info="Text and Image Search module for RMS (TRENDS project)" doc="" />
-  <component 	name="ogm_uci/lib" info="Upper Communication Interface " doc="" />
-  <component 	name="ogm_uci/prog/ogucic" info="" doc="" />
-  <component 	name="ogm_http/lib" info="HTTP tools" doc="" />
-  <component 	name="ogm_sock/lib" info="Socket tools" doc="" />
-  <component 	name="ogm_thn/lib" info="" doc="" />
-  <component 	name="ogm_thn_nthr/lib" info="" doc="" />
-  <component 	name="ogm_eql/lib" info="Equivalences module (syn, trad, ...)" doc="" />
-  <component 	name="ogm_eql/prog/ogeqlc" info="Equivalences compilator" doc="" />
-  <component 	name="ogm_eql/prog/ogeqls" info="Equivalences search" doc="" />
-  <component 	name="ogm_eql/prog/ogeqlmeta" info="Equivalences metadata handling" doc="" />
-  <component 	name="ogm_ica/lib" info="Item Content Access" doc="" />
-  <component 	name="ogm_icamsql/lib" info="MySQL plugin for ICA" doc="" />
-  <component 	name="ogm_lip/lib" info="Linguistic Parser" doc="" />
-  <component 	name="ogm_lip/prog/oglip" info="Linguistic Parser program" doc=""/>
-  <component 	name="ogm_lip/prog/oglanguage" info="Language recognition program" doc=""/>
-  <component 	name="ogm_xmla/lib" info="XML Analyser for SSRV" doc="" />
-  <component 	name="ogm_xmla/prog/ogssiscan" info="XMLA Test program" doc="" />
-  <component 	name="ogm_zlib/lib" info="ZipLib" doc="" />
-  <component 	name="ogm_zlib/prog/ogzlib" info="Zlib test function" doc=""/>
-  <component 	name="ogm_zip/lib" info="old zip lib used only by hrd2, and only in win32, must be removed from hrd2" doc="" />
-  <component 	name="ogm_md5/lib" info="MD5 Tools" doc="" />
-  <component 	name="ogm_md5/prog/ogmd5" info="MD5 encrypter" doc="" />
-  <component 	name="ogm_ave/lib" info="" doc="" />
-  <component 	name="ogm_req/lib" info="Request parsing and tools" doc="" />
-  <component 	name="ogm_req/prog/ogreq" info="Request program" doc="" />
-  <component 	name="ogm_req/prog/borisreq" info="" doc="" />
-  <component 	name="ogm_grab/lib" info="Grabbing components" doc="" />
-  <component 	name="ogm_son/lib" info="Handles names for sockets" doc="" />
-  <component 	name="ogm_addr/lib" info="Handles listening to multiple IP/ports" doc="" />
+  <component   name="ogm_thr/lib"         info="Threads, Semaphores and Mutex handling" doc="" />
+  <component   name="ogm_xml/lib"         info="XML tools" doc="" />
+  <component   name="ogm_sidx/prog/ogcheckxml" info="Checking an xml file with an xsd file" doc="" />
+  <component   name="ogm_uni/lib"         info="Unicode tools" doc="" />
+  <component   name="ogm_uni/prog/oguc"   info="Encoding conversion program" doc="" />
+  <component   name="ogm_auta/lib" info="" doc="" />
+  <component   name="ogm_mas/lib" info="Associative Memory (repository)" doc="" />
+  <component   name="ogm_mas/prog/ogmas" info="Basic functions (repository)" doc="" />
+  <component   name="ogm_cksum/lib" info="Cheksum tools" doc="" />
+  <component   name="ogm_rqp/lib" info="Request Parsing tools" doc="" />
+  <component   name="ogm_rqp/prog/ogrqp" info="ogm_rqp example program" doc="" />
+  <component   name="ogm_shm/lib" info="" doc="" />
+  <component   name="ogm_rms/lib" info="Request Management Server module for SSRV (TRENDS project)" doc="" />
+  <component   name="ogm_tis/lib" info="Text and Image Search module for RMS (TRENDS project)" doc="" />
+  <component   name="ogm_uci/lib" info="Upper Communication Interface " doc="" />
+  <component   name="ogm_uci/prog/ogucic" info="" doc="" />
+  <component   name="ogm_http/lib" info="HTTP tools" doc="" />
+  <component   name="ogm_sock/lib" info="Socket tools" doc="" />
+  <component   name="ogm_thn/lib" info="" doc="" />
+  <component   name="ogm_thn_nthr/lib" info="" doc="" />
+  <component   name="ogm_eql/lib" info="Equivalences module (syn, trad, ...)" doc="" />
+  <component   name="ogm_eql/prog/ogeqlc" info="Equivalences compilator" doc="" />
+  <component   name="ogm_eql/prog/ogeqls" info="Equivalences search" doc="" />
+  <component   name="ogm_eql/prog/ogeqlmeta" info="Equivalences metadata handling" doc="" />
+  <component   name="ogm_ica/lib" info="Item Content Access" doc="" />
+  <component   name="ogm_icamsql/lib" info="MySQL plugin for ICA" doc="" />
+  <component   name="ogm_lip/lib" info="Linguistic Parser" doc="" />
+  <component   name="ogm_lip/prog/oglip" info="Linguistic Parser program" doc=""/>
+  <component   name="ogm_lip/prog/oglanguage" info="Language recognition program" doc=""/>
+  <component   name="ogm_xmla/lib" info="XML Analyser for SSRV" doc="" />
+  <component   name="ogm_xmla/prog/ogssiscan" info="XMLA Test program" doc="" />
+  <component   name="ogm_zlib/lib" info="ZipLib" doc="" />
+  <component   name="ogm_zlib/prog/ogzlib" info="Zlib test function" doc=""/>
+  <component   name="ogm_zip/lib" info="old zip lib used only by hrd2, and only in win32, must be removed from hrd2" doc="" />
+  <component   name="ogm_md5/lib" info="MD5 Tools" doc="" />
+  <component   name="ogm_md5/prog/ogmd5" info="MD5 encrypter" doc="" />
+  <component   name="ogm_ave/lib" info="" doc="" />
+  <component   name="ogm_req/lib" info="Request parsing and tools" doc="" />
+  <component   name="ogm_req/prog/ogreq" info="Request program" doc="" />
+  <component   name="ogm_req/prog/borisreq" info="" doc="" />
+  <component   name="ogm_grab/lib" info="Grabbing components" doc="" />
+  <component   name="ogm_son/lib" info="Handles names for sockets" doc="" />
+  <component   name="ogm_addr/lib" info="Handles listening to multiple IP/ports" doc="" />
   <component  name="ogm_addr/prog/ogaddr" info="" doc="" />
-  <component 	name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" doc="" />
-  <component 	name="ogm_xpt/lib" info="Experimental, handles exceptions" doc="" />
-  <component 	name="ogm_pho/lib" info="Phonetizer" doc="" />
-  <component 	name="ogm_pho/prog/ogphonet" info="Phonetizer program" doc="" />
-  <component 	name="ogm_sidx/lib" info="Simple Indexer" doc="" />
-  <component 	name="ogm_sidx/prog/ogm_sidx" info="Simple Indexer program" doc="" />
-  <component 	name="ogm_sidx/prog/ogsubi" info="Extraction of subindexes (mainly for debugging)" doc="" />
-  <component 	name="ogm_sidx/prog/ofiles" info="Testing opening many files at the same time" doc="" />
-  <component 	name="ogm_sidx/prog/cutitems" info="cutting items from import files" doc="" />
-  <component 	name="ogm_sidx/prog/ogaix" info="Testing AIX searches" doc="" />
-  <component 	name="ogm_sidx/prog/ogpreindex" info="Pre indexation step (data serialization, etc.)" doc=""
+  <component   name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" doc="" />
+  <component   name="ogm_xpt/lib" info="Experimental, handles exceptions" doc="" />
+  <component   name="ogm_pho/lib" info="Phonetizer" doc="" />
+  <component   name="ogm_pho/prog/ogphonet" info="Phonetizer program" doc="" />
+  <component   name="ogm_sidx/lib" info="Simple Indexer" doc="" />
+  <component   name="ogm_sidx/prog/ogm_sidx" info="Simple Indexer program" doc="" />
+  <component   name="ogm_sidx/prog/ogsubi" info="Extraction of subindexes (mainly for debugging)" doc="" />
+  <component   name="ogm_sidx/prog/ofiles" info="Testing opening many files at the same time" doc="" />
+  <component   name="ogm_sidx/prog/cutitems" info="cutting items from import files" doc="" />
+  <component   name="ogm_sidx/prog/ogaix" info="Testing AIX searches" doc="" />
+  <component   name="ogm_sidx/prog/ogpreindex" info="Pre indexation step (data serialization, etc.)" doc=""
                 support="philippe.boinot@pertimm.com"/>
-  <component 	name="ogm_sidx/prog/cmpsidxscan" info="Helps compares sidxcan.log files" doc="" />
-  <component 	name="ogm_ssrv/lib" info="Simple Server" doc="" />
+  <component   name="ogm_sidx/prog/cmpsidxscan" info="Helps compares sidxcan.log files" doc="" />
+  <component   name="ogm_ssrv/lib" info="Simple Server" doc="" />
   <component  name="ogm_ssrv/prog/ogm_ssrv" info="Simple Server program" doc="" />
-  <component 	name="ogm_ssrv/prog/ssrv_test" info="Ssrv test program" doc="" />
+  <component   name="ogm_ssrv/prog/ssrv_test" info="Ssrv test program" doc="" />
   <component  name="ogm_nls/lib" info="Natural Language Server" doc="" />
   <component  name="ogm_nls/prog/ogm_nls" info="Natural Language Server program" doc="" />
-  <component 	name="ogm_sig/lib" info="Signals" doc="" />
-  <component 	name="ogm_ldi/lib" info="Linguistic Dictionaries" doc="" />
-  <component 	name="ogm_ldi/prog/ogldi" info="Linguistic dictionnaries query program" doc=""/>
-  <component 	name="ogm_bun/lib" info="Handles bundle files such as zip,gz,etc." doc="" />
-  <component 	name="ogm_eml/lib" info="Handles .eml files" doc="" />
-  <component 	name="ogm_stp/lib" info="Stopping servers library" doc="" />
-  <component 	name="ogm_stp/prog/ogm_stop" info="Stopping servers command" doc="" />
-  <component 	name="ogm_stp/prog/ogmclean" info="Cleaning and stopping" doc="" />
-  <component 	name="ogm_sda/lib" info="Structured document analysis" doc=""/>
-  <component 	name="ogm_sda/prog/ogsda" info="SDA utility" doc=""/>
-  <component 	name="ogm_zh/lib" info="Chinese document analysis" doc=""/>
-  <component 	name="ogm_zh/prog/ogzh"   info="Parsing program for chinese" doc="" />
-  <component 	name="ogm_sda/prog/ogparag" info="Compute paragraphs on the textual content of a structured file" doc=""/>
-  <component 	name="ogm_dla/lib" info="Language dictionaries" doc="" support="charlotte.lecluze@pertimm.com"/>
-  <component 	name="ogm_dla/prog/ogdla" info="Language identification" doc="" support="charlotte.lecluze@pertimm.com"/>
-  <component 	name="ogm_pfix/lib" info="Prefix array" doc="" support="charlotte.lecluze@pertimm.com"/>
-  <component 	name="ogm_pfix/prog/ogpfix" info="Prefix Array" doc="" support="charlotte.lecluze@pertimm.com"/>
-  <component 	name="ogm_freq/lib" info="Computes frequencies of items on large collections" doc="" support="lois.rigouste@pertimm.com"/>
-  <component 	name="ogm_freq/prog/ogwordfreq" info="Computes word frequencies" doc="" support="lois.rigouste@pertimm.com"/>
-  <component 	name="ogm_gen/prog/ogrunning" info="Running status indicator" doc=""/>
-  <component 	name="ogm_gen/prog/test" info="To create simple programs" doc=""/>
-  <component 	name="ogm_ssi/lib" info="Simple Server Indexer Plugin" doc="" />
-  <component 	name="ogm_url/lib" info="URL management and grabbing library" doc="" />
-  <component 	name="ogm_url/prog/oggl" info="Grabber" doc="" />
-  <component 	name="ogm_url/prog/ogreadurl" info="URL Reader" doc="" />
-  <component 	name="ogm_rgx/lib" info="Regular Expressions" doc="" />
-  <component 	name="ogm_rgx/prog/ogrgx" info="Regex" doc="" support=""/>
+  <component   name="ogm_sig/lib" info="Signals" doc="" />
+  <component   name="ogm_ldi/lib" info="Linguistic Dictionaries" doc="" />
+  <component   name="ogm_ldi/prog/ogldi" info="Linguistic dictionnaries query program" doc=""/>
+  <component   name="ogm_bun/lib" info="Handles bundle files such as zip,gz,etc." doc="" />
+  <component   name="ogm_eml/lib" info="Handles .eml files" doc="" />
+  <component   name="ogm_stp/lib" info="Stopping servers library" doc="" />
+  <component   name="ogm_stp/prog/ogm_stop" info="Stopping servers command" doc="" />
+  <component   name="ogm_stp/prog/ogmclean" info="Cleaning and stopping" doc="" />
+  <component   name="ogm_sda/lib" info="Structured document analysis" doc=""/>
+  <component   name="ogm_sda/prog/ogsda" info="SDA utility" doc=""/>
+  <component   name="ogm_zh/lib" info="Chinese document analysis" doc=""/>
+  <component   name="ogm_zh/prog/ogzh"   info="Parsing program for chinese" doc="" />
+  <component   name="ogm_sda/prog/ogparag" info="Compute paragraphs on the textual content of a structured file" doc=""/>
+  <component   name="ogm_dla/lib" info="Language dictionaries" doc="" support="charlotte.lecluze@pertimm.com"/>
+  <component   name="ogm_dla/prog/ogdla" info="Language identification" doc="" support="charlotte.lecluze@pertimm.com"/>
+  <component   name="ogm_pfix/lib" info="Prefix array" doc="" support="charlotte.lecluze@pertimm.com"/>
+  <component   name="ogm_pfix/prog/ogpfix" info="Prefix Array" doc="" support="charlotte.lecluze@pertimm.com"/>
+  <component   name="ogm_freq/lib" info="Computes frequencies of items on large collections" doc="" support="lois.rigouste@pertimm.com"/>
+  <component   name="ogm_freq/prog/ogwordfreq" info="Computes word frequencies" doc="" support="lois.rigouste@pertimm.com"/>
+  <component   name="ogm_gen/prog/ogrunning" info="Running status indicator" doc=""/>
+  <component   name="ogm_gen/prog/test" info="To create simple programs" doc=""/>
+  <component   name="ogm_ssi/lib" info="Simple Server Indexer Plugin" doc="" />
+  <component   name="ogm_url/lib" info="URL management and grabbing library" doc="" />
+  <component   name="ogm_url/prog/oggl" info="Grabber" doc="" />
+  <component   name="ogm_url/prog/ogreadurl" info="URL Reader" doc="" />
+  <component   name="ogm_rgx/lib" info="Regular Expressions" doc="" />
+  <component   name="ogm_rgx/prog/ogrgx" info="Regex" doc="" support=""/>
   <component    name="flash_player_sdk" info="Adobe swf2html" doc="" />
-  <component 	name="ogm_mail/lib" info="Mail library" doc="" />
-  <component 	name="ogm_tpl/lib" info="Templates management" doc="" />
-  <component 	name="ogm_aut/lib" info="Finite State Automaton library" doc="" />
-  <component 	name="ogm_sort/lib" info="Sorting routines (level 4)" doc="" />
-  <component 	name="ogm_sort/prog/bpat" info="pattern builder for language recognition" doc="" />
-  <component 	name="ogm_sort/prog/cpat" info="test program for language recognition" doc="" />
-  <component 	name="ogm_aut/prog/ogaut" info="Automaton generic use program" doc="" />
-  <component 	name="ogm_aut/prog/ogdict" info="Dictionary processing program" doc="" />
-  <component 	name="ogm_aut/prog/gettoklex" info="Create toklex automatons" doc="" />
-  <component 	name="ogm_aut/prog/getroot" info="Create root and form automatons" doc="" />
-  <component 	name="ogm_aut/prog/ogacp" info="Auto completion prepare program" doc="" />
-  <component 	name="ogm_aut/prog/ogbreqs" info="Build requests" doc="" />
-  <component 	name="ogm_std/lib" info="Standard (level 4)" doc="" />
-  <component 	name="ogm_std/prog/ogm_val" info="Test standard (level 4)" doc="" />
-  <component 	name="ogm_srta/lib" info="Split linear sort (level 4)" doc="" />
-  <component 	name="ogm_hrd2/lib" info="Repository library (level 4)" doc="" />
-  <component 	name="ogm_mbi/lib" info="Matrix of BIts (in fact, vectors)" doc="" />
-  <component 	name="ogm_mbv/lib" info="Matrix By Value (in fact, vectors) (level 4)" doc="" />
-  <component 	name="ogm_mbx/lib" info="Matrix By Xref (in fact, vectors) (level 4)" doc="" />
-  <component 	name="ogm_mbx/prog/ogmbx" info="Test program for ogm_mbx used to dump Xref matrices" doc=""/>
-  <component 	name="ogm_mbn/lib" info="Matrix By Numbers (in fact, vectors)" doc="" />
-  <component 	name="ogm_proc/lib" info="Handles processes" doc="" />
-  <component 	name="ogm_nen/lib" info="Named ENtities handling (bu1)" doc="" />
-  <component 	name="ogm_nen/prog/cnen" info="Program to compile named entities (bu1)" doc="" />
-  <component 	name="ogm_dbase/lib" info="Connection to MySQL database" doc="" />
-  <component 	name="ogm_ls/lib" info="Linear sorting" doc="" />
-  <component 	name="ogm_ls/prog/ogls" info="Linear sorting test program" doc="" />
-  <component 	name="ogm_lsa/lib" info="Linear sorting application" doc="" />
-  <component 	name="ogm_miz/lib" info="OptiMIZed PertimMIZers library (level 4)" doc="" />
-  <component 	name="ogm_miz/prog/ogmiz" info="OptiMIZed PertimMIZers library test program" doc="" />
-  <component 	name="ogm_stm/lib" info="String Matching Library (Levenshtein edit distance)" doc="" />
-  <component 	name="ogm_stm/prog/ogstm" info="String Matching Library test program" doc="" />
-  <component 	name="ogm_stm/prog/ogcorrect" info="Spellchecking corrections generator" doc="" />
-  <component 	name="ogm_ltras/lib" info="Linguistic transformations search library" doc="" />
-  <component 	name="ogm_ltras/prog/ogltras" info="Using ltras library" doc="" />
-  <component 	name="ogm_ltrac/lib" info="Linguistic transformations compile library" doc="" />
-  <component 	name="ogm_ltrac/prog/ogltrac" info="Using ltrac library" doc="" />
-  <component 	name="ogm_ltrap/lib" info="Linguistic transformations parse library" doc="" />
-  <component 	name="ogm_ltrap/prog/ogltrap" info="Using ltrap library" doc="" />
-  <component 	name="ogm_sysi/lib" info="Synchronisation server/indexer library" doc="" />
-  <component 	name="ogm_sysi/prog/ogsysi" info="Using/testing sysi library" doc="" />
-  <component 	name="ogm_hit/lib" info="handling hits for libogvw and libogabst" doc="" />
-  <component 	name="ogm_vw/lib" info="viewer lib for ssrv" doc="" />
-  <component 	name="ogm_vw/prog/ogvw" info="viewer program" doc="" />
-  <component 	name="ogm_abst/lib" info="viewer lib for ssrv" doc="" />
-  <component 	name="ogm_abst/prog/ogabst" info="viewer program" doc="" />
-  <component 	name="ogm_fxp/lib" info="lib for fxp, file exportation" doc="" />
-  <component 	name="ogm_fxpa/lib" info="lib for fxpa, file exportation API" doc="" />
-  <component 	name="ogm_fxp/prog/ogfxp" info="file exportation program" doc="" />
-  <component 	name="ogm_heap/lib" info="lib for memory heap management" doc="" />
-  <component 	name="ogm_heap/prog/ogheap" info="test program for memory heap management" doc="" />
-  <component 	name="ogm_queue/lib" info="lib for queues management" doc="" />
-  <component 	name="ogm_queue/prog/ogqueue" info="test program for queues management" doc="" />
-  <component 	name="ogm_stopword/lib" info="lib for stop words management" doc="" />
-  <component 	name="ogm_stopword/prog/ogstopword" info="test program for stop words management" doc="" />
+  <component   name="ogm_mail/lib" info="Mail library" doc="" />
+  <component   name="ogm_tpl/lib" info="Templates management" doc="" />
+  <component   name="ogm_aut/lib" info="Finite State Automaton library" doc="" />
+  <component   name="ogm_sort/lib" info="Sorting routines (level 4)" doc="" />
+  <component   name="ogm_sort/prog/bpat" info="pattern builder for language recognition" doc="" />
+  <component   name="ogm_sort/prog/cpat" info="test program for language recognition" doc="" />
+  <component   name="ogm_aut/prog/ogaut" info="Automaton generic use program" doc="" />
+  <component   name="ogm_aut/prog/ogdict" info="Dictionary processing program" doc="" />
+  <component   name="ogm_aut/prog/gettoklex" info="Create toklex automatons" doc="" />
+  <component   name="ogm_aut/prog/getroot" info="Create root and form automatons" doc="" />
+  <component   name="ogm_aut/prog/ogacp" info="Auto completion prepare program" doc="" />
+  <component   name="ogm_aut/prog/ogbreqs" info="Build requests" doc="" />
+  <component   name="ogm_std/lib" info="Standard (level 4)" doc="" />
+  <component   name="ogm_std/prog/ogm_val" info="Test standard (level 4)" doc="" />
+  <component   name="ogm_srta/lib" info="Split linear sort (level 4)" doc="" />
+  <component   name="ogm_hrd2/lib" info="Repository library (level 4)" doc="" />
+  <component   name="ogm_mbi/lib" info="Matrix of BIts (in fact, vectors)" doc="" />
+  <component   name="ogm_mbv/lib" info="Matrix By Value (in fact, vectors) (level 4)" doc="" />
+  <component   name="ogm_mbx/lib" info="Matrix By Xref (in fact, vectors) (level 4)" doc="" />
+  <component   name="ogm_mbx/prog/ogmbx" info="Test program for ogm_mbx used to dump Xref matrices" doc=""/>
+  <component   name="ogm_mbn/lib" info="Matrix By Numbers (in fact, vectors)" doc="" />
+  <component   name="ogm_proc/lib" info="Handles processes" doc="" />
+  <component   name="ogm_nen/lib" info="Named ENtities handling (bu1)" doc="" />
+  <component   name="ogm_nen/prog/cnen" info="Program to compile named entities (bu1)" doc="" />
+  <component   name="ogm_dbase/lib" info="Connection to MySQL database" doc="" />
+  <component   name="ogm_ls/lib" info="Linear sorting" doc="" />
+  <component   name="ogm_ls/prog/ogls" info="Linear sorting test program" doc="" />
+  <component   name="ogm_lsa/lib" info="Linear sorting application" doc="" />
+  <component   name="ogm_miz/lib" info="OptiMIZed PertimMIZers library (level 4)" doc="" />
+  <component   name="ogm_miz/prog/ogmiz" info="OptiMIZed PertimMIZers library test program" doc="" />
+  <component   name="ogm_stm/lib" info="String Matching Library (Levenshtein edit distance)" doc="" />
+  <component   name="ogm_stm/prog/ogstm" info="String Matching Library test program" doc="" />
+  <component   name="ogm_stm/prog/ogcorrect" info="Spellchecking corrections generator" doc="" />
+  <component   name="ogm_ltras/lib" info="Linguistic transformations search library" doc="" />
+  <component   name="ogm_ltras/prog/ogltras" info="Using ltras library" doc="" />
+  <component   name="ogm_ltrac/lib" info="Linguistic transformations compile library" doc="" />
+  <component   name="ogm_ltrac/prog/ogltrac" info="Using ltrac library" doc="" />
+  <component   name="ogm_ltrap/lib" info="Linguistic transformations parse library" doc="" />
+  <component   name="ogm_ltrap/prog/ogltrap" info="Using ltrap library" doc="" />
+  <component   name="ogm_sysi/lib" info="Synchronisation server/indexer library" doc="" />
+  <component   name="ogm_sysi/prog/ogsysi" info="Using/testing sysi library" doc="" />
+  <component   name="ogm_hit/lib" info="handling hits for libogvw and libogabst" doc="" />
+  <component   name="ogm_vw/lib" info="viewer lib for ssrv" doc="" />
+  <component   name="ogm_vw/prog/ogvw" info="viewer program" doc="" />
+  <component   name="ogm_abst/lib" info="viewer lib for ssrv" doc="" />
+  <component   name="ogm_abst/prog/ogabst" info="viewer program" doc="" />
+  <component   name="ogm_fxp/lib" info="lib for fxp, file exportation" doc="" />
+  <component   name="ogm_fxpa/lib" info="lib for fxpa, file exportation API" doc="" />
+  <component   name="ogm_fxp/prog/ogfxp" info="file exportation program" doc="" />
+  <component   name="ogm_heap/lib" info="lib for memory heap management" doc="" />
+  <component   name="ogm_heap/prog/ogheap" info="test program for memory heap management" doc="" />
+  <component   name="ogm_queue/lib" info="lib for queues management" doc="" />
+  <component   name="ogm_queue/prog/ogqueue" info="test program for queues management" doc="" />
+  <component   name="ogm_stopword/lib" info="lib for stop words management" doc="" />
+  <component   name="ogm_stopword/prog/ogstopword" info="test program for stop words management" doc="" />
   <component  name="ogm_interpret/lib" info="Natural language interpretation of requests" doc="" />
   <component  name="ogm_interpret_parser/lib" info="Natural language interpretation of requests, parser for functions" doc="" />
   <component  name="ogm_interpret_parser/prog/ogm_interpret_parser" info="Using interpret parser library" doc="" />
-  <component 	name="ogm_interpret/prog/oginterpret" info="Using interpret library" doc="" />
+  <component   name="ogm_interpret/prog/oginterpret" info="Using interpret library" doc="" />
   <component  name="ogm_attribute/lib" info="Attribute and attribute number, synchronized for multi-threaded indexation and search" doc="" />
   <component  name="ogm_req_counter/lib" info="Persitent request counter Lib" doc="" />
   <component  name="ogm_req_counter/prog/og_req_counter" info="Persitent request counter Prog" doc="" />
@@ -306,40 +309,40 @@
   <component    name="ogm_glb/lib" info="" doc="" />
   <component    name="ogm_glb/prog/cglb" info="" doc="" />
   <component    name="ogm_gpub/prog/ogm_gpub" info="" doc="" />
-  <component 	name="ogm_ima/lib"    info="" doc="" />
-  <component 	name="ogm_ima/prog/tima"   info="" doc="" />
-  <component 	name="ogm_loga/lib"   info="" doc="" />
-  <component 	name="ogm_moni/prog/ogm_moni"   info="" doc="" />
-  <component 	name="ogm_ocea/prog/ogm_oca"   info="" doc="" />
-  <component 	name="ogm_phox/lib"   info="" doc="" />
-  <component 	name="ogm_phox/prog/ogpinf"   info="" doc="" />
-  <component 	name="ogm_pmo/prog/ogm_pmo"    info="" doc="" />
-  <component 	name="ogm_sct/lib"    info="" doc="" />
-  <component 	name="ogm_sct/prog/ogm_scta"    info="" doc="" />
-  <component 	name="ogm_syn/lib"    info="" doc="" />
+  <component   name="ogm_ima/lib"    info="" doc="" />
+  <component   name="ogm_ima/prog/tima"   info="" doc="" />
+  <component   name="ogm_loga/lib"   info="" doc="" />
+  <component   name="ogm_moni/prog/ogm_moni"   info="" doc="" />
+  <component   name="ogm_ocea/prog/ogm_oca"   info="" doc="" />
+  <component   name="ogm_phox/lib"   info="" doc="" />
+  <component   name="ogm_phox/prog/ogpinf"   info="" doc="" />
+  <component   name="ogm_pmo/prog/ogm_pmo"    info="" doc="" />
+  <component   name="ogm_sct/lib"    info="" doc="" />
+  <component   name="ogm_sct/prog/ogm_scta"    info="" doc="" />
+  <component   name="ogm_syn/lib"    info="" doc="" />
   <component    name="ogm_syn/prog/csyn"        info="" doc=""/>
-  <component 	name="ogm_syn/prog/ogm_csyn"    info="" doc="" />
-  <component 	name="ogurun/prog/ogurun"     info="" doc="" />
-  <component 	name="ogm_img/lib"       info="" doc="" />
+  <component   name="ogm_syn/prog/ogm_csyn"    info="" doc="" />
+  <component   name="ogurun/prog/ogurun"     info="" doc="" />
+  <component   name="ogm_img/lib"       info="" doc="" />
   <component    name="ogm_fltr/prog/ogm_fltr" info="" doc=""/>
-  <component 	name="ogm_img/prog/cimg" info="" doc="" />
-  <component 	name="ogm_img/prog/fimg" info="" doc="" />
-  <component 	name="ogm_men/lib"    info="" doc="" />
-  <component 	name="ogm_men/prog/amen"    info="" doc="" />
-  <component 	name="ogm_men/prog/imen"    info="" doc="" />
-  <component 	name="ogm_name/lib"         info="" doc="" />
-  <component 	name="ogm_name/prog/ogname" info="" doc="" />
+  <component   name="ogm_img/prog/cimg" info="" doc="" />
+  <component   name="ogm_img/prog/fimg" info="" doc="" />
+  <component   name="ogm_men/lib"    info="" doc="" />
+  <component   name="ogm_men/prog/amen"    info="" doc="" />
+  <component   name="ogm_men/prog/imen"    info="" doc="" />
+  <component   name="ogm_name/lib"         info="" doc="" />
+  <component   name="ogm_name/prog/ogname" info="" doc="" />
   <component    name="ogm_ocea/prog/ogm_ocea" info="" doc=""/>
-  <component 	name="ogm_pds/prog/ogm_pds"    info="" doc="" />
-  <component 	name="ogm_pinf/lib"   info="" doc="" />
-  <component 	name="ogm_pinf/prog/ogpinf"   info="" doc="" />
-  <component 	name="ogm_s2k/prog/ogm_s2k"    info="" doc="" />
-  <component 	name="ogm_sid/lib"    info="" doc="" />
-  <component 	name="ogm_sid/lib"    info="" doc="" />
-  <component 	name="ogm_sync/prog/ogm_sync"   info="" doc="" />
-  <component 	name="ogm_html/lib"   info="" doc="" />
-  <component 	name="ogm_html/prog/exsimple" info="" doc="" />
-  <component 	name="ogm_html/prog/thtml"    info="" doc="" />
+  <component   name="ogm_pds/prog/ogm_pds"    info="" doc="" />
+  <component   name="ogm_pinf/lib"   info="" doc="" />
+  <component   name="ogm_pinf/prog/ogpinf"   info="" doc="" />
+  <component   name="ogm_s2k/prog/ogm_s2k"    info="" doc="" />
+  <component   name="ogm_sid/lib"    info="" doc="" />
+  <component   name="ogm_sid/lib"    info="" doc="" />
+  <component   name="ogm_sync/prog/ogm_sync"   info="" doc="" />
+  <component   name="ogm_html/lib"   info="" doc="" />
+  <component   name="ogm_html/prog/exsimple" info="" doc="" />
+  <component   name="ogm_html/prog/thtml"    info="" doc="" />
   <component    name="ogm_hrd2/prog/hdbplay"    info="" doc=""/>
   <component    name="ogm_hrd2/prog/hread"    info="" doc=""/>
   <component    name="ogm_hrd2/prog/hstatxref" info="" doc=""/>
@@ -348,25 +351,25 @@
   <component    name="ogm_hrd2/prog/mergerep"  info="" doc=""/>
   <component    name="ogm_hrd2/prog/ogentlist" info="" doc=""/>
   <component    name="ogm_hrd2/prog/getvoca" info="" doc=""/>
-  <component 	name="ogm_jsrv/prog/ogm_jsrv"   info="" doc="" />
-  <component 	name="ogm_mgb/lib"    info="" doc="" />
-  <component 	name="ogm_mgb/prog/ogmgb"    info="" doc="" />
-  <component 	name="ogm_node/prog/ogm_node"   info="" doc="" />
-  <component 	name="ogm_pgr/lib"    info="" doc="" />
-  <component 	name="ogm_pgr/prog/cpgr"    info="" doc="" />
-  <component 	name="ogm_pgr/prog/pgrdump"    info="" doc="" />
-  <component 	name="ogm_pgr/prog/pgrmerge"    info="" doc="" />
-  <component 	name="ogm_pgr/prog/pgrscan"    info="" doc="" />
-  <component 	name="ogm_plug/lib"   info="" doc="" />
-  <component 	name="ogm_plug/prog/ogplug"   info="" doc="" />
-  <component 	name="ogm_s9x/prog/ogm_s9x"    info="" doc="" />
+  <component   name="ogm_jsrv/prog/ogm_jsrv"   info="" doc="" />
+  <component   name="ogm_mgb/lib"    info="" doc="" />
+  <component   name="ogm_mgb/prog/ogmgb"    info="" doc="" />
+  <component   name="ogm_node/prog/ogm_node"   info="" doc="" />
+  <component   name="ogm_pgr/lib"    info="" doc="" />
+  <component   name="ogm_pgr/prog/cpgr"    info="" doc="" />
+  <component   name="ogm_pgr/prog/pgrdump"    info="" doc="" />
+  <component   name="ogm_pgr/prog/pgrmerge"    info="" doc="" />
+  <component   name="ogm_pgr/prog/pgrscan"    info="" doc="" />
+  <component   name="ogm_plug/lib"   info="" doc="" />
+  <component   name="ogm_plug/prog/ogplug"   info="" doc="" />
+  <component   name="ogm_s9x/prog/ogm_s9x"    info="" doc="" />
   <component    name="ogm_slo/lib"    info="" doc=""/>
   <component    name="ogm_smi/lib"    info="" doc=""/>
-  <component 	name="ogm_svw/lib"    info="" doc="" />
-  <component 	name="ogm_svw/prog/tsvw"    info="" doc="" />
-  <component 	name="ogm_uli/lib"   info="" doc="" />
-  <component 	name="ogm_uli/prog/oguli"   info="" doc="" />
-  <component 	name="ogm_updt/prog/ogm_updt"   info="" doc="" />
+  <component   name="ogm_svw/lib"    info="" doc="" />
+  <component   name="ogm_svw/prog/tsvw"    info="" doc="" />
+  <component   name="ogm_uli/lib"   info="" doc="" />
+  <component   name="ogm_uli/prog/oguli"   info="" doc="" />
+  <component   name="ogm_updt/prog/ogm_updt"   info="" doc="" />
   <component    name="ogm_bulk/prog/ogm_bulk" info="" doc=""/>
   <component    name="ogm_dsp/prog/ogm_dsp" info="" doc=""/>
   <component    name="ogm_find/prog/ogm_find" info="" doc=""/>
@@ -405,6 +408,6 @@
   <component    name="ogm_pick/prog/ogpick" info="Pick program" doc=""/>
   <component    name="ogm_codepage/lib" info="Codepage library calculates the codepage from a buffer." doc=""/>
   <component    name="ogm_codepage/prog/ogcodepage" info="Codepage program" doc=""/>
-  <component 	name="ogm_extract/lib" info="extract lib for ssrv" doc="" />
-  <component 	name="ogm_extract/prog/ogextract" info="extract program" doc="" />
+  <component   name="ogm_extract/lib" info="extract lib for ssrv" doc="" />
+  <component   name="ogm_extract/prog/ogextract" info="extract program" doc="" />
 </components_manifest>
