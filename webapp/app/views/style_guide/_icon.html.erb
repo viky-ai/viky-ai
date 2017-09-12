@@ -1,0 +1,49 @@
+<section>
+  <h2>Icons</h2>
+  <p>
+    The <code>icon</code> element is a container for any svg icons available via ruby <code>icon_*</code> view helpers.
+  </p>
+  <%= highlight_html do %>
+<span class="icon">
+  <%= icon_check %>
+</span>
+  <% end %>
+
+  <h3>Size variants</h3>
+  <%= highlight_html do %>
+<span class="icon icon--small">
+  <%= icon_check %>
+</span>
+<span class="icon">
+  <%= icon_check %>
+</span>
+<span class="icon icon--large">
+  <%= icon_check %>
+</span>
+  <% end %>
+
+
+  <h3>Spin animation</h3>
+  <%= highlight_html do %>
+<span class="icon icon--spin">
+  <%= icon_loading %>
+</span>
+  <% end %>
+
+
+  <h3>Avalaible icons list</h3>
+  <ul class="icon-list clearfix">
+    <% [
+        "icon_check",
+        "icon_close",
+        "icon_information",
+        "icon_alert",
+        "icon_loading"
+       ].each do |helper| %>
+    <li>
+      <span class="icon"><%= send(helper) %></span><br /><br />
+      <code>&lt;%= <%= helper %> %&gt;</code>
+    </li>
+    <% end %>
+  </ul>
+</section>

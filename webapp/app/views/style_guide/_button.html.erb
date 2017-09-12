@@ -36,4 +36,46 @@
   <%= highlight_html do %>
 <button class="btn btn--full">Full width</button>
   <% end %>
+
+  <h3>With icon</h3>
+  <%= highlight_html do %>
+<button class="btn btn--small">
+  <span class="icon icon--small"><%= icon_check %></span>
+  Default small
+</button>
+<button class="btn btn--small btn--primary">
+  <span class="icon icon--small"><%= icon_check %></span>
+  Primary small
+</button>
+<button class="btn btn--small btn--destructive">
+  <span class="icon icon--small"><%= icon_check %></span>
+  Destructive small
+</button>
+<br /><br />
+<button class="btn">
+  <span class="icon"><%= icon_check %></span>
+  Default
+</button>
+<button class="btn btn--primary">
+  <span class="icon"><%= icon_check %></span>
+  Primary
+</button>
+<button class="btn btn--destructive">
+  <span class="icon"><%= icon_check %></span>
+  Destructive
+</button>
+<br /><br />
+<button class="btn btn--large">
+  <span class="icon icon--large"><%= icon_check %></span>
+  Default large
+</button>
+<button class="btn btn--large btn--primary">
+  <span class="icon icon--large"><%= icon_check %></span>
+  Primary large
+</button>
+<button class="btn btn--large btn--destructive">
+  <span class="icon icon--large"><%= icon_check %></span>
+  Destructive large
+</button>
+  <% end %>
 </section>

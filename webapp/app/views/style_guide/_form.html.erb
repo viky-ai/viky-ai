@@ -34,12 +34,18 @@
 <div class="field">
   <label for="password-b">Password</label>
   <input type="password" name="password" id="password-b" />
-  <div class="help help--success">Yeah ! Your password has at least 8 characters.</div>
+  <div class="help help--success">
+    <span class="icon icon--small"><%= icon_information %></span>
+    Yeah ! Your password has at least 8 characters.
+  </div>
 </div>
 <div class="field">
   <label for="password-c">Password</label>
   <input type="password" name="password" id="password-c" />
-  <div class="help help--error">Password must have at least 8 characters.</div>
+  <div class="help help--error">
+    <span class="icon icon--small"><%= icon_alert %></span>
+    Password must have at least 8 characters.
+  </div>
 </div>
   <% end %>
 

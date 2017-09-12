@@ -60,9 +60,15 @@
     font-size: .875em;
     &.help--success{
       color: $success_color;
+      .icon svg{
+        fill: $success_color;
+      }
     }
     &.help--error{
       color: $error_color;
+      .icon svg{
+        fill: $error_color;
+      }
     }
   }
 

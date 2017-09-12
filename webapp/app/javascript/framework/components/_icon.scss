@@ -1,0 +1,49 @@
+@keyframes iconspin {
+  0% {
+    transform:rotate(0deg) scale(1);
+  }
+  50%{
+    transform:rotate(180deg) scale(.9);
+  }
+  100% {
+    transform:rotate(360deg) scale(1);
+  }
+}
+
+.icon{
+  width: 24px;
+  height: 24px;
+  vertical-align: center;
+  svg{
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  &.icon--small{
+    width: 18px;
+    height: 18px;
+    svg{
+      width: 18px;
+      height: 18px;
+    }
+  }
+  &.icon--large{
+    width: 27px;
+    height: 27px;
+    svg{
+      width: 27px;
+      height: 27px;
+    }
+  }
+  &.icon--spin svg{
+    animation: iconspin linear 1s infinite;
+  }
+}
+
+.btn--primary .icon,
+.btn--destructive .icon{
+  svg{
+    fill: #fff;
+  }
+}
