@@ -7,6 +7,7 @@
 * NodeJS (8.4.0)
 * Yarn (1.0.1)
 * PostgreSQL (9.6.5)
+* Redis (4.0.1)
 
 ## Environment Variables
 
@@ -26,5 +27,3 @@ VOQALAPP_DB_PORT=5432
 
 VOQALAPP_REDIS_URL='redis://localhost:6379/1'
 ```
-
-those variables will be used by the application database connector.
