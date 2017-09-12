@@ -15,13 +15,16 @@ You can define your local variables in a `.env` file and place it in the root of
 they will be loaded into the environment at the application bootstrap and available within your code as usual, via `ENV['EXAMPLE_VAR']`.
 
 Beware of never committing or pushing the `.env` file, it is just useful for your local webapp instance to match your local configuration.
-For example you could define your local PostgreSQL username, password, host and port variables, maybe it's a remote machine, maybe not, e.g.:
+
+For example you could define your local PostgreSQL username, password and other variables, and also declare your favourite Redis endpoint, maybe it's a remote machine, maybe your localhost, e.g.:
 
 ```
 VOQALAPP_DB_USERNAME=superman
 VOQALAPP_DB_PASSWORD='sup$_3rman'
 VOQALAPP_DB_HOST=localhost
 VOQALAPP_DB_PORT=5432
+
+VOQALAPP_REDIS_URL='redis://localhost:6379/1'
 ```
 
 those variables will be used by the application database connector.
