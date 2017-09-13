@@ -1,0 +1,15 @@
+.card{
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(black, .1);
+  margin-bottom: 1.5em;
+}
+.card-content{
+  padding: 2.5em 2em 2em 2em;
+  p{
+    margin: 0;
+  }
+  p:not(:last-child){
+    margin-bottom: 1em;
+  }
+}

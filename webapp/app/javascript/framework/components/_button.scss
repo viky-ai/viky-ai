@@ -47,7 +47,7 @@
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($primary_color, .3);
-      border-color: darken($primary_color, 12%);
+      border-color: darken($primary_color, 13%);
       outline:0;
     }
   }
@@ -71,7 +71,7 @@
     }
     &:focus{
       box-shadow: 0 0 0 2px rgba($destructive_color, .3);
-      border-color: darken($destructive_color, 12%);
+      border-color: darken($destructive_color, 15%);
       outline:0;
     }
   }

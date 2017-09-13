@@ -1,7 +1,8 @@
 <section>
   <h2>Icons</h2>
   <p>
-    The <code>icon</code> element is a container for any svg icons available via ruby <code>icon_*</code> view helpers.
+    The <code>icon</code> element is a container for any svg icons available
+    via ruby <code>icon_*</code> view helpers.
   </p>
   <%= highlight_html do %>
 <span class="icon">
@@ -41,7 +42,7 @@
         "icon_loading"
        ].each do |helper| %>
     <li>
-      <span class="icon"><%= send(helper) %></span><br /><br />
+      <span class="icon icon--large"><%= send(helper) %></span>
       <code>&lt;%= <%= helper %> %&gt;</code>
     </li>
     <% end %>

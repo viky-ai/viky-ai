@@ -2,18 +2,36 @@ $ = require('jquery');
 
 class StyleGuideMenu
   constructor: ->
-    menu = []
-    i = 0
-    for title in $('h2')
+    @build_numbers()
+    @build_nav()
+
+  build_numbers: ->
+    i = 1
+    for title in $('section > h2')
       $(title).attr(id: "section-#{i}")
+              .html("<small>#{i}.</small> #{$(title).html()}")
+      i++
+
+    i = 1
+    for section in $('section')
+      j = 1
+      for h3 in $(section).find(" > h3")
+        $(h3).html("<small>#{i}.#{j}.</small> #{$(h3).html()}")
+        j++
+      i++
+
+  build_nav: ->
+    menu = []
+    i = 1
+    for title in $('section > h2')
       menu.push "<li>"
       menu.push "  <a href='#section-#{i}'>"
-      menu.push "    <small>#{i}.</small>"
       menu.push "    #{$(title).html()}"
       menu.push "  </a>"
       menu.push "</li>"
       i++
     $('nav ul').html(menu.join(''))
+
 
 Setup = ->
   if $('body').data('controller-name') == "style_guide"
