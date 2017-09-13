@@ -1,0 +1,68 @@
+<section>
+  <h2>Logo</h2>
+  <p>
+     The <code>logo</code> element is a container for any svg logos available via ruby <code>logo_*</code> view helpers.
+  </p>
+  <h3>Size variant</h3>
+  <%= highlight_html do %>
+<span class="logo logo--small">
+  <%= logo_on_white %>
+</span>
+<span class="logo">
+  <%= logo_on_white %>
+</span>
+<span class="logo logo--large">
+  <%= logo_on_white %>
+</span>
+<span class="logo logo--x-large">
+  <%= logo_on_white %>
+</span>
+<span class="logo logo--xx-large">
+  <%= logo_on_white %>
+</span>
+  <% end %>
+
+  <h3>Display full logo on white background</h3>
+  <p>
+    Use <code>&lt;%= logo_on_white %&gt;</code> view helper.
+  </p>
+  <%= highlight_html do %>
+<span class="logo">
+  <%= logo_on_white %>
+</span>
+  <% end %>
+
+  <h3>Display logo without text</h3>
+  <p>
+    Use <code>&lt;%= logo_simple %&gt;</code> view helper.
+  </p>
+  <%= highlight_html do %>
+<span class="logo">
+  <%= logo_simple %>
+</span>
+  <% end %>
+
+  <h3>Display full logo on light background</h3>
+  <p>
+    Use <code>&lt;%= logo_on_light %&gt;</code> view helper.
+  </p>
+  <div class="light-background">
+    <%= highlight_html do %>
+<span class="logo">
+  <%= logo_on_light %>
+</span>
+    <% end %>
+  </div>
+
+  <h3>Display full logo on dark background</h3>
+  <p>
+    Use <code>&lt;%= logo_on_dark %&gt;</code> view helper.
+  </p>
+  <div class="dark-background">
+    <%= highlight_html do %>
+<span class="logo">
+  <%= logo_on_dark %>
+</span>
+    <% end %>
+  </div>
+</section>

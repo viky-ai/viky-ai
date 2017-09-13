@@ -1,0 +1,39 @@
+.logo{
+  height: 24px;
+  vertical-align: center;
+  margin-right: 2em;
+  svg{
+    width: auto;
+    height: 24px;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+
+  &.logo--small{
+    height: 18px;
+    svg{
+      height: 18px;
+    }
+  }
+
+  &.logo--large{
+    height: 28px;
+    svg{
+      height: 28px;
+    }
+  }
+
+  &.logo--x-large{
+    height: 36px;
+    svg{
+      height: 36px;
+    }
+  }
+
+  &.logo--xx-large{
+    height: 48px;
+    svg{
+      height: 48px;
+    }
+  }
+}

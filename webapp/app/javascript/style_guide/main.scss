@@ -97,6 +97,16 @@ body{
       max-height: 250px;
     }
   }
+  .light-background{
+    .component-and-code{
+      background: linear-gradient(to top, #F7BB97, #DD5E89);
+    }
+  }
+  .dark-background{
+    .component-and-code{
+      background: linear-gradient(to top, #000, #444);
+    }
+  }
 }
 
 // Icons related
