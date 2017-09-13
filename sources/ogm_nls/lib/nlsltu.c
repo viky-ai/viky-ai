@@ -119,7 +119,7 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
   int headerSize = output->header_length;
   int contentSize = output->content_length - headerSize;
 
-  IFE(OgNLSJsonAnswer(lt, output->content + headerSize, contentSize));
+  IFE(OgNLSJsonReadRequest(lt, output->content + headerSize, contentSize));
 
   winput->content_length = OgHeapGetCellsUsed(lt->json->hb_json_buffer);
   winput->content = OgHeapGetCell(lt->json->hb_json_buffer, 0);

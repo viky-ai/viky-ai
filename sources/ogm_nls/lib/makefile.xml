@@ -14,6 +14,7 @@
     <file>nlsltp.c</file>
     <file>nlsltu.c</file>
     <file>nls_json.c</file>
+    <file>nls_dataEngine.c</file>
   </sources>
   <platforms>
     <platform name="linux">

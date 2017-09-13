@@ -211,6 +211,14 @@ og_status OgNLSJsonGenStringSized(struct og_listening_thread *lt, og_string stri
 //  DONE;
 //}
 
+og_status OgNLSJsonGenKeyValueBool(struct og_listening_thread *lt, og_string key, og_bool boolean)
+{
+  IFE(OgNLSJsonGenString(lt, key));
+  IFE(OgNLSJsonGenBool(lt, boolean));
+
+  DONE;
+}
+
 og_status OgNLSJsonGenKeyValueString(struct og_listening_thread *lt, og_string key, og_string value_string)
 {
 
@@ -254,6 +262,33 @@ og_status OgNLSJsonGenKeyValueDouble(struct og_listening_thread *lt, og_string k
 
   IFE(OgNLSJsonGenString(lt, key));
   IFE(OgNLSJsonGenDouble(lt, number));
+
+  DONE;
+}
+
+og_status OgNLSJsonGenKeyValueNumber(struct og_listening_thread *lt, og_string key, og_string number, size_t l)
+{
+
+  IFE(OgNLSJsonGenString(lt, key));
+  IFE(OgNLSJsonGenNumber(lt, number, l));
+
+  DONE;
+}
+
+og_status OgNLSJsonGenKeyValueArrayOpen(struct og_listening_thread *lt, og_string key)
+{
+
+  IFE(OgNLSJsonGenString(lt, key));
+  IFE(OgNLSJsonGenArrayOpen(lt));
+
+  DONE;
+}
+
+og_status OgNLSJsonGenKeyValueMapOpen(struct og_listening_thread *lt, og_string key)
+{
+
+  IFE(OgNLSJsonGenString(lt, key));
+  IFE(OgNLSJsonGenMapOpen(lt));
 
   DONE;
 }
@@ -516,24 +551,50 @@ int get_null(void * ctx)
 
 int get_boolean(void * ctx, int boolean)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_BOOLEAN;
+  jsonCtx->jsonNode.booleanValue = boolean;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_integer(void * ctx, long long integerVal)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_INT;
+  jsonCtx->jsonNode.intValue = integerVal;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_double(void * ctx, double doubleVal)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_DOUBLE;
+  jsonCtx->jsonNode.intValue = doubleVal;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_number(void * ctx, const char * numberVal, size_t l)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_NUMBER;
+  int iLen = (int) l;
+  snprintf(jsonCtx->jsonNode.numberValue, DPcPathSize, "%.*s", iLen, numberVal);
+  jsonCtx->jsonNode.valueSize = l;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
@@ -542,28 +603,12 @@ int get_string(void * ctx, const unsigned char * stringVal, size_t stringLen)
 {
   struct jsonValuesContext *jsonCtx = ctx;
   int iStringLen = (int) stringLen;
-  if (strcmp(jsonCtx->mapKey, "name") == 0)
-  {
-    snprintf(jsonCtx->stringValue, DPcPathSize, "%.*s", iStringLen, stringVal);
-  }
 
-  if (strcmp(jsonCtx->mapKey, "name") == 0)
-  {
-    og_char_buffer tmpString[DPcPathSize];
-    if (strcmp(jsonCtx->stringValue, "Zorglub") == 0)
-    {
-      snprintf(tmpString, DPcPathSize, "Eviv Bulgroz!");
-    }
-    else
-    {
-      snprintf(tmpString, DPcPathSize, "Hello %.*s", iStringLen, jsonCtx->stringValue);
-    }
-    IFE(OgNLSJsonGenKeyValueString(jsonCtx->lt, "answer", tmpString));
-  }
-  else
-  {
-    IFE(OgNLSJsonGenKeyValueString(jsonCtx->lt, "answer", "Greuh !!!"));
-  }
+  jsonCtx->jsonNode.type = JSON_STRING;
+  snprintf(jsonCtx->jsonNode.stringValue, DPcPathSize, "%.*s", iStringLen, stringVal);
+  jsonCtx->jsonNode.valueSize = stringLen;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
@@ -572,30 +617,175 @@ int get_map_key(void * ctx, const unsigned char * stringVal, size_t stringLen)
 {
   struct jsonValuesContext *jsonCtx = ctx;
   int iStringLen = (int) stringLen;
-  snprintf(jsonCtx->mapKey, DPcPathSize, "%.*s", iStringLen, stringVal);
+
+  snprintf(jsonCtx->jsonNode.mapKey, DPcPathSize, "%.*s", iStringLen, stringVal);
+  jsonCtx->jsonNode.mapSize = stringLen;
+
   return TRUE;
 }
 
 int get_start_map(void * ctx)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_START_MAP;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_end_map(void * ctx)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_END_MAP;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_start_array(void * ctx)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_START_ARRAY;
+
+  manageNodeReceived(jsonCtx);
 
   return TRUE;
 }
 
 int get_end_array(void * ctx)
 {
+  struct jsonValuesContext *jsonCtx = ctx;
+
+  jsonCtx->jsonNode.type = JSON_END_ARRAY;
+
+  manageNodeReceived(jsonCtx);
+
+  return TRUE;
+}
+
+// =====================================================================
+//
+// Writing JSON output
+//
+// =====================================================================
+
+int writeJsonNode(struct jsonValuesContext * ctx)
+{
+  if (ctx->bIsArray[ctx->IsArrayUsed] == TRUE)
+  {
+    if (ctx->jsonNode.type == JSON_STRING)
+    {
+      IFE(OgNLSJsonGenString(ctx->lt, ctx->jsonNode.stringValue));
+    }
+    if (ctx->jsonNode.type == JSON_BOOLEAN)
+    {
+      if (ctx->jsonNode.booleanValue == 0)
+      {
+        IFE(OgNLSJsonGenBool(ctx->lt, FALSE));
+      }
+      else if (ctx->jsonNode.booleanValue == 1)
+      {
+        IFE(OgNLSJsonGenBool(ctx->lt, TRUE));
+      }
+      else
+      {
+        IFE(OgNLSJsonGenBool(ctx->lt, -1));
+      }
+    }
+    if (ctx->jsonNode.type == JSON_DOUBLE)
+    {
+      IFE(OgNLSJsonGenDouble(ctx->lt, ctx->jsonNode.doubleValue));
+    }
+    if (ctx->jsonNode.type == JSON_NUMBER)
+    {
+      IFE(OgNLSJsonGenNumber(ctx->lt, ctx->jsonNode.numberValue, ctx->jsonNode.valueSize));
+    }
+    if (ctx->jsonNode.type == JSON_INT)
+    {
+      IFE(OgNLSJsonGenInteger(ctx->lt, ctx->jsonNode.intValue));
+    }
+    if (ctx->jsonNode.type == JSON_START_ARRAY)
+    {
+      IFE(OgNLSJsonGenArrayOpen(ctx->lt));
+    }
+    if (ctx->jsonNode.type == JSON_END_ARRAY)
+    {
+      IFE(OgNLSJsonGenArrayClose(ctx->lt));
+    }
+    if (ctx->jsonNode.type == JSON_START_MAP)
+    {
+      IFE(OgNLSJsonGenMapOpen(ctx->lt));
+    }
+    if (ctx->jsonNode.type == JSON_END_MAP)   // ne devrait pas arriver, on n'a une fin de map que dans une map
+    {
+      IFE(OgNLSJsonGenMapClose(ctx->lt));
+    }
+
+  }
+  else
+  {
+    if (ctx->jsonNode.type == JSON_STRING)
+    {
+      IFE(OgNLSJsonGenKeyValueString(ctx->lt, ctx->jsonNode.mapKey, ctx->jsonNode.stringValue));
+    }
+    if (ctx->jsonNode.type == JSON_BOOLEAN)
+    {
+      if (ctx->jsonNode.booleanValue == 0)
+      {
+        IFE(OgNLSJsonGenKeyValueBool(ctx->lt, ctx->jsonNode.mapKey, FALSE));
+      }
+      else if (ctx->jsonNode.booleanValue == 1)
+      {
+        IFE(OgNLSJsonGenKeyValueBool(ctx->lt, ctx->jsonNode.mapKey, TRUE));
+      }
+      else
+      {
+        IFE(OgNLSJsonGenKeyValueBool(ctx->lt, ctx->jsonNode.mapKey, -1));
+      }
+    }
+    if (ctx->jsonNode.type == JSON_DOUBLE)
+    {
+      IFE(OgNLSJsonGenKeyValueDouble(ctx->lt, ctx->jsonNode.mapKey, ctx->jsonNode.doubleValue));
+    }
+    if (ctx->jsonNode.type == JSON_NUMBER)
+    {
+      IFE(
+          OgNLSJsonGenKeyValueNumber(ctx->lt, ctx->jsonNode.mapKey, ctx->jsonNode.numberValue,
+              ctx->jsonNode.valueSize));
+    }
+    if (ctx->jsonNode.type == JSON_INT)
+    {
+      IFE(OgNLSJsonGenKeyValueInteger(ctx->lt, ctx->jsonNode.mapKey, ctx->jsonNode.intValue));
+    }
+    if (ctx->jsonNode.type == JSON_START_ARRAY)
+    {
+      IFE(OgNLSJsonGenKeyValueArrayOpen(ctx->lt, ctx->jsonNode.mapKey));
+    }
+    if (ctx->jsonNode.type == JSON_END_ARRAY)   // ne devrait pas arriver, on n'a une fin d'array que dans un array
+    {
+      IFE(OgNLSJsonGenArrayClose(ctx->lt));
+    }
+    if (ctx->jsonNode.type == JSON_START_MAP)
+    {
+      if (ctx->bIsArray[ctx->IsArrayUsed] == 0)
+      {
+        IFE(OgNLSJsonGenMapOpen(ctx->lt));
+      }
+      else
+      {
+        IFE(OgNLSJsonGenKeyValueMapOpen(ctx->lt, ctx->jsonNode.mapKey));
+      }
+    }
+    if (ctx->jsonNode.type == JSON_END_MAP)   //
+    {
+      IFE(OgNLSJsonGenMapClose(ctx->lt));
+    }
+  }
 
   return TRUE;
 }
@@ -675,14 +865,15 @@ og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size
 /**
  * Getting data from JSon
  */
-og_status OgNLSJsonAnswer(struct og_listening_thread *lt, og_string json, size_t json_size)
+og_status OgNLSJsonReadRequest(struct og_listening_thread *lt, og_string json, size_t json_size)
 {
   IFE(OgNLSJsonReset(lt));
 
-  IFE(OgNLSJsonGenMapOpen(lt));
-
   struct jsonValuesContext jsonCtx;
   jsonCtx.lt = lt;
+  memset(jsonCtx.bIsArray, FALSE, maxArrayLevel);
+  jsonCtx.bIsArray[0] = TRUE;   // au démarrage, on n'est pas dans un array, mais il ne faut pas de tag
+  jsonCtx.IsArrayUsed = 0;
 
   yajl_handle parser = yajl_alloc(&get_callbacks, NULL, &jsonCtx);
 
@@ -694,8 +885,6 @@ og_status OgNLSJsonAnswer(struct og_listening_thread *lt, og_string json, size_t
     yajl_parser_status = yajl_complete_parse(parser);
     status = yajlParseErrorManagement(lt, parser, yajl_parser_status, json, json_size);
   }
-
-  IFE(OgNLSJsonGenMapClose(lt));
 
   yajl_free(parser);
 
