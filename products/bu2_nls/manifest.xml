@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE product_manifest SYSTEM "pmanifest.dtd" >
+<product_manifest commercial_name="nls">
+
+  <info>
+    <version major="0" minor="1" fix="0" />
+    <summary>Pertimm NLS</summary>
+    <license>(C) Copyright Pertimm</license>
+    <vendor>Pertimm</vendor>
+    <url>http://www.pertimm.com</url>
+    <description>Pertimm Natural Language Server</description>
+  </info>
+
+  <use>
+
+    <component name="external_dependencies" />
+
+    <component name="glib" />
+    <component name="libiconv" />
+    <component name="yajl" />
+
+    <!-- Pertimm libs -->
+    <component name="ogm_gen/lib" />
+    <component name="ogm_aut/lib" />
+    <component name="ogm_xpt/lib" />
+    <component name="ogm_thr/lib" />
+    <component name="ogm_sig/lib" />
+    <component name="ogm_auta/lib" />
+    <component name="ogm_uni/lib" />
+    <component name="ogm_msg/lib" />
+    <component name="ogm_sysi/lib" />
+    <component name="ogm_heap/lib" />
+    <component name="ogm_sock/lib" />
+    <component name="ogm_zlib/lib" />
+    <component name="ogm_ghbn/lib" />
+    <component name="ogm_addr/lib" />
+    <component name="ogm_http/lib" />
+    <component name="ogm_uci/lib" />
+    <component name="ogm_nls/lib" />
+
+    <!-- programs -->
+    <component name="ogm_nls/prog/ogm_nls" />
+
+  </use>
+
+  <packaging>
+    <ship>
+      <directory name="%COMMERCIAL_NAME%-%SVNREV%">
+
+        <file name="README.md" source="%OG_REPO_PATH%/products/bu2_nls/README.md" />
+        <file name="LICENSE.TXT" source="%OG_REPO_PATH%/products/bu2_nls/LICENSE.TXT" />
+
+        <bin name="ogm_nls" source="%OG_REPO_PATH%/build/%TARGET%/bin/ogm_nls" />
+
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./" platform="linux" />
+
+        <directory name="control" />
+        <directory name="log" />
+
+        <!-- Linux specific -->
+        <directory name="lib" platform="linux">
+          <directory name="linux" platform="linux">
+
+            <copy source="%OG_REPO_PATH%/build/%TARGET%/bin/*.so*" target="./" platform="linux" />
+
+          </directory>
+        </directory>
+
+      </directory>
+    </ship>
+  </packaging>
+</product_manifest>

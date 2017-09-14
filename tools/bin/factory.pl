@@ -981,7 +981,7 @@ sub parseShipTree ($$$$$$)
             }
             else {
               print("COPY $source $target\n");
-              my $res = `cp $source $target`;
+              my $res = `cp -af $source $target`;
               if ( $? != 0 ) {
                 die("\e[0;31m Building Ship Error: can't copy $source -> $target \e[0m\n");
               }
@@ -989,7 +989,7 @@ sub parseShipTree ($$$$$$)
           }
           else {
             print("COPY $source $target\n");
-            my $res = `cp $source $target`;
+            my $res = `cp -af $source $target`;
             if ( $? != 0 ) {
               die("\e[0;31m Building Ship Error: can't copy $source -> $target \e[0m\n");
             }
@@ -1014,7 +1014,7 @@ sub parseShipTree ($$$$$$)
 
         if ( $platform eq "" || $platform eq "all" || $platform eq OgOsString($os) ) {
           print("COPY $source $target\n");
-          my $res = `cp -r $source $target`;
+          my $res = `cp -afr $source $target`;
           if ( $? != 0 ) {
             die("\e[0;31m Building Ship Error: can't copy $source -> $target \e[0m\n");
           }
@@ -1082,7 +1082,7 @@ sub parseShipTree ($$$$$$)
           my $res = `pwd`;
           print("RENAME $mvName $mvTarget\n");
           if ( -d $mvTarget ) {
-            my $res = `cp -r $mvName/* $mvTarget`;
+            my $res = `cp -afr $mvName/* $mvTarget`;
             $res = `rm -rf $mvName`;
           }
           else {

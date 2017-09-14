@@ -17,7 +17,7 @@ static struct og_listening_thread *OgNlsRunAcquireRunnningLt(struct og_ctrl_nls 
 PUBLIC(int) OgNlsRun(void *handle)
 {
   struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) handle;
-  IF( OgNlsRun1( ctrl_nls))
+  IF(OgNlsRun1(ctrl_nls))
   {
     // handling server states here, if necessary
     DPcErr;
@@ -27,10 +27,7 @@ PUBLIC(int) OgNlsRun(void *handle)
 
 static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
 {
-  struct og_conf_lines *nls_addresses = &ctrl_nls->nls_addresses;
   struct og_addr_param addr_param[1];
-  int i;
-
   memset(addr_param, 0, sizeof(struct og_addr_param));
   addr_param->herr = ctrl_nls->herr;
   addr_param->hmsg = ctrl_nls->hmsg;
@@ -51,40 +48,11 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
     OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "OgNlsRun starting with following adresses:");
   }
 
-  IFE(OgConfGetVarLines(DOgFileOgmConf_Txt, "SimpleSearchAddresses", nls_addresses, ctrl_nls->loginfo->where));
-  if (nls_addresses->nb_values == 0)
-  {
-    char saddress[DPcPathSize];
-    sprintf(saddress, "0.0.0.0:%d", DOgNlsPortNumber);
-    IFE(OgAddrAdd(ctrl_nls->haddr, saddress, DOgNlsPortNumber));
-    if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
-    {
-      OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "  %s", saddress);
-    }
-    /** hostname 0.0.0.0 does not work for calling sockets **/
-    sprintf(saddress, "127.0.0.1:%d", DOgNlsPortNumber);
-    IFE(OgParseServerAddress(saddress, ctrl_nls->hostname, &ctrl_nls->port_number));
-  }
-  else
-  {
-    char *address;
-    for (i = 0; i < nls_addresses->nb_values; i++)
-    {
-      address = nls_addresses->buffer + nls_addresses->value[i];
-      IFE(OgAddrAdd(ctrl_nls->haddr, address, DOgNlsPortNumber));
-      if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
-      {
-        OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "  %s", address);
-      }
-    }
-    address = nls_addresses->buffer + nls_addresses->value[0];
-    ctrl_nls->port_number = DOgNlsPortNumber; /** Necessary if the port is not given **/
-    IFE(OgParseServerAddress(address, ctrl_nls->hostname, &ctrl_nls->port_number));
-    /** hostname 0.0.0.0 does not work for calling sockets **/
-    if (!strcmp(ctrl_nls->hostname, "0.0.0.0")) strcpy(ctrl_nls->hostname, "127.0.0.1");
-  }
+  IFE(OgAddrAdd(ctrl_nls->haddr, ctrl_nls->conf->env->listenning_address, ctrl_nls->conf->env->listenning_port));
 
-  OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "Nls listening ...");
+  OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox,"NLS listening on %s:%d ...", ctrl_nls->conf->env->listenning_address,
+      ctrl_nls->conf->env->listenning_port);
+
 
   ctrl_nls->must_stop = 0;
   IFE(OgAddrLoop(ctrl_nls->haddr, OgNlsRun2, (void * ) ctrl_nls));
@@ -94,7 +62,6 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
     IFE(NlsStopPermanentLtThreads(ctrl_nls));
   }
 
-  IFE(OgConfGetVarLinesFlush(nls_addresses));
   IFE(OgAddrClose(ctrl_nls->haddr));
 
   IFE(NlsWaitForListeningThreads("Main thread", ctrl_nls));

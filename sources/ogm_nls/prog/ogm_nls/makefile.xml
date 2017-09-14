@@ -13,7 +13,7 @@
         <file>nlsdaem.c</file>
       </sources>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-loggen -logmsg -logsig -lognls -logthr</option>
+      <option name="ADD_LIBR">-loggen -logmsg -logsig -lognls -logthr -lglib-2.0</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

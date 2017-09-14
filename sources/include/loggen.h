@@ -768,7 +768,7 @@ DEFPUBLIC(int) OgReadDirAlias(void *, char *, struct og_dir_aliases *);
 DEFPUBLIC(int) OgGetDiskInfo(char *, unsigned *, unsigned *);
 
 DEFPUBLIC(int) OgGetConfServerAddress(char *, char *, char *, int *);
-DEFPUBLIC(int) OgParseServerAddress(char *, char *, int *);
+DEFPUBLIC(int) OgParseServerAddress(const char *, char *, int *);
 
 DEFPUBLIC(int) OgGetStringDate(char *, time_t *);
 

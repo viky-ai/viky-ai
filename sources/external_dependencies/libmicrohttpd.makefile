@@ -9,11 +9,13 @@ include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 .PHONY: all redebug debug build make clean fullclean
 
-redebug: debug
+redebug: rebuild
 
 debug: build
 
-rebuild: build
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 build: $(DBINPATH)/libmicrohttpd.so $(SRCPATH)/include/microhttpd.h
 
@@ -25,18 +27,20 @@ all:
 
 fullclean: clean
 	cd libmicrohttpd && $(MAKE) clean
+	rm -f libmicrohttpd/Makefile
+	rm -f libmicrohttpd/configure
 
 clean:
 	rm -f $(SRCPATH)/include/microhttpd.h
 	rm -f $(DBINPATH)/libmicrohttpd.so*
 
-make: ./Makefile
+make: libmicrohttpd/Makefile
 	cd libmicrohttpd && $(MAKE)
 
-./configure:
+libmicrohttpd/configure:
 	cd libmicrohttpd && autoreconf -fi
 
-./Makefile: ./configure
+libmicrohttpd/Makefile: libmicrohttpd/configure
 	cd libmicrohttpd && ./configure --prefix="$(DBUILDPATH)" \
 																	--bindir="$(DBINPATH)" \
 																	--libdir="$(DLIBPATH)" \
@@ -44,11 +48,11 @@ make: ./Makefile
 																	--disable-https
 
 $(DBINPATH)/libmicrohttpd.so: make
-	cd libmicrohttpd && cp -af src/microhttpd/.libs/libmicrohttpd.so* $(DBINPATH)
+	cp -af libmicrohttpd/src/microhttpd/.libs/libmicrohttpd.so* $(DBINPATH)
 
 
 $(SRCPATH)/include/microhttpd.h: make
-	cd libmicrohttpd && cp -af src/include/microhttpd.h $(SRCPATH)/include/
+	cp -af libmicrohttpd/src/include/microhttpd.h $(SRCPATH)/include/
 
 
 

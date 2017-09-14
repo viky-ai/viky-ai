@@ -11,11 +11,13 @@ LDFLAGS:="-L$(DBINPATH) -L$(DLINKPATH)"
 
 .PHONY: all redebug debug build make clean fullclean make_yder make_orcania ulfius
 
-redebug: debug
+redebug: rebuild
 
 debug: build
 
-rebuild: build
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 build: $(DBINPATH)/libulfius.so $(SRCPATH)/include/ulfius.h
 

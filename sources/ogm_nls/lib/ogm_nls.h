@@ -10,10 +10,12 @@
 #include <logpath.h>
 #include <logthr.h>
 #include <logheap.h>
-#include <logxml.h>
+#include <glib.h>
+
 #include <yajl/yajl_gen.h>
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_tree.h>
+
 #include <string.h>
 
 typedef struct og_listening_thread og_listening_thread;
@@ -27,8 +29,17 @@ struct timeout_conf_context
   int default_timeout; /** default timeout value */
 };
 
+struct og_nls_env
+{
+  char listenning_address[DPcPathSize];
+  int listenning_port;
+};
+
 struct og_nls_conf
 {
+
+  struct og_nls_env env[1];
+
   int max_listening_threads;
   int max_parallel_threads;
   char data_directory[DPcPathSize];
@@ -122,9 +133,6 @@ struct og_ctrl_nls
   int must_stop;
 
   void *haddr, *hucis;
-  struct og_conf_lines nls_addresses;
-  char hostname[DPcPathSize];
-  int port_number;
 
   struct og_listening_thread *Lt;
   int LtNumber;
@@ -192,7 +200,8 @@ int NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
 int OgListeningThreadError(struct og_listening_thread *lt);
 
 /** nlsconf.c **/
-int NlsReadConfigurationFile(struct og_ctrl_nls *ctrl_nls, int init);
+int NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init);
+og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl);
 
 /** nlsltu.c **/
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);

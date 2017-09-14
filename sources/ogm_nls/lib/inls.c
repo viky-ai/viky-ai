@@ -11,19 +11,17 @@ static void * OgNlsInit1(struct og_nls_param *, void **);
 
 PUBLIC(void *) OgNlsInit(struct og_nls_param *param, void **phandle)
 {
-  struct og_ctrl_nls *ctrl_nls;
-  struct og_listening_thread *lt;
-  void *handle; int i;
-  IFn(handle=OgNlsInit1(param,phandle))
+  void *handle = NULL;
+  IFn(handle = OgNlsInit1(param ,phandle))
   {
-    ctrl_nls = (struct og_ctrl_nls *) *phandle;
+    struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) *phandle;
     IFx(ctrl_nls)
     {
       /* We need to send the errors from listening threads here,
        * because they cannot be reached after this point */
-      for (i=0; i<ctrl_nls->LtNumber; i++)
+      for (int i = 0; i < ctrl_nls->LtNumber; i++)
       {
-        lt = ctrl_nls->Lt + i;
+        struct og_listening_thread *lt = ctrl_nls->Lt + i;
         IFn(lt->herr) continue;
         OgMsgErr(lt->hmsg,"",0,0,0,DOgMsgSeverityEmergency+DOgMsgDestInLog+DOgMsgDestInErr+DOgMsgDestMBox
             , DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
@@ -36,15 +34,12 @@ PUBLIC(void *) OgNlsInit(struct og_nls_param *param, void **phandle)
 
 static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
 {
-  char erreur[DOgErrorSize], sys_erreur[DOgErrorSize], filename[DPcPathSize];
-  struct og_uci_server_param uci_param[1];
-  struct og_msg_param msg_param[1];
-  struct og_ctrl_nls *ctrl_nls;
-  int i, size;
+  char erreur[DOgErrorSize], filename[DPcPathSize];
 
-  *phandle = 0;
+  *phandle = NULL;
 
-  IFn(ctrl_nls=(struct og_ctrl_nls *)malloc(sizeof(struct og_ctrl_nls)))
+  struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) malloc(sizeof(struct og_ctrl_nls));
+  IFn(ctrl_nls)
   {
     sprintf(erreur, "OgNlsInit: malloc error on ctrl_nls");
     OgErr(param->herr, erreur);
@@ -60,6 +55,7 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
   strcpy(ctrl_nls->WorkingDirectory, param->WorkingDirectory);
   strcpy(ctrl_nls->configuration_file, param->configuration_file);
 
+  struct og_msg_param msg_param[1];
   memset(msg_param, 0, sizeof(struct og_msg_param));
   msg_param->herr = ctrl_nls->herr;
   msg_param->hmutex = ctrl_nls->hmutex;
@@ -69,7 +65,8 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
   IFn(ctrl_nls->hmsg=OgMsgInit(msg_param)) return (0);
   IF(OgMsgTuneInherit(ctrl_nls->hmsg,param->hmsg)) return (0);
 
-  IF(NlsReadConfigurationFile(ctrl_nls,1)) return (0);
+  IF(NlsConfReadFile(ctrl_nls,1)) return (0);
+  IF(NlsConfReadEnv(ctrl_nls)) return (0);
 
   if (ctrl_nls->WorkingDirectory[0] && !OgIsAbsolutePath(ctrl_nls->conf->data_directory))
   {
@@ -79,25 +76,17 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
 
   IFN(getcwd(ctrl_nls->cwd,DPcPathSize)) return NULL;
   ctrl_nls->icwd = strlen(ctrl_nls->cwd);
-  for (i = 0; i < ctrl_nls->icwd; i++)
+  for (int i = 0; i < ctrl_nls->icwd; i++)
+  {
     if (ctrl_nls->cwd[i] == '\\') ctrl_nls->cwd[i] = '/';
+  }
 
   IF(OgStartupSockets(param->herr)) return (0);
-  if (gethostname(ctrl_nls->hostname, DPcPathSize) != 0)
-  {
-    int nerr = OgSysErrMes(DOgSocketErrno, DPcSzSysErr, sys_erreur);
-    sprintf(erreur, "gethostname: (%d) %s", nerr, sys_erreur);
-    OgErr(ctrl_nls->herr, erreur);
-    return (0);
-  }
-  if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
-  {
-    OgMsg(ctrl_nls->hmsg, "gethostname", DOgMsgDestInLog, "OgNlsInit: hostname is '%s'", ctrl_nls->hostname);
-  }
 
   ctrl_nls->LtNumber = ctrl_nls->conf->max_listening_threads;
-  size = ctrl_nls->LtNumber * sizeof(struct og_listening_thread);
-  IFn(ctrl_nls->Lt=(struct og_listening_thread *)malloc(size))
+  int size = ctrl_nls->LtNumber * sizeof(struct og_listening_thread);
+  ctrl_nls->Lt= (struct og_listening_thread *) malloc(size);
+  IFn(ctrl_nls->Lt)
   {
     sprintf(erreur, "OgNlsInit: malloc error on ctrl_nls->lt (%d bytes)", size);
     OgErr(ctrl_nls->herr, erreur);
@@ -105,6 +94,7 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
   }
   memset(ctrl_nls->Lt, 0, size);
 
+  struct og_uci_server_param uci_param[1];
   memset(uci_param, 0, sizeof(struct og_uci_server_param));
   uci_param->hmsg = ctrl_nls->hmsg;
   uci_param->herr = ctrl_nls->herr;
@@ -117,10 +107,11 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
   IFn(ctrl_nls->hucis=OgUciServerInit(uci_param)) return (0);
 
   IF(OgSemaphoreInit(ctrl_nls->hsem_run3,ctrl_nls->LtNumber)) return (0);
+
   /** Mutex for choosing lt */
   IF(OgInitCriticalSection(ctrl_nls->hmutex_run_lt,"hmutex_run_lt")) return (0);
 
-  for (i = 0; i < ctrl_nls->LtNumber; i++)
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
     og_listening_thread *lt = ctrl_nls->Lt + i;
     lt->ID = i;
@@ -155,7 +146,7 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
     uci_param->loginfo.where = ctrl_nls->loginfo->where;
     IFn(lt->hucis=OgUciServerInit(uci_param)) return (0);
 
-    IFE(OgNLSJsonInit(lt));
+    IF(OgNLSJsonInit(lt)) return NULL;
 
   }
 

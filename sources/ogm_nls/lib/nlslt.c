@@ -10,7 +10,7 @@
 
 static og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
 
-/*
+/**
  *  Listening threads are not really listening the port but they
  *  are started just after the main lt (which is listening)
  *  received a call to the socket.
@@ -73,27 +73,6 @@ int OgListeningThread(void *ptr)
       DONE;
     }
   }
-  else if (retour == 1)
-  {
-    int hsocket, timeout = 30, timed_out;
-    /* Client asked the server to stop, the main lt has already gone into a listening state.
-     * We simply open a socket so that the main lt gets out of its listening state.
-     * We also do the same thing for the indexing thread. */
-    ctrl_nls->must_stop = 1;
-
-    if (lt->loginfo->trace & DOgNlsTraceMinimal)
-    {
-      OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: OgListeningThread sending a null message at"
-          " '%s' to the main thread to awaken it for stopping", lt->ID, ctrl_nls->hostname);
-    }
-    IF(hsocket = OgTimeoutCallSocket(lt->herr,ctrl_nls->hostname, ctrl_nls->port_number, timeout, &timed_out))
-    {
-      OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: %s on sending null message, error message:", lt->ID,
-          timed_out ? "timed out" : "error");
-      OgMsgErr(lt->hmsg, "main_timeout", 0, 0, 0, DOgMsgSeverityError, 0);
-    }
-    else OgCloseSocket(hsocket);
-  }
 
   if (lt->loginfo->trace & DOgNlsTraceLT)
   {
@@ -101,7 +80,7 @@ int OgListeningThread(void *ptr)
     OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: OgListeningThread finished after %s micro-seconds", lt->ID, v);
   }
 
-// release lt to be use later
+  // release lt to be use later
   IFE(OgNlsLtReleaseCurrentRunnning(lt));
 
   DONE;

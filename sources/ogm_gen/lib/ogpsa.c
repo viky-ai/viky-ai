@@ -1,6 +1,6 @@
 /*
  *  Parsing server addresses specifications of format "server:port"
- *  Copyright (c) 2005	Pertimm by Patrick Constant
+ *  Copyright (c) 2005  Pertimm by Patrick Constant
  *  Dev : March 2005
  *  Version 1.0
 */
@@ -48,11 +48,11 @@ DONE;
  *  if port does not exist, port value is not set.
 */
 
-PUBLIC(int) OgParseServerAddress(char *address, char *hostname, int *port)
+PUBLIC(int) OgParseServerAddress(const char *address, char *hostname, int *port)
 {
 int i,dp=(-1);
 
-strcpy(hostname,address); 
+strcpy(hostname,address);
 
 for (i=0; hostname[i]; i++) {
   if (hostname[i]==':') { dp=i; break; }

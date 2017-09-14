@@ -24,90 +24,67 @@ int main(argc, argv)
   void *hInstance = 0;
   int nCmdShow = 0;
 
-  int i;
-  int found;
-  int must_exit = 0;
+  og_bool must_exit = 0;
   char cmd_param[1024], cmd[4096], v[64];
-  struct og_nls_ctrl *nls_ctrl = &OgNlsCtrl;
-  struct og_sig_param csig_param, *sig_param = &csig_param;
-  char working_directory[DPcPathSize], *DOgPIPE;
-  struct og_nls_param cparam, *param = &cparam;
-  char *plugin_argv[DOgNlsMaxArgc];
-  char prior_messages[DPcPathSize];
-  int force_as_regular_program = 0;
+
   time_t ltime, clock_start;
-  int use_signal = 1;
+  og_bool use_signal = TRUE;
 
+  char prior_messages[DPcPathSize];
   prior_messages[0] = 0;
-  memset(nls_ctrl, 0, sizeof(struct og_nls_ctrl));
-  nls_ctrl->loginfo = &nls_ctrl->cloginfo;
-  nls_ctrl->loginfo->where = SSRV_EXE;
-  nls_ctrl->loginfo->trace = DOgNlsTraceDefault;
-  nls_ctrl->param = param;
 
+  struct og_nls_param param[1];
   memset(param, 0, sizeof(struct og_nls_param));
   param->loginfo.trace = DOgNlsTraceMinimal + DOgNlsTraceMemory;
   param->loginfo.where = "ogm_nls";
 
-  /* Si la variable d'environnement DOgPIPE est d�finie, on utilise le mode de log en pipe*/
-  if ((DOgPIPE = getenv("DOgPIPE")))
-  {
-    IFn(nls_ctrl->hmsg=OgLogInit("ogm_nls",DOgPIPE, DOgMsgTraceMinimal+DOgMsgTraceMemory, DOgMsgLogPipe)) return (0);
-  }
-  else
-  {
-    IFn(nls_ctrl->hmsg=OgLogInit("ogm_nls","ogm_nls", DOgMsgTraceMinimal+DOgMsgTraceMemory, DOgMsgLogFile)) return (0);
-  }
-  param->hmsg = nls_ctrl->hmsg;
-  param->herr = OgLogGetErr(nls_ctrl->hmsg);
-  param->hmutex = OgLogGetMutex(nls_ctrl->hmsg);
+  struct og_nls_ctrl *nls_ctrl = &OgNlsCtrl;
+  memset(nls_ctrl, 0, sizeof(struct og_nls_ctrl));
+  nls_ctrl->loginfo->where = SSRV_EXE;
+  nls_ctrl->loginfo->trace = DOgNlsTraceDefault;
+  nls_ctrl->param = param;
+  nls_ctrl->hmsg = OgLogInit("ogm_nls", "ogm_nls", DOgMsgTraceMinimal + DOgMsgTraceMemory, DOgMsgLogFile);
+  IFN(nls_ctrl->hmsg) return 0;
 
   nls_ctrl->herr = OgLogGetErr(nls_ctrl->hmsg);
   nls_ctrl->hmutex = OgLogGetMutex(nls_ctrl->hmsg);
 
-  found = OgConfGetWorkingDirectory(working_directory, DPcPathSize);
-  IF(found)
+  param->hmsg = nls_ctrl->hmsg;
+  param->herr = OgLogGetErr(nls_ctrl->hmsg);
+  param->hmutex = OgLogGetMutex(nls_ctrl->hmsg);
+
+  snprintf(nls_ctrl->WorkingDirectory, DPcPathSize, "%s", g_get_current_dir());
+
+  snprintf(nls_ctrl->DirControl, DPcPathSize, "%s/%s", nls_ctrl->WorkingDirectory, DOgDirControl);
+  IF(OgCheckOrCreateDir(nls_ctrl->DirControl,0,nls_ctrl->loginfo->where)) DoExit(nls_ctrl);
+
+  char DirLog[DPcPathSize];
+  snprintf(DirLog, DPcPathSize, "%s/log", nls_ctrl->WorkingDirectory);
+  IF(OgCheckOrCreateDir(DirLog,0,nls_ctrl->loginfo->where)) DoExit(nls_ctrl);
+  IF(OgSetWorkingDirLog(nls_ctrl->WorkingDirectory)) DoExit(nls_ctrl);
+
+  /* Configuration arametres de nls*/
+  strcpy(param->WorkingDirectory, nls_ctrl->WorkingDirectory);
+  if (nls_ctrl->WorkingDirectory[0])
   {
-    PcErrLast(-1, cmd_param);
-    sprintf(prior_messages + strlen(prior_messages), "OgConfGetWorkingDirectory error: %s\n", cmd_param);
-    found = 0;
-  }
-  if (found)
-  {
-    char DirLog[DPcPathSize];
-    strcpy(nls_ctrl->WorkingDirectory, working_directory);
-    if (!Ogstricmp(working_directory, DOgTempDirectory))
-    {
-      IF(OgGetTempPath(DPcPathSize,working_directory,nls_ctrl->herr)) DoExit(nls_ctrl);
-      sprintf(working_directory + strlen(working_directory), "pertimm");
-    }
-    sprintf(nls_ctrl->DirControl, "%s/%s", nls_ctrl->WorkingDirectory, DOgDirControl);
-    IF(OgCheckOrCreateDir(nls_ctrl->DirControl,0,nls_ctrl->loginfo->where)) DoExit(nls_ctrl);
-    sprintf(DirLog, "%s/log", nls_ctrl->WorkingDirectory);
-    IF(OgCheckOrCreateDir(DirLog,0,nls_ctrl->loginfo->where)) DoExit(nls_ctrl);
-    IF(OgSetWorkingDirLog(nls_ctrl->WorkingDirectory)) DoExit(nls_ctrl);
+    snprintf(param->configuration_file, DPcPathSize, "%s/%s", nls_ctrl->WorkingDirectory, DOgFileConfOgmSsi_Txt);
   }
   else
   {
-    nls_ctrl->WorkingDirectory[0] = 0;
-    sprintf(nls_ctrl->DirControl, "%s", DOgDirControl);
+    snprintf(param->configuration_file, DPcPathSize, "%s", DOgFileConfOgmSsi_Txt);
   }
 
-  strcpy(param->WorkingDirectory, nls_ctrl->WorkingDirectory);
-
-  /* personnalisation du log avec des parametres de nls*/
-  if (nls_ctrl->WorkingDirectory[0]) sprintf(param->configuration_file, "%s/%s", nls_ctrl->WorkingDirectory,
-      DOgFileConfOgmSsi_Txt);
-  else strcpy(param->configuration_file, DOgFileConfOgmSsi_Txt);
-
+  // Tune msg conf
   IFE(GetNlsConfiguration(nls_ctrl, param->configuration_file));
 
+  struct og_sig_param sig_param[1];
   memset(sig_param, 0, sizeof(struct og_sig_param));
   sig_param->herr = nls_ctrl->herr;
   sig_param->hmutex = nls_ctrl->hmutex;
   sig_param->loginfo.trace = DOgSigTraceMinimal + DOgSigTraceMemory;
   sig_param->loginfo.where = nls_ctrl->loginfo->where;
-  IFn(nls_ctrl->hsig=OgSigInit(sig_param)) return (0);
+  nls_ctrl->hsig = OgSigInit(sig_param);
+  IFN(nls_ctrl->hsig) return 0;
 
   strcpy(cmd, "ogm_nls");
   nls_ctrl->pid = getpid();
@@ -115,12 +92,12 @@ int main(argc, argv)
   OgGetExecutablePath(argv0, nls_ctrl->cwd);
   chdir(nls_ctrl->cwd);
 
+  char *plugin_argv[DOgNlsMaxArgc];
   memset(plugin_argv, 0, sizeof plugin_argv);
   nls_ctrl->param->argv = plugin_argv;
-
   nls_ctrl->param->argc = argc < DOgNlsMaxArgc ? argc : DOgNlsMaxArgc;
 
-  for (i = 1; i < argc; i++)
+  for (int i = 1; i < argc; i++)
   {
     strcpy(cmd_param, argv[i]);
     if (i < DOgNlsMaxArgc) plugin_argv[i] = argv[i];
@@ -144,18 +121,6 @@ int main(argc, argv)
       OgUse(nls_ctrl, hInstance, nCmdShow);
       must_exit = 1;
     }
-    else if (!memcmp(cmd_param, "-auto", 5))
-    {
-      nls_ctrl->service_automatic = 1;
-    }
-    else if (!memcmp(cmd_param, "-user=", 6))
-    {
-      strcpy(nls_ctrl->service_user, cmd_param + 6);
-    }
-    else if (!memcmp(cmd_param, "-password=", 10))
-    {
-      strcpy(nls_ctrl->service_password, cmd_param + 10);
-    }
     else if (!memcmp(cmd_param, "-nosignal", 9))
     {
       use_signal = 0;
@@ -164,20 +129,10 @@ int main(argc, argv)
 
   if (must_exit)
   {
-#if ( DPcSystem == DPcSystemWin32)
-    if (must_install)
-    {
-      CmdInstallService();
-    }
-    else if (must_remove)
-    {
-      CmdRemoveService();
-    }
-#endif
     return (0);
   }
 
-  IF(OgCheckOrCreateDir(DOgDirLog,0,param->loginfo.where))
+  IF(OgCheckOrCreateDir(DOgDirLog, 0, param->loginfo.where))
   {
     OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "Can't create directory '%s'", DOgDirLog);
     return (1);
@@ -191,16 +146,8 @@ int main(argc, argv)
     OgMsg(nls_ctrl->hmsg, "prior_messages", DOgMsgDestInLog + DOgMsgDestInErr, "prior_messages: \n[[%s]]",
         prior_messages);
   }
-  if (nls_ctrl->service_postfix[0])
-  {
-    OgMsg(nls_ctrl->hmsg, "service_name", DOgMsgDestInLog, "ServiceName is: '%s'", nls_ctrl->service_postfix);
-  }
-  OgMsg(nls_ctrl->hmsg, "cwd", DOgMsgDestInLog, "Current directory is '%s'", nls_ctrl->cwd);
 
-  if (force_as_regular_program)
-  {
-    OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "Forcing program to start as a regular program and not as a service");
-  }
+  OgMsg(nls_ctrl->hmsg, "cwd", DOgMsgDestInLog, "Current directory is '%s'", nls_ctrl->cwd);
 
   IF(GetNlsControlVariables(nls_ctrl)) DoExit(nls_ctrl);
   param->loginfo.trace = nls_ctrl->loginfo->trace;
@@ -209,11 +156,11 @@ int main(argc, argv)
    * thus we will use the -nosignal option */
   if (use_signal)
   {
-    IF(OgSignal(nls_ctrl->hsig,SIGTERM,NlsSignalFunc,nls_ctrl,0)) DoExit(nls_ctrl);
-    IF(OgSignal(nls_ctrl->hsig,SIGINT,NlsSignalFunc,nls_ctrl,0)) DoExit(nls_ctrl);
-    IF(OgSignal(nls_ctrl->hsig,SIGSEGV,NlsSignalFunc,nls_ctrl,0)) DoExit(nls_ctrl);
-    IF(OgSignal(nls_ctrl->hsig,SIGABRT,NlsSignalFunc,nls_ctrl,0)) DoExit(nls_ctrl);
-    IF(OgSignal(nls_ctrl->hsig,SIGUSR1,NlsSignalFunc,nls_ctrl,0)) DoExit(nls_ctrl);
+    IF(OgSignal(nls_ctrl->hsig, SIGTERM, NlsSignalFunc, nls_ctrl, 0)) DoExit(nls_ctrl);
+    IF(OgSignal(nls_ctrl->hsig, SIGINT, NlsSignalFunc, nls_ctrl, 0)) DoExit(nls_ctrl);
+    IF(OgSignal(nls_ctrl->hsig, SIGSEGV, NlsSignalFunc, nls_ctrl, 0)) DoExit(nls_ctrl);
+    IF(OgSignal(nls_ctrl->hsig, SIGABRT, NlsSignalFunc,nls_ctrl, 0)) DoExit(nls_ctrl);
+    IF(OgSignal(nls_ctrl->hsig, SIGUSR1, NlsSignalFunc, nls_ctrl, 0)) DoExit(nls_ctrl);
   }
 
   clock_start = OgClock();
@@ -256,8 +203,7 @@ static int OgUse(struct og_nls_ctrl *nls_ctrl, void *hInstance, int nCmdShow)
       nls_ctrl->loginfo->trace);
   sprintf(buffer + strlen(buffer), "      <n> has a combined hexadecimal value of:\n");
   sprintf(buffer + strlen(buffer), "        0x1: minimal, 0x2: memory, 0x4: all request, 0x8: answer\n");
-  sprintf(buffer + strlen(buffer),
-      "        0x10: socket, 0x20: socket size, 0x40: listening thread (LT), 0x80: LT search\n");
+  sprintf(buffer + strlen(buffer), "        0x10: socket, 0x20: socket size, 0x40: LT, 0x80: LT search\n");
   sprintf(buffer + strlen(buffer), "    -v gives version number of the program\n");
 
   OgMessageBox(0, buffer, nls_ctrl->loginfo->where, DOgMessageBoxInformation);
@@ -265,12 +211,11 @@ static int OgUse(struct og_nls_ctrl *nls_ctrl, void *hInstance, int nCmdShow)
   DONE;
 }
 
-/*
+/**
  *    Gets trace level which is defined as a file in CONTROL directory
  *    named jtrace_<x>.rqs, where x is hexadecimal of variable nls_ctrl->loginfo->trace.
  *    Example : ftrace_1.rqs to get minimal trace.
  */
-
 static int GetNlsControlVariables(struct og_nls_ctrl *nls_ctrl)
 {
   char *stop, value[1024];
@@ -281,26 +226,54 @@ static int GetNlsControlVariables(struct og_nls_ctrl *nls_ctrl)
     if (save_trace != nls_ctrl->loginfo->trace)
     {
       OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "Trace value is %x", nls_ctrl->loginfo->trace);
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceMinimal) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  minimal trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceMemory) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  memory trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceAllRequest) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog,
-          "  all request trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceAnswer) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  answer trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceSocket) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  socket trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceSocketSize) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog,
-          "  socket size trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceLT) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog,
-          "  listening threads trace");
-      if (nls_ctrl->loginfo->trace & DOgNlsTraceLTSearch) OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog,
-          "  listening threads search trace");
     }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceMinimal)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  minimal trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceMemory)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  memory trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceAllRequest)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  all request trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceAnswer)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  answer trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceSocket)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  socket trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceSocketSize)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  socket size trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceLT)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  listening threads trace");
+    }
+
+    if (nls_ctrl->loginfo->trace & DOgNlsTraceLTSearch)
+    {
+      OgMsg(nls_ctrl->hmsg, "", DOgMsgDestInLog, "  listening threads search trace");
+    }
+
   }
   return (0);
 }
 
 static int GetNlsConfiguration(struct og_nls_ctrl *nls_ctrl, char *conf)
 {
-  int msg_timestamp, msg_id, msg_mask;
   char value[DPcPathSize];
   int found;
 
@@ -312,9 +285,9 @@ static int GetNlsConfiguration(struct og_nls_ctrl *nls_ctrl, char *conf)
   {
     OgTrimString(value, value);
     PcStrlwr(value);
-    if (!strcmp(value, "true") || !strcmp(value, "yes")) msg_timestamp = 1;
-    else msg_timestamp = 0;
-    IF(OgMsgTune(nls_ctrl->hmsg,DOgMsgTuneShowTimestamp,(void *)msg_timestamp)) return (0);
+    size_t msg_timestamp = FALSE;
+    if (!strcmp(value, "true") || !strcmp(value, "yes")) msg_timestamp = TRUE;
+    IF(OgMsgTune(nls_ctrl->hmsg, DOgMsgTuneShowTimestamp, (void *) msg_timestamp)) return (0);
   }
 
   /** Since this variable concerns log tuning, we do it as soon as possible **/
@@ -322,17 +295,20 @@ static int GetNlsConfiguration(struct og_nls_ctrl *nls_ctrl, char *conf)
   if (found)
   {
     OgTrimString(value, value);
-    msg_id = OgArgSize(value);
-    IF(OgMsgTune(nls_ctrl->hmsg,DOgMsgTuneShowId,(void *)msg_id)) return (0);
+    size_t msg_id = OgArgSize(value);
+    IF(OgMsgTune(nls_ctrl->hmsg, DOgMsgTuneShowId, (void *) msg_id)) return (0);
   }
 
   /** Since this variable concerns log tuning, we do it as soon as possible **/
-  IFE(found=OgDipperConfGetVar(conf,"msg_mask",value,DPcPathSize));
+  IFE(found=OgDipperConfGetVar(conf,"msg_mask", value, DPcPathSize));
   if (found)
   {
     OgTrimString(value, value);
+    int msg_mask;
     IFE(OgMsgMaskInterpret(nls_ctrl->hmsg, value, &msg_mask));
-    IF(OgMsgTune(nls_ctrl->hmsg,DOgMsgTuneMask,(void *)msg_mask)) return (0);
+
+    size_t clean_msg_mask = msg_mask;
+    IF(OgMsgTune(nls_ctrl->hmsg, DOgMsgTuneMask, (void *) clean_msg_mask)) return (0);
   }
 
   DONE;
@@ -343,7 +319,6 @@ static void NlsSignalFunc(void *context, int signal_type)
   struct og_nls_ctrl *nls_ctrl = (struct og_nls_ctrl *) context;
 
   int levelFlag = DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamDateIn;
-  if (!nls_ctrl->is_service) levelFlag += DOgMsgDestMBox;
 
   // log back trace
   {
@@ -378,7 +353,7 @@ static void NlsSignalFunc(void *context, int signal_type)
 static void LogErrors(struct og_nls_ctrl *nls_ctrl, char *label)
 {
   int mb = DOgMsgDestInLog + DOgMsgDestInErr;
-  OgMsgErr(nls_ctrl->hmsg, "ogm_nls_normal_exit", 0, 0, 0, DOgMsgSeverityEmergency, 0);
+  OgMsgErr(nls_ctrl->hmsg, "ogm_nls_normal_exit", 1, 0, 0, DOgMsgSeverityEmergency, 0);
   OgMsg(nls_ctrl->hmsg, "exiting_normally", mb, "Errors found in '%s', exiting normally", label);
 }
 
@@ -386,8 +361,7 @@ void DoExit(nls_ctrl)
   struct og_nls_ctrl *nls_ctrl;
 {
   int mb = DOgMsgDestInLog + DOgMsgDestInErr;
-  if (!nls_ctrl->is_service) mb += DOgMsgDestMBox;
-  OgMsgErr(nls_ctrl->hmsg, "ogm_nls_error", 0, 0, 0, DOgMsgSeverityEmergency, 0);
+  OgMsgErr(nls_ctrl->hmsg, "ogm_nls_error", 1, 0, 0, DOgMsgSeverityEmergency, 0);
   OgMsg(nls_ctrl->hmsg, "exiting_on_error", mb, "Program ogm_nls exiting on error.");
   exit(1);
 }

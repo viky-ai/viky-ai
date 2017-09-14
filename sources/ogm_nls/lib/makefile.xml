@@ -20,7 +20,7 @@
     <platform name="linux">
       <option name="NAME">ognls</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaddr -logxml -loguci -logsock -logthr -logheap -logmsg -loggen -lyajl</option>
+      <option name="ADD_LIBR">-logaddr -loguci -logsock -logthr -logheap -logmsg -loggen -lglib-2.0 -lyajl -ljansson -lulfius -lyder -lorcania -lmicrohttpd</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

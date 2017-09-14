@@ -8,11 +8,13 @@ include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 .PHONY: all redebug debug build make clean fullclean
 
-redebug: debug
+redebug: rebuild
 
 debug: build
 
-rebuild: build
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 build: $(DBINPATH)/libjansson.so $(SRCPATH)/include/jansson.h $(SRCPATH)/include/jansson_config.h
 
@@ -24,19 +26,21 @@ all:
 
 fullclean: clean
 	cd jansson && $(MAKE) clean
+	rm -rf jansson/Makefile
+	rm -rf jansson/configure
 
 clean:
 	rm -f $(SRCPATH)/include/jansson_config.h
 	rm -f $(SRCPATH)/include/jansson.h
 	rm -f $(DBINPATH)/libjansson.so*
 
-make: ./Makefile
+make: jansson/Makefile
 	cd jansson && $(MAKE)
 
-./configure:
+jansson/configure:
 	cd jansson && autoreconf -fi
 
-./Makefile: ./configure
+jansson/Makefile: jansson/configure
 	cd jansson && ./configure --prefix="$(DBUILDPATH)" \
 																	--bindir="$(DBINPATH)" \
 																	--libdir="$(DLIBPATH)" \
