@@ -1,0 +1,14 @@
+.login-layout{
+  max-width: 30em;
+  margin: 0 auto;
+
+  h1.logo-container{
+    text-align: center;
+    margin: 2em 0;
+    font-size: 1em;
+    transition: transform .2s;
+    &:hover{
+      transform: scale(1.05);
+    }
+  }
+}

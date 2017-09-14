@@ -3,6 +3,7 @@ html{
   font-family: $family-sans-serif;
   font-weight: 300;
   line-height: 1.5em;
+  background-color: #f5f5f5;
 }
 
 strong{
@@ -30,6 +31,7 @@ h2{
     font-size: 1.5em;
     color: #888;
     margin-top: -0.15em;
+    margin-bottom: 1em; // 16px
   }
 }
 h3{
@@ -54,6 +56,13 @@ h4{
   &:not(:first-child){
     margin-top: 1.3333em;
   }
+}
+
+ul:first-child{
+  margin-top: 0;
+}
+ul:last-child{
+  margin-bottom: 0;
 }
 
 p{
