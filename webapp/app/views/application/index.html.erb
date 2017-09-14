@@ -1,26 +1,22 @@
-<% if user_signed_in? %>
+
+  <% if user_signed_in? %>
+    <p>
+      <%= current_user.email %>
+      <%= link_to 'Edit profile', edit_user_registration_path %> |
+      <%= link_to "Logout", destroy_user_session_path, method: :delete %>
+    </p>
+  <% end %>
+
+  <h1>voqal.ai</h1>
+  <h2 class="tagline">The AI next generation platform for voice search and bots.</h2>
+
+  <% unless user_signed_in? %>
+    <p>
+      Access to <%= link_to "Sign up", new_user_registration_path %> or
+      <%= link_to "Login", new_user_session_path %>.
+    </p>
+  <% end %>
+
   <p>
-    <%= current_user.email %>
-    <%= link_to 'Edit profile', edit_user_registration_path %> |
-    <%= link_to "Logout", destroy_user_session_path, method: :delete %>
+    Developper ? Watch our <a href="style-guide" data-turbolinks="false">style guide</a>.
   </p>
-<% end %>
-
-<span class="logo logo--x-large">
-  <%= logo_on_white %>
-</span>
-
-<h1>voqal.ai</h1>
-<h2 class="tagline">The AI next generation platform for voice search and bots.</h2>
-
-<% unless user_signed_in? %>
-  <p>
-    <%= link_to "Sign up", new_user_registration_path, class: "btn" %>
-    <%= link_to "Login", new_user_session_path, class: "btn" %>
-  </p>
-<% end %>
-
-<p>
-  Developper ? Watch our <a href="style-guide">style guide</a>.
-</p>
-

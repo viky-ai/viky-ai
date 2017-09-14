@@ -1,31 +1,24 @@
-<div class="login-layout">
+<div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
+  <div class="card-content">
 
-  <h1 class="logo-container">
-    <a href="/" class="logo logo--x-large">
-      <%= logo_on_white %>
-    </a>
-  </h1>
+    <h2>Resend confirmation instructions</h2>
+    <h3 class="tagline">Did not receive a confirmation email?</h3>
 
-  <div class="card">
-    <div class="card-content">
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
 
-      <h2>Resend confirmation instructions</h2>
-      <h3 class="tagline">Did not receive a confirmation email?</h3>
+      <div class="field">
+        <%= f.label :email %><br />
+        <%= f.email_field :email, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+        <%= display_errors(resource, :email) %>
+      </div>
 
-      <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-        <%= devise_error_messages! %>
+      <div class="actions">
+        <%= f.button "Resend confirmation instructions", class: "btn btn--full btn--large btn--primary",
+            data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+      </div>
+    <% end %>
 
-        <div class="field">
-          <%= f.label :email %><br />
-          <%= f.email_field :email, autofocus: true, value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
-        </div>
-
-        <div class="actions">
-          <%= f.submit "Resend confirmation instructions", class: "btn btn--primary" %>
-        </div>
-      <% end %>
-    </div>
   </div>
-
-  <%= render "devise/shared/links" %>
 </div>
+
+<%= render "devise/shared/links" %>

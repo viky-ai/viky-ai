@@ -1,0 +1,111 @@
+.login-wrapper{
+  background: linear-gradient(to top, #fff, #f0f0f0);
+  min-height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  .bg-left-line-1, .bg-left-line-2, .bg-left-line-3,
+  .bg-left-line-4, .bg-left-line-5, .bg-left-line-6{
+    position: absolute;
+    height: 400px;
+    width: 100%;
+    left: 0;
+    transform: skewY(45deg);
+
+    background-color: rgba(adjust-hue(#49D8FB, -10deg), .2);
+    bottom: 0px;
+  }
+  .bg-left-line-2{
+    background-color: rgba(adjust-hue(#49D8FB, -5deg), .2);
+    bottom: -100px;
+  }
+  .bg-left-line-3{
+    background-color: rgba(adjust-hue(#49D8FB, 0deg), .2);
+    bottom: -200px;
+  }
+  .bg-left-line-4{
+    background-color: rgba(adjust-hue(#49D8FB, 5deg), .2);
+    bottom: -300px;
+  }
+  .bg-left-line-5{
+    background-color: rgba(adjust-hue(#49D8FB, 10deg), .2);
+    bottom: -400px;
+  }
+  .bg-left-line-6{
+    background-color: rgba(adjust-hue(#49D8FB, 15deg), .2);
+    bottom: -500px;
+  }
+
+  .bg-right-line-1, .bg-right-line-2, .bg-right-line-3,
+  .bg-right-line-4, .bg-right-line-5, .bg-right-line-6{
+    position: absolute;
+    height: 400px;
+    width: 100%;
+
+    background-color: rgba(adjust-hue(#49b6fb, 15deg), .2);
+    bottom: -100px;
+    transform: skewY(-45deg);
+  }
+  .bg-right-line-2{
+    background-color: rgba(adjust-hue(#49b6fb, 10deg), .2);
+    bottom: -200px;
+  }
+  .bg-right-line-3{
+    background-color: rgba(adjust-hue(#49b6fb, 5deg), .2);
+    bottom: -300px;
+  }
+  .bg-right-line-4{
+    background-color: rgba(adjust-hue(#49b6fb, 0deg), .2);
+    bottom: -400px;
+  }
+  .bg-right-line-5{
+    background-color: rgba(adjust-hue(#49b6fb, -5deg), .2);
+    bottom: -400px;
+  }
+  .bg-right-line-6{
+    background-color: rgba(adjust-hue(#49b6fb, -10deg), .2);
+    bottom: -400px;
+  }
+}
+
+
+
+.login-ui-wrapper{
+  max-width: 26em;
+  margin: 0 auto;
+  min-height: 100%;
+
+  -webkit-perspective: 600px;
+          perspective: 600px;
+
+  background-image: url(robot-idle.png);
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) 88px;
+
+  &.robot-trouble{
+    background-image: url(robot-trouble.png);
+  }
+  &.robot-happy{
+    background-image: url(robot-happy.png);
+  }
+  &.robot-close-eyes{
+    background-image: url(robot-close-eyes.png);
+  }
+
+  position: relative;
+
+  h1.logo-container{
+    text-align: center;
+    padding: 3em 0;
+    font-size: 1em;
+    a{
+      transition: transform .2s;
+      display:inline-block;
+    }
+    a:hover{
+      transform: scale(1.075);
+    }
+  }
+
+}

@@ -1,16 +1,74 @@
 .card{
-  border: 1px solid #ddd;
   border-radius: 3px;
-  box-shadow: 0 2px 3px rgba(black, .1);
+  box-shadow: 0 0 1px 0 rgba(black, .1), 0 2px 3px rgba(black, .1);
   margin-bottom: 1.5em;
   background-color: #fff;
+
+  .card-content{
+    padding: 2em;
+    p{
+      margin: 0;
+    }
+    p:not(:last-child){
+      margin-bottom: 1em;
+    }
+    ul{
+      padding: 0 1em;
+    }
+  }
+
+  &.card--notice{
+    border: none;
+    background-color: $success_color;
+    color: #fff;
+    .card-content{
+      padding: 1em 2em;
+    }
+  }
+
+  &.card--alert{
+    border: none;
+    background-color: $alert_color;
+    color: #fff;
+    .card-content{
+      padding: 1em 2em;
+    }
+  }
 }
-.card-content{
-  padding: 2.5em 2em 2em 2em;
-  p{
-    margin: 0;
+
+
+
+@keyframes cardShakeAnimation {
+  0 {
+    transform: translateX(0)
   }
-  p:not(:last-child){
-    margin-bottom: 1em;
+
+  12.5% {
+    transform: translateX(-6px) rotateY(-5deg)
   }
+
+  37.5% {
+    transform: translateX(5px) rotateY(4deg)
+  }
+
+  62.5% {
+    transform: translateX(-3px) rotateY(-2deg)
+  }
+
+  87.5% {
+    transform: translateX(2px) rotateY(1deg)
+  }
+
+  100% {
+    transform: translateX(0)
+  }
+}
+
+.card--shake{
+  -webkit-animation-duration: 400ms;
+  -webkit-animation-timing-function: ease-in-out;
+  -webkit-animation-name: cardShakeAnimation;
+  -moz-animation-duration: 400ms;
+  -moz-animation-timing-function: ease-in-out;
+  -moz-animation-name: cardShakeAnimation;
 }

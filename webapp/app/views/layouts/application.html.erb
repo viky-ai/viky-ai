@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Webapp</title>
+    <title>voqal.ai</title>
     <%= csrf_meta_tags %>
-
-
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
-
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-
     <%= stylesheet_pack_tag 'application' %>
     <%= javascript_pack_tag 'application' %>
   </head>
 
-  <body>
-
-
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
-
-
+  <body style="padding: 3em;">
+    <% unless notice.nil? %>
+      <div class="card card--notice">
+        <div class="card-content">
+          <%= notice %>
+        </div>
+      </div>
+    <% end %>
+    <% unless alert.nil? %>
+      <div class="card card--alert">
+        <div class="card-content">
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
 
     <%= yield %>
+
   </body>
 </html>

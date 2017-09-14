@@ -5,6 +5,8 @@
     margin-bottom: 1em;
   }
 
+  .field_with_errors { display: inline }
+
   label{
     font-weight: 400;
     margin-bottom: .5em;
@@ -51,9 +53,6 @@
     opacity: .3;
   }
 
-  .checkbox{
-
-  }
 
   .help{
     line-height: 1.5em;
@@ -66,9 +65,9 @@
       }
     }
     &.help--error{
-      color: $error_color;
+      color: $alert_color;
       .icon svg{
-        fill: $error_color;
+        fill: $alert_color;
       }
     }
   }

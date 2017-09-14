@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>voqal.ai</title>
+    <%= csrf_meta_tags %>
+    <meta name="turbolinks-cache-control" content="no-cache">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_pack_tag 'application' %>
+    <%= javascript_pack_tag 'application' %>
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="bg-left-line-1"></div>
+      <div class="bg-left-line-2"></div>
+      <div class="bg-left-line-3"></div>
+      <div class="bg-left-line-4"></div>
+      <div class="bg-left-line-5"></div>
+      <div class="bg-left-line-6"></div>
+      <div class="bg-right-line-1"></div>
+      <div class="bg-right-line-2"></div>
+      <div class="bg-right-line-3"></div>
+      <div class="bg-right-line-4"></div>
+      <div class="bg-right-line-5"></div>
+      <div class="bg-right-line-6"></div>
+
+      <div class="login-ui-wrapper
+                  <% unless resource.errors.empty? %>robot-trouble<% end %>
+                  <% unless alert.nil? %>robot-trouble<% end %>
+                  <% unless notice.nil? %>robot-happy<% end %>">
+
+        <h1 class="logo-container">
+          <a href="/" class="logo logo--large">
+            <%= logo_on_white %>
+          </a>
+        </h1>
+
+        <% unless notice.nil? %>
+          <div class="card card--notice">
+            <div class="card-content">
+              <%= notice %>
+            </div>
+          </div>
+        <% end %>
+
+        <% unless alert.nil? %>
+          <div class="card card--alert">
+            <div class="card-content">
+              <%= alert %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= yield %>
+
+        </div>
+
+    </div>
+  </body>
+</html>
