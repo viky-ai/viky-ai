@@ -27,3 +27,10 @@ VOQALAPP_DB_PORT=5432
 
 VOQALAPP_REDIS_URL='redis://localhost:6379/1'
 ```
+
+## Run in production environment
+
+    RAILS_ENV=production rails db:setup
+    RAILS_ENV=production rails assets:clobber
+    RAILS_ENV=production rails assets:precompile
+    RAILS_ENV=production SECRET_KEY_BASE=xyz RAILS_SERVE_STATIC_FILES=true rails s
