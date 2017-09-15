@@ -30,4 +30,33 @@
   </div>
 </div>
   <% end %>
+
+  <h3>Card animation</h3>
+  <p>
+    Wrap <code>&lt;div class="card"&gt;</code> in <code>&lt;div class="card-animation-wrapper"&gt;</code> in order to add 3D perspective to animation. Then add class <code>card--shake</code> to animate card on error.
+  </p>
+  <%= highlight_html do %>
+<div class="card-animation-wrapper">
+  <div class="card">
+    <div class="card-content">
+      <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+      <a href="#" class="btn btn--small shake-card-trigger">Shake me!</a>
+    </div>
+  </div>
+</div>
+  <% end %>
+  <%= highlight_html do %>
+<div class="card-animation-wrapper">
+  <div class="card card--alert">
+    <div class="card-content">
+      <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      </p>
+      <a href="#" class="btn btn--small shake-card-trigger">Shake me!</a>
+    </div>
+  </div>
+</div>
+  <% end %>
 </section>

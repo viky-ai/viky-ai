@@ -5,7 +5,7 @@ module ApplicationHelper
     html = []
     if model_instance.errors[field].any?
       html << "<div class='help help--error'>"
-      html << "<span class='icon icon--small'>"
+      html << "<span class='icon icon--x-small'>"
       html << icon_alert
       html << "</span> "
 

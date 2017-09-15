@@ -3,3 +3,4 @@ import 'prismjs/themes/prism.css';
 
 require('prismjs');
 import './nav';
+import './card-shake';

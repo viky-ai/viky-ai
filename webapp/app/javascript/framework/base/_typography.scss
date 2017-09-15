@@ -13,10 +13,10 @@ strong{
   font-weight: 400;
 }
 a{
-  color: $primary_color;
+  color: darken($primary_color, 6%);
   &:focus,
   &:hover{
-    color: darken($primary_color, 15%);
+    color: darken($primary_color, 20%);
   }
 }
 

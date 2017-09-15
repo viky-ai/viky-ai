@@ -1,34 +1,37 @@
-<div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
-  <div class="card-content">
+<div class="card-animation-wrapper">
+  <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
+    <div class="card-content">
 
-    <h2>Sign up</h2>
-    <h3 class="tagline">Start building chatbots now!</h3>
+      <h2>Sign up</h2>
+      <h3 class="tagline">Start building chatbots now!</h3>
 
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
-      <div class="field">
-        <%= f.label :email %><br />
-        <%= f.email_field :email %>
-        <%= display_errors(resource, :email) %>
-      </div>
+        <div class="field">
+          <%= f.label :email %><br />
+          <%= f.email_field :email %>
+          <%= display_errors(resource, :email) %>
+        </div>
 
-      <div class="field">
-        <%= f.label :password %>
-        <%= f.password_field :password, autocomplete: "off" %>
-        <%= display_errors(resource, :password) %>
-        <% if @minimum_password_length %>
-          <div class="help">
-            At least <%= @minimum_password_length %> characters
-          </div>
-        <% end %>
-      </div>
+        <div class="field">
+          <%= f.label :password %>
+          <% if @minimum_password_length %>
+            <span class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              At least <%= @minimum_password_length %> characters
+            </span>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "off" %>
+          <%= display_errors(resource, :password) %>
+        </div>
 
-      <div class="field">
-        <%= f.button "Sign up", class: 'btn btn--primary btn--large btn--full',
-            data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
-      </div>
-    <% end %>
+        <div class="field">
+          <%= f.button "Sign up", class: 'btn btn--primary btn--large btn--full',
+              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+        </div>
+      <% end %>
 
+    </div>
   </div>
 </div>
 

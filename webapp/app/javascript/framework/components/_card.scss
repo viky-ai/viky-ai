@@ -64,6 +64,11 @@
   }
 }
 
+.card-animation-wrapper{
+  -webkit-perspective: 600px;
+          perspective: 600px;
+}
+
 .card--shake{
   -webkit-animation-duration: 400ms;
   -webkit-animation-timing-function: ease-in-out;

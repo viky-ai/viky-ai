@@ -14,15 +14,26 @@
   width: 24px;
   height: 24px;
   vertical-align: center;
+  display: inline-block;
   svg{
     width: 24px;
     height: 24px;
     display: inline-block;
     vertical-align: bottom;
   }
+  &.icon--x-small{
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    svg{
+      width: 14px;
+      height: 14px;
+    }
+  }
   &.icon--small{
     width: 18px;
     height: 18px;
+    line-height: 18px;
     svg{
       width: 18px;
       height: 18px;
@@ -31,6 +42,7 @@
   &.icon--large{
     width: 28px;
     height: 28px;
+    line-height: 28px;
     svg{
       width: 28px;
       height: 28px;

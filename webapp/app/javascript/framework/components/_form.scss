@@ -41,6 +41,7 @@
     &:focus{
       border-color: $focus_color;
       box-shadow: 0 0 0 2px rgba($focus_color, .25);
+      outline:none;
     }
   }
   input::-webkit-input-placeholder{
@@ -52,12 +53,28 @@
   input:-ms-input-placeholder{
     opacity: .3;
   }
+  .field_with_errors{
+    input[type='text'],
+    input[type='email'],
+    input[type='password']{
+      border: 1px solid $alert_color;
+      border-top: 1px solid darken($alert_color, 5%);
+      &:focus{
+        border-color: $alert_color;
+        box-shadow: 0 0 0 2px rgba($alert_color, .25);
+      }
+    }
 
+  }
 
   .help{
     line-height: 1.5em;
     margin-top: 0.25em;
     font-size: .875em;
+    color: #888;
+    .icon svg{
+      fill: #888;
+    }
     &.help--success{
       color: $success_color;
       .icon svg{

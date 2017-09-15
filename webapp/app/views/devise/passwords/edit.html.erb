@@ -1,26 +1,31 @@
-<div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
-  <div class="card-content">
+<div class="card-animation-wrapper">
+  <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
+    <div class="card-content">
 
-    <h2>Change your password</h2>
+      <h2>Change your password</h2>
 
-    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-      <%= f.hidden_field :reset_password_token %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+        <%= f.hidden_field :reset_password_token %>
 
-      <div class="field">
-        <%= f.label :password, "New password" %><br />
-        <%= f.password_field :password, autocomplete: "off" %>
-        <% if @minimum_password_length %>
-          <div class="help">At least <%= @minimum_password_length %> characters</div>
-        <% end %>
-        <%= display_errors(resource, :password) %>
-      </div>
+        <div class="field">
+          <%= f.label :password, "New password" %>
+          <% if @minimum_password_length %>
+            <span class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              At least <%= @minimum_password_length %> characters
+            </span>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "off" %>
+          <%= display_errors(resource, :password) %>
+        </div>
 
-      <div class="actions">
-        <%= f.button "Change my password", class: 'btn btn--full btn--large btn--primary',
-            data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
-      </div>
-    <% end %>
+        <div class="actions">
+          <%= f.button "Change my password", class: 'btn btn--full btn--large btn--primary',
+              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+        </div>
+      <% end %>
 
+    </div>
   </div>
 </div>
 

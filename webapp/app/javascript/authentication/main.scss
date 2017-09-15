@@ -1,8 +1,15 @@
 .login-wrapper{
-  background: linear-gradient(to top, #fff, #f0f0f0);
+  background-color: #0E131A;
+
+  background-image: url(images/sky.png);
+  background-size: 200px;
+
   min-height: 100%;
   position: relative;
   overflow: hidden;
+
+  $left-transparency: .15;
+  $right-transparency: .15;
 
   .bg-left-line-1, .bg-left-line-2, .bg-left-line-3,
   .bg-left-line-4, .bg-left-line-5, .bg-left-line-6{
@@ -12,27 +19,27 @@
     left: 0;
     transform: skewY(45deg);
 
-    background-color: rgba(adjust-hue(#49D8FB, -10deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, -10deg), $left-transparency);
     bottom: 0px;
   }
   .bg-left-line-2{
-    background-color: rgba(adjust-hue(#49D8FB, -5deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, -5deg), $left-transparency);
     bottom: -100px;
   }
   .bg-left-line-3{
-    background-color: rgba(adjust-hue(#49D8FB, 0deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, 0deg), $left-transparency);
     bottom: -200px;
   }
   .bg-left-line-4{
-    background-color: rgba(adjust-hue(#49D8FB, 5deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, 5deg), $left-transparency);
     bottom: -300px;
   }
   .bg-left-line-5{
-    background-color: rgba(adjust-hue(#49D8FB, 10deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, 10deg), $left-transparency);
     bottom: -400px;
   }
   .bg-left-line-6{
-    background-color: rgba(adjust-hue(#49D8FB, 15deg), .2);
+    background-color: rgba(adjust-hue(#49D8FB, 15deg), $left-transparency);
     bottom: -500px;
   }
 
@@ -42,29 +49,29 @@
     height: 400px;
     width: 100%;
 
-    background-color: rgba(adjust-hue(#49b6fb, 15deg), .2);
-    bottom: -100px;
+    background-color: rgba(adjust-hue(#49b6fb, 15deg), $right-transparency);
+    bottom: 0px;
     transform: skewY(-45deg);
   }
   .bg-right-line-2{
-    background-color: rgba(adjust-hue(#49b6fb, 10deg), .2);
-    bottom: -200px;
+    background-color: rgba(adjust-hue(#49b6fb, 10deg), $right-transparency);
+    bottom: -100px;
   }
   .bg-right-line-3{
-    background-color: rgba(adjust-hue(#49b6fb, 5deg), .2);
-    bottom: -300px;
+    background-color: rgba(adjust-hue(#49b6fb, 5deg), $right-transparency);
+    bottom: -200px;
   }
   .bg-right-line-4{
-    background-color: rgba(adjust-hue(#49b6fb, 0deg), .2);
-    bottom: -400px;
+    background-color: rgba(adjust-hue(#49b6fb, 0deg), $right-transparency);
+    bottom: -300px;
   }
   .bg-right-line-5{
-    background-color: rgba(adjust-hue(#49b6fb, -5deg), .2);
+    background-color: rgba(adjust-hue(#49b6fb, -5deg), $right-transparency);
     bottom: -400px;
   }
   .bg-right-line-6{
-    background-color: rgba(adjust-hue(#49b6fb, -10deg), .2);
-    bottom: -400px;
+    background-color: rgba(adjust-hue(#49b6fb, -10deg), $right-transparency);
+    bottom: -500px;
   }
 }
 
@@ -75,22 +82,19 @@
   margin: 0 auto;
   min-height: 100%;
 
-  -webkit-perspective: 600px;
-          perspective: 600px;
-
-  background-image: url(robot-idle.png);
+  background-image: url(images/robot-idle-white.png);
   background-size: 40px;
   background-repeat: no-repeat;
   background-position: calc(100% - 10px) 88px;
 
   &.robot-trouble{
-    background-image: url(robot-trouble.png);
+    background-image: url(images/robot-trouble-white.png);
   }
   &.robot-happy{
-    background-image: url(robot-happy.png);
+    background-image: url(images/robot-happy-white.png);
   }
   &.robot-close-eyes{
-    background-image: url(robot-close-eyes.png);
+    background-image: url(images/robot-close-eyes-white.png);
   }
 
   position: relative;
@@ -104,7 +108,7 @@
       display:inline-block;
     }
     a:hover{
-      transform: scale(1.075);
+      transform: scale(1.1);
     }
   }
 
