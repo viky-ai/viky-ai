@@ -17,6 +17,7 @@
           <% end %>
           <%= f.password_field :password, autocomplete: "off" %>
           <%= display_errors(resource, :password) %>
+          <%= display_errors(resource, :reset_password_token) %>
         </div>
 
         <div class="actions">
