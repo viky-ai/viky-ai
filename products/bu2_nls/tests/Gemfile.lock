@@ -6,6 +6,7 @@ GEM
     builder (3.2.3)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
+    dotenv (2.2.1)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     mime-types (3.1)
@@ -25,6 +26,9 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     ruby-progressbar (1.8.3)
+    term-ansicolor (1.6.0)
+      tins (~> 1.0)
+    tins (1.15.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
@@ -34,11 +38,13 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
+  dotenv
   minitest
   minitest-reporters
   parallel
   rake
   rest-client
+  term-ansicolor
 
 BUNDLED WITH
    1.15.4

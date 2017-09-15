@@ -4,7 +4,14 @@ class TestNlsHello < Minitest::Test
 
   include Common
 
-  # add
+  def setup
+    Nls.start
+  end
+
+  def after_run
+    Nls.stop
+  end
+
   def test_hello_world
 
     actual = nls_query({})

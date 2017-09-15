@@ -1,8 +1,12 @@
 source 'https://rubygems.org/'
 
+gem 'dotenv'
 gem 'minitest' # optional as it's included by default in Ruby std lib
 gem 'minitest-reporters'
 gem 'rest-client'
-gem 'awesome_print'
+
 gem 'rake'
 gem 'parallel'
+
+gem 'awesome_print'
+gem 'term-ansicolor'

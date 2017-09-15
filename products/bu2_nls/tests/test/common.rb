@@ -1,7 +1,15 @@
 module Common
 
   def nls_url
-    "http://127.0.0.1:9345"
+
+    listening_address = ENV['NLS_LISTENNING_ADDRESS']
+    if listening_address.nil?
+      listening_address = '127.0.0.1:9345'
+    else
+      listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
+    end
+
+    "http://#{listening_address}"
   end
 
   def nls_query(param)
