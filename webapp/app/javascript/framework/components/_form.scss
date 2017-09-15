@@ -64,7 +64,6 @@
         box-shadow: 0 0 0 2px rgba($alert_color, .25);
       }
     }
-
   }
 
   .help{
@@ -88,6 +87,23 @@
       }
     }
   }
+}
 
+
+.password-show-hide{
+  position: relative;
+  .password-show-hide__show,
+  .password-show-hide__hide{
+    font-size: .9em;
+    position: absolute;
+    right: 10px;
+    top: calc(100% - 2.1em);
+    color: #bbb;
+    text-decoration: none;
+    &:hover{
+      color: #000;
+      text-decoration: underline;
+    }
+  }
 }
 
