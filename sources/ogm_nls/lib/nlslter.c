@@ -6,73 +6,48 @@
  */
 #include "ogm_nls.h"
 
-static int OgListeningThreadErrorUci(struct og_listening_thread *);
-
 /*
  *  Handling errors for listening threads.
  */
-
-int OgListeningThreadError(struct og_listening_thread *lt)
+og_status OgListeningThreadError(struct og_listening_thread *lt)
 {
-  int is_error = 0;
-  IFE(is_error = OgListeningThreadErrorUci(lt));
-  return (is_error);
-}
 
-static int OgListeningThreadErrorUci(lt)
-  struct og_listening_thread *lt;
-{
-  char erreur[DOgErrorSize], sys_erreur[DOgErrorSize];
-  int h, is_error = 0;
-  char client_error[DOgErrorSize + 100];
-  struct og_ucisw_input winput[1];
-  int is;
-  unsigned char *s;
+  IFE(OgNLSJsonReset(lt));
+
+  // on ouvre le fichier json et on ouvre le tableau
+  IFE(OgNLSJsonGenMapOpen(lt));
+
+  IFE(OgNLSJsonGenKeyValueArrayOpen(lt, "error"));
+
   int nb_error = 0;
-
-  char lt_heap_name[DPcPathSize];
-  snprintf(lt_heap_name, DPcPathSize, "nls_lt%d_thread_error", lt->ID);
-  og_heap hanswer;
-  IFn(hanswer = OgHeapInit(lt->hmsg, lt_heap_name, sizeof(unsigned char), DPcPathSize)) DPcErr;
-
-  s = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-      "<search_answers>\n"
-      "  <errors>\n";
-  is = strlen(s);
-  IFE(OgHeapAppend(hanswer, is, s));
-
+  char erreur[DOgErrorSize];
   while (OgErrLast(lt->herr, erreur, 0))
   {
-    strcpy(sys_erreur, erreur);
-    PcStrlwr(sys_erreur);
-    if (memcmp(sys_erreur, "warning", 7)) is_error = 1;
-    sprintf(client_error, "    <error>%s</error>\n", erreur);
-    IFE(OgHeapAppend(hanswer, strlen(client_error), client_error));
-    OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "%s", erreur);
+    IFE(OgNLSJsonGenString(lt, erreur));
     nb_error++;
   }
+
+  int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    strcpy(sys_erreur, erreur);
-    PcStrlwr(sys_erreur);
-    if (memcmp(sys_erreur, "warning", 7)) is_error = 1;
-    sprintf(client_error, "    <error>%s</error>\n", erreur);
-    IFE(OgHeapAppend(hanswer, strlen(client_error), client_error));
-    OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr, "%s", erreur);
+    IFE(OgNLSJsonGenString(lt, erreur));
     nb_error++;
   }
 
-  s = "  </errors>\n"
-      "</search_answers>\n";
-  is = strlen(s);
-  IFE(OgHeapAppend(hanswer, is, s));
+  // on ferme le tableau et le fichier json
+  IFE(OgNLSJsonGenArrayClose(lt));
 
+  // on logue le nombre d'erreurs
+  IFE(OgNLSJsonGenKeyValueInteger(lt, "error_number", nb_error));
+  IFE(OgNLSJsonGenMapClose(lt));
+
+  struct og_ucisw_input winput[1];
   memset(winput, 0, sizeof(struct og_ucisw_input));
   winput->http_status = 500;
   winput->http_status_message = "Internal Server Error";
-  winput->content_length = OgHeapGetCellsUsed(hanswer);
-  winput->content = OgHeapGetCell(hanswer, 0);
   winput->hsocket = lt->hsocket_in;
+  winput->content_length = OgHeapGetCellsUsed(lt->json->hb_json_buffer);
+  winput->content = OgHeapGetCell(lt->json->hb_json_buffer, 0);
 
   IF(OgUciServerWrite(lt->hucis,winput))
   {
@@ -80,8 +55,8 @@ static int OgListeningThreadErrorUci(lt)
         "OgUciServerWrite (%d): connexion was prematurely closed by client on an error message, giving up", lt->ID);
   }
 
-  IFE(OgHeapFlush(hanswer));
+  IFE(OgNLSJsonReset(lt));
 
-  return (is_error);
+  DONE;
 }
 

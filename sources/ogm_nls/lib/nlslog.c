@@ -10,7 +10,7 @@
 #define DOgNlsLogTruncatedBufferSize 64
 #define DOgNlsLogLabelBufferSize     64
 
-int NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags)
+og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags)
 {
   int is = lt->output->content_length - lt->output->header_length;
 
@@ -45,7 +45,7 @@ int NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_st
 /**
  * Add Error to error stack and log it
  */
-int NlsThrowError(struct og_listening_thread *lt, og_string format, ...)
+og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...)
 {
 
   // level dependent

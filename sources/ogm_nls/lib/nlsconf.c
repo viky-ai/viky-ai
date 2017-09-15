@@ -72,7 +72,7 @@ og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl)
   DONE;
 }
 
-int NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init)
+og_status NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init)
 {
   struct og_nls_conf new_conf[1], old_conf[1];
   char *conf = ctrl_nls->configuration_file;

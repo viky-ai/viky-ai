@@ -6,21 +6,17 @@
  */
 #include "ogm_nls.h"
 
-//#define TEST_SOCKETS
-
-static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output);
-static int OgListeningAnswerStop(struct og_listening_thread *, int);
 static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output, og_bool is_ssi_control_commands);
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
-/*
+
+/**
  *  Returns 1 if server must stop, 0 otherwise
  *  Returns -1 on error.
  */
-
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 {
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
@@ -48,22 +44,12 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 
   IFE(OgListeningRead(lt, input, output));
 
-  lt->t1 = OgMicroClock();
-
-  // Test for stopping
-  og_bool must_stop = OgListeningReceivedStop(lt, output);
-  IFE(must_stop);
-  if (must_stop)
+  if (lt->loginfo->trace & DOgNlsTraceLT)
   {
-    if (lt->loginfo->trace & DOgNlsTraceMinimal)
-    {
-      OgMsg(lt->hmsg, "", DOgMsgDestInLog, "OgListeningThreadAnswerUci stopping");
-    }
-    IFE(OgListeningAnswerStop(lt, input->hsocket));
-    OgCloseSocket(lt->hsocket_in);
-    ctrl_nls->must_stop = TRUE;
-    return TRUE;
+    OgMsg(lt->hmsg, "", DOgMsgDestInLog, "OgListeningThreadErrorUci: lt_%d : request receive", lt->ID);
   }
+
+  lt->t1 = OgMicroClock();
 
   struct og_ucisw_input winput[1];
   memset(winput, 0, sizeof(struct og_ucisw_input));
@@ -149,51 +135,5 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   OgCloseSocket(lt->hsocket_in);
 
   return FALSE;
-}
-
-/*
- * TODO : parsing a JSON stop message and use it.
- *  The stop message can be anything, for example:
- *    <?xml version="1.0" encoding="UTF-8"?>
- *    <control_commands>
- *      <control_command name="stop"/>
- *    </control_commands>
- *  The UCI api does not handle this as lt should
- *  not understand the content of the XML buffer.
- *  return 1 is the server must stop
- */
-
-static int OgListeningReceivedStop(struct og_listening_thread *lt, struct og_ucisr_output *output)
-{
-//  int is = output->content_length - output->header_length;
-//  unsigned char *s = output->content + output->header_length;
-// TODO JSON parsing of the 's' string to check if it is a stop message
-  return (0);
-}
-
-static int OgListeningAnswerStop(struct og_listening_thread *lt, int hsocket)
-{
-  struct og_ucisw_input cwinput, *winput = &cwinput;
-  unsigned char *answer = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-      "<ssi_control_answers>\n"
-      "  <control_answer name=\"stop\">ok</control_answer>\n"
-      "</ssi_control_answers>\n";
-  int ianswer = strlen(answer);
-
-  memset(winput, 0, sizeof(struct og_ucisw_input));
-  winput->content_length = ianswer;
-  winput->content = answer;
-  winput->hsocket = hsocket;
-
-  IF(OgUciServerWrite(lt->hucis,winput))
-  {
-    if (lt->loginfo->trace & DOgNlsTraceMinimal)
-    {
-      OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
-          "OgUciServerWrite: connexion was prematurely closed by client on a stop command, giving up");
-    }
-  }
-
-  DONE;
 }
 

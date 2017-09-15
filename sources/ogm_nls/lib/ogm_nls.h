@@ -10,6 +10,7 @@
 #include <logpath.h>
 #include <logthr.h>
 #include <logheap.h>
+#include <loggen.h>
 #include <glib.h>
 
 #include <yajl/yajl_gen.h>
@@ -173,10 +174,12 @@ struct jsonNode
 
 struct jsonValuesContext
 {
+  struct og_listening_thread *lt;
+
   struct jsonNode jsonNode;
   og_bool bIsArray[maxArrayLevel];
   int IsArrayUsed;
-  struct og_listening_thread *lt;
+  og_bool isEmpty;
 };
 
 /** nlsrun.c **/
@@ -193,21 +196,21 @@ int NlsFlushPermanentLtThreads(struct og_ctrl_nls *ctrl_nls);
 int OgListeningThread(void *ptr);
 
 /** nlslog.c **/
-int NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags);
-int NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
+og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags);
+og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
 
 /** nlsler.c **/
-int OgListeningThreadError(struct og_listening_thread *lt);
+og_status OgListeningThreadError(struct og_listening_thread *lt);
 
 /** nlsconf.c **/
-int NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init);
+og_status NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init);
 og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl);
 
 /** nlsltu.c **/
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 
 /** nlsonem.c **/
-int NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
+og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 
 /** lns_json **/
 og_status OgNLSJsonInit(struct og_listening_thread *lt);
@@ -248,9 +251,9 @@ int get_end_map(void * ctx);
 int get_start_array(void * ctx);
 int get_end_array(void * ctx);
 
-int writeJsonNode(struct jsonValuesContext * ctx);
+og_status writeJsonNode(struct jsonValuesContext * ctx);
 
 /** nls_dataEngine.c **/
 
-int manageNodeReceived(struct jsonValuesContext * ctx);
-int changeTag(struct jsonValuesContext * ctx);
+og_status manageNodeReceived(struct jsonValuesContext * ctx);
+og_status changeTag(struct jsonValuesContext * ctx);
