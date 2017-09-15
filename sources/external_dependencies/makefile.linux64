@@ -12,16 +12,16 @@ EXTERNALS_LIB = jansson libmicrohttpd ulfius
 .PHONY: $(EXTERNALS_LIB) fullclean clean debug build redebug rebuild all
 
 jansson:
-	$(MAKE) -f jansson.makefile $(MAKECMDGOALS) 2>&1 | tee jansson.log
+	$(MAKE) -f jansson.makefile $(MAKECMDGOALS) 2>&1
 
 libmicrohttpd: jansson
-	$(MAKE) -f libmicrohttpd.makefile $(MAKECMDGOALS) 2>&1 | tee libmicrohttpd.log
+	$(MAKE) -f libmicrohttpd.makefile $(MAKECMDGOALS) 2>&1
 
 ulfius: libmicrohttpd jansson
-	$(MAKE) -f ulfius.makefile $(MAKECMDGOALS) 2>&1 | tee ulfius.log
+	$(MAKE) -f ulfius.makefile $(MAKECMDGOALS) 2>&1
 
 glib:
-	$(MAKE) -f glib.makefile $(MAKECMDGOALS) 2>&1 | tee glib.log
+	$(MAKE) -f glib.makefile $(MAKECMDGOALS) 2>&1
 
 fullclean: $(EXTERNALS_LIB)
 

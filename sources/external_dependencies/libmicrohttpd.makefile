@@ -7,7 +7,7 @@ CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
 include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
-.PHONY: all redebug debug build make clean fullclean
+.PHONY: all redebug rebuild debug build make clean fullclean
 
 redebug: rebuild
 
