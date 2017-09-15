@@ -48,6 +48,21 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
 
   if (ctx->jsonNode.type == JSON_NUMBER)
   {
+    if (ctx->bIsArray[ctx->IsArrayUsed] == FALSE)
+    {
+      if(strcmp(ctx->jsonNode.mapKey,"wait")==0)
+      {
+        // si sleep, on attend le nombre de miliseconds
+        int waitTime = atoi(ctx->jsonNode.numberValue);
+
+        if(waitTime != 0)
+        {
+          OgSleep(waitTime);
+        }
+
+      }
+    }
+
     IFE(changeTag(ctx));
     IF(writeJsonNode(ctx))
     {

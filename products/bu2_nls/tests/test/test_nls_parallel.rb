@@ -12,7 +12,7 @@ class TestNlsParallel < Minitest::Test
     tests_number = *(0..20)
     Parallel.map(tests_number, in_threads: 3) do |test_number|
       data = {
-        name: "toto_#{test_number}"
+        wait: 50
       }
 
       response  = RestClient.post(url, data.to_json, content_type: :json)
@@ -20,7 +20,7 @@ class TestNlsParallel < Minitest::Test
 
 
       expected = {
-        "Answer_name" => "Hello toto_#{test_number}"
+        "Answer_wait" => 50
       }
 
       assert_equal expected, actual
