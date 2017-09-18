@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  root to: "application#index"
+  namespace :backend do 
+  	resources :users, only: [:index]
+  end
+
+  root to: "welcome#index"
 
   get 'style-guide', to: 'style_guide#index'
 end

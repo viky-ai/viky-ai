@@ -1,0 +1,22 @@
+
+  <% if user_signed_in? %>
+    <p>
+      <%= current_user.email %>
+      <%= link_to t('edit_profile'), edit_user_registration_path %> |
+      <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
+    </p>
+  <% end %>
+
+  <h1>voqal.ai</h1>
+  <h2 class="tagline">The AI next generation platform for voice search and bots.</h2>
+
+  <% unless user_signed_in? %>
+    <p>
+      Access to <%= link_to t('signup'), new_user_registration_path %> or
+      <%= link_to t('login'), new_user_session_path %>.
+    </p>
+  <% end %>
+
+  <p>
+    Developper ? Watch our <a href="style-guide" data-turbolinks="false">style guide</a>.
+  </p>

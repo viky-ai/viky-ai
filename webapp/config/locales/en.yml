@@ -1,2 +1,14 @@
 en:
   loading: Loading
+  controllers:
+    backend:
+      application:
+        not_signed_in: Log in first
+        not_admin: You are not an administrator
+  views:
+    welcome:
+      index:
+        signup: Sign up
+        login: Log in
+        logout: Log out
+        edit_profile: Edit profile
