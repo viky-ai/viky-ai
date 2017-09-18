@@ -276,32 +276,6 @@ og_status NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init)
     ctrl_nls->conf->backlog_indexing_timeout = timeout_ctx->default_timeout;
   }
 
-  /** Specific rule: when the variable is not found, its value is 2*answer_timeout **/
-  IFE(found=OgDipperConfGetVar(conf,"loop_answer_timeout",value,DPcPathSize));
-  if (found)
-  {
-    OgTrimString(value, value);
-    new_conf->loop_answer_timeout = OgArgSize(value);
-  }
-  else new_conf->loop_answer_timeout = ctrl_nls->conf->answer_timeout * 2;
-  if (init || new_conf->loop_answer_timeout != old_conf->loop_answer_timeout)
-  {
-    ctrl_nls->conf->loop_answer_timeout = new_conf->loop_answer_timeout;
-  }
-  if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
-  {
-    if (init)
-    {
-      OgMsg(ctrl_nls->hmsg, "loop_answer_timeout", DOgMsgDestInLog, "loop_answer_timeout: %d milli-seconds",
-          ctrl_nls->conf->loop_answer_timeout);
-    }
-    else if (new_conf->loop_answer_timeout != old_conf->loop_answer_timeout)
-    {
-      OgMsg(ctrl_nls->hmsg, "loop_answer_timeout", DOgMsgDestInLog,
-          "loop_answer_timeout changed from %d to %d milli-seconds", old_conf->loop_answer_timeout,
-          ctrl_nls->conf->loop_answer_timeout);
-    }
-  }
 
   DONE;
 }

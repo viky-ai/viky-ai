@@ -761,16 +761,9 @@ og_status writeJsonNode(struct jsonValuesContext * ctx)
     }
     if (ctx->jsonNode.type == JSON_START_MAP)
     {
-      if (ctx->bIsArray[ctx->IsArrayUsed] == TRUE)
-      {
-        IFE(OgNLSJsonGenMapOpen(ctx->lt));
-      }
-      else
-      {
         IFE(OgNLSJsonGenKeyValueMapOpen(ctx->lt, ctx->jsonNode.mapKey));
-      }
     }
-    if (ctx->jsonNode.type == JSON_END_MAP)   //
+    if (ctx->jsonNode.type == JSON_END_MAP)
     {
       if ( (ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE) )
       {

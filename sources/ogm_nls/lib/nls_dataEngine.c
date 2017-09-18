@@ -50,12 +50,12 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
   {
     if (ctx->bIsArray[ctx->IsArrayUsed] == FALSE)
     {
-      if(strcmp(ctx->jsonNode.mapKey,"wait")==0)
+      if (strcmp(ctx->jsonNode.mapKey, "wait") == 0)
       {
         // si sleep, on attend le nombre de miliseconds
         int waitTime = atoi(ctx->jsonNode.numberValue);
 
-        if(waitTime != 0)
+        if (waitTime != 0)
         {
           OgSleep(waitTime);
         }
@@ -136,14 +136,7 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
 
   if (ctx->jsonNode.type == JSON_START_MAP)
   {
-    if (ctx->bIsArray[ctx->IsArrayUsed] == FALSE)   // si la map n'est pas un élément d'un array -> pas de tag
-    {
-      int iMapLen = ctx->jsonNode.mapSize;
-      char tmpMapKey[DPcPathSize];
-      snprintf(tmpMapKey, DPcPathSize, "%.*s", iMapLen, ctx->jsonNode.mapKey);
-      snprintf(ctx->jsonNode.mapKey, DPcPathSize, "Answer_%s", tmpMapKey);
-    }
-
+    IFE(changeTag(ctx));
     IF(writeJsonNode(ctx))
     {
       NlsThrowError(ctx->lt, "manageNodeReceived : Error on jsonNode.type == JSON_START_MAP");
@@ -163,6 +156,13 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
 
   if (ctx->jsonNode.type == JSON_END_MAP)
   {
+//    if ((ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE))
+//    {
+//      struct jsonValuesContext tmpCtx;
+//      tmpCtx.lt = ctx->lt;
+//
+//    }
+
     IF(writeJsonNode(ctx))
     {
       NlsThrowError(ctx->lt, "manageNodeReceived : Error on jsonNode.type == JSON_END_MAP");

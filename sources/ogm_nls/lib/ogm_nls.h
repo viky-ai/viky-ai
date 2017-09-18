@@ -64,7 +64,6 @@ struct og_nls_conf
   /** backlog timeout specified only for indexing requests. If not specified, it has the same value as backlog_timeout*/
   int backlog_indexing_timeout;
   int backlog_max_pending_requests;
-  int loop_answer_timeout;
 
 };
 
@@ -116,6 +115,21 @@ struct og_listening_thread
 
 };
 
+/** nlsmt.c **/
+#define DOgNlsClockTick        10
+
+/** data structure for the maintenance thread **/
+struct og_maintenance_thread
+{
+  void *herr;
+  ogmutex_t *hmutex;
+  struct og_ctrl_nls *ctrl_nls;
+  ogthread_t IT;
+  int running;
+  void *hmsg;
+};
+
+
 struct og_ctrl_nls
 {
   void *herr, *hmsg;
@@ -142,6 +156,8 @@ struct og_ctrl_nls
   ogsem_t hsem_run3[1];
   /** Mutex to choose current lt */
   ogmutex_t hmutex_run_lt[1];
+
+  struct og_maintenance_thread mt;
 
 };
 
@@ -259,3 +275,6 @@ og_status writeJsonNode(struct jsonValuesContext * ctx);
 
 og_status manageNodeReceived(struct jsonValuesContext * ctx);
 og_status changeTag(struct jsonValuesContext * ctx);
+
+/** nlsmt.c **/
+int OgMaintenanceThread(void *ptr);

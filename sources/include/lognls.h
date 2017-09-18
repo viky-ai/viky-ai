@@ -23,6 +23,7 @@
 #define DOgNlsTraceSocketSize             0x20
 #define DOgNlsTraceLT                     0x40
 #define DOgNlsTraceLTSearch               0x80
+#define DOgNlsTraceMT                    0x100
 #define DOgNlsTraceDefault               (DOgNlsTraceMinimal+DOgNlsTraceMemory)
 
 /** Default value for configuration file information **/

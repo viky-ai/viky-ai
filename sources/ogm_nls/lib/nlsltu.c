@@ -58,7 +58,9 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   og_bool is_ssi_control_commands = FALSE;
   IFE(OgListeningProcessSearchRequest(lt, winput, output));
 
-  return OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
+  int retour= OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
+  lt->request_running = 0;
+  return retour;
 }
 
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
@@ -104,11 +106,14 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
 {
   int headerSize = output->header_length;
   int contentSize = output->content_length - headerSize;
-
+  lt->request_running = 1;
   IFE(OgNLSJsonReadRequest(lt, output->content + headerSize, contentSize));
 
   winput->content_length = OgHeapGetCellsUsed(lt->json->hb_json_buffer);
   winput->content = OgHeapGetCell(lt->json->hb_json_buffer, 0);
+
+
+  // Do all the process
 
   DONE;
 }
