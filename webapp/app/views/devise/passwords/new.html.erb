@@ -2,8 +2,8 @@
   <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
-      <h2>Forgot your password?</h2>
-      <h3 class="tagline">No fear, here is how to define it again.</h3>
+      <h2><%= t('views.passwords.new.title') %></h2>
+      <h3 class="tagline"><%= t('views.passwords.new.tagline') %></h3>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
 
@@ -14,8 +14,10 @@
         </div>
 
         <div class="actions">
-          <%= f.button "Send me reset password instructions", class: 'btn btn--full btn--large btn--primary',
-              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+          <%= f.button t('views.passwords.new.btn'), class: 'btn btn--full btn--large btn--primary',
+              data: {
+                disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
         </div>
       <% end %>
 

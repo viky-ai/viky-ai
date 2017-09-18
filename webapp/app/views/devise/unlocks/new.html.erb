@@ -2,8 +2,8 @@
   <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
-      <h2>Resend unlock instructions</h2>
-      <h3 class="tagline">We will try to fix that!</h3>
+      <h2><%= t('views.unlocks.new.title') %></h2>
+      <h3 class="tagline"><%= t('views.unlocks.new.tagline') %></h3>
 
       <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post }) do |f| %>
 
@@ -14,8 +14,10 @@
         </div>
 
         <div class="actions">
-          <%= f.button "Resend unlock instructions", class: "btn btn--full btn--large btn--primary",
-              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+          <%= f.button t('views.unlocks.new.btn'), class: "btn btn--full btn--large btn--primary",
+              data: {
+                disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
         </div>
       <% end %>
 

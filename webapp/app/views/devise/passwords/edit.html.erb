@@ -2,7 +2,7 @@
   <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
-      <h2>Change your password</h2>
+      <h2><%= t('views.passwords.edit.title') %></h2>
 
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
         <%= f.hidden_field :reset_password_token %>
@@ -12,7 +12,7 @@
           <% if @minimum_password_length %>
             <span class="help">
               <span class="icon icon--x-small"><%= icon_information %></span>
-              At least <%= @minimum_password_length %> characters
+              <%= t('views.auth.at_least_x_char', min: @minimum_password_length) %>
             </span>
           <% end %>
           <%= f.password_field :password, autocomplete: "off" %>
@@ -21,8 +21,10 @@
         </div>
 
         <div class="actions">
-          <%= f.button "Change my password", class: 'btn btn--full btn--large btn--primary',
-              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+          <%= f.button t('views.passwords.edit.btn'), class: 'btn btn--full btn--large btn--primary',
+              data: {
+                disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
         </div>
       <% end %>
 

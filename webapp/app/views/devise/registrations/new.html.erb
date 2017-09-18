@@ -2,8 +2,8 @@
   <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
-      <h2>Sign up</h2>
-      <h3 class="tagline">Start building chatbots now!</h3>
+      <h2><%= t('views.registrations.new.title') %></h2>
+      <h3 class="tagline"><%= t('views.registrations.new.tagline') %></h3>
 
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
@@ -18,7 +18,7 @@
           <% if @minimum_password_length %>
             <span class="help">
               <span class="icon icon--x-small"><%= icon_information %></span>
-              At least <%= @minimum_password_length %> characters
+              <%= t('views.auth.at_least_x_char', min: @minimum_password_length) %>
             </span>
           <% end %>
           <%= f.password_field :password, autocomplete: "off" %>
@@ -26,8 +26,10 @@
         </div>
 
         <div class="field">
-          <%= f.button "Sign up", class: 'btn btn--primary btn--large btn--full',
-              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+          <%= f.button t('views.registrations.new.btn'), class: 'btn btn--primary btn--large btn--full',
+              data: {
+                disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
         </div>
       <% end %>
 

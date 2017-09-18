@@ -1,0 +1,41 @@
+en:
+  views:
+    auth:
+      at_least_x_char: At least %{min} characters
+      shared:
+        new_session_prefix: Already have an account?
+        new_session: Log in
+        new_registration_prefix: Don't have an account?
+        new_registration: Sign up
+        edit_password: Forgot your password?
+        new_confirmation: Didn't receive confirmation instructions?
+        new_unlock: Didn't receive unlock instructions?
+    sessions:
+      new:
+        title: Log in
+        tagline: Welcome back!
+        btn: Log in
+    registrations:
+      new:
+        title: Sign up
+        tagline: Start building chatbots now!
+        btn: Sign up
+    passwords:
+      new:
+        title: Forgot your password?
+        tagline: No fear, here is how to define it again.
+        btn: Send me reset password instructions
+      edit:
+        title: Change your password
+        btn: Change my password
+    confirmations:
+      new:
+        title: Resend confirmation instructions
+        tagline: Did not receive a confirmation email?
+        btn: Resend confirmation instructions
+    unlocks:
+      new:
+        title: Resend unlock instructions
+        tagline: Resend unlock instructions
+        btn: Resend unlock instructions
+

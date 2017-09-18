@@ -3,8 +3,8 @@
   <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
-      <h2>Resend confirmation instructions</h2>
-      <h3 class="tagline">Did not receive a confirmation email?</h3>
+      <h2><%= t('views.confirmations.new.title') %></h2>
+      <h3 class="tagline"><%= t('views.confirmations.new.tagline') %></h3>
 
       <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
 
@@ -15,8 +15,10 @@
         </div>
 
         <div class="actions">
-          <%= f.button "Resend confirmation instructions", class: "btn btn--full btn--large btn--primary",
-              data: { disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> Loading".html_safe } %>
+          <%= f.button t('views.confirmations.new.btn'), class: "btn btn--full btn--large btn--primary",
+              data: {
+                disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
         </div>
       <% end %>
 
