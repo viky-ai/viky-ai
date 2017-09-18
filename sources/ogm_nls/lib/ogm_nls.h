@@ -5,6 +5,7 @@
  *  Version 1.0
  */
 #include <lognls.h>
+
 #include <logaddr.h>
 #include <loguci.h>
 #include <logpath.h>
@@ -196,7 +197,8 @@ int NlsFlushPermanentLtThreads(struct og_ctrl_nls *ctrl_nls);
 int OgListeningThread(void *ptr);
 
 /** nlslog.c **/
-og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags);
+og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label,
+    int additional_log_flags);
 og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
 
 /** nlsler.c **/

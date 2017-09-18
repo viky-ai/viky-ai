@@ -14,7 +14,7 @@
 /** simple server configuration file for this program **/
 #define DOgFileConfOgmSsi_Txt  "conf/ogm_ssi.txt"
 
-struct og_nls_ctrl
+struct og_nls_prog
 {
   char cwd[DPcPathSize];
   char WorkingDirectory[DPcPathSize];
@@ -28,15 +28,15 @@ struct og_nls_ctrl
   struct og_loginfo loginfo[1];
 
   struct og_nls_param *param;
-  void *hnls;
+  og_nls hnls;
 
   char sremote_addr[DPcPathSize];
 
 };
 
 /** ogm_nls.c **/
-void DoExit(pr(struct og_nls_ctrl *));
+void DoExit(struct og_nls_prog *nls_ctrl);
 
 /** nlsdaem.c **/
-void Daemonize(struct og_nls_ctrl *nls_ctrl);
+void Daemonize(struct og_nls_prog *nls_ctrl);
 

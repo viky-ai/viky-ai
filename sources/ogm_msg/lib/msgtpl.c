@@ -92,7 +92,7 @@ int OgMsgTemplateBuild(struct og_ctrl_msg *ctrl_msg, char *id, char *stemplate, 
   }
   else if (sdate[0])
   {
-    sprintf(stemplate, "[%s] ", sdate, sid);
+    sprintf(stemplate, "[%s] ", sdate);
   }
   else if (sseverity[0] && sid[0])
   {
@@ -100,7 +100,7 @@ int OgMsgTemplateBuild(struct og_ctrl_msg *ctrl_msg, char *id, char *stemplate, 
   }
   else if (sseverity[0])
   {
-    sprintf(stemplate, "[%s] ", sseverity, sid);
+    sprintf(stemplate, "[%s] ", sseverity);
   }
   else if (sid[0])
   {

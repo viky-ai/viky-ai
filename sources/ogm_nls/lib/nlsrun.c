@@ -14,9 +14,9 @@ static int NlsRunGetBacklogTimeout(void *ptr);
 
 static struct og_listening_thread *OgNlsRunAcquireRunnningLt(struct og_ctrl_nls *ctrl_nls, struct og_socket_info *info);
 
-PUBLIC(int) OgNlsRun(void *handle)
+PUBLIC(int) OgNlsRun(og_nls handle)
 {
-  struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) handle;
+  struct og_ctrl_nls *ctrl_nls = handle;
   IF(OgNlsRun1(ctrl_nls))
   {
     // handling server states here, if necessary
@@ -50,9 +50,8 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
 
   IFE(OgAddrAdd(ctrl_nls->haddr, ctrl_nls->conf->env->listenning_address, ctrl_nls->conf->env->listenning_port));
 
-  OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox,"NLS listening on %s:%d ...", ctrl_nls->conf->env->listenning_address,
-      ctrl_nls->conf->env->listenning_port);
-
+  OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox, "NLS listening on %s:%d ...",
+      ctrl_nls->conf->env->listenning_address, ctrl_nls->conf->env->listenning_port);
 
   ctrl_nls->must_stop = 0;
   IFE(OgAddrLoop(ctrl_nls->haddr, OgNlsRun2, (void * ) ctrl_nls));

@@ -36,6 +36,8 @@
 #define DOgNlsIndexingTimeout              30000
 #define DOgNlsStopTimeout                  30000
 
+typedef struct og_ctrl_nls *og_nls;
+
 struct og_nls_param
 {
   void *herr, *hmsg;
@@ -43,15 +45,15 @@ struct og_nls_param
   struct og_loginfo loginfo;
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
-  int argc;
-  char **argv;
 };
 
 DEFPUBLIC(char *) OgNlsBanner(void);
-DEFPUBLIC(void *) OgNlsInit(struct og_nls_param *param, void **phandle);
-DEFPUBLIC(int) OgNlsFlush(void *hnls);
-DEFPUBLIC(int) OgNlsRun(void *handle);
-DEFPUBLIC(int) OgNlsOnSignal(void *handle);
+DEFPUBLIC(og_nls) OgNlsInit(struct og_nls_param *param);
+DEFPUBLIC(int) OgNlsFlush(og_nls hnls);
+DEFPUBLIC(int) OgNlsRun(og_nls handle);
+
+DEFPUBLIC(int) OgNlsOnSignalStop(og_nls handle);
+DEFPUBLIC(int) OgNlsOnSignalEmergency(og_nls handle);
 
 #define _LOGNLSALIVE_
 #endif

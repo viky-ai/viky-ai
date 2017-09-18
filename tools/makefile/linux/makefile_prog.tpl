@@ -29,6 +29,9 @@ EOBJO = $(SRC:%.c=$(ROBJ)/%.o) $(SRC:%.cpp=$(ROBJ)/%.o)
 EOBJD = $(SRC:%.c=$(DOBJ)/%.o) $(SRC:%.cpp=$(DOBJ)/%.o)
 EOBJP = $(SRC:%.c=$(POBJ)/%.o) $(SRC:%.cpp=$(POBJ)/%.o)
 
+debug_copy: debug
+	cp -af $(DLIBPATH)/$(NAME) $(OG_REPO_PATH)/ship/debug/
+
 build: $(RBINPATH)/$(NAME)
 
 debug: $(DBINPATH)/$(NAME)
@@ -37,16 +40,16 @@ profile: $(PBINPATH)/$(NAME)
 
 all: build debug profile
 
-rebuild: 
+rebuild:
 	$(MAKE) -f $(CURRENT_MAKEFILE) cleanrelease
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
-redebug: 
+redebug:
 	$(MAKE) -f $(CURRENT_MAKEFILE) cleandebug
 	$(MAKE) -f $(CURRENT_MAKEFILE) debug
 
-release: 
-	$(MAKE) -f $(CURRENT_MAKEFILE) cleanrelease 
+release:
+	$(MAKE) -f $(CURRENT_MAKEFILE) cleanrelease
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 	$(MAKE) -f $(CURRENT_MAKEFILE) test
 
@@ -106,15 +109,15 @@ cleanprofile:
 #---------------------------------------------------------------#
 
 $(RBINPATH)/$(NAME): $(RBINPATH) $(ROBJ) $(EOBJO)
-	cd $(ROBJ); $(CC) -rdynamic $(CFLAGSR) $(CFLAGSR_INTERNAL) $(ADD_CFLAGS) $(LFLAGSR_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(RLIBPATH) $(ADD_LIBR) $(ADD_LIBS) $(LIBS) 
+	cd $(ROBJ); $(CC) -rdynamic $(CFLAGSR) $(CFLAGSR_INTERNAL) $(ADD_CFLAGS) $(LFLAGSR_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(RLIBPATH) $(ADD_LIBR) $(ADD_LIBS) $(LIBS)
 	@echo "Done: $@"
 
 $(DBINPATH)/$(NAME): $(DBINPATH) $(DOBJ) $(EOBJD)
-	cd $(DOBJ); $(CC) -rdynamic $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_CFLAGS) $(LFLAGSD_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(DLIBPATH) $(ADD_LIBD) $(ADD_LIBS) $(LIBS) 
+	cd $(DOBJ); $(CC) -rdynamic $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_CFLAGS) $(LFLAGSD_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(DLIBPATH) $(ADD_LIBD) $(ADD_LIBS) $(LIBS)
 	@echo "Done: $@"
 
 $(PBINPATH)/$(NAME): $(PBINPATH) $(POBJ) $(EOBJP)
-	cd $(POBJ); $(CC) -rdynamic $(CFLAGSP) $(CFLAGSP_INTERNAL) $(ADD_CFLAGS) $(LFLAGSP_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(PLIBPATH) $(ADD_LIBP) $(ADD_LIBS) $(LIBS) 
+	cd $(POBJ); $(CC) -rdynamic $(CFLAGSP) $(CFLAGSP_INTERNAL) $(ADD_CFLAGS) $(LFLAGSP_INTERNAL) $(RPATH_PROG) -o $@ *.o -L$(PLIBPATH) $(ADD_LIBP) $(ADD_LIBS) $(LIBS)
 	@echo "Done: $@"
 
 #---------------------------------------------------------------#

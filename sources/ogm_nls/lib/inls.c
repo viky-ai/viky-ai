@@ -7,37 +7,9 @@
 #include "ogm_nls.h"
 #include <stddef.h>
 
-static void * OgNlsInit1(struct og_nls_param *, void **);
-
-PUBLIC(void *) OgNlsInit(struct og_nls_param *param, void **phandle)
-{
-  void *handle = NULL;
-  IFn(handle = OgNlsInit1(param ,phandle))
-  {
-    struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) *phandle;
-    IFx(ctrl_nls)
-    {
-      /* We need to send the errors from listening threads here,
-       * because they cannot be reached after this point */
-      for (int i = 0; i < ctrl_nls->LtNumber; i++)
-      {
-        struct og_listening_thread *lt = ctrl_nls->Lt + i;
-        IFn(lt->herr) continue;
-        OgMsgErr(lt->hmsg,"",0,0,0,DOgMsgSeverityEmergency+DOgMsgDestInLog+DOgMsgDestInErr+DOgMsgDestMBox
-            , DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
-      }
-    }
-  }
-
-  return(handle);
-}
-
-static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
+PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
 {
   char erreur[DOgErrorSize], filename[DPcPathSize];
-
-  *phandle = NULL;
-
   struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) malloc(sizeof(struct og_ctrl_nls));
   IFn(ctrl_nls)
   {
@@ -45,8 +17,6 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
     OgErr(param->herr, erreur);
     return (0);
   }
-
-  *phandle = ctrl_nls;
 
   memset(ctrl_nls, 0, sizeof(struct og_ctrl_nls));
   ctrl_nls->herr = param->herr;
@@ -85,7 +55,7 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
 
   ctrl_nls->LtNumber = ctrl_nls->conf->max_listening_threads;
   int size = ctrl_nls->LtNumber * sizeof(struct og_listening_thread);
-  ctrl_nls->Lt= (struct og_listening_thread *) malloc(size);
+  ctrl_nls->Lt = (struct og_listening_thread *) malloc(size);
   IFn(ctrl_nls->Lt)
   {
     sprintf(erreur, "OgNlsInit: malloc error on ctrl_nls->lt (%d bytes)", size);
@@ -155,21 +125,31 @@ static void * OgNlsInit1(struct og_nls_param *param, void **phandle)
     IF(NlsInitPermanentLtThreads(ctrl_nls)) return (0);
   }
 
-  return ((void *) ctrl_nls);
+  return ctrl_nls;
 }
 
-PUBLIC(int) OgNlsOnSignal(void *handle)
+PUBLIC(og_status) OgNlsOnSignalStop(og_nls handle)
 {
-  struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) handle;
+
+  // TODO implement stopping check
+
+  OgNlsFlush(handle);
+
+  DONE;
+}
+
+PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls handle)
+{
+  struct og_ctrl_nls *ctrl_nls = handle;
 
   IFE(NlsOnEmergency(ctrl_nls));
 
   DONE;
 }
 
-PUBLIC(int) OgNlsFlush(void *handle)
+PUBLIC(int) OgNlsFlush(og_nls handle)
 {
-  struct og_ctrl_nls *ctrl_nls = (struct og_ctrl_nls *) handle;
+  struct og_ctrl_nls *ctrl_nls = handle;
 
   if (ctrl_nls->conf->permanent_threads)
   {
@@ -195,6 +175,6 @@ PUBLIC(int) OgNlsFlush(void *handle)
 
 PUBLIC(char *) OgNlsBanner(void)
 {
-  return(DOgNlsBanner);
+  return DOgNlsBanner;
 }
 
