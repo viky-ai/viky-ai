@@ -33,4 +33,12 @@ VOQALAPP_REDIS_URL='redis://localhost:6379/1'
     RAILS_ENV=production rails db:setup
     RAILS_ENV=production rails assets:clobber
     RAILS_ENV=production rails assets:precompile
-    RAILS_ENV=production SECRET_KEY_BASE=xyz RAILS_SERVE_STATIC_FILES=true rails s
+    RAILS_ENV=production SECRET_KEY_BASE=xyz POSTMARK_TOKEN=wxyz RAILS_SERVE_STATIC_FILES=true rails s
+
+
+## Mail
+
+We use postmarkapp.com in order to send emails in `production` and `development` environment. Environment variable `POSTMARK_TOKEN` must be defined for `production` environment (default one is set for `development`).
+Emails from Devise are sent with `support@voqal.ai` sender.
+
+Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
