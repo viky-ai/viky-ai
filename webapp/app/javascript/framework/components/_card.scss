@@ -37,43 +37,39 @@
 }
 
 
-
+@-webkit-keyframes cardShakeAnimation {
+    0%   { transform: translateX(0) }
+   12.5% { transform: translateX(-6px) rotateY(-5deg) }
+   37.5% { transform: translateX(5px) rotateY(4deg)   }
+   62.5% { transform: translateX(-3px) rotateY(-2deg) }
+   87.5% { transform: translateX(2px) rotateY(1deg)   }
+  100%   { transform: translateX(0) }
+}
+@-moz-keyframes cardShakeAnimation {
+    0%   { transform: translateX(0) }
+   12.5% { transform: translateX(-6px) rotateY(-5deg) }
+   37.5% { transform: translateX(5px) rotateY(4deg)   }
+   62.5% { transform: translateX(-3px) rotateY(-2deg) }
+   87.5% { transform: translateX(2px) rotateY(1deg)   }
+  100%   { transform: translateX(0) }
+}
 @keyframes cardShakeAnimation {
-  0 {
-    transform: translateX(0)
-  }
-
-  12.5% {
-    transform: translateX(-6px) rotateY(-5deg)
-  }
-
-  37.5% {
-    transform: translateX(5px) rotateY(4deg)
-  }
-
-  62.5% {
-    transform: translateX(-3px) rotateY(-2deg)
-  }
-
-  87.5% {
-    transform: translateX(2px) rotateY(1deg)
-  }
-
-  100% {
-    transform: translateX(0)
-  }
+    0%   { transform: translateX(0) }
+   12.5% { transform: translateX(-6px) rotateY(-5deg) }
+   37.5% { transform: translateX(5px) rotateY(4deg)   }
+   62.5% { transform: translateX(-3px) rotateY(-2deg) }
+   87.5% { transform: translateX(2px) rotateY(1deg)   }
+  100%   { transform: translateX(0) }
 }
 
 .card-animation-wrapper{
   -webkit-perspective: 600px;
+     -moz-perspective: 600px;
           perspective: 600px;
 }
 
 .card--shake{
-  -webkit-animation-duration: 400ms;
-  -webkit-animation-timing-function: ease-in-out;
-  -webkit-animation-name: cardShakeAnimation;
-  -moz-animation-duration: 400ms;
-  -moz-animation-timing-function: ease-in-out;
-  -moz-animation-name: cardShakeAnimation;
+  -webkit-animation: 500ms ease-in-out cardShakeAnimation;
+     -moz-animation: 500ms ease-in-out cardShakeAnimation;
+          animation: 500ms ease-in-out cardShakeAnimation;
 }
