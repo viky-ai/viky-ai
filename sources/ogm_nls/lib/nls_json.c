@@ -761,7 +761,7 @@ og_status writeJsonNode(struct jsonValuesContext * ctx)
     }
     if (ctx->jsonNode.type == JSON_START_MAP)
     {
-      if (ctx->bIsArray[ctx->IsArrayUsed] == 0)
+      if (ctx->bIsArray[ctx->IsArrayUsed] == TRUE)
       {
         IFE(OgNLSJsonGenMapOpen(ctx->lt));
       }
@@ -772,7 +772,7 @@ og_status writeJsonNode(struct jsonValuesContext * ctx)
     }
     if (ctx->jsonNode.type == JSON_END_MAP)   //
     {
-      if (ctx->isEmpty == TRUE)
+      if ( (ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE) )
       {
         IFE(OgNLSJsonGenKeyValueString(ctx->lt, "Answer", "Hello world!"));
       }

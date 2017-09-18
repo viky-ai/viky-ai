@@ -6,7 +6,10 @@ class Nls
   @@pid = nil
 
   def self.start
-    @@pid = Nls.exec('./ogm_nls -d') if @@pid.nil?
+    if @@pid.nil?
+      @@pid = Nls.exec('./ogm_nls -d')
+      sleep(0.5)
+    end
   end
 
   def self.stop
@@ -39,7 +42,7 @@ class Nls
         end
 
         if take_care_of_return && !exit_status.success?
-          raise "Command \"#{cmd}\" failed !!!"
+          raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})"
         end
 
         return pid

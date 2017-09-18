@@ -10,8 +10,7 @@ permanent_threads yes
 max_request_size 2M
 
 # Timeout for search requests
-answer_timeout 20000
-
+answer_timeout 3000
 
 # Requests history log (yes, no, search, index)
 history no
