@@ -17,8 +17,6 @@ static void LogErrors(struct og_nls_prog *nls_prog, char *label);
 static void NlsSignalOnEmergency(void *context, int signal_type);
 static void NlsSignalOnStop(void *context, int signal_type);
 
-#define DOgNlsMaxArgc  20
-
 int main(int argc, char *argv[])
 
 {
@@ -27,7 +25,7 @@ int main(int argc, char *argv[])
   int nCmdShow = 0;
 
   og_bool must_exit = 0;
-  char cmd_param[1024], cmd[4096], v[64];
+  char cmd[4096], v[64];
 
   og_bool use_signal = TRUE;
 
@@ -95,6 +93,8 @@ int main(int argc, char *argv[])
 
   for (int i = 1; i < argc; i++)
   {
+    og_string cmd_param = argv[i];
+
     sprintf(cmd + strlen(cmd), " %s", cmd_param);
     if (!strcmp(cmd_param, "-d"))
     {

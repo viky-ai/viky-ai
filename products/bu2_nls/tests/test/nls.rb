@@ -13,7 +13,7 @@ class Nls
   end
 
   def self.stop
-    Nls.exec("kill -9 #{@@pid}") unless @@pid.nil?
+    Nls.exec("kill #{@@pid}") unless @@pid.nil?
     @@pid = nil
   end
 
