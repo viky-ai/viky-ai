@@ -41,7 +41,7 @@
 
       <% if user.confirmed? %>
         <p>
-          Last login: <%= l(user.current_sign_in_at, format: :short) %><br />
+          Last login: <% if user.current_sign_in_at.nil? %>Never<% else %><%= l(user.current_sign_in_at, format: :short) %><% end %><br />
           Log in count: <%= user.sign_in_count %>
         </p>
       <% else %>
