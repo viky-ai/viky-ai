@@ -12,19 +12,23 @@ class TestNlsTimeout < Minitest::Test
     Nls.stop
   end
 
-#  def test_timeout
-#
-#    data = {
-#          wait: 5000
-#        }
-#    actual = nls_query(data)
-#
-#    expected = {
-#      "error" => ["Request takes too long"]
-#    }
-#
-#    assert_equal expected, actual
-#  end
+  def test_timeout
+
+    data = {
+          wait: 5000
+        }
+    actual = nls_query(data)
+
+    assert_false true
+    rescue RestClient::ExceptionWithResponse => e
+    actual = JSON.parse(e.response.body)
+    expected = {
+      "error" => ["lt 0: OgNlsOnSignalTimeout : Timeout on LT = 0"],
+      "error_number" => 1
+    }
+
+    assert_equal expected, actual
+  end
 
 
 end

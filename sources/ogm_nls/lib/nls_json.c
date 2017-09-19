@@ -59,6 +59,12 @@ og_status OgNLSJsonReset(struct og_listening_thread *lt)
   // reset buffer
   IFE(OgHeapReset(lt->json->hb_json_buffer));
 
+  if (lt->parser != 0 )
+  {
+    yajl_free(lt->parser);
+  }
+  lt->parser = 0;
+
   DONE;
 }
 
@@ -761,11 +767,11 @@ og_status writeJsonNode(struct jsonValuesContext * ctx)
     }
     if (ctx->jsonNode.type == JSON_START_MAP)
     {
-        IFE(OgNLSJsonGenKeyValueMapOpen(ctx->lt, ctx->jsonNode.mapKey));
+      IFE(OgNLSJsonGenKeyValueMapOpen(ctx->lt, ctx->jsonNode.mapKey));
     }
     if (ctx->jsonNode.type == JSON_END_MAP)
     {
-      if ( (ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE) )
+      if ((ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE))
       {
         IFE(OgNLSJsonGenKeyValueString(ctx->lt, "Answer", "Hello world!"));
       }
@@ -862,18 +868,22 @@ og_status OgNLSJsonReadRequest(struct og_listening_thread *lt, og_string json, s
   jsonCtx.IsArrayUsed = 0;
   jsonCtx.isEmpty = TRUE;   // si le json est vide, on retourne "Hello world!"
 
-  yajl_handle parser = yajl_alloc(&get_callbacks, NULL, &jsonCtx);
+  lt->parser = yajl_alloc(&get_callbacks, NULL, &jsonCtx);
 
-  yajl_status yajl_parser_status = yajl_parse(parser, json, json_size);
-  og_status status = yajlParseErrorManagement(lt, parser, yajl_parser_status, json, json_size);
+  yajl_status yajl_parser_status = yajl_parse(lt->parser, json, json_size);
+  og_status status = yajlParseErrorManagement(lt, lt->parser, yajl_parser_status, json, json_size);
 
   NIF(status)
   {
-    yajl_parser_status = yajl_complete_parse(parser);
-    status = yajlParseErrorManagement(lt, parser, yajl_parser_status, json, json_size);
+    yajl_parser_status = yajl_complete_parse(lt->parser);
+    status = yajlParseErrorManagement(lt, lt->parser, yajl_parser_status, json, json_size);
   }
 
-  yajl_free(parser);
+  if (lt->parser != 0 )
+  {
+    yajl_free(lt->parser);
+  }
+  lt->parser = 0;
 
   return status;
 }

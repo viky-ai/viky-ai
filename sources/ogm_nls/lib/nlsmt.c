@@ -97,11 +97,14 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
          * without killing the whole process, and this not the place to do it. */
         if (!lt->looping && lt->request_running_time >= lt->ctrl_nls->conf->request_processing_timeout)
         {
+
           lt->looping = TRUE;
 
           OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamDateIn,
-              "OgMaintenanceThreadTick: a request is running for more than %d milliseconds (%d milliseconds) on thread %d",
-              lt->ctrl_nls->conf->request_processing_timeout, lt->request_running_time, lt->ID);
+              "OgMaintenanceThreadTick: a request is running for more than %d milliseconds (%d milliseconds) on thread %d, LT= %d",
+              lt->ctrl_nls->conf->request_processing_timeout, lt->request_running_time, lt->ID, i);
+
+          pthread_kill(lt->current_thread,SIGUSR1);
 
         }
       }

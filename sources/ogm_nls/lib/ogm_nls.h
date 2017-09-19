@@ -111,7 +111,9 @@ struct og_listening_thread
 
   ogint64_t t0, t1, t2, t3, ot3;
 
+  pthread_t current_thread;
   struct json_object json[1];
+  yajl_handle parser;
 
 };
 
@@ -211,6 +213,9 @@ int NlsFlushPermanentLtThreads(struct og_ctrl_nls *ctrl_nls);
 
 /** nlslt.c **/
 int OgListeningThread(void *ptr);
+og_status NlsListeningThreadReset(struct og_listening_thread * lt);
+og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
+
 
 /** nlslog.c **/
 og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label,

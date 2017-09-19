@@ -78,13 +78,15 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
 
   /** Maintenance thread initialization **/
   struct og_maintenance_thread *mt = &ctrl_nls->mt;
-  memset(mt,0,sizeof(struct og_maintenance_thread));
-  IFn(mt->herr=OgErrInit()) {
-    sprintf(erreur,"OgSsrvInit: OgErrInit error");
-    OgErr(ctrl_nls->herr,erreur); return(0);
-    }
+  memset(mt, 0, sizeof(struct og_maintenance_thread));
+  IFn(mt->herr=OgErrInit())
+  {
+    sprintf(erreur, "OgSsrvInit: OgErrInit error");
+    OgErr(ctrl_nls->herr, erreur);
+    return (0);
+  }
   mt->ctrl_nls = ctrl_nls;
-  mt->hmutex=ctrl_nls->hmutex;
+  mt->hmutex = ctrl_nls->hmutex;
 
   IF(OgSemaphoreInit(ctrl_nls->hsem_run3,ctrl_nls->LtNumber)) return (0);
 
@@ -153,6 +155,30 @@ PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls handle)
   struct og_ctrl_nls *ctrl_nls = handle;
 
   IFE(NlsOnEmergency(ctrl_nls));
+
+  DONE;
+}
+
+PUBLIC(og_status) OgNlsOnSignalTimeout(og_nls handle)
+{
+  struct og_ctrl_nls *ctrl_nls = handle;
+  int i = -1;
+  for (i = 0; i < ctrl_nls->LtNumber; i++)
+  {
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
+    if (lt->current_thread == pthread_self())
+    {
+      NlsThrowError(lt, "OgNlsOnSignalTimeout : Timeout on LT = %d",i);
+      int is_error = OgListeningThreadError(lt);
+      OgCloseSocket(lt->hsocket_in);
+      IFE(is_error);
+      IFE(OgNlsLtReleaseCurrentRunnning(lt));
+      IFE(NlsListeningThreadReset(lt));
+      break;
+    }
+  }
+
+  pthread_exit((void *) 1);
 
   DONE;
 }

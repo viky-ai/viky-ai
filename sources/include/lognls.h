@@ -55,6 +55,7 @@ DEFPUBLIC(int) OgNlsRun(og_nls handle);
 
 DEFPUBLIC(int) OgNlsOnSignalStop(og_nls handle);
 DEFPUBLIC(int) OgNlsOnSignalEmergency(og_nls handle);
+DEFPUBLIC(int) OgNlsOnSignalTimeout(og_nls handle);
 
 #define _LOGNLSALIVE_
 #endif

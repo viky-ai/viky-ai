@@ -4,7 +4,7 @@
 max_listening_threads 4
 
 # Use permanent processing threads number
-permanent_threads yes
+permanent_threads no
 
 # Maximum size for a search request
 max_request_size 2M

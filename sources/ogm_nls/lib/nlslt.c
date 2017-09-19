@@ -8,7 +8,6 @@
 
 #include "ogm_nls.h"
 
-static og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
 
 /**
  *  Listening threads are not really listening the port but they
@@ -23,6 +22,7 @@ int OgListeningThread(void *ptr)
   char v[128];
   int retour;
 
+  lt->current_thread = pthread_self();
   lt->looping = 0;
   lt->loginfo->trace = ctrl_nls->loginfo->trace;
 
@@ -86,13 +86,20 @@ int OgListeningThread(void *ptr)
   DONE;
 }
 
-static og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
+og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
 {
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
   lt->running = FALSE;
+  lt->current_thread = 0;
 
   IFE(OgSemaphorePost(ctrl_nls->hsem_run3));
 
   DONE;
 }
 
+og_status NlsListeningThreadReset(struct og_listening_thread * lt)
+{
+  IFE(OgNLSJsonReset(lt));
+
+  DONE;
+}
