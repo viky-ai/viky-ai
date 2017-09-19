@@ -18,12 +18,14 @@ class TestNlsParallel < Minitest::Test
     Parallel.map(tests_number, in_threads: 3) do |test_number|
 
       data = {
+        test_ID: "test_#{test_number}",
         wait: 50
       }
 
       actual = nls_query(data)
 
       expected = {
+        "Answer_test_ID" => "test_#{test_number}",
         "Answer_wait" => 50
       }
 
