@@ -42,3 +42,12 @@ We use postmarkapp.com in order to send emails in `production` and `development`
 Emails from Devise are sent with `support@voqal.ai` sender.
 
 Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
+
+
+## Admin user
+
+Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks :
+
+* `./bin/rails users:create_admin[email,password]`
+* `./bin/rails users:set_admin[email]`
+* `./bin/rails users:unset_admin[email]`

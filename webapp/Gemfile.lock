@@ -143,6 +143,8 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
+    rainbow (2.2.2)
+      rake
     rake (12.1.0)
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
@@ -219,6 +221,7 @@ DEPENDENCIES
   postmark-rails
   puma (~> 3.7)
   rails (~> 5.1.4)
+  rainbow
   redis (~> 3.0)
   sass-rails (~> 5.0)
   spring
