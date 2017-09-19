@@ -5,9 +5,10 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'User index not allowed if user is not logged in' do
     visit backend_users_path
 
-    assert page.has_content?('Log in first')
+    assert page.has_content?('Please, log in before continuing.')
     assert_equal '/users/sign_in', current_path
   end
+
 
   test 'User index not allowed if user is not admin' do
     visit new_user_session_path
@@ -18,9 +19,10 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button 'Log in'
 
     visit backend_users_path
-    assert page.has_content?('You are not an administrator')
+    assert page.has_content?('You do not have permission to access this interface.')
     assert_equal '/', current_path
   end
+
 
   test 'Successful log in' do
     visit new_user_session_path

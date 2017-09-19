@@ -1,0 +1,6 @@
+en:
+  controllers:
+    backend:
+      application:
+        not_signed_in: Please, log in before continuing.
+        not_admin: You do not have permission to access this interface.

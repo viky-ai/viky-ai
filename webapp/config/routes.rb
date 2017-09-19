@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  namespace :backend do 
-  	resources :users, only: [:index]
+  namespace :backend do
+    resources :users, only: [:index]
   end
 
   root to: "welcome#index"
