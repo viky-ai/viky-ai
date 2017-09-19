@@ -33,7 +33,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button 'Log in'
 
     visit backend_users_path
-    assert page.has_content?('BACKEND USER INDEX')
+    assert page.has_content?('4 users')
     assert_equal '/backend/users', current_path
   end
 

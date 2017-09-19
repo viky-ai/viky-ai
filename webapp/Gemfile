@@ -54,4 +54,5 @@ end
 gem 'awesome_print'
 gem 'postmark-rails'
 gem 'rainbow'
+gem 'kaminari'
 
