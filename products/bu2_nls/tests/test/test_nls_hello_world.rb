@@ -48,8 +48,7 @@ class TestNlsHello < Minitest::Test
     rescue RestClient::ExceptionWithResponse => e
       actual = JSON.parse(e.response.body)
       expected = {
-        "error" => ["lt 0: Error during json reformat (2) : yajl_status_error : An error occured during the parse.\nparse error: object key and value must be separated by a colon (':')\n                                {\"toto\"}\n                     (right here) ------^\n"],
-        "error_number" => 1
+        "error" => ["lt 0: Error during json reformat (2) : yajl_status_error : An error occured during the parse.\nparse error: object key and value must be separated by a colon (':')\n                                {\"toto\"}\n                     (right here) ------^\n"]
       }
       assert_equal expected, actual
     end

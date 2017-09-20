@@ -23,8 +23,7 @@ class TestNlsTimeout < Minitest::Test
     rescue RestClient::ExceptionWithResponse => e
     actual = JSON.parse(e.response.body)
     expected = {
-      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"],
-      "error_number" => 1
+      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"]
     }
 
     assert_equal expected, actual
@@ -40,8 +39,7 @@ class TestNlsTimeout < Minitest::Test
     rescue RestClient::ExceptionWithResponse => e
     actual = JSON.parse(e.response.body)
     expected = {
-      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"],
-      "error_number" => 1
+      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"]
     }
 
     assert_equal expected, actual

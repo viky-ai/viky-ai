@@ -38,7 +38,7 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   IFE(OgNLSJsonGenArrayClose(lt));
 
   // on logue le nombre d'erreurs
-  IFE(OgNLSJsonGenKeyValueInteger(lt, "error_number", nb_error));
+  // IFE(OgNLSJsonGenKeyValueInteger(lt, "error_number", nb_error));
   IFE(OgNLSJsonGenMapClose(lt));
 
   struct og_ucisw_input winput[1];
