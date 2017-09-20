@@ -771,10 +771,6 @@ og_status writeJsonNode(struct jsonValuesContext * ctx)
     }
     if (ctx->jsonNode.type == JSON_END_MAP)
     {
-      if ((ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE))
-      {
-        IFE(OgNLSJsonGenKeyValueString(ctx->lt, "Answer", "Hello world!"));
-      }
       IFE(OgNLSJsonGenMapClose(ctx->lt));
     }
   }

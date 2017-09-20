@@ -163,12 +163,24 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
 
   if (ctx->jsonNode.type == JSON_END_MAP)
   {
-//    if ((ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE))
-//    {
-//      struct jsonValuesContext tmpCtx;
-//      tmpCtx.lt = ctx->lt;
-//
-//    }
+    if ((ctx->isEmpty == TRUE) && (ctx->IsArrayUsed == TRUE))
+    {
+      struct jsonValuesContext tmpCtx;
+      tmpCtx.lt = ctx->lt;
+      memset(tmpCtx.bIsArray, FALSE, maxArrayLevel);
+      tmpCtx.bIsArray[0] = TRUE;   // au démarrage, on n'est pas dans un array, mais il ne faut pas de tag
+      tmpCtx.IsArrayUsed = TRUE;
+      tmpCtx.isEmpty = FALSE;   // si le json est vide, on retourne "Hello world!"
+      snprintf(tmpCtx.jsonNode.mapKey, DPcPathSize, "Answer");
+      tmpCtx.jsonNode.mapSize = 6;
+      snprintf(tmpCtx.jsonNode.stringValue, DPcPathSize, "Hello world!");
+      tmpCtx.jsonNode.valueSize = 12;
+      IF(writeJsonNode(&tmpCtx))
+      {
+        NlsThrowError(ctx->lt, "manageNodeReceived : Error on jsonNode.type == JSON_END_MAP");
+        DPcErr;
+      }
+    }
 
     IF(writeJsonNode(ctx))
     {
