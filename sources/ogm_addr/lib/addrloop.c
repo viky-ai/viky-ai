@@ -111,6 +111,8 @@ static og_status OgAddrLoopThread(void *ctx)
 
     }
 
+    must_stop = ctrl_addr->must_stop_func(ctrl_addr->func_context);
+    IFE(must_stop);
     if (must_stop)
     {
       OgMsg(ctrl_addr->hmsg, "", DOgMsgDestInLog, "OgAddrLoopThread %s: must stop service", ctrl_addr->addr_name);

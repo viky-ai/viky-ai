@@ -106,7 +106,7 @@ struct og_listening_thread
   void *hucis;
 
   /** for permanent lt threads **/
-  ogsem_t csem, *hsem;
+  ogsem_t hsem[1];
   int must_stop;
 
   ogint64_t t0, t1, t2, t3, ot3;
@@ -124,13 +124,13 @@ struct og_listening_thread
 struct og_maintenance_thread
 {
   void *herr;
-  ogmutex_t *hmutex;
-  struct og_ctrl_nls *ctrl_nls;
-  ogthread_t IT;
-  int running;
   void *hmsg;
-};
+  ogmutex_t *hmutex;
 
+  struct og_ctrl_nls *ctrl_nls;
+
+  ogthread_t IT;
+};
 
 struct og_ctrl_nls
 {
@@ -202,9 +202,6 @@ struct jsonValuesContext
 };
 
 
-
-/** inls.c **/
-int NlsCleanLTOnTimeout(struct og_listening_thread *lt, char *label);
 
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);

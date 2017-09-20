@@ -90,7 +90,13 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
       {
         if(strcmp(ctx->jsonNode.stringValue,"infinite") == 0)
         {
-          while(1);
+          int toto = 0;
+          for(;;)
+          {
+            toto++;
+          }
+          int titi = toto;
+          toto = titi;
         }
       }
     }

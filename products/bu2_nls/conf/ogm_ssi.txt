@@ -4,13 +4,13 @@
 max_listening_threads 4
 
 # Use permanent processing threads number
-permanent_threads no
+permanent_threads yes
 
 # Maximum size for a search request
 max_request_size 2M
 
 # Timeout for search requests
-answer_timeout 3000
+answer_timeout 2000
 
 # Requests history log (yes, no, search, index)
 history no

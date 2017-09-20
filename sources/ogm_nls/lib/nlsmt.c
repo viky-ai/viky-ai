@@ -22,7 +22,7 @@ int OgMaintenanceThread(void *ptr)
   struct og_maintenance_thread *mt = (struct og_maintenance_thread *) ptr;
   struct og_ctrl_nls *ctrl_nls = mt->ctrl_nls;
   int clock_tick_time, elapsed;
-  int error = 0;
+  og_bool error = FALSE;
 
   IFE(OgThreadSetCurrentName("nls_mt"));
 
@@ -44,29 +44,24 @@ int OgMaintenanceThread(void *ptr)
       OgSleep(DOgNlsClockTick - elapsed);
     }
 
-    if (ctrl_nls->must_stop) break;
     clock_tick_time = OgMilliClock();
 
     /* do it every tick */
     IF(OgMaintenanceThreadTick(mt, clock_tick_time))
     {
       OgMaintenanceThreadHandleError(mt);
-
-      error = 1;
-      goto endOgMaintenanceThread;
+      error = TRUE;
+      break;
     }
 
     elapsed = OgMilliClock() - clock_tick_time;
 
-  } // while (1)
-
-  endOgMaintenanceThread:
+  }   // while (1)
 
   if (ctrl_nls->loginfo->trace & DOgNlsTraceMT)
   {
     OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "OgMaintenanceThread finished%s", error ? " on error" : "");
   }
-  mt->running = 0;
 
   DONE;
 }
@@ -83,10 +78,6 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
     {
       lt->request_running_time = clock_tick_time - lt->request_running_start;
 
-//      OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamDateIn,
-//          "OgMaintenanceThreadTick %d: request_processing_timeout=%d request_running_time=%d request_running=%d",
-//          i, lt->ctrl_nls->conf->request_processing_timeout, lt->request_running_time, lt->request_running);
-//
       nb_running_threads++;
       if (lt->ctrl_nls->conf->request_processing_timeout)
       {
@@ -104,9 +95,10 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
               "OgMaintenanceThreadTick: a request is running for more than %d milliseconds (%d milliseconds) on thread %d, LT= %d",
               lt->ctrl_nls->conf->request_processing_timeout, lt->request_running_time, lt->ID, i);
 
-          pthread_cancel(lt->current_thread);
-
-          pthread_kill(lt->current_thread,SIGUSR1);
+          if (lt->current_thread > 0)
+          {
+            pthread_cancel(lt->current_thread);
+          }
 
         }
       }
@@ -123,13 +115,13 @@ static int OgMaintenanceThreadHandleError(struct og_maintenance_thread *mt)
   OgMsg(mt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamLogDate,
       "OgMaintenanceThread: error on maintenance thread");
   OgMsgErr(mt->hmsg, "maintenance_thread_error", 0, 0, 0, DOgMsgSeverityError,
-      DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
+  DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
 
   /** Making sure we get errors from all error head **/
   OgMsg(mt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamLogDate,
       "OgMaintenanceThread: error on maintenance thread (main error stack)");
   OgMsgErr(ctrl_nls->hmsg, "maintenance_thread_error", 0, 0, 0, DOgMsgSeverityError,
-      DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
+  DOgErrLogFlagNoSystemError/*+DOgErrLogFlagNotInErr*/);
 
   DONE;
 }

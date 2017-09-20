@@ -16,7 +16,6 @@ static void LogErrors(struct og_nls_prog *nls_prog, char *label);
 
 static void NlsSignalOnEmergency(void *context, int signal_type);
 static void NlsSignalOnStop(void *context, int signal_type);
-static void NlsSignalOnTimeout(void *context, int signal_type);
 
 int main(int argc, char *argv[])
 
@@ -159,8 +158,6 @@ int main(int argc, char *argv[])
   IF(OgSignal(nls_prog->hsig, SIGTERM, NlsSignalOnStop, nls_prog, 0)) DoExit(nls_prog);
   IF(OgSignal(nls_prog->hsig, SIGINT, NlsSignalOnStop, nls_prog, 0)) DoExit(nls_prog);
 
-  // Signal timeout
-  IF(OgSignal(nls_prog->hsig, SIGUSR1, NlsSignalOnTimeout, nls_prog, 0)) printf("toto");
   time_t clock_start = OgClock();
 
   nls_prog->hnls = OgNlsInit(nls_prog->param);
@@ -317,6 +314,8 @@ static void NlsSignalOnStop(void *context, int signal_type)
 {
   struct og_nls_prog *nls_prog = (struct og_nls_prog *) context;
 
+  nls_prog->stop_counter++;
+
   OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog, "Program ogm_nls received STOP signal (%d),"
       " stopping in progress ...", signal_type);
 
@@ -325,28 +324,13 @@ static void NlsSignalOnStop(void *context, int signal_type)
     OgNlsOnSignalStop(nls_prog->hnls);
   }
 
-  OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog, "Program ogm_nls stopped");
-
-  exit(0);
-}
-
-static void NlsSignalOnTimeout(void *context, int signal_type)
-{
-  struct og_nls_prog *nls_prog = (struct og_nls_prog *) context;
-
-  int thread_pid = 0;
-
-  OgMsg(nls_prog->hmsg, "received_timeout_signal", DOgMsgDestInLog, "thread %d received TIMEOUT signal (%d),"
-      " request stopping in progress ...", thread_pid, signal_type);
-
-  if (nls_prog->hnls != NULL)
+  if (nls_prog->stop_counter > 3)
   {
-    OgNlsOnSignalTimeout(nls_prog->hnls);
+    OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog + DOgMsgDestMBox,
+        "Program ogm_nls received STOP signal (%d), STOP forced.", signal_type);
+    DoExit(nls_prog);
   }
 
-  OgMsg(nls_prog->hmsg, "received_timeout_signal", DOgMsgDestInLog, "request stopped");
-
-  // exit(0);
 }
 
 static void NlsSignalOnEmergency(void *context, int signal_type)

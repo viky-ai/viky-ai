@@ -17,7 +17,7 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   // on ouvre le fichier json et on ouvre le tableau
   IFE(OgNLSJsonGenMapOpen(lt));
 
-  IFE(OgNLSJsonGenKeyValueArrayOpen(lt, "error"));
+  IFE(OgNLSJsonGenKeyValueArrayOpen(lt, "errors"));
 
   int nb_error = 0;
   char erreur[DOgErrorSize];

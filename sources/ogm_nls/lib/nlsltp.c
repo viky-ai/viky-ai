@@ -42,13 +42,9 @@ int OgPermanentLtThread(void *ptr)
 
 int NlsInitPermanentLtThreads(struct og_ctrl_nls *ctrl_nls)
 {
-  struct og_listening_thread *lt;
-  int i;
-
-  for (i = 0; i < ctrl_nls->LtNumber; i++)
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
-    lt = ctrl_nls->Lt + i;
-    lt->hsem = &lt->csem;
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
     IFE(OgSemaphoreInit(lt->hsem, 0));
     IFE(OgCreateThread(&lt->IT, OgPermanentLtThread, (void * )lt));
   }
@@ -58,12 +54,11 @@ int NlsInitPermanentLtThreads(struct og_ctrl_nls *ctrl_nls)
 
 int NlsStopPermanentLtThreads(struct og_ctrl_nls *ctrl_nls)
 {
-  struct og_listening_thread *lt;
-  int i;
 
-  for (i = 0; i < ctrl_nls->LtNumber; i++)
+
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
-    lt = ctrl_nls->Lt + i;
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
     lt->must_stop = 1;
     IFE(OgSemaphorePost(lt->hsem));
   }

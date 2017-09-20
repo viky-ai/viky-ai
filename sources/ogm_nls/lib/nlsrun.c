@@ -28,7 +28,6 @@ PUBLIC(int) OgNlsRun(og_nls handle)
 static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
 {
   struct og_maintenance_thread *mt = &ctrl_nls->mt;
-  mt->running = 1;
   IFE(OgCreateThread(&mt->IT, OgMaintenanceThread, (void *)mt));
 
   struct og_addr_param addr_param[1];
@@ -218,13 +217,9 @@ static struct og_listening_thread *OgNlsRunAcquireRunnningLt(struct og_ctrl_nls 
 int NlsWaitForListeningThreads(char *label, struct og_ctrl_nls *ctrl_nls)
 {
   int overall_waiting_time = 0;
-  int timeout_period = 60000; /* 1 minute */
   int lt_running = 0;
 
-  if (ctrl_nls->conf->request_processing_timeout > 0)
-  {
-    timeout_period = ctrl_nls->conf->request_processing_timeout;
-  }
+  int timeout_period = ctrl_nls->conf->request_processing_timeout * 1.2;
 
   // Waiting for threads to finish nicely
   while (TRUE)

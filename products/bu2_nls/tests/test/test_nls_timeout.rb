@@ -15,34 +15,32 @@ class TestNlsTimeout < Minitest::Test
   def test_timeout
 
     data = {
-          wait: 5000
-        }
-    actual = nls_query(data)
-
-    assert_false true
-    rescue RestClient::ExceptionWithResponse => e
-    actual = JSON.parse(e.response.body)
-    expected = {
-      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"]
+      wait: 5000
     }
 
-    assert_equal expected, actual
+    nls_query(data)
+
+    assert false
+  rescue RestClient::ExceptionWithResponse => e
+    actual = JSON.parse(e.response.body)
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+    assert actual["errors"].first.include? expected_error
   end
 
   def test_infinite_loop
     data = {
       wait: "infinite"
     }
-    actual = nls_query(data)
 
-    assert_false true
-    rescue RestClient::ExceptionWithResponse => e
+    nls_query(data)
+
+    assert false
+  rescue RestClient::ExceptionWithResponse => e
     actual = JSON.parse(e.response.body)
-    expected = {
-      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"]
-    }
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
-    assert_equal expected, actual
+    assert actual["errors"].first.include? expected_error
   end
 
 

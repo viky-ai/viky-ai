@@ -11,14 +11,14 @@
 static int OgListeningThread1(void *ptr);
 static void NlsCancelCleanupOnTimeout(void* context);
 
-
 int OgListeningThread(void *ptr)
 {
   int retour;
-  pthread_cleanup_push(NlsCancelCleanupOnTimeout,ptr);
-  retour = OgListeningThread1(ptr);
-  pthread_cleanup_pop(0);
-  return(retour);
+  pthread_cleanup_push(NlsCancelCleanupOnTimeout,ptr)
+    ;
+    retour = OgListeningThread1(ptr);
+    pthread_cleanup_pop(0);
+  return (retour);
 }
 
 /**
@@ -37,8 +37,6 @@ static int OgListeningThread1(void *ptr)
   lt->current_thread = pthread_self();
   lt->looping = 0;
   lt->loginfo->trace = ctrl_nls->loginfo->trace;
-
-
 
   if (!ctrl_nls->conf->permanent_threads)
   {
@@ -87,7 +85,6 @@ static int OgListeningThread1(void *ptr)
       DONE;
     }
 
-
   }
 
   if (lt->loginfo->trace & DOgNlsTraceLT)
@@ -123,12 +120,27 @@ og_status NlsListeningThreadReset(struct og_listening_thread * lt)
 static void NlsCancelCleanupOnTimeout(void* context)
 {
   struct og_listening_thread *lt = (struct og_listening_thread *) context;
+  lt->current_thread = 0;
 
   OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout starting", lt->ID);
 
-  // Make sure that in this code, no function with cancellation point is used,
-  // otherwise this function is called recursively, thus looping infinitely
-  NlsCleanLTOnTimeout(lt,"NlsCancelCleanupOnTimeout");
+  int elapsed = OgMilliClock() - lt->request_running_start;
+
+  NlsThrowError(lt, "NlsCancelCleanupOnTimeout : Request timeout after %d ms", elapsed);
+
+  OgListeningThreadError(lt);
+  OgCloseSocket(lt->hsocket_in);
+
+  NlsListeningThreadReset(lt);
+
+  // restart cancelled thread
+  if (lt->ctrl_nls->conf->permanent_threads)
+  {
+    OgCreateThread(&lt->IT, OgPermanentLtThread, lt);
+  }
+
+  OgNlsLtReleaseCurrentRunnning(lt);
+
 
   OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout finished", lt->ID);
 }

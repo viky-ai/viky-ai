@@ -22,6 +22,8 @@ struct og_nls_prog
 
   unsigned pid;
 
+  int stop_counter;
+
   void *herr, *hmsg, *hsig;
   ogmutex_t *hmutex;
 

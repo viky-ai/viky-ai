@@ -140,60 +140,60 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   return ctrl_nls;
 }
 
-PUBLIC(og_status) OgNlsOnSignalStop(og_nls handle)
+PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
 {
 
-  // TODO implement stopping check
+  // stop non blocking thread
+  ctrl_nls->must_stop = TRUE;
 
-  OgNlsFlush(handle);
+  // unblock other thread
+  struct og_uci_client_param param[1];
+  memset(param, 0, sizeof(struct og_uci_client_param));
+  param->herr = ctrl_nls->herr;
+  param->hmutex = ctrl_nls->hmutex;
+  param->loginfo.trace = DOgUciClientTraceMinimal + DOgUciClientTraceMemory;
+  //+ DOgUciClientTraceSocket
+  //+ DOgUciClientTraceSocketSize;
+  param->loginfo.where = ctrl_nls->loginfo->where;
+
+  struct og_ucic_request request[1];
+  memset(request, 0, sizeof(struct og_ucic_request));
+
+  // bind all addresses '0.0.0.0' need to use localhost instead '127.0.0.1'
+  strcpy(request->hostname, ctrl_nls->conf->env->listenning_address);
+  if(strcmp(request->hostname, "0.0.0.0") == 0)
+  {
+    strcpy(request->hostname, "127.0.0.1");
+  }
+  request->port = ctrl_nls->conf->env->listenning_port;
+  request->timeout = ctrl_nls->conf->backlog_timeout * 1.2;
+  request->request = "";
+  request->request_length = 0;
+
+  void *hucic = OgUciClientInit(param);
+  if (hucic != NULL)
+  {
+    struct og_ucic_answer answer[1];
+    OgUciClientRequest(hucic, request, answer);
+
+    OgUciClientFlush(hucic);
+  }
 
   DONE;
 }
 
-PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls handle)
+PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls ctrl_nls)
 {
-  struct og_ctrl_nls *ctrl_nls = handle;
-
   IFE(NlsOnEmergency(ctrl_nls));
 
   DONE;
 }
 
-PUBLIC(og_status) OgNlsOnSignalTimeout(og_nls handle)
-{
-  // This code is not necessary, because a signal obviously triggers a cancellation point
-  // and we handle the same thing in the cancellation point NlsCancelCleanupOnTimeout
-#if 0
-  struct og_ctrl_nls *ctrl_nls = handle;
-  int i = -1;
-  for (i = 0; i < ctrl_nls->LtNumber; i++)
-  {
-    struct og_listening_thread *lt = ctrl_nls->Lt + i;
-    if (lt->current_thread == pthread_self())
-    {
-      IFE(NlsCleanLTOnTimeout(lt,"OgNlsOnSignalTimeout"));
-      break;
-    }
-  }
-
-  pthread_exit((void *) 1);
-#endif
-  DONE;
-}
-
-
 int NlsCleanLTOnTimeout(struct og_listening_thread *lt, char *label)
 {
-  NlsThrowError(lt, "%s : Timeout on LT = %d", label, lt->ID);
-  int is_error = OgListeningThreadError(lt);
-  OgCloseSocket(lt->hsocket_in);
-  IFE(is_error);
-  IFE(OgNlsLtReleaseCurrentRunnning(lt));
-  IFE(NlsListeningThreadReset(lt));
+
   DONE;
 }
-
-
 
 PUBLIC(int) OgNlsFlush(og_nls handle)
 {
