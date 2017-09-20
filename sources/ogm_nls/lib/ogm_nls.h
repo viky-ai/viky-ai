@@ -14,13 +14,18 @@
 #include <loggen.h>
 #include <glib.h>
 
+#include <jansson.h>
+
+#include <uriparser/Uri.h>
+#include <uriparser/UriBase.h>
+
 #include <yajl/yajl_gen.h>
 #include <yajl/yajl_parse.h>
 #include <yajl/yajl_tree.h>
 
 #include <string.h>
 
-typedef struct og_listening_thread og_listening_thread;
+typedef struct og_listening_thread og_listening_thread ;
 
 #define DOgNlsPortNumber  9345
 
@@ -163,6 +168,19 @@ struct og_ctrl_nls
 
 };
 
+typedef struct
+{
+    const char * key;
+    const char * value;
+}nls_request_param;
+
+typedef struct
+{
+  og_heap hba;
+  int length;
+  nls_request_param params[50];
+} nls_request_paramList;
+/*
 enum JSonNodeType
 {
   JSON_STRING,
@@ -188,9 +206,9 @@ struct jsonNode
   double doubleValue;
   int booleanValue;
 };
-
+*/
 #define maxArrayLevel 10
-
+/*
 struct jsonValuesContext
 {
   struct og_listening_thread *lt;
@@ -200,7 +218,7 @@ struct jsonValuesContext
   int IsArrayUsed;
   og_bool isEmpty;
 };
-
+*/
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
 int NlsWaitForListeningThreads(char *label, struct og_ctrl_nls *ctrl_nls);
@@ -234,8 +252,8 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
-
-/** lns_json **/
+/*
+/** lns_json
 og_status OgNLSJsonInit(struct og_listening_thread *lt);
 og_status OgNLSJsonReset(struct og_listening_thread *lt);
 og_status OgNLSJsonFlush(struct og_listening_thread *lt);
