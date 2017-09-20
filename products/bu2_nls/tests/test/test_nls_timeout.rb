@@ -23,7 +23,24 @@ class TestNlsTimeout < Minitest::Test
     rescue RestClient::ExceptionWithResponse => e
     actual = JSON.parse(e.response.body)
     expected = {
-      "error" => ["lt 0: OgNlsOnSignalTimeout : Timeout on LT = 0"],
+      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"],
+      "error_number" => 1
+    }
+
+    assert_equal expected, actual
+  end
+
+  def test_infinite_loop
+    data = {
+      wait: "infinite"
+    }
+    actual = nls_query(data)
+
+    assert_false true
+    rescue RestClient::ExceptionWithResponse => e
+    actual = JSON.parse(e.response.body)
+    expected = {
+      "error" => ["lt 0: NlsCancelCleanupOnTimeout : Timeout on LT = 0"],
       "error_number" => 1
     }
 
