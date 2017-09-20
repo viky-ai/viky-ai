@@ -3,11 +3,12 @@
   <head>
     <title>Style Guide - voqal.ai</title>
     <%= csrf_meta_tags %>
+    <meta name="turbolinks-cache-control" content="no-cache">
     <%= render 'layouts/favicon' %>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400" rel="stylesheet">
-    <%= stylesheet_pack_tag 'style_guide' %>
+    <%= stylesheet_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_pack_tag 'style_guide' %>
+    <%= javascript_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body data-controller-name="<%= controller_name %>"

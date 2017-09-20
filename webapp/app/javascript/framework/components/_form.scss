@@ -1,5 +1,4 @@
 .field{
-  position: relative;
 
   &:not(:last-child){
     margin-bottom: 1em;
@@ -88,6 +87,9 @@
     }
   }
 }
+
+
+
 
 
 .password-show-hide{

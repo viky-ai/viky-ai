@@ -6,26 +6,101 @@
     ) do |f| %>
 
   <div class="field">
-    <%= f.label :sort_by %><br />
-    <%= f.select :sort_by, [[ 'Last action', 'last_action' ], ['Email', 'email']] %>
+
+    <%= f.hidden_field :sort_by %>
+    <%= t('views.backend.users.index.sort_by.label') %>
+    <div class="dropdown">
+      <div class="dropdown__trigger">
+        <a href="#" class="btn">
+          <%= t("views.backend.users.index.sort_by.#{@search.sort_by}") %>
+          <span class="icon icon--x-small">
+            <%= icon_arrow_down %>
+          </span>
+        </a>
+      </div>
+      <div class="dropdown__content dropdown__content--hidden">
+        <ul>
+          <li>
+            <a href="#" <% if @search.sort_by == 'last_action' %>class="current"<% end %>
+               data-behavior="populate-input, submit-form"
+               data-input-selector="input[name='search[sort_by]']"
+               data-input-value="last_action"
+               data-form-selector=".new_search">
+              <%= t('views.backend.users.index.sort_by.last_action') %>
+            </a>
+          </li>
+          <li>
+            <a href="#" <% if @search.sort_by == 'email' %>class="current"<% end %>
+               data-behavior="populate-input, submit-form"
+               data-input-selector="input[name='search[sort_by]']"
+               data-input-value="email"
+               data-form-selector=".new_search">
+              <%= t('views.backend.users.index.sort_by.email') %>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <%= f.hidden_field :status %>
+    <%= t('views.backend.users.index.status.label') %>
+    <div class="dropdown">
+      <div class="dropdown__trigger">
+        <a href="#" class="btn">
+          <% if @search.status.blank? %>
+            <%= t('views.backend.users.index.status.all') %>
+          <% else %>
+            <%= t("views.backend.users.index.status.#{@search.status}") %>
+          <% end %>
+          <span class="icon icon--x-small">
+            <%= icon_arrow_down %>
+          </span>
+        </a>
+      </div>
+      <div class="dropdown__content dropdown__content--hidden">
+        <ul>
+          <li>
+            <a href="#" <% if @search.status.blank? %>class="current"<% end %>
+               data-behavior="populate-input, submit-form"
+               data-input-selector="input[name='search[status]']"
+               data-input-value=""
+               data-form-selector=".new_search">
+              <%= t('views.backend.users.index.status.all') %>
+            </a>
+          </li>
+          <li>
+            <a href="#" <% if @search.status == 'not-confirmed' %>class="current"<% end %>
+               data-behavior="populate-input, submit-form"
+               data-input-selector="input[name='search[status]']"
+               data-input-value="not-confirmed"
+               data-form-selector=".new_search">
+              <%= t('views.backend.users.index.status.not-confirmed') %>
+            </a>
+          </li>
+          <li>
+            <a href="#" <% if @search.status == 'locked' %>class="current"<% end %>
+               data-behavior="populate-input, submit-form"
+               data-input-selector="input[name='search[status]']"
+               data-input-value="locked"
+               data-form-selector=".new_search">
+              <%= t('views.backend.users.index.status.locked') %>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div class="field">
-    <%= f.radio_button("status", "")  %>
-    <label for="search_status_">All</label><br />
-
-    <%= f.radio_button("status", "not-confirmed") %>
-    <label for="search_status_not-confirmed">Not confirmed</label><br />
-
-    <%= f.radio_button("status", "locked")  %>
-    <label for="search_status_locked">Locked</label>
-  </div>
-
-  <div class="field">
-    <%= f.label :email, "Email" %><br />
+    <%= f.label :email %>
     <%= f.text_field :email %>
   </div>
-  <%= f.button "Search", class: 'btn btn--primary', data: { disable_with: t('loading') } %>
+  <div class="actions">
+    <%= f.button t('views.backend.users.index.search.btn'), class: "btn btn--primary",
+        data: {
+          disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+        } %>
+  </div>
 <% end %>
 
 <h2><%= pluralize(@users.count, "user") %></h2>
@@ -35,24 +110,41 @@
     <div class="card-content">
       <h3>
         <%= user.email %>
-        <% unless user.confirmed? %><span class="badge">not confirmed</span><% end %>
-        <% if user.locked_at? %><span class="badge">locked</span><% end %>
+        <% unless user.confirmed? %>
+          <span class="badge">
+            <%= t('views.backend.users.index.status.not-confirmed') %>
+          </span>
+        <% end %>
+        <% if user.locked_at? %>
+          <span class="badge">
+            <%= t('views.backend.users.index.status.locked') %>
+          </span>
+        <% end %>
       </h3>
 
       <% if user.confirmed? %>
         <p>
-          Last login: <% if user.current_sign_in_at.nil? %>Never<% else %><%= l(user.current_sign_in_at, format: :short) %><% end %><br />
-          Log in count: <%= user.sign_in_count %>
+          <%= t('views.backend.users.index.last_login') %>
+          <% if user.current_sign_in_at.nil? %>
+            Never
+          <% else %>
+            <%= l(user.current_sign_in_at, format: :short) %>
+          <% end %>
+          <br />
+          <%= t('views.backend.users.index.login_count') %>
+          <%= user.sign_in_count %>
         </p>
       <% else %>
         <p>
-          Last confirmation sent at: <%= l(user.confirmation_sent_at, format: :short) %>
+          <%= t('views.backend.users.index.last_confirmation') %>
+          <%= l(user.confirmation_sent_at, format: :short) %>
         </p>
       <% end %>
 
       <% if user.locked_at? %>
         <p>
-          Locked at: <%= l(user.locked_at, format: :short) %>
+          <%= t('views.backend.users.index.locked_at') %>
+          <%= l(user.locked_at, format: :short) %>
         </p>
       <% end %>
     </div>

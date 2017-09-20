@@ -6,3 +6,4 @@ import './main'
 
 // Coffee
 import './password';
+import './dropdown';

@@ -4,3 +4,22 @@ en:
       application:
         not_signed_in: Please, log in before continuing.
         not_admin: You do not have permission to access this interface.
+  views:
+    backend:
+      users:
+        index:
+          sort_by:
+            label: Sort by
+            last_action: Last action
+            email: Email
+          status:
+            label: Status
+            all: All
+            not-confirmed: Not confirmed
+            locked: Locked
+          search:
+            btn: Search
+          last_login: "Last login:"
+          login_count: "Log in count:"
+          last_confirmation: "Last confirmation sent at:"
+          locked_at: "Locked at:"

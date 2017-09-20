@@ -17,6 +17,11 @@
     </p>
   <% end %>
 
-  <p>
-    Developper ? Watch our <a href="style-guide" data-turbolinks="false">style guide</a>.
-  </p>
+  <% if user_signed_in? %>
+    <p>
+      Developer ? Watch our <a href="style-guide">style guide</a>.
+    </p>
+    <% if current_user.admin %>
+      Oh, you are admin! <%= link_to "Go to backend", backend_users_path %>
+    <% end %>
+  <% end %>
