@@ -201,6 +201,11 @@ struct jsonValuesContext
   og_bool isEmpty;
 };
 
+
+
+/** inls.c **/
+int NlsCleanLTOnTimeout(struct og_listening_thread *lt, char *label);
+
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
 int NlsWaitForListeningThreads(char *label, struct og_ctrl_nls *ctrl_nls);

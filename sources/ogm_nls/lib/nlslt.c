@@ -8,13 +8,25 @@
 
 #include "ogm_nls.h"
 
+static int OgListeningThread1(void *ptr);
+static void NlsCancelCleanupOnTimeout(void* context);
+
+
+int OgListeningThread(void *ptr)
+{
+  int retour;
+  pthread_cleanup_push(NlsCancelCleanupOnTimeout,ptr);
+  retour = OgListeningThread1(ptr);
+  pthread_cleanup_pop(0);
+  return(retour);
+}
 
 /**
  *  Listening threads are not really listening the port but they
  *  are started just after the main lt (which is listening)
  *  received a call to the socket.
  */
-int OgListeningThread(void *ptr)
+static int OgListeningThread1(void *ptr)
 {
   struct og_listening_thread *lt = (struct og_listening_thread *) ptr;
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
@@ -25,6 +37,8 @@ int OgListeningThread(void *ptr)
   lt->current_thread = pthread_self();
   lt->looping = 0;
   lt->loginfo->trace = ctrl_nls->loginfo->trace;
+
+
 
   if (!ctrl_nls->conf->permanent_threads)
   {
@@ -72,6 +86,8 @@ int OgListeningThread(void *ptr)
 
       DONE;
     }
+
+
   }
 
   if (lt->loginfo->trace & DOgNlsTraceLT)
@@ -103,3 +119,17 @@ og_status NlsListeningThreadReset(struct og_listening_thread * lt)
 
   DONE;
 }
+
+static void NlsCancelCleanupOnTimeout(void* context)
+{
+  struct og_listening_thread *lt = (struct og_listening_thread *) context;
+
+  OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout starting", lt->ID);
+
+  // Make sure that in this code, no function with cancellation point is used,
+  // otherwise this function is called recursively, thus looping infinitely
+  NlsCleanLTOnTimeout(lt,"NlsCancelCleanupOnTimeout");
+
+  OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout finished", lt->ID);
+}
+

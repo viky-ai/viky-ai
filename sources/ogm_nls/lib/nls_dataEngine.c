@@ -86,6 +86,13 @@ og_status manageNodeReceived(struct jsonValuesContext * ctx)
         snprintf(tmpStringValue, DPcPathSize, "%.*s", iStringLen, ctx->jsonNode.stringValue);
         snprintf(ctx->jsonNode.stringValue, DPcPathSize, "Hello %s", tmpStringValue);
       }
+      else if ((strcmp(ctx->jsonNode.mapKey, "Answer_Wait") == 0) || (strcmp(ctx->jsonNode.mapKey, "Answer_wait") == 0))
+      {
+        if(strcmp(ctx->jsonNode.stringValue,"infinite") == 0)
+        {
+          while(1);
+        }
+      }
     }
 
     IF(writeJsonNode(ctx))

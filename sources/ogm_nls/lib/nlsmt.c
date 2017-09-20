@@ -104,6 +104,8 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
               "OgMaintenanceThreadTick: a request is running for more than %d milliseconds (%d milliseconds) on thread %d, LT= %d",
               lt->ctrl_nls->conf->request_processing_timeout, lt->request_running_time, lt->ID, i);
 
+          pthread_cancel(lt->current_thread);
+
           pthread_kill(lt->current_thread,SIGUSR1);
 
         }

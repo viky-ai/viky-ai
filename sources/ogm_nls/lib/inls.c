@@ -161,6 +161,9 @@ PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls handle)
 
 PUBLIC(og_status) OgNlsOnSignalTimeout(og_nls handle)
 {
+  // This code is not necessary, because a signal obviously triggers a cancellation point
+  // and we handle the same thing in the cancellation point NlsCancelCleanupOnTimeout
+#if 0
   struct og_ctrl_nls *ctrl_nls = handle;
   int i = -1;
   for (i = 0; i < ctrl_nls->LtNumber; i++)
@@ -168,20 +171,29 @@ PUBLIC(og_status) OgNlsOnSignalTimeout(og_nls handle)
     struct og_listening_thread *lt = ctrl_nls->Lt + i;
     if (lt->current_thread == pthread_self())
     {
-      NlsThrowError(lt, "OgNlsOnSignalTimeout : Timeout on LT = %d",i);
-      int is_error = OgListeningThreadError(lt);
-      OgCloseSocket(lt->hsocket_in);
-      IFE(is_error);
-      IFE(OgNlsLtReleaseCurrentRunnning(lt));
-      IFE(NlsListeningThreadReset(lt));
+      IFE(NlsCleanLTOnTimeout(lt,"OgNlsOnSignalTimeout"));
       break;
     }
   }
 
   pthread_exit((void *) 1);
-
+#endif
   DONE;
 }
+
+
+int NlsCleanLTOnTimeout(struct og_listening_thread *lt, char *label)
+{
+  NlsThrowError(lt, "%s : Timeout on LT = %d", label, lt->ID);
+  int is_error = OgListeningThreadError(lt);
+  OgCloseSocket(lt->hsocket_in);
+  IFE(is_error);
+  IFE(OgNlsLtReleaseCurrentRunnning(lt));
+  IFE(NlsListeningThreadReset(lt));
+  DONE;
+}
+
+
 
 PUBLIC(int) OgNlsFlush(og_nls handle)
 {
