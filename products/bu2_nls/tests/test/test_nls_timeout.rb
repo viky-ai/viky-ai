@@ -8,7 +8,7 @@ class TestNlsTimeout < Minitest::Test
     Nls.start
   end
 
-  def after_run
+  Minitest.after_run do
     Nls.stop
   end
 
@@ -18,11 +18,11 @@ class TestNlsTimeout < Minitest::Test
       wait: 5000
     }
 
-    nls_query(data)
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query(data)
+    end
 
-    assert false
-  rescue RestClient::ExceptionWithResponse => e
-    actual = JSON.parse(e.response.body)
+    actual = JSON.parse(exception.response.body)
     expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
     assert actual["errors"].first.include? expected_error
@@ -33,45 +33,69 @@ class TestNlsTimeout < Minitest::Test
       wait: "infinite"
     }
 
-    nls_query(data)
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query(data)
+    end
 
-    assert false
-  rescue RestClient::ExceptionWithResponse => e
-    actual = JSON.parse(e.response.body)
+    actual = JSON.parse(exception.response.body)
     expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
     assert actual["errors"].first.include? expected_error
   end
 
-  def test_stop_during_request
+  def test_stop_during_request_with_timeout
 
-    tests_number = *(0..1)
-    Parallel.map(tests_number, in_threads: 2) do |test_number|
-
-      if test_number == 0
-
-        begin
-          data = {
-            wait: "infinite"
-          }
-
+    thr1 = Thread.new {
+      begin
+        data = {
+          wait: "infinite"
+        }
+        exception = assert_raises RestClient::ExceptionWithResponse do
           nls_query(data)
-
-          assert false
-        rescue RestClient::ExceptionWithResponse => e
-          actual = JSON.parse(e.response.body)
-          expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
-
-          assert actual["errors"].first.include? expected_error
         end
 
-      else
-        sleep(1)
-        Nls.stop
+        actual = JSON.parse(exception.response.body)
+        expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+        assert actual["errors"].first.include? expected_error
       end
+    }
 
-    end
+    thr2 = Thread.new {
+      sleep(1)
+      Nls.stop
+    }
 
+    thr1.join
+    thr2.join
+
+  end
+
+  def test_stop_during_request_without_timeout
+
+    thr1 = Thread.new {
+
+      data = {
+        wait: 1500
+      }
+
+      actual = nls_query(data)
+
+      expected = {
+        "Answer_wait" => 1500
+      }
+
+      assert_equal expected, actual
+
+    }
+
+    thr2 = Thread.new {
+      sleep(0.5)
+      Nls.stop
+    }
+
+    thr1.join
+    thr2.join
   end
 
 

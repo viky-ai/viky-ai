@@ -8,14 +8,14 @@ class TestNlsParallel < Minitest::Test
     Nls.start
   end
 
-  def after_run
+  Minitest.after_run do
     Nls.stop
   end
 
   def test_parallel
 
-    tests_number = *(0..20)
-    Parallel.map(tests_number, in_threads: 3) do |test_number|
+    tests_number = (0...20).to_a
+    Parallel.map(tests_number, in_threads: 20) do |test_number|
 
       data = {
         test_ID: "test_#{test_number}",

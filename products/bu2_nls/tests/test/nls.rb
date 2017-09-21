@@ -15,8 +15,12 @@ class Nls
   end
 
   def self.stop
-    Nls.exec("kill #{@@pid}") unless @@pid.nil?
-    @@pid = nil
+    unless @@pid.nil?
+      Nls.exec("kill #{@@pid}") unless @@pid.nil?
+      @@pid = nil
+    end
+
+
   end
 
   def self.exec(cmd, take_care_of_return = {})
