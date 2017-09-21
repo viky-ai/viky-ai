@@ -21,4 +21,15 @@
 .pagination{
   margin-top: 2em;
   text-align: center;
+
+  .current-page{
+    background-image: none;
+    border-color: #000;
+    background-color: #000;
+    color: #fff;
+    cursor: default;
+    &:active{
+      transform: none;
+    }
+  }
 }

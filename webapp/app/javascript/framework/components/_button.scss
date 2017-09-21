@@ -18,24 +18,32 @@ a.btn,
   background: linear-gradient(to bottom, #fff 0%, #f5f5f5 100%);
   cursor: pointer;
 
-  &:not(.btn--disabled):hover{
-    color: #000;
+  &:hover{
     background: linear-gradient(to bottom, #fff 0%, darken(#f5f5f5, 4%) 100%);
   }
-  &:not(.btn--disabled):focus{
+  &:focus{
     color: #000;
     box-shadow: 0 0 0 2px rgba(#000, .05);
     border-color: #bbb;
     outline:0;
   }
-  &:not(.btn--disabled):active{
+  &:active{
     transform: translateY(1px);
+  }
+  &.btn--disabled{
+    background: linear-gradient(to bottom, #fff 0%, #f5f5f5 100%);
+  }
+  &.btn--disabled:active{
+    transform: none;
   }
 
   &.btn--outline{
     background-image: none;
-    &:not(.btn--disabled):hover{
+    &:hover{
       border-color: #aaa;
+    }
+    &.btn--disabled{
+      border-color: #ddd;
     }
   }
 
@@ -48,7 +56,7 @@ a.btn,
       darken($primary_color, 4%) 100%
     );
     border-color: darken($primary_color, 4%);
-    &:not(.btn--disabled):hover{
+    &:hover{
       background: linear-gradient(
         to bottom,
         darken($primary_color, 0%) 0%,
@@ -56,10 +64,18 @@ a.btn,
       );
       border-color: darken($primary_color, 8%);
     }
-    &:not(.btn--disabled):focus{
+    &:focus{
       box-shadow: 0 0 0 2px rgba($primary_color, .3);
       border-color: darken($primary_color, 13%);
       outline:0;
+    }
+    &.btn--disabled{
+      background: linear-gradient(
+        to bottom,
+        darken($primary_color, 0%) 0%,
+        darken($primary_color, 4%) 100%
+      );
+      border-color: darken($primary_color, 4%);
     }
 
     &.btn--outline{
@@ -67,9 +83,13 @@ a.btn,
       text-shadow: none;
       border-color: $primary_color;
       color: darken($primary_color, 10%);
-      &:not(.btn--disabled):hover{
+      &:hover{
         color: #fff;
         background-color: $primary_color;
+      }
+      &.btn--disabled{
+        color: darken($primary_color, 10%);
+        background-color: transparent;
       }
     }
   }
@@ -83,7 +103,7 @@ a.btn,
       darken($destructive_color, 4%) 100%
     );
     border-color: darken($destructive_color, 4%);
-    &:not(.btn--disabled):hover{
+    &:hover{
       background: linear-gradient(
         to bottom,
         darken($destructive_color, 0%) 0%,
@@ -91,10 +111,19 @@ a.btn,
       );
       border-color: darken($destructive_color, 10%);
     }
-    &:not(.btn--disabled):focus{
+    &:focus{
       box-shadow: 0 0 0 2px rgba($destructive_color, .3);
       border-color: darken($destructive_color, 15%);
       outline:0;
+    }
+
+    &.btn--disabled{
+      background: linear-gradient(
+        to bottom,
+        darken($destructive_color, 0%) 0%,
+        darken($destructive_color, 4%) 100%
+      );
+      border-color: darken($destructive_color, 4%);
     }
 
     &.btn--outline{
@@ -102,9 +131,13 @@ a.btn,
       text-shadow: none;
       border-color: $destructive_color;
       color: darken($destructive_color, 10%);
-      &:not(.btn--disabled):hover{
+      &:hover{
         color: #fff;
         background-color: $destructive_color;
+      }
+      &.btn--disabled{
+        color: darken($destructive_color, 10%);
+        background-color: transparent;
       }
     }
   }
@@ -114,13 +147,17 @@ a.btn,
     border-color: transparent;
     text-decoration: underline;
     color: $primary_color;
-    &:not(.btn--disabled):hover{
+    &:hover{
       background-color: #f9f9f9;
       color: darken($primary_color, 15%);
     }
-    &:not(.btn--disabled):focus{
+    &:focus{
       box-shadow: 0 0 0 2px #f5f5f5;
       outline:0;
+    }
+    &.btn--disabled{
+      background-color: transparent;
+      color: $primary_color;
     }
   }
 
@@ -137,6 +174,7 @@ a.btn,
 
   &.btn--disabled{
     opacity: 0.5;
+    cursor: not-allowed;
   }
 
 }
