@@ -24,6 +24,15 @@
         </a>
       </li>
       <li>
+        <a href="#" <% if @search.status == 'confirmed' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[status]']"
+           data-input-value="confirmed"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.status.confirmed') %>
+        </a>
+      </li>
+      <li>
         <a href="#" <% if @search.status == 'not-confirmed' %>class="current"<% end %>
            data-behavior="populate-input, submit-form"
            data-input-selector="input[name='search[status]']"

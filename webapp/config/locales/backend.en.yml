@@ -15,6 +15,7 @@ en:
           status:
             label: Status
             all: All
+            confirmed: Confirmed
             not-confirmed: Not confirmed
             locked: Locked
           search:
