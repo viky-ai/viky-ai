@@ -5,7 +5,7 @@
   }
 
   &.field--inline{
-    display: flex;
+    @include display_flex();
     .control{
       margin-right: 1.5em;
       align-self: flex-end;
@@ -16,7 +16,7 @@
   }
 
   .control--merged{
-    display: flex;
+    @include display_flex();
 
     input[type='text'],
     input[type='email'],
@@ -46,14 +46,17 @@
 
   &.field--inline--expanded{
     .control{
-      flex-grow: 1;
+      -webkit-flex-grow: 1;
+              flex-grow: 1;
     }
   }
   &.field--inline--centered{
-    justify-content: center;
+    -webkit-justify-content: center;
+            justify-content: center;
   }
   &.field--inline--right{
-    justify-content: flex-end;
+    -webkit-justify-content: flex-end;
+            justify-content: flex-end;
   }
 
   .field_with_errors { display: inline }

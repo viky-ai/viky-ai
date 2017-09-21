@@ -3,16 +3,16 @@
 }
 
 .app-wrapper{
-  display: flex;
+  @include display_flex();
   height: 100%;
   nav{
     width: 200px;
     height: 100%;
   }
   main{
+    @include flex(1);
     overflow: auto;
     height: 100%;
-    flex: 1;
     padding: 2em;
   }
 }
