@@ -7,8 +7,10 @@ class Nls
 
   def self.start
     if @@pid.nil?
-      @@pid = Nls.exec('./ogm_nls -d')
+      Nls.exec('./ogm_nls -d')
       sleep(0.5)
+      pid_string = `ps -aux | grep "./ogm_nls -d" | grep -v grep`
+      @@pid = pid_string.split(" ")[1]
     end
   end
 
