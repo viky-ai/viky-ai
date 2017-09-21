@@ -12,61 +12,84 @@
 
 <div class="card">
   <div class="card-content">
-    <h2>
+    <p>
       <%= page_entries_info @users %>
-    </h2>
-    <% @users.each do |user| %>
-      <h3>
-        <%= user.email %>
-        <% unless user.confirmed? %>
-          <span class="badge">
-            <%= t('views.backend.users.index.status.not-confirmed') %>
-          </span>
+    </p>
+    <% unless @users.count == 0 %>
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Invitation</th>
+          <th>Last action</th>
+          <th>Log in count</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td>
+              <%= user.email %>
+
+              <% if user.confirmed? %>
+                <span class="badge">
+                  <%= t('views.backend.users.index.status.confirmed') %>
+                </span>
+              <% else %>
+                <span class="badge">
+                  <%= t('views.backend.users.index.status.not-confirmed') %>
+                </span>
+                <% unless user.confirmation_sent_at.nil? %>
+                  <p>
+                    <%= t('views.backend.users.index.last_confirmation') %>
+                    <%= l(user.confirmation_sent_at, format: :short) %>
+                  </p>
+                <% end %>
+              <% end %>
+
+              <% if user.locked_at? %>
+                <span class="badge">
+                  <%= t('views.backend.users.index.status.locked') %>
+                </span>
+                <p>
+                  <%= t('views.backend.users.index.locked_since') %>
+                  <%= l(user.locked_at, format: :short) %>
+                </p>
+              <% end %>
+            </td>
+            <td>
+              <% unless user.invited_by.nil? %>
+                <%= l(user.created_at, format: :short) %>
+                (<%= t('views.backend.users.index.invited_by') %>
+                <%= user.invited_by.email %>)
+              <% end %>
+            </td>
+            <td>
+              <% if user.confirmed? %>
+                <% unless user.current_sign_in_at.nil? %>
+                  <%= l(user.current_sign_in_at, format: :short) %>
+                  <%= t('views.backend.users.index.last_login') %>
+                <% end %>
+              <% else %>
+                <%= l(user.created_at, format: :short) %>
+                <%= t('views.backend.users.index.creation') %>
+              <% end %>
+            </td>
+            <td>
+              <% if user.confirmed? %>
+                <%= user.sign_in_count %>
+              <% end %>
+            </td>
+            <td>
+              <a href="#" class="btn btn--small btn--destructive">
+                <span class="icon icon--small"><%= icon_delete %></span> Delete
+              </a>
+            </td>
+          </tr>
         <% end %>
-        <% if user.locked_at? %>
-          <span class="badge">
-            <%= t('views.backend.users.index.status.locked') %>
-          </span>
-        <% end %>
-      </h3>
-
-      <% if user.confirmed? %>
-        <p>
-          <%= t('views.backend.users.index.last_login') %>
-          <% if user.current_sign_in_at.nil? %>
-            <%= t('views.backend.users.index.never_login') %>
-          <% else %>
-            <%= l(user.current_sign_in_at, format: :short) %>
-          <% end %>
-          <br />
-          <%= t('views.backend.users.index.login_count') %>
-          <%= user.sign_in_count %>
-        </p>
-      <% else %>
-        <p>
-          <% unless user.confirmation_sent_at.nil? %>
-            <%= t('views.backend.users.index.last_confirmation') %>
-            <%= l(user.confirmation_sent_at, format: :short) %>
-          <% end %>
-        </p>
-      <% end %>
-
-      <% if user.locked_at? %>
-        <p>
-          <%= t('views.backend.users.index.locked_at') %>
-          <%= l(user.locked_at, format: :short) %>
-        </p>
-      <% end %>
-
-      <% unless user.invited_by.nil? %>
-        <p>
-          <%= t('views.backend.users.index.invited_by') %>
-          <%= user.invited_by.email %>
-          <%= t('views.backend.users.index.invited_at') %>
-          <%= l(user.created_at, format: :short) %>
-        </p>
-      <% end %>
-
+      </tbody>
+    </table>
     <% end %>
 
   </div>
