@@ -22,7 +22,7 @@ class TestNlsParallel < Minitest::Test
         wait: 50
       }
 
-      actual = nls_query(data)
+      actual = nls_query_post(data)
 
       expected = {
         "Answer_test_ID" => "test_#{test_number}",

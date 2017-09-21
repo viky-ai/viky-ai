@@ -14,7 +14,7 @@ class TestNlsHello < Minitest::Test
 
   def test_hello_world
 
-    actual = nls_query({})
+    actual = nls_query_post({})
 
     expected = {
       "Answer" => "Hello world!"
@@ -29,7 +29,7 @@ class TestNlsHello < Minitest::Test
       name: 'toto'
     }
 
-    actual = nls_query(data)
+    actual = nls_query_post(data)
 
     expected = {
       "Answer_name" => "Hello toto"
