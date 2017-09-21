@@ -12,7 +12,7 @@ module Common
     "http://#{listening_address}"
   end
 
-  def nls_query(param)
+  def nls_query_post(param)
     response  = RestClient.post(nls_url, param.to_json, content_type: :json)
     JSON.parse(response.body)
   end

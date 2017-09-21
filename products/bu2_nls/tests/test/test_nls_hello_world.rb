@@ -8,13 +8,13 @@ class TestNlsHello < Minitest::Test
     Nls.start
   end
 
-  def after_run
+  Minitest.after_run do
     Nls.stop
   end
 
   def test_hello_world
 
-    actual = nls_query({})
+    actual = nls_query_post({})
 
     expected = {
       "Answer" => "Hello world!"
@@ -29,7 +29,7 @@ class TestNlsHello < Minitest::Test
       name: 'toto'
     }
 
-    actual = nls_query(data)
+    actual = nls_query_post(data)
 
     expected = {
       "Answer_name" => "Hello toto"
@@ -42,14 +42,14 @@ class TestNlsHello < Minitest::Test
 
     begin
 
-      RestClient.post(nls_url, "{\"toto\"}", content_type: :json)
+      exception = assert_raises RestClient::ExceptionWithResponse do
+        RestClient.post(nls_url, "{\"toto\"}", content_type: :json)
+      end
 
-      assert_false true
-    rescue RestClient::ExceptionWithResponse => e
-      actual = JSON.parse(e.response.body)
+      actual = JSON.parse(exception.response.body)
 
       expected_error =
-"""
+      """
 lt 0: Error during json reformat (2) : yajl_status_error : An error occured during the parse.
 parse error: object key and value must be separated by a colon (':')
                                 {\"toto\"}
