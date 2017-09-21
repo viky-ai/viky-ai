@@ -10,7 +10,7 @@ en:
         index:
           sort_by:
             label: Sort by
-            last_action: Last action
+            last_action: Last log in
             email: Email
           status:
             label: Status
@@ -20,10 +20,8 @@ en:
             locked: Locked
           search:
             btn: Search
-          never_login: Never
-          last_login: "(login)"
-          creation: (creation)
-          last_confirmation: "Last confirmation sent at"
+          last_confirmation: "Last confirmation sent on"
+          last_invitation: "Last invitation sent on"
           locked_since: "Locked at"
           invited_by: "by"
       breadcrumb:
