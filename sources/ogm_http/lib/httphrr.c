@@ -1,14 +1,14 @@
 /*
- *	Working on http hh.
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : August 2006
- *	Version 1.0
+ *  Working on http hh.
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : August 2006
+ *  Version 1.0
 */
 #include "ogm_http.h"
 
 
 
-STATICF(int) HeaderRead1(pr_(struct og_ctrl_http *) pr_(int) pr_(unsigned char *) pr(struct og_http_header2 *));
+STATICF(int) HeaderRead1(pr_(struct og_ctrl_http *) pr_(int) pr_(unsigned char *) pr_(struct og_http_header2 *) pr(int));
 STATICF(int) HeaderReadFirstLine(pr_(struct og_ctrl_http *) pr_(int) pr_(unsigned char *) pr(struct og_http_header2 *));
 STATICF(int) ReadResponse(pr_(struct og_ctrl_http *) pr_(char *) pr(struct og_http_header2 *));
 STATICF(int) ReadRequest(pr_(struct og_ctrl_http *) pr_(char *) pr(struct og_http_header2 *));
@@ -25,7 +25,7 @@ void *handle; int is; unsigned char *s;
 struct og_http_header2 *hh;
 {
 struct og_ctrl_http *ctrl_http = (struct og_ctrl_http *)handle;
-int i,c,found_header,header_length,start=0,state=1;
+int i,c,found_header,header_length,start=0,state=1,first_line=1;
 
 IFE(OgAutReset(ctrl_http->ha_header));
 memset(hh,0,sizeof(struct og_http_header2));
@@ -40,13 +40,14 @@ hh->header_length=header_length;
 for (i=0; i<header_length; i++) {
   c=s[i];
   switch (state) {
-    case 1: 
+    case 1:
       if (c=='\r' || c=='\n');
       else { start=i; state=2; }
       break;
-    case 2: 
+    case 2:
       if (c=='\r' || c=='\n') {
-        IFE(HeaderRead1(ctrl_http,i-start,s+start,hh));
+        IFE(HeaderRead1(ctrl_http,i-start,s+start,hh,first_line));
+        first_line=0;
         state=1;
         }
       break;
@@ -60,16 +61,17 @@ return(1);
 
 
 
-STATICF(int) HeaderRead1(ctrl_http,ih,h,hh)
+STATICF(int) HeaderRead1(ctrl_http,ih,h,hh,first_line)
 struct og_ctrl_http *ctrl_http; int ih; unsigned char *h;
 struct og_http_header2 *hh;
+int first_line;
 {
 char s[DOgHttpHeaderLineSize],v[DOgHttpHeaderLineSize],b[DOgHttpHeaderLineSize+10];
 int i,is,iv,iname=0,attr=(-1);
 char erreur[DOgErrorSize];
 
 if (ih >= DOgHttpHeaderLineSize-1) {
-  /* June 24th 2006: this can happen for example on site http://www.cmykpages.com, 
+  /* June 24th 2006: this can happen for example on site http://www.cmykpages.com,
    * there is a very big Location attribute, we could cut it, but, for the moment
    * we keep this as an error because it is rare */
   sprintf(erreur,"HeaderRead1: ih (%d)>= DOgHttpHeaderLineSize-1 (%d) for '%.200s'"
@@ -88,7 +90,7 @@ for (i=0; OgHttpHeaderLine[i].iname; i++) {
   if (PcIsspace(s[iname]) || s[iname] == ':') break;
   }
 
-if (attr<0) {
+if (first_line) {
   /** Handling the first line **/
   IFE(HeaderReadFirstLine(ctrl_http,is,s,hh));
   DONE;
@@ -99,7 +101,7 @@ for (i=iname; i<is; i++) {
   if (s[i] == ':') continue;
   break;
   }
-strcpy(v,s+i); 
+strcpy(v,s+i);
 IFE(OgTrimString(v,v)); iv=strlen(v);
 
 sprintf(b,"%d:%s",attr,v);
@@ -164,15 +166,15 @@ DONE;
 
 
 
-/* 
+/*
  * Working on: HTTP/1.1 200 OK
 */
 STATICF(int) ReadResponse(ctrl_http,v,hh)
 struct og_ctrl_http *ctrl_http;
 char *v; struct og_http_header2 *hh;
 {
-int ibuf=0; char buf[DOgHttpHeaderLineSize]; 
-int i,c,state=1,end=0; 
+int ibuf=0; char buf[DOgHttpHeaderLineSize];
+int i,c,state=1,end=0;
 
 for (i=0; !end; i++) {
   if (v[i]==0) end=1;
@@ -189,16 +191,16 @@ for (i=0; !end; i++) {
       else goto endReadResponse;
       break;
     case 7:
-      if (PcIsdigit(c)) buf[ibuf++]=c; 
+      if (PcIsdigit(c)) buf[ibuf++]=c;
       else if (c=='.') { buf[ibuf]=0; hh->major=atoi(buf); ibuf=0; state=8; }
       else goto endReadResponse;
       break;
     case 8:
-      if (PcIsdigit(c)) buf[ibuf++]=c; 
+      if (PcIsdigit(c)) buf[ibuf++]=c;
       else if (PcIsspace(c)) { buf[ibuf]=0; hh->minor=atoi(buf); state=9; }
       else goto endReadResponse;
       break;
-    
+
     /** 200 OK **/
     case 9:
       if (PcIsdigit(c)) { ibuf=0; buf[ibuf++]=c; state=10; }
@@ -206,7 +208,7 @@ for (i=0; !end; i++) {
       else goto endReadResponse;
       break;
     case 10:
-      if (PcIsdigit(c)) buf[ibuf++]=c; 
+      if (PcIsdigit(c)) buf[ibuf++]=c;
       else if (PcIsspace(c)) { buf[ibuf]=0; hh->status=atoi(buf); goto endReadResponse; }
       else goto endReadResponse;
       break;
@@ -219,7 +221,7 @@ DONE;
 
 
 
-/* 
+/*
  * Working on: <request> URI HTTP/1.1
  * per RFC 2616: Request-Line = Method SP Request-URI SP HTTP-Version CRLF
 */
@@ -228,22 +230,22 @@ STATICF(int) ReadRequest(ctrl_http,v,hh)
 struct og_ctrl_http *ctrl_http;
 char *v; struct og_http_header2 *hh;
 {
-int ibuf=0; char buf[DOgHttpHeaderLineSize]; 
-int i,c,state=1,end=0,start=1,length; 
+int ibuf=0; char buf[DOgHttpHeaderLineSize];
+int i,c,state=1,end=0,start=1,length;
 
 for (i=0; !end; i++) {
   if (v[i]==0) { c=' '; end=1; }
   else c=PcTolower(v[i]);
   switch (state) {
-    case 1: 
+    case 1:
       if (!PcIsspace(c)) { start=i; state=2; }
       break;
-    case 2: 
+    case 2:
       if (PcIsspace(c)) {
         length=i-start;
         if (length>DPcPathSize-1) length=DPcPathSize-1;
         memcpy(hh->request_uri,v+start,length); hh->request_uri[length]=0;
-        state=3; 
+        state=3;
         }
       break;
     /** HTTP/1.1 200 OK **/
@@ -257,16 +259,16 @@ for (i=0; !end; i++) {
       else goto endReadRequest;
       break;
     case 9:
-      if (PcIsdigit(c)) buf[ibuf++]=c; 
+      if (PcIsdigit(c)) buf[ibuf++]=c;
       else if (c=='.') { buf[ibuf]=0; hh->major=atoi(buf); ibuf=0; state=10; }
       else goto endReadRequest;
       break;
     case 10:
-      if (PcIsdigit(c)) buf[ibuf++]=c; 
+      if (PcIsdigit(c)) buf[ibuf++]=c;
       else if (PcIsspace(c)) { buf[ibuf]=0; hh->minor=atoi(buf); goto endReadRequest; }
       else goto endReadRequest;
       break;
-    
+
     }
   }
 endReadRequest:
