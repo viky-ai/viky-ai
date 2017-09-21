@@ -6,28 +6,33 @@
   </div>
 </header>
 
-<h2><%= t "views.invitations.new.title" %></h2>
+  <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
+    <div class="card-content">
+      <h2><%= t "views.invitations.new.title" %></h2>
 
-<%= form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post}) do |f| %>
+      <%= form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post}) do |f| %>
 
-  <div class="field field--inline">
-    <div class="control">
-      <%= f.label :email %><br />
-      <%= f.email_field :email %>
-    </div>
+        <div class="field field--inline">
+          <div class="control">
+            <%= f.label :email %><br />
+            <%= f.email_field :email %>
+          </div>
 
-    <div class="control">
-      <div class="actions">
-        <%= f.button t('views.invitations.new.btn'), class: "btn btn--primary",
-          data: {
-            disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-        } %>
-      </div>
-    </div>
+          <div class="control">
+            <div class="actions">
+              <%= f.button t('views.invitations.new.btn'), class: "btn btn--primary",
+                data: {
+                  disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+              } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <%= display_errors(resource, :email) %>
+        </div>
+
+      <% end %>
+
   </div>
-
-  <div class="field">
-    <%= display_errors(resource, :email) %>
-  </div>
-
-<% end %>
+</div>
