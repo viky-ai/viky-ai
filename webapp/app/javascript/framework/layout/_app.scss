@@ -5,14 +5,20 @@
 .app-wrapper{
   @include display_flex();
   height: 100%;
-  nav{
+  & > nav{
     width: 200px;
     height: 100%;
   }
-  main{
+  & > main{
     @include flex(1);
     overflow: auto;
     height: 100%;
     padding: 2em;
   }
+}
+
+
+.pagination{
+  margin-top: 2em;
+  text-align: center;
 }
