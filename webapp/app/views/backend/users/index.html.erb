@@ -126,7 +126,7 @@
         <p>
           <%= t('views.backend.users.index.last_login') %>
           <% if user.current_sign_in_at.nil? %>
-            Never
+            <%= t('views.backend.users.index.never_login') %>
           <% else %>
             <%= l(user.current_sign_in_at, format: :short) %>
           <% end %>
@@ -136,8 +136,10 @@
         </p>
       <% else %>
         <p>
-          <%= t('views.backend.users.index.last_confirmation') %>
-          <%= l(user.confirmation_sent_at, format: :short) %>
+          <% unless user.confirmation_sent_at.nil? %>
+            <%= t('views.backend.users.index.last_confirmation') %>
+            <%= l(user.confirmation_sent_at, format: :short) %>
+          <% end %>
         </p>
       <% end %>
 
@@ -147,6 +149,16 @@
           <%= l(user.locked_at, format: :short) %>
         </p>
       <% end %>
+
+      <% unless user.invited_by.nil? %>
+        <p>
+          <%= t('views.backend.users.index.invited_by') %>
+          <%= user.invited_by.email %>
+          <%= t('views.backend.users.index.invited_at') %>
+          <%= l(user.created_at, format: :short) %>
+        </p>
+      <% end %>
+
     </div>
   </div>
 <% end %>

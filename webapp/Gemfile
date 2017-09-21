@@ -24,8 +24,9 @@ gem 'webpacker'
 # Environment variables at boostrap time
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 
-# User Devise as authentication solution
-gem 'devise'
+# Use Devise as authentication solution
+gem 'devise', '~> 4.3.0'
+gem 'devise_invitable', '~> 1.7.2'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'

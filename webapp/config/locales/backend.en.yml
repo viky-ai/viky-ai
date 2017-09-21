@@ -19,7 +19,10 @@ en:
             locked: Locked
           search:
             btn: Search
+          never_login: Never
           last_login: "Last login:"
           login_count: "Log in count:"
           last_confirmation: "Last confirmation sent at:"
           locked_at: "Locked at:"
+          invited_by: "Invited by:"
+          invited_at: "at:"

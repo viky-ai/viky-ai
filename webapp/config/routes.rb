@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, :controllers => { :invitations => 'backend/invitations' }
 
   namespace :backend do
     resources :users, only: [:index]
