@@ -1,0 +1,52 @@
+.nav{
+  background-color: #0E131A;
+  background-image: url(images/sky.png);
+  background-size: 200px 200px;
+  color: #fff;
+}
+.nav__header{
+  padding: 2em;
+}
+.nav__content{
+  height: calc(100% - 24px - 4em - 80px);
+  overflow-y: auto;
+  padding-bottom: 1em;
+  ul{
+    padding: 0;
+    list-style: none;
+    li{
+      a{
+        display:block;
+        padding: .45em 2em;
+        color: rgba(white, .7);
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        &:hover{
+          color: #fff;
+          background-color: rgba(black, .4);
+        }
+        &.current{
+          color: #fff;
+          border-left: 3px solid $primary_color;
+          background-color: rgba(black, .4);
+        }
+      }
+    }
+    ul li a{
+      font-size: .875em;
+      padding: .25em 3em;
+      small{
+        color: rgba(white, .35);
+      }
+    }
+  }
+}
+.nav__footer{
+  height: 80px;
+  background-color: rgba(black, .8);
+  padding: 1em 2em;
+  border-top: 1px solid rgba(white, .125);
+  box-shadow: 0 -1px 0 rgba(black, .9);
+  font-size: .9em;
+  color: rgba(white, .8);
+}

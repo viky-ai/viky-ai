@@ -1,0 +1,34 @@
+<section>
+  <h2>Nav</h2>
+  <p>
+    Used to navigate through application.
+  </p>
+  <%= highlight_html do %>
+<div class="nav">
+  <div class="nav__header">
+    <a href="#" class="logo">
+      <%= logo_on_dark %>
+    </a>
+  </div>
+  <div class="nav__content">
+    <ul>
+      <li><a href="#">Item A</a></li>
+      <li>
+        <a href="#" class="current">Item B</a>
+        <ul>
+          <li><a href="#">Item B1</a></li>
+          <li><a href="#">Item B2</a></li>
+          <li><a href="#" class="current">Item B3</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Item C</a></li>
+      <li><a href="#">Item D</a></li>
+      <li><a href="#">Item E</a></li>
+    </ul>
+  </div>
+  <div class="nav__footer">
+    Lorem ipsum dolor sit amet<br />
+    Consectetur adipisicing elit.
+  </div>
+</div>
+  <% end %>

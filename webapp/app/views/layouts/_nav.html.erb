@@ -1,0 +1,36 @@
+<div class="nav__header">
+  <a href="/" class="logo">
+    <%= logo_on_dark %>
+  </a>
+</div>
+<div class="nav__content">
+  <ul>
+    <li>
+      <a href="/" <% if controller_path.include?('welcome') %>class="current"<% end %>>
+        Home
+      </a>
+    </li>
+    <% if user_signed_in? %>
+      <% if current_user.admin %>
+        <li>
+          <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
+            Backend
+          </a>
+        </li>
+      <% end %>
+      <li>
+        <a href="/style-guide" <% if controller_path.include?('style_guide') %>class="current"<% end %>>
+          Style guide
+        </a>
+        <ul class="style-guide" data-turbolinks="false"></ul>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="nav__footer">
+  <% if user_signed_in? %>
+    <%= current_user.email %><br />
+    <%= link_to t('edit_profile'), edit_user_registration_path %> |
+    <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
+  <% end %>
+</div>

@@ -1,0 +1,34 @@
+<%= f.hidden_field :sort_by %>
+<%= t('views.backend.users.index.sort_by.label') %>
+<div class="dropdown">
+  <div class="dropdown__trigger">
+    <a href="#" class="btn">
+      <%= t("views.backend.users.index.sort_by.#{@search.sort_by}") %>
+      <span class="icon icon--x-small">
+        <%= icon_arrow_down %>
+      </span>
+    </a>
+  </div>
+  <div class="dropdown__content dropdown__content--hidden">
+    <ul>
+      <li>
+        <a href="#" <% if @search.sort_by == 'last_action' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="last_action"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.sort_by.last_action') %>
+        </a>
+      </li>
+      <li>
+        <a href="#" <% if @search.sort_by == 'email' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="email"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.sort_by.email') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

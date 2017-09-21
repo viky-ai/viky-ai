@@ -1,71 +1,3 @@
-$nav_width: 200px;
-$nav_main_color: #222;
-
-
-// Layout
-html,
-body{
-  height: 100%;
-}
-.sg{
-  height: 100%;
-  .sg-container{
-    height: 100%;
-    nav{
-      height: 100%;
-      float:left;
-      width: $nav_width;
-    }
-    main{
-      height: 100%;
-      overflow-y: auto;
-      float: right;
-      width: calc(100% - #{$nav_width});
-      padding: 2em;
-      background-color: #fff;
-    }
-  }
-}
-
-// Nav
-.sg{
-  background-color: #f9f9f9;
-  nav{
-    background-color: $nav_main_color;
-    h1{
-      font-size: 1em;
-      padding: 1em;
-      margin: 0;
-      color: #fff;
-      font-weight: 700;
-
-      background-color: rgba(black, .2);
-      border-bottom: 1px solid rgba(#fff, .1);
-    }
-    ul{
-      padding: 0;
-      margin: 0;
-      li{
-        list-style: none;
-        a{
-          display:block;
-          padding: .5em 1em;
-          font-weight: 300;
-          color: #eee;
-          text-decoration: none;
-          &:hover,&:focus{
-            background-color: rgba(black, .4);
-          }
-          small{
-            color: rgba(white, .4);
-          }
-        }
-      }
-    }
-  }
-}
-
-// Section
 .sg{
   section{
     margin: 4em 0;
@@ -97,17 +29,21 @@ body{
       max-height: 250px;
     }
   }
+  .component{
+    background-color: #fff;
+  }
   .light-background{
-    .component-and-code{
+    .component{
       background: linear-gradient(to top, #F7BB97, #DD5E89);
     }
   }
   .dark-background{
-    .component-and-code{
-      background: linear-gradient(to top, #000, #444);
+    .component{
+      background: linear-gradient(to top, #000, #222);
     }
   }
 }
+
 
 // Icons related
 .sg{
@@ -116,18 +52,21 @@ body{
     margin: 0;
     padding: 0;
     li{
+      background-color: #fff;
       float:left;
       border: 2px solid darken(#F5F2F0, 2%);
       text-align: center;
       margin: 0 1em 1em 0;
       padding-top: 1em;
       border-radius: 3px;
+      width: 12em;
     }
     code{
       display:block;
       padding: .25em .75em;
       margin-top: 1em;
       background-color: #F5F2F0;
+      font-size: .75em;
       border-radius: 0;
     }
   }

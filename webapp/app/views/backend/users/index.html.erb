@@ -1,113 +1,21 @@
-<%= form_for(
-      @search,
-      as: :search,
-      url: backend_users_path,
-      method: :get
-    ) do |f| %>
-
-  <div class="field">
-
-    <%= f.hidden_field :sort_by %>
-    <%= t('views.backend.users.index.sort_by.label') %>
-    <div class="dropdown">
-      <div class="dropdown__trigger">
-        <a href="#" class="btn">
-          <%= t("views.backend.users.index.sort_by.#{@search.sort_by}") %>
-          <span class="icon icon--x-small">
-            <%= icon_arrow_down %>
-          </span>
-        </a>
-      </div>
-      <div class="dropdown__content dropdown__content--hidden">
-        <ul>
-          <li>
-            <a href="#" <% if @search.sort_by == 'last_action' %>class="current"<% end %>
-               data-behavior="populate-input, submit-form"
-               data-input-selector="input[name='search[sort_by]']"
-               data-input-value="last_action"
-               data-form-selector=".new_search">
-              <%= t('views.backend.users.index.sort_by.last_action') %>
-            </a>
-          </li>
-          <li>
-            <a href="#" <% if @search.sort_by == 'email' %>class="current"<% end %>
-               data-behavior="populate-input, submit-form"
-               data-input-selector="input[name='search[sort_by]']"
-               data-input-value="email"
-               data-form-selector=".new_search">
-              <%= t('views.backend.users.index.sort_by.email') %>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <%= f.hidden_field :status %>
-    <%= t('views.backend.users.index.status.label') %>
-    <div class="dropdown">
-      <div class="dropdown__trigger">
-        <a href="#" class="btn">
-          <% if @search.status.blank? %>
-            <%= t('views.backend.users.index.status.all') %>
-          <% else %>
-            <%= t("views.backend.users.index.status.#{@search.status}") %>
-          <% end %>
-          <span class="icon icon--x-small">
-            <%= icon_arrow_down %>
-          </span>
-        </a>
-      </div>
-      <div class="dropdown__content dropdown__content--hidden">
-        <ul>
-          <li>
-            <a href="#" <% if @search.status.blank? %>class="current"<% end %>
-               data-behavior="populate-input, submit-form"
-               data-input-selector="input[name='search[status]']"
-               data-input-value=""
-               data-form-selector=".new_search">
-              <%= t('views.backend.users.index.status.all') %>
-            </a>
-          </li>
-          <li>
-            <a href="#" <% if @search.status == 'not-confirmed' %>class="current"<% end %>
-               data-behavior="populate-input, submit-form"
-               data-input-selector="input[name='search[status]']"
-               data-input-value="not-confirmed"
-               data-form-selector=".new_search">
-              <%= t('views.backend.users.index.status.not-confirmed') %>
-            </a>
-          </li>
-          <li>
-            <a href="#" <% if @search.status == 'locked' %>class="current"<% end %>
-               data-behavior="populate-input, submit-form"
-               data-input-selector="input[name='search[status]']"
-               data-input-value="locked"
-               data-form-selector=".new_search">
-              <%= t('views.backend.users.index.status.locked') %>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+<header class="header">
+  <div class="header__breadcrumb">
+    Backend / User Management
   </div>
-
-  <div class="field">
-    <%= f.label :email %>
-    <%= f.text_field :email %>
+  <div class="header__search">
+    <%= render "search" %>
   </div>
-  <div class="actions">
-    <%= f.button t('views.backend.users.index.search.btn'), class: "btn btn--primary",
-        data: {
-          disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-        } %>
+  <div class="header__tools">
+    <a href="#" class="btn btn--primary">Invite new user</a>
   </div>
-<% end %>
+</header>
 
-<h2><%= pluralize(@users.count, "user") %></h2>
-
-<% @users.each do |user| %>
-  <div class="card">
-    <div class="card-content">
+<div class="card">
+  <div class="card-content">
+    <h2>
+      <%= page_entries_info @users %>
+    </h2>
+    <% @users.each do |user| %>
       <h3>
         <%= user.email %>
         <% unless user.confirmed? %>
@@ -147,8 +55,10 @@
           <%= l(user.locked_at, format: :short) %>
         </p>
       <% end %>
-    </div>
-  </div>
-<% end %>
+    <% end %>
 
-<%= paginate @users %>
+
+    <%= paginate @users %>
+  </div>
+</div>
+

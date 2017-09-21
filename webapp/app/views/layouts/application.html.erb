@@ -9,27 +9,39 @@
     <%= stylesheet_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+    <%= stylesheet_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body data-controller-name="<%= controller_path %>"
-        data-controller-action="<%= action_name %>" style="padding: 3em;">
+        data-controller-action="<%= action_name %>"
+        class="app <% if controller_path.include?('style_guide') %>sg<% end %>">
 
-    <% unless notice.nil? %>
-      <div class="card card--notice">
-        <div class="card-content">
-          <%= notice %>
-        </div>
-      </div>
-    <% end %>
-    <% unless alert.nil? %>
-      <div class="card card--alert">
-        <div class="card-content">
-          <%= alert %>
-        </div>
-      </div>
-    <% end %>
+    <div class="app-wrapper">
+      <nav class="nav">
+        <%= render 'layouts/nav' %>
+      </nav>
 
-    <%= yield %>
+      <main>
+        <% unless notice.nil? %>
+          <div class="card card--notice">
+            <div class="card-content">
+              <%= notice %>
+            </div>
+          </div>
+        <% end %>
 
+        <% unless alert.nil? %>
+          <div class="card card--alert">
+            <div class="card-content">
+              <%= alert %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= yield %>
+      </main>
+    </div>
   </body>
 </html>

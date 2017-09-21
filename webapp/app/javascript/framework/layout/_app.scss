@@ -1,0 +1,18 @@
+.app{
+  background-color: #f5f5f5;
+}
+
+.app-wrapper{
+  display: flex;
+  height: 100%;
+  nav{
+    width: 200px;
+    height: 100%;
+  }
+  main{
+    overflow: auto;
+    height: 100%;
+    flex: 1;
+    padding: 2em;
+  }
+}

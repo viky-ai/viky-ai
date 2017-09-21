@@ -4,6 +4,58 @@
     margin-bottom: 1em;
   }
 
+  &.field--inline{
+    display: flex;
+    .control{
+      margin-right: 1.5em;
+      align-self: flex-end;
+      &:last-child{
+        margin-right: 0;
+      }
+    }
+  }
+
+  .control--merged{
+    display: flex;
+
+    input[type='text'],
+    input[type='email'],
+    input[type='password'],
+    .btn{
+      border-radius: 0;
+      margin-left: -1px;
+    }
+
+    input[type='text']:first-child,
+    input[type='email']:first-child,
+    input[type='password']:first-child,
+    .btn:first-child{
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      margin-left: 0;
+    }
+    input[type='text']:last-child,
+    input[type='email']:last-child,
+    input[type='password']:last-child,
+    .btn:last-child{
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+  }
+
+  &.field--inline--expanded{
+    .control{
+      flex-grow: 1;
+    }
+  }
+  &.field--inline--centered{
+    justify-content: center;
+  }
+  &.field--inline--right{
+    justify-content: flex-end;
+  }
+
   .field_with_errors { display: inline }
 
   label{

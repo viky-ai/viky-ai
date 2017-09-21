@@ -8,23 +8,126 @@
   <h3>Basic form example</h3>
   <%= highlight_html do %>
 <div class="field">
-  <label for="username">Username</label>
-  <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
 </div>
 <div class="field">
-  <label for="password">Password</label>
-  <input type="password" name="password" id="password" />
-  <div class="help">This is a help text</div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+    <div class="help">This is a help text</div>
+  </div>
 </div>
 <div class="field">
-  <input type="checkbox" id="rememberme">
-  <label class="checkbox" for="rememberme">Remember me</label>
+  <div class="control">
+    <input type="checkbox" id="rememberme">
+    <label class="checkbox" for="rememberme">Remember me</label>
+  </div>
 </div>
 <div class="field">
   <input type="submit" value="Log in" class="btn btn--primary" />
   <a href="#" class="btn btn--plain">Cancel</a>
 </div>
   <% end %>
+
+
+  <h3>Merged control</h3>
+  <%= highlight_html do %>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="One input" name="username" />
+    <input type="submit" value="Validate" class="btn btn--primary" />
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="One input" name="username" />
+    <input type="submit" value="Add" class="btn btn--primary" />
+    <input type="submit" value="Remove" class="btn btn--destructive" />
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="First input" />
+    <input type="text" placeholder="Second input" />
+    <input type="submit" value="Validate" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+
+
+  <h3>Inline form (left alignment)</h3>
+  <%= highlight_html do %>
+<div class="field field--inline">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+
+  <h3>Inline form (expanded)</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--expanded">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Inline form (center alignment)</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--centered">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Inline form (right alignment)</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--right">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
 
   <h3>Help message variants</h3>
   <%= highlight_html do %>

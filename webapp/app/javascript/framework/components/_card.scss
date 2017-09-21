@@ -6,13 +6,13 @@
 
   .card-content{
     padding: 2em;
-    p{
+    & > p{
       margin: 0;
     }
-    p:not(:last-child){
+    & > p:not(:last-child){
       margin-bottom: 1em;
     }
-    ul{
+    & > ul{
       padding: 0 1em;
     }
   }

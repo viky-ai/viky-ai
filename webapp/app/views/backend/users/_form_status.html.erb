@@ -1,0 +1,46 @@
+<%= f.hidden_field :status %>
+<div class="dropdown">
+  <div class="dropdown__trigger">
+    <a href="#" class="btn">
+      <% if @search.status.blank? %>
+        <%= t('views.backend.users.index.status.all') %>
+      <% else %>
+        <%= t("views.backend.users.index.status.#{@search.status}") %>
+      <% end %>
+      <span class="icon icon--x-small">
+        <%= icon_arrow_down %>
+      </span>
+    </a>
+  </div>
+  <div class="dropdown__content dropdown__content--hidden">
+    <ul>
+      <li>
+        <a href="#" <% if @search.status.blank? %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[status]']"
+           data-input-value=""
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.status.all') %>
+        </a>
+      </li>
+      <li>
+        <a href="#" <% if @search.status == 'not-confirmed' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[status]']"
+           data-input-value="not-confirmed"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.status.not-confirmed') %>
+        </a>
+      </li>
+      <li>
+        <a href="#" <% if @search.status == 'locked' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[status]']"
+           data-input-value="locked"
+           data-form-selector=".new_search">
+          <%= t('views.backend.users.index.status.locked') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
