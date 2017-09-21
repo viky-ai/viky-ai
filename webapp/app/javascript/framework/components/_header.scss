@@ -1,0 +1,16 @@
+.header{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2em;
+
+  .header__breadcrumb{
+    color: rgba(black, .5);
+  }
+  .header__search{
+
+  }
+  .header__tools{
+
+  }
+}

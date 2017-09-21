@@ -1,0 +1,22 @@
+<%= form_for(
+      @search,
+      as: :search,
+      url: backend_users_path,
+      method: :get
+    ) do |f| %>
+  <div class="field field--inline">
+    <div class="control control--merged">
+      <%= f.text_field :email, placeholder: "Search by email" %>
+      <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe, class: "btn",
+            data: {
+              disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+            } %>
+    </div>
+    <div class="control">
+      <%= render "form_status", f: f %>
+    </div>
+    <div class="control">
+      <%= render "form_sort_by", f: f %>
+    </div>
+  </div>
+<% end %>

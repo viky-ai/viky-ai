@@ -1,27 +1,14 @@
+<div class="card">
+  <div class="card-content">
+    <h1>voqal.ai</h1>
+    <h2 class="tagline">The AI next generation platform for voice search and bots.</h2>
 
-  <% if user_signed_in? %>
-    <p>
-      <%= current_user.email %>
-      <%= link_to t('edit_profile'), edit_user_registration_path %> |
-      <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
-    </p>
-  <% end %>
-
-  <h1>voqal.ai</h1>
-  <h2 class="tagline">The AI next generation platform for voice search and bots.</h2>
-
-  <% unless user_signed_in? %>
-    <p>
-      Access to <%= link_to t('signup'), new_user_registration_path %> or
-      <%= link_to t('login'), new_user_session_path %>.
-    </p>
-  <% end %>
-
-  <% if user_signed_in? %>
-    <p>
-      Developer ? Watch our <a href="style-guide">style guide</a>.
-    </p>
-    <% if current_user.admin %>
-      Oh, you are admin! <%= link_to "Go to backend", backend_users_path %>
+    <% unless user_signed_in? %>
+      <p>
+        Access to <%= link_to t('signup'), new_user_registration_path %> or
+        <%= link_to t('login'), new_user_session_path %>.
+      </p>
     <% end %>
-  <% end %>
+
+  </div>
+</div>
