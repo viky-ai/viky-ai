@@ -32,6 +32,13 @@ a.btn,
     transform: translateY(1px);
   }
 
+  &.btn--outline{
+    background-image: none;
+    &:hover{
+      border-color: #aaa;
+    }
+  }
+
   &.btn--primary{
     color: #fff;
     text-shadow: 0 1px 0 rgba(black, .2);
@@ -53,6 +60,17 @@ a.btn,
       box-shadow: 0 0 0 2px rgba($primary_color, .3);
       border-color: darken($primary_color, 13%);
       outline:0;
+    }
+
+    &.btn--outline{
+      background-image: none;
+      text-shadow: none;
+      border-color: $primary_color;
+      color: darken($primary_color, 10%);
+      &:hover{
+        color: #fff;
+        background-color: $primary_color;
+      }
     }
   }
 
@@ -78,6 +96,17 @@ a.btn,
       border-color: darken($destructive_color, 15%);
       outline:0;
     }
+
+    &.btn--outline{
+      background-image: none;
+      text-shadow: none;
+      border-color: $destructive_color;
+      color: darken($destructive_color, 10%);
+      &:hover{
+        color: #fff;
+        background-color: $destructive_color;
+      }
+    }
   }
 
   &.btn--plain{
@@ -101,7 +130,6 @@ a.btn,
   &.btn--large{
     font-size: 1.2em;
   }
-
   &.btn--full{
     width: 100%;
     text-align: center;

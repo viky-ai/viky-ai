@@ -59,3 +59,14 @@
     fill: #fff;
   }
 }
+
+.btn--primary.btn--outline .icon{
+  svg{
+    fill: $primary_color;
+  }
+}
+.btn--destructive.btn--outline .icon{
+  svg{
+    fill: $destructive_color;
+  }
+}

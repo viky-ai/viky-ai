@@ -7,7 +7,9 @@
     <%= render "search" %>
   </div>
   <div class="header__tools">
-    <a href="<%= new_user_invitation_path %>" class="btn btn--primary">Invite new user</a>
+    <a href="<%= new_user_invitation_path %>" class="btn btn--primary">
+      <span class="icon icon--small"><%= icon_add_circle %></span> New invitation
+    </a>
   </div>
 </header>
 
@@ -23,8 +25,8 @@
           <th>User</th>
           <th>Invitation</th>
           <th>Last action</th>
-          <th>Log in count</th>
-          <th></th>
+          <th class="number">Log in count</th>
+          <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
@@ -34,57 +36,63 @@
               <%= user.email %>
 
               <% if user.confirmed? %>
-                <span class="badge">
+                <span class="badge badge--success">
                   <%= t('views.backend.users.index.status.confirmed') %>
                 </span>
               <% else %>
-                <span class="badge">
+                <span class="badge badge--warning">
                   <%= t('views.backend.users.index.status.not-confirmed') %>
                 </span>
                 <% unless user.confirmation_sent_at.nil? %>
                   <p>
-                    <%= t('views.backend.users.index.last_confirmation') %>
-                    <%= l(user.confirmation_sent_at, format: :short) %>
+                    <small>
+                      <%= t('views.backend.users.index.last_confirmation') %>
+                      <%= l(user.confirmation_sent_at, format: :short) %>
+                    </small>
                   </p>
                 <% end %>
               <% end %>
 
               <% if user.locked_at? %>
-                <span class="badge">
+                <span class="badge badge--danger">
                   <%= t('views.backend.users.index.status.locked') %>
                 </span>
                 <p>
-                  <%= t('views.backend.users.index.locked_since') %>
-                  <%= l(user.locked_at, format: :short) %>
+                  <small>
+                    <%= t('views.backend.users.index.locked_since') %>
+                    <%= l(user.locked_at, format: :short) %>
+                  </small>
                 </p>
               <% end %>
             </td>
             <td>
               <% unless user.invited_by.nil? %>
                 <%= l(user.created_at, format: :short) %>
-                (<%= t('views.backend.users.index.invited_by') %>
-                <%= user.invited_by.email %>)
+                <small>
+                  (<%= t('views.backend.users.index.invited_by') %>
+                    <%= user.invited_by.email %>)
+                </small>
               <% end %>
             </td>
             <td>
               <% if user.confirmed? %>
                 <% unless user.current_sign_in_at.nil? %>
                   <%= l(user.current_sign_in_at, format: :short) %>
-                  <%= t('views.backend.users.index.last_login') %>
+                  <small><%= t('views.backend.users.index.last_login') %></small>
                 <% end %>
               <% else %>
                 <%= l(user.created_at, format: :short) %>
-                <%= t('views.backend.users.index.creation') %>
+                <small><%= t('views.backend.users.index.creation') %></small>
               <% end %>
             </td>
-            <td>
+            <td class="number">
               <% if user.confirmed? %>
                 <%= user.sign_in_count %>
               <% end %>
             </td>
-            <td>
-              <a href="#" class="btn btn--small btn--destructive">
-                <span class="icon icon--small"><%= icon_delete %></span> Delete
+            <td class="actions">
+              <a href="#" class="btn btn--small btn--outline btn--destructive">
+                Delete
               </a>
             </td>
           </tr>
