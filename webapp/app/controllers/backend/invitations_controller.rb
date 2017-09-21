@@ -2,6 +2,24 @@ class Backend::InvitationsController < Devise::InvitationsController
   before_action :authenticate_admin!, only: :new
   layout :switch_layout
 
+
+  # POST /resource/invitation
+  def create
+    self.resource = invite_resource
+    resource_invited = resource.errors.empty?
+
+    yield resource if block_given?
+
+    if resource_invited
+      if is_flashing_format? && self.resource.invitation_sent_at
+        set_flash_message :notice, :send_instructions, :email => self.resource.email
+      end
+      redirect_to backend_users_path, notice: "An invitation email has been sent to #{resource.email}."
+    else
+      respond_with_navigational(resource) { render :new }
+    end
+  end
+
   def authenticate_admin!
     unless (user_signed_in? && current_user.admin?)
       if user_signed_in?

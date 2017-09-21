@@ -38,4 +38,10 @@ en:
         title: Resend unlock instructions
         tagline: Resend unlock instructions
         btn: Resend unlock instructions
-
+    invitations:
+      new:
+        title: Invite a new user
+        btn: "Send invitation"
+      edit:
+        title: Finalize your invitation
+        tagline: Set password

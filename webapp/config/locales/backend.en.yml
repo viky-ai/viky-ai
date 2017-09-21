@@ -25,3 +25,7 @@ en:
           last_confirmation: "Last confirmation sent at"
           locked_since: "Locked at"
           invited_by: "by"
+      breadcrumb:
+        base: Backend
+        user_management: User management
+        user_invitation: User invitation

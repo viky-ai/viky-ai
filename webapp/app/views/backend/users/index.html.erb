@@ -1,12 +1,13 @@
 <header class="header">
   <div class="header__breadcrumb">
-    Backend / User Management
+    <%= link_to t('views.backend.breadcrumb.base'), backend_users_path %> /
+    <%= link_to t('views.backend.breadcrumb.user_management'), backend_users_path %>
   </div>
   <div class="header__search">
     <%= render "search" %>
   </div>
   <div class="header__tools">
-    <a href="#" class="btn btn--primary">Invite new user</a>
+    <a href="<%= new_user_invitation_path %>" class="btn btn--primary">Invite new user</a>
   </div>
 </header>
 

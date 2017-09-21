@@ -1,12 +1,34 @@
-<h2><%= t "devise.invitations.new.header" %></h2>
+<header class="header">
+  <div class="header__breadcrumb">
+    <%= link_to t('views.backend.breadcrumb.base'), backend_users_path %> /
+    <%= link_to t('views.backend.breadcrumb.user_management'), backend_users_path %> /
+    <%= link_to t('views.backend.breadcrumb.user_invitation'), new_user_invitation_path %>
+  </div>
+</header>
+
+<h2><%= t "views.invitations.new.title" %></h2>
 
 <%= form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
-  <%= devise_error_messages! %>
 
-<% resource.class.invite_key_fields.each do |field| -%>
-  <p><%= f.label field %><br />
-  <%= f.text_field field %></p>
-<% end -%>
+  <div class="field field--inline">
+    <% resource.class.invite_key_fields.each do |field| -%>
+      <div class="control">
+        <input type="text" placeholder="<%= field.capitalize %>" name="<%= field %>" id="<%= field %>" />
+      </div>
+    <% end -%>
 
-  <p><%= f.submit t("devise.invitations.new.submit_button") %></p>
+    <div class="control">
+      <div class="actions">
+        <%= f.button t('views.invitations.new.btn'), class: "btn btn--primary",
+          data: {
+            disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+        } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= display_errors(resource, :email) %>
+  </div>
+
 <% end %>

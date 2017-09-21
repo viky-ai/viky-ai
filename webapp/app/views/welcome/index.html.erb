@@ -5,8 +5,8 @@
 
     <% unless user_signed_in? %>
       <p>
-        Access to <%= link_to t('signup'), new_user_registration_path %> or
-        <%= link_to t('login'), new_user_session_path %>.
+        Access to <%= link_to t('views.welcome.index.signup'), new_user_registration_path %> or
+        <%= link_to t('views.welcome.index.login'), new_user_session_path %>.
       </p>
     <% end %>
 
