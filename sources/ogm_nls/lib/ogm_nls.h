@@ -180,46 +180,8 @@ typedef struct
   int length;
   nls_request_param params[50];
 } nls_request_paramList;
-/*
-enum JSonNodeType
-{
-  JSON_STRING,
-  JSON_NUMBER,
-  JSON_INT,
-  JSON_DOUBLE,
-  JSON_BOOLEAN,
-  JSON_START_MAP,
-  JSON_END_MAP,
-  JSON_START_ARRAY,
-  JSON_END_ARRAY
-};
 
-struct jsonNode
-{
-  int type;
-  char mapKey[DPcPathSize];
-  char stringValue[DPcPathSize];
-  char numberValue[DPcPathSize];
-  size_t valueSize;
-  size_t mapSize;
-  long long intValue;
-  double doubleValue;
-  int booleanValue;
-};
-*/
 #define maxArrayLevel 10
-/*
-struct jsonValuesContext
-{
-  struct og_listening_thread *lt;
-
-  struct jsonNode jsonNode;
-  og_bool bIsArray[maxArrayLevel];
-  int IsArrayUsed;
-  og_bool isEmpty;
-};
-
-
 
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
@@ -255,51 +217,6 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 /*
-/** lns_json
-og_status OgNLSJsonInit(struct og_listening_thread *lt);
-og_status OgNLSJsonReset(struct og_listening_thread *lt);
-og_status OgNLSJsonFlush(struct og_listening_thread *lt);
-og_status OgNLSJsonGenInteger(struct og_listening_thread *lt, long long int number);
-og_status OgNLSJsonGenDouble(struct og_listening_thread *lt, double number);
-og_status OgNLSJsonGenNumber(struct og_listening_thread *lt, og_string number, int len);
-og_status OgNLSJsonGenBool(struct og_listening_thread *lt, og_bool boolean);
-og_status OgNLSJsonGenString(struct og_listening_thread *lt, og_string string);
-og_status OgNLSJsonGenStringSized(struct og_listening_thread *lt, og_string string, int length);
-og_status OgNLSJsonGenKeyValueBool(struct og_listening_thread *lt, og_string key, og_bool boolean);
-og_status OgNLSJsonGenKeyValueNumber(struct og_listening_thread *lt, og_string key, og_string number, size_t l);
-og_status OgNLSJsonGenKeyValueString(struct og_listening_thread *lt, og_string key, og_string value_string);
-og_status OgNLSJsonGenKeyValueStringSized(struct og_listening_thread *lt, og_string key, og_string value_string,
-    int length);
-og_status OgNLSJsonGenKeyValueInteger(struct og_listening_thread *lt, og_string key, int number);
-og_status OgNLSJsonGenKeyValueDouble(struct og_listening_thread *lt, og_string key, double number);
-og_status OgNLSJsonGenKeyValueArrayOpen(struct og_listening_thread *lt, og_string key);
-og_status OgNLSJsonGenKeyValueMapOpen(struct og_listening_thread *lt, og_string key);
-og_status OgNLSJsonGenNull(struct og_listening_thread *lt);
-og_status OgNLSJsonGenArrayOpen(struct og_listening_thread *lt);
-og_status OgNLSJsonGenArrayClose(struct og_listening_thread *lt);
-og_status OgNLSJsonGenMapOpen(struct og_listening_thread *lt);
-og_status OgNLSJsonGenMapClose(struct og_listening_thread *lt);
-og_status OgNLSJsonReFormat(struct og_listening_thread *lt, og_string json, size_t json_size);
-og_status OgNLSJsonReadRequest(struct og_listening_thread *lt, og_string json, size_t json_size);
-
-int get_null(void * ctx);
-int get_boolean(void * ctx, int boolean);
-int get_integer(void * ctx, long long integerVal);
-int get_double(void * ctx, double doubleVal);
-int get_number(void * ctx, const char * numberVal, size_t l);
-int get_string(void * ctx, const unsigned char * stringVal, size_t stringLen);
-int get_map_key(void * ctx, const unsigned char * stringVal, size_t stringLen);
-int get_start_map(void * ctx);
-int get_end_map(void * ctx);
-int get_start_array(void * ctx);
-int get_end_array(void * ctx);
-
-og_status writeJsonNode(struct jsonValuesContext * ctx);
-
-/** nls_dataEngine.c **/
-
-og_status manageNodeReceived(struct jsonValuesContext * ctx);
-og_status changeTag(struct jsonValuesContext * ctx);
 
 /** nlsmt.c **/
 int OgMaintenanceThread(void *ptr);
