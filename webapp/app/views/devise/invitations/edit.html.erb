@@ -1,11 +1,11 @@
 <div class="card-animation-wrapper">
-  <div class="card">
+  <div class="card <% unless resource.errors.empty? %>card--shake<% end %>">
     <div class="card-content">
 
       <h2><%= t 'devise.invitations.edit.header' %></h2>
+      <%= devise_error_messages_but([:password, :password_confirmation]) %>
 
       <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put }) do |f| %>
-        <%= devise_error_messages_but([:password, :password_confirmation]) %>
         <%= f.hidden_field :invitation_token %>
 
         <% if f.object.class.require_password_on_accepting %>
