@@ -15,11 +15,7 @@ int OgMsgTemplateBuild(struct og_ctrl_msg *ctrl_msg, char *id, char *stemplate, 
   sdate[0] = 0;
   if (ctrl_msg->show_timestamp)
   {
-    time_t ltime;
-
-    time(&ltime);
-    struct tm *gmt = gmtime(&ltime);
-    strftime(sdate, DPcPathSize, "%Y-%m-%dT%H:%M:%SZ", gmt);
+    OgGetTimeISO8601(sdate,DPcPathSize);
   }
 
   sseverity[0] = 0;

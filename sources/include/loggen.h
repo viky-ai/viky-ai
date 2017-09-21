@@ -812,6 +812,7 @@ DEFPUBLIC(char *)           OgWriteErrnoMsg(void); // DEPRECATED
 DEFPUBLIC(char *)           OgStrError(char *msg);
 DEFPUBLIC(int)              OgGetTimeOfDay(struct timeval *tvp, void *tzp);
 DEFPUBLIC(struct tm *)      OgLocalTime(const time_t *, struct tm *);
+DEFPUBLIC(struct tm *)      OgGmtTime(const time_t *clck, struct tm *res);
 DEFPUBLIC(char *)           OgGetTimeISO8601(char *buffer, int size);
 
 //-- pipe
