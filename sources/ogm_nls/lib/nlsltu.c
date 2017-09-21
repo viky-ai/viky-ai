@@ -13,7 +13,6 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
 static void OgGetRequestParameters(struct og_listening_thread *lt , char * url, nls_request_paramList *paramatersList);
-
 static int compareEndPointWithString(const char * str1,const char *str2);
 static int sizeOfString(const char * str);
 /**
@@ -23,8 +22,6 @@ static int sizeOfString(const char * str);
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 {
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
-
-
 
   lt->t0 = OgMicroClock();
 
@@ -114,38 +111,19 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
   DONE;
 }
 
-static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
-    struct og_ucisr_output *output)
+static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output)
 {
-  int headerSize = output->header_length;
-  int contentSize = output->content_length - headerSize;
   lt->request_running = 1;
 
   nls_request_paramList parametersList ;
   IFn(parametersList.hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100)) DPcErr;
 
   OgGetRequestParameters(lt,output->hh.request_uri,&parametersList);
-  if(parametersList.length > 0)
+
+
+  if( ( compareEndPointWithString("/test", output->hh.request_uri) == 1 || compareEndPointWithString("/test/", output->hh.request_uri) == 1 ))
   {
-    for(int i=0;i<parametersList.length;i++)
-    {
-      OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox,"%s = %s",parametersList.params[i].key,parametersList.params[i].value);
-    }
-  }
-
-  if(compareEndPointWithString("/hello-world", output->hh.request_uri) == 1 && output->hh.request_method == DOgHttpHeaderTypeGet)
-  {
-    json_t *helloworld = json_object();
-
-    json_object_set(helloworld, "hello", json_string("world"));
-    char * json = json_dumps(helloworld,0);
-
-    winput->content_length = sizeOfString(json);
-    winput->content = json;
-
-    //free(json);
-    json_decref(helloworld);
-
+    endpoint_test(lt, winput, output, &parametersList);
   }
   else
   {
@@ -203,24 +181,26 @@ static void OgGetRequestParameters(struct og_listening_thread *lt , char * url, 
       {
         for (pQItem = queryList ; pQItem ; pQItem = pQItem->next)
         {
-          nls_request_param param;
+          if(pQItem->key != NULL && pQItem->value != NULL)
+          {
+            nls_request_param param;
 
-          int start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key)+1, pQItem->key)) ;
-          IFn(param.key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+            int start = OgHeapGetCellsUsed(parametersList->hba);
+            IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key)+1, pQItem->key)) ;
+            IFn(param.key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
-          start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value)+1, pQItem->value)) ;
-          IFn(param.value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+            start = OgHeapGetCellsUsed(parametersList->hba);
+            IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value)+1, pQItem->value)) ;
+            IFn(param.value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
-          parametersList->params[parametersList->length] = param ;
-          parametersList->length++;
+            parametersList->params[parametersList->length] = param ;
+            parametersList->length++;
+          }
         };
         uriFreeQueryListA(queryList);
       }
     }
     uriFreeUriMembersA(&uri);
-
 }
 
 

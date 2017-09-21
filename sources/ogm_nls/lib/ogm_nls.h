@@ -216,7 +216,13 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
 
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
-/*
 
 /** nlsmt.c **/
 int OgMaintenanceThread(void *ptr);
+
+/** endpoint-test.c **/
+void endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,nls_request_paramList *parametersList);
+
+
+
+

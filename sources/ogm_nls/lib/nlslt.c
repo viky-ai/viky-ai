@@ -16,8 +16,8 @@ int OgListeningThread(void *ptr)
   int retour;
   pthread_cleanup_push(NlsCancelCleanupOnTimeout,ptr)
     ;
-    retour = OgListeningThread1(ptr);
-    pthread_cleanup_pop(0);
+  retour = OgListeningThread1(ptr);
+  pthread_cleanup_pop(0);
   return (retour);
 }
 
@@ -110,13 +110,6 @@ og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
   DONE;
 }
 
-og_status NlsListeningThreadReset(struct og_listening_thread * lt)
-{
-  IFE(OgNLSJsonReset(lt));
-
-  DONE;
-}
-
 static void NlsCancelCleanupOnTimeout(void* context)
 {
   struct og_listening_thread *lt = (struct og_listening_thread *) context;
@@ -131,7 +124,6 @@ static void NlsCancelCleanupOnTimeout(void* context)
   OgListeningThreadError(lt);
   OgCloseSocket(lt->hsocket_in);
 
-  NlsListeningThreadReset(lt);
 
   // restart cancelled thread
   if (lt->ctrl_nls->conf->permanent_threads)

@@ -13,15 +13,14 @@
     <file>nlslter.c</file>
     <file>nlsltp.c</file>
     <file>nlsltu.c</file>
-    <file>nls_json.c</file>
-    <file>nls_dataEngine.c</file>
+    <file>nls_endpoint_test.c</file>
     <file>nlsmt.c</file>
   </sources>
   <platforms>
     <platform name="linux">
       <option name="NAME">ognls</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaddr -loguci -logsock -logthr -logheap -logmsg -loggen -lglib-2.0 -lyajl -ljansson -lulfius -lyder -lorcania -lmicrohttpd</option>
+      <option name="ADD_LIBR">-logaddr -loguci -logsock -logthr -logheap -logmsg -loggen -lglib-2.0 -ljansson -luriparser</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>
