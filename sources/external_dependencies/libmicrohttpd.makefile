@@ -26,7 +26,7 @@ all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 fullclean: clean
-	cd libmicrohttpd && $(MAKE) clean
+	-cd libmicrohttpd && $(MAKE) clean
 	rm -f libmicrohttpd/Makefile
 	rm -f libmicrohttpd/configure
 

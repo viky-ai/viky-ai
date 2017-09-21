@@ -28,7 +28,7 @@ all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 fullclean: clean
-	cd ulfius && $(MAKE) clean
+	-cd ulfius && $(MAKE) clean
 
 clean:
 	rm -f $(SRCPATH)/include/yder.h

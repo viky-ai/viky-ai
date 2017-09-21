@@ -25,7 +25,7 @@ all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
 fullclean: clean
-	cd jansson && $(MAKE) clean
+	-cd jansson && $(MAKE) clean
 	rm -rf jansson/Makefile
 	rm -rf jansson/configure
 
