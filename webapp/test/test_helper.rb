@@ -5,5 +5,10 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
+  def admin_login
+    visit new_user_session_path
+    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Password', with: 'AdminBoom'
+    click_button 'Log in'
+  end
 end
