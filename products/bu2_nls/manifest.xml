@@ -36,9 +36,11 @@
     <component name="ogm_addr/lib" />
     <component name="ogm_http/lib" />
     <component name="ogm_uci/lib" />
+    <component name="ogm_nlp/lib" />
     <component name="ogm_nls/lib" />
 
     <!-- programs -->
+    <component name="ogm_nlp/prog/ognlp" />
     <component name="ogm_nls/prog/ogm_nls" />
 
   </use>
@@ -51,6 +53,7 @@
         <file name="LICENSE.TXT" source="%OG_REPO_PATH%/products/bu2_nls/LICENSE.TXT" />
 
         <bin name="ogm_nls" source="%OG_REPO_PATH%/build/%TARGET%/bin/ogm_nls" />
+        <bin name="ognlp" source="%OG_REPO_PATH%/build/%TARGET%/bin/ognlp" />
 
         <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./" platform="linux" />
 

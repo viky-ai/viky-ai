@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>prog</type>
+  <project_name>ognlp</project_name>
+  <sources>
+    <file>ognlp.c</file>
+  </sources>
+  <platforms>
+    <platform name="linux">
+      <option name="NAME">ognlp</option>
+      <option name="ADD_CFLAGS"/>
+      <option name="ADD_LIBR">-lognlp -logmsg -loggen -logheap -logthr -lglib-2.0 -ljansson</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+  </platforms>
+</makefile>
