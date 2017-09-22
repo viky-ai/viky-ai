@@ -66,6 +66,9 @@ struct og_nls_conf
   /** Timeout for the request. If only answer_timeout is specified, request_processing_timeout is 80 % of answer_timeout*/
   int request_processing_timeout;
 
+  /** Timeout for the request. If only answer_timeout is specified, request_processing_timeout is 80 % of answer_timeout*/
+  int tmp_request_processing_timeout;
+
   /** backlog timeout specified only for indexing requests. If not specified, it has the same value as backlog_timeout*/
   int backlog_indexing_timeout;
   int backlog_max_pending_requests;
@@ -203,6 +206,7 @@ og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
 og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label,
     int additional_log_flags);
 og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
+og_status NlsJSONThrowError(struct og_listening_thread *lt, og_string function_name , json_error_t * error);
 
 /** nlsler.c **/
 og_status OgListeningThreadError(struct og_listening_thread *lt);
@@ -221,8 +225,14 @@ og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 int OgMaintenanceThread(void *ptr);
 
 /** endpoint-test.c **/
-void endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,nls_request_paramList *parametersList);
+og_status endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,nls_request_paramList *parametersList);
 
+char * default_response();
+const char * get_param_value(nls_request_paramList *parametersList, char * paramKey);
+int param_exists(nls_request_paramList *parametersList, char * paramKey);
+char * returnJsonName(const char * name);
+char * returnJsonWait(const char * wait);
+og_status wait(const char * wait);
 
 
 

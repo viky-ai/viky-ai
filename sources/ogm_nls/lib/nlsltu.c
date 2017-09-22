@@ -123,7 +123,7 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
 
   if( ( compareEndPointWithString("/test", output->hh.request_uri) == 1 || compareEndPointWithString("/test/", output->hh.request_uri) == 1 ))
   {
-    endpoint_test(lt, winput, output, &parametersList);
+    IFE(endpoint_test(lt, winput, output, &parametersList));
   }
   else
   {

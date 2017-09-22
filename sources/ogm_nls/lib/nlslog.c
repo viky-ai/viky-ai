@@ -10,7 +10,8 @@
 #define DOgNlsLogTruncatedBufferSize 64
 #define DOgNlsLogLabelBufferSize     64
 
-og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label, int additional_log_flags)
+og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label,
+    int additional_log_flags)
 {
   int is = lt->output->content_length - lt->output->header_length;
 
@@ -72,6 +73,14 @@ og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...)
 
   // add to error to stack
   return OgErr(lt->herr, textBuffer);
+
+}
+
+og_status NlsJSONThrowError(struct og_listening_thread *lt, og_string function_name, json_error_t * error)
+{
+  NlsThrowError(lt, "%s : Your json contains error in ligne %d and column %d , %s , %s ", function_name, error->line,
+      error->column, error->source, error->text);
+  DONE;
 
 }
 
