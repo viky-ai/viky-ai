@@ -15,11 +15,11 @@ a.btn,
   border: 1px solid #ddd;
   border-radius: 2px;
 
-  background: linear-gradient(to bottom, #fff 0%, #f5f5f5 100%);
+  background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
   cursor: pointer;
 
   &:hover{
-    background: linear-gradient(to bottom, #fff 0%, darken(#f5f5f5, 4%) 100%);
+    background: linear-gradient(to bottom, darken(#fff, 2%) 0%, darken(#f9f9f9, 3%) 100%);
   }
   &:focus{
     color: #000;
@@ -31,7 +31,7 @@ a.btn,
     transform: translateY(1px);
   }
   &.btn--disabled{
-    background: linear-gradient(to bottom, #fff 0%, #f5f5f5 100%);
+    background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
   }
   &.btn--disabled:active{
     transform: none;
