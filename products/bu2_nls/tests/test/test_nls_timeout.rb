@@ -19,7 +19,8 @@ class TestNlsTimeout < Minitest::Test
     }
 
     exception = assert_raises RestClient::ExceptionWithResponse do
-      nls_query_post(data)
+#      nls_query_post_by_parameters(data)
+      nls_query_get(data)
     end
 
     actual = JSON.parse(exception.response.body)
@@ -34,7 +35,8 @@ class TestNlsTimeout < Minitest::Test
     }
 
     exception = assert_raises RestClient::ExceptionWithResponse do
-      nls_query_post(data)
+#      nls_query_post_by_parameters(data)
+      nls_query_get(data)
     end
 
     actual = JSON.parse(exception.response.body)
@@ -51,7 +53,8 @@ class TestNlsTimeout < Minitest::Test
           wait: "infinite"
         }
         exception = assert_raises RestClient::ExceptionWithResponse do
-          nls_query_post(data)
+#          nls_query_post_by_parameters(data)
+          nls_query_get(data)
         end
 
         actual = JSON.parse(exception.response.body)
@@ -79,10 +82,11 @@ class TestNlsTimeout < Minitest::Test
         wait: 1500
       }
 
-      actual = nls_query_post(data)
+#      actual = nls_query_post_by_parameters(data)
+      actual = nls_query_get(data)
 
       expected = {
-        "Answer_wait" => 1500
+        "hello" => "world"
       }
 
       assert_equal expected, actual
