@@ -6,6 +6,23 @@ class User < ApplicationRecord
          :confirmable, :lockable, :timeoutable
 
 
+  def invitation_status
+    istatus = {status: :not_invited}
+    unless self.invitation_sent_at.nil?
+      cntdown = (DateTime.now.in_time_zone - self.invitation_sent_at)
+      if cntdown > User.invite_for
+        istatus[:status] = :expired
+      else
+        istatus[:status] = :valid
+        mm, ss = (User.invite_for - cntdown).divmod(60)
+        hh, mm = mm.divmod(60)
+        dd, hh = hh.divmod(24)
+        istatus[:count_down] = "#{dd} days #{hh} hours #{mm} minutes"
+      end
+    end
+    istatus
+  end
+
   def self.search(q = {})
     conditions = where("1 = 1")
 
@@ -31,4 +48,5 @@ class User < ApplicationRecord
 
     conditions
   end
+
 end

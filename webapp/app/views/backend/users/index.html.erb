@@ -31,6 +31,7 @@
       </thead>
       <tbody>
         <% @users.each do |user| %>
+          <% istatus = user.invitation_status %>
           <tr>
             <td>
               <%= user.email %>
@@ -45,6 +46,11 @@
                 <span class="badge badge--warning">
                   <%= t('views.backend.users.index.status.not-confirmed') %>
                 </span>
+                <% if istatus[:status] == :expired %>
+                  <span class="badge badge--danger">
+                    <%= t('views.backend.users.index.status.invitation-expired') %>
+                  </span>
+                <% end %>
                 <% unless user.confirmation_sent_at.nil? %>
                   <p>
                     <small>
@@ -76,6 +82,15 @@
                     <%= user.invited_by.email %>.
                   </small>
                 </p>
+                <% if istatus[:status] == :expired %>
+                  <a href="<%= reinvite_backend_user_path(user) %>" class="btn btn--primary btn--small btn--outline">
+                    <span class="icon icon--small"><%= icon_loading %></span> Resend invitation
+                  </a>
+                <% elsif istatus[:status] == :valid %>
+                  <small>
+                    expires in <%= istatus[:count_down] %>
+                  </small>
+                <% end %>
               <% end %>
             </td>
 
