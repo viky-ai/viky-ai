@@ -12,16 +12,15 @@ module Common
     "http://#{listening_address}/test"
   end
 
-  def nls_query_post_by_parameters(parameters)
-    #response  = RestClient.post(nls_url, param.to_json, content_type: :json)
-    response  = RestClient.post(nls_url, params: parameters)
+  def nls_query_get(parameters)
+    response  = RestClient.get(nls_url, params: parameters)
     JSON.parse(response.body)
   end
 
-  def nls_query_get(parameters)
-      response  = RestClient.get(nls_url, params: parameters)
-      JSON.parse(response.body)
-    end
+  def nls_query_post_by_parameters(parameters)
+    response  = RestClient.post(nls_url, {}.to_json, content_type: :json, params: parameters)
+    JSON.parse(response.body)
+  end
 
   def nls_query_post_by_body(param)
     response  = RestClient.post(nls_url, param.to_json, content_type: :json)
