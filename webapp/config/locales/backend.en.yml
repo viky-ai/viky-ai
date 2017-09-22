@@ -42,6 +42,11 @@ en:
           locked_since: Locked at
           invited_by: by
           expiration: expires in
+        confirm_destroy:
+          title: Are you sure?
+          content_html: "You're about to delete user with the email: <strong>%{email}</strong>."
+        destroy:
+          message: "User with the email: %{email} has successfully been deleted."
       breadcrumb:
         base: Backend
         user_management: User management

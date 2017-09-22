@@ -2,8 +2,11 @@ Rails.application.routes.draw do
   devise_for :users, :controllers => { :invitations => 'backend/invitations' }
 
   namespace :backend do
-    resources :users, only: [:index] do
-      get :reinvite, on: :member
+    resources :users, only: [:index, :destroy] do
+      member do
+        get :confirm_destroy
+        get :reinvite
+      end
     end
   end
 

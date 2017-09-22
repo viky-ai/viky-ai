@@ -8,3 +8,4 @@ import './main'
 import './password';
 import './dropdown';
 import './modal';
+import './form_delete_validation'

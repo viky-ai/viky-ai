@@ -21,6 +21,16 @@ class Modal
       $(modal_selector).show()
       $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 
+    if action is "open-remote-modal"
+      event.preventDefault()
+      $.ajax
+        url: node.attr('href')
+        complete: (data) =>
+          $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
+          $('#modal_container').html(data.responseText);
+          $('#modal_container .modal').show()
+          $(document).on 'keyup', (e) => @close() if e.keyCode == 27
+
     if action is "close-modal"
       event.preventDefault()
       @close()

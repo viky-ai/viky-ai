@@ -1,2 +1,6 @@
 en:
   loading: Loading
+  cancel: Cancel
+  confirm_destroy:
+    label: Type DELETE to confirm
+    error: Please enter the text exactly as it is displayed to confirm.

@@ -111,7 +111,7 @@
               <% end %>
             </td>
             <td class="actions">
-              <a href="#" class="btn btn--small btn--outline btn--destructive">
+              <a href="<%= confirm_destroy_backend_user_path(user) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
                 <%= t('views.backend.users.index.delete.btn') %>
               </a>
             </td>
