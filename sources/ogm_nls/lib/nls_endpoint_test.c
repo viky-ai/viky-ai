@@ -96,7 +96,7 @@ og_status endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *w
 
     if(name_json != NULL)
     {
-      json_object_set(reponse_json, "name", name_json);
+      json_object_set(reponse_json, "hello", name_json);
     }
 
     if (id_json != NULL)

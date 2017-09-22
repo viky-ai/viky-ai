@@ -50,7 +50,7 @@ class TestNlsTimeoutGet < Minitest::Test
     thr1 = Thread.new {
       begin
         data = {
-          timeout:1500,
+          timeout:500,
           wait: "infinite"
         }
         exception = assert_raises RestClient::ExceptionWithResponse do
@@ -65,7 +65,7 @@ class TestNlsTimeoutGet < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(1)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -79,13 +79,13 @@ class TestNlsTimeoutGet < Minitest::Test
     thr1 = Thread.new {
 
       data = {
-        wait: 1500
+        wait: 500
       }
 
       actual = nls_query_get(data)
 
       expected = {
-        "wait" => "1500"
+        "wait" => "500"
       }
 
       assert_equal expected, actual
@@ -93,7 +93,7 @@ class TestNlsTimeoutGet < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(0.5)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -154,7 +154,7 @@ class TestNlsTimeoutPostByParameters < Minitest::Test
     thr1 = Thread.new {
       begin
         data = {
-          timeout:150,
+          timeout:500,
           wait: "infinite"
         }
         exception = assert_raises RestClient::ExceptionWithResponse do
@@ -169,7 +169,7 @@ class TestNlsTimeoutPostByParameters < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(1)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -183,13 +183,13 @@ class TestNlsTimeoutPostByParameters < Minitest::Test
     thr1 = Thread.new {
 
       data = {
-        wait: 1500
+        wait: 500
       }
 
       actual = nls_query_post_by_parameters(data)
 
       expected = {
-        "wait" => "1500"
+        "wait" => "500"
       }
 
       assert_equal expected, actual
@@ -197,7 +197,7 @@ class TestNlsTimeoutPostByParameters < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(0.5)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -258,7 +258,7 @@ class TestNlsTimeoutPostByBody < Minitest::Test
     thr1 = Thread.new {
       begin
         data = {
-          timeout:1500,
+          timeout:500,
           wait: "infinite"
         }
         exception = assert_raises RestClient::ExceptionWithResponse do
@@ -273,7 +273,7 @@ class TestNlsTimeoutPostByBody < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(1)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -287,13 +287,13 @@ class TestNlsTimeoutPostByBody < Minitest::Test
     thr1 = Thread.new {
 
       data = {
-        wait: 1500
+        wait: 500
       }
 
       actual = nls_query_post_by_body(data)
 
       expected = {
-        "wait" => 1500
+        "wait" => 500
       }
 
       assert_equal expected, actual
@@ -301,7 +301,7 @@ class TestNlsTimeoutPostByBody < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(0.5)
+      sleep(0.2)
       Nls.stop
     }
 
