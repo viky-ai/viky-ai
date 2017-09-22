@@ -128,8 +128,6 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
     uci_param->loginfo.where = ctrl_nls->loginfo->where;
     IFn(lt->hucis=OgUciServerInit(uci_param)) return (0);
 
-    IF(OgNLSJsonInit(lt)) return NULL;
-
   }
 
   if (ctrl_nls->conf->permanent_threads)
@@ -208,7 +206,6 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
   {
     struct og_listening_thread *lt = ctrl_nls->Lt + i;
     IFE(OgUciServerFlush(lt->hucis));
-    IFE(OgNLSJsonFlush(lt));
     OgErrFlush(lt->herr);
   }
   DPcFree(ctrl_nls->Lt);

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TestNlsTimeout < Minitest::Test
+class TestNlsTimeoutGet < Minitest::Test
 
   include Common
 
@@ -15,11 +15,12 @@ class TestNlsTimeout < Minitest::Test
   def test_timeout
 
     data = {
-      wait: 5000
+      timeout:100,
+      wait: 150
     }
 
     exception = assert_raises RestClient::ExceptionWithResponse do
-      nls_query_post(data)
+      nls_query_get(data)
     end
 
     actual = JSON.parse(exception.response.body)
@@ -30,11 +31,12 @@ class TestNlsTimeout < Minitest::Test
 
   def test_infinite_loop
     data = {
+      timeout:100,
       wait: "infinite"
     }
 
     exception = assert_raises RestClient::ExceptionWithResponse do
-      nls_query_post(data)
+      nls_query_get(data)
     end
 
     actual = JSON.parse(exception.response.body)
@@ -48,10 +50,11 @@ class TestNlsTimeout < Minitest::Test
     thr1 = Thread.new {
       begin
         data = {
+          timeout:500,
           wait: "infinite"
         }
         exception = assert_raises RestClient::ExceptionWithResponse do
-          nls_query_post(data)
+          nls_query_get(data)
         end
 
         actual = JSON.parse(exception.response.body)
@@ -62,7 +65,7 @@ class TestNlsTimeout < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(1)
+      sleep(0.2)
       Nls.stop
     }
 
@@ -76,13 +79,13 @@ class TestNlsTimeout < Minitest::Test
     thr1 = Thread.new {
 
       data = {
-        wait: 1500
+        wait: 500
       }
 
-      actual = nls_query_post(data)
+      actual = nls_query_get(data)
 
       expected = {
-        "Answer_wait" => 1500
+        "wait" => "500"
       }
 
       assert_equal expected, actual
@@ -90,7 +93,215 @@ class TestNlsTimeout < Minitest::Test
     }
 
     thr2 = Thread.new {
-      sleep(0.5)
+      sleep(0.2)
+      Nls.stop
+    }
+
+    thr1.join
+    thr2.join
+  end
+
+
+end
+
+class TestNlsTimeoutPostByParameters < Minitest::Test
+
+  include Common
+
+  def setup
+    Nls.start
+  end
+
+  Minitest.after_run do
+    Nls.stop
+  end
+
+  def test_timeout
+
+    data = {
+      timeout:150,
+      wait: 5000
+    }
+
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query_post_by_parameters(data)
+    end
+
+    actual = JSON.parse(exception.response.body)
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+    assert actual["errors"].first.include? expected_error
+  end
+
+  def test_infinite_loop
+    data = {
+      timeout:150,
+      wait: "infinite"
+    }
+
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query_post_by_parameters(data)
+    end
+
+    actual = JSON.parse(exception.response.body)
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+    assert actual["errors"].first.include? expected_error
+  end
+
+  def test_stop_during_request_with_timeout
+
+    thr1 = Thread.new {
+      begin
+        data = {
+          timeout:500,
+          wait: "infinite"
+        }
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          nls_query_post_by_parameters(data)
+        end
+
+        actual = JSON.parse(exception.response.body)
+        expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+        assert actual["errors"].first.include? expected_error
+      end
+    }
+
+    thr2 = Thread.new {
+      sleep(0.2)
+      Nls.stop
+    }
+
+    thr1.join
+    thr2.join
+
+  end
+
+  def test_stop_during_request_without_timeout
+
+    thr1 = Thread.new {
+
+      data = {
+        wait: 500
+      }
+
+      actual = nls_query_post_by_parameters(data)
+
+      expected = {
+        "wait" => "500"
+      }
+
+      assert_equal expected, actual
+
+    }
+
+    thr2 = Thread.new {
+      sleep(0.2)
+      Nls.stop
+    }
+
+    thr1.join
+    thr2.join
+  end
+
+
+end
+
+class TestNlsTimeoutPostByBody < Minitest::Test
+
+  include Common
+
+  def setup
+    Nls.start
+  end
+
+  Minitest.after_run do
+    Nls.stop
+  end
+
+  def test_timeout
+
+    data = {
+      timeout:150,
+      wait: 5000
+    }
+
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query_post_by_body(data)
+    end
+
+    actual = JSON.parse(exception.response.body)
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+    assert actual["errors"].first.include? expected_error
+  end
+
+  def test_infinite_loop
+    data = {
+      timeout:150,
+      wait: "infinite"
+    }
+
+    exception = assert_raises RestClient::ExceptionWithResponse do
+      nls_query_post_by_body(data)
+    end
+
+    actual = JSON.parse(exception.response.body)
+    expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+    assert actual["errors"].first.include? expected_error
+  end
+
+  def test_stop_during_request_with_timeout
+
+    thr1 = Thread.new {
+      begin
+        data = {
+          timeout:500,
+          wait: "infinite"
+        }
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          nls_query_post_by_body(data)
+        end
+
+        actual = JSON.parse(exception.response.body)
+        expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+
+        assert actual["errors"].first.include? expected_error
+      end
+    }
+
+    thr2 = Thread.new {
+      sleep(0.2)
+      Nls.stop
+    }
+
+    thr1.join
+    thr2.join
+
+  end
+
+  def test_stop_during_request_without_timeout
+
+    thr1 = Thread.new {
+
+      data = {
+        wait: 500
+      }
+
+      actual = nls_query_post_by_body(data)
+
+      expected = {
+        "wait" => 500
+      }
+
+      assert_equal expected, actual
+
+    }
+
+    thr2 = Thread.new {
+      sleep(0.2)
       Nls.stop
     }
 

@@ -79,7 +79,22 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
       lt->request_running_time = clock_tick_time - lt->request_running_start;
 
       nb_running_threads++;
-      if (lt->ctrl_nls->conf->request_processing_timeout)
+      if(lt->ctrl_nls->conf->tmp_request_processing_timeout > 0)
+      {
+        if (!lt->looping && lt->request_running_time >= lt->ctrl_nls->conf->tmp_request_processing_timeout)
+        {
+          lt->looping = TRUE;
+          OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamDateIn,
+              "OgMaintenanceThreadTick: a request is running for more than %d milliseconds (%d milliseconds) on thread %d, LT= %d",
+              lt->ctrl_nls->conf->tmp_request_processing_timeout, lt->request_running_time, lt->ID, i);
+          if (lt->current_thread > 0)
+          {
+            lt->ctrl_nls->conf->tmp_request_processing_timeout = -1 ;
+            pthread_cancel(lt->current_thread);
+          }
+        }
+      }
+      else if (lt->ctrl_nls->conf->request_processing_timeout)
       {
         /* The lt->looping is designed so that the request is logged only once
          * This does not kill the request, thus the only way to stop that request

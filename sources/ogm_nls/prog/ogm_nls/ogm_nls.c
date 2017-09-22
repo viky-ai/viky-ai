@@ -378,7 +378,7 @@ static void LogErrors(struct og_nls_prog *nls_prog, char *label)
 
 void DoExit(struct og_nls_prog *nls_prog)
 {
-  int mb = DOgMsgDestInLog + DOgMsgDestInErr;
+  int mb = DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgDestMBox;
   OgMsgErr(nls_prog->hmsg, "ogm_nls_error", 1, 0, 0, DOgMsgSeverityEmergency, 0);
   OgMsg(nls_prog->hmsg, "exiting_on_error", mb, "Program ogm_nls exiting on error.");
   exit(1);
