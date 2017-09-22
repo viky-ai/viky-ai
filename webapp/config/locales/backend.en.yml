@@ -33,15 +33,18 @@ en:
             confirmed: Confirmed
             not-confirmed: Not confirmed
             locked: Locked
+          admin_badge: Admin
           search:
             btn: Search
           delete:
             btn: Delete
+          reinvite:
+            btn: Re-invite
           last_confirmation: Last confirmation sent on
-          last_invitation: Last invitation sent on
           locked_since: Locked at
-          invited_by: by
-          expiration: expires in
+          invited_by: by %{email}
+          invitation_expires_in: Invitation expires in
+          invitation_send_on: Sent on %{date}
         confirm_destroy:
           title: Are you sure?
           content_html: "You're about to delete user with the email: <strong>%{email}</strong>."

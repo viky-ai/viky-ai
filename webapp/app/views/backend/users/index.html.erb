@@ -31,10 +31,12 @@
       </thead>
       <tbody>
         <% @users.each do |user| %>
-          <% istatus = user.invitation_status %>
           <tr>
             <td>
               <%= user.email %>
+              <% if user.admin? %>
+                <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
+              <% end %>
             </td>
 
             <td>
@@ -46,11 +48,6 @@
                 <span class="badge badge--warning">
                   <%= t('views.backend.users.index.status.not-confirmed') %>
                 </span>
-                <% if istatus[:status] == :expired %>
-                  <span class="badge badge--danger">
-                    <%= t('views.backend.users.index.status.invitation-expired') %>
-                  </span>
-                <% end %>
                 <% unless user.confirmation_sent_at.nil? %>
                   <p>
                     <small>
@@ -73,26 +70,23 @@
                 </p>
               <% end %>
 
-              <% unless user.invited_by.nil? %>
-                <p>
-                  <small>
-                    <%= t('views.backend.users.index.last_invitation') %>
-                    <%= l(user.created_at, format: :short) %><br />
-                    <%= t('views.backend.users.index.invited_by') %>
-                    <%= user.invited_by.email %>.
-                  </small>
-                </p>
-                <% if istatus[:status] == :expired %>
-                  <a href="<%= reinvite_backend_user_path(user) %>" class="btn btn--primary btn--small btn--outline">
-                    <span class="icon icon--small"><%= icon_loading %></span> Resend invitation
-                  </a>
-                <% elsif (istatus[:status] == :valid && User.invite_for != 0) %>
-                  <small>
-                    <%= t('views.backend.users.index.expiration') %>
-                    <%= distance_of_time_in_words(
-                      user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
-                      scope: 'views.datetime.distance_in_words.short') %>
-                  </small>
+              <% unless user.invitation_status == :not_invited %>
+                <% if user.invitation_status == :valid %>
+                  <p>
+                    <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :short)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
+                      <%= t('views.backend.users.index.invitation_expires_in') %>
+                      <%= distance_of_time_in_words(
+                            user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
+                            scope: 'views.datetime.distance_in_words.short'
+                          ) %>
+                    </small>
+                  </p>
+                <% else %>
+                  <% if user.invitation_status == :expired %>
+                    <span class="badge badge--danger">
+                      <%= t('views.backend.users.index.status.invitation-expired') %>
+                    </span>
+                  <% end %>
                 <% end %>
               <% end %>
             </td>
@@ -111,6 +105,11 @@
               <% end %>
             </td>
             <td class="actions">
+              <% unless user.confirmed? %>
+                <a href="<%= reinvite_backend_user_path(user) %>" class="btn btn--primary btn--small btn--outline">
+                  <%= t('views.backend.users.index.reinvite.btn') %>
+                </a>
+              <% end %>
               <a href="<%= confirm_destroy_backend_user_path(user) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
                 <%= t('views.backend.users.index.delete.btn') %>
               </a>

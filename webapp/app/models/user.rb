@@ -5,12 +5,11 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable, :lockable, :timeoutable
 
-
   def invitation_status
-    istatus = {status: :not_invited}
-    unless self.invitation_sent_at.nil?
-      cntdown = (DateTime.now.in_time_zone - self.invitation_sent_at)
-      istatus[:status] = (User.invite_for != 0 && cntdown > User.invite_for) ? :expired : :valid
+    istatus = :not_invited
+    unless invitation_sent_at.nil?
+      cntdown = (DateTime.now.in_time_zone - invitation_sent_at)
+      istatus = (cntdown > User.invite_for) ? :expired : :valid
     end
     istatus
   end
