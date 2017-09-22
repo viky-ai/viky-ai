@@ -17,7 +17,6 @@
 
     <component name="glib" />
     <component name="libiconv" />
-    <component name="yajl" />
 
     <!-- Pertimm libs -->
     <component name="ogm_gen/lib" />
