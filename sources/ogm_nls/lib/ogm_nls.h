@@ -19,9 +19,9 @@
 #include <uriparser/Uri.h>
 #include <uriparser/UriBase.h>
 
-#include <yajl/yajl_gen.h>
-#include <yajl/yajl_parse.h>
-#include <yajl/yajl_tree.h>
+//#include <yajl/yajl_gen.h>
+//#include <yajl/yajl_parse.h>
+//#include <yajl/yajl_tree.h>
 
 #include <string.h>
 
@@ -72,16 +72,16 @@ struct og_nls_conf
 
 };
 
-struct json_object
-{
-  yajl_gen yajl_gen;
-
-  og_bool error_detected;
-
-  /**  Yajl Json json buffer **/
-  og_heap hb_json_buffer;
-
-};
+//struct json_object
+//{
+//  yajl_gen yajl_gen;
+//
+//  og_bool error_detected;
+//
+//  /**  Yajl Json json buffer **/
+//  og_heap hb_json_buffer;
+//
+//};
 
 /** data structure for a listening thread **/
 struct og_listening_thread
@@ -117,8 +117,8 @@ struct og_listening_thread
   ogint64_t t0, t1, t2, t3, ot3;
 
   pthread_t current_thread;
-  struct json_object json[1];
-  yajl_handle parser;
+  // struct json_object json[1];
+  // yajl_handle parser;
 
 };
 

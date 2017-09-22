@@ -34,9 +34,8 @@ void endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput
         json_object_set(response_json, "hello", json_string(parametersList->params[i].value));
         response = json_dumps(response_json, 0);
         json_decref(response_json);
-        break;
       }
-      if (strcmp(parametersList->params[i].key, "wait") == 0)
+      else if (strcmp(parametersList->params[i].key, "wait") == 0)
       {
         if(strcmp(parametersList->params[i].value, "infinity") == 0 || strcmp(parametersList->params[i].value, "infinite") == 0 )
         {
@@ -45,10 +44,9 @@ void endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput
         }
         else
         {
-
           int sleep_for = atoi(parametersList->params[i].value) ;
           IFE(OgHeapFlush(parametersList->hba));
-          sleep(sleep_for);
+          OgSleep(sleep_for);
         }
       }
     }
