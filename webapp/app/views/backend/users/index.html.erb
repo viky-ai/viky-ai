@@ -86,9 +86,12 @@
                   <a href="<%= reinvite_backend_user_path(user) %>" class="btn btn--primary btn--small btn--outline">
                     <span class="icon icon--small"><%= icon_loading %></span> Resend invitation
                   </a>
-                <% elsif istatus[:status] == :valid %>
+                <% elsif (istatus[:status] == :valid && User.invite_for != 0) %>
                   <small>
-                    expires in <%= istatus[:count_down] %>
+                    <%= t('views.backend.users.index.expiration') %>
+                    <%= distance_of_time_in_words(
+                      user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
+                      scope: 'views.datetime.distance_in_words.short') %>
                   </small>
                 <% end %>
               <% end %>
@@ -109,7 +112,7 @@
             </td>
             <td class="actions">
               <a href="#" class="btn btn--small btn--outline btn--destructive">
-                Delete
+                <%= t('views.backend.users.index.delete.btn') %>
               </a>
             </td>
           </tr>

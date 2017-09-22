@@ -10,15 +10,7 @@ class User < ApplicationRecord
     istatus = {status: :not_invited}
     unless self.invitation_sent_at.nil?
       cntdown = (DateTime.now.in_time_zone - self.invitation_sent_at)
-      if cntdown > User.invite_for
-        istatus[:status] = :expired
-      else
-        istatus[:status] = :valid
-        mm, ss = (User.invite_for - cntdown).divmod(60)
-        hh, mm = mm.divmod(60)
-        dd, hh = hh.divmod(24)
-        istatus[:count_down] = "#{dd} days #{hh} hours #{mm} minutes"
-      end
+      istatus[:status] = (User.invite_for != 0 && cntdown > User.invite_for) ? :expired : :valid
     end
     istatus
   end

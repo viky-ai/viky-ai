@@ -4,7 +4,22 @@ en:
       application:
         not_signed_in: Please, log in before continuing.
         not_admin: You do not have permission to access this interface.
+        invitation_sent: "An invitation email has been sent to %{resource_email}."
+      users:
+        invitation_resent: "An invitation email has been sent to %{resource_email}."
   views:
+    datetime:
+      distance_in_words:
+        short:
+          x_hours:
+            one: 'an hour'
+            other: '%{count} hours'
+          x_days:
+            one: 'a day'
+            other: '%{count} days'
+          x_minutes:
+            one: 'a minute'
+            other: '%{count} minutes'
     backend:
       users:
         index:
@@ -20,10 +35,13 @@ en:
             locked: Locked
           search:
             btn: Search
-          last_confirmation: "Last confirmation sent on"
-          last_invitation: "Last invitation sent on"
-          locked_since: "Locked at"
-          invited_by: "by"
+          delete:
+            btn: Delete
+          last_confirmation: Last confirmation sent on
+          last_invitation: Last invitation sent on
+          locked_since: Locked at
+          invited_by: by
+          expiration: expires in
       breadcrumb:
         base: Backend
         user_management: User management

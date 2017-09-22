@@ -14,7 +14,7 @@ class Backend::InvitationsController < Devise::InvitationsController
       if is_flashing_format? && self.resource.invitation_sent_at
         set_flash_message :notice, :send_instructions, :email => self.resource.email
       end
-      redirect_to backend_users_path, notice: "An invitation email has been sent to #{resource.email}."
+      redirect_to backend_users_path, notice: t('controllers.backend.application.invitation_sent', resource_email: resource.email)
     else
       respond_with_navigational(resource) { render :new }
     end
