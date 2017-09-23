@@ -125,7 +125,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal before_count - 1, delete_buttons_after.count
   end
 
-  test 'Invitations can be resent to not confirmed users' do
+  test 'Invitations can be resent to not confirmed users only' do
     visit new_user_session_path
 
     fill_in 'Email', with: 'admin@voqal.ai'
@@ -135,16 +135,17 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     visit backend_users_path
 
-    breaked = false
     all("tbody tr").each do |tr|
-      if tr.all('td').map {|td| td.text}.join.include?('Not confirmed')
-        tr.all('.btn--primary', text: 'Re-invite').first.click
-        breaked = true
-        break
+      user_line = tr.all('td').map {|td| td.text}.join
+      if user_line.include?('Not confirmed')
+        assert user_line.include?('Re-invite')
+      else
+        assert user_line.include?('Confirmed')
+        assert !user_line.include?('Re-invite')
       end
     end
 
-    assert breaked 
+    all('.btn--primary', text: 'Re-invite').first.click
     sleep 0.5
     assert_equal '/backend/users', current_path
     assert page.has_content?('An invitation email has been sent to')
