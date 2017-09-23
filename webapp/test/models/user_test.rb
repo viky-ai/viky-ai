@@ -18,6 +18,7 @@ class UserTest < ActiveSupport::TestCase
       'locked@voqal.ai',
       'admin@voqal.ai',
       'confirmed@voqal.ai',
+      'invited@voqal.ai',
       'notconfirmed@voqal.ai'
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
@@ -27,6 +28,7 @@ class UserTest < ActiveSupport::TestCase
     expected = [
       'admin@voqal.ai',
       'confirmed@voqal.ai',
+      'invited@voqal.ai',
       'locked@voqal.ai',
       'notconfirmed@voqal.ai'
     ]
@@ -36,7 +38,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "search & status" do
     s = Backend::UserSearch.new
-    assert_equal 4, User.search(s.options).count
+    assert_equal 5, User.search(s.options).count
 
     s = Backend::UserSearch.new(status: 'confirmed')
     assert_equal 3, User.search(s.options).count
@@ -48,8 +50,12 @@ class UserTest < ActiveSupport::TestCase
     assert_equal expected, User.search(s.options).all.collect(&:email)
 
     s = Backend::UserSearch.new(status: 'not-confirmed')
-    assert_equal 1, User.search(s.options).count
-    assert_equal "notconfirmed@voqal.ai", User.search(s.options).first.email
+    assert_equal 2, User.search(s.options).count
+    expected = [
+      'invited@voqal.ai',
+      'notconfirmed@voqal.ai'
+    ]
+    assert_equal expected, User.search(s.options).all.collect(&:email)
 
     s = Backend::UserSearch.new(status: 'locked')
     assert_equal 1, User.search(s.options).count
@@ -59,7 +65,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "search by email" do
     s = Backend::UserSearch.new
-    assert_equal 4, User.search(s.options).count
+    assert_equal 5, User.search(s.options).count
 
     s = Backend::UserSearch.new(email: 'lock')
     assert_equal 1, User.search(s.options).count
@@ -79,6 +85,15 @@ class UserTest < ActiveSupport::TestCase
 
     s = Backend::UserSearch.new(sort_by: 'email', email: "locked")
     assert !s.empty?
+  end
+
+  test "invitation status" do
+    u = users(:invited)
+    travel_to (u.invitation_sent_at + User.invite_for + 1.seconds)
+    assert_equal :expired, u.invitation_status
+    travel_to (u.invitation_sent_at + User.invite_for - 1.seconds)
+    assert_equal :valid, u.invitation_status
+    travel_back
   end
 
 end

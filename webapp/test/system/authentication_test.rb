@@ -16,7 +16,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   end
 
 
-  test 'Sign up failed without too short password' do
+  test 'Sign up failed with a too short password' do
     visit new_user_registration_path
 
     fill_in 'Email', with: 'superman@voqal.ai'
@@ -44,7 +44,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     message << "Please follow the link to activate your account."
     assert page.has_content?(message)
 
-    # Second sign in that failed
+    # Second sign up with same credentials
     visit new_user_registration_path
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
@@ -57,7 +57,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   end
 
 
-  test "Successful sign in" do
+  test "Successful sign up" do
     visit new_user_registration_path
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
@@ -275,7 +275,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   end
 
 
-  test "Invitation page can be sent by administrators only" do
+  test "An invitation can be sent by administrators only" do
     visit new_user_invitation_path
     assert page.has_content? "You need to sign in or sign up before continuing."
 
@@ -285,11 +285,8 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Log in'
 
     assert_equal '/', current_path
-    assert page.has_content?("Signed in successfully.")
-
-    visit new_user_invitation
     assert page.has_content? "You do not have permission to access this interface."
-    click "Logout"
+    click_on "Logout"
 
     visit new_user_session_path
     fill_in 'Email', with: 'admin@voqal.ai'
@@ -300,33 +297,35 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert page.has_content?("Signed in successfully.")
 
     visit new_user_invitation_path
-    assert page.has_content? "Send invitation"
-
     fill_in 'Email', with: 'bibibubu@bibibubu.org'
-    click_button 'Send an invitation'
+    click_button 'Send invitation'
     assert page.has_content?("An invitation email has been sent to bibibubu@bibibubu.org.")
   end
 
 
-  test "An invitation can be validated by someone with no session and only once and" do
-    User.invite!({:email => "new_user1@newusers.ne"}, users(:admin))
-    u = User.find_by_email(email: "new_user1@newusers.ne")
+  test "An invitation can be validated by someone with no session and only once" do
+    u = users(:invited)
+    raw_token, enc_token = Devise.token_generator.generate(User, :invitation_token)
+    u.invitation_token = enc_token
+    u.save
+    travel_to (u.invitation_sent_at + 1.seconds)
 
     visit new_user_session_path
     fill_in 'Email', with: 'confirmed@voqal.ai'
     fill_in 'Password', with: 'BimBamBoom'
-    visit accept_user_invitation_path(invitation_token: u.invitation_token)
-    assert page.has_content? "You are already signed in."
-    click "Logout"
+    click_button 'Log in'
 
-    visit accept_user_invitation_path(invitation_token: u.invitation_token)
-    fill_in 'Password', with: 'The Gret Magic Password'
-    fill_in 'Password confirmation', with: 'The Gret Magic Password'
+    visit accept_user_invitation_path(invitation_token: raw_token)
+    assert page.has_content? "You are already signed in."
+    click_on "Logout"
+
+    visit accept_user_invitation_path(invitation_token: raw_token)
+    fill_in 'Password', with: 'The Great Magic Password'
 
     click_button 'Set my password'
     assert page.has_content? "Your password was set successfully. You are now signed in."
 
-    click "Logout"
+    click_on "Logout"
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"
   end

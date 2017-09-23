@@ -31,7 +31,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button 'Log in'
 
     visit backend_users_path
-    assert page.has_content?('4 users')
+    assert page.has_content?('5 users')
     assert_equal '/backend/users', current_path
   end
 
@@ -45,12 +45,13 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     visit backend_users_path
 
-    ['not-confirmed', 'locked'].each do |filter_name|
-      find("input[value='#{filter_name}']").click
-      click_button 'Search'
-
+    find('.dropdown__trigger', text: 'All').click
+    all('.dropdown__content li').each do |filter_name|
+      next if filter_name.text
+      find('.dropdown__content', text: filter_name.text).click
       assert page.has_content?('1 user')
       assert_equal '/backend/users', current_path
+      find('.dropdown__trigger', text: filter_name.text).click
     end
   end
 
@@ -64,29 +65,19 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     visit backend_users_path
 
-    find('#search_sort_by').find(:xpath, 'option[1]').select_option
-    click_button 'Search'
-
-    expected = [
-      'admin@voqal.ai',
-      'locked@voqal.ai',
-      'confirmed@voqal.ai',
-      'notconfirmed@voqal.ai'
-    ]
-
-    assert_equal expected, all(".card-content h3").map {|h3| h3.text.split(' ').first}
-
-    find('#search_sort_by').find(:xpath, 'option[2]').select_option
-    click_button 'Search'
-
+    find('.dropdown__trigger', text: 'Last log in').click
+    find('.dropdown__content', text: 'Email').click
     expected = [
       'admin@voqal.ai',
       'confirmed@voqal.ai',
+      'invited@voqal.ai',
       'locked@voqal.ai',
       'notconfirmed@voqal.ai'
     ]
-
-    assert_equal expected, all(".card-content h3").map {|h3| h3.text.split(' ').first}
+    sleep 0.2
+    assert_equal expected, all("tbody tr").map {|tr|
+      tr.all('td').first.text.split(' ').first
+    }
   end
 
   test 'Users can be found by email' do
@@ -100,12 +91,63 @@ class BackendUsersTest < ApplicationSystemTestCase
     visit backend_users_path
 
     fill_in 'search_email', :with => 'ocked'
-    click_button 'Search'
+    click_button '#search'
 
     assert page.has_content?('1 user')
     assert page.has_content?('locked@voqal.ai')
 
     assert_equal '/backend/users', current_path
+  end
+
+  test 'Users can be deleted' do
+    visit new_user_session_path
+
+    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Password', with: 'AdminBoom'
+
+    click_button 'Log in'
+
+    visit backend_users_path
+
+    delete_buttons_before = all('.btn--destructive', text: 'Delete')
+    before_count = delete_buttons_before.count
+    delete_buttons_before[1].click
+    fill_in 'validation', :with => 'dElEtE'
+    click_button 'Delete'
+    assert page.has_content?('Please enter the text exactly as it is displayed to confirm.')
+
+    fill_in 'validation', :with => 'DELETE'
+    click_button 'Delete'
+    assert page.has_content?('has successfully been deleted.')
+
+    assert_equal '/backend/users', current_path
+    delete_buttons_after = all('.btn--destructive', text: 'Delete')
+    assert_equal before_count - 1, delete_buttons_after.count
+  end
+
+  test 'Invitations can be resent to not confirmed users' do
+    visit new_user_session_path
+
+    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Password', with: 'AdminBoom'
+
+    click_button 'Log in'
+
+    visit backend_users_path
+
+    breaked = false
+    all("tbody tr").each do |tr|
+      if tr.all('td').map {|td| td.text}.join.include?('Not confirmed')
+        tr.all('.btn--primary', text: 'Re-invite').first.click
+        breaked = true
+        break
+      end
+    end
+
+    assert breaked 
+    sleep 0.5
+    assert_equal '/backend/users', current_path
+    assert page.has_content?('An invitation email has been sent to')
   end
 
 end

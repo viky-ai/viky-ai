@@ -25,4 +25,11 @@ locked:
   confirmed_at: "2017-01-01 00:00:03"
   current_sign_in_at: "2017-01-01 00:00:03"
   locked_at: "2017-01-01 01:00:00"
-  admin: false
+
+invited:
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
+  email: invited@voqal.ai
+  invited_by: admin
+  created_at: "2017-01-01 00:00:04"
+  invitation_created_at: "2017-01-01 00:00:04"
+  invitation_sent_at: "2017-01-01 00:00:04"
