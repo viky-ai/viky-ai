@@ -80,6 +80,7 @@ GEM
     erubi (1.6.1)
     execjs (2.7.0)
     ffi (1.9.18)
+    flipper (0.10.2)
     foundation_emails (2.2.1.0)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
@@ -247,6 +248,7 @@ DEPENDENCIES
   devise (~> 4.3.0)
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)
+  flipper
   inky-rb
   jbuilder (~> 2.5)
   kaminari

@@ -4,6 +4,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Sign up failed without email and password' do
+    FLIPPER.enable :user_registration
     visit new_user_registration_path
 
     click_button 'Sign up'
@@ -18,6 +19,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Sign up failed with a too short password' do
+    FLIPPER.enable :user_registration
     visit new_user_registration_path
 
     fill_in 'Email', with: 'superman@voqal.ai'
@@ -34,6 +36,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Sign up failed with duplicate email' do
+    FLIPPER.enable :user_registration
     # First successful sign in
     visit new_user_registration_path
     fill_in 'Email', with: 'superman@voqal.ai'
@@ -63,6 +66,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test "Successful sign up" do
+    FLIPPER.enable :user_registration
     visit new_user_registration_path
     fill_in 'Email', with: 'rocky@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
@@ -144,6 +148,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test "Sign in then confirm email then log in" do
+    FLIPPER.enable :user_registration
     # Sign in
     visit new_user_registration_path
     fill_in 'Email', with: 'batman@voqal.ai'
@@ -344,5 +349,14 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert page.has_content? "The invitation token provided is not valid!"
   end
 
+  test "Registration not possible if feature is disabled" do
+    FLIPPER.disable :user_registration
+    visit '/'
+    assert !page.has_content?("Sign up")
+
+    visit new_user_registration_path
+    assert page.has_content?("User registration is temporarily disabled.")
+    assert_equal '/', current_path
+  end
 
 end

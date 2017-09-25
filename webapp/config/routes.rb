@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :users, :controllers => { :invitations => 'backend/invitations' }
+  devise_for :users, controllers: {
+    invitations: 'backend/invitations', registrations: 'registrations'
+  }
 
   namespace :backend do
     resources :users, only: [:index, :destroy] do

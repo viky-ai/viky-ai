@@ -12,7 +12,10 @@
 
   <% unless user_signed_in? %>
     <p>
-      Access to <%= link_to "Sign up", new_user_registration_path %> or
+      Access to
+      <% if FLIPPER.enabled? :user_registration %>
+        <%= link_to "Sign up", new_user_registration_path %> or
+      <% end %>
       <%= link_to "Login", new_user_session_path %>.
     </p>
   <% end %>

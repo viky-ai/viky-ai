@@ -45,3 +45,6 @@ en:
       edit:
         title: Finalize your invitation
         tagline: Set password
+  controllers:
+    registrations:
+      disabled_message: User registration is temporarily disabled.
