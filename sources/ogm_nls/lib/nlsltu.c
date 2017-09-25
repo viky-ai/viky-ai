@@ -12,8 +12,8 @@ static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt,
     struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
-static void OgGetRequestParameters(struct og_listening_thread *lt , char * url, nls_request_paramList *paramatersList);
-static int compareEndPointWithString(const char * str1,const char *str2);
+static void OgGetRequestParameters(struct og_listening_thread *lt, char * url, nls_request_paramList *paramatersList);
+static int compareEndPointWithString(const char * str1, const char *str2);
 static int sizeOfString(const char * str);
 /**
  *  Returns 1 if server must stop, 0 otherwise
@@ -60,7 +60,7 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   og_bool is_ssi_control_commands = FALSE;
   IFE(OgListeningProcessSearchRequest(lt, winput, output));
 
-  int retour= OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
+  int retour = OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
   lt->request_running = 0;
   return retour;
 }
@@ -68,8 +68,6 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output)
 {
-
-
 
   IF(OgUciServerRead(lt->hucis,input,output))
   {
@@ -91,15 +89,13 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
     }
   }
 
-
-
   /*
-  if (output->hh.request_method > 0 && output->hh.request_method != DOgHttpHeaderTypePost)
-  {
-    NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request is not an HTTP POST Request.");
-    DPcErr;
-  }
-  */
+   if (output->hh.request_method > 0 && output->hh.request_method != DOgHttpHeaderTypePost)
+   {
+   NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request is not an HTTP POST Request.");
+   DPcErr;
+   }
+   */
   if (output->hh.request_method > 0 && output->hh.request_method == DOgHttpHeaderTypePost)
   {
     if (output->content_length <= 0 || (output->content_length - output->header_length) <= 1)
@@ -111,19 +107,20 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
   DONE;
 }
 
-static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output)
+static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
+    struct og_ucisr_output *output)
 {
   lt->request_running = 1;
 
-  nls_request_paramList parametersList ;
+  nls_request_paramList parametersList;
   IFn(parametersList.hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100)) DPcErr;
 
-  OgGetRequestParameters(lt,output->hh.request_uri,&parametersList);
+  OgGetRequestParameters(lt, output->hh.request_uri, &parametersList);
 
-
-  if( ( compareEndPointWithString("/test", output->hh.request_uri) == 1 || compareEndPointWithString("/test/", output->hh.request_uri) == 1 ))
+  if ((compareEndPointWithString("/test", output->hh.request_uri) == 1
+      || compareEndPointWithString("/test/", output->hh.request_uri) == 1))
   {
-    IFE(endpoint_test(lt, winput, output, &parametersList));
+    IFE(NlsEndpointTest(lt, winput, output, &parametersList));
   }
   else
   {
@@ -163,68 +160,70 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   return FALSE;
 }
 
-static void OgGetRequestParameters(struct og_listening_thread *lt , char * url, nls_request_paramList *parametersList)
+static void OgGetRequestParameters(struct og_listening_thread *lt, char * url, nls_request_paramList *parametersList)
 {
-    UriUriA uri;
-    UriQueryListA * queryList;
-    UriQueryListA * pQItem;
-    int itemCount;
+  UriUriA uri;
+  UriQueryListA * queryList;
+  UriQueryListA * pQItem;
+  int itemCount;
 
-    UriParserStateA state;
-    state.uri = &uri;
+  UriParserStateA state;
+  state.uri = &uri;
 
-    parametersList->length = 0;
+  parametersList->length = 0;
 
-    if (uriParseUriA(&state, url) == URI_SUCCESS)
+  if (uriParseUriA(&state, url) == URI_SUCCESS)
+  {
+    if (uriDissectQueryMallocA(&queryList, &itemCount, uri.query.first, uri.query.afterLast) == URI_SUCCESS)
     {
-      if (uriDissectQueryMallocA(&queryList, &itemCount, uri.query.first,uri.query.afterLast) == URI_SUCCESS)
+      for (pQItem = queryList; pQItem; pQItem = pQItem->next)
       {
-        for (pQItem = queryList ; pQItem ; pQItem = pQItem->next)
+        if (pQItem->key != NULL && pQItem->value != NULL)
         {
-          if(pQItem->key != NULL && pQItem->value != NULL)
-          {
-            nls_request_param param;
+          nls_request_param param;
 
-            int start = OgHeapGetCellsUsed(parametersList->hba);
-            IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key)+1, pQItem->key)) ;
-            IFn(param.key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+          int start = OgHeapGetCellsUsed(parametersList->hba);
+          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key)+1, pQItem->key));
+          IFn(param.key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
-            start = OgHeapGetCellsUsed(parametersList->hba);
-            IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value)+1, pQItem->value)) ;
-            IFn(param.value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+          start = OgHeapGetCellsUsed(parametersList->hba);
+          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value)+1, pQItem->value));
+          IFn(param.value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
-            parametersList->params[parametersList->length] = param ;
-            parametersList->length++;
-          }
-        };
-        uriFreeQueryListA(queryList);
-      }
+          parametersList->params[parametersList->length] = param;
+          parametersList->length++;
+        }
+      };
+      uriFreeQueryListA(queryList);
     }
-    uriFreeUriMembersA(&uri);
+  }
+  uriFreeUriMembersA(&uri);
 }
 
-
-static int compareEndPointWithString(const char * str1,const char *str2)
+static int compareEndPointWithString(const char * str1, const char *str2)
 {
-  int are_the_same = 1 ;
+  int are_the_same = 1;
   int size_of_str1 = sizeOfString(str1);
 
-  for(int i=0 ; i< size_of_str1;i++)
+  for (int i = 0; i < size_of_str1; i++)
   {
-    if(str2[i] == '?')
+    if (str2[i] == '?')
     {
       are_the_same = 0;
       break;
     }
-    else if(str1[i] != str2[i])
+    else if (str1[i] != str2[i])
     {
       are_the_same = 0;
       break;
     }
-    else if(i == size_of_str1 - 1)
+    else if (i == size_of_str1 - 1)
     {
-      if(str2[i+1] != '?' && str2[i+1] != '\0')
-        are_the_same=0;
+      if (str2[i + 1] != '?' && str2[i + 1] != '\0')
+        {
+          are_the_same = 0;
+          break;
+        }
     }
   }
   return are_the_same;
@@ -232,15 +231,13 @@ static int compareEndPointWithString(const char * str1,const char *str2)
 
 static int sizeOfString(const char * str)
 {
-  int count = 0 ;
+  int count = 0;
   do
   {
-    if(str[count] == '\0')
-      break;
-    else
-      count++;
-  }while(count>=0);
+    if (str[count] == '\0') break;
+    else count++;
+  }
+  while (count >= 0);
   return count;
 }
-
 

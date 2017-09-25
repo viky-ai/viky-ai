@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-typedef struct og_listening_thread og_listening_thread ;
+typedef struct og_listening_thread og_listening_thread;
 
 #define DOgNlsPortNumber  9345
 
@@ -75,17 +75,6 @@ struct og_nls_conf
 
 };
 
-//struct json_object
-//{
-//  yajl_gen yajl_gen;
-//
-//  og_bool error_detected;
-//
-//  /**  Yajl Json json buffer **/
-//  og_heap hb_json_buffer;
-//
-//};
-
 /** data structure for a listening thread **/
 struct og_listening_thread
 {
@@ -120,8 +109,8 @@ struct og_listening_thread
   ogint64_t t0, t1, t2, t3, ot3;
 
   pthread_t current_thread;
-  // struct json_object json[1];
-  // yajl_handle parser;
+// struct json_object json[1];
+// yajl_handle parser;
 
 };
 
@@ -173,9 +162,9 @@ struct og_ctrl_nls
 
 typedef struct
 {
-    const char * key;
-    const char * value;
-}nls_request_param;
+  const char * key;
+  const char * value;
+} nls_request_param;
 
 typedef struct
 {
@@ -201,12 +190,11 @@ int OgListeningThread(void *ptr);
 og_status NlsListeningThreadReset(struct og_listening_thread * lt);
 og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
 
-
 /** nlslog.c **/
 og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name, og_string label,
     int additional_log_flags);
 og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
-og_status NlsJSONThrowError(struct og_listening_thread *lt, og_string function_name , json_error_t * error);
+og_status NlsJSONThrowError(struct og_listening_thread *lt, og_string function_name, json_error_t * error);
 
 /** nlsler.c **/
 og_status OgListeningThreadError(struct og_listening_thread *lt);
@@ -225,14 +213,13 @@ og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 int OgMaintenanceThread(void *ptr);
 
 /** endpoint-test.c **/
-og_status endpoint_test(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,nls_request_paramList *parametersList);
+og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,
+    nls_request_paramList *parametersList);
 
-char * default_response();
-const char * get_param_value(nls_request_paramList *parametersList, char * paramKey);
-int param_exists(nls_request_paramList *parametersList, char * paramKey);
-char * returnJsonName(const char * name);
-char * returnJsonWait(const char * wait);
-og_status wait(const char * wait);
-
-
+char * NlsDefaultResponse();
+const char * NlsGetParamValue(nls_request_paramList *parametersList, char * paramKey);
+og_bool NlsParamExists(nls_request_paramList *parametersList, char * paramKey);
+char * NlsReturnJsonName(const char * name);
+char * NlsReturnJsonWait(const char * wait);
+og_status NlsWait(const char * wait);
 
