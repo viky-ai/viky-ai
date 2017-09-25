@@ -75,6 +75,12 @@ struct og_nls_conf
 
 };
 
+struct og_nls_options
+{
+  /** Current request processing timeout */
+  int request_processing_timeout;
+};
+
 /** data structure for a listening thread **/
 struct og_listening_thread
 {
@@ -88,8 +94,10 @@ struct og_listening_thread
   ogmutex_t *hmutex;
   struct og_ctrl_nls *ctrl_nls;
   struct og_loginfo loginfo[1];
-  int ID, running, looping, disabled, state;
-  int request_running, request_running_start, request_running_time;
+  int ID, running, disabled, state;
+  og_bool request_running;
+  int request_running_start;
+  int request_running_time;
   ogthread_t IT;
   unsigned hsocket_in;
   int connection_closed;
@@ -109,8 +117,7 @@ struct og_listening_thread
   ogint64_t t0, t1, t2, t3, ot3;
 
   pthread_t current_thread;
-// struct json_object json[1];
-// yajl_handle parser;
+  struct og_nls_options options[1];
 
 };
 
@@ -160,18 +167,18 @@ struct og_ctrl_nls
 
 };
 
-typedef struct
+struct og_nls_request_param
 {
   const char * key;
   const char * value;
-} nls_request_param;
+};
 
-typedef struct
+struct og_nls_request_paramList
 {
   og_heap hba;
   int length;
-  nls_request_param params[50];
-} nls_request_paramList;
+  struct og_nls_request_param params[50];
+};
 
 #define maxArrayLevel 10
 
@@ -187,7 +194,9 @@ int NlsFlushPermanentLtThreads(struct og_ctrl_nls *ctrl_nls);
 
 /** nlslt.c **/
 int OgListeningThread(void *ptr);
-og_status NlsListeningThreadReset(struct og_listening_thread * lt);
+og_status NlsLtInit(struct og_listening_thread *lt);
+og_status NlsLtFlush(struct og_listening_thread *lt);
+og_status NlsLtReset(struct og_listening_thread *lt);
 og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt);
 
 /** nlslog.c **/
@@ -205,6 +214,8 @@ og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl);
 
 /** nlsltu.c **/
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
+og_bool NlsParamExists(struct og_nls_request_paramList *parametersList, og_string paramKey);
+og_string NlsGetParamValue(struct og_nls_request_paramList *parametersList, og_string paramKey);
 
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
@@ -214,12 +225,5 @@ int OgMaintenanceThread(void *ptr);
 
 /** endpoint-test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,
-    nls_request_paramList *parametersList);
-
-char * NlsDefaultResponse();
-const char * NlsGetParamValue(nls_request_paramList *parametersList, char * paramKey);
-og_bool NlsParamExists(nls_request_paramList *parametersList, char * paramKey);
-char * NlsReturnJsonName(const char * name);
-char * NlsReturnJsonWait(const char * wait);
-og_status NlsWait(const char * wait);
+    struct og_nls_request_paramList *parametersList);
 

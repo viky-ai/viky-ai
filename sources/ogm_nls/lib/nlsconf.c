@@ -198,7 +198,6 @@ og_status NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init)
   timeout_ctx->timeout_name = timeout_name;
   timeout_ctx->default_timeout = DOgNlsRequestProcessingTimeout;
   timeout_ctx->old_timeout = old_conf->request_processing_timeout;
-  ctrl_nls->conf->tmp_request_processing_timeout = 0;
 
   og_bool request_processing_timeout_specified = setTimeout(ctrl_nls, conf, init, timeout_ctx,
       &ctrl_nls->conf->request_processing_timeout);

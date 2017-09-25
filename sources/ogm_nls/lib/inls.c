@@ -96,46 +96,46 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
     og_listening_thread *lt = ctrl_nls->Lt + i;
+
     lt->ID = i;
     lt->ctrl_nls = ctrl_nls;
-    lt->loginfo[0] = ctrl_nls->loginfo[0];
 
-    IFn(lt->herr=OgErrInit())
-    {
-      sprintf(erreur, "OgNlsInit: OgErrInit error");
-      OgErr(ctrl_nls->herr, erreur);
-      return (0);
-    }
-    lt->hmutex = ctrl_nls->hmutex;
-
-    memset(msg_param, 0, sizeof(struct og_msg_param));
-    msg_param->herr = lt->herr;
-    msg_param->hmutex = lt->hmutex;
-    msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
-    msg_param->loginfo.where = ctrl_nls->loginfo->where;
-    msg_param->module_name = "nls";
-    IFn(lt->hmsg=OgMsgInit(msg_param)) return (0);
-    IF(OgMsgTuneInherit(lt->hmsg,ctrl_nls->hmsg)) return (0);
-
-    memset(uci_param, 0, sizeof(struct og_uci_server_param));
-    uci_param->hmsg = lt->hmsg;
-    uci_param->herr = lt->herr;
-    uci_param->hmutex = lt->hmutex;
-    uci_param->loginfo.trace = DOgUciServerTraceMinimal + DOgUciServerTraceMemory;
-    if (ctrl_nls->loginfo->trace & DOgNlsTraceSocket) uci_param->loginfo.trace |= DOgUciServerTraceSocket;
-    if (ctrl_nls->loginfo->trace & DOgNlsTraceSocketSize) uci_param->loginfo.trace |= DOgUciServerTraceSocketSize;
-    uci_param->socket_buffer_size = ctrl_nls->conf->max_request_size;
-    uci_param->loginfo.where = ctrl_nls->loginfo->where;
-    IFn(lt->hucis=OgUciServerInit(uci_param)) return (0);
+    IF(NlsLtInit(lt)) return NULL;
 
   }
 
   if (ctrl_nls->conf->permanent_threads)
   {
-    IF(NlsInitPermanentLtThreads(ctrl_nls)) return (0);
+    IF(NlsInitPermanentLtThreads(ctrl_nls)) return NULL;
   }
 
   return ctrl_nls;
+}
+
+PUBLIC(int) OgNlsFlush(og_nls handle)
+{
+  struct og_ctrl_nls *ctrl_nls = handle;
+
+  if (ctrl_nls->conf->permanent_threads)
+  {
+    IFE(NlsFlushPermanentLtThreads(ctrl_nls));
+  }
+
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
+  {
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
+
+    IFE(NlsLtFlush(lt));
+
+  }
+  DPcFree(ctrl_nls->Lt);
+
+  IFE(OgMsgFlush(ctrl_nls->hmsg));
+
+  OgCleanupSocket();
+
+  DPcFree(ctrl_nls);
+  DONE;
 }
 
 PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
@@ -159,7 +159,7 @@ PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
 
   // bind all addresses '0.0.0.0' need to use localhost instead '127.0.0.1'
   strcpy(request->hostname, ctrl_nls->conf->env->listenning_address);
-  if(strcmp(request->hostname, "0.0.0.0") == 0)
+  if (strcmp(request->hostname, "0.0.0.0") == 0)
   {
     strcpy(request->hostname, "127.0.0.1");
   }
@@ -184,37 +184,6 @@ PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls ctrl_nls)
 {
   IFE(NlsOnEmergency(ctrl_nls));
 
-  DONE;
-}
-
-int NlsCleanLTOnTimeout(struct og_listening_thread *lt, char *label)
-{
-
-  DONE;
-}
-
-PUBLIC(int) OgNlsFlush(og_nls handle)
-{
-  struct og_ctrl_nls *ctrl_nls = handle;
-
-  if (ctrl_nls->conf->permanent_threads)
-  {
-    IFE(NlsFlushPermanentLtThreads(ctrl_nls));
-  }
-
-  for (int i = 0; i < ctrl_nls->LtNumber; i++)
-  {
-    struct og_listening_thread *lt = ctrl_nls->Lt + i;
-    IFE(OgUciServerFlush(lt->hucis));
-    OgErrFlush(lt->herr);
-  }
-  DPcFree(ctrl_nls->Lt);
-
-  IFE(OgMsgFlush(ctrl_nls->hmsg));
-
-  OgCleanupSocket();
-
-  DPcFree(ctrl_nls);
   DONE;
 }
 

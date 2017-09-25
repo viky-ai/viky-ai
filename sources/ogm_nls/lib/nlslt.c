@@ -13,11 +13,15 @@ static void NlsCancelCleanupOnTimeout(void* context);
 
 int OgListeningThread(void *ptr)
 {
-  int retour;
-  pthread_cleanup_push(NlsCancelCleanupOnTimeout,ptr)
-    ;
-  retour = OgListeningThread1(ptr);
-  pthread_cleanup_pop(0);
+  int retour = CORRECT;
+
+  pthread_cleanup_push(NlsCancelCleanupOnTimeout, ptr)
+        ;
+
+        retour = OgListeningThread1(ptr);
+
+        pthread_cleanup_pop(0);
+
   return (retour);
 }
 
@@ -35,8 +39,8 @@ static int OgListeningThread1(void *ptr)
   int retour;
 
   lt->current_thread = pthread_self();
-  lt->looping = 0;
-  lt->loginfo->trace = ctrl_nls->loginfo->trace;
+
+  IFE(NlsLtReset(lt));
 
   if (!ctrl_nls->conf->permanent_threads)
   {
@@ -79,6 +83,8 @@ static int OgListeningThread1(void *ptr)
             "lt %d: OgListeningThread exiting on error while answering", lt->ID);
       }
 
+      NlsLtReset(lt);
+
       // release lt to be use later
       IFE(OgNlsLtReleaseCurrentRunnning(lt));
 
@@ -92,6 +98,8 @@ static int OgListeningThread1(void *ptr)
     OgFormatThousand((int) (OgMicroClock() - micro_clock_start), v);
     OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: OgListeningThread finished after %s micro-seconds", lt->ID, v);
   }
+
+  NlsLtReset(lt);
 
   // release lt to be use later
   IFE(OgNlsLtReleaseCurrentRunnning(lt));
@@ -110,6 +118,21 @@ og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
   DONE;
 }
 
+/**
+ * Reset current request options
+ *
+ * @param lt current listening thread
+ * @return status
+ */
+static og_status NlsLtResetOptions(struct og_listening_thread *lt)
+{
+
+  memset(lt->options, 0, sizeof(struct og_nls_options));
+  lt->options->request_processing_timeout = lt->ctrl_nls->conf->request_processing_timeout;
+
+  DONE;
+}
+
 static void NlsCancelCleanupOnTimeout(void* context)
 {
   struct og_listening_thread *lt = (struct og_listening_thread *) context;
@@ -124,6 +147,8 @@ static void NlsCancelCleanupOnTimeout(void* context)
   OgListeningThreadError(lt);
   OgCloseSocket(lt->hsocket_in);
 
+  // reset memory
+  NlsLtReset(lt);
 
   // restart cancelled thread
   if (lt->ctrl_nls->conf->permanent_threads)
@@ -133,7 +158,79 @@ static void NlsCancelCleanupOnTimeout(void* context)
 
   OgNlsLtReleaseCurrentRunnning(lt);
 
-
   OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout finished", lt->ID);
 }
 
+/**
+ * Reset all memory allocated during request
+ *
+ * @param lt current listening thread
+ * @return status
+ */
+og_status NlsLtInit(struct og_listening_thread *lt)
+{
+  struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
+  lt->loginfo[0] = ctrl_nls->loginfo[0];
+
+  IFn(lt->herr=OgErrInit())
+  {
+    og_char_buffer erreur[DPcPathSize];
+    sprintf(erreur, "OgNlsInit: OgErrInit error");
+    OgErr(ctrl_nls->herr, erreur);
+    DPcErr;
+  }
+  lt->hmutex = ctrl_nls->hmutex;
+
+  struct og_msg_param msg_param[1];
+  memset(msg_param, 0, sizeof(struct og_msg_param));
+  msg_param->herr = lt->herr;
+  msg_param->hmutex = lt->hmutex;
+  msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
+  msg_param->loginfo.where = ctrl_nls->loginfo->where;
+  msg_param->module_name = "nls";
+  IFn(lt->hmsg=OgMsgInit(msg_param)) DPcErr;
+  IFE(OgMsgTuneInherit(lt->hmsg, ctrl_nls->hmsg));
+
+  struct og_uci_server_param uci_param[1];
+  memset(uci_param, 0, sizeof(struct og_uci_server_param));
+  uci_param->hmsg = lt->hmsg;
+  uci_param->herr = lt->herr;
+  uci_param->hmutex = lt->hmutex;
+  uci_param->loginfo.trace = DOgUciServerTraceMinimal + DOgUciServerTraceMemory;
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocket) uci_param->loginfo.trace |= DOgUciServerTraceSocket;
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocketSize) uci_param->loginfo.trace |= DOgUciServerTraceSocketSize;
+  uci_param->socket_buffer_size = ctrl_nls->conf->max_request_size;
+  uci_param->loginfo.where = ctrl_nls->loginfo->where;
+  IFn(lt->hucis=OgUciServerInit(uci_param)) DPcErr;
+
+  DONE;
+}
+
+/**
+ * Reset all memory allocated during request
+ *
+ * @param lt current listening thread
+ * @return status
+ */
+og_status NlsLtReset(struct og_listening_thread *lt)
+{
+  lt->loginfo->trace = lt->ctrl_nls->loginfo->trace;
+
+  IFE(NlsLtResetOptions(lt));
+
+  DONE;
+}
+
+/**
+ * Reset all memory allocated during request
+ *
+ * @param lt current listening thread
+ * @return status
+ */
+og_status NlsLtFlush(struct og_listening_thread *lt)
+{
+  IFE(OgUciServerFlush(lt->hucis));
+  OgErrFlush(lt->herr);
+
+  DONE;
+}

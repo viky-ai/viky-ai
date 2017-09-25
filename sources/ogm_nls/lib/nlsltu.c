@@ -7,14 +7,15 @@
 #include "ogm_nls.h"
 
 static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
-    struct og_ucisr_output *output, og_bool is_ssi_control_commands);
+    struct og_ucisr_output *output);
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
-static void OgGetRequestParameters(struct og_listening_thread *lt, char * url, nls_request_paramList *paramatersList);
-static int compareEndPointWithString(const char * str1, const char *str2);
-static int sizeOfString(const char * str);
+
+static og_status OgGetRequestParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request_paramList *parametersList);
+static og_bool compareEndPointWithString(og_string str1, og_string str2);
+static int sizeOfString(og_string str);
 /**
  *  Returns 1 if server must stop, 0 otherwise
  *  Returns -1 on error.
@@ -39,7 +40,7 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   memset(input, 0, sizeof(struct og_ucisr_input));
   input->hsocket = lt->hsocket_in;
 
-// input->timeout is used later on select() system function and needs to be converted in seconds
+  // input->timeout is used later on select() system function and needs to be converted in seconds
   input->timeout = ctrl_nls->conf->socket_read_timeout;
 
   struct og_ucisr_output *output = lt->output;
@@ -57,10 +58,9 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   memset(winput, 0, sizeof(struct og_ucisw_input));
   winput->hsocket = input->hsocket;
 
-  og_bool is_ssi_control_commands = FALSE;
   IFE(OgListeningProcessSearchRequest(lt, winput, output));
 
-  int retour = OgListeningAnswer(lt, winput, output, is_ssi_control_commands);
+  int retour = OgListeningAnswer(lt, winput, output);
   lt->request_running = 0;
   return retour;
 }
@@ -110,34 +110,39 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
 static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output)
 {
-  lt->request_running = 1;
+  lt->request_running = TRUE;
 
-  nls_request_paramList parametersList;
-  IFn(parametersList.hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100)) DPcErr;
+  struct og_nls_request_paramList parametersList[1];
 
-  OgGetRequestParameters(lt, output->hh.request_uri, &parametersList);
+  // TODO move hba init in NLS init
+  IFn(parametersList->hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100))
+  {
+    DPcErr;
+  }
 
+  IFE(OgGetRequestParameters(lt, output->hh.request_uri, parametersList));
+
+  // TODO add a function register
   if ((compareEndPointWithString("/test", output->hh.request_uri) == 1
       || compareEndPointWithString("/test/", output->hh.request_uri) == 1))
   {
-    IFE(NlsEndpointTest(lt, winput, output, &parametersList));
+    IFE(NlsEndpointTest(lt, winput, output, parametersList));
   }
   else
   {
-    char * error = "error no endpoint";
-    winput->content_length = sizeOfString(error);
-    winput->content = error;
+    winput->http_status = 404;
+    winput->http_status_message = "No endpoint found";
+    winput->hsocket = lt->hsocket_in;
+    winput->content_length = 0;
   }
 
-  IFE(OgHeapFlush(parametersList.hba));
-
-  // Do all the process
+  IFE(OgHeapFlush(parametersList->hba));
 
   DONE;
 }
 
 static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
-    struct og_ucisr_output *output, og_bool is_ssi_control_commands)
+    struct og_ucisr_output *output)
 {
   lt->t2 = OgMicroClock();
 
@@ -160,47 +165,86 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   return FALSE;
 }
 
-static void OgGetRequestParameters(struct og_listening_thread *lt, char * url, nls_request_paramList *parametersList)
-{
-  UriUriA uri;
-  UriQueryListA * queryList;
-  UriQueryListA * pQItem;
-  int itemCount;
 
-  UriParserStateA state;
-  state.uri = &uri;
+og_bool NlsParamExists(struct og_nls_request_paramList *parametersList, og_string paramKey)
+{
+  if (parametersList->length > 0)
+  {
+    for (int i = 0; i < parametersList->length; i++)
+    {
+      if (strcmp(parametersList->params[i].key, paramKey) == 0) return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+og_string NlsGetParamValue(struct og_nls_request_paramList *parametersList, og_string paramKey)
+{
+  if (parametersList->length > 0)
+  {
+    for (int i = 0; i < parametersList->length; i++)
+    {
+      if (strcmp(parametersList->params[i].key, paramKey) == 0) return parametersList->params[i].value;
+    }
+  }
+  return NULL;
+}
+
+static og_status OgGetRequestParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request_paramList *parametersList)
+{
+
+
+
+  UriParserStateA state[1];
+  memset(state, 0, sizeof(UriParserStateA));
+
+  UriUriA uri[1];
+  memset(uri, 0, sizeof(UriUriA));
+  state->uri = uri;
 
   parametersList->length = 0;
 
-  if (uriParseUriA(&state, url) == URI_SUCCESS)
+  if (uriParseUriA(state, url) == URI_SUCCESS)
   {
-    if (uriDissectQueryMallocA(&queryList, &itemCount, uri.query.first, uri.query.afterLast) == URI_SUCCESS)
+
+    UriQueryListA *queryList = NULL;
+    int itemCount = 0;
+    if (uriDissectQueryMallocA(&queryList, &itemCount, uri->query.first, uri->query.afterLast) == URI_SUCCESS)
     {
-      for (pQItem = queryList; pQItem; pQItem = pQItem->next)
+      for (UriQueryListA * pQItem = queryList; pQItem; pQItem = pQItem->next)
       {
         if (pQItem->key != NULL && pQItem->value != NULL)
         {
-          nls_request_param param;
+          struct og_nls_request_param param[1];
+          memset(param, 0, sizeof(struct og_nls_request_param));
+
+          // TODO Heap can be reallocated
 
           int start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key)+1, pQItem->key));
-          IFn(param.key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key) + 1, pQItem->key));
+          IFn(param->key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
           start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value)+1, pQItem->value));
-          IFn(param.value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
+          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value) + 1, pQItem->value));
+          IFn(param->value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
 
-          parametersList->params[parametersList->length] = param;
+          parametersList->params[parametersList->length] = *param;
           parametersList->length++;
         }
-      };
+      }
+
+      // TODO ensure FREE
       uriFreeQueryListA(queryList);
     }
   }
-  uriFreeUriMembersA(&uri);
+
+  // TODO ensure FREE
+  uriFreeUriMembersA(uri);
+
+  DONE;
 }
 
-static int compareEndPointWithString(const char * str1, const char *str2)
+static og_bool compareEndPointWithString(og_string str1, og_string str2)
 {
   int are_the_same = 1;
   int size_of_str1 = sizeOfString(str1);
@@ -220,16 +264,16 @@ static int compareEndPointWithString(const char * str1, const char *str2)
     else if (i == size_of_str1 - 1)
     {
       if (str2[i + 1] != '?' && str2[i + 1] != '\0')
-        {
-          are_the_same = 0;
-          break;
-        }
+      {
+        are_the_same = 0;
+        break;
+      }
     }
   }
   return are_the_same;
 }
 
-static int sizeOfString(const char * str)
+static int sizeOfString(og_string str)
 {
   int count = 0;
   do
