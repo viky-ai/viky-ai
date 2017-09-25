@@ -10,12 +10,14 @@
         </li>
       <% end -%>
 
-      <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-        <li>
-          <%= t('views.auth.shared.new_registration_prefix') %>
-          <%= link_to t('views.auth.shared.new_registration'), new_registration_path(resource_name) %>
-        </li>
-      <% end -%>
+      <% if Feature.user_registration_enabled? %>
+        <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+          <li>
+            <%= t('views.auth.shared.new_registration_prefix') %>
+            <%= link_to t('views.auth.shared.new_registration'), new_registration_path(resource_name) %>
+          </li>
+        <% end -%>
+      <% end %>
 
       <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
         <li>

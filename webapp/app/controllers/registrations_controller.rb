@@ -2,7 +2,8 @@ class RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/sign_up
   def new
-    if FLIPPER.enabled? :user_registration
+
+    if Feature.user_registration_enabled?
       super
     else
       redirect_to '/', alert: t('controllers.registrations.disabled_message')
@@ -11,7 +12,7 @@ class RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create
-    if FLIPPER.enabled? :user_registration
+    if Feature.user_registration_enabled?
       super
     else
       redirect_to '/', alert: t('controllers.registrations.disabled_message')

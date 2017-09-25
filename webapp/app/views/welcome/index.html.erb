@@ -6,8 +6,8 @@
     <% unless user_signed_in? %>
       <p>
         Access to
-        <% if FLIPPER.enabled? :user_registration %>
-        <%= link_to t('views.welcome.index.signup'), new_user_registration_path %> or
+        <% if Feature.user_registration_enabled? %>
+          <%= link_to t('views.welcome.index.signup'), new_user_registration_path %> or
         <% end %>
         <%= link_to t('views.welcome.index.login'), new_user_session_path %>.
       </p>
