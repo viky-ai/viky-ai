@@ -19,9 +19,9 @@
 /** because ERR is defined in some system headers **/
 //#define DPcErr          { FILE *fd; fd=fopen("erreur.log","a"); fprintf(fd,"file '%s', line %d\n",__FILE__,__LINE__); fclose(fd); return(ERREUR); }
 // Show stack trace when error occurred
-#include <execinfo.h>
-#define DPcErr          { FILE *DPT_fd = fopen("trace.log","a"); void * DPT_trace[255]; int DPT_i, DPT_trace_size = 0; char **DPT_messages = NULL; DPT_trace_size = backtrace(DPT_trace, sizeof(DPT_trace)); DPT_messages = backtrace_symbols(DPT_trace, DPT_trace_size); fprintf(DPT_fd, "ERROR : in file '%s', line %d\n", __FILE__, __LINE__ ); for (DPT_i = 0; DPT_i < DPT_trace_size; DPT_i++) { fprintf(DPT_fd, "\t%s\n", DPT_messages[DPT_i]); }; free(DPT_messages); fclose(DPT_fd); return(ERREUR); }
-//#define DPcErr          return(ERREUR)
+//#include <execinfo.h>
+//#define DPcErr          { FILE *DPT_fd = fopen("trace.log","a"); void * DPT_trace[255]; int DPT_i, DPT_trace_size = 0; char **DPT_messages = NULL; DPT_trace_size = backtrace(DPT_trace, sizeof(DPT_trace)); DPT_messages = backtrace_symbols(DPT_trace, DPT_trace_size); fprintf(DPT_fd, "ERROR : in file '%s', line %d\n", __FILE__, __LINE__ ); for (DPT_i = 0; DPT_i < DPT_trace_size; DPT_i++) { fprintf(DPT_fd, "\t%s\n", DPT_messages[DPT_i]); }; free(DPT_messages); fclose(DPT_fd); return(ERREUR); }
+#define DPcErr          return(ERREUR)
 /** Removed May 3rd 2003 **/
 //#define ERR             DPcErr
 #define DONE            return(CORRECT)
