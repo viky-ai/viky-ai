@@ -1,0 +1,19 @@
+$global-gutter: 32px;
+$container-radius: 3px;
+
+$body-background: #f0f0f0;
+$primary-color: #3bb8d7;
+$small-font-color: #888;
+
+$anchor-text-decoration: underline;
+
+$header-margin-bottom: 15px;
+$paragraph-margin-bottom: 15px;
+
+@import "foundation-emails";
+
+hr{
+  border: 1px solid #dddddd;
+  height: 0px;
+  line-height: 0;
+}

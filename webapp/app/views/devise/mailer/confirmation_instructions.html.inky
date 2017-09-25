@@ -1,0 +1,34 @@
+<spacer size="32"></spacer>
+<row>
+  <center>
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="voqal.ai" />
+  </center>
+</row>
+<spacer size="32"></spacer>
+
+<container class="radius">
+  <spacer size="32"></spacer>
+
+  <row>
+    <columns>
+
+      <h2>Welcome!</h2>
+
+      <p>You can confirm your account email through the link below:</p>
+
+      <p>
+        <button href="<%= confirmation_url(@resource, confirmation_token: @token) %>" class="radius">
+          Confirm my account
+        </button>
+      </p>
+
+      <p>
+        Thanks,<br />
+        The voqal.ai Team.
+      </p>
+
+    </columns>
+  </row>
+</container>
+
+<spacer size="96"></spacer>

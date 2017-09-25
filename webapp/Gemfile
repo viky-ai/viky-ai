@@ -53,7 +53,10 @@ group :development do
 end
 
 gem 'awesome_print'
-gem 'postmark-rails'
 gem 'rainbow'
 gem 'kaminari'
 
+# Mailing
+gem 'postmark-rails'
+gem 'inky-rb', require: 'inky'
+gem 'premailer-rails'

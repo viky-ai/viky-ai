@@ -1,0 +1,32 @@
+<spacer size="32"></spacer>
+<row>
+  <center>
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="voqal.ai" />
+  </center>
+</row>
+<spacer size="32"></spacer>
+
+<container class="radius">
+  <spacer size="32"></spacer>
+
+  <row>
+    <columns>
+
+      <h2>Hello!</h2>
+
+      <% if @resource.try(:unconfirmed_email?) %>
+        <p>We're contacting you to notify you that your email is being changed to <%= @resource.unconfirmed_email %>.</p>
+      <% else %>
+        <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
+      <% end %>
+
+      <p>
+        Thanks,<br />
+        The voqal.ai Team.
+      </p>
+
+    </columns>
+  </row>
+</container>
+
+<spacer size="96"></spacer>

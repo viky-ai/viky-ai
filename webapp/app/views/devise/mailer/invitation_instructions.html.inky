@@ -1,0 +1,51 @@
+<spacer size="32"></spacer>
+<row>
+  <center>
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="voqal.ai" />
+  </center>
+</row>
+<spacer size="32"></spacer>
+
+<container class="radius">
+  <spacer size="32"></spacer>
+  <row>
+    <columns>
+
+      <h3>Hello!</h3>
+
+      <p>
+        We invited you to <a href="<%= root_url %>" target="_blank">voqal.ai</a>, the AI next generation platform for voice search and bots.
+      </p>
+      <p>
+        You can accept it through the link below.
+      </p>
+
+      <p>
+        <button href="<%= accept_invitation_url(@resource, :invitation_token => @token) %>" class="radius">
+          Accept invitation
+        </button>
+      </p>
+
+      <% if @resource.invitation_due_at %>
+        <p>
+          This invitation will be due in <%= l(@resource.invitation_due_at, format: :'devise.mailer.invitation_instructions.accept_until_format') %>
+        </p>
+      <% end %>
+
+      <p>
+        Thanks,<br />
+        The voqal.ai Team.
+      </p>
+
+      <p>
+        <small>
+          If you don't want to accept the invitation, please ignore this email.<br />
+          Your account won't be created until you access the link above and set your password.
+        </small>
+      </p>
+
+    </columns>
+  </row>
+</container>
+
+<spacer size="96"></spacer>
