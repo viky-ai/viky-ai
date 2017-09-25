@@ -2,12 +2,14 @@ require "application_system_test_case"
 
 class BackendUsersTest < ApplicationSystemTestCase
 
+
   test 'User index not allowed if user is not logged in' do
     visit backend_users_path
 
     assert page.has_content?('Please, log in before continuing.')
     assert_equal '/users/sign_in', current_path
   end
+
 
   test 'User index not allowed if user is not admin' do
     visit new_user_session_path
@@ -22,26 +24,18 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal '/', current_path
   end
 
+
   test 'Successful log in' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-
-    click_button 'Log in'
+    admin_login
 
     visit backend_users_path
     assert page.has_content?('5 users')
     assert_equal '/backend/users', current_path
   end
 
+
   test 'Users can be filtered' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-
-    click_button 'Log in'
+    admin_login
 
     visit backend_users_path
 
@@ -55,13 +49,9 @@ class BackendUsersTest < ApplicationSystemTestCase
     end
   end
 
+
   test 'Users can be sorted by last action and email' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-
-    click_button 'Log in'
+    admin_login
 
     visit backend_users_path
 
@@ -74,23 +64,21 @@ class BackendUsersTest < ApplicationSystemTestCase
       'locked@voqal.ai',
       'notconfirmed@voqal.ai'
     ]
-    sleep 0.2
+
+    find(".field .control:last-child .dropdown__trigger a").assert_text "Email"
+
     assert_equal expected, all("tbody tr").map {|tr|
       tr.all('td').first.text.split(' ').first
     }
   end
 
+
   test 'Users can be found by email' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-
-    click_button 'Log in'
+    admin_login
 
     visit backend_users_path
 
-    fill_in 'search_email', :with => 'ocked'
+    fill_in 'search_email', with: 'ocked'
     click_button '#search'
 
     assert page.has_content?('1 user')
@@ -99,39 +87,35 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal '/backend/users', current_path
   end
 
-  test 'Users can be deleted' do
-    visit new_user_session_path
 
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
+  test 'Destroy with confirmation' do
+    before_count = User.count
 
-    click_button 'Log in'
+    admin_login
 
-    visit backend_users_path
+    click_link('Backend')
+    assert page.has_content?('5 users')
 
-    delete_buttons_before = all('.btn--destructive', text: 'Delete')
-    before_count = delete_buttons_before.count
-    delete_buttons_before[1].click
-    fill_in 'validation', :with => 'dElEtE'
-    click_button 'Delete'
+    all('a.btn--destructive').last.click
+
+    assert page.has_content?('Are you sure?')
+    click_button('Delete')
     assert page.has_content?('Please enter the text exactly as it is displayed to confirm.')
 
-    fill_in 'validation', :with => 'DELETE'
-    click_button 'Delete'
-    assert page.has_content?('has successfully been deleted.')
+    fill_in 'validation', with: 'dElEtE'
+    click_button('Delete')
+    assert page.has_content?('Please enter the text exactly as it is displayed to confirm.')
 
+    fill_in 'validation', with: 'DELETE'
+    click_button('Delete')
+    assert page.has_content?('User with the email: notconfirmed@voqal.ai has successfully been deleted.')
     assert_equal '/backend/users', current_path
-    delete_buttons_after = all('.btn--destructive', text: 'Delete')
-    assert_equal before_count - 1, delete_buttons_after.count
+    assert_equal before_count - 1, User.count
   end
 
+
   test 'Invitations can be resent to not confirmed users only' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-
-    click_button 'Log in'
+    admin_login
 
     visit backend_users_path
 
@@ -145,10 +129,9 @@ class BackendUsersTest < ApplicationSystemTestCase
       end
     end
 
-    all('.btn--primary', text: 'Re-invite').first.click
-    sleep 0.5
-    assert_equal '/backend/users', current_path
+    first('.btn--primary', text: 'Re-invite').click
     assert page.has_content?('An invitation email has been sent to')
+    assert_equal '/backend/users', current_path
   end
 
 end

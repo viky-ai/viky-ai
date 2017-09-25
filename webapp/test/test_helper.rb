@@ -12,3 +12,5 @@ class ActiveSupport::TestCase
     click_button 'Log in'
   end
 end
+
+require 'mocha/mini_test'

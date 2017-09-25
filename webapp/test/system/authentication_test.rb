@@ -2,6 +2,7 @@ require "application_system_test_case"
 
 class AuthenticationTest < ApplicationSystemTestCase
 
+
   test 'Sign up failed without email and password' do
     visit new_user_registration_path
 
@@ -38,8 +39,12 @@ class AuthenticationTest < ApplicationSystemTestCase
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
+    # TODO: Remove this as soon as possible
+    User.any_instance.stubs('active_for_authentication?').returns(false)
+
     click_button 'Sign up'
     assert_equal '/', current_path
+
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
     assert page.has_content?(message)
@@ -59,11 +64,13 @@ class AuthenticationTest < ApplicationSystemTestCase
 
   test "Successful sign up" do
     visit new_user_registration_path
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'rocky@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
-    click_button 'Sign up'
+    # TODO: Remove this as soon as possible
+    User.any_instance.stubs('active_for_authentication?').returns(false)
 
+    click_button 'Sign up'
     assert_equal '/', current_path
 
     message  = "A message with a confirmation link has been sent to your email address. "
@@ -139,24 +146,31 @@ class AuthenticationTest < ApplicationSystemTestCase
   test "Sign in then confirm email then log in" do
     # Sign in
     visit new_user_registration_path
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'batman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
+
+    # TODO: Remove this as soon as possible
+    User.any_instance.stubs('active_for_authentication?').returns(false)
 
     click_button 'Sign up'
     assert_equal '/', current_path
+
     message  = "A message with a confirmation link has been sent to your email address. "
     message << "Please follow the link to activate your account."
     assert page.has_content?(message)
 
     # Visit confirmation url from email
-    confirmation_token = User.find_by_email('superman@voqal.ai').confirmation_token
+    confirmation_token = User.find_by_email('batman@voqal.ai').confirmation_token
     visit user_confirmation_path(confirmation_token: confirmation_token)
+
+    # TODO: Remove this as soon as possible
+    User.any_instance.stubs('active_for_authentication?').returns(true)
 
     # Log in
     assert_equal new_user_session_path, current_path
     assert page.has_content?("Your email address has been successfully confirmed.")
 
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'batman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
     click_button 'Log in'
 
@@ -329,5 +343,6 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"
   end
+
 
 end
