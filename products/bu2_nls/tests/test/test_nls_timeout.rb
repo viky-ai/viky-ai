@@ -85,7 +85,7 @@ class TestNlsTimeoutGet < Minitest::Test
       actual = nls_query_get(data)
 
       expected = {
-        "wait" => "500"
+        "wait" => 500
       }
 
       assert_equal expected, actual
@@ -189,7 +189,7 @@ class TestNlsTimeoutPostByParameters < Minitest::Test
       actual = nls_query_post_by_parameters(data)
 
       expected = {
-        "wait" => "500"
+        "wait" => 500
       }
 
       assert_equal expected, actual

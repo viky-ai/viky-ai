@@ -65,6 +65,13 @@ og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_ucisw_input 
 
     og_string id = NlsGetParamValue(parametersList, "id");
     response = NlsReturnJsonWait(wait, id);
+    if(response == NULL)
+    {
+      char erreur[DOgErrorSize];
+      sprintf(erreur, "NlsEndpointTest: non numeric wait value : %s", wait);
+      OgErr(lt->ctrl_nls->herr, erreur);
+      DPcErr;
+    }
   }
 
   /*
@@ -171,11 +178,18 @@ char *NlsReturnJsonWait(og_string wait, og_string id)
   {
     json_object_set_new(response_json, "id", json_string(id));
   }
-  json_object_set_new(response_json, "wait", json_string(wait));
 
-  char * response = json_dumps(response_json, 0);
-  json_decref(response_json);
-  return response;
+  char *endptr;
+  int waitVal = strtol(wait, &endptr, 10);
+  if(endptr[0] == '\0')
+  {
+    json_object_set_new(response_json, "wait", json_integer(waitVal));
+    char * response = json_dumps(response_json, 0);
+    json_decref(response_json);
+    return response;
+  }
+
+  return NULL;
 }
 
 static og_status NlsWait(og_string wait, int wait_int)

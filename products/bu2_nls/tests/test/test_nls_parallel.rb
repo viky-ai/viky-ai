@@ -25,7 +25,7 @@ class TestNlsParallelGet < Minitest::Test
         actual = nls_query_get(data)
 
         expected = {
-          "id" => test_number,
+          "id" => "#{test_number}",
           "wait" => 50
         }
 
@@ -63,7 +63,7 @@ class TestNlsParallelPostByParameters < Minitest::Test
         actual = nls_query_post_by_parameters(data)
 
         expected = {
-          "id" => test_number,
+          "id" => "#{test_number}",
           "wait" => 50
         }
 
