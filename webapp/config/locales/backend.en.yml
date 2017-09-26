@@ -24,9 +24,8 @@ en:
       users:
         index:
           sort_by:
-            label: Sort by
-            last_action: Last log in
-            email: Email
+            last_action: Sort by last log in
+            email: Sort by email
           status:
             label: Status
             all: All

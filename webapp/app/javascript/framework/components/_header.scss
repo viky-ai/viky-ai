@@ -1,9 +1,12 @@
 .header{
+  margin-bottom: 2em;
+  min-height: 2.25em;
+
   display:flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2em;
-  min-height: 2.25em;
+
+  flex-wrap: wrap;
 
   .header__breadcrumb{
     color: rgba(black, .5);
@@ -18,11 +21,24 @@
         color: #000;
       }
     }
+    order: 1;
   }
   .header__search{
+    min-width: 100%;
+    order: 3;
+    margin-top: 1.5em;
 
+    @media (min-width: 1200px){
+      order: 2;
+      min-width: auto;
+      margin-top: 0;
+    }
   }
   .header__tools{
-
+    order: 2;
+    @media (min-width: 1200px){
+      order: 3;
+    }
   }
 }
+

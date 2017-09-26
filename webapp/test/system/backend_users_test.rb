@@ -37,7 +37,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be filtered' do
     admin_login
 
-    visit backend_users_path
+    click_link('Backend')
 
     find('.dropdown__trigger', text: 'All').click
     all('.dropdown__content li').each do |filter_name|
@@ -50,13 +50,13 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test 'Users can be sorted by last action and email' do
+  test 'Users can be sorted by email' do
     admin_login
 
-    visit backend_users_path
+    click_link('Backend')
 
-    find('.dropdown__trigger', text: 'Last log in').click
-    find('.dropdown__content', text: 'Email').click
+    find('.dropdown__trigger', text: 'Sort by last log in').click
+    find('.dropdown__content', text: 'Sort by email').click
     expected = [
       'admin@voqal.ai',
       'confirmed@voqal.ai',
@@ -65,7 +65,7 @@ class BackendUsersTest < ApplicationSystemTestCase
       'notconfirmed@voqal.ai'
     ]
 
-    find(".field .control:last-child .dropdown__trigger a").assert_text "Email"
+    find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
 
     assert_equal expected, all("tbody tr").map {|tr|
       tr.all('td').first.text.split(' ').first
@@ -76,7 +76,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be found by email' do
     admin_login
 
-    visit backend_users_path
+    click_link('Backend')
 
     fill_in 'search_email', with: 'ocked'
     click_button '#search'
@@ -117,7 +117,9 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Invitations can be resent to not confirmed users only' do
     admin_login
 
-    visit backend_users_path
+    click_link('Backend')
+
+    assert page.has_content?('5 users')
 
     all("tbody tr").each do |tr|
       user_line = tr.all('td').map {|td| td.text}.join
@@ -129,7 +131,7 @@ class BackendUsersTest < ApplicationSystemTestCase
       end
     end
 
-    first('.btn--primary', text: 'Re-invite').click
+    first('table .btn--primary', text: 'Re-invite').click
     assert page.has_content?('An invitation email has been sent to')
     assert_equal '/backend/users', current_path
   end
