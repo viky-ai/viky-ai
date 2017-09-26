@@ -43,6 +43,7 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   winput->http_status = 500;
   winput->http_status_message = "Internal Server Error";
   winput->hsocket = lt->hsocket_in;
+  winput->content_type = "application/json";
   winput->content_length = strlen(response);
   winput->content = response;
 

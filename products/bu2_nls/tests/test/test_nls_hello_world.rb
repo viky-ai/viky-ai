@@ -127,7 +127,7 @@ class TestNlsHelloPostByBody < Minitest::Test
       end
 
       actual = JSON.parse(exception.response.body)
-      expected_error = "endpoint_test : Your json contains error in"
+      expected_error = "OgListeningProcessSearchRequest : Your json contains error in"
 
       assert actual["errors"].first.include? expected_error
     end

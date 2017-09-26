@@ -13,6 +13,7 @@
     <file>nlslter.c</file>
     <file>nlsltp.c</file>
     <file>nlsltu.c</file>
+    <file>nls_endpoints.c</file>
     <file>nls_endpoint_test.c</file>
     <file>nlsmt.c</file>
   </sources>

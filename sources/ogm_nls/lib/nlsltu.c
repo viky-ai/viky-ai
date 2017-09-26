@@ -8,14 +8,12 @@
 
 static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output);
-static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
+static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
 
-static og_status OgGetRequestParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request_paramList *parametersList);
-static og_bool compareEndPointWithString(og_string str1, og_string str2);
-static int sizeOfString(og_string str);
+
 /**
  *  Returns 1 if server must stop, 0 otherwise
  *  Returns -1 on error.
@@ -58,7 +56,7 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   memset(winput, 0, sizeof(struct og_ucisw_input));
   winput->hsocket = input->hsocket;
 
-  IFE(OgListeningProcessSearchRequest(lt, winput, output));
+  IFE(OgListeningProcessEndpoint(lt, winput, output));
 
   int retour = OgListeningAnswer(lt, winput, output);
   lt->request_running = 0;
@@ -89,54 +87,76 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
     }
   }
 
-  /*
-   if (output->hh.request_method > 0 && output->hh.request_method != DOgHttpHeaderTypePost)
-   {
-   NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request is not an HTTP POST Request.");
-   DPcErr;
-   }
-   */
-  if (output->hh.request_method > 0 && output->hh.request_method == DOgHttpHeaderTypePost)
-  {
-    if (output->content_length <= 0 || (output->content_length - output->header_length) <= 1)
-    {
-      NlsThrowError(lt, "OgListeningThreadAnswerUci: UCI request body is empty.");
-      DPcErr;
-    }
-  }
   DONE;
 }
 
-static og_status OgListeningProcessSearchRequest(struct og_listening_thread *lt, struct og_ucisw_input *winput,
+static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output)
 {
   lt->request_running = TRUE;
 
-  struct og_nls_request_paramList parametersList[1];
+  winput->content_type = "application/json";
+  winput->content_length = 0;
+  winput->content = NULL;
+
+  struct og_nls_request request[1];
+  memset(request, 0, sizeof(struct og_nls_request));
+  request->raw = output;
+
+  struct og_nls_response response[1];
+  memset(response, 0, sizeof(struct og_nls_response));
+
 
   // TODO move hba init in NLS init
-  IFn(parametersList->hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100))
+  request->parameters->length = 0;
+  IFn(request->parameters->hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100))
   {
     DPcErr;
   }
 
-  IFE(OgGetRequestParameters(lt, output->hh.request_uri, parametersList));
+  IFE(OgNlsEndpointsParseParameters(lt, output->hh.request_uri, request->parameters));
 
-  // TODO add a function register
-  if ((compareEndPointWithString("/test", output->hh.request_uri) == 1
-      || compareEndPointWithString("/test/", output->hh.request_uri) == 1))
+  // Parse json body
+  if (request->raw->hh.request_method != DOgHttpHeaderTypeGet)
   {
-    IFE(NlsEndpointTest(lt, winput, output, parametersList));
+    int headerSize = output->header_length;
+    int contentSize = output->content_length - headerSize;
+    if (contentSize > 0)
+    {
+      json_error_t error[1];
+      request->body = json_loads(output->content + headerSize, contentSize, error);
+      if (!request->body)
+      {
+        NlsJSONThrowError(lt, "OgListeningProcessSearchRequest", error);
+        DPcErr;
+      }
+    }
   }
-  else
+
+  // Setup an empty json response
+  response->body = json_object();
+
+  og_bool endpoint_status = OgNlsEndpoints(lt, request, response);
+  IFE(endpoint_status);
+
+  // current endpoint not found
+  if(endpoint_status == FALSE)
   {
     winput->http_status = 404;
     winput->http_status_message = "No endpoint found";
-    winput->hsocket = lt->hsocket_in;
-    winput->content_length = 0;
+
+    json_decref(response->body);
+
+    DONE;
   }
 
-  IFE(OgHeapFlush(parametersList->hba));
+  // Build json string from response->body
+  winput->http_status = response->http_status;
+  winput->content = json_dumps(response->body, JSON_INDENT(2));
+  winput->content_length = strlen(winput->content);
+  json_decref(response->body);
+
+  IFE(OgHeapFlush(request->parameters->hba));
 
   DONE;
 }
@@ -146,7 +166,7 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
 {
   lt->t2 = OgMicroClock();
 
-  IF(OgUciServerWrite(lt->hucis,winput))
+  IF(OgUciServerWrite(lt->hucis, winput))
   {
     if (lt->loginfo->trace & DOgNlsTraceMinimal)
     {
@@ -163,125 +183,5 @@ static og_bool OgListeningAnswer(struct og_listening_thread *lt, struct og_ucisw
   OgCloseSocket(lt->hsocket_in);
 
   return FALSE;
-}
-
-
-og_bool NlsParamExists(struct og_nls_request_paramList *parametersList, og_string paramKey)
-{
-  if (parametersList->length > 0)
-  {
-    for (int i = 0; i < parametersList->length; i++)
-    {
-      if (strcmp(parametersList->params[i].key, paramKey) == 0) return TRUE;
-    }
-  }
-  return FALSE;
-}
-
-og_string NlsGetParamValue(struct og_nls_request_paramList *parametersList, og_string paramKey)
-{
-  if (parametersList->length > 0)
-  {
-    for (int i = 0; i < parametersList->length; i++)
-    {
-      if (strcmp(parametersList->params[i].key, paramKey) == 0) return parametersList->params[i].value;
-    }
-  }
-  return NULL;
-}
-
-static og_status OgGetRequestParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request_paramList *parametersList)
-{
-
-
-
-  UriParserStateA state[1];
-  memset(state, 0, sizeof(UriParserStateA));
-
-  UriUriA uri[1];
-  memset(uri, 0, sizeof(UriUriA));
-  state->uri = uri;
-
-  parametersList->length = 0;
-
-  if (uriParseUriA(state, url) == URI_SUCCESS)
-  {
-
-    UriQueryListA *queryList = NULL;
-    int itemCount = 0;
-    if (uriDissectQueryMallocA(&queryList, &itemCount, uri->query.first, uri->query.afterLast) == URI_SUCCESS)
-    {
-      for (UriQueryListA * pQItem = queryList; pQItem; pQItem = pQItem->next)
-      {
-        if (pQItem->key != NULL && pQItem->value != NULL)
-        {
-          struct og_nls_request_param param[1];
-          memset(param, 0, sizeof(struct og_nls_request_param));
-
-          // TODO Heap can be reallocated
-
-          int start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key) + 1, pQItem->key));
-          IFn(param->key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
-
-          start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value) + 1, pQItem->value));
-          IFn(param->value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
-
-          parametersList->params[parametersList->length] = *param;
-          parametersList->length++;
-        }
-      }
-
-      // TODO ensure FREE
-      uriFreeQueryListA(queryList);
-    }
-  }
-
-  // TODO ensure FREE
-  uriFreeUriMembersA(uri);
-
-  DONE;
-}
-
-static og_bool compareEndPointWithString(og_string str1, og_string str2)
-{
-  int are_the_same = 1;
-  int size_of_str1 = sizeOfString(str1);
-
-  for (int i = 0; i < size_of_str1; i++)
-  {
-    if (str2[i] == '?')
-    {
-      are_the_same = 0;
-      break;
-    }
-    else if (str1[i] != str2[i])
-    {
-      are_the_same = 0;
-      break;
-    }
-    else if (i == size_of_str1 - 1)
-    {
-      if (str2[i + 1] != '?' && str2[i + 1] != '\0')
-      {
-        are_the_same = 0;
-        break;
-      }
-    }
-  }
-  return are_the_same;
-}
-
-static int sizeOfString(og_string str)
-{
-  int count = 0;
-  do
-  {
-    if (str[count] == '\0') break;
-    else count++;
-  }
-  while (count >= 0);
-  return count;
 }
 

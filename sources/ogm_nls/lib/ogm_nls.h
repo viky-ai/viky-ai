@@ -66,9 +66,6 @@ struct og_nls_conf
   /** Timeout for the request. If only answer_timeout is specified, request_processing_timeout is 80 % of answer_timeout*/
   int request_processing_timeout;
 
-  /** Timeout for the request. If only answer_timeout is specified, request_processing_timeout is 80 % of answer_timeout*/
-  int tmp_request_processing_timeout;
-
   /** backlog timeout specified only for indexing requests. If not specified, it has the same value as backlog_timeout*/
   int backlog_indexing_timeout;
   int backlog_max_pending_requests;
@@ -180,6 +177,21 @@ struct og_nls_request_paramList
   struct og_nls_request_param params[50];
 };
 
+struct og_nls_request
+{
+  struct og_nls_request_paramList parameters[1];
+  json_t *body;
+
+  struct og_ucisr_output *raw;
+
+};
+
+struct og_nls_response
+{
+  int http_status;
+  json_t *body;
+};
+
 #define maxArrayLevel 10
 
 /** nlsrun.c **/
@@ -214,8 +226,8 @@ og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl);
 
 /** nlsltu.c **/
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
-og_bool NlsParamExists(struct og_nls_request_paramList *parametersList, og_string paramKey);
-og_string NlsGetParamValue(struct og_nls_request_paramList *parametersList, og_string paramKey);
+og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey);
+og_string NlsRequestGetParamValue(struct og_nls_request *request, og_string paramKey);
 
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
@@ -223,7 +235,12 @@ og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 /** nlsmt.c **/
 int OgMaintenanceThread(void *ptr);
 
-/** endpoint-test.c **/
-og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_ucisw_input *winput, struct og_ucisr_output *output,
+/** nls_endpoints.c **/
+og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
+og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,
     struct og_nls_request_paramList *parametersList);
+
+/** nls_endpoint_test.c **/
+og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
 

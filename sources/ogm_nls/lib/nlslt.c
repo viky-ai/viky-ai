@@ -15,12 +15,9 @@ int OgListeningThread(void *ptr)
 {
   int retour = CORRECT;
 
-  pthread_cleanup_push(NlsCancelCleanupOnTimeout, ptr)
-        ;
-
-        retour = OgListeningThread1(ptr);
-
-        pthread_cleanup_pop(0);
+  pthread_cleanup_push(NlsCancelCleanupOnTimeout, ptr);
+  retour = OgListeningThread1(ptr);
+  pthread_cleanup_pop(0);
 
   return (retour);
 }
@@ -230,6 +227,7 @@ og_status NlsLtReset(struct og_listening_thread *lt)
 og_status NlsLtFlush(struct og_listening_thread *lt)
 {
   IFE(OgUciServerFlush(lt->hucis));
+  IFE(OgMsgFlush(lt->hmsg));
   OgErrFlush(lt->herr);
 
   DONE;
