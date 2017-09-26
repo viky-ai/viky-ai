@@ -4,6 +4,8 @@ en:
       breadcrumb: Your profile
       edit:
         breadcrumb: Edition
+        global:
+          title: General informations
         authentication:
           title: Authentication parameters
           waiting_email_confirmation: "Currently waiting confirmation for: %{email}"

@@ -80,7 +80,8 @@
 
   input[type='text'],
   input[type='email'],
-  input[type='password']{
+  input[type='password'],
+  textarea{
     width: 100%;
     line-height: 1.5;
     font-weight: 300;
@@ -105,6 +106,15 @@
     opacity: .3;
   }
   input:-ms-input-placeholder{
+    opacity: .3;
+  }
+  textarea::-webkit-input-placeholder{
+    opacity: .3;
+  }
+  textarea::-moz-placeholder{
+    opacity: .3;
+  }
+  textarea:-ms-input-placeholder{
     opacity: .3;
   }
   .field_with_errors{

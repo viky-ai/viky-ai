@@ -5,7 +5,11 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable, :lockable, :timeoutable
 
-  # overload devise method to send mail
+  validates :username, uniqueness: true, allow_blank: true, length: { in: 3..25 }
+
+  before_validation :clean_username
+
+  # overload devise method to send async emails
   def send_devise_notification(notification, *args)
     devise_mailer.send(notification, self, *args).deliver_later
   end
@@ -44,5 +48,14 @@ class User < ApplicationRecord
 
     conditions
   end
+
+
+  private
+
+    def clean_username
+      unless username.nil?
+        self.username = username.parameterize(separator: '_')
+      end
+    end
 
 end

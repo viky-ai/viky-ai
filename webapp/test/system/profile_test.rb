@@ -9,6 +9,23 @@ class ProfileTest < ApplicationSystemTestCase
   end
 
 
+  test "Profile change Name, username, bio" do
+    admin_login
+
+    click_link "admin@voqal.ai"
+
+    fill_in 'Name', with: 'Batman and Robin'
+    fill_in 'Username', with: 'batman'
+    fill_in 'Bio', with: "blah blah blah"
+
+    click_button 'Update profile'
+
+    assert page.has_field?('Name', with: 'Batman and Robin')
+    assert page.has_field?('Username', with: 'batman')
+    assert page.has_field?('Bio', with: 'blah blah blah')
+  end
+
+
   test "Update Authentication parameters without any change" do
     admin_login
     click_link "admin@voqal.ai"

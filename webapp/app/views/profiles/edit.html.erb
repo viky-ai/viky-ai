@@ -8,6 +8,31 @@
   <div class="card">
     <div class="card-content">
 
+      <h2><%= t('views.profile.edit.global.title') %></h2>
+      <div class="field">
+        <div class="control">
+          <%= f.label :name %><br />
+          <%= f.text_field :name, placeholder: "John Smith" %>
+          <%= display_errors(@profile, :name) %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.label :username %><br />
+          <%= f.text_field :username, placeholder: "jsmith" %>
+          <%= display_errors(@profile, :username) %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.label :bio %><br />
+          <%= f.text_area :bio, placeholder: "Tell us a little about yourself" %>
+          <%= display_errors(@profile, :bio) %>
+        </div>
+      </div>
+
       <h2><%= t('views.profile.edit.authentication.title') %></h2>
       <div class="field">
         <div class="control">

@@ -12,6 +12,34 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
+  test "username uniqueness" do
+    admin = User.find_by_email('admin@voqal.ai')
+    admin.username = "admin"
+    assert admin.save
+
+    confirmed = User.find_by_email('confirmed@voqal.ai')
+    confirmed.username = "admin"
+    assert !confirmed.save
+    assert_equal ["has already been taken"], confirmed.errors.messages[:username]
+  end
+
+
+  test "username cleanup" do
+    admin = User.find_by_email('admin@voqal.ai')
+    admin.username = "Admin Yeah ' Toto"
+    assert admin.save
+    assert_equal "admin_yeah_toto", admin.username
+
+    admin.username = "  "
+    assert admin.save
+    assert_equal "", admin.username
+
+    admin.username = "\" 1   2 3 ABC !?/^äù"
+    assert admin.save
+    assert_equal "1_2_3_abc_au", admin.username
+  end
+
+
   test "search & order_by" do
     s = Backend::UserSearch.new
     expected = [
