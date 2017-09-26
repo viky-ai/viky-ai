@@ -162,6 +162,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   json_auto_t *json = json_load_file(json_compilation_filename, JSON_REJECT_DUPLICATES, error);
   IFN(json)
   {
+    OgErr(info->herr, "nlp_compile: error while reading 'json_compilation_filename'");
     DPcErr;
   }
   struct og_nlp_compile_input input[1];
@@ -170,7 +171,35 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
 
-  IFE(OgNlpCompile(info->hnlp, input, output));
+  IF(OgNlpCompile(info->hnlp, input, output))
+  {
+    json_t * root = json_object();
+    json_t * errors = json_array();
+
+    int nb_error = 0;
+    char erreur[DOgErrorSize];
+    while (OgErrLast(info->herr, erreur, 0))
+    {
+      json_array_append(errors, json_string(erreur) );
+      nb_error++;
+    }
+
+    int h = 0;
+    while (PcErrDiag(&h, erreur))
+    {
+      json_array_append(errors, json_string(erreur) );
+      nb_error++;
+    }
+
+    json_object_set(root, "errors", errors);
+
+    json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
+    printf("\n");
+
+    json_decref(errors);
+    json_decref(root);
+
+  }
 
   IFN(output->json_output)
   {

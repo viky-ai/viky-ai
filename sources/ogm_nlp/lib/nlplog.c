@@ -14,7 +14,7 @@ og_status NlpPackageLog(package_t package)
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "Package '%s' :", package_id);
 
   int intent_used = OgHeapGetCellsUsed(package->hintent);
-  for (int i; i < intent_used; i++)
+  for (int i = 0; i < intent_used; i++)
   {
     IFE(NlpPackageIntentLog(package, i));
   }
