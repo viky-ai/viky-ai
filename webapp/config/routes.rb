@@ -12,6 +12,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :profile, only: [:edit, :update, :destroy] do
+    get :confirm_destroy
+  end
+
   root to: "welcome#index"
 
   get 'style-guide', to: 'style_guide#index'

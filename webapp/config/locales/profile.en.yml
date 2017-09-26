@@ -1,0 +1,21 @@
+en:
+  views:
+    profile:
+      breadcrumb: Your profile
+      edit:
+        breadcrumb: Edition
+        authentication:
+          title: Authentication parameters
+          waiting_email_confirmation: "Currently waiting confirmation for: %{email}"
+          password_constraint: At least %{min_length} characters
+          leave_blank: leave blank if you don't want to change it
+          btn: Update profile
+        destroy:
+          title: Delete my account
+          message: Deleting your account is final, you will not be able to go back.
+          btn: I want delete my account
+      confirm_destroy:
+        title: Are you sure?
+        message: Deleting your account is final, you will not be able to go back.
+        btn: Delete my account
+        success_message: Your account has been succefully delete. ByeBye.

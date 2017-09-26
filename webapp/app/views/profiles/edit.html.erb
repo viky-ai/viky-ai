@@ -1,0 +1,68 @@
+<header class="header">
+  <div class="header__breadcrumb">
+    <%= t('views.profile.breadcrumb') %> / <strong><%= t('views.profile.edit.breadcrumb') %></strong>
+  </div>
+</header>
+
+<%= form_for(@profile, as: :profile, url: profile_path(), html: { method: :put }) do |f| %>
+  <div class="card">
+    <div class="card-content">
+
+      <h2><%= t('views.profile.edit.authentication.title') %></h2>
+      <div class="field">
+        <div class="control">
+          <%= f.label :email %><br />
+          <%= f.text_field :email, autocomplete: "off" %>
+          <%= display_errors(@profile, :email) %>
+
+          <% if @profile.pending_reconfirmation? %>
+            <div class="help help--success">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              <%= t('views.profile.edit.authentication.waiting_email_confirmation', email: @profile.unconfirmed_email) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.label :password %>
+          <span class="help">
+            <span class="icon icon--x-small"><%= icon_information %></span>
+            <%= t('views.profile.edit.authentication.password_constraint', min_length: User.password_length.min) %>
+          </span>
+
+          <br />
+          <%= f.password_field :password, autocomplete: "off" %>
+          <%= display_errors(@profile, :password) %>
+
+          <div class="help">
+            <span class="icon icon--x-small"><%= icon_information %></span>
+            <%= t('views.profile.edit.authentication.leave_blank') %>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <%= f.button t('views.profile.edit.authentication.btn'), class: "btn btn--primary",
+            data: {
+              disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+            } %>
+      </div>
+
+    </div>
+  </div>
+<% end %>
+
+<div class="card">
+  <div class="card-content">
+    <h2><%= t('views.profile.edit.destroy.title') %></h2>
+    <p><%= t('views.profile.edit.destroy.message') %></p>
+    <p>
+      <a href="<%= confirm_destroy_profile_path %>" class="btn btn--destructive" data-action="open-remote-modal">
+        <%= t('views.profile.edit.destroy.btn') %>
+      </a>
+    </p>
+  </div>
+</div>
+

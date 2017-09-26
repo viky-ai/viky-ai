@@ -17,24 +17,24 @@
             Backend
           </a>
         </li>
+        <li>
+          <a href="/style-guide" <% if controller_path.include?('style_guide') %>class="current"<% end %>>
+            Style guide
+          </a>
+          <ul class="style-guide" data-turbolinks="false"></ul>
+        </li>
+        <li>
+          <a href="/rails/mailers/" data-turbolinks="false">
+            Mailer tests
+          </a>
+        </li>
       <% end %>
-      <li>
-        <a href="/style-guide" <% if controller_path.include?('style_guide') %>class="current"<% end %>>
-          Style guide
-        </a>
-        <ul class="style-guide" data-turbolinks="false"></ul>
-      </li>
-      <li>
-        <a href="/rails/mailers/" data-turbolinks="false">
-          Mailer tests
-        </a>
-      </li>
     <% end %>
   </ul>
 </div>
 <div class="nav__footer">
   <% if user_signed_in? %>
-    <%= current_user.email %><br />
+    <%= link_to current_user.email, edit_profile_path %><br />
     <%= link_to t('edit_profile'), edit_user_registration_path %> |
     <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
   <% end %>

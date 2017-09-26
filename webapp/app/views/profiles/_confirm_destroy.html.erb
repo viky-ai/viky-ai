@@ -1,0 +1,32 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.profile.confirm_destroy.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+      <p>
+        <%= t('views.profile.confirm_destroy.message') %>
+      </p>
+      <%= form_for(profile, url: profile_path, method: :delete, html: { data: { validation: :delete }}) do |f| %>
+        <div class="field">
+          <div class="control">
+            <label><%= t('confirm_destroy.label') %></label>
+            <div>
+              <input type="text" name="validation" />
+            </div>
+            <div class="help help--error" style="display:none;">
+              <span class="icon icon--x-small"><%= icon_alert %></span>
+              <%= t('confirm_destroy.error') %>
+            </div>
+          </div>
+        </div>
+        <%= f.button t('views.profile.confirm_destroy.btn'), class: "btn btn--destructive" %>
+        <a href="#" class="btn btn--flat" ><%= t('cancel') %></a>
+      <% end %>
+    </div>
+  </div>
+</div>
