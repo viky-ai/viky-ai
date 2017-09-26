@@ -35,6 +35,7 @@ struct og_info
 static int nlp(struct og_info *info, int argc, char * argv[]);
 static int nlp_compile(struct og_info *info, char *json_compilation_filename);
 static int nlp_interpret(struct og_info *info);
+static int nlp_send_errors_as_json(struct og_info *info);
 
 /* default function to define */
 static int OgUse(struct og_info *);
@@ -163,6 +164,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   IFN(json)
   {
     OgErr(info->herr, "nlp_compile: error while reading 'json_compilation_filename'");
+    nlp_send_errors_as_json(info);
     DPcErr;
   }
   struct og_nlp_compile_input input[1];
@@ -173,37 +175,14 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
 
   IF(OgNlpCompile(info->hnlp, input, output))
   {
-    json_t * root = json_object();
-    json_t * errors = json_array();
-
-    int nb_error = 0;
-    char erreur[DOgErrorSize];
-    while (OgErrLast(info->herr, erreur, 0))
-    {
-      json_array_append(errors, json_string(erreur) );
-      nb_error++;
-    }
-
-    int h = 0;
-    while (PcErrDiag(&h, erreur))
-    {
-      json_array_append(errors, json_string(erreur) );
-      nb_error++;
-    }
-
-    json_object_set(root, "errors", errors);
-
-    json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
-    printf("\n");
-
-    json_decref(errors);
-    json_decref(root);
-
+    nlp_send_errors_as_json(info);
+    DPcErr;
   }
 
   IFN(output->json_output)
   {
     OgErr(info->herr, "nlp_compile: null output->json_output");
+    nlp_send_errors_as_json(info);
     DPcErr;
   }
   else
@@ -230,6 +209,38 @@ static int nlp_interpret(struct og_info *info)
   DONE;
 }
 
+
+static int nlp_send_errors_as_json(struct og_info *info)
+{
+  json_t * root = json_object();
+  json_t * errors = json_array();
+
+  int nb_error = 0;
+  char erreur[DOgErrorSize];
+  while (OgErrLast(info->herr, erreur, 0))
+  {
+    json_array_append(errors, json_string(erreur) );
+    nb_error++;
+  }
+
+  int h = 0;
+  while (PcErrDiag(&h, erreur))
+  {
+    json_array_append(errors, json_string(erreur) );
+    nb_error++;
+  }
+
+  json_object_set(root, "errors", errors);
+
+  json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
+  printf("\n");
+
+  json_decref(errors);
+  json_decref(root);
+  DONE;
+}
+
+
 static int OgUse(struct og_info *info)
 {
   char buffer[8192];
@@ -253,6 +264,7 @@ static int OgUse(struct og_info *info)
 
   DONE;
 }
+
 
 static void OgExit(struct og_info *info)
 {
