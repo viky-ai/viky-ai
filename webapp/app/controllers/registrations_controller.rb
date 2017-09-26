@@ -2,7 +2,6 @@ class RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/sign_up
   def new
-
     if Feature.user_registration_enabled?
       super
     else
@@ -19,5 +18,17 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  # Disable edit/update/destroy
+  def edit
+    raise ActionController::RoutingError.new('Not Found')
+  end
+
+  def update
+    raise ActionController::RoutingError.new('Not Found')
+  end
+
+  def destroy
+    raise ActionController::RoutingError.new('Not Found')
+  end
 
 end

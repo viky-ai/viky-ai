@@ -35,7 +35,6 @@
 <div class="nav__footer">
   <% if user_signed_in? %>
     <%= link_to current_user.email, edit_profile_path %><br />
-    <%= link_to t('edit_profile'), edit_user_registration_path %> |
     <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
   <% end %>
 </div>
