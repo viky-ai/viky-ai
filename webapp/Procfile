@@ -1,4 +1,4 @@
-sidekiq_redis:  redis-server
+sidekiq_redis:  redis-server --port 7372
 workers:        bundle exec sidekiq -C config/sidekiq.yml
 webpack:        ./bin/webpack-dev-server
 web:            bundle exec rails s -p 3000
