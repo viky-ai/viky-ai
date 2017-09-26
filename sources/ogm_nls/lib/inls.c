@@ -24,6 +24,8 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   memcpy(ctrl_nls->loginfo, &param->loginfo, sizeof(struct og_loginfo));
   strcpy(ctrl_nls->WorkingDirectory, param->WorkingDirectory);
   strcpy(ctrl_nls->configuration_file, param->configuration_file);
+  strcpy(ctrl_nls->import_directory, param->import_directory);
+  IFn(ctrl_nls->import_directory[0]) strcpy(ctrl_nls->import_directory, "import");
 
   struct og_msg_param msg_param[1];
   memset(msg_param, 0, sizeof(struct og_msg_param));
@@ -108,6 +110,18 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   {
     IF(NlsInitPermanentLtThreads(ctrl_nls)) return NULL;
   }
+
+  struct og_nlp_param nlp_param[1];
+  memset(nlp_param, 0, sizeof(struct og_nlp_param));
+  nlp_param->hmsg = ctrl_nls->hmsg;
+  nlp_param->herr = ctrl_nls->herr;
+  nlp_param->hmutex = ctrl_nls->hmutex;
+  nlp_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
+  nlp_param->loginfo.where = ctrl_nls->loginfo->where;
+  IFn(ctrl_nls->hnlp=OgNlpInit(nlp_param)) return (0);
+
+  IF(NlsReadImportFiles(ctrl_nls)) return NULL;
+
 
   return ctrl_nls;
 }

@@ -5,12 +5,14 @@
  *  Version 1.0
  */
 #include <lognls.h>
+#include <lognlp.h>
 
 #include <logaddr.h>
 #include <loguci.h>
 #include <logpath.h>
 #include <logthr.h>
 #include <logheap.h>
+#include <logsort.h>
 #include <loggen.h>
 #include <glib.h>
 
@@ -18,10 +20,6 @@
 
 #include <uriparser/Uri.h>
 #include <uriparser/UriBase.h>
-
-//#include <yajl/yajl_gen.h>
-//#include <yajl/yajl_parse.h>
-//#include <yajl/yajl_tree.h>
 
 #include <string.h>
 
@@ -140,6 +138,8 @@ struct og_ctrl_nls
   struct og_loginfo loginfo[1];
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
+  char import_directory[DPcPathSize];
+
   int icwd;
   unsigned char cwd[DPcPathSize];
   struct og_nls_conf conf[1];
@@ -162,6 +162,7 @@ struct og_ctrl_nls
 
   struct og_maintenance_thread mt;
 
+  og_nlp hnlp;
 };
 
 struct og_nls_request_param
@@ -216,6 +217,7 @@ og_status NlsRequestLog(struct og_listening_thread *lt, og_string function_name,
     int additional_log_flags);
 og_status NlsThrowError(struct og_listening_thread *lt, og_string format, ...);
 og_status NlsJSONThrowError(struct og_listening_thread *lt, og_string function_name, json_error_t * error);
+og_status NlsMainThrowError(og_nls ctrl_nls, og_string format, ...);
 
 /** nlsler.c **/
 og_status OgListeningThreadError(struct og_listening_thread *lt);
@@ -243,4 +245,8 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
 /** nls_endpoint_test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
+
+/** nlsimport.c **/
+og_status NlsReadImportFiles(og_nls ctrl_nls);
+
 

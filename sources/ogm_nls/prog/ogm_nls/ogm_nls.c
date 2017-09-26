@@ -91,32 +91,51 @@ int main(int argc, char *argv[])
   OgGetExecutablePath(argv0, nls_prog->cwd);
   chdir(nls_prog->cwd);
 
-  for (int i = 1; i < argc; i++)
-  {
-    og_string cmd_param = argv[i];
+  /* definition of program options */
+  struct option longOptions[] = { { "import", required_argument, NULL, 'i' },   //
+      { "nosignal", no_argument, NULL, 'n' },   //
+      { "daemon", no_argument, NULL, 'd' },   //
+      { "help", no_argument, NULL, 'h' },   //
+      { "version", no_argument, NULL, 'v' },   //
+      { "trace", required_argument, NULL, 't' },   //
+      { 0, 0, 0, 0 }   //
+  };
 
-    sprintf(cmd + strlen(cmd), " %s", cmd_param);
-    if (!strcmp(cmd_param, "-d"))
+  char *nil, carlu;
+  int optionIndex;
+  char banner[1024];
+
+  /* parsing options to exclusion of compilation and interpretation files */
+  optionIndex = 0;
+  while ((carlu = getopt_long(argc, argv, "i:t:ndvh", longOptions, &optionIndex)) != EOF)
+  {
+    switch (carlu)
     {
-      Daemonize(nls_prog);
-    }
-    if (!strcmp(cmd_param, "-v"))
-    {
-      char banner[1024];
-      banner[0] = 0;
-      sprintf(banner + strlen(banner), "%s\n", DOgNlsBanner);
-      sprintf(banner + strlen(banner), "lib:  %s\n", OgNlsBanner());
-      OgMessageBox(0, banner, param->loginfo.where, DOgMessageBoxInformation);
-      must_exit = 1;
-    }
-    else if (!strcmp(cmd_param, "-h"))
-    {
-      OgUse(nls_prog, hInstance, nCmdShow);
-      must_exit = 1;
-    }
-    else if (!memcmp(cmd_param, "-nosignal", 9))
-    {
-      use_signal = FALSE;
+      case 0:
+        break;
+      case 'n': /* nosignal */
+        use_signal = FALSE;
+        break;
+      case 'i': /* import directory */
+        strcpy(param->import_directory, optarg);
+        break;
+      case 'd': /* put program into background */
+        Daemonize(nls_prog);
+        break;
+      case 't':
+        param->loginfo.trace = strtol(optarg, &nil, 16);
+        break;
+      case 'v': /* version */
+        banner[0] = 0;
+        sprintf(banner + strlen(banner), "%s\n", DOgNlsBanner);
+        sprintf(banner + strlen(banner), "lib:  %s\n", OgNlsBanner());
+        OgMessageBox(0, banner, param->loginfo.where, DOgMessageBoxInformation);
+        must_exit = 1;
+        break;
+      case 'h': /* help */
+        OgUse(nls_prog, hInstance, nCmdShow);
+        must_exit = 1;
+        break;
     }
   }
 
@@ -151,7 +170,6 @@ int main(int argc, char *argv[])
   {
     IF(OgSignal(nls_prog->hsig, SIGSEGV, NlsSignalOnEmergency, nls_prog, 0)) DoExit(nls_prog);
     IF(OgSignal(nls_prog->hsig, SIGABRT, NlsSignalOnEmergency,nls_prog, 0)) DoExit(nls_prog);
-
   }
 
   // Signal stop
@@ -193,14 +211,16 @@ static int OgUse(struct og_nls_prog *nls_prog, void *hInstance, int nCmdShow)
   sprintf(buffer, "Usage : ogm_nls [-v] [-h] [options]\n");
   sprintf(buffer + strlen(buffer), "options are:\n");
   sprintf(buffer + strlen(buffer), "  -d start as a daemon (Unix only)\n");
-  sprintf(buffer + strlen(buffer), "  -nosignal: gets a core dump, instead of a log set by the exception\n");
-  sprintf(buffer + strlen(buffer), "    -h prints this message\n");
-  sprintf(buffer + strlen(buffer), "    -nlst_<n>: trace options for logging (default 0x%x)\n",
-      nls_prog->loginfo->trace);
-  sprintf(buffer + strlen(buffer), "      <n> has a combined hexadecimal value of:\n");
-  sprintf(buffer + strlen(buffer), "        0x1: minimal, 0x2: memory, 0x4: all request, 0x8: answer\n");
-  sprintf(buffer + strlen(buffer), "        0x10: socket, 0x20: socket size, 0x40: LT, 0x80: LT search\n");
-  sprintf(buffer + strlen(buffer), "    -v gives version number of the program\n");
+  sprintf(buffer + strlen(buffer), "  -n or -nosignal: gets a core dump, instead of a log set by the exception\n");
+  sprintf(buffer + strlen(buffer),
+      "  -i <dir> or --import=<dir> : specifies the directory where to look for json import files\n");
+  sprintf(buffer + strlen(buffer), "    default is 'import'\n");
+  sprintf(buffer + strlen(buffer), "  -h prints this message\n");
+  sprintf(buffer + strlen(buffer), "  -t <n>: trace options for logging (default 0x%x)\n", nls_prog->loginfo->trace);
+  sprintf(buffer + strlen(buffer), "     <n> has a combined hexadecimal value of:\n");
+  sprintf(buffer + strlen(buffer), "      0x1: minimal, 0x2: memory, 0x4: all request, 0x8: answer\n");
+  sprintf(buffer + strlen(buffer), "      0x10: socket, 0x20: socket size, 0x40: LT, 0x80: LT search\n");
+  sprintf(buffer + strlen(buffer), "  -v gives version number of the program\n");
 
   OgMessageBox(0, buffer, nls_prog->loginfo->where, DOgMessageBoxInformation);
 

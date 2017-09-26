@@ -6,11 +6,12 @@
   <sources>
     <file>inls.c</file>
     <file>nlsconf.c</file>
+    <file>nlsimport.c</file>
     <file>nlsonem.c</file>
     <file>nlsrun.c</file>
     <file>nlslog.c</file>
     <file>nlslt.c</file>
-    <file>nlslter.c</file>
+    <file>nlserror.c</file>
     <file>nlsltp.c</file>
     <file>nlsltu.c</file>
     <file>nls_endpoints.c</file>
@@ -21,7 +22,7 @@
     <platform name="linux">
       <option name="NAME">ognls</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaddr -loguci -logsock -logthr -logheap -logmsg -loggen -lglib-2.0 -ljansson -luriparser</option>
+      <option name="ADD_LIBR">-lognlp -logaddr -loguci -logsock -logthr -logheap -logmsg -loggen -lglib-2.0 -ljansson -luriparser</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>
