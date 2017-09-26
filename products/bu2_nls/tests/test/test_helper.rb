@@ -13,4 +13,5 @@ require 'parallel'
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new # spec-like progress
 
 require 'nls/common'
+require 'nlp/common'
 require 'nls/nls'
