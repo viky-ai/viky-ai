@@ -61,13 +61,15 @@ Asynchronous tasks, like mail delivery and other, are lazily performed making us
 
 The configuration file for queue definition and options is `config/sidekiq.yml`, you can therein define as many queues as you need and route them in your Sidekiq workers and ActiveJob jobs.
 
+## Start all in development
+
 To ensure having all those processes up and running during development, you can simply run:
 
     foreman start
 
 which reads the `Procfile` behind the scenes, bringing the web server and workers up:
 
-    sidekiq_redis:  redis-server
+    sidekiq_redis:  redis-server --port 7372
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
