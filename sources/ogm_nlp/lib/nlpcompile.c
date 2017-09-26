@@ -335,6 +335,14 @@ static int NlpCompilePackagePhrase(package_t package, struct intent *intent, jso
     const char *string_text = json_string_value(json_text);
     phrase->text_start = OgHeapGetCellsUsed(package->hba);
     phrase->text_length = strlen(string_text);
+
+    if(phrase->text_length > DOgNlpIntentPhraseMaxLength)
+    {
+      NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: text is too long");
+      DPcErr;
+    }
+
+
     IFE(OgHeapAppend(package->hba, package->id_length + 1, string_text));
   }
   else

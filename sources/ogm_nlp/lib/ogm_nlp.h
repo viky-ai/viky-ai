@@ -13,6 +13,8 @@
 #define DOgNlpPackageBaNumber 0x100
 #define DOgNlpPackageIntentNumber 0x10
 #define DOgNlpPackagePhraseNumber (DOgNlpPackageIntentNumber*0x10)
+#define DOgNlpIntentPhraseMaxLength 0x800
+
 
 struct phrase
 {

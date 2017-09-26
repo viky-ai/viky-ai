@@ -67,6 +67,27 @@ module Nlp
       assert_equal expected, actual
     end
 
+
+    def test_intent_phrase_too_long
+
+      input = input_ref
+      input["intents"][0]["phrases"][0]["text"] = ""
+
+      for i in 0..500
+        input["intents"][0]["phrases"][0]["text"]  << "Brice Hello "
+      end
+
+      File.open("#{@@pwd}/input.json", 'w') do |f|
+        f.write input.to_json
+      end
+
+      actual = nlp([ "-c #{@@pwd}/input.json"])
+
+      expected = {"errors" => ["NlpCompilePackagePhrase: text is too long"]}
+
+      assert_equal expected, actual
+    end
+
   end
 
 end
