@@ -6,12 +6,15 @@
   <sources>
     <file>inlp.c</file>
     <file>nlpcompile.c</file>
+    <file>nlperr.c</file>
+    <file>nlplog.c</file>
+    <file>nlppackage.c</file>
   </sources>
   <platforms>
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logheap -logmsg -loggen -ljansson</option>
+      <option name="ADD_LIBR">-logheap -logmsg -loggen -ljansson -lglib-2.0</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

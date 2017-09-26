@@ -7,6 +7,11 @@
 #include "ogm_nlp.h"
 #include <stddef.h>
 
+static guint package_hash_func(gconstpointer key);
+static gboolean package_key_equal_func(gconstpointer  key_a, gconstpointer  key_b);
+
+
+
 PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 {
   char erreur[DOgErrorSize];
@@ -33,7 +38,22 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
   IFn(ctrl_nlp->hmsg=OgMsgInit(msg_param)) return (0);
   IF(OgMsgTuneInherit(ctrl_nlp->hmsg,param->hmsg)) return (0);
 
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, g_free);
+
   return ctrl_nlp;
+}
+
+static guint package_hash_func(gconstpointer key)
+{
+  og_string package_id = key;
+  return g_str_hash(package_id);
+}
+
+static gboolean package_key_equal_func(gconstpointer  key_a, gconstpointer  key_b)
+{
+  og_string package_id_a = key_a;
+  og_string package_id_b = key_b;
+  return g_str_equal(package_id_a, package_id_b);
 }
 
 PUBLIC(int) OgNlpFlush(og_nlp handle)

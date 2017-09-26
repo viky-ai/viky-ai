@@ -156,6 +156,8 @@ static int nlp(struct og_info *info, int argc, char * argv[])
 
 static int nlp_compile(struct og_info *info, char *json_compilation_filename)
 {
+  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Compiling '%s'", json_compilation_filename);
+
   json_error_t error[1];
   json_auto_t *json = json_load_file(json_compilation_filename, JSON_REJECT_DUPLICATES, error);
   IFN(json)
@@ -165,17 +167,30 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   struct og_nlp_compile_input input[1];
   struct og_nlp_compile_output output[1];
 
-  memset(input,0,sizeof(struct og_nlp_compile_input));
+  memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
 
   IFE(OgNlpCompile(info->hnlp, input, output));
 
-  og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
-  printf("\n");
-  json_decref(output->json_output);
-  IFE(status);
+  IFN(output->json_output)
+  {
+    OgErr(info->herr, "nlp_compile: null output->json_output");
+    DPcErr;
+  }
+  else
+  {
+    og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
+    printf("\n");
+    json_decref(output->json_output);
+    IF(status)
+    {
+      char buffer[DPcPathSize];
+      sprintf(buffer, "nlp_compile: error on json_dump_file");
+      OgErr(info->herr, buffer);
+      DPcErr;
+    }
+  }
 
-  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Compiling '%s'", json_compilation_filename);
   DONE;
 }
 
