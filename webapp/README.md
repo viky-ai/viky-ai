@@ -44,7 +44,7 @@ Emails from Devise are sent with `support@voqal.ai` sender.
 
 Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
 
-Mail delivery is performed through an high priority enqueuing (see _Background job_ for details paragraph).
+Mail delivery is performed through a high priority queue named `webapp_mailers` (see _Background jobs_ paragraph for details).
 
 ## Admin user
 
@@ -57,7 +57,11 @@ Admin users can access to `/backend/users` UI. In order to create admin user, yo
 
 ## Background jobs
 
-Asynchronous tasks and mail delivery are performed lazily, making use of a job queue based on ActiveJob + Sidekiq + Redis. To ensure having all those processes up and running during development, you can simply run:
+Asynchronous tasks, like mail delivery and other, are lazily performed making use of a job queue based on ActiveJob + Sidekiq + Redis.
+
+The configuration file for queue definition and options is `config/sidekiq.yml`, you can therein define as many queues as you need and route them in your Sidekiq workers and ActiveJob jobs.
+
+To ensure having all those processes up and running during development, you can simply run:
 
     foreman start
 
