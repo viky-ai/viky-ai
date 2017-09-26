@@ -2,36 +2,13 @@ require 'test_helper'
 
 module Nlp
 
-class TestNlpCompile < Minitest::Test
-
-  @@pwd = ENV['NLS_INSTALL_PATH']
-  @@pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if @@pwd.nil?
-
-  def nlp(param = [])
-
-    response = `cd #{@@pwd} && ./ognlp #{param.join(' ')}`
-    JSON.parse response
-
+class TestNlpCompile < Common
+  def input_ref()
+    JSON.parse(File.read(fixture_path('package_base.json')))
   end
-
   def test_compile
 
-    input =
-      {
-        "id"  => "voqal.ai:datetime",
-        "intents"  => [
-            {
-              "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-              "phrases"  =>  [
-                {
-                  "text" => "Hello Brice",
-                  "locale"  => "fr-FR"
-                }
-             ]
-          }
-        ]
-      }
-
+    input = input_ref()
 
     File.open("#{@@pwd}/input.json", 'w') do |f|
       f.write input.to_json
