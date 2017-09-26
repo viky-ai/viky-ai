@@ -53,5 +53,3 @@ og_status NlpPackagePhraseLog(package_t package, int Iphrase)
   DONE;
 }
 
-
-

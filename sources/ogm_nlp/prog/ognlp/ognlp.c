@@ -34,6 +34,7 @@ struct og_info
 /* functions for using main api */
 static int nlp(struct og_info *info, int argc, char * argv[]);
 static int nlp_compile(struct og_info *info, char *json_compilation_filename);
+static og_status nlp_dump(struct og_info *info, char *json_compilation_filename);
 static int nlp_interpret(struct og_info *info);
 static int nlp_send_errors_as_json(struct og_info *info);
 
@@ -150,6 +151,13 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
+
+  if(info->dump == TRUE)
+  {
+    if (info->output_filename[0] == 0) sprintf(info->output_filename,"/dev/stdout");
+    IFE(nlp_dump(info, info->output_filename));
+  }
+
   IFE(nlp_interpret(info));
 
   DONE;
@@ -196,6 +204,49 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
       sprintf(buffer, "nlp_compile: error on json_dump_file");
       OgErr(info->herr, buffer);
       DPcErr;
+    }
+  }
+
+  DONE;
+}
+
+static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
+{
+  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Dumping '%s'", json_dump_filename);
+
+  json_error_t error[1];
+  json_auto_t *json = json_load_file(json_dump_filename, JSON_REJECT_DUPLICATES, error);
+//  IFN(json)
+//  {
+//    DPcErr;
+//  }
+  struct og_nlp_dump_input input[1];
+  struct og_nlp_dump_output output[1];
+
+  memset(input, 0, sizeof(struct og_nlp_dump_input));
+  input->json_input = json;
+
+
+  IFE(OgNlpDump(info->hnlp, input, output));
+
+  IFN(output->json_output)
+  {
+    OgErr(info->herr, "nlp_dump: null output->json_output");
+    DPcErr;
+  }
+  else
+  {
+    if(info->output_filename != NULL)
+    {
+      og_status status = json_dump_file(output->json_output, info->output_filename, JSON_INDENT(2));
+      json_decref(output->json_output);
+      IF(status)
+      {
+        char buffer[DPcPathSize];
+        sprintf(buffer, "nlp_dump: error on json_dump_file");
+        OgErr(info->herr, buffer);
+        DPcErr;
+      }
     }
   }
 

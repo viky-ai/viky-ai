@@ -48,7 +48,7 @@ PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, st
       }
       if (json_is_object(json_package))
       {
-        IFE(NlpCompilePackage(ctrl_nlp, input->json_input));
+        IFE(NlpCompilePackage(ctrl_nlp, json_package));
       }
       else
       {
@@ -121,10 +121,6 @@ static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
 
   IFE(NlpCompilePackageIntents(ctrl_nlp, json_id, json_intents));
 
-  // A la fin, on parcours la liste des package (liste sur les pointeurs package) et on compare l'id
-  // si on trouve un même id, on swap le package dans la liste (synchro) et on détruit l'ancien package
-  // sinon on ajoute le package dans la liste des package (donc un tas slicé).
-
   DONE;
 }
 
@@ -168,6 +164,7 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
     }
   }
 
+  IFE(NlpPackageAdd(ctrl_nlp, package));
   IFE(NlpPackageLog(package));
 
   DONE;
