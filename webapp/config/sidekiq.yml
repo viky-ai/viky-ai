@@ -1,0 +1,6 @@
+---
+:concurrency: 1
+:logfile: ./log/sidekiq.log
+:pidfile: ./tmp/pids/sidekiq.pid
+:queues:
+  - [webapp_mailers, 2]

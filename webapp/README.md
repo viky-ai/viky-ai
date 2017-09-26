@@ -17,7 +17,7 @@ they will be loaded into the environment at the application bootstrap and availa
 
 Beware of never committing or pushing the `.env` file, it is just useful for your local webapp instance to match your local configuration.
 
-For example you could define your local PostgreSQL username, password and other variables, and also declare your favourite Redis endpoint, maybe it's a remote machine, maybe your localhost, e.g.:
+For example you could define your local PostgreSQL username, password and other variables like your favourite Redis endpoint for ActionCable and ActiveJob, maybe it's a remote machine, maybe your localhost, e.g.:
 
 ```
 VOQALAPP_DB_USERNAME=superman
@@ -25,7 +25,8 @@ VOQALAPP_DB_PASSWORD='sup$_3rman'
 VOQALAPP_DB_HOST=localhost
 VOQALAPP_DB_PORT=5432
 
-VOQALAPP_REDIS_URL='redis://localhost:6379/1'
+VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
+VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/12'
 ```
 
 ## Run in production environment
@@ -43,11 +44,27 @@ Emails from Devise are sent with `support@voqal.ai` sender.
 
 Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
 
+Mail delivery is performed through an high priority enqueuing (see _Background job_ for details paragraph).
 
 ## Admin user
 
-Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks :
+Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks:
 
 * `./bin/rails users:create_admin[email,password]`
 * `./bin/rails users:set_admin[email]`
 * `./bin/rails users:unset_admin[email]`
+
+
+## Background jobs
+
+Asynchronous tasks and mail delivery are performed lazily, making use of a job queue based on ActiveJob + Sidekiq + Redis. To ensure having all those processes up and running during development, you can simply run:
+
+    foreman start
+
+which reads the `Procfile` behind the scenes, bringing the web server and workers up:
+
+    sidekiq_redis:  redis-server
+    workers:        bundle exec sidekiq -C config/sidekiq.yml
+    webpack:        ./bin/webpack-dev-server
+    web:            bundle exec rails s -p 3000
+

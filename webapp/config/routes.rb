@@ -16,6 +16,11 @@ Rails.application.routes.draw do
     get :confirm_destroy
   end
 
+  require 'sidekiq/web'
+  authenticate :user, lambda { |u| u.admin? } do
+    mount Sidekiq::Web => '/backend/jobs'
+  end
+
   root to: "welcome#index"
 
   get 'style-guide', to: 'style_guide#index'

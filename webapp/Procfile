@@ -1,0 +1,4 @@
+sidekiq_redis:  redis-server
+workers:        bundle exec sidekiq -C config/sidekiq.yml
+webpack:        ./bin/webpack-dev-server
+web:            bundle exec rails s -p 3000
