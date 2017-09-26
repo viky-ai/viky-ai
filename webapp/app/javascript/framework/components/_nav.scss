@@ -17,7 +17,7 @@
     li{
       a{
         display:block;
-        padding: .45em 2em;
+        padding: .45em 1em .45em 2em;
         color: rgba(white, .7);
         text-decoration: none;
         border-left: 3px solid transparent;
@@ -34,9 +34,12 @@
     }
     ul li a{
       font-size: .875em;
-      padding: .25em 3em;
+      padding: .25em 1em .25em 3em;
       small{
         color: rgba(white, .35);
+      }
+      .icon svg{
+        fill: rgba(white, .4);
       }
     }
   }

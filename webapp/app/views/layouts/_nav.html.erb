@@ -13,20 +13,32 @@
     <% if user_signed_in? %>
       <% if current_user.admin %>
         <li>
-          <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
+          <a href="<%= backend_users_path %>">
             Backend
           </a>
-        </li>
-        <li>
-          <a href="/style-guide" <% if controller_path.include?('style_guide') %>class="current"<% end %>>
-            Style guide
-          </a>
-          <ul class="style-guide" data-turbolinks="false"></ul>
-        </li>
-        <li>
-          <a href="/rails/mailers/" data-turbolinks="false">
-            Mailer tests
-          </a>
+          <ul>
+            <li>
+              <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
+                User management
+              </a>
+            </li>
+            <li>
+              <a href="/style-guide" <% if controller_path.include?('style_guide') %>class="current"<% end %>>
+                Style guide
+              </a>
+              <ul class="style-guide" data-turbolinks="false"></ul>
+            </li>
+            <li>
+              <a href="/backend/jobs/" data-turbolinks="false" target="_blank">
+                Async jobs <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+              </a>
+            </li>
+            <li>
+              <a href="/rails/mailers/" data-turbolinks="false" target="_blank">
+                Mailer tests <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+              </a>
+            </li>
+          </ul>
         </li>
       <% end %>
     <% end %>
