@@ -44,7 +44,7 @@ module Nls
         thr1 = Thread.new {
           begin
             data = {
-              timeout: 500,
+              timeout: 200,
               wait: "infinite"
             }
             exception = assert_raises RestClient::ExceptionWithResponse do
@@ -59,7 +59,7 @@ module Nls
         }
 
         thr2 = Thread.new {
-          sleep(0.2)
+          sleep(0.1)
           Nls.stop
         }
 
@@ -73,13 +73,13 @@ module Nls
         thr1 = Thread.new {
 
           data = {
-            wait: 500
+            wait: 200
           }
 
           actual = Nls.query_post_by_parameters(data)
 
           expected = {
-            "wait" => 500
+            "wait" => 200
           }
 
           assert_equal expected, actual
@@ -87,7 +87,7 @@ module Nls
         }
 
         thr2 = Thread.new {
-          sleep(0.2)
+          sleep(0.1)
           Nls.stop
         }
 
