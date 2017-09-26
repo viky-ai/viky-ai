@@ -4,8 +4,6 @@ require 'test_helper'
 
 class TestNlpCompile < Minitest::Test
 
-  include Common
-
   @@pwd = ENV['NLS_INSTALL_PATH']
   @@pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if @@pwd.nil?
 

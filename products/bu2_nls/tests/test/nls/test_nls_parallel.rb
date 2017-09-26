@@ -1,16 +1,8 @@
 require 'test_helper'
 
-class TestNlsParallelGet < Minitest::Test
+module Nls
 
-  include Common
-
-  def setup
-    Nls.start
-  end
-
-  Minitest.after_run do
-    Nls.stop
-  end
+  class TestNlsParallelGet < Common
 
     def test_parallel
 
@@ -22,7 +14,7 @@ class TestNlsParallelGet < Minitest::Test
           wait: 50
         }
 
-        actual = nls_query_get(data)
+        actual = Nls.query_get(data)
 
         expected = {
           "id" => "#{test_number}",
@@ -36,19 +28,9 @@ class TestNlsParallelGet < Minitest::Test
     end
 
 
-end
-
-class TestNlsParallelPostByParameters < Minitest::Test
-
-  include Common
-
-  def setup
-    Nls.start
   end
 
-  Minitest.after_run do
-    Nls.stop
-  end
+  class TestNlsParallelPostByParameters < Common
 
     def test_parallel
 
@@ -60,7 +42,7 @@ class TestNlsParallelPostByParameters < Minitest::Test
           wait: 50
         }
 
-        actual = nls_query_post_by_parameters(data)
+        actual = Nls.query_post_by_parameters(data)
 
         expected = {
           "id" => "#{test_number}",
@@ -74,19 +56,10 @@ class TestNlsParallelPostByParameters < Minitest::Test
     end
 
 
-end
-
-class TestNlsParallelPostByBody < Minitest::Test
-
-  include Common
-
-  def setup
-    Nls.start
   end
 
-  Minitest.after_run do
-    Nls.stop
-  end
+  class TestNlsParallelPostByBody < Common
+
 
     def test_parallel
 
@@ -98,7 +71,7 @@ class TestNlsParallelPostByBody < Minitest::Test
           wait: 50
         }
 
-        actual = nls_query_post_by_body(data)
+        actual = Nls.query_post_by_body(data)
 
         expected = {
           "id" => test_number,
@@ -110,5 +83,7 @@ class TestNlsParallelPostByBody < Minitest::Test
 
 
     end
+
+  end
 
 end
