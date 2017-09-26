@@ -6,13 +6,17 @@
  */
 #include "ogm_nlp.h"
 
+gint compar(gpointer a, gpointer b)
+{ return strcasecmp( (char*)a, (char*)b ); }
+
 PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
 {
 
   json_t *json_packages = json_array();
 
   GList *key_list = g_hash_table_get_keys(ctrl_nlp->packages_hash);
-  for (GList *iter = g_list_first(key_list); iter; iter = iter->next)
+  GList *sorted_key_kist = g_list_sort(key_list,compar);
+  for (GList *iter = g_list_first(sorted_key_kist); iter; iter = iter->next)
   {
     json_t *json_package = json_object();
 

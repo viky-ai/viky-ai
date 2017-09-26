@@ -70,6 +70,7 @@ og_status NlpPackageIntentLog(package_t package, int Iintent);
 og_status NlpPackagePhraseLog(package_t package, int Iphrase);
 
 /* nlpdump.c */
+gint compar(gpointer a, gpointer b)
 og_status NlpPackageDump(package_t package, json_t *dump_json);
 og_status NlpPackageIntentDump(package_t package, int Iintent, json_t *dump_json);
 og_status NlpPackagePhraseDump(package_t package, int Iphrase, json_t *dump_json);
