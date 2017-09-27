@@ -36,6 +36,7 @@
 
 
 .grid{
+
   @include clearfix();
 
   .grid__half{
@@ -43,15 +44,28 @@
       margin-top: 2em;
     }
   }
+
   @media (min-width: 1000px){
     .grid__half{
       float:left;
-      width: calc(50% - 2em);
-      margin-right: 4em;
+      width: calc(50% - 3em);
+      margin-right: 6em;
       &:last-child{
         margin-top: 0;
         margin-right: 0;
       }
     }
   }
+
+  @media (min-width: 1000px){
+    .grid_sidebar{
+      float: left;
+      width: 300px;
+    }
+    .grid_main{
+      float: right;
+      width: calc(100% - 300px - 4em);
+    }
+  }
+
 }

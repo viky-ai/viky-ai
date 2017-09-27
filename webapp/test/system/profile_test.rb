@@ -2,19 +2,23 @@ require "application_system_test_case"
 
 class ProfileTest < ApplicationSystemTestCase
 
-  test "Profile access" do
+  test "Edit profile access" do
     admin_login
-    click_link "admin"
+    within(".nav") do
+      click_link "admin"
+    end
+    click_link "Edit your profile"
+
     assert page.has_content?("Authentication parameters")
   end
 
 
   test "Profile change Name, username, bio" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     fill_in 'Name', with: 'Batman and Robin'
     fill_in 'Username', with: 'batman'
@@ -30,10 +34,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Profile add avatar and remove" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     within("main") do
       assert find(".avatar img")['src'].include? 'default'
@@ -60,10 +64,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Profile avatar with not permitted format" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     within("main") do
       assert find(".avatar img")['src'].include? 'default'
@@ -84,10 +88,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Update Authentication parameters without any change" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     fill_in 'Password', with: ''
     click_button 'Update profile'
@@ -98,10 +102,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Update Authentication parameters - Change password" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     fill_in 'Password', with: 'short'
     click_button 'Update profile'
@@ -125,10 +129,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Update Authentication parameters - Change email" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     fill_in 'Email', with: 'admin_new@voqal.ai'
     click_button 'Update profile'
@@ -139,10 +143,10 @@ class ProfileTest < ApplicationSystemTestCase
 
   test "Delete my account" do
     admin_login
-
     within(".nav") do
       click_link "admin"
     end
+    click_link "Edit your profile"
 
     click_link 'I want delete my account'
 

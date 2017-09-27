@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :profile, only: [:edit, :update, :destroy] do
+  resource :profile, only: [:show, :edit, :update, :destroy] do
     get :confirm_destroy
   end
 

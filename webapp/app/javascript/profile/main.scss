@@ -1,11 +1,30 @@
 @import '../framework/abstracts/mixins';
 
-.avatar-container{
-  margin-top: 2em;
+.avatar-edit{
+  background-color: #f9f9f9;
+  padding: 1.5em 2em;
+  border: 1px solid rgba(black, .05);
+  border-radius: 3px;
+  h2{
+    margin-top: 0;
+  }
+}
+
+.avatar-edit__image-container{
+  margin: 0 0 2em 0;
   @include display_flex();
   align-items: center;
-
   .avatar{
     margin-right: 2em;
+  }
+}
+
+.profile{
+  text-align: center;
+  h2{
+    margin-top: 0;
+  }
+  p{
+    text-align: left;
   }
 }
