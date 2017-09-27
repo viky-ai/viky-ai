@@ -6,8 +6,10 @@
  */
 #include "ogm_nlp.h"
 
-gint compar(gpointer a, gpointer b)
-{ return strcasecmp( (char*)a, (char*)b ); }
+static gint str_compar(gconstpointer a, gconstpointer b)
+{
+  return strcmp((const char*) a, (const char*) b);
+}
 
 PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
 {
@@ -15,7 +17,7 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
   json_t *json_packages = json_array();
 
   GList *key_list = g_hash_table_get_keys(ctrl_nlp->packages_hash);
-  GList *sorted_key_kist = g_list_sort(key_list,compar);
+  GList *sorted_key_kist = g_list_sort(key_list, str_compar);
   for (GList *iter = g_list_first(sorted_key_kist); iter; iter = iter->next)
   {
     json_t *json_package = json_object();
@@ -29,14 +31,14 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
 
     IFE(NlpPackageDump(package, json_package));
 
-    if(json_array_append(json_packages,json_package) == 0)
+    if (json_array_append(json_packages, json_package) == 0)
     {
       json_incref(json_packages);
     }
     else
     {
       OgMsg(ctrl_nlp->hmsg, "NlpPackageDump", DOgMsgDestInLog, "Error while dumping package");
-          DPcErr;
+      DPcErr;
     }
   }
 
@@ -46,7 +48,6 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
     OgMsg(ctrl_nlp->hmsg, "OgNlpDump", DOgMsgDestInLog, "Empty JSon structure");
     DPcErr;
   }
-
 
   output->json_output = json_packages;
 
@@ -88,7 +89,7 @@ og_status NlpPackageDump(package_t package, json_t *json_package)
     else
     {
       OgMsg(ctrl_nlp->hmsg, "NlpPackageDump", DOgMsgDestInLog, "Error while dumping intents");
-          DPcErr;
+      DPcErr;
     }
   }
   DONE;
