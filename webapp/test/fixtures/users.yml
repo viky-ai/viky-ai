@@ -32,7 +32,6 @@ locked:
 invited:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: invited@voqal.ai
-  username: invited
   invited_by: admin
   created_at: "2017-01-01 00:00:04"
   invitation_created_at: "2017-01-01 00:00:04"

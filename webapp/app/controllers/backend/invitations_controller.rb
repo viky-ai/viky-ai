@@ -1,5 +1,7 @@
 class Backend::InvitationsController < Devise::InvitationsController
   before_action :authenticate_admin!, only: :new
+  before_action :configure_permitted_parameters
+
   layout :switch_layout
 
 
@@ -32,6 +34,11 @@ class Backend::InvitationsController < Devise::InvitationsController
     end
   end
 
+  protected
+
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:accept_invitation, keys: [:username, :password])
+    end
 
   private
 

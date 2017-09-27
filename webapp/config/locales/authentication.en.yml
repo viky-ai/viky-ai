@@ -44,7 +44,8 @@ en:
         btn: "Send invitation"
       edit:
         title: Finalize your invitation
-        tagline: Set password
+        tagline: Set password & username
+        btn: Validate
   controllers:
     registrations:
       disabled_message: User registration is temporarily disabled.

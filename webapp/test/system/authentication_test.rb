@@ -242,6 +242,8 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test "Resend confirmation instructions with confirmed email" do
+    Feature.enable_user_registration
+
     visit new_user_session_path
 
     click_link("Didn't receive confirmation instructions?")
@@ -256,6 +258,8 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test "Resend confirmation instructions with not confirmed email" do
+    Feature.enable_user_registration
+
     visit new_user_session_path
 
     click_link("Didn't receive confirmation instructions?")
@@ -319,40 +323,12 @@ class AuthenticationTest < ApplicationSystemTestCase
   end
 
 
-  test "An invitation can be sent by administrators only" do
-    visit new_user_invitation_path
-    assert page.has_content? "You need to sign in or sign up before continuing."
-
-    visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@voqal.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
-
-    assert_equal '/', current_path
-    assert page.has_content? "You do not have permission to access this interface."
-
-    first('.nav__footer svg').click # Logout
-
-    visit new_user_session_path
-    fill_in 'Email', with: 'admin@voqal.ai'
-    fill_in 'Password', with: 'AdminBoom'
-    click_button 'Log in'
-
-    assert_equal '/', current_path
-    assert page.has_content?("Signed in successfully.")
-
-    visit new_user_invitation_path
-    fill_in 'Email', with: 'bibibubu@bibibubu.org'
-    click_button 'Send invitation'
-    assert page.has_content?("An invitation email has been sent to bibibubu@bibibubu.org.")
-  end
-
-
   test "An invitation can be validated by someone with no session and only once" do
     u = users(:invited)
+    # Hack: Dynamically build invitation token
     raw_token, enc_token = Devise.token_generator.generate(User, :invitation_token)
     u.invitation_token = enc_token
-    u.save
+    assert u.save(validate: false)
     travel_to (u.invitation_sent_at + 1.seconds)
 
     visit new_user_session_path
@@ -362,20 +338,35 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     assert page.has_content? "You are already signed in."
+  end
 
-    first('.nav__footer svg').click # Logout
+
+  test "Basic invitation validation" do
+    u = users(:invited)
+
+    # Hack: Dynamically build invitation token
+    raw_token, enc_token = Devise.token_generator.generate(User, :invitation_token)
+    u.invitation_token = enc_token
+    assert u.save(validate: false)
+    travel_to (u.invitation_sent_at + 1.seconds)
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     fill_in 'Password', with: 'The Great Magic Password'
+    click_button 'Validate'
+    assert page.has_content? "Username can't be blank"
 
-    click_button 'Set my password'
-    assert page.has_content? "Your password was set successfully. You are now signed in."
+    fill_in 'Password', with: 'The Great Magic Password'
+    fill_in 'Username', with: 'magicusername'
+    click_button 'Validate'
+    expected = 'Your password and username were set successfully. You are now signed in.'
+    assert page.has_content? expected
 
     first('.nav__footer svg').click # Logout
 
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"
   end
+
 
   test "Registration not possible if feature is disabled" do
     Feature.disable_user_registration

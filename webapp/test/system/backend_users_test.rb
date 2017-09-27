@@ -114,6 +114,35 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
+  test "An invitation can be sent by administrators only" do
+    visit new_user_invitation_path
+    assert page.has_content? "You need to sign in or sign up before continuing."
+
+    visit new_user_session_path
+    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Password', with: 'BimBamBoom'
+    click_button 'Log in'
+
+    assert_equal '/', current_path
+    assert page.has_content? "You do not have permission to access this interface."
+
+    first('.nav__footer svg').click # Logout
+
+    visit new_user_session_path
+    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Password', with: 'AdminBoom'
+    click_button 'Log in'
+
+    assert_equal '/', current_path
+    assert page.has_content?("Signed in successfully.")
+
+    visit new_user_invitation_path
+    fill_in 'Email', with: 'bibibubu@bibibubu.org'
+    click_button 'Send invitation'
+    assert page.has_content?("An invitation email has been sent to bibibubu@bibibubu.org.")
+  end
+
+
   test 'Invitations can be resent to not confirmed users only' do
     admin_login
 

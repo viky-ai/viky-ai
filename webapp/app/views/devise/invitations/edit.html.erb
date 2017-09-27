@@ -23,8 +23,18 @@
           </div>
         <% end %>
 
+        <div class="field">
+          <%= f.label :username %>
+          <span class="help">
+            <span class="icon icon--x-small"><%= icon_information %></span>
+            <%= t('views.auth.at_least_x_char', min: 3) %>
+          </span>
+          <%= f.text_field :username %>
+          <%= display_errors(resource, :username) %>
+        </div>
+
         <div class="actions">
-          <%= f.button t('devise.invitations.edit.submit_button'), class: 'btn btn--full btn--large btn--primary',
+          <%= f.button t('views.invitations.edit.btn'), class: 'btn btn--full btn--large btn--primary',
               data: {
                 disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
               } %>
