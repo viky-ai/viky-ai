@@ -8,7 +8,7 @@
   padding: 2em;
 }
 .nav__content{
-  height: calc(100% - 24px - 4em - 80px);
+  height: calc(100% - 24px - 4em - 60px);
   overflow-y: auto;
   padding-bottom: 1em;
   ul{
@@ -45,11 +45,32 @@
   }
 }
 .nav__footer{
-  height: 80px;
+  @include display_flex();
+  justify-content: space-between;
+  align-items: center;
+
+  height: 60px;
   background-color: rgba(black, .8);
-  padding: 1em 2em;
+  padding: 1em 1em;
   border-top: 1px solid rgba(white, .125);
   box-shadow: 0 -1px 0 rgba(black, .9);
   font-size: .9em;
   color: rgba(white, .8);
+  a{
+    color: rgba(white, .8);
+    text-decoration: none;
+    &:hover span{
+      color: #fff;
+      text-decoration: underline;
+    }
+    svg{
+      fill: rgba(white, .6);
+    }
+    &:hover svg{
+      fill: #fff;
+    }
+  }
+
+
+
 }

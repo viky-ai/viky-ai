@@ -142,7 +142,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
 
-    click_link 'Logout'
+    first('.nav__footer svg').click # Logout
     assert page.has_content?("Signed out successfully.")
   end
 
@@ -305,7 +305,8 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     assert_equal '/', current_path
     assert page.has_content? "You do not have permission to access this interface."
-    click_on "Logout"
+
+    first('.nav__footer svg').click # Logout
 
     visit new_user_session_path
     fill_in 'Email', with: 'admin@voqal.ai'
@@ -336,7 +337,8 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     assert page.has_content? "You are already signed in."
-    click_on "Logout"
+
+    first('.nav__footer svg').click # Logout
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     fill_in 'Password', with: 'The Great Magic Password'
@@ -344,7 +346,8 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Set my password'
     assert page.has_content? "Your password was set successfully. You are now signed in."
 
-    click_on "Logout"
+    first('.nav__footer svg').click # Logout
+
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"
   end

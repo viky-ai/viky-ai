@@ -1,5 +1,5 @@
 .header{
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
   min-height: 2.25em;
 
   display:flex;
@@ -26,7 +26,7 @@
   .header__search{
     min-width: 100%;
     order: 3;
-    margin-top: 1.5em;
+    margin-top: 1em;
 
     @media (min-width: 1200px){
       order: 2;

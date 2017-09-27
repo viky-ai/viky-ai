@@ -13,7 +13,7 @@
     @include flex(1);
     overflow: auto;
     height: 100%;
-    padding: 2em;
+    padding: 1.5em 2em 2em 2em;
   }
 }
 
@@ -30,6 +30,28 @@
     cursor: default;
     &:active{
       transform: none;
+    }
+  }
+}
+
+
+.grid{
+  @include clearfix();
+
+  .grid__half{
+    &:last-child{
+      margin-top: 2em;
+    }
+  }
+  @media (min-width: 1000px){
+    .grid__half{
+      float:left;
+      width: calc(50% - 2em);
+      margin-right: 4em;
+      &:last-child{
+        margin-top: 0;
+        margin-right: 0;
+      }
     }
   }
 }

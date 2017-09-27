@@ -6,6 +6,8 @@ en:
         breadcrumb: Edition
         global:
           title: General informations
+        avatar:
+          title: Your avatar
         authentication:
           title: Authentication parameters
           waiting_email_confirmation: "Currently waiting confirmation for: %{email}"

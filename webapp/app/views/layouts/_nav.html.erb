@@ -44,9 +44,15 @@
     <% end %>
   </ul>
 </div>
-<div class="nav__footer">
-  <% if user_signed_in? %>
-    <%= link_to current_user.email, edit_profile_path %><br />
-    <%= link_to t('logout'), destroy_user_session_path, method: :delete %>
-  <% end %>
-</div>
+<% if user_signed_in? %>
+  <div class="nav__footer">
+    <a href="<%= edit_profile_path %>" class="user">
+      <div class="avatar">
+        <img src="<%= current_user.image_url(:square) %>">
+      </div>
+      <span><%= current_user.username %></span>
+    </a>
+    <%= link_to "<span class='icon' title='Logout'>#{icon_logout}</span>".html_safe,
+          destroy_user_session_path, method: :delete %>
+  </div>
+<% end %>

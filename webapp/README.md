@@ -8,6 +8,7 @@
 * Yarn (1.0.1)
 * PostgreSQL (9.6.5)
 * Redis (4.0.1)
+* ImageMagick
 
 ## Environment Variables
 

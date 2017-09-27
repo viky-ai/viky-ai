@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include ImageUploader::Attachment.new(:image)
+
   # Include default devise modules. Others available are:
   # :omniauthable
   devise :invitable, :database_authenticatable, :registerable,

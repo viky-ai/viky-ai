@@ -12,14 +12,8 @@ gem 'rails', '~> 5.1.4'
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+
+
 
 # Environment variables at boostrap time
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
@@ -28,18 +22,43 @@ gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 gem 'devise', '~> 4.3.0'
 gem 'devise_invitable', '~> 1.7.2'
 
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
+
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 3.0'
 
-# Use Sdekiq to manage background jobs
+# Use Sidekiq to manage background jobs
 gem 'sidekiq'
 gem 'foreman'
+
+gem 'awesome_print'
+gem 'rainbow'
+gem 'kaminari'
+
+# Upload
+gem "shrine"
+gem "image_processing"
+gem "mini_magick", ">= 4.3.5"
+
+# Mailing
+gem 'postmark-rails'
+gem 'inky-rb', require: 'inky'
+gem 'premailer-rails'
+
+group :assets do
+  # Use SCSS for stylesheets
+  gem 'sass-rails', '~> 5.0'
+  # Use Uglifier as compressor for JavaScript assets
+  gem 'uglifier', '>= 1.3.0'
+  # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
+  gem 'webpacker'
+  # Use CoffeeScript for .coffee assets and views
+  gem 'coffee-rails', '~> 4.2'
+end
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -59,12 +78,3 @@ end
 group :test do
   gem 'mocha'
 end
-
-gem 'awesome_print'
-gem 'rainbow'
-gem 'kaminari'
-
-# Mailing
-gem 'postmark-rails'
-gem 'inky-rb', require: 'inky'
-gem 'premailer-rails'

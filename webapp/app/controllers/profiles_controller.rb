@@ -40,11 +40,11 @@ class ProfilesController < ApplicationController
     end
 
     def user_params
-      params.require(:profile).permit(:email, :password, :name, :username, :bio)
+      params.require(:profile).permit(:email, :password, :name, :username, :bio, :image, :remove_image)
     end
 
     def user_without_password_params
-      params.require(:profile).permit(:email, :name, :username, :bio)
+      params.require(:profile).permit(:email, :name, :username, :bio, :image, :remove_image)
     end
 
 end

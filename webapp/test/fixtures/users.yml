@@ -15,6 +15,7 @@ confirmed:
 admin:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'AdminBoom') %>
   email: admin@voqal.ai
+  username: admin
   confirmed_at: "2017-01-01 00:00:02"
   current_sign_in_at: "2017-01-01 00:00:02"
   admin: true

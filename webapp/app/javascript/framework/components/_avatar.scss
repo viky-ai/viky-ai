@@ -1,0 +1,22 @@
+.avatar{
+  display: inline-block;
+  line-height: 0;
+  img{
+    border-radius: 100%;
+    width: 30px;
+  }
+
+  &.avatar--large{
+    img{
+      width: 100px;
+    }
+  }
+}
+
+.user{
+  @include display_flex();
+  align-items: center;
+  .avatar{
+    margin-right: .5em;
+  }
+}
