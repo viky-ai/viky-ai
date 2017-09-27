@@ -44,7 +44,9 @@ class ProfileTest < ApplicationSystemTestCase
     end
 
     file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png')
-    attach_file('profile_image', file)
+
+    # https://github.com/teampoltergeist/poltergeist/issues/866
+    attach_file('profile_image', file).click
 
     click_button 'Update profile'
 
@@ -74,7 +76,9 @@ class ProfileTest < ApplicationSystemTestCase
     end
 
     file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.txt')
-    attach_file('profile_image', file)
+
+    # https://github.com/teampoltergeist/poltergeist/issues/866
+    attach_file('profile_image', file).click
 
     click_button 'Update profile'
 
