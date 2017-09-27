@@ -27,7 +27,7 @@ VOQALAPP_DB_HOST=localhost
 VOQALAPP_DB_PORT=5432
 
 VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
-VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/12'
+VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 ```
 
 ## Run in production environment
@@ -47,6 +47,7 @@ Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
 
 Mail delivery is performed through a high priority queue named `webapp_mailers` (see _Background jobs_ paragraph for details).
 
+
 ## Admin user
 
 Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks:
@@ -61,6 +62,9 @@ Admin users can access to `/backend/users` UI. In order to create admin user, yo
 Asynchronous tasks, like mail delivery and other, are lazily performed making use of a job queue based on ActiveJob + Sidekiq + Redis.
 
 The configuration file for queue definition and options is `config/sidekiq.yml`, you can therein define as many queues as you need and route them in your Sidekiq workers and ActiveJob jobs.
+
+Default concurrency for background job management is set to 5, you can change it via environment variable `VOQALAPP_SIDEKIQ_CONCURRENCY`.
+
 
 ## Start all in development
 

@@ -1,5 +1,7 @@
 class RegistrationsController < Devise::RegistrationsController
 
+  before_action :configure_permitted_parameters
+
   # GET /resource/sign_up
   def new
     if Feature.user_registration_enabled?
@@ -30,5 +32,12 @@ class RegistrationsController < Devise::RegistrationsController
   def destroy
     raise ActionController::RoutingError.new('Not Found')
   end
+
+
+  protected
+
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:username, :email, :password])
+    end
 
 end

@@ -1,5 +1,5 @@
 ---
-:concurrency: 1
+:concurrency: <%= ENV.fetch("VOQALAPP_SIDEKIQ_CONCURRENCY") { 5 } %>
 :logfile: ./log/sidekiq.log
 :pidfile: ./tmp/pids/sidekiq.pid
 :queues:

@@ -6,7 +6,7 @@ class UserTest < ActiveSupport::TestCase
     assert !User.find_by_email('notconfirmed@voqal.ai').admin?
     assert User.find_by_email('admin@voqal.ai').admin?
 
-    u = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby')
+    u = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
     assert u.save
     assert !u.admin?
   end
@@ -31,7 +31,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "admin_yeah_toto", admin.username
 
     admin.username = "  "
-    assert admin.save
+    assert !admin.save
     assert_equal "", admin.username
 
     admin.username = "\" 1   2 3 ABC !?/^äù"
@@ -123,5 +123,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal :valid, u.invitation_status
     travel_back
   end
+
+
+  test "Users with blank username are allowed during invitation" do
+    User.invite!({email: "tester_nil_1@voqal.ai"}, users(:admin))
+    User.invite!({email: "tester_nil_2@voqal.ai"}, users(:admin))
+
+    assert !User.find_by_email("tester_nil_1@voqal.ai").nil?
+    assert !User.find_by_email("tester_nil_2@voqal.ai").nil?
+  end
+
 
 end

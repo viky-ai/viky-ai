@@ -4,12 +4,12 @@ namespace :users do
 
   desc "Create admin user"
   task :create_admin, [:email, :password] => [:environment] do |t, args|
-    u = User.new({
+    u = User.invite!({
       email:    args[:email],
       password: args[:password],
       admin:    true
     })
-    unless u.save
+    unless u.errors.empty?
       puts Rainbow("\nUser creation failed, please fix following errors:").yellow
       errors = []
       errors << u.errors.full_messages.collect{|e| "  - #{e}"}

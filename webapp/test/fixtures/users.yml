@@ -9,6 +9,7 @@ notconfirmed:
 confirmed:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: confirmed@voqal.ai
+  username: confirmed
   confirmed_at: "2017-01-01 00:00:01"
   current_sign_in_at: "2017-01-01 00:00:01"
 
@@ -23,6 +24,7 @@ admin:
 locked:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: locked@voqal.ai
+  username: locked
   confirmed_at: "2017-01-01 00:00:03"
   current_sign_in_at: "2017-01-01 00:00:03"
   locked_at: "2017-01-01 01:00:00"
@@ -30,6 +32,7 @@ locked:
 invited:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: invited@voqal.ai
+  username: invited
   invited_by: admin
   created_at: "2017-01-01 00:00:04"
   invitation_created_at: "2017-01-01 00:00:04"

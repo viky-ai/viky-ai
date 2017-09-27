@@ -10,6 +10,8 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Sign up'
 
     expected = [
+      "Username is too short (minimum is 3 characters)",
+      "Username can't be blank",
       "Email can't be blank",
       "Password can't be blank"
     ]
@@ -18,56 +20,10 @@ class AuthenticationTest < ApplicationSystemTestCase
   end
 
 
-  test 'Sign up failed with a too short password' do
-    Feature.enable_user_registration
-    visit new_user_registration_path
-
-    fill_in 'Email', with: 'superman@voqal.ai'
-    fill_in 'Password', with: 'short'
-
-    click_button 'Sign up'
-
-    expected = [
-      "Password is too short (minimum is 6 characters)"
-    ]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
-    assert_equal '/users', current_path
-  end
-
-
-  test 'Sign up failed with duplicate email' do
-    Feature.enable_user_registration
-    # First successful sign in
-    visit new_user_registration_path
-    fill_in 'Email', with: 'superman@voqal.ai'
-    fill_in 'Password', with: 'great password baby!'
-
-    # TODO: Remove this as soon as possible
-    User.any_instance.stubs('active_for_authentication?').returns(false)
-
-    click_button 'Sign up'
-    assert_equal '/', current_path
-
-    message  = "A message with a confirmation link has been sent to your email address. "
-    message << "Please follow the link to activate your account."
-    assert page.has_content?(message)
-
-    # Second sign up with same credentials
-    visit new_user_registration_path
-    fill_in 'Email', with: 'superman@voqal.ai'
-    fill_in 'Password', with: 'great password baby!'
-
-    click_button 'Sign up'
-
-    expected = ["Email has already been taken"]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
-    assert_equal '/users', current_path
-  end
-
-
   test "Successful sign up" do
     Feature.enable_user_registration
     visit new_user_registration_path
+    fill_in 'Username', with: 'rockybalboa'
     fill_in 'Email', with: 'rocky@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -151,6 +107,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     # Sign in
     visit new_user_registration_path
+    fill_in 'Username', with: 'batman'
     fill_in 'Email', with: 'batman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -207,7 +164,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     token = User.find_by_email('confirmed@voqal.ai').send_reset_password_instructions
     visit edit_user_password_path(reset_password_token: token)
 
-    fill_in 'user[password]', with: 'new password baby!'
+    fill_in 'New password', with: 'new password baby!'
     click_button 'Change my password'
 
     message = "Your password has been changed successfully. You are now signed in."

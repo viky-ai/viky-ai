@@ -7,7 +7,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :confirmable, :lockable, :timeoutable
 
-  validates :username, uniqueness: true, allow_blank: true, length: { in: 3..25 }
+  validates :username, uniqueness: true, length: { in: 3..25 }, presence: true,
+    allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
   before_validation :clean_username
 
