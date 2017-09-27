@@ -2,14 +2,15 @@ require 'rainbow'
 
 namespace :users do
 
-  desc "Create admin user"
-  task :create_admin, [:email, :password] => [:environment] do |t, args|
+  desc "Invite admin user"
+  task :invite_admin, [:email] => [:environment] do |t, args|
     u = User.invite!({
       email:    args[:email],
-      password: args[:password],
       admin:    true
     })
-    unless u.errors.empty?
+    if u.errors.empty?
+      puts Rainbow("\nUser will receive an email invitation").green unless Rails.env.test?
+    else
       puts Rainbow("\nUser creation failed, please fix following errors:").yellow
       errors = []
       errors << u.errors.full_messages.collect{|e| "  - #{e}"}

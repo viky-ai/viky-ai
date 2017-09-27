@@ -7,11 +7,11 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     visit new_user_registration_path
 
+    fill_in 'Username', with: 'myusername'
+
     click_button 'Sign up'
 
     expected = [
-      "Username is too short (minimum is 3 characters)",
-      "Username can't be blank",
       "Email can't be blank",
       "Password can't be blank"
     ]
@@ -19,19 +19,37 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert_equal '/users', current_path
   end
 
+
   test 'Sign up failed with a too short password' do
     Feature.enable_user_registration
     visit new_user_registration_path
 
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'short'
+    fill_in 'Username', with: 'myusername'
+
+    click_button 'Sign up'
+
+    expected = [
+      "Password is too short (minimum is 6 characters)"
+    ]
+    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal '/users', current_path
+  end
+
+
+  test 'Sign up failed without username' do
+    Feature.enable_user_registration
+    visit new_user_registration_path
+
+    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Password', with: 'mypassword'
 
     click_button 'Sign up'
 
     expected = [
       "Username is too short (minimum is 3 characters)",
       "Username can't be blank",
-      "Password is too short (minimum is 6 characters)"
     ]
     assert_equal expected, all('.help--error').collect {|n| n.text}
     assert_equal '/users', current_path

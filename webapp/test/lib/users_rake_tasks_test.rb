@@ -3,13 +3,10 @@ require 'test_helper'
 class RemoveUnconfirmedTaskTest < ActiveSupport::TestCase
   Webapp::Application.load_tasks
 
-  test "user:create_admin" do
-    Rake::Task['users:create_admin'].invoke('user_from_rake_task@voqal.ai', 'awesome password')
+  test "user:invite_admin" do
+    Rake::Task['users:invite_admin'].invoke('user_from_rake_task@voqal.ai')
     assert !User.find_by_email('user_from_rake_task@voqal.ai').nil?
     assert User.find_by_email('user_from_rake_task@voqal.ai').admin?
-
-    Rake::Task['users:create_admin'].invoke('second_user_from_rake_task@voqal.ai', '')
-    assert User.find_by_email('second_user_from_rake_task@voqal.ai').nil?
   end
 
 

@@ -25,11 +25,13 @@
         </li>
       <% end -%>
 
-      <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-        <li>
-          <%= link_to t('views.auth.shared.new_confirmation'), new_confirmation_path(resource_name) %>
-        </li>
-      <% end -%>
+      <% if Feature.user_registration_enabled? %>
+        <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+          <li>
+            <%= link_to t('views.auth.shared.new_confirmation'), new_confirmation_path(resource_name) %>
+          </li>
+        <% end -%>
+      <% end %>
 
       <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
         <li>

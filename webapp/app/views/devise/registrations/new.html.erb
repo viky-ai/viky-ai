@@ -8,12 +8,6 @@
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
 
         <div class="field">
-          <%= f.label :username %><br />
-          <%= f.text_field :username %>
-          <%= display_errors(resource, :username) %>
-        </div>
-
-        <div class="field">
           <%= f.label :email %><br />
           <%= f.email_field :email %>
           <%= display_errors(resource, :email) %>
@@ -29,6 +23,16 @@
           <% end %>
           <%= f.password_field :password, autocomplete: "off" %>
           <%= display_errors(resource, :password) %>
+        </div>
+
+        <div class="field">
+          <%= f.label :username %>
+          <span class="help">
+            <span class="icon icon--x-small"><%= icon_information %></span>
+            <%= t('views.auth.at_least_x_char', min: 3) %>
+          </span>
+          <%= f.text_field :username %>
+          <%= display_errors(resource, :username) %>
         </div>
 
         <div class="field">
