@@ -10,6 +10,10 @@ module Nls
       Nls.stop
     end
 
+    def fixture_path(file = '')
+      File.join(File.expand_path(__dir__), 'fixtures', file)
+    end
+
   end
 
 end

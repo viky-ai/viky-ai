@@ -50,7 +50,16 @@ module Nls
       JSON.parse(response.body)
     end
 
-    def self.exec(cmd, take_care_of_return = {})
+    def self.exec(cmd, opts_param = {})
+
+      default_opts = {
+        take_care_of_return: true,
+        log: true
+      }
+
+      opts = default_opts.merge(opts_param)
+
+      take_care_of_return = opts[:take_care_of_return]
 
       pwd = ENV['NLS_INSTALL_PATH']
       pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd.nil?
@@ -63,8 +72,22 @@ module Nls
 
           c = Term::ANSIColor
 
-          stdout.each { |line| print "    ⤷ #{line}" }
-          stderr.each { |line| print c.red, "    ⤷ #{line}", c.clear }
+          stdout_str = "" ;
+          stderr_str = "" ;
+
+          stdout.each do |line|
+            if opts[:log]
+              print "#{line}"
+            end
+            stdout_str << line ;
+          end
+
+          stderr.each do |line|
+            if opts[:log]
+              print "#{line}"
+            end
+            stderr_str << line ;
+          end
 
           # Process::Status object returned.
           exit_status = wait_thr.value
@@ -75,7 +98,7 @@ module Nls
           end
 
           if take_care_of_return && !exit_status.success?
-            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})"
+            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\r#{stdout_str}\r#{stderr_str}"
           end
 
           return pid

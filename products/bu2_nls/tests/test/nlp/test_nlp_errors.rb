@@ -75,7 +75,7 @@ module Nlp
       input = input_ref
       input[0]["intents"][0]["phrases"][0]["text"] = ""
 
-      for i in 0..500
+      500.times do
         input[0]["intents"][0]["phrases"][0]["text"]  << "Brice Hello "
       end
 

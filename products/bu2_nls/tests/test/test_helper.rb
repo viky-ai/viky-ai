@@ -9,6 +9,7 @@ require 'rest-client'
 require 'awesome_print'
 require 'json'
 require 'parallel'
+require 'fileutils'
 
 Minitest::Reporters.use! Minitest::Reporters::SpecReporter.new # spec-like progress
 
