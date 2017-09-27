@@ -28,6 +28,60 @@ class ProfileTest < ApplicationSystemTestCase
   end
 
 
+  test "Profile add avatar and remove" do
+    admin_login
+
+    within(".nav") do
+      click_link "admin"
+    end
+
+    within("main") do
+      assert find(".avatar img")['src'].include? 'default'
+    end
+
+    file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png')
+    attach_file('profile_image', file)
+
+    click_button 'Update profile'
+
+    within("main") do
+      assert find(".avatar img")['src'].include? 'square'
+    end
+
+    assert page.has_field?('profile[remove_image]')
+
+    check('Remove avatar')
+    click_button 'Update profile'
+    within("main") do
+      assert find(".avatar img")['src'].include? 'default'
+    end
+  end
+
+
+  test "Profile avatar with not permitted format" do
+    admin_login
+
+    within(".nav") do
+      click_link "admin"
+    end
+
+    within("main") do
+      assert find(".avatar img")['src'].include? 'default'
+    end
+
+    file = File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.txt')
+    attach_file('profile_image', file)
+
+    click_button 'Update profile'
+
+    within("main") do
+      assert find(".avatar img")['src'].include? 'default'
+    end
+
+    assert page.has_content?("Image isn't of allowed type")
+  end
+
+
   test "Update Authentication parameters without any change" do
     admin_login
 
