@@ -23,7 +23,7 @@ package_t NlpPackageCreate(og_nlp ctrl_nlp, const char *string_id)
   IF(OgHeapAppend(package->hba,package->id_length+1,string_id)) return (0);
 
   IFn(package->hintent=OgHeapInit(ctrl_nlp->hmsg,"package_intent",sizeof(struct intent),DOgNlpPackageIntentNumber)) return (0);
-  IFn(package->hphrase=OgHeapInit(ctrl_nlp->hmsg,"package_phrase",sizeof(struct phrase),DOgNlpPackagePhraseNumber)) return (0);
+  IFn(package->hsentence=OgHeapInit(ctrl_nlp->hmsg,"package_phrase",sizeof(struct sentence),DOgNlpPackagePhraseNumber)) return (0);
 
   return (package);
 }

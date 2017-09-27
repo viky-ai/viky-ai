@@ -4,9 +4,9 @@
     "intents"  : [
         {
           "id" : "0d981484-9313-11e7-abc4-cec278b6b50b",
-          "phrases"  :  [
+          "sentences"  :  [
             {
-              "text" : "Hello Brice",
+              "sentence" : "Hello Brice",
               "locale"  : "fr-FR"
             }
          ]

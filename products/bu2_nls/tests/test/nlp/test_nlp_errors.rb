@@ -56,7 +56,7 @@ module Nlp
     def test_intent_locale
 
       input = input_ref
-      input[0]["intents"][0]["phrases"][0]["locale"] = "ok-KO"
+      input[0]["intents"][0]["sentences"][0]["locale"] = "ok-KO"
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -73,10 +73,10 @@ module Nlp
     def test_intent_phrase_too_long
 
       input = input_ref
-      input[0]["intents"][0]["phrases"][0]["text"] = ""
+      input[0]["intents"][0]["sentences"][0]["sentence"] = ""
 
       500.times do
-        input[0]["intents"][0]["phrases"][0]["text"]  << "Brice Hello "
+        input[0]["intents"][0]["sentences"][0]["sentence"]  << "Brice Hello "
       end
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
@@ -85,7 +85,7 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected = {"errors" => ["NlpCompilePackagePhrase: text is too long"]}
+      expected = {"errors" => ["NlpCompilePackageSentence: text is too long"]}
 
       assert_equal expected, actual
       File.delete("#{@@pwd}/input.json")

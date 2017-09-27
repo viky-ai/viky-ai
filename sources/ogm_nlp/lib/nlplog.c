@@ -30,18 +30,18 @@ og_status NlpPackageIntentLog(package_t package, int Iintent)
   IFN(intent_id) DPcErr;
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "  Intent '%s' :", intent_id);
 
-  for (int i = 0; i < intent->phrases_nb; i++)
+  for (int i = 0; i < intent->sentences_nb; i++)
   {
-    IFE(NlpPackagePhraseLog(package, intent->phrase_start + i));
+    IFE(NlpPackageSentenceLog(package, intent->sentence_start + i));
   }
   DONE;
 }
 
-og_status NlpPackagePhraseLog(package_t package, int Iphrase)
+og_status NlpPackageSentenceLog(package_t package, int Iphrase)
 
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
-  struct phrase *phrase = OgHeapGetCell(package->hphrase, Iphrase);
+  struct sentence *phrase = OgHeapGetCell(package->hsentence, Iphrase);
   IFN(phrase) DPcErr;
 
   char *text = OgHeapGetCell(package->hba, phrase->text_start);

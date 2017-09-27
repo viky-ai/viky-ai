@@ -9,8 +9,8 @@
 static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package);
 static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents);
 static int NlpCompilePackageIntent(package_t package, json_t *json_intent);
-static int NlpCompilePackagePhrases(package_t package, struct intent *intent, json_t *json_phrases);
-static int NlpCompilePackagePhrase(package_t package, struct intent *intent, json_t *json_phrase);
+static int NlpCompilePackageSentences(package_t package, struct intent *intent, json_t *json_sentences);
+static int NlpCompilePackageSentence(package_t package, struct intent *intent, json_t *json_sentence);
 
 PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output)
 {
@@ -185,7 +185,7 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
     DPcErr;
   }
   json_t *json_id = NULL;
-  json_t *json_phrases = NULL;
+  json_t *json_sentences = NULL;
   do
   {
     const char *key = json_object_iter_key(intent_iter);
@@ -194,9 +194,9 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
     {
       json_id = json_object_iter_value(intent_iter);
     }
-    else if (Ogstricmp(key, "phrases") == 0)
+    else if (Ogstricmp(key, "sentences") == 0)
     {
-      json_phrases = json_object_iter_value(intent_iter);
+      json_sentences = json_object_iter_value(intent_iter);
     }
     else
     {
@@ -211,9 +211,9 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
     NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: no id");
     DPcErr;
   }
-  IFN(json_phrases)
+  IFN(json_sentences)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: no phrases");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: no sentences");
     DPcErr;
   }
 
@@ -222,9 +222,9 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
     NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: id is not a string");
     DPcErr;
   }
-  if (!json_is_array(json_phrases))
+  if (!json_is_array(json_sentences))
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: phrases is not an array");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: sentences is not an array");
     DPcErr;
   }
   // At that point, we can create the intent structure
@@ -239,54 +239,54 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
   intent->id_length = strlen(string_id);
   IFE(OgHeapAppend(package->hba, intent->id_length + 1, string_id));
 
-  IFE(NlpCompilePackagePhrases(package, intent, json_phrases));
+  IFE(NlpCompilePackageSentences(package, intent, json_sentences));
 
   DONE;
 }
 
-static int NlpCompilePackagePhrases(package_t package, struct intent *intent, json_t *json_phrases)
+static int NlpCompilePackageSentences(package_t package, struct intent *intent, json_t *json_sentences)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
 
-  intent->phrase_start = OgHeapGetCellsUsed(package->hphrase);
+  intent->sentence_start = OgHeapGetCellsUsed(package->hsentence);
 
-  int array_size = json_array_size(json_phrases);
+  int array_size = json_array_size(json_sentences);
   for (int i = 0; i < array_size; i++)
   {
-    json_t *json_phrase = json_array_get(json_phrases, i);
-    IFN(json_phrase)
+    json_t *json_sentence = json_array_get(json_sentences, i);
+    IFN(json_sentence)
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrases: null json_phrase at position %d", i);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageSentences: null json_sentence at position %d", i);
       DPcErr;
     }
-    if (json_is_object(json_phrase))
+    if (json_is_object(json_sentence))
     {
-      IFE(NlpCompilePackagePhrase(package, intent, json_phrase));
+      IFE(NlpCompilePackageSentence(package, intent, json_sentence));
     }
     else
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrases: json_phrase at position %d is not an object", i);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageSentences: json_sentence at position %d is not an object", i);
       DPcErr;
     }
   }
 
-  intent->phrases_nb = OgHeapGetCellsUsed(package->hphrase) - intent->phrase_start;
+  intent->sentences_nb = OgHeapGetCellsUsed(package->hsentence) - intent->sentence_start;
 
   DONE;
 }
 
-static int NlpCompilePackagePhrase(package_t package, struct intent *intent, json_t *json_phrase)
+static int NlpCompilePackageSentence(package_t package, struct intent *intent, json_t *json_sentence)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
-  char *json_phrase_string = json_dumps(json_phrase, JSON_INDENT(2));
+  char *json_phrase_string = json_dumps(json_sentence, JSON_INDENT(2));
 
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackagePhrase: compiling phrase [\n%.*s]",
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackagesentence: compiling phrase [\n%.*s]",
       strlen(json_phrase_string), json_phrase_string);
 
-  void *intent_iter = json_object_iter(json_phrase);
+  void *intent_iter = json_object_iter(json_sentence);
   IFN(intent_iter)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: phrase is empty");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: phrase is empty");
     DPcErr;
   }
   json_t *json_text = NULL;
@@ -294,8 +294,8 @@ static int NlpCompilePackagePhrase(package_t package, struct intent *intent, jso
   do
   {
     const char *key = json_object_iter_key(intent_iter);
-    OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackagePhrase: found key='%s'", key);
-    if (Ogstricmp(key, "text") == 0)
+    OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageSentence: found key='%s'", key);
+    if (Ogstricmp(key, "sentence") == 0)
     {
       json_text = json_object_iter_value(intent_iter);
     }
@@ -305,55 +305,55 @@ static int NlpCompilePackagePhrase(package_t package, struct intent *intent, jso
     }
     else
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: unknow key '%s'", key);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: unknow key '%s'", key);
       DPcErr;
     }
   }
-  while ((intent_iter = json_object_iter_next(json_phrase, intent_iter)) != NULL);
+  while ((intent_iter = json_object_iter_next(json_sentence, intent_iter)) != NULL);
 
   IFN(json_text)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: no text");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: no text");
     DPcErr;
   }
   IFN(json_locale)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: no locale");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: no locale");
     DPcErr;
   }
 
   size_t Iphrase;
-  struct phrase *phrase = OgHeapNewCell(package->hphrase, &Iphrase);
-  IFn(phrase) DPcErr;
+  struct sentence *sentence = OgHeapNewCell(package->hsentence, &Iphrase);
+  IFn(sentence) DPcErr;
   IFE(Iphrase);
 
   if (json_is_string(json_text))
   {
     const char *string_text = json_string_value(json_text);
-    phrase->text_start = OgHeapGetCellsUsed(package->hba);
-    phrase->text_length = strlen(string_text);
-    if(phrase->text_length > DOgNlpIntentPhraseMaxLength)
+    sentence->text_start = OgHeapGetCellsUsed(package->hba);
+    sentence->text_length = strlen(string_text);
+    if(sentence->text_length > DOgNlpIntentPhraseMaxLength)
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: text is too long");
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: text is too long");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, phrase->text_length + 1, string_text));
+    IFE(OgHeapAppend(package->hba, sentence->text_length + 1, string_text));
   }
   else
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackagePhrase: text is not a string");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: text is not a string");
     DPcErr;
   }
 
-  phrase->locale = 0;
+  sentence->locale = 0;
   if (json_is_string(json_locale))
   {
     const char *string_locale = json_string_value(json_locale);
-    IFE(phrase->locale=OgCodeToIso639_3166(ctrl_nlp->herr,(char *)string_locale));
+    IFE(sentence->locale=OgCodeToIso639_3166(ctrl_nlp->herr,(char *)string_locale));
   }
   else if (json_is_null(json_locale))
   {
-    phrase->locale = 0;
+    sentence->locale = 0;
   }
   else
   {

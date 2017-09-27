@@ -16,7 +16,7 @@
 #define DOgNlpIntentPhraseMaxLength 0x800
 
 
-struct phrase
+struct sentence
 {
   int text_start, text_length;
   int locale;
@@ -25,7 +25,7 @@ struct phrase
 struct intent
 {
   int id_start, id_length;
-  int phrase_start, phrases_nb;
+  int sentence_start, sentences_nb;
 };
 
 
@@ -39,7 +39,7 @@ struct package
 
   og_heap hba;
   og_heap hintent;
-  og_heap hphrase;
+  og_heap hsentence;
 };
 
 typedef struct package *package_t;
@@ -67,12 +67,12 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
 /* nlplog.c */
 og_status NlpPackageLog(package_t package);
 og_status NlpPackageIntentLog(package_t package, int Iintent);
-og_status NlpPackagePhraseLog(package_t package, int Iphrase);
+og_status NlpPackageSentenceLog(package_t package, int Isentence);
 
 /* nlpdump.c */
 og_status NlpPackageDump(package_t package, json_t *dump_json);
 og_status NlpPackageIntentDump(package_t package, int Iintent, json_t *dump_json);
-og_status NlpPackagePhraseDump(package_t package, int Iphrase, json_t *dump_json);
+og_status NlpPackageSentenceDump(package_t package, int Isentence, json_t *dump_json);
 
 /* nlpackage.c */
 package_t NlpPackageCreate(og_nlp ctrl_nlp, const char *string_id);
