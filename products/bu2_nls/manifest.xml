@@ -57,6 +57,7 @@
 
         <directory name="control" />
         <directory name="log" />
+        <directory name="import" />
 
         <!-- Linux specific -->
         <directory name="lib" platform="linux">
