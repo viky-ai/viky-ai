@@ -12,7 +12,7 @@ module Nlp
 
       input = input_ref
 
-      input["id"] = 123
+      input[0]["id"] = 123
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -23,12 +23,13 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackageIntents: id is not a string"]}
 
       assert_equal expected, actual
+      File.delete("#{@@pwd}/input.json")
     end
 
     def test_intent_id_type
 
       input = input_ref
-      input["intents"][0]["id"] = 123
+      input[0]["intents"][0]["id"] = 123
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -39,6 +40,7 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackageIntent: id is not a string"]}
 
       assert_equal expected, actual
+      File.delete("#{@@pwd}/input.json")
     end
 
     def test_package_intents_type
@@ -46,7 +48,7 @@ module Nlp
       input = input_ref
 
       actual = Array
-      expected = input["intents"].class
+      expected = input[0]["intents"].class
 
       assert_equal expected, actual
     end
@@ -54,7 +56,7 @@ module Nlp
     def test_intent_locale
 
       input = input_ref
-      input["intents"][0]["phrases"][0]["locale"] = "ok-KO"
+      input[0]["intents"][0]["phrases"][0]["locale"] = "ok-KO"
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -65,16 +67,16 @@ module Nlp
       expected = {"errors" => ["OgCodeToIso639_3166: Language 'ok' does not exist"]}
 
       assert_equal expected, actual
+      File.delete("#{@@pwd}/input.json")
     end
-
 
     def test_intent_phrase_too_long
 
       input = input_ref
-      input["intents"][0]["phrases"][0]["text"] = ""
+      input[0]["intents"][0]["phrases"][0]["text"] = ""
 
       for i in 0..500
-        input["intents"][0]["phrases"][0]["text"]  << "Brice Hello "
+        input[0]["intents"][0]["phrases"][0]["text"]  << "Brice Hello "
       end
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
@@ -86,6 +88,7 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackagePhrase: text is too long"]}
 
       assert_equal expected, actual
+      File.delete("#{@@pwd}/input.json")
     end
 
   end
