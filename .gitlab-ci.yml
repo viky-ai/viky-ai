@@ -13,12 +13,11 @@ build_image:
   stage: build
   variables:
     DOCKER_DRIVER: overlay
-    VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+    VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/app
   image: docker:dind
   script:
-    - cd webapp
-    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./voqal_version.json"
-    - docker build -t ${VOQALAPP_DOCKER_IMAGE}:latest -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} .
+    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ../webapp/voqal_version.json"
+    - docker build -t ${VOQALAPP_DOCKER_IMAGE}:latest -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
 
@@ -40,9 +39,6 @@ deploy_branch:
 # remove environment
 delete_env:
   stage: cleanup
-  except:
-    - master
-    - tags
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
