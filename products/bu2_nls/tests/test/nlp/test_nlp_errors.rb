@@ -23,7 +23,6 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackageIntents: id is not a string"]}
 
       assert_equal expected, actual
-      File.delete("#{@@pwd}/input.json")
     end
 
     def test_intent_id_type
@@ -40,7 +39,6 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackageIntent: id is not a string"]}
 
       assert_equal expected, actual
-      File.delete("#{@@pwd}/input.json")
     end
 
     def test_package_intents_type
@@ -67,7 +65,6 @@ module Nlp
       expected = {"errors" => ["OgCodeToIso639_3166: Language 'ok' does not exist"]}
 
       assert_equal expected, actual
-      File.delete("#{@@pwd}/input.json")
     end
 
     def test_intent_phrase_too_long
@@ -88,7 +85,6 @@ module Nlp
       expected = {"errors" => ["NlpCompilePackageSentence: text is too long"]}
 
       assert_equal expected, actual
-      File.delete("#{@@pwd}/input.json")
     end
 
   end

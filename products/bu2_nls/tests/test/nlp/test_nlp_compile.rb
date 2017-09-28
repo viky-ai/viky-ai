@@ -21,7 +21,6 @@ module Nlp
       expected = {"compilation"=>"ok"}
 
       assert_equal expected, actual
-      File.delete("#{@@pwd}/input.json")
     end
 
     def test_dump
@@ -35,8 +34,6 @@ module Nlp
       output = JSON.parse(File.read("#{@@pwd}/output.json"))
 
       assert_equal input, output
-      File.delete("#{@@pwd}/output.json")
-      File.delete("#{@@pwd}/input.json")
     end
 
     def test_intent_special_char
@@ -52,8 +49,6 @@ module Nlp
       output = JSON.parse(File.read("#{@@pwd}/output.json"))
 
       assert_equal input, output
-      File.delete("#{@@pwd}/output.json")
-      File.delete("#{@@pwd}/input.json")
 
     end
 
