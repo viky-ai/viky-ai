@@ -229,12 +229,7 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   memset(input, 0, sizeof(struct og_nlp_dump_input));
   input->json_input = json;
 
-<<<<<<< Updated upstream
-
-  IFE(OgNlpDump(info->hnlp, output));
-=======
-  IFE(OgNlpDump(info->hnlp, input, output));
->>>>>>> Stashed changes
+  IFE(OgNlpDump(info->hnlp,input, output));
 
   IFN(output->json_output)
   {
