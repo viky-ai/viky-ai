@@ -26,6 +26,7 @@ struct og_info
   struct og_nlp_param *param;
   og_heap hfilename_ba, hfilename;
   og_nlp hnlp;
+  og_nlpi hnlpi;
   char output_filename[DPcPathSize];
   char interpret_filename[DPcPathSize];
   int dump;
@@ -35,7 +36,7 @@ struct og_info
 static int nlp(struct og_info *info, int argc, char * argv[]);
 static int nlp_compile(struct og_info *info, char *json_compilation_filename);
 static og_status nlp_dump(struct og_info *info, char *json_compilation_filename);
-static int nlp_interpret(struct og_info *info);
+static int nlp_interpret(struct og_info *info, char *json_interpret_filename);
 static int nlp_send_errors_as_json(struct og_info *info);
 
 /* default function to define */
@@ -151,14 +152,16 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
-
-  if(info->dump == TRUE)
+  if (info->dump == TRUE)
   {
-    if (info->output_filename[0] == 0) sprintf(info->output_filename,"/dev/stdout");
+    if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");
     IFE(nlp_dump(info, info->output_filename));
   }
 
-  IFE(nlp_interpret(info));
+  if (info->interpret_filename[0])
+  {
+    IFE(nlp_interpret(info, info->interpret_filename));
+  }
 
   DONE;
 }
@@ -226,8 +229,12 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   memset(input, 0, sizeof(struct og_nlp_dump_input));
   input->json_input = json;
 
+<<<<<<< Updated upstream
 
   IFE(OgNlpDump(info->hnlp, output));
+=======
+  IFE(OgNlpDump(info->hnlp, input, output));
+>>>>>>> Stashed changes
 
   IFN(output->json_output)
   {
@@ -236,7 +243,7 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   }
   else
   {
-    if(info->output_filename != NULL)
+    if (info->output_filename != NULL)
     {
       og_status status = json_dump_file(output->json_output, info->output_filename, JSON_INDENT(2));
       json_decref(output->json_output);
@@ -253,13 +260,65 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   DONE;
 }
 
-static int nlp_interpret(struct og_info *info)
+static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
 {
-  if (info->interpret_filename[0] == 0) DONE;
-  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Interpreting '%s'", info->interpret_filename);
+  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Compiling '%s'", json_interpret_filename);
+
+  json_error_t error[1];
+  json_auto_t *json = json_load_file(json_interpret_filename, JSON_REJECT_DUPLICATES, error);
+  IFN(json)
+  {
+    OgErr(info->herr, "nlp_interpret: error while reading 'json_compilation_filename'");
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
+  struct og_nlp_interpret_input input[1];
+  struct og_nlp_interpret_output output[1];
+
+  memset(input, 0, sizeof(struct og_nlp_interpret_input));
+  input->json_input = json;
+
+  struct og_nlpi_param param[1];
+  memset(param,0,sizeof(struct og_nlpi_param));
+  param->herr = info->param->herr;
+  param->hmsg = info->param->hmsg;
+  param->hmutex = info->param->hmutex;
+  param->loginfo = info->param->loginfo;
+  info->hnlpi = OgNlpInterpretInit(info->hnlp,param);
+  IFN(info->hnlpi)
+  {
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
+
+  IF(OgNlpInterpret(info->hnlpi, input, output))
+  {
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
+
+  IFN(output->json_output)
+  {
+    OgErr(info->herr, "nlp_interpret: null output->json_output");
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
+  else
+  {
+    og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
+    printf("\n");
+    json_decref(output->json_output);
+    IF(status)
+    {
+      char buffer[DPcPathSize];
+      sprintf(buffer, "nlp_interpret: error on json_dump_file");
+      OgErr(info->herr, buffer);
+      DPcErr;
+    }
+  }
+
   DONE;
 }
-
 
 static int nlp_send_errors_as_json(struct og_info *info)
 {
@@ -270,14 +329,14 @@ static int nlp_send_errors_as_json(struct og_info *info)
   char erreur[DOgErrorSize];
   while (OgErrLast(info->herr, erreur, 0))
   {
-    json_array_append(errors, json_string(erreur) );
+    json_array_append(errors, json_string(erreur));
     nb_error++;
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append(errors, json_string(erreur) );
+    json_array_append(errors, json_string(erreur));
     nb_error++;
   }
 
@@ -290,7 +349,6 @@ static int nlp_send_errors_as_json(struct og_info *info)
   json_decref(root);
   DONE;
 }
-
 
 static int OgUse(struct og_info *info)
 {
@@ -315,7 +373,6 @@ static int OgUse(struct og_info *info)
 
   DONE;
 }
-
 
 static void OgExit(struct og_info *info)
 {

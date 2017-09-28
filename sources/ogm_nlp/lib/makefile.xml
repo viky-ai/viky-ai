@@ -9,6 +9,7 @@
     <file>nlpdump.c</file>
     <file>nlperr.c</file>
     <file>nlplog.c</file>
+    <file>nlpinterpret.c</file>
     <file>nlppackage.c</file>
   </sources>
   <platforms>
