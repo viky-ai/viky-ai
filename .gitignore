@@ -1,0 +1,22 @@
+#############
+# OSX files #
+#############
+**/.DS_Store
+**/._.DS_Store
+
+#################
+# Eclipse files #
+#################
+**/.settings/
+**/.project
+**/.buildpath
+**/.cproject
+
+##############
+# Temp files #
+##############
+*.log
+*.bak
+*.swp
+
+

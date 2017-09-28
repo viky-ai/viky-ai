@@ -1,0 +1,58 @@
+stages:
+  - build
+  - deploy
+  - cleanup
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
+  VOQALAPP_DEPLOY_URL: https://${VOQALAPP_DEPLOY_RANCHER_STACK}.voqal.ai
+
+# Build docker image
+build_image:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay
+    VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+  image: docker:dind
+  script:
+    - cd webapp
+    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./voqal_version.json"
+    - docker build -t ${VOQALAPP_DOCKER_IMAGE}:latest -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} .
+    - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
+    - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
+# Deploy any branches on rancher dev
+deploy_branch:
+  stage: deploy
+  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  dependencies:
+    - build_image
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: ${VOQALAPP_DEPLOY_URL}
+    on_stop: delete_env
+  script:
+    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev"
+    - cd deployment
+    - rancher --debug --environment dev up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} -d --pull --force-upgrade
+
+# remove environment
+delete_env:
+  stage: cleanup
+  except:
+    - master
+    - tags
+  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: ${VOQALAPP_DEPLOY_URL}
+    action: stop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev"
+    - cd deployment
+    - rancher --debug --environment dev rm --stop --type stack ${VOQALAPP_DEPLOY_RANCHER_STACK}
+  when: manual
+  allow_failure: true

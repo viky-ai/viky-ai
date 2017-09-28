@@ -1,3 +1,6 @@
+.bundle
+vendor/bundle
+
 node_modules
 .env
 log
