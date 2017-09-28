@@ -204,6 +204,15 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   lt->h_json_answer = OgHeapInit(lt->hmsg, "lt_json_answer", sizeof(unsigned char), DPcPathSize / 4);
   IFN(lt->h_json_answer) DPcErr;
 
+  struct og_nlpi_param nlpi_param[1];
+  memset(nlpi_param,0,sizeof(struct og_nlpi_param));
+  nlpi_param->herr = lt->herr;
+  nlpi_param->hmsg = lt->hmsg;
+  nlpi_param->hmutex = lt->hmutex;
+  nlpi_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
+  nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
+  lt->hnlpi = OgNlpInterpretInit(ctrl_nls->hnlp,nlpi_param);
+
   DONE;
 }
 

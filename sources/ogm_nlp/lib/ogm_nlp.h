@@ -56,6 +56,7 @@ struct og_ctrl_nlpi
   int json_interpret_request_string_length_truncated;
   og_heap hinterpret_package;
   const char *request_sentence;
+  json_t *json_answer;
 };
 
 struct og_ctrl_nlp

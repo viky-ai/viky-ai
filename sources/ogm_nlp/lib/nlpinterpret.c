@@ -7,6 +7,7 @@
 #include "ogm_nlp.h"
 
 static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *json_answer);
+static int NlpInterpretRequestReset(og_nlpi ctrl_nlpi);
 static int NlpInterpretRequestPackage(og_nlpi ctrl_nlpi, package_t package, json_t *json_intents);
 static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int Iintent, json_t *json_intents);
 static int NlpInterpretRequestParse(og_nlpi ctrl_nlpi, json_t *json_request);
@@ -76,6 +77,8 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
   }
   else if (json_is_array(input->json_input))
   {
+    json_t *json_answers = json_array();
+
     int array_size = json_array_size(input->json_input);
     for (int i = 0; i < array_size; i++)
     {
@@ -89,12 +92,23 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
       {
         json_t *json_answer = json_object();
         IFE(NlpInterpretRequest(ctrl_nlpi, json_request, json_answer));
+        IF(json_array_append(json_answers, json_answer))
+        {
+          NlpiThrowError(ctrl_nlpi, "OgNlpInterpret: error appending json_answer to array");
+          DPcErr;
+        }
+        else
+        {
+          json_incref(json_answers);
+        }
+
       }
       else
       {
         NlpiThrowError(ctrl_nlpi, "OgNlpInterpret: json_request at position %d is not an object", i);
         DPcErr;
       }
+      output->json_output = json_answers;
     }
   }
   else
@@ -103,19 +117,14 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
     DPcErr;
   }
 
-  // Not necessary anymore
-  //json_t *json = json_object();
-  //output->json_output = json;
-
-  //json_t *value = json_string("ok");
-  //IFE(json_object_set_new(json, "interpret", value));
-
   DONE;
 }
+
 
 static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *json_answer)
 {
 
+  IFE(NlpInterpretRequestReset(ctrl_nlpi));
   json_t *json_intents = json_array();
 
   char *json_request_string = json_dumps(json_request, JSON_INDENT(2));
@@ -149,6 +158,13 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *
 
   OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: finished interpreting request [\n%.*s]",
       strlen(json_request_string), json_request_string);
+  DONE;
+}
+
+
+static int NlpInterpretRequestReset(og_nlpi ctrl_nlpi)
+{
+  IFE(OgHeapReset(ctrl_nlpi->hinterpret_package));
   DONE;
 }
 

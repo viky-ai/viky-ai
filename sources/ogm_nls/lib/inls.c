@@ -95,6 +95,15 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   /** Mutex for choosing lt */
   IF(OgInitCriticalSection(ctrl_nls->hmutex_run_lt,"hmutex_run_lt")) return (0);
 
+  struct og_nlp_param nlp_param[1];
+  memset(nlp_param, 0, sizeof(struct og_nlp_param));
+  nlp_param->hmsg = ctrl_nls->hmsg;
+  nlp_param->herr = ctrl_nls->herr;
+  nlp_param->hmutex = ctrl_nls->hmutex;
+  nlp_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
+  nlp_param->loginfo.where = ctrl_nls->loginfo->where;
+  IFn(ctrl_nls->hnlp=OgNlpInit(nlp_param)) return (0);
+
   for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
     og_listening_thread *lt = ctrl_nls->Lt + i;
@@ -110,15 +119,6 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   {
     IF(NlsInitPermanentLtThreads(ctrl_nls)) return NULL;
   }
-
-  struct og_nlp_param nlp_param[1];
-  memset(nlp_param, 0, sizeof(struct og_nlp_param));
-  nlp_param->hmsg = ctrl_nls->hmsg;
-  nlp_param->herr = ctrl_nls->herr;
-  nlp_param->hmutex = ctrl_nls->hmutex;
-  nlp_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
-  nlp_param->loginfo.where = ctrl_nls->loginfo->where;
-  IFn(ctrl_nls->hnlp=OgNlpInit(nlp_param)) return (0);
 
   IF(NlsReadImportFiles(ctrl_nls)) return NULL;
 

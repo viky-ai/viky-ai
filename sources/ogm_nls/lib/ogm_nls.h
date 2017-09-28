@@ -117,6 +117,7 @@ struct og_listening_thread
   /** Heap of char */
   og_heap h_json_answer;
 
+  og_nlpi hnlpi;
 };
 
 /** nlsmt.c **/
@@ -248,6 +249,10 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
 
 /** nls_endpoint_test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+
+/** nls_endpoint_interpret.c **/
+og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
 
 /** nlsimport.c **/
