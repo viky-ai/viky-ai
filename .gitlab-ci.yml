@@ -27,11 +27,11 @@ deploy_branch:
     - build_image
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
     on_stop: delete_env
   variables:
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_DEPLOY_URL: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_DEPLOY_URL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
@@ -43,12 +43,12 @@ delete_env:
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
     action: stop
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_DEPLOY_URL: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_DEPLOY_URL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
     - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
