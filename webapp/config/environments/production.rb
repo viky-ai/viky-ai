@@ -33,7 +33,7 @@ Rails.application.configure do
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.action_controller.asset_host = ENV.fetch("VOQALAPP_BASEURL") { "https://www.voqal.ai/" }
+  config.action_controller.asset_host = ENV.fetch("VOQALAPP_BASEURL") { "www.voqal.ai" }
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
@@ -45,7 +45,7 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [/http:\/\/voqal.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
@@ -66,7 +66,7 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.default_url_options = { host: ENV.fetch("VOQALAPP_BASEURL") { "https://www.voqal.ai/" } }
+  config.action_mailer.default_url_options = { host: ENV.fetch("VOQALAPP_BASEURL") { "www.voqal.ai" } }
   config.action_mailer.show_previews = true
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
