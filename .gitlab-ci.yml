@@ -31,7 +31,7 @@ deploy_branch:
     on_stop: delete_env
   variables:
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: ${CI_ENVIRONMENT_URL}
+    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
@@ -48,7 +48,7 @@ delete_env:
   variables:
     GIT_STRATEGY: none
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: ${CI_ENVIRONMENT_URL}
+    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
     - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
