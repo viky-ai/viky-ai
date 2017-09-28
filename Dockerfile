@@ -1,7 +1,7 @@
 # Using docker multi stage (docker >= 17.05)
 # https://codefresh.io/blog/node_docker_multistage/
 
-# docker builf -f products/bu2_nls/Dockerfile -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
+# docker build -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
 
 # ============================================================================
 # Compile and package Nls
@@ -39,7 +39,7 @@ WORKDIR /tests
 ADD products/bu2_nls/tests/Gemfile      /tests
 ADD products/bu2_nls/tests/Gemfile.lock /tests
 
-RUN bundle install --path=cache/bundler --jobs $(nproc)
+RUN bundle install --jobs $(nproc)
 
 # Copy test code
 ADD products/bu2_nls/tests  /tests
@@ -62,6 +62,7 @@ COPY --from=build_image /builds/pse/ship /
 RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
 
 WORKDIR /nls
+
 EXPOSE 9345
 CMD ["./ogm_nls"]
 
