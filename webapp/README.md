@@ -37,6 +37,9 @@ VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
     RAILS_ENV=production rails assets:precompile
     RAILS_ENV=production SECRET_KEY_BASE=xyz POSTMARK_TOKEN=wxyz RAILS_SERVE_STATIC_FILES=true rails s
 
+## Base url
+
+<code>VOQALAPP_BASEURL</code> environment variable must be set.
 
 ## Mail
 
