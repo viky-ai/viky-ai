@@ -46,11 +46,12 @@ WORKDIR /
 
 # Copy Node and Yarn install
 COPY --from=nodejs-base /nodejs.tgz /
-RUN tar xzf /nodejs.tgz
+RUN tar xzPf /nodejs.tgz
 
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.6.0
 ENV YARN_VERSION 1.1.0
+ENV NODE_ENV=production
 
 # App specific
 RUN mkdir -p /webpapp

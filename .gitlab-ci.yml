@@ -5,8 +5,6 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
-  VOQALAPP_DEPLOY_URL: https://${VOQALAPP_DEPLOY_RANCHER_STACK}.voqal.ai
 
 # Build docker image
 build_image:
@@ -29,10 +27,13 @@ deploy_branch:
     - build_image
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: ${VOQALAPP_DEPLOY_URL}
+    url: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
     on_stop: delete_env
+  variables:
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_DEPLOY_URL: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
-    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev"
+    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - rancher --debug --environment dev up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} -d --pull --force-upgrade
 
@@ -42,12 +43,14 @@ delete_env:
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: ${VOQALAPP_DEPLOY_URL}
+    url: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
     action: stop
   variables:
     GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-plateform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_DEPLOY_URL: https://voqal-plateform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
-    - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev"
+    - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - rancher --debug --environment dev rm --stop --type stack ${VOQALAPP_DEPLOY_RANCHER_STACK}
   when: manual
