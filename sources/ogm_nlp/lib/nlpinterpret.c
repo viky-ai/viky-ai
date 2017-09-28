@@ -6,9 +6,9 @@
  */
 #include "ogm_nlp.h"
 
-static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request);
-static int NlpInterpretRequestPackage(og_nlpi ctrl_nlpi, package_t package);
-static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int Iintent);
+static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *json_answer);
+static int NlpInterpretRequestPackage(og_nlpi ctrl_nlpi, package_t package, json_t *json_intents);
+static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int Iintent, json_t *json_intents);
 static int NlpInterpretRequestParse(og_nlpi ctrl_nlpi, json_t *json_request);
 static int NlpInterpretRequestBuildSentence(og_nlpi ctrl_nlpi, json_t *json_sentence);
 static int NlpInterpretRequestBuildPackages(og_nlpi ctrl_nlpi, json_t *json_packages);
@@ -70,7 +70,9 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
 
   if (json_is_object(input->json_input))
   {
-    IFE(NlpInterpretRequest(ctrl_nlpi, input->json_input));
+    json_t *json_answer = json_object();
+    IFE(NlpInterpretRequest(ctrl_nlpi, input->json_input, json_answer));
+    output->json_output = json_answer;
   }
   else if (json_is_array(input->json_input))
   {
@@ -85,7 +87,8 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
       }
       if (json_is_object(json_request))
       {
-        IFE(NlpInterpretRequest(ctrl_nlpi, json_request));
+        json_t *json_answer = json_object();
+        IFE(NlpInterpretRequest(ctrl_nlpi, json_request, json_answer));
       }
       else
       {
@@ -100,18 +103,21 @@ PUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *inp
     DPcErr;
   }
 
-  // Just saying that compilation went well
-  json_t *json = json_object();
-  output->json_output = json;
+  // Not necessary anymore
+  //json_t *json = json_object();
+  //output->json_output = json;
 
-  json_t *value = json_string("ok");
-  IFE(json_object_set_new(json, "interpret", value));
+  //json_t *value = json_string("ok");
+  //IFE(json_object_set_new(json, "interpret", value));
 
   DONE;
 }
 
-static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request)
+static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *json_answer)
 {
+
+  json_t *json_intents = json_array();
+
   char *json_request_string = json_dumps(json_request, JSON_INDENT(2));
 
   OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%.*s]",
@@ -128,7 +134,17 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request)
     char *package_id = OgHeapGetCell(package->hba, package->id_start);
     IFN(package_id) DPcErr;
     OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s'", package_id);
-    IFE(NlpInterpretRequestPackage(ctrl_nlpi, package));
+    IFE(NlpInterpretRequestPackage(ctrl_nlpi, package, json_intents));
+  }
+
+  IF(json_object_set(json_answer, "intents", json_intents))
+  {
+    NlpiThrowError(ctrl_nlpi, "NlpInterpretRequest: error setting json_intents");
+    DPcErr;
+  }
+  else
+  {
+    json_incref(json_answer);
   }
 
   OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: finished interpreting request [\n%.*s]",
@@ -136,18 +152,18 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request)
   DONE;
 }
 
-static int NlpInterpretRequestPackage(og_nlpi ctrl_nlpi, package_t package)
+static int NlpInterpretRequestPackage(og_nlpi ctrl_nlpi, package_t package, json_t *json_intents)
 {
   int intent_used = OgHeapGetCellsUsed(package->hintent);
   for (int i = 0; i < intent_used; i++)
   {
-    IFE(NlpInterpretRequestIntent(ctrl_nlpi, package, i));
+    IFE(NlpInterpretRequestIntent(ctrl_nlpi, package, i, json_intents));
   }
 
   DONE;
 }
 
-static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int Iintent)
+static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int Iintent, json_t *json_intents)
 {
   struct intent *intent = OgHeapGetCell(package->hintent, Iintent);
   IFN(intent) DPcErr;
@@ -164,6 +180,51 @@ static int NlpInterpretRequestIntent(og_nlpi ctrl_nlpi, package_t package, int I
       char *package_id = OgHeapGetCell(package->hba, package->id_start);
       OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestIntent: found intent '%s' in package '%s'",
           intent_id, package_id);
+      json_t *json_intent = json_object();
+
+      json_t *json_package_id = json_string(package_id);
+      IF(json_object_set(json_intent, "package", json_package_id))
+      {
+        NlpiThrowError(ctrl_nlpi, "NlpInterpretRequestIntent: error setting json_package_id");
+        DPcErr;
+      }
+      else
+      {
+        json_incref(json_intent);
+      }
+
+      json_t *json_intent_id = json_string(intent_id);
+      IF(json_object_set(json_intent, "id", json_intent_id))
+      {
+        NlpiThrowError(ctrl_nlpi, "NlpInterpretRequestIntent: error setting json_intent_id");
+        DPcErr;
+      }
+      else
+      {
+        json_incref(json_intent);
+      }
+
+      json_t *json_score = json_real(1.0);
+      IF(json_object_set(json_intent, "score", json_score))
+      {
+        NlpiThrowError(ctrl_nlpi, "NlpInterpretRequestIntent: error setting json_score");
+        DPcErr;
+      }
+      else
+      {
+        json_incref(json_intent);
+      }
+
+      IF(json_array_append(json_intents, json_intent))
+      {
+        NlpiThrowError(ctrl_nlpi, "NlpInterpretRequestIntent: error appending json_intent to array");
+        DPcErr;
+      }
+      else
+      {
+        json_incref(json_intents);
+      }
+
     }
   }
   DONE;
