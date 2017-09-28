@@ -4,36 +4,70 @@ module Nls
 
   class TestNlsNlp < Common
     @@testDirPath = File.join(File.expand_path(__dir__),"tmp_test_nls_nlp")
+    @@errorJson   = File.join(@@testDirPath,"package_with_error.json")
+    @@goodJson    = File.join(@@testDirPath,"package_without_error.json")
 
-    def setup
-      Nls.stop
-    end
-
-    def teardown
-      #FileUtils.rm_rf(@@testDirPath)
-    end
-
-    def test_toto
-
-
-      pwd = ENV['NLS_INSTALL_PATH']
-      pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd.nil?
-
-      testFilePath = File.join(@@testDirPath,"package_with_error.json")
+    def resetDir
+      if File.file?(@@errorJson)
+        FileUtils.remove_file(@@errorJson, force = true)
+      end
+      if File.file?(@@goodJson)
+        FileUtils.remove_file(@@goodJson, force = true)
+      end
       FileUtils.mkdir_p(@@testDirPath)
-      Dir.glob(File.join(@@testDirPath,"*.*")).each { |file| File.delete(file)}
-      FileUtils.cp(fixture_path("package_with_error.json"), testFilePath)
+    end
+
+    def test_nlp_nls_error_parsing
+      resetDir
+
+      FileUtils.cp(fixture_path("package_with_error.json"), @@errorJson)
 
       command = "./ogm_nls -i #{@@testDirPath}"
 
       exception = assert_raises RuntimeError do
-        response = Nls.exec(command, log: false )
+      Nls.stop
+      response = Nls.exec(command, log: false)
         print "hey #{response}"
       end
 
       assert exception.message.include? "Error 1/2: main: NlsReadImportFile: Json contains error in ligne 1 and column 5"
-
+      resetDir
     end
+
+    def test_nlp_nls_compile
+      resetDir
+
+      FileUtils.cp(fixture_path("package_without_error.json"), @@goodJson)
+
+      Nls.stop
+      Nls.start(@@testDirPath)
+
+      response  = RestClient.get(Nls.url_dump)
+      actual    = JSON.parse(response.body)
+
+      expected =
+      [
+        {
+          "id" => "voqal.ai:datetime",
+           "intents" =>
+           [
+             {
+               "id"=>"0d981484-9313-11e7-abc4-cec278b6b50b",
+               "sentences" => [
+                 {
+                   "sentence" => "Hello Brice",
+                   "locale"=>"fr-FR"
+                 }
+               ]
+             }
+           ]
+         }
+       ];
+
+      assert_equal expected, actual
+      resetDir
+    end
+
   end
 
 end

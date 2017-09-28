@@ -89,7 +89,7 @@ struct og_listening_thread
   ogmutex_t *hmutex;
   struct og_ctrl_nls *ctrl_nls;
   struct og_loginfo loginfo[1];
-  int ID, running, disabled, state;
+  int ID, disabled, state;
   og_bool request_running;
   int request_running_start;
   int request_running_time;
@@ -249,6 +249,8 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
 
 /** nls_endpoint_test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+og_status NlsEndpointDump(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
 
 /** nls_endpoint_interpret.c **/

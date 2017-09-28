@@ -107,7 +107,7 @@ static int OgListeningThread1(void *ptr)
 og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
 {
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
-  lt->running = FALSE;
+  lt->request_running = FALSE;
   lt->current_thread = 0;
 
   IFE(OgSemaphorePost(ctrl_nls->hsem_run3));

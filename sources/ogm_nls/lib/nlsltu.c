@@ -59,7 +59,7 @@ og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt)
   IFE(OgListeningProcessEndpoint(lt, winput, output));
 
   int retour = OgListeningAnswer(lt, winput, output);
-  lt->request_running = 0;
+
   return retour;
 }
 
@@ -93,8 +93,6 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
 static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, struct og_ucisw_input *winput,
     struct og_ucisr_output *output)
 {
-  lt->request_running = TRUE;
-
   winput->content_type = "application/json";
   winput->content_length = 0;
   winput->content = NULL;

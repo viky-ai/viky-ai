@@ -35,6 +35,14 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
+  else if (isEndPointRegistered(request, "/dump/", DOgHttpHeaderTypeGet))
+  {
+    IF(NlsEndpointDump(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointDump\"");
+      DPcErr;
+    }
+  }
   else if (isEndPointRegistered(request, "/interpret/", DOgHttpHeaderTypePost))
   {
     IF(NlsEndpointInterpret(lt, request, response))

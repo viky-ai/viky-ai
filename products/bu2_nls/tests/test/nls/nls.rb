@@ -7,9 +7,9 @@ module Nls
 
     @@pid = nil
 
-    def self.start
+    def self.start(compile_this_dir = "import")
       if @@pid.nil?
-        Nls.exec('./ogm_nls -d')
+        Nls.exec("./ogm_nls -d -i \"#{compile_this_dir}\"")
         sleep(0.5)
         pid_string = `ps -aux | grep "./ogm_nls -d" | grep -v grep`
         @@pid = pid_string.split(" ")[1]
@@ -33,6 +33,19 @@ module Nls
       end
 
       "http://#{listening_address}/test"
+    end
+
+
+    def self.url_dump
+
+      listening_address = ENV['NLS_LISTENNING_ADDRESS']
+      if listening_address.nil?
+        listening_address = '127.0.0.1:9345'
+      else
+        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
+      end
+
+      "http://#{listening_address}/dump"
     end
 
     def self.query_get(parameters)
@@ -70,7 +83,7 @@ module Nls
 
           pid = wait_thr[:pid]
 
-          c = Term::ANSIColor
+          #c = Term::ANSIColor
 
           stdout_str = "" ;
           stderr_str = "" ;

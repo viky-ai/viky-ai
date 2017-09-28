@@ -16,6 +16,7 @@
     <file>nlsltu.c</file>
     <file>nls_endpoints.c</file>
     <file>nls_endpoint_test.c</file>
+    <file>nls_endpoint_dump.c</file>
     <file>nls_endpoint_interpret.c</file>
     <file>nlsmt.c</file>
   </sources>

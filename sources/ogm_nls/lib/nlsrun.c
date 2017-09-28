@@ -165,8 +165,8 @@ static struct og_listening_thread *OgNlsRunAcquireRunnningLtNoSync(struct og_ctr
   for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
     struct og_listening_thread *lt = ctrl_nls->Lt + i;
-    if (lt->running) continue;
-    lt->running = TRUE;
+    if (lt->request_running) continue;
+    lt->request_running = TRUE;
     return lt;
 
   }
@@ -233,7 +233,7 @@ int NlsWaitForListeningThreads(char *label, struct og_ctrl_nls *ctrl_nls)
     for (int i = 0; i < ctrl_nls->LtNumber; i++)
     {
       struct og_listening_thread *lt = ctrl_nls->Lt + i;
-      if (lt->running)
+      if (lt->request_running)
       {
         int ilt_running_str = strlen(lt_running_str);
         snprintf(lt_running_str + ilt_running_str, DPcPathSize - ilt_running_str, "%s%d", lt_running > 0 ? "," : "", i);
