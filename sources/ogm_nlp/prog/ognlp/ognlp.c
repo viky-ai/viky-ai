@@ -227,7 +227,7 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   input->json_input = json;
 
 
-  IFE(OgNlpDump(info->hnlp, input, output));
+  IFE(OgNlpDump(info->hnlp, output));
 
   IFN(output->json_output)
   {

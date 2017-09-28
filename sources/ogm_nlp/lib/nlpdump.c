@@ -11,7 +11,7 @@ static gint str_compar(gconstpointer a, gconstpointer b)
   return strcmp((const char*) a, (const char*) b);
 }
 
-PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
+PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_output *output)
 {
 
   json_t *json_packages = json_array();

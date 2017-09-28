@@ -59,7 +59,7 @@ DEFPUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param);
 DEFPUBLIC(int) OgNlpFlush(og_nlp hnlp);
 
 DEFPUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
-DEFPUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+DEFPUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_output *output);
 
 #define _LOGNLPALIVE_
 #endif
