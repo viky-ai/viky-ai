@@ -76,5 +76,6 @@ group :development do
 end
 
 group :test do
+  gem "shrine-memory"
   gem 'mocha'
 end

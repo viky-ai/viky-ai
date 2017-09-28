@@ -10,4 +10,11 @@ class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 end
 
+require "shrine/storage/memory"
+
+Shrine.storages = {
+  cache: Shrine::Storage::Memory.new,
+  store: Shrine::Storage::Memory.new,
+}
+
 require 'mocha/mini_test'
