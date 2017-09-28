@@ -19,20 +19,20 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   char erreur[DOgErrorSize];
   while (OgErrLast(lt->herr, erreur, 0))
   {
-    json_array_append(errors, json_string(erreur));
+    json_array_append_new(errors, json_string(erreur));
     nb_error++;
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append(errors, json_string(erreur));
+    json_array_append_new(errors, json_string(erreur));
     nb_error++;
   }
 
   json_object_set(root, "errors", errors);
 
-  char * response = json_dumps(root, 0);
+  unsigned char *response = json_dumps(root, JSON_INDENT(2));
 
   json_decref(errors);
   json_decref(root);
@@ -51,6 +51,8 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
     OgMsg(lt->hmsg, "", DOgMsgDestInLog + DOgMsgDestInErr,
         "OgUciServerWrite (%d): connexion was prematurely closed by client on an error message, giving up", lt->ID);
   }
+
+  DPcFree(response);
 
   DONE;
 }

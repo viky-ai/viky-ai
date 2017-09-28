@@ -12,7 +12,7 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     struct og_ucisr_output *output);
 static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr_input *input,
     struct og_ucisr_output *output);
-
+static int json_dump_answer_callback(const char *buffer, size_t size, void *data);
 
 /**
  *  Returns 1 if server must stop, 0 otherwise
@@ -106,7 +106,6 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   struct og_nls_response response[1];
   memset(response, 0, sizeof(struct og_nls_response));
 
-
   // TODO move hba init in NLS init
   request->parameters->length = 0;
   IFn(request->parameters->hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100))
@@ -140,23 +139,42 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   IFE(endpoint_status);
 
   // current endpoint not found
-  if(endpoint_status == FALSE)
+  if (endpoint_status == FALSE)
   {
-    winput->http_status = 404;
-    winput->http_status_message = "No endpoint found";
+    response->http_status = 404;
+    response->http_message = "No endpoint found";
 
-    json_decref(response->body);
+    json_t *errors = json_array();
+    json_array_append_new(errors, json_string(response->http_message));
+    json_object_set_new(response->body, "errors", errors);
 
-    DONE;
+
   }
+
+  // convert json_t body to json string
+  IF(json_dump_callback(response->body, json_dump_answer_callback, lt, JSON_INDENT(2)))
+  {
+    NlsThrowError(lt, "OgListeningProcessEndpoint: error on json_dump_callback");
+    DPcErr;
+  }
+  json_decref(response->body);
 
   // Build json string from response->body
   winput->http_status = response->http_status;
-  winput->content = json_dumps(response->body, JSON_INDENT(2));
-  winput->content_length = strlen(winput->content);
-  json_decref(response->body);
+  winput->http_status_message = response->http_message;
+  winput->content = OgHeapGetCell(lt->h_json_answer, 0);
+  winput->content_length = OgHeapGetCellsUsed(lt->h_json_answer);
 
   IFE(OgHeapFlush(request->parameters->hba));
+
+  DONE;
+}
+
+int json_dump_answer_callback(const char *buffer, size_t size, void *data)
+{
+  struct og_listening_thread *lt = data;
+
+  IFE(OgHeapAppend(lt->h_json_answer, size, buffer));
 
   DONE;
 }

@@ -114,6 +114,9 @@ struct og_listening_thread
   pthread_t current_thread;
   struct og_nls_options options[1];
 
+  /** Heap of char */
+  og_heap h_json_answer;
+
 };
 
 /** nlsmt.c **/
@@ -190,6 +193,7 @@ struct og_nls_request
 struct og_nls_response
 {
   int http_status;
+  og_string http_message;
   json_t *body;
 };
 

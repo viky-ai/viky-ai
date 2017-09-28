@@ -200,6 +200,10 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   uci_param->loginfo.where = ctrl_nls->loginfo->where;
   IFn(lt->hucis=OgUciServerInit(uci_param)) DPcErr;
 
+
+  lt->h_json_answer = OgHeapInit(lt->hmsg, "lt_json_answer", sizeof(unsigned char), DPcPathSize / 4);
+  IFN(lt->h_json_answer) DPcErr;
+
   DONE;
 }
 
@@ -214,6 +218,7 @@ og_status NlsLtReset(struct og_listening_thread *lt)
   lt->loginfo->trace = lt->ctrl_nls->loginfo->trace;
 
   IFE(NlsLtResetOptions(lt));
+  IFE(OgHeapReset(lt->h_json_answer));
 
   DONE;
 }
@@ -226,6 +231,7 @@ og_status NlsLtReset(struct og_listening_thread *lt)
  */
 og_status NlsLtFlush(struct og_listening_thread *lt)
 {
+  IFE(OgHeapFlush(lt->h_json_answer));
   IFE(OgUciServerFlush(lt->hucis));
   IFE(OgMsgFlush(lt->hmsg));
   OgErrFlush(lt->herr);
