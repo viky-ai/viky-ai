@@ -35,6 +35,7 @@ RUN set -ex; \
 RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
+      file \
       libcurl4-openssl-dev \
       libpq-dev \
       libyaml-dev \
