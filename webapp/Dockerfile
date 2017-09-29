@@ -1,7 +1,8 @@
 # Using docker multi stage (docker >= 17.05)
 # https://codefresh.io/blog/node_docker_multistage/
 
-# docker build -t docker-registry.pertimm.corp:50001/voqal.ai/platform/app .
+# docker build --target image_ruby_run  -t docker-registry.pertimm.corp:50001/voqal.ai/platform/app .
+# docker build --target image_ruby_test -t docker-registry.pertimm.corp:50001/voqal.ai/platform/app_test .
 
 #################################################
 # nodejs-base : tar.gz
@@ -38,6 +39,7 @@ RUN set -ex; \
       file \
       graphicsmagick-imagemagick-compat \
       libcurl4-openssl-dev \
+      libfontconfig \
       libpq-dev \
       libyaml-dev \
       zlib1g-dev \
@@ -53,7 +55,6 @@ RUN tar xzPf /nodejs.tgz
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.6.0
 ENV YARN_VERSION 1.1.0
-ENV NODE_ENV=production
 
 # App specific
 RUN mkdir -p /webpapp
@@ -74,6 +75,11 @@ COPY Gemfile.lock /webpapp
 # Production dependencies
 RUN bundle install --without development test --deployment --jobs=$(nproc)
 
+#################################################
+# image_ruby_run : image_ruby_base + code + assets
+#################################################
+FROM image_ruby_base AS image_ruby_run
+
 # Copy application code
 COPY . /webpapp
 
@@ -83,7 +89,7 @@ ENV SECRET_KEY_BASE=dummy
 # Precompile assets
 RUN ./bin/rails assets:precompile
 
-# create temporary dir
+# create temporary dir for sidekiq
 RUN mkdir -p /webpapp/tmp/
 RUN mkdir -p /webpapp/tmp/pids/
 RUN mkdir -p /webpapp/log/
@@ -94,3 +100,30 @@ ENV RAILS_LOG_TO_STDOUT=1
 
 EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
+
+#################################################
+# phantomjs-base
+#################################################
+
+FROM wernight/phantomjs AS phantomjs-base
+
+#################################################
+# image_ruby_test : image_ruby_base + test dependencies
+#################################################
+FROM image_ruby_base AS image_ruby_test
+
+# copy phantomjs
+COPY --from=phantomjs-base /usr/local/bin/phantomjs /usr/local/bin/phantomjs
+
+# Install test dependencies
+RUN bundle install --with test --deployment --jobs=$(nproc)
+
+# Copy application code
+COPY . /webpapp
+
+ENV RAILS_ENV=test
+
+# Run test
+CMD ["./bin/docker_run_test.sh"]
+
+# docker
