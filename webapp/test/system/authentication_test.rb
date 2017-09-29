@@ -7,7 +7,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     visit new_user_registration_path
 
-    fill_in 'Username', with: 'myusername'
+    fill_in 'Choose your username', with: 'myusername'
 
     click_button 'Sign up'
 
@@ -26,7 +26,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'short'
-    fill_in 'Username', with: 'myusername'
+    fill_in 'Choose your username', with: 'myusername'
 
     click_button 'Sign up'
 
@@ -60,7 +60,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     # First successful sign in
     visit new_user_registration_path
-    fill_in 'Username', with: 'superman'
+    fill_in 'Choose your username', with: 'superman'
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -76,7 +76,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     # Second sign up with same credentials
     visit new_user_registration_path
-    fill_in 'Username', with: 'superman2'
+    fill_in 'Choose your username', with: 'superman2'
     fill_in 'Email', with: 'superman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -91,7 +91,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   test "Successful sign up" do
     Feature.enable_user_registration
     visit new_user_registration_path
-    fill_in 'Username', with: 'rockybalboa'
+    fill_in 'Choose your username', with: 'rockybalboa'
     fill_in 'Email', with: 'rocky@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -175,7 +175,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     # Sign in
     visit new_user_registration_path
-    fill_in 'Username', with: 'batman'
+    fill_in 'Choose your username', with: 'batman'
     fill_in 'Email', with: 'batman@voqal.ai'
     fill_in 'Password', with: 'great password baby!'
 
@@ -356,7 +356,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert page.has_content? "Username can't be blank"
 
     fill_in 'Password', with: 'The Great Magic Password'
-    fill_in 'Username', with: 'magicusername'
+    fill_in 'Choose your username', with: 'magicusername'
     click_button 'Validate'
     expected = 'Your password and username were set successfully. You are now signed in.'
     assert page.has_content? expected

@@ -9,6 +9,16 @@
         <%= f.hidden_field :invitation_token %>
         <div style="display:none;"><%= f.text_field :email %></div>
 
+        <div class="field">
+          <%= f.label :username, t('views.invitations.edit.username_label') %>
+          <span class="help">
+            <span class="icon icon--x-small"><%= icon_information %></span>
+            <%= t('views.auth.at_least_x_char', min: 3) %>
+          </span>
+          <%= f.text_field :username %>
+          <%= display_errors(resource, :username) %>
+        </div>
+
         <% if f.object.class.require_password_on_accepting %>
           <div class="field">
             <%= f.label :password %>
@@ -22,16 +32,6 @@
             <%= display_errors(resource, :password) %>
           </div>
         <% end %>
-
-        <div class="field">
-          <%= f.label :username %>
-          <span class="help">
-            <span class="icon icon--x-small"><%= icon_information %></span>
-            <%= t('views.auth.at_least_x_char', min: 3) %>
-          </span>
-          <%= f.text_field :username %>
-          <%= display_errors(resource, :username) %>
-        </div>
 
         <div class="actions">
           <%= f.button t('views.invitations.edit.btn'), class: 'btn btn--full btn--large btn--primary',

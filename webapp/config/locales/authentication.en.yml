@@ -19,6 +19,7 @@ en:
       new:
         title: Sign up
         tagline: Start building chatbots now!
+        username_label: Choose your username
         btn: Sign up
     passwords:
       new:
@@ -44,7 +45,8 @@ en:
         btn: "Send invitation"
       edit:
         title: Finalize your invitation
-        tagline: Set password & username
+        tagline: Set your username & password
+        username_label: Choose your username
         btn: Validate
   controllers:
     registrations:
