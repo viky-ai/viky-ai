@@ -37,9 +37,7 @@ module Nlp
     end
 
     def test_intent_special_char
-      input = input_ref()
-      input[0]["intents"][0]["sentences"][0]["sentence"] =
-      "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸º°¯§…¤¦≠¬ˆ¨‰ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ#自爾秦書わたしワタシ🎾"
+      input = JSON.parse(File.read(fixture_path('package_specialchar.json')))
 
       File.open("#{@@pwd}/input.json", 'w') do |f|
         f.write input.to_json

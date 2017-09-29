@@ -35,6 +35,17 @@ module Nls
       "http://#{listening_address}/test"
     end
 
+    def self.url_interpret
+
+      listening_address = ENV['NLS_LISTENNING_ADDRESS']
+      if listening_address.nil?
+        listening_address = '127.0.0.1:9345'
+      else
+        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
+      end
+
+      "http://#{listening_address}/interpret"
+    end
 
     def self.url_dump
 
