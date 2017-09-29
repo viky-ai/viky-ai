@@ -72,6 +72,6 @@ invite_admin:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-    - rancher --debug --environment dev exec -it ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+    - rancher --environment dev exec -it ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
   when: manual
   allow_failure: true
