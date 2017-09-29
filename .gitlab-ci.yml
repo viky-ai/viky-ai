@@ -1,6 +1,7 @@
 stages:
   - build
   - deploy
+  - setup
   - cleanup
 
 variables:
@@ -53,5 +54,24 @@ delete_env:
     - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - rancher --debug --environment dev rm --stop --type stack ${VOQALAPP_DEPLOY_RANCHER_STACK}
+  when: manual
+  allow_failure: true
+
+# invite admin user
+invite_admin:
+  stage: cleanup
+  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+  variables:
+    GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+  script:
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - cd deployment
+    - TASK_CMD="/webapp/bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
+    - rancher --debug --environment dev exec -it ${VOQALAPP_DEPLOY_RANCHER_STACK}/webapp ${TASK_CMD}
   when: manual
   allow_failure: true
