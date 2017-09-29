@@ -66,6 +66,7 @@ invite_admin:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   variables:
+    TERM: xterm-256color
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
     VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
