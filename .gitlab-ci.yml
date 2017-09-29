@@ -66,11 +66,11 @@ invite_admin:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   variables:
-    GIT_STRATEGY: none
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
     VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - cd deployment
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
     - rancher --debug --environment dev exec -it ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
   when: manual
