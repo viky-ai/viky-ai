@@ -47,7 +47,9 @@ test:
   script:
     - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
     - >
-       docker run -t \
+       docker run -t --rm \
+         --link=service-redis:redis \
+         --link=service-postgres:${VOQALAPP_DB_HOST} \
          -e VOQALAPP_DB_USERNAME \
          -e VOQALAPP_DB_PASSWORD \
          -e VOQALAPP_DB_HOST \
@@ -56,7 +58,7 @@ test:
          -e POSTGRES_DB \
          -e VOQALAPP_ACTIONCABLE_REDIS_URL \
          -e VOQALAPP_ACTIVEJOB_REDIS_URL \
-         --rm ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+         ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Deploy any branches on rancher dev
 deploy_branch:
