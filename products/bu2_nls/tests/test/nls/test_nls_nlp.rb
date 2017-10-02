@@ -3,27 +3,6 @@ require 'test_helper'
 module Nls
 
   class TestNlsNlp < Common
-    @@testDirPath = File.join(File.expand_path(__dir__),"tmp_test_nls_nlp")
-    @@errorJson   = File.join(@@testDirPath,"package_with_error.json")
-    @@goodJson    = File.join(@@testDirPath,"package_without_error.json")
-    @@severalpackages  = File.join(@@testDirPath,"several_packages_several_intents.json")
-    @@parallelpackages  = File.join(@@testDirPath,"several_packages_parallelize.json")
-
-    def resetDir
-      if File.file?(@@errorJson)
-        FileUtils.remove_file(@@errorJson, force = true)
-      end
-      if File.file?(@@goodJson)
-        FileUtils.remove_file(@@goodJson, force = true)
-      end
-      if File.file?(@@severalpackages)
-        FileUtils.remove_file(@@severalpackages, force = true)
-      end
-      if File.file?(@@parallelpackages)
-        FileUtils.remove_file(@@parallelpackages, force = true)
-      end
-      FileUtils.mkdir_p(@@testDirPath)
-    end
 
     def test_nlp_nls_error_parsing
       resetDir
@@ -104,6 +83,56 @@ module Nls
           {
             "package" => "voqal.ai:datetime1",
             "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
+            "score" => 1
+          }
+        ]
+      }
+
+      assert_equal expected, actual
+
+    end
+
+    def test_nlp_nls_several_package_same_sentence
+      resetDir
+
+      FileUtils.cp(fixture_path("several_packages_same_sentence.json"), @@severalpackagessamesentence)
+
+      Nls.stop
+      sleep(0.1)
+      Nls.start(@@testDirPath)
+
+      param =
+      {
+        "packages" => ["package_2","package_3","package_1","package_9"],
+        "sentence" => "sentence_8",
+        "Accept-Language" => "fr-FR"
+      }
+
+      response  = RestClient.post(Nls.url_interpret, param.to_json, content_type: :json)
+      actual    = JSON.parse(response.body)
+
+      expected =
+      {
+        "intents" =>
+        [
+          {
+            "package" => "package_2",
+            "id" => "intent_2_8",
+            "score" => 1
+          },
+          {
+            "package" => "package_3",
+            "id" => "intent_3_8",
+            "score" => 1
+          },
+          {
+            "package" => "package_1",
+            "id" => "intent_1_8",
+            "score" => 1
+          },
+          {
+            "package" => "package_9",
+            "id" => "intent_9_8",
             "score" => 1
           }
         ]
