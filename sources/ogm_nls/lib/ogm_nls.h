@@ -184,7 +184,7 @@ struct og_nls_request_paramList
 
 struct og_nls_request
 {
-  struct og_nls_request_paramList parameters[1];
+  json_t *parameters;
   json_t *body;
 
   struct og_ucisr_output *raw;
@@ -244,8 +244,7 @@ int OgMaintenanceThread(void *ptr);
 
 /** nls_endpoints.c **/
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
-og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,
-    struct og_nls_request_paramList *parametersList);
+og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,json_t *parametersList);
 
 /** nls_endpoint_test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,

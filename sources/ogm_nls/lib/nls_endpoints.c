@@ -61,45 +61,35 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
 
 og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey)
 {
-  struct og_nls_request_paramList *parametersList = request->parameters;
-
-  if (parametersList->length > 0)
-  {
-    for (int i = 0; i < parametersList->length; i++)
-    {
-      if (strcmp(parametersList->params[i].key, paramKey) == 0) return TRUE;
-    }
-  }
-
-  return FALSE;
+  if(json_object_get(request->parameters, paramKey) == NULL)
+    return FALSE;
+  return TRUE;
 }
 
 og_string NlsRequestGetParamValue(struct og_nls_request *request, og_string paramKey)
 {
-
-  struct og_nls_request_paramList *parametersList = request->parameters;
-  if (parametersList->length > 0)
+  json_t * object = json_object_get(request->parameters, paramKey) ;
+  if(object == NULL)
   {
-    for (int i = 0; i < parametersList->length; i++)
-    {
-      if (strcmp(parametersList->params[i].key, paramKey) == 0) return parametersList->params[i].value;
-    }
+      return NULL;
   }
-  return NULL;
+  else
+  {
+    const char * str = json_string_value(object) ;
+    json_decref(object);
+    return str;
+  }
 }
 
 og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,
-    struct og_nls_request_paramList *parametersList)
+    json_t *parameters)
 {
-
   UriParserStateA state[1];
   memset(state, 0, sizeof(UriParserStateA));
 
   UriUriA uri[1];
   memset(uri, 0, sizeof(UriUriA));
   state->uri = uri;
-
-  parametersList->length = 0;
 
   if (uriParseUriA(state, url) == URI_SUCCESS)
   {
@@ -112,30 +102,16 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
       {
         if (pQItem->key != NULL && pQItem->value != NULL)
         {
-          struct og_nls_request_param param[1];
-          memset(param, 0, sizeof(struct og_nls_request_param));
-
-          int start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->key) + 1, pQItem->key));
-          IFn(param->key=OgHeapGetCell(parametersList->hba,start)) DPcErr;
-
-          start = OgHeapGetCellsUsed(parametersList->hba);
-          IFE(OgHeapAppend(parametersList->hba, strlen(pQItem->value) + 1, pQItem->value));
-          IFn(param->value=OgHeapGetCell(parametersList->hba,start)) DPcErr;
-
-          parametersList->params[parametersList->length] = *param;
-          parametersList->length++;
+          json_object_set(parameters, json_string_value(json_string(pQItem->key)), json_string(pQItem->value));
         }
       }
 
-      // TODO ensure FREE
       uriFreeQueryListA(queryList);
     }
   }
 
   // TODO ensure FREE
   uriFreeUriMembersA(uri);
-
   DONE;
 }
 

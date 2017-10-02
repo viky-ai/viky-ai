@@ -100,16 +100,10 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   struct og_nls_request request[1];
   memset(request, 0, sizeof(struct og_nls_request));
   request->raw = output;
+  request->parameters = json_object() ;
 
   struct og_nls_response response[1];
   memset(response, 0, sizeof(struct og_nls_response));
-
-  // TODO move hba init in NLS init
-  request->parameters->length = 0;
-  IFn(request->parameters->hba=OgHeapSliceInit(lt->hmsg,"parametersList_ba",sizeof(unsigned char),0x100,0x100))
-  {
-    DPcErr;
-  }
 
   IFE(OgNlsEndpointsParseParameters(lt, output->hh.request_uri, request->parameters));
 
@@ -163,7 +157,9 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   winput->content = OgHeapGetCell(lt->h_json_answer, 0);
   winput->content_length = OgHeapGetCellsUsed(lt->h_json_answer);
 
-  IFE(OgHeapFlush(request->parameters->hba));
+  if(request->parameters != NULL)
+    json_decref(request->parameters);
+
 
   DONE;
 }
