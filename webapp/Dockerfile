@@ -57,20 +57,20 @@ ENV NODE_VERSION 8.6.0
 ENV YARN_VERSION 1.1.0
 
 # App specific
-RUN mkdir -p /webpapp
-WORKDIR /webpapp
+RUN mkdir -p /webapp
+WORKDIR /webapp
 
 # Yarn install
-COPY package.json /webpapp
-COPY yarn.lock /webpapp
+COPY package.json /webapp
+COPY yarn.lock /webapp
 RUN yarn install
 
 # setup env
-ENV PATH="/webpapp/bin:${PATH}"
+ENV PATH="/webapp/bin:${PATH}"
 
 # Firstly bundle install (faster build)
-COPY Gemfile /webpapp
-COPY Gemfile.lock /webpapp
+COPY Gemfile /webapp
+COPY Gemfile.lock /webapp
 
 # Production dependencies
 RUN bundle install --without development test --deployment --jobs=$(nproc)
@@ -81,7 +81,7 @@ RUN bundle install --without development test --deployment --jobs=$(nproc)
 FROM image_ruby_base AS image_ruby_run
 
 # Copy application code
-COPY . /webpapp
+COPY . /webapp
 
 # Use a dummy SECRET_KEY_BASE
 ENV SECRET_KEY_BASE=dummy
@@ -90,9 +90,9 @@ ENV SECRET_KEY_BASE=dummy
 RUN ./bin/rails assets:precompile
 
 # create temporary dir for sidekiq
-RUN mkdir -p /webpapp/tmp/
-RUN mkdir -p /webpapp/tmp/pids/
-RUN mkdir -p /webpapp/log/
+RUN mkdir -p /webapp/tmp/
+RUN mkdir -p /webapp/tmp/pids/
+RUN mkdir -p /webapp/log/
 
 ENV RAILS_ENV=production
 ENV RAILS_SERVE_STATIC_FILES=true
@@ -119,7 +119,7 @@ COPY --from=phantomjs-base /usr/local/bin/phantomjs /usr/local/bin/phantomjs
 RUN bundle install --with test --deployment --jobs=$(nproc)
 
 # Copy application code
-COPY . /webpapp
+COPY . /webapp
 
 ENV RAILS_ENV=test
 
