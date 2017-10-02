@@ -47,7 +47,7 @@ test:
     - postgres:9.6-alpine
     - redis:4.0-alpine
   script:
-    - /webapp
+    - cd /webapp
     - ./bin/docker_run_test.sh
 
 # Deploy any branches on rancher dev
