@@ -29,9 +29,18 @@ docker_push:
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
 
 # Test
-test:
-  stage: test
+build_image_test:
+  stage: build
   image: docker:dind
+  services:
+    - postgres:9.6-alpine
+    - redis:4.0-alpine
+  script:
+    - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+
+run_test:
+  stage: test
+  image: ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
   variables:
     VOQALAPP_DB_USERNAME: superman
     VOQALAPP_DB_PASSWORD: sup_3rman
@@ -44,9 +53,6 @@ test:
   services:
     - postgres:9.6-alpine
     - redis:4.0-alpine
-  script:
-    - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
-    - docker run -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Deploy any branches on rancher dev
 deploy_branch:
