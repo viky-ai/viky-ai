@@ -46,7 +46,7 @@ test:
     - redis:4.0-alpine
   script:
     - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
-    - docker run -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker run -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Deploy any branches on rancher dev
 deploy_branch:
