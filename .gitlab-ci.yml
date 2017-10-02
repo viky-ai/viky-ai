@@ -1,26 +1,52 @@
 stages:
   - build
   - test
+  - docker_push
   - deploy
-  - setup
   - admin
-  - cleanup
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  DOCKER_DRIVER: overlay
+  VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/app
 
 # Build docker image
 build_image:
   stage: build
-  variables:
-    DOCKER_DRIVER: overlay
-    VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/app
   image: docker:dind
   script:
     - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/voqal_version.json"
     - docker build --target image_ruby_run -t ${VOQALAPP_DOCKER_IMAGE}:latest -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
+# Build docker image
+docker_push:
+  stage: docker_push
+  image: docker:dind
+  script:
+    - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
+    - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
+# Test
+test:
+  stage: test
+  image: docker:dind
+  variables:
+    VOQALAPP_DB_USERNAME: superman
+    VOQALAPP_DB_PASSWORD: sup_3rman
+    VOQALAPP_DB_HOST: postgres
+    POSTGRES_USER: superman
+    POSTGRES_PASSWORD: sup_3rman
+    POSTGRES_DB: voqalapp_test
+    VOQALAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
+    VOQALAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
+  services:
+    - postgres:9.6-alpine
+    - redis:4.0-alpine
+  script:
+    - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker run -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
 
 # Deploy any branches on rancher dev
 deploy_branch:
@@ -42,7 +68,7 @@ deploy_branch:
 
 # remove environment
 delete_env:
-  stage: cleanup
+  stage: admin
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
