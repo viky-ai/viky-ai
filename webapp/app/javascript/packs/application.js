@@ -8,5 +8,4 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import 'framework'
-import 'authentication'
-import 'profile'
+import 'app'
