@@ -2,24 +2,7 @@ require 'test_helper'
 
 module Nls
 
-  class TestNlsNlp < Common
-
-    def test_nlp_nls_error_parsing
-      resetDir
-
-      FileUtils.cp(fixture_path("package_with_error.json"), @@errorJson)
-
-      command = "./ogm_nls -i #{@@testDirPath}"
-
-      exception = assert_raises RuntimeError do
-        Nls.stop
-        response = Nls.exec(command, log: false)
-        print "hey #{response}"
-      end
-
-      assert exception.message.include? "Error 1/2: main: NlsReadImportFile: Json contains error in ligne 1 and column 5"
-      resetDir
-    end
+  class TestNlsNlpCompile < Common
 
     def test_nlp_nls_compile
       resetDir
@@ -161,7 +144,6 @@ module Nls
         end
       end
 
-      tests_number = sentences_array.size
       Parallel.map(sentences_array, in_threads: 20) do |sentence_array|
 
         param =
