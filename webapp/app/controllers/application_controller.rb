@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!, :log_headers
 
   def log_headers
-    logger.info request.env
+    logger.info request.env.select { |key, value| key.start_with?('HTTP') }
   end
 
 end
