@@ -183,6 +183,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
 
   memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
+  input->filename = json_compilation_filename;
 
   IF(OgNlpCompile(info->hnlp, input, output))
   {

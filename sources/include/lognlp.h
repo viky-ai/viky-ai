@@ -46,6 +46,7 @@ struct og_nlpi_param
 struct og_nlp_compile_input
 {
   json_t *json_input;
+  char* filename;
 };
 
 struct og_nlp_compile_output

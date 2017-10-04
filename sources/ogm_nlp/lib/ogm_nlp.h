@@ -38,6 +38,13 @@ struct package
   og_heap hsentence;
 };
 
+struct packages_intents_hashtables
+{
+    GHashTable *package_id_hastable;
+    GHashTable *intent_id_hastable;
+    char *filename;
+};
+
 typedef struct package *package_t;
 
 struct interpret_package

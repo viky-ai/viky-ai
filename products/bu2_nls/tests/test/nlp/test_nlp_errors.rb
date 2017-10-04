@@ -20,9 +20,9 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected = {"errors" => ["NlpCompilePackageIntents: id is not a string"]}
+      expected_error = "package id is not a string"
 
-      assert_equal expected, actual
+      assert actual["errors"].first.include? expected_error
     end
 
     def test_intent_id_type
@@ -36,9 +36,9 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected = {"errors" => ["NlpCompilePackageIntent: id is not a string"]}
+      expected_error = "intent id is not a string"
 
-      assert_equal expected, actual
+      assert actual["errors"].first.include? expected_error
     end
 
     def test_package_intents_type

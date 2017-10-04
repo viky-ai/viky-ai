@@ -32,7 +32,7 @@ module Nls
         Nls.exec(command, log: false)
       end
 
-      assert exception.message.include? "does not fit expected format : several intents with same id"
+      assert exception.message.include? "intent id"
       resetDir
     end
 
@@ -48,7 +48,7 @@ module Nls
         Nls.exec(command, log: false)
       end
 
-      assert exception.message.include? "does not fit expected format : several packages with same id"
+      assert exception.message.include? "package id"
       resetDir
     end
 

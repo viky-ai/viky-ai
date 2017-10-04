@@ -6,11 +6,12 @@
  */
 #include "ogm_nlp.h"
 
-static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package);
-static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents);
-static int NlpCompilePackageIntent(package_t package, json_t *json_intent);
+static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package, struct packages_intents_hashtables *p_i_hash);
+static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents, struct packages_intents_hashtables *p_i_hash);
+static int NlpCompilePackageIntent(package_t package, json_t *json_intent, struct packages_intents_hashtables *p_i_hash);
 static int NlpCompilePackageSentences(package_t package, struct intent *intent, json_t *json_sentences);
 static int NlpCompilePackageSentence(package_t package, struct intent *intent, json_t *json_sentence);
+// static int NlpControlImportFile(og_nlp ctrl_nlp, json_t *json, char *import_file);
 
 PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output)
 {
@@ -18,7 +19,7 @@ PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, st
   ctrl_nlp->json_compile_request_string = json_dumps(input->json_input, JSON_INDENT(2));
   IFN(ctrl_nlp->json_compile_request_string)
   {
-    NlpThrowError(ctrl_nlp, "OgNlpCompile: json_dumps error on input->json_input");
+    NlpThrowError(ctrl_nlp, "OgNlpCompile: json_dumps error on input->json_input for file %s", input->filename);
     DPcErr;
   }
   ctrl_nlp->json_compile_request_string_length = strlen(ctrl_nlp->json_compile_request_string);
@@ -33,33 +34,52 @@ PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, st
 
   if (json_is_object(input->json_input))
   {
-    IFE(NlpCompilePackage(ctrl_nlp, input->json_input));
+    NlpThrowError(ctrl_nlp, "OgNlpCompile: structure error in file %s : main container must be an array", input->filename);
+    DPcErr;
   }
   else if (json_is_array(input->json_input))
   {
     int array_size = json_array_size(input->json_input);
+
+    struct packages_intents_hashtables p_i_hash;
+    p_i_hash.package_id_hastable = g_hash_table_new(g_str_hash,g_str_equal);
+    p_i_hash.intent_id_hastable = g_hash_table_new(g_str_hash,g_str_equal);
+    p_i_hash.filename = input->filename;
+
     for (int i = 0; i < array_size; i++)
     {
       json_t *json_package = json_array_get(input->json_input, i);
       IFN(json_package)
       {
         NlpThrowError(ctrl_nlp, "OgNlpCompile: null json_package at position %d", i);
+        g_hash_table_destroy(p_i_hash.package_id_hastable);
+        g_hash_table_destroy(p_i_hash.intent_id_hastable);
         DPcErr;
       }
       if (json_is_object(json_package))
       {
-        IFE(NlpCompilePackage(ctrl_nlp, json_package));
+        og_bool compiledPackage = NlpCompilePackage(ctrl_nlp, json_package, &p_i_hash);
+        if(compiledPackage == ERREUR)
+        {
+          g_hash_table_destroy(p_i_hash.package_id_hastable);
+          g_hash_table_destroy(p_i_hash.intent_id_hastable);
+          DPcErr;
+        }
       }
       else
       {
-        NlpThrowError(ctrl_nlp, "OgNlpCompile: json_package at position %d is not an object", i);
+        NlpThrowError(ctrl_nlp, "OgNlpCompile: structure error in file %s : json_package at position %d is not an object", input->filename, i);
+        g_hash_table_destroy(p_i_hash.package_id_hastable);
+        g_hash_table_destroy(p_i_hash.intent_id_hastable);
         DPcErr;
       }
     }
+    g_hash_table_destroy(p_i_hash.package_id_hastable);
+    g_hash_table_destroy(p_i_hash.intent_id_hastable);
   }
   else
   {
-    NlpThrowError(ctrl_nlp, "OgNlpCompile: input->json_input is not an object nor an array");
+    NlpThrowError(ctrl_nlp, "OgNlpCompile: structure error in file %s : main container must be an array", input->filename);
     DPcErr;
   }
 
@@ -73,7 +93,7 @@ PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, st
   DONE;
 }
 
-static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
+static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package, struct packages_intents_hashtables *p_i_hash)
 {
   char *json_package_string = json_dumps(json_package, JSON_INDENT(2));
 
@@ -83,7 +103,7 @@ static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
   void *package_iter = json_object_iter(json_package);
   IFN(package_iter)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackage: package is empty");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackage: package is empty in file %s", p_i_hash->filename);
     DPcErr;
   }
   json_t *json_id = NULL;
@@ -95,6 +115,24 @@ static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
     if (Ogstricmp(key, "id") == 0)
     {
       json_id = json_object_iter_value(package_iter);
+      if(json_is_string(json_id) != FALSE)
+      {
+        const char* package_id_string = json_string_value(json_id);
+        if(g_hash_table_lookup (p_i_hash->package_id_hastable,package_id_string) == NULL)
+        {
+          g_hash_table_insert(p_i_hash->package_id_hastable,g_strdup (package_id_string),"");
+        }
+        else
+        {
+          NlpThrowError(ctrl_nlp, "NlpCompilePackage: file %s, package id %s already exist", p_i_hash->filename, package_id_string);
+          DPcErr;
+        }
+      }
+      else
+      {
+        NlpThrowError(ctrl_nlp, "NlpCompilePackage: file %s, package id is not a string", p_i_hash->filename);
+        DPcErr;
+      }
     }
     else if (Ogstricmp(key, "intents") == 0)
     {
@@ -102,7 +140,7 @@ static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
     }
     else
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackage: unknow key '%s'", key);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackage: file %s, unknow key '%s'", p_i_hash->filename, key);
       DPcErr;
     }
   }
@@ -110,35 +148,35 @@ static int NlpCompilePackage(og_nlp ctrl_nlp, json_t *json_package)
 
   IFN(json_id)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackage: no key");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackage: file %s, package without key", p_i_hash->filename);
     DPcErr;
   }
   IFN(json_intents)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackage: no intents");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackage: file %s, no intents in package", p_i_hash->filename);
     DPcErr;
   }
 
-  IFE(NlpCompilePackageIntents(ctrl_nlp, json_id, json_intents));
+  IFE(NlpCompilePackageIntents(ctrl_nlp, json_id, json_intents, p_i_hash));
 
   DONE;
 }
 
-static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents)
+static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents, struct packages_intents_hashtables *p_i_hash)
 {
   if (!json_is_string(json_id))
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: id is not a string");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: file %s, id is not a string", p_i_hash->filename);
     DPcErr;
   }
   if (!json_is_array(json_intents))
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: intents is not an array");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: file %s, intents is not an array", p_i_hash->filename);
     DPcErr;
   }
   // At that point, we can create the package structure
   const char *string_id = json_string_value(json_id);
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntents: package id is '%s'", string_id);
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntents: file %s, package id is '%s'", p_i_hash->filename, string_id);
 
   // We do not use a package heap because we dont want synchronization on that heap
   package_t package = NlpPackageCreate(ctrl_nlp, string_id);
@@ -150,16 +188,16 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
     json_t *json_intent = json_array_get(json_intents, i);
     IFN(json_intent)
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: null json_intent at position %d", i);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: file %s, null json_intent at position %d", p_i_hash->filename, i);
       DPcErr;
     }
     if (json_is_object(json_intent))
     {
-      IFE(NlpCompilePackageIntent(package, json_intent));
+      IFE(NlpCompilePackageIntent(package, json_intent, p_i_hash));
     }
     else
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: json_intent at position %d is not an object", i);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntents: file %s, json_intent at position %d is not an object", p_i_hash->filename, i);
       DPcErr;
     }
   }
@@ -170,18 +208,18 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
   DONE;
 }
 
-static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
+static int NlpCompilePackageIntent(package_t package, json_t *json_intent, struct packages_intents_hashtables *p_i_hash)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
   char *json_intent_string = json_dumps(json_intent, JSON_INDENT(2));
 
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: compiling intent [\n%.*s]",
-      strlen(json_intent_string), json_intent_string);
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: file %s, compiling intent [\n%.*s]",
+      p_i_hash->filename, strlen(json_intent_string), json_intent_string);
 
   void *intent_iter = json_object_iter(json_intent);
   IFN(intent_iter)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: intent is empty");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, intent is empty", p_i_hash->filename);
     DPcErr;
   }
   json_t *json_id = NULL;
@@ -189,10 +227,31 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
   do
   {
     const char *key = json_object_iter_key(intent_iter);
-    OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: found key='%s'", key);
+    OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: file %s, found key='%s'", p_i_hash->filename, key);
     if (Ogstricmp(key, "id") == 0)
     {
       json_id = json_object_iter_value(intent_iter);
+
+      if(json_is_string(json_id) != FALSE)
+      {
+        const char* intent_id_string = json_string_value(json_id);
+        if(g_hash_table_lookup (p_i_hash->intent_id_hastable,intent_id_string) == NULL)
+        {
+          g_hash_table_insert(p_i_hash->intent_id_hastable,g_strdup (intent_id_string),"");
+        }
+        else
+        {
+          NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, intent id %s already exist", p_i_hash->filename, intent_id_string);
+          DPcErr;
+        }
+      }
+      else
+      {
+        NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, intent id is not a string", p_i_hash->filename);
+        DPcErr;
+      }
+
+
     }
     else if (Ogstricmp(key, "sentences") == 0)
     {
@@ -200,7 +259,7 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
     }
     else
     {
-      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: unknow key '%s'", key);
+      NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, unknow key '%s'", p_i_hash->filename, key);
       DPcErr;
     }
   }
@@ -208,28 +267,28 @@ static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
 
   IFN(json_id)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: no id");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, no id", p_i_hash->filename);
     DPcErr;
   }
   IFN(json_sentences)
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: no sentences");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, no sentences", p_i_hash->filename);
     DPcErr;
   }
 
   if (!json_is_string(json_id))
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: id is not a string");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, id is not a string", p_i_hash->filename);
     DPcErr;
   }
   if (!json_is_array(json_sentences))
   {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: sentences is not an array");
+    NlpThrowError(ctrl_nlp, "NlpCompilePackageIntent: file %s, sentences is not an array", p_i_hash->filename);
     DPcErr;
   }
   // At that point, we can create the intent structure
   const char *string_id = json_string_value(json_id);
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: intent id is '%s'", string_id);
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: file %s, intent id is '%s'", p_i_hash->filename, string_id);
 
   size_t Iintent;
   struct intent *intent = OgHeapNewCell(package->hintent, &Iintent);
