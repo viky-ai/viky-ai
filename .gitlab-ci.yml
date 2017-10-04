@@ -20,6 +20,8 @@ build_image:
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
     - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker push ${VOQALAPP_DOCKER_IMAGE}_test:latest
+    - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Build docker image
 docker_push:
