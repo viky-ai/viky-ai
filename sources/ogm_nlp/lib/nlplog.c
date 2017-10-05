@@ -6,6 +6,46 @@
  */
 #include "ogm_nlp.h"
 
+/**
+ * Write json_t in buffer. Buffer is always NUL terminated.
+ *
+ * @param json json_t pointer
+ * @param buffer buffer to write json in
+ * @param buffer_size buffer size
+ * @param p_truncated flag to indicate if json is truncated or not
+ * @return status
+ */
+og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated)
+{
+  og_string truncated_ends = " ... (truncated) ";
+  int truncated_ends_size = strlen(truncated_ends);
+
+  int expected_size = json_dumpb(json, buffer, buffer_size - truncated_ends_size - 1, JSON_INDENT(2));
+  IF(expected_size)
+  {
+    DPcErr;
+  }
+
+  // truncated json
+  if (expected_size >= (buffer_size - truncated_ends_size - 1))
+  {
+    if (p_truncated) *p_truncated = TRUE;
+
+    if (truncated_ends_size > buffer_size)
+    {
+      snprintf(buffer + buffer_size - truncated_ends_size - 1, truncated_ends_size, "%s", truncated_ends);
+    }
+
+    DONE;
+  }
+
+  buffer[expected_size - 1] = 0;
+
+  if (p_truncated) *p_truncated = TRUE;
+
+  DONE;
+}
+
 og_status NlpPackageLog(package_t package)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;

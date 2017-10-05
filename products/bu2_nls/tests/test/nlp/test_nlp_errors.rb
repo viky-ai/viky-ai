@@ -20,7 +20,7 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected_error = "package id is not a string"
+      expected_error = "package 'id' is not a string"
 
       assert actual["errors"].first.include? expected_error
     end
@@ -36,9 +36,9 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected_error = "intent id is not a string"
+      expected_error = "intent 'id' is not a string"
 
-      assert actual["errors"].first.include? expected_error
+      assert_response_has_error expected_error, actual
     end
 
     def test_package_intents_type
@@ -62,9 +62,9 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected = {"errors" => ["OgCodeToIso639_3166: Language 'ok' does not exist"]}
+      expected_error = "OgCodeToIso639_3166: Language 'ok' does not exist"
 
-      assert_equal expected, actual
+      assert_response_has_error expected_error, actual
     end
 
     def test_intent_phrase_too_long
@@ -82,9 +82,9 @@ module Nlp
 
       actual = nlp([ "-c #{@@pwd}/input.json"])
 
-      expected = {"errors" => ["NlpCompilePackageSentence: text is too long"]}
+      expected_error = "NlpCompilePackageSentence: text is too long"
 
-      assert_equal expected, actual
+      assert_response_has_error expected_error, actual
     end
 
   end

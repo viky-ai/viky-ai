@@ -5,13 +5,10 @@ module Nls
   class TestNlsNlpCompile < Common
 
     def test_nlp_nls_compile
-      resetDir
 
-      FileUtils.cp(fixture_path("package_without_error.json"), @@goodJson)
+      cp_import_fixture("package_without_error.json")
 
-      Nls.stop
-      sleep(0.1)
-      Nls.start(@@testDirPath)
+      Nls.restart
 
       response  = RestClient.get(Nls.url_dump)
       actual    = JSON.parse(response.body)
@@ -37,17 +34,13 @@ module Nls
       ];
 
       assert_equal expected, actual
-      resetDir
     end
 
     def test_nlp_nls_query
-      resetDir
 
-      FileUtils.cp(fixture_path("several_packages_several_intents.json"), @@severalpackages)
+      cp_import_fixture("several_packages_several_intents.json")
 
-      Nls.stop
-      sleep(0.1)
-      Nls.start(@@testDirPath)
+      Nls.restart
 
       param =
       {
@@ -76,13 +69,10 @@ module Nls
     end
 
     def test_nlp_nls_several_package_same_sentence
-      resetDir
 
-      FileUtils.cp(fixture_path("several_packages_same_sentence.json"), @@severalpackagessamesentence)
+      cp_import_fixture("several_packages_same_sentence.json")
 
-      Nls.stop
-      sleep(0.1)
-      Nls.start(@@testDirPath)
+      Nls.restart
 
       param =
       {
@@ -126,13 +116,10 @@ module Nls
     end
 
     def test_nlp_nls_parallel_query
-      resetDir
 
-      FileUtils.cp(fixture_path("several_packages_parallelize.json"), @@parallelpackages)
+      cp_import_fixture("several_packages_parallelize.json")
 
-      Nls.stop
-      sleep(0.1)
-      Nls.start(@@testDirPath)
+      Nls.restart
 
       sentences_array = [];
 

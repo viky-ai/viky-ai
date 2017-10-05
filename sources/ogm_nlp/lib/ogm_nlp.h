@@ -38,13 +38,6 @@ struct package
   og_heap hsentence;
 };
 
-struct packages_intents_hashtables
-{
-    GHashTable *package_id_hastable;
-    GHashTable *intent_id_hastable;
-    char *filename;
-};
-
 typedef struct package *package_t;
 
 struct interpret_package
@@ -58,9 +51,7 @@ struct og_ctrl_nlpi
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
-  char *json_interpret_request_string;
-  int json_interpret_request_string_length;
-  int json_interpret_request_string_length_truncated;
+
   og_heap hinterpret_package;
   const char *request_sentence;
   json_t *json_answer;
@@ -71,9 +62,6 @@ struct og_ctrl_nlp
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
-  char *json_compile_request_string;
-  int json_compile_request_string_length;
-  int json_compile_request_string_length_truncated;
 
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
@@ -84,6 +72,7 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
 og_status NlpiThrowError(og_nlpi ctrl_nlpi, og_string format, ...);
 
 /* nlplog.c */
+og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
 og_status NlpPackageLog(package_t package);
 og_status NlpPackageIntentLog(package_t package, int Iintent);
 og_status NlpPackageSentenceLog(package_t package, int Isentence);

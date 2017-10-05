@@ -83,9 +83,9 @@ static int NlsReadImportFile(og_nls ctrl_nls, char *import_file)
   json_auto_t *json = json_load_file(import_file, JSON_REJECT_DUPLICATES, error);
   IFN(json)
   {
-    NlsMainThrowError(ctrl_nls, "NlsReadImportFile: error while reading '%s'", import_file);
     NlsMainThrowError(ctrl_nls, "NlsReadImportFile: Json contains error in ligne %d and column %d , %s , %s ",
         error->line, error->column, error->source, error->text);
+    NlsMainThrowError(ctrl_nls, "NlsReadImportFile: error while reading '%s'", import_file);
     DPcErr;
   }
 
@@ -94,9 +94,12 @@ static int NlsReadImportFile(og_nls ctrl_nls, char *import_file)
 
   memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
-  input->filename = import_file;
 
-  IFE(OgNlpCompile(ctrl_nls->hnlp, input, output));
+  IF(OgNlpCompile(ctrl_nls->hnlp, input, output))
+  {
+    NlsMainThrowError(ctrl_nls, "NlsReadImportFile: error OgNlpCompile from file '%s'", import_file);
+    DPcErr;
+  }
 
   IFN(output->json_output)
   {

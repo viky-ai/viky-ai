@@ -183,7 +183,6 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
 
   memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
-  input->filename = json_compilation_filename;
 
   IF(OgNlpCompile(info->hnlp, input, output))
   {
@@ -201,12 +200,10 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
-    json_decref(output->json_output);
+    json_decrefp(&output->json_output);
     IF(status)
     {
-      char buffer[DPcPathSize];
-      sprintf(buffer, "nlp_compile: error on json_dump_file");
-      OgErr(info->herr, buffer);
+      OgErr(info->herr, "nlp_compile: error on json_dump_file");
       DPcErr;
     }
   }
@@ -318,31 +315,30 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
 
 static int nlp_send_errors_as_json(struct og_info *info)
 {
-  json_t * root = json_object();
   json_t * errors = json_array();
 
   int nb_error = 0;
   char erreur[DOgErrorSize];
   while (OgErrLast(info->herr, erreur, 0))
   {
-    json_array_append(errors, json_string(erreur));
+    json_array_append_new(errors, json_string(erreur));
     nb_error++;
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append(errors, json_string(erreur));
+    json_array_append_new(errors, json_string(erreur));
     nb_error++;
   }
 
-  json_object_set(root, "errors", errors);
-
+  json_t * root = json_object();
+  json_object_set_new(root, "errors", errors);
   json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
+  json_decrefp(&root);
+
   printf("\n");
 
-  json_decref(errors);
-  json_decref(root);
   DONE;
 }
 

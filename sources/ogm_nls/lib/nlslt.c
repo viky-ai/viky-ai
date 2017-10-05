@@ -228,6 +228,8 @@ og_status NlsLtReset(struct og_listening_thread *lt)
 
   IFE(OgNlsEndpointsMemoryReset(lt));
 
+  IFE(OgNlpInterpretReset(lt->hnlpi));
+
   IFE(NlsLtResetOptions(lt));
   IFE(OgHeapReset(lt->h_json_answer));
 
@@ -242,6 +244,8 @@ og_status NlsLtReset(struct og_listening_thread *lt)
  */
 og_status NlsLtFlush(struct og_listening_thread *lt)
 {
+  IFE(OgNlpInterpretFlush(lt->hnlpi));
+
   IFE(OgHeapFlush(lt->h_json_answer));
   IFE(OgUciServerFlush(lt->hucis));
   IFE(OgMsgFlush(lt->hmsg));

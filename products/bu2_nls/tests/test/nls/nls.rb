@@ -23,6 +23,12 @@ module Nls
       end
     end
 
+    def self.restart
+      Nls.stop
+      sleep(0.05)
+      Nls.start
+    end
+
     def self.url
 
       listening_address = ENV['NLS_LISTENNING_ADDRESS']

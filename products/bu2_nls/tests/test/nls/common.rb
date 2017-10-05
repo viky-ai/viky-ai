@@ -1,41 +1,24 @@
 module Nls
 
   class Common < Minitest::Test
-    @@testDirPath = File.join(File.expand_path(__dir__),"tmp_test_nls_nlp")
-    @@errorJson   = File.join(@@testDirPath,"package_with_error.json")
-    @@goodJson    = File.join(@@testDirPath,"package_without_error.json")
-    @@parallelpackages              = File.join(@@testDirPath,"several_packages_parallelize.json")
-    @@severalpackagessamesentence   = File.join(@@testDirPath,"several_packages_same_sentence.json")
-    @@severalpackages               = File.join(@@testDirPath,"several_packages_several_intents.json")
-    @@sameintentinpackage           = File.join(@@testDirPath,"several_same_intents_in_package.json")
-    @@samepackageinfile             = File.join(@@testDirPath,"several_same_package_in_file.json")
+
+
+    def importDir
+      pwd = ENV['NLS_INSTALL_PATH']
+      pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd.nil?
+
+      File.join(File.expand_path(pwd), "import")
+    end
 
     def resetDir
-      if File.file?(@@errorJson)
-        FileUtils.remove_file(@@errorJson, force = true)
-      end
-      if File.file?(@@goodJson)
-        FileUtils.remove_file(@@goodJson, force = true)
-      end
-      if File.file?(@@parallelpackages)
-        FileUtils.remove_file(@@parallelpackages, force = true)
-      end
-      if File.file?(@@severalpackagessamesentence)
-        FileUtils.remove_file(@@severalpackagessamesentence, force = true)
-      end
-      if File.file?(@@severalpackages)
-        FileUtils.remove_file(@@severalpackages, force = true)
-      end
-      if File.file?(@@sameintentinpackage)
-        FileUtils.remove_file(@@sameintentinpackage, force = true)
-      end
-      if File.file?(@@samepackageinfile)
-        FileUtils.remove_file(@@samepackageinfile, force = true)
-      end
-      FileUtils.mkdir_p(@@testDirPath)
+      FileUtils.rm_r(importDir, :force => true)
+      FileUtils.mkdir_p(importDir)
     end
 
     def setup
+
+      resetDir
+
       Nls.start
     end
 
@@ -45,6 +28,29 @@ module Nls
 
     def fixture_path(file = '')
       File.join(File.expand_path(__dir__), 'fixtures', file)
+    end
+
+    def cp_import_fixture(file)
+      FileUtils.cp(fixture_path(file), importDir)
+    end
+
+    def assert_exception_has_message expected_error, exception, msg = nil
+
+      header = ''
+      header = "#{msg} : " if !msg.nil?
+
+      if !expected_error.nil? && !expected_error.empty?
+        assert !exception.nil?, "#{header}exception must not be nil : #{exception.inspect}"
+        assert !exception.message.nil?, "#{header}exception message must not be nil : #{exception.inspect}"
+        assert !exception.message.empty?, "#{header}exception message must not be empty : #{exception.inspect}"
+
+        expected_error_found = false
+        expected_error_found = true  if exception.message.include? expected_error
+
+        assert expected_error_found, "#{header}exception message must contains \"#{expected_error}\": \n#{exception.message}"
+
+      end
+
     end
 
   end

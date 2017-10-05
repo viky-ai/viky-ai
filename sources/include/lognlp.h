@@ -46,12 +46,15 @@ struct og_nlpi_param
 struct og_nlp_compile_input
 {
   json_t *json_input;
-  char* filename;
+
+  /** TRUE if the package can be updated, FALSE if package must not exits (duplicate detection) */
+  og_bool package_update;
+
 };
 
 struct og_nlp_compile_output
 {
-    json_t *json_output;
+  json_t *json_output;
 };
 
 struct og_nlp_dump_input
@@ -61,7 +64,7 @@ struct og_nlp_dump_input
 
 struct og_nlp_dump_output
 {
-    json_t *json_output;
+  json_t *json_output;
 };
 
 struct og_nlp_interpret_input
@@ -71,17 +74,20 @@ struct og_nlp_interpret_input
 
 struct og_nlp_interpret_output
 {
-    json_t *json_output;
+  json_t *json_output;
 };
 
 DEFPUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param);
-DEFPUBLIC(int) OgNlpFlush(og_nlp hnlp);
+DEFPUBLIC(og_status) OgNlpFlush(og_nlp hnlp);
 
-DEFPUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
-DEFPUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+DEFPUBLIC(og_status) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
+DEFPUBLIC(og_status) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
 
 DEFPUBLIC(og_nlpi) OgNlpInterpretInit(og_nlp ctrl_nlp, struct og_nlpi_param *param);
-DEFPUBLIC(int) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *input, struct og_nlp_interpret_output *output);
+DEFPUBLIC(og_status) OgNlpInterpretReset(og_nlpi ctrl_nlpi);
+DEFPUBLIC(og_status) OgNlpInterpretFlush(og_nlpi ctrl_nlpi);
+DEFPUBLIC(og_status) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *input,
+    struct og_nlp_interpret_output *output);
 
 #define _LOGNLPALIVE_
 #endif

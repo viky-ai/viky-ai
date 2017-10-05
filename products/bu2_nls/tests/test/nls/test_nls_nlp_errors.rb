@@ -4,52 +4,42 @@ module Nls
 
   class TestNlsNlpError < Common
 
+    def setup
+
+      # override setup because this test do not need nls to be started
+
+      resetDir
+
+    end
+
     def test_nlp_nls_error_parsing
-      resetDir
 
-      FileUtils.cp(fixture_path("package_with_error.json"), @@errorJson)
+      cp_import_fixture("package_with_error.json")
 
-      command = "./ogm_nls -i #{@@testDirPath}"
+      command = "./ogm_nls"
 
       exception = assert_raises RuntimeError do
         Nls.stop
         Nls.exec(command, log: false)
       end
 
-      assert exception.message.include? "Error 1/2: main: NlsReadImportFile: Json contains error in ligne 1 and column 5"
-      resetDir
+      assert_exception_has_message "NlsReadImportFile: Json contains error in ligne 1 and column 5", exception
+
     end
 
-    def test_same_intent_in_package
-      resetDir
+    def test_package_already_exists
 
-      FileUtils.cp(fixture_path("several_same_intents_in_package.json"), @@sameintentinpackage)
+      cp_import_fixture("several_same_package_in_file.json")
 
-      command = "./ogm_nls -i #{@@testDirPath}"
-
-      exception = assert_raises RuntimeError do
-        Nls.stop
-        Nls.exec(command, log: false)
-      end
-
-      assert exception.message.include? "intent id"
-      resetDir
-    end
-
-    def test_same_package_in_file
-      resetDir
-
-      FileUtils.cp(fixture_path("several_same_package_in_file.json"), @@samepackageinfile)
-
-      command = "./ogm_nls -i #{@@testDirPath}"
+      command = "./ogm_nls"
 
       exception = assert_raises RuntimeError do
         Nls.stop
         Nls.exec(command, log: false)
       end
 
-      assert exception.message.include? "package id"
-      resetDir
+      assert_exception_has_message "NlpCompilePackage: package with id='package_1' already exists" , exception
+
     end
 
   end
