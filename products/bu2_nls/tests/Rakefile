@@ -6,3 +6,18 @@ Rake::TestTask.new do |task|
 end
 
 task :default => :test
+
+Rake::TestTask.new do |task|
+  task.description = "Run massif test"
+  task.name = "test_massif"
+  task.libs << %w(massif)
+  task.pattern = 'massif/**/test_massif.rb'
+end
+
+Rake::TestTask.new do |task|
+  task.description = "Run memcheck test"
+  task.name = "test_memcheck"
+  task.libs << %w(massif)
+  task.pattern = 'massif/**/test_memcheck.rb'
+end
+
