@@ -17,27 +17,32 @@ class Modal
 
     if action is "open-modal"
       event.preventDefault()
-      modal_selector = node.data('modal-selector')
-      $(modal_selector).show()
-      $(document).on 'keyup', (e) => @close() if e.keyCode == 27
+      modal_selector =
+      @prepare($(node.data('modal-selector')).clone())
 
     if action is "open-remote-modal"
       event.preventDefault()
       $.ajax
         url: node.attr('href')
         complete: (data) =>
-          $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
-          $('#modal_container').html(data.responseText);
-          $('#modal_container .modal').show()
-          $(document).on 'keyup', (e) => @close() if e.keyCode == 27
+          @prepare(data.responseText)
 
     if action is "close-modal"
       event.preventDefault()
       @close()
 
   close: ->
+    $('.app-wrapper').removeClass('modal-background-effect')
     $('.modal').hide()
     $(document).off 'keyup'
+
+  prepare: (html_content) ->
+    $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
+    $('#modal_container').html(html_content)
+    $('#modal_container .modal').show()
+    $('.app-wrapper').addClass('modal-background-effect')
+    $(document).on 'keyup', (e) => @close() if e.keyCode == 27
+
 
 Setup = ->
   new Modal()
