@@ -11,9 +11,7 @@
  */
 og_status OgListeningThreadError(struct og_listening_thread *lt)
 {
-
-  json_t * root = json_object();
-  json_t * errors = json_array();
+  json_t *errors = json_array();
 
   int nb_error = 0;
   char erreur[DOgErrorSize];
@@ -30,12 +28,12 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
     nb_error++;
   }
 
-  json_object_set(root, "errors", errors);
+  json_t * root = json_object();
+  json_object_set_new(root, "errors", errors);
 
   unsigned char *response = json_dumps(root, JSON_INDENT(2));
 
-  json_decref(errors);
-  json_decref(root);
+  json_decrefp(&root);
 
   struct og_ucisw_input winput[1];
   memset(winput, 0, sizeof(struct og_ucisw_input));

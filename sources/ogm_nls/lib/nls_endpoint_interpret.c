@@ -7,7 +7,6 @@
 
 #include "ogm_nls.h"
 
-
 og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response)
 {

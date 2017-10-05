@@ -13,8 +13,6 @@ og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request 
     struct og_nls_response *response)
 {
 
-
-
   // setting timeout for request to value given in parameter timeout.
   // Using  request timeout if timeout > 0 else conf->request_processing_timeout
   og_string timeout = NlsRequestGetParamValue(request, "timeout");

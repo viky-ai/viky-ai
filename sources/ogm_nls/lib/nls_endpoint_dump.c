@@ -18,17 +18,8 @@ og_status NlsEndpointDump(struct og_listening_thread *lt, struct og_nls_request 
     DPcErr;
   }
 
-  // Remove the initialized response->body
-  json_decref(response->body);
-
   // Replace it with the output->json_ouput pointer
   response->body = output->json_output;
-
-//  // if no params and no body
-//  if (json_object_size(response->body) == 0)
-//  {
-//    IFE(json_object_set_new(response->body, "hello", json_string("world")));
-//  }
 
   DONE;
 }

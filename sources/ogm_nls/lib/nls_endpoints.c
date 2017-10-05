@@ -61,28 +61,45 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
 
 og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey)
 {
-  if(json_object_get(request->parameters, paramKey) == NULL)
-    return FALSE;
+  if (json_object_get(request->parameters, paramKey) == NULL) return FALSE;
   return TRUE;
 }
 
 og_string NlsRequestGetParamValue(struct og_nls_request *request, og_string paramKey)
 {
-  json_t * object = json_object_get(request->parameters, paramKey) ;
-  if(object == NULL)
+  json_t * object = json_object_get(request->parameters, paramKey);
+  if (object == NULL)
   {
-      return NULL;
+    return NULL;
   }
   else
   {
-    const char * str = json_string_value(object) ;
-    json_decref(object);
+    const char * str = json_string_value(object);
     return str;
   }
 }
 
-og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,
-    json_t *parameters)
+og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt)
+{
+  struct og_nls_request *request = lt->request;
+  json_decrefp(&request->parameters);
+  json_decrefp(&request->parameters_keys);
+
+  struct og_nls_response *response = lt->response;
+  if (response->default_body != response->body)
+  {
+    json_decrefp(&response->default_body);
+  }
+  else
+  {
+    response->default_body = NULL;
+  }
+  json_decrefp(&response->body);
+
+  DONE;
+}
+
+og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request *request)
 {
   UriParserStateA state[1];
   memset(state, 0, sizeof(UriParserStateA));
@@ -90,6 +107,8 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
   UriUriA uri[1];
   memset(uri, 0, sizeof(UriUriA));
   state->uri = uri;
+
+  og_status status = CORRECT;
 
   if (uriParseUriA(state, url) == URI_SUCCESS)
   {
@@ -102,7 +121,27 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
       {
         if (pQItem->key != NULL && pQItem->value != NULL)
         {
-          json_object_set(parameters, json_string_value(json_string(pQItem->key)), json_string(pQItem->value));
+          json_t *key = json_string(pQItem->key);
+
+          status = json_array_append(request->parameters_keys, key);
+          IF(status)
+          {
+            NlsThrowError(lt, "OgNlsEndpointsParseParameters: error on json_array_append with key : '%s'", pQItem->key);
+            json_decrefp(&key);
+            break;
+          }
+
+          status = json_object_set_new(request->parameters, json_string_value(key), json_string(pQItem->value));
+          IF(status)
+          {
+            NlsThrowError(lt, "OgNlsEndpointsParseParameters: error on json_object_set_new with key : '%s'",
+                pQItem->key);
+            json_decrefp(&key);
+            break;
+          }
+
+          json_decrefp(&key);
+
         }
       }
 
@@ -110,8 +149,10 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
     }
   }
 
-  // TODO ensure FREE
   uriFreeUriMembersA(uri);
+
+  IFE(status);
+
   DONE;
 }
 

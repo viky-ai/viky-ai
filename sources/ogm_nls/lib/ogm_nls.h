@@ -76,6 +76,31 @@ struct og_nls_options
   int request_processing_timeout;
 };
 
+struct og_nls_request
+{
+
+  /* json_array : containing all parameters keys only to keep keys in memory */
+  json_t *parameters_keys;
+
+  /* json_object : containing all parameters : key -> value */
+  json_t *parameters;
+
+  /* By default it is an empty json_object */
+  json_t *body;
+
+  struct og_ucisr_output *raw;
+
+};
+
+struct og_nls_response
+{
+  int http_status;
+  og_string http_message;
+
+  json_t *default_body;
+  json_t *body;
+};
+
 /** data structure for a listening thread **/
 struct og_listening_thread
 {
@@ -118,6 +143,11 @@ struct og_listening_thread
   og_heap h_json_answer;
 
   og_nlpi hnlpi;
+
+  /** Endpoint in/out structure are kept here for memory release after request is finished */
+  struct og_nls_request  request[1];
+  struct og_nls_response response[1];
+
 };
 
 /** nlsmt.c **/
@@ -169,35 +199,6 @@ struct og_ctrl_nls
   og_nlp hnlp;
 };
 
-struct og_nls_request_param
-{
-  const char * key;
-  const char * value;
-};
-
-struct og_nls_request_paramList
-{
-  og_heap hba;
-  int length;
-  struct og_nls_request_param params[50];
-};
-
-struct og_nls_request
-{
-  json_t *parameters;
-  json_t *body;
-
-  struct og_ucisr_output *raw;
-
-};
-
-struct og_nls_response
-{
-  int http_status;
-  og_string http_message;
-  json_t *body;
-};
-
 #define maxArrayLevel 10
 
 /** nlsrun.c **/
@@ -244,7 +245,8 @@ int OgMaintenanceThread(void *ptr);
 
 /** nls_endpoints.c **/
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
-og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url,json_t *parametersList);
+og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request *request);
+og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt);
 
 /** nls_endpoint_test.c **/
 og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request *request,

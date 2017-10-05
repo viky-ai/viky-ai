@@ -226,6 +226,8 @@ og_status NlsLtReset(struct og_listening_thread *lt)
 {
   lt->loginfo->trace = lt->ctrl_nls->loginfo->trace;
 
+  IFE(OgNlsEndpointsMemoryReset(lt));
+
   IFE(NlsLtResetOptions(lt));
   IFE(OgHeapReset(lt->h_json_answer));
 

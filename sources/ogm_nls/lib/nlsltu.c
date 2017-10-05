@@ -97,15 +97,16 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   winput->content_length = 0;
   winput->content = NULL;
 
-  struct og_nls_request request[1];
+  struct og_nls_request *request = lt->request;
   memset(request, 0, sizeof(struct og_nls_request));
   request->raw = output;
-  request->parameters = json_object() ;
+  request->parameters = json_object();
+  request->parameters_keys = json_array();
 
-  struct og_nls_response response[1];
+  struct og_nls_response *response = lt->response;
   memset(response, 0, sizeof(struct og_nls_response));
 
-  IFE(OgNlsEndpointsParseParameters(lt, output->hh.request_uri, request->parameters));
+  IFE(OgNlsEndpointsParseParameters(lt, output->hh.request_uri, request));
 
   // Parse json body
   if (request->raw->hh.request_method != DOgHttpHeaderTypeGet)
@@ -125,7 +126,8 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   }
 
   // Setup an empty json response
-  response->body = json_object();
+  response->default_body = json_object();
+  response->body = response->default_body;
 
   og_bool endpoint_status = OgNlsEndpoints(lt, request, response);
   IFE(endpoint_status);
@@ -140,7 +142,6 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     json_array_append_new(errors, json_string(response->http_message));
     json_object_set_new(response->body, "errors", errors);
 
-
   }
 
   // convert json_t body to json string
@@ -149,7 +150,6 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     NlsThrowError(lt, "OgListeningProcessEndpoint: error on json_dump_callback");
     DPcErr;
   }
-  json_decref(response->body);
 
   // Build json string from response->body
   winput->http_status = response->http_status;
@@ -157,8 +157,6 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   winput->content = OgHeapGetCell(lt->h_json_answer, 0);
   winput->content_length = OgHeapGetCellsUsed(lt->h_json_answer);
 
-  if(request->parameters != NULL)
-    json_decref(request->parameters);
 
 
   DONE;
