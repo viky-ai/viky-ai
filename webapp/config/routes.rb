@@ -17,10 +17,9 @@ Rails.application.routes.draw do
   end
 
   require 'sidekiq/web'
-  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
-  #authenticate :user, lambda { |u| u.admin? } do
+  authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/backend/jobs'
-  #end
+  end
 
   root to: "welcome#index"
 
