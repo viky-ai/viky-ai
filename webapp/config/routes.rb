@@ -17,7 +17,6 @@ Rails.application.routes.draw do
   end
 
   require 'sidekiq/web'
-  Sidekiq::Web.set :sessions, false
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/backend/jobs'
   end
