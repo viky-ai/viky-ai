@@ -20,6 +20,5 @@ see section below
 Memcheck
 ========
 
-(not yet implemented)
 launch the command
 `rake test_memcheck`

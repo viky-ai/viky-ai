@@ -12,8 +12,6 @@ module Massif
       # copy the right import file in the right place
       FileUtils.cp("#{@@test_file_path}/several_packages_several_intents.json", @@import_path)
 
-      puts "starting server"
-
       # launch the server
       @@pid = spawn("valgrind --tool=massif --stacks=yes --time-unit=ms --massif-out-file=massif-output.txt ./ogm_nls -d -i import", :chdir=>@@pwd)
       Process.detach(@@pid)
@@ -29,13 +27,7 @@ module Massif
       }
 
       # getting the url for server
-      listening_address = ENV['NLS_LISTENNING_ADDRESS']
-      if listening_address.nil?
-        listening_address = '127.0.0.1:9345'
-      else
-        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
-      end
-      url_interpret = "http://#{listening_address}/interpret"
+      url_interpret = getUrlInterpret
 
       for i in 0..1000
         RestClient.post(url_interpret, param.to_json, content_type: :json)

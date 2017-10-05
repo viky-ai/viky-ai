@@ -19,22 +19,36 @@ module Massif
 
     end
 
+    def getUrlInterpret
+      listening_address = ENV['NLS_LISTENNING_ADDRESS']
+      if listening_address.nil?
+        listening_address = '127.0.0.1:9345'
+      else
+        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
+      end
+      "http://#{listening_address}/interpret"
+    end
+
     def cleanoutputfiles
 
       Dir.foreach(@@debug_path) do |filename|
-        if filename.start_with? "massif.out."
+        if filename.start_with? "massif.out"
           FileUtils.remove_file("#{@@debug_path}/#{filename}")
         end
       end
 
       Dir.foreach(@@test_path) do |filename|
-        if filename.start_with? "massif.out."
+        if filename.start_with? "massif.out"
           FileUtils.remove_file("#{@@test_path}/#{filename}")
         end
       end
 
       Dir.foreach(@@import_path) do |filename|
         FileUtils.remove_file("#{@@import_path}/#{filename}") unless filename == ".." or filename == "."
+      end
+
+      if File.file?("#{@@debug_path}/Valgrind.log")
+        FileUtils.remove_file("#{@@debug_path}/Valgrind.log")
       end
 
     end
