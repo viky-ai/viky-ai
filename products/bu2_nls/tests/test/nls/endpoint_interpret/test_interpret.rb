@@ -6,7 +6,6 @@ module Nls
 
     class TestInterpret < Common
 
-
       def test_interpret_simple
 
         cp_import_fixture("several_packages_several_intents.json")
@@ -26,11 +25,11 @@ module Nls
         {
           "intents" =>
           [
-            {
-              "package" => "voqal.ai:datetime1",
-              "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-              "score" => 1
-            }
+          {
+          "package" => "voqal.ai:datetime1",
+          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
+          "score" => 1
+          }
           ]
         }
 
@@ -57,26 +56,26 @@ module Nls
         {
           "intents" =>
           [
-            {
-              "package" => "package_2",
-              "id" => "intent_2_8",
-              "score" => 1
-            },
-            {
-              "package" => "package_3",
-              "id" => "intent_3_8",
-              "score" => 1
-            },
-            {
-              "package" => "package_1",
-              "id" => "intent_1_8",
-              "score" => 1
-            },
-            {
-              "package" => "package_9",
-              "id" => "intent_9_8",
-              "score" => 1
-            }
+          {
+          "package" => "package_2",
+          "id" => "intent_2_8",
+          "score" => 1
+          },
+          {
+          "package" => "package_3",
+          "id" => "intent_3_8",
+          "score" => 1
+          },
+          {
+          "package" => "package_1",
+          "id" => "intent_1_8",
+          "score" => 1
+          },
+          {
+          "package" => "package_9",
+          "id" => "intent_9_8",
+          "score" => 1
+          }
           ]
         }
 
@@ -115,17 +114,95 @@ module Nls
           {
             "intents" =>
             [
-              {
-                "package" => sentence_array[0],
-                "id" => sentence_array[1],
-                "score" => 1
-              }
+            {
+            "package" => sentence_array[0],
+            "id" => sentence_array[1],
+            "score" => 1
+            }
             ]
           }
 
           assert_equal expected, actual
 
         end
+      end
+
+      def test_empty_sentence
+
+        cp_import_fixture("package_without_error.json")
+
+        Nls.restart
+
+        param =
+        {
+          "packages" => ["voqal.ai:datetime1"],
+          "sentence" => "",
+          "Accept-Language" => "fr-FR"
+        }
+
+        expected_error = "NlsCheckRequestString : empty text in request"
+
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          Nls.interpret(param)
+        end
+        assert_response_has_error expected_error, exception, "Post"
+
+      end
+
+      def test_too_long_sentence
+
+        cp_import_fixture("package_without_error.json")
+
+        Nls.restart
+
+        param =
+        {
+          "packages" => ["voqal.ai:datetime"],
+          "sentence" => "abcdefghij",
+          "Accept-Language" => "fr-FR"
+        }
+
+        210.times do
+          param["sentence"] << "abcdefghij"
+        end
+
+        expected_error = "NlsCheckRequestString : too long text in request"
+
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          Nls.interpret(param)
+        end
+        assert_response_has_error expected_error, exception, "Post"
+
+      end
+
+      def test_special_char
+
+        cp_import_fixture("package_with_special_char.json")
+
+        Nls.restart
+
+        param =
+        {
+          "packages" => ["voqal.ai:datetime"],
+          "sentence" => "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸º°¯§…¤¦≠¬ˆ¨‰ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ#自爾秦書わたしワタシ🎾",
+          "Accept-Language" => "fr-FR"
+        }
+
+        actual = Nls.interpret(param)
+
+        expected =
+        {
+          "intents" =>
+          [
+          {
+          "package" => "voqal.ai:datetime",
+          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
+          "score" => 1
+          }
+          ]
+        }
+
+        assert_equal expected, actual
       end
 
 

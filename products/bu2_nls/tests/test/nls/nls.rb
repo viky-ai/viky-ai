@@ -25,7 +25,7 @@ module Nls
 
     def self.restart
       Nls.stop
-      sleep(0.05)
+      sleep(0.1)
       Nls.start
     end
 
