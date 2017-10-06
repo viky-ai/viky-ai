@@ -205,6 +205,29 @@ module Nls
         assert_equal expected, actual
       end
 
+      def test_no_sentence_match
+
+        cp_import_fixture("package_without_error.json")
+
+        Nls.restart
+
+        param =
+        {
+          "packages" => ["voqal.ai:datetime"],
+          "sentence" => "azerty",
+          "Accept-Language" => "fr-FR"
+        }
+
+        actual = Nls.interpret(param)
+
+        expected =
+        {
+          "intents" => []
+        }
+
+        assert_equal expected, actual
+
+      end
 
     end
 
