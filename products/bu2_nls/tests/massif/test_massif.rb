@@ -29,7 +29,7 @@ module Massif
       # getting the url for server
       url_interpret = getUrlInterpret
 
-      for i in 0..1000
+      1000.times do
         RestClient.post(url_interpret, param.to_json, content_type: :json)
       end
 

@@ -16,7 +16,7 @@ module Massif
       @@pid = spawn("valgrind --tool=memcheck -v --error-limit=no --track-origins=yes --read-var-info=yes --show-reachable=yes --keep-stacktraces=alloc-then-free --log-file=valgrind.log ./ogm_nls -d -i import", :chdir=>@@pwd)
       Process.detach(@@pid)
 
-      sleep(3)
+      sleep(4)
       # launch standard query
       param =
       {
@@ -28,7 +28,7 @@ module Massif
       # getting the url for server
       url_interpret = getUrlInterpret
 
-      for i in 0..1000
+      1000.times do
         RestClient.post(url_interpret, param.to_json, content_type: :json)
       end
 

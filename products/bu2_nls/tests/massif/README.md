@@ -2,10 +2,10 @@ Prerequisites
 =============
 
 install Valgrind massif and memcheck
-`sudo apt-get valgrind`
+`sudo apt-get install valgrind`
 
 install massif visualizer
-`sudo apt-get massif-visualizer`
+`sudo apt-get install massif-visualizer`
 
 Massif
 ======
