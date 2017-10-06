@@ -7,26 +7,60 @@
   color: rgba(black, .75);
   background-color: #f5f5f5;
 
+  &.badge--outline{
+    background-color: transparent;
+    box-shadow: 0 0 0 1px rgba(black, .1);
+    color: rgba(black, .5);
+  }
+
   &.badge--primary{
     background-color: $primary_color;
     color: #fff;
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px rgba($primary_color, .9);
+      color: $primary_color;
+    }
+  }
+
+  &.badge--outline{
+    border-radius: 1px;
   }
 
   &.badge--warning{
     background-color: #ffdd57;
     color: darken(#ffdd57, 50%);
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px #ffdd57;
+      color: darken(#ffdd57, 20%);
+    }
   }
 
   &.badge--danger{
     background-color: $alert_color;
     color: #fff;
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px rgba($alert_color, .9);
+      color: $alert_color;
+    }
   }
 
   &.badge--success{
     background-color: $success_color;
     color: #fff;
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px rgba($success_color, .9);
+      color: $success_color;
+    }
   }
 
+  &.badge--small{
+    font-size: .675em;
+    padding: 0px .25em;
+  }
   &.badge--medium{
     font-size: .875em;
   }

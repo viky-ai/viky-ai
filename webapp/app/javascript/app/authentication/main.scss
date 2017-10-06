@@ -1,33 +1,23 @@
-@-webkit-keyframes vectorAnimation {
-    0% { opacity: 1;   }
-   50% { opacity: 0.8; }
-  100% { opacity: 1;   }
-}
-@-moz-keyframes vectorAnimation {
-    0% { opacity: 1;   }
-   50% { opacity: 0.8; }
-  100% { opacity: 1;   }
-}
-@keyframes vectorAnimation {
-    0% { opacity: 1;   }
-   50% { opacity: 0.8; }
-  100% { opacity: 1;   }
-}
-
-
-
 .login-wrapper{
-  background-color: #0E131A;
+  background-color: lighten(#0E131A, 8%);
 
-  background-image: linear-gradient(to bottom, rgba(black, .0), rgba(black, .6)), url(images/sky.png);
-  background-size: 100% 100%, 200px 200px;
+  background-image:
+    url(images/sky.svg),
+    url(images/sky.svg),
+    url(images/sky.svg),
+    linear-gradient(to bottom, rgba(black, .3), rgba(black, 0));
+  background-size:
+    150px 75px,
+    200px 100px,
+    300px 150px,
+    100% 100%;
 
   min-height: 100%;
   position: relative;
   overflow: hidden;
 
-  $left-transparency: .05;
-  $right-transparency: .05;
+  $left-transparency: .065;
+  $right-transparency: .065;
 
   .bg-left-line-1, .bg-left-line-2, .bg-left-line-3, .bg-left-line-4{
     position: absolute;
@@ -38,10 +28,6 @@
 
     background-color: rgba(adjust-hue(#49D8FB, -10deg), $left-transparency);
     bottom: -25px;
-
-    -webkit-animation: 5s ease-in-out infinite vectorAnimation;
-       -moz-animation: 5s ease-in-out infinite vectorAnimation;
-            animation: 5s ease-in-out infinite vectorAnimation;
   }
   .bg-left-line-2{
     background-color: rgba(adjust-hue(#49D8FB, -5deg), $left-transparency);
@@ -64,10 +50,6 @@
     background-color: rgba(adjust-hue(#49b6fb, 15deg), $right-transparency);
     bottom: -25px;
     transform: skewY(-55deg);
-
-    -webkit-animation: 5s ease-in-out infinite vectorAnimation;
-       -moz-animation: 5s ease-in-out infinite vectorAnimation;
-            animation: 5s ease-in-out infinite vectorAnimation;
   }
   .bg-right-line-2{
     background-color: rgba(adjust-hue(#49b6fb, 10deg), $right-transparency);
@@ -83,10 +65,19 @@
   }
 }
 
-
+@-webkit-keyframes lifeAnimation {
+    0% { opacity: 1;    }
+   50% { opacity: 0.65; }
+  100% { opacity: 1;    }
+}
+@-moz-keyframes lifeAnimation {
+    0% { opacity: 1;    }
+   50% { opacity: 0.65; }
+  100% { opacity: 1;    }
+}
 @keyframes lifeAnimation {
     0% { opacity: 1;    }
-   50% { opacity: 0.75; }
+   50% { opacity: 0.65; }
   100% { opacity: 1;    }
 }
 

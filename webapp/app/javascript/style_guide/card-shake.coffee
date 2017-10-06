@@ -6,7 +6,7 @@ class CardShake
       $(this).closest('.card').addClass('card--shake')
       init = =>
         $(this).closest('.card').removeClass('card--shake')
-      setTimeout(init, 400)
+      setTimeout(init, 700)
 
 Setup = ->
   if $('body').data('controller-name') == "style_guide"

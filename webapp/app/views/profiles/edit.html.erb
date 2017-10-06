@@ -25,7 +25,9 @@
 
           <div class="field">
             <div class="control">
-              <%= f.label :username %><br />
+              <%= f.label :username %>
+              &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+              <br />
               <%= f.text_field :username, placeholder: "jsmith" %>
               <%= display_errors(@profile, :username) %>
             </div>
@@ -42,7 +44,9 @@
           <h3><%= t('views.profile.edit.authentication.title') %></h3>
           <div class="field">
             <div class="control">
-              <%= f.label :email %><br />
+              <%= f.label :email %>
+              &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+              <br />
               <%= f.text_field :email, autocomplete: "off" %>
               <%= display_errors(@profile, :email) %>
 
