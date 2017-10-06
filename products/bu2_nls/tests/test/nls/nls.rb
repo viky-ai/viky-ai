@@ -29,7 +29,7 @@ module Nls
       Nls.start
     end
 
-    def self.url
+    def self.base_url
 
       listening_address = ENV['NLS_LISTENNING_ADDRESS']
       if listening_address.nil?
@@ -38,45 +38,33 @@ module Nls
         listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
       end
 
-      "http://#{listening_address}/test"
+      "http://#{listening_address}"
+    end
+
+    def self.url_test
+      "#{base_url}/test"
     end
 
     def self.url_interpret
-
-      listening_address = ENV['NLS_LISTENNING_ADDRESS']
-      if listening_address.nil?
-        listening_address = '127.0.0.1:9345'
-      else
-        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
-      end
-
-      "http://#{listening_address}/interpret"
+      "#{base_url}/interpret"
     end
 
     def self.url_dump
-
-      listening_address = ENV['NLS_LISTENNING_ADDRESS']
-      if listening_address.nil?
-        listening_address = '127.0.0.1:9345'
-      else
-        listening_address = listening_address.gsub('0.0.0.0', '127.0.0.1')
-      end
-
-      "http://#{listening_address}/dump"
+      "#{base_url}/dump"
     end
 
-    def self.query_get(parameters)
-      response  = RestClient.get(url, params: parameters)
+    def self.query_get(url, params = {})
+      response  = RestClient.get(url, params: params)
       JSON.parse(response.body)
     end
 
-    def self.query_post_by_parameters(parameters)
-      response  = RestClient.post(url, {}.to_json, content_type: :json, params: parameters)
+    def self.query_post(url, body = {}, params = {})
+      response  = RestClient.post(url, body.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
     end
 
-    def self.query_post_by_body(param)
-      response  = RestClient.post(url, param.to_json, content_type: :json)
+    def self.interpret(body, params = {})
+      response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
     end
 

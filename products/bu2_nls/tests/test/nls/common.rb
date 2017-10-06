@@ -1,7 +1,6 @@
 module Nls
 
-  class Common < Minitest::Test
-
+  class Common < TestCommon
 
     def importDir
       pwd = ENV['NLS_INSTALL_PATH']
