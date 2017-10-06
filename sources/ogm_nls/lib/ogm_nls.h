@@ -173,6 +173,7 @@ struct og_ctrl_nls
   struct og_loginfo loginfo[1];
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
+  char pidfile[DPcPathSize];
   char import_directory[DPcPathSize];
 
   int icwd;
@@ -201,6 +202,9 @@ struct og_ctrl_nls
 };
 
 #define maxArrayLevel 10
+
+/** inls.c **/
+og_status OgNlsWritePidFile(og_nls ctrl_nls);
 
 /** nlsrun.c **/
 int NlsRunSendErrorStatus(void *ptr, struct og_socket_info *info, int error_status, og_string message);
@@ -246,6 +250,7 @@ int OgMaintenanceThread(void *ptr);
 
 /** nls_endpoints.c **/
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
+og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct og_nls_request *request);
 og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request *request);
 og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt);
 

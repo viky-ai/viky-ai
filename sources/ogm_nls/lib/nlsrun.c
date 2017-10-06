@@ -56,6 +56,9 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
   OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox, "NLS listening on %s:%d ...",
       ctrl_nls->conf->env->listenning_address, ctrl_nls->conf->env->listenning_port);
 
+  // write pid in file
+  IFE(OgNlsWritePidFile(ctrl_nls));
+
   ctrl_nls->must_stop = 0;
   IFE(OgAddrLoop(ctrl_nls->haddr, OgNlsRun2, (void * ) ctrl_nls));
 

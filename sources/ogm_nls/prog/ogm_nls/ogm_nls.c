@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
   IF(OgCheckOrCreateDir(DirLog,0,nls_prog->loginfo->where)) DoExit(nls_prog);
   IF(OgSetWorkingDirLog(nls_prog->WorkingDirectory)) DoExit(nls_prog);
 
-  /* Configuration arametres de nls*/
+  /* Configuration parametres de nls*/
   strcpy(param->WorkingDirectory, nls_prog->WorkingDirectory);
   if (nls_prog->WorkingDirectory[0])
   {
@@ -71,6 +71,16 @@ int main(int argc, char *argv[])
   else
   {
     snprintf(param->configuration_file, DPcPathSize, "%s", DOgFileConfOgmSsi_Txt);
+  }
+
+  // pidfile
+  if (nls_prog->WorkingDirectory[0])
+  {
+    snprintf(param->pidfile, DPcPathSize, "%s/%s", nls_prog->WorkingDirectory, DOgNlsPidFile);
+  }
+  else
+  {
+    snprintf(param->pidfile, DPcPathSize, "%s", DOgNlsPidFile);
   }
 
   // Tune msg conf

@@ -18,11 +18,8 @@ module Nls
 
         cp_import_fixture("package_with_error.json")
 
-        command = "./ogm_nls"
-
         exception = assert_raises RuntimeError do
-          Nls.stop
-          Nls.exec(command, log: false)
+          Nls.restart(log: false, daemon: false)
         end
 
         assert_exception_has_message "NlsReadImportFile: Json contains error in ligne 1 and column 5", exception
@@ -33,11 +30,8 @@ module Nls
 
         cp_import_fixture("several_same_package_in_file.json")
 
-        command = "./ogm_nls"
-
         exception = assert_raises RuntimeError do
-          Nls.stop
-          Nls.exec(command, log: false)
+          Nls.restart(log: false, daemon: false)
         end
 
         assert_exception_has_message "NlpCompilePackage: package with id='package_1' already exists" , exception

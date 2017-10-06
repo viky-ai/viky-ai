@@ -19,7 +19,16 @@ static og_bool compareEndPointWithString(og_string str1, og_string str2);
  */
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response)
 {
-  if (isEndPointRegistered(request, "/test/", DOgHttpHeaderTypeGet))
+  // interpret must be the first endpoint (because it is the most used)
+  if (isEndPointRegistered(request, "/interpret/", DOgHttpHeaderTypePost))
+  {
+    IF(NlsEndpointInterpret(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointInterpret\"");
+      DPcErr;
+    }
+  }
+  else if (isEndPointRegistered(request, "/test/", DOgHttpHeaderTypeGet))
   {
     IF(NlsEndpointTest(lt, request, response))
     {
@@ -43,14 +52,6 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
-  else if (isEndPointRegistered(request, "/interpret/", DOgHttpHeaderTypePost))
-  {
-    IF(NlsEndpointInterpret(lt, request, response))
-    {
-      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointInterpret\"");
-      DPcErr;
-    }
-  }
   else
   {
     return FALSE;
@@ -58,6 +59,24 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
 
   return TRUE;
 }
+
+og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct og_nls_request *request)
+{
+  // setting timeout for request to value given in parameter timeout.
+  // Using  request timeout if timeout > 0 else conf->request_processing_timeout
+  og_string timeout = NlsRequestGetParamValue(request, "timeout");
+  if (timeout != NULL)
+  {
+    int timeout_new = atoi(timeout);
+    if (timeout_new > 0)
+    {
+      lt->options->request_processing_timeout = timeout_new;
+    }
+  }
+
+  DONE;
+}
+
 
 og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey)
 {
@@ -84,6 +103,7 @@ og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt)
   struct og_nls_request *request = lt->request;
   json_decrefp(&request->parameters);
   json_decrefp(&request->parameters_keys);
+  json_decrefp(&request->body);
 
   struct og_nls_response *response = lt->response;
   if (response->default_body != response->body)

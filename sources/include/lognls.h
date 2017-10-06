@@ -46,6 +46,7 @@ struct og_nls_param
   struct og_loginfo loginfo;
   char WorkingDirectory[DPcPathSize];
   char configuration_file[DPcPathSize];
+  char pidfile[DPcPathSize];
   char import_directory[DPcPathSize];
 };
 

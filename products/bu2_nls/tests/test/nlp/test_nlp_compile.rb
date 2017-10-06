@@ -12,11 +12,11 @@ module Nlp
 
       input = input_ref()
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
 
-      actual = nlp([ "-c #{@@pwd}/input.json"])
+      actual = nlp([ "-c #{pwd}/input.json"])
 
       expected = {"compilation"=>"ok"}
 
@@ -26,12 +26,12 @@ module Nlp
     def test_dump
       input = input_ref
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
-      nlp([ "-c #{@@pwd}/input.json","-d","-o #{@@pwd}/output.json"])
+      nlp([ "-c #{pwd}/input.json","-d","-o #{pwd}/output.json"])
 
-      output = JSON.parse(File.read("#{@@pwd}/output.json"))
+      output = JSON.parse(File.read("#{pwd}/output.json"))
 
       assert_equal input, output
     end
@@ -39,12 +39,12 @@ module Nlp
     def test_intent_special_char
       input = JSON.parse(File.read(fixture_path('package_specialchar.json')))
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
-      nlp([ "-c #{@@pwd}/input.json","-d","-o #{@@pwd}/output.json"])
+      nlp([ "-c #{pwd}/input.json","-d","-o #{pwd}/output.json"])
 
-      output = JSON.parse(File.read("#{@@pwd}/output.json"))
+      output = JSON.parse(File.read("#{pwd}/output.json"))
 
       assert_equal input, output
 

@@ -5,28 +5,77 @@ module Nls
 
   class Nls
 
-    @@pid = nil
+    @@nls_background = nil
 
-    def self.start(compile_this_dir = "import")
-      if @@pid.nil?
-        Nls.exec("./ogm_nls -d -i \"#{compile_this_dir}\"")
-        sleep(0.5)
-        pid_string = `ps -aux | grep "./ogm_nls -d" | grep -v grep`
-        @@pid = pid_string.split(" ")[1]
+    def self.start( opts = {} )
+
+      # defaulr values
+      command  = './ogm_nls'
+      daemon   = true
+      log      = false
+
+      command = opts[:command] if opts.has_key?(:command)
+      daemon  = opts[:daemon]  if opts.has_key?(:daemon)
+      log     = opts[:log]     if opts.has_key?(:log)
+
+      if daemon
+
+        if @@nls_background.nil?
+
+          pidfile = "#{pwd}/ogm_nls.pid"
+          FileUtils.rm(pidfile, :force => true)
+
+          starting = true
+
+          @@nls_background = Thread.new {
+
+            Thread.current.name = "nls start : #{command}"
+            begin
+              Nls.exec(command, { log: log })
+            rescue => e
+              puts "Nls start crashed : #{e.inspect}"
+              starting = false
+            end
+
+          }
+
+          # wait for starting
+          until starting && File.exist?(pidfile)
+            sleep(0.05)
+          end
+
+        end
+
+      else
+
+        Nls.exec(command, { log: log })
+
       end
+
+      end
+
+    def self.force_stop
+      `killall ogm_nls 1>/dev/null 2>&1`
     end
 
     def self.stop
-      unless @@pid.nil?
-        Nls.exec("kill #{@@pid}") unless @@pid.nil?
-        @@pid = nil
+      pidfile = "#{pwd}/ogm_nls.pid"
+
+      if File.exist?(pidfile)
+        `pkill --pidfile #{pidfile}`
       end
+
+      if !@@nls_background.nil? && @@nls_background.alive?
+        @@nls_background.join
+      end
+      @@nls_background = nil
+
     end
 
-    def self.restart
+    def self.restart(opt = {})
       Nls.stop
-      sleep(0.1)
-      Nls.start
+      sleep(0.05)
+      Nls.start(opt)
     end
 
     def self.base_url
@@ -68,19 +117,20 @@ module Nls
       JSON.parse(response.body)
     end
 
-    def self.exec(cmd, opts_param = {})
+    def self.pwd
+      pwd_local = ENV['NLS_INSTALL_PATH']
+      pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
+      pwd_local
+    end
 
-      default_opts = {
-        take_care_of_return: true,
-        log: true
-      }
+    def self.exec(cmd, opts = {})
 
-      opts = default_opts.merge(opts_param)
+      # defaulr values
+      take_care_of_return  = true
+      log                  = false
 
-      take_care_of_return = opts[:take_care_of_return]
-
-      pwd = ENV['NLS_INSTALL_PATH']
-      pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd.nil?
+      take_care_of_return = opts[:take_care_of_return] if opts.has_key?(:take_care_of_return)
+      log                 = opts[:log]                 if opts.has_key?(:log)
 
       if File.directory? pwd
 
@@ -94,14 +144,14 @@ module Nls
           stderr_str = "" ;
 
           stdout.each do |line|
-            if opts[:log]
+            if log
               print "#{line}"
             end
             stdout_str << line ;
           end
 
           stderr.each do |line|
-            if opts[:log]
+            if log
               print "#{line}"
             end
             stderr_str << line ;

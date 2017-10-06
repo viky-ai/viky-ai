@@ -77,17 +77,15 @@ static og_status OgListeningRead(struct og_listening_thread *lt, struct og_ucisr
     int waited_time = (OgMicroClock() - lt->t0) / 1000;
     if (output->timed_out)
     {
-      NlsThrowError(lt,
-          "OgListeningThreadAnswerUci: timed-out in OgUciServerRead after %d milli-seconds, with timeout=%d milli-seconds",
-          waited_time, input->timeout);
+      NlsThrowError(lt, "OgListeningThreadAnswerUci: timed-out in OgUciServerRead "
+          "after %d milli-seconds, with timeout=%d milli-seconds", waited_time, input->timeout);
       DPcErr;
     }
     else
     {
       OgMsgErr(lt->hmsg, "OgUciRead", 0, 0, 0, DOgMsgSeverityError, DOgErrLogFlagNoSystemError + DOgErrLogFlagNotInErr);
-      NlsThrowError(lt,
-          "OgListeningThreadAnswerUci: error in OgUciServerRead after %d milli-seconds, if the error is related to \"buffer full\", set max_request_size to a larger value",
-          waited_time);
+      NlsThrowError(lt, "OgListeningThreadAnswerUci: error in OgUciServerRead after %d milli-seconds,"
+          " if the error is related to \"buffer full\", set max_request_size to a larger value", waited_time);
       DPcErr;
     }
   }
@@ -112,6 +110,9 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   memset(response, 0, sizeof(struct og_nls_response));
 
   IFE(OgNlsEndpointsParseParameters(lt, output->hh.request_uri, request));
+
+  // parse common parameters like : timeout
+  IFE(OgNlsEndpointsCommonParameters(lt, request));
 
   // Parse json body
   if (request->raw->hh.request_method != DOgHttpHeaderTypeGet)

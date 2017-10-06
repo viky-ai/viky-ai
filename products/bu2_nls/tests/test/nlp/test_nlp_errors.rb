@@ -14,11 +14,11 @@ module Nlp
 
       input[0]["id"] = 123
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
 
-      actual = nlp([ "-c #{@@pwd}/input.json"])
+      actual = nlp([ "-c #{pwd}/input.json"])
 
       expected_error = "package 'id' is not a string"
 
@@ -30,11 +30,11 @@ module Nlp
       input = input_ref
       input[0]["intents"][0]["id"] = 123
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
 
-      actual = nlp([ "-c #{@@pwd}/input.json"])
+      actual = nlp([ "-c #{pwd}/input.json"])
 
       expected_error = "intent 'id' is not a string"
 
@@ -56,11 +56,11 @@ module Nlp
       input = input_ref
       input[0]["intents"][0]["sentences"][0]["locale"] = "ok-KO"
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
 
-      actual = nlp([ "-c #{@@pwd}/input.json"])
+      actual = nlp([ "-c #{pwd}/input.json"])
 
       expected_error = "OgCodeToIso639_3166: Language 'ok' does not exist"
 
@@ -76,11 +76,11 @@ module Nlp
         input[0]["intents"][0]["sentences"][0]["sentence"]  << "Brice Hello "
       end
 
-      File.open("#{@@pwd}/input.json", 'w') do |f|
+      File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
       end
 
-      actual = nlp([ "-c #{@@pwd}/input.json"])
+      actual = nlp([ "-c #{pwd}/input.json"])
 
       expected_error = "NlpCompilePackageSentence: text is too long"
 

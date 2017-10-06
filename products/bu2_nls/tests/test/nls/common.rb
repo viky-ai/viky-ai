@@ -3,9 +3,6 @@ module Nls
   class Common < TestCommon
 
     def importDir
-      pwd = ENV['NLS_INSTALL_PATH']
-      pwd = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd.nil?
-
       File.join(File.expand_path(pwd), "import")
     end
 

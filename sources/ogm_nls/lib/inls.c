@@ -6,6 +6,7 @@
  */
 #include "ogm_nls.h"
 #include <stddef.h>
+#include <glib-2.0/glib/gstdio.h>
 
 PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
 {
@@ -24,6 +25,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   memcpy(ctrl_nls->loginfo, &param->loginfo, sizeof(struct og_loginfo));
   strcpy(ctrl_nls->WorkingDirectory, param->WorkingDirectory);
   strcpy(ctrl_nls->configuration_file, param->configuration_file);
+  strcpy(ctrl_nls->pidfile, param->pidfile);
   strcpy(ctrl_nls->import_directory, param->import_directory);
   IFn(ctrl_nls->import_directory[0]) strcpy(ctrl_nls->import_directory, "import");
 
@@ -122,7 +124,6 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
 
   IF(NlsReadImportFiles(ctrl_nls)) return NULL;
 
-
   return ctrl_nls;
 }
 
@@ -147,6 +148,12 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
   IFE(OgMsgFlush(ctrl_nls->hmsg));
 
   OgCleanupSocket();
+
+  // clean up pidfile
+  if (ctrl_nls->pidfile[0] && g_file_test(ctrl_nls->pidfile, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))
+  {
+    g_unlink(ctrl_nls->pidfile);
+  }
 
   DPcFree(ctrl_nls);
   DONE;
@@ -204,5 +211,34 @@ PUBLIC(og_status) OgNlsOnSignalEmergency(og_nls ctrl_nls)
 PUBLIC(char *) OgNlsBanner(void)
 {
   return DOgNlsBanner;
+}
+
+og_status OgNlsWritePidFile(og_nls ctrl_nls)
+{
+  if (!ctrl_nls->pidfile[0])  CONT;
+
+  FILE* file = fopen(ctrl_nls->pidfile, "w");
+  IFN(file)
+  {
+    og_char_buffer erreur[DPcPathSize];
+    sprintf(erreur, "OgNlsWritePidFile: failed to open pidfile %s.", ctrl_nls->pidfile);
+    OgMsg(ctrl_nls->hmsg, "OgNlsWritePidFile", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgDestMBox, erreur);
+    OgErr(ctrl_nls->herr, erreur);
+    DPcErr;
+  }
+
+  fprintf(file, "%ld\n", (long) getpid());
+
+  int close_status = fclose(file);
+  if (close_status != 0)
+  {
+    og_char_buffer erreur[DPcPathSize];
+    sprintf(erreur, "OgNlsWritePidFile: failed to write in pidfile %s.", ctrl_nls->pidfile);
+    OgMsg(ctrl_nls->hmsg, "OgNlsWritePidFile", DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgDestMBox, erreur);
+    OgErr(ctrl_nls->herr, erreur);
+    DPcErr;
+  }
+
+  DONE;
 }
 

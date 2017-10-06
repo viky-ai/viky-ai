@@ -1,5 +1,9 @@
 class TestCommon < Minitest::Test
 
+  def pwd
+    Nls::Nls.pwd
+  end
+
   def assert_response_has_error expected_error = "", actual_response = {}, msg = nil
 
     header = ''

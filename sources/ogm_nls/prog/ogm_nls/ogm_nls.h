@@ -13,6 +13,7 @@
 
 /** simple server configuration file for this program **/
 #define DOgFileConfOgmSsi_Txt  "conf/ogm_ssi.txt"
+#define DOgNlsPidFile          "ogm_nls.pid"
 
 struct og_nls_prog
 {
