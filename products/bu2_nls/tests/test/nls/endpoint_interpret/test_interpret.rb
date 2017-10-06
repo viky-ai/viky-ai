@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'test_helper'
 
 module Nls
@@ -194,11 +196,11 @@ module Nls
         {
           "intents" =>
           [
-          {
-          "package" => "voqal.ai:datetime",
-          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-          "score" => 1
-          }
+            {
+              "package" => "voqal.ai:datetime",
+              "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
+              "score" => 1
+            }
           ]
         }
 

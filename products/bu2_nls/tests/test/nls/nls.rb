@@ -9,7 +9,7 @@ module Nls
 
     def self.start( opts = {} )
 
-      # defaulr values
+      # default values
       command  = './ogm_nls'
       daemon   = true
       log      = false
@@ -52,7 +52,7 @@ module Nls
 
       end
 
-      end
+    end
 
     def self.force_stop
       `killall ogm_nls 1>/dev/null 2>&1`
