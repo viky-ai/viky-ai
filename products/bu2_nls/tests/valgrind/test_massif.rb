@@ -8,6 +8,7 @@ module Valgrind
 
       # launch the server
       command = []
+      command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
       command << "valgrind --tool=massif"
       command << "--time-unit=ms"
       command << "--massif-out-file=massif-output.txt"

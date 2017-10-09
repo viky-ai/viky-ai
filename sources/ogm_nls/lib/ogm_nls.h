@@ -161,6 +161,9 @@ struct og_maintenance_thread
   void *hmsg;
   ogmutex_t *hmutex;
 
+  og_bool mt_should_stop;
+  og_bool mt_is_stopped;
+
   struct og_ctrl_nls *ctrl_nls;
 
   ogthread_t IT;
@@ -196,7 +199,7 @@ struct og_ctrl_nls
   /** Mutex to choose current lt */
   ogmutex_t hmutex_run_lt[1];
 
-  struct og_maintenance_thread mt;
+  struct og_maintenance_thread mt[1];
 
   og_nlp hnlp;
 };
@@ -247,6 +250,7 @@ og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 
 /** nlsmt.c **/
 int OgMaintenanceThread(void *ptr);
+og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt);
 
 /** nls_endpoints.c **/
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);

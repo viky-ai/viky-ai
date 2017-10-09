@@ -30,6 +30,7 @@ package_t NlpPackageCreate(og_nlp ctrl_nlp, const char *string_id)
 
 og_status NlpPackageDestroy(package_t package)
 {
+  OgHeapFlush(package->hsentence);
   OgHeapFlush(package->hintent);
   OgHeapFlush(package->hba);
   DPcFree(package);

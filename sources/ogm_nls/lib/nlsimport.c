@@ -9,6 +9,7 @@
 static int NlsReadImportFilesBuildList(og_nls ctrl_nls, GQueue *queue_files);
 static int NlsReadImportFilesBuildList1(og_nls ctrl_nls, GQueue *queue_files, char *pattern);
 static int NlsReadImportFile(og_nls ctrl_nls, char *import_file);
+static og_status NlsReadImportFilesFreeSafe(og_nls ctrl_nls, GQueue *queue_files);
 
 og_status NlsReadImportFiles(og_nls ctrl_nls)
 {
@@ -21,8 +22,19 @@ og_status NlsReadImportFiles(og_nls ctrl_nls)
     DPcErr;
   }
 
-  GQueue queue_files[1];
-  g_queue_init(queue_files);
+  GQueue *queue_files = g_queue_new();
+
+  og_status status = NlsReadImportFilesFreeSafe(ctrl_nls, queue_files);
+
+  g_queue_free_full(queue_files, g_free);
+
+  IFE(status);
+
+  DONE;
+}
+
+static og_status NlsReadImportFilesFreeSafe(og_nls ctrl_nls, GQueue *queue_files)
+{
   IFE(NlsReadImportFilesBuildList(ctrl_nls, queue_files));
 
   for (GList *iter = queue_files->head; iter; iter = iter->next)
@@ -97,15 +109,19 @@ static int NlsReadImportFile(og_nls ctrl_nls, char *import_file)
 
   IF(OgNlpCompile(ctrl_nls->hnlp, input, output))
   {
+    json_decrefp(&output->json_output);
     NlsMainThrowError(ctrl_nls, "NlsReadImportFile: error OgNlpCompile from file '%s'", import_file);
     DPcErr;
   }
 
   IFN(output->json_output)
   {
+    json_decrefp(&output->json_output);
     NlsMainThrowError(ctrl_nls, "NlsReadImportFile: OgNlpCompile returns null json from '%s'", import_file);
     DPcErr;
   }
+
+  json_decrefp(&output->json_output);
 
   DONE;
 }

@@ -19,7 +19,7 @@ og_status NlsEndpointDump(struct og_listening_thread *lt, struct og_nls_request 
   }
 
   // Replace it with the output->json_ouput pointer
-  response->body = output->json_output;
+  response->body = json_incref(output->json_output);
 
   DONE;
 }

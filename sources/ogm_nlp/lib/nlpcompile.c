@@ -15,12 +15,14 @@ static int NlpCompilePackageSentence(package_t package, struct intent *intent, j
 PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output)
 {
 
+  // reset ouput
+  memset(output, 0, sizeof(struct og_nlp_compile_output));
+
   og_char_buffer json_compile_request_string[DOgMlogMaxMessageSize / 2];
   IFE(NlpJsonToBuffer(input->json_input, json_compile_request_string, DOgMlogMaxMessageSize / 2, NULL));
 
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "OgNlpCompile: json_compile_request_string is [\n%s]",
       json_compile_request_string);
-
 
   // package input can be a json object (a package) or an array (a list of package)
   if (json_is_object(input->json_input))
@@ -127,7 +129,6 @@ static og_status NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input 
 
 static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents)
 {
-
 
   if (!json_is_array(json_intents))
   {
@@ -270,30 +271,25 @@ static int NlpCompilePackageSentences(package_t package, struct intent *intent, 
 static int NlpCompilePackageSentence(package_t package, struct intent *intent, json_t *json_sentence)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
-  char *json_phrase_string = json_dumps(json_sentence, JSON_INDENT(2));
 
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackagesentence: compiling phrase [\n%.*s]",
-      strlen(json_phrase_string), json_phrase_string);
+  og_char_buffer json_sentence_string[DPcPathSize];
+  IFE(NlpJsonToBuffer(json_sentence, json_sentence_string, DPcPathSize, NULL));
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageSentence: compiling sentence [\n%s]", json_sentence_string);
 
-  void *intent_iter = json_object_iter(json_sentence);
-  IFN(intent_iter)
-  {
-    NlpThrowError(ctrl_nlp, "NlpCompilePackageSentence: phrase is empty");
-    DPcErr;
-  }
   json_t *json_text = NULL;
   json_t *json_locale = NULL;
-  do
+
+  for (void *iter = json_object_iter(json_sentence); iter; iter = json_object_iter_next(json_sentence, iter))
   {
-    const char *key = json_object_iter_key(intent_iter);
+    const char *key = json_object_iter_key(iter);
     OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageSentence: found key='%s'", key);
     if (Ogstricmp(key, "sentence") == 0)
     {
-      json_text = json_object_iter_value(intent_iter);
+      json_text = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "locale") == 0)
     {
-      json_locale = json_object_iter_value(intent_iter);
+      json_locale = json_object_iter_value(iter);
     }
     else
     {
@@ -301,7 +297,6 @@ static int NlpCompilePackageSentence(package_t package, struct intent *intent, j
       DPcErr;
     }
   }
-  while ((intent_iter = json_object_iter_next(json_sentence, intent_iter)) != NULL);
 
   IFN(json_text)
   {

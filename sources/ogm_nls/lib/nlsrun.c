@@ -27,8 +27,8 @@ PUBLIC(int) OgNlsRun(og_nls handle)
 
 static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
 {
-  struct og_maintenance_thread *mt = &ctrl_nls->mt;
-  IFE(OgCreateThread(&mt->IT, OgMaintenanceThread, (void *)mt));
+  struct og_maintenance_thread *mt = ctrl_nls->mt;
+  IFE(OgCreateThread(&mt->IT, OgMaintenanceThread, mt));
 
   struct og_addr_param addr_param[1];
   memset(addr_param, 0, sizeof(struct og_addr_param));
@@ -70,6 +70,8 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
   IFE(OgAddrClose(ctrl_nls->haddr));
 
   IFE(NlsWaitForListeningThreads("Main thread", ctrl_nls));
+
+  IFE(OgMaintenanceThreadStop(ctrl_nls->mt));
 
   if (ctrl_nls->loginfo->trace & DOgNlsTraceMinimal)
   {

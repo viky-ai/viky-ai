@@ -35,7 +35,7 @@ module Valgrind
 
       # launch hello world query with timeout
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
-      700.times do |i|
+      0.times do |i|
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls::Nls.query_get(Nls::Nls.url_test, hello_world_query)
         end

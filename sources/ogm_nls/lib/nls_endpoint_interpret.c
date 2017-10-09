@@ -24,7 +24,7 @@ og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_req
 
   IFE(OgNlpInterpret(lt->hnlpi, input, output));
 
-  response->body = output->json_output;
+  response->body = json_incref(output->json_output);
 
   DONE;
 }

@@ -17,9 +17,9 @@ static int OgMaintenanceThreadHandleError(struct og_maintenance_thread *);
  *  The maintenance thread never stops, except when the whole program is stopping.
  */
 
-int OgMaintenanceThread(void *ptr)
+int OgMaintenanceThread(void * void_mt)
 {
-  struct og_maintenance_thread *mt = (struct og_maintenance_thread *) ptr;
+  struct og_maintenance_thread *mt = (struct og_maintenance_thread *) void_mt;
   struct og_ctrl_nls *ctrl_nls = mt->ctrl_nls;
   int clock_tick_time, elapsed;
   og_bool error = FALSE;
@@ -33,7 +33,7 @@ int OgMaintenanceThread(void *ptr)
 
   elapsed = 0;
 
-  while (1)
+  while (!mt->mt_should_stop)
   {
     if (elapsed < DOgNlsClockTick)
     {
@@ -62,6 +62,8 @@ int OgMaintenanceThread(void *ptr)
   {
     OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "OgMaintenanceThread finished%s", error ? " on error" : "");
   }
+
+  mt->mt_is_stopped = TRUE;
 
   DONE;
 }
@@ -101,6 +103,17 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
         }
       }
     }
+  }
+
+  DONE;
+}
+
+og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt)
+{
+  mt->mt_should_stop = TRUE;
+  while(mt->mt_is_stopped)
+  {
+    IFE(OgSleep(DOgNlsClockTick));
   }
 
   DONE;

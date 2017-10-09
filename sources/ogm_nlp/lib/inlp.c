@@ -60,6 +60,10 @@ PUBLIC(int) OgNlpFlush(og_nlp handle)
 {
   struct og_ctrl_nlp *ctrl_nlp = handle;
 
+  OgMsgFlush(ctrl_nlp->hmsg);
+
+  g_hash_table_destroy(ctrl_nlp->packages_hash);
+
   DPcFree(ctrl_nlp);
   DONE;
 }

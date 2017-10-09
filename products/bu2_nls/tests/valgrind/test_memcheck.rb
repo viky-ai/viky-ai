@@ -6,7 +6,10 @@ module Valgrind
 
     def test_valgrind_memcheck
 
+      supression_file = File.join(File.expand_path(__dir__), 'valgrind_supression.supp')
+
       command = []
+      command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
       command << "valgrind --tool=memcheck -v"
       command << "--leak-check=full"
       command << "--error-limit=no"
@@ -15,7 +18,8 @@ module Valgrind
       command << "--show-reachable=yes"
       command << "--keep-stacktraces=alloc-then-free"
       command << "--log-file=valgrind.log"
-      command << "./ogm_nls"
+      command << "--suppressions=#{supression_file}"
+      command << "./ogm_nls -n"
 
       # clean file
       FileUtils.rm_r("#{pwd}/#{pwd}/valgrind.log", :force => true)
@@ -30,7 +34,7 @@ module Valgrind
       Nls::Nls.stop
 
       puts "Check leaks in file #{pwd}/valgrind.log"
-      `xdg-open #{pwd}/valgrind.log 1>/dev/null 2>&1 &`
+      `subl #{pwd}/valgrind.log 1>/dev/null 2>&1 &`
 
     end
 
