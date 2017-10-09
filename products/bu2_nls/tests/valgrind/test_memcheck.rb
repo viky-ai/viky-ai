@@ -1,4 +1,4 @@
-require 'common'
+require 'valgrind_common'
 
 module Valgrind
 
