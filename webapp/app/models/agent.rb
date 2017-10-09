@@ -1,4 +1,7 @@
 class Agent < ApplicationRecord
+  extend FriendlyId
+  friendly_id :agentname, use: :history, slug_column: 'agentname'
+
   has_many :memberships
   has_many :users, through: :memberships
 
@@ -9,9 +12,7 @@ class Agent < ApplicationRecord
   validate :owner_presence_in_users
 
   before_validation :add_owner_id, on: :create
-
-
-
+  before_validation :clean_agentname
 
   private
 
@@ -25,6 +26,12 @@ class Agent < ApplicationRecord
 
     def add_owner_id
       self.owner_id = users.first.id unless users.empty?
+    end
+
+    def clean_agentname
+      unless agentname.nil?
+        self.agentname = agentname.parameterize(separator: '-')
+      end
     end
 
 end

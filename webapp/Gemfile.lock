@@ -86,6 +86,8 @@ GEM
       dotenv (>= 0.7)
       thor (>= 0.13.6)
     foundation_emails (2.2.1.0)
+    friendly_id (5.1.0)
+      activerecord (>= 4.0.0)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     htmlentities (4.3.4)
@@ -266,6 +268,7 @@ DEPENDENCIES
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)
   foreman
+  friendly_id (~> 5.1.0)
   image_processing
   inky-rb
   jbuilder (~> 2.5)

@@ -28,7 +28,7 @@ class UserTest < ActiveSupport::TestCase
     admin = User.find_by_email('admin@voqal.ai')
     admin.username = "Admin Yeah ' Toto"
     assert admin.save
-    assert_equal "admin_yeah_toto", admin.username
+    assert_equal "admin-yeah-toto", admin.username
 
     admin.username = "  "
     assert !admin.save
@@ -36,7 +36,7 @@ class UserTest < ActiveSupport::TestCase
 
     admin.username = "\" 1   2 3 ABC !?/^äù"
     assert admin.save
-    assert_equal "1_2_3_abc_au", admin.username
+    assert_equal "1-2-3-abc-au", admin.username
   end
 
 
@@ -131,6 +131,29 @@ class UserTest < ActiveSupport::TestCase
 
     assert !User.find_by_email("tester_nil_1@voqal.ai").nil?
     assert !User.find_by_email("tester_nil_2@voqal.ai").nil?
+  end
+
+
+  test "Test user slug" do
+    user = User.friendly.find("admin")
+    assert_equal "admin@voqal.ai", user.email
+
+    user.username = 'new-admin'
+    assert user.save
+    
+    user = User.friendly.find("admin")
+    assert_equal "admin@voqal.ai", user.email
+    user = User.friendly.find("new-admin")
+    assert_equal "admin@voqal.ai", user.email
+
+    user.username = 'new-new-admin'
+    assert user.save
+    user = User.friendly.find("admin")
+    assert_equal "admin@voqal.ai", user.email
+    user = User.friendly.find("new-admin")
+    assert_equal "admin@voqal.ai", user.email
+    user = User.friendly.find("new-new-admin")
+    assert_equal "admin@voqal.ai", user.email
   end
 
 

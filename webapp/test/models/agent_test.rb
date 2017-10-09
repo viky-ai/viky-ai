@@ -136,4 +136,35 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal expected, agent_2.errors.full_messages
   end
 
+  test "Test agent slug" do
+    agent = users(:admin).agents.friendly.find("weather")
+    assert_equal "My awesome weather bot", agent.name
+
+    agent.agentname = 'new-weather'
+    assert agent.save
+    agent = users(:admin).agents.friendly.find("weather")
+    assert_equal "My awesome weather bot", agent.name
+    agent = users(:admin).agents.friendly.find("new-weather")
+    assert_equal "My awesome weather bot", agent.name
+
+    agent.agentname = 'new-new-weather'
+    assert agent.save
+    agent = users(:admin).agents.friendly.find("weather")
+    assert_equal "My awesome weather bot", agent.name
+    agent = users(:admin).agents.friendly.find("new-weather")
+    assert_equal "My awesome weather bot", agent.name
+    agent = users(:admin).agents.friendly.find("new-new-weather")
+    assert_equal "My awesome weather bot", agent.name
+  end
+
+  test "Clean agentname" do
+    agent = Agent.new(
+      name: "Agent 2",
+      agentname: "aaa?# b"
+    )
+    agent.users << users(:admin)
+    assert agent.save
+    assert_equal "aaa-b", agent.agentname
+  end
+
 end

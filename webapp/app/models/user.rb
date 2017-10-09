@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  extend FriendlyId
+  friendly_id :username, use: :history, slug_column: 'username'
+
   include ImageUploader::Attachment.new(:image)
 
   has_many :memberships
@@ -59,7 +62,7 @@ class User < ApplicationRecord
 
     def clean_username
       unless username.nil?
-        self.username = username.parameterize(separator: '_')
+        self.username = username.parameterize(separator: '-')
       end
     end
 

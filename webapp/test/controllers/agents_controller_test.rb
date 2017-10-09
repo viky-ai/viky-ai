@@ -4,7 +4,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
   test "agent routes" do
     user_id  = User.find_by_username('admin').id
-    agent_id = Agent.find_by_agentname('weather').id
+    agent_id = 'weather'
 
     # Show
     assert_routing({
