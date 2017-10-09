@@ -1,0 +1,8 @@
+en:
+  views:
+    agents:
+      breadcrumb:
+        base: Agents
+        agents_management: Agents management
+        new_btn: New agent
+

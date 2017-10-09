@@ -1,0 +1,24 @@
+<header class="header">
+  <div class="header__breadcrumb">
+    <%= t('views.agents.breadcrumb.base') %> /
+    <strong><%= t('views.agents.breadcrumb.agents_management') %></strong>
+  </div>
+  <div class="header__search">
+    ...
+  </div>
+  <div class="header__tools">
+    <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary">
+      <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
+    </a>
+  </div>
+</header>
+
+<ul class="agents-list">
+  <% @agents.each do |agent| %>
+    <li class="agents-list__item">
+      <h3><%= agent.name %></h3>
+      <p><%= agent.description %></p>
+    </li>
+  <% end %>
+</ul>
+

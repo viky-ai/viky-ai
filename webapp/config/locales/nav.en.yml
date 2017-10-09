@@ -1,0 +1,11 @@
+en:
+  views:
+    nav:
+      home: Home
+      agents: Agents
+      backend:
+        title: Backend
+        users: Users management
+        style_guide: Style guide
+        sidekiq_ui: Async jobs
+        mailer_test: Mailer test

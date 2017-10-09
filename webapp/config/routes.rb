@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :users, path: '', only: [] do
     resources :agents, path: '', except: [:index]
   end
+  get 'agents', to: 'agents#index'
 
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
