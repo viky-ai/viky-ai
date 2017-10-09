@@ -1,0 +1,4 @@
+weather:
+  name: My awesome weather bot
+  description: My awesome weather bot description
+  agentname: weather
