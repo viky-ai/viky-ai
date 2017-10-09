@@ -14,6 +14,7 @@ confirmed:
   current_sign_in_at: "2017-01-01 00:00:01"
 
 admin:
+  id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'AdminBoom') %>
   email: admin@voqal.ai
   username: admin

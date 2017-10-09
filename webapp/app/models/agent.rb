@@ -3,7 +3,28 @@ class Agent < ApplicationRecord
   has_many :users, through: :memberships
 
   validates :name, presence: true
-  validates :agentname, uniqueness: true, length: { in: 3..25 }, presence: true
-
+  validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :users, presence: true
+  validates :owner_id, presence: true
+  validate :owner_presence_in_users
+
+  before_validation :add_owner_id, on: :create
+
+
+
+
+  private
+
+    def owner_presence_in_users
+      unless users.empty?
+        unless users.collect(&:id).include?(owner_id)
+          errors.add(:users, "list does not includes agent owner")
+        end
+      end
+    end
+
+    def add_owner_id
+      self.owner_id = users.first.id unless users.empty?
+    end
+
 end
