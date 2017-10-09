@@ -28,6 +28,11 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
     nb_error++;
   }
 
+  if (json_array_size(errors) == 0)
+  {
+    json_array_append_new(errors, json_string("Unexpected errors"));
+  }
+
   json_t * root = json_object();
   json_object_set_new(root, "errors", errors);
 
