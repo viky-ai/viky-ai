@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     get :confirm_destroy
   end
 
+  resources :users, path: '', only: [] do
+    resources :agents, path: '', except: [:index]
+  end
+
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/backend/jobs'
