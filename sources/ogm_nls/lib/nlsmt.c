@@ -111,9 +111,12 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
 og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt)
 {
   mt->mt_should_stop = TRUE;
-  while(mt->mt_is_stopped)
+
+  int max_wait_count = 0;
+  while(mt->mt_is_stopped && max_wait_count < 200)
   {
     IFE(OgSleep(DOgNlsClockTick));
+    max_wait_count++;
   }
 
   DONE;

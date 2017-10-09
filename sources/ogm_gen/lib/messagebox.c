@@ -11,15 +11,34 @@
 
 PUBLIC(void) OgMessageBox(void *hwnd, char *lptext, char *lpcaption, unsigned int utype)
 {
-char *str_type;
-switch(utype) {
- case DOgMessageBoxInformation: str_type="information"; break;
- case DOgMessageBoxQuestion: str_type="question"; break;
- case DOgMessageBoxWarning: str_type="warning"; break;
- case DOgMessageBoxError: str_type="error"; break;
- default: str_type="error"; break;
- }
-printf("%s (%s):\n%s\n", lpcaption, str_type, lptext);
+  char *str_type;
+  switch (utype)
+  {
+    case DOgMessageBoxInformation:
+      str_type = "information";
+      break;
+    case DOgMessageBoxQuestion:
+      str_type = "question";
+      break;
+    case DOgMessageBoxWarning:
+      str_type = "warning";
+      break;
+    case DOgMessageBoxError:
+      str_type = "error";
+      break;
+    default:
+      str_type = "error";
+      break;
+  }
+
+  if (DOgMessageBoxInformation == utype)
+  {
+    printf("%s\n", lptext);
+  }
+  else
+  {
+    printf("%s (%s):\n%s\n", lpcaption, str_type, lptext);
+  }
 }
 
 #else

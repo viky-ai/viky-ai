@@ -129,6 +129,8 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
 
 PUBLIC(int) OgNlsFlush(og_nls handle)
 {
+  if (handle == NULL) CONT;
+
   struct og_ctrl_nls *ctrl_nls = handle;
 
   if (ctrl_nls->conf->permanent_threads)
@@ -217,7 +219,7 @@ PUBLIC(char *) OgNlsBanner(void)
 
 og_status OgNlsWritePidFile(og_nls ctrl_nls)
 {
-  if (!ctrl_nls->pidfile[0])  CONT;
+  if (!ctrl_nls->pidfile[0]) CONT;
 
   FILE* file = fopen(ctrl_nls->pidfile, "w");
   IFN(file)

@@ -43,7 +43,7 @@ module Nls
         expected_error_found = false
         expected_error_found = true  if exception.message.include? expected_error
 
-        assert expected_error_found, "#{header}exception message must contains \"#{expected_error}\": \n#{exception.message}"
+        assert expected_error_found, "#{header}exception message must contains \"#{expected_error}\": \ntoto#{exception.inspect}"
 
       end
 

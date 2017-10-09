@@ -367,7 +367,7 @@ static void NlsSignalOnEmergency(void *context, int signal_type)
 {
   struct og_nls_prog *nls_prog = (struct og_nls_prog *) context;
 
-  int levelFlag = DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgParamDateIn;
+  int levelFlag = DOgMsgSeverityCritical + DOgMsgDestInLog + DOgMsgDestInErr + DOgMsgDestMBox;
 
   // log back trace
   {
@@ -377,18 +377,18 @@ static void NlsSignalOnEmergency(void *context, int signal_type)
     DPT_trace_size = backtrace(DPT_trace, sizeof(DPT_trace));
     DPT_messages = backtrace_symbols(DPT_trace, DPT_trace_size);
 
-    OgLogCritical(nls_prog->hmsg, "Program ogm_nls received signal %d, Backtrace :", signal_type);
+    OgMsg(nls_prog->hmsg, "[CRITICAL]", levelFlag, "Program ogm_nls received signal %d, Backtrace :", signal_type);
 
     for (DPT_i = 0; DPT_i < DPT_trace_size; DPT_i++)
     {
-      OgLogCritical(nls_prog->hmsg, "\t%s", DPT_messages[DPT_i]);
+      OgMsg(nls_prog->hmsg, "[CRITICAL]", levelFlag, "\t%s", DPT_messages[DPT_i]);
     }
-    OgLogCritical(nls_prog->hmsg, "\t%s\n", "...");
+    OgMsg(nls_prog->hmsg, "[CRITICAL]", levelFlag, "\t%s", "...");
 
     free(DPT_messages);
   }
 
-  OgMsg(nls_prog->hmsg, "received_signal", levelFlag, "Program ogm_nls received signal %d", signal_type);
+  OgMsg(nls_prog->hmsg, "[CRITICAL]", levelFlag, "Program ogm_nls received signal %d", signal_type);
 
   // save what we can
   if (nls_prog->hnls != NULL)
