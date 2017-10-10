@@ -251,6 +251,8 @@ og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
 /** nlsmt.c **/
 int OgMaintenanceThread(void *ptr);
 og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt);
+og_status OgMaintenanceThreadInit(struct og_ctrl_nls *ctrl_nls);
+og_status OgMaintenanceThreadFlush(struct og_maintenance_thread *mt);
 
 /** nls_endpoints.c **/
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);

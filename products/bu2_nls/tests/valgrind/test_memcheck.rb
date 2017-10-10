@@ -10,7 +10,7 @@ module Valgrind
 
       command = []
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
-      command << "valgrind --tool=memcheck -v"
+      command << "valgrind --tool=memcheck"
       command << "--leak-check=full"
       command << "--error-limit=no"
       command << "--track-origins=yes"

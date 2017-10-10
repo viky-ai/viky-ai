@@ -113,7 +113,7 @@ og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt)
   mt->mt_should_stop = TRUE;
 
   int max_wait_count = 0;
-  while(mt->mt_is_stopped && max_wait_count < 200)
+  while (mt->mt_is_stopped && max_wait_count < 200)
   {
     IFE(OgSleep(DOgNlsClockTick));
     max_wait_count++;
@@ -140,3 +140,24 @@ static int OgMaintenanceThreadHandleError(struct og_maintenance_thread *mt)
   DONE;
 }
 
+og_status OgMaintenanceThreadInit(struct og_ctrl_nls *ctrl_nls)
+{
+  struct og_maintenance_thread *mt = ctrl_nls->mt;
+
+  mt->herr = OgErrInit();
+  if (mt->herr == NULL)
+  {
+    DPcErr;
+  }
+  mt->ctrl_nls = ctrl_nls;
+  mt->hmutex = ctrl_nls->hmutex;
+
+  DONE;
+}
+
+og_status OgMaintenanceThreadFlush(struct og_maintenance_thread *mt)
+{
+  IFE(OgErrFlush(mt->herr));
+  mt->herr = NULL;
+  DONE;
+}
