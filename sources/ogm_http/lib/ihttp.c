@@ -62,6 +62,7 @@ void *handle;
 {
 struct og_ctrl_http *ctrl_http = (struct og_ctrl_http *)handle;
 IFE(OgAutFlush(ctrl_http->ha_header));
+IFE(OgMsgFlush(ctrl_http->hmsg));
 DPcFree(ctrl_http);
 DONE;
 }

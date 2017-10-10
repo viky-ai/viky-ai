@@ -5,6 +5,17 @@
 #  - https://github.com/dtrebbien/GNOME.supp
 
 ###################
+# NLS
+###################
+{
+    LogInit Main
+    Memcheck:Leak
+    ...
+    fun:OgLogInit
+    fun:main
+}
+
+###################
 # LibCurl
 ###################
 {
@@ -140,6 +151,13 @@
     Memcheck:Leak
     ...
     fun:g_hash_table_new_full
+    fun:g_quark_init
+}
+{
+    g_quake_init
+    Memcheck:Leak
+    ...
+    fun:g_malloc
     fun:g_quark_init
 }
 

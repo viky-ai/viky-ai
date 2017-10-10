@@ -52,7 +52,9 @@ int main(int argc, char *argv[])
   param->herr = OgLogGetErr(nls_prog->hmsg);
   param->hmutex = OgLogGetMutex(nls_prog->hmsg);
 
-  snprintf(nls_prog->WorkingDirectory, DPcPathSize, "%s", g_get_current_dir());
+  gchar *current_dir = g_get_current_dir();
+  snprintf(nls_prog->WorkingDirectory, DPcPathSize, "%s", current_dir);
+  g_free(current_dir);
 
   snprintf(nls_prog->DirControl, DPcPathSize, "%s/%s", nls_prog->WorkingDirectory, DOgDirControl);
   IF(OgCheckOrCreateDir(nls_prog->DirControl,0,nls_prog->loginfo->where)) DoExit(nls_prog);
@@ -413,6 +415,8 @@ void DoExit(struct og_nls_prog *nls_prog)
   OgMsg(nls_prog->hmsg, "exiting_on_error", mb, "Program ogm_nls exiting on error.");
 
   OgNlsFlush(nls_prog->hnls);
+
+  OgLogFlush(nls_prog->hmsg);
 
   exit(1);
 }

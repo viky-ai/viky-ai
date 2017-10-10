@@ -1,8 +1,8 @@
 /*
- *	Initialization for ogm_uci functions
- *	Copyright (c) 2006 Pertimm by Patrick Constant
- *	Dev : July 2006
- *	Version 1.0
+ *  Initialization for ogm_uci functions
+ *  Copyright (c) 2006 Pertimm by Patrick Constant
+ *  Dev : July 2006
+ *  Version 1.0
 */
 #include "ogm_uci.h"
 
@@ -48,17 +48,17 @@ size = ctrl_ucic->BaSize*sizeof(unsigned char);
 IFn(ctrl_ucic->Ba=(unsigned char *)malloc(size)) {
   sprintf(erreur,"OgEmlInit: malloc error on Ba (%d bytes)",size);
   OgErr(ctrl_ucic->herr,erreur); return(0);
-  } 
+  }
 
 memset(uci_param,0,sizeof(struct og_uci_param));
-uci_param->herr=ctrl_ucic->herr; 
-uci_param->hmsg=ctrl_ucic->hmsg; 
+uci_param->herr=ctrl_ucic->herr;
+uci_param->hmsg=ctrl_ucic->hmsg;
 uci_param->hmutex=ctrl_ucic->hmutex;
-uci_param->loginfo.trace=0; 
-if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMinimal) uci_param->loginfo.trace|=DOgUciTraceMinimal; 
-if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMemory) uci_param->loginfo.trace|=DOgUciTraceMemory; 
-if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocket) uci_param->loginfo.trace|=DOgUciTraceSocket; 
-if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocketSize) uci_param->loginfo.trace|=DOgUciTraceSocketSize; 
+uci_param->loginfo.trace=0;
+if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMinimal) uci_param->loginfo.trace|=DOgUciTraceMinimal;
+if (ctrl_ucic->loginfo->trace & DOgUciClientTraceMemory) uci_param->loginfo.trace|=DOgUciTraceMemory;
+if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocket) uci_param->loginfo.trace|=DOgUciTraceSocket;
+if (ctrl_ucic->loginfo->trace & DOgUciClientTraceSocketSize) uci_param->loginfo.trace|=DOgUciTraceSocketSize;
 uci_param->loginfo.where = ctrl_ucic->loginfo->where;
 uci_param->socket_buffer_size=param->socket_buffer_size;
 uci_param->header_mandatory=param->header_mandatory;
@@ -79,6 +79,8 @@ struct og_ctrl_ucic *ctrl_ucic = (struct og_ctrl_ucic *)handle;
 
 IFE(OgUciFlush(ctrl_ucic->huci));
 DPcFree(ctrl_ucic->Ba);
+
+IFE(OgMsgFlush(ctrl_ucic->hmsg));
 
 DPcFree(ctrl_ucic);
 DONE;

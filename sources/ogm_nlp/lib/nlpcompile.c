@@ -168,8 +168,9 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
 static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
-  char *json_intent_string = json_dumps(json_intent, JSON_INDENT(2));
 
+  og_char_buffer json_intent_string[DPcPathSize];
+  IFE(NlpJsonToBuffer(json_intent, json_intent_string, DPcPathSize, NULL));
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageIntent: compiling intent [\n%s]", json_intent_string);
 
   json_t *json_id = NULL;
