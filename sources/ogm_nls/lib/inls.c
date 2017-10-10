@@ -83,7 +83,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   /** Maintenance thread initialization **/
   struct og_maintenance_thread *mt = ctrl_nls->mt;
   memset(mt, 0, sizeof(struct og_maintenance_thread));
-  IF(OgMaintenanceThreadInit(mt, ctrl_nls))
+  IF(OgMaintenanceThreadInit(ctrl_nls))
   {
     sprintf(erreur, "OgNlsInit: OgMaintenanceThreadInit error");
     OgErr(ctrl_nls->herr, erreur);
@@ -147,6 +147,8 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
   DPcFree(ctrl_nls->Lt);
 
   IFE(OgNlpFlush(ctrl_nls->hnlp));
+
+  IFE(OgUciServerFlush(ctrl_nls->hucis));
 
   IFE(OgMaintenanceThreadFlush(ctrl_nls->mt));
 
