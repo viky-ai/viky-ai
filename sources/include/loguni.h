@@ -7,9 +7,10 @@
  *  Version 1.9
 */
 #ifndef _LOGUNIALIVE_
+#include <iconv.h>
+
 #include <loggen.h>
 #include <logthr.h>
-#include <iconv/iconv.h>
 #include <errno.h>
 
 #define DOgUniBanner  "ogm_uni V1.38, Copyright (c) 2003-2012 Pertimm"

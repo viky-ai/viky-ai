@@ -644,15 +644,9 @@ sub OgGetSvnRevision ($)
   my ($pse_path) = @_;
   my $currentdir = `pwd`;
 
-  my $svnRev = 0;
+  my $svnRev = "local";
 
   chdir($pse_path) || die("Invalid chdir $! ($pse_path)\n");
-
-  my $is_git_respoitory = 0;
-  if (system("git rev-parse --is-inside-work-tree") == 0)
-  {
-    $is_git_respoitory = 1;
-  }
 
   # chosee betwen SVN and SVN
   if (OgIsPathInGitRepo($pse_path))
@@ -671,30 +665,10 @@ sub OgGetSvnRevision ($)
   }
   else
   {
-
-    my $svnInfoXml = `svn info --xml`;
-    if ( !defined($svnInfoXml) || $? != 0 ) {
-      print("Warning, can't fetch SVN revision, using 0.\n");
-      return (0);
+    if(defined($ENV{'CI_COMMIT_SHA'}))
+    {
+      $svnRev = substr($ENV{'CI_COMMIT_SHA'}, 0, 8);
     }
-
-    my $parser         = new XML::DOM::Parser;
-    my $svnInfoXmlRoot = $parser->parse($svnInfoXml);
-    if ( !defined($svnInfoXmlRoot) ) {
-      print("Warning, can't fetch SVN revision, using 0.\n");
-      return (0);
-    }
-
-    my @svnRevList = $svnInfoXmlRoot->xql('/info/entry/commit/@revision');
-    if ( scalar(@svnRevList) == 0 ) {
-      print("Warning, can't fetch SVN revision, using 0.\n");
-      return (0);
-    }
-
-    $svnRev = OgXmlGetNodeText( $svnRevList[0] );
-
-    $svnInfoXmlRoot->dispose;
-
   }
 
   if (defined($currentdir) && $currentdir ne "")

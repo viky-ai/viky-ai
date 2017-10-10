@@ -62,29 +62,18 @@ my $buildpath = dir($ENV{OG_REPO_PATH}, "build");
 
 OgVerbose("- OG_REPO_PATH = '$OG_REPO_PATH'\n");
 OgVerbose("- buildpath    = '$buildpath'\n");
-
-my $privatepath = OgPlatformPath(dir($ENV{OG_REPO_PATH}, "sources", "private"));
-unless (defined($privatepath) && -d $privatepath) {
-  print "Error: Invalid private path : $privatepath.\n";
-  exit(1);
-}
-
-OgVerbose("- privatepath  = '$privatepath'\n");
 OgVerbose("- update       = $update\n");
 
-if ($update) {
-  mkdir($buildpath) unless (-d $buildpath);
-} else {
+if (!$update) {
   OgVerbose("Resetting 'build' directory.\n");
   rmtree("$buildpath");
   die("Build directory cannot be deleted ($buildpath)") if (-d $buildpath);
-  mkdir($buildpath);
 }
 
-OgVerbose("Copying 'private' data into 'build' directory.\n");
-OgCopy($privatepath, $buildpath, 1, $update);
-
-
+system("mkdir -p $buildpath/debug/bin");
+system("mkdir -p $buildpath/debug/link");
+system("mkdir -p $buildpath/release/bin");
+system("mkdir -p $buildpath/release/link");
 
 ##
 # Functions

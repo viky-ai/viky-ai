@@ -19,11 +19,10 @@
 PUBLIC(int) OgUniToCp(int iunicode, const unsigned char *unicode, int scode, int *icode, unsigned char *code, int codepage,
     int*position, int *truncated)
 {
-int i,j,c,start,byte_zero,byte_one,retour=0,iout=0;
+int i,j,c,start,byte_zero,byte_one;
 int (*func)(pr_(int) pr(int *));
 char sys_erreur[DOgErrorSize];
 char erreur[DOgErrorSize];
-int iunicode_iconv;
 char *iconv_cp=0;
 
 if (truncated) *truncated=0;
@@ -60,13 +59,12 @@ switch(codepage) {
   }
 
 if(iconv_cp) {
-  iconv_t hiconv; int discard_ilseq=1;
-  hiconv=iconv_open(iconv_cp,"unicodebig");
-  /** We could also add "//IGNORE" to iconv_cp **/
-  iconvctl(hiconv,ICONV_SET_DISCARD_ILSEQ,&discard_ilseq);
-  iout=scode; iunicode_iconv=iunicode;
-  retour=iconv(hiconv,&unicode,&iunicode_iconv,&code,&iout);
+  iconv_t hiconv = iconv_open(iconv_cp, "unicodebig");
+  size_t iout = scode;
+  size_t iunicode_iconv = iunicode;
+  size_t retour = iconv(hiconv, &unicode, &iunicode_iconv, &code, &iout);
   if (retour==(size_t)-1) {
+    iconv_close(hiconv);
     strcpy(sys_erreur,strerror(errno));
     sprintf(erreur,"OgUniToCp: iconv error (%d): %s",errno,sys_erreur);
     PcErr(-1,erreur); DPcErr;

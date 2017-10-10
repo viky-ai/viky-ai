@@ -11,9 +11,9 @@
 <!ATTLIST component
    name         CDATA         #REQUIRED
    info         CDATA         #REQUIRED
-   doc          CDATA         #REQUIRED
+   doc          CDATA         #IMPLIED
    flags        CDATA         #IMPLIED
    support      CDATA         #IMPLIED
    parallel     (true|false)  #IMPLIED
-> 
+>
 

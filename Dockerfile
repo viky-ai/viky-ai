@@ -8,23 +8,27 @@
 # ============================================================================
 FROM docker-registry.pertimm.corp:50001/pertimm/docker-ebusiness-build-stack AS build_image
 
-ADD products/*.dtd                  /builds/pse/products/
-ADD resources/manifest.xml          /builds/pse/resources/
-ADD tools                           /builds/pse/tools
-ADD sources                         /builds/pse/sources
-ADD products/bu2_nls/conf           /builds/pse/products/bu2_nls/conf
-ADD products/bu2_nls/manifest.xml   /builds/pse/products/bu2_nls/manifest.xml
-ADD products/bu2_nls/LICENSE.TXT    /builds/pse/products/bu2_nls/LICENSE.TXT
-
 ENV OG_REPO_PATH=/builds/pse
 ENV OG_TOOL_PATH=${OG_REPO_PATH}/tools
 ENV PATH=${OG_TOOL_PATH}/bin:${PATH}
-ENV MAKE_OPTS_PARALLEL=-j$(nproc)
 
-RUN buildinit.pl -u
-RUN genmake.pl linux64 all
+# Optimise : prebuild externale dependencies
+ADD products/*.dtd                  /builds/pse/products/
+ADD resources/manifest.xml          /builds/pse/resources/manifest.xml
+ADD sources/manifest.xml            /builds/pse/sources/manifest.xml
+ADD sources/makefile.defs.linux     /builds/pse/sources/makefile.defs.linux
+ADD sources/external_dependencies   /builds/pse/sources/external_dependencies
+ADD tools                           /builds/pse/tools
+
+RUN buildinit.pl
 RUN factory.pl -c external_dependencies redebug
-RUN factory.pl -c glib                  redebug
+
+ADD products/bu2_nls/conf           /builds/pse/products/bu2_nls/conf
+ADD products/bu2_nls/manifest.xml   /builds/pse/products/bu2_nls/manifest.xml
+ADD products/bu2_nls/LICENSE.TXT    /builds/pse/products/bu2_nls/LICENSE.TXT
+ADD sources                         /builds/pse/sources
+
+RUN genmake.pl linux64 all
 RUN factory.pl -p bu2_nls redebug
 RUN factory.pl -s bu2_nls   debug
 
@@ -65,4 +69,3 @@ WORKDIR /nls
 
 EXPOSE 9345
 CMD ["./ogm_nls"]
-

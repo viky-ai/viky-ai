@@ -20,7 +20,7 @@ PUBLIC(int) OgCpToUni(int icode, const unsigned char *code, int sunicode, int *i
 int codepage, int *position, int *truncated)
 {
 char sys_erreur[DOgErrorSize],erreur[DOgErrorSize],*iconv_cp=0;
-int i,j,u,retour=0,iout=0,icode_iconv;
+int i,j,u;
 int (*func)(pr(int));
 
 if (truncated) *truncated=0;
@@ -59,13 +59,12 @@ switch(codepage) {
   }
 
 if(iconv_cp) {
-  iconv_t hiconv; int discard_ilseq=1;
-  hiconv=iconv_open("unicodebig",iconv_cp);
-  /** We could also add "//IGNORE" to "unicodebig" **/
-  iconvctl(hiconv,ICONV_SET_DISCARD_ILSEQ,&discard_ilseq);
-  iout=sunicode; icode_iconv=icode;
-  retour=iconv(hiconv,&code,&icode_iconv,&unicode,&iout);
+  iconv_t hiconv = iconv_open("unicodebig", iconv_cp);
+  size_t iout = sunicode;
+  size_t icode_iconv = icode;
+  size_t retour = iconv(hiconv, &code, &icode_iconv, &unicode, &iout);
   if (retour==(size_t)-1) {
+    iconv_close(hiconv);
     strcpy(sys_erreur,strerror(errno));
     sprintf(erreur,"OgCpToUni: iconv error (%d): %s",errno,sys_erreur);
     PcErr(-1,erreur); DPcErr;

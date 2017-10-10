@@ -3,8 +3,8 @@
 <!ATTLIST resource
    name         CDATA         #REQUIRED
    info         CDATA         #REQUIRED
-   doc          CDATA         #REQUIRED
+   doc          CDATA         #IMPLIED
    support      CDATA         #IMPLIED
    parallel     (true|false)  #IMPLIED
-> 
+>
 

@@ -1,1 +1,16 @@
-../../../.gitlab-ci.yml
+stages:
+  - build
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+docker_build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay
+    VOQALNLS_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+  image: docker:dind
+  script:
+    - docker build -t ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} -t ${VOQALNLS_DOCKER_IMAGE}:latest pse
+    - docker push ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+    - docker push ${VOQALNLS_DOCKER_IMAGE}:latest

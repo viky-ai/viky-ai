@@ -26,6 +26,7 @@ all:
 
 fullclean: clean
 	-cd jansson && $(MAKE) clean
+	-cd jansson && git clean -dfx
 	rm -rf jansson/Makefile
 	rm -rf jansson/configure
 
@@ -42,17 +43,20 @@ jansson/configure:
 
 jansson/Makefile: jansson/configure
 	cd jansson && ./configure --prefix="$(DBUILDPATH)" \
-																	--bindir="$(DBINPATH)" \
-																	--libdir="$(DLIBPATH)" \
-																	--includedir="$(SRCPATH)/include"
+														--bindir="$(DBINPATH)" \
+														--libdir="$(DLIBPATH)" \
+														--includedir="$(SRCPATH)/include"
 
 $(DBINPATH)/libjansson.so: make
+	mkdir -p $(DBINPATH)
 	cp -af jansson/src/.libs/libjansson.so* $(DBINPATH)
 
 $(SRCPATH)/include/jansson.h: make
+	mkdir -p $(SRCPATH)/include/
 	cp -af jansson/src/jansson.h $(SRCPATH)/include/
 
 $(SRCPATH)/include/jansson_config.h: make
+	mkdir -p $(SRCPATH)/include/
 	cp -af jansson/src/jansson_config.h $(SRCPATH)/include/
 
 

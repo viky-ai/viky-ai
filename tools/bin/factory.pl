@@ -255,7 +255,7 @@ sub main ()
     ( $nbErr, $nbWarn, $nbMakeErr ) = mainPackageProduct($product, $target, $shipPath, $cleanShip);
   }
 
-  return ( $nbErr != 0 || $nbMakeErr != 0 );
+  return ( $nbMakeErr != 0 );
 }
 
 ##
@@ -461,7 +461,7 @@ sub initFactory ()
       $makeCMD = "make -f makefile.linux32";
     }
     elsif ( $arch == ogutil::ARCH_X86_64 ) {
-      $makeCMD = "make -f makefile.linux64";
+      $makeCMD = "make -w -f makefile.linux64";
     }
   }
   else {
@@ -741,9 +741,16 @@ sub makeComponents ($$$$@)
     print( "making component: $target " . $componentTab[$id]{name} . "\n" );
 
     my $use_makeopts_parallel = "";
-    if($componentTab[$id]{parallel} ne "false" && defined($ENV{'MAKE_OPTS_PARALLEL'}))
+    if($componentTab[$id]{parallel} ne "false")
     {
-      $use_makeopts_parallel = $ENV{'MAKE_OPTS_PARALLEL'};
+      if(defined($ENV{'MAKE_OPTS_PARALLEL'}))
+      {
+        $use_makeopts_parallel = "--output-sync=recurse " + $ENV{'MAKE_OPTS_PARALLEL'};
+      }
+      else
+      {
+        $use_makeopts_parallel = "--output-sync=recurse -j`nproc`";
+      }
     }
 
     my ( $nbErr, $nbWarn, $makeRet ) = makeTarget(
@@ -847,6 +854,20 @@ sub makeTarget ($$$$$$$$)
       $makeMsg = `$makeCMD $use_makeopts_parallel $target > \"$logFile\" 2>&1`;
     }
     $makeRet = $?;
+
+    # a little tricky since system returns composite non-null return value
+    if ($makeRet == -1) {
+      print "\nCommand \"$makeCMD\" failed to execute: $!\n";
+      return ( 0, 0, $makeRet );
+    }
+    elsif ($makeRet & 127) {
+      printf "\nCommand \"$makeCMD\" failed, child died with signal %d, %s coredump\n", ($makeRet & 127),  ($makeRet & 128) ? 'with' : 'without';
+      return ( 0, 0, $makeRet );
+    }
+    else {
+      $makeRet = $makeRet >> 8;
+    }
+
   }
 
   return OgWriteBDComponentReport( $logFile, $cName, $makeRet, $makeMsg );

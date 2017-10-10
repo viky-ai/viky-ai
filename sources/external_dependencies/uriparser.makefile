@@ -26,6 +26,7 @@ all:
 
 fullclean: clean
 	-cd uriparser && $(MAKE) clean
+	-cd uriparser && git clean -dfx
 	rm -rf uriparser/Makefile
 	rm -rf uriparser/configure
 
@@ -45,9 +46,10 @@ uriparser/Makefile: uriparser/configure
 															--libdir="$(DLIBPATH)" \
 															--includedir="$(SRCPATH)/include" \
 															--disable-test \
-															--disable-doc 
+															--disable-doc
 
 $(DBINPATH)/liburiparser.so: make
+	mkdir -p $(DBINPATH)
 	cp -af uriparser/.libs/liburiparser.so* $(DBINPATH)
 
 $(SRCPATH)/include/uriparser/Uri.h: make

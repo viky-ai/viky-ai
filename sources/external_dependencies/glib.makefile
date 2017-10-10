@@ -1,110 +1,71 @@
 #
-# Glib Makefile
+# Extrenal lib glib
+# dependencies : gtk-doc-tools
 #
 
 CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 
 include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
-LIBVERSION=2.48.2
-LIBDIR=glib-$(LIBVERSION)
+.PHONY: all redebug debug build make clean fullclean
 
-build:
-	@if [ ! -e $(RBINPATH)/libglib-2.0.so ] || [ ! -d glib-$(LIBVERSION) ] ; then $(MAKE) -f $(CURRENT_MAKEFILE) __build; fi
+redebug: rebuild
 
-debug:
-	@if [ ! -e $(DBINPATH)/libglib-2.0.so ] || [ ! -d glib-$(LIBVERSION) ]; then $(MAKE) -f $(CURRENT_MAKEFILE) __debug; fi
+debug: build
 
-profile:
-	@if [ ! -e $(PBINPATH)/libglib-2.0.so ] || [ ! -d glib-$(LIBVERSION) ]; then $(MAKE) -f $(CURRENT_MAKEFILE) __profile; fi
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
-__build:
+build: $(DBINPATH)/libglib-2.0.so $(SRCPATH)/include/glib-2.0/glib.h $(SRCPATH)/include/glib-2.0/glibconfig.h
+
+glib: all
+
+all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) unpack
-	$(MAKE) -f $(CURRENT_MAKEFILE) _build
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
-__debug:
-	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) unpack
-	$(MAKE) -f $(CURRENT_MAKEFILE) _debug
-
-__profile:
-	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) unpack
-	$(MAKE) -f $(CURRENT_MAKEFILE) _profile
-
-_build: $(RBINPATH) $(RLINKPATH)
-	@echo "run configure script"
-	@cd $(LIBDIR) && ./autogen.sh --prefix="$(RBUILDPATH)" --bindir="$(RBINPATH)" --libdir="$(RLIBPATH)" --includedir="$(SRCPATH)/include" --datarootdir=$(SRCPATH)/glib/share --enable-static=yes --disable-fam --with-pcre=internal --disable-libmount
-	@cd $(LIBDIR) && $(MAKE)
-	@cd $(LIBDIR) && $(MAKE) install
-	rm -rf $(RBINPATH)/*.la $(RBINPATH)/glib2-0
-	mv $(RBINPATH)/libgio-2.0.a     $(RLINKPATH)
-	mv $(RBINPATH)/libglib-2.0.a    $(RLINKPATH)
-	mv $(RBINPATH)/libgmodule-2.0.a $(RLINKPATH)
-	mv $(RBINPATH)/libgobject-2.0.a $(RLINKPATH)
-	mv $(RBINPATH)/libgthread-2.0.a $(RLINKPATH)
-	cp $(LIBDIR)/glib/glibconfig.h $(SRCPATH)/include/glib-2.0
-
-_debug: $(DBINPATH) $(DLINKPATH)
-	@echo "run configure script"
-	@cd $(LIBDIR) && ./autogen.sh --prefix="$(DBUILDPATH)" --bindir="$(DBINPATH)" --libdir="$(DLIBPATH)" --includedir="$(SRCPATH)/include" --datarootdir=$(SRCPATH)/glib/share --enable-static=yes --disable-fam --with-pcre=internal --disable-libmount # --enable-gtk-doc
-	@cd $(LIBDIR) && $(MAKE)
-	@cd $(LIBDIR) && $(MAKE) install
-	rm -rf $(DBINPATH)/*.la $(DBINPATH)/glib2-0
-	mv $(DBINPATH)/libgio-2.0.a     $(DLINKPATH)
-	mv $(DBINPATH)/libglib-2.0.a    $(DLINKPATH)
-	mv $(DBINPATH)/libgmodule-2.0.a $(DLINKPATH)
-	mv $(DBINPATH)/libgobject-2.0.a $(DLINKPATH)
-	mv $(DBINPATH)/libgthread-2.0.a $(DLINKPATH)
-	cp $(LIBDIR)/glib/glibconfig.h $(SRCPATH)/include/glib-2.0
-
-_profile: $(PBINPATH) $(PLINKPATH)
-	@echo "run configure script"
-	@cd $(LIBDIR) && ./autogen.sh --prefix="$(PBUILDPATH)" --bindir="$(PBINPATH)" --libdir="$(PLIBPATH)" --includedir="$(SRCPATH)/include" --datarootdir=$(SRCPATH)/glib/share --enable-static=yes --disable-fam --with-pcre=internal --disable-libmount
-	@cd $(LIBDIR) && $(MAKE)
-	@cd $(LIBDIR) && $(MAKE) install
-	rm -rf $(PBINPATH)/*.la $(PBINPATH)/glib2-0
-	mv $(PBINPATH)/libgio-2.0.a     $(PLINKPATH)
-	mv $(PBINPATH)/libglib-2.0.a    $(PLINKPATH)
-	mv $(PBINPATH)/libgmodule-2.0.a $(PLINKPATH)
-	mv $(PBINPATH)/libgobject-2.0.a $(PLINKPATH)
-	mv $(PBINPATH)/libgthread-2.0.a $(PLINKPATH)
-	cp $(LIBDIR)/glib/glibconfig.h $(SRCPATH)/include/glib-2.0
-
-all: build debug profile
-
-redebug: debug
-
-rebuild: build
-
-runtest_build:
-
-runtest_debug:
-
-runtest_profile:
-
-GENTEST:
-
-test:
+fullclean: clean
+	-cd glib && $(MAKE) clean
+	-cd glib && git clean -dfx
+	rm -rf glib/Makefile
+	rm -rf glib/configure
 
 clean:
+	rm -rf $(SRCPATH)/include/gio-unix-2.0/
+	rm -rf $(SRCPATH)/include/glib-2.0/
+	rm -f  $(DBINPATH)/libglib.so*
+	rm -f  $(DBINPATH)/libgio.so*
+	rm -f  $(DBINPATH)/libgmodule.so*
+	rm -f  $(DBINPATH)/libgobject.so*
+	rm -f  $(DBINPATH)/libgthread.so*
 
-# Trouble on ubuntu 16.04 : https://github.com/Alexpux/MINGW-packages/issues/1351
-unpack:
-	tar xvf $(LIBDIR).tar.xz --use-compress-program=xz
+make: glib/Makefile
+	cd glib && $(MAKE)
+	mkdir -p $(DBINPATH)/gio
+	mkdir -p $(SRCPATH)/include/
+	cd glib && $(MAKE) install
 
-release: build
+glib/configure:
+	cd glib && NOCONFIGURE=yes ./autogen.sh
 
-fullclean:
-	\rm -rf $(LIBDIR) html share
-	\rm -rf $(SRCPATH)/include/glib-2.0 $(SRCPATH)/include/doc $(sRCPATH)/include/html
-	\rm -rf $(RBINPATH)/libgio-2.0.* $(RBINPATH)/libglib-2.0.* $(RBINPATH)/libgmodule-2.0.* $(RBINPATH)/libgthread-2.0.* $(RBINPATH)/libgobject-2.0.*
-	\rm -rf $(DBINPATH)/libgio-2.0.* $(DBINPATH)/libglib-2.0.* $(DBINPATH)/libgmodule-2.0.* $(DBINPATH)/libgthread-2.0.* $(DBINPATH)/libgobject-2.0.*
-	\rm -rf $(PBINPATH)/libgio-2.0.* $(PBINPATH)/libglib-2.0.* $(PBINPATH)/libgmodule-2.0.* $(PBINPATH)/libgthread-2.0.* $(PBINPATH)/libgobject-2.0.*
-	\rm -rf $(RBINPATH)/gtester $(RBINPATH)/gobject-query gio $(RBINPATH)/glib-2.0
-	\rm -rf $(DBINPATH)/gtester $(DBINPATH)/gobject-query gio $(DBINPATH)/glib-2.0
-	\rm -rf $(PBINPATH)/gtester $(PBINPATH)/gobject-query gio $(PBINPATH)/glib-2.0
-	\rm -f  $(DLINKPATH)/libgio-2.0.a $(DLINKPATH)/libglib-2.0.a $(DLINKPATH)/libgmodule-2.0.a $(DLINKPATH)/libgobject-2.0.a $(DLINKPATH)/libgthread-2.0.a
-	\rm -f  $(RLINKPATH)/libgio-2.0.a $(RLINKPATH)/libglib-2.0.a $(RLINKPATH)/libgmodule-2.0.a $(RLINKPATH)/libgobject-2.0.a $(RLINKPATH)/libgthread-2.0.a
-	\rm -f  $(PLINKPATH)/libgio-2.0.a $(PLINKPATH)/libglib-2.0.a $(PLINKPATH)/libgmodule-2.0.a $(PLINKPATH)/libgobject-2.0.a $(PLINKPATH)/libgthread-2.0.a
+glib/Makefile: glib/configure
+	cd glib && ./configure  --prefix="$(DBUILDPATH)" \
+													--bindir="$(DBINPATH)" \
+													--libdir="$(DLIBPATH)" \
+													--includedir="$(SRCPATH)/include" \
+													--enable-debug \
+													--with-pcre=internal \
+													--disable-fam	 \
+													--disable-selinux \
+													--disable-libmount \
+													--disable-gtk-doc \
+													--disable-man
+
+$(DBINPATH)/libglib-2.0.so: make
+
+$(SRCPATH)/include/glib-2.0/glib.h: make
+
+$(SRCPATH)/include/glib-2.0/glibconfig.h: make
+	mkdir -p $(SRCPATH)/include/glib-2.0
+	cp -af $(DBINPATH)/glib-2.0/include/glibconfig.h $(SRCPATH)/include/glib-2.0/

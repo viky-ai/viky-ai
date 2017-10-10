@@ -15,9 +15,6 @@
 
     <component name="external_dependencies" />
 
-    <component name="glib" />
-    <component name="libiconv" />
-
     <!-- Pertimm libs -->
     <component name="ogm_gen/lib" />
     <component name="ogm_aut/lib" />
