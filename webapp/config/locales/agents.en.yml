@@ -6,6 +6,15 @@ en:
         agents_management: Agents management
         new_btn: New agent
         create_agent: Create agent
+      index:
+        delete:
+          btn: Delete
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete agent : <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        message: "Agent with the name : %{name} has successfully been deleted."
       new:
         title: New agent
         success_message: Your agent has been succefully created.

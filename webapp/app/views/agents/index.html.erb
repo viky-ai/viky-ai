@@ -12,13 +12,18 @@
     </a>
   </div>
 </header>
-
-<ul class="agents-list">
-  <% @agents.each do |agent| %>
-    <li class="agents-list__item">
-      <h3><%= agent.name %></h3>
-      <p><%= agent.description %></p>
-    </li>
-  <% end %>
-</ul>
-
+<div class="card">
+  <div class="card-content">
+    <ul class="agents-list">
+      <% @agents.each do |agent| %>
+      <li class="agents-list__item">
+        <h3><%= agent.name %></h3>
+        <p><%= agent.description %></p>
+        <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
+          <%= t('views.agents.index.delete.btn') %>
+        </a>
+      </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
