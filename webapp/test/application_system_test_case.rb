@@ -11,4 +11,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     fill_in 'Password', with: 'AdminBoom'
     click_button 'Log in'
   end
+
+  def go_to_agents_index
+    admin_login
+    within(".nav") do
+      click_link "Agents"
+    end
+  end
 end
