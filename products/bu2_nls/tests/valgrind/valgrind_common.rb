@@ -13,7 +13,7 @@ module Valgrind
 
     end
 
-    def interpret_queries
+    def interpret_queries(nb_simple, nb_timeout)
 
       interpret_simple_query=
       {
@@ -23,7 +23,7 @@ module Valgrind
       }
 
       # launch simple query
-      700.times do
+      nb_simple.times do
         response = Nls::Nls.interpret(interpret_simple_query)
         assert !response.nil?
       end
@@ -35,7 +35,7 @@ module Valgrind
 
       # launch hello world query with timeout
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
-      0.times do |i|
+      nb_timeout.times do |i|
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls::Nls.query_get(Nls::Nls.url_test, hello_world_query)
         end

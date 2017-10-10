@@ -190,7 +190,9 @@ struct og_ctrl_nls
   char sremote_addr[DPcPathSize];
   int must_stop;
 
-  void *haddr, *hucis;
+  void *haddr;
+  void *hucis;
+  void *hucic;
 
   struct og_listening_thread *Lt;
   int LtNumber;

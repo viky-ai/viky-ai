@@ -10,7 +10,7 @@
 //#define OgThnMessageLog OgThrMessageLog
 //#define OgThnErrLog OgThrErrLog
 
-#define DOgBaSize   0x8000 /* 32k */
+#define DOgBaSize   0x1000 /* 4k */
 
 #define DOgUciTraceMinimal          0x1
 #define DOgUciTraceMemory           0x2

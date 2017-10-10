@@ -7,7 +7,7 @@
 #include "ogm_http.h"
 
 
-#define DOgHttpHaHeaderSize 0x2000 /* 8k */
+#define DOgHttpHaHeaderSize 1024 /* 1k */
 
 
 

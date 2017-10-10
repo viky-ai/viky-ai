@@ -68,17 +68,26 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   }
   memset(ctrl_nls->Lt, 0, size);
 
-  struct og_uci_server_param uci_param[1];
-  memset(uci_param, 0, sizeof(struct og_uci_server_param));
-  uci_param->hmsg = ctrl_nls->hmsg;
-  uci_param->herr = ctrl_nls->herr;
-  uci_param->hmutex = ctrl_nls->hmutex;
-  uci_param->loginfo.trace = DOgUciServerTraceMinimal + DOgUciServerTraceMemory;
-  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocket) uci_param->loginfo.trace |= DOgUciServerTraceSocket;
-  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocketSize) uci_param->loginfo.trace |= DOgUciServerTraceSocketSize;
-  uci_param->socket_buffer_size = ctrl_nls->conf->max_request_size;
-  uci_param->loginfo.where = ctrl_nls->loginfo->where;
-  IFn(ctrl_nls->hucis=OgUciServerInit(uci_param)) return (0);
+  struct og_uci_server_param ucis_param[1];
+  memset(ucis_param, 0, sizeof(struct og_uci_server_param));
+  ucis_param->hmsg = ctrl_nls->hmsg;
+  ucis_param->herr = ctrl_nls->herr;
+  ucis_param->hmutex = ctrl_nls->hmutex;
+  ucis_param->loginfo.trace = DOgUciServerTraceMinimal + DOgUciServerTraceMemory;
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocket) ucis_param->loginfo.trace |= DOgUciServerTraceSocket;
+  if (ctrl_nls->loginfo->trace & DOgNlsTraceSocketSize) ucis_param->loginfo.trace |= DOgUciServerTraceSocketSize;
+  ucis_param->socket_buffer_size = ctrl_nls->conf->max_request_size;
+  ucis_param->loginfo.where = ctrl_nls->loginfo->where;
+  IFn(ctrl_nls->hucis=OgUciServerInit(ucis_param)) return (0);
+
+  // Use to send http request to unblock other thread
+  struct og_uci_client_param ucic_param[1];
+  memset(ucic_param, 0, sizeof(struct og_uci_client_param));
+  ucic_param->herr = ctrl_nls->herr;
+  ucic_param->hmutex = ctrl_nls->hmutex;
+  ucic_param->loginfo.trace = DOgUciClientTraceMinimal + DOgUciClientTraceMemory;
+  ucic_param->loginfo.where = ctrl_nls->loginfo->where;
+  IFn(ctrl_nls->hucic = OgUciClientInit(ucic_param)) return NULL;
 
   /** Maintenance thread initialization **/
   struct og_maintenance_thread *mt = ctrl_nls->mt;
@@ -148,6 +157,7 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
 
   IFE(OgNlpFlush(ctrl_nls->hnlp));
 
+  IFE(OgUciClientFlush(ctrl_nls->hucic));
   IFE(OgUciServerFlush(ctrl_nls->hucis));
 
   IFE(OgMaintenanceThreadFlush(ctrl_nls->mt));
@@ -168,19 +178,8 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
 
 PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
 {
-
   // stop non blocking thread
   ctrl_nls->must_stop = TRUE;
-
-  // unblock other thread
-  struct og_uci_client_param param[1];
-  memset(param, 0, sizeof(struct og_uci_client_param));
-  param->herr = ctrl_nls->herr;
-  param->hmutex = ctrl_nls->hmutex;
-  param->loginfo.trace = DOgUciClientTraceMinimal + DOgUciClientTraceMemory;
-  //+ DOgUciClientTraceSocket
-  //+ DOgUciClientTraceSocketSize;
-  param->loginfo.where = ctrl_nls->loginfo->where;
 
   struct og_ucic_request request[1];
   memset(request, 0, sizeof(struct og_ucic_request));
@@ -196,14 +195,8 @@ PUBLIC(og_status) OgNlsOnSignalStop(og_nls ctrl_nls)
   request->request = "";
   request->request_length = 0;
 
-  void *hucic = OgUciClientInit(param);
-  if (hucic != NULL)
-  {
-    struct og_ucic_answer answer[1];
-    OgUciClientRequest(hucic, request, answer);
-
-    OgUciClientFlush(hucic);
-  }
+  struct og_ucic_answer answer[1];
+  IFE(OgUciClientRequest(ctrl_nls->hucic, request, answer));
 
   DONE;
 }
