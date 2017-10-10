@@ -15,6 +15,7 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
 {
 
   json_t *json_packages = json_array();
+  output->json_output = json_packages;
 
   GList *key_list = g_hash_table_get_keys(ctrl_nlp->packages_hash);
 
@@ -22,7 +23,11 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
   for (GList *iter = g_list_first(sorted_key_kist); iter; iter = iter->next)
   {
     json_t *json_package = json_object();
-
+    IF(json_array_append_new(json_packages, json_package))
+    {
+      NlpThrowError(ctrl_nlp, "NlpPackageDump : Error while dumping package");
+      DPcErr;
+    }
     og_string package_id = iter->data;
 
     package_t package = NlpPackageGet(ctrl_nlp, package_id);
@@ -32,12 +37,6 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
 
     IFE(NlpPackageDump(package, json_package));
 
-    IF(json_array_append_new(json_packages, json_package))
-    {
-      NlpThrowError(ctrl_nlp, "NlpPackageDump : Error while dumping package");
-      DPcErr;
-    }
-
   }
 
   size_t size = json_dumpb(json_packages, NULL, 0, 0);
@@ -46,8 +45,6 @@ PUBLIC(int) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct o
     NlpThrowError(ctrl_nlp, "OgNlpDump : Empty JSon structure");
     DPcErr;
   }
-
-  output->json_output = json_packages;
 
   DONE;
 }
@@ -72,17 +69,17 @@ og_status NlpPackageDump(package_t package, json_t *json_package)
   if (intent_used > 0)
   {
     json_t *json_intents = json_array();
+    IF(json_object_set_new(json_package, "intents", json_intents))
+    {
+      NlpThrowError(ctrl_nlp, "NlpPackageDump : Error while dumping intents");
+      DPcErr;
+    }
 
     for (int i = 0; i < intent_used; i++)
     {
       IFE(NlpPackageIntentDump(package, i, json_intents));
     }
 
-    IF(json_object_set_new(json_package, "intents", json_intents))
-    {
-      NlpThrowError(ctrl_nlp, "NlpPackageDump : Error while dumping intents");
-      DPcErr;
-    }
   }
   DONE;
 }
@@ -98,6 +95,11 @@ og_status NlpPackageIntentDump(package_t package, int Iintent, json_t *json_inte
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "  Intent '%s' :", intent_id);
 
   json_t *json_intent = json_object();
+  IF(json_array_append_new(json_intents, json_intent))
+  {
+    NlpThrowError(ctrl_nlp, "NlpPackageIntentDump : Error while dumping intent");
+    DPcErr;
+  }
 
   json_t *json_intent_id = json_string(intent_id);
   IF(json_object_set_new(json_intent, "id", json_intent_id))
@@ -109,22 +111,17 @@ og_status NlpPackageIntentDump(package_t package, int Iintent, json_t *json_inte
   if (intent->sentences_nb > 0)
   {
     json_t *json_sentences = json_array();
-    for (int i = 0; i < intent->sentences_nb; i++)
-    {
-      IFE(NlpPackageSentenceDump(package, intent->sentence_start + i, json_sentences));
-    }
-
     IF(json_object_set_new(json_intent, "sentences", json_sentences))
     {
       NlpThrowError(ctrl_nlp, "NlpPackageIntentDump : Error while dumping sentences");
       DPcErr;
     }
-  }
 
-  IF(json_array_append_new(json_intents, json_intent))
-  {
-    NlpThrowError(ctrl_nlp, "NlpPackageIntentDump : Error while dumping intent");
-    DPcErr;
+    for (int i = 0; i < intent->sentences_nb; i++)
+    {
+      IFE(NlpPackageSentenceDump(package, intent->sentence_start + i, json_sentences));
+    }
+
   }
 
   DONE;
@@ -138,7 +135,11 @@ og_status NlpPackageSentenceDump(package_t package, int Isentence, json_t *json_
   IFN(sentence) DPcErr;
 
   json_t *json_sentence = json_object();
-
+  IF(json_array_append_new(json_sentences, json_sentence))
+  {
+    NlpThrowError(ctrl_nlp, "NlpPackageSentenceDump : Error while dumping sentence");
+    DPcErr;
+  }
   og_string text = OgHeapGetCell(package->hba, sentence->text_start);
   json_t *json_text = json_string(text);
 
@@ -156,14 +157,7 @@ og_status NlpPackageSentenceDump(package_t package, int Isentence, json_t *json_
   json_t *json_locale = json_string(string_locale);
   IF(json_object_set_new(json_sentence, "locale", json_locale))
   {
-    NlpThrowError(ctrl_nlp, "NlpPackageSentenceDump : Error while dumping sentence locale",
-        string_locale);
-    DPcErr;
-  }
-
-  IF(json_array_append_new(json_sentences, json_sentence))
-  {
-    NlpThrowError(ctrl_nlp, "NlpPackageSentenceDump : Error while dumping sentence");
+    NlpThrowError(ctrl_nlp, "NlpPackageSentenceDump : Error while dumping sentence locale", string_locale);
     DPcErr;
   }
 
