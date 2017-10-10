@@ -133,7 +133,8 @@ struct og_listening_thread
 
   /** for permanent lt threads **/
   ogsem_t hsem[1];
-  int must_stop;
+  og_bool must_stop;
+  og_bool is_stopped;
 
   ogint64_t t0, t1, t2, t3, ot3;
 

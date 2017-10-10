@@ -29,7 +29,7 @@ module Valgrind
       end
 
       hello_world_query = {
-        timeout: 5,
+        timeout: 15,
         wait: "2000"
       }
 

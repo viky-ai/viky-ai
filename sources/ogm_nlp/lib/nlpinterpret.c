@@ -143,6 +143,11 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *
   IFE(NlpInterpretRequestParse(ctrl_nlpi, json_request));
 
   json_t *json_intents = json_array();
+  IF(json_object_set_new(json_answer, "intents", json_intents))
+  {
+    NlpiThrowError(ctrl_nlpi, "NlpInterpretRequest: error setting json_intents");
+    DPcErr;
+  }
 
   int package_used = OgHeapGetCellsUsed(ctrl_nlpi->hinterpret_package);
   for (int i = 0; i < package_used; i++)
@@ -158,12 +163,6 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *
     OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s'", package_id);
 
     IFE(NlpInterpretRequestPackage(ctrl_nlpi, package, json_intents));
-  }
-
-  IF(json_object_set_new(json_answer, "intents", json_intents))
-  {
-    NlpiThrowError(ctrl_nlpi, "NlpInterpretRequest: error setting json_intents");
-    DPcErr;
   }
 
   OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: finished interpreting request [\n%s]",

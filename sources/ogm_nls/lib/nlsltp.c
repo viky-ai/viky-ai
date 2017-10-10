@@ -37,6 +37,8 @@ int OgPermanentLtThread(void *ptr)
     OgMsg(lt->hmsg, "", DOgMsgDestInLog, "OgPermanentLtThread %d: finished", lt->ID);
   }
 
+  lt->is_stopped = TRUE;
+
   DONE;
 }
 
@@ -68,13 +70,22 @@ int NlsStopPermanentLtThreads(struct og_ctrl_nls *ctrl_nls)
 
 int NlsFlushPermanentLtThreads(struct og_ctrl_nls *ctrl_nls)
 {
-  struct og_listening_thread *lt;
-  int i;
-
-  for (i = 0; i < ctrl_nls->LtNumber; i++)
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
-    lt = ctrl_nls->Lt + i;
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
     IFE(OgSemaphoreFlush(lt->hsem));
+  }
+
+  for (int i = 0; i < ctrl_nls->LtNumber; i++)
+  {
+    int max_wait_count = 0;
+    struct og_listening_thread *lt = ctrl_nls->Lt + i;
+    while (!lt->is_stopped && max_wait_count < 200)
+    {
+      IFE(OgSleep(DOgNlsClockTick));
+      max_wait_count++;
+    }
+
   }
 
   DONE;

@@ -113,7 +113,7 @@ og_status OgMaintenanceThreadStop(struct og_maintenance_thread *mt)
   mt->mt_should_stop = TRUE;
 
   int max_wait_count = 0;
-  while (mt->mt_is_stopped && max_wait_count < 200)
+  while (!mt->mt_is_stopped && max_wait_count < 200)
   {
     IFE(OgSleep(DOgNlsClockTick));
     max_wait_count++;
