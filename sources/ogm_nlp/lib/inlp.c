@@ -38,7 +38,7 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
   IFn(ctrl_nlp->hmsg=OgMsgInit(msg_param)) return (0);
   IF(OgMsgTuneInherit(ctrl_nlp->hmsg,param->hmsg)) return (0);
 
-  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, g_free);
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NlpPackageDestroy);
 
   return ctrl_nlp;
 }

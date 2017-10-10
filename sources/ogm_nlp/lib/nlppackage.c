@@ -28,13 +28,13 @@ package_t NlpPackageCreate(og_nlp ctrl_nlp, const char *string_id)
   return (package);
 }
 
-og_status NlpPackageDestroy(package_t package)
+void NlpPackageDestroy(gpointer data)
 {
+  package_t package = data;
   OgHeapFlush(package->hsentence);
   OgHeapFlush(package->hintent);
   OgHeapFlush(package->hba);
   DPcFree(package);
-  DONE;
 }
 
 og_status NlpPackageAdd(og_nlp ctrl_nlp, package_t package)
