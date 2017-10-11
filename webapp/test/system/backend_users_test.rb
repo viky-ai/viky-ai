@@ -88,7 +88,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test 'Destroy with confirmation' do
+  test 'Destroy user without username' do
     before_count = User.count
 
     admin_login
@@ -109,6 +109,24 @@ class BackendUsersTest < ApplicationSystemTestCase
     fill_in 'validation', with: 'DELETE'
     click_button('Delete')
     assert page.has_content?('User with the email: notconfirmed@voqal.ai has successfully been deleted.')
+    assert_equal '/backend/users', current_path
+    assert_equal before_count - 1, User.count
+  end
+
+
+  test 'Destroy user with username' do
+    before_count = User.count
+    admin_login
+
+    click_link('Backend')
+    assert page.has_content?('5 users')
+
+    all('a.btn--destructive')[1].click
+    assert page.has_content?('Are you sure?')
+    assert page.has_content?("You're about to delete user with the email: locked@voqal.ai.")
+    fill_in 'validation', with: 'DELETE'
+    click_button('Delete')
+    assert page.has_content?('User with the email: locked@voqal.ai has successfully been deleted.')
     assert_equal '/backend/users', current_path
     assert_equal before_count - 1, User.count
   end
