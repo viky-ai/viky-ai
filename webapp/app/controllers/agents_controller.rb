@@ -28,7 +28,6 @@ class AgentsController < ApplicationController
   def destroy
     @agent.destroy
     redirect_to agents_url, notice: t('views.agents.destroy.message', name: @agent.name)
-    render partial: 'confirm_destroy', locals: { agent: @agent }
   end
 
 
