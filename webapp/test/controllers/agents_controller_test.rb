@@ -9,7 +9,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # Show
     assert_routing({
       method: 'get',
-      path: "#{user_id}/#{agent_id}"
+      path: "agents/#{user_id}/#{agent_id}"
     },
     {
       controller: 'agents',
@@ -21,7 +21,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # new
     assert_routing({
       method: 'get',
-      path: "#{user_id}/new"
+      path: "agents/#{user_id}/new"
     },
     {
       controller: 'agents',
@@ -32,7 +32,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # Create
     assert_routing({
       method: 'post',
-      path: "#{user_id}"
+      path: "agents/#{user_id}"
     },
     {
       controller: 'agents',
@@ -43,7 +43,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # Edit
     assert_routing({
       method: 'get',
-      path: "#{user_id}/#{agent_id}/edit"
+      path: "agents/#{user_id}/#{agent_id}/edit"
     },
     {
       controller: 'agents',
@@ -55,7 +55,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # update
     assert_routing({
       method: 'patch',
-      path: "#{user_id}/#{agent_id}"
+      path: "agents/#{user_id}/#{agent_id}"
     },
     {
       controller: 'agents',
@@ -67,7 +67,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     # destroy
     assert_routing({
       method: 'delete',
-      path: "#{user_id}/#{agent_id}"
+      path: "agents/#{user_id}/#{agent_id}"
     },
     {
       controller: 'agents',

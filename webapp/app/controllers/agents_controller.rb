@@ -1,4 +1,5 @@
 class AgentsController < ApplicationController
+  before_action :set_agent, only: [:confirm_destroy, :destroy]
 
   def index
     @agents = current_user.agents
@@ -7,16 +8,39 @@ class AgentsController < ApplicationController
   end
 
   def new
+    @agent = Agent.new
   end
 
   def create
-    # @agent = Agent.new(agent_params)
-    # @agent.users << current_user
-    # if @agent.save
-    #   redirect_to :index, notice: "it's ok"
-    # else
-    #   render :new
-    # end
+    @agent = Agent.new(agent_params)
+    @agent.users << current_user
+    if @agent.save
+      redirect_to agents_path, notice: t('views.agents.new.success_message')
+    else
+      render :new
+    end
   end
+
+  def confirm_destroy
+    render partial: 'confirm_destroy', locals: { agent: @agent }
+  end
+
+  def destroy
+    @agent.destroy
+    redirect_to agents_url, notice: t('views.agents.destroy.message', name: @agent.name)
+    render partial: 'confirm_destroy', locals: { agent: @agent }
+  end
+
+
+  private
+
+    def set_agent
+      user = User.friendly.find(params[:user_id])
+      @agent = user.agents.friendly.find(params[:id])
+    end
+
+    def agent_params
+      params.require(:agent).permit(:name, :agentname)
+    end
 
 end
