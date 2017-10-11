@@ -11,7 +11,7 @@
 
     <h3><%= t('views.agents.new.title') %></h3>
 
-    <%= form_with model: @agent, local: true do |f| %>
+    <%= form_with url: user_agents_path(current_user), model: @agent, local: true do |f| %>
       <div class="field">
         <div class="control">
           <%= f.label :name, t('views.agents.new.name') %>

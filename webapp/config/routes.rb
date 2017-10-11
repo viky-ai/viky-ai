@@ -16,10 +16,12 @@ Rails.application.routes.draw do
     get :confirm_destroy
   end
 
-  resources :users, path: '', only: [] do
-    resources :agents, path: '', except: [:index] do
-      member do
-        get :confirm_destroy
+  scope '/agents' do
+    resources :users, path: '', only: [] do
+      resources :agents, path: '', except: [:index] do
+        member do
+          get :confirm_destroy
+        end
       end
     end
   end
