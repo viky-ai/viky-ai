@@ -7,6 +7,7 @@ notconfirmed:
   updated_at: "2017-01-01 00:00:00"
 
 confirmed:
+  id: "a370752a-7dbd-4d76-a966-f5b271ab782b"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
   email: confirmed@voqal.ai
   username: confirmed

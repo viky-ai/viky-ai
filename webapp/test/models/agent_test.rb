@@ -13,7 +13,7 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.save
     assert_equal users(:admin).id, agent.owner_id
     assert_equal 'admin', agent.users.first.username
-    assert_equal ['weather','agenta'], users(:admin).agents.collect(&:agentname)
+    assert_equal ['weather', 'terminator', 'agenta'], users(:admin).agents.collect(&:agentname)
   end
 
 

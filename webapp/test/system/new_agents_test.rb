@@ -36,6 +36,7 @@ class NewAgentsTest < ApplicationSystemTestCase
     assert page.has_text?('Your agent has been succefully created.')
     expected = [
       "My awesome weather bot",
+      "T-800",
       "Wall-e",
     ]
     assert_equal expected, all('.agent-box h2').collect {|n| n.text}
