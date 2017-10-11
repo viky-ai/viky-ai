@@ -745,7 +745,7 @@ sub makeComponents ($$$$@)
     {
       if(defined($ENV{'MAKE_OPTS_PARALLEL'}))
       {
-        $use_makeopts_parallel = "--output-sync=recurse " + $ENV{'MAKE_OPTS_PARALLEL'};
+        $use_makeopts_parallel = "--output-sync=recurse " . $ENV{'MAKE_OPTS_PARALLEL'};
       }
       else
       {
