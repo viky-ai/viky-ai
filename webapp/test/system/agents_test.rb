@@ -67,4 +67,18 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('My new updated agent')
   end
 
+  test 'Agents can be found by name' do
+    go_to_agents_index
+    fill_in 'search_query', with: '800'
+    click_button '#search'
+    assert_equal '/agents', current_path
+  end
+
+  test 'Agents can be found by agentname' do
+    go_to_agents_index
+    fill_in 'search_query', with: 'inator'
+    click_button '#search'
+    assert_equal '/agents', current_path
+  end
+
 end

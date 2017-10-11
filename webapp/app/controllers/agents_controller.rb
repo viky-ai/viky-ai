@@ -3,6 +3,7 @@ class AgentsController < ApplicationController
 
   def index
     @agents = current_user.agents
+    @search = AgentSearch.new
     # TODO: Pagination
     # TODO: Recherche
   end
