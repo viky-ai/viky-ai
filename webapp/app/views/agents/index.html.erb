@@ -6,24 +6,49 @@
   <div class="header__search">
     ...
   </div>
-  <div class="header__tools">
-    <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary">
-      <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
-    </a>
-  </div>
+  <% if !@agents.empty? %>
+    <div class="header__tools">
+      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary">
+        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
+      </a>
+    </div>
+  <% end %>
 </header>
-<div class="card">
-  <div class="card-content">
-    <ul class="agents-list">
-      <% @agents.each do |agent| %>
-      <li class="agents-list__item">
-        <h3><%= agent.name %></h3>
-        <p><%= agent.description %></p>
-        <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
-          <%= t('views.agents.index.delete.btn') %>
-        </a>
-      </li>
-      <% end %>
-    </ul>
+
+<% if @agents.empty? %>
+  <div class="blankslate">
+    <div class="blankslate__illustration">
+      <img src='<%= image_path "robot-idle.png" %>'
+           srcset='<%= image_path "robot-idle.png" %> 1x,
+                   <%= image_path "robot-idle@2x.png" %> 2x' />
+    </div>
+    <div class="blankslate__content">
+      <h2><%= t('views.agents.index.blankslate.title') %></h2>
+      <p>
+        <%= t('views.agents.index.blankslate.content') %>
+      </p>
+      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary btn--large">
+        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
+      </a>
+    </div>
   </div>
-</div>
+<% else %>
+
+  <div class="card">
+    <div class="card-content">
+      <ul class="agents-list">
+        <% @agents.each do |agent| %>
+        <li class="agents-list__item">
+          <h3><%= agent.name %></h3>
+          <p><%= agent.description %></p>
+          <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
+            <%= t('views.agents.index.delete.btn') %>
+          </a>
+        </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+<% end %>
+

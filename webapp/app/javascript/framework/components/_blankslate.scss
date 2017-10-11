@@ -1,7 +1,7 @@
 .blankslate{
   padding: 1em;
-  max-width: 40em;
-  margin: 0 auto;
+  max-width: 34em;
+  margin: 6em auto 0 auto;
   @include display_flex();
   align-items: center;
 
@@ -12,6 +12,5 @@
     }
   }
   .blankslate__content{
-
   }
 }

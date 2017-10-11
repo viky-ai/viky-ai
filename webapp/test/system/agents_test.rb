@@ -8,6 +8,12 @@ class AgentsTest < ApplicationSystemTestCase
     assert_equal "My awesome weather bot", first('.agents-list__item h3').text
   end
 
+  test 'blank slate' do
+    Agent.delete_all
+    go_to_agents_index
+    assert page.has_content?("Create your first agent")
+  end
+
   test 'Button to delete agent is present' do
     go_to_agents_index
     assert page.has_link?("Delete")
