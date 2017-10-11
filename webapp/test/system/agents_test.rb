@@ -5,7 +5,7 @@ class AgentsTest < ApplicationSystemTestCase
   test 'Navigation to agents index' do
     go_to_agents_index
     assert page.has_content?("Agents management")
-    assert_equal "My awesome weather bot", first('.agents-list__item h3').text
+    assert_equal "My awesome weather bot", first('.agent-box h2').text
   end
 
   test 'blank slate' do
@@ -31,7 +31,7 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('Please enter the text exactly as it is displayed to confirm.')
     fill_in 'validation', with: 'DELETE'
     click_button('Delete')
-    assert page.has_content?('Agent with the name : My awesome weather bot has successfully been deleted.')
+    assert page.has_content?('Agent with the name: My awesome weather bot has successfully been deleted.')
     assert_equal '/agents', current_path
     assert_equal before_count - 1, Agent.count
   end

@@ -31,7 +31,7 @@ class NewAgentsTest < ApplicationSystemTestCase
       "My awesome weather bot",
       "Wall-e",
     ]
-    assert_equal expected, all('.agents-list__item h3').collect {|n| n.text}
+    assert_equal expected, all('.agent-box h2').collect {|n| n.text}
   end
 
   test "Agent creation form cancel" do

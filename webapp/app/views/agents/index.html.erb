@@ -34,20 +34,27 @@
   </div>
 <% else %>
 
-  <div class="card">
-    <div class="card-content">
-      <ul class="agents-list">
-        <% @agents.each do |agent| %>
-        <li class="agents-list__item">
-          <h3><%= agent.name %></h3>
-          <p><%= agent.description %></p>
+  <div class="agents-box-grid">
+    <% @agents.each do |agent| %>
+      <div class="agent-box">
+        <div class="agent-box__header">
+          <h2><%= agent.name %></h2>
+          <h3><%= agent.users.first.username %>/<%= agent.agentname %></h3>
+        </div>
+        <div class="agent-box__content">
+          <span>
+            <% if agent.updated_at == agent.created_at %>
+              <%= t('views.agents.index.created_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+            <% else %>
+              <%= t('views.agents.index.updated_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+            <% end %>
+          </span>
           <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" class="btn btn--small btn--outline btn--destructive" data-action="open-remote-modal">
             <%= t('views.agents.index.delete.btn') %>
           </a>
-        </li>
-        <% end %>
-      </ul>
-    </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
 <% end %>

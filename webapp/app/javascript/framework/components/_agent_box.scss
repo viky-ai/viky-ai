@@ -1,0 +1,108 @@
+.agent-box{
+  box-shadow: 0 2px 3px rgba(black, .1);
+  border-radius: 2px;
+  .agent-box__header{
+    display: block;
+    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: linear-gradient(to top right, #444 0%, #555 100%);
+    padding: 5em 0 0 0;
+    text-decoration: none;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    h2,h3{
+      font-size:1em;
+      margin: 0;
+      color: rgba(white, .9);
+      padding: 0 1rem;
+      background-color: rgba(black, .075);
+      text-shadow: 0 1px 0 rgba(black, .3);
+    }
+    h2{
+      font-weight: 400;
+      font-size: 1em;
+      padding-top: .5rem;
+      padding-bottom: .2rem;
+    }
+    h3{
+      font-size: .9em;
+      padding-bottom: .5em;
+    }
+  }
+
+  a.agent-box__header{
+    &:hover,
+    &:focus{
+      h2, h3{
+        color: #fff;
+        background-color: rgba(black, .2);
+      }
+    }
+  }
+
+  .agent-box__content{
+    padding: .5em 1em;
+    border-top: none;
+    background-color: #fff;
+    @include display_flex();
+    align-items: center;
+    justify-content: space-between;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    span{
+      color: #aaa;
+      font-size: .9em;
+    }
+  }
+}
+
+$agent_colors: (
+  brown: #5d4037,
+  red: #d32f2f,
+  pink: #c2185b,
+  purple: #7b1fa2,
+  deep-purple: #512da8,
+  indigo: #303f9f,
+  blue: #1976d2,
+  light-blue: #0288d1,
+  cyan: #0097a7,
+  teal: #00796b,
+  green: #388e3c,
+  light-green: #689f38,
+  lime: #afb42b,
+  yellow: #fbc02d,
+  amber: #ffa000,
+  orange: #f57c00,
+  deep-orange: #e64a19
+);
+.agent-box{
+  @each $name, $color in $agent_colors{
+    .agent-box__header.agent-box__header--#{$name}{
+      background-image: linear-gradient(to top right, $color 0%, lighten($color, 8%) 100%);
+    }
+  }
+}
+
+
+.agents-box-grid{
+  margin-top: 2em;
+  display: -ms-grid;
+  display: grid;
+
+  -ms-grid-columns: 1fr;
+  grid-template-columns: 1fr;
+
+  grid-gap: 2em;
+
+  @media (min-width: 900px){
+    -ms-grid-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1200px){
+    -ms-grid-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (min-width: 1600px){
+    -ms-grid-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
