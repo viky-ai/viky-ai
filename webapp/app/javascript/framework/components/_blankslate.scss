@@ -1,0 +1,17 @@
+.blankslate{
+  padding: 1em;
+  max-width: 40em;
+  margin: 0 auto;
+  @include display_flex();
+  align-items: center;
+
+  .blankslate__illustration{
+    margin-right: 3em;
+    img{
+      max-width: 100px;
+    }
+  }
+  .blankslate__content{
+
+  }
+}
