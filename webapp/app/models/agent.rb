@@ -9,6 +9,7 @@ class Agent < ApplicationRecord
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :users, presence: true
   validates :owner_id, presence: true
+  validates :color, inclusion: { in: :available_colors }
   validate :owner_presence_in_users
 
   before_validation :add_owner_id, on: :create
@@ -19,6 +20,14 @@ class Agent < ApplicationRecord
     conditions = joins(:memberships).where("user_id = ?", q[:user_id])
     conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
     conditions
+  end
+
+  def available_colors
+    [
+      'black', 'brown', 'red', 'pink', 'purple', 'deep-purple',
+      'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green',
+      'lime', 'yellow', 'amber', 'orange', 'deep-orange'
+    ]
   end
 
   private

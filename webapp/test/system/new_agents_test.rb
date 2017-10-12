@@ -19,8 +19,8 @@ class NewAgentsTest < ApplicationSystemTestCase
     click_link 'New agent'
 
     within(".modal") do
-      assert page.has_field? 'Agent name'
-      assert page.has_field? 'Agent ID'
+      assert page.has_field? 'Name'
+      assert page.has_field? 'ID'
       assert page.has_button? 'Create'
       assert page.has_link? 'Cancel'
     end
@@ -29,8 +29,8 @@ class NewAgentsTest < ApplicationSystemTestCase
 
   test "Agent creation form ok" do
     go_to_agents_creation
-    fill_in 'Agent name', with: 'Wall-e'
-    fill_in 'Agent ID', with: 'wall-e'
+    fill_in 'Name', with: 'Wall-e'
+    fill_in 'ID', with: 'wall-e'
     click_button 'Create'
 
     assert page.has_text?('Your agent has been succefully created.')
@@ -56,8 +56,8 @@ class NewAgentsTest < ApplicationSystemTestCase
     click_button 'Create'
     expected = [
       "Name can't be blank",
-      "Agentname is too short (minimum is 3 characters)",
-      "Agentname can't be blank",
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank",
     ]
     expected.each do |error|
       assert page.has_text?(error)
@@ -68,10 +68,10 @@ class NewAgentsTest < ApplicationSystemTestCase
 
   test "Agent creation form error too short" do
     go_to_agents_creation
-    fill_in 'Agent name', with: 'Wall-e'
-    fill_in 'Agent ID', with: 'A'
+    fill_in 'Name', with: 'Wall-e'
+    fill_in 'ID', with: 'A'
     click_button 'Create'
-    expected = ["Agentname is too short (minimum is 3 characters)"]
+    expected = ["ID is too short (minimum is 3 characters)"]
     expected.each do |error|
       assert page.has_text?(error)
     end

@@ -73,8 +73,8 @@ class AgentTest < ActiveSupport::TestCase
     assert !agent.valid?
     expected = [
       "Name can't be blank",
-      "Agentname is too short (minimum is 3 characters)",
-      "Agentname can't be blank"
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank"
     ]
     assert_equal expected, agent.errors.full_messages
   end
@@ -89,8 +89,8 @@ class AgentTest < ActiveSupport::TestCase
     assert !agent.valid?
     expected = [
       "Name can't be blank",
-      "Agentname is too short (minimum is 3 characters)",
-      "Agentname can't be blank"
+      "ID is too short (minimum is 3 characters)",
+      "ID can't be blank"
     ]
     assert_equal expected, agent.errors.full_messages
 
@@ -111,7 +111,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     agent.users << users(:admin)
     assert !agent.valid?
-    expected = ["Agentname is too short (minimum is 3 characters)"]
+    expected = ["ID is too short (minimum is 3 characters)"]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -132,9 +132,29 @@ class AgentTest < ActiveSupport::TestCase
     agent_2.users << users(:admin)
 
     assert !agent_2.valid?
-    expected = ["Agentname has already been taken"]
+    expected = ["ID has already been taken"]
     assert_equal expected, agent_2.errors.full_messages
   end
+
+
+  test "agent color validation" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.users << users(:admin)
+    assert agent.valid?
+    assert agent.save
+
+    agent.color = "missing value"
+    assert agent.invalid?
+    expected = ["Color is not included in the list"]
+    assert_equal expected, agent.errors.full_messages
+
+    agent.color = "red"
+    assert agent.valid?
+  end
+
 
   test "Test agent slug" do
     agent = users(:admin).agents.friendly.find("weather")
@@ -157,6 +177,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal "My awesome weather bot", agent.name
   end
 
+
   test "Clean agentname" do
     agent = Agent.new(
       name: "Agent 2",
@@ -167,12 +188,14 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal "aaa-b", agent.agentname
   end
 
+
   test "Search agent empty" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)
     assert_equal 1, s.options.size
     assert_equal user_id, s.options[:user_id]
   end
+
 
   test "Search agent by name" do
     user_id = users(:admin).id
@@ -186,6 +209,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
   end
 
+
   test "Search agent by agentname" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)
@@ -197,6 +221,7 @@ class AgentTest < ActiveSupport::TestCase
     ]
     assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
   end
+
 
   test "Search agent by name is trimmed" do
     user_id = users(:admin).id

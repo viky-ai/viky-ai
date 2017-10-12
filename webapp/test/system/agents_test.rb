@@ -52,7 +52,7 @@ class AgentsTest < ApplicationSystemTestCase
     first('.dropdown__trigger > button').click
     click_link 'Configure'
     assert page.has_text?('Configure agent')
-    fill_in 'Agent name', with: ''
+    fill_in 'Name', with: ''
     click_button 'Update'
 
     expected = ["Name can't be blank"]
@@ -61,7 +61,7 @@ class AgentsTest < ApplicationSystemTestCase
     end
     assert_equal 1, all('.help--error').size
 
-    fill_in 'Agent name', with: 'My new updated agent'
+    fill_in 'Name', with: 'My new updated agent'
     click_button 'Update'
     assert page.has_text?('Your agent has been succefully updated.')
     assert page.has_text?('My new updated agent')

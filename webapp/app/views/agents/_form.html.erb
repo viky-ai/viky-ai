@@ -1,7 +1,7 @@
 <%= form_with model: [current_user, agent], data: { type: 'json' } do |f| %>
   <div class="field">
     <div class="control">
-      <%= f.label :name, t('views.agents.new.name') %>
+      <%= f.label :name %>
       &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
       <br />
       <%= f.text_field :name, id: :agent_name %>
@@ -11,11 +11,19 @@
 
   <div class="field">
     <div class="control">
-      <%= f.label :agentname, t('views.agents.new.agentname') %>
+      <%= f.label :agentname %>
       &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
       <br />
       <%= f.text_field :agentname, id: :agent_agentname %>
       <%= display_errors(agent, :agentname) %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.label :color %>
+      <% colors_array = agent.available_colors.map { |color| [color, color] } %>
+      <%= f.select :color, options_for_select(colors_array) %>
     </div>
   </div>
 

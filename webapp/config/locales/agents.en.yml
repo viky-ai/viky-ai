@@ -24,10 +24,8 @@ en:
         message: "Agent with the name: %{name} has successfully been deleted."
       new:
         title: Create new agent
-        success_message: Your agent has been succefully created.
-        name: Agent name
-        agentname: Agent ID
         btn: Create
+        success_message: Your agent has been succefully created.
       edit:
         title: Configure agent
         btn: Update

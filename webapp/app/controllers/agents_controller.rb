@@ -71,7 +71,7 @@ class AgentsController < ApplicationController
     end
 
     def agent_params
-      params.require(:agent).permit(:name, :agentname)
+      params.require(:agent).permit(:name, :agentname, :color)
     end
 
     def search_params
