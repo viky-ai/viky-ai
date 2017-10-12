@@ -1,11 +1,10 @@
 /*
- *	Initialization for msg library
- *	Copyright (c) 2007 Pertimm by Patrick Constant and Guillaume Logerot
- *	Dev : March,April 2007
- *	Version 1.1
+ *  Initialization for msg library
+ *  Copyright (c) 2007 Pertimm by Patrick Constant and Guillaume Logerot
+ *  Dev : March,April 2007
+ *  Version 1.1
 */
 #include "ogm_msg.h"
-#include <logxml.h>
 
 PUBLIC(void *) OgMsgInit(struct og_msg_param *param)
 {

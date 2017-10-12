@@ -12,7 +12,6 @@
 #include <logpath.h>
 #include <logthr.h>
 #include <logheap.h>
-#include <logsort.h>
 #include <loggen.h>
 #include <glib.h>
 

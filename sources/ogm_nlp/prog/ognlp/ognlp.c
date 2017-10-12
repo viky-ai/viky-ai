@@ -5,7 +5,6 @@
  *  Version 1.0
  */
 #include <lognlp.h>
-#include <logxml.h>
 #include <logmsg.h>
 #include <getopt.h>
 #include <logpath.h>

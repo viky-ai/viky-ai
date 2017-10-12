@@ -137,11 +137,11 @@ $(POBJ):
 #  Compilation Rules                                            #
 #---------------------------------------------------------------#
 $(ROBJ)/%.o : %.c ; @echo $< ; $(CC) -rdynamic -o $@ -c $(CFLAGSR) $(CFLAGSR_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
-$(DOBJ)/%.o : %.c ; @echo $< ; $(CC) -rdynamic -o $@ -c $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
+$(DOBJ)/%.o : %.c ; @echo $< ; $(CC) -MD -rdynamic -o $@ -c $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
 $(POBJ)/%.o : %.c ; @echo $< ; $(CC) -rdynamic -o $@ -c $(CFLAGSP) $(CFLAGSP_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
 
 $(ROBJ)/%.o : %.cpp ; @echo $< ; $(CPP) -rdynamic -o $@ -c $(CFLAGSR) $(CFLAGSR_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
-$(DOBJ)/%.o : %.cpp ; @echo $< ; $(CPP) -rdynamic -o $@ -c $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
+$(DOBJ)/%.o : %.cpp ; @echo $< ; $(CPP) -MD -rdynamic -o $@ -c $(CFLAGSD) $(CFLAGSD_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
 $(POBJ)/%.o : %.cpp ; @echo $< ; $(CPP) -rdynamic -o $@ -c $(CFLAGSP) $(CFLAGSP_INTERNAL) $(ADD_INC) $(ADD_CFLAGS) $<
 
 GENTEST: $(RBINPATH) $(DBINPATH) $(PBINPATH)

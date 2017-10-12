@@ -7,7 +7,6 @@
 #ifndef _LOGUCIALIVE_
 #include <lpcgentype.h>
 #include <loggen.h>
-#include <logthn.h>
 #include <logsock.h>
 #include <loghttp.h>
 #include <logmsg.h>

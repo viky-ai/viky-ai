@@ -8,6 +8,7 @@
 #include <logpath.h>
 #include <logsig.h>
 #include <signal.h>
+#include <getopt.h>
 #include <execinfo.h>
 #include <glib.h>
 

@@ -1,11 +1,10 @@
 /*
- *	Used for file selection in ogm_conf.txt, sections
+ *  Used for file selection in ogm_conf.txt, sections
  *  [DirSelect], [FileSelect], [FileSystemSelect]
- *	Copyright (c) 1999-2000	Ogmios by Patrick Constant
- *	Dev : December 1999, January 2000
- *	Version 1.2
+ *  Copyright (c) 1999-2000  Ogmios by Patrick Constant
+ *  Dev : December 1999, January 2000
+ *  Version 1.2
 */
-#include <loghist.h>
 #include <logfix.h>
 #include <loggen.h>
 #include <stdlib.h>
@@ -24,7 +23,7 @@ struct og_select_line {
   };
 
 struct og_select_section {
-  int isl;  struct og_select_line *sl;  
+  int isl;  struct og_select_line *sl;
   unsigned char *B;
   };
 
@@ -61,7 +60,7 @@ PUBLIC(void *) OgFileSelectInit(char *ogm_conf_in, const char *exclude_path, cha
 int retour;
 char value[256],ogm_conf[DPcPathSize],*DOgMAIN,*DOgINSTANCE;
 char erreur[DPcSzErr];
-struct og_select *ogselect; 
+struct og_select *ogselect;
 
 if(!Ogstricmp(ogm_conf_in,DOgFileOgmConf_Txt) && (DOgMAIN=getenv("DOgMAIN")) && (DOgINSTANCE=getenv("DOgINSTANCE"))) {
   sprintf(ogm_conf,"%s/%s/%s/%s",DOgMAIN,DOgPathMAINtoINSTANCES,DOgINSTANCE,DOgFileOgmConf_Txt_instance);  }
@@ -71,7 +70,7 @@ else {
 IFn(ogselect=(struct og_select *)malloc(sizeof(struct og_select))) {
   DPcSprintf(erreur,"OgFileSelectInit: impossible to malloc ogselect (%d bytes)"
             ,sizeof(struct og_select));
-  PcErr(-1,erreur); return(0);  
+  PcErr(-1,erreur); return(0);
   }
 
 memset(ogselect,0,sizeof(struct og_select));
@@ -81,7 +80,7 @@ IF(retour=OgConfGetVar(ogm_conf,"MajToMin",value,256,1)) return(0);
 if (retour) {
   OgMessageLog( DOgMlogInLog, where, 0
               , "MajToMin is: '%s'", value);
-  if (value[0]=='y') ogselect->MajToMin = 1; 
+  if (value[0]=='y') ogselect->MajToMin = 1;
   else ogselect->MajToMin = 0;
   }
 else {
@@ -114,12 +113,12 @@ PUBLIC(void *) OgFileSelectZoneInit(char *ogm_conf, char *zone, char *where)
 int retour;
 char value[256];
 char erreur[DPcSzErr];
-struct og_select *ogselect; 
+struct og_select *ogselect;
 
 IFn(ogselect=(struct og_select *)malloc(sizeof(struct og_select))) {
   DPcSprintf(erreur,"OgFileSelectInit: impossible to malloc ogselect (%d bytes)"
             ,sizeof(struct og_select));
-  PcErr(-1,erreur); return(0);  
+  PcErr(-1,erreur); return(0);
   }
 
 memset(ogselect,0,sizeof(struct og_select));
@@ -129,7 +128,7 @@ IF(retour=OgConfGetVar(ogm_conf,"MajToMin",value,256,1)) return(0);
 if (retour) {
   OgMessageLog( DOgMlogInLog, where, 0
               , "MajToMin is: '%s'", value);
-  if (value[0]=='y') ogselect->MajToMin = 1; 
+  if (value[0]=='y') ogselect->MajToMin = 1;
   else ogselect->MajToMin = 0;
   }
 else {
@@ -161,7 +160,7 @@ return((void *)ogselect);
  *  Each time a file is selected, the function 'func'
  *  is started with an og_selected structure filled with
  *  the following information:
- *    name and length of name of file 
+ *    name and length of name of file
  *    type of selection ('x' or 'i' or 'n' for none)
  *    for the three existing sections.
 */
@@ -173,12 +172,12 @@ char erreur[DPcSzErr];
 
 IFn(fd=fopen(filename,"r")) {
   DPcSprintf(erreur,"OgFileSelect: impossible to open '%s'",filename);
-  PcErr(-1,erreur); DPcErr;  
+  PcErr(-1,erreur); DPcErr;
   }
 
 while(fgets(buffer,1024,fd)) {
   int ibuffer=strlen(buffer);
-  if (buffer[ibuffer-1]=='\n') buffer[--ibuffer]=0;  
+  if (buffer[ibuffer-1]=='\n') buffer[--ibuffer]=0;
   IFE(OgFileSelectLine(handle,ibuffer,buffer,func,ptr));
   }
 
@@ -191,7 +190,7 @@ DONE;
 
 PUBLIC(int) OgFileSelectFlush(void *handle)
 {
-struct og_select *ogselect = (struct og_select *)handle; 
+struct og_select *ogselect = (struct og_select *)handle;
 
 IFn(handle) DONE;
 DPcFree(ogselect->ds.sl);  DPcFree(ogselect->ds.B);
@@ -209,7 +208,7 @@ DONE;
 
 PUBLIC(int) OgFileSelectZoneFlush(void *handle)
 {
-struct og_select *ogselect = (struct og_select *)handle; 
+struct og_select *ogselect = (struct og_select *)handle;
 
 IFn(handle) DONE;
 DPcFree(ogselect->ds.sl);  DPcFree(ogselect->ds.B);
@@ -225,7 +224,7 @@ DONE;
 
 PUBLIC(int) OgFileSelectLine(void *handle, int ifile, char *file, int (*func) (void *, struct og_selected *), void *ptr)
 {
-struct og_select *ogselect = (struct og_select *)handle; 
+struct og_select *ogselect = (struct og_select *)handle;
 int icanon; char canon[DPcPathSize*2];
 struct og_selected selected;
 char type;
@@ -262,7 +261,7 @@ DONE;
 
 PUBLIC(int) OgFileSelectZoneLine(void *handle, int ifile, char *file, int (*func) (void *, struct og_selected *), void *ptr)
 {
-struct og_select *ogselect = (struct og_select *)handle; 
+struct og_select *ogselect = (struct og_select *)handle;
 int icanon; char canon[DPcPathSize*2];
 struct og_selected selected;
 char type;
@@ -326,23 +325,23 @@ int dir,slash,point=0,iref=0;
 canon[k++]='['; dir=1;
 for (i=0; i<len; i++) {
   if (file[i]==DOgSepReference) {
-    if (iref < 2) { 
+    if (iref < 2) {
       point=0; canon[k++]=':';
       if (iref == 1) {
         for (dir=0,j=i+1; j<len && file[j] != DOgSepReference; j++) {
           if (file[j]=='\\' || file[j]=='/') { dir=1; break; }
           }
         if (!dir) canon[k++]='+';
-        } 
-      iref++;  
-      continue; 
+        }
+      iref++;
+      continue;
       }
     /** Third separator indicates end of filename **/
     else break;
     }
   if (file[i]=='\\' || file[i]=='/') {
     if (point==0 && i>0 && file[i-1]!=':' && file[i-1]!='[') canon[k++]=';';
-    point=0; 
+    point=0;
     for (dir=0,j=i+1; j<len && file[j] != DOgSepReference; j++) {
       if (file[j]=='\\' || file[j]=='/') { dir=1; break; }
       }
@@ -351,8 +350,8 @@ for (i=0; i<len; i++) {
   else slash=0;
   /**if (dir && file[i]=='.') { point=1; canon[k++]=';'; } **/
   if (file[i]=='.') {
-    point=1; 
-    if (dir) canon[k++]=';'; 
+    point=1;
+    if (dir) canon[k++]=';';
     else canon[k++]=PcTolower(file[i]);
     }
   else canon[k++]=PcTolower(file[i]);
@@ -386,12 +385,12 @@ int ibuffer,ibuf;
 
 IFn(fd=fopen(filename,"r")) {
   DPcSprintf(erreur,"OgCompileSelectSection: impossible to open '%s'",filename);
-  PcErr(-1,erreur); DPcErr;  
+  PcErr(-1,erreur); DPcErr;
   }
 
 IFn(isection=strlen(section)) {
   DPcSprintf(erreur,"OgCompileSelectSection: null variable name");
-  PcErr(-1,erreur); DPcErr;  
+  PcErr(-1,erreur); DPcErr;
   }
 
 strcpy(lwsection,section);
@@ -402,7 +401,7 @@ state=1; start_line=end_line=iline=0;
 while(fgets(buffer,1024,fd)) {
   ibuffer=strlen(buffer); iline++;
   if (buffer[0]==';') continue;
-  for(i=0; i<ibuffer; i++) { 
+  for(i=0; i<ibuffer; i++) {
     /**if (buffer[i]==';') { ibuffer=i; buffer[i]=0; break; }   **/
     if (!isspace((int)buffer[i])) break;
     if (buffer[i]=='[') break;
@@ -417,8 +416,8 @@ while(fgets(buffer,1024,fd)) {
     }
   else if (state==2) {
     if (buffer[i]=='[') { end_line=iline; break; }
-    for(i=0; i<ibuffer; i++) { 
-      if (PcIsspace(buffer[i])) continue;  
+    for(i=0; i<ibuffer; i++) {
+      if (PcIsspace(buffer[i])) continue;
       else if (buffer[i]=='i' || buffer[i]=='I') { nbi++; sB+=ibuffer; }
       else if (buffer[i]=='x' || buffer[i]=='X') { nbx++; sB+=ibuffer; }
       break;
@@ -432,7 +431,7 @@ if (start_line==0) {
     OgMessageLog( DOgMlogInLog, ogselect->where, 0
       , "OgCompileSelectSection: no section '%s'",section);
     }
-#endif  
+#endif
   DONE;
   }
 /** This happens when arriving at the end of the file **/
@@ -440,7 +439,7 @@ if (end_line==0) end_line=iline+1;
 
 IFn(sB) DONE;
 
-/* Buffer can be bigger because of ';' that are added 
+/* Buffer can be bigger because of ';' that are added
  * when canonizing the select lines, thus we multiply by 2 */
 sB*=2;
 nbsl=nbi+nbx;
@@ -452,14 +451,14 @@ if (exclude_path) {
 
 IFn(ss->B=(unsigned char *)malloc(sB+10)) {
   DPcSprintf(erreur,"OgCompileSelectSection: impossible to malloc ss->B (%d bytes)",sB);
-  PcErr(-1,erreur); DPcErr;  
+  PcErr(-1,erreur); DPcErr;
   }
 
 
 IFn(ss->sl=(struct og_select_line *)malloc(nbsl*sizeof(struct og_select_line))) {
   DPcSprintf(erreur,"OgCompileSelectSection: impossible to malloc ss->sl (%d bytes)"
             ,nbsl*sizeof(struct og_select_line));
-  PcErr(-1,erreur); DPcErr;  
+  PcErr(-1,erreur); DPcErr;
   }
 memset(ss->sl,0,nbsl*sizeof(struct og_select_line));
 
@@ -468,18 +467,18 @@ rewind(fd);
 iline=0; iB=0; ss->isl=0;
 while(fgets(buffer,1024,fd)) {
   ibuffer=strlen(buffer);
-  if (buffer[ibuffer-1]=='\n') buffer[--ibuffer]=0;  
+  if (buffer[ibuffer-1]=='\n') buffer[--ibuffer]=0;
   iline++;
   if (iline <= start_line) continue;
   if (iline >= end_line) break;
   if (buffer[0]==';') continue;
   PcStrlwr(buffer);
-  for(i=0; i<ibuffer; i++) { 
-    if (PcIsspace(buffer[i])) continue;  
+  for(i=0; i<ibuffer; i++) {
+    if (PcIsspace(buffer[i])) continue;
     else if (buffer[i]=='i' || buffer[i]=='x') {
       IFE(ModifyCanon(ibuffer,buffer,&ibuf,buf));
       if (ibuf-i > 0) {
-        memcpy(ss->B+iB, buf+i, ibuf-i); 
+        memcpy(ss->B+iB, buf+i, ibuf-i);
         IFE(AddSelectLine(buffer[i],ss,iB,ibuf-i));
         /** +1 for the zero at the end of the string **/
         iB += ibuf-i+1; ss->isl++;
@@ -499,13 +498,13 @@ if (exclude_path) {
   if (work_exclude_path[len-1] != '\\' && work_exclude_path[len-1] != '/') {
     strcpy(work_exclude_path+len,DPcDirectorySeparator);
     }
-  PcStrlwr(work_exclude_path); 
-  OgGetCanon(work_exclude_path,buffer); 
+  PcStrlwr(work_exclude_path);
+  OgGetCanon(work_exclude_path,buffer);
   ibuffer = strlen(buffer);
   /** to remove the ending '+.]' **/
   buffer[ibuffer-3] = 0; ibuffer -= 3;
   IFE(ModifyCanon(ibuffer,buffer,&ibuf,buf));
-  memcpy(ss->B+iB, buf, ibuf); 
+  memcpy(ss->B+iB, buf, ibuf);
   IF(AddSelectLine('x',ss,iB,ibuf)) return(0);
   /** +1 for the zero at the end of the string **/
   iB += ibuf+1; ss->isl++;
@@ -516,7 +515,7 @@ if (ogselect->where) {
   OgMessageLog( DOgMlogInLog, ogselect->where, 0
               , "Analysed section: '%s'",section);
   for (i=0; i<ss->isl; i++) {
-    sprintf(buffer, "%3d:%c: ", i, ss->sl[i].type);  
+    sprintf(buffer, "%3d:%c: ", i, ss->sl[i].type);
     for (j=0; j<ss->sl[i].nb_start; j++) {
       sprintf( buffer+strlen(buffer), "'%s' "
              , ss->B + ss->sl[i].start[j]);
@@ -534,7 +533,7 @@ DONE;
 
 /*
  *  When the specification is something like ...aaa\...
- *  it is obvious that a ';' should be added except if there is 
+ *  it is obvious that a ';' should be added except if there is
  *  one before. Thus getting ...aaa;\...
 */
 
@@ -565,7 +564,7 @@ DONE;
 static int AddSelectLine(char type, struct og_select_section *ss, int startB, int iB)
 {
 int i,state=1;
-struct og_select_line *sl = ss->sl; 
+struct og_select_line *sl = ss->sl;
 int isl = ss->isl;
 
 sl[isl].nb_start=0; sl[isl].type=type;
@@ -582,7 +581,7 @@ for (i=1; i<=iB; i++) {
       if (i==iB || isspace(ss->B[startB+i])) {
         int n = sl[isl].nb_start;
         sl[isl].length[n] = startB+i - sl[isl].start[n];
-        ss->B[sl[isl].start[n] + sl[isl].length[n]]=0; 
+        ss->B[sl[isl].start[n] + sl[isl].length[n]]=0;
         sl[isl].nb_start++;
         state = 1;
         }
