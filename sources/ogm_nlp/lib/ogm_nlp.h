@@ -85,8 +85,9 @@ og_status NlpPackageSentenceDump(package_t package, int Isentence, json_t *dump_
 /* nlpackage.c */
 package_t NlpPackageCreate(og_nlp ctrl_nlp, const char *string_id);
 void NlpPackageDestroy(gpointer package);
-og_status NlpPackageAdd(og_nlp ctrl_nlp, package_t package);
+og_status NlpPackageAddOrReplace(og_nlp ctrl_nlp, package_t package);
 package_t NlpPackageGet(og_nlp ctrl_nlp, og_string package_id);
 
 /* nlpcompile.c */
-int NlpCompilePackageIntent(package_t package, json_t *json_intent);
+og_status NlpCompilePackageIntent(package_t package, json_t *json_intent);
+og_status NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, json_t *json_package);

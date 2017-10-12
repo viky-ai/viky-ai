@@ -6,7 +6,6 @@
  */
 #include "ogm_nlp.h"
 
-static int NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, json_t *json_package);
 static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents);
 
 static int NlpCompilePackageSentences(package_t package, struct intent *intent, json_t *json_sentences);
@@ -63,7 +62,7 @@ PUBLIC(int) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, st
   DONE;
 }
 
-static og_status NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, json_t *json_package)
+og_status NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, json_t *json_package)
 {
   og_char_buffer json_package_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_package, json_package_string, DPcPathSize, NULL));
@@ -159,13 +158,13 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
     }
   }
 
-  IFE(NlpPackageAdd(ctrl_nlp, package));
+  IFE(NlpPackageAddOrReplace(ctrl_nlp, package));
   IFE(NlpPackageLog(package));
 
   DONE;
 }
 
-int NlpCompilePackageIntent(package_t package, json_t *json_intent)
+og_status NlpCompilePackageIntent(package_t package, json_t *json_intent)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
 

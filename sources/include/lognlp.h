@@ -50,6 +50,9 @@ struct og_nlp_compile_input
   /** TRUE if the package can be updated, FALSE if package must not exits (duplicate detection) */
   og_bool package_update;
 
+  /** Used for add or update of package and NOT for initial loading*/
+  og_string package_name;
+
 };
 
 struct og_nlp_compile_output
@@ -89,7 +92,7 @@ DEFPUBLIC(og_status) OgNlpInterpretFlush(og_nlpi ctrl_nlpi);
 DEFPUBLIC(og_status) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *input,
     struct og_nlp_interpret_output *output);
 
-DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_interpret_input *input, const char *package_id);
+DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_compile_input *input);
 DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp ctrl_nlp, const char *package_id);
 
 #define _LOGNLPALIVE_
