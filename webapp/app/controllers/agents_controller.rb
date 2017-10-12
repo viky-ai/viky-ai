@@ -9,15 +9,26 @@ class AgentsController < ApplicationController
 
   def new
     @agent = Agent.new
+    render partial: 'new'
   end
 
   def create
     @agent = Agent.new(agent_params)
     @agent.users << current_user
-    if @agent.save
-      redirect_to agents_path, notice: t('views.agents.new.success_message')
-    else
-      render :new
+
+    respond_to do |format|
+      if @agent.save
+        format.json{
+          redirect_to agents_path, notice: t('views.agents.new.success_message')
+        }
+      else
+        format.json{
+          render json: {
+            html: render_to_string(partial: 'new', formats: :html),
+            status: 422
+          }
+        }
+      end
     end
   end
 

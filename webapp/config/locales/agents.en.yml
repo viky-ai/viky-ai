@@ -5,7 +5,6 @@ en:
         base: Agents
         agents_management: Agents management
         new_btn: New agent
-        create_agent: Create agent
       index:
         delete:
           btn: Delete
@@ -21,7 +20,7 @@ en:
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."
       new:
-        title: New agent
+        title: Create new agent
         success_message: Your agent has been succefully created.
         name: Agent name
         agentname: Agent ID

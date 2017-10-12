@@ -8,7 +8,7 @@
   </div>
   <% if !@agents.empty? %>
     <div class="header__tools">
-      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary">
+      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary" data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
       </a>
     </div>
@@ -16,6 +16,7 @@
 </header>
 
 <% if @agents.empty? %>
+
   <div class="blankslate">
     <div class="blankslate__illustration">
       <img src='<%= image_path "robot-idle.png" %>'
@@ -27,11 +28,12 @@
       <p>
         <%= t('views.agents.index.blankslate.content') %>
       </p>
-      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary btn--large">
+      <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary btn--large" data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
       </a>
     </div>
   </div>
+
 <% else %>
 
   <div class="agents-box-grid">
