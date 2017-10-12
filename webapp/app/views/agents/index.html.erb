@@ -42,10 +42,10 @@
   <div class="agents-box-grid">
     <% @agents.each do |agent| %>
       <div class="agent-box">
-        <div class="agent-box__header agent-box__header--<%= agent.color %>">
+        <a href="<%= user_agent_path(current_user, agent.agentname) %>" class="agent-box__header agent-box__header--<%= agent.color %>">
           <h2><%= agent.name %></h2>
           <h3><%= agent.users.first.username %>/<%= agent.agentname %></h3>
-        </div>
+        </a>
         <div class="agent-box__content">
           <span>
             <% if agent.updated_at == agent.created_at %>

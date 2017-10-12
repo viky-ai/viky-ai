@@ -7,6 +7,10 @@ class AgentsController < ApplicationController
                 .page(params[:page]).per(12)
   end
 
+  def show
+    @agent = Agent.friendly.find(params[:id])
+  end
+
   def new
     @agent = Agent.new
     render partial: 'new'
