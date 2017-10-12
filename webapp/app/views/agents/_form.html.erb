@@ -1,4 +1,4 @@
-<%= form_with model: [current_user, agent], data: { type: 'json' } do |f| %>
+<%= form_with model: [current_user, agent], data: { type: 'json' }, class: 'js-agent-form' do |f| %>
   <div class="field">
     <div class="control">
       <%= f.label :name %>

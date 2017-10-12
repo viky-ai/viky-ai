@@ -26,6 +26,7 @@ class Modal
         url: node.attr('href')
         complete: (data) =>
           @prepare(data.responseText)
+          $('body').trigger('modal:open')
 
     if action is "close-modal"
       event.preventDefault()
