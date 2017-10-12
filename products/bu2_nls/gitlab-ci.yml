@@ -25,7 +25,7 @@ test_nls:
   variables:
     GIT_STRATEGY: none
   script:
-    - /tests
+    - cd /tests
     - bundle exec rake test
 
 # Push tested docker image
