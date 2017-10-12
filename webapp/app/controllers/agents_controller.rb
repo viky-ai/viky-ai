@@ -4,7 +4,7 @@ class AgentsController < ApplicationController
   def index
     @search = AgentSearch.new(current_user.id, search_params)
     @agents = Agent.search(@search.options).order(name: :asc)
-    # TODO: Pagination
+                .page(params[:page]).per(12)
   end
 
   def new
