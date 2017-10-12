@@ -107,6 +107,9 @@
       outline:none;
     }
   }
+  textarea{
+    resize:vertical;
+  }
   input::-webkit-input-placeholder{
     opacity: .3;
   }
