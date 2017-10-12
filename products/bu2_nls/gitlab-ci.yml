@@ -15,7 +15,7 @@ build_nls_image:
   script:
     - docker build --target run_image  -t ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} pse
     - docker push ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker build --target test_image -t ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --target test_image -t ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} pse
     - docker push ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Test docker image
