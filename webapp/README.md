@@ -69,6 +69,23 @@ The configuration file for queue definition and options is `config/sidekiq.yml`,
 Default concurrency for background job management is set to 5, you can change it via environment variable `VOQALAPP_SIDEKIQ_CONCURRENCY`.
 
 
+## Boostrap development databases
+
+The first time you start the application you need to manually create two databases `voqalapp_development` and `voqalapp_test` :
+
+```
+$ sudo -i -u postgres
+## Become postgres user
+$ createuser --interactive
+...
+ALTER USER "<user>" WITH PASSWORD '<password>';
+
+$ ./bin/rails db:setup
+> Created database 'voqalapp_development'
+> Created database 'voqalapp_test'
+> ...
+```
+
 ## Start all in development
 
 To ensure having all those processes up and running during development, you can simply run:
@@ -81,4 +98,3 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
-
