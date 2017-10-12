@@ -14,6 +14,13 @@ class Agent < ApplicationRecord
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
 
+  def self.search(q = {})
+    conditions = where("1 = 1")
+    conditions = joins(:memberships).where("user_id = ?", q[:user_id])
+    conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
+    conditions
+  end
+
   private
 
     def owner_presence_in_users

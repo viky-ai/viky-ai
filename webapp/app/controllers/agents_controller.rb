@@ -2,10 +2,9 @@ class AgentsController < ApplicationController
   before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy]
 
   def index
-    @agents = current_user.agents
-    @search = AgentSearch.new
+    @search = AgentSearch.new(current_user.id, search_params)
+    @agents = Agent.search(@search.options).order(name: :asc)
     # TODO: Pagination
-    # TODO: Recherche
   end
 
   def new
@@ -73,6 +72,10 @@ class AgentsController < ApplicationController
 
     def agent_params
       params.require(:agent).permit(:name, :agentname)
+    end
+
+    def search_params
+      params.permit(search: [:query])[:search]
     end
 
 end

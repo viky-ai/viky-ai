@@ -71,6 +71,8 @@ class AgentsTest < ApplicationSystemTestCase
     go_to_agents_index
     fill_in 'search_query', with: '800'
     click_button '#search'
+    assert page.has_content?('T-800')
+    assert page.has_no_content?('My awesome weather bot')
     assert_equal '/agents', current_path
   end
 
@@ -78,7 +80,21 @@ class AgentsTest < ApplicationSystemTestCase
     go_to_agents_index
     fill_in 'search_query', with: 'inator'
     click_button '#search'
+    assert page.has_content?('T-800')
+    assert page.has_no_content?('My awesome weather bot')
     assert_equal '/agents', current_path
   end
 
+  test 'Empty search agent' do
+    go_to_agents_index
+    fill_in 'search_query', with: 'inator'
+    click_button '#search'
+    assert page.has_content?('T-800')
+    assert page.has_no_content?('My awesome weather bot')
+    fill_in 'search_query', with: ''
+    click_button '#search'
+    assert page.has_content?('T-800')
+    assert page.has_content?('My awesome weather bot')
+    assert_equal '/agents', current_path
+  end
 end

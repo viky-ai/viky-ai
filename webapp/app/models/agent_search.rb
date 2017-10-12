@@ -1,8 +1,9 @@
 class AgentSearch
-  attr_reader :options
+  attr_reader :user_id, :options
 
-  def initialize(options = {})
-    @options = options || {}
+  def initialize(user_id, options = {})
+    @options = clean_options options
+    @options[:user_id] = user_id.strip
   end
 
   def self.keys
@@ -22,4 +23,12 @@ class AgentSearch
     end
     return is_empty
   end
+
+  private
+
+    def clean_options(options)
+      (options || {}).transform_values do |v|
+        v.respond_to?(:strip) ? v.strip : v
+      end
+    end
 end
