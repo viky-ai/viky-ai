@@ -102,6 +102,10 @@ module Nls
       "#{base_url}/dump"
     end
 
+    def self.url_packages
+      "#{base_url}/packages"
+    end
+
     def self.query_get(url, params = {})
       response  = RestClient.get(url, params: params)
       JSON.parse(response.body)
@@ -114,6 +118,11 @@ module Nls
 
     def self.interpret(body, params = {})
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
+      JSON.parse(response.body)
+    end
+
+    def self.delete(url)
+      response = RestClient.delete(url)
       JSON.parse(response.body)
     end
 

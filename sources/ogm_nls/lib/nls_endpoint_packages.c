@@ -53,7 +53,7 @@ og_status NlsEndpointPackageDelete(struct og_listening_thread *lt, struct og_nls
 
   char responsechar[DPcPathSize];
   sprintf(responsechar, "Package %s successfully deleted", package_name);
-  IFE(json_object_set_new(response->body, "Package update", json_string(responsechar)));
+  IFE(json_object_set_new(response->body, "Package delete", json_string(responsechar)));
 
   DONE;
 }

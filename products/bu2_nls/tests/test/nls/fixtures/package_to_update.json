@@ -1,0 +1,22 @@
+[
+  {
+    "id": "voqal.ai:datetime2",
+    "intents":
+    [
+      {
+        "id": "0d981484-9313-11e7-abc4-cec278b6b50b4",
+        "sentences":
+        [
+          {
+            "sentence": "Hello tout le monde",
+            "locale": "fr-FR"
+          },
+          {
+            "sentence": "Hello chacun",
+            "locale": "fr-FR"
+          }
+        ]
+      }
+    ]
+  }
+]
