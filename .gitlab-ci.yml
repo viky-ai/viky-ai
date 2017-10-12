@@ -55,7 +55,7 @@ deploy_branch:
   stage: deploy
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   dependencies:
-    - build_image
+    - build_webapp_image
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
