@@ -1,6 +1,6 @@
 <header class="header">
   <div class="header__breadcrumb">
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <strong><%= @agent.name %></strong>
+    <strong><%= @agent.name %></strong> (<%= @agent.memberships.first.user.username %>/<%= @agent.agentname %>)
   </div>
 </header>
