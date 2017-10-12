@@ -52,6 +52,22 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
+  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypePost))
+    {
+      IF(NlsEndpointPackages(lt, request, response))
+      {
+        NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointPackages\"");
+        DPcErr;
+      }
+    }
+  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypeDelete))
+      {
+        IF(NlsEndpointPackageDelete(lt, request, response))
+        {
+          NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"DELETE NlsEndpointPackages\"");
+          DPcErr;
+        }
+      }
   else
   {
     return FALSE;
@@ -222,6 +238,10 @@ static og_bool compareEndPointWithString(og_string str1, og_string str2)
     else if (str1[i] != str2[i])
     {
       are_the_same = FALSE;
+      break;
+    }
+    else if ( i != 0 && str1[i] == '/' && str2[i] == '/')
+    {
       break;
     }
     else if (i == size_of_str1 - 1)

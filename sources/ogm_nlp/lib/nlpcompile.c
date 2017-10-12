@@ -8,7 +8,7 @@
 
 static int NlpCompilePackage(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, json_t *json_package);
 static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *json_intents);
-static int NlpCompilePackageIntent(package_t package, json_t *json_intent);
+
 static int NlpCompilePackageSentences(package_t package, struct intent *intent, json_t *json_sentences);
 static int NlpCompilePackageSentence(package_t package, struct intent *intent, json_t *json_sentence);
 
@@ -165,7 +165,7 @@ static int NlpCompilePackageIntents(og_nlp ctrl_nlp, json_t *json_id, json_t *js
   DONE;
 }
 
-static int NlpCompilePackageIntent(package_t package, json_t *json_intent)
+int NlpCompilePackageIntent(package_t package, json_t *json_intent)
 {
   og_nlp ctrl_nlp = package->ctrl_nlp;
 

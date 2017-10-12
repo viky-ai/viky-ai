@@ -273,6 +273,12 @@ og_status NlsEndpointDump(struct og_listening_thread *lt, struct og_nls_request 
 og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
 
+/** nls_endpoint_packages.c **/
+og_status NlsEndpointPackages(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+og_status NlsEndpointPackageDelete(struct og_listening_thread *lt, struct og_nls_request *request,
+    struct og_nls_response *response);
+
 /** nlsimport.c **/
 og_status NlsReadImportFiles(og_nls ctrl_nls);
 

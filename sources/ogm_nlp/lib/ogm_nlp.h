@@ -88,3 +88,5 @@ void NlpPackageDestroy(gpointer package);
 og_status NlpPackageAdd(og_nlp ctrl_nlp, package_t package);
 package_t NlpPackageGet(og_nlp ctrl_nlp, og_string package_id);
 
+/* nlpcompile.c */
+int NlpCompilePackageIntent(package_t package, json_t *json_intent);

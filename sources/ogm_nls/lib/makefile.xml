@@ -18,6 +18,7 @@
     <file>nls_endpoint_test.c</file>
     <file>nls_endpoint_dump.c</file>
     <file>nls_endpoint_interpret.c</file>
+    <file>nls_endpoint_packages.c</file>
     <file>nlsmt.c</file>
   </sources>
   <platforms>

@@ -89,6 +89,9 @@ DEFPUBLIC(og_status) OgNlpInterpretFlush(og_nlpi ctrl_nlpi);
 DEFPUBLIC(og_status) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *input,
     struct og_nlp_interpret_output *output);
 
+DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_interpret_input *input);
+DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp ctrl_nlp, const char *package_id);
+
 #define _LOGNLPALIVE_
 #endif
 
