@@ -15,7 +15,7 @@ en:
         updated_time_ago: Updated %{time} ago
         search:
           not_found: No agent found
-          placeholder: Search by name or by id
+          placeholder: Search by name or ID
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."

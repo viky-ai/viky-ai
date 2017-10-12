@@ -21,7 +21,9 @@
     input[type='text'],
     input[type='email'],
     input[type='password'],
-    .btn{
+    .addon,
+    .btn,
+    .field_with_errors{
       border-radius: 0;
       margin-left: -1px;
     }
@@ -29,14 +31,17 @@
     input[type='text']:first-child,
     input[type='email']:first-child,
     input[type='password']:first-child,
+    .addon:first-child,
     .btn:first-child{
       border-top-left-radius: 3px;
       border-bottom-left-radius: 3px;
       margin-left: 0;
     }
+
     input[type='text']:last-child,
     input[type='email']:last-child,
     input[type='password']:last-child,
+    .addon:last-child,
     .btn:last-child{
       border-top-right-radius: 3px;
       border-bottom-right-radius: 3px;
@@ -59,7 +64,10 @@
             justify-content: flex-end;
   }
 
-  .field_with_errors { display: inline }
+  .field_with_errors {
+    display: inline;
+    width: 100%;
+  }
 
   label{
     font-weight: 400;
@@ -116,6 +124,18 @@
   }
   textarea:-ms-input-placeholder{
     opacity: .3;
+  }
+  .addon{
+    line-height: 1.5;
+    font-weight: 300;
+    vertical-align: top;
+    padding: calc(.375em - 1px) .5em;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    border-top: 1px solid #bbb;
+    background-color: #f5f5f5;
+    color: #666;
+    white-space: nowrap;
   }
   .field_with_errors{
     input[type='text'],
