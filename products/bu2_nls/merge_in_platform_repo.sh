@@ -177,9 +177,9 @@ cat >> .gitmodules <<EOL
 EOL
 
 git submodule sync
-git submodule update nls/sources/external_dependencies/uriparser
-git submodule update nls/sources/external_dependencies/jansson
-git submodule update nls/sources/external_dependencies/glib
+git submodule update --init nls/sources/external_dependencies/uriparser
+git submodule update --init nls/sources/external_dependencies/jansson
+git submodule update --init nls/sources/external_dependencies/glib
 
 git add .gitmodules
 

@@ -5,7 +5,7 @@
 # docker build --target run_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
 
 # Tests
-# docker build --target test_image_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test .
+# docker build --target test_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test .
 # docker run -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test
 
 # ============================================================================
