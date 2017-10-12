@@ -25,3 +25,7 @@ en:
         name: Agent name
         agentname: Agent ID
         btn: Create
+      edit:
+        title: Configure agent
+        btn: Update
+        success_message: Your agent has been succefully updated.

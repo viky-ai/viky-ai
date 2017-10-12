@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_agent, only: [:confirm_destroy, :destroy]
+  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy]
 
   def index
     @agents = current_user.agents
@@ -25,6 +25,27 @@ class AgentsController < ApplicationController
         format.json{
           render json: {
             html: render_to_string(partial: 'new', formats: :html),
+            status: 422
+          }
+        }
+      end
+    end
+  end
+
+  def edit
+    render partial: 'edit'
+  end
+
+  def update
+    respond_to do |format|
+      if @agent.update(agent_params)
+        format.json{
+          redirect_to agents_path, notice: t('views.agents.edit.success_message')
+        }
+      else
+        format.json{
+          render json: {
+            html: render_to_string(partial: 'edit', formats: :html),
             status: 422
           }
         }

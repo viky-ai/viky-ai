@@ -1,6 +1,6 @@
 $ = require('jquery');
 
-class AgentCreateForm
+class AgentForm
   constructor: ->
     $("body").on 'ajax:success', (event) ->
       [data, status, xhr] = event.detail
@@ -9,6 +9,6 @@ class AgentCreateForm
 
 Setup = ->
   if $('body').data('controller-name') == "agents"
-    new AgentCreateForm()
+    new AgentForm()
 
 $(document).on('turbolinks:load', Setup)

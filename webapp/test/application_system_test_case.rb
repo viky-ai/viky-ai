@@ -17,5 +17,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     within(".nav") do
       click_link "Agents"
     end
+    assert page.has_text?("Agents management")
   end
 end
