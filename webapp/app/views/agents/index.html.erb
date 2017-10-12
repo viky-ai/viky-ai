@@ -29,7 +29,7 @@
         <p>
           <%= t('views.agents.index.blankslate.content') %>
         </p>
-        <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary btn--large">
+        <a href="<%= new_user_agent_path(current_user) %>" class="btn btn--primary btn--large" data-action="open-remote-modal">
           <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.breadcrumb.new_btn') %>
         </a>
       </div>

@@ -13,6 +13,14 @@ class AgentsTest < ApplicationSystemTestCase
     Agent.delete_all
     go_to_agents_index
     assert page.has_text?("Create your first agent")
+
+    click_link 'New agent'
+
+    within(".modal") do
+      assert page.has_field? 'Name'
+      assert page.has_field? 'ID'
+      assert page.has_button? 'Create'
+    end
   end
 
 
