@@ -58,11 +58,19 @@ package_t NlpPackageGet(og_nlp ctrl_nlp, og_string package_id)
   return (package);
 }
 
-PUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_interpret_input *input)
+PUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_interpret_input *input, const char *url_package_id)
 {
   const char* package_id = getPackageIdForupdate(ctrl_nlp, input->json_input);
   if (package_id != NULL)
   {
+    // on verifie que les noms des packages matchent
+    if (strcmp(url_package_id, package_id) != 0)
+    {
+      NlpThrowError(ctrl_nlp, "OgNlpPackageAdd: url package id (%s) is not the same as body package id (%s)",
+          url_package_id, package_id);
+      DPcErr;
+    }
+
     // si le package existe, on l'efface
     package_t package = NlpPackageGet(ctrl_nlp, package_id);
     if (package != NULL)

@@ -27,7 +27,7 @@ og_status NlsEndpointPackages(struct og_listening_thread *lt, struct og_nls_requ
   memset(input, 0, sizeof(struct og_nlp_interpret_input));
   input->json_input = request->body;
 
-  IFE(OgNlpPackageAdd(lt->ctrl_nls->hnlp, input));
+  IFE(OgNlpPackageAdd(lt->ctrl_nls->hnlp, input, package_name));
 
   char responsechar[DPcPathSize];
   sprintf(responsechar, "Package %s successfully updated", package_name);

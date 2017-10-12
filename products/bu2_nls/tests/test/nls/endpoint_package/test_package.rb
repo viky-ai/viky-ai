@@ -66,12 +66,12 @@ module Nls
 
         json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
 
-        url_add = Nls.url_packages + "/voqal.ai:datetime"
+        url_add = Nls.url_packages + "/voqal.ai:datetime2"
         actual = Nls.query_post(url_add, json_package_to_update, {})
 
         expected =
         {
-          "Package update" => "Package voqal.ai:datetime successfully updated"
+          "Package update" => "Package voqal.ai:datetime2 successfully updated"
         }
 
         assert_equal expected, actual
@@ -81,6 +81,25 @@ module Nls
         expexted_dump = JSON.parse(File.read(fixture_path("several_packages_several_intents_after_update.json")))
 
         assert_equal json_dump, expexted_dump
+
+      end
+
+      def test_package_mismatch
+
+        cp_import_fixture("several_packages_several_intents.json")
+
+        Nls.restart
+
+        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+
+        expected_error = "OgNlsEndpoints : request error on endpoint"
+
+        url_add = Nls.url_packages + "/voqal.ai:datetime1"
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          actual = Nls.query_post(url_add, json_package_to_update, {})
+
+        end
+        assert_response_has_error expected_error, exception, "Post by body"
 
       end
 
