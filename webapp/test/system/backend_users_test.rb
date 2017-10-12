@@ -87,6 +87,20 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal '/backend/users', current_path
   end
 
+  test 'Users can be found by email trimmed' do
+    admin_login
+
+    click_link('Backend')
+
+    fill_in 'search_email', with: ' ocked   '
+    click_button '#search'
+
+    assert page.has_content?('1 user')
+    assert page.has_content?('locked@voqal.ai')
+
+    assert_equal '/backend/users', current_path
+  end
+
 
   test 'Destroy user without username' do
     before_count = User.count
