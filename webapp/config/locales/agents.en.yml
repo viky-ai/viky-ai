@@ -13,6 +13,9 @@ en:
           content: Start building your first conversational agent to create human-like interactions.
         created_time_ago: Created %{time} ago
         updated_time_ago: Updated %{time} ago
+        search:
+          not_found: No agent found
+          placeholder: Search by name or by id
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."

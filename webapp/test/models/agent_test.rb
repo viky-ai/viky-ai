@@ -13,7 +13,7 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.save
     assert_equal users(:admin).id, agent.owner_id
     assert_equal 'admin', agent.users.first.username
-    assert_equal ['weather','agenta'], users(:admin).agents.collect(&:agentname)
+    assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
   end
 
 
@@ -167,4 +167,46 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal "aaa-b", agent.agentname
   end
 
+  test "Search agent empty" do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 1, s.options.size
+    assert_equal user_id, s.options[:user_id]
+  end
+
+  test "Search agent by name" do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 2, Agent.search(s.options).count
+    s = AgentSearch.new(user_id, query: '800')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'terminator'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+  test "Search agent by agentname" do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 2, Agent.search(s.options).count
+    s = AgentSearch.new(user_id, query: 'inator')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'terminator'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+  test "Search agent by name is trimmed" do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 2, Agent.search(s.options).count
+    s = AgentSearch.new(user_id, query: ' inator     ')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'terminator'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
 end
