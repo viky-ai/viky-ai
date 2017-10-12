@@ -167,4 +167,36 @@
 </div>
   <% end %>
 
+
+  <h3>Color picker</h3>
+  <%= highlight_html do %>
+<div class="field">
+  <div class="control">
+    <label for="color">Choose background color</label>
+    <ul class="color-picker" data-input-selector="#color_value">
+      <li><a href="#" class="color-picker__black"       data-input-value="black"></a></li>
+      <li><a href="#" class="color-picker__red current" data-input-value="red"></a></li>
+      <li><a href="#" class="color-picker__pink"        data-input-value="pink"></a></li>
+      <li><a href="#" class="color-picker__purple"      data-input-value="purple"></a></li>
+      <li><a href="#" class="color-picker__deep-purple" data-input-value="deep-purple"></a></li>
+      <li><a href="#" class="color-picker__indigo"      data-input-value="indigo"></a></li>
+      <li><a href="#" class="color-picker__blue"        data-input-value="blue"></a></li>
+      <li><a href="#" class="color-picker__light-blue"  data-input-value="light-blue"></a></li>
+      <li><a href="#" class="color-picker__cyan"        data-input-value="cyan"></a></li>
+      <li><a href="#" class="color-picker__teal"        data-input-value="teal"></a></li>
+      <li><a href="#" class="color-picker__green"       data-input-value="green"></a></li>
+      <li><a href="#" class="color-picker__light-green" data-input-value="light-green"></a></li>
+      <li><a href="#" class="color-picker__lime"        data-input-value="lime"></a></li>
+      <li><a href="#" class="color-picker__yellow"      data-input-value="yellow"></a></li>
+      <li><a href="#" class="color-picker__amber"       data-input-value="amber"></a></li>
+      <li><a href="#" class="color-picker__orange"      data-input-value="orange"></a></li>
+      <li><a href="#" class="color-picker__deep-orange" data-input-value="deep-orange"></a></li>
+      <li><a href="#" class="color-picker__brown"       data-input-value="brown"></a></li>
+    </ul>
+    <input type="hidden" id="color_value" />
+  </div>
+</div>
+  <% end %>
+
+
 </section>

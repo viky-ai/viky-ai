@@ -22,6 +22,8 @@ en:
         btn: Delete
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."
+      form:
+        color_label: Choose a background color
       new:
         title: Create new agent
         btn: Create

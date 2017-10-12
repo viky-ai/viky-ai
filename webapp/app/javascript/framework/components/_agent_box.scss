@@ -3,7 +3,6 @@
   border-radius: 2px;
   .agent-box__header{
     display: block;
-    background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     background-image: linear-gradient(to top right, #444 0%, #555 100%);
     padding: 5em 0 0 0;
     text-decoration: none;
@@ -55,27 +54,8 @@
   }
 }
 
-$agent_colors: (
-  brown: #5d4037,
-  red: #d32f2f,
-  pink: #c2185b,
-  purple: #7b1fa2,
-  deep-purple: #512da8,
-  indigo: #303f9f,
-  blue: #1976d2,
-  light-blue: #0288d1,
-  cyan: #0097a7,
-  teal: #00796b,
-  green: #388e3c,
-  light-green: #689f38,
-  lime: #afb42b,
-  yellow: #fbc02d,
-  amber: #ffa000,
-  orange: #f57c00,
-  deep-orange: #e64a19
-);
 .agent-box{
-  @each $name, $color in $agent_colors{
+  @each $name, $color in $picker_colors{
     .agent-box__header.agent-box__header--#{$name}{
       background-image: linear-gradient(to top right, $color 0%, lighten($color, 8%) 100%);
     }

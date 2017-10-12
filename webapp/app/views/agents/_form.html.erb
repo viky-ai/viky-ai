@@ -21,11 +21,21 @@
 
   <div class="field">
     <div class="control">
-      <%= f.label :color %>
+      <%= f.label :color, t('views.agents.form.color_label') %>
       <% colors_array = agent.available_colors.map { |color| [color, color] } %>
-      <%= f.select :color, options_for_select(colors_array) %>
+      <ul class="color-picker" data-input-selector="#agent-color-input">
+        <% agent.available_colors.each do |color| %>
+          <li>
+            <a href="#"
+               class="color-picker__<%= color %> <% if agent.color == color %>current<% end %>"
+               data-input-value="<%= color %>"></a>
+          </li>
+        <% end %>
+      </ul>
+      <%= f.hidden_field :color, id: 'agent-color-input' %>
     </div>
   </div>
+
 
   <div class="actions">
     <% if ["edit", "update"].include? action_name %>
