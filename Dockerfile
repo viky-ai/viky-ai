@@ -33,6 +33,21 @@ RUN factory.pl -p bu2_nls redebug
 RUN factory.pl -s bu2_nls   debug
 
 # ============================================================================
+# Setup a lightweigth image only with minimal binaries
+# ============================================================================
+FROM ubuntu:xenial AS run_image
+
+WORKDIR /
+
+COPY --from=build_image /builds/pse/ship /
+RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
+
+WORKDIR /nls
+
+EXPOSE 9345
+CMD ["./ogm_nls"]
+
+# ============================================================================
 # Test Nls
 # ============================================================================
 FROM ruby:2.4.2 AS test_image
@@ -50,22 +65,10 @@ ADD products/bu2_nls/tests  /tests
 
 COPY --from=build_image /builds/pse/ship /
 RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
+
 ENV NLS_INSTALL_PATH=/nls
-
-
-# Run Tests
 ENV TERM=xterm-256color
-RUN bundle exec rake test
 
-# ============================================================================
-# Setup a lightweigth image only with minimal binaries
-# ============================================================================
-FROM ubuntu:xenial AS run_image
-WORKDIR /
-COPY --from=build_image /builds/pse/ship /
-RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
+# Run test
+CMD ["bundle", "exec", "rake", "test"]
 
-WORKDIR /nls
-
-EXPOSE 9345
-CMD ["./ogm_nls"]

@@ -11,20 +11,16 @@ Add new external dependencies
 
 Clone it our gitlab : http://gitlab.pertimm.corp/voqal.ai/dependencies
 
-Sample adding `glib` :
+Sample adding `glib` use http url:
 
 ```
 cd ${OG_REPO_PATH}/sources/external_dependencies
-git submodule add "git@gitlab.pertimm.corp:voqal.ai/dependencies/glib.git" glib
+git submodule add "http://gitlab.pertimm.corp/voqal.ai/dependencies/glib.git" glib
 
 # choose tag to use
 cd glib
-git checkout v1.15
+git checkout 2.54.1
 cd -
-
-# Change absolute relative to relative one :
-#  https://docs.gitlab.com/ce/ci/git_submodules.html#configuring-the-gitmodules-file
-vim ${OG_REPO_PATH}/../.gitmodules
 
 git add ${OG_REPO_PATH}/../.gitmodules glib
 git commit -m "#15937 [added] Nls : glib (2.54.1) as external dependencies"

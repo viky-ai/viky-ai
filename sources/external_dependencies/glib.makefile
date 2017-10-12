@@ -45,6 +45,7 @@ make: glib/Makefile
 	mkdir -p $(DBINPATH)/gio
 	mkdir -p $(SRCPATH)/include/
 	cd glib && $(MAKE) install
+	rm -f glib/gio/gdbus-2.0/codegen/config.py
 
 glib/configure:
 	cd glib && NOCONFIGURE=yes ./autogen.sh
