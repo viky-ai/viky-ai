@@ -25,7 +25,7 @@ en:
       form:
         color_label: Choose a background color
       new:
-        title: Create new agent
+        title: Create a new agent
         btn: Create
         success_message: Your agent has been succefully created.
       edit:

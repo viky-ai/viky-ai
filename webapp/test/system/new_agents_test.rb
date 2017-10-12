@@ -9,7 +9,7 @@ class NewAgentsTest < ApplicationSystemTestCase
       click_link 'Agents'
     end
     click_link('New agent')
-    assert page.has_text? 'Create new agent'
+    assert page.has_text? 'Create a new agent'
   end
 
 
@@ -45,7 +45,6 @@ class NewAgentsTest < ApplicationSystemTestCase
 
   test "Agent creation form cancel" do
     go_to_agents_creation
-    assert page.has_text?('Create new agent')
     click_link 'Cancel'
     assert page.has_no_text?('Create new agent')
   end
