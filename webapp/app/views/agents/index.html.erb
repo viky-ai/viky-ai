@@ -59,12 +59,12 @@
               <ul>
                 <li>
                   <a href="<%= edit_user_agent_path(current_user, agent) %>" data-action="open-remote-modal">
-                    <span class="icon icon--small"><%= icon_settings %></span> Configure
+                    <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.index.configure') %>
                   </a>
                 </li>
                 <li>
                   <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" data-action="open-remote-modal">
-                    <span class="icon icon--small"><%= icon_delete %></span> <%= t('views.agents.index.delete.btn') %>
+                    <span class="icon icon--small"><%= icon_delete %></span> <%= t('views.agents.index.delete') %>
                   </a>
                 </li>
               </ul>
