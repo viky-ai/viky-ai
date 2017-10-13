@@ -27,4 +27,15 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert_equal '/agents/admin/weather', current_path
   end
 
+
+  test 'Transfer agent ownership' do
+    go_to_agents_index
+    assert page.has_content?('T-800')
+    click_link 'agent-admin-terminator'
+    click_link 'Transfer ownership'
+    within(".modal") do
+      assert page.has_field? 'users_new_owner_id'
+      assert page.has_button? 'Transfer'
+    end
+  end
 end

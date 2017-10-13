@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy]
+  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership]
 
   def index
     @search = AgentSearch.new(current_user.id, search_params)
@@ -69,6 +69,14 @@ class AgentsController < ApplicationController
   def destroy
     @agent.destroy
     redirect_to agents_path, notice: t('views.agents.destroy.message', name: @agent.name)
+  end
+
+  def confirm_transfer_ownership
+    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, users: User.all }
+  end
+
+  def transfer_ownership
+
   end
 
 

@@ -19,6 +19,11 @@ en:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."
         btn: Delete
+      confirm_transfer_ownership:
+        title: Are you sure?
+        content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong>."
+        label: "Select the new owner :"
+        btn: Transfer
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."
       form:
@@ -33,6 +38,7 @@ en:
         success_message: Your agent has been succefully created.
       edit:
         title: Configure agent
+        transfer_ownership: Transfer ownership
         btn: Update
         success_message: Your agent has been succefully updated.
       show:

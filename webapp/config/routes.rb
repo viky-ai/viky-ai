@@ -21,6 +21,8 @@ Rails.application.routes.draw do
       resources :agents, path: '', except: [:index] do
         member do
           get :confirm_destroy
+          get :confirm_transfer_ownership
+          post :transfer_ownership
         end
       end
     end
