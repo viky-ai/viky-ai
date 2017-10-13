@@ -2,7 +2,8 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
-    @agents = current_user.agents
+    @agents = current_user.agents.order(name: :asc)
+                .page(params[:page]).per(12)
   end
 
   def edit
