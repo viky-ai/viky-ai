@@ -1,5 +1,8 @@
 class TestCommon < Minitest::Test
 
+  # Generates nicer diffs for complicated, nested values.
+  make_my_diffs_pretty!
+
   def pwd
     Nls::Nls.pwd
   end

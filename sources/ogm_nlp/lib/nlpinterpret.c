@@ -16,55 +16,35 @@ static og_status NlpInterpretRequestBuildPackages(og_nlpi ctrl_nlpi, json_t *jso
 static og_status NlpInterpretRequestBuildPackage(og_nlpi ctrl_nlpi, const char *package_id);
 static og_status NlpInterpretRequestBuildAcceptLanguage(og_nlpi ctrl_nlpi, json_t *json_accept_language);
 
-PUBLIC(og_nlpi) OgNlpInterpretInit(og_nlp ctrl_nlp, struct og_nlpi_param *param)
+og_status NlpInterpretInit(og_nlpi ctrl_nlpi, struct og_nlpi_param *param)
 {
-  char erreur[DOgErrorSize];
-  struct og_ctrl_nlpi *ctrl_nlpi = (struct og_ctrl_nlpi *) malloc(sizeof(struct og_ctrl_nlpi));
-  IFn(ctrl_nlpi)
+
+  // setup request memory for future interpretation
+
+  og_char_buffer nlpc_name[DPcPathSize];
+  snprintf(nlpc_name, DPcPathSize, "%s_interpret_package", param->name);
+  ctrl_nlpi->hinterpret_package = OgHeapInit(ctrl_nlpi->hmsg, nlpc_name, sizeof(struct interpret_package),
+  DOgNlpiPackageNumber);
+  IFN(ctrl_nlpi->hinterpret_package)
   {
-    sprintf(erreur, "OgNlpInit: malloc error on ctrl_nlpi");
-    OgErr(param->herr, erreur);
-    return (0);
+    NlpiThrowError(ctrl_nlpi, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
   }
-
-  memset(ctrl_nlpi, 0, sizeof(struct og_ctrl_nlpi));
-  ctrl_nlpi->ctrl_nlp = ctrl_nlp;
-  ctrl_nlpi->herr = param->herr;
-  ctrl_nlpi->hmutex = param->hmutex;
-  memcpy(ctrl_nlpi->loginfo, &param->loginfo, sizeof(struct og_loginfo));
-
-  struct og_msg_param msg_param[1];
-  memset(msg_param, 0, sizeof(struct og_msg_param));
-  msg_param->herr = ctrl_nlpi->herr;
-  msg_param->hmutex = ctrl_nlpi->hmutex;
-  msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
-  msg_param->loginfo.where = ctrl_nlpi->loginfo->where;
-  msg_param->module_name = "nlp";
-  IFn(ctrl_nlpi->hmsg=OgMsgInit(msg_param)) return (0);
-  IF(OgMsgTuneInherit(ctrl_nlpi->hmsg,param->hmsg)) return (0);
-
-  IFn(ctrl_nlpi->hinterpret_package=OgHeapInit(ctrl_nlpi->hmsg,"interpret_package",sizeof(struct interpret_package),DOgNlpiPackageNumber)) return (0);
-
-  return ctrl_nlpi;
-
-}
-
-PUBLIC(og_status) OgNlpInterpretReset(og_nlpi ctrl_nlpi)
-{
-  IFE(NlpInterpretRequestReset(ctrl_nlpi));
-
-  json_decrefp(&ctrl_nlpi->json_answer);
 
   DONE;
 }
 
-PUBLIC(og_status) OgNlpInterpretFlush(og_nlpi ctrl_nlpi)
+og_status NlpInterpretReset(og_nlpi ctrl_nlpi)
 {
+  IFE(NlpInterpretRequestReset(ctrl_nlpi));
 
+  DONE;
+}
+
+og_status NlpInterpretFlush(og_nlpi ctrl_nlpi)
+{
   IFE(OgHeapFlush(ctrl_nlpi->hinterpret_package));
-  IFE(OgMsgFlush(ctrl_nlpi->hmsg));
-
-  DPcFree(ctrl_nlpi);
+  ctrl_nlpi->hinterpret_package = NULL;
 
   DONE;
 }
@@ -136,8 +116,7 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *
   og_char_buffer json_request_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL));
 
-  OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]",
-      json_request_string);
+  OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]", json_request_string);
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlpi, json_request));
@@ -173,6 +152,9 @@ static int NlpInterpretRequest(og_nlpi ctrl_nlpi, json_t *json_request, json_t *
 static og_status NlpInterpretRequestReset(og_nlpi ctrl_nlpi)
 {
   IFE(OgHeapReset(ctrl_nlpi->hinterpret_package));
+
+  ctrl_nlpi->request_sentence = NULL;
+
   DONE;
 }
 
@@ -343,7 +325,7 @@ static og_status NlpInterpretRequestBuildPackages(og_nlpi ctrl_nlpi, json_t *jso
 
 static og_status NlpInterpretRequestBuildPackage(og_nlpi ctrl_nlpi, const char *package_id)
 {
-  package_t package = NlpPackageGet(ctrl_nlpi->ctrl_nlp, package_id);
+  package_t package = NlpPackageGet(ctrl_nlpi, package_id);
   IFN(package)
   {
     NlpiThrowError(ctrl_nlpi, "NlpInterpretRequestBuildPackage: unknown package '%s'", package_id);

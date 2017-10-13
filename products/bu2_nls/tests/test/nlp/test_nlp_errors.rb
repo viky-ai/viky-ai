@@ -22,7 +22,7 @@ module Nlp
 
       expected_error = "package 'id' is not a string"
 
-      assert actual["errors"].first.include? expected_error
+      assert_response_has_error  expected_error, actual
     end
 
     def test_intent_id_type
@@ -38,17 +38,7 @@ module Nlp
 
       expected_error = "intent 'id' is not a string"
 
-      assert_response_has_error expected_error, actual
-    end
-
-    def test_package_intents_type
-
-      input = input_ref
-
-      actual = Array
-      expected = input[0]["intents"].class
-
-      assert_equal expected, actual
+      assert_response_has_error  expected_error, actual
     end
 
     def test_intent_locale

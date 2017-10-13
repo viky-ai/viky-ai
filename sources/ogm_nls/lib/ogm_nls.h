@@ -203,7 +203,13 @@ struct og_ctrl_nls
 
   struct og_maintenance_thread mt[1];
 
+  /** Nlp common memmory : should not be use except in init phase */
   og_nlp hnlp;
+
+  /** Nlp local thread memory : should not be use except in init phase */
+  og_nlpi hnlpi_main;
+
+
 };
 
 #define maxArrayLevel 10

@@ -141,7 +141,26 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     }
   }
 
-  IFN(info->hnlp = OgNlpInit(info->param)) DPcErr;
+  info->hnlp = OgNlpInit(info->param);
+  IFN(info->hnlp)
+  {
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
+
+  struct og_nlpi_param nlpi_param[1];
+  memset(nlpi_param, 0, sizeof(struct og_nlpi_param));
+  nlpi_param->herr = info->param->herr;
+  nlpi_param->hmsg = info->param->hmsg;
+  nlpi_param->hmutex = info->param->hmutex;
+  nlpi_param->loginfo = info->param->loginfo;
+  nlpi_param->name = "ognlp";
+  info->hnlpi = OgNlpRequestInit(info->hnlp, nlpi_param);
+  IFN(info->hnlpi)
+  {
+    nlp_send_errors_as_json(info);
+    DPcErr;
+  }
 
   int nb_compilation_files = OgHeapGetCellsUsed(info->hfilename);
   for (int i = 0; i < nb_compilation_files; i++)
@@ -183,7 +202,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   memset(input, 0, sizeof(struct og_nlp_compile_input));
   input->json_input = json;
 
-  IF(OgNlpCompile(info->hnlp, input, output))
+  IF(OgNlpCompile(info->hnlpi, input, output))
   {
     nlp_send_errors_as_json(info);
     DPcErr;
@@ -226,7 +245,7 @@ static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
   memset(input, 0, sizeof(struct og_nlp_dump_input));
   input->json_input = json;
 
-  IFE(OgNlpDump(info->hnlp, input, output));
+  IFE(OgNlpDump(info->hnlpi, input, output));
 
   IFN(output->json_output)
   {
@@ -269,19 +288,6 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
 
   memset(input, 0, sizeof(struct og_nlp_interpret_input));
   input->json_input = json;
-
-  struct og_nlpi_param param[1];
-  memset(param,0,sizeof(struct og_nlpi_param));
-  param->herr = info->param->herr;
-  param->hmsg = info->param->hmsg;
-  param->hmutex = info->param->hmutex;
-  param->loginfo = info->param->loginfo;
-  info->hnlpi = OgNlpInterpretInit(info->hnlp,param);
-  IFN(info->hnlpi)
-  {
-    nlp_send_errors_as_json(info);
-    DPcErr;
-  }
 
   IF(OgNlpInterpret(info->hnlpi, input, output))
   {

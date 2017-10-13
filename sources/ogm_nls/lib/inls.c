@@ -16,7 +16,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   {
     sprintf(erreur, "OgNlsInit: malloc error on ctrl_nls");
     OgErr(param->herr, erreur);
-    return (0);
+    return NULL;
   }
 
   memset(ctrl_nls, 0, sizeof(struct og_ctrl_nls));
@@ -36,11 +36,11 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
   msg_param->loginfo.where = ctrl_nls->loginfo->where;
   msg_param->module_name = "nls";
-  IFn(ctrl_nls->hmsg=OgMsgInit(msg_param)) return (0);
-  IF(OgMsgTuneInherit(ctrl_nls->hmsg,param->hmsg)) return (0);
+  IFn(ctrl_nls->hmsg=OgMsgInit(msg_param)) return NULL;
+  IF(OgMsgTuneInherit(ctrl_nls->hmsg,param->hmsg)) return NULL;
 
-  IF(NlsConfReadFile(ctrl_nls,1)) return (0);
-  IF(NlsConfReadEnv(ctrl_nls)) return (0);
+  IF(NlsConfReadFile(ctrl_nls,1)) return NULL;
+  IF(NlsConfReadEnv(ctrl_nls)) return NULL;
 
   if (ctrl_nls->WorkingDirectory[0] && !OgIsAbsolutePath(ctrl_nls->conf->data_directory))
   {
@@ -55,7 +55,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
     if (ctrl_nls->cwd[i] == '\\') ctrl_nls->cwd[i] = '/';
   }
 
-  IF(OgStartupSockets(param->herr)) return (0);
+  IF(OgStartupSockets(param->herr)) return NULL;
 
   ctrl_nls->LtNumber = ctrl_nls->conf->max_listening_threads;
   int size = ctrl_nls->LtNumber * sizeof(struct og_listening_thread);
@@ -64,7 +64,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   {
     sprintf(erreur, "OgNlsInit: malloc error on ctrl_nls->lt (%d bytes)", size);
     OgErr(ctrl_nls->herr, erreur);
-    return (0);
+    return NULL;
   }
   memset(ctrl_nls->Lt, 0, size);
 
@@ -78,7 +78,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   if (ctrl_nls->loginfo->trace & DOgNlsTraceSocketSize) ucis_param->loginfo.trace |= DOgUciServerTraceSocketSize;
   ucis_param->socket_buffer_size = ctrl_nls->conf->max_request_size;
   ucis_param->loginfo.where = ctrl_nls->loginfo->where;
-  IFn(ctrl_nls->hucis=OgUciServerInit(ucis_param)) return (0);
+  IFn(ctrl_nls->hucis=OgUciServerInit(ucis_param)) return NULL;
 
   // Use to send http request to unblock other thread
   struct og_uci_client_param ucic_param[1];
@@ -96,13 +96,13 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   {
     sprintf(erreur, "OgNlsInit: OgMaintenanceThreadInit error");
     OgErr(ctrl_nls->herr, erreur);
-    return (0);
+    return NULL;
   }
 
-  IF(OgSemaphoreInit(ctrl_nls->hsem_run3,ctrl_nls->LtNumber)) return (0);
+  IF(OgSemaphoreInit(ctrl_nls->hsem_run3,ctrl_nls->LtNumber)) return NULL;
 
   /** Mutex for choosing lt */
-  IF(OgInitCriticalSection(ctrl_nls->hmutex_run_lt,"hmutex_run_lt")) return (0);
+  IF(OgInitCriticalSection(ctrl_nls->hmutex_run_lt,"hmutex_run_lt")) return NULL;
 
   struct og_nlp_param nlp_param[1];
   memset(nlp_param, 0, sizeof(struct og_nlp_param));
@@ -111,7 +111,19 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   nlp_param->hmutex = ctrl_nls->hmutex;
   nlp_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   nlp_param->loginfo.where = ctrl_nls->loginfo->where;
-  IFn(ctrl_nls->hnlp=OgNlpInit(nlp_param)) return (0);
+  ctrl_nls->hnlp = OgNlpInit(nlp_param);
+  IFN(ctrl_nls->hnlp) return NULL;
+
+  struct og_nlpi_param nlpi_param[1];
+  memset(nlpi_param, 0, sizeof(struct og_nlpi_param));
+  nlpi_param->herr = ctrl_nls->herr;
+  nlpi_param->hmsg = ctrl_nls->hmsg;
+  nlpi_param->hmutex = ctrl_nls->hmutex;
+  nlpi_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
+  nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
+  nlpi_param->name = "nls_cltr_main_nlpth";
+  ctrl_nls->hnlpi_main = OgNlpRequestInit(ctrl_nls->hnlp, nlpi_param);
+  IFN(ctrl_nls->hnlpi_main) return NULL;
 
   for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {

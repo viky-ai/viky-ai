@@ -41,6 +41,8 @@ struct og_nlpi_param
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo;
+
+  og_string name;
 };
 
 struct og_nlp_compile_input
@@ -83,17 +85,19 @@ struct og_nlp_interpret_output
 DEFPUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param);
 DEFPUBLIC(og_status) OgNlpFlush(og_nlp hnlp);
 
-DEFPUBLIC(og_status) OgNlpCompile(og_nlp ctrl_nlp, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
-DEFPUBLIC(og_status) OgNlpDump(og_nlp ctrl_nlp, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+DEFPUBLIC(og_nlpi) OgNlpRequestInit(og_nlp ctrl_nlp, struct og_nlpi_param *param);
+DEFPUBLIC(og_status) OgNlpRequestReset(og_nlpi ctrl_nlpi);
+DEFPUBLIC(og_status) OgNlpRequestFlush(og_nlpi ctrl_nlpi);
 
-DEFPUBLIC(og_nlpi) OgNlpInterpretInit(og_nlp ctrl_nlp, struct og_nlpi_param *param);
-DEFPUBLIC(og_status) OgNlpInterpretReset(og_nlpi ctrl_nlpi);
-DEFPUBLIC(og_status) OgNlpInterpretFlush(og_nlpi ctrl_nlpi);
+
+DEFPUBLIC(og_status) OgNlpCompile(og_nlpi ctrl_nlpi, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
+DEFPUBLIC(og_status) OgNlpDump(og_nlpi ctrl_nlpi, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+
 DEFPUBLIC(og_status) OgNlpInterpret(og_nlpi ctrl_nlpi, struct og_nlp_interpret_input *input,
     struct og_nlp_interpret_output *output);
 
-DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp ctrl_nlp, struct og_nlp_compile_input *input);
-DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp ctrl_nlp, const char *package_id);
+DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlpi ctrl_nlpi, struct og_nlp_compile_input *input);
+DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlpi ctrl_nlpi, const char *package_id);
 
 #define _LOGNLPALIVE_
 #endif

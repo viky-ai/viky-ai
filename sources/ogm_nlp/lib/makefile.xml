@@ -5,6 +5,7 @@
   <project_name>ogm_nlp</project_name>
   <sources>
     <file>inlp.c</file>
+    <file>nlpthreaded.c</file>
     <file>nlpcompile.c</file>
     <file>nlpdump.c</file>
     <file>nlperr.c</file>

@@ -4,7 +4,9 @@ module Nlp
 
     def nlp(param = [])
 
-      response = `cd #{pwd} && ./ognlp #{param.join(' ')}`
+      cmd = "cd #{pwd} && ./ognlp #{param.join(' ')}"
+      # puts "Executing command : #{cmd}"
+      response = `#{cmd}`
       JSON.parse response
 
     end
@@ -14,12 +16,8 @@ module Nlp
     end
 
     def setup
-      if File.file?("#{pwd}output.json")
-        File.delete("#{pwd}/output.json")
-      end
-      if File.file?("#{pwd}input.json")
-        File.delete("#{pwd}/input.json")
-      end
+      FileUtils.rm("#{pwd}/output.json", :force => true)
+      FileUtils.rm("#{pwd}/input.json", :force => true)
     end
 
   end

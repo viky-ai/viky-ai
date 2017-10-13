@@ -49,6 +49,41 @@ module Nls
 
     end
 
+    def assert_json expected, actual, msg = nil
+
+      header = ''
+      header = "#{msg} : " if !msg.nil?
+
+      expected_json = {}
+      if expected.kind_of?(Array) || expected.kind_of?(Hash)
+        expected_json = expected
+      elsif expected.kind_of?(String)
+        if File.exist?(expected)
+          expected_json = JSON.parse(File.read(expected))
+        else
+          assert false, "#{header}expected file path must exists, expected: #{expected}"
+        end
+      else
+        assert false, "#{header}expected must a file path or a json object, expected: #{expected.inspect}"
+      end
+
+      actual_json = {}
+      if actual.kind_of?(Array) || actual.kind_of?(Hash)
+        actual_json = actual
+      elsif actual.kind_of?(String)
+        if File.exist?(actual)
+          actual_json = JSON.parse(File.read(actual))
+        else
+          assert false, "#{header}actual file path must exists, actual: #{actual}"
+        end
+      else
+        assert false, "#{header}actual must a file path or a json object, actual: #{actual.inspect}"
+      end
+
+      assert_equal expected_json, actual_json, "#{header} json content must be equals"
+
+    end
+
   end
 
 end

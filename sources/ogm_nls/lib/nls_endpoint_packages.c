@@ -29,7 +29,7 @@ og_status NlsEndpointPackages(struct og_listening_thread *lt, struct og_nls_requ
   input->package_name = package_name;
   input->package_update = TRUE;
 
-  IFE(OgNlpPackageAdd(lt->ctrl_nls->hnlp, input));
+  IFE(OgNlpPackageAdd(lt->hnlpi, input));
 
   char responsechar[DPcPathSize];
   sprintf(responsechar, "Package %s successfully updated", package_name);
@@ -51,7 +51,7 @@ og_status NlsEndpointPackageDelete(struct og_listening_thread *lt, struct og_nls
   }
   const char* package_name = json_string_value(json_package_name);
 
-  IFE(OgNlpPackageDelete(lt->ctrl_nls->hnlp, package_name));
+  IFE(OgNlpPackageDelete(lt->hnlpi, package_name));
 
   char responsechar[DPcPathSize];
   sprintf(responsechar, "Package %s successfully deleted", package_name);
