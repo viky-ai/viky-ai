@@ -167,6 +167,8 @@ PUBLIC(int) OgNlsFlush(og_nls handle)
   ctrl_nls->LtNumber = 0;
   DPcFree(ctrl_nls->Lt);
 
+  IFE(OgNlpThreadedFlush(ctrl_nls->hnlpi_main));
+
   IFE(OgNlpFlush(ctrl_nls->hnlp));
 
   IFE(OgUciClientFlush(ctrl_nls->hucic));

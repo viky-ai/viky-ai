@@ -37,11 +37,20 @@ static og_status NlsReadImportFilesFreeSafe(og_nls ctrl_nls, GQueue *queue_files
 {
   IFE(NlsReadImportFilesBuildList(ctrl_nls, queue_files));
 
+  // reset local thread memory before use
+  IFE(OgNlpThreadedReset(ctrl_nls->hnlpi_main));
+
   for (GList *iter = queue_files->head; iter; iter = iter->next)
   {
     char *import_file = iter->data;
     OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog, "NlsReadImportFilesBuildList: compiling file '%s'", import_file);
-    IFE(NlsReadImportFile(ctrl_nls, import_file));
+
+    og_status status = NlsReadImportFile(ctrl_nls, import_file);
+
+    // reset local thread memory on each file
+    IFE(OgNlpThreadedReset(ctrl_nls->hnlpi_main));
+
+    IFE(status);
   }
 
   DONE;
