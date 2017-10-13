@@ -86,7 +86,7 @@ module Nls
 
     def skip_timeout_with_ASAN
 
-      if ENV['OG_ASAN_ENABLE'] == "yes"
+      if ENV['OG_ASAN_ENABLE'] == "1"
 
         # https://www.mail-archive.com/gcc-bugs@gcc.gnu.org/msg544042.html
         skip('ASAN false positive with pthread_cancel() - skipped')
