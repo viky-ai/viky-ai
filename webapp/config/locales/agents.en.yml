@@ -24,7 +24,11 @@ en:
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."
       form:
-        color_label: Choose a background color
+        background_label: Background
+        background_color_chooser: Uses a color gradient
+        background_image_chooser: Or upload an image
+        remove_image_background_btn: Remove image
+        upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
       new:
         title: Create a new agent
         btn: Create

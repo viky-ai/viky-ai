@@ -16,6 +16,10 @@ class ColorPicker
         date_picker.find('a').removeClass('current')
         link.addClass('current')
 
+        preview = link.closest('.color-picker-preview')
+        if preview.length == 1
+          preview.attr( "class", "color-picker-preview background-color-gradient__#{input_value}")
+
 Setup = ->
   new ColorPicker()
 

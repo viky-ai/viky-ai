@@ -3,8 +3,7 @@
   border-radius: 2px;
   .agent-box__header{
     display: block;
-    background-image: linear-gradient(to top right, #444 0%, #555 100%);
-    padding: 5em 0 0 0;
+    padding: 6em 0 0 0;
     text-decoration: none;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
@@ -25,6 +24,14 @@
     h3{
       font-size: .9em;
       padding-bottom: .5em;
+    }
+    &.agent-box__header--image{
+      background-size: cover;
+      background-position: center center;
+      h2, h3{
+        background-color: rgba(black, .35);
+        text-shadow: 0 1px 0 rgba(black, .5);
+      }
     }
   }
 
@@ -54,13 +61,6 @@
   }
 }
 
-.agent-box{
-  @each $name, $color in $picker_colors{
-    .agent-box__header.agent-box__header--#{$name}{
-      background-image: linear-gradient(to top right, $color 0%, lighten($color, 8%) 100%);
-    }
-  }
-}
 .agents-box-grid{
   margin: 2em 0;
   display: -ms-grid;

@@ -2,6 +2,8 @@ class Agent < ApplicationRecord
   extend FriendlyId
   friendly_id :agentname, use: :history, slug_column: 'agentname'
 
+  include AgentImageUploader::Attachment.new(:image)
+
   has_many :memberships
   has_many :users, through: :memberships
 

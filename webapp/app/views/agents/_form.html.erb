@@ -30,18 +30,62 @@
 
   <div class="field">
     <div class="control">
-      <%= f.label :color, t('views.agents.form.color_label') %>
-      <% colors_array = agent.available_colors.map { |color| [color, color] } %>
-      <ul class="color-picker" data-input-selector="#agent-color-input">
-        <% agent.available_colors.each do |color| %>
-          <li>
-            <a href="#"
-               class="color-picker__<%= color %> <% if agent.color == color %>current<% end %>"
-               data-input-value="<%= color %>"></a>
-          </li>
+
+      <div class="agent-background-header">
+        <label><%= t('views.agents.form.background_label') %></label>
+        <div class="btn-group">
+          <a href="#" class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
+             data-action="agent-select-color">
+            <%= t('views.agents.form.background_color_chooser') %>
+          </a>
+          <a href="#" class="btn btn--small <% unless agent.image.nil? %>btn--primary <% end %>"
+             data-action="agent-select-image">
+            <%= t('views.agents.form.background_image_chooser') %>
+          </a>
+        </div>
+      </div>
+
+      <div class="color-picker-preview background-color-gradient__<%= agent.color %>"
+           <% unless agent.image.nil? %>style="display:none;"<% end %>>
+        <% colors_array = agent.available_colors.map { |color| [color, color] } %>
+        <div>
+          <ul class="color-picker" data-input-selector="#agent-color-input">
+            <% agent.available_colors.each do |color| %>
+              <li>
+                <a href="#"
+                   class="background-color__<%= color %> <% if agent.color == color %>current<% end %>"
+                   data-input-value="<%= color %>"></a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <%= f.hidden_field :color, id: 'agent-color-input' %>
+      </div>
+
+      <div class="agent-image-options__image" <% if agent.image.nil? %>style="display:none;"<% end %>>
+        <% unless agent.image.nil? %>
+          <div class="agent-upload__destroy" style="background-image: url(<%= agent.image_url(:background) %>)">
+            <a href="#" class="btn btn--small btn--destructive" data-action="agent-remove-image">
+              <span class="icon icon--x-small"><%= icon_delete %></span>
+              <%= t('views.agents.form.remove_image_background_btn') %>
+            </a>
+            <%= f.hidden_field :remove_image, id: 'agent-remove-image-input' %>
+          </div>
         <% end %>
-      </ul>
-      <%= f.hidden_field :color, id: 'agent-color-input' %>
+
+        <div class="agent-upload__new" <% unless agent.image.nil? %>style="display:none;"<% end %>>
+          <div>
+            <%= f.hidden_field :image, value: agent.cached_image_data %>
+            <%= f.file_field :image, id: 'agent_image' %>
+            <div class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              <%= t('views.agents.form.upload_info') %>
+            </div>
+            <%= display_errors(agent, :image) %>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
