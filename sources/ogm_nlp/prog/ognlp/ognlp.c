@@ -25,7 +25,7 @@ struct og_info
   struct og_nlp_param *param;
   og_heap hfilename_ba, hfilename;
   og_nlp hnlp;
-  og_nlpi hnlpi;
+  og_nlp_th hnlpi;
   char output_filename[DPcPathSize];
   char interpret_filename[DPcPathSize];
   int dump;
@@ -34,7 +34,7 @@ struct og_info
 /* functions for using main api */
 static int nlp(struct og_info *info, int argc, char * argv[]);
 static int nlp_compile(struct og_info *info, char *json_compilation_filename);
-static og_status nlp_dump(struct og_info *info, char *json_compilation_filename);
+static og_status nlp_dump(struct og_info *info);
 static int nlp_interpret(struct og_info *info, char *json_interpret_filename);
 static int nlp_send_errors_as_json(struct og_info *info);
 
@@ -148,14 +148,14 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     DPcErr;
   }
 
-  struct og_nlpi_param nlpi_param[1];
-  memset(nlpi_param, 0, sizeof(struct og_nlpi_param));
+  struct og_nlp_threaded_param nlpi_param[1];
+  memset(nlpi_param, 0, sizeof(struct og_nlp_threaded_param));
   nlpi_param->herr = info->param->herr;
   nlpi_param->hmsg = info->param->hmsg;
   nlpi_param->hmutex = info->param->hmutex;
   nlpi_param->loginfo = info->param->loginfo;
   nlpi_param->name = "ognlp";
-  info->hnlpi = OgNlpRequestInit(info->hnlp, nlpi_param);
+  info->hnlpi = OgNlpThreadedInit(info->hnlp, nlpi_param);
   IFN(info->hnlpi)
   {
     nlp_send_errors_as_json(info);
@@ -173,7 +173,7 @@ static int nlp(struct og_info *info, int argc, char * argv[])
   if (info->dump == TRUE)
   {
     if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");
-    IFE(nlp_dump(info, info->output_filename));
+    IFE(nlp_dump(info));
   }
 
   if (info->interpret_filename[0])
@@ -229,21 +229,14 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   DONE;
 }
 
-static og_status nlp_dump(struct og_info *info, char *json_dump_filename)
+static og_status nlp_dump(struct og_info *info)
 {
-  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Dumping '%s'", json_dump_filename);
+  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Dumping '%s'", info->output_filename);
 
-  json_error_t error[1];
-  json_auto_t *json = json_load_file(json_dump_filename, JSON_REJECT_DUPLICATES, error);
-//  IFN(json)
-//  {
-//    DPcErr;
-//  }
   struct og_nlp_dump_input input[1];
   struct og_nlp_dump_output output[1];
 
   memset(input, 0, sizeof(struct og_nlp_dump_input));
-  input->json_input = json;
 
   IFE(OgNlpDump(info->hnlpi, input, output));
 

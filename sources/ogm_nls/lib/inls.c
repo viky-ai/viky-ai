@@ -114,15 +114,15 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   ctrl_nls->hnlp = OgNlpInit(nlp_param);
   IFN(ctrl_nls->hnlp) return NULL;
 
-  struct og_nlpi_param nlpi_param[1];
-  memset(nlpi_param, 0, sizeof(struct og_nlpi_param));
+  struct og_nlp_threaded_param nlpi_param[1];
+  memset(nlpi_param, 0, sizeof(struct og_nlp_threaded_param));
   nlpi_param->herr = ctrl_nls->herr;
   nlpi_param->hmsg = ctrl_nls->hmsg;
   nlpi_param->hmutex = ctrl_nls->hmutex;
   nlpi_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
   nlpi_param->name = "nls_cltr_main_nlpth";
-  ctrl_nls->hnlpi_main = OgNlpRequestInit(ctrl_nls->hnlp, nlpi_param);
+  ctrl_nls->hnlpi_main = OgNlpThreadedInit(ctrl_nls->hnlp, nlpi_param);
   IFN(ctrl_nls->hnlpi_main) return NULL;
 
   for (int i = 0; i < ctrl_nls->LtNumber; i++)

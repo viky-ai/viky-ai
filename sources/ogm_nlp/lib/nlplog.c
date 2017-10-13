@@ -46,22 +46,22 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
   DONE;
 }
 
-og_status NlpPackageLog(og_nlpi ctrl_nlpi, package_t package)
+og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package)
 {
   og_string package_id = OgHeapGetCell(package->hba, package->id_start);
   IFN(package_id) DPcErr;
 
-  OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "Package '%s' :", package_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package '%s' :", package_id);
 
   int intent_used = OgHeapGetCellsUsed(package->hintent);
   for (int i = 0; i < intent_used; i++)
   {
-    IFE(NlpPackageIntentLog(ctrl_nlpi, package, i));
+    IFE(NlpPackageIntentLog(ctrl_nlp_th, package, i));
   }
   DONE;
 }
 
-og_status NlpPackageIntentLog(og_nlpi ctrl_nlpi, package_t package, int Iintent)
+og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent)
 {
   struct intent *intent = OgHeapGetCell(package->hintent, Iintent);
   IFN(intent) DPcErr;
@@ -69,16 +69,16 @@ og_status NlpPackageIntentLog(og_nlpi ctrl_nlpi, package_t package, int Iintent)
   og_string intent_id = OgHeapGetCell(package->hba, intent->id_start);
   IFN(intent_id) DPcErr;
 
-  OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "  Intent '%s' :", intent_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Intent '%s' :", intent_id);
 
   for (int i = 0; i < intent->sentences_nb; i++)
   {
-    IFE(NlpPackageSentenceLog(ctrl_nlpi, package, intent->sentence_start + i));
+    IFE(NlpPackageSentenceLog(ctrl_nlp_th, package, intent->sentence_start + i));
   }
   DONE;
 }
 
-og_status NlpPackageSentenceLog(og_nlpi ctrl_nlpi, package_t package, int Iphrase)
+og_status NlpPackageSentenceLog(og_nlp_th ctrl_nlp_th, package_t package, int Iphrase)
 
 {
   struct sentence *phrase = OgHeapGetCell(package->hsentence, Iphrase);
@@ -89,7 +89,7 @@ og_status NlpPackageSentenceLog(og_nlpi ctrl_nlpi, package_t package, int Iphras
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(phrase->locale, string_locale);
 
-  OgMsg(ctrl_nlpi->hmsg, "", DOgMsgDestInLog, "    Phrase '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Phrase '%s' with locale %s", text, string_locale);
 
   DONE;
 }

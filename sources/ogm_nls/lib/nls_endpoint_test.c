@@ -13,21 +13,32 @@ og_status NlsEndpointTest(struct og_listening_thread *lt, struct og_nls_request 
     struct og_nls_response *response)
 {
 
-  /**
-   * Parameters parsing
-   */
-  og_string name = NlsRequestGetParamValue(request, "name");
+  IFE(OgNlsEndpointsParseParametersInUrlPath(lt, request, "/test/hello/:path_param1/of/:path_param2/"));
+
+  og_string name = json_string_value(json_object_get(request->parameters, "name"));
   if (name != NULL)
   {
     IFE(json_object_set_new(response->body, "hello", json_string(name)));
   }
 
-  og_string wait = NlsRequestGetParamValue(request, "wait");
+  og_string path_param1 = json_string_value(json_object_get(request->parameters, "path_param1"));
+  if (path_param1 != NULL)
+  {
+    IFE(json_object_set_new(response->body, "path_param1", json_string(path_param1)));
+  }
+
+  og_string path_param2 = json_string_value(json_object_get(request->parameters, "path_param2"));
+  if (path_param2 != NULL)
+  {
+    IFE(json_object_set_new(response->body, "path_param2", json_string(path_param2)));
+  }
+
+  og_string wait = json_string_value(json_object_get(request->parameters, "wait"));
   if (wait != NULL)
   {
     IFE(NlsWait(wait, -1));
 
-    og_string id = NlsRequestGetParamValue(request, "id");
+    og_string id = json_string_value(json_object_get(request->parameters, "id"));
     if (id != NULL)
     {
       IFE(json_object_set_new(response->body, "id", json_string(id)));

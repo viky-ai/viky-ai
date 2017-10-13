@@ -19,7 +19,7 @@ module Nls
 
         expected =
         {
-          "status" => "Package voqal.ai:datetime2 successfully deleted"
+          "status" => "Package 'voqal.ai:datetime2' successfully deleted"
         }
 
         assert_json expected, actual
@@ -45,7 +45,7 @@ module Nls
 
         expected =
         {
-          "status" => "Package voqal.ai:datetime successfully updated"
+          "status" => "Package 'voqal.ai:datetime' successfully updated"
         }
 
         assert_json expected, actual
@@ -71,7 +71,7 @@ module Nls
 
         expected =
         {
-          "status" => "Package voqal.ai:datetime2 successfully updated"
+          "status" => "Package 'voqal.ai:datetime2' successfully updated"
         }
 
         assert_json expected, actual

@@ -41,7 +41,7 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...)
 /**
  * Add Error to error stack and log it
  */
-og_status NlpiThrowError(og_nlpi ctrl_nlpi, og_string format, ...)
+og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...)
 {
 
   // level dependent
@@ -49,7 +49,7 @@ og_status NlpiThrowError(og_nlpi ctrl_nlpi, og_string format, ...)
   og_char_buffer *levelText = "[ERROR]";
 
   // consistency checking
-  IFN(ctrl_nlpi) DPcErr;
+  IFN(ctrl_nlp_th) DPcErr;
 
   og_char_buffer textBuffer[DOgErrorSize];
   va_list vl;
@@ -60,10 +60,10 @@ og_status NlpiThrowError(og_nlpi ctrl_nlpi, og_string format, ...)
   va_end(vl);
 
   // log message
-  IFE(OgMsg(ctrl_nlpi->hmsg, levelText, levelFlag, textBuffer));
+  IFE(OgMsg(ctrl_nlp_th->hmsg, levelText, levelFlag, textBuffer));
 
   // add to error to stack
-  return OgErr(ctrl_nlpi->herr, textBuffer);
+  return OgErr(ctrl_nlp_th->herr, textBuffer);
 
 }
 

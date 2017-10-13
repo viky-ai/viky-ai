@@ -54,6 +54,26 @@ module Nls
 
       end
 
+      def test_param_in_path
+
+        # Url must be correctly encoded
+        url = "#{Nls.url_test}/hello/my%20friends/of/pertimm/"
+
+        data = {
+          name: "toto"
+        }
+
+        expected = {
+          "hello" => "toto",
+          "path_param1" => "my friends",
+          "path_param2" => "pertimm"
+        }
+
+        actual = Nls.query_get(url, data)
+        assert_equal expected, actual
+
+      end
+
 
     end
 

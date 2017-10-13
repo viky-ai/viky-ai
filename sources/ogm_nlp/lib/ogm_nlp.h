@@ -44,7 +44,7 @@ struct interpret_package
   package_t package;
 };
 
-struct og_ctrl_nlpi
+struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
   void *herr, *hmsg;
@@ -72,30 +72,30 @@ struct og_ctrl_nlp
 
 /* nlperr.c */
 og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
-og_status NlpiThrowError(og_nlpi ctrl_nlpi, og_string format, ...);
+og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlplog.c */
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
-og_status NlpPackageLog(og_nlpi ctrl_nlpi, package_t package);
-og_status NlpPackageIntentLog(og_nlpi ctrl_nlpi, package_t package, int Iintent);
-og_status NlpPackageSentenceLog(og_nlpi ctrl_nlpi, package_t package, int Isentence);
+og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent);
+og_status NlpPackageSentenceLog(og_nlp_th ctrl_nlp_th, package_t package, int Isentence);
 
 /* nlpdump.c */
-og_status NlpPackageDump(og_nlpi ctrl_nlpi, package_t package, json_t *dump_json);
-og_status NlpPackageIntentDump(og_nlpi ctrl_nlpi, package_t package, int Iintent, json_t *dump_json);
-og_status NlpPackageSentenceDump(og_nlpi ctrl_nlpi, package_t package, int Isentence, json_t *dump_json);
+og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
+og_status NlpPackageIntentDump(og_nlp_th ctrl_nlp_th, package_t package, int Iintent, json_t *dump_json);
+og_status NlpPackageSentenceDump(og_nlp_th ctrl_nlp_th, package_t package, int Isentence, json_t *dump_json);
 
 /* nlpackage.c */
-package_t NlpPackageCreate(og_nlpi ctrl_nlpi, const char *string_id);
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id);
 void NlpPackageDestroy(gpointer package);
-og_status NlpPackageAddOrReplace(og_nlpi ctrl_nlpi, package_t package);
-package_t NlpPackageGet(og_nlpi ctrl_nlpi, og_string package_id);
+og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
+package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
 
 /* nlpinterpret.c */
-og_status NlpInterpretInit(og_nlpi ctrl_nlpi, struct og_nlpi_param *param);
-og_status NlpInterpretReset(og_nlpi ctrl_nlpi);
-og_status NlpInterpretFlush(og_nlpi ctrl_nlpi);
+og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);
+og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th);
+og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th);
 
 /* nlpcompile.c */
-og_status NlpCompilePackageIntent(og_nlpi ctrl_nlpi, package_t package, json_t *json_intent);
-og_status NlpCompilePackage(og_nlpi ctrl_nlpi, struct og_nlp_compile_input *input, json_t *json_package);
+og_status NlpCompilePackageIntent(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_intent);
+og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_package);

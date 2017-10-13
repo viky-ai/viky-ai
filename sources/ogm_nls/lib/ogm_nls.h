@@ -18,7 +18,6 @@
 #include <jansson.h>
 
 #include <uriparser/Uri.h>
-#include <uriparser/UriBase.h>
 
 #include <string.h>
 
@@ -101,9 +100,18 @@ struct og_nls_response
   json_t *body;
 };
 
+enum lt_running_state
+{
+  lt_running_state_waiting = 0,   //
+  lt_running_state_running = 1,   //
+  lt_running_state_cleanning = 2,   //
+};
+
 /** data structure for a listening thread **/
 struct og_listening_thread
 {
+  struct og_ctrl_nls *ctrl_nls;
+  int ID;
 
   /** Error handler */
   void *herr;
@@ -112,22 +120,19 @@ struct og_listening_thread
   void *hmsg;
 
   ogmutex_t *hmutex;
-  struct og_ctrl_nls *ctrl_nls;
   struct og_loginfo loginfo[1];
-  int ID, disabled, state;
-  og_bool request_running;
+
+
+  enum lt_running_state state;
   int request_running_start;
   int request_running_time;
+
   ogthread_t IT;
   unsigned hsocket_in;
   int connection_closed;
   struct sockaddr_in socket_in;
 
-  int content_start, content_length;
-
   struct og_ucisr_output output[1];
-  int valid_request;
-
   void *hucis;
 
   /** for permanent lt threads **/
@@ -143,7 +148,8 @@ struct og_listening_thread
   /** Heap of char */
   og_heap h_json_answer;
 
-  og_nlpi hnlpi;
+  /** Nlp local thread handler*/
+  og_nlp_th hnlp_th;
 
   /** Endpoint in/out structure are kept here for memory release after request is finished */
   struct og_nls_request  request[1];
@@ -207,7 +213,7 @@ struct og_ctrl_nls
   og_nlp hnlp;
 
   /** Nlp local thread memory : should not be use except in init phase */
-  og_nlpi hnlpi_main;
+  og_nlp_th hnlpi_main;
 
 
 };
@@ -250,8 +256,6 @@ og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl);
 
 /** nlsltu.c **/
 og_bool OgListeningThreadAnswerUci(struct og_listening_thread *lt);
-og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey);
-og_string NlsRequestGetParamValue(struct og_nls_request *request, og_string paramKey);
 
 /** nlsonem.c **/
 og_status NlsOnEmergency(struct og_ctrl_nls *ctrl_nls);
@@ -266,6 +270,7 @@ og_status OgMaintenanceThreadFlush(struct og_maintenance_thread *mt);
 og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *request, struct og_nls_response *response);
 og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct og_nls_request *request);
 og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_string url, struct og_nls_request *request);
+og_status OgNlsEndpointsParseParametersInUrlPath(struct og_listening_thread *lt, struct og_nls_request *request, og_string format);
 og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt);
 
 /** nls_endpoint_test.c **/
@@ -279,9 +284,9 @@ og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_req
     struct og_nls_response *response);
 
 /** nls_endpoint_packages.c **/
-og_status NlsEndpointPackages(struct og_listening_thread *lt, struct og_nls_request *request,
+og_status NlsEndpointPackagesPost(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
-og_status NlsEndpointPackageDelete(struct og_listening_thread *lt, struct og_nls_request *request,
+og_status NlsEndpointPackagesDelete(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response);
 
 /** nlsimport.c **/

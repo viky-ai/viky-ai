@@ -11,7 +11,12 @@ require 'json'
 require 'parallel'
 require 'fileutils'
 
-Minitest::Reporters.use! [ Minitest::Reporters::SpecReporter.new(:color => true), Minitest::Reporters::HtmlReporter.new ] # spec-like progress
+reporters = [
+  Minitest::Reporters::SpecReporter.new( color:true),
+  # Minitest::Reporters::HtmlReporter.new(reports_dir: 'html_reports')
+]
+
+Minitest::Reporters.use! reporters
 
 require 'test_common'
 require 'nls/common'

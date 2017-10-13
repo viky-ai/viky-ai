@@ -114,22 +114,6 @@ ifeq "$(GCC_VERSION_GE_v44)" "1"
 
 endif
 
-ifeq "$(GCC_VERSION_GE_v48)" "1"
-
-  # Add debug and optimisze compatible flag
-  #
-  # A new general optimization level, -Og, has been introduced. It addresses the need for fast compilation and a superior debugging experience
-  # while providing a reasonable level of runtime performance.
-  # Overall experience for development should be better than the default optimization level -O0.
-  # DEBUG_GCC_FLAGS += -Og
-
-  # Use address-sanitizer :
-  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer
-  # DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address -DDOG_HEAP_FORCE_RESET
-  # LIBS += -lasan
-
-endif
-
 ifeq "$(GCC_VERSION_GE_v49)" "1"
 
   # Add debug and optimisze compatible flag
@@ -139,13 +123,17 @@ ifeq "$(GCC_VERSION_GE_v49)" "1"
   # Overall experience for development should be better than the default optimization level -O0.
   #DEBUG_GCC_FLAGS += -Og
 
-  # Use address-sanitizer :
-  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
-  #DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address #-DDOG_HEAP_FORCE_RESET
-  #LIBS += -lasan -llsan -lubsan
-  #
-  # Run with :
-  # export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:detect_stack_use_after_return=1:debug=1
+  ifeq "$(OG_ASAN_ENABLE)" "1"
+
+    # Use address-sanitizer :
+    # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
+    DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address #-DDOG_HEAP_FORCE_RESET
+    LIBS += -lasan -llsan -lubsan
+
+    # Run with :
+    # export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:detect_stack_use_after_return=1:debug=0
+
+  endif
 endif
 
 
@@ -201,7 +189,7 @@ $(PLINKPATH):
 
 $(LOGPATH) :
 	@if test ! -d $(LOGPATH); then mkdir $(LOGPATH); fi
-	cp $(OG_REPO_PATH)/tools/buildReport2html.xsl $(LOGPATH)
+	cp -af $(OG_REPO_PATH)/tools/buildReport2html.xsl $(LOGPATH)
 
 
 

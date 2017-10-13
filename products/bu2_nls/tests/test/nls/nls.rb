@@ -121,8 +121,8 @@ module Nls
       JSON.parse(response.body)
     end
 
-    def self.delete(url)
-      response = RestClient.delete(url)
+    def self.delete(url, params = {})
+      response = RestClient.delete(url, params: params)
       JSON.parse(response.body)
     end
 
@@ -131,6 +131,8 @@ module Nls
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
       pwd_local
     end
+
+    private
 
     def self.exec(cmd, opts = {})
 

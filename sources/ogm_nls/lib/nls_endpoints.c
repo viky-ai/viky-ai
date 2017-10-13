@@ -8,6 +8,9 @@
 
 static og_bool isEndPointRegistered(struct og_nls_request *request, og_string registered_uri, int registered_method);
 static og_bool compareEndPointWithString(og_string str1, og_string str2);
+static og_status paramInUrlPathUntilStop(og_string url_path, og_char_buffer *detected);
+static og_status NlsEndpointsParseParametersAdd(struct og_listening_thread *lt, struct og_nls_request *request,
+    og_string key, og_string value);
 
 /**
  * Dispatch NLS enpoints
@@ -28,6 +31,30 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
+  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypePost))
+  {
+    IF(NlsEndpointPackagesPost(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointPackages\"");
+      DPcErr;
+    }
+  }
+  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypeDelete))
+  {
+    IF(NlsEndpointPackagesDelete(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"DELETE NlsEndpointPackages\"");
+      DPcErr;
+    }
+  }
+  else if (isEndPointRegistered(request, "/dump/", DOgHttpHeaderTypeGet))
+  {
+    IF(NlsEndpointDump(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointDump\"");
+      DPcErr;
+    }
+  }
   else if (isEndPointRegistered(request, "/test/", DOgHttpHeaderTypeGet))
   {
     IF(NlsEndpointTest(lt, request, response))
@@ -44,30 +71,6 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
-  else if (isEndPointRegistered(request, "/dump/", DOgHttpHeaderTypeGet))
-  {
-    IF(NlsEndpointDump(lt, request, response))
-    {
-      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointDump\"");
-      DPcErr;
-    }
-  }
-  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypePost))
-    {
-      IF(NlsEndpointPackages(lt, request, response))
-      {
-        NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointPackages\"");
-        DPcErr;
-      }
-    }
-  else if (isEndPointRegistered(request, "/packages/", DOgHttpHeaderTypeDelete))
-      {
-        IF(NlsEndpointPackageDelete(lt, request, response))
-        {
-          NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"DELETE NlsEndpointPackages\"");
-          DPcErr;
-        }
-      }
   else
   {
     return FALSE;
@@ -80,7 +83,7 @@ og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct 
 {
   // setting timeout for request to value given in parameter timeout.
   // Using  request timeout if timeout > 0 else conf->request_processing_timeout
-  og_string timeout = NlsRequestGetParamValue(request, "timeout");
+  og_string timeout = json_string_value(json_object_get(request->parameters, "timeout"));
   if (timeout != NULL)
   {
     int timeout_new = atoi(timeout);
@@ -91,27 +94,6 @@ og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct 
   }
 
   DONE;
-}
-
-
-og_bool NlsRequestParamExists(struct og_nls_request *request, og_string paramKey)
-{
-  if (json_object_get(request->parameters, paramKey) == NULL) return FALSE;
-  return TRUE;
-}
-
-og_string NlsRequestGetParamValue(struct og_nls_request *request, og_string paramKey)
-{
-  json_t * object = json_object_get(request->parameters, paramKey);
-  if (object == NULL)
-  {
-    return NULL;
-  }
-  else
-  {
-    const char * str = json_string_value(object);
-    return str;
-  }
 }
 
 og_status OgNlsEndpointsMemoryReset(struct og_listening_thread *lt)
@@ -155,29 +137,11 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
     {
       for (UriQueryListA * pQItem = queryList; pQItem; pQItem = pQItem->next)
       {
-        if (pQItem->key != NULL && pQItem->value != NULL)
+        // add param in request
+        status = NlsEndpointsParseParametersAdd(lt, request, pQItem->key, pQItem->value);
+        IF(status)
         {
-          json_t *key = json_string(pQItem->key);
-
-          status = json_array_append(request->parameters_keys, key);
-          IF(status)
-          {
-            NlsThrowError(lt, "OgNlsEndpointsParseParameters: error on json_array_append with key : '%s'", pQItem->key);
-            json_decrefp(&key);
-            break;
-          }
-
-          status = json_object_set_new(request->parameters, json_string_value(key), json_string(pQItem->value));
-          IF(status)
-          {
-            NlsThrowError(lt, "OgNlsEndpointsParseParameters: error on json_object_set_new with key : '%s'",
-                pQItem->key);
-            json_decrefp(&key);
-            break;
-          }
-
-          json_decrefp(&key);
-
+          break;
         }
       }
 
@@ -191,6 +155,47 @@ og_status OgNlsEndpointsParseParameters(struct og_listening_thread *lt, og_strin
 
   DONE;
 }
+
+static og_status NlsEndpointsParseParametersAdd(struct og_listening_thread *lt, struct og_nls_request *request,
+    og_string key, og_string value)
+{
+  if (key == NULL || value == NULL || !key[0] || !value[0])
+  {
+    CONT;
+  }
+
+  // check  if key is already in param
+  if (json_object_get(request->parameters, key))
+  {
+    NlsThrowError(lt, "NlsEndpointsParseParametersAdd: a parameter named '%s' already exists", key);
+    DPcErr;
+  }
+
+  // add key/value in parameters
+  json_t *key_json = json_string(key);
+
+  // add key in array 'parameters_keys' to keep it in memory
+  og_status status = json_array_append(request->parameters_keys, key_json);
+  IF(status)
+  {
+    NlsThrowError(lt, "NlsEndpointsParseParametersAdd: error on json_array_append with key : '%s'", key);
+    json_decrefp(&key_json);
+    DPcErr;
+  }
+
+  status = json_object_set_new(request->parameters, json_string_value(key_json), json_string(value));
+  IF(status)
+  {
+    NlsThrowError(lt, "NlsEndpointsParseParametersAdd: error on json_object_set_new with key : '%s'", value);
+    json_decrefp(&key_json);
+    DPcErr;
+  }
+
+  json_decrefp(&key_json);
+
+  DONE;
+}
+
 
 static og_bool isEndPointRegistered(struct og_nls_request *request, og_string registered_uri, int registered_method)
 {
@@ -222,31 +227,30 @@ static og_bool isEndPointRegistered(struct og_nls_request *request, og_string re
   return FALSE;
 }
 
-static og_bool compareEndPointWithString(og_string str1, og_string str2)
+static og_bool compareEndPointWithString(og_string registered_uri, og_string request_uri)
 {
   og_bool are_the_same = TRUE;
-  int size_of_str1 = strlen(str1);
+  int registered_uri_len = strlen(registered_uri);
 
-  for (int i = 0; i < size_of_str1; i++)
+  for (int i = 0; i < registered_uri_len; i++)
   {
-
-    if (str2[i] == '?')
+    if (request_uri[i] == '?')
     {
       are_the_same = FALSE;
       break;
     }
-    else if (str1[i] != str2[i])
+    else if (registered_uri[i] != request_uri[i])
     {
       are_the_same = FALSE;
       break;
     }
-    else if ( i != 0 && str1[i] == '/' && str2[i] == '/')
+    else if (i != 0 && registered_uri[i] == '/' && request_uri[i] == '/')
     {
       break;
     }
-    else if (i == size_of_str1 - 1)
+    else if (i == registered_uri_len - 1)
     {
-      if (str2[i + 1] != '?' && str2[i + 1] != '\0')
+      if (request_uri[i + 1] != '?' && request_uri[i + 1] != '\0')
       {
         are_the_same = FALSE;
         break;
@@ -254,6 +258,81 @@ static og_bool compareEndPointWithString(og_string str1, og_string str2)
     }
 
   }
+
   return are_the_same;
 }
 
+og_status OgNlsEndpointsParseParametersInUrlPath(struct og_listening_thread *lt, struct og_nls_request *request,
+    og_string format)
+{
+  og_string url = request->raw->hh.request_uri;
+
+  int format_len = strlen(format);
+  int url_len = strlen(url);
+
+  // url :    /test/hello/my friends/of/pertimm/
+  // format : /test/hello/:path_param1/of/:path_param2/
+
+  for (int i_format = 0, i_url = 0; i_format < format_len - 2; i_format++)
+  {
+    // match format part
+    if (format[i_format] == '/')
+    {
+      og_string format_part = format + i_format + 1;
+
+      // move forward in url
+      og_string url_part = NULL;
+      while (i_url < url_len)
+      {
+        if (url[i_url] == '/')
+        {
+          i_url++;
+          url_part = url + i_url;
+          break;
+        }
+        i_url++;
+      }
+
+      // format is matching param
+      if (format_part[0] == ':' && url_part != NULL)
+      {
+
+        og_char_buffer detectedKey[DPcPathSize];
+        paramInUrlPathUntilStop(format_part + 1, detectedKey);
+
+        og_char_buffer detectedValue[DPcPathSize];
+        paramInUrlPathUntilStop(url_part, detectedValue);
+
+        // url decode
+        uriUnescapeInPlaceA(detectedValue);
+
+        // add param in request
+        IFE(NlsEndpointsParseParametersAdd(lt, request, detectedKey, detectedValue));
+
+      }
+
+    }
+
+  }
+
+  DONE;
+}
+
+
+static og_status paramInUrlPathUntilStop(og_string url_path, og_char_buffer *detected)
+{
+  int url_path_len = strlen(url_path);
+  int i = 0;
+  for (i = 0; i < url_path_len; i++)
+  {
+    if (url_path[i] == '/' || url_path[i] == '?' || url_path[i] == '#')
+    {
+      break;
+    }
+    detected[i] = url_path[i];
+  }
+
+  detected[i] = '\0';
+
+  DONE;
+}

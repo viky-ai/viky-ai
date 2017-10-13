@@ -12,7 +12,7 @@ og_status NlsEndpointDump(struct og_listening_thread *lt, struct og_nls_request 
     struct og_nls_response *response)
 {
   struct og_nlp_dump_output output[1];
-  IF(OgNlpDump(lt->hnlpi, NULL, output))
+  IF(OgNlpDump(lt->hnlp_th, NULL, output))
   {
     NlsThrowError(lt, "NlsEndpointDump: error on OgNlpDump");
     DPcErr;

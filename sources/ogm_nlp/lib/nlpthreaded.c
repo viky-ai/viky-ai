@@ -7,67 +7,67 @@
  */
 #include "ogm_nlp.h"
 
-PUBLIC(og_nlpi) OgNlpRequestInit(og_nlp ctrl_nlp, struct og_nlpi_param *param)
+PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_param *param)
 {
-  struct og_ctrl_nlpi *ctrl_nlpi = (struct og_ctrl_nlpi *) malloc(sizeof(struct og_ctrl_nlpi));
-  IFn(ctrl_nlpi)
+  struct og_ctrl_nlp_threaded *ctrl_nlp_th = (struct og_ctrl_nlp_threaded *) malloc(sizeof(struct og_ctrl_nlp_threaded));
+  IFn(ctrl_nlp_th)
   {
     og_char_buffer erreur[DOgErrorSize];
-    sprintf(erreur, "OgNlpRequestInit: malloc error on ctrl_nlpi");
+    sprintf(erreur, "OgNlpRequestInit: malloc error on ctrl_nlp_th");
     OgErr(param->herr, erreur);
     return NULL;
   }
 
-  memset(ctrl_nlpi, 0, sizeof(struct og_ctrl_nlpi));
-  ctrl_nlpi->ctrl_nlp = ctrl_nlp;
-  ctrl_nlpi->herr = param->herr;
-  ctrl_nlpi->hmutex = param->hmutex;
-  memcpy(ctrl_nlpi->loginfo, &param->loginfo, sizeof(struct og_loginfo));
+  memset(ctrl_nlp_th, 0, sizeof(struct og_ctrl_nlp_threaded));
+  ctrl_nlp_th->ctrl_nlp = ctrl_nlp;
+  ctrl_nlp_th->herr = param->herr;
+  ctrl_nlp_th->hmutex = param->hmutex;
+  memcpy(ctrl_nlp_th->loginfo, &param->loginfo, sizeof(struct og_loginfo));
 
   og_char_buffer nlpc_name[DPcPathSize];
 
   struct og_msg_param msg_param[1];
   memset(msg_param, 0, sizeof(struct og_msg_param));
-  msg_param->herr = ctrl_nlpi->herr;
-  msg_param->hmutex = ctrl_nlpi->hmutex;
+  msg_param->herr = ctrl_nlp_th->herr;
+  msg_param->hmutex = ctrl_nlp_th->hmutex;
   msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
-  msg_param->loginfo.where = ctrl_nlpi->loginfo->where;
+  msg_param->loginfo.where = ctrl_nlp_th->loginfo->where;
 
   snprintf(nlpc_name, DPcPathSize, "%s_msg", param->name);
   msg_param->module_name = nlpc_name;
-  IFn(ctrl_nlpi->hmsg = OgMsgInit(msg_param)) return (0);
-  IF(OgMsgTuneInherit(ctrl_nlpi->hmsg, param->hmsg)) return (0);
+  IFn(ctrl_nlp_th->hmsg = OgMsgInit(msg_param)) return (0);
+  IF(OgMsgTuneInherit(ctrl_nlp_th->hmsg, param->hmsg)) return (0);
 
   // interpret specific memory
-  IF(NlpInterpretInit(ctrl_nlpi, param))
+  IF(NlpInterpretInit(ctrl_nlp_th, param))
   {
     og_char_buffer erreur[DOgErrorSize];
     sprintf(erreur, "OgNlpRequestInit: error on OgNlpInterpretInit");
-    OgErr(ctrl_nlpi->herr, erreur);
+    OgErr(ctrl_nlp_th->herr, erreur);
     return NULL;
   }
 
-  return ctrl_nlpi;
+  return ctrl_nlp_th;
 
 }
 
-PUBLIC(og_status) OgNlpRequestReset(og_nlpi ctrl_nlpi)
+PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 {
-  IFE(NlpInterpretReset(ctrl_nlpi));
+  IFE(NlpInterpretReset(ctrl_nlp_th));
 
-  json_decrefp(&ctrl_nlpi->json_answer);
+  json_decrefp(&ctrl_nlp_th->json_answer);
 
   DONE;
 }
 
-PUBLIC(og_status) OgNlpRequestFlush(og_nlpi ctrl_nlpi)
+PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
 {
-  IFE(NlpInterpretFlush(ctrl_nlpi));
+  IFE(NlpInterpretFlush(ctrl_nlp_th));
 
 
-  IFE(OgMsgFlush(ctrl_nlpi->hmsg));
+  IFE(OgMsgFlush(ctrl_nlp_th->hmsg));
 
-  DPcFree(ctrl_nlpi);
+  DPcFree(ctrl_nlp_th);
 
   DONE;
 }

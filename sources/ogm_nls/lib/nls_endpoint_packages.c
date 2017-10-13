@@ -7,97 +7,51 @@
 
 #include "ogm_nls.h"
 
-static og_bool getUntilStop(char* inputStr, int startFrom, char* detected);
-static og_bool getJSonUrlValues(json_t *dataObject, char* url);
-
-og_status NlsEndpointPackages(struct og_listening_thread *lt, struct og_nls_request *request,
+og_status NlsEndpointPackagesPost(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response)
 {
-  json_t *uriData = json_object();
-  getJSonUrlValues(uriData, request->raw->hh.request_uri);
-  json_t *json_package_name = json_object_get(uriData,"package_name");
-  if(json_package_name == NULL)
+
+  IFE(OgNlsEndpointsParseParametersInUrlPath(lt, request, "/packages/:package_id"));
+
+  og_string package_id = json_string_value(json_object_get(request->parameters, "package_id"));
+  if (package_id == NULL)
   {
-    NlsThrowError(lt, "NlsEndpointPackages: error on NlsEndpointPackages : package name not found");
+    NlsThrowError(lt, "NlsEndpointPackagesPost: no such param 'package_id'.");
     DPcErr;
   }
-  const char* package_name = json_string_value(json_package_name);
 
   struct og_nlp_compile_input input[1];
   memset(input, 0, sizeof(struct og_nlp_interpret_input));
   input->json_input = request->body;
-  input->package_name = package_name;
+  input->package_id = package_id;
   input->package_update = TRUE;
 
-  IFE(OgNlpPackageAdd(lt->hnlpi, input));
+  IFE(OgNlpPackageAdd(lt->hnlp_th, input));
 
-  char responsechar[DPcPathSize];
-  sprintf(responsechar, "Package %s successfully updated", package_name);
+  og_char_buffer responsechar[DPcPathSize];
+  sprintf(responsechar, "Package '%s' successfully updated", package_id);
   IFE(json_object_set_new(response->body, "status", json_string(responsechar)));
 
   DONE;
 }
 
-og_status NlsEndpointPackageDelete(struct og_listening_thread *lt, struct og_nls_request *request,
+og_status NlsEndpointPackagesDelete(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response)
 {
-  json_t *uriData = json_object();
-  getJSonUrlValues(uriData, request->raw->hh.request_uri);
-  const json_t *json_package_name = json_object_get(uriData,"package_name");
-  if(json_package_name == NULL)
+  IFE(OgNlsEndpointsParseParametersInUrlPath(lt, request, "/packages/:package_id"));
+
+  og_string package_id = json_string_value(json_object_get(request->parameters, "package_id"));
+  if (package_id == NULL)
   {
-    NlsThrowError(lt, "NlsEndpointPackageDelete: error on NlsEndpointPackageDelete : package name not found");
+    NlsThrowError(lt, "NlsEndpointPackagesPost: no such param 'package_id'.");
     DPcErr;
   }
-  const char* package_name = json_string_value(json_package_name);
 
-  IFE(OgNlpPackageDelete(lt->hnlpi, package_name));
+  IFE(OgNlpPackageDelete(lt->hnlp_th, package_id));
 
-  char responsechar[DPcPathSize];
-  sprintf(responsechar, "Package %s successfully deleted", package_name);
+  og_char_buffer responsechar[DPcPathSize];
+  sprintf(responsechar, "Package '%s' successfully deleted", package_id);
   IFE(json_object_set_new(response->body, "status", json_string(responsechar)));
 
-  DONE;
-}
-
-static og_bool getJSonUrlValues(json_t *dataObject, char* url)
-{
-  char * format = "/packages/:package_name";
-
-  int i_url = 0;
-  int i_format = 0;
-
-  int ilen = strlen(url);
-  for (i_url = 0; i_url < ilen - 1; i_url++)
-  {
-    if (format[i_format] == '/' && format[i_format + 1] == ':')
-    {
-      char detectedValue[DPcPathSize];
-      getUntilStop(url, i_url + 1, detectedValue);
-      char detectedKey[DPcPathSize];
-      getUntilStop(format, i_format + 2, detectedKey);
-
-      json_t *json_detected_value = json_string(detectedValue);
-      json_object_set_new(dataObject, detectedKey, json_detected_value);
-
-    }
-
-    i_format++;
-  }
-  DONE;
-}
-
-static og_bool getUntilStop(char* inputStr, int startFrom, char* detected)
-{
-  int counter = 0;
-  // int i=startFrom;
-  int ilen = strlen(inputStr);
-  for (int i = startFrom; i < ilen; i++)
-  {
-    if (inputStr[i] == '/' || inputStr[i] == '?' || inputStr[i] == '#') break;
-    detected[counter] = inputStr[i];
-    counter++;
-  }
-  detected[counter] = '\0';
   DONE;
 }

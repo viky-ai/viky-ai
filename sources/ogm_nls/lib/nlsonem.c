@@ -46,7 +46,7 @@ static int NlsOnEmergency1(struct og_ctrl_nls *ctrl_nls, int Ilt)
 
     IFn(lt) DONE;
     IFn(lt->output->content) DONE;
-    if (!lt->request_running) DONE;
+    if (lt->state != lt_running_state_running) DONE;
 
     if (lt->loginfo->trace & DOgNlsTraceMinimal)
     {

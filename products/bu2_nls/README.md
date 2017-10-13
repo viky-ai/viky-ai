@@ -39,6 +39,8 @@ geneclipse.pl linux64 all
 Build
 =====
 
+If you want to build with ASAN set `export OG_ASAN_ENABLE=1`, https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer
+
 ```
 buildinit.pl -u
 genmake.pl linux64 all

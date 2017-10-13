@@ -8,6 +8,8 @@ module Nls
 
       def test_timeout_with_wait
 
+        skip_timeout_with_ASAN
+
         data = {
           timeout: 100,
           wait: 150
@@ -33,6 +35,9 @@ module Nls
       end
 
       def test_timeout_with_infinite_loop
+
+        skip_timeout_with_ASAN
+
         data = {
           timeout: 100,
           wait: "infinite"
@@ -59,6 +64,8 @@ module Nls
 
       def test_stop_during_request_with_timeout
 
+        skip_timeout_with_ASAN
+
         thr1 = Thread.new {
           data = {
             timeout: 200,
@@ -84,6 +91,8 @@ module Nls
       end
 
       def test_stop_during_request_without_timeout
+
+        skip_timeout_with_ASAN
 
         thr1 = Thread.new {
 

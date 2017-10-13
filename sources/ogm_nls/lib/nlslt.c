@@ -8,15 +8,16 @@
 
 #include "ogm_nls.h"
 
-static int OgListeningThread1(void *ptr);
+static og_status OgListeningThread1(struct og_listening_thread *lt);
 static void NlsCancelCleanupOnTimeout(void* context);
 
 int OgListeningThread(void *ptr)
 {
-  int retour = CORRECT;
+  struct og_listening_thread *lt = (struct og_listening_thread *) ptr;
+  og_status retour = CORRECT;
 
-  pthread_cleanup_push(NlsCancelCleanupOnTimeout, ptr);
-  retour = OgListeningThread1(ptr);
+  pthread_cleanup_push(NlsCancelCleanupOnTimeout, lt);
+  retour = OgListeningThread1(lt);
   pthread_cleanup_pop(0);
 
   return (retour);
@@ -27,9 +28,8 @@ int OgListeningThread(void *ptr)
  *  are started just after the main lt (which is listening)
  *  received a call to the socket.
  */
-static int OgListeningThread1(void *ptr)
+static og_status OgListeningThread1(struct og_listening_thread *lt)
 {
-  struct og_listening_thread *lt = (struct og_listening_thread *) ptr;
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
   ogint64_t micro_clock_start;
   char v[128];
@@ -55,6 +55,8 @@ static int OgListeningThread1(void *ptr)
 
   IF(retour=OgListeningThreadAnswerUci(lt))
   {
+    lt->state = lt_running_state_cleanning;
+
     /** Sends error message to the connected client and exits **/
     int is_error = 0;
     if (lt->connection_closed)
@@ -96,6 +98,8 @@ static int OgListeningThread1(void *ptr)
     OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: OgListeningThread finished after %s micro-seconds", lt->ID, v);
   }
 
+  lt->state = lt_running_state_cleanning;
+
   NlsLtReset(lt);
 
   // release lt to be use later
@@ -107,7 +111,7 @@ static int OgListeningThread1(void *ptr)
 og_status OgNlsLtReleaseCurrentRunnning(struct og_listening_thread * lt)
 {
   struct og_ctrl_nls *ctrl_nls = lt->ctrl_nls;
-  lt->request_running = FALSE;
+  lt->state = lt_running_state_waiting;
   lt->current_thread = 0;
 
   IFE(OgSemaphorePost(ctrl_nls->hsem_run3));
@@ -133,6 +137,7 @@ static og_status NlsLtResetOptions(struct og_listening_thread *lt)
 static void NlsCancelCleanupOnTimeout(void* context)
 {
   struct og_listening_thread *lt = (struct og_listening_thread *) context;
+  lt->state = lt_running_state_cleanning;
   lt->current_thread = 0;
 
   OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout starting", lt->ID);
@@ -207,8 +212,8 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   lt->h_json_answer = OgHeapInit(lt->hmsg, lt_name, sizeof(unsigned char), DPcPathSize / 4);
   IFN(lt->h_json_answer) DPcErr;
 
-  struct og_nlpi_param nlpi_param[1];
-  memset(nlpi_param,0,sizeof(struct og_nlpi_param));
+  struct og_nlp_threaded_param nlpi_param[1];
+  memset(nlpi_param, 0, sizeof(struct og_nlp_threaded_param));
   nlpi_param->herr = lt->herr;
   nlpi_param->hmsg = lt->hmsg;
   nlpi_param->hmutex = lt->hmutex;
@@ -216,8 +221,8 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
   snprintf(lt_name, DPcPathSize, "lt_%2d_nlpth", lt->ID);
   nlpi_param->name = lt_name;
-  lt->hnlpi = OgNlpRequestInit(ctrl_nls->hnlp, nlpi_param);
-  IFN(lt->hnlpi) DPcErr;
+  lt->hnlp_th = OgNlpThreadedInit(ctrl_nls->hnlp, nlpi_param);
+  IFN(lt->hnlp_th) DPcErr;
 
   DONE;
 }
@@ -234,7 +239,7 @@ og_status NlsLtReset(struct og_listening_thread *lt)
 
   IFE(OgNlsEndpointsMemoryReset(lt));
 
-  IFE(OgNlpRequestReset(lt->hnlpi));
+  IFE(OgNlpThreadedReset(lt->hnlp_th));
 
   IFE(NlsLtResetOptions(lt));
   IFE(OgHeapReset(lt->h_json_answer));
@@ -250,7 +255,7 @@ og_status NlsLtReset(struct og_listening_thread *lt)
  */
 og_status NlsLtFlush(struct og_listening_thread *lt)
 {
-  IFE(OgNlpRequestFlush(lt->hnlpi));
+  IFE(OgNlpThreadedFlush(lt->hnlp_th));
 
   IFE(OgHeapFlush(lt->h_json_answer));
   IFE(OgUciServerFlush(lt->hucis));

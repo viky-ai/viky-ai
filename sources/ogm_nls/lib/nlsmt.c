@@ -76,7 +76,7 @@ static int OgMaintenanceThreadTick(struct og_maintenance_thread *mt, int clock_t
   for (int i = 0; i < ctrl_nls->LtNumber; i++)
   {
     struct og_listening_thread *lt = ctrl_nls->Lt + i;
-    if (lt->request_running)
+    if (lt->state == lt_running_state_running)
     {
       lt->request_running_time = clock_tick_time - lt->request_running_start;
 
