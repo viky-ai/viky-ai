@@ -1,6 +1,7 @@
-/*
+/**
  *  Natural Language Processing library
- *  NLP call init/reset/flush
+ *  NLP local thread init/reset/flush
+ *
  *  Copyright (c) 2017 Pertimm, by Patrick Constant
  *  Dev : September 2017
  *  Version 1.0
@@ -54,6 +55,8 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
 PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 {
   IFE(NlpInterpretReset(ctrl_nlp_th));
+
+  IFE(OgNlpSynchroUnLockAll(ctrl_nlp_th));
 
   json_decrefp(&ctrl_nlp_th->json_answer);
 

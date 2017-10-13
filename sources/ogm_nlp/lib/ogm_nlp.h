@@ -6,6 +6,7 @@
  */
 #include <lognlp.h>
 #include <logheap.h>
+#include <logsysi.h>
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
 
@@ -44,6 +45,19 @@ struct interpret_package
   package_t package;
 };
 
+enum nlp_synchro_lock_type
+{
+  nlp_synchro_lock_type_read_lock,
+  nlp_synchro_lock_type_write_lock
+};
+
+struct nlp_synchro_lock
+{
+  enum nlp_synchro_lock_type type;
+
+  ogsysi_rwlock rwlock;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -53,6 +67,9 @@ struct og_ctrl_nlp_threaded
 
   /** common request */
   json_t *json_answer;
+
+  /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
+  GQueue current_rw_lock[1];
 
   /** interpret request */
   og_heap hinterpret_package;
@@ -79,6 +96,13 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent);
 og_status NlpPackageSentenceLog(og_nlp_th ctrl_nlp_th, package_t package, int Isentence);
+
+/* nlpsynchro.c */
+og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
+og_status OgNlpSynchroReadLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
+og_status OgNlpSynchroReadUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
+og_status OgNlpSynchroWriteLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
+og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 
 /* nlpdump.c */
 og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
