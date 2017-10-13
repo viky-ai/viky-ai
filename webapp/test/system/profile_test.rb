@@ -2,11 +2,26 @@ require "application_system_test_case"
 
 class ProfileTest < ApplicationSystemTestCase
 
-  test "Edit profile access" do
+  def go_to_profile
     admin_login
     within(".nav") do
       click_link "admin"
     end
+  end
+
+
+  test "Display user's agents" do
+    go_to_profile
+    within(".agents-box-grid") do
+      assert page.has_content?("My awesome weather bot")
+      assert page.has_content?("T-800")
+      assert page.has_no_content?("Weather bot")
+    end
+  end
+
+
+  test "Edit profile access" do
+    go_to_profile
     click_link "Edit your profile"
 
     assert page.has_content?("Authentication parameters")
@@ -14,10 +29,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Profile change Name, username, bio" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     fill_in 'Name', with: 'Batman and Robin'
@@ -33,10 +45,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Profile add avatar and remove" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     within("main") do
@@ -65,10 +74,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Profile avatar with not permitted format" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     within("main") do
@@ -91,10 +97,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Update Authentication parameters without any change" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     fill_in 'Password', with: ''
@@ -105,10 +108,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Update Authentication parameters - Change password" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     fill_in 'Password', with: 'short'
@@ -132,10 +132,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Update Authentication parameters - Change email" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     fill_in 'Email', with: 'admin_new@voqal.ai'
@@ -146,10 +143,7 @@ class ProfileTest < ApplicationSystemTestCase
 
 
   test "Delete my account" do
-    admin_login
-    within(".nav") do
-      click_link "admin"
-    end
+    go_to_profile
     click_link "Edit your profile"
 
     click_link 'I want delete my account'

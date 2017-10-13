@@ -2,6 +2,7 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
+    @agents = current_user.agents
   end
 
   def edit

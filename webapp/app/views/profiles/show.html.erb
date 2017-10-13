@@ -35,15 +35,26 @@
       <div class="card-content">
 
         <h2><%= t('views.profile.edit.agents.title') %></h2>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
+
+        <div class="agents-box-grid">
+          <% @agents.each do |agent| %>
+            <div class="agent-box">
+              <a href="<%= user_agent_path(current_user, agent.agentname) %>" class="agent-box__header agent-box__header--<%= agent.color %>" id="<%= "agent-#{current_user.username}-#{agent.agentname}"%>">
+                <h2><%= agent.name %></h2>
+                <h3><%= agent.users.first.username %>/<%= agent.agentname %></h3>
+              </a>
+              <div class="agent-box__content">
+                <span>
+                  <% if agent.updated_at == agent.created_at %>
+                    <%= t('views.agents.index.created_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+                  <% else %>
+                    <%= t('views.agents.index.updated_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+                  <% end %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
