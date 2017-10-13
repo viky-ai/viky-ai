@@ -50,7 +50,6 @@
         <% end %>
         <a href="<%= user_agent_path(current_user, agent.agentname) %>"
            class="agent-box__header <%= css_class %>"
-           id="<%= "agent-#{current_user.username}-#{agent.agentname}"%>"
            style="<%= css_style %>"">
           <h2><%= agent.name %></h2>
           <h3><%= agent.users.first.username %>/<%= agent.agentname %></h3>

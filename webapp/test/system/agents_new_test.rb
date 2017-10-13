@@ -1,6 +1,6 @@
 require "application_system_test_case"
 
-class NewAgentsTest < ApplicationSystemTestCase
+class AgentsNewTest < ApplicationSystemTestCase
 
   def go_to_agents_creation
     admin_login

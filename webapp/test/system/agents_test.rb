@@ -24,6 +24,9 @@ class AgentsTest < ApplicationSystemTestCase
   end
 
 
+  #
+  # Delete
+  #
   test 'Button to delete agent is present' do
     go_to_agents_index
     first('.dropdown__trigger > button').click
@@ -55,6 +58,9 @@ class AgentsTest < ApplicationSystemTestCase
   end
 
 
+  #
+  # Configure
+  #
   test 'Configure from index' do
     go_to_agents_index
     first('.dropdown__trigger > button').click
@@ -76,6 +82,20 @@ class AgentsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Cancel configure from index' do
+    go_to_agents_index
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    assert page.has_text?('Configure agent')
+    click_link 'Cancel'
+    assert page.has_no_text?('Configure agent')
+    assert_equal '/agents', current_path
+  end
+
+
+  #
+  # Search
+  #
   test 'Agents can be found by name' do
     go_to_agents_index
     fill_in 'search_query', with: '800'
@@ -109,19 +129,4 @@ class AgentsTest < ApplicationSystemTestCase
     assert_equal '/agents', current_path
   end
 
-  test 'No redirection when configuring from index' do
-    go_to_agents_index
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
-    assert page.has_text?('Configure agent')
-    click_link 'Cancel'
-    assert_equal '/agents', current_path
-    sleep 0.1 # Hack
-    first('.dropdown__trigger > button').click
-    click_link 'Configure'
-    assert page.has_text?('Configure agent')
-    fill_in 'Name', with: 'My new updated agent'
-    click_button 'Update'
-    assert_equal '/agents', current_path
-  end
 end
