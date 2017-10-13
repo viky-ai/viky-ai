@@ -36,7 +36,7 @@
 
         <h2><%= t('views.profile.edit.agents.title') %></h2>
 
-        <div class="agents-box-grid">
+        <div class="agents-box-grid agents-box-grid--with-sidebar">
           <% @agents.each do |agent| %>
             <div class="agent-box">
               <a href="<%= user_agent_path(current_user, agent.agentname) %>" class="agent-box__header agent-box__header--<%= agent.color %>" id="<%= "agent-#{current_user.username}-#{agent.agentname}"%>">
