@@ -33,7 +33,7 @@
 
       <div class="agent-background-header">
         <label><%= t('views.agents.form.background_label') %></label>
-        <div class="btn-group">
+        <div class="btn-group" <% unless agent.image.nil? %>style="display:none;"<% end %>>
           <a href="#" class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
              data-action="agent-select-color">
             <%= t('views.agents.form.background_color_chooser') %>

@@ -37,6 +37,7 @@ class AgentForm
       $('#agent-remove-image-input').val(1)
       $('.agent-upload__destroy').hide()
       $('.agent-upload__new').show()
+      $('.agent-background-header .btn-group').show()
 
     if action == 'agent-select-color'
       event.preventDefault()
