@@ -45,6 +45,7 @@
     </div>
   </div>
 
+  <%= hidden_field_tag :origin, @origin %>
   <div class="actions">
     <% if ["edit", "update"].include? action_name %>
       <% btn_label = t('views.agents.edit.btn') %>
@@ -56,6 +57,6 @@
         disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
       }
     %>
-    <a href="<%= agents_path %>" class="btn btn--plain"><%= t('cancel') %></a>
+    <a href="#" class="btn btn--plain"><%= t('cancel') %></a>
   </div>
 <% end %>

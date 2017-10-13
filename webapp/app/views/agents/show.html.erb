@@ -3,4 +3,9 @@
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
     <strong><%= @agent.name %></strong> (<%= @agent.memberships.first.user.username %>/<%= @agent.agentname %>)
   </div>
+  <div class="header__tools">
+    <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>" class="btn btn--primary" data-action="open-remote-modal">
+      <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.breadcrumb.configure_btn') %>
+    </a>
+  </div>
 </header>

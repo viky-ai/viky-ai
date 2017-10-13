@@ -5,6 +5,7 @@ en:
         base: Agents
         agents_management: Agents management
         new_btn: New agent
+        configure_btn: Configure
       index:
         delete: Delete
         configure: Configure

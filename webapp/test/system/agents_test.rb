@@ -105,4 +105,20 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('My awesome weather bot')
     assert_equal '/agents', current_path
   end
+
+  test 'No redirection when configuring from index' do
+    go_to_agents_index
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    assert page.has_text?('Configure agent')
+    click_link 'Cancel'
+    assert_equal '/agents', current_path
+    sleep 0.1 # Hack
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    assert page.has_text?('Configure agent')
+    fill_in 'Name', with: 'My new updated agent'
+    click_button 'Update'
+    assert_equal '/agents', current_path
+  end
 end

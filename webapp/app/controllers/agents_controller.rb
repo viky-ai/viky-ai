@@ -13,6 +13,7 @@ class AgentsController < ApplicationController
 
   def new
     @agent = Agent.new
+    @origin = 'index'
     render partial: 'new'
   end
 
@@ -26,6 +27,7 @@ class AgentsController < ApplicationController
           redirect_to agents_path, notice: t('views.agents.new.success_message')
         }
       else
+        @origin = 'index'
         format.json{
           render json: {
             html: render_to_string(partial: 'new', formats: :html),
@@ -37,14 +39,17 @@ class AgentsController < ApplicationController
   end
 
   def edit
+    @origin = params[:origin]
     render partial: 'edit'
   end
 
   def update
+    @origin = params[:origin]
     respond_to do |format|
       if @agent.update(agent_params)
+        redirect_path = @origin == 'show' ? user_agent_path(current_user, params[:id]) : agents_path
         format.json{
-          redirect_to agents_path, notice: t('views.agents.edit.success_message')
+          redirect_to redirect_path, notice: t('views.agents.edit.success_message')
         }
       else
         format.json{
