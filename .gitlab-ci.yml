@@ -26,9 +26,9 @@ build_image_nls:
   stage: build
   image: docker:dind
   script:
-    - docker build --target run_image  -t ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} pse
+    - docker build --target run_image  -t ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} nls
     - docker push ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker build --target test_image -t ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} pse
+    - docker build --target test_image -t ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} nls
     - docker push ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Test
