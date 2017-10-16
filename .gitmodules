@@ -1,12 +1,12 @@
 [submodule "uriparser"]
-  path = nls/sources/external_dependencies/uriparser
+	path = nlp/sources/external_dependencies/uriparser
   url = http://gitlab.pertimm.corp/voqal.ai/dependencies/uriparser.git
   branch = master
 [submodule "jansson"]
-  path = nls/sources/external_dependencies/jansson
+	path = nlp/sources/external_dependencies/jansson
   url = http://gitlab.pertimm.corp/voqal.ai/dependencies/jansson.git
   branch = master
 [submodule "glib"]
-  path = nls/sources/external_dependencies/glib
+	path = nlp/sources/external_dependencies/glib
   url = http://gitlab.pertimm.corp/voqal.ai/dependencies/glib.git
   branch = 2.54.1
