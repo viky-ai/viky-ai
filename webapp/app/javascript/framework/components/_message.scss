@@ -1,0 +1,103 @@
+@-webkit-keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+@-moz-keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+@keyframes message-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+@-webkit-keyframes message-disappear {
+  0% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+}
+@-moz-keyframes message-disappear {
+  0% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+}
+@keyframes message-disappear {
+  0% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100%)
+  }
+}
+
+.message{
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+
+  @include display_flex();
+
+  background-color: #222;
+  color: #fff;
+  max-width: 30em;
+  border-radius: 3px;
+
+  .message__content{
+    padding: 1em 1.5em;
+  }
+  .message__action{
+    a{
+      display:block;
+      padding: 1em;
+      .icon svg{
+        fill: #fff;
+      }
+    }
+  }
+  &.message--show{
+    -webkit-animation: 250ms ease-in-out message-appear;
+       -moz-animation: 250ms ease-in-out message-appear;
+            animation: 250ms ease-in-out message-appear;
+  }
+  &.message--hide{
+    -webkit-animation: 250ms ease-in-out message-disappear;
+       -moz-animation: 250ms ease-in-out message-disappear;
+            animation: 250ms ease-in-out message-disappear;
+  }
+}
+
+.message--notice{
+  border-left: 7px solid $success_color;
+}
+.message--alert{
+  border-left: 7px solid $alert_color;
+}
