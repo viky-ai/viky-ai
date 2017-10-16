@@ -103,7 +103,7 @@ export TO_KEEP_LIST="
   pse/sources/ogm_xpt/lib
   pse/sources/ogm_thr/lib
   pse/sources/ogm_sig/lib
-  pse/sources/ogm_auta/lib
+  pse/sources/ogm_auta
   pse/sources/ogm_uni/lib
   pse/sources/ogm_msg/lib
   pse/sources/ogm_sysi
@@ -113,7 +113,7 @@ export TO_KEEP_LIST="
   pse/sources/ogm_ghbn/lib
   pse/sources/ogm_addr/lib
   pse/sources/ogm_http/lib
-  pse/sources/ogm_uci/lib
+  pse/sources/ogm_uci
 
   pse/sources/ogm_nlp
   pse/sources/ogm_nls
