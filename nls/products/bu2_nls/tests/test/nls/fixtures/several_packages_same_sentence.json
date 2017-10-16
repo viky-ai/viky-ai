@@ -1,0 +1,1062 @@
+[
+  {
+    "id"  : "package_1",
+    "intents":
+    [
+      {
+        "id" : "intent_1_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_1_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_2",
+    "intents":
+    [
+      {
+        "id" : "intent_2_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_2_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_3",
+    "intents":
+    [
+      {
+        "id" : "intent_3_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_3_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_4",
+    "intents":
+    [
+      {
+        "id" : "intent_4_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_4_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_5",
+    "intents":
+    [
+      {
+        "id" : "intent_5_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_5_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_6",
+    "intents":
+    [
+      {
+        "id" : "intent_6_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_6_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_7",
+    "intents":
+    [
+      {
+        "id" : "intent_7_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_7_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_8",
+    "intents":
+    [
+      {
+        "id" : "intent_8_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_8_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_9",
+    "intents":
+    [
+      {
+        "id" : "intent_9_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_9_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id"  : "package_10",
+    "intents":
+    [
+      {
+        "id" : "intent_10_1",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_1",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_2",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_2",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_3",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_3",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_4",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_4",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_5",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_5",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_6",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_6",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_7",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_7",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_8",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_8",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_9",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_9",
+            "locale"  : "fr-FR"
+          }
+        ]
+      },
+      {
+        "id" : "intent_10_10",
+        "sentences":
+        [
+          {
+            "sentence" : "sentence_10",
+            "locale"  : "fr-FR"
+          }
+        ]
+      }
+    ]
+  }
+]

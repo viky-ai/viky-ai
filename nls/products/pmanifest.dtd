@@ -1,0 +1,137 @@
+<!ELEMENT product_manifest (info, use, instances?, packaging*)>
+<!ATTLIST product_manifest
+   commercial_name CDATA     #REQUIRED
+   parent          CDATA     #IMPLIED
+>
+<!ELEMENT info (version?, summary, license, vendor, url, description)>
+<!ELEMENT version EMPTY>
+<!ATTLIST version
+   major        CDATA        #REQUIRED
+   minor        CDATA        #REQUIRED
+   fix          CDATA        #REQUIRED
+   revision     CDATA        #IMPLIED
+>
+<!ELEMENT summary (#PCDATA)>
+<!ELEMENT license (#PCDATA)>
+<!ELEMENT vendor  (#PCDATA)>
+<!ELEMENT url     (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT use (resource | component)* >
+<!ELEMENT resource EMPTY>
+<!ATTLIST resource
+   name         CDATA         #REQUIRED
+>
+<!ELEMENT component EMPTY>
+<!ATTLIST component
+   name         CDATA         #REQUIRED
+>
+<!ELEMENT packaging (instance | ship | package)* >
+<!ATTLIST packaging
+   platform     (linux|win|all)   #IMPLIED
+>
+<!ELEMENT ship (module | directory | file | lib | bin | copy | link | rename | lhp)*>
+
+<!ELEMENT module EMPTY>
+<!ATTLIST module
+   source       CDATA             #REQUIRED
+>
+
+<!ELEMENT directory (module | directory | file | lib | bin | copy | link | rename | lhp)*>
+<!ATTLIST directory
+   name         CDATA             #REQUIRED
+   permissions  CDATA             #IMPLIED
+   owner        CDATA             #IMPLIED
+   group        CDATA             #IMPLIED
+   info         CDATA             #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+<!ELEMENT file EMPTY>
+<!ATTLIST file
+   name         CDATA             #REQUIRED
+   source       CDATA             #REQUIRED
+   strip        CDATA             #IMPLIED
+   permissions  CDATA             #IMPLIED
+   owner        CDATA             #IMPLIED
+   group        CDATA             #IMPLIED
+   info         CDATA             #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT lib EMPTY>
+<!ATTLIST lib
+   name         CDATA             #REQUIRED
+   source       CDATA             #REQUIRED
+   strip        CDATA             #IMPLIED
+   permissions  CDATA             #IMPLIED
+   owner        CDATA             #IMPLIED
+   group        CDATA             #IMPLIED
+   info         CDATA             #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT bin EMPTY>
+<!ATTLIST bin
+   name         CDATA             #REQUIRED
+   source       CDATA             #REQUIRED
+   strip        CDATA             #IMPLIED
+   permissions  CDATA             #IMPLIED
+   owner        CDATA             #IMPLIED
+   group        CDATA             #IMPLIED
+   info         CDATA             #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT link EMPTY>
+<!ATTLIST link
+   name         CDATA         #REQUIRED
+   target       CDATA         #REQUIRED
+   permissions  CDATA         #IMPLIED
+   owner        CDATA         #IMPLIED
+   group        CDATA         #IMPLIED
+   info         CDATA         #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT lhp (#PCDATA)>
+<!ATTLIST lhp
+   name         CDATA            #REQUIRED
+   source       CDATA            #REQUIRED
+   permissions  CDATA            #IMPLIED
+   owner        CDATA            #IMPLIED
+   group        CDATA            #IMPLIED
+   info         CDATA            #IMPLIED
+   platform     (linux|win|all)  #IMPLIED
+>
+
+<!ELEMENT rename EMPTY>
+<!ATTLIST rename
+   name         CDATA             #REQUIRED
+   target       CDATA             #REQUIRED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT copy EMPTY>
+<!ATTLIST copy
+   source       CDATA             #REQUIRED
+   target       CDATA             #IMPLIED
+   platform     (linux|win|all)   #IMPLIED
+>
+
+<!ELEMENT instances (instance+)>
+
+<!ELEMENT instance (directory | file | lib | bin | copy | link | rename | lhp)* >
+<!ATTLIST instance
+   name         CDATA         #REQUIRED
+>
+
+<!ELEMENT package (var*)>
+<!ATTLIST package
+   platform         (linux|win)       #REQUIRED
+   default_location CDATA             #REQUIRED
+>
+
+<!ELEMENT var (#PCDATA)>
+<!ATTLIST var
+   name             CDATA             #REQUIRED
+>

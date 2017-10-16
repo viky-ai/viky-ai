@@ -1,0 +1,25 @@
+require 'rake/testtask'
+
+Rake::TestTask.new do |task|
+  task.libs << %w(test)
+  task.pattern = 'test/**/test_*.rb'
+end
+
+task :default => :test
+
+Rake::TestTask.new do |task|
+  task.description = "Run massif test"
+  task.name = "test_massif"
+  task.libs << %w(test)
+  task.libs << %w(valgrind)
+  task.pattern = 'valgrind/**/test_massif.rb'
+end
+
+Rake::TestTask.new do |task|
+  task.description = "Run memcheck test"
+  task.name = "test_memcheck"
+  task.libs << %w(test)
+  task.libs << %w(valgrind)
+  task.pattern = 'valgrind/**/test_memcheck.rb'
+end
+

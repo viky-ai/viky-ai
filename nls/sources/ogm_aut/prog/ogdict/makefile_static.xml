@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>prog</type>
+  <project_name>ogdict</project_name>
+  <sources>
+    <file>ogdict.c</file>
+  </sources>
+  <platforms>
+    <platform name="win">
+      <option name="NAME">ogdict.exe</option>
+      <option name="ADD_LIBR">ogm_thr_a.lib ogm_gen_a.lib ogm_aut_a.lib ogm_uni_a.lib</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+    <platform name="linux">
+      <option name="NAME">ogdict</option>
+      <option name="ADD_CFLAGS"></option>
+      <option name="ADD_LIBR">$(RLINKPATH)/libogaut.a  $(RLINKPATH)/liboguni.a $(RLINKPATH)/libogauta.a $(RLINKPATH)/libogmsg.a $(RLINKPATH)/liboggen.a $(RLINKPATH)/libogthr.a</option>
+      <option name="ADD_LIBD">$(DLINKPATH)/libogaut.a  $(DLINKPATH)/liboguni.a $(DLINKPATH)/libogauta.a $(DLINKPATH)/libogmsg.a $(DLINKPATH)/liboggen.a $(DLINKPATH)/libogthr.a</option>
+      <option name="ADD_LIBP">$(PLINKPATH)/libogaut.a  $(PLINKPATH)/liboguni.a $(PLINKPATH)/libogauta.a $(PLINKPATH)/libogmsg.a $(PLINKPATH)/liboggen.a $(PLINKPATH)/libogthr.a</option>
+    </platform>
+  </platforms>
+</makefile>

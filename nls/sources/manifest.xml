@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE components_manifest
+  SYSTEM 'cmanifest.dtd'>
+<components_manifest>
+  <factory_config>
+    <highlight_msg>
+      <msg color="0;31m" type="warning">
+        <![CDATA[: warning]]>
+      </msg>
+    </highlight_msg>
+  <hide_msg>
+  </hide_msg>
+  </factory_config>
+  <component info="All libs not maintained by Pertimm" name="external_dependencies" parallel="true" support="brice.ruzand@pertimm.com" />
+
+  <component name="ogm_addr/lib" info="Handles listening to multiple IP/ports" />
+  <component name="ogm_aut/lib" info="Finite State Automaton library" />
+  <component name="ogm_auta/lib" info="" />
+  <component name="ogm_gen/lib" info="Historical Pertimm 'generic libs'" />
+  <component name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" />
+  <component name="ogm_heap/lib" info="Memory heap management library" />
+  <component name="ogm_heap/prog/ogheap" info="Memory heap management library test program" />
+  <component name="ogm_http/lib" info="HTTP tools" />
+  <component name="ogm_msg/lib" info="Messages Handling" />
+  <component name="ogm_sig/lib" info="Signals" />
+  <component name="ogm_sock/lib" info="Socket tools" />
+  <component name="ogm_sysi/lib" info="Synchronisation read/write library" />
+  <component name="ogm_sysi/prog/ogsysi" info="Synchronisation read/write library test program" />
+  <component name="ogm_thr/lib" info="Threads, Semaphores and Mutex handling" />
+  <component name="ogm_uci/lib" info="Upper Communication Interface" />
+  <component name="ogm_uni/lib" info="Unicode tools" />
+  <component name="ogm_xpt/lib" info="Experimental, handles exceptions" />
+  <component name="ogm_zlib/lib" info="ZipLib" />
+
+  <component name="ogm_nls/lib" info="Natural Language Server" />
+  <component name="ogm_nls/prog/ogm_nls" info="Natural Language Server program" />
+  <component name="ogm_nlp/lib" info="Natural Language Processing" />
+  <component name="ogm_nlp/prog/ognlp" info="Natural Language Processing test program" />
+
+</components_manifest>

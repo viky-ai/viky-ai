@@ -1,0 +1,19 @@
+<!ELEMENT makefile (type , project_name , revision?, version?, tests?, sources , platforms) >
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT project_name (#PCDATA)>
+<!ELEMENT revision (#PCDATA)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT tests (file*) >
+<!ELEMENT sources (file*) >
+<!ELEMENT file (#PCDATA)>
+<!ELEMENT platforms (platform)*>
+<!ELEMENT platform (option | sources)*>
+<!ATTLIST platform
+   name         CDATA         #REQUIRED
+>
+<!ELEMENT option (#PCDATA)>
+<!ATTLIST option
+   name         CDATA         #REQUIRED
+   arch         CDATA         #IMPLIED
+>
+
