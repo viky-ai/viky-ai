@@ -8,6 +8,8 @@
  */
 #include "ogm_nlp.h"
 
+#define DogNlpSynchroTestTimeoutLongSleep 30000 // 30s
+
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
 {
   struct nlp_synchro_lock *poped_lock = g_queue_pop_tail(ctrl_nlp_th->current_rw_lock);
@@ -17,6 +19,7 @@ og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
     if (poped_lock->type == nlp_synchro_lock_type_read_lock)
     {
       og_status status = OgSysiReadUnLock(poped_lock->rwlock);
+
       // TODO log status
     }
     else if (poped_lock->type == nlp_synchro_lock_type_write_lock)
@@ -95,6 +98,44 @@ og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock)
   IFE(OgSysiWriteUnLock(rwlock));
 
   IFE(pop_lock(ctrl_nlp_th, nlp_synchro_lock_type_write_lock, rwlock));
+
+  DONE;
+}
+
+
+og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in)
+{
+  if (ctrl_nlp_th->timeout_in != nlp_timeout_in_NONE)
+  {
+    if (ctrl_nlp_th->timeout_in == timeout_in)
+    {
+      OgSleep(DogNlpSynchroTestTimeoutLongSleep);
+
+      // We should never reach this code
+      NlpThrowErrorTh(ctrl_nlp_th, "OgNlpSynchroTestSleepIfTimeoutNeeded : timeout should have been reach");
+      DPcErr;
+
+    }
+  }
+
+  DONE;
+}
+
+PUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_string timeout_in)
+{
+  if (timeout_in != NULL)
+  {
+
+    if (strcmp(timeout_in, "NlpPackageAddOrReplace") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpPackageAddOrReplace;
+    }
+    else if (strcmp(timeout_in, "NlpPackageGet") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpPackageGet;
+    }
+
+  }
 
   DONE;
 }

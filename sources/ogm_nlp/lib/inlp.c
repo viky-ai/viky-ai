@@ -38,6 +38,16 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
   IFn(ctrl_nlp->hmsg=OgMsgInit(msg_param)) return (0);
   IF(OgMsgTuneInherit(ctrl_nlp->hmsg,param->hmsg)) return (0);
 
+  struct og_sysi_param sysi_param[1];
+  memset(sysi_param, 0, sizeof(struct og_sysi_param));
+  sysi_param->herr = ctrl_nlp->herr;
+  sysi_param->hmsg = ctrl_nlp->hmsg;
+  // TODO remove disable_log_rw_lock_stat_on_flush
+  sysi_param->disable_log_rw_lock_stat_on_flush = FALSE;
+  snprintf(sysi_param->lock_name, DPcPathSize, "nlp_rw_lock_packages_hash");
+
+  ctrl_nlp->rw_lock_packages_hash = OgSysiInit(sysi_param);
+
   ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NlpPackageDestroy);
 
   return ctrl_nlp;
@@ -60,9 +70,13 @@ PUBLIC(int) OgNlpFlush(og_nlp handle)
 {
   struct og_ctrl_nlp *ctrl_nlp = handle;
 
-  OgMsgFlush(ctrl_nlp->hmsg);
-
   g_hash_table_destroy(ctrl_nlp->packages_hash);
+  ctrl_nlp->packages_hash = NULL;
+
+  OgSysiFlush(ctrl_nlp->rw_lock_packages_hash);
+  ctrl_nlp->rw_lock_packages_hash = NULL;
+
+  OgMsgFlush(ctrl_nlp->hmsg);
 
   DPcFree(ctrl_nlp);
   DONE;

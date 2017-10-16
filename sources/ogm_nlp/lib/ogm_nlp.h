@@ -45,6 +45,14 @@ struct interpret_package
   package_t package;
 };
 
+
+enum nlp_synchro_test_timeout_in
+{
+  nlp_timeout_in_NONE = 0,
+  nlp_timeout_in_NlpPackageAddOrReplace,
+  nlp_timeout_in_NlpPackageGet
+};
+
 enum nlp_synchro_lock_type
 {
   nlp_synchro_lock_type_read_lock,
@@ -64,6 +72,9 @@ struct og_ctrl_nlp_threaded
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
+
+  /** Use for testing feature : trigger timeout in a specific function */
+  enum nlp_synchro_test_timeout_in timeout_in;
 
   /** common request */
   json_t *json_answer;
@@ -85,6 +96,7 @@ struct og_ctrl_nlp
 
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
+  ogsysi_rwlock rw_lock_packages_hash;
 };
 
 /* nlperr.c */
@@ -103,6 +115,7 @@ og_status OgNlpSynchroReadLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroReadUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroWriteLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
+og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in);
 
 /* nlpdump.c */
 og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);

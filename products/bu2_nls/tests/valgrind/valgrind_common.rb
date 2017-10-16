@@ -29,15 +29,15 @@ module Valgrind
       end
 
       hello_world_query = {
-        timeout: 15,
-        wait: "2000"
+        timeout: 20,
+        timeout_in: "NlpPackageGet"
       }
 
       # launch hello world query with timeout
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
       nb_timeout.times do |i|
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.query_get(Nls::Nls.url_test, hello_world_query)
+          Nls::Nls.interpret(interpret_simple_query, hello_world_query)
         end
         assert_response_has_error expected_error, exception, "Timeout #{i}"
       end

@@ -93,6 +93,13 @@ og_status OgNlsEndpointsCommonParameters(struct og_listening_thread *lt, struct 
     }
   }
 
+  // For testing feature, we can trigger timeout in some function
+  og_string timeout_in = json_string_value(json_object_get(request->parameters, "timeout_in"));
+  if (timeout_in != NULL)
+  {
+    IFE(OgNlpSynchroTestRegisterTimeout(lt->hnlp_th, timeout_in));
+  }
+
   DONE;
 }
 

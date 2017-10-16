@@ -87,17 +87,21 @@ DEFPUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param);
 DEFPUBLIC(og_status) OgNlpFlush(og_nlp hnlp);
 
 DEFPUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_param *param);
-DEFPUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlpi);
-DEFPUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlpi);
+DEFPUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th);
+DEFPUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th);
 
-DEFPUBLIC(og_status) OgNlpCompile(og_nlp_th ctrl_nlpi, struct og_nlp_compile_input *input, struct og_nlp_compile_output *output);
-DEFPUBLIC(og_status) OgNlpDump(og_nlp_th ctrl_nlpi, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+DEFPUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_string timeout_in);
 
-DEFPUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlpi, struct og_nlp_interpret_input *input,
+DEFPUBLIC(og_status) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input,
+    struct og_nlp_compile_output *output);
+DEFPUBLIC(og_status) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
+    struct og_nlp_dump_output *output);
+
+DEFPUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_input *input,
     struct og_nlp_interpret_output *output);
 
-DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlpi, struct og_nlp_compile_input *input);
-DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlpi, og_string package_id);
+DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input);
+DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id);
 
 #define _LOGNLPALIVE_
 #endif

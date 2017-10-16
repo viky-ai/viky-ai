@@ -39,24 +39,98 @@ void NlpPackageDestroy(gpointer data)
   DPcFree(package);
 }
 
-og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package)
+static og_status NlpPackageAddOrReplaceNosync(og_nlp_th ctrl_nlp_th, package_t package)
 {
+  // Timeout trigger for synchro test
+  IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpPackageAddOrReplace));
+
   og_string package_id = OgHeapGetCell(package->hba, package->id_start);
   char *allocated_package_id = strdup(package_id);
 
-  // TODO: synchro ecriture
   g_hash_table_replace(ctrl_nlp_th->ctrl_nlp->packages_hash, allocated_package_id, package);
 
   DONE;
 }
 
+og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  IF(OgNlpSynchroWriteLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageAddOrReplace: error on OgNlpSynchroWriteLock");
+    DPcErr;
+  }
+
+  og_status status = NlpPackageAddOrReplaceNosync(ctrl_nlp_th, package);
+
+  IF(OgNlpSynchroWriteUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageAddOrReplace: error on OgNlpSynchroWriteUnLock");
+    DPcErr;
+  }
+
+  return status;
+}
+
+static package_t NlpPackageGetNosync(og_nlp_th ctrl_nlp_th, og_string package_id)
+{
+
+  // Timeout trigger for synchro test
+  IF(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpPackageGet))
+  {
+    return NULL;
+  }
+
+  package_t package = g_hash_table_lookup(ctrl_nlp_th->ctrl_nlp->packages_hash, package_id);
+
+  return package;
+}
+
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id)
 {
 
-  // TODO: synchro lecture
-  package_t package = g_hash_table_lookup(ctrl_nlp_th->ctrl_nlp->packages_hash, package_id);
+  IF(OgNlpSynchroReadLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageGet: error on OgNlpSynchroReadLock");
+    return NULL;
+  }
 
-  return (package);
+  package_t package = NlpPackageGetNosync(ctrl_nlp_th, package_id);
+
+  IF(OgNlpSynchroReadUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageGet: error on OgNlpSynchroReadUnLock");
+    return NULL;
+  }
+
+  return package;
+}
+
+static og_status NlpPackageRemoveNosync(og_nlp_th ctrl_nlp_th, const char *package_id)
+{
+  // g_hash_table_remove : will call NlpPackageDestroy(package) on value;
+
+  g_hash_table_remove(ctrl_nlp_th->ctrl_nlp->packages_hash, package_id);
+
+  DONE;
+}
+
+static og_status NlpPackageRemove(og_nlp_th ctrl_nlp_th, const char *package_id)
+{
+  IF(OgNlpSynchroWriteLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteLock");
+    DPcErr;
+  }
+
+  og_status status = NlpPackageRemoveNosync(ctrl_nlp_th, package_id);
+
+  IF(OgNlpSynchroWriteUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteUnLock");
+    DPcErr;
+  }
+
+  return status;
 }
 
 PUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input)
@@ -111,16 +185,6 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
   }
 
   IFE(NlpPackageRemove(ctrl_nlp_th, package_id));
-
-  DONE;
-}
-
-static og_status NlpPackageRemove(og_nlp_th ctrl_nlp_th, const char *package_id)
-{
-  // g_hash_table_remove : will call NlpPackageDestroy(package) on value;
-
-  // TODO: synchro ecriture
-  g_hash_table_remove(ctrl_nlp_th->ctrl_nlp->packages_hash, package_id);
 
   DONE;
 }

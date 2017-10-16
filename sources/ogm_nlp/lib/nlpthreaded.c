@@ -48,15 +48,19 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
     return NULL;
   }
 
+  ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
+
   return ctrl_nlp_th;
 
 }
 
 PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 {
-  IFE(NlpInterpretReset(ctrl_nlp_th));
+  ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
   IFE(OgNlpSynchroUnLockAll(ctrl_nlp_th));
+
+  IFE(NlpInterpretReset(ctrl_nlp_th));
 
   json_decrefp(&ctrl_nlp_th->json_answer);
 
