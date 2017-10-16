@@ -12,7 +12,7 @@ variables:
   VOQALNLS_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
 
 # Build docker image
-build_image_webapp:
+build_webapp:
   stage: build
   image: docker:dind
   script:
@@ -22,7 +22,7 @@ build_image_webapp:
     - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
-build_image_nls:
+build_nls:
   stage: build
   image: docker:dind
   script:
@@ -62,7 +62,7 @@ test_nls:
     - bundle exec rake test
 
 # Push tested docker image
-docker_push_webapp:
+push_webapp:
   stage: docker_push
   image: docker:dind
   variables:
@@ -71,7 +71,7 @@ docker_push_webapp:
     - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
 
-docker_push_nls:
+push_nls:
   stage: docker_push
   image: docker:dind
   variables:
@@ -85,8 +85,8 @@ deploy_branch:
   stage: deploy
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   dependencies:
-    - build_image_webapp
-    - build_image_nls
+    - build_webapp
+    - build_nls
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
