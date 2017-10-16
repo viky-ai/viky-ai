@@ -45,6 +45,16 @@
     }
   }
 
+  a.agent-box__header--image{
+    &:hover,
+    &:focus{
+      h2, h3{
+        color: #fff;
+        background-color: rgba(black, .5);
+      }
+    }
+  }
+
   .agent-box__content{
     padding: .5em 1em;
     border-top: none;
