@@ -9,9 +9,10 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/app
+  VOQALNLS_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
 
 # Build docker image
-build_webapp_image:
+build_image_webapp:
   stage: build
   image: docker:dind
   script:
@@ -20,6 +21,15 @@ build_webapp_image:
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
     - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+
+build_image_nls:
+  stage: build
+  image: docker:dind
+  script:
+    - docker build --target run_image  -t ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} pse
+    - docker push ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+    - docker build --target test_image -t ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} pse
+    - docker push ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Test
 test_webapp:
@@ -42,20 +52,41 @@ test_webapp:
     - cd /webapp
     - ./bin/docker_run_test.sh
 
+test_nls:
+  stage: test
+  image: ${VOQALNLS_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - cd /tests
+    - bundle exec rake test
+
 # Push tested docker image
-docker_push:
+docker_push_webapp:
   stage: docker_push
   image: docker:dind
+  variables:
+    GIT_STRATEGY: none
   script:
     - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
+
+docker_push_nls:
+  stage: docker_push
+  image: docker:dind
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker tag ${VOQALNLS_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALNLS_DOCKER_IMAGE}:latest
+    - docker push ${VOQALNLS_DOCKER_IMAGE}:latest
 
 # Deploy any branches on rancher dev
 deploy_branch:
   stage: deploy
   image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
   dependencies:
-    - build_webapp_image
+    - build_image_webapp
+    - build_image_nls
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
