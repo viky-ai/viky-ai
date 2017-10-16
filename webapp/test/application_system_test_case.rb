@@ -14,9 +14,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def go_to_agents_index
     admin_login
-    within(".nav") do
-      click_link "Agents"
-    end
     assert page.has_text?("Agents management")
   end
 end

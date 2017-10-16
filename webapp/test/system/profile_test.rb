@@ -7,6 +7,7 @@ class ProfileTest < ApplicationSystemTestCase
     within(".nav") do
       click_link "admin"
     end
+    assert page.has_text?("Your profile")
   end
 
 

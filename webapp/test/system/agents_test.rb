@@ -89,7 +89,7 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('Configure agent')
     click_link 'Cancel'
     assert page.has_no_text?('Configure agent')
-    assert_equal '/agents', current_path
+    assert_equal '/', current_path
   end
 
 

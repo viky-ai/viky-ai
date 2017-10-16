@@ -6,11 +6,6 @@
 <div class="nav__content">
   <ul>
     <li>
-      <a href="/" <% if controller_path.include?('welcome') %>class="current"<% end %>>
-        <%= t('views.nav.home') %>
-      </a>
-    </li>
-    <li>
       <a href="<%= agents_path %>" <% if controller_path.include?('agent') %>class="current"<% end %>>
         <%= t('views.nav.agents') %>
       </a>

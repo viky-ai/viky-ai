@@ -32,7 +32,15 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/backend/jobs'
   end
 
-  root to: "welcome#index"
-
   get 'style-guide', to: 'style_guide#index'
+
+
+  unauthenticated :user do
+    root to: "marketing#index", as: :unauthenticated_root
+  end
+
+  authenticate :user do
+    root to: 'agents#index', as: :authenticated_root
+  end
+
 end

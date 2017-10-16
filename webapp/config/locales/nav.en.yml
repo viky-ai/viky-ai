@@ -1,7 +1,6 @@
 en:
   views:
     nav:
-      home: Home
       agents: Agents
       backend:
         title: Backend
