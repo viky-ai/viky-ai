@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>lib</type>
+  <project_name>ogm_aut</project_name>
+  <sources>
+    <file>auf.c</file>
+    <file>auf2t.c</file>
+    <file>aufgline.c</file>
+    <file>auflet.c</file>
+    <file>aufsave.c</file>
+    <file>aufscan.c</file>
+    <file>auftry.c</file>
+    <file>aug.c</file>
+    <file>augscan.c</file>
+    <file>aum.c</file>
+    <file>aumbuild.c</file>
+    <file>aut.c</file>
+    <file>autadd.c</file>
+    <file>autaline.c</file>
+    <file>autcopy.c</file>
+    <file>autdel.c</file>
+    <file>autdele.c</file>
+    <file>autfinal.c</file>
+    <file>autflush.c</file>
+    <file>autfreq.c</file>
+    <file>autget.c</file>
+    <file>autgline.c</file>
+    <file>autinit.c</file>
+    <file>autlet.c</file>
+    <file>autlstmin.c</file>
+    <file>autmem.c</file>
+    <file>autmisc.c</file>
+    <file>autput.c</file>
+    <file>autreset.c</file>
+    <file>autsave.c</file>
+    <file>autscan.c</file>
+    <file>autstat.c</file>
+    <file>autstate.c</file>
+    <file>auttry.c</file>
+    <file>autu.c</file>
+    <file>ogauf.c</file>
+    <file>ogaufscan.c</file>
+    <file>autendian.c</file>
+    <file>autefstate.c</file>
+    <file>autestate.c</file>
+    <file>autegstate.c</file>
+    <file>autefrstate.c</file>
+    <file>aul.c</file>
+    <file>auldecl.c</file>
+    <file>aulscan.c</file>
+    <file>autpri.c</file>
+    <file>aufbuf.c</file>
+    <file>autadde.c</file>
+    <file>autscane.c</file>
+  </sources>
+  <platforms>
+    <platform name="win">
+      <option name="NAME">ogm_aut</option>
+      <option name="ADD_INC"></option>
+      <option name="ADD_LIBR">ogm_gen.lib</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+    <platform name="linux">
+      <option name="NAME">ogaut</option>
+      <option name="ADD_CFLAGS"></option>
+      <option name="ADD_LIBR">-loggen</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+  </platforms>
+</makefile>

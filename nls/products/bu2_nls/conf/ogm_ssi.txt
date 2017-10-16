@@ -1,0 +1,24 @@
+#### NLS ####
+
+# Search server request processing threads number
+max_listening_threads 4
+
+# Use permanent processing threads number
+permanent_threads yes
+
+# Maximum size for a search request
+max_request_size 2M
+
+# Timeout for search requests
+backlog_timeout 1000
+request_processing_timeout 2000
+socket_read_timeout 200
+
+# Requests history log (yes, no, search, index)
+history no
+
+# Log file rotation size
+log_rotation_size 100M
+
+# Add timestamp in log
+msg_timestamp true
