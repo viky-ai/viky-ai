@@ -32,6 +32,16 @@ class Agent < ApplicationRecord
     ]
   end
 
+  def transfer_ownership_to(new_owner)
+    ActiveRecord::Base.transaction do
+      self.users = self.users.reject do |user|
+        user.id == self.owner_id
+      end
+      self.users << new_owner
+      self.owner_id = new_owner.id
+    end
+  end
+
   private
 
     def owner_presence_in_users

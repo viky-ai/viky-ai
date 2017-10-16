@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership]
+  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership, :transfer_ownership]
 
   def index
     @search = AgentSearch.new(current_user.id, search_params)
@@ -72,11 +72,14 @@ class AgentsController < ApplicationController
   end
 
   def confirm_transfer_ownership
-    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, users: User.all }
+    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, users: User.where("id != ?", current_user.id) }
   end
 
   def transfer_ownership
-
+    new_owner = User.friendly.find(params[:users][:new_owner])
+    @agent.transfer_ownership_to(new_owner)
+    @agent.save
+    redirect_to agents_path, notice: t('views.agents.index.ownership_transferred', name: @agent.name, username: new_owner.username)
   end
 
 

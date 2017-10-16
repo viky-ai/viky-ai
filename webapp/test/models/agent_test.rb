@@ -189,6 +189,29 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Transfer agent ownership" do
+    user_admin = users(:admin)
+    user_confirmed = users(:confirmed)
+    terminator_agent = user_admin.agents.friendly.find("terminator")
+    assert_equal user_admin.id, terminator_agent.owner_id
+    assert terminator_agent.users.one? do |user|
+      user.id == user_admin.id
+    end
+    assert 0, terminator_agent.users.count do |user|
+      user.id == user_confirmed.id
+    end
+    terminator_agent.transfer_ownership_to(user_confirmed)
+    assert terminator_agent.save
+    assert_equal user_confirmed.id, terminator_agent.owner_id
+    assert terminator_agent.users.one? do |user|
+      user.id == user_confirmed.id
+    end
+    assert 0, terminator_agent.users.count do |user|
+      user.id == user_admin.id
+    end
+  end
+
+
   test "Search agent empty" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)

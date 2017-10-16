@@ -15,6 +15,7 @@ en:
         search:
           not_found: No agent found
           placeholder: Search by name or ID
+        ownership_transferred: "Agent %{name} transferred to user %{username}"
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."

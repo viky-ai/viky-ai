@@ -30,12 +30,17 @@ class AgentsShowTest < ApplicationSystemTestCase
 
   test 'Transfer agent ownership' do
     go_to_agents_index
-    assert page.has_content?('T-800')
-    click_link 'agent-admin-terminator'
+    assert page.has_content?('admin/terminator')
+    click_link 'T-800'
     click_link 'Transfer ownership'
     within(".modal") do
-      assert page.has_field? 'users_new_owner_id'
+      assert page.has_field? 'users_new_owner'
       assert page.has_button? 'Transfer'
+      select('confirmed', from: 'users_new_owner')
+      click_button 'Transfer'
     end
+    assert_equal '/agents', current_path
+    assert page.has_text?('Agent T-800 transferred to user confirmed')
+    assert page.has_no_content?('admin/terminator')
   end
 end

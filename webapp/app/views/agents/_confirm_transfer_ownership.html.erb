@@ -15,7 +15,7 @@
         <div class="field">
           <div class="control">
             <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>
-              <%= select("users", "new_owner_id", users.map { |u| [u.username, u.id] }, { include_blank: false }) %>
+              <%= select("users", "new_owner", users.map { |u| u.username }, { include_blank: false }) %>
               <div class="help help--error" style="display:none;">
                 <span class="icon icon--x-small"><%= icon_alert %></span>
                 <%= t('confirm_destroy.error') %>
