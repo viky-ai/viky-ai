@@ -124,7 +124,7 @@ class ProfileTest < ApplicationSystemTestCase
 
     first('.nav__footer svg').click # Logout
     click_link "Log in"
-    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Email', with: 'admin@viky.ai'
     fill_in 'Password', with: 'shortshort'
     click_button 'Log in'
 
@@ -136,10 +136,10 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    fill_in 'Email', with: 'admin_new@voqal.ai'
+    fill_in 'Email', with: 'admin_new@viky.ai'
     click_button 'Update profile'
 
-    assert page.has_content?("Currently waiting confirmation for: admin_new@voqal.ai")
+    assert page.has_content?("Currently waiting confirmation for: admin_new@viky.ai")
   end
 
 

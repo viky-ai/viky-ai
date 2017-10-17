@@ -1,7 +1,7 @@
 <spacer size="32"></spacer>
 <row>
   <center>
-    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="voqal.ai" />
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="viky.ai" />
   </center>
 </row>
 <spacer size="32"></spacer>
@@ -14,7 +14,7 @@
       <h3>Hello!</h3>
 
       <p>
-        We invited you to <a href="<%= root_url %>" target="_blank">voqal.ai</a>, the AI next generation platform for voice search and bots.
+        We invited you to <a href="<%= root_url %>" target="_blank">viky.ai</a>, the AI next generation platform for voice search and bots.
       </p>
       <p>
         You can accept it through the link below.
@@ -34,7 +34,7 @@
 
       <p>
         Thanks,<br />
-        The voqal.ai Team.
+        The viky.ai Team.
       </p>
 
       <p>

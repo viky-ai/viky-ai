@@ -14,7 +14,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'User index not allowed if user is not admin' do
     visit new_user_session_path
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
 
     click_button 'Log in'
@@ -58,11 +58,11 @@ class BackendUsersTest < ApplicationSystemTestCase
     find('.dropdown__trigger', text: 'Sort by last log in').click
     find('.dropdown__content', text: 'Sort by email').click
     expected = [
-      'admin@voqal.ai',
-      'confirmed@voqal.ai',
-      'invited@voqal.ai',
-      'locked@voqal.ai',
-      'notconfirmed@voqal.ai'
+      'admin@viky.ai',
+      'confirmed@viky.ai',
+      'invited@viky.ai',
+      'locked@viky.ai',
+      'notconfirmed@viky.ai'
     ]
 
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
@@ -82,7 +82,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button '#search'
 
     assert page.has_content?('1 user')
-    assert page.has_content?('locked@voqal.ai')
+    assert page.has_content?('locked@viky.ai')
 
     assert_equal '/backend/users', current_path
   end
@@ -96,7 +96,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_button '#search'
 
     assert page.has_content?('1 user')
-    assert page.has_content?('locked@voqal.ai')
+    assert page.has_content?('locked@viky.ai')
 
     assert_equal '/backend/users', current_path
   end
@@ -122,7 +122,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     fill_in 'validation', with: 'DELETE'
     click_button('Delete')
-    assert page.has_content?('User with the email: notconfirmed@voqal.ai has successfully been deleted.')
+    assert page.has_content?('User with the email: notconfirmed@viky.ai has successfully been deleted.')
     assert_equal '/backend/users', current_path
     assert_equal before_count - 1, User.count
   end
@@ -137,10 +137,10 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     all('a.btn--destructive')[1].click
     assert page.has_content?('Are you sure?')
-    assert page.has_content?("You're about to delete user with the email: locked@voqal.ai.")
+    assert page.has_content?("You're about to delete user with the email: locked@viky.ai.")
     fill_in 'validation', with: 'DELETE'
     click_button('Delete')
-    assert page.has_content?('User with the email: locked@voqal.ai has successfully been deleted.')
+    assert page.has_content?('User with the email: locked@viky.ai has successfully been deleted.')
     assert_equal '/backend/users', current_path
     assert_equal before_count - 1, User.count
   end
@@ -151,7 +151,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert page.has_content? "You need to sign in or sign up before continuing."
 
     visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
     click_button 'Log in'
 
@@ -161,7 +161,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     first('.nav__footer svg').click # Logout
 
     visit new_user_session_path
-    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Email', with: 'admin@viky.ai'
     fill_in 'Password', with: 'AdminBoom'
     click_button 'Log in'
 
