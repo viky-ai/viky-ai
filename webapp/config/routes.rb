@@ -23,6 +23,7 @@ Rails.application.routes.draw do
           get :confirm_destroy
           get :confirm_transfer_ownership
           post :transfer_ownership
+          get :search_users_for_transfer_ownership
         end
       end
     end

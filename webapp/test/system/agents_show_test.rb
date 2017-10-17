@@ -34,9 +34,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'T-800'
     click_link 'Transfer ownership'
     within(".modal") do
-      assert page.has_field? 'users_new_owner'
-      assert page.has_button? 'Transfer'
-      select('confirmed', from: 'users_new_owner')
+      page.execute_script "document.getElementById('input-new-owner').value = 'confirmed'"
       click_button 'Transfer'
     end
     assert page.has_text?('Agent T-800 transferred to user confirmed')
@@ -51,9 +49,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot'
     click_link 'Transfer ownership'
     within(".modal") do
-      assert page.has_field? 'users_new_owner'
-      assert page.has_button? 'Transfer'
-      select('confirmed', from: 'users_new_owner')
+      page.execute_script "document.getElementById('input-new-owner').value = 'confirmed'"
       click_button 'Transfer'
       assert page.has_content?('This user already have an agent with this ID')
     end

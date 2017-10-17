@@ -24,6 +24,7 @@ en:
         title: Are you sure?
         content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong>."
         label: "Select the new owner :"
+        placeholder: Search new owner by email or username (at least 3 characters).
         btn: Transfer
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."

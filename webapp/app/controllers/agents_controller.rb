@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_agent, only: [:show, :edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership, :transfer_ownership]
+  before_action :set_user_and_agent, except: [:index, :new, :create]
 
   def index
     @search = AgentSearch.new(current_user.id, search_params)
@@ -76,7 +76,7 @@ class AgentsController < ApplicationController
 
   def transfer_ownership
     new_owner = User.friendly.find(params[:users][:new_owner])
-    result = @agent.transfer_ownership_to new_owner
+    result = @agent.transfer_ownership_to(new_owner)
 
     respond_to do |format|
       if result[:success]
@@ -94,12 +94,24 @@ class AgentsController < ApplicationController
     end
   end
 
+  def search_users_for_transfer_ownership
+    respond_to do |format|
+      format.json {
+        query = params[:q]
+        @users = []
+        if query.size > 2
+          @users = User.where("id != ? AND ( email LIKE ? OR username LIKE ? )", @agent.owner_id, "%#{query}%", "%#{query}%").limit(10)
+        end
+      }
+    end
+  end
+
 
   private
 
-    def set_agent
-      user = User.friendly.find(params[:user_id])
-      @agent = user.agents.friendly.find(params[:id])
+    def set_user_and_agent
+      @user = User.friendly.find(params[:user_id])
+      @agent = @user.agents.friendly.find(params[:id])
     end
 
     def agent_params
