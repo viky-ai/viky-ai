@@ -14,7 +14,7 @@
       <h3>Hello!</h3>
 
       <p>
-        We invited you to <a href="<%= root_url %>" target="_blank">viky.ai</a>, the AI next generation platform for voice search and bots.
+        We invited you to <a href="<%= unauthenticated_root_url %>" target="_blank">viky.ai</a>, the AI next generation platform for voice search and bots.
       </p>
       <p>
         You can accept it through the link below.
