@@ -30,7 +30,11 @@ og_status NlsEndpointPackagesPost(struct og_listening_thread *lt, struct og_nls_
 
   og_char_buffer responsechar[DPcPathSize];
   sprintf(responsechar, "Package '%s' successfully updated", package_id);
-  IFE(json_object_set_new(response->body, "status", json_string(responsechar)));
+  IF(json_object_set_new(response->body, "status", json_string(responsechar)))
+  {
+    NlsThrowError(lt, "NlsEndpointPackagesPost: Error on json_object_set_new");
+    DPcErr;
+  }
 
   DONE;
 }

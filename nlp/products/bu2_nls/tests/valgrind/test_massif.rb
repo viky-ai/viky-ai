@@ -21,7 +21,7 @@ module Valgrind
       Nls::Nls.start(command: command.join(' '))
 
       # launch queries
-      interpret_queries(1000, 300)
+      interpret_queries(1000, 300, 300)
 
       # stop server
       Nls::Nls.stop

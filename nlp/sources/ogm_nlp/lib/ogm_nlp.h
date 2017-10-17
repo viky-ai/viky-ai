@@ -97,6 +97,9 @@ struct og_ctrl_nlp
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
+
+  /** List of deleted package wait for been freed when they are not used any more */
+  GQueue deleted_packages[1];
 };
 
 /* nlperr.c */
@@ -124,9 +127,10 @@ og_status NlpPackageSentenceDump(og_nlp_th ctrl_nlp_th, package_t package, int I
 
 /* nlpackage.c */
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id);
-void NlpPackageDestroy(gpointer package);
+og_status NlpPackageFlush(package_t package);
 og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
+og_status NlpFlushPackageMarkedAsDeletedNosync(og_nlp ctrl_nlp);
 
 /* nlpinterpret.c */
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);
