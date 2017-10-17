@@ -3,6 +3,7 @@
 
 # Run
 # docker build --target run_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
+# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
 
 # Tests
 # docker build --target test_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test .
@@ -49,6 +50,7 @@ RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
 
 WORKDIR /nls
 
+VOLUME [ "/nls/import" ]
 EXPOSE 9345
 CMD ["./ogm_nls"]
 
