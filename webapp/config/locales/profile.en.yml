@@ -19,9 +19,9 @@ en:
         destroy:
           title: Delete my account
           message: Deleting your account is final, you will not be able to go back.
-          btn: I want delete my account
+          btn: I want to delete my account
       confirm_destroy:
         title: Are you sure?
         message: Deleting your account is final, you will not be able to go back.
         btn: Delete my account
-        success_message: Your account has been succefully delete. ByeBye.
+        success_message: Your account has been successfully deleted. Bye bye.

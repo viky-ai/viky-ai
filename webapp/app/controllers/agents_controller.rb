@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_agent, only: [:edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership, :transfer_ownership]
+  before_action :set_agent, only: [:show, :edit, :update, :confirm_destroy, :destroy, :confirm_transfer_ownership, :transfer_ownership]
 
   def index
     @search = AgentSearch.new(current_user.id, search_params)
@@ -8,7 +8,6 @@ class AgentsController < ApplicationController
   end
 
   def show
-    @agent = Agent.friendly.find(params[:id])
   end
 
   def new

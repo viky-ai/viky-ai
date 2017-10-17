@@ -147,7 +147,7 @@ class ProfileTest < ApplicationSystemTestCase
     go_to_profile
     click_link "Edit your profile"
 
-    click_link 'I want delete my account'
+    click_link 'I want to delete my account'
 
     assert page.has_content?("Are you sure?")
 
@@ -159,7 +159,7 @@ class ProfileTest < ApplicationSystemTestCase
     fill_in 'validation', with: 'DELETE'
     click_button('Delete my account')
 
-    assert page.has_content?('Your account has been succefully delete. ByeBye.')
+    assert page.has_content?('Your account has been successfully deleted. Bye bye.')
   end
 
 end

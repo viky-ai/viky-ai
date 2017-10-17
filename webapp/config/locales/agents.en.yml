@@ -29,19 +29,19 @@ en:
         message: "Agent with the name: %{name} has successfully been deleted."
       form:
         background_label: Background
-        background_color_chooser: Uses a color gradient
+        background_color_chooser: Use a color gradient
         background_image_chooser: Or upload an image
         remove_image_background_btn: Remove image
         upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
       new:
         title: Create a new agent
         btn: Create
-        success_message: Your agent has been succefully created.
+        success_message: Your agent has been successfully created.
       edit:
         title: Configure agent
         transfer_ownership: Transfer ownership
         btn: Update
-        success_message: Your agent has been succefully updated.
+        success_message: Your agent has been successfully updated.
       show:
         configure_btn: Configure
 

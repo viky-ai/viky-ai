@@ -70,10 +70,8 @@ class Agent < ApplicationRecord
   private
 
     def owner_presence_in_users
-      unless users.empty?
-        unless users.collect(&:id).include?(owner_id)
-          errors.add(:users, "list does not includes agent owner")
-        end
+      unless (users.empty? || users.collect(&:id).include?(owner_id))
+        errors.add(:users, "list does not includes agent owner")
       end
     end
 

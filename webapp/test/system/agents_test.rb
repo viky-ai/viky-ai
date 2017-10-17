@@ -77,7 +77,7 @@ class AgentsTest < ApplicationSystemTestCase
 
     fill_in 'Name', with: 'My new updated agent'
     click_button 'Update'
-    assert page.has_text?('Your agent has been succefully updated.')
+    assert page.has_text?('Your agent has been successfully updated.')
     assert page.has_text?('My new updated agent')
   end
 

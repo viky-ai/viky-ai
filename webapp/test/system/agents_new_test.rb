@@ -37,7 +37,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       click_button 'Create'
     end
 
-    assert page.has_text?('Your agent has been succefully created.')
+    assert page.has_text?('Your agent has been successfully created.')
     expected = [
       "My awesome weather bot",
       "T-800",
@@ -64,7 +64,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       click_button 'Create'
     end
 
-    assert page.has_text?('Your agent has been succefully created.')
+    assert page.has_text?('Your agent has been successfully created.')
     expected = [
       "My awesome weather bot",
       "T-800",
