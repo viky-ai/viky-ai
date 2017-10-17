@@ -4,7 +4,7 @@ class AgentsTest < ApplicationSystemTestCase
 
   test 'Navigation to agents index' do
     go_to_agents_index
-    assert page.has_text?("Agents management")
+    assert page.has_text?("Agents")
     assert_equal "My awesome weather bot", first('.agent-box h2').text
   end
 

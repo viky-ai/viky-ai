@@ -3,9 +3,7 @@ en:
     agents:
       breadcrumb:
         base: Agents
-        agents_management: Agents management
         new_btn: New agent
-        configure_btn: Configure
       index:
         delete: Delete
         configure: Configure
@@ -37,3 +35,6 @@ en:
         title: Configure agent
         btn: Update
         success_message: Your agent has been succefully updated.
+      show:
+        configure_btn: Configure
+

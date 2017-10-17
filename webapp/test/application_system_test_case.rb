@@ -14,6 +14,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def go_to_agents_index
     admin_login
-    assert page.has_text?("Agents management")
+    assert page.has_text?("Agents")
   end
 end
