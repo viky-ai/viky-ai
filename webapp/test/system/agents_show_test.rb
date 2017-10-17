@@ -22,9 +22,10 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'Configure'
     assert page.has_text?('Configure agent')
     fill_in 'Name', with: 'My new updated weather agent'
+    fill_in 'ID', with: 'weather-v2'
     click_button 'Update'
-    assert page.has_text?('Agents / My new updated weather agent (admin/weather)')
-    assert_equal '/agents/admin/weather', current_path
+    assert page.has_text?('Agents / My new updated weather agent (admin/weather-v2)')
+    assert_equal '/agents/admin/weather-v2', current_path
   end
 
 

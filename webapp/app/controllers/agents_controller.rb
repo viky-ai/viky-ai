@@ -46,7 +46,7 @@ class AgentsController < ApplicationController
     @origin = params[:origin]
     respond_to do |format|
       if @agent.update(agent_params)
-        redirect_path = @origin == 'show' ? user_agent_path(current_user, params[:id]) : agents_path
+        redirect_path = @origin == 'show' ? user_agent_path(current_user, @agent.agentname) : agents_path
         format.json{
           redirect_to redirect_path, notice: t('views.agents.edit.success_message')
         }
