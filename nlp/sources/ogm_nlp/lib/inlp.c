@@ -73,7 +73,7 @@ PUBLIC(int) OgNlpFlush(og_nlp ctrl_nlp)
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "OgNlpFlush in progress");
 
   // flush package mark as deleted
-  OgNlpFlushPackageMarkedAsDeleted(ctrl_nlp);
+  NlpFlushPackageMarkedAsDeletedNosync(ctrl_nlp);
 
   g_hash_table_destroy(ctrl_nlp->packages_hash);
   ctrl_nlp->packages_hash = NULL;

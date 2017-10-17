@@ -102,6 +102,107 @@ module Nls
 
       end
 
+      def test_package_lock_parallel
+
+        cp_import_fixture("several_packages_several_intents.json")
+
+        Nls.restart
+
+        json_interpret_body =
+        {
+          "packages" => ["voqal.ai:datetime1"],
+          "sentence" => "Hello Jean Marie",
+          "Accept-Language" => "fr-FR"
+        }
+
+        expected_interpret_result = {
+                "intents"=> [
+                    {
+                        "package" => "voqal.ai:datetime1",
+                        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
+                        "score" => 1
+                    }
+                ]
+            }
+
+        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        url_add = Nls.url_packages + "/voqal.ai:datetime2"
+
+        expected_update_result =
+        {
+          "status" => "Package 'voqal.ai:datetime2' successfully updated"
+        }
+
+        tab = (0..10).to_a
+        Parallel.map(tab, in_threads: 20) do |i|
+
+          # querying
+          actual_interpret_result = Nls.interpret(json_interpret_body)
+          assert_json expected_interpret_result, actual_interpret_result, "querying #{i}"
+
+          # updating
+          actual_update_result = Nls.query_post(url_add, json_package_to_update)
+          assert_json expected_update_result, actual_update_result, "updating #{i}"
+
+          # re-querying
+          actual_interpret_result = Nls.interpret(json_interpret_body)
+          assert_json expected_interpret_result, actual_interpret_result, "re-querying #{i}"
+
+          # re-updating
+          actual_update_result = Nls.query_post(url_add, json_package_to_update)
+          assert_json expected_update_result, actual_update_result, "re-updating #{i}"
+
+        end
+      end
+
+      def test_package_simplelock
+        cp_import_fixture("several_packages_several_intents.json")
+
+        Nls.restart
+
+        json_interpret_body =
+        {
+          "packages" => ["voqal.ai:datetime1"],
+          "sentence" => "Hello Jean Marie",
+          "Accept-Language" => "fr-FR"
+        }
+
+        expected_interpret_result = {
+                "intents"=> [
+                    {
+                        "package" => "voqal.ai:datetime1",
+                        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
+                        "score" => 1
+                    }
+                ]
+            }
+
+        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        url_add = Nls.url_packages + "/voqal.ai:datetime2"
+
+        expected_update_result =
+        {
+          "status" => "Package 'voqal.ai:datetime2' successfully updated"
+        }
+
+        # querying
+        actual_interpret_result = Nls.interpret(json_interpret_body)
+        assert_json expected_interpret_result, actual_interpret_result, "querying"
+
+        # updating
+        actual_update_result = Nls.query_post(url_add, json_package_to_update)
+        assert_json expected_update_result, actual_update_result, "updating"
+
+        # re-querying
+        actual_interpret_result = Nls.interpret(json_interpret_body)
+        assert_json expected_interpret_result, actual_interpret_result, "re-querying"
+
+        # re-updating
+        actual_update_result = Nls.query_post(url_add, json_package_to_update)
+        assert_json expected_update_result, actual_update_result, "re-updating"
+
+      end
+
     end
 
   end
