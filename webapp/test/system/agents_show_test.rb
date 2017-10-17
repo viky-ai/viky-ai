@@ -39,8 +39,23 @@ class AgentsShowTest < ApplicationSystemTestCase
       select('confirmed', from: 'users_new_owner')
       click_button 'Transfer'
     end
-    assert_equal '/agents', current_path
     assert page.has_text?('Agent T-800 transferred to user confirmed')
+    assert_equal '/agents', current_path
     assert page.has_no_content?('admin/terminator')
+  end
+
+
+  test 'Transfer agent ownership whereas another agent with the same agentname throw an error' do
+    go_to_agents_index
+    assert page.has_content?('admin/weather')
+    click_link 'My awesome weather bot'
+    click_link 'Transfer ownership'
+    within(".modal") do
+      assert page.has_field? 'users_new_owner'
+      assert page.has_button? 'Transfer'
+      select('confirmed', from: 'users_new_owner')
+      click_button 'Transfer'
+      assert page.has_content?('This user already have an agent with this ID')
+    end
   end
 end

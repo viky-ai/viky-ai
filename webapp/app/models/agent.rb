@@ -33,13 +33,31 @@ class Agent < ApplicationRecord
   end
 
   def transfer_ownership_to(new_owner)
+    errors = []
     ActiveRecord::Base.transaction do
-      self.users = self.users.reject do |user|
-        user.id == self.owner_id
+      has_agent_with_this_agentname = new_owner.agents.where(agentname: self.agentname).count != 0
+      if has_agent_with_this_agentname
+        errors << I18n.t('errors.agent.transfer_ownership.duplicate_agentname')
+        raise ActiveRecord::Rollback
       end
-      self.users << new_owner
-      self.owner_id = new_owner.id
+
+      self.memberships.where(user_id: owner_id).first.destroy
+      new_membership = Membership.new(agent_id: id, user_id: new_owner.id)
+      if new_membership.save
+        self.owner_id = new_owner.id
+        unless self.save
+          errors << self.errors.full_messages
+          raise ActiveRecord::Rollback
+        end
+      else
+        errors << new_membership.errors.full_messages
+        raise ActiveRecord::Rollback
+      end
     end
+    return {
+      success: errors.empty?,
+      errors: errors.flatten
+    }
   end
 
   private

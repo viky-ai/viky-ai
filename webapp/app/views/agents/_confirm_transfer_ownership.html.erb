@@ -11,15 +11,17 @@
       <p>
         <%= t('views.agents.confirm_transfer_ownership.content_html', name: agent.name) %>
       </p>
-      <%= form_for(agent, url: transfer_ownership_user_agent_path, method: :post) do |transfer_form| %>
+      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, data: { type: 'json' } do |transfer_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>
-              <%= select("users", "new_owner", users.map { |u| u.username }, { include_blank: false }) %>
-              <div class="help help--error" style="display:none;">
-                <span class="icon icon--x-small"><%= icon_alert %></span>
-                <%= t('confirm_destroy.error') %>
-              </div>
+              <%= select("users", "new_owner", User.where("id != ?", current_user.id).map { |u| u.username }, { include_blank: false }) %>
+              <% unless errors.empty? %>
+                <div class="help help--error">
+                  <span class="icon icon--x-small"><%= icon_alert %></span>
+                  <%= errors.join(', ') %>.
+                </div>
+              <% end %>
           </div>
         </div>
         <%= transfer_form.button t('views.agents.confirm_transfer_ownership.btn'), class: "btn btn--destructive" %>

@@ -193,6 +193,7 @@ class AgentTest < ActiveSupport::TestCase
     user_admin = users(:admin)
     user_confirmed = users(:confirmed)
     terminator_agent = user_admin.agents.friendly.find("terminator")
+
     assert_equal user_admin.id, terminator_agent.owner_id
     assert terminator_agent.users.one? do |user|
       user.id == user_admin.id
@@ -200,8 +201,8 @@ class AgentTest < ActiveSupport::TestCase
     assert 0, terminator_agent.users.count do |user|
       user.id == user_confirmed.id
     end
-    terminator_agent.transfer_ownership_to(user_confirmed)
-    assert terminator_agent.save
+    result = terminator_agent.transfer_ownership_to(user_confirmed)
+    assert result[:success]
     assert_equal user_confirmed.id, terminator_agent.owner_id
     assert terminator_agent.users.one? do |user|
       user.id == user_confirmed.id
@@ -210,6 +211,33 @@ class AgentTest < ActiveSupport::TestCase
       user.id == user_admin.id
     end
   end
+
+
+  test "Transfer agent ownership whereas another agent exists with this agentname" do
+    user_admin = users(:admin)
+    user_confirmed = users(:confirmed)
+    weather_agent = user_admin.agents.friendly.find("weather")
+    assert_equal 0, user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" }
+
+    result = weather_agent.transfer_ownership_to(user_confirmed)
+    assert !result[:success]
+    expected = ["This user already have an agent with this ID"]
+    assert_equal expected, result[:errors]
+
+    assert weather_agent.save
+
+    assert_equal 0, user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" }
+  end
+
+
+  # test "Transfer agent ownership whereas new owner doesn't exit" do
+  #   user_admin = users(:admin)
+  #   new_owner = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
+  #   weather_agent = user_admin.agents.friendly.find("terminator")
+  #
+  #   weather_agent.transfer_ownership_to(new_owner)
+  #   assert weather_agent.save
+  # end
 
 
   test "Search agent empty" do

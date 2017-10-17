@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171013073854) do
+ActiveRecord::Schema.define(version: 20171016114217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20171013073854) do
     t.uuid "owner_id"
     t.string "color", default: "black"
     t.text "image_data"
+    t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|

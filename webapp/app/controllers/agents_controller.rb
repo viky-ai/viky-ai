@@ -72,14 +72,27 @@ class AgentsController < ApplicationController
   end
 
   def confirm_transfer_ownership
-    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, users: User.where("id != ?", current_user.id) }
+    render partial: 'confirm_transfer_ownership', locals: { agent: @agent, errors: [] }
   end
 
   def transfer_ownership
     new_owner = User.friendly.find(params[:users][:new_owner])
-    @agent.transfer_ownership_to(new_owner)
-    @agent.save
-    redirect_to agents_path, notice: t('views.agents.index.ownership_transferred', name: @agent.name, username: new_owner.username)
+    result = @agent.transfer_ownership_to new_owner
+
+    respond_to do |format|
+      if result[:success]
+        format.json {
+          redirect_to agents_path, notice: t('views.agents.index.ownership_transferred', name: @agent.name, username: new_owner.username)
+        }
+      else
+        format.json {
+          render json: {
+            html: render_to_string(partial: 'confirm_transfer_ownership', formats: :html, locals: { agent: @agent, errors: result[:errors] }),
+            status: 422
+          }
+        }
+      end
+    end
   end
 
 
