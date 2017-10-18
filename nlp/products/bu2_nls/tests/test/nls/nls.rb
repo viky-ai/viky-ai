@@ -126,6 +126,51 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.package(body, params = {})
+      package_url = "#{base_url}/packages/" + body["id"]
+      response = RestClient.post(package_url, body.to_json, content_type: :json, params: params)
+      JSON.parse(response.body)
+    end
+
+    def self.json_interpret_body
+      {
+        "packages" => ["voqal.ai:datetime1"],
+        "sentence" => "Hello Jean Marie",
+        "Accept-Language" => "fr-FR"
+      }
+    end
+
+    def self.expected_interpret_result
+      {
+        "intents"=>
+        [
+        {
+        "package" => "voqal.ai:datetime1",
+        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
+        "score" => 1
+        }
+        ]
+      }
+    end
+
+    def self.expected_update_package
+      {
+        "status" => "Package 'voqal.ai:datetime2' successfully updated"
+      }
+    end
+
+    def self.expected_delete_package
+      {
+        "status" => "Package 'voqal.ai:datetime2' successfully deleted"
+      }
+    end
+
+    def self.expected_added_package
+      {
+        "status" => "Package 'voqal.ai:datetime' successfully updated"
+      }
+    end
+
     def self.pwd
       pwd_local = ENV['NLS_INSTALL_PATH']
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?

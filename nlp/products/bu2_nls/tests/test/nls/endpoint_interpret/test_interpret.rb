@@ -14,28 +14,9 @@ module Nls
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime1"],
-          "sentence" => "Hello Jean Marie",
-          "Accept-Language" => "fr-FR"
-        }
+        actual = Nls.interpret(Nls.json_interpret_body)
 
-        actual = Nls.interpret(param)
-
-        expected =
-        {
-          "intents" =>
-          [
-          {
-          "package" => "voqal.ai:datetime1",
-          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-          "score" => 1
-          }
-          ]
-        }
-
-        assert_equal expected, actual
+        assert_equal Nls.expected_interpret_result, actual
 
       end
 

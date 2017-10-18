@@ -17,12 +17,7 @@ module Nls
         url_delete = Nls.url_packages + "/voqal.ai:datetime2"
         actual = Nls.delete(url_delete)
 
-        expected =
-        {
-          "status" => "Package 'voqal.ai:datetime2' successfully deleted"
-        }
-
-        assert_json expected, actual
+        assert_json Nls.expected_delete_package, actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -40,15 +35,9 @@ module Nls
 
         json_package_to_add = JSON.parse(File.read(fixture_path("package_to_add.json")))
 
-        url_add = Nls.url_packages + "/voqal.ai:datetime"
-        actual = Nls.query_post(url_add, json_package_to_add)
+        actual = Nls.package(json_package_to_add)
 
-        expected =
-        {
-          "status" => "Package 'voqal.ai:datetime' successfully updated"
-        }
-
-        assert_json expected, actual
+        assert_json Nls.expected_added_package, actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -66,15 +55,9 @@ module Nls
 
         json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
 
-        url_add = Nls.url_packages + "/voqal.ai:datetime2"
-        actual = Nls.query_post(url_add, json_package_to_update)
+        actual = Nls.package(json_package_to_update)
 
-        expected =
-        {
-          "status" => "Package 'voqal.ai:datetime2' successfully updated"
-        }
-
-        assert_json expected, actual
+        assert_json Nls.expected_update_package, actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -108,49 +91,26 @@ module Nls
 
         Nls.restart
 
-        json_interpret_body =
-        {
-          "packages" => ["voqal.ai:datetime1"],
-          "sentence" => "Hello Jean Marie",
-          "Accept-Language" => "fr-FR"
-        }
-
-        expected_interpret_result = {
-                "intents"=> [
-                    {
-                        "package" => "voqal.ai:datetime1",
-                        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-                        "score" => 1
-                    }
-                ]
-            }
-
         json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
-        url_add = Nls.url_packages + "/voqal.ai:datetime2"
-
-        expected_update_result =
-        {
-          "status" => "Package 'voqal.ai:datetime2' successfully updated"
-        }
 
         tab = (0..10).to_a
         Parallel.map(tab, in_threads: 20) do |i|
 
           # querying
-          actual_interpret_result = Nls.interpret(json_interpret_body)
-          assert_json expected_interpret_result, actual_interpret_result, "querying #{i}"
+          actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
+          assert_json Nls.expected_interpret_result, actual_interpret_result, "querying #{i}"
 
           # updating
-          actual_update_result = Nls.query_post(url_add, json_package_to_update)
-          assert_json expected_update_result, actual_update_result, "updating #{i}"
+          actual_update_result = Nls.package(json_package_to_update)
+          assert_json Nls.expected_update_package, actual_update_result, "updating #{i}"
 
           # re-querying
-          actual_interpret_result = Nls.interpret(json_interpret_body)
-          assert_json expected_interpret_result, actual_interpret_result, "re-querying #{i}"
+          actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
+          assert_json Nls.expected_interpret_result, actual_interpret_result, "re-querying #{i}"
 
           # re-updating
-          actual_update_result = Nls.query_post(url_add, json_package_to_update)
-          assert_json expected_update_result, actual_update_result, "re-updating #{i}"
+          actual_update_result = Nls.package(json_package_to_update)
+          assert_json Nls.expected_update_package, actual_update_result, "re-updating #{i}"
 
         end
       end
@@ -160,46 +120,23 @@ module Nls
 
         Nls.restart
 
-        json_interpret_body =
-        {
-          "packages" => ["voqal.ai:datetime1"],
-          "sentence" => "Hello Jean Marie",
-          "Accept-Language" => "fr-FR"
-        }
-
-        expected_interpret_result = {
-                "intents"=> [
-                    {
-                        "package" => "voqal.ai:datetime1",
-                        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-                        "score" => 1
-                    }
-                ]
-            }
-
         json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
-        url_add = Nls.url_packages + "/voqal.ai:datetime2"
-
-        expected_update_result =
-        {
-          "status" => "Package 'voqal.ai:datetime2' successfully updated"
-        }
 
         # querying
-        actual_interpret_result = Nls.interpret(json_interpret_body)
-        assert_json expected_interpret_result, actual_interpret_result, "querying"
+        actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
+        assert_json Nls.expected_interpret_result, actual_interpret_result, "querying"
 
         # updating
-        actual_update_result = Nls.query_post(url_add, json_package_to_update)
-        assert_json expected_update_result, actual_update_result, "updating"
+        actual_update_result = Nls.package(json_package_to_update)
+        assert_json Nls.expected_update_package, actual_update_result, "updating"
 
         # re-querying
-        actual_interpret_result = Nls.interpret(json_interpret_body)
-        assert_json expected_interpret_result, actual_interpret_result, "re-querying"
+        actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
+        assert_json Nls.expected_interpret_result, actual_interpret_result, "re-querying"
 
         # re-updating
-        actual_update_result = Nls.query_post(url_add, json_package_to_update)
-        assert_json expected_update_result, actual_update_result, "re-updating"
+        actual_update_result = Nls.package(json_package_to_update)
+        assert_json Nls.expected_update_package, actual_update_result, "re-updating"
 
       end
 
