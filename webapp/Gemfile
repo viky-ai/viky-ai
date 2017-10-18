@@ -78,4 +78,5 @@ end
 group :test do
   gem "shrine-memory"
   gem 'mocha'
+  gem 'simplecov', require: false
 end
