@@ -32,40 +32,15 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def transfer_ownership_to(new_owner)
-    previous_owner = User.find(owner_id)
-
-    errors = []
-    ActiveRecord::Base.transaction do
-      has_agent_with_this_agentname = new_owner.agents.where(agentname: self.agentname).count != 0
-      if has_agent_with_this_agentname
-        errors << I18n.t('errors.agent.transfer_ownership.duplicate_agentname')
-        raise ActiveRecord::Rollback
-      end
-
-      self.memberships.where(user_id: owner_id).first.destroy
-      new_membership = Membership.new(agent_id: id, user_id: new_owner.id)
-      if new_membership.save
-        self.owner_id = new_owner.id
-        unless self.save
-          errors << self.errors.full_messages
-          raise ActiveRecord::Rollback
-        end
-      else
-        errors << new_membership.errors.full_messages
-        raise ActiveRecord::Rollback
-      end
-    end
-
-    if errors.empty?
-      AgentMailer.transfert_ownership(previous_owner, new_owner, self).deliver_later
-    end
-
-    return {
-      success: errors.empty?,
-      errors: errors.flatten
+  def transfer_ownership_to(new_owner_username)
+    transfert = AgentTransfert.new(self, new_owner_username)
+    transfert.proceed
+    {
+      success: transfert.valid?,
+      errors: transfert.errors.flatten
     }
   end
+
 
   private
 

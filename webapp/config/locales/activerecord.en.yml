@@ -11,3 +11,4 @@ en:
     agent:
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
+        invalid_username: Please select a valid new owner

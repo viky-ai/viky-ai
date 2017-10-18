@@ -192,7 +192,7 @@ class AgentTest < ActiveSupport::TestCase
   test "Transfer agent ownership" do
     user_admin = users(:admin)
     user_confirmed = users(:confirmed)
-    terminator_agent = user_admin.agents.friendly.find("terminator")
+    terminator_agent = agents(:terminator)
 
     assert_equal user_admin.id, terminator_agent.owner_id
     assert terminator_agent.users.one? do |user|
@@ -201,7 +201,7 @@ class AgentTest < ActiveSupport::TestCase
     assert 0, terminator_agent.users.count do |user|
       user.id == user_confirmed.id
     end
-    result = terminator_agent.transfer_ownership_to(user_confirmed)
+    result = terminator_agent.transfer_ownership_to(user_confirmed.username)
     assert result[:success]
     assert_equal user_confirmed.id, terminator_agent.owner_id
     assert terminator_agent.users.one? do |user|
@@ -216,10 +216,10 @@ class AgentTest < ActiveSupport::TestCase
   test "Transfer agent ownership whereas another agent exists with this agentname" do
     user_admin = users(:admin)
     user_confirmed = users(:confirmed)
-    weather_agent = user_admin.agents.friendly.find("weather")
+    weather_agent = agents(:weather)
     assert_equal 0, user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" }
 
-    result = weather_agent.transfer_ownership_to(user_confirmed)
+    result = weather_agent.transfer_ownership_to(user_confirmed.username)
     assert !result[:success]
     expected = ["This user already have an agent with this ID"]
     assert_equal expected, result[:errors]
@@ -233,11 +233,11 @@ class AgentTest < ActiveSupport::TestCase
   test "Transfer agent ownership whereas new owner doesn't exit" do
     user_admin = users(:admin)
     new_owner = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
-    weather_agent = user_admin.agents.friendly.find("terminator")
+    weather_agent = agents(:terminator)
 
-    result = weather_agent.transfer_ownership_to(new_owner)
+    result = weather_agent.transfer_ownership_to(new_owner.username)
     assert !result[:success]
-    expected = ["User must exist"]
+    expected = ["Please select a valid new owner"]
     assert_equal expected, result[:errors]
   end
 
