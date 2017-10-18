@@ -26,6 +26,10 @@ module Nls
       File.join(File.expand_path(__dir__), 'fixtures', file)
     end
 
+    def json_from_fixture(filename)
+      JSON.parse(File.read(fixture_path(filename)))
+    end
+
     def cp_import_fixture(file)
       FileUtils.cp(fixture_path(file), importDir)
     end

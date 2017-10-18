@@ -33,7 +33,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_add = JSON.parse(File.read(fixture_path("package_to_add.json")))
+        json_package_to_add = json_from_fixture("package_to_add.json")
 
         actual = Nls.package(json_package_to_add)
 
@@ -53,7 +53,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        json_package_to_update = json_from_fixture("package_to_update.json")
 
         actual = Nls.package(json_package_to_update)
 
@@ -73,7 +73,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        json_package_to_update = json_from_fixture("package_to_update.json")
 
         expected_error = "OgNlsEndpoints : request error on endpoint"
 
@@ -91,7 +91,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        json_package_to_update = json_from_fixture("package_to_update.json")
 
         tab = (0..10).to_a
         Parallel.map(tab, in_threads: 20) do |i|
@@ -120,7 +120,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
+        json_package_to_update = json_from_fixture("package_to_update.json")
 
         # querying
         actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
