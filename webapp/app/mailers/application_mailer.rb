@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'support@viki.ai'
+  default from: 'support@voqal.ai'
   layout 'mailer'
 end

@@ -12,16 +12,22 @@ class TransfertAgentForm
 
   setup: ->
     $('#input-new-owner').selectize({
-      maxItems: 1,
-      valueField: 'username',
-      labelField: 'email',
-      searchField: ['email', 'username'],
+      maxItems: 1
+      valueField: 'username'
+      labelField: 'email'
+      searchField: ['email', 'username']
       placeholder: $('#input-new-owner').data('placeholder')
-      options: [],
-      create: false,
+      dropdownParent: 'body'
+      options: []
+      create: false
       render: {
         option: (item, escape) ->
-          return '<div>' + escape(item.email) + " (" + escape(item.username) + ')</div>'
+          html = []
+          html.push "<div>"
+          html.push "  <img src='#{escape(item.image)}' />"
+          html.push "  #{escape(item.email)} (#{escape(item.username)})"
+          html.push "</div>"
+          return html.join('')
       },
       load: (query, callback) ->
         if !query.length
@@ -33,7 +39,7 @@ class TransfertAgentForm
             error: ->
               callback()
             success: (res) ->
-              callback(res.users);
+              callback(res.users)
           });
     });
 

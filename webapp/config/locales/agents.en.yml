@@ -21,11 +21,12 @@ en:
         content_html: "You're about to delete agent: <strong>%{name}</strong>."
         btn: Delete
       confirm_transfer_ownership:
-        title: Are you sure?
-        content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong>."
+        title: Transfer ownership
+        content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong> to another user."
         label: "Select the new owner :"
-        placeholder: Search new owner by email or username (at least 3 characters).
-        btn: Transfer
+        placeholder: Search by email or username (at least 3 characters).
+        note: The new owner will be notify by email.
+        btn: Transfer ownership now
       destroy:
         message: "Agent with the name: %{name} has successfully been deleted."
       form:

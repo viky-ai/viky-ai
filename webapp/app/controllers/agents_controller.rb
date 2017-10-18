@@ -97,10 +97,15 @@ class AgentsController < ApplicationController
   def search_users_for_transfer_ownership
     respond_to do |format|
       format.json {
-        query = params[:q]
+        query = params[:q].strip
         @users = []
-        if query.size > 2
-          @users = User.where("id != ? AND ( email LIKE ? OR username LIKE ? )", @agent.owner_id, "%#{query}%", "%#{query}%").limit(10)
+        unless query.nil?
+          if query.size > 2
+            @users = User.confirmed.where(
+              "id != ? AND ( email LIKE ? OR username LIKE ? )",
+              @agent.owner_id, "%#{query}%", "%#{query}%"
+            ).limit(10)
+          end
         end
       }
     end

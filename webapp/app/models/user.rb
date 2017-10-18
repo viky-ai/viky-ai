@@ -7,6 +7,10 @@ class User < ApplicationRecord
   has_many :memberships
   has_many :agents, through: :memberships
 
+  scope :confirmed, -> { where.not(confirmed_at: nil) }
+  scope :not_confirmed, -> { where(confirmed_at: nil) }
+  scope :locked, -> { where.not(locked_at: nil) }
+
   # Include default devise modules except :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
@@ -47,11 +51,11 @@ class User < ApplicationRecord
 
     case q[:status]
     when "confirmed"
-      conditions = conditions.where.not(confirmed_at: nil)
+      conditions = conditions.confirmed
     when "not-confirmed"
-      conditions = conditions.where(confirmed_at: nil)
+      conditions = conditions.not_confirmed
     when "locked"
-      conditions = conditions.where.not(locked_at: nil)
+      conditions = conditions.locked
     end
 
     conditions
