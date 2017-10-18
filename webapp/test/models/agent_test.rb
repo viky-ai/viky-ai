@@ -230,14 +230,16 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  # test "Transfer agent ownership whereas new owner doesn't exit" do
-  #   user_admin = users(:admin)
-  #   new_owner = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
-  #   weather_agent = user_admin.agents.friendly.find("terminator")
-  #
-  #   weather_agent.transfer_ownership_to(new_owner)
-  #   assert weather_agent.save
-  # end
+  test "Transfer agent ownership whereas new owner doesn't exit" do
+    user_admin = users(:admin)
+    new_owner = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
+    weather_agent = user_admin.agents.friendly.find("terminator")
+
+    result = weather_agent.transfer_ownership_to(new_owner)
+    assert !result[:success]
+    expected = ["User must exist"]
+    assert_equal expected, result[:errors]
+  end
 
 
   test "Search agent empty" do
