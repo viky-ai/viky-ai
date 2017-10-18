@@ -68,7 +68,7 @@ module Nls
 
       def test_interpret_parallel_query
 
-        cp_import_fixture("several_packages_parallelize.json")
+        createHugePackagesFile("several_packages_parallelize.json", 10)
 
         Nls.restart
 

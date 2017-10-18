@@ -30,6 +30,36 @@ module Nls
       JSON.parse(File.read(fixture_path(filename)))
     end
 
+    def createHugePackagesFile(filename, packagenumber, itentsnumber = 0, sentensenumber = 0)
+
+      if(itentsnumber == 0)
+        itentsnumber = packagenumber
+      end
+      if(sentensenumber == 0)
+        sentensenumber = itentsnumber
+      end
+
+      json_content_packages = []
+      for i in 1..packagenumber
+        json_object_package = {"id"=>"package_#{i}", "intents"=>[]}
+        for j in 1..itentsnumber
+          json_object_intents = {"id"=>"intent_#{i}_#{j}", "sentences"=>[]}
+          for k in 1..sentensenumber
+            json_object_sentence = {"sentence"=>"sentence_#{i}_#{j}_#{k}", "locale"=>"fr-FR"}
+            json_object_intents["sentences"] << json_object_sentence
+          end
+          json_object_package["intents"] << json_object_intents
+        end
+        json_content_packages << json_object_package
+      end
+
+      filepath = File.join(File.expand_path(importDir), filename)
+      fJson = File.open(filepath,"w")
+      fJson.write(JSON.pretty_generate(json_content_packages))
+      fJson.close
+
+    end
+
     def cp_import_fixture(file)
       FileUtils.cp(fixture_path(file), importDir)
     end
