@@ -164,14 +164,9 @@ module Nls
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime"],
-          "sentence" => "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸º°¯§…¤¦≠¬ˆ¨‰ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ#自爾秦書わたしワタシ🎾",
-          "Accept-Language" => "fr-FR"
-        }
+        json_query_special_char = JSON.parse(File.read(fixture_path("query_with_special_char.json")))
 
-        actual = Nls.interpret(param)
+        actual = Nls.interpret(json_query_special_char)
 
         expected =
         {
