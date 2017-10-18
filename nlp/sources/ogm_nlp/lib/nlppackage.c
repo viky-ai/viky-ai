@@ -8,7 +8,7 @@
 
 static og_status NlpPackageRemove(og_nlp_th ctrl_nlp_th, const char *package_id);
 
-package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id)
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug)
 {
   package_t package = (package_t) malloc(sizeof(struct package));
   IFn(package)
@@ -24,8 +24,13 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id)
   package->id_length = strlen(string_id);
   IF(OgHeapAppend(package->hba,package->id_length+1, string_id)) return NULL;
 
-  IFn(package->hintent = OgHeapInit(hmsg, "package_intent", sizeof(struct intent), DOgNlpPackageIntentNumber)) return NULL;
-  IFn(package->hsentence = OgHeapInit(hmsg, "package_phrase", sizeof(struct sentence), DOgNlpPackagePhraseNumber)) return NULL;
+  package->slug_start = OgHeapGetCellsUsed(package->hba);
+  package->slug_length = strlen(string_slug);
+  IF(OgHeapAppend(package->hba,package->slug_length+1, string_slug)) return NULL;
+
+  IFn(package->hinterpretation = OgHeapInit(hmsg, "package_interpretation", sizeof(struct interpretation), DOgNlpPackageInterpretationNumber)) return NULL;
+  IFn(package->hexpression = OgHeapInit(hmsg, "package_expression", sizeof(struct expression), DOgNlpPackageExpressionNumber)) return NULL;
+  IFn(package->halias = OgHeapInit(hmsg, "package_alias", sizeof(struct alias), DOgNlpPackageAliasNumber)) return NULL;
 
   return (package);
 }
@@ -33,8 +38,8 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id)
 void NlpPackageDestroy(gpointer data)
 {
   package_t package = data;
-  OgHeapFlush(package->hsentence);
-  OgHeapFlush(package->hintent);
+  OgHeapFlush(package->hexpression);
+  OgHeapFlush(package->hinterpretation);
   OgHeapFlush(package->hba);
   DPcFree(package);
 }

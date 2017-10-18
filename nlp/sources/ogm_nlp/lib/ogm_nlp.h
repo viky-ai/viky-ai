@@ -12,30 +12,44 @@
 
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
-#define DOgNlpPackageIntentNumber 0x10
-#define DOgNlpPackagePhraseNumber (DOgNlpPackageIntentNumber*0x10)
-#define DOgNlpIntentPhraseMaxLength 0x800
+#define DOgNlpPackageInterpretationNumber 0x10
+#define DOgNlpPackageExpressionNumber (DOgNlpPackageInterpretationNumber*0x10)
+#define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
+#define DOgNlpInterpretationExpressionMaxLength 0x800
 
 #define DOgNlpiPackageNumber  0x10
 
-struct sentence
+
+struct alias
+{
+  int alias_start, alias_length;
+  int slug_start, slug_length; // interpretation slug
+  int id_start, id_length; // interpretation id
+  int package_start, package_length;
+};
+
+struct expression
 {
   int text_start, text_length;
+  int alias_start, aliases_nb;
   int locale;
 };
 
-struct intent
+struct interpretation
 {
   int id_start, id_length;
-  int sentence_start, sentences_nb;
+  int slug_start, slug_length;
+  int expression_start, expressions_nb;
 };
 
 struct package
 {
   int id_start, id_length;
+  int slug_start, slug_length;
   og_heap hba;
-  og_heap hintent;
-  og_heap hsentence;
+  og_heap hinterpretation;
+  og_heap hexpression;
+  og_heap halias;
 };
 
 typedef struct package *package_t;
@@ -106,8 +120,9 @@ og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 /* nlplog.c */
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent);
-og_status NlpPackageSentenceLog(og_nlp_th ctrl_nlp_th, package_t package, int Isentence);
+og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
+og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
+og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -119,11 +134,11 @@ og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_s
 
 /* nlpdump.c */
 og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
-og_status NlpPackageIntentDump(og_nlp_th ctrl_nlp_th, package_t package, int Iintent, json_t *dump_json);
-og_status NlpPackageSentenceDump(og_nlp_th ctrl_nlp_th, package_t package, int Isentence, json_t *dump_json);
+og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *dump_json);
+og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *dump_json);
 
 /* nlpackage.c */
-package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id);
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug);
 void NlpPackageDestroy(gpointer package);
 og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
@@ -134,5 +149,5 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th);
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th);
 
 /* nlpcompile.c */
-og_status NlpCompilePackageIntent(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_intent);
+og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_interpretation);
 og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_package);
