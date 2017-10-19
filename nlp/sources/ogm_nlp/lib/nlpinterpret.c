@@ -123,16 +123,11 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   og_char_buffer json_request_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL));
 
-<<<<<<< HEAD
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]",
         json_request_string);
   }
-=======
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]",
-      json_request_string);
->>>>>>> origin/develop
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
