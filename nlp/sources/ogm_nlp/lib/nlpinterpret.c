@@ -24,7 +24,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   og_char_buffer nlpc_name[DPcPathSize];
   snprintf(nlpc_name, DPcPathSize, "%s_interpret_package", param->name);
   ctrl_nlp_th->hinterpret_package = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct interpret_package),
-  DOgNlpiPackageNumber);
+  DOgNlpPackageNumber);
   IFN(ctrl_nlp_th->hinterpret_package)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
@@ -120,7 +120,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   og_char_buffer json_request_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL));
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]", json_request_string);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]",
+      json_request_string);
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));

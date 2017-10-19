@@ -49,6 +49,7 @@ DEFPUBLIC(og_status) DOG_SYSI_WARN_UNUSED_RESULT OgSysiReadLock(ogsysi_rwlock rw
 DEFPUBLIC(og_status) DOG_SYSI_WARN_UNUSED_RESULT OgSysiReadLockWithTimeout(ogsysi_rwlock handle, int timeout_ms);
 DEFPUBLIC(og_status) DOG_SYSI_WARN_UNUSED_RESULT OgSysiReadUnLock(ogsysi_rwlock rwlock);
 
+DEFPUBLIC(og_string) OgSysiGetName(ogsysi_rwlock rwlock);
 DEFPUBLIC(og_status) OgSysiFlush(ogsysi_rwlock rwlock);
 DEFPUBLIC(og_status) OgSysiLogStatEnable(ogsysi_rwlock rwlock, int enable);
 DEFPUBLIC(og_status) OgSysiLogStat(ogsysi_rwlock rwlock);

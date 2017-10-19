@@ -24,6 +24,7 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   ctrl_nlp_th->herr = param->herr;
   ctrl_nlp_th->hmutex = param->hmutex;
   memcpy(ctrl_nlp_th->loginfo, &param->loginfo, sizeof(struct og_loginfo));
+  snprintf(ctrl_nlp_th->name, DPcPathSize, "%s", param->name);
 
   og_char_buffer nlpc_name[DPcPathSize];
 

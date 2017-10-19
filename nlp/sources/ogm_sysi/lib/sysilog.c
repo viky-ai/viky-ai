@@ -182,3 +182,9 @@ og_status OgSysiLogDebug(struct og_ctrl_sysi *ctrl_sysi, unsigned char *action, 
 
 }
 
+PUBLIC(og_string) OgSysiGetName(ogsysi_rwlock handle)
+{
+  struct og_ctrl_sysi *ctrl_sysi = (struct og_ctrl_sysi *) handle;
+
+  return ctrl_sysi->name;
+}

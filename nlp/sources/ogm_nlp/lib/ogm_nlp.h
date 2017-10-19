@@ -10,13 +10,13 @@
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
 
-#define DOgNlpPackageNumber 0x10
-#define DOgNlpPackageBaNumber 0x100
-#define DOgNlpPackageIntentNumber 0x10
-#define DOgNlpPackagePhraseNumber (DOgNlpPackageIntentNumber*0x10)
+#define DOgNlpPackageNumber         0x10
+#define DOgNlpPackageBaNumber       0x100
+#define DOgNlpPackageIntentNumber   0x10
+#define DOgNlpPackagePhraseNumber   (DOgNlpPackageIntentNumber*0x10)
 #define DOgNlpIntentPhraseMaxLength 0x800
 
-#define DOgNlpiPackageNumber  0x10
+#define DOgNlpMaximumOwnedLock      16
 
 struct sentence
 {
@@ -55,8 +55,8 @@ enum nlp_synchro_test_timeout_in
 
 enum nlp_synchro_lock_type
 {
-  nlp_synchro_lock_type_read_lock,
-  nlp_synchro_lock_type_write_lock
+  nlp_synchro_lock_type_read,
+  nlp_synchro_lock_type_write
 };
 
 struct nlp_synchro_lock
@@ -66,12 +66,21 @@ struct nlp_synchro_lock
   ogsysi_rwlock rwlock;
 };
 
+struct nlp_synchro_current_lock
+{
+  int used;
+  struct nlp_synchro_lock lock[DOgNlpMaximumOwnedLock];
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
+
+  // current nlp_th_name
+  og_char_buffer name[DPcPathSize];
 
   /** Use for testing feature : trigger timeout in a specific function */
   enum nlp_synchro_test_timeout_in timeout_in;
@@ -80,7 +89,7 @@ struct og_ctrl_nlp_threaded
   json_t *json_answer;
 
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
-  GQueue current_rw_lock[1];
+  struct nlp_synchro_current_lock current_lock[1];
 
   /** interpret request */
   og_heap hinterpret_package;
@@ -107,6 +116,8 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
 og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlplog.c */
+og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
+og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent);
