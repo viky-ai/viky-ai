@@ -29,6 +29,8 @@ VOQALAPP_DB_PORT=5432
 
 VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
 VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
+
+VOQALAPP_NLS_URL='http://localhost:9345'
 ```
 
 ## Run in production environment
@@ -120,4 +122,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
-    nlp_server:     docker run -ti --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+    nlp_server:     docker pull docker-registry.pertimm.corp:50001/voqal.ai/platform/nls:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls

@@ -46,4 +46,13 @@ Rails.application.routes.draw do
     root to: 'agents#index', as: :authenticated_root
   end
 
+  # API with versioning
+  namespace :api, defaults: {format: :json} do
+    namespace :v1 do
+      scope '/agents' do
+        get '/:user_username/:agent_name/interpret', to: 'nls#interpret'
+      end
+    end
+  end
+
 end
