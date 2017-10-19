@@ -132,43 +132,43 @@ module Nls
       JSON.parse(response.body)
     end
 
-    def self.json_interpret_body
+    def self.json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
       {
-        "packages" => ["voqal.ai:datetime1"],
-        "sentence" => "Hello Jean Marie",
+        "packages" => ["#{package}"],
+        "sentence" => "#{sentence}",
         "Accept-Language" => "fr-FR"
       }
     end
 
-    def self.expected_interpret_result
+    def self.expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")
       {
         "interpretations"=>
         [
         {
-        "package" => "voqal.ai:datetime1",
-        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-        "slug" => "hello1",
+        "package" => "#{package}",
+        "id" => "#{id}",
+        "slug" => "#{slug}",
         "score" => 1.0
         }
         ]
       }
     end
 
-    def self.expected_update_package
+    def self.expected_update_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime2' successfully updated"
+        "status" => "Package '#{package_name}' successfully updated"
       }
     end
 
-    def self.expected_delete_package
+    def self.expected_delete_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime2' successfully deleted"
+        "status" => "Package '#{package_name}' successfully deleted"
       }
     end
 
-    def self.expected_added_package
+    def self.expected_added_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime' successfully updated"
+        "status" => "Package '#{package_name}' successfully updated"
       }
     end
 
@@ -176,6 +176,75 @@ module Nls
       pwd_local = ENV['NLS_INSTALL_PATH']
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
       pwd_local
+    end
+
+    def self.createUUID
+      UUIDTools::UUID.timestamp_create.to_s
+    end
+
+    def self.package_to_add(slug = "titi", interpretation = "toto", expression = "Hello Brice")
+      package_to_update(createUUID, slug, interpretation, expression)
+    end
+
+    def self.package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
+      json_expression = create_expression(expression)
+      json_interpretation = create_interpretation(interpretation)
+      json_interpretation["expressions"] << json_expression
+      json_package = create_package(uuid,slug)
+      json_package["interpretations"] << json_interpretation
+      json_package
+    end
+
+    def self.create_package(uuid, slug)
+      {
+        "id" => "#{uuid}",
+        "slug" => "#{slug}",
+        "interpretations"  => []
+      }
+    end
+
+    def self.create_new_package(slug)
+      create_package(createUUID, slug)
+    end
+
+    def self.create_interpretation(slug = "titi")
+      {
+        "id" => createUUID,
+        "slug"  => "#{slug}",
+        "expressions"  =>  []
+      }
+    end
+
+    def self.create_expression(expression)
+      {
+        "expression" => "#{expression}",
+        "locale"  => "fr-FR"
+      }
+    end
+
+    def self.several_packages_several_intents
+      json_container = []
+      json_container << create_new_package("datetime1")
+      json_container[0]["interpretations"] << create_interpretation("hello1")
+      json_container[0]["interpretations"][0]["expressions"] << create_expression("Hello Brice")
+      json_container[0]["interpretations"][0]["expressions"] << create_expression("Hello Jean Marie")
+      json_container[0]["interpretations"] << create_interpretation("hello2")
+      json_container[0]["interpretations"][1]["expressions"] << create_expression("Hello Nicolas")
+      json_container[0]["interpretations"][1]["expressions"] << create_expression("Hello Olivier")
+      json_container[0]["interpretations"] << create_interpretation("hello3")
+      json_container[0]["interpretations"][2]["expressions"] << create_expression("Hello Sebastien")
+      json_container[0]["interpretations"][2]["expressions"] << create_expression("Hello Enrico")
+      json_container[0]["interpretations"][2]["expressions"] << create_expression("Hello Mouadh")
+      json_container << create_new_package("datetime2")
+      json_container[1]["interpretations"] << create_interpretation("hello1")
+      json_container[1]["interpretations"][0]["expressions"] << create_expression("Hello Nicolas")
+      json_container[1]["interpretations"][0]["expressions"] << create_expression("Hello Olivier")
+      json_container << create_new_package("datetime3")
+      json_container[2]["interpretations"] << create_interpretation("hello2")
+      json_container[2]["interpretations"][0]["expressions"] << create_expression("Hello Sebastien")
+      json_container[2]["interpretations"][0]["expressions"] << create_expression("Hello Enrico")
+      json_container[2]["interpretations"][0]["expressions"] << create_expression("Hello Mouadh")
+      json_container
     end
 
     private

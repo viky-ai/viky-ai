@@ -10,6 +10,7 @@ require 'awesome_print'
 require 'json'
 require 'parallel'
 require 'fileutils'
+require 'uuidtools'
 
 reporters = [
   Minitest::Reporters::SpecReporter.new( color:true),

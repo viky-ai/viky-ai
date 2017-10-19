@@ -64,6 +64,23 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
+    def generate_single_package_file(json_package)
+      filename = "package" + json_package["id"] + ".json"
+      filepath = File.join(File.expand_path(importDir), filename)
+      fJson = File.open(filepath,"w")
+      fJson.write(JSON.pretty_generate(json_package))
+      fJson.close
+    end
+
+    def generate_multiple_package_file(json_packages)
+      filename = "packages" + json_packages[0]["id"] + ".json"
+      filepath = File.join(File.expand_path(importDir), filename)
+      fJson = File.open(filepath,"w")
+      fJson.write(JSON.pretty_generate(json_packages))
+      fJson.close
+    end
+
+
     def assert_exception_has_message expected_error, exception, msg = nil
 
       header = ''

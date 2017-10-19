@@ -32,6 +32,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
+    uuidtools (2.1.5)
 
 PLATFORMS
   ruby
@@ -45,6 +46,7 @@ DEPENDENCIES
   rake
   rest-client
   term-ansicolor
+  uuidtools
 
 BUNDLED WITH
    1.15.4
