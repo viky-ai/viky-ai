@@ -168,6 +168,14 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
 
 static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 {
+  // mark InterpretRequest package as unused
+  int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
+  for (int i = 0; i < package_used; i++)
+  {
+    struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
+    NlpPackageMarkAsUnused(ctrl_nlp_th, interpret_package->package);
+  }
+
   IFE(OgHeapReset(ctrl_nlp_th->hinterpret_package));
 
   ctrl_nlp_th->request_sentence = NULL;

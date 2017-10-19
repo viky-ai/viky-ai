@@ -49,6 +49,8 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
     return NULL;
   }
 
+  g_queue_init(ctrl_nlp_th->package_in_used);
+
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
   return ctrl_nlp_th;
@@ -63,6 +65,8 @@ PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpInterpretReset(ctrl_nlp_th));
 
+  IFE(NlpPackageMarkAllInUsedAsUnused(ctrl_nlp_th));
+
   json_decrefp(&ctrl_nlp_th->json_answer);
 
   DONE;
@@ -71,7 +75,6 @@ PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
 {
   IFE(NlpInterpretFlush(ctrl_nlp_th));
-
 
   IFE(OgMsgFlush(ctrl_nlp_th->hmsg));
 

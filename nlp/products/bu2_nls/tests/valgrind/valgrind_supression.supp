@@ -130,15 +130,6 @@
     fun:g_main_context_new
 }
 
-{
-    g_main_context_dispatch
-    Memcheck:Leak
-    ...
-    fun:g_slice_*
-    ...
-    fun:g_main_context_dispatch
-}
-
 # GQuark
 {
     g_quake_from_

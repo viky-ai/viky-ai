@@ -44,6 +44,22 @@ struct interpretation
 
 struct package
 {
+  // =======================================
+  // memory management
+
+  /**
+   * Each time a package is obtain by #NlpPackageGet ref_counter is incremented by one.
+   * NlpPackageMarkAsUnused function decrement counter by one and free it it as been marked as remove.
+   *
+   * Warn : ref_counter can be updated currently (see: https://developer.gnome.org/glib/stable/glib-Atomic-Operations.html)
+   */
+  int ref_counter;
+
+  /** Package has been remove, it is waiting to bee freed, until ref_counter == 0 */
+  og_bool is_removed;
+
+  // =======================================
+
   int id_start, id_length;
   int slug_start, slug_length;
   og_heap hba;
@@ -109,6 +125,13 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
 
+  /**
+   * List of package_t currently used by the og_ctrl_nlp_threaded
+   * (reset clean this list at the end of the request), it is better
+   * to mark it as used soon as possible
+   */
+  GQueue package_in_used[1];
+
 };
 
 struct og_ctrl_nlp
@@ -121,8 +144,6 @@ struct og_ctrl_nlp
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
 
-  /** List of deleted package wait for been freed when they are not used any more */
-  GQueue deleted_packages[1];
 };
 
 /* nlperr.c */
@@ -146,18 +167,13 @@ og_status OgNlpSynchroWriteLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in);
 
-/* nlpdump.c */
-og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
-og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *dump_json);
-og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *dump_json);
-og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Ialias, json_t *json_aliases);
-
 /* nlpackage.c */
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug);
-og_status NlpPackageFlush(package_t package);
 og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
-og_status NlpFlushPackageMarkedAsDeletedNosync(og_nlp ctrl_nlp);
+og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th);
+void NlpPackageDestroyIfNotUsed(gpointer package_void);
 
 /* nlpinterpret.c */
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);

@@ -6,8 +6,7 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpPackageRemove(og_nlp_th ctrl_nlp_th, const char *package_id);
-static og_status NlpPackageRemoveNosync(og_nlp_th ctrl_nlp_th, const char *package_id);
+static og_status NlpPackageFlush(package_t package);
 
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug)
 {
@@ -19,31 +18,23 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const c
   }
   memset(package, 0, sizeof(struct package));
 
+  package->ref_counter = 0;
+
   void *hmsg = ctrl_nlp_th->ctrl_nlp->hmsg;
   IFn(package->hba=OgHeapInit(hmsg, "package_ba", sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
   package->id_start = OgHeapGetCellsUsed(package->hba);
   package->id_length = strlen(string_id);
-  IF(OgHeapAppend(package->hba,package->id_length+1, string_id)) return NULL;
+  IF(OgHeapAppend(package->hba, package->id_length + 1, string_id)) return NULL;
 
   package->slug_start = OgHeapGetCellsUsed(package->hba);
   package->slug_length = strlen(string_slug);
-  IF(OgHeapAppend(package->hba,package->slug_length+1, string_slug)) return NULL;
+  IF(OgHeapAppend(package->hba, package->slug_length + 1, string_slug)) return NULL;
 
   IFn(package->hinterpretation = OgHeapInit(hmsg, "package_interpretation", sizeof(struct interpretation), DOgNlpPackageInterpretationNumber)) return NULL;
   IFn(package->hexpression = OgHeapInit(hmsg, "package_expression", sizeof(struct expression), DOgNlpPackageExpressionNumber)) return NULL;
   IFn(package->halias = OgHeapInit(hmsg, "package_alias", sizeof(struct alias), DOgNlpPackageAliasNumber)) return NULL;
 
   return (package);
-}
-
-og_status NlpPackageFlush(package_t package)
-{
-  OgHeapFlush(package->hexpression);
-  OgHeapFlush(package->hinterpretation);
-  OgHeapFlush(package->hba);
-  DPcFree(package);
-
-  DONE;
 }
 
 static og_status NlpPackageAddOrReplaceNosync(og_nlp_th ctrl_nlp_th, package_t package)
@@ -54,14 +45,9 @@ static og_status NlpPackageAddOrReplaceNosync(og_nlp_th ctrl_nlp_th, package_t p
   og_string package_id = OgHeapGetCell(package->hba, package->id_start);
   char *allocated_package_id = strdup(package_id);
 
-  // remove preview package
-  IF(NlpPackageRemoveNosync(ctrl_nlp_th, package_id))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageAddOrReplaceNosync: error on NlpPackageRemoveNosync : '%s'", package_id);
-    DPcErr;
-  }
-
   og_nlp ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
+
+  // update package and remove preview package : see NlpPackageDestroyIfNotUsed
   g_hash_table_replace(ctrl_nlp->packages_hash, allocated_package_id, package);
 
   DONE;
@@ -117,41 +103,87 @@ package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id)
     return NULL;
   }
 
+  if (package != NULL)
+  {
+    // flag package as used
+    g_atomic_int_inc(&package->ref_counter);
+
+    // keep all used package to free it in fallback reset
+    g_queue_push_head(ctrl_nlp_th->package_in_used, package);
+  }
+
   return package;
 }
 
-static og_status NlpPackageRemoveNosync(og_nlp_th ctrl_nlp_th, const char *package_id)
+og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 {
-  og_nlp ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
-
-  package_t preview_package = g_hash_table_lookup(ctrl_nlp->packages_hash, package_id);
-  if (preview_package != NULL)
+  if (package == NULL)
   {
-    g_queue_push_tail(ctrl_nlp->deleted_packages, preview_package);
+    CONT;
   }
 
-  g_hash_table_remove(ctrl_nlp_th->ctrl_nlp->packages_hash, package_id);
+  // remove package in package_in_used list
+  g_queue_remove(ctrl_nlp_th->package_in_used, package);
+
+  // flag package as used
+  og_bool no_more_used = g_atomic_int_dec_and_test(&package->ref_counter);
+  if (no_more_used && package->is_removed)
+  {
+    IFE(NlpPackageFlush(package));
+  }
 
   DONE;
 }
 
-static og_status NlpPackageRemove(og_nlp_th ctrl_nlp_th, const char *package_id)
+og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
-  IF(OgNlpSynchroWriteLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  NlpLogInfo(ctrl_nlp_th, DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages",
+      ctrl_nlp_th->package_in_used);
+
+  // flush package mark as deleted
+  package_t package = NULL;
+  while ((package = g_queue_peek_head(ctrl_nlp_th->package_in_used)))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteLock");
+    NlpPackageMarkAsUnused(ctrl_nlp_th, package);
+  }
+
+  DONE;
+}
+
+void NlpPackageDestroyIfNotUsed(gpointer package_void)
+{
+  package_t package = package_void;
+  if (package != NULL)
+  {
+
+    // mark package as removed
+    package->is_removed = TRUE;
+
+    // if package is no more used, free it
+    if (package->ref_counter <= 0)
+    {
+      NlpPackageFlush(package);
+    }
+
+  }
+}
+
+static og_status NlpPackageDeleteNosync(og_nlp_th ctrl_nlp_th, og_string package_id)
+{
+  og_nlp ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
+
+  package_t preview_package = g_hash_table_lookup(ctrl_nlp->packages_hash, package_id);
+
+  if (preview_package == NULL)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDeleteNosync: unknown package");
     DPcErr;
   }
 
-  og_status status = NlpPackageRemoveNosync(ctrl_nlp_th, package_id);
+  // remove package lookup
+  g_hash_table_remove(ctrl_nlp->packages_hash, package_id);
 
-  IF(OgNlpSynchroWriteUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteUnLock");
-    DPcErr;
-  }
-
-  return status;
+  DONE;
 }
 
 PUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input)
@@ -197,53 +229,33 @@ PUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_i
 
 PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id)
 {
-  // si le package existe, on l'efface
-  package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
-  if (package == NULL)
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpPackageDelete: unknown package");
-    DPcErr;
-  }
-
-  IFE(NlpPackageRemove(ctrl_nlp_th, package_id));
-
-  DONE;
-}
-
-og_status NlpFlushPackageMarkedAsDeletedNosync(og_nlp ctrl_nlp)
-{
-  // flush package mark as deleted
-  package_t package = NULL;
-
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpFlushPackageMarkedAsDeleted to delete %d", ctrl_nlp->deleted_packages->length);
-
-  while ((package = g_queue_pop_head(ctrl_nlp->deleted_packages)))
-  {
-    NlpPackageFlush(package);
-  }
-
-  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpFlushPackageMarkedAsDeleted to delete %d", ctrl_nlp->deleted_packages->length);
-
-  DONE;
-}
-
-
-og_status OgNlpFlushPackageMarkedAsDeleted(og_nlp_th ctrl_nlp_th)
-{
   IF(OgNlpSynchroWriteLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpFlushPackageMarkedAsDeleted: error on OgNlpSynchroWriteLock");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteLock");
     DPcErr;
   }
 
-  og_status status = NlpFlushPackageMarkedAsDeletedNosync(ctrl_nlp_th->ctrl_nlp);
+  og_status status = NlpPackageDeleteNosync(ctrl_nlp_th, package_id);
 
   IF(OgNlpSynchroWriteUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpFlushPackageMarkedAsDeleted: error on OgNlpSynchroWriteUnLock");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteUnLock");
     DPcErr;
   }
 
   return status;
+}
+
+static og_status NlpPackageFlush(package_t package)
+{
+  if (package == NULL) CONT;
+
+  OgHeapFlush(package->hexpression);
+  OgHeapFlush(package->hinterpretation);
+  OgHeapFlush(package->halias);
+  OgHeapFlush(package->hba);
+  DPcFree(package);
+
+  DONE;
 }
 

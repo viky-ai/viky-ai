@@ -6,6 +6,12 @@
  */
 #include "ogm_nlp.h"
 
+static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package);
+static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *dump_json);
+static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *dump_json);
+static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Ialias, json_t *json_aliases);
+static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+
 static gint str_compar(gconstpointer a, gconstpointer b)
 {
   return strcmp((const char*) a, (const char*) b);
@@ -15,13 +21,30 @@ PUBLIC(int) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, st
 {
   // reset output
   memset(output, 0, sizeof(struct og_nlp_dump_output));
-
   ctrl_nlp_th->json_answer = json_array();
+
+  IF(OgNlpSynchroReadLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpDump: error on OgNlpSynchroReadLock");
+    DPcErr;
+  }
+
+  og_status dump_status = NlpDumpNoSync(ctrl_nlp_th, input, output);
+
+  IF(OgNlpSynchroReadUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpDump: error on OgNlpSynchroReadUnLock");
+    DPcErr;
+  }
+
+  output->json_output = ctrl_nlp_th->json_answer;
+
+  return dump_status;
+}
+
+static og_status NlpDumpNoSyncFreeSafe(og_nlp_th ctrl_nlp_th, GList *sorted_key_kist)
+{
   json_t *json_packages = ctrl_nlp_th->json_answer;
-
-  GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->ctrl_nlp->packages_hash);
-
-  GList *sorted_key_kist = g_list_sort(key_list, str_compar);
 
   for (GList *iter = sorted_key_kist; iter; iter = iter->next)
   {
@@ -31,24 +54,45 @@ PUBLIC(int) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, st
       NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package");
       DPcErr;
     }
+
     og_string package_id = iter->data;
 
     package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
     IFN(package) DONE;
 
-    IFE(NlpPackageLog(ctrl_nlp_th, package));
+    og_status dump_status = NlpPackageDump(ctrl_nlp_th, package, json_package);
 
-    IFE(NlpPackageDump(ctrl_nlp_th, package, json_package));
+    NlpPackageMarkAsUnused(ctrl_nlp_th, package);
+
+    IF(dump_status)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : NlpPackageDump failed on package '%s'", package_id);
+      DPcErr;
+    }
 
   }
-
-  output->json_output = json_packages;
 
   DONE;
 }
 
-og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package)
+static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
 {
+
+  GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->ctrl_nlp->packages_hash);
+
+  GList *sorted_key_list = g_list_sort(key_list, str_compar);
+
+  og_status dump_status = NlpDumpNoSyncFreeSafe(ctrl_nlp_th, sorted_key_list);
+
+  g_list_free(sorted_key_list);
+
+  return dump_status;
+}
+
+static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package)
+{
+  IFE(NlpPackageLog(ctrl_nlp_th, package));
+
   const char *package_id = OgHeapGetCell(package->hba, package->id_start);
   IFN(package_id) DPcErr;
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package id '%s' :", package_id);

@@ -141,6 +141,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
   {
     og_string package_id = json_string_value(json_id);
     package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
+    NlpPackageMarkAsUnused(ctrl_nlp_th, package);
     if (package != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package with id='%s' already exists, init must update package",
