@@ -87,11 +87,7 @@ $ ./bin/rails db:setup
 > ...
 ```
 
-## Running NLS in a local container
-
-To run a local instance of the Natural Language Processing Server (NLS) you can exploit the Docker image `docker-registry.pertimm.corp:50001/voqal.ai/platform/nls` and run it with:
-
-    docker run -ti --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+## Docker
 
 If you haven't Docker installed in your system yet, you can follow this [guide](https://docs.docker.com/engine/installation/).
 Then check to have the image registry mirrors well configured.
@@ -124,3 +120,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
+    nlp_server:     docker run -ti --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
