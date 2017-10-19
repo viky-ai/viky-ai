@@ -1,5 +1,6 @@
 class AgentsController < ApplicationController
   before_action :set_user_and_agent, except: [:index, :new, :create]
+  before_action :check_user_rights, except: [:index, :new, :create]
 
   def index
     @search = AgentSearch.new(current_user.id, search_params)
@@ -121,6 +122,13 @@ class AgentsController < ApplicationController
 
 
   private
+
+    def check_user_rights
+      unless current_user.id == @user.id
+        flash[:alert] = t('views.agents.index.authorisation_refused')
+        redirect_to agents_path
+      end
+    end
 
     def set_user_and_agent
       @user = User.friendly.find(params[:user_id])

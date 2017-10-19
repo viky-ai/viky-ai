@@ -16,6 +16,7 @@ en:
           not_found: No agent found
           placeholder: Search by name or ID
         ownership_transferred: "Agent %{name} transferred to user %{username}"
+        authorisation_refused: You can't access this agent.
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."

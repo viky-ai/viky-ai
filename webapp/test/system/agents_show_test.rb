@@ -10,6 +10,13 @@ class AgentsShowTest < ApplicationSystemTestCase
   end
 
 
+  test 'Navigation to agent show without right' do
+    admin_login
+    visit user_agent_path(users(:confirmed), agents(:weather_confirmed))
+    assert page.has_text?("You can't access this agent.")
+  end
+
+
   test 'No redirection when configuring from show' do
     go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
