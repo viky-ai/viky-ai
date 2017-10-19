@@ -142,12 +142,13 @@ module Nls
 
     def self.expected_interpret_result
       {
-        "intents"=>
+        "interpretations"=>
         [
         {
         "package" => "voqal.ai:datetime1",
         "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-        "score" => 1
+        "slug" => "hello1",
+        "score" => 1.0
         }
         ]
       }

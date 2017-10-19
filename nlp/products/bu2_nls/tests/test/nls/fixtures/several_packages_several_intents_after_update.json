@@ -1,50 +1,54 @@
 [
   {
     "id": "voqal.ai:datetime1",
-    "intents":
+    "slug": "datetime1",
+    "interpretations":
     [
       {
         "id": "0d981484-9313-11e7-abc4-cec278b6b50b1",
-        "sentences":
+        "slug": "hello1",
+        "expressions":
         [
           {
-            "sentence": "Hello Brice",
+            "expression": "Hello Brice",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Jean Marie",
+            "expression": "Hello Jean Marie",
             "locale": "fr-FR"
           }
         ]
       },
       {
         "id": "0d981484-9313-11e7-abc4-cec278b6b50b2",
-        "sentences":
+        "slug": "hello2",
+        "expressions":
         [
           {
-            "sentence": "Hello Nicolas",
+            "expression": "Hello Nicolas",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Olivier",
+            "expression": "Hello Olivier",
             "locale": "fr-FR"
           }
         ]
       },
       {
         "id": "0d981484-9313-11e7-abc4-cec278b6b50b3",
-        "sentences":
+        "slug": "hello3",
+        "expressions":
         [
           {
-            "sentence": "Hello Sebastien",
+            "expression": "Hello Sebastien",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Enrico",
+            "expression": "Hello Enrico",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Mouadh",
+            "expression": "Hello Mouadh",
             "locale": "fr-FR"
           }
         ]
@@ -53,18 +57,20 @@
   },
   {
     "id": "voqal.ai:datetime2",
-    "intents":
+    "slug": "datetime2",
+    "interpretations":
     [
       {
         "id": "0d981484-9313-11e7-abc4-cec278b6b50b4",
-        "sentences":
+        "slug": "hello2",
+        "expressions":
         [
           {
-            "sentence": "Hello tout le monde",
+            "expression": "Hello tout le monde",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello chacun",
+            "expression": "Hello chacun",
             "locale": "fr-FR"
           }
         ]
@@ -73,22 +79,24 @@
   },
   {
     "id": "voqal.ai:datetime3",
-    "intents":
+    "slug": "datetime3",
+    "interpretations":
     [
       {
         "id": "0d981484-9313-11e7-abc4-cec278b6b50b5",
-        "sentences":
+        "slug": "hello3",
+        "expressions":
         [
           {
-            "sentence": "Hello Sebastien",
+            "expression": "Hello Sebastien",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Enrico",
+            "expression": "Hello Enrico",
             "locale": "fr-FR"
           },
           {
-            "sentence": "Hello Mouadh",
+            "expression": "Hello Mouadh",
             "locale": "fr-FR"
           }
         ]

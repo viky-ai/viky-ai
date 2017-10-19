@@ -18,14 +18,16 @@ module Nls
         [
           {
             "id" => "voqal.ai:datetime",
-            "intents" =>
+            "slug" => "datetime",
+            "interpretations" =>
             [
               {
                 "id"=>"0d981484-9313-11e7-abc4-cec278b6b50b",
-                "sentences" =>
+                "slug"=>"hello",
+                "expressions" =>
                 [
                   {
-                    "sentence" => "Hello Brice",
+                    "expression" => "Hello Brice",
                     "locale"=>"fr-FR"
                   }
                 ]

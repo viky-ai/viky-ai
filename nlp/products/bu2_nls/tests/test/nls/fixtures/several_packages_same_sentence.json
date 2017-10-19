@@ -1,104 +1,115 @@
 [
   {
     "id"  : "package_1",
-    "intents":
+    "slug"  : "package_1",
+    "interpretations":
     [
       {
         "id" : "intent_1_1",
-        "sentences":
+        "slug" : "intent_1_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_2",
-        "sentences":
+        "slug" : "intent_1_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_3",
-        "sentences":
+        "slug" : "intent_1_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_4",
-        "sentences":
+        "slug" : "intent_1_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_5",
-        "sentences":
+        "slug" : "intent_1_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_6",
-        "sentences":
+        "slug" : "intent_1_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_7",
-        "sentences":
+        "slug" : "intent_1_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_8",
-        "sentences":
+        "slug" : "intent_1_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_9",
-        "sentences":
+        "slug" : "intent_1_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_1_10",
-        "sentences":
+        "slug" : "intent_1_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -107,104 +118,115 @@
   },
   {
     "id"  : "package_2",
-    "intents":
+    "slug"  : "package_2",
+    "interpretations":
     [
       {
         "id" : "intent_2_1",
-        "sentences":
+        "slug" : "intent_2_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_2",
-        "sentences":
+        "slug" : "intent_2_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_3",
-        "sentences":
+        "slug" : "intent_2_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_4",
-        "sentences":
+        "slug" : "intent_2_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_5",
-        "sentences":
+        "slug" : "intent_2_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_6",
-        "sentences":
+        "slug" : "intent_2_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_7",
-        "sentences":
+        "slug" : "intent_2_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_8",
-        "sentences":
+        "slug" : "intent_2_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_9",
-        "sentences":
+        "slug" : "intent_2_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_2_10",
-        "sentences":
+        "slug" : "intent_2_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -213,104 +235,115 @@
   },
   {
     "id"  : "package_3",
-    "intents":
+    "slug"  : "package_3",
+    "interpretations":
     [
       {
         "id" : "intent_3_1",
-        "sentences":
+        "slug" : "intent_3_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_2",
-        "sentences":
+        "slug" : "intent_3_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_3",
-        "sentences":
+        "slug" : "intent_3_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_4",
-        "sentences":
+        "slug" : "intent_3_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_5",
-        "sentences":
+        "slug" : "intent_3_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_6",
-        "sentences":
+        "slug" : "intent_3_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_7",
-        "sentences":
+        "slug" : "intent_3_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_8",
-        "sentences":
+        "slug" : "intent_3_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_9",
-        "sentences":
+        "slug" : "intent_3_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_3_10",
-        "sentences":
+        "slug" : "intent_3_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -319,104 +352,115 @@
   },
   {
     "id"  : "package_4",
-    "intents":
+    "slug"  : "package_4",
+    "interpretations":
     [
       {
         "id" : "intent_4_1",
-        "sentences":
+        "slug" : "intent_4_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_2",
-        "sentences":
+        "slug" : "intent_4_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_3",
-        "sentences":
+        "slug" : "intent_4_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_4",
-        "sentences":
+        "slug" : "intent_4_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_5",
-        "sentences":
+        "slug" : "intent_4_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_6",
-        "sentences":
+        "slug" : "intent_4_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_7",
-        "sentences":
+        "slug" : "intent_4_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_8",
-        "sentences":
+        "slug" : "intent_4_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_9",
-        "sentences":
+        "slug" : "intent_4_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_4_10",
-        "sentences":
+        "slug" : "intent_4_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -425,104 +469,115 @@
   },
   {
     "id"  : "package_5",
-    "intents":
+    "slug"  : "package_5",
+    "interpretations":
     [
       {
         "id" : "intent_5_1",
-        "sentences":
+        "slug" : "intent_5_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_2",
-        "sentences":
+        "slug" : "intent_5_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_3",
-        "sentences":
+        "slug" : "intent_5_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_4",
-        "sentences":
+        "slug" : "intent_5_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_5",
-        "sentences":
+        "slug" : "intent_5_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_6",
-        "sentences":
+        "slug" : "intent_5_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_7",
-        "sentences":
+        "slug" : "intent_5_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_8",
-        "sentences":
+        "slug" : "intent_5_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_9",
-        "sentences":
+        "slug" : "intent_5_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_5_10",
-        "sentences":
+        "slug" : "intent_5_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -531,104 +586,115 @@
   },
   {
     "id"  : "package_6",
-    "intents":
+    "slug"  : "package_6",
+    "interpretations":
     [
       {
         "id" : "intent_6_1",
-        "sentences":
+        "slug" : "intent_6_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_2",
-        "sentences":
+        "slug" : "intent_6_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_3",
-        "sentences":
+        "slug" : "intent_6_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_4",
-        "sentences":
+        "slug" : "intent_6_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_5",
-        "sentences":
+        "slug" : "intent_6_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_6",
-        "sentences":
+        "slug" : "intent_6_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_7",
-        "sentences":
+        "slug" : "intent_6_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_8",
-        "sentences":
+        "slug" : "intent_6_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_9",
-        "sentences":
+        "slug" : "intent_6_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_6_10",
-        "sentences":
+        "slug" : "intent_6_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -637,104 +703,115 @@
   },
   {
     "id"  : "package_7",
-    "intents":
+    "slug"  : "package_7",
+    "interpretations":
     [
       {
         "id" : "intent_7_1",
-        "sentences":
+        "slug" : "intent_7_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_2",
-        "sentences":
+        "slug" : "intent_7_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_3",
-        "sentences":
+        "slug" : "intent_7_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_4",
-        "sentences":
+        "slug" : "intent_7_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_5",
-        "sentences":
+        "slug" : "intent_7_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_6",
-        "sentences":
+        "slug" : "intent_7_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_7",
-        "sentences":
+        "slug" : "intent_7_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_8",
-        "sentences":
+        "slug" : "intent_7_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_9",
-        "sentences":
+        "slug" : "intent_7_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_7_10",
-        "sentences":
+        "slug" : "intent_7_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -743,104 +820,115 @@
   },
   {
     "id"  : "package_8",
-    "intents":
+    "slug"  : "package_8",
+    "interpretations":
     [
       {
         "id" : "intent_8_1",
-        "sentences":
+        "slug" : "intent_8_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_2",
-        "sentences":
+        "slug" : "intent_8_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_3",
-        "sentences":
+        "slug" : "intent_8_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_4",
-        "sentences":
+        "slug" : "intent_8_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_5",
-        "sentences":
+        "slug" : "intent_8_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_6",
-        "sentences":
+        "slug" : "intent_8_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_7",
-        "sentences":
+        "slug" : "intent_8_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_8",
-        "sentences":
+        "slug" : "intent_8_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_9",
-        "sentences":
+        "slug" : "intent_8_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_8_10",
-        "sentences":
+        "slug" : "intent_8_10",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -849,104 +937,115 @@
   },
   {
     "id"  : "package_9",
-    "intents":
+    "slug"  : "package_9",
+    "interpretations":
     [
       {
         "id" : "intent_9_1",
-        "sentences":
+        "slug" : "intent_9_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_2",
-        "sentences":
+        "slug" : "intent_9_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_3",
-        "sentences":
+        "slug" : "intent_9_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_4",
-        "sentences":
+        "slug" : "intent_9_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_5",
-        "sentences":
+        "slug" : "intent_9_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_6",
-        "sentences":
+        "slug" : "intent_9_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_7",
-        "sentences":
+        "slug" : "intent_9_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_8",
-        "sentences":
+        "slug" : "intent_9_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_9",
-        "sentences":
+        "slug" : "intent_9_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_9_10",
-        "sentences":
+        "slug" : "intent_9_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]
@@ -955,104 +1054,115 @@
   },
   {
     "id"  : "package_10",
-    "intents":
+    "slug"  : "package_10",
+    "interpretations":
     [
       {
         "id" : "intent_10_1",
-        "sentences":
+        "slug" : "intent_10_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_1",
+            "expression" : "expression_1",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_2",
-        "sentences":
+        "slug" : "intent_10_2",
+        "expressions":
         [
           {
-            "sentence" : "sentence_2",
+            "expression" : "expression_2",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_3",
-        "sentences":
+        "slug" : "intent_10_3",
+        "expressions":
         [
           {
-            "sentence" : "sentence_3",
+            "expression" : "expression_3",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_4",
-        "sentences":
+        "slug" : "intent_10_4",
+        "expressions":
         [
           {
-            "sentence" : "sentence_4",
+            "expression" : "expression_4",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_5",
-        "sentences":
+        "slug" : "intent_10_5",
+        "expressions":
         [
           {
-            "sentence" : "sentence_5",
+            "expression" : "expression_5",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_6",
-        "sentences":
+        "slug" : "intent_10_6",
+        "expressions":
         [
           {
-            "sentence" : "sentence_6",
+            "expression" : "expression_6",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_7",
-        "sentences":
+        "slug" : "intent_10_7",
+        "expressions":
         [
           {
-            "sentence" : "sentence_7",
+            "expression" : "expression_7",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_8",
-        "sentences":
+        "slug" : "intent_10_8",
+        "expressions":
         [
           {
-            "sentence" : "sentence_8",
+            "expression" : "expression_8",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_9",
-        "sentences":
+        "slug" : "intent_10_9",
+        "expressions":
         [
           {
-            "sentence" : "sentence_9",
+            "expression" : "expression_9",
             "locale"  : "fr-FR"
           }
         ]
       },
       {
         "id" : "intent_10_10",
-        "sentences":
+        "slug" : "intent_10_1",
+        "expressions":
         [
           {
-            "sentence" : "sentence_10",
+            "expression" : "expression_10",
             "locale"  : "fr-FR"
           }
         ]

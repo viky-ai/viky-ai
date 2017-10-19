@@ -139,6 +139,7 @@ og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_s
 og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
 og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *dump_json);
 og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *dump_json);
+og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Ialias, json_t *json_aliases);
 
 /* nlpackage.c */
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug);

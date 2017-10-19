@@ -29,7 +29,7 @@ module Nls
         param =
         {
           "packages" => ["package_2","package_3","package_1","package_9"],
-          "sentence" => "sentence_8",
+          "sentence" => "expression_8",
           "Accept-Language" => "fr-FR"
         }
 
@@ -37,27 +37,31 @@ module Nls
 
         expected =
         {
-          "intents" =>
+          "interpretations" =>
           [
           {
           "package" => "package_2",
           "id" => "intent_2_8",
-          "score" => 1
+          "slug" => "intent_2_8",
+          "score" => 1.0
           },
           {
           "package" => "package_3",
           "id" => "intent_3_8",
-          "score" => 1
+          "slug" => "intent_3_8",
+          "score" => 1.0
           },
           {
           "package" => "package_1",
           "id" => "intent_1_8",
-          "score" => 1
+          "slug" => "intent_1_8",
+          "score" => 1.0
           },
           {
           "package" => "package_9",
           "id" => "intent_9_8",
-          "score" => 1
+          "slug" => "intent_9_8",
+          "score" => 1.0
           }
           ]
         }
@@ -72,22 +76,22 @@ module Nls
 
         Nls.restart
 
-        sentences_array = [];
+        expressions_array = [];
 
         for package in 1..10
-          for intent in 1..10
-            for sentence in 1..10
-              sentences_array << ["package_#{package}","intent_#{package}_#{intent}","sentence_#{package}_#{intent}_#{sentence}"]
+          for interpretation in 1..10
+            for expression in 1..10
+              expressions_array << ["package_#{package}","interpretation_#{package}_#{interpretation}","expression_#{package}_#{interpretation}_#{expression}"]
             end
           end
         end
 
-        Parallel.map(sentences_array, in_threads: 20) do |sentence_array|
+        Parallel.map(expressions_array, in_threads: 20) do |expression_array|
 
           param =
           {
-            "packages" => [sentence_array[0]],
-            "sentence" => sentence_array[2],
+            "packages" => [expression_array[0]],
+            "sentence" => expression_array[2],
             "Accept-Language" => "fr-FR"
           }
 
@@ -95,12 +99,13 @@ module Nls
 
           expected =
           {
-            "intents" =>
+            "interpretations" =>
             [
             {
-            "package" => sentence_array[0],
-            "id" => sentence_array[1],
-            "score" => 1
+            "package" => expression_array[0],
+            "id" => expression_array[1],
+            "slug" => expression_array[1],
+            "score" => 1.0
             }
             ]
           }
@@ -170,12 +175,13 @@ module Nls
 
         expected =
         {
-          "intents" =>
+          "interpretations" =>
           [
             {
               "package" => "voqal.ai:datetime",
               "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-              "score" => 1
+              "slug" => "special_char",
+              "score" => 1.0
             }
           ]
         }
@@ -200,7 +206,7 @@ module Nls
 
         expected =
         {
-          "intents" => []
+          "interpretations" => []
         }
 
         assert_equal expected, actual

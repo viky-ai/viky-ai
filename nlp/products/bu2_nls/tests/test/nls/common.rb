@@ -41,14 +41,14 @@ module Nls
 
       json_content_packages = []
       for i in 1..packagenumber
-        json_object_package = {"id"=>"package_#{i}", "intents"=>[]}
+        json_object_package = {"id"=>"package_#{i}", "slug"=>"package_slug#{i}", "interpretations"=>[]}
         for j in 1..itentsnumber
-          json_object_intents = {"id"=>"intent_#{i}_#{j}", "sentences"=>[]}
+          json_object_intents = {"id"=>"interpretation_#{i}_#{j}", "slug"=>"interpretation_#{i}_#{j}", "expressions"=>[]}
           for k in 1..sentensenumber
-            json_object_sentence = {"sentence"=>"sentence_#{i}_#{j}_#{k}", "locale"=>"fr-FR"}
-            json_object_intents["sentences"] << json_object_sentence
+            json_object_sentence = {"expression"=>"expression_#{i}_#{j}_#{k}", "locale"=>"fr-FR"}
+            json_object_intents["expressions"] << json_object_sentence
           end
-          json_object_package["intents"] << json_object_intents
+          json_object_package["interpretations"] << json_object_intents
         end
         json_content_packages << json_object_package
       end

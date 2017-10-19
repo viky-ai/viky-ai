@@ -1,17 +1,19 @@
 {
   "id": "voqal.ai:datetime2",
-  "intents":
+  "slug": "datetime2",
+  "interpretations":
   [
     {
       "id": "0d981484-9313-11e7-abc4-cec278b6b50b4",
-      "sentences":
+      "slug": "hello2",
+      "expressions":
       [
         {
-          "sentence": "Hello tout le monde",
+          "expression": "Hello tout le monde",
           "locale": "fr-FR"
         },
         {
-          "sentence": "Hello chacun",
+          "expression": "Hello chacun",
           "locale": "fr-FR"
         }
       ]
