@@ -59,8 +59,11 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
   og_char_buffer json_interpret_request[DOgMlogMaxMessageSize / 2];
   IFE(NlpJsonToBuffer(input->json_input, json_interpret_request, DOgMlogMaxMessageSize / 2, NULL));
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "OgNlpInterpret: ctrl_nlp_th->json_interpret_request_string is [\n%s]",
-      json_interpret_request);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+        "OgNlpInterpret: ctrl_nlp_th->json_interpret_request_string is [\n%s]", json_interpret_request);
+  }
 
   if (json_is_object(input->json_input))
   {
@@ -120,7 +123,11 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   og_char_buffer json_request_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL));
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]", json_request_string);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: interpreting request [\n%s]",
+        json_request_string);
+  }
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
@@ -143,13 +150,19 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     og_string package_id = OgHeapGetCell(package->hba, package->id_start);
     IFN(package_id) DPcErr;
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s'", package_id);
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+    {
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s'", package_id);
+    }
 
     IFE(NlpInterpretRequestPackage(ctrl_nlp_th, package, json_interpretations));
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: finished interpreting request [\n%s]",
-      json_request_string);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: finished interpreting request [\n%s]",
+        json_request_string);
+  }
   DONE;
 }
 
@@ -181,6 +194,9 @@ static og_status NlpInterpretRequestInterpretation(og_nlp_th ctrl_nlp_th, packag
   char *interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
   IFN(interpretation_id) DPcErr;
 
+  char *interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
+  IFN(interpretation_slug) DPcErr;
+
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
     struct expression *expression = OgHeapGetCell(package->hexpression, interpretation->expression_start + i);
@@ -190,8 +206,12 @@ static og_status NlpInterpretRequestInterpretation(og_nlp_th ctrl_nlp_th, packag
     if (Ogstricmp(string_expression, ctrl_nlp_th->request_sentence) == 0)
     {
       og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestInterpretation: found interpretation '%s' in package '%s'",
-          interpretation_id, package_id);
+      if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+      {
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+            "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s'", interpretation_slug,
+            interpretation_id, package_id);
+      }
       json_t *json_interpretation = json_object();
 
       json_t *json_package_id = json_string(package_id);
@@ -205,6 +225,13 @@ static og_status NlpInterpretRequestInterpretation(og_nlp_th ctrl_nlp_th, packag
       IF(json_object_set_new(json_interpretation, "id", json_interpretation_id))
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_id");
+        DPcErr;
+      }
+
+      json_t *json_interpretation_slug = json_string(interpretation_slug);
+      IF(json_object_set_new(json_interpretation, "slug", json_interpretation_slug))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_slug");
         DPcErr;
       }
 
@@ -237,7 +264,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   {
     og_string key = json_object_iter_key(iter);
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestParse: found key='%s'", key);
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+    {
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestParse: found key='%s'", key);
+    }
 
     if (Ogstricmp(key, "packages") == 0)
     {
@@ -286,8 +316,11 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   {
     ctrl_nlp_th->request_sentence = json_string_value(json_sentence);
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestBuildSentence: sentence '%s'",
-        ctrl_nlp_th->request_sentence);
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+    {
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestBuildSentence: sentence '%s'",
+          ctrl_nlp_th->request_sentence);
+    }
   }
   else
   {
@@ -312,7 +345,11 @@ static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t 
     if (json_is_string(json_package))
     {
       const char *package_id = json_string_value(json_package);
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestBuildPackages: package id is '%s'", package_id);
+      if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+      {
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequestBuildPackages: package id is '%s'",
+            package_id);
+      }
 
       IFE(NlpInterpretRequestBuildPackage(ctrl_nlp_th, package_id));
     }
