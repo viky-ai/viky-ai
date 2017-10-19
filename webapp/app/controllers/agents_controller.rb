@@ -19,7 +19,7 @@ class AgentsController < ApplicationController
 
   def create
     @agent = Agent.new(agent_params)
-    @agent.users << current_user
+    @agent.memberships << Membership.new(user_id: current_user.id, rights: 'all')
 
     respond_to do |format|
       if @agent.save

@@ -7,7 +7,7 @@ class AgentTransfert
     @agent = agent
     @new_owner_username = new_owner_username
 
-    @previous_owner = User.find(@agent.owner_id)
+    @previous_owner = @agent.owner
     @new_owner = User.find_by_username(@new_owner_username)
   end
 
@@ -20,7 +20,7 @@ class AgentTransfert
     if valid?
       ActiveRecord::Base.transaction do
         Membership.where(user_id: @agent.owner_id).where(agent_id: @agent.id).first.destroy
-        new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id)
+        new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
         if new_membership.save
           @agent.owner_id = @new_owner.id
           unless @agent.save

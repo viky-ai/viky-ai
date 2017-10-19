@@ -21,9 +21,21 @@ class User < ApplicationRecord
 
   before_validation :clean_username
 
-  # overload devise method to send async emails
-  def send_devise_notification(notification, *args)
-    devise_mailer.send(notification, self, *args).deliver_later
+  def can?(action, agent)
+    return false unless [:edit, :show].include? action
+    return false if memberships.where(agent_id: agent.id).count == 0
+    return true if agent.owner.id == id
+
+    if action == :show
+      true
+    else
+      rights = memberships.where(agent_id: agent.id).first.rights
+      action == :edit && rights == 'edit' ? true : false
+    end
+  end
+
+  def owner?(agent)
+    agent.owner.id == id
   end
 
   def invitation_status
@@ -59,6 +71,11 @@ class User < ApplicationRecord
     end
 
     conditions
+  end
+
+  # overload devise method to send async emails
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
   end
 
 

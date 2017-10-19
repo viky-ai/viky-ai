@@ -8,11 +8,11 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription"
     )
-    agent.users << users(:admin)
-
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
+
     assert_equal users(:admin).id, agent.owner_id
-    assert_equal 'admin', agent.users.first.username
+    assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
   end
 
@@ -24,7 +24,7 @@ class AgentTest < ActiveSupport::TestCase
       description: "Agent A decription"
     )
     assert !agent.save
-    expected = ["Users can't be blank", "Owner can't be blank"]
+    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -35,15 +35,58 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription"
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
 
     assert agent.save
     assert_equal users(:admin).id, agent.owner_id
+    assert_equal users(:admin).id, agent.owner.id
 
     agent.users << users(:confirmed)
     assert agent.save
     assert_equal users(:admin).id, agent.owner_id
-    assert_equal ['admin', 'confirmed'], agent.users.collect(&:username)
+    assert_equal users(:admin).id, agent.owner.id
+    assert_equal ['confirmed'], agent.collaborators.collect(&:username)
+    assert_equal ['confirmed', 'admin'], agent.users.collect(&:username)
+  end
+
+
+  test "Add collaborators and succeed" do
+    agent = agents(:weather)
+
+    assert_equal "admin", agent.owner.username
+    expected = ['show_on_agent_weather', 'edit_on_agent_weather']
+    assert_equal expected, agent.collaborators.collect(&:username)
+
+    agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "edit")
+    agent.memberships << Membership.new(user_id: users(:locked).id, rights: "show")
+    assert agent.save
+    expected = ['confirmed', 'locked', 'show_on_agent_weather', 'edit_on_agent_weather']
+    assert_equal expected, agent.collaborators.collect(&:username)
+  end
+
+
+  test "Add owner as collaborators" do
+    agent = agents(:weather)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "edit")
+    assert !agent.save
+    assert_equal ['Memberships is invalid'], agent.errors.full_messages
+  end
+
+
+  test "Add same collaborator" do
+    agent = agents(:weather)
+    agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "edit")
+    agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "show")
+    assert !agent.save
+    assert_equal ['Memberships is invalid'], agent.errors.full_messages
+  end
+
+
+  test "Add collaborator with bad rights" do
+    agent = agents(:weather)
+    agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "missing rights")
+    assert !agent.save
+    assert_equal ['Memberships is invalid'], agent.errors.full_messages
   end
 
 
@@ -52,12 +95,12 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent 1",
       agentname: "aaa"
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
 
     agent.users = []
     assert !agent.valid?
-    expected = ["Users can't be blank"]
+    expected = ["Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
 
     agent.users << users(:confirmed)
@@ -69,7 +112,7 @@ class AgentTest < ActiveSupport::TestCase
 
   test "Name & agentname nil validation" do
     agent = Agent.new
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert !agent.valid?
     expected = [
       "Name can't be blank",
@@ -85,7 +128,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "",
       agentname: ""
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert !agent.valid?
     expected = [
       "Name can't be blank",
@@ -98,7 +141,7 @@ class AgentTest < ActiveSupport::TestCase
       name: " ",
       agentname: " "
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert !agent.valid?
     assert_equal expected, agent.errors.full_messages
   end
@@ -109,7 +152,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent A",
       agentname: "aa"
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert !agent.valid?
     expected = ["ID is too short (minimum is 3 characters)"]
     assert_equal expected, agent.errors.full_messages
@@ -121,7 +164,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent 1",
       agentname: "aaa"
     )
-    agent_1.users << users(:admin)
+    agent_1.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent_1.valid?
     assert agent_1.save
 
@@ -129,7 +172,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent 2",
       agentname: "aaa"
     )
-    agent_2.users << users(:admin)
+    agent_2.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
 
     assert !agent_2.valid?
     expected = ["ID has already been taken"]
@@ -142,7 +185,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent 1",
       agentname: "aaa"
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.valid?
     assert agent.save
 
@@ -183,7 +226,7 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent 2",
       agentname: "aaa?# b"
     )
-    agent.users << users(:admin)
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
     assert_equal "aaa-b", agent.agentname
   end

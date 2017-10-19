@@ -1,7 +1,7 @@
 <header class="header">
   <div class="header__breadcrumb">
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <strong><%= @agent.name %></strong> (<%= @agent.memberships.first.user.username %>/<%= @agent.agentname %>)
+    <strong><%= @agent.name %></strong> (<%= @agent.owner.username %>/<%= @agent.agentname %>)
   </div>
   <div class="header__tools">
     <% if User.confirmed.count > 1 %>

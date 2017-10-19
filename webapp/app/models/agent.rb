@@ -9,7 +9,6 @@ class Agent < ApplicationRecord
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
-  validates :users, presence: true
   validates :owner_id, presence: true
   validates :color, inclusion: { in: :available_colors }
   validate :owner_presence_in_users
@@ -41,17 +40,25 @@ class Agent < ApplicationRecord
     }
   end
 
+  def owner
+    users.includes(:memberships).where('memberships.rights' => 'all').first
+  end
+
+  def collaborators
+    users.includes(:memberships).where.not('memberships.rights' => 'all')
+  end
+
 
   private
 
     def owner_presence_in_users
-      unless (users.empty? || users.collect(&:id).include?(owner_id))
+      unless memberships.select {|m| m.rights == 'all'}.size == 1
         errors.add(:users, "list does not includes agent owner")
       end
     end
 
     def add_owner_id
-      self.owner_id = users.first.id unless users.empty?
+      self.owner_id = memberships.first.user_id unless memberships.empty?
     end
 
     def clean_agentname

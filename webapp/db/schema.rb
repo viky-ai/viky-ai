@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171016114217) do
+ActiveRecord::Schema.define(version: 20171019123348) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20171016114217) do
     t.uuid "agent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "rights", default: "show"
     t.index ["agent_id", "user_id"], name: "index_memberships_on_agent_id_and_user_id", unique: true
   end
 
