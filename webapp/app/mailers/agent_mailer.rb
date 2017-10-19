@@ -6,7 +6,7 @@ class AgentMailer < ApplicationMailer
     @owner = owner
     mail(
       to: @owner.email,
-      subject: "test transfert ownership"
+      subject: I18n.t('mailer.agent.transfert_ownership.subject')
     )
   end
 
