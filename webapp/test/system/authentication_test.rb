@@ -24,7 +24,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     visit new_user_registration_path
 
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'superman@viky.ai'
     fill_in 'Password', with: 'short'
     fill_in 'Choose your username', with: 'myusername'
 
@@ -42,7 +42,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     visit new_user_registration_path
 
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'superman@viky.ai'
     fill_in 'Password', with: 'mypassword'
 
     click_button 'Sign up'
@@ -61,7 +61,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     # First successful sign in
     visit new_user_registration_path
     fill_in 'Choose your username', with: 'superman'
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'superman@viky.ai'
     fill_in 'Password', with: 'great password baby!'
 
     # TODO: Remove this as soon as possible
@@ -77,7 +77,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     # Second sign up with same credentials
     visit new_user_registration_path
     fill_in 'Choose your username', with: 'superman2'
-    fill_in 'Email', with: 'superman@voqal.ai'
+    fill_in 'Email', with: 'superman@viky.ai'
     fill_in 'Password', with: 'great password baby!'
 
     click_button 'Sign up'
@@ -92,7 +92,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     Feature.enable_user_registration
     visit new_user_registration_path
     fill_in 'Choose your username', with: 'rockybalboa'
-    fill_in 'Email', with: 'rocky@voqal.ai'
+    fill_in 'Email', with: 'rocky@viky.ai'
     fill_in 'Password', with: 'great password baby!'
 
     # TODO: Remove this as soon as possible
@@ -119,7 +119,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   test 'Log in failed with not confirmed email' do
     visit new_user_session_path
 
-    fill_in 'Email', with: 'notconfirmed@voqal.ai'
+    fill_in 'Email', with: 'notconfirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
 
     click_button 'Log in'
@@ -132,7 +132,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   test 'Log in failed with bad password' do
     visit new_user_session_path
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBam'
 
     click_button 'Log in'
@@ -145,7 +145,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   test 'Successful log in' do
     visit new_user_session_path
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
 
     click_button 'Log in'
@@ -158,7 +158,7 @@ class AuthenticationTest < ApplicationSystemTestCase
   test 'Successful log in then log out' do
     visit new_user_session_path
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
 
     click_button 'Log in'
@@ -176,7 +176,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     # Sign in
     visit new_user_registration_path
     fill_in 'Choose your username', with: 'batman'
-    fill_in 'Email', with: 'batman@voqal.ai'
+    fill_in 'Email', with: 'batman@viky.ai'
     fill_in 'Password', with: 'great password baby!'
 
     # TODO: Remove this as soon as possible
@@ -190,7 +190,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert page.has_content?(message)
 
     # Visit confirmation url from email
-    confirmation_token = User.find_by_email('batman@voqal.ai').confirmation_token
+    confirmation_token = User.find_by_email('batman@viky.ai').confirmation_token
     visit user_confirmation_path(confirmation_token: confirmation_token)
 
     # TODO: Remove this as soon as possible
@@ -200,7 +200,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert_equal new_user_session_path, current_path
     assert page.has_content?("Your email address has been successfully confirmed.")
 
-    fill_in 'Email', with: 'batman@voqal.ai'
+    fill_in 'Email', with: 'batman@viky.ai'
     fill_in 'Password', with: 'great password baby!'
     click_button 'Log in'
 
@@ -221,7 +221,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert_equal expected, all('.help--error').collect {|n| n.text}
 
     # Fill email, email is send
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     click_button 'Send me reset password instructions'
 
     message = "You will receive an email with instructions on how to reset your password in a few minutes."
@@ -229,7 +229,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert_equal new_user_session_path, current_path
 
     # Visit url from email with reset password instructions
-    token = User.find_by_email('confirmed@voqal.ai').send_reset_password_instructions
+    token = User.find_by_email('confirmed@viky.ai').send_reset_password_instructions
     visit edit_user_password_path(reset_password_token: token)
 
     fill_in 'New password', with: 'new password baby!'
@@ -249,7 +249,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_link("Didn't receive confirmation instructions?")
     assert page.has_content? "Resend confirmation instructions"
 
-    fill_in 'user[email]', with: 'confirmed@voqal.ai'
+    fill_in 'user[email]', with: 'confirmed@viky.ai'
     click_button 'Resend confirmation instructions'
 
     expected = ["Email was already confirmed, please try signing in"]
@@ -265,7 +265,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_link("Didn't receive confirmation instructions?")
     assert page.has_content? "Resend confirmation instructions"
 
-    fill_in 'user[email]', with: 'notconfirmed@voqal.ai'
+    fill_in 'user[email]', with: 'notconfirmed@viky.ai'
     click_button 'Resend confirmation instructions'
 
     message  = "You will receive an email with instructions for how "
@@ -280,29 +280,29 @@ class AuthenticationTest < ApplicationSystemTestCase
     visit new_user_session_path
 
     18.times do
-      fill_in 'Email', with: 'confirmed@voqal.ai'
+      fill_in 'Email', with: 'confirmed@viky.ai'
       fill_in 'Password', with: 'BimBam'
       click_button 'Log in'
       assert page.has_content?("Invalid Email or password.")
     end
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBam'
     click_button 'Log in'
     assert page.has_content?("You have one more attempt before your account is locked.")
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBam'
     click_button 'Log in'
     assert page.has_content?("Your account is locked.")
 
     # Unlock
-    token = User.find_by_email('confirmed@voqal.ai').send_unlock_instructions
+    token = User.find_by_email('confirmed@viky.ai').send_unlock_instructions
     visit user_unlock_path(unlock_token: token)
     assert page.has_content?("Your account has been unlocked successfully. Please sign in to continue.")
 
     # Log in
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
     click_button 'Log in'
     assert_equal '/', current_path
@@ -316,7 +316,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_link("Didn't receive unlock instructions?")
     assert page.has_content? "Resend unlock instructions"
 
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     click_button 'Resend unlock instructions'
     expected = ["Email was not locked"]
     assert_equal expected, all('.help--error').collect {|n| n.text}
@@ -332,7 +332,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     travel_to (u.invitation_sent_at + 1.seconds)
 
     visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@voqal.ai'
+    fill_in 'Email', with: 'confirmed@viky.ai'
     fill_in 'Password', with: 'BimBamBoom'
     click_button 'Log in'
 

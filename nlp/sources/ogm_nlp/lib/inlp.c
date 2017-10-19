@@ -48,7 +48,8 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 
   ctrl_nlp->rw_lock_packages_hash = OgSysiInit(sysi_param);
 
-  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NlpPackageDestroy);
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NULL);
+  g_queue_init(ctrl_nlp->deleted_packages);
 
   return ctrl_nlp;
 }
@@ -66,9 +67,13 @@ static gboolean package_key_equal_func(gconstpointer  key_a, gconstpointer  key_
   return g_str_equal(package_id_a, package_id_b);
 }
 
-PUBLIC(int) OgNlpFlush(og_nlp handle)
+PUBLIC(int) OgNlpFlush(og_nlp ctrl_nlp)
 {
-  struct og_ctrl_nlp *ctrl_nlp = handle;
+
+  OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "OgNlpFlush in progress");
+
+  // flush package mark as deleted
+  NlpFlushPackageMarkedAsDeletedNosync(ctrl_nlp);
 
   g_hash_table_destroy(ctrl_nlp->packages_hash);
   ctrl_nlp->packages_hash = NULL;
@@ -79,6 +84,7 @@ PUBLIC(int) OgNlpFlush(og_nlp handle)
   OgMsgFlush(ctrl_nlp->hmsg);
 
   DPcFree(ctrl_nlp);
+
   DONE;
 }
 

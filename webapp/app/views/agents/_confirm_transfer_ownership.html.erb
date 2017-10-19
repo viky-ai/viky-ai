@@ -1,0 +1,39 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.agents.confirm_transfer_ownership.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+      <p>
+        <%= t('views.agents.confirm_transfer_ownership.content_html', name: agent.name) %>
+      </p>
+      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, data: { type: 'json' }, class: 'js-agent-transfert' do |transfer_form| %>
+        <div class="field">
+          <div class="control">
+            <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>
+            <input type="text" name="users[new_owner]" id="input-new-owner"
+              data-remote-url="<%= search_users_for_transfer_ownership_user_agent_path(current_user, agent) %>"
+              data-placeholder="<%= t('views.agents.confirm_transfer_ownership.placeholder') %>" />
+            <% unless errors.empty? %>
+              <div class="help help--error">
+                <span class="icon icon--x-small"><%= icon_alert %></span>
+                <%= errors.join(', ') %>.
+              </div>
+            <% end %>
+            <div class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              <%= t('views.agents.confirm_transfer_ownership.note') %>
+            </div>
+          </div>
+        </div>
+
+        <%= transfer_form.button t('views.agents.confirm_transfer_ownership.btn'), class: "btn btn--destructive" %>
+        <a href="#" class="btn btn--flat" data-action='close-modal'><%= t('cancel') %></a>
+      <% end %>
+    </div>
+  </div>
+</div>

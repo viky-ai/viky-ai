@@ -74,6 +74,7 @@ GEM
     devise_invitable (1.7.2)
       actionmailer (>= 4.1.0)
       devise (>= 4.0.0)
+    docile (1.1.5)
     dotenv (2.2.1)
     dotenv-rails (2.2.1)
       dotenv (= 2.2.1)
@@ -86,6 +87,8 @@ GEM
       dotenv (>= 0.7)
       thor (>= 0.13.6)
     foundation_emails (2.2.1.0)
+    friendly_id (5.1.0)
+      activerecord (>= 4.0.0)
     globalid (0.4.0)
       activesupport (>= 4.2.0)
     htmlentities (4.3.4)
@@ -215,6 +218,11 @@ GEM
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (~> 3.3, >= 3.3.3)
+    simplecov (0.15.1)
+      docile (~> 1.1.0)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     spring (2.0.2)
       activesupport (>= 4.2)
     spring-watcher-listen (2.0.1)
@@ -266,6 +274,7 @@ DEPENDENCIES
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)
   foreman
+  friendly_id (~> 5.1.0)
   image_processing
   inky-rb
   jbuilder (~> 2.5)
@@ -285,6 +294,7 @@ DEPENDENCIES
   shrine
   shrine-memory
   sidekiq
+  simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)

@@ -27,17 +27,38 @@
     min-width: 100%;
     order: 3;
     margin-top: 1em;
-
-    @media (min-width: 1200px){
-      order: 2;
-      min-width: auto;
-      margin-top: 0;
-    }
   }
   .header__tools{
     order: 2;
-    @media (min-width: 1200px){
-      order: 3;
+  }
+
+  &.header--backend-users{
+    .header__search{
+      @media (min-width: 1300px){
+        order: 2;
+        min-width: auto;
+        margin-top: 0;
+      }
+    }
+    .header__tools{
+      @media (min-width: 1300px){
+        order: 3;
+      }
+    }
+  }
+
+  &.header--agents{
+    .header__search{
+      @media (min-width: 800px){
+        order: 2;
+        min-width: auto;
+        margin-top: 0;
+      }
+    }
+    .header__tools{
+      @media (min-width: 800px){
+        order: 3;
+      }
     }
   }
 }

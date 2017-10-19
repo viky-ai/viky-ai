@@ -1,6 +1,6 @@
 require "image_processing/mini_magick"
 
-class ImageUploader < Shrine
+class UserImageUploader < Shrine
   include ImageProcessing::MiniMagick
 
   plugin :determine_mime_type

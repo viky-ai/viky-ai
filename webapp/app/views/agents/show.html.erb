@@ -1,0 +1,16 @@
+<header class="header">
+  <div class="header__breadcrumb">
+    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
+    <strong><%= @agent.name %></strong> (<%= @agent.memberships.first.user.username %>/<%= @agent.agentname %>)
+  </div>
+  <div class="header__tools">
+    <% if User.confirmed.count > 1 %>
+      <a href="<%= confirm_transfer_ownership_user_agent_path(current_user, @agent) %>" class="btn btn--destructive" data-action="open-remote-modal">
+        <%= t('views.agents.edit.transfer_ownership') %>
+      </a>
+    <% end %>
+    <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>" class="btn btn--primary" data-action="open-remote-modal">
+      <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
+    </a>
+  </div>
+</header>

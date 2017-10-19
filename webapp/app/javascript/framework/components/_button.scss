@@ -1,3 +1,5 @@
+$btn_border_radius: 2px;
+
 a.btn,
 .btn{
   @include unselectable();
@@ -13,7 +15,7 @@ a.btn,
   color: #000;
 
   border: 1px solid #ddd;
-  border-radius: 2px;
+  border-radius: $btn_border_radius;
 
   background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
   cursor: pointer;
@@ -177,5 +179,22 @@ a.btn,
     cursor: not-allowed;
   }
 
+}
+
+.btn-group{
+  @include display_inline_flex();
+  .btn{
+    margin-left: -1px;
+    border-radius: 0;
+  }
+  .btn:first-child{
+    margin-left: 0;
+    border-top-left-radius: $btn_border_radius;
+    border-bottom-left-radius: $btn_border_radius;
+  }
+  .btn:last-child{
+    border-top-right-radius: $btn_border_radius;
+    border-bottom-right-radius: $btn_border_radius;
+  }
 }
 

@@ -55,6 +55,20 @@
     <button class="btn">Remove</button>
   </div>
 </div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon">This in an addon</span>
+    <input type="text" placeholder="One input" name="username" />
+    <button class="btn">Validate</button>
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon">This in an addon at beginning</span>
+    <input type="text" placeholder="One input" name="username" />
+    <span class="addon">This in an addon at end</span>
+  </div>
+</div>
   <% end %>
 
 
@@ -166,5 +180,71 @@
   </div>
 </div>
   <% end %>
+
+
+  <h3>Color picker</h3>
+  <%= highlight_html do %>
+<div class="field">
+  <div class="control">
+    <label for="color">Choose a color</label>
+    <ul class="color-picker" data-input-selector="#color_value">
+      <li><a href="#" class="background-color__black"       data-input-value="black"></a></li>
+      <li><a href="#" class="background-color__red current" data-input-value="red"></a></li>
+      <li><a href="#" class="background-color__pink"        data-input-value="pink"></a></li>
+      <li><a href="#" class="background-color__purple"      data-input-value="purple"></a></li>
+      <li><a href="#" class="background-color__deep-purple" data-input-value="deep-purple"></a></li>
+      <li><a href="#" class="background-color__indigo"      data-input-value="indigo"></a></li>
+      <li><a href="#" class="background-color__blue"        data-input-value="blue"></a></li>
+      <li><a href="#" class="background-color__light-blue"  data-input-value="light-blue"></a></li>
+      <li><a href="#" class="background-color__cyan"        data-input-value="cyan"></a></li>
+      <li><a href="#" class="background-color__teal"        data-input-value="teal"></a></li>
+      <li><a href="#" class="background-color__green"       data-input-value="green"></a></li>
+      <li><a href="#" class="background-color__light-green" data-input-value="light-green"></a></li>
+      <li><a href="#" class="background-color__lime"        data-input-value="lime"></a></li>
+      <li><a href="#" class="background-color__yellow"      data-input-value="yellow"></a></li>
+      <li><a href="#" class="background-color__amber"       data-input-value="amber"></a></li>
+      <li><a href="#" class="background-color__orange"      data-input-value="orange"></a></li>
+      <li><a href="#" class="background-color__deep-orange" data-input-value="deep-orange"></a></li>
+      <li><a href="#" class="background-color__brown"       data-input-value="brown"></a></li>
+    </ul>
+    <input type="hidden" id="color_value" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Color picker with preview</h3>
+  <%= highlight_html do %>
+<div class="field">
+  <div class="control">
+    <label for="color">Choose a background color gradient</label>
+    <div class="color-picker-preview background-color-gradient__red">
+      <div>
+        <ul class="color-picker" data-input-selector="#color_value">
+          <li><a href="#" class="background-color__black"       data-input-value="black"></a></li>
+          <li><a href="#" class="background-color__red current" data-input-value="red"></a></li>
+          <li><a href="#" class="background-color__pink"        data-input-value="pink"></a></li>
+          <li><a href="#" class="background-color__purple"      data-input-value="purple"></a></li>
+          <li><a href="#" class="background-color__deep-purple" data-input-value="deep-purple"></a></li>
+          <li><a href="#" class="background-color__indigo"      data-input-value="indigo"></a></li>
+          <li><a href="#" class="background-color__blue"        data-input-value="blue"></a></li>
+          <li><a href="#" class="background-color__light-blue"  data-input-value="light-blue"></a></li>
+          <li><a href="#" class="background-color__cyan"        data-input-value="cyan"></a></li>
+          <li><a href="#" class="background-color__teal"        data-input-value="teal"></a></li>
+          <li><a href="#" class="background-color__green"       data-input-value="green"></a></li>
+          <li><a href="#" class="background-color__light-green" data-input-value="light-green"></a></li>
+          <li><a href="#" class="background-color__lime"        data-input-value="lime"></a></li>
+          <li><a href="#" class="background-color__yellow"      data-input-value="yellow"></a></li>
+          <li><a href="#" class="background-color__amber"       data-input-value="amber"></a></li>
+          <li><a href="#" class="background-color__orange"      data-input-value="orange"></a></li>
+          <li><a href="#" class="background-color__deep-orange" data-input-value="deep-orange"></a></li>
+          <li><a href="#" class="background-color__brown"       data-input-value="brown"></a></li>
+        </ul>
+      </div>
+    </div>
+    <input type="hidden" id="color_value" />
+  </div>
+</div>
+  <% end %>
+
 
 </section>

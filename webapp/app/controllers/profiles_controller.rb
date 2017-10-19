@@ -2,6 +2,8 @@ class ProfilesController < ApplicationController
   before_action :set_profile
 
   def show
+    @agents = current_user.agents.order(name: :asc)
+                .page(params[:page]).per(12)
   end
 
   def edit
@@ -32,7 +34,7 @@ class ProfilesController < ApplicationController
 
   def destroy
     @profile.destroy
-    redirect_to root_path, notice: t('views.profile.confirm_destroy.success_message')
+    redirect_to unauthenticated_root_path, notice: t('views.profile.confirm_destroy.success_message')
   end
 
 

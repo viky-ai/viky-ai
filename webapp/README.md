@@ -9,6 +9,7 @@
 * PostgreSQL (9.6.5)
 * Redis (4.0.1)
 * ImageMagick
+* Docker 17.09.0-ce
 
 ## Environment Variables
 
@@ -86,9 +87,30 @@ $ ./bin/rails db:setup
 > ...
 ```
 
-## Start all in development
+## Docker
 
-To ensure having all those processes up and running during development, you can simply run:
+If you haven't Docker installed in your system yet, you can follow this [guide](https://docs.docker.com/engine/installation/).
+Then check to have the image registry mirrors well configured.
+In Ubuntu you should:
+1. stop the Docker daemon `service docker stop`
+2. check to have the configuration file `/etc/docker/daemon.json` containing:
+```
+{
+    "registry-mirrors": [
+      "http://docker-mirror.pertimm.corp:50000"
+    ],
+    "insecure-registries" : [
+      "docker-registry.pertimm.corp:50001"
+    ]
+}
+```
+3. add your current user into the `docker` system group: `sudo usermod -a -G groupName userName`
+4. you will need to logout and log back in for this change to take effect
+5. be sure the Docker daemon is started: `service docker start`
+
+## Start the webapp in development
+
+To ensure having all the webapp related processes up and running during development, you can simply run:
 
     foreman start
 
@@ -98,3 +120,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
+    nlp_server:     docker run -ti --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls

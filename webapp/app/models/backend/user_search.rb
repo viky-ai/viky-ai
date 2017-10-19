@@ -2,7 +2,7 @@ class Backend::UserSearch
   attr_reader :options
 
   def initialize(options = {})
-    @options = options || {}
+    @options = clean_options options
     @options[:sort_by] = sort_by
   end
 
@@ -27,5 +27,13 @@ class Backend::UserSearch
     end
     return is_empty
   end
+
+  private
+
+    def clean_options(options)
+      (options || {}).transform_values do |v|
+        v.respond_to?(:strip) ? v.strip : v
+      end
+    end
 
 end

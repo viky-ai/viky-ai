@@ -14,28 +14,9 @@ module Nls
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime1"],
-          "sentence" => "Hello Jean Marie",
-          "Accept-Language" => "fr-FR"
-        }
+        actual = Nls.interpret(Nls.json_interpret_body)
 
-        actual = Nls.interpret(param)
-
-        expected =
-        {
-          "intents" =>
-          [
-          {
-          "package" => "voqal.ai:datetime1",
-          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-          "score" => 1
-          }
-          ]
-        }
-
-        assert_equal expected, actual
+        assert_equal Nls.expected_interpret_result, actual
 
       end
 
@@ -87,7 +68,7 @@ module Nls
 
       def test_interpret_parallel_query
 
-        cp_import_fixture("several_packages_parallelize.json")
+        createHugePackagesFile("several_packages_parallelize.json", 10)
 
         Nls.restart
 
@@ -183,14 +164,9 @@ module Nls
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime"],
-          "sentence" => "@#!|\"\\\n_¢ß¥£™©®ª×÷±²³¼½¾µ¿¶·¸º°¯§…¤¦≠¬ˆ¨‰ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØŒŠþÙÚÛÜÝŸàáâãäåæçèéêëìíîïðñòóôõöøœšÞùúûüýÿ#自爾秦書わたしワタシ🎾",
-          "Accept-Language" => "fr-FR"
-        }
+        json_query_special_char = JSON.parse(File.read(fixture_path("query_with_special_char.json")))
 
-        actual = Nls.interpret(param)
+        actual = Nls.interpret(json_query_special_char)
 
         expected =
         {

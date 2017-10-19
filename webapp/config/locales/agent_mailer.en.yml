@@ -1,0 +1,5 @@
+en:
+  mailer:
+    agent:
+      transfert_ownership:
+        subject: Agent Transfert Ownership

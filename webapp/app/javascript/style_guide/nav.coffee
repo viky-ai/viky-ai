@@ -16,7 +16,8 @@ class StyleGuideMenu
     for section in $('main section')
       j = 1
       for h3 in $(section).find(" > h3")
-        $(h3).html("<small>#{i}.#{j}.</small> #{$(h3).html()}")
+        $(h3).attr(id: "section-#{i}-#{j}")
+             .html("<small>#{i}.#{j}.</small> #{$(h3).html()} <a href='#section-#{i}-#{j}' data-turbolinks='false'>(anchor)</a>")
         j++
       i++
 

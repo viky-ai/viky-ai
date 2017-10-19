@@ -14,12 +14,13 @@
     overflow: auto;
     height: 100%;
     padding: 1.5em 2em 2em 2em;
+    position: relative;
   }
 }
 
 
 .pagination{
-  margin-top: 2em;
+  margin: 2em 0;
   text-align: center;
 
   .current-page{
