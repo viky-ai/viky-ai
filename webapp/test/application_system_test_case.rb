@@ -7,8 +7,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def admin_login
     visit new_user_session_path
-    fill_in 'Email', with: 'admin@voqal.ai'
+    fill_in 'Email', with: 'admin@viky.ai'
     fill_in 'Password', with: 'AdminBoom'
     click_button 'Log in'
+  end
+
+  def go_to_agents_index
+    admin_login
+    assert page.has_text?("Agents")
   end
 end

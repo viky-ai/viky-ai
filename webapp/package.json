@@ -5,7 +5,8 @@
     "@rails/webpacker": "^3.0.1",
     "jquery": "^3.2.1",
     "normalize.css": "^7.0.0",
-    "prismjs": "^1.7.0"
+    "prismjs": "^1.7.0",
+    "selectize": "^0.12.4"
   },
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"

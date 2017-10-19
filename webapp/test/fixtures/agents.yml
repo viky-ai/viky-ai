@@ -1,0 +1,17 @@
+weather:
+  name: My awesome weather bot
+  description: My awesome weather bot description
+  agentname: weather
+  owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+
+terminator:
+  name: T-800
+  description: Sarah Connor ?
+  agentname: terminator
+  owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+
+weather_confirmed:
+  name: Weather bot
+  description: The weather bot description of user confirmed
+  agentname: weather
+  owner_id: "a370752a-7dbd-4d76-a966-f5b271ab782b"

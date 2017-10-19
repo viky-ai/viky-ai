@@ -1,0 +1,11 @@
+one:
+  user_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+  agent: weather
+
+two:
+  user_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+  agent: terminator
+
+three:
+  user_id: "a370752a-7dbd-4d76-a966-f5b271ab782b"
+  agent: weather_confirmed

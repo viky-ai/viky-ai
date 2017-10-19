@@ -1,21 +1,23 @@
 notconfirmed:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
-  email: notconfirmed@voqal.ai
+  email: notconfirmed@viky.ai
   confirmed_at: null
   confirmation_sent_at: "2017-01-01 00:00:00"
   created_at: "2017-01-01 00:00:00"
   updated_at: "2017-01-01 00:00:00"
 
 confirmed:
+  id: "a370752a-7dbd-4d76-a966-f5b271ab782b"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
-  email: confirmed@voqal.ai
+  email: confirmed@viky.ai
   username: confirmed
   confirmed_at: "2017-01-01 00:00:01"
   current_sign_in_at: "2017-01-01 00:00:01"
 
 admin:
+  id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
   encrypted_password: <%= Devise::Encryptor.digest(User, 'AdminBoom') %>
-  email: admin@voqal.ai
+  email: admin@viky.ai
   username: admin
   confirmed_at: "2017-01-01 00:00:02"
   current_sign_in_at: "2017-01-01 00:00:02"
@@ -23,7 +25,7 @@ admin:
 
 locked:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
-  email: locked@voqal.ai
+  email: locked@viky.ai
   username: locked
   confirmed_at: "2017-01-01 00:00:03"
   current_sign_in_at: "2017-01-01 00:00:03"
@@ -31,7 +33,7 @@ locked:
 
 invited:
   encrypted_password: <%= Devise::Encryptor.digest(User, 'BimBamBoom') %>
-  email: invited@voqal.ai
+  email: invited@viky.ai
   invited_by: admin
   created_at: "2017-01-01 00:00:04"
   invitation_created_at: "2017-01-01 00:00:04"

@@ -1,0 +1,18 @@
+<header>
+  <div class="header-content">
+    <h1><%= logo_on_dark %></h1>
+    <h2>The AI next generation platform for voice search and bots.</h2>
+    <h3>Collaborative • Multilingual • Privacy-safe</h3>
+
+    <% unless user_signed_in? %>
+      <p>
+        Already member ?
+        <%= link_to t('views.welcome.index.login'), new_user_session_path, class: 'btn btn--primary', data: {turbolinks: "false" } %>
+        <% if Feature.user_registration_enabled? %>
+          <%= link_to t('views.welcome.index.signup'), new_user_registration_path %> or
+        <% end %>
+      </p>
+    <% end %>
+
+  </div>
+</header>

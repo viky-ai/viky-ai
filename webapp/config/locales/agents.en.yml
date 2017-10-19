@@ -1,0 +1,50 @@
+en:
+  views:
+    agents:
+      breadcrumb:
+        base: Agents
+        new_btn: New agent
+      index:
+        delete: Delete
+        configure: Configure
+        blankslate:
+          title: Create your first agent
+          content: Start building your first conversational agent to create human-like interactions.
+        created_time_ago: Created %{time} ago
+        updated_time_ago: Updated %{time} ago
+        search:
+          not_found: No agent found
+          placeholder: Search by name or ID
+        ownership_transferred: "Agent %{name} transferred to user %{username}"
+        authorisation_refused: You can't access this agent.
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete agent: <strong>%{name}</strong>."
+        btn: Delete
+      confirm_transfer_ownership:
+        title: Transfer ownership
+        content_html: "You're about to transfer ownership of agent: <strong>%{name}</strong> to another user."
+        label: "Select the new owner :"
+        placeholder: Search by email or username (at least 3 characters).
+        note: The new owner will be notify by email.
+        btn: Transfer ownership now
+      destroy:
+        message: "Agent with the name: %{name} has successfully been deleted."
+      form:
+        background_label: Background
+        background_color_chooser: Use a color gradient
+        background_image_chooser: Or upload an image
+        remove_image_background_btn: Remove image
+        upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
+      new:
+        title: Create a new agent
+        btn: Create
+        success_message: Your agent has been successfully created.
+      edit:
+        title: Configure agent
+        transfer_ownership: Transfer ownership
+        btn: Update
+        success_message: Your agent has been successfully updated.
+      show:
+        configure_btn: Configure
+

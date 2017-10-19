@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>voqal.ai</title>
+    <title>viky.ai</title>
     <%= csrf_meta_tags %>
     <meta name="turbolinks-cache-control" content="no-cache">
     <%= render 'layouts/favicon' %>
@@ -24,24 +24,34 @@
       </nav>
 
       <main>
+        <%= yield %>
+
         <% unless notice.nil? %>
-          <div class="card card--notice">
-            <div class="card-content">
+          <div class="message message--notice">
+            <div class="message__content">
               <%= notice %>
+            </div>
+            <div class="message__action">
+              <a href="#" data-action="message-close"><span class="icon"><%= icon_close %></span></a>
             </div>
           </div>
         <% end %>
 
         <% unless alert.nil? %>
-          <div class="card card--alert">
-            <div class="card-content">
+          <div class="message message--alert">
+            <div class="message__content">
               <%= alert %>
+            </div>
+            <div class="message__action">
+              <a href="#" data-action="message-close"><span class="icon"><%= icon_close %></span></a>
             </div>
           </div>
         <% end %>
 
-        <%= yield %>
       </main>
+
+
+
     </div>
   </body>
 </html>

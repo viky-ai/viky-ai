@@ -1,0 +1,14 @@
+en:
+  activerecord:
+    models:
+      agent: Agent
+    attributes:
+      agent:
+        name: Name
+        agentname: ID
+        color: Color
+  errors:
+    agent:
+      transfer_ownership:
+        duplicate_agentname: This user already have an agent with this ID
+        invalid_username: Please select a valid new owner

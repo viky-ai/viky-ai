@@ -9,9 +9,10 @@
   </div>
 </header>
 
-
 <div class="grid">
+
   <div class="grid_sidebar">
+
     <div class="card">
       <div class="card-content">
         <div class="profile">
@@ -26,26 +27,19 @@
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
 
   <div class="grid_main">
 
-    <div class="card">
-      <div class="card-content">
-
-        <h2>Agents</h2>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa provident voluptate exercitationem voluptatem magni quae tempore deleniti facilis, dolor quam cumque alias recusandae facere possimus voluptatibus saepe ipsum, ratione iste.
-        </p>
-      </div>
+    <h2><%= t('views.profile.edit.agents.title') %></h2>
+    <div class="agents-box-grid agents-box-grid--with-sidebar">
+      <% @agents.each do |agent| %>
+        <%= render '/agents/show', agent: agent, editable: false %>
+      <% end %>
     </div>
+    <%= paginate @agents %>
+
   </div>
 
 </div>

@@ -11,6 +11,11 @@
     z-index: 1001;
     min-width: 8em;
 
+    &.dropdown__content--on-right{
+      left: auto;
+      right: 0;
+    }
+
     background-color: #fff;
     box-shadow: 0 0 1px 0 rgba(black, .25), 0 2px 3px rgba(black, .2);
     padding: 3px 0;

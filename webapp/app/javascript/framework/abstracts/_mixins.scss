@@ -31,6 +31,14 @@
   display: flex;
 }
 
+@mixin display_inline_flex() {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -moz-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
 @mixin flex($values) {
   -webkit-box-flex: $values;
   -moz-box-flex:  $values;

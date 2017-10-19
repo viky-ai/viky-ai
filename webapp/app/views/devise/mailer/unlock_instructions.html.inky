@@ -1,7 +1,7 @@
 <spacer size="32"></spacer>
 <row>
   <center>
-    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="voqal.ai" />
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="viky.ai" />
   </center>
 </row>
 <spacer size="32"></spacer>
@@ -25,7 +25,7 @@
 
       <p>
         Thanks,<br />
-        The voqal.ai Team.
+        The viky.ai Team.
       </p>
 
     </columns>

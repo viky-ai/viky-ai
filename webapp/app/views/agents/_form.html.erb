@@ -1,0 +1,106 @@
+<%= form_with model: [current_user, agent], data: { type: 'json' }, class: 'js-agent-form' do |f| %>
+  <div class="field">
+    <div class="control">
+      <%= f.label :name %>
+      &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <br />
+      <%= f.text_field :name, id: :agent_name %>
+      <%= display_errors(agent, :name) %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :agentname %>
+    &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control control--merged">
+      <span class="addon"><%= current_user.username %>/</span>
+      <%= f.text_field :agentname, id: :agent_agentname %>
+    </div>
+    <%= display_errors(agent, :agentname) %>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.label :description %>
+      <br />
+      <%= f.text_area :description, id: :agent_description %>
+      <%= display_errors(agent, :description) %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+
+      <div class="agent-background-header">
+        <label><%= t('views.agents.form.background_label') %></label>
+        <div class="btn-group" <% unless agent.image.nil? %>style="display:none;"<% end %>>
+          <a href="#" class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
+             data-action="agent-select-color">
+            <%= t('views.agents.form.background_color_chooser') %>
+          </a>
+          <a href="#" class="btn btn--small <% unless agent.image.nil? %>btn--primary <% end %>"
+             data-action="agent-select-image">
+            <%= t('views.agents.form.background_image_chooser') %>
+          </a>
+        </div>
+      </div>
+
+      <div class="color-picker-preview background-color-gradient__<%= agent.color %>"
+           <% unless agent.image.nil? %>style="display:none;"<% end %>>
+        <% colors_array = agent.available_colors.map { |color| [color, color] } %>
+        <div>
+          <ul class="color-picker" data-input-selector="#agent-color-input">
+            <% agent.available_colors.each do |color| %>
+              <li>
+                <a href="#"
+                   class="background-color__<%= color %> <% if agent.color == color %>current<% end %>"
+                   data-input-value="<%= color %>"></a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <%= f.hidden_field :color, id: 'agent-color-input' %>
+      </div>
+
+      <div class="agent-image-options__image" <% if agent.image.nil? %>style="display:none;"<% end %>>
+        <% unless agent.image.nil? %>
+          <div class="agent-upload__destroy" style="background-image: url(<%= agent.image_url(:background) %>)">
+            <a href="#" class="btn btn--small btn--destructive" data-action="agent-remove-image">
+              <span class="icon icon--x-small"><%= icon_delete %></span>
+              <%= t('views.agents.form.remove_image_background_btn') %>
+            </a>
+            <%= f.hidden_field :remove_image, id: 'agent-remove-image-input' %>
+          </div>
+        <% end %>
+
+        <div class="agent-upload__new" <% unless agent.image.nil? %>style="display:none;"<% end %>>
+          <div>
+            <%= f.hidden_field :image, value: agent.cached_image_data %>
+            <%= f.file_field :image, id: 'agent_image' %>
+            <div class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              <%= t('views.agents.form.upload_info') %>
+            </div>
+            <%= display_errors(agent, :image) %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <%= hidden_field_tag :origin, @origin %>
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.agents.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.agents.new.btn') %>
+    <% end %>
+    <%= f.button btn_label, class: "btn btn--primary",
+      data: {
+        disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+      }
+    %>
+    <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
+  </div>
+<% end %>

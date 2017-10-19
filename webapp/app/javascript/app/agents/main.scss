@@ -1,0 +1,36 @@
+@import '../../framework/abstracts/mixins';
+
+.agent-background-header{
+  @include clearfix();
+  margin-bottom: .5em;
+  label{
+    float:left;
+  }
+  .btn-group{
+    float: right;
+  }
+}
+
+.agent-upload__destroy{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  background-position: center center;
+  background-size: cover;
+  height: 12em;
+}
+
+.agent-upload__new{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+  height: 12em;
+  border: 1px dashed #ccc;
+  overflow: hidden;
+  & > div{
+    padding: 0 1em;
+    width: 100%;
+    text-align: center;
+  }
+}

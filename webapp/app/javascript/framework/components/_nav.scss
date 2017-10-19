@@ -1,7 +1,5 @@
 .nav{
-  background-color: #0E131A;
-  background-image: url(images/sky.png);
-  background-size: 200px 200px;
+  background-color: lighten(#0E131A, 5%);
   color: #fff;
 }
 .nav__header{
@@ -23,12 +21,12 @@
         border-left: 3px solid transparent;
         &:hover{
           color: #fff;
-          background-color: rgba(black, .4);
+          background-color: rgba(black, .5);
         }
         &.current{
           color: #fff;
           border-left: 3px solid $primary_color;
-          background-color: rgba(black, .4);
+          background-color: rgba(black, .5);
         }
       }
     }
