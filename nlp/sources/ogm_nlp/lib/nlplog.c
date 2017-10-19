@@ -7,6 +7,74 @@
 #include "ogm_nlp.h"
 
 /**
+ * Log message at info level if trace_component is enable
+ */
+og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...)
+{
+  // consistency checking
+  IFN(ctrl_nlp_th) DPcErr;
+
+  if (ctrl_nlp_th->loginfo->trace & trace_component)
+  {
+    // level dependent
+    int levelFlag = DOgMsgDestInLog + DOgMsgSeverityInfo;
+    og_char_buffer *levelText = "[INFO]";
+
+    og_char_buffer textBuffer[DOgErrorSize];
+    va_list vl;
+
+    // prefix with lt number
+    og_char_buffer format_extended[DPcPathSize];
+    snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
+
+    // var_args processing
+    va_start(vl, format);
+    vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
+    va_end(vl);
+
+    // log message
+    IFE(OgMsg(ctrl_nlp_th->hmsg, levelText, levelFlag, textBuffer));
+
+  }
+
+  DONE;
+}
+
+/**
+ * Log message at info level if trace_component is enable
+ */
+og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...)
+{
+  // consistency checking
+  IFN(ctrl_nlp_th) DPcErr;
+
+  if (ctrl_nlp_th->loginfo->trace & trace_component)
+  {
+    // level dependent
+    int levelFlag = DOgMsgDestInLog + DOgMsgSeverityDebug;
+    og_char_buffer *levelText = "[DEBUG]";
+
+    og_char_buffer textBuffer[DOgErrorSize];
+    va_list vl;
+
+    // prefix with lt number
+    og_char_buffer format_extended[DPcPathSize];
+    snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
+
+    // var_args processing
+    va_start(vl, format);
+    vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
+    va_end(vl);
+
+    // log message
+    IFE(OgMsg(ctrl_nlp_th->hmsg, levelText, levelFlag, textBuffer));
+
+  }
+
+  DONE;
+}
+
+/**
  * Write json_t in buffer. Buffer is always NUL terminated.
  *
  * @param json json_t pointer

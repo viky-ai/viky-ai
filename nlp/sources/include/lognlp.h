@@ -19,6 +19,7 @@
 /** Trace levels **/
 #define DOgNlpTraceMinimal                0x1
 #define DOgNlpTraceMemory                 0x2
+#define DOgNlpTraceSynchro                0x4
 #define DOgNlpTraceDefault               (DOgNlpTraceMinimal+DOgNlpTraceMemory)
 #define DOgNlpTraceCompile                0x4
 #define DOgNlpTraceInterpret              0x8

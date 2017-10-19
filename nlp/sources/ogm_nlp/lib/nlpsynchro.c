@@ -12,55 +12,81 @@
 
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
 {
-  struct nlp_synchro_lock *poped_lock = g_queue_pop_tail(ctrl_nlp_th->current_rw_lock);
-  while (poped_lock)
+  struct nlp_synchro_current_lock *current_locks = ctrl_nlp_th->current_lock;
+  for (int i = 0; i < current_locks->used; i++)
   {
+    struct nlp_synchro_lock *poped_lock = current_locks->lock + i;
 
-    if (poped_lock->type == nlp_synchro_lock_type_read_lock)
+    if (poped_lock->type == nlp_synchro_lock_type_read)
     {
       og_status status = OgSysiReadUnLock(poped_lock->rwlock);
+      IF(status)
+      {
+        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiReadUnLock failed");
+      }
 
-      // TODO log status
     }
-    else if (poped_lock->type == nlp_synchro_lock_type_write_lock)
+    else if (poped_lock->type == nlp_synchro_lock_type_write)
     {
       og_status status = OgSysiWriteUnLock(poped_lock->rwlock);
-      // TODO log status
+      IF(status)
+      {
+        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiWriteUnLock failed");
+      }
     }
     else
     {
-      // TODO unsupported
+      NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : unsupported lock type : %d",
+          poped_lock->type);
     }
 
-    poped_lock = g_queue_pop_tail(ctrl_nlp_th->current_rw_lock);
   }
+  current_locks->used = 0;
 
   DONE;
 }
 
 static og_status push_lock(og_nlp_th ctrl_nlp_th, enum nlp_synchro_lock_type type, ogsysi_rwlock rwlock)
 {
-  struct nlp_synchro_lock *stack_lock = g_slice_new(struct nlp_synchro_lock);
-  stack_lock->type = type;
-  stack_lock->rwlock = rwlock;
+  struct nlp_synchro_current_lock *current_locks = ctrl_nlp_th->current_lock;
+  if (current_locks->used >= DOgNlpMaximumOwnedLock)
+  {
+    // We should never reach this code
+    NlpThrowErrorTh(ctrl_nlp_th, "push_lock : failed to many lock >= %d", current_locks->used);
+    DPcErr;
+  }
 
-  g_queue_push_tail(ctrl_nlp_th->current_rw_lock, stack_lock);
+  struct nlp_synchro_lock *pushed_lock = current_locks->lock + current_locks->used++;
+  pushed_lock->type = type;
+  pushed_lock->rwlock = rwlock;
 
   DONE;
 }
 
 static og_status pop_lock(og_nlp_th ctrl_nlp_th, enum nlp_synchro_lock_type type, ogsysi_rwlock rwlock)
 {
-  struct nlp_synchro_lock *poped_lock = g_queue_pop_tail(ctrl_nlp_th->current_rw_lock);
-
-  if (poped_lock->type != type)
+  struct nlp_synchro_current_lock *current_locks = ctrl_nlp_th->current_lock;
+  if (current_locks->used <= 0)
   {
-    // TODO check lock consistency
+    // We should never reach this code
+    NlpThrowErrorTh(ctrl_nlp_th, "pop_lock : no more lock to pop");
+    DPcErr;
   }
+
+  struct nlp_synchro_lock *poped_lock = current_locks->lock + (--current_locks->used);
 
   if (poped_lock->rwlock != rwlock)
   {
-    // TODO check lock consistency
+    NlpThrowErrorTh(ctrl_nlp_th, "pop_lock : unlock order mismatch, expected lock '%s' vs '%s'", OgSysiGetName(rwlock),
+        OgSysiGetName(poped_lock->rwlock));
+    DPcErr;
+  }
+
+  if (poped_lock->type != type)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "pop_lock : unlock order mismatch, on lock '%s' expected access type %d vs %d",
+        OgSysiGetName(rwlock), type, poped_lock->type);
+    DPcErr;
   }
 
   DONE;
@@ -68,9 +94,9 @@ static og_status pop_lock(og_nlp_th ctrl_nlp_th, enum nlp_synchro_lock_type type
 
 og_status OgNlpSynchroReadLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock)
 {
-  IFE(OgSysiReadLock(rwlock));
+  IFE(push_lock(ctrl_nlp_th, nlp_synchro_lock_type_read, rwlock));
 
-  IFE(push_lock(ctrl_nlp_th, nlp_synchro_lock_type_read_lock, rwlock));
+  IFE(OgSysiReadLock(rwlock));
 
   DONE;
 }
@@ -79,16 +105,17 @@ og_status OgNlpSynchroReadUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock)
 {
   IFE(OgSysiReadUnLock(rwlock));
 
-  IFE(pop_lock(ctrl_nlp_th, nlp_synchro_lock_type_read_lock, rwlock));
+  IFE(pop_lock(ctrl_nlp_th, nlp_synchro_lock_type_read, rwlock));
 
   DONE;
 }
 
 og_status OgNlpSynchroWriteLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock)
 {
-  IFE(OgSysiWriteLock(rwlock));
 
-  IFE(push_lock(ctrl_nlp_th, nlp_synchro_lock_type_write_lock, rwlock));
+  IFE(push_lock(ctrl_nlp_th, nlp_synchro_lock_type_write, rwlock));
+
+  IFE(OgSysiWriteLock(rwlock));
 
   DONE;
 }
@@ -97,11 +124,10 @@ og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock)
 {
   IFE(OgSysiWriteUnLock(rwlock));
 
-  IFE(pop_lock(ctrl_nlp_th, nlp_synchro_lock_type_write_lock, rwlock));
+  IFE(pop_lock(ctrl_nlp_th, nlp_synchro_lock_type_write, rwlock));
 
   DONE;
 }
-
 
 og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in)
 {
