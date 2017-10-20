@@ -8,8 +8,18 @@ module Valgrind
 
       resetDir
 
-      # copy import file
-      cp_import_fixture("several_packages_several_intents.json")
+
+      @json_structure = Nls::Nls.several_packages_several_intents
+
+      @main_uuid = "123456789"
+      @main_package = Nls::Nls.create_package(@main_uuid , "voqal.ai:datetime1")
+      @main_package["interpretations"] << Nls::Nls.create_interpretation("hello1")
+      @main_package["interpretations"][0]["expressions"] << Nls::Nls.create_expression("Hello Brice")
+      @main_package["interpretations"][0]["expressions"] << Nls::Nls.create_expression("Hello Jean Marie")
+
+      @json_structure << @main_package
+
+      generate_multiple_package_file(@json_structure)
 
     end
 
@@ -24,7 +34,7 @@ module Valgrind
       # launch simple query
       interpret_simple_query=
       {
-        "packages" => ["voqal.ai:datetime1"],
+        "packages" => [ @main_uuid ],
         "sentence" => "Hello Jean Marie",
         "Accept-Language" => "fr-FR"
       }
@@ -35,16 +45,15 @@ module Valgrind
       end
 
       # package update
-      json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
-      url_add = Nls::Nls.url_packages + "/voqal.ai:datetime2"
+      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
 
       expected_update_result =
       {
-        "status" => "Package 'voqal.ai:datetime2' successfully updated"
+        "status" => "Package '#{@main_uuid}' successfully updated"
       }
 
       (30 * nb_request_factor).times do |i|
-        actual_update_result = Nls::Nls.query_post(url_add, json_package_to_update)
+        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
         assert_json expected_update_result, actual_update_result, "updating #{i}"
       end
 
