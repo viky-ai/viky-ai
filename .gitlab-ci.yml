@@ -8,27 +8,29 @@ stages:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
-  VOQALAPP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/app
-  VOQALNLP_DOCKER_IMAGE: docker-registry.pertimm.corp:50001/voqal.ai/platform/nlp
+  VOQALAPP_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/app
+  VOQALNLP_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/nlp
 
 # Build docker image
 build_webapp:
   stage: build
   image: docker:dind
   script:
-    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/voqal_version.json"
-    - docker build --target image_ruby_run  -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
+    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/version.json"
+    - docker build --pull --target image_ruby_run  -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --pull --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker build --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 build_nlp:
   stage: build
   image: docker:dind
   script:
-    - docker build --target run_image  -t ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} nlp
+    - docker build --pull --target run_image  -t ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} nlp
+    - docker build --pull --target test_image -t ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} nlp
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker build --target test_image -t ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} nlp
     - docker push ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
 # Test
@@ -69,6 +71,7 @@ push_webapp:
     GIT_STRATEGY: none
   script:
     - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
 
 push_nlp:
@@ -78,6 +81,7 @@ push_nlp:
     GIT_STRATEGY: none
   script:
     - docker tag ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALNLP_DOCKER_IMAGE}:latest
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALNLP_DOCKER_IMAGE}:latest
 
 # Deploy any branches on rancher dev
