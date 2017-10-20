@@ -35,6 +35,9 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const c
   IFn(package->halias = OgHeapInit(hmsg, "package_alias", sizeof(struct alias), DOgNlpPackageAliasNumber)) return NULL;
   IFn(package->hinput_part = OgHeapInit(hmsg, "package_input_part", sizeof(struct alias), DOgNlpPackageInputPartNumber)) return NULL;
 
+  IF(NlpInputPartWordInit(ctrl_nlp_th, package)) return NULL;
+  IF(NlpInputPartAliasInit(ctrl_nlp_th, package)) return NULL;
+
   return (package);
 }
 
@@ -250,26 +253,6 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
-
-  int input_part_used = OgHeapGetCellsUsed(package->hinterpretation);
-  struct input_part *all_input_part = OgHeapGetCell(package->hinput_part, 0);
-  IFN(all_input_part) DPcErr;
-  for (int i = 0; i < input_part_used; i++)
-  {
-    struct input_part *input_part = all_input_part + i;
-
-    if (input_part->type != nlp_input_part_type_Interpretation) continue;
-    package_t dependency_package = input_part->interpretation_package;
-    if (dependency_package == package) continue;
-
-    // flag package as unused
-    og_bool no_more_used = g_atomic_int_dec_and_test(&dependency_package->ref_counter);
-    if (no_more_used && dependency_package->is_removed)
-    {
-      NlpPackageFlush(dependency_package);
-    }
-  }
-
   OgHeapFlush(package->hexpression);
   OgHeapFlush(package->hinterpretation);
   OgHeapFlush(package->halias);

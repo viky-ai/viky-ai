@@ -213,21 +213,17 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int I
     }
     case nlp_input_part_type_Interpretation:
     {
-      og_string package_id = OgHeapGetCell(package->hba, input_part->interpretation_package->id_start);
-      IFN(package_id) DPcErr;
-      og_string package_slug = OgHeapGetCell(package->hba, input_part->interpretation_package->slug_start);
-      IFN(package_slug) DPcErr;
+      struct alias *alias = input_part->alias;
 
-      struct interpretation *interpretation = OgHeapGetCell(input_part->interpretation_package->hinterpretation,
-          input_part->Iinterpretation);
-      IFN(interpretation) DPcErr;
-      og_string interpretation_id = OgHeapGetCell(input_part->interpretation_package->hba, interpretation->id_start);
+      og_string package_id = OgHeapGetCell(package->hba, alias->package_start);
+      IFN(package_id) DPcErr;
+
+      og_string interpretation_id = OgHeapGetCell(package->hba, alias->id_start);
       IFN(interpretation_id) DPcErr;
-      og_string interpretation_slug = OgHeapGetCell(input_part->interpretation_package->hba,
-          interpretation->slug_start);
+      og_string interpretation_slug = OgHeapGetCell(package->hba, alias->slug_start);
       IFN(interpretation_slug) DPcErr;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part interpretation '%s' '%s' in package '%s' '%s'",
-          interpretation_slug, interpretation_id, package_slug, package_id);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part interpretation '%s' '%s' in package '%s'",
+          interpretation_slug, interpretation_id, package_id);
       break;
     }
   }

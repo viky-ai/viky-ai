@@ -14,12 +14,14 @@
     <file>nlplog.c</file>
     <file>nlpinterpret.c</file>
     <file>nlppackage.c</file>
+    <file>nlpipalias.c</file>
+    <file>nlpipword.c</file>
   </sources>
   <platforms>
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logheap -logmsg -loggen -ljansson -lglib-2.0 -logsysi</option>
+      <option name="ADD_LIBR">-logaut -logheap -logmsg -loggen -ljansson -lglib-2.0 -logsysi</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

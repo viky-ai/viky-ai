@@ -5,6 +5,7 @@
  *  Version 1.0
  */
 #include <lognlp.h>
+#include <logaut.h>
 #include <logheap.h>
 #include <logsysi.h>
 #include <logis639_3166.h>
@@ -38,7 +39,6 @@ struct expression
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
-  int activated;
 };
 
 struct interpretation
@@ -73,6 +73,10 @@ struct package
   og_heap hexpression;
   og_heap halias;
   og_heap hinput_part;
+  void *ha_word;
+  /** HashTable key: string (package id) , value: input_part index */
+  GHashTable *interpretation_id_hash;
+
 };
 
 typedef struct package *package_t;
@@ -93,8 +97,7 @@ struct input_part
 {
   enum nlp_input_part_type type;
   int word_start, word_length;
-  package_t interpretation_package;
-  int Iinterpretation;
+  struct alias *alias;
 };
 
 
@@ -209,4 +212,19 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
 /* nlpconsolidate.c */
 og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpipword.c */
+og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartWordFlush(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word, int Iinput_part);
+og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpipalias.c */
+og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id, size_t Iinput_part);
+og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+
+
+
 
