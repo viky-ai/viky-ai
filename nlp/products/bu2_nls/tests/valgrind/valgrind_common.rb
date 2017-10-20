@@ -13,8 +13,15 @@ module Valgrind
 
     end
 
-    def interpret_queries(nb_simple, nb_timeout, nb_pkg_update)
+    def interpret_queries(nb_request_factor)
 
+      # dump packages
+      (30 * nb_request_factor).times do |i|
+        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
+        assert !actual_dump_result.nil?, "dump #{i}"
+      end
+
+      # launch simple query
       interpret_simple_query=
       {
         "packages" => ["voqal.ai:datetime1"],
@@ -22,27 +29,12 @@ module Valgrind
         "Accept-Language" => "fr-FR"
       }
 
-      # launch simple query
-      nb_simple.times do
+      (100 * nb_request_factor).times do
         response = Nls::Nls.interpret(interpret_simple_query)
         assert !response.nil?
       end
 
-      hello_world_query = {
-        timeout: 20,
-        timeout_in: "NlpPackageGet"
-      }
-
-      # launch hello world query with timeout
-      expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
-      nb_timeout.times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_simple_query, hello_world_query)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-
+      # package update
       json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
       url_add = Nls::Nls.url_packages + "/voqal.ai:datetime2"
 
@@ -51,9 +43,23 @@ module Valgrind
         "status" => "Package 'voqal.ai:datetime2' successfully updated"
       }
 
-      nb_pkg_update.times do |i|
+      (30 * nb_request_factor).times do |i|
         actual_update_result = Nls::Nls.query_post(url_add, json_package_to_update)
         assert_json expected_update_result, actual_update_result, "updating #{i}"
+      end
+
+      # launch hello world query with timeout
+      hello_world_query = {
+        timeout: 20,
+        timeout_in: "NlpPackageGet"
+      }
+
+      expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
+      (30 * nb_request_factor).times do |i|
+        exception = assert_raises RestClient::ExceptionWithResponse do
+          Nls::Nls.interpret(interpret_simple_query, hello_world_query)
+        end
+        assert_response_has_error expected_error, exception, "Timeout #{i}"
       end
 
     end

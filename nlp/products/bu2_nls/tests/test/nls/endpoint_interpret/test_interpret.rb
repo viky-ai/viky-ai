@@ -10,26 +10,35 @@ module Nls
 
       def test_interpret_simple
 
-        cp_import_fixture("several_packages_several_intents.json")
+        json_structure = Nls.several_packages_several_intents
+        generate_multiple_package_file(json_structure)
 
         Nls.restart
 
-        actual = Nls.interpret(Nls.json_interpret_body)
+        package_id = json_structure[0]["id"]
+        expression = json_structure[0]["interpretations"][0]["expressions"][1]["expression"]
+        interpretation_id = json_structure[0]["interpretations"][0]["id"]
+        slug = json_structure[0]["interpretations"][0]["slug"]
 
-        assert_equal Nls.expected_interpret_result, actual
+
+        actual = Nls.interpret(Nls.json_interpret_body(package_id, expression))
+        expected_interpret_result = Nls.expected_interpret_result(package_id, interpretation_id, slug)
+
+        assert_equal expected_interpret_result, actual
 
       end
 
       def test_interpret_several_package_same_sentence
 
-        cp_import_fixture("several_packages_same_sentence.json")
+        json_structure = Nls.several_packages_same_sentence(10)
+        write_json_to_import_dir(json_structure, "several_packages_same_sentence.json")
 
         Nls.restart
 
         param =
         {
-          "packages" => ["package_2","package_3","package_1","package_9"],
-          "sentence" => "expression_8",
+          "packages" => [json_structure[1]["id"],json_structure[2]["id"],json_structure[0]["id"],json_structure[8]["id"]],
+          "sentence" => json_structure[1]["interpretations"][7]["expressions"][0]["expression"],
           "Accept-Language" => "fr-FR"
         }
 
@@ -40,27 +49,27 @@ module Nls
           "interpretations" =>
           [
           {
-          "package" => "package_2",
-          "id" => "intent_2_8",
-          "slug" => "intent_2_8",
+          "package" => json_structure[1]["id"],
+          "id" => json_structure[1]["interpretations"][7]["id"],
+          "slug" => json_structure[1]["interpretations"][7]["slug"],
           "score" => 1.0
           },
           {
-          "package" => "package_3",
-          "id" => "intent_3_8",
-          "slug" => "intent_3_8",
+          "package" => json_structure[2]["id"],
+          "id" => json_structure[2]["interpretations"][7]["id"],
+          "slug" => json_structure[2]["interpretations"][7]["slug"],
           "score" => 1.0
           },
           {
-          "package" => "package_1",
-          "id" => "intent_1_8",
-          "slug" => "intent_1_8",
+          "package" => json_structure[0]["id"],
+          "id" => json_structure[0]["interpretations"][7]["id"],
+          "slug" => json_structure[0]["interpretations"][7]["slug"],
           "score" => 1.0
           },
           {
-          "package" => "package_9",
-          "id" => "intent_9_8",
-          "slug" => "intent_9_8",
+          "package" => json_structure[8]["id"],
+          "id" => json_structure[8]["interpretations"][7]["id"],
+          "slug" => json_structure[8]["interpretations"][7]["slug"],
           "score" => 1.0
           }
           ]
@@ -72,7 +81,8 @@ module Nls
 
       def test_interpret_parallel_query
 
-        createHugePackagesFile("several_packages_parallelize.json", 10)
+        json_structure = Nls.createHugePackagesFile(10)
+        write_json_to_import_dir(json_structure, "several_packages_parallelize.json")
 
         Nls.restart
 
@@ -81,7 +91,10 @@ module Nls
         for package in 1..10
           for interpretation in 1..10
             for expression in 1..10
-              expressions_array << ["package_#{package}","interpretation_#{package}_#{interpretation}","expression_#{package}_#{interpretation}_#{expression}"]
+              expressions_array << [json_structure[package-1]["id"],
+                                    json_structure[package-1]["interpretations"][interpretation-1]["id"],
+                                    json_structure[package-1]["interpretations"][interpretation-1]["slug"],
+                                    json_structure[package-1]["interpretations"][interpretation-1]["expressions"][expression-1]["expression"]]
             end
           end
         end
@@ -91,7 +104,7 @@ module Nls
           param =
           {
             "packages" => [expression_array[0]],
-            "sentence" => expression_array[2],
+            "sentence" => expression_array[3],
             "Accept-Language" => "fr-FR"
           }
 
@@ -104,7 +117,7 @@ module Nls
             {
             "package" => expression_array[0],
             "id" => expression_array[1],
-            "slug" => expression_array[1],
+            "slug" => expression_array[2],
             "score" => 1.0
             }
             ]
@@ -117,13 +130,14 @@ module Nls
 
       def test_empty_sentence
 
-        cp_import_fixture("package_without_error.json")
+        json_structure = Nls.package_without_error
+        write_json_to_import_dir(json_structure, "package_without_error.json")
 
         Nls.restart
 
         param =
         {
-          "packages" => ["voqal.ai:datetime1"],
+          "packages" => [json_structure[0]["id"]],
           "sentence" => "",
           "Accept-Language" => "fr-FR"
         }
@@ -139,13 +153,14 @@ module Nls
 
       def test_too_long_sentence
 
-        cp_import_fixture("package_without_error.json")
+        json_structure = Nls.package_without_error
+        write_json_to_import_dir(json_structure, "package_without_error.json")
 
         Nls.restart
 
         param =
         {
-          "packages" => ["voqal.ai:datetime"],
+          "packages" => [json_structure[0]["id"]],
           "sentence" => "abcdefghij",
           "Accept-Language" => "fr-FR"
         }
@@ -191,13 +206,14 @@ module Nls
 
       def test_no_sentence_match
 
-        cp_import_fixture("package_without_error.json")
+        json_structure = Nls.package_without_error
+        write_json_to_import_dir(json_structure, "package_without_error.json")
 
         Nls.restart
 
         param =
         {
-          "packages" => ["voqal.ai:datetime"],
+          "packages" => [json_structure[0]["id"]],
           "sentence" => "azerty",
           "Accept-Language" => "fr-FR"
         }

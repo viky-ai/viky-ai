@@ -30,39 +30,33 @@ module Nls
       JSON.parse(File.read(fixture_path(filename)))
     end
 
-    def createHugePackagesFile(filename, packagenumber, itentsnumber = 0, sentensenumber = 0)
-
-      if(itentsnumber == 0)
-        itentsnumber = packagenumber
-      end
-      if(sentensenumber == 0)
-        sentensenumber = itentsnumber
-      end
-
-      json_content_packages = []
-      for i in 1..packagenumber
-        json_object_package = {"id"=>"package_#{i}", "slug"=>"package_slug#{i}", "interpretations"=>[]}
-        for j in 1..itentsnumber
-          json_object_intents = {"id"=>"interpretation_#{i}_#{j}", "slug"=>"interpretation_#{i}_#{j}", "expressions"=>[]}
-          for k in 1..sentensenumber
-            json_object_sentence = {"expression"=>"expression_#{i}_#{j}_#{k}", "locale"=>"fr-FR"}
-            json_object_intents["expressions"] << json_object_sentence
-          end
-          json_object_package["interpretations"] << json_object_intents
-        end
-        json_content_packages << json_object_package
-      end
-
+    def write_json_to_import_dir(json_structure, filename)
       filepath = File.join(File.expand_path(importDir), filename)
       fJson = File.open(filepath,"w")
-      fJson.write(JSON.pretty_generate(json_content_packages))
+      fJson.write(JSON.pretty_generate(json_structure))
       fJson.close
-
     end
 
     def cp_import_fixture(file)
       FileUtils.cp(fixture_path(file), importDir)
     end
+
+    def generate_single_package_file(json_package)
+      filename = "package" + json_package["id"] + ".json"
+      filepath = File.join(File.expand_path(importDir), filename)
+      fJson = File.open(filepath,"w")
+      fJson.write(JSON.pretty_generate(json_package))
+      fJson.close
+    end
+
+    def generate_multiple_package_file(json_packages)
+      filename = "packages" + json_packages[0]["id"] + ".json"
+      filepath = File.join(File.expand_path(importDir), filename)
+      fJson = File.open(filepath,"w")
+      fJson.write(JSON.pretty_generate(json_packages))
+      fJson.close
+    end
+
 
     def assert_exception_has_message expected_error, exception, msg = nil
 

@@ -21,10 +21,11 @@
 #define DOgNlpTraceMemory                 0x2
 #define DOgNlpTraceSynchro                0x4
 #define DOgNlpTraceDefault               (DOgNlpTraceMinimal+DOgNlpTraceMemory)
-#define DOgNlpTraceCompile                0x4
-#define DOgNlpTraceConsolidate            0x8
-#define DOgNlpTraceInterpret              0x10
-#define DOgNlpTraceDump                   0x20
+#define DOgNlpTraceCompile                0x8
+#define DOgNlpTraceConsolidate            0x10
+#define DOgNlpTraceInterpret              0x20
+#define DOgNlpTraceDump                   0x40
+#define DOgNlpTracePackage                0x80
 
 /** Default value for configuration file information **/
 #define DOgNlpMaxListeningThreads          4

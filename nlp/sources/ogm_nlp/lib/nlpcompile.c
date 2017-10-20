@@ -6,8 +6,8 @@
  */
 #include "ogm_nlp.h"
 
-static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, json_t *json_id, json_t *json_slug,
-    json_t *json_interpretations);
+static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_id,
+    json_t *json_slug, json_t *json_interpretations);
 
 static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation,
     json_t *json_expressions);
@@ -141,6 +141,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
   {
     og_string package_id = json_string_value(json_id);
     package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
+    NlpPackageMarkAsUnused(ctrl_nlp_th, package);
     if (package != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package with id='%s' already exists, init must update package",
@@ -155,13 +156,13 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
     DPcErr;
   }
 
-  IFE(NlpCompilePackageInterpretations(ctrl_nlp_th, json_id, json_slug, json_interpretations));
+  IFE(NlpCompilePackageInterpretations(ctrl_nlp_th, input, json_id, json_slug, json_interpretations));
 
   DONE;
 }
 
-static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, json_t *json_id, json_t *json_slug,
-    json_t *json_interpretations)
+static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_id,
+    json_t *json_slug, json_t *json_interpretations)
 {
 
   if (!json_is_array(json_interpretations))
@@ -197,6 +198,11 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, json_t *json_
           "NlpCompilePackageinterpretations: json_interpretation at position %d is not an object", i);
       DPcErr;
     }
+  }
+
+  if (input->package_update)
+  {
+    IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
   }
 
   IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));
@@ -499,7 +505,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   IFn(alias) DPcErr;
   IFE(Ialias);
 
-  if (expression->aliases_nb==0)
+  if (expression->aliases_nb == 0)
   {
     expression->alias_start = Ialias;
   }
@@ -539,7 +545,6 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       DPcErr;
     }
   }
-
 
   if (json_is_string(json_alias_name))
   {

@@ -6,7 +6,6 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
 static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
 static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
@@ -33,7 +32,7 @@ PUBLIC(int) OgNlpConsolidate(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
 {
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
   for (int i = 0; i < interpretation_used; i++)
