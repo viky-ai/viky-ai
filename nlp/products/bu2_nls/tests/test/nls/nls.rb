@@ -247,6 +247,60 @@ module Nls
       json_container
     end
 
+    def self.several_packages_same_sentence(packagenumber, itentsnumber = 0, sentensenumber = 0)
+
+      if(itentsnumber == 0)
+        itentsnumber = packagenumber
+      end
+      if(sentensenumber == 0)
+        sentensenumber = itentsnumber
+      end
+
+      json_content_packages = []
+      for i in 1..packagenumber
+        json_content_packages << create_new_package("package_#{i}")
+        for j in 1..itentsnumber
+          json_content_packages[i-1]["interpretations"] << create_interpretation("interpretation_#{i}_#{j}")
+          json_content_packages[i-1]["interpretations"][j-1]["expressions"] << create_expression("expression_#{j}")
+        end
+      end
+
+      json_content_packages
+
+    end
+
+    def self.createHugePackagesFile(packagenumber, itentsnumber = 0, sentensenumber = 0)
+
+      if(itentsnumber == 0)
+        itentsnumber = packagenumber
+      end
+      if(sentensenumber == 0)
+        sentensenumber = itentsnumber
+      end
+
+      json_content_packages = []
+      for i in 1..packagenumber
+        json_content_packages << create_new_package("package_slug#{i}")
+        for j in 1..itentsnumber
+          json_content_packages[i-1]["interpretations"] << create_interpretation("interpretation_#{i}_#{j}")
+          for k in 1..sentensenumber
+            json_content_packages[i-1]["interpretations"][j-1]["expressions"] << create_expression("expression_#{i}_#{j}_#{k}")
+          end
+        end
+      end
+
+      json_content_packages
+
+    end
+
+    def self.package_without_error
+      json_packages = []
+      json_packages << create_new_package("datetime")
+      json_packages[0]["interpretations"] << create_interpretation("hello")
+      json_packages[0]["interpretations"][0]["expressions"] << create_expression("Hello Brice")
+      json_packages
+    end
+
     private
 
     def self.exec(cmd, opts = {})

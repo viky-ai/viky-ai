@@ -8,35 +8,14 @@ module Nls
 
       def test_package_dump
 
-        cp_import_fixture("package_without_error.json")
+        json_structure = Nls.several_packages_several_intents
+        generate_multiple_package_file(json_structure)
 
         Nls.restart
 
         actual  = Nls.query_get(Nls.url_dump)
 
-        expected =
-        [
-          {
-            "id" => "voqal.ai:datetime",
-            "slug" => "datetime",
-            "interpretations" =>
-            [
-              {
-                "id"=>"0d981484-9313-11e7-abc4-cec278b6b50b",
-                "slug"=>"hello",
-                "expressions" =>
-                [
-                  {
-                    "expression" => "Hello Brice",
-                    "locale"=>"fr-FR"
-                  }
-                ]
-              }
-            ]
-          }
-        ];
-
-        assert_equal expected, actual
+        assert_equal json_structure, actual
       end
 
     end
