@@ -70,6 +70,7 @@ class Dropdown
     # materialize current option
     node.closest('ul').find('a').removeClass('current')
     node.addClass('current')
+    @close(node.closest('.dropdown'))
 
   submit_form: (event) ->
     event.preventDefault()

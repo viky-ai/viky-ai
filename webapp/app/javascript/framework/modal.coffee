@@ -20,6 +20,14 @@ class Modal
       modal_selector =
       @prepare($(node.data('modal-selector')).clone())
 
+    if action is "update-remote-modal"
+      event.preventDefault()
+      $.ajax
+        url: node.attr('href')
+        complete: (data) =>
+          @update(data.responseText)
+          $('body').trigger('modal:update')
+
     if action is "open-remote-modal"
       event.preventDefault()
       $.ajax
@@ -37,10 +45,13 @@ class Modal
     $('.modal').hide()
     $(document).off 'keyup'
 
-  prepare: (html_content) ->
-    $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
+  update: (html_content) ->
     $('#modal_container').html(html_content)
     $('#modal_container .modal').show()
+
+  prepare: (html_content) ->
+    $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
+    @update(html_content)
     $('.app-wrapper').addClass('modal-background-effect')
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 

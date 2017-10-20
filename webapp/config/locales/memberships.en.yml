@@ -1,0 +1,8 @@
+en:
+  views:
+    memberships:
+      index:
+        title: "%{agent} / Sharing overview"
+      new:
+        title: "%{agent} / Invite collaborators"
+

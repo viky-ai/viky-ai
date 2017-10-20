@@ -1,0 +1,48 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+
+    <h5 class="modal__main__title">
+      <%= t('views.memberships.index.title', agent: @agent.name) %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+
+    <div class="modal__main__content">
+
+      <ul class="tabs">
+        <li>
+          <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
+            Sharing overview
+          </a>
+        </li>
+        <li>
+          <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
+            Invite collaborators
+          </a>
+        </li>
+      </ul>
+
+      <ul>
+        <li>
+          <%= @agent.owner.email %> (Owner)
+        </li>
+        <% @agent.collaborators.each do |collaborator| %>
+          <li>
+            <% membership = collaborator.memberships.where(agent_id: @agent.id).first %>
+            <%= render partial: 'edit', locals: {
+              collaborator: collaborator,
+              owner: @agent.owner,
+              agent: @agent,
+              membership: membership
+            } %>
+          </li>
+        <% end %>
+      </ul>
+      <br />
+      <br />
+    </div>
+
+  </div>
+</div>

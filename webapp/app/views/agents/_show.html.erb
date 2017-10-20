@@ -5,7 +5,7 @@
     <% css_class = "agent-box__header--image" %>
     <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
   <% end %>
-  <a href="<%= user_agent_path(current_user, agent.agentname) %>"
+  <a href="<%= user_agent_path(agent.owner, agent.agentname) %>"
      class="agent-box__header <%= css_class %>"
      style="<%= css_style %>"">
     <h2><%= agent.name %></h2>
@@ -27,12 +27,18 @@
         <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
           <ul>
             <li>
-              <a href="<%= edit_user_agent_path(current_user, agent, origin: 'index') %>" data-action="open-remote-modal">
+              <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'index') %>" data-action="open-remote-modal">
                 <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.index.configure') %>
               </a>
             </li>
             <li>
-              <a href="<%= confirm_destroy_user_agent_path(current_user, agent) %>" data-action="open-remote-modal">
+              <a href="<%= user_agent_memberships_path(agent.owner, agent) %>" data-action="open-remote-modal">
+                <span class="icon icon--small"><%= icon_settings %></span>
+                Share
+              </a>
+            </li>
+            <li>
+              <a href="<%= confirm_destroy_user_agent_path(agent.owner, agent) %>" data-action="open-remote-modal">
                 <span class="icon icon--small"><%= icon_delete %></span> <%= t('views.agents.index.delete') %>
               </a>
             </li>

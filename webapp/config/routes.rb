@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   scope '/agents' do
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
+        resources :memberships, only: [:index, :new, :create, :update]
         member do
           get :confirm_destroy
           get :confirm_transfer_ownership
