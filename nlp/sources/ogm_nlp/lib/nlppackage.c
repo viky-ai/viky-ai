@@ -32,14 +32,17 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const c
   IFn(package->hinterpretation = OgHeapInit(hmsg, "package_interpretation", sizeof(struct interpretation), DOgNlpPackageInterpretationNumber)) return NULL;
   IFn(package->hexpression = OgHeapInit(hmsg, "package_expression", sizeof(struct expression), DOgNlpPackageExpressionNumber)) return NULL;
   IFn(package->halias = OgHeapInit(hmsg, "package_alias", sizeof(struct alias), DOgNlpPackageAliasNumber)) return NULL;
+  IFn(package->hinput_part = OgHeapInit(hmsg, "package_input_part", sizeof(struct alias), DOgNlpPackageInputPartNumber)) return NULL;
 
   return (package);
 }
 
 og_status NlpPackageFlush(package_t package)
 {
-  OgHeapFlush(package->hexpression);
   OgHeapFlush(package->hinterpretation);
+  OgHeapFlush(package->hexpression);
+  OgHeapFlush(package->halias);
+  OgHeapFlush(package->hinput_part);
   OgHeapFlush(package->hba);
   DPcFree(package);
 

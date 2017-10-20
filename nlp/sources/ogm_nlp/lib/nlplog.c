@@ -168,6 +168,11 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int 
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->alias_start + i));
   }
 
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, expression->input_part_start + i));
+  }
+
   DONE;
 }
 
@@ -181,8 +186,51 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialia
   og_string string_slug = OgHeapGetCell(package->hba, alias->slug_start);
   og_string string_id = OgHeapGetCell(package->hba, alias->id_start);
   og_string string_package = OgHeapGetCell(package->hba, alias->package_start);
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", string_alias, string_slug, string_id, string_package);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", string_alias, string_slug, string_id,
+      string_package);
 
   DONE;
 }
 
+og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part)
+
+{
+  struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
+  IFN(input_part) DPcErr;
+
+  switch (input_part->type)
+  {
+    case nlp_input_part_type_Nil:
+    {
+      break;
+    }
+    case nlp_input_part_type_Word:
+    {
+      og_string string_word = OgHeapGetCell(package->hba, input_part->word_start);
+      IFN(string_word) DPcErr;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part word '%s'",string_word);
+      break;
+    }
+    case nlp_input_part_type_Interpretation:
+    {
+      og_string package_id = OgHeapGetCell(package->hba, input_part->interpretation_package->id_start);
+      IFN(package_id) DPcErr;
+      og_string package_slug = OgHeapGetCell(package->hba, input_part->interpretation_package->slug_start);
+      IFN(package_slug) DPcErr;
+
+      struct interpretation *interpretation = OgHeapGetCell(input_part->interpretation_package->hinterpretation,
+          input_part->Iinterpretation);
+      IFN(interpretation) DPcErr;
+      og_string interpretation_id = OgHeapGetCell(input_part->interpretation_package->hba, interpretation->id_start);
+      IFN(interpretation_id) DPcErr;
+      og_string interpretation_slug = OgHeapGetCell(input_part->interpretation_package->hba,
+          interpretation->slug_start);
+      IFN(interpretation_slug) DPcErr;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part interpretation '%s' '%s' in package '%s' '%s'",
+          interpretation_slug, interpretation_id, package_slug, package_id);
+      break;
+    }
+  }
+
+  DONE;
+}

@@ -8,6 +8,7 @@
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>
+    <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
     <file>nlperr.c</file>
     <file>nlplog.c</file>

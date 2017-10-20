@@ -15,7 +15,11 @@
 #define DOgNlpPackageInterpretationNumber 0x10
 #define DOgNlpPackageExpressionNumber (DOgNlpPackageInterpretationNumber*0x10)
 #define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
+#define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
+
 #define DOgNlpInterpretationExpressionMaxLength 0x800
+
+
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -33,6 +37,8 @@ struct expression
   int text_start, text_length;
   int alias_start, aliases_nb;
   int locale;
+  int input_part_start, input_parts_nb;
+  int activated;
 };
 
 struct interpretation
@@ -50,6 +56,7 @@ struct package
   og_heap hinterpretation;
   og_heap hexpression;
   og_heap halias;
+  og_heap hinput_part;
 };
 
 typedef struct package *package_t;
@@ -57,6 +64,21 @@ typedef struct package *package_t;
 struct interpret_package
 {
   package_t package;
+};
+
+enum nlp_input_part_type
+{
+  nlp_input_part_type_Nil = 0,
+  nlp_input_part_type_Word,
+  nlp_input_part_type_Interpretation
+};
+
+struct input_part
+{
+  enum nlp_input_part_type type;
+  int word_start, word_length;
+  package_t interpretation_package;
+  int Iinterpretation;
 };
 
 
@@ -137,6 +159,7 @@ og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias);
+og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
