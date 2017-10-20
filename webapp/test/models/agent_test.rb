@@ -275,7 +275,7 @@ class AgentTest < ActiveSupport::TestCase
 
   test "Transfer agent ownership whereas new owner doesn't exit" do
     user_admin = users(:admin)
-    new_owner = User.new(email: 'not-admin@voqal.ai', password: 'Hello baby', username: 'mrwho')
+    new_owner = User.new(email: 'not-admin@viky.ai', password: 'Hello baby', username: 'mrwho')
     weather_agent = agents(:terminator)
 
     result = weather_agent.transfer_ownership_to(new_owner.username)
