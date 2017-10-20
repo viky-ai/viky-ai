@@ -87,7 +87,7 @@ push_nlp:
 # Deploy any branches on rancher dev
 deploy_branch:
   stage: deploy
-  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   dependencies:
     - build_webapp
     - build_nlp
@@ -106,7 +106,7 @@ deploy_branch:
 # remove environment
 delete_env:
   stage: admin
-  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
@@ -124,7 +124,7 @@ delete_env:
 # invite admin user
 invite_admin:
   stage: admin
-  image: docker-registry.pertimm.corp:50001/pertimm/docker-rancher-cli:latest
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
     url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
