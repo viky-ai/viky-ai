@@ -98,12 +98,6 @@ package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id)
 
   package_t package = NlpPackageGetNosync(ctrl_nlp_th, package_id);
 
-  IF(OgNlpSynchroReadUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageGet: error on OgNlpSynchroReadUnLock");
-    return NULL;
-  }
-
   if (package != NULL)
   {
     // flag package as used
@@ -113,13 +107,19 @@ package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id)
     g_queue_push_head(ctrl_nlp_th->package_in_used, package);
   }
 
+  IF(OgNlpSynchroReadUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageGet: error on OgNlpSynchroReadUnLock");
+    return NULL;
+  }
+
   return package;
 }
 
 og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 {
   if (package == NULL)
-{
+  {
     CONT;
   }
 
@@ -134,7 +134,7 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
   }
 
   DONE;
-  }
+}
 
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
@@ -155,19 +155,19 @@ void NlpPackageDestroyIfNotUsed(gpointer package_void)
 {
   package_t package = package_void;
   if (package != NULL)
-{
+  {
 
     // mark package as removed
     package->is_removed = TRUE;
 
     // if package is no more used, free it
     if (package->ref_counter <= 0)
-  {
+    {
       NlpPackageFlush(package);
     }
 
   }
-  }
+}
 
 static og_status NlpPackageDeleteNosync(og_nlp_th ctrl_nlp_th, og_string package_id)
 {
@@ -239,7 +239,7 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
   og_status status = NlpPackageDeleteNosync(ctrl_nlp_th, package_id);
 
   IF(OgNlpSynchroWriteUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
-{
+  {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageRemoveNosync: error on OgNlpSynchroWriteUnLock");
     DPcErr;
   }
@@ -250,6 +250,25 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
+
+  int input_part_used = OgHeapGetCellsUsed(package->hinterpretation);
+  struct input_part *all_input_part = OgHeapGetCell(package->hinput_part, 0);
+  IFN(all_input_part) DPcErr;
+  for (int i = 0; i < input_part_used; i++)
+  {
+    struct input_part *input_part = all_input_part + i;
+
+    if (input_part->type != nlp_input_part_type_Interpretation) continue;
+    package_t dependency_package = input_part->interpretation_package;
+    if (dependency_package == package) continue;
+
+    // flag package as unused
+    og_bool no_more_used = g_atomic_int_dec_and_test(&dependency_package->ref_counter);
+    if (no_more_used && dependency_package->is_removed)
+    {
+      NlpPackageFlush(dependency_package);
+    }
+  }
 
   OgHeapFlush(package->hexpression);
   OgHeapFlush(package->hinterpretation);
