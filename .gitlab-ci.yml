@@ -17,9 +17,9 @@ build_webapp:
   image: docker:dind
   script:
     - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/version.json"
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker build --pull --target image_ruby_run  -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
     - docker build --pull --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
     - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
@@ -27,9 +27,9 @@ build_nlp:
   stage: build
   image: docker:dind
   script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker build --pull --target run_image  -t ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} nlp
     - docker build --pull --target test_image -t ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} nlp
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker push ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
     - docker push ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
 
@@ -70,8 +70,8 @@ push_webapp:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
     - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
 
 push_nlp:
@@ -80,8 +80,8 @@ push_nlp:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker tag ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALNLP_DOCKER_IMAGE}:latest
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALNLP_DOCKER_IMAGE}:latest
     - docker push ${VOQALNLP_DOCKER_IMAGE}:latest
 
 # Deploy any branches on rancher dev
