@@ -30,7 +30,29 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
   }
-
+  snprintf(nlpc_name, DPcPathSize, "%s_request_word", param->name);
+  ctrl_nlp_th->hrequest_word = OgHeapSliceInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_word),
+  DOgNlpRequestWordNumber, DOgNlpRequestWordNumber);
+  IFN(ctrl_nlp_th->hrequest_word)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_ba", param->name);
+  ctrl_nlp_th->hba=OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(unsigned char), DOgNlpBaNumber);
+  IFN(ctrl_nlp_th->hba)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_request_input_part", param->name);
+  ctrl_nlp_th->hrequest_input_part = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_input_part),
+  DOgNlpRequestInputPartNumber);
+  IFN(ctrl_nlp_th->hrequest_input_part)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
   DONE;
 }
 
@@ -138,6 +160,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequest: error setting json_interpretations");
     DPcErr;
   }
+
+  IFE(NlpMatch(ctrl_nlp_th, json_interpretations));
 
   int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < package_used; i++)

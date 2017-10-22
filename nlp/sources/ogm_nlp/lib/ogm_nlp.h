@@ -6,6 +6,7 @@
  */
 #include <lognlp.h>
 #include <logaut.h>
+#include <loguni.h>
 #include <logheap.h>
 #include <logsysi.h>
 #include <logis639_3166.h>
@@ -18,18 +19,19 @@
 #define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
 
+#define DOgNlpRequestWordNumber 0x10
+#define DOgNlpRequestInputPartNumber 0x10
+#define DOgNlpBaNumber 0x100
+
 #define DOgNlpInterpretationExpressionMaxLength 0x800
 
-
-
 #define DOgNlpMaximumOwnedLock      16
-
 
 struct alias
 {
   int alias_start, alias_length;
-  int slug_start, slug_length; // interpretation slug
-  int id_start, id_length; // interpretation id
+  int slug_start, slug_length;   // interpretation slug
+  int id_start, id_length;   // interpretation id
   int package_start, package_length;
 };
 
@@ -88,30 +90,25 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0,
-  nlp_input_part_type_Word,
-  nlp_input_part_type_Interpretation
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation
 };
 
 struct input_part
 {
+  package_t package;
   enum nlp_input_part_type type;
   int word_start, word_length;
   struct alias *alias;
 };
 
-
 enum nlp_synchro_test_timeout_in
 {
-  nlp_timeout_in_NONE = 0,
-  nlp_timeout_in_NlpPackageAddOrReplace,
-  nlp_timeout_in_NlpPackageGet
+  nlp_timeout_in_NONE = 0, nlp_timeout_in_NlpPackageAddOrReplace, nlp_timeout_in_NlpPackageGet
 };
 
 enum nlp_synchro_lock_type
 {
-  nlp_synchro_lock_type_read,
-  nlp_synchro_lock_type_write
+  nlp_synchro_lock_type_read, nlp_synchro_lock_type_write
 };
 
 struct nlp_synchro_lock
@@ -125,6 +122,20 @@ struct nlp_synchro_current_lock
 {
   int used;
   struct nlp_synchro_lock lock[DOgNlpMaximumOwnedLock];
+};
+
+struct request_word
+{
+  int start;
+  int length;
+  int start_position;
+  int length_position;
+};
+
+struct request_input_part
+{
+  struct request_word *request_word;   // sliced heap
+  struct input_part *input_part;   // direct link to input_part, package can be retrieved in the structure
 };
 
 struct og_ctrl_nlp_threaded
@@ -149,11 +160,14 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  og_heap hrequest_word;
+  og_heap hba;
+  og_heap hrequest_input_part;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
    * (reset clean this list at the end of the request), it is better
-   * to mark it as used soon as possible
+   * to mark it as used as soon as possible
    */
   GQueue package_in_used[1];
 
@@ -184,6 +198,8 @@ og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, 
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias);
 og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
+og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -216,15 +232,26 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
 /* nlpipword.c */
 og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpInputPartWordFlush(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word, int Iinput_part);
+og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
+    int Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id, size_t Iinput_part);
+og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id,
+    size_t Iinput_part);
 og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
 
+/* nlpmatch.c */
+og_status NlpMatch(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 
+/* nlpparse.c */
+og_status NlpParse(og_nlp_th ctrl_nlp_th);
 
+/* nlprip.c */
+og_status NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th, struct request_word *request_word, package_t package,
+    int Iinput_part);
+og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 
 

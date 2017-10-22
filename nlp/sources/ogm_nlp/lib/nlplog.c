@@ -208,7 +208,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int I
     {
       og_string string_word = OgHeapGetCell(package->hba, input_part->word_start);
       IFN(string_word) DPcErr;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part word '%s'",string_word);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part word '%s'", string_word);
       break;
     }
     case nlp_input_part_type_Interpretation:
@@ -230,3 +230,28 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int I
 
   DONE;
 }
+
+og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th)
+{
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request words:");
+  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
+  for (int i = 0; i < request_word_used; i++)
+  {
+    IFE(NlpLogRequestWord(ctrl_nlp_th, i));
+  }
+  DONE;
+}
+
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
+{
+  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
+  IFN(request_word) DPcErr;
+
+  og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+  IFN(string_request_word) DPcErr;
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d", Irequest_word, string_request_word,
+      request_word->start_position, request_word->length_position);
+  DONE;
+}
+
