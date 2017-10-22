@@ -276,7 +276,9 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   json_auto_t *json = json_load_file(json_interpret_filename, JSON_REJECT_DUPLICATES, error);
   IFN(json)
   {
-    OgErr(info->herr, "nlp_interpret: error while reading 'json_compilation_filename'");
+    char erreur[DPcPathSize];
+    sprintf(erreur,"nlp_interpret: error while reading '%s'",json_interpret_filename);
+    OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
   }
