@@ -35,6 +35,7 @@ og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_stri
   DONE;
 }
 
+
 static gint str_compar(gconstpointer a, gconstpointer b)
 {
   return strcmp((const char*) a, (const char*) b);

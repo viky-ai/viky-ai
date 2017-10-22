@@ -27,29 +27,6 @@
 
 #define DOgNlpMaximumOwnedLock      16
 
-struct alias
-{
-  int alias_start, alias_length;
-  int slug_start, slug_length;   // interpretation slug
-  int id_start, id_length;   // interpretation id
-  int package_start, package_length;
-};
-
-struct expression
-{
-  int text_start, text_length;
-  int alias_start, aliases_nb;
-  int locale;
-  int input_part_start, input_parts_nb;
-};
-
-struct interpretation
-{
-  int id_start, id_length;
-  int slug_start, slug_length;
-  int expression_start, expressions_nb;
-};
-
 struct package
 {
   // =======================================
@@ -83,6 +60,31 @@ struct package
 
 typedef struct package *package_t;
 
+struct alias
+{
+  int alias_start, alias_length;
+  int slug_start, slug_length;   // interpretation slug
+  int id_start, id_length;   // interpretation id
+  int package_start, package_length;
+};
+
+struct expression
+{
+  struct interpretation *interpretation;
+  int text_start, text_length;
+  int alias_start, aliases_nb;
+  int locale;
+  int input_part_start, input_parts_nb;
+};
+
+struct interpretation
+{
+  package_t package;
+  int id_start, id_length;
+  int slug_start, slug_length;
+  int expression_start, expressions_nb;
+};
+
 struct interpret_package
 {
   package_t package;
@@ -95,7 +97,7 @@ enum nlp_input_part_type
 
 struct input_part
 {
-  package_t package;
+  struct expression *expression;
   enum nlp_input_part_type type;
   int word_start, word_length;
   struct alias *alias;
@@ -134,8 +136,13 @@ struct request_word
 
 struct request_input_part
 {
-  struct request_word *request_word;   // sliced heap
+  enum nlp_input_part_type type;
+  struct request_word *request_word;   // sliced heap, used when type=nlp_input_part_type_Word
+  struct interpretation *request_interpretation; // used when type=nlp_input_part_type_Interpretation
   struct input_part *input_part;   // direct link to input_part, package can be retrieved in the structure
+  int Iinterpret_package; // used for sorting
+  int Iinput_part; // used for sorting
+  int consumed;
 };
 
 struct og_ctrl_nlp_threaded
@@ -249,8 +256,10 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpParse(og_nlp_th ctrl_nlp_th);
 
 /* nlprip.c */
-og_status NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th, struct request_word *request_word, package_t package,
-    int Iinput_part);
+og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int Iinterpret_package,
+    package_t package, int Iinput_part);
+og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *request_interpretation, int Iinterpret_package,
+    package_t package, int Iinput_part);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 

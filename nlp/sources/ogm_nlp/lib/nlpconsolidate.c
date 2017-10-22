@@ -7,7 +7,8 @@
 #include "ogm_nlp.h"
 
 static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
-static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
+static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, int Iexpression);
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias);
 static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
@@ -50,19 +51,22 @@ static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t p
 {
   struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, Iinterpretation);
   IFN(interpretation) DPcErr;
+  interpretation->package = package;
 
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
-    IFE(NlpConsolidateExpression(ctrl_nlp_th, package, interpretation->expression_start + i));
+    IFE(NlpConsolidateExpression(ctrl_nlp_th, package, interpretation, interpretation->expression_start + i));
   }
 
   DONE;
 }
 
-static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression)
+static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, int Iexpression)
 {
   struct expression *expression = OgHeapGetCell(package->hexpression, Iexpression);
   IFN(expression) DPcErr;
+  expression->interpretation = interpretation;
 
   int is = expression->text_length;
   og_string s = OgHeapGetCell(package->hba, expression->text_start);
@@ -200,7 +204,7 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
   struct input_part *input_part = OgHeapNewCell(package->hinput_part, &Iinput_part);
   IFn(input_part) return (NULL);
   IF(Iinput_part) return (NULL);
-  input_part->package = package;
+  input_part->expression = expression;
 
   if (expression->input_parts_nb == 0)
   {
