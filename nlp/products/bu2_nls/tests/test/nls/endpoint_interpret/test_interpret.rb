@@ -6,39 +6,53 @@ module Nls
 
   module EndpointInterpret
 
-    class TestInterpret < Common
+    class TestInterpret < NlsTestCommon
 
       def test_interpret_simple
 
-        json_structure = Nls.several_packages_several_intents
-        generate_multiple_package_file(json_structure)
+        several_packages_several_intents
 
         Nls.restart
 
-        package_id = json_structure[0]["id"]
-        expression = json_structure[0]["interpretations"][0]["expressions"][1]["expression"]
-        interpretation_id = json_structure[0]["interpretations"][0]["id"]
-        slug = json_structure[0]["interpretations"][0]["slug"]
+        package = available_packages['datetime2']
 
+        interpretation = package.interpretation('hello1')
+        sentence = 'Hello Nicolas'
 
-        actual = Nls.interpret(Nls.json_interpret_body(package_id, expression))
-        expected_interpret_result = Nls.expected_interpret_result(package_id, interpretation_id, slug)
+        actual = Nls.interpret_package(package, sentence)
 
-        assert_equal expected_interpret_result, actual
+        expected = {
+          "interpretations" => [ interpretation.to_match  ]
+        }
+
+        assert_equal expected, actual
 
       end
 
       def test_interpret_several_package_same_sentence
 
-        json_structure = Nls.several_packages_same_sentence(10)
-        write_json_to_import_dir(json_structure, "several_packages_same_sentence.json")
+        several_packages_several_intents
 
         Nls.restart
 
+        interpretation_to_check = 7 #arbitrairement
+
+        package_1 = available_packages['datetime1']
+        package_2 = available_packages['datetime3']
+        package_3 = available_packages['samesentence1']
+        package_4 = available_packages['samesentence2']
+
+        sentence = "Hello Sebastien"
+
+        json_interpretation_1 = package_1.interpretation('hello3')
+        json_interpretation_2 = package_2.interpretation('hello2')
+        json_interpretation_3 = package_3.interpretation('hello4')
+        json_interpretation_4 = package_4.interpretation('hello5')
+
         param =
         {
-          "packages" => [json_structure[1]["id"],json_structure[2]["id"],json_structure[0]["id"],json_structure[8]["id"]],
-          "sentence" => json_structure[1]["interpretations"][7]["expressions"][0]["expression"],
+          "packages" => [package_1.id, package_2.id, package_3.id, package_4.id],
+          "sentence" => sentence,
           "Accept-Language" => "fr-FR"
         }
 
@@ -48,30 +62,10 @@ module Nls
         {
           "interpretations" =>
           [
-          {
-          "package" => json_structure[1]["id"],
-          "id" => json_structure[1]["interpretations"][7]["id"],
-          "slug" => json_structure[1]["interpretations"][7]["slug"],
-          "score" => 1.0
-          },
-          {
-          "package" => json_structure[2]["id"],
-          "id" => json_structure[2]["interpretations"][7]["id"],
-          "slug" => json_structure[2]["interpretations"][7]["slug"],
-          "score" => 1.0
-          },
-          {
-          "package" => json_structure[0]["id"],
-          "id" => json_structure[0]["interpretations"][7]["id"],
-          "slug" => json_structure[0]["interpretations"][7]["slug"],
-          "score" => 1.0
-          },
-          {
-          "package" => json_structure[8]["id"],
-          "id" => json_structure[8]["interpretations"][7]["id"],
-          "slug" => json_structure[8]["interpretations"][7]["slug"],
-          "score" => 1.0
-          }
+            json_interpretation_1.to_match,
+            json_interpretation_2.to_match,
+            json_interpretation_3.to_match,
+            json_interpretation_4.to_match
           ]
         }
 
@@ -81,46 +75,31 @@ module Nls
 
       def test_interpret_parallel_query
 
-        json_structure = Nls.createHugePackagesFile(10)
-        write_json_to_import_dir(json_structure, "several_packages_parallelize.json")
+        interpretations = []
+
+        # Prepare data
+        package = Package.new("package_test_interpret_parallel_query")
+        1000.times do |j|
+          interpretation = Interpretation.new("interpretation_#{j}")
+          interpretation << Expression.new("sentence_#{j}")
+          interpretations << interpretation
+          package << interpretation
+        end
+        package.to_file(importDir)
 
         Nls.restart
 
-        expressions_array = [];
+        # Run parallel queries
+        Parallel.map(interpretations, in_threads: 20) do |interpretation|
 
-        for package in 1..10
-          for interpretation in 1..10
-            for expression in 1..10
-              expressions_array << [json_structure[package-1]["id"],
-                                    json_structure[package-1]["interpretations"][interpretation-1]["id"],
-                                    json_structure[package-1]["interpretations"][interpretation-1]["slug"],
-                                    json_structure[package-1]["interpretations"][interpretation-1]["expressions"][expression-1]["expression"]]
-            end
-          end
-        end
+          package = interpretation.package
+          sentence = interpretation.expressions.first.expression
 
-        Parallel.map(expressions_array, in_threads: 20) do |expression_array|
-
-          param =
-          {
-            "packages" => [expression_array[0]],
-            "sentence" => expression_array[3],
-            "Accept-Language" => "fr-FR"
-          }
-
-          actual = Nls.interpret(param)
+          actual = Nls.interpret_package(package, sentence)
 
           expected =
           {
-            "interpretations" =>
-            [
-            {
-            "package" => expression_array[0],
-            "id" => expression_array[1],
-            "slug" => expression_array[2],
-            "score" => 1.0
-            }
-            ]
+            "interpretations" => [ interpretation.to_match ]
           }
 
           assert_equal expected, actual
@@ -130,22 +109,15 @@ module Nls
 
       def test_empty_sentence
 
-        json_structure = Nls.package_without_error
-        write_json_to_import_dir(json_structure, "package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => [json_structure[0]["id"]],
-          "sentence" => "",
-          "Accept-Language" => "fr-FR"
-        }
-
+        package = available_packages['datetime1']
         expected_error = "NlsCheckRequestString : empty text in request"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls.interpret(param)
+          Nls.interpret_package(package, "")
         end
         assert_response_has_error expected_error, exception, "Post"
 
@@ -153,26 +125,21 @@ module Nls
 
       def test_too_long_sentence
 
-        json_structure = Nls.package_without_error
-        write_json_to_import_dir(json_structure, "package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => [json_structure[0]["id"]],
-          "sentence" => "abcdefghij",
-          "Accept-Language" => "fr-FR"
-        }
+        package = available_packages['datetime1']
 
+        sentence = "abcdefghij"
         210.times do
-          param["sentence"] << "abcdefghij"
+          sentence << "abcdefghij"
         end
 
         expected_error = "NlsCheckRequestString : too long text in request"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls.interpret(param)
+          Nls.interpret_package(package, sentence)
         end
         assert_response_has_error expected_error, exception, "Post"
 
@@ -192,12 +159,12 @@ module Nls
         {
           "interpretations" =>
           [
-            {
-              "package" => "voqal.ai:datetime",
-              "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-              "slug" => "special_char",
-              "score" => 1.0
-            }
+          {
+          "package" => "voqal.ai:datetime",
+          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
+          "slug" => "special_char",
+          "score" => 1.0
+          }
           ]
         }
 
@@ -206,19 +173,12 @@ module Nls
 
       def test_no_sentence_match
 
-        json_structure = Nls.package_without_error
-        write_json_to_import_dir(json_structure, "package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => [json_structure[0]["id"]],
-          "sentence" => "azerty",
-          "Accept-Language" => "fr-FR"
-        }
-
-        actual = Nls.interpret(param)
+        package = available_packages['datetime1']
+        actual = Nls.interpret_package(package, "azerty")
 
         expected =
         {

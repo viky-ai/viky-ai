@@ -4,18 +4,17 @@ module Nls
 
   module FeedInit
 
-    class TestDump < Common
+    class TestDump < NlsTestCommon
 
       def test_package_dump
 
-        json_structure = Nls.several_packages_several_intents
-        generate_multiple_package_file(json_structure)
+        several_packages_several_intents
 
         Nls.restart
 
         actual  = Nls.query_get(Nls.url_dump)
 
-        assert_equal json_structure, actual
+        assert_equal JSON.parse(@packages_dump.to_json), actual
       end
 
     end

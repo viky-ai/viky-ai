@@ -6,7 +6,7 @@ module Nls
 
   module EndpointPackage
 
-    class TestPackage < Common
+    class TestPackage < NlsTestCommon
 
       def test_package_delete
 
@@ -111,75 +111,69 @@ module Nls
 
       def test_package_lock_parallel
 
-        json_structure = Nls.several_packages_several_intents
-        generate_multiple_package_file(json_structure)
+        several_packages_several_intents
+        json_package_to_update = available_packages['datetime3']
 
         Nls.restart
 
-        json_package_to_update = json_structure[2]
+        json_interpretation = json_package_to_update.interpretation('hello2')
+        sentence = "Hello Sebastien"
 
-        package_id = json_package_to_update["id"]
-        expression = json_package_to_update["interpretations"][0]["expressions"][1]["expression"]
-        interpretation_id = json_package_to_update["interpretations"][0]["id"]
-        slug = json_package_to_update["interpretations"][0]["slug"]
-
-        json_interpret_body = Nls.json_interpret_body(package_id, expression)
-        expected_interpret_result = Nls.expected_interpret_result(package_id, interpretation_id, slug)
+        expected_interpret_result = {
+                  "interpretations" => [ json_interpretation.to_match  ]
+                }
 
         tab = (0..10).to_a
         Parallel.map(tab, in_threads: 20) do |i|
 
           # querying
-          actual_interpret_result = Nls.interpret(json_interpret_body)
+          actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
           assert_json expected_interpret_result, actual_interpret_result, "querying #{i}"
 
           # updating
-          actual_update_result = Nls.package(json_package_to_update)
-          assert_json Nls.expected_update_package(json_package_to_update["id"]), actual_update_result, "updating #{i}"
+          actual_update_result = Nls.package_update(json_package_to_update)
+          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating #{i}"
 
           # re-querying
-          actual_interpret_result = Nls.interpret(json_interpret_body)
+          actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
           assert_json expected_interpret_result, actual_interpret_result, "re-querying #{i}"
 
           # re-updating
-          actual_update_result = Nls.package(json_package_to_update)
-          assert_json Nls.expected_update_package(json_package_to_update["id"]), actual_update_result, "re-updating #{i}"
+          actual_update_result = Nls.package_update(json_package_to_update)
+          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating #{i}"
 
         end
       end
 
       def test_package_simplelock
 
-        json_structure = Nls.several_packages_several_intents
-        generate_multiple_package_file(json_structure)
+        several_packages_several_intents
+        json_package_to_update = available_packages['datetime3']
 
         Nls.restart
 
-        json_package_to_update = json_structure[2]
+        json_interpretation = json_package_to_update.interpretation('hello2')
+        sentence = "Hello Sebastien"
 
-        package_id = json_package_to_update["id"]
-        expression = json_package_to_update["interpretations"][0]["expressions"][1]["expression"]
-        interpretation_id = json_package_to_update["interpretations"][0]["id"]
-        slug = json_package_to_update["interpretations"][0]["slug"]
-
-        json_interpret_body = Nls.json_interpret_body(package_id, expression)
-        expected_interpret_result = Nls.expected_interpret_result(package_id, interpretation_id, slug)
+        expected_interpret_result = {
+                  "interpretations" => [ json_interpretation.to_match  ]
+                }
 
         # querying
-        actual_interpret_result = Nls.interpret(json_interpret_body)
+        actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
         assert_json expected_interpret_result, actual_interpret_result, "querying"
 
         # updating
-        actual_update_result = Nls.package(json_package_to_update)
-        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual_update_result, "updating"
+        actual_update_result = Nls.package_update(json_package_to_update)
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating"
 
         # re-querying
-        actual_interpret_result = Nls.interpret(json_interpret_body)
+        actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
         assert_json expected_interpret_result, actual_interpret_result, "re-querying"
 
         # re-updating
-        actual_update_result = Nls.package(json_package_to_update)
-        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual_update_result, "re-updating"
+        actual_update_result = Nls.package_update(json_package_to_update)
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating"
 
       end
 

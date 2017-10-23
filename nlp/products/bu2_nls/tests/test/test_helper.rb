@@ -19,7 +19,7 @@ reporters = [
 
 Minitest::Reporters.use! reporters
 
+require 'nls'
 require 'test_common'
-require 'nls/common'
-require 'nlp/common'
-require 'nls/nls'
+require 'nls/nls_test_common'
+require 'nlp/nlp_test_common'

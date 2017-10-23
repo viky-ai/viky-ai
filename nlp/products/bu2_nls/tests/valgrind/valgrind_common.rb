@@ -2,26 +2,18 @@ require 'test_helper'
 
 module Valgrind
 
-  class ValgrindCommon < Nls::Common
+  class ValgrindCommon < Nls::NlsTestCommon
 
     def setup
 
       resetDir
 
+      several_packages_several_intents
 
-      @json_structure = Nls::Nls.several_packages_several_intents
+      @main_package = @available_packages["datetime1"]
+      @main_uuid = @main_package.id
 
-      @main_uuid = "123456789"
-      @main_package = Nls::Nls.create_package(@main_uuid , "voqal.ai:datetime1")
-      @main_package["interpretations"] << Nls::Nls.create_interpretation("hello1")
-      @main_package["interpretations"][0]["expressions"] << Nls::Nls.create_expression("Hello Brice")
-      @main_package["interpretations"][0]["expressions"] << Nls::Nls.create_expression("Hello Jean Marie")
-
-      @json_structure << @main_package
-
-      generate_multiple_package_file(@json_structure)
-
-    end
+   end
 
     def interpret_queries(nb_request_factor)
 
