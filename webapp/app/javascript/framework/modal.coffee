@@ -30,6 +30,7 @@ class Modal
           else
             @update(data.responseText)
             $('body').trigger('modal:update')
+            $('body').trigger('modal:load')
 
     if action is "open-remote-modal"
       event.preventDefault()
@@ -41,6 +42,7 @@ class Modal
           else
             @prepare(data.responseText)
             $('body').trigger('modal:open')
+            $('body').trigger('modal:load')
 
     if action is "close-modal"
       event.preventDefault()

@@ -147,4 +147,16 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('Agent weather shared with user confirmed.')
   end
 
+  test 'Share agent empty user' do
+    go_to_agents_index
+
+    first('.dropdown__trigger > button').click
+    click_link 'Share'
+    within(".modal") do
+      click_link 'Invite collaborators'
+      assert page.has_content?('Share with')
+      click_button 'Invite'
+    end
+    assert page.has_text?('Please select a valid user.')
+  end
 end

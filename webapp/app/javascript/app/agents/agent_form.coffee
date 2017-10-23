@@ -10,12 +10,12 @@ class AgentForm
       [data, status, xhr] = event.detail
       if data.status == 422
         $("#modal_container").html(data.html).find('.modal').show()
-        @setup() if $("#modal_container .js-agent-form").length == 1
+        $('body').trigger 'modal:update'
 
     $("body").on "ajax:before", (event) =>
       @update_delete_image() if $(event.target).hasClass('js-agent-form')
 
-    $('body').on 'modal:open', (event) =>
+    $('body').on 'modal:load', (event) =>
       @setup() if $("#modal_container .js-agent-form").length == 1
 
   setup: ->

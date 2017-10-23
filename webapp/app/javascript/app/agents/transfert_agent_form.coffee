@@ -2,14 +2,9 @@ $ = require('jquery');
 
 class TransfertAgentForm
   constructor: ->
-    $("body").on 'ajax:success', (event) =>
-      [data, status, xhr] = event.detail
-      if data.status == 422
-        @setup() if $("#modal_container .js-agent-transfert").length == 1
-
-    $('body').on 'modal:open', (event) =>
+     $('body').on 'modal:load', (event) =>
       @setup() if $("#modal_container .js-agent-transfert").length == 1
-
+      
   setup: ->
     $('#input-new-owner').selectize({
       maxItems: 1

@@ -9,23 +9,32 @@ class MembershipsController < ApplicationController
 
   def new
     @membership = Membership.new()
-    render partial: 'new'
+    render partial: 'new', locals: { errors: [] }
   end
 
   def create
-    @membership = Membership.new(user_id: @dest_user.id, rights: membership_params[:rights])
-    @membership.agent_id = @agent.id
+    errors = []
+    if @dest_user.nil?
+      @membership = Membership.new()
+      errors << t('views.memberships.new.empty_dest_message')
+    else
+      @membership = Membership.new(user_id: @dest_user.id, rights: membership_params[:rights])
+      @membership.agent_id = @agent.id
+    end
 
     respond_to do |format|
-      if @membership.save
+      if errors.empty? && @membership.save
         format.json{
           redirect_to agents_path, notice: t('views.memberships.new.success_message', agent: @agent.agentname, user: @dest_user.username)
         }
       else
         format.json{
           render json: {
-            html: render_to_string(partial: 'new', formats: :html),
-            status: 422
+            html: render_to_string(
+              partial: 'new',
+              formats: :html,
+              locals: { errors: errors }),
+            status: 422,
           }
         }
       end
@@ -64,7 +73,7 @@ class MembershipsController < ApplicationController
     end
 
     def set_dest_user
-      @dest_user = User.friendly.find(membership_params[:username])
+      @dest_user = User.friendly.find(membership_params[:username]) unless membership_params[:username].empty?
     end
 
 end

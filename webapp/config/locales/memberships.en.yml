@@ -7,3 +7,4 @@ en:
         title: "%{agent} / Invite collaborators"
         placeholder: Search by email or username (at least 3 characters).
         success_message: Agent %{agent} shared with user %{user}.
+        empty_dest_message: Please select a valid user.

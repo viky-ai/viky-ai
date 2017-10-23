@@ -2,15 +2,7 @@ $ = require('jquery');
 
 class UserSearchInput
   constructor: ->
-    $("body").on 'ajax:success', (event) =>
-      [data, status, xhr] = event.detail
-      if data.status == 422
-        @setup() if $("#modal_container .js-user-search").length == 1
-
-    $('body').on 'modal:open', (event) =>
-      @setup() if $("#modal_container .js-user-search").length == 1
-
-    $('body').on 'modal:update', (event) =>
+    $('body').on 'modal:load', (event) =>
       @setup() if $("#modal_container .js-user-search").length == 1
 
   setup: ->

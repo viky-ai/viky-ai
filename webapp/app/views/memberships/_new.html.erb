@@ -70,8 +70,12 @@
               </div>
             </div>
           </div>
-          <%= display_errors(@membership, :user_id) %>
-          <%= display_errors(@membership, :user) %>
+          <% unless errors.empty? %>
+            <div class="help help--error">
+              <span class="icon icon--x-small"><%= icon_alert %></span>
+              <%= errors.join(', ') %>
+            </div>
+          <% end %>
         </div>
 
         <div class="actions">
