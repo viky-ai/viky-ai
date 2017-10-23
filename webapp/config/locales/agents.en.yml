@@ -50,4 +50,8 @@ en:
         collaborator: "Collaborator /"
         show: Show
         edit: Edit
+        x_collaborators:
+          zero: 'No collaborator'
+          one: 'One collaborator'
+          other: '%{count} collaborators'
 
