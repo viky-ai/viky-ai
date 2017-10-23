@@ -14,21 +14,25 @@ class Nls::Interpret
 
   def interpret
     return unless valid?
+    @intents = post_to_nls("#{@endpoint}/interpret/")['intents'] || []
+    @intents.each {|i| i["name"] = i["slug"].split("/").last}
+  end
 
-    uri = URI.parse "#{@endpoint}/interpret/"
+  def post_to_nls(url)
+    resp = {}
+    uri = URI.parse url
     http = Net::HTTP.new uri.host, uri.port
-    @intents = []
-
     begin
       out = http.post(uri.path, options.to_json, JSON_HEADERS)
       if out.code == '200'
-        @intents = JSON.parse(out.body)['intents']
+        resp = JSON.parse(out.body)
       else
         errors.add(:nls, JSON.parse(out.body)['errors'])
       end
     rescue StandardError => sterr
       errors.add(:nls, sterr.message)
     end
+    resp
   end
 
 

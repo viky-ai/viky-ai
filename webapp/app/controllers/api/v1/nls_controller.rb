@@ -7,7 +7,7 @@ class Api::V1::NlsController < Api::V1::ApplicationController
     @nls.interpret
 
     unless @nls.errors.empty?
-      render json: {code: 422, message: @nls.errors.messages} and return
+      render json: {message: @nls.errors.messages}, status: 422 and return
     end
   end
 
@@ -19,7 +19,7 @@ class Api::V1::NlsController < Api::V1::ApplicationController
       language = request.headers["Accept-Language"] || params[:language]
 
       if @agent.nil? || @agent.api_token != agent_token
-        render json: {code: 401, message: t('controllers.api.v1.nls.interpret.wrong_agent_token', agent_name: params[:id])} and return
+        render json: {message: t('controllers.api.v1.nls.interpret.wrong_agent_token', agent_name: params[:id])}, status: 401 and return
       end
       params.merge({language: language})
     end

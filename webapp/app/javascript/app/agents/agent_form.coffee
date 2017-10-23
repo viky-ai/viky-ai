@@ -55,7 +55,6 @@ class AgentForm
 
     if action == 'generate-token'
       event.preventDefault()
-      console.log 'ciao'
       $.ajax
         url: link.attr('href')
         success: (data, textStatus) ->
