@@ -54,18 +54,18 @@
               <ul>
                 <li>
                   <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'index') %>" data-action="open-remote-modal">
-                    <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.index.configure') %>
+                    <span class="icon icon--x-small"><%= icon_settings %></span> <%= t('views.agents.index.configure') %>
                   </a>
                 </li>
                 <li>
                   <a href="<%= user_agent_memberships_path(agent.owner, agent) %>" data-action="open-remote-modal">
-                    <span class="icon icon--small"><%= icon_settings %></span>
+                    <span class="icon icon--x-small"><%= icon_share %></span>
                     Share
                   </a>
                 </li>
                 <li>
                   <a href="<%= confirm_destroy_user_agent_path(agent.owner, agent) %>" data-action="open-remote-modal">
-                    <span class="icon icon--small"><%= icon_delete %></span> <%= t('views.agents.index.delete') %>
+                    <span class="icon icon--x-small"><%= icon_delete %></span> <%= t('views.agents.index.delete') %>
                   </a>
                 </li>
               </ul>
