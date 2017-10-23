@@ -54,4 +54,6 @@ en:
           zero: 'No collaborator'
           one: 'One collaborator'
           other: '%{count} collaborators'
+        description: Description
+        sharing_overview: Sharing overview
 

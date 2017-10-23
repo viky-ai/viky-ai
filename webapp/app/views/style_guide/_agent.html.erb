@@ -1,0 +1,153 @@
+<section>
+  <h2>Agent</h2>
+  <p>
+    Used to display agent configuration (name, slug, description & sharing overview).
+  </p>
+  <h3>Agent with background gradient</h3>
+  <%= highlight_html do %>
+<div class="agent">
+  <div class="agent__visual background-color-gradient__brown">
+    <h2>
+      My awesome first agent
+      <br /><small>username/agentname</small>
+    </h2>
+  </div>
+  <div class="agent__info">
+    <h3>Description</h3>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni rerum deserunt repellat ducimus nostrum culpa, asperiores magnam adipisci ratione earum in debitis expedita laudantium odit, eius, quidem recusandae, voluptates cumque.</p>
+    <h3>Sharing overview</h3>
+    <ul class="user-list">
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Bob Sinclar <span class="badge">Info</span><br />
+            <small>bob.sinclar@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            John Abitbol <span class="badge">Info</span><br />
+            <small>john.abitbol@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            John Wayne <span class="badge">Info</span><br />
+            <small>john.wayne@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Paul Newman <span class="badge">Info</span><br />
+            <small>paul.newman@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Robert Redford <span class="badge">Info</span><br />
+            <small>robert.redford@viky.ai</small>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+    <% end %>
+
+  <h3>Agent with background image</h3>
+  <%= highlight_html do %>
+<div class="agent">
+  <div class="agent__visual agent__visual--image" style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);">
+    <h2>
+      My awesome first agent
+      <br /><small>username/agentname</small>
+    </h2>
+  </div>
+  <div class="agent__info">
+    <h3>Description</h3>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magni rerum deserunt repellat ducimus nostrum culpa, asperiores magnam adipisci ratione earum in debitis expedita laudantium odit, eius, quidem recusandae, voluptates cumque.</p>
+    <h3>Sharing overview</h3>
+    <ul class="user-list">
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Bob Sinclar <span class="badge">Info</span><br />
+            <small>bob.sinclar@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            John Abitbol <span class="badge">Info</span><br />
+            <small>john.abitbol@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            John Wayne <span class="badge">Info</span><br />
+            <small>john.wayne@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Paul Newman <span class="badge">Info</span><br />
+            <small>paul.newman@viky.ai</small>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="user">
+          <div class="user__avatar">
+            <%= image_tag "default_avatar.png" %>
+          </div>
+          <div class="user__info">
+            Robert Redford <span class="badge">Info</span><br />
+            <small>robert.redford@viky.ai</small>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+    <% end %>
+</section>

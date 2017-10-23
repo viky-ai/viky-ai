@@ -20,3 +20,23 @@
     margin-right: .5em;
   }
 }
+
+
+.user{
+  @include display_flex();
+  align-items: flex-start;
+  .user__avatar{
+    margin-right: .5em;
+    img{
+      border-radius: 100%;
+      width: 30px;
+    }
+  }
+  .user__info{
+    line-height: 1em;
+    small{
+      font-size: .9em;
+      color: #888;
+    }
+  }
+}
