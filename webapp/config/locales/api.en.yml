@@ -1,0 +1,7 @@
+en:
+  controllers:
+    api:
+      v1:
+        nls:
+          interpret:
+            wrong_agent_token: "Wrong token for agent %{agent_name}."

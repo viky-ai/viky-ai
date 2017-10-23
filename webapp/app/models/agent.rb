@@ -14,6 +14,7 @@ class Agent < ApplicationRecord
   validates :color, inclusion: { in: :available_colors }
   validate :owner_presence_in_users
 
+  before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
 
@@ -39,6 +40,12 @@ class Agent < ApplicationRecord
       success: transfert.valid?,
       errors: transfert.errors.flatten
     }
+  end
+
+  def ensure_api_token
+    begin
+      self.api_token = SecureRandom.hex
+    end while self.class.exists?(token: api_token)
   end
 
 

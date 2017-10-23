@@ -50,7 +50,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       scope '/agents' do
-        get '/:user_username/:agent_name/interpret', to: 'nls#interpret'
+        get '/:user_id/:id/interpret', to: 'nls#interpret'
       end
     end
   end

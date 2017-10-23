@@ -1,8 +1,11 @@
 require 'net/http'
 
 class Nls::Interpret
+  include ActiveModel::Validations
+  validates_with InterpretValidator
+
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
-  attr_reader :options, :endpoint, :errors, :intents
+  attr_reader :options, :intents
 
   def initialize(options = {})
     @options = clean_options options
@@ -10,20 +13,21 @@ class Nls::Interpret
   end
 
   def interpret
+    return unless valid?
+
     uri = URI.parse "#{@endpoint}/interpret/"
     http = Net::HTTP.new uri.host, uri.port
     @intents = []
-    @errors = []
 
     begin
       out = http.post(uri.path, options.to_json, JSON_HEADERS)
       if out.code == '200'
         @intents = JSON.parse(out.body)['intents']
       else
-        @errors = JSON.parse(out.body)['errors']
+        errors.add(:nls, JSON.parse(out.body)['errors'])
       end
     rescue StandardError => sterr
-      @errors << sterr.message
+      errors.add(:nls, sterr.message)
     end
   end
 
@@ -31,17 +35,16 @@ class Nls::Interpret
   private
 
     # clean parameters up to match NLS expectations
-    def clean_options(options)
-      (options || {}).transform_values do |v|
+    def clean_options(opts)
+      (opts || {}).transform_values do |v|
         v.respond_to?(:strip) ? v.strip : v
       end
-      options["sentence"] = options[:sentence] || ""
 
-      options["Accept-Language"] = options[:language] || "en-US"
-      options.delete :language
+      opts["Accept-Language"] = opts[:language] || "en-US"
+      opts.delete :language
 
-      options["packages"] = [options[:agent_name]]
-      options.delete :agent_name
+      opts["packages"] = [opts[:id]]
+      opts
     end
 
 end
