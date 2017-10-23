@@ -1,5 +1,6 @@
 class MembershipsController < ApplicationController
   before_action :set_agent
+  before_action :check_user_rights
 
   def index
     render partial: 'index'
@@ -45,7 +46,12 @@ class MembershipsController < ApplicationController
     end
   end
 
+
   private
+
+    def check_user_rights
+      access_denied unless current_user.can? :edit, @agent
+    end
 
     def membership_params
       params.require(:membership).permit(:user_id, :rights)

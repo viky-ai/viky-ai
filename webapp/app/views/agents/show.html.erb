@@ -5,12 +5,16 @@
   </div>
   <div class="header__tools">
     <% if User.confirmed.count > 1 %>
-      <a href="<%= confirm_transfer_ownership_user_agent_path(current_user, @agent) %>" class="btn btn--destructive" data-action="open-remote-modal">
-        <%= t('views.agents.edit.transfer_ownership') %>
+      <% if current_user.owner? @agent %>
+        <a href="<%= confirm_transfer_ownership_user_agent_path(current_user, @agent) %>" class="btn btn--destructive" data-action="open-remote-modal">
+          <%= t('views.agents.edit.transfer_ownership') %>
+        </a>
+      <% end %>
+    <% end %>
+    <% if current_user.can? :edit, @agent %>
+      <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>" class="btn btn--primary" data-action="open-remote-modal">
+        <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
       </a>
     <% end %>
-    <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>" class="btn btn--primary" data-action="open-remote-modal">
-      <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
-    </a>
   </div>
 </header>

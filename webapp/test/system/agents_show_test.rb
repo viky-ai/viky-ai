@@ -10,10 +10,10 @@ class AgentsShowTest < ApplicationSystemTestCase
   end
 
 
-  test 'Navigation to agent show without right' do
+  test 'Navigation to agent show without rights' do
     admin_login
     visit user_agent_path(users(:confirmed), agents(:weather_confirmed))
-    assert page.has_text?("You can't access this agent.")
+    assert page.has_text?("Unauthorized operation.")
   end
 
 
@@ -62,4 +62,5 @@ class AgentsShowTest < ApplicationSystemTestCase
       assert page.has_content?('This user already have an agent with this ID')
     end
   end
+
 end

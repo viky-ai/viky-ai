@@ -10,4 +10,4 @@ import './dropdown';
 import './modal';
 import './form_delete_validation'
 import './color_picker'
-import './message'
+window.App.Message = require('./message')

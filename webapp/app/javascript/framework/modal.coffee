@@ -25,16 +25,22 @@ class Modal
       $.ajax
         url: node.attr('href')
         complete: (data) =>
-          @update(data.responseText)
-          $('body').trigger('modal:update')
+          if data.status == 403
+            App.Message.alert(JSON.parse(data.responseText).message)
+          else
+            @update(data.responseText)
+            $('body').trigger('modal:update')
 
     if action is "open-remote-modal"
       event.preventDefault()
       $.ajax
         url: node.attr('href')
         complete: (data) =>
-          @prepare(data.responseText)
-          $('body').trigger('modal:open')
+          if data.status == 403
+            App.Message.alert(JSON.parse(data.responseText).message)
+          else
+            @prepare(data.responseText)
+            $('body').trigger('modal:open')
 
     if action is "close-modal"
       event.preventDefault()

@@ -2,6 +2,10 @@ $ = require('jquery');
 
 class AgentForm
   constructor: ->
+    $("body").on 'ajax:error', (event) =>
+      [data, status, xhr] = event.detail
+      App.Message.alert(data.message) if data.message
+
     $("body").on 'ajax:success', (event) =>
       [data, status, xhr] = event.detail
       if data.status == 422

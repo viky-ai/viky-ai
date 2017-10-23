@@ -57,6 +57,14 @@
     }
   }
 
+  &.badge--white{
+    color: #fff;
+    &.badge--outline{
+      background-color: rgba(#000, .2);
+      box-shadow: 0 0 0 1px rgba(#fff, .5);
+    }
+  }
+
   &.badge--small{
     font-size: .675em;
     padding: 0px .25em;

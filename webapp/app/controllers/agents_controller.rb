@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_user_and_agent, except: [:index, :new, :create]
+  before_action :set_owner_and_agent, except: [:index, :new, :create]
   before_action :check_user_rights, except: [:index, :new, :create]
 
   def index
@@ -124,15 +124,19 @@ class AgentsController < ApplicationController
   private
 
     def check_user_rights
-      unless current_user.id == @user.id
-        flash[:alert] = t('views.agents.index.authorisation_refused')
-        redirect_to agents_path
+      case action_name
+      when "show"
+        access_denied unless current_user.can? :show, @agent
+      when "edit", "update", "confirm_destroy", "destroy"
+        access_denied unless current_user.can? :edit, @agent
+      when "confirm_transfer_ownership", "transfer_ownership"
+        access_denied unless current_user.owner?(@agent)
       end
     end
 
-    def set_user_and_agent
-      @user = User.friendly.find(params[:user_id])
-      @agent = @user.agents.friendly.find(params[:id])
+    def set_owner_and_agent
+      @owner = User.friendly.find(params[:user_id])
+      @agent = @owner.agents.friendly.find(params[:id])
     end
 
     def agent_params

@@ -3,10 +3,11 @@
   border-radius: 2px;
   .agent-box__header{
     display: block;
-    padding: 6em 0 0 0;
+    padding: 7em 0 0 0;
     text-decoration: none;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
+    position: relative;
     h2,h3{
       font-size:1em;
       margin: 0;
@@ -24,6 +25,11 @@
     h3{
       font-size: .9em;
       padding-bottom: .5em;
+    }
+    .agent-box__header__role{
+      position: absolute;
+      top: .2em;
+      right: .5em;
     }
     &.agent-box__header--image{
       background-size: cover;
@@ -64,9 +70,11 @@
     justify-content: space-between;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
-    span{
+    line-height: 1em;
+    & > span{
       color: #aaa;
       font-size: .9em;
+      line-height: 2.4em;
     }
   }
 }
