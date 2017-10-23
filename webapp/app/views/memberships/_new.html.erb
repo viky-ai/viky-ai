@@ -24,13 +24,16 @@
         </li>
       </ul>
 
-      <%= form_with model: [@agent.owner, @agent, @membership], data: { type: 'json' } do |f| %>
-
+      <%= form_with model: [@agent.owner, @agent, @membership], data: { type: 'json' }, class: 'js-user-search' do |f| %>
         <div class="field">
           <%= f.label :user_id, "Share with" %>
           <div class="control control--merged">
-            <%= f.text_field :user_id %>
 
+            <div class="merged-control-container">
+              <input type="text" name="membership[username]" id="input-user-search"
+                data-remote-url="<%= search_users_for_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
+                data-placeholder="<%= t('views.memberships.new.placeholder') %>" />
+            </div>
             <%= f.hidden_field :rights %>
             <div class="dropdown">
               <div class="dropdown__trigger">

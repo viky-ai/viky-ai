@@ -24,9 +24,20 @@
     .addon,
     .btn,
     .dropdown,
-    .field_with_errors{
+    .field_with_errors,
+    .merged-control-container{
       border-radius: 0;
       margin-left: -1px;
+    }
+
+    .merged-control-container{
+      margin-left: -1px;
+    }
+    .merged-control-container .selectize-input{
+      border-radius: 0;
+    }
+    .merged-control-container{
+      width:100%;
     }
 
     input[type='text']:first-child,
@@ -39,17 +50,28 @@
       border-bottom-left-radius: 3px;
       margin-left: 0;
     }
+    .merged-control-container:first-child{
+      margin-left: 0;
+    }
+    .merged-control-container:first-child .selectize-input{
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
 
     input[type='text']:last-child,
     input[type='email']:last-child,
     input[type='password']:last-child,
     .addon:last-child,
     .btn:last-child,
-    .dropdown:last-child{
+    .dropdown:last-child,
+    .merged-control-container:last-child{
       border-top-right-radius: 3px;
       border-bottom-right-radius: 3px;
     }
-
+    .merged-control-container:last-child .selectize-input{
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
   }
 
   &.field--inline--expanded{

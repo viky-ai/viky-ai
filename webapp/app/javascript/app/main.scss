@@ -1,8 +1,12 @@
+.selectize-control{
+  line-height: 0;
+}
 .selectize-input{
-  padding: 8px 34px 8px 8px;
+  padding: 4px 34px 4px 6px;
   input{
     font-size: 16px;
     height: 26px;
+    width: 100% !important;
   }
   .item{
     font-size: 16px;

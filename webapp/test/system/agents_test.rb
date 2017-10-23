@@ -129,4 +129,22 @@ class AgentsTest < ApplicationSystemTestCase
     assert_equal '/agents', current_path
   end
 
+
+  #
+  # Share
+  #
+  test 'Share agent user' do
+    go_to_agents_index
+
+    first('.dropdown__trigger > button').click
+    click_link 'Share'
+    within(".modal") do
+      click_link 'Invite collaborators'
+      assert page.has_content?('Share with')
+      page.execute_script "document.getElementById('input-user-search').value = 'confirmed'"
+      click_button 'Invite'
+    end
+    assert page.has_text?('Agent weather shared with user confirmed.')
+  end
+
 end

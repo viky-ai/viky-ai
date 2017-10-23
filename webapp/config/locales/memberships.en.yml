@@ -5,4 +5,5 @@ en:
         title: "%{agent} / Sharing overview"
       new:
         title: "%{agent} / Invite collaborators"
-
+        placeholder: Search by email or username (at least 3 characters).
+        success_message: Agent %{agent} shared with user %{user}.

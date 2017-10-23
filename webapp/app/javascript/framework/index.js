@@ -11,3 +11,4 @@ import './modal';
 import './form_delete_validation'
 import './color_picker'
 window.App.Message = require('./message')
+import './user_search'
