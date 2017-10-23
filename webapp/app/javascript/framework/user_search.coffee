@@ -21,6 +21,7 @@ class UserSearchInput
       searchField: ['email', 'username']
       placeholder: $('#input-user-search').data('placeholder')
       dropdownParent: 'body'
+      hideSelected: true
       options: []
       create: false
       render: {
