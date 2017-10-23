@@ -62,4 +62,5 @@ class AgentsShowTest < ApplicationSystemTestCase
       assert page.has_content?('This user already have an agent with this ID')
     end
   end
+
 end

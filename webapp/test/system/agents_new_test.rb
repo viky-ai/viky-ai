@@ -109,4 +109,13 @@ class AgentsNewTest < ApplicationSystemTestCase
     assert_equal 1, all('.help--error').size
   end
 
+
+  test "No Api Token is shown in creation" do
+    go_to_agents_creation
+    within(".modal") do
+      assert !page.has_text?("Api token")
+      assert_nil first("#agent_api_token")
+    end
+  end
+
 end
