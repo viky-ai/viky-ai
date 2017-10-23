@@ -3,15 +3,18 @@ weather:
   description: My awesome weather bot description
   agentname: weather
   owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+  api_token: "52f6cb86b23d8d2a0df9c6808d73ce05"
 
 terminator:
   name: T-800
   description: Sarah Connor ?
   agentname: terminator
   owner_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
+  api_token: "4911cb86b23d8d2a0df9c6808d73777a"
 
 weather_confirmed:
   name: Weather bot
   description: The weather bot description of user confirmed
   agentname: weather
   owner_id: "a370752a-7dbd-4d76-a966-f5b271ab782b"
+  api_token: "eebab86b23d8d2a0df9c6808d73c9110"

@@ -11,6 +11,7 @@ class Agent < ApplicationRecord
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :users, presence: true
   validates :owner_id, presence: true
+  validates :api_token, presence: true, uniqueness: true
   validates :color, inclusion: { in: :available_colors }
   validate :owner_presence_in_users
 
@@ -45,7 +46,7 @@ class Agent < ApplicationRecord
   def ensure_api_token
     begin
       self.api_token = SecureRandom.hex
-    end while self.class.exists?(token: api_token)
+    end while self.class.exists?(api_token: api_token)
   end
 
 

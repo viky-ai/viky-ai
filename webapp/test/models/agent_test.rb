@@ -287,4 +287,32 @@ class AgentTest < ActiveSupport::TestCase
     ]
     assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
   end
+
+
+  test "A new agent always has a token" do
+    agent = Agent.new(
+      name: "Agent A",
+      agentname: "agenta",
+      description: "Agent A decription"
+    )
+    agent.users << users(:admin)
+
+    agent.save
+    assert !agent.api_token.nil?
+  end
+
+
+  test "Api token is unique" do
+    agent = Agent.new(
+      name: "Agent A",
+      agentname: "agenta",
+      description: "Agent A decription",
+      api_token: agents(:terminator).api_token
+    )
+    agent.users << users(:admin)
+
+    agent.save
+    assert ["has already been taken"], agent.errors.messages[:api_token]
+  end
+
 end

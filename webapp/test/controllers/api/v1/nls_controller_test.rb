@@ -12,6 +12,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       path: "api/v1/agents/#{user_id}/#{agent_id}/interpret"
     },
     {
+      format: :json,
       controller: 'api/v1/nls',
       action: 'interpret',
       user_id: user_id,

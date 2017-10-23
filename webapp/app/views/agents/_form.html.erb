@@ -28,6 +28,22 @@
     </div>
   </div>
 
+  <% if ["edit", "update"].include? action_name %>
+    <div class="field">
+      <%= f.label :api_token %>
+      <div class="control control--merged">
+        <br />
+        <%= f.text_field :api_token, id: :agent_api_token, readonly: true %>
+        <span class="btn-group">
+          <a href="<%= generate_token_user_agent_path(current_user, agent) %>" class="btn" data-action="generate-token">
+            <%= t('views.agents.form.api_token.generate_btn') %>
+          </a>
+        </span>
+      </div>
+      <%= display_errors(agent, :api_token) %>
+    </div>
+  <% end %>
+
   <div class="field">
     <div class="control">
 

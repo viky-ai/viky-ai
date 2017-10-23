@@ -24,6 +24,7 @@ Rails.application.routes.draw do
           get :confirm_transfer_ownership
           post :transfer_ownership
           get :search_users_for_transfer_ownership
+          get :generate_token
         end
       end
     end
