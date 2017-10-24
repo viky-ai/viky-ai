@@ -35,35 +35,8 @@ module Nls
       File.join(File.expand_path(__dir__), 'fixtures', file)
     end
 
-    def json_from_fixture(filename)
-      JSON.parse(File.read(fixture_path(filename)))
-    end
-
-    def write_json_to_import_dir(json_structure, filename)
-      filepath = File.join(File.expand_path(importDir), filename)
-      fJson = File.open(filepath,"w")
-      fJson.write(JSON.pretty_generate(json_structure))
-      fJson.close
-    end
-
     def cp_import_fixture(file)
       FileUtils.cp(fixture_path(file), importDir)
-    end
-
-    def generate_single_package_file(json_package)
-      filename = "package" + json_package["id"] + ".json"
-      filepath = File.join(File.expand_path(importDir), filename)
-      fJson = File.open(filepath,"w")
-      fJson.write(JSON.pretty_generate(json_package))
-      fJson.close
-    end
-
-    def generate_multiple_package_file(json_packages)
-      filename = "packages" + json_packages[0]["id"] + ".json"
-      filepath = File.join(File.expand_path(importDir), filename)
-      fJson = File.open(filepath,"w")
-      fJson.write(JSON.pretty_generate(json_packages))
-      fJson.close
     end
 
     def several_packages_several_intents
@@ -85,7 +58,7 @@ module Nls
       datetime1_hello3 << Expression.new('Hello Mouadh')
       datetime1 << datetime1_hello3
       @available_packages[datetime1.slug] = datetime1
-      @packages_dump << datetime1
+      @packages_dump << datetime1.to_h
 
       datetime2 = Package.new('datetime2')
       datetime2_hello1 = Interpretation.new('hello1')
@@ -93,7 +66,7 @@ module Nls
       datetime2_hello1 << Expression.new('Hello Olivier')
       datetime2 << datetime2_hello1
       @available_packages[datetime2.slug] = datetime2
-      @packages_dump << datetime2
+      @packages_dump << datetime2.to_h
 
       datetime3 = Package.new('datetime3')
       datetime3_hello2 = Interpretation.new('hello2')
@@ -102,7 +75,7 @@ module Nls
       datetime3_hello2 << Expression.new('Hello Mouadh')
       datetime3 << datetime3_hello2
       @available_packages[datetime3.slug] = datetime3
-      @packages_dump << datetime3
+      @packages_dump << datetime3.to_h
 
       datetime4 = Package.new('samesentence1')
       datetime4_hello4 = Interpretation.new('hello4')
@@ -111,7 +84,7 @@ module Nls
       datetime4_hello4 << Expression.new('Hello Mouadh')
       datetime4 << datetime4_hello4
       @available_packages[datetime4.slug] = datetime4
-      @packages_dump << datetime4
+      @packages_dump << datetime4.to_h
 
       datetime5 = Package.new('samesentence2')
       datetime5_hello5 = Interpretation.new('hello5')
@@ -120,42 +93,12 @@ module Nls
       datetime5_hello5 << Expression.new('Hello Mouadh')
       datetime5 << datetime5_hello5
       @available_packages[datetime5.slug] = datetime5
-      @packages_dump << datetime5
+      @packages_dump << datetime5.to_h
 
       @available_packages.values.each do |package|
-      package.to_file(importDir)
+        package.to_file(importDir)
       end
 
-    end
-
-    def several_packages_same_sentence(packagenumber, itentsnumber = 0, sentensenumber = 0)
-
-      if(itentsnumber == 0)
-        itentsnumber = packagenumber
-      end
-      if(sentensenumber == 0)
-        sentensenumber = itentsnumber
-      end
-
-      json_content_packages = []
-      for i in 1..packagenumber
-        json_content_packages << create_new_package("package_#{i}")
-        for j in 1..itentsnumber
-          json_content_packages[i-1]["interpretations"] << create_new_interpretation("interpretation_#{i}_#{j}")
-          json_content_packages[i-1]["interpretations"][j-1]["expressions"] << create_expression("expression_#{j}")
-        end
-      end
-
-      json_content_packages
-
-    end
-
-    def package_without_error
-      json_packages = []
-      json_packages << create_new_package("datetime")
-      json_packages[0]["interpretations"] << create_new_interpretation("hello")
-      json_packages[0]["interpretations"][0]["expressions"] << create_expression("Hello Brice")
-      json_packages
     end
 
     def full_minimal_package(package_slug, interpretation_slug, expression)
@@ -164,6 +107,14 @@ module Nls
       interpretation << Expression.new(expression)
       package << interpretation
       package
+    end
+
+    def package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
+      json_package = Package.new(slug, id: uuid)
+      json_interpretation = Interpretation.new(interpretation)
+      json_interpretation << Expression.new(expression)
+      json_package << json_interpretation
+      json_package
     end
 
     def assert_exception_has_message expected_error, exception, msg = nil

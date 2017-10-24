@@ -10,8 +10,6 @@ module Nls
 
       def test_package_delete
 
-        import_json = []
-
         import_package = full_minimal_package("titi","toto","Hello Brice")
         import_package.to_file(importDir)
 
@@ -43,7 +41,7 @@ module Nls
 
         json_package_to_update = full_minimal_package("titi1", "toto1", "Hello zorglub")
 
-        actual = Nls.package(JSON.parse(json_package_to_update.to_json))
+        actual = Nls.package_update(json_package_to_update)
 
         assert_json Nls.expected_update_package(json_package_to_update.id), actual
 
@@ -64,9 +62,9 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = Nls.package_to_update(import_package.id, "titi1", "toto1", "Hello zorglub")
+        json_package_to_update = package_to_update(import_package.id, "titi1", "toto1", "Hello zorglub")
 
-        actual = Nls.package(json_package_to_update.to_h)
+        actual = Nls.package_update(json_package_to_update)
 
         assert_json Nls.expected_update_package(json_package_to_update.id), actual
 
@@ -88,7 +86,7 @@ module Nls
 
         Nls.restart
 
-        json_package_to_update = Nls.package_to_update(import_package.id, "titi", "toto", "Hello zorglub")
+        json_package_to_update = package_to_update(import_package.id, "titi", "toto", "Hello zorglub")
 
         expected_error = "OgNlsEndpoints : request error on endpoint"
 

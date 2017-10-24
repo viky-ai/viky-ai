@@ -35,8 +35,6 @@ module Nls
 
         Nls.restart
 
-        interpretation_to_check = 7 #arbitrairement
-
         package_1 = available_packages['datetime1']
         package_2 = available_packages['datetime3']
         package_3 = available_packages['samesentence1']

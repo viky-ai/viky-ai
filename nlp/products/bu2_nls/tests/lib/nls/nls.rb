@@ -135,26 +135,11 @@ module Nls
       JSON.parse(response.body)
     end
 
-
-
-
-
-
-    def self.package(body, params = {})
-      package_url = "#{base_url}/packages/#{body["id"]}"
-      response = RestClient.post(package_url, body.to_json, content_type: :json, params: params)
-      JSON.parse(response.body)
-    end
-
     def self.package_update(package, params = {})
-      package_url = "#{base_url}/packages/" + package.id
+      package_url = "#{base_url}/packages/#{package.id}"
       response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
     end
-
-
-
-
 
     def self.json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
       {
@@ -168,12 +153,12 @@ module Nls
       {
         "interpretations"=>
         [
-        {
-        "package" => "#{package}",
-        "id" => "#{id}",
-        "slug" => "#{slug}",
-        "score" => 1.0
-        }
+          {
+            "package" => "#{package}",
+            "id" => "#{id}",
+            "slug" => "#{slug}",
+            "score" => 1.0
+          }
         ]
       }
     end
@@ -204,79 +189,6 @@ module Nls
 
     def self.createUUID
       UUIDTools::UUID.timestamp_create
-    end
-
-    def self.package_to_add(slug = "titi", interpretation = "toto", expression = "Hello Brice")
-      package_to_update(createUUID, slug, interpretation, expression)
-    end
-
-    def self.package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
-      json_package = Package.new(slug, id: uuid)
-      json_interpretation = Interpretation.new(interpretation)
-      json_interpretation << Expression.new(expression)
-      json_package << json_interpretation
-      json_package
-    end
-
-    def self.create_package(uuid, slug)
-      {
-        "id" => "#{uuid}",
-        "slug" => "#{slug}",
-        "interpretations"  => []
-      }
-    end
-
-    def self.create_new_package(slug)
-      create_package(createUUID, slug)
-    end
-
-    def self.create_interpretation(uuid, slug)
-      {
-        "id" => "#{uuid}",
-        "slug"  => "#{slug}",
-        "expressions"  =>  []
-      }
-    end
-
-    def self.create_new_interpretation(slug)
-      create_interpretation(createUUID, slug)
-    end
-
-    def self.create_expression(expression)
-      {
-        "expression" => "#{expression}",
-        "locale"  => "fr-FR"
-      }
-    end
-
-    def self.get_interpretation(package,interpretation_id)
-      interpretation = package["interpretations"][interpretation_id]
-      interpretation
-    end
-
-    def self.get_expression(interpretation,expression_id)
-      expression = interpretation["expressions"][expression_id]["expression"]
-      expression
-    end
-
-    def self.get_package_ids_from_slug(package_map, slug)
-      ids = []
-      package_map.each do |package|
-        if(package["slug"] == slug)
-          ids << package["id"]
-        end
-      end
-      ids
-    end
-
-    def self.get_interpretation_ids_from_slug(package, slug)
-      ids = nil
-      package["interpretations"].each do |interpretation|
-        if(interpretation["slug"] == slug)
-          ids << interpretation["id"]
-        end
-      end
-      ids
     end
 
     private

@@ -14,7 +14,7 @@ module Nls
 
         actual  = Nls.query_get(Nls.url_dump)
 
-        assert_equal JSON.parse(@packages_dump.to_json), actual
+        assert_equal @packages_dump, actual
       end
 
     end
