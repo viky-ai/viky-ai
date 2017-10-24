@@ -12,7 +12,6 @@ static int NlpRequestInterpretationCmp(gconstpointer ptr_request_interpretation1
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th,
     struct request_interpretation *request_interpretation, json_t *json_interpretations);
 
-
 og_status NlpRequestInterpretationAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level)
 {
   size_t Irequest_interpretation;
@@ -114,6 +113,60 @@ og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_int
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th,
     struct request_interpretation *request_interpretation, json_t *json_interpretations)
 {
+  struct expression *expression = request_interpretation->expression;
+  struct interpretation *interpretation = expression->interpretation;
+
+  package_t package = interpretation->package;
+
+  char *interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
+  IFN(interpretation_id) DPcErr;
+
+  char *interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
+  IFN(interpretation_slug) DPcErr;
+
+  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+        "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s'", interpretation_slug,
+        interpretation_id, package_id);
+  }
+  json_t *json_interpretation = json_object();
+
+  json_t *json_package_id = json_string(package_id);
+  IF(json_object_set_new(json_interpretation, "package", json_package_id))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_package_id");
+    DPcErr;
+  }
+
+  json_t *json_interpretation_id = json_string(interpretation_id);
+  IF(json_object_set_new(json_interpretation, "id", json_interpretation_id))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_id");
+    DPcErr;
+  }
+
+  json_t *json_interpretation_slug = json_string(interpretation_slug);
+  IF(json_object_set_new(json_interpretation, "slug", json_interpretation_slug))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_slug");
+    DPcErr;
+  }
+
+  json_t *json_score = json_real(1.0);
+  IF(json_object_set_new(json_interpretation, "score", json_score))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score");
+    DPcErr;
+  }
+
+  IF(json_array_append_new(json_interpretations, json_interpretation))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error appending json_interpretation to array");
+    DPcErr;
+  }
+
   DONE;
 }
 

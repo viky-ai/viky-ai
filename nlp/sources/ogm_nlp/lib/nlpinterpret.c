@@ -177,7 +177,7 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   }
 
   IFE(NlpMatch(ctrl_nlp_th));
-  IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
+  //IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
 
   int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < package_used; i++)
