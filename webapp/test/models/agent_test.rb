@@ -302,6 +302,20 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "A token is always required" do
+    agent = agents(:terminator)
+
+    agent.api_token = nil
+    agent.save
+
+    expected = [
+      "can't be blank",
+      "is too short (minimum is 32 characters)"
+    ]
+    assert_equal expected, agent.errors.messages[:api_token]
+  end
+
+
   test "Api token is unique" do
     agent = Agent.new(
       name: "Agent A",
