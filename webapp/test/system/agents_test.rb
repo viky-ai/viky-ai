@@ -162,8 +162,9 @@ class AgentsTest < ApplicationSystemTestCase
       page.execute_script "document.getElementById('input-user-search').value = 'confirmed'"
       click_button 'Invite'
     end
-    assert page.has_text?('Agent weather shared with user confirmed.')
+    assert page.has_text?('Agent weather shared with : confirmed.')
   end
+
 
   test 'Share agent empty user' do
     go_to_agents_index
@@ -177,4 +178,21 @@ class AgentsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Please select a valid user.')
   end
+
+
+  test 'Share agent with multiple users at the same time' do
+    go_to_agents_index
+
+    agent_terminator_dropdown = all('.dropdown__trigger > button')[-1]
+    agent_terminator_dropdown.click
+    click_link 'Share'
+    within(".modal") do
+      click_link 'Invite collaborators'
+      assert page.has_content?('Share with')
+      page.execute_script "document.getElementById('input-user-search').value = 'confirmed;show_on_agent_weather'"
+      click_button 'Invite'
+    end
+    assert page.has_text?('Agent terminator shared with : confirmed, show_on_agent_weather.')
+  end
+
 end

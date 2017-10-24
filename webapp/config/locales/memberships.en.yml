@@ -11,7 +11,7 @@ en:
       new:
         title_html: "<strong>%{agent}</strong> agent sharing options"
         placeholder: Search by email or username (at least 3 characters).
-        success_message: Agent %{agent} shared with user %{user}.
+        success_message: "Agent %{agent} shared with : %{users}."
         empty_dest_message: Please select a valid user.
       note_html: >
         <p>

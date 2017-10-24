@@ -80,11 +80,11 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        membership: { username: users(:locked).username, rights: 'show' },
+        memberships: { usernames: users(:locked).username, rights: 'show' },
         format: :json
       }
     assert_redirected_to agents_url
-    assert_equal "Agent weather shared with user locked.", flash[:notice]
+    assert_equal "Agent weather shared with : locked.", flash[:notice]
   end
 
   test "Create access: User has no relation to agent" do
@@ -92,7 +92,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:confirmed), agents(:weather_confirmed)),
       params: {
-        membership: { username: users(:locked).username, rights: 'show' },
+        memberships: { usernames: users(:locked).username, rights: 'show' },
         format: :json
       }
     assert_response :forbidden
@@ -104,7 +104,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        membership: { username: users(:locked).username, rights: 'show' },
+        memberships: { usernames: users(:locked).username, rights: 'show' },
         format: :json
       }
     assert_response :forbidden
@@ -116,7 +116,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        membership: { username: users(:locked).username, rights: 'show' },
+        memberships: { usernames: users(:locked).username, rights: 'show' },
         format: :json
       }
     assert_response :forbidden

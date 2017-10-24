@@ -1,6 +1,5 @@
 class MembershipsController < ApplicationController
   before_action :set_agent
-  before_action :set_dest_user, only: :create
   before_action :check_user_rights
 
   def index
@@ -8,24 +7,37 @@ class MembershipsController < ApplicationController
   end
 
   def new
-    @membership = Membership.new()
+    @membership = Membership.new
     render partial: 'new', locals: { errors: [] }
   end
 
   def create
     errors = []
-    if @dest_user.nil?
-      @membership = Membership.new()
+
+    usernames = memberships_params[:usernames].split(';')
+    dest_users = User.where(username: usernames)
+
+    if dest_users.empty?
       errors << t('views.memberships.new.empty_dest_message')
     else
-      @membership = Membership.new(user_id: @dest_user.id, rights: membership_params[:rights])
-      @membership.agent_id = @agent.id
+      memberships = dest_users.collect do |user|
+        Membership.new(
+          user_id: user.id,
+          agent_id: @agent.id,
+          rights: memberships_params[:rights]
+        )
+      end
+      memberships.each do |membership|
+        membership.save
+      end
     end
 
+
     respond_to do |format|
-      if errors.empty? && @membership.save
+      if errors.empty?
+        users = dest_users.collect { |user| user.username }.join(', ')
         format.json{
-          redirect_to agents_path, notice: t('views.memberships.new.success_message', agent: @agent.agentname, user: @dest_user.username)
+          redirect_to agents_path, notice: t('views.memberships.new.success_message', agent: @agent.agentname, users: users)
         }
       else
         format.json{
@@ -83,13 +95,13 @@ class MembershipsController < ApplicationController
       params.require(:membership).permit(:username, :rights)
     end
 
+    def memberships_params
+      params.require(:memberships).permit(:usernames, :rights)
+    end
+
     def set_agent
       owner = User.friendly.find(params[:user_id])
       @agent = owner.agents.friendly.find(params[:agent_id])
-    end
-
-    def set_dest_user
-      @dest_user = User.friendly.find(membership_params[:username]) unless membership_params[:username].empty?
     end
 
 end

@@ -7,7 +7,8 @@ class UserSearchInput
 
   setup: ->
     $('#input-user-search').selectize({
-      maxItems: 1
+      maxItems: null
+      delimiter: ';'
       valueField: 'username'
       labelField: 'email'
       searchField: ['email', 'username']
