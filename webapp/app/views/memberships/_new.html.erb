@@ -11,18 +11,20 @@
 
     <div class="modal__main__content">
 
-      <ul class="tabs">
-        <li>
-          <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
-            Sharing overview
-          </a>
-        </li>
-        <li>
-          <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
-            Invite collaborators
-          </a>
-        </li>
-      </ul>
+      <div class="tabs tabs--on-center">
+        <ul>
+          <li>
+            <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
+              Sharing overview
+            </a>
+          </li>
+          <li>
+            <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>" data-action="update-remote-modal" class="current">
+              Invite collaborators
+            </a>
+          </li>
+        </ul>
+      </div>
 
       <%= form_with model: [@agent.owner, @agent, @membership], data: { type: 'json' }, class: 'js-user-search' do |f| %>
         <div class="field">
