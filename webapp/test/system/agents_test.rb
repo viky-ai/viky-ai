@@ -143,8 +143,7 @@ class AgentsTest < ApplicationSystemTestCase
     all("a", text: "Generate").first.click
     click_button 'Update'
 
-    sleep 0.7
-    assert page.has_text?('Agents')
+    assert_not page.has_text?(prev_value)
     first('.dropdown__trigger > button').click
     click_link 'Configure'
     after_value = find("#agent_api_token").value
