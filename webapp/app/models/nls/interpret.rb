@@ -23,7 +23,10 @@ class Nls::Interpret
     uri = URI.parse url
     http = Net::HTTP.new uri.host, uri.port
     begin
+      Rails.logger.info "Started POST to NLS \"#{url}\" at #{DateTime.now}"
+      Rails.logger.info "  Parameters: #{options}"
       out = http.post(uri.path, options.to_json, JSON_HEADERS)
+      Rails.logger.info "  Completed from NLS #{out.code}"
       if out.code == '200'
         resp = JSON.parse(out.body)
       else
