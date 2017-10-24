@@ -1,6 +1,6 @@
 module Nlp
 
-  class Common < TestCommon
+  class NlpTestCommon < TestCommon
 
     def nlp(param = [])
 

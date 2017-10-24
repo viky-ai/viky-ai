@@ -170,6 +170,8 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
+  IFE(OgNlpConsolidate(info->hnlpi));
+
   if (info->dump == TRUE)
   {
     if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");
@@ -192,7 +194,9 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   json_auto_t *json = json_load_file(json_compilation_filename, JSON_REJECT_DUPLICATES, error);
   IFN(json)
   {
-    OgErr(info->herr, "nlp_compile: error while reading 'json_compilation_filename'");
+    char erreur[DPcPathSize];
+    sprintf(erreur,"nlp_compile: error while reading '%s'",json_compilation_filename);
+    OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
   }

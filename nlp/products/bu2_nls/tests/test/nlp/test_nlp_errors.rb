@@ -2,7 +2,7 @@ require 'test_helper'
 
 module Nlp
 
-  class TestNlpErrors < Common
+  class TestNlpErrors < NlpTestCommon
 
     def input_ref()
       JSON.parse(File.read(fixture_path('package_base.json')))
@@ -28,7 +28,7 @@ module Nlp
     def test_intent_id_type
 
       input = input_ref
-      input[0]["intents"][0]["id"] = 123
+      input[0]["interpretations"][0]["id"] = 123
 
       File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -36,7 +36,7 @@ module Nlp
 
       actual = nlp([ "-c #{pwd}/input.json"])
 
-      expected_error = "intent 'id' is not a string"
+      expected_error = "interpretation 'id' is not a string"
 
       assert_response_has_error  expected_error, actual
     end
@@ -44,7 +44,7 @@ module Nlp
     def test_intent_locale
 
       input = input_ref
-      input[0]["intents"][0]["sentences"][0]["locale"] = "ok-KO"
+      input[0]["interpretations"][0]["expressions"][0]["locale"] = "ok-KO"
 
       File.open("#{pwd}/input.json", 'w') do |f|
         f.write input.to_json
@@ -60,10 +60,10 @@ module Nlp
     def test_intent_phrase_too_long
 
       input = input_ref
-      input[0]["intents"][0]["sentences"][0]["sentence"] = ""
+      input[0]["interpretations"][0]["expressions"][0]["expression"] = ""
 
       500.times do
-        input[0]["intents"][0]["sentences"][0]["sentence"]  << "Brice Hello "
+        input[0]["interpretations"][0]["expressions"][0]["expression"]  << "Brice Hello "
       end
 
       File.open("#{pwd}/input.json", 'w') do |f|
@@ -72,7 +72,7 @@ module Nlp
 
       actual = nlp([ "-c #{pwd}/input.json"])
 
-      expected_error = "NlpCompilePackageSentence: text is too long"
+      expected_error = "NlpCompilePackageExpression: text is too long"
 
       assert_response_has_error expected_error, actual
     end

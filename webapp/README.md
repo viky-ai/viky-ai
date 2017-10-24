@@ -100,9 +100,6 @@ In Ubuntu you should:
 {
     "registry-mirrors": [
       "http://docker-mirror.pertimm.corp:50000"
-    ],
-    "insecure-registries" : [
-      "docker-registry.pertimm.corp:50001"
     ]
 }
 ```
@@ -122,4 +119,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
-    nlp_server:     docker pull docker-registry.pertimm.corp:50001/voqal.ai/platform/nls:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+    nlp_server:     docker pull docker-registry.pertimm.net/voqal.ai/platform/nlp:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.net/voqal.ai/platform/nlp

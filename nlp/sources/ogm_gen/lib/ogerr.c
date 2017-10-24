@@ -8,7 +8,7 @@
 #include <loggen.h>
 
 
-#define  DOgErreurNumber     30
+#define  DOgErreurNumber     16
 
 
 struct og_erreur {

@@ -6,22 +6,29 @@ module Nls
 
   module EndpointPackage
 
-    class TestPackage < Common
+    class TestPackage < NlsTestCommon
 
       def test_package_delete
 
-        cp_import_fixture("several_packages_several_intents.json")
+        import_json = []
+        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
+        import_json << import_package
+        import_package2 = Nls.package_to_add("titi1", "toto1", "Hello Jean Marie")
+        import_json << import_package2
+
+        generate_multiple_package_file(import_json)
 
         Nls.restart
 
-        url_delete = Nls.url_packages + "/voqal.ai:datetime2"
+        url_delete = Nls.url_packages + "/" + import_package2["id"]
         actual = Nls.delete(url_delete)
 
-        assert_json Nls.expected_delete_package, actual
+        assert_json Nls.expected_delete_package(import_package2["id"]), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
-        expected_dump = fixture_path("several_packages_several_intents_after_remove.json")
+        expected_dump = []
+        expected_dump << import_package
 
         assert_json expected_dump, json_dump
 
@@ -29,19 +36,25 @@ module Nls
 
       def test_package_add
 
-        cp_import_fixture("several_packages_several_intents.json")
+        import_json = []
+        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
+        import_json << import_package
+        generate_multiple_package_file(import_json)
 
         Nls.restart
 
-        json_package_to_add = json_from_fixture("package_to_add.json")
+        json_package_to_update = Nls.package_to_add("titi1", "toto1", "Hello zorglub")
+        generate_single_package_file(json_package_to_update)
 
-        actual = Nls.package(json_package_to_add)
+        actual = Nls.package(json_package_to_update)
 
-        assert_json Nls.expected_added_package, actual
+        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
-        expected_dump = fixture_path("several_packages_several_intents_after_add.json")
+        expected_dump  = []
+        expected_dump << import_package
+        expected_dump << json_package_to_update
 
         assert_json expected_dump, json_dump
 
@@ -49,19 +62,24 @@ module Nls
 
       def test_package_update
 
-        cp_import_fixture("several_packages_several_intents.json")
+        import_json = []
+        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
+        import_json << import_package
+        generate_multiple_package_file(import_json)
 
         Nls.restart
 
-        json_package_to_update = json_from_fixture("package_to_update.json")
+        json_package_to_update = Nls.package_to_update(import_package["id"], "Hello zorglub")
+        generate_single_package_file(json_package_to_update)
 
         actual = Nls.package(json_package_to_update)
 
-        assert_json Nls.expected_update_package, actual
+        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
-        expected_dump = fixture_path("several_packages_several_intents_after_update.json")
+        expected_dump  = []
+        expected_dump << json_package_to_update
 
         assert_json expected_dump, json_dump
 
@@ -69,15 +87,21 @@ module Nls
 
       def test_package_mismatch
 
-        cp_import_fixture("several_packages_several_intents.json")
+        import_json = []
+        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
+        import_json << import_package
+        import_package2 = Nls.package_to_add("titi1", "toto1", "Hello Jean Marie")
+        import_json << import_package2
+
+        generate_multiple_package_file(import_json)
 
         Nls.restart
 
-        json_package_to_update = json_from_fixture("package_to_update.json")
+        json_package_to_update = Nls.package_to_update(import_package["id"], "Hello zorglub")
 
         expected_error = "OgNlsEndpoints : request error on endpoint"
 
-        url_add = "#{Nls.url_packages}/voqal.ai:datetime1"
+        url_add = "#{Nls.url_packages}/nimportequoi"
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls.query_post(url_add, json_package_to_update)
         end
@@ -87,56 +111,69 @@ module Nls
 
       def test_package_lock_parallel
 
-        cp_import_fixture("several_packages_several_intents.json")
+        several_packages_several_intents
+        json_package_to_update = available_packages['datetime3']
 
         Nls.restart
 
-        json_package_to_update = json_from_fixture("package_to_update.json")
+        json_interpretation = json_package_to_update.interpretation('hello2')
+        sentence = "Hello Sebastien"
+
+        expected_interpret_result = {
+                  "interpretations" => [ json_interpretation.to_match  ]
+                }
 
         tab = (0..10).to_a
         Parallel.map(tab, in_threads: 20) do |i|
 
           # querying
-          actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
-          assert_json Nls.expected_interpret_result, actual_interpret_result, "querying #{i}"
+          actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
+          assert_json expected_interpret_result, actual_interpret_result, "querying #{i}"
 
           # updating
-          actual_update_result = Nls.package(json_package_to_update)
-          assert_json Nls.expected_update_package, actual_update_result, "updating #{i}"
+          actual_update_result = Nls.package_update(json_package_to_update)
+          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating #{i}"
 
           # re-querying
-          actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
-          assert_json Nls.expected_interpret_result, actual_interpret_result, "re-querying #{i}"
+          actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
+          assert_json expected_interpret_result, actual_interpret_result, "re-querying #{i}"
 
           # re-updating
-          actual_update_result = Nls.package(json_package_to_update)
-          assert_json Nls.expected_update_package, actual_update_result, "re-updating #{i}"
+          actual_update_result = Nls.package_update(json_package_to_update)
+          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating #{i}"
 
         end
       end
 
       def test_package_simplelock
-        cp_import_fixture("several_packages_several_intents.json")
+
+        several_packages_several_intents
+        json_package_to_update = available_packages['datetime3']
 
         Nls.restart
 
-        json_package_to_update = json_from_fixture("package_to_update.json")
+        json_interpretation = json_package_to_update.interpretation('hello2')
+        sentence = "Hello Sebastien"
+
+        expected_interpret_result = {
+                  "interpretations" => [ json_interpretation.to_match  ]
+                }
 
         # querying
-        actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
-        assert_json Nls.expected_interpret_result, actual_interpret_result, "querying"
+        actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
+        assert_json expected_interpret_result, actual_interpret_result, "querying"
 
         # updating
-        actual_update_result = Nls.package(json_package_to_update)
-        assert_json Nls.expected_update_package, actual_update_result, "updating"
+        actual_update_result = Nls.package_update(json_package_to_update)
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating"
 
         # re-querying
-        actual_interpret_result = Nls.interpret(Nls.json_interpret_body)
-        assert_json Nls.expected_interpret_result, actual_interpret_result, "re-querying"
+        actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
+        assert_json expected_interpret_result, actual_interpret_result, "re-querying"
 
         # re-updating
-        actual_update_result = Nls.package(json_package_to_update)
-        assert_json Nls.expected_update_package, actual_update_result, "re-updating"
+        actual_update_result = Nls.package_update(json_package_to_update)
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating"
 
       end
 
