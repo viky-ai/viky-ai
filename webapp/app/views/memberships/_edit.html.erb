@@ -1,46 +1,53 @@
-<%= form_with model: [owner, agent, membership], id: "membership-form-#{collaborator.username}" do |f| %>
-  <%= collaborator.email %> (collaborator)
-  <%= f.hidden_field :user_id %>
-  <%= f.hidden_field :rights %>
-  <div class="dropdown">
-    <div class="dropdown__trigger">
-      <button class="btn">
-        <span class="btn__label">
-          <% if collaborator.can? :edit, agent %>Can edit<% else %>Can show<% end %>
-        </span>
-        <span class="icon icon--x-small">
-          <%= icon_arrow_down %>
-        </span>
-      </button>
+<%= form_with model: [owner, agent, membership], id: "membership-form-#{collaborator.username}", class: "actions-list__row" do |f| %>
+  <span class="actions-list__label">
+    <% if collaborator.name.blank? %>
+      <%= collaborator.username %>
+    <% else %>
+      <%= collaborator.name %>
+    <% end %>
+  </span>
+  <span class="actions-list__action">
+    <%= f.hidden_field :user_id %>
+    <%= f.hidden_field :rights %>
+    <div class="dropdown">
+      <div class="dropdown__trigger">
+        <button class="btn">
+          <span class="btn__label">
+            <% if collaborator.can? :edit, agent %>Can edit<% else %>Can show<% end %>
+          </span>
+          <span class="icon icon--x-small">
+            <%= icon_arrow_down %>
+          </span>
+        </button>
+      </div>
+      <div class="dropdown__content dropdown__content--hidden">
+        <ul>
+          <li>
+            <a href="#" <% if !collaborator.can? :edit, agent %>class="current"<% end %>
+               data-behavior="populate-input, replace-trigger-label"
+               data-replace-with="Can show"
+               data-replace-selector=".btn__label"
+               data-input-selector="input[name='membership[rights]']"
+               data-input-value="show">
+              Can show
+            </a>
+          </li>
+          <li>
+            <a href="#" <% if collaborator.can? :edit, agent %>class="current"<% end %>
+               data-behavior="populate-input, replace-trigger-label"
+               data-replace-with="Can edit"
+               data-replace-selector=".btn__label"
+               data-input-selector="input[name='membership[rights]']"
+               data-input-value="edit">
+              Can edit
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="dropdown__content dropdown__content--hidden">
-      <ul>
-        <li>
-          <a href="#" <% if !collaborator.can? :edit, agent %>class="current"<% end %>
-             data-behavior="populate-input, replace-trigger-label"
-             data-replace-with="Can show"
-             data-replace-selector=".btn__label"
-             data-input-selector="input[name='membership[rights]']"
-             data-input-value="show">
-            Can show
-          </a>
-        </li>
-        <li>
-          <a href="#" <% if collaborator.can? :edit, agent %>class="current"<% end %>
-             data-behavior="populate-input, replace-trigger-label"
-             data-replace-with="Can edit"
-             data-replace-selector=".btn__label"
-             data-input-selector="input[name='membership[rights]']"
-             data-input-value="edit">
-            Can edit
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <%= f.button "Update", class: "btn btn--primary",
-    data: {
-      disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-    }
-  %>
+    <%= f.button "Update", class: "btn btn--primary",
+      data: {
+        disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+      }
+    %>
 <% end %>

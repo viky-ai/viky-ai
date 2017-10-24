@@ -1,0 +1,43 @@
+<section>
+  <h2>Actions list</h2>
+
+  <%= highlight_html do %>
+  <div class="actions-list">
+    <ul>
+      <li>
+        <div class="actions-list__row">
+          <span class="actions-list__label">Item 1</span>
+          <span class="actions-list__action">
+            <button class="btn btn--destructive">Destructive</button>
+          </span>
+        </div>
+      </li>
+      <li>
+        <div class="actions-list__row">
+          <span class="actions-list__label">Item 2</span>
+          <span class="actions-list__action">
+            <button class="btn btn--primary">Primary</button>
+            <div class="dropdown">
+              <div class="dropdown__trigger">
+                <button class="btn">
+                  Options
+                  <span class="icon icon--x-small">
+                    <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">    <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"/>    <path d="M0-.75h24v24H0z" fill="none"/></svg>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown__content dropdown__content--hidden">
+                <ul>
+                  <li><a href="#section-1">Option 1</a></li>
+                  <li><a href="#section-2" class="current">Option 2</a></li>
+                  <li><a href="#section-3">Option 3</a></li>
+                </ul>
+              </div>
+            </div>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <% end %>
+</section>

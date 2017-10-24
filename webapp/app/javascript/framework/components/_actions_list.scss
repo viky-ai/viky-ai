@@ -1,0 +1,23 @@
+.actions-list {
+  & > ul {
+    list-style-type: none;
+    padding: 0;
+
+    @include display_flex();
+    flex-direction: column;
+    justify-content: space-between;
+
+    & > li {
+      border-bottom: 1px solid #eee;
+
+      & > .actions-list__row {
+        @include display_flex();
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: space-between;
+        margin: 6px 12px;
+      }
+    }
+
+  }
+}
