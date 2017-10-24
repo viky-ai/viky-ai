@@ -1,11 +1,13 @@
+<div class="sg-intro">
+  <h1>Form</h1>
+</div>
+
 <section>
-  <h2>Form</h2>
   <p>
      When combining several form elements, use the <code>field</code>
      class as a container, to keep the spacing consistent.
   </p>
-
-  <h3>Basic form example</h3>
+  <h2>Basic form</h2>
   <%= highlight_html do %>
 <div class="field">
   <div class="control">
@@ -31,119 +33,11 @@
   <a href="#" class="btn btn--plain">Cancel</a>
 </div>
   <% end %>
+</section>
 
 
-  <h3>Merged control</h3>
-  <%= highlight_html do %>
-<div class="field">
-  <div class="control control--merged">
-    <input type="text" placeholder="One input" name="username" />
-    <button class="btn btn--primary">Validate</button>
-  </div>
-</div>
-<div class="field">
-  <div class="control control--merged">
-    <input type="text" placeholder="First input" />
-    <input type="text" placeholder="Second input" />
-    <button class="btn btn--destructive">Remove</button>
-  </div>
-</div>
-<div class="field">
-  <div class="control control--merged">
-    <input type="text" placeholder="One input" name="username" />
-    <button class="btn">Add</button>
-    <button class="btn">Remove</button>
-  </div>
-</div>
-<div class="field">
-  <div class="control control--merged">
-    <span class="addon">This in an addon</span>
-    <input type="text" placeholder="One input" name="username" />
-    <button class="btn">Validate</button>
-  </div>
-</div>
-<div class="field">
-  <div class="control control--merged">
-    <span class="addon">This in an addon at beginning</span>
-    <input type="text" placeholder="One input" name="username" />
-    <span class="addon">This in an addon at end</span>
-  </div>
-</div>
-  <% end %>
-
-
-
-  <h3>Inline form (left alignment)</h3>
-  <%= highlight_html do %>
-<div class="field field--inline">
-  <div class="control">
-    <label for="username">Username</label>
-    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
-  </div>
-  <div class="control">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-  </div>
-  <div class="control">
-    <input type="submit" value="Log in" class="btn btn--primary" />
-  </div>
-</div>
-  <% end %>
-
-
-  <h3>Inline form (expanded)</h3>
-  <%= highlight_html do %>
-<div class="field field--inline field--inline--expanded">
-  <div class="control">
-    <label for="username">Username</label>
-    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
-  </div>
-  <div class="control">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-  </div>
-  <div class="control">
-    <input type="submit" value="Log in" class="btn btn--primary" />
-  </div>
-</div>
-  <% end %>
-
-  <h3>Inline form (center alignment)</h3>
-  <%= highlight_html do %>
-<div class="field field--inline field--inline--centered">
-  <div class="control">
-    <label for="username">Username</label>
-    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
-  </div>
-  <div class="control">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-  </div>
-  <div class="control">
-    <input type="submit" value="Log in" class="btn btn--primary" />
-  </div>
-</div>
-  <% end %>
-
-  <h3>Inline form (right alignment)</h3>
-  <%= highlight_html do %>
-<div class="field field--inline field--inline--right">
-  <div class="control">
-    <label for="username">Username</label>
-    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
-  </div>
-  <div class="control">
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" />
-  </div>
-  <div class="control">
-    <input type="submit" value="Log in" class="btn btn--primary" />
-  </div>
-</div>
-  <% end %>
-
-
-  <h3>Help message variants</h3>
+<section>
+  <h2>Help variants</h2>
   <%= highlight_html do %>
 <div class="field">
   <label for="password-a">Password</label>
@@ -180,9 +74,124 @@
   </div>
 </div>
   <% end %>
+</section>
 
 
-  <h3>Color picker</h3>
+<section>
+  <h2>Merged control</h2>
+  <%= highlight_html do %>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="One input" name="username" />
+    <button class="btn btn--primary">Validate</button>
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="First input" />
+    <input type="text" placeholder="Second input" />
+    <button class="btn btn--destructive">Remove</button>
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <input type="text" placeholder="One input" name="username" />
+    <button class="btn">Add</button>
+    <button class="btn">Remove</button>
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon">This in an addon</span>
+    <input type="text" placeholder="One input" name="username" />
+    <button class="btn">Validate</button>
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon">This in an addon at beginning</span>
+    <input type="text" placeholder="One input" name="username" />
+    <span class="addon">This in an addon at end</span>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Inline form</h2>
+  <h3>Default</h3>
+  <%= highlight_html do %>
+<div class="field field--inline">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Expanded</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--expanded">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Center alignment</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--centered">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+
+  <h3>Right alignment</h3>
+  <%= highlight_html do %>
+<div class="field field--inline field--inline--right">
+  <div class="control">
+    <label for="username">Username</label>
+    <input type="text" placeholder="Text input placeholder" name="username" id="username" />
+  </div>
+  <div class="control">
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" />
+  </div>
+  <div class="control">
+    <input type="submit" value="Log in" class="btn btn--primary" />
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Color picker</h2>
+  <h3>Basic</h3>
   <%= highlight_html do %>
 <div class="field">
   <div class="control">

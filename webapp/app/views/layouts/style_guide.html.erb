@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>viky.ai</title>
+    <%= csrf_meta_tags %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="turbolinks-cache-control" content="no-cache">
+    <%= render 'layouts/favicon' %>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <%= stylesheet_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'style_guide', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body class="app sg">
+    <div class="app-wrapper">
+      <nav class="nav">
+        <div class="nav__header">
+          <p>
+            Style Guide
+            <%= logo_on_dark %>
+          </p>
+        </div>
+        <div class="nav__content">
+          <ul>
+            <% @pages.each_with_index do |page, i| %>
+              <li>
+                <a href="/style-guide/<%= page[:slug] %>"
+                   <% if @page[:slug] == page[:slug] %>class="current"<% end %>>
+                  <%= page[:name] %>
+                </a>
+                <% if @page[:slug] == page[:slug] %>
+                  <ul class="style-guide" data-turbolinks="false"></ul>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </nav>
+
+      <main>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
+

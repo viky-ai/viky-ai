@@ -9,7 +9,6 @@ class CardShake
       setTimeout(init, 700)
 
 Setup = ->
-  if $('body').data('controller-name') == "style_guide"
-    new CardShake()
+  new CardShake()
 
 $(document).on('turbolinks:load', Setup)

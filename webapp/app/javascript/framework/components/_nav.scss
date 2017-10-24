@@ -4,6 +4,16 @@
 }
 .nav__header{
   padding: 2em;
+  p{
+    text-align: center;
+    font-size: 1.2em;
+    margin: 0;
+    svg{
+      width: 50%;
+      height: auto;
+      margin-top: .5em;
+    }
+  }
 }
 .nav__content{
   height: calc(100% - 24px - 4em - 60px);
@@ -13,12 +23,15 @@
     padding: 0;
     list-style: none;
     li{
+      & > span,
       a{
         display:block;
         padding: .45em 1em .45em 2em;
         color: rgba(white, .7);
         text-decoration: none;
         border-left: 3px solid transparent;
+      }
+      a{
         &:hover{
           color: #fff;
           background-color: rgba(black, .5);
@@ -39,6 +52,11 @@
       .icon svg{
         fill: rgba(white, .4);
       }
+    }
+
+    ul li ul li a{
+      font-size: .7em;
+      padding: 0 1em 0 5em;
     }
   }
 }

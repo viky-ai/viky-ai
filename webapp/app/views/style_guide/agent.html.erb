@@ -1,9 +1,12 @@
-<section>
-  <h2>Agent</h2>
+<div class="sg-intro">
+  <h1>Agent</h1>
   <p>
-    Used to display agent configuration (name, slug, description & sharing overview).
+    Used to display a complete agent configuration (name, slug, description & sharing overview).
   </p>
-  <h3>Agent with background gradient</h3>
+</div>
+
+<section>
+  <h2>With bg gradient</h2>
   <%= highlight_html do %>
 <div class="agent">
   <div class="agent__visual background-color-gradient__brown">
@@ -76,8 +79,10 @@
   </div>
 </div>
     <% end %>
+</section>
 
-  <h3>Agent with background image</h3>
+<section>
+  <h2>With bg image</h2>
   <%= highlight_html do %>
 <div class="agent">
   <div class="agent__visual agent__visual--image" style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);">

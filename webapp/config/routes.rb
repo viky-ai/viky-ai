@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   end
 
   get 'style-guide', to: 'style_guide#index'
-
+  get 'style-guide/:page_id', to: "style_guide#page"
 
   unauthenticated :user do
     root to: "marketing#index", as: :unauthenticated_root

@@ -1,5 +1,9 @@
+<div class="sg-intro">
+  <h1>Card</h1>
+</div>
+
 <section>
-  <h2>Card</h2>
+  <h2>Default</h2>
   <%= highlight_html do %>
 <div class="card">
   <div class="card-content">
@@ -13,8 +17,11 @@
   </div>
 </div>
   <% end %>
+</section>
 
-  <h3>Notice variant</h3>
+
+<section>
+  <h2>Notice variant</h2>
   <%= highlight_html do %>
 <div class="card card--notice">
   <div class="card-content">
@@ -22,7 +29,11 @@
   </div>
 </div>
   <% end %>
-  <h3>Alert variant</h3>
+</section>
+
+
+<section>
+  <h2>Alert variant</h2>
   <%= highlight_html do %>
 <div class="card card--alert">
   <div class="card-content">
@@ -30,8 +41,10 @@
   </div>
 </div>
   <% end %>
+</section>
 
-  <h3>Card animation</h3>
+<section>
+  <h2>Card animation</h2>
   <p>
     Wrap <code>&lt;div class="card"&gt;</code> in <code>&lt;div class="card-animation-wrapper"&gt;</code> in order to add 3D perspective to animation. Then add class <code>card--shake</code> to animate card on error.
   </p>

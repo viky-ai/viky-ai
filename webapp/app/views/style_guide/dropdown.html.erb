@@ -1,6 +1,15 @@
+<div class="sg-intro">
+  <h1>Dropdown</h1>
+  <p>
+    Dropdown are used to display a list of actions or selectable options.
+  </p>
+</div>
+
 <section>
-  <h2>Dropdown</h2>
-  <p>Basic dropdown. Respect HTML structure i.e. <code>.dropdown</code> must have 2 children <code>.dropdown__trigger</code> and <code>.dropdown__content</code>.</p>
+  <h2>Default</h2>
+  <p>
+    Basic dropdown. Respect HTML structure i.e. <code>.dropdown</code> must have 2 children <code>.dropdown__trigger</code> and <code>.dropdown__content</code>.
+  </p>
 
   <%= highlight_html do %>
 <div class="dropdown">
@@ -21,8 +30,11 @@
   </div>
 </div>
   <% end %>
+</section>
 
-  <h3>Right alignement</h3>
+
+<section>
+  <h2>Right alignement</h2>
   <p>
     <code>.dropdown_content</code> is left aligned by default, in order to have a right alignment uses <code>.dropdown__content--on-right</code> class.
   </p>
@@ -45,8 +57,11 @@
   </div>
 </div>
   <% end %>
+</section>
 
-  <h3>Dropdown: behaviors</h3>
+
+<section>
+  <h2>JS Behaviors</h2>
   <p>3 available behaviors throught <code>data-behavior</code> attribute.</p>
   <ul>
     <li><code>populate-input</code></li>
@@ -94,5 +109,4 @@
   <input type="hidden" class="dropdown-input" name="search[sort_by]" />
 </form>
   <% end %>
-
 </section>
