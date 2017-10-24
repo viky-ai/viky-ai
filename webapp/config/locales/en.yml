@@ -5,3 +5,12 @@ en:
   confirm_destroy:
     label: Type DELETE to confirm
     error: Please enter the text exactly as it is displayed to confirm.
+  errors:
+    internal_error:
+      title: Error 500
+      comment: An error was rised server side
+      action_message_html: Please get back to the <a href="/">home page</a>.
+    not_found:
+      title: Error 404
+      comment: The requested resource does not exist
+      action_message_html: Please get back to the <a href="/">home page</a>.
