@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   end
 
   # API with versioning
-  namespace :api, defaults: {format: :json} do
+  namespace :api do
     namespace :v1 do
       scope '/agents' do
         get '/:user_id/:id/interpret', to: 'nls#interpret'

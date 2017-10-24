@@ -15,10 +15,10 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     # Interpret action
     assert_routing({
       method: 'get',
-      path: "api/v1/agents/#{user_id}/#{agent_id}/interpret"
+      path: "api/v1/agents/#{user_id}/#{agent_id}/interpret.json"
     },
     {
-      format: :json,
+      format: 'json',
       controller: 'api/v1/nls',
       action: 'interpret',
       user_id: user_id,
@@ -31,11 +31,11 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     u = users(:admin)
     a = u.agents.first
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret"
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json"
     assert_equal '401', response.code
     assert_equal "Wrong token for agent #{a.agentname}.", JSON.parse(response.body)["message"]
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret",
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: {agent_token: "blablabla"}
     assert_equal '401', response.code
     assert_equal "Wrong token for agent #{a.agentname}.", JSON.parse(response.body)["message"]
@@ -50,12 +50,12 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     u = users(:admin)
     a = u.agents.first
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret",
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: {sentence: "test", agent_token: a.api_token}
     assert response.code == '200'
     assert_equal nls_interpret_200, JSON.parse(response.body)
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret",
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: {sentence: "test"},
       headers: {"Agent-Token" => a.api_token}
     assert response.code == '200'
@@ -71,11 +71,11 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     a = u.agents.first
     wrong_token = "blablabla"
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret",
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: {sentence: "test", agent_token: wrong_token}
     assert response.code == '401'
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret",
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: {sentence: "test", agent_token: wrong_token},
       headers: {"Agent-Token" => a.api_token}
     assert response.code == '200'
@@ -86,7 +86,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     u = users(:admin)
     a = u.agents.first
 
-    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret?agent_token=#{a.api_token}"
+    get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json?agent_token=#{a.api_token}"
     assert_equal '422', response.code
     assert_equal ["is empty"], JSON.parse(response.body)["message"]["sentence"]
   end

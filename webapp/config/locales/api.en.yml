@@ -1,6 +1,7 @@
 en:
   controllers:
     api:
+      format_not_acceptable: "Format not acceptable. JSON only is accepted."
       v1:
         nls:
           interpret:
