@@ -295,7 +295,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription"
     )
-    agent.users << users(:admin)
+    Membership.new(user: users(:admin), agent: agent).save
 
     agent.save
     assert !agent.api_token.nil?
@@ -323,7 +323,7 @@ class AgentTest < ActiveSupport::TestCase
       description: "Agent A decription",
       api_token: agents(:terminator).api_token
     )
-    agent.users << users(:admin)
+    Membership.new(user: users(:admin), agent: agent).save
 
     agent.save
     assert ["has already been taken"], agent.errors.messages[:api_token]
