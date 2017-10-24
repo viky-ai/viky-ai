@@ -48,7 +48,7 @@ en:
       show:
         configure_btn: Configure
         owner: Owner
-        collaborator: "Collaborator /"
+        collaborator: "Collaborator"
         show: Show
         edit: Edit
         x_collaborators:

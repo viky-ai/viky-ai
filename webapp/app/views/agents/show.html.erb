@@ -73,7 +73,7 @@
                 <%= collaborator.name %>
               <% end %>
               <span class="badge">
-                <%= t('views.agents.show.collaborator') %>
+                <%= t('views.agents.show.collaborator') %> /
                 <% if collaborator.can? :edit, @agent %>
                   <%= t('views.agents.show.edit') %>
                 <% else %>

@@ -1,23 +1,15 @@
-.actions-list {
-  & > ul {
-    list-style-type: none;
-    padding: 0;
-
+ul.actions-list {
+  list-style-type: none;
+  padding: 0;
+  & > li {
     @include display_flex();
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
-
-    & > li {
-      border-bottom: 1px solid #eee;
-
-      & > .actions-list__row {
-        @include display_flex();
-        flex-direction: row;
-        align-items: baseline;
-        justify-content: space-between;
-        margin: 6px 12px;
-      }
+    margin: 0;
+    padding: 1em 0;
+    border-bottom: 1px solid #eee;
+    &:last-child{
+      border: none;
     }
-
   }
 }
