@@ -123,7 +123,7 @@ module Nls
       @packages_dump << datetime5
 
       @available_packages.values.each do |package|
-        package.to_file(importDir)
+      package.to_file(importDir)
       end
 
     end
@@ -156,6 +156,14 @@ module Nls
       json_packages[0]["interpretations"] << create_new_interpretation("hello")
       json_packages[0]["interpretations"][0]["expressions"] << create_expression("Hello Brice")
       json_packages
+    end
+
+    def full_minimal_package(package_slug, interpretation_slug, expression)
+      package = Package.new(package_slug)
+      interpretation = Interpretation.new(interpretation_slug)
+      interpretation << Expression.new(expression)
+      package << interpretation
+      package
     end
 
     def assert_exception_has_message expected_error, exception, msg = nil

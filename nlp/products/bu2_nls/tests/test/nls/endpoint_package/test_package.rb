@@ -11,24 +11,24 @@ module Nls
       def test_package_delete
 
         import_json = []
-        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
-        import_json << import_package
-        import_package2 = Nls.package_to_add("titi1", "toto1", "Hello Jean Marie")
-        import_json << import_package2
 
-        generate_multiple_package_file(import_json)
+        import_package = full_minimal_package("titi","toto","Hello Brice")
+        import_package.to_file(importDir)
+
+        import_package2 = full_minimal_package("titi1","toto1","Hello Jean Marie")
+        import_package2.to_file(importDir)
 
         Nls.restart
 
-        url_delete = Nls.url_packages + "/" + import_package2["id"]
+        url_delete = Nls.url_packages + "/" + import_package2.id
         actual = Nls.delete(url_delete)
 
-        assert_json Nls.expected_delete_package(import_package2["id"]), actual
+        assert_json Nls.expected_delete_package(import_package2.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
         expected_dump = []
-        expected_dump << import_package
+        expected_dump << import_package.to_h
 
         assert_json expected_dump, json_dump
 
@@ -36,25 +36,22 @@ module Nls
 
       def test_package_add
 
-        import_json = []
-        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
-        import_json << import_package
-        generate_multiple_package_file(import_json)
+        import_package = full_minimal_package("titi","toto","Hello Brice")
+        import_package.to_file(importDir)
 
         Nls.restart
 
-        json_package_to_update = Nls.package_to_add("titi1", "toto1", "Hello zorglub")
-        generate_single_package_file(json_package_to_update)
+        json_package_to_update = full_minimal_package("titi1", "toto1", "Hello zorglub")
 
-        actual = Nls.package(json_package_to_update)
+        actual = Nls.package(JSON.parse(json_package_to_update.to_json))
 
-        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
         expected_dump  = []
-        expected_dump << import_package
-        expected_dump << json_package_to_update
+        expected_dump << import_package.to_h
+        expected_dump << json_package_to_update.to_h
 
         assert_json expected_dump, json_dump
 
@@ -62,24 +59,21 @@ module Nls
 
       def test_package_update
 
-        import_json = []
-        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
-        import_json << import_package
-        generate_multiple_package_file(import_json)
+        import_package = full_minimal_package("titi1", "toto1", "Hello Brice")
+        import_package.to_file(importDir)
 
         Nls.restart
 
-        json_package_to_update = Nls.package_to_update(import_package["id"], "Hello zorglub")
-        generate_single_package_file(json_package_to_update)
+        json_package_to_update = Nls.package_to_update(import_package.id, "titi1", "toto1", "Hello zorglub")
 
-        actual = Nls.package(json_package_to_update)
+        actual = Nls.package(json_package_to_update.to_h)
 
-        assert_json Nls.expected_update_package(json_package_to_update["id"]), actual
+        assert_json Nls.expected_update_package(json_package_to_update.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
         expected_dump  = []
-        expected_dump << json_package_to_update
+        expected_dump << json_package_to_update.to_h
 
         assert_json expected_dump, json_dump
 
@@ -87,17 +81,14 @@ module Nls
 
       def test_package_mismatch
 
-        import_json = []
-        import_package = Nls.package_to_add("titi", "toto", "Hello Brice")
-        import_json << import_package
-        import_package2 = Nls.package_to_add("titi1", "toto1", "Hello Jean Marie")
-        import_json << import_package2
-
-        generate_multiple_package_file(import_json)
+        import_package = full_minimal_package("titi", "toto", "Hello Brice")
+        import_package.to_file(importDir)
+        import_package2 = full_minimal_package("titi1", "toto1", "Hello Jean Marie")
+        import_package2.to_file(importDir)
 
         Nls.restart
 
-        json_package_to_update = Nls.package_to_update(import_package["id"], "Hello zorglub")
+        json_package_to_update = Nls.package_to_update(import_package.id, "titi", "toto", "Hello zorglub")
 
         expected_error = "OgNlsEndpoints : request error on endpoint"
 

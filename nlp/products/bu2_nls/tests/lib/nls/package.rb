@@ -52,7 +52,7 @@ module Nls
       {
         "id" => @id.to_s,
         "slug" => @slug,
-        "interpretations" => @interpretations_indexed_by_slug.values
+        "interpretations" => @interpretations_indexed_by_slug.values.map{|v| v.to_h}
       }
     end
 

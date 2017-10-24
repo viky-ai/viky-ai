@@ -37,7 +37,7 @@ module Nls
       {
         "id" => @id.to_s,
         "slug" => @slug,
-        "expressions" => @expressions
+        "expressions" => @expressions.map{|v| v.to_h}
       }
     end
 

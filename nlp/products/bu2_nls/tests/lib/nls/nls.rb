@@ -141,7 +141,7 @@ module Nls
 
 
     def self.package(body, params = {})
-      package_url = "#{base_url}/packages/" + body["id"]
+      package_url = "#{base_url}/packages/#{body["id"]}"
       response = RestClient.post(package_url, body.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
     end
@@ -211,11 +211,10 @@ module Nls
     end
 
     def self.package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
-      json_expression = create_expression(expression)
-      json_interpretation = create_new_interpretation(interpretation)
-      json_interpretation["expressions"] << json_expression
-      json_package = create_package(uuid,slug)
-      json_package["interpretations"] << json_interpretation
+      json_package = Package.new(slug, id: uuid)
+      json_interpretation = Interpretation.new(interpretation)
+      json_interpretation << Expression.new(expression)
+      json_package << json_interpretation
       json_package
     end
 
