@@ -17,6 +17,7 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
   IFN(request_input_part) DPcErr;
   request_input_part->type = nlp_input_part_type_Word;
   request_input_part->request_word = request_word;
+  DONE;
 }
 
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *request_interpretation, int Iinterpret_package,
@@ -27,6 +28,7 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct int
   IFN(request_input_part) DPcErr;
   request_input_part->type = nlp_input_part_type_Interpretation;
   request_input_part->request_interpretation = request_interpretation;
+  DONE;
 }
 
 static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th, int Iinterpret_package,
@@ -73,7 +75,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
   {
     case nlp_input_part_type_Nil :
     {
-      sprintf(string_input_part,"nil");
+      snprintf(string_input_part,DPcPathSize,"nil");
       break;
     }
     case nlp_input_part_type_Word :
@@ -81,7 +83,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
-      sprintf(string_input_part,"word:%s %d:%d",string_request_word,request_word->start_position, request_word->length_position);
+      snprintf(string_input_part,DPcPathSize,"word:%s %d:%d",string_request_word,request_word->start_position, request_word->length_position);
       break;
     }
     case nlp_input_part_type_Interpretation :
@@ -94,7 +96,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 
       og_string interpretation_slug = OgHeapGetCell(interpretation_package->hba, interpretation->slug_start);
       IFN(interpretation_slug) DPcErr;
-      sprintf(string_input_part,"interpretation: '%s' '%s'",interpretation_slug, interpretation_id);
+      snprintf(string_input_part,DPcPathSize,"interpretation: '%s' '%s'",interpretation_slug, interpretation_id);
       break;
     }
   }

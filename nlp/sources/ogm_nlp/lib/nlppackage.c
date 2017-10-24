@@ -17,7 +17,7 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const c
     return NULL;
   }
   memset(package, 0, sizeof(struct package));
-
+  package->ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
   package->ref_counter = 0;
 
   void *hmsg = ctrl_nlp_th->ctrl_nlp->hmsg;

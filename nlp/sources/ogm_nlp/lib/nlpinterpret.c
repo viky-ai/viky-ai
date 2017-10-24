@@ -53,6 +53,14 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
   }
+  snprintf(nlpc_name, DPcPathSize, "%s_request_interpretation", param->name);
+  ctrl_nlp_th->hrequest_interpretation = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_interpretation),
+  DOgNlpRequestInterpretationNumber);
+  IFN(ctrl_nlp_th->hrequest_interpretation)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
   DONE;
 }
 
@@ -66,8 +74,15 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 {
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_word));
+  IFE(OgHeapFlush(ctrl_nlp_th->hba));
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_input_part));
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_interpretation));
   ctrl_nlp_th->hinterpret_package = NULL;
-
+  ctrl_nlp_th->hrequest_word = NULL;
+  ctrl_nlp_th->hba = NULL;
+  ctrl_nlp_th->hrequest_input_part = NULL;
+  ctrl_nlp_th->hrequest_interpretation = NULL;
   DONE;
 }
 
@@ -161,7 +176,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     DPcErr;
   }
 
-  IFE(NlpMatch(ctrl_nlp_th, json_interpretations));
+  IFE(NlpMatch(ctrl_nlp_th));
+  IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
 
   int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < package_used; i++)
@@ -201,6 +217,10 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   }
 
   IFE(OgHeapReset(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_word));
+  IFE(OgHeapReset(ctrl_nlp_th->hba));
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_interpretation));
 
   ctrl_nlp_th->request_sentence = NULL;
 
@@ -409,6 +429,9 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
   interpret_package->package = package;
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
+
+  NlpPackageLog(ctrl_nlp_th, package);
+
 
   DONE;
 }

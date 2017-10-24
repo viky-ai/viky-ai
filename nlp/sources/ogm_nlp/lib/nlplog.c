@@ -121,7 +121,7 @@ og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package)
   og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
   IFN(package_slug) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package '%s' '%s':", package_slug, package_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package '%s' '%s' ref_counter=%d is_removed=%d:", package_slug, package_id, package->ref_counter, package->is_removed);
 
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
   for (int i = 0; i < interpretation_used; i++)

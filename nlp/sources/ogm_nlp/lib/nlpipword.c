@@ -78,7 +78,7 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
       int Iinput_part;
       unsigned char *p = out+sep+1;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%.*s : %d",sep, out, Iinput_part);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : %d",sep, out, Iinput_part);
     }
     while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }

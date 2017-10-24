@@ -19,6 +19,7 @@
     <file>nlppackage.c</file>
     <file>nlpparse.c</file>
     <file>nlprip.c</file>
+    <file>nlprinterpretation.c</file>
   </sources>
   <platforms>
     <platform name="linux">

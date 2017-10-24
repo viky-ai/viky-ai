@@ -21,6 +21,7 @@
 
 #define DOgNlpRequestWordNumber 0x10
 #define DOgNlpRequestInputPartNumber 0x10
+#define DOgNlpRequestInterpretationNumber 0x10
 #define DOgNlpBaNumber 0x100
 
 #define DOgNlpInterpretationExpressionMaxLength 0x800
@@ -29,6 +30,8 @@
 
 struct package
 {
+  struct og_ctrl_nlp *ctrl_nlp;
+
   // =======================================
   // memory management
 
@@ -138,11 +141,19 @@ struct request_input_part
 {
   enum nlp_input_part_type type;
   struct request_word *request_word;   // sliced heap, used when type=nlp_input_part_type_Word
-  struct interpretation *request_interpretation; // used when type=nlp_input_part_type_Interpretation
+  struct interpretation *request_interpretation;   // used when type=nlp_input_part_type_Interpretation
   struct input_part *input_part;   // direct link to input_part, package can be retrieved in the structure
-  int Iinterpret_package; // used for sorting
-  int Iinput_part; // used for sorting
+  int Iinterpret_package;   // used for sorting
+  int Iinput_part;   // used for sorting
   int consumed;
+};
+
+struct request_interpretation
+{
+  int level;   // from zero (only words) to N
+  struct expression *expression;   // matched expression
+  int request_input_part_start;   // calculated from expression at the end, for easier use
+  int request_input_parts_nb;   // calculated from expression at the end, for easier use
 };
 
 struct og_ctrl_nlp_threaded
@@ -170,6 +181,7 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_word;
   og_heap hba;
   og_heap hrequest_input_part;
+  og_heap hrequest_interpretation;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -250,7 +262,7 @@ og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_stri
 og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpmatch.c */
-og_status NlpMatch(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
+og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpparse.c */
 og_status NlpParse(og_nlp_th ctrl_nlp_th);
@@ -258,9 +270,15 @@ og_status NlpParse(og_nlp_th ctrl_nlp_th);
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int Iinterpret_package,
     package_t package, int Iinput_part);
-og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *request_interpretation, int Iinterpret_package,
-    package_t package, int Iinput_part);
+og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *request_interpretation,
+    int Iinterpret_package, package_t package, int Iinput_part);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 
+/* nlprinterpretation.c */
+og_status NlpRequestInterpretationAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level);
+og_status NlpRequestInterpretationsExplicit(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
+og_status NlpRequestInterpretationsLog(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestInterpretationLog(og_nlp_th ctrl_nlp_th, int Irequest_interpretation);
 

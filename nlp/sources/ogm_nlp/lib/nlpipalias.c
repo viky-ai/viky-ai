@@ -35,7 +35,6 @@ og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_stri
   DONE;
 }
 
-
 static gint str_compar(gconstpointer a, gconstpointer b)
 {
   return strcmp((const char*) a, (const char*) b);
@@ -56,7 +55,7 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package)
   {
     og_string interpretation_id = iter->data;
     size_t Iinput_part = (size_t) g_hash_table_lookup(package->interpretation_id_hash, interpretation_id);
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s : %d", interpretation_id, Iinput_part);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s : %d", interpretation_id, Iinput_part);
   }
   g_list_free(sorted_key_list);
 
