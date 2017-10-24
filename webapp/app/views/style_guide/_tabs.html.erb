@@ -1,0 +1,66 @@
+<section>
+  <h2>Tabs</h2>
+  <%= highlight_html do %>
+<div class="tabs">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+  <% end %>
+
+  <h3>Alignment</h3>
+  <p>
+    To align the tabs list on center, use the <code>.tabs--on-center</code> modifier on <code>.tabs</code> container.
+  </p>
+  <%= highlight_html do %>
+<div class="tabs tabs--on-center">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+  <% end %>
+  <p>
+    To align the tabs list on right, use the <code>.tabs--on-right</code> modifier on <code>.tabs</code> container.
+  </p>
+  <%= highlight_html do %>
+<div class="tabs tabs--on-right">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+  <% end %>
+
+  <h3>Size</h3>
+  <p>
+    To change size of the tabs list, use the <code>.tabs--small</code> or <code>.tabs--large</code> modifier on <code>.tabs</code> container.
+  </p>
+  <%= highlight_html do %>
+<div class="tabs tabs--small">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+<div class="tabs">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+<div class="tabs tabs--large">
+  <ul>
+    <li><a href="#">First item</a></li>
+    <li><a href="#" class="current">Second item</a></li>
+    <li><a href="#">Third item</a></li>
+  </ul>
+</div>
+  <% end %>
+</section>
