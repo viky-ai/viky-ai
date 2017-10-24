@@ -3,7 +3,7 @@
   <div class="modal__main">
 
     <h5 class="modal__main__title">
-      <%= t('views.memberships.new.title', agent: @agent.name) %>
+      <%= t('views.memberships.new.title_html', agent: @agent.name) %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
@@ -14,17 +14,21 @@
       <div class="tabs tabs--on-center">
         <ul>
           <li>
-            <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
+            <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>"
+               data-action="update-remote-modal">
               Sharing overview
             </a>
           </li>
           <li>
-            <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>" data-action="update-remote-modal" class="current">
+            <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>"
+               data-action="update-remote-modal" class="current">
               Invite collaborators
             </a>
           </li>
         </ul>
       </div>
+
+      <br />
 
       <%= form_with model: [@agent.owner, @agent, @membership], data: { type: 'json' }, class: 'js-user-search' do |f| %>
         <div class="field">
@@ -91,6 +95,17 @@
              class="btn btn--plain" data-action='update-remote-modal'><%= t('cancel') %></a>
         </div>
       <% end %>
+
+      <br />
+
+      <div class="note">
+        <div class="note__icon">
+          <span class="icon"><%= icon_information %></span>
+        </div>
+        <div class="note__content">
+          <%= t('views.memberships.note_html') %>
+        </div>
+      </div>
 
     </div>
   </div>

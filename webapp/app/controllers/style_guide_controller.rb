@@ -18,6 +18,7 @@ class StyleGuideController < ApplicationController
       { name: "Actions list", slug: "actions_list" },
       { name: "Table",        slug: "table"        },
       { name: "Card",         slug: "card"         },
+      { name: "Note",         slug: "note"         },
       { name: "Blankslate",   slug: "blankslate"   },
       { name: "Agent",        slug: "agent"        },
       { name: "Agent box",    slug: "agent_box"    },
