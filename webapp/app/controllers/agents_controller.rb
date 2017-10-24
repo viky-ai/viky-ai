@@ -127,9 +127,9 @@ class AgentsController < ApplicationController
       case action_name
       when "show"
         access_denied unless current_user.can? :show, @agent
-      when "edit", "update", "confirm_destroy", "destroy"
+      when "edit", "update"
         access_denied unless current_user.can? :edit, @agent
-      when "confirm_transfer_ownership", "transfer_ownership"
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
         access_denied unless current_user.owner?(@agent)
       end
     end

@@ -233,8 +233,8 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
 
     get confirm_destroy_user_agent_url(users(:admin), agents(:weather_confirmed))
-    assert_response :success
-    assert_nil flash[:alert]
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
 
@@ -270,7 +270,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     delete user_agent_url(users(:admin), agents(:weather))
     assert_redirected_to agents_url
-    assert_equal "Agent with the name: My awesome weather bot has successfully been deleted.", flash[:notice]
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
 

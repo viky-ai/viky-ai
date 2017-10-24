@@ -50,7 +50,7 @@ class MembershipsController < ApplicationController
   private
 
     def check_user_rights
-      access_denied unless current_user.can? :edit, @agent
+      access_denied unless current_user.owner?(@agent)
     end
 
     def membership_params

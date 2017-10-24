@@ -33,8 +33,8 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
 
     get user_agent_memberships_url(users(:admin), agents(:weather))
-    assert_response :success
-    assert_nil flash[:alert]
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
   #
@@ -68,8 +68,8 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
 
     get new_user_agent_membership_url(users(:admin), agents(:weather))
-    assert_response :success
-    assert_nil flash[:alert]
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
   #
@@ -119,8 +119,8 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
         membership: { user_id: users(:locked).id, rights: 'show' },
         format: :json
       }
-    assert_redirected_to agents_url
-    assert_equal "done", flash[:notice]
+    assert_response :forbidden
+    assert response.body.include?("Unauthorized operation.")
   end
 
   #
@@ -169,7 +169,8 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
         membership: { user_id: users(:show_on_agent_weather).id, rights: 'edit' },
         format: :js
       }
-    assert_response :success
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
 end
