@@ -8,7 +8,7 @@ class MembershipsController < ApplicationController
 
   def new
     @membership = Membership.new
-    render partial: 'new', locals: { errors: [] }
+    render partial: 'new', locals: { search_initial_values: [], errors: [] }
   end
 
   def create
@@ -16,6 +16,15 @@ class MembershipsController < ApplicationController
 
     usernames = memberships_params[:usernames].split(';')
     dest_users = User.where(username: usernames)
+
+    search_initial_values = dest_users.map do |user|
+      {
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        images: user.image
+      }
+    end
 
     if dest_users.empty?
       errors << t('views.memberships.new.empty_dest_message')
@@ -27,8 +36,17 @@ class MembershipsController < ApplicationController
           rights: memberships_params[:rights]
         )
       end
-      memberships.each do |membership|
-        membership.save
+      memberships_in_errors = []
+      ActiveRecord::Base.transaction do
+        memberships.each do |membership|
+          if !membership.save
+            memberships_in_errors << User.find(membership.user_id).username
+          end
+        end
+        raise ActiveRecord::Rollback unless memberships_in_errors.empty?
+      end
+      if !memberships_in_errors.empty?
+        errors << "Impossible to create share for : #{memberships_in_errors.join(', ')}"
       end
     end
 
@@ -45,7 +63,7 @@ class MembershipsController < ApplicationController
             html: render_to_string(
               partial: 'new',
               formats: :html,
-              locals: { errors: errors }),
+              locals: { search_initial_values: search_initial_values, errors: errors }),
             status: 422,
           }
         }

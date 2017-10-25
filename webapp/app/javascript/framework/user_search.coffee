@@ -2,7 +2,7 @@ $ = require('jquery');
 
 class UserSearchInput
   constructor: ->
-    $('body').on 'modal:load', (event) =>
+    $('body').on 'modal:update', (event) =>
       @setup() if $("#modal_container .js-user-search").length == 1
 
   setup: ->
@@ -15,7 +15,8 @@ class UserSearchInput
       placeholder: $('#input-user-search').data('placeholder')
       dropdownParent: 'body'
       hideSelected: true
-      options: []
+      options: $('#input-user-search').data('initial-values')
+      items: $('#input-user-search').data('initial-values').map((value) -> value.username)
       create: false
       render: {
         option: (item, escape) ->

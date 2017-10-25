@@ -195,4 +195,21 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_text?('Agent terminator shared with : confirmed, show_on_agent_weather.')
   end
 
+
+  test 'Share agent with multiple users at the same time with one error' do
+    go_to_agents_index
+
+    first('.dropdown__trigger > button').click
+    click_link 'Share'
+    within(".modal") do
+      click_link 'Invite collaborators'
+      assert page.has_content?('Share with')
+      page.execute_script "document.getElementById('input-user-search').value = 'confirmed;show_on_agent_weather'"
+      click_button 'Invite'
+      assert page.has_text?('confirmed@viky.ai')
+      assert page.has_text?('show_on_agent_weather@viky.ai')
+    end
+    assert page.has_text?('Impossible to create share for : show_on_agent_weather')
+  end
+
 end
