@@ -65,6 +65,13 @@ PUBLIC(size_t) OgHeapAddCells(og_heap ctrl_heap, int nb_cells)
 {
   size_t cell_start, cell_index;
 
+  if (ctrl_heap->freezed)
+  {
+    OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog, "OgHeapAddCells on '%s': is freezed you cannot add cells",
+        ctrl_heap->name);
+    DPcErr;
+  }
+
   if (nb_cells < 1)
   {
     OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog,

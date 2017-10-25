@@ -10,12 +10,11 @@
 static og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int input_length,
-    unsigned char *input, int Iinterpret_package, package_t package);
+    unsigned char *input, struct interpret_package *interpret_package);
 static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level);
 static int NlpRequestInputPartCmp(const void *void_request_input_part1, const void *void_request_input_part2);
-static og_status NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation);
-static og_status NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation,
-    og_string interpretation_id, int Iinterpret_package, package_t package);
+static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation);
+static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package, struct interpretation *interpretation);
 
 /**
  * Parse the request and then working on all words of the sentence
@@ -42,7 +41,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   int at_least_one_input_part_added = 0;
   do
   {
-    IFE(at_least_one_input_part_added = NlpMatchExpressions(ctrl_nlp_th,level));
+    IFE(at_least_one_input_part_added = NlpMatchExpressions(ctrl_nlp_th, level));
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       IFE(NlpRequestInputPartsLog(ctrl_nlp_th));
@@ -90,27 +89,25 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   {
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
-    IFE(NlpMatchWordInPackage(ctrl_nlp_th, request_word, input_length, input, i, interpret_package->package));
+    IFE(NlpMatchWordInPackage(ctrl_nlp_th, request_word, input_length, input, interpret_package));
   }
 
   DONE;
 }
 
 static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int input_length,
-    unsigned char *input, int Iinterpret_package, package_t package)
+    unsigned char *input, struct interpret_package *interpret_package)
 {
+  package_t package = interpret_package->package;
+
   unsigned char out[DPcAutMaxBufferSize + 9];
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-    IFN(package_id) DPcErr;
-    og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
-    IFN(package_slug) DPcErr;
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Looking for input parts in package '%s' '%s':", package_slug,
-        package_id);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Looking for input parts in package '%s' '%s':", package->slug,
+        package->id);
   }
 
   if ((retour = OgAutScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
@@ -125,7 +122,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       {
         OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    found input part %d", Iinput_part);
       }
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, Iinterpret_package, package, Iinput_part));
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part));
     }
     while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
@@ -135,8 +132,9 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
 static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
 {
-  int at_least_one_input_part_added = 0;
-  size_t request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
+  og_bool at_least_one_input_part_added = 0;
+
+  int request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
   struct request_input_part *all_request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
   IFN(all_request_input_part) DPcErr;
 
@@ -148,36 +146,43 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
   }
 
   // scan all request input parts
-  for (size_t i = 0; i < request_input_part_used; i++)
+  for (int i = 0; i < request_input_part_used; i++)
   {
-    struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, i);
-    IFN(request_input_part) DPcErr;
+    struct request_input_part *request_input_part = all_request_input_part + i;
     if (request_input_part->consumed) continue;
+
     struct expression *expression = request_input_part->input_part->expression;
-    if (expression->input_part_start != request_input_part->Iinput_part) continue;
-    if (i + expression->input_parts_nb > request_input_part_used) continue;
-    int found_expression = 1;
+
+    if (expression->input_parts != request_input_part->input_part) continue;
+
+    // matched expression is shorter than request
+    if (expression->input_parts_nb > (request_input_part_used - i)) continue;
+
+    // check next request words in expression
+    og_bool found_expression = TRUE;
     for (int j = 1; j < expression->input_parts_nb; j++)
     {
-      if (expression->input_part_start + j != request_input_part[j].Iinput_part)
+      struct request_input_part *next_request_input_part = request_input_part + j;
+      if ((expression->input_parts + j) != next_request_input_part->input_part)
       {
-        found_expression = 0;
+        found_expression = FALSE;
         break;
       }
     }
     if (!found_expression) continue;
+
     // here we have found an expression, thus an interpretation
-    og_string text = OgHeapGetCell(expression->interpretation->package->hba, expression->text_start);
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "found expression '%.*s' with input_parts %d:%d at level %d", DPcPathSize, text,
-          expression->input_part_start, expression->input_parts_nb, level);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "found expression '%.*s' with input_parts %d:%d at level %d",
+          DPcPathSize, expression->text, i, expression->input_parts_nb, level);
     }
     IFE(NlpRequestInterpretationAdd(ctrl_nlp_th, expression, level));
-    i += expression->input_parts_nb - 1;
+
     int at_least_one_input_part_added_here = 0;
     IFE(at_least_one_input_part_added_here = NlpMatchInterpretation(ctrl_nlp_th, expression->interpretation));
     if (at_least_one_input_part_added_here) at_least_one_input_part_added = 1;
+
     // Can be reallocated by NlpMatchInterpretation
     request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, i);
     IFN(request_input_part) DPcErr;
@@ -185,6 +190,8 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     {
       request_input_part[j].consumed = 1;
     }
+
+    i += expression->input_parts_nb - 1;
   }
   return (at_least_one_input_part_added);
 }
@@ -194,63 +201,55 @@ static int NlpRequestInputPartCmp(const void *void_request_input_part1, const vo
   struct request_input_part *request_input_part1 = (struct request_input_part *) void_request_input_part1;
   struct request_input_part *request_input_part2 = (struct request_input_part *) void_request_input_part2;
 
-  if (request_input_part1->Iinterpret_package != request_input_part2->Iinterpret_package)
+  if (request_input_part1->interpret_package != request_input_part2->interpret_package)
   {
-    return (request_input_part1->Iinterpret_package - request_input_part2->Iinterpret_package);
+    return (request_input_part1->interpret_package - request_input_part2->interpret_package);
   }
   return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
 }
 
-static og_status NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation)
+static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation)
 {
-  package_t package = interpretation->package;
-  og_string interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
-  IFN(interpretation_id) DPcErr;
-
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    og_string interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
-    IFN(interpretation_slug) DPcErr;
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Looking for input parts for interpretation '%s' '%s':",
-        interpretation_slug, interpretation_id);
+        interpretation->slug, interpretation->id);
   }
 
-  int at_least_one_input_part_added = 0;
+  og_bool at_least_one_input_part_added = FALSE;
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
   {
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
-    int input_part_added;
-    IFE(
-        input_part_added = NlpMatchInterpretationInPackage(ctrl_nlp_th, interpretation, interpretation_id, i,
-            interpret_package->package));
-    if (input_part_added) at_least_one_input_part_added = 1;
+
+    og_bool input_part_added = NlpMatchInterpretationInPackage(ctrl_nlp_th, interpret_package, interpretation);
+    IFE(input_part_added);
+    if (input_part_added) at_least_one_input_part_added = TRUE;
   }
 
   return at_least_one_input_part_added;
 }
 
-static og_status NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation,
-    og_string interpretation_id, int Iinterpret_package, package_t package)
+static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package, struct interpretation *interpretation)
 {
-  int Iinput_part;
-  int found = g_hash_table_lookup_extended(package->interpretation_id_hash, interpretation_id, NULL,
-      (void **) (&Iinput_part));
-  if (!found) return (0);
+  package_t package = interpret_package->package;
+
+  gpointer Iinput_part_void = NULL;
+
+  int found = g_hash_table_lookup_extended(package->interpretation_id_hash, interpretation->id, NULL, &Iinput_part_void);
+  if (!found) return FALSE;
+
+  int Iinput_part = GPOINTER_TO_INT(Iinput_part_void);
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-    IFN(package_id) DPcErr;
-    og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
-    IFN(package_slug) DPcErr;
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Found input part %d in package '%s' '%s':", Iinput_part,
-        package_slug, package_id);
+        package->slug, package->id);
   }
 
-  IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, interpretation, Iinterpret_package, package, Iinput_part));
+  IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, interpretation, interpret_package, Iinput_part));
 
-  return (1);
+  return TRUE;
 }
 

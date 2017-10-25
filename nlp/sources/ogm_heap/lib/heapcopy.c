@@ -19,6 +19,13 @@ PUBLIC(size_t) OgHeapCopy(og_heap heap_from, og_heap heap_to)
   struct og_ctrl_heap *ctrl_heap_from = heap_from;
   struct og_ctrl_heap *ctrl_heap_to = heap_to;
 
+  if (heap_to->freezed)
+  {
+    OgMsg(heap_to->hmsg, "", DOgMsgDestInLog, "OgHeapCopy on '%s': is freezed you copy cells to",
+        heap_to->name);
+    DPcErr;
+  }
+
   if (ctrl_heap_to->type != DOgHeapTypeNormal)
   {
     og_char_buffer erreur[DOgErrorSize];

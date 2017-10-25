@@ -48,7 +48,7 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 
   ctrl_nlp->rw_lock_packages_hash = OgSysiInit(sysi_param);
 
-  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NlpPackageDestroyIfNotUsed);
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, NULL, NlpPackageDestroyIfNotUsed);
 
   return ctrl_nlp;
 }

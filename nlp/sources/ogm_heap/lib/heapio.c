@@ -137,6 +137,12 @@ PUBLIC(og_status) OgHeapFileWrite(og_heap ctrl_heap, FILE *fd, size_t *p_nb_writ
  */
 PUBLIC(og_status) OgHeapFileRead(og_heap ctrl_heap, FILE *fd, size_t nb_bytes_to_read)
 {
+  if (ctrl_heap->freezed)
+  {
+    OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog, "OgHeapFileRead on '%s': is freezed you cannot load it from a file",
+        ctrl_heap->name);
+    DPcErr;
+  }
 
   // add enough cells to ensure read data can be written
   size_t nb_cell_to_read = nb_bytes_to_read / ctrl_heap->cell_size;

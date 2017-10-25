@@ -98,6 +98,30 @@ struct og_ctrl_heap *HeapInit(void *hmsg, unsigned char *name, size_t cell_size)
 }
 
 /**
+ * Reduce heap size to current heap used and mark it has readonly to avoid append
+ */
+PUBLIC(og_status) OgHeapFreeze(og_heap ctrl_heap)
+{
+  if (ctrl_heap->freezed)
+  {
+    CONT;
+  }
+
+  size_t cells_number_min = ctrl_heap->cells_used;
+  if (cells_number_min <= 0)
+  {
+    cells_number_min = 1;
+  }
+
+  // reduce cells number to cells used
+  IFE(OgHeapReallocInternal(ctrl_heap, cells_number_min));
+
+  ctrl_heap->freezed = TRUE;
+
+  DONE;
+}
+
+/**
  * Check is the heap can be sliced or not
  * \param handle handle to a memory heap API
  * \return 0 if ok or -1 on error

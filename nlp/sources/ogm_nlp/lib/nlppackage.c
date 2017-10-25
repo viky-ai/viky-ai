@@ -8,7 +8,7 @@
 
 static og_status NlpPackageFlush(package_t package);
 
-package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug)
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string string_slug)
 {
   package_t package = (package_t) malloc(sizeof(struct package));
   IFn(package)
@@ -19,21 +19,41 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const c
   memset(package, 0, sizeof(struct package));
   package->ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
   package->ref_counter = 0;
+  package->id = strdup(string_id);
+  package->slug = strdup(string_slug);
 
   void *hmsg = ctrl_nlp_th->ctrl_nlp->hmsg;
-  IFn(package->hba=OgHeapInit(hmsg, "package_ba", sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
-  package->id_start = OgHeapGetCellsUsed(package->hba);
-  package->id_length = strlen(string_id);
-  IF(OgHeapAppend(package->hba,package->id_length+1, string_id)) return NULL;
+  og_char_buffer heap_name[DPcPathSize];
 
-  package->slug_start = OgHeapGetCellsUsed(package->hba);
-  package->slug_length = strlen(string_slug);
-  IF(OgHeapAppend(package->hba,package->slug_length+1, string_slug)) return NULL;
+  // interpretation
+  snprintf(heap_name, DPcPathSize, "package_interpretation_ba_%s", package->id);
+  IFn(package->hinterpretation_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_interpretation_compile_%s", package->id);
+  IFn(package->hinterpretation_compile = OgHeapInit(hmsg, heap_name, sizeof(struct interpretation_compile), DOgNlpPackageInterpretationNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_interpretation_%s", package->id);
+  IFn(package->hinterpretation = OgHeapInit(hmsg, heap_name, sizeof(struct interpretation), 1)) return NULL;
 
-  IFn(package->hinterpretation = OgHeapInit(hmsg, "package_interpretation", sizeof(struct interpretation), DOgNlpPackageInterpretationNumber)) return NULL;
-  IFn(package->hexpression = OgHeapInit(hmsg, "package_expression", sizeof(struct expression), DOgNlpPackageExpressionNumber)) return NULL;
-  IFn(package->halias = OgHeapInit(hmsg, "package_alias", sizeof(struct alias), DOgNlpPackageAliasNumber)) return NULL;
-  IFn(package->hinput_part = OgHeapInit(hmsg, "package_input_part", sizeof(struct alias), DOgNlpPackageInputPartNumber)) return NULL;
+  // expression
+  snprintf(heap_name, DPcPathSize, "package_expression_ba_%s", package->id);
+  IFn(package->hexpression_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_expression_compile_%s", package->id);
+  IFn(package->hexpression_compile = OgHeapInit(hmsg, heap_name, sizeof(struct expression_compile), DOgNlpPackageExpressionNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_expression_%s", package->id);
+  IFn(package->hexpression = OgHeapInit(hmsg, heap_name, sizeof(struct expression), 1)) return NULL;
+
+  // alias
+  snprintf(heap_name, DPcPathSize, "package_alias_ba_%s", package->id);
+  IFn(package->halias_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_alias_compile_%s", package->id);
+  IFn(package->halias_compile = OgHeapInit(hmsg, heap_name, sizeof(struct alias_compile), DOgNlpPackageAliasNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_alias_%s", package->id);
+  IFn(package->halias = OgHeapInit(hmsg, heap_name, sizeof(struct alias), 1)) return NULL;
+
+  // input_part
+  snprintf(heap_name, DPcPathSize, "package_input_part_ba_%s", package->id);
+  IFn(package->hinput_part_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_input_part_%s", package->id);
+  IFn(package->hinput_part = OgHeapInit(hmsg, heap_name, sizeof(struct input_part), 1)) return NULL;
 
   IF(NlpInputPartWordInit(ctrl_nlp_th, package)) return NULL;
   IF(NlpInputPartAliasInit(ctrl_nlp_th, package)) return NULL;
@@ -46,13 +66,11 @@ static og_status NlpPackageAddOrReplaceNosync(og_nlp_th ctrl_nlp_th, package_t p
   // Timeout trigger for synchro test
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpPackageAddOrReplace));
 
-  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-  char *allocated_package_id = strdup(package_id);
-
   og_nlp ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
 
   // update package and remove preview package : see NlpPackageDestroyIfNotUsed
-  g_hash_table_replace(ctrl_nlp->packages_hash, allocated_package_id, package);
+  gpointer key = (unsigned char *) package->id;
+  g_hash_table_replace(ctrl_nlp->packages_hash, key, package);
 
   DONE;
 }
@@ -253,11 +271,30 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
-  OgHeapFlush(package->hexpression);
+
+  OgHeapFlush(package->hinterpretation_ba);
+  OgHeapFlush(package->hinterpretation_compile);
   OgHeapFlush(package->hinterpretation);
+
+  OgHeapFlush(package->hexpression_ba);
+  OgHeapFlush(package->hexpression_compile);
+  OgHeapFlush(package->hexpression);
+
+  OgHeapFlush(package->halias_ba);
+  OgHeapFlush(package->halias_compile);
   OgHeapFlush(package->halias);
-  OgHeapFlush(package->hba);
+
+  OgHeapFlush(package->hinput_part_ba);
   OgHeapFlush(package->hinput_part);
+
+  unsigned char * slug = (unsigned char * ) package->slug;
+  DPcFree(slug);
+  package->slug = NULL;
+
+  unsigned char * id = (unsigned char * ) package->id;
+  DPcFree(id);
+  package->id = NULL;
+
   DPcFree(package);
 
   DONE;

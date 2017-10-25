@@ -170,8 +170,6 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
-  IFE(OgNlpConsolidate(info->hnlpi));
-
   if (info->dump == TRUE)
   {
     if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");

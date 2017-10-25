@@ -35,6 +35,9 @@ struct og_ctrl_heap
   /** Type of the heap */
   og_heap_type type;
 
+  /** Read only heap */
+  og_bool freezed;
+
   /** Default value in use in memset */
   int default_mem_set_value;
 

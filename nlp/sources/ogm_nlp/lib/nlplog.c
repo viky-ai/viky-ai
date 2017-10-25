@@ -114,88 +114,160 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
   DONE;
 }
 
-og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpPackageCompileLog(og_nlp_th ctrl_nlp_th, package_t package)
 {
-  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-  IFN(package_id) DPcErr;
-  og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
-  IFN(package_slug) DPcErr;
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package compile '%s' '%s':", package->slug, package->id);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package '%s' '%s' ref_counter=%d is_removed=%d:", package_slug, package_id, package->ref_counter, package->is_removed);
-
-  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
+  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation_compile);
   for (int i = 0; i < interpretation_used; i++)
   {
-    IFE(NlpPackageInterpretationLog(ctrl_nlp_th, package, i));
+    struct interpretation_compile *interpretation = OgHeapGetCell(package->hinterpretation_compile, i);
+    IFN(interpretation) DPcErr;
+
+    IFE(NlpPackageCompileInterpretationLog(ctrl_nlp_th, package, interpretation));
   }
   DONE;
 }
 
-og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation)
+og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation)
 {
-  struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, Iinterpretation);
   IFN(interpretation) DPcErr;
 
-  og_string interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
+  og_string interpretation_id = OgHeapGetCell(package->hinterpretation_ba, interpretation->id_start);
   IFN(interpretation_id) DPcErr;
 
-  og_string interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
+  og_string interpretation_slug = OgHeapGetCell(package->hinterpretation_ba, interpretation->slug_start);
   IFN(interpretation_slug) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s':", interpretation_slug, interpretation_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation compile '%s' '%s':", interpretation_slug, interpretation_id);
 
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
-    IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, interpretation->expression_start + i));
+    struct expression_compile *expression = OgHeapGetCell(package->hexpression_compile,
+        interpretation->expression_start + i);
+    IFN(expression) DPcErr;
+
+    IFE(NlpPackageCompileExpressionLog(ctrl_nlp_th, package, expression));
   }
   DONE;
 }
 
-og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression)
-
+og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression)
 {
-  struct expression *expression = OgHeapGetCell(package->hexpression, Iexpression);
   IFN(expression) DPcErr;
 
-  og_string text = OgHeapGetCell(package->hba, expression->text_start);
+  og_string text = OgHeapGetCell(package->hexpression_ba, expression->text_start);
 
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Phrase '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s", text, string_locale);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
-    IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->alias_start + i));
-  }
+    struct alias_compile *alias = OgHeapGetCell(package->halias_compile, expression->alias_start + i);
+    IFN(alias) DPcErr;
 
-  for (int i = 0; i < expression->input_parts_nb; i++)
-  {
-    IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, expression->input_part_start + i));
+    IFE(NlpPackageCompileAliasLog(ctrl_nlp_th, package, alias));
   }
 
   DONE;
 }
 
-og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias)
-
+og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias_compile *alias)
 {
-  struct alias *alias = OgHeapGetCell(package->halias, Ialias);
+
   IFN(alias) DPcErr;
 
-  og_string string_alias = OgHeapGetCell(package->hba, alias->alias_start);
-  og_string string_slug = OgHeapGetCell(package->hba, alias->slug_start);
-  og_string string_id = OgHeapGetCell(package->hba, alias->id_start);
-  og_string string_package = OgHeapGetCell(package->hba, alias->package_start);
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", string_alias, string_slug, string_id,
+  og_string string_alias = OgHeapGetCell(package->halias_ba, alias->alias_start);
+  og_string string_slug = OgHeapGetCell(package->halias_ba, alias->slug_start);
+  og_string string_id = OgHeapGetCell(package->halias_ba, alias->id_start);
+  og_string string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug, string_id,
       string_package);
 
   DONE;
 }
 
-og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part)
+og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, og_string label, package_t package)
+{
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package %s '%s' '%s' :", label, package->slug, package->id);
+
+  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
+  for (int i = 0; i < interpretation_used; i++)
+  {
+    struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, i);
+    IFN(interpretation) DPcErr;
+
+    IFE(NlpPackageInterpretationLog(ctrl_nlp_th, package, interpretation));
+  }
+  DONE;
+}
+
+og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation)
+{
+  IFN(interpretation) DPcErr;
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s':", interpretation->slug,
+      interpretation->id);
+
+  for (int i = 0; i < interpretation->expressions_nb; i++)
+  {
+    IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, interpretation->expressions + i));
+  }
+  DONE;
+}
+
+og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
 
 {
-  struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
+  IFN(expression) DPcErr;
+
+  og_string text = expression->text;
+
+  unsigned char string_locale[DPcPathSize];
+  OgIso639_3166ToCode(expression->locale, string_locale);
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s", text, string_locale);
+  for (int i = 0; i < expression->aliases_nb; i++)
+  {
+    IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));
+  }
+
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    if(package->consolidate_done)
+    {
+
+      IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, expression->input_parts + i));
+    }
+    else
+    {
+      struct input_part *input_parts = OgHeapGetCell(package->hinput_part, expression->input_part_start);
+      IFN(input_parts) DPcErr;
+
+      IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, input_parts + i));
+    }
+  }
+
+  DONE;
+}
+
+og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias)
+
+{
+  IFN(alias) DPcErr;
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", alias->alias, alias->slug, alias->id,
+      alias->package_id);
+
+  DONE;
+}
+
+og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part)
+
+{
   IFN(input_part) DPcErr;
 
   switch (input_part->type)
@@ -206,7 +278,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int I
     }
     case nlp_input_part_type_Word:
     {
-      og_string string_word = OgHeapGetCell(package->hba, input_part->word_start);
+      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word_start);
       IFN(string_word) DPcErr;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part word '%s'", string_word);
       break;
@@ -214,16 +286,8 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int I
     case nlp_input_part_type_Interpretation:
     {
       struct alias *alias = input_part->alias;
-
-      og_string package_id = OgHeapGetCell(package->hba, alias->package_start);
-      IFN(package_id) DPcErr;
-
-      og_string interpretation_id = OgHeapGetCell(package->hba, alias->id_start);
-      IFN(interpretation_id) DPcErr;
-      og_string interpretation_slug = OgHeapGetCell(package->hba, alias->slug_start);
-      IFN(interpretation_slug) DPcErr;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part interpretation '%s' '%s' in package '%s'",
-          interpretation_slug, interpretation_id, package_id);
+          alias->slug, alias->id, alias->package_id);
       break;
     }
   }

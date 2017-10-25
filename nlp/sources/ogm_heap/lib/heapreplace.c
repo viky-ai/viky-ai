@@ -26,6 +26,13 @@ PUBLIC(og_status) OgHeapReplace(og_heap ctrl_heap, size_t position, size_t nb_ce
   size_t shift, start, length;
   unsigned char *dest, *src;
 
+  if (ctrl_heap->freezed)
+  {
+    OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog, "OgHeapReplace on '%s': is freezed you cannot repalce content",
+        ctrl_heap->name);
+    DPcErr;
+  }
+
   if (nb_cells_to_add == 0 && nb_cells_to_delete == 0) DONE;
 
   if (ctrl_heap->type != DOgHeapTypeNormal)

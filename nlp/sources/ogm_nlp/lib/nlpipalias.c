@@ -31,7 +31,8 @@ static gboolean package_key_equal_func(gconstpointer key_a, gconstpointer key_b)
 og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id,
     size_t Iinput_part)
 {
-  g_hash_table_replace(package->interpretation_id_hash, (gpointer) interpretation_id, (gpointer) Iinput_part);
+  gpointer key = (unsigned char *) interpretation_id;
+  g_hash_table_insert(package->interpretation_id_hash, key, GINT_TO_POINTER(Iinput_part));
   DONE;
 }
 
@@ -42,11 +43,7 @@ static gint str_compar(gconstpointer a, gconstpointer b)
 
 og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package)
 {
-  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-  IFN(package_id) DPcErr;
-  og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
-  IFN(package_slug) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Interpretation ids for package '%s' '%s':", package_slug, package_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Interpretation ids for package '%s' '%s':", package->id, package->slug);
 
   GList *key_list = g_hash_table_get_keys(package->interpretation_id_hash);
   GList *sorted_key_list = g_list_sort(key_list, str_compar);
@@ -57,6 +54,7 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package)
     size_t Iinput_part = (size_t) g_hash_table_lookup(package->interpretation_id_hash, interpretation_id);
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s : %d", interpretation_id, Iinput_part);
   }
+
   g_list_free(sorted_key_list);
 
   DONE;

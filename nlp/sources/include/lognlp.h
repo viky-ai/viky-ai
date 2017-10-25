@@ -102,7 +102,6 @@ DEFPUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_s
 
 DEFPUBLIC(og_status) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input,
     struct og_nlp_compile_output *output);
-DEFPUBLIC(int) OgNlpConsolidate(og_nlp_th ctrl_nlp_th);
 
 DEFPUBLIC(og_status) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
     struct og_nlp_dump_output *output);

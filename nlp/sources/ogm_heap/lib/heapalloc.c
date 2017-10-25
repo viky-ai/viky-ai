@@ -207,6 +207,11 @@ og_status OgHeapTestReallocInternal(og_heap ctrl_heap, size_t nb_added_cells)
     incrFactor = DOgHeapIncreaseFactorMin;
   }
 
+  // To facilitate debugging with asan, set incrFactor to 1.
+#ifdef DOG_HEAP_FORCE_RESET
+  incrFactor = 1.0;
+#endif
+
   size_t old_cells_number = ctrl_heap->normal_cells_number;
   size_t needed_cells_number = old_cells_number + nb_added_cells;
   size_t new_cells_number = incrFactor * needed_cells_number + 1;

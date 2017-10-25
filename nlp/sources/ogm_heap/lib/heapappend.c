@@ -21,6 +21,13 @@ static int HeapAppendSlice(struct og_ctrl_heap *ctrl_heap, size_t nb_cells, char
 PUBLIC(og_status) OgHeapAppend(og_heap ctrl_heap, size_t nb_added_cells, void const *cells)
 {
 
+  if (ctrl_heap->freezed)
+  {
+    OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog, "OgHeapAppend on '%s': is freezed you cannot add cells",
+        ctrl_heap->name);
+    DPcErr;
+  }
+
   if (nb_added_cells <= 0) DONE;
 
   if (ctrl_heap->type == DOgHeapTypeSliced)

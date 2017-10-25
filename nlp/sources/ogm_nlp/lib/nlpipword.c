@@ -32,11 +32,14 @@ og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_strin
     int Iinput_part)
 {
   unsigned char buffer[DPcAutMaxBufferSize];
+  int ibuffer = 0;
   memcpy(buffer, string_word, length_string_word);
-  buffer[length_string_word] = 1;
+  ibuffer = length_string_word;
+  buffer[ibuffer++] = '\1';
 
-  unsigned char *p = buffer + length_string_word + 1;
-  OggNout(Iinput_part,&p);
+  unsigned char *p = buffer + ibuffer;
+  OggNout(Iinput_part, &p);
+
   int length = p - buffer;
   IFE(OgAutAdd(package->ha_word, length, buffer));
 
@@ -49,11 +52,7 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-  IFN(package_id) DPcErr;
-  og_string package_slug = OgHeapGetCell(package->hba, package->slug_start);
-  IFN(package_slug) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Words for package '%s' '%s':", package_slug, package_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Words for package '%s' '%s':", package->slug, package->id);
 
   if ((retour = OgAutScanf(package->ha_word, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {

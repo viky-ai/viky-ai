@@ -187,12 +187,9 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
 
     package_t package = interpret_package->package;
 
-    og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-    IFN(package_id) DPcErr;
-
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
     {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s'", package_id);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpInterpretRequest: searching package '%s' '%s'", package->slug, package->id);
     }
 
     IFE(NlpInterpretRequestPackage(ctrl_nlp_th, package, json_interpretations));
@@ -243,54 +240,48 @@ static og_status NlpInterpretRequestInterpretation(og_nlp_th ctrl_nlp_th, packag
   struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, Iinterpretation);
   IFN(interpretation) DPcErr;
 
-  char *interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
-  IFN(interpretation_id) DPcErr;
-
-  char *interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
-  IFN(interpretation_slug) DPcErr;
-
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
-    struct expression *expression = OgHeapGetCell(package->hexpression, interpretation->expression_start + i);
+    struct expression *expression = interpretation->expressions + i;
     IFN(expression) DPcErr;
 
-    og_string string_expression = OgHeapGetCell(package->hba, expression->text_start);
+    og_string string_expression = expression->text;
     if (Ogstricmp(string_expression, ctrl_nlp_th->request_sentence) == 0)
     {
-      og_string package_id = OgHeapGetCell(package->hba, package->id_start);
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
       {
         OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-            "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s'", interpretation_slug,
-            interpretation_id, package_id);
+            "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s' '%s'", interpretation->slug,
+            interpretation->id, package->slug, package->id);
       }
       json_t *json_interpretation = json_object();
 
-      json_t *json_package_id = json_string(package_id);
+      json_t *json_package_id = json_string(package->id);
       IF(json_object_set_new(json_interpretation, "package", json_package_id))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_package_id");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_package_id '%s'");
         DPcErr;
       }
 
-      json_t *json_interpretation_id = json_string(interpretation_id);
+      json_t *json_interpretation_id = json_string(interpretation->id);
       IF(json_object_set_new(json_interpretation, "id", json_interpretation_id))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_id");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_id '%s'", interpretation->id);
         DPcErr;
       }
 
-      json_t *json_interpretation_slug = json_string(interpretation_slug);
+      json_t *json_interpretation_slug = json_string(interpretation->slug);
       IF(json_object_set_new(json_interpretation, "slug", json_interpretation_slug))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_slug");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_interpretation_slug '%s'", interpretation->slug);
         DPcErr;
       }
 
-      json_t *json_score = json_real(1.0);
+      double score = 1.0;
+      json_t *json_score = json_real(score);
       IF(json_object_set_new(json_interpretation, "score", json_score))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score '%d'", score);
         DPcErr;
       }
 
@@ -430,7 +421,7 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
 
-  NlpPackageLog(ctrl_nlp_th, package);
+  NlpPackageLog(ctrl_nlp_th, "interpret request", package);
 
 
   DONE;
