@@ -132,12 +132,16 @@
 <div class="card">
   <div class="card-content">
     <h2><%= t('views.profile.edit.destroy.title') %></h2>
-    <p><%= t('views.profile.edit.destroy.message') %></p>
-    <p>
-      <a href="<%= confirm_destroy_profile_path %>" class="btn btn--destructive" data-action="open-remote-modal">
-        <%= t('views.profile.edit.destroy.btn') %>
-      </a>
-    </p>
+    <% if current_user.can_be_destroyed? %>
+      <p><%= t('views.profile.edit.destroy.message') %></p>
+      <p>
+        <a href="<%= confirm_destroy_profile_path %>" class="btn btn--destructive" data-action="open-remote-modal">
+          <%= t('views.profile.edit.destroy.btn') %>
+        </a>
+      </p>
+    <% else %>
+      <p><%= t('views.profile.edit.destroy.not_possible_message') %></p>
+    <% end %>
   </div>
 </div>
 

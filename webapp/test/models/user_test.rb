@@ -199,4 +199,30 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
+  test "Can not destroy if user own agent" do
+    admin_user = users(:admin)
+
+    assert_equal 5, Membership.all.count
+    assert !admin_user.destroy
+
+    expected = ["You must delete all the agents you own"]
+    assert_equal expected, admin_user.errors.full_messages
+
+    assert !admin_user.can_be_destroyed?
+  end
+
+
+  test "Can destroy if user is only a collaborator" do
+    collaborator = users(:show_on_agent_weather)
+
+    assert_equal 3, Agent.all.count
+    assert_equal 5, Membership.all.count
+
+    assert collaborator.destroy
+
+    assert_equal 3, Agent.all.count
+    assert_equal 4, Membership.all.count
+  end
+
+
 end

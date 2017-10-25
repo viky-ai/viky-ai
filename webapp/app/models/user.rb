@@ -20,6 +20,7 @@ class User < ApplicationRecord
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
   before_validation :clean_username
+  before_destroy :check_agents_presence
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
@@ -77,6 +78,10 @@ class User < ApplicationRecord
     conditions
   end
 
+  def can_be_destroyed?
+    agents.includes(:memberships).where('memberships.rights' => 'all').count == 0
+  end
+
   # overload devise method to send async emails
   def send_devise_notification(notification, *args)
     devise_mailer.send(notification, self, *args).deliver_later
@@ -88,6 +93,13 @@ class User < ApplicationRecord
     def clean_username
       unless username.nil?
         self.username = username.parameterize(separator: '-')
+      end
+    end
+
+    def check_agents_presence
+      unless can_be_destroyed?
+        errors.add(:base, I18n.t('errors.user.delete.agents_presence'))
+        throw(:abort)
       end
     end
 

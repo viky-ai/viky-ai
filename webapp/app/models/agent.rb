@@ -57,7 +57,7 @@ class Agent < ApplicationRecord
 
     def check_collaborators_presence
       unless can_be_destroyed?
-        errors.add(:base, I18n.t('errors.agent.delete.colaborator_presence'))
+        errors.add(:base, I18n.t('errors.agent.delete.collaborators_presence'))
         throw(:abort)
       end
     end

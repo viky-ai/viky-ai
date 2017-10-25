@@ -19,9 +19,11 @@ en:
         destroy:
           title: Delete my account
           message: Deleting your account is final, you will not be able to go back.
+          not_possible_message: You must delete all agents you own in order to delete your account.
           btn: I want to delete my account
       confirm_destroy:
         title: Are you sure?
         message: Deleting your account is final, you will not be able to go back.
         btn: Delete my account
         success_message: Your account has been successfully deleted. Bye bye.
+        errors_message: "Deletion failed: %{errors}."

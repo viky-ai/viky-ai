@@ -143,7 +143,27 @@ class ProfileTest < ApplicationSystemTestCase
   end
 
 
+  test "Delete my account not available" do
+    go_to_profile
+    click_link "Edit your profile"
+    assert page.has_content?("You must delete all agents you own in order to delete your account.")
+  end
+
+
   test "Delete my account" do
+    # Make user deletable
+    agent = agents(:weather)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+    assert agent.destroy
+
+    agent = agents(:terminator)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+    assert agent.destroy
+
     go_to_profile
     click_link "Edit your profile"
 

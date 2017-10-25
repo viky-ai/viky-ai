@@ -8,10 +8,13 @@ en:
         agentname: ID
         color: Color
   errors:
+    user:
+      delete:
+        agents_presence: You must delete all the agents you own
     agent:
       owner_presence_in_users: list does not includes agent owner
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
         invalid_username: Please select a valid new owner
       delete:
-        colaborator_presence: You must remove all collaborators before delete an agent
+        collaborators_presence: You must remove all collaborators before delete an agent

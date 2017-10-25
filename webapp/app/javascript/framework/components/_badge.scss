@@ -5,7 +5,7 @@
   padding: 1px .5em;
   border-radius: 3px;
   color: rgba(black, .75);
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
 
   &.badge--outline{
     background-color: transparent;
@@ -57,6 +57,26 @@
     }
   }
 
+  &.badge--grey{
+    background-color: #888;
+    color: #fff;
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px rgba(#888, .9);
+      color: #888;
+    }
+  }
+
+  &.badge--black{
+    background-color: #000;
+    color: #fff;
+    &.badge--outline{
+      background-color: transparent;
+      box-shadow: 0 0 0 1px rgba(#000, .9);
+      color: #000;
+    }
+  }
+
   &.badge--white{
     color: #fff;
     &.badge--outline{
@@ -82,7 +102,7 @@
     border-bottom-right-radius: 0;
   }
   .badge:last-child{
-    margin-left: -0.275em;
+    margin-left: -0.35em;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }

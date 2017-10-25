@@ -48,7 +48,8 @@ en:
           title: Are you sure?
           content_html: "You're about to delete user with the email: <strong>%{email}</strong>."
         destroy:
-          message: "User with the email: %{email} has successfully been deleted."
+          success_message: "User with the email: %{email} has successfully been deleted."
+          errors_message: "Deletion failed: %{errors}"
       breadcrumb:
         base: Backend
         user_management: User management

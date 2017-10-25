@@ -137,7 +137,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     click_link('Backend')
     assert page.has_content?("#{before_count} users")
 
-    all('a.btn--destructive')[3].click
+    all('a.btn--destructive')[2].click
     assert page.has_content?('Are you sure?')
     assert page.has_content?("You're about to delete user with the email: locked@viky.ai.")
     fill_in 'validation', with: 'DELETE'
