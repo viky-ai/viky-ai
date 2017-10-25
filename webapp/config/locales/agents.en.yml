@@ -29,7 +29,8 @@ en:
         note: The new owner will be notify by email.
         btn: Transfer ownership now
       destroy:
-        message: "Agent with the name: %{name} has successfully been deleted."
+        success_message: "Agent with the name: %{name} has successfully been deleted."
+        errors_message: "Deletion failed: %{errors}."
       form:
         background_label: Background
         background_color_chooser: Use a color gradient

@@ -67,13 +67,15 @@
                       <%= t('views.agents.index.share') %>
                     </a>
                   </li>
-                  <li>
-                    <a href="<%= confirm_destroy_user_agent_path(agent.owner, agent) %>"
-                       data-action="open-remote-modal">
-                      <span class="icon icon--x-small"><%= icon_delete %></span>
-                      <%= t('views.agents.index.delete') %>
-                    </a>
-                  </li>
+                  <% if agent.can_be_destroyed? %>
+                    <li class="separator">
+                      <a href="<%= confirm_destroy_user_agent_path(agent.owner, agent) %>"
+                         data-action="open-remote-modal" class="destructive">
+                        <span class="icon icon--x-small"><%= icon_delete %></span>
+                        <%= t('views.agents.index.delete') %>
+                      </a>
+                    </li>
+                  <% end %>
                 <% end %>
               </ul>
             </div>

@@ -246,7 +246,8 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     delete user_agent_url(users(:admin), agents(:weather))
     assert_redirected_to agents_url
-    assert_equal "Agent with the name: My awesome weather bot has successfully been deleted.", flash[:notice]
+    expected = "Deletion failed: You must remove all collaborators before delete an agent."
+    assert_equal expected, flash[:alert]
   end
 
   test "Destroy access: User has no relation to agent" do

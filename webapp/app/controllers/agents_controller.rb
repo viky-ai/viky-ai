@@ -67,8 +67,14 @@ class AgentsController < ApplicationController
   end
 
   def destroy
-    @agent.destroy
-    redirect_to agents_path, notice: t('views.agents.destroy.message', name: @agent.name)
+    if @agent.destroy
+      redirect_to agents_path, notice: t('views.agents.destroy.success_message', name: @agent.name)
+    else
+      redirect_to agents_path, alert: t(
+        'views.agents.destroy.errors_message',
+        errors: @agent.errors.full_messages.join(', ')
+      )
+    end
   end
 
   def confirm_transfer_ownership

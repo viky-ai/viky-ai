@@ -27,7 +27,19 @@ class AgentsTest < ApplicationSystemTestCase
   #
   # Delete
   #
-  test 'Button to delete agent is present' do
+  test 'Button to delete agent is not present' do
+    go_to_agents_index
+    first('.dropdown__trigger > button').click
+    assert !page.has_link?("Delete")
+  end
+
+  test 'Button to delete agent is (not) present' do
+    # Make agent deletable
+    agent = agents(:weather)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+
     go_to_agents_index
     first('.dropdown__trigger > button').click
     assert page.has_link?("Delete")
@@ -35,6 +47,12 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Delete with confirmation' do
+    # Make agent deletable
+    agent = agents(:weather)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+
     before_count = Agent.count
     go_to_agents_index
 

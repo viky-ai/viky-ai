@@ -47,6 +47,12 @@
         }
         &.destructive{
           color: darken($destructive_color, 10%);
+          .icon svg{
+            fill: $destructive_color;
+          }
+        }
+        .icon{
+          margin-right: .25em;
         }
       }
     }

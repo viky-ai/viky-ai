@@ -15,6 +15,7 @@ class Agent < ApplicationRecord
 
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
+  before_destroy :check_collaborators_presence
 
   def self.search(q = {})
     conditions = where("1 = 1")
@@ -48,12 +49,22 @@ class Agent < ApplicationRecord
     users.includes(:memberships).where.not('memberships.rights' => 'all')
   end
 
+  def can_be_destroyed?
+    collaborators.count == 0
+  end
 
   private
 
+    def check_collaborators_presence
+      unless can_be_destroyed?
+        errors.add(:base, I18n.t('errors.agent.delete.colaborator_presence'))
+        throw(:abort)
+      end
+    end
+
     def owner_presence_in_users
       unless memberships.select {|m| m.rights == 'all'}.size == 1
-        errors.add(:users, "list does not includes agent owner")
+        errors.add(:users, I18n.t('errors.agent.owner_presence_in_users'))
       end
     end
 
