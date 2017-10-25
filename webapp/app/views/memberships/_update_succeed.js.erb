@@ -1,1 +1,9 @@
-App.Message.notice("<%= @message %>");
+<%
+  message = t(
+    "views.memberships.update_succeed.#{@membership.rights}",
+    user: @membership.user.name_or_username,
+    agent: @membership.agent.name
+  )
+%>
+App.Message.notice("<%= escape_javascript(message) %>");
+$("#membership-<%= @membership.id %>").html("<%= escape_javascript(@html) %>");

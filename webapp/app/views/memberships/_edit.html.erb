@@ -1,17 +1,28 @@
+<%
+  user = membership.user
+  agent = membership.agent
+%>
+
 <div class="user">
   <div class="user__avatar">
-    <img src="<%= collaborator.image_url(:square) %>" />
+    <img src="<%= user.image_url(:square) %>" />
   </div>
   <div class="user__info">
-    <%= collaborator.name_or_username %>
+    <%= user.name_or_username %>
     <span class="badge">
-      <%= t('views.agents.show.collaborator') %>
+      <%= t('views.agents.show.collaborator') %> /
+      <% if user.can? :edit, agent %>
+        <%= t('views.agents.show.edit') %>
+      <% else %>
+        <%= t('views.agents.show.show') %>
+      <% end %>
     </span><br />
-    <small><%= collaborator.email %></small>
+    <small><%= user.email %></small>
   </div>
 </div>
 
-<%= form_with model: [owner, agent, membership], id: "membership-form-#{collaborator.username}" do |f| %>
+<%= form_with model: [agent.owner, agent, membership],
+      id: "membership-form-#{membership.user.username}" do |f| %>
 
   <%= f.hidden_field :user_id %>
   <%= f.hidden_field :rights %>
@@ -19,7 +30,7 @@
     <div class="dropdown__trigger">
       <button class="btn">
         <span class="btn__label">
-          <% if collaborator.can? :edit, agent %>
+          <% if user.can? :edit, agent %>
             <%= t('views.memberships.can_edit') %>
           <% else %>
             <%= t('views.memberships.can_show') %>
@@ -33,24 +44,24 @@
     <div class="dropdown__content dropdown__content--hidden">
       <ul>
         <li>
-          <a href="#" <% if !collaborator.can? :edit, agent %>class="current"<% end %>
+          <a href="#" <% if !user.can? :edit, agent %>class="current"<% end %>
              data-behavior="populate-input, replace-trigger-label, submit-form"
              data-replace-with="Can show"
              data-replace-selector=".btn__label"
              data-input-selector="input[name='membership[rights]']"
              data-input-value="show"
-             data-form-selector="<%= "#membership-form-#{collaborator.username}" %>">
+             data-form-selector="<%= "#membership-form-#{user.username}" %>">
             <%= t('views.memberships.can_show') %>
           </a>
         </li>
         <li>
-          <a href="#" <% if collaborator.can? :edit, agent %>class="current"<% end %>
+          <a href="#" <% if user.can? :edit, agent %>class="current"<% end %>
              data-behavior="populate-input, replace-trigger-label, submit-form"
              data-replace-with="Can edit"
              data-replace-selector=".btn__label"
              data-input-selector="input[name='membership[rights]']"
              data-input-value="edit"
-             data-form-selector="<%= "#membership-form-#{collaborator.username}" %>">
+             data-form-selector="<%= "#membership-form-#{user.username}" %>">
             <%= t('views.memberships.can_edit') %>
           </a>
         </li>

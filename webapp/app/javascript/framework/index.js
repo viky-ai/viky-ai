@@ -12,3 +12,6 @@ import './form_delete_validation'
 import './color_picker'
 window.App.Message = require('./message')
 import './user_search'
+
+// Expose jQuery
+window.$ = require('jquery');

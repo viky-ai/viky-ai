@@ -42,20 +42,15 @@ class MembershipsController < ApplicationController
   end
 
   def update
-    membership = Membership.find(params[:id])
+    @membership = Membership.find(params[:id])
     respond_to do |format|
-      if membership.update(membership_params)
+      if @membership.update(membership_params)
         format.js{
-          @message = t(
-            "views.memberships.update_succeed.#{membership.rights}",
-            user: membership.user.name_or_username,
-            agent: membership.agent.name
-          )
+          @html = render_to_string(partial: 'edit', formats: :html, locals: { membership: @membership })
           render partial: 'update_succeed'
         }
       else
         format.js{
-          @message = t("views.memberships.update_failed")
           render partial: 'update_failed'
         }
       end
