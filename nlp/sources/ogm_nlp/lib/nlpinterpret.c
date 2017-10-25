@@ -177,7 +177,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   }
 
   IFE(NlpMatch(ctrl_nlp_th));
-  //IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
+  IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
+  DONE;
 
   int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < package_used; i++)
@@ -420,10 +421,6 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
   interpret_package->package = package;
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
-
-  NlpPackageLog(ctrl_nlp_th, "interpret request", package);
-
-
   DONE;
 }
 

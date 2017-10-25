@@ -28,6 +28,17 @@
 
 #define DOgNlpMaximumOwnedLock      16
 
+#define Nlplog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
+  { \
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, nlpformat, __VA_ARGS__); \
+  } \
+
+
+
+
+
+
+
 struct package
 {
   struct og_ctrl_nlp *ctrl_nlp;

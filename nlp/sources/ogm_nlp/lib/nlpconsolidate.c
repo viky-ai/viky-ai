@@ -29,7 +29,7 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
 //  IFE(OgHeapFreeze(package->hexpression_compile));
 //  IFE(OgHeapFreeze(package->halias_compile));
 
-  // prealloc heap to avoid realloc
+// prealloc heap to avoid realloc
   int interpretation_compile_used = OgHeapGetCellsUsed(package->hinterpretation_compile);
   IFE(interpretation_compile_used);
   if (interpretation_compile_used > 0)
@@ -164,7 +164,10 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
 
   IFE(NlpConsolidatePrepare(ctrl_nlp_th, package));
 
-  IFE(NlpPackageLog(ctrl_nlp_th, "before consolidate", package));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
+  {
+    IFE(NlpPackageLog(ctrl_nlp_th, "before consolidate", package));
+  }
 
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
   for (int i = 0; i < interpretation_used; i++)
@@ -177,7 +180,6 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
   {
     IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
-
     IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
     IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
   }
@@ -214,7 +216,10 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   og_string s = expression->text;
   int is = strlen(s);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateExpression: parsing '%s'", s);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateExpression: parsing '%s'", s);
+  }
 
   for (int i = 0, state = 1, start = 0, end = 0; !end; i++)
   {

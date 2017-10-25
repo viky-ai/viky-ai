@@ -9,14 +9,14 @@
 static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_id,
     json_t *json_slug, json_t *json_interpretations);
 
-static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation_compile *interpretation,
-    json_t *json_expressions);
-static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation_compile *interpretation,
-    json_t *json_expression);
-static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package, struct expression_compile *expression,
-    json_t *json_aliases);
-static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression_compile *expression,
-    json_t *json_alias);
+static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expressions);
+static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expression);
+static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_aliases);
+static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_alias);
 
 PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input,
     struct og_nlp_compile_output *output)
@@ -81,6 +81,8 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackage: compiling package [\n%s]", json_package_string);
   }
+
+  //Nlplog(DOgNlpTraceCompile,"NlpCompilePackage: compiling package [\n%s]", json_package_string)
 
   json_t *json_id = NULL;
   json_t *json_slug = NULL;
@@ -200,7 +202,10 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
     }
   }
 
-  IFE(NlpPackageCompileLog(ctrl_nlp_th, package));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
+  {
+    IFE(NlpPackageCompileLog(ctrl_nlp_th, package));
+  }
 
   // freeze memory structure
   IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
@@ -318,8 +323,8 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   DONE;
 }
 
-static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation_compile *interpretation,
-    json_t *json_expressions)
+static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expressions)
 {
   interpretation->expression_start = OgHeapGetCellsUsed(package->hexpression_compile);
 
@@ -349,8 +354,8 @@ static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package
   DONE;
 }
 
-static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation_compile *interpretation,
-    json_t *json_expression)
+static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expression)
 {
   og_char_buffer json_expression_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL));
@@ -462,8 +467,8 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   DONE;
 }
 
-static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package, struct expression_compile *expression,
-    json_t *json_aliases)
+static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_aliases)
 {
 
   expression->alias_start = (-1);
@@ -488,8 +493,8 @@ static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t p
   DONE;
 }
 
-static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression_compile *expression,
-    json_t *json_alias)
+static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_alias)
 {
 
   og_char_buffer json_alias_string[DPcPathSize];
