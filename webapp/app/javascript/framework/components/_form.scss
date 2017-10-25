@@ -111,12 +111,13 @@
     cursor: pointer;
   }
 
+  .selectize-input,
   input[type='text'],
   input[type='email'],
   input[type='password'],
   textarea{
     width: 100%;
-    line-height: 1.5;
+    line-height: 1.0;
     font-weight: 300;
     vertical-align: top;
 
@@ -126,7 +127,7 @@
     border: 1px solid #ccc;
     border-top: 1px solid #bbb;
     box-shadow: 0 1px 0 rgba(black, .05) inset;
-    &:focus{
+    &:focus, &.focus{
       border-color: $focus_color;
       box-shadow: 0 0 0 2px rgba($focus_color, .25);
       outline:none;
