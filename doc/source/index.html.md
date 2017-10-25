@@ -14,27 +14,18 @@ search: true
 ---
 
 # Introduction
-
 Welcome to the Viky.ai API! You can use our API to access bot building and AI endpoints.
 We have language bindings in Shell and more to come in Ruby, Javascript and other languages!
-
-# Base URI
-
-The API is versioned and the current base endpoint is:
-
-`https://www.viky.ai/api/v1`
-
-This will be referred as `<API_BASE_URI>` all along the documentation.
 
 # Authentication
 
 ```shell
 # With shell, you can just pass the correct resource token header with each request
-curl "<API_BASE_URI>/superman/superbot/:action"
+curl "https://www.viky.ai/api/v1/superman/superbot/:action"
   -H "Agent-Token: the-superbot-api-token"
 
 # or pass the token as a parameter in the URL
-curl "<API_BASE_URI>/superman/superbot/:action?agent_token=the-superbot-api-token"
+curl "https://www.viky.ai/api/v1/superman/superbot/:action?agent_token=the-superbot-api-token"
 ```
 
 > Make sure to replace `the-superbot-api-token` with the actual resource API token.

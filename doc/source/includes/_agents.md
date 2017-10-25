@@ -3,7 +3,7 @@
 ## Interpret
 
 ```shell
-curl "<API_BASE_URI>/agents/superman/superbot/interpret?sentence=hello"
+curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret?sentence=hello"
   -H "Agent-Token: the-agent-token"
   -H "Accept-Language: en-gb"
 ```

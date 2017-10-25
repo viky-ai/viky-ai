@@ -120,3 +120,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
     nlp_server:     docker pull docker-registry.pertimm.net/voqal.ai/platform/nlp:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.net/voqal.ai/platform/nlp
+    doc:            cd ../doc && bundle exec middleman build --build-dir=../webapp/public/doc/

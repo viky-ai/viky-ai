@@ -10,6 +10,11 @@
         <%= t('views.nav.agents') %>
       </a>
     </li>
+    <li>
+      <a href="doc">
+        <%= t('views.nav.doc') %>
+      </a>
+    </li>
     <% if user_signed_in? %>
       <% if current_user.admin %>
         <li>

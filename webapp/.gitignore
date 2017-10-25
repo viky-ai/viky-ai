@@ -27,6 +27,7 @@
 /node_modules
 /public/assets
 /public/uploads
+/public/doc
 /coverage/
 
 .env
