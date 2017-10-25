@@ -4,7 +4,7 @@ class MembershipsController < ApplicationController
   before_action :check_user_rights
 
   def index
-    render partial: 'index'
+    render partial: 'index', locals: { agent: @agent }
   end
 
   def new
@@ -54,6 +54,21 @@ class MembershipsController < ApplicationController
           render partial: 'update_failed'
         }
       end
+    end
+  end
+
+  def confirm_destroy
+    @membership = Membership.find(params[:membership_id])
+    render partial: 'confirm_destroy', locals: { membership: @membership }
+  end
+
+  def destroy
+    @membership = Membership.find(params[:id])
+    @membership.destroy
+    respond_to do |format|
+      format.js{
+        @html = render_to_string(partial: 'index', formats: :html, locals: { agent: @agent })
+      }
     end
   end
 

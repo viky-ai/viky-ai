@@ -3,7 +3,7 @@
   <div class="modal__main">
 
     <h5 class="modal__main__title">
-      <%= t('views.memberships.index.title_html', agent: @agent.name) %>
+      <%= t('views.memberships.index.title_html', agent: agent.name) %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
@@ -14,13 +14,13 @@
       <div class="tabs tabs--on-center">
         <ul>
           <li>
-            <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>" data-action="update-remote-modal"
+            <a href="<%= user_agent_memberships_path(agent.owner, agent) %>" data-action="update-remote-modal"
                class="current">
               <%= t('views.memberships.tabs.index') %>
             </a>
           </li>
           <li>
-            <a href="<%= new_user_agent_membership_path(@agent.owner, @agent) %>" data-action="update-remote-modal">
+            <a href="<%= new_user_agent_membership_path(agent.owner, agent) %>" data-action="update-remote-modal">
               <%= t('views.memberships.tabs.new') %>
             </a>
           </li>
@@ -31,18 +31,18 @@
         <li>
           <div class="user">
             <div class="user__avatar">
-              <img src="<%= @agent.owner.image_url(:square) %>" />
+              <img src="<%= agent.owner.image_url(:square) %>" />
             </div>
             <div class="user__info">
-              <%= @agent.owner.name_or_username %>
+              <%= agent.owner.name_or_username %>
               <span class="badge badge--primary">
                 <%= t('views.agents.show.owner') %>
               </span><br />
-              <small><%= @agent.owner.email %></small>
+              <small><%= agent.owner.email %></small>
             </div>
           </div>
         </li>
-        <% @agent.memberships.where.not(rights: 'all').each do |membership| %>
+        <% agent.memberships.where.not(rights: 'all').each do |membership| %>
           <li id="membership-<%= membership.id %>">
             <%= render partial: 'edit', locals: { membership: membership } %>
           </li>

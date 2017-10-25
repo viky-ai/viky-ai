@@ -69,6 +69,13 @@
             <%= t('views.memberships.can_edit') %>
           </a>
         </li>
+        <li class="separator">
+          <a href="<%= user_agent_membership_confirm_destroy_path(agent.owner, agent, membership) %>"
+             class="destructive"
+             data-action="update-remote-modal">
+            <%= t('views.memberships.confirm_destroy.access') %>
+          </a>
+        </li>
       </ul>
     </div>
   </div>

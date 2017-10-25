@@ -28,6 +28,9 @@
     ul{
       padding: 0;
       list-style: none;
+      li.separator{
+        border-top: 1px solid #eee;
+      }
       a{
         display:block;
         font-size: .875em;
@@ -42,12 +45,14 @@
         &:focus{
           background-color: #f5f5f5;
         }
+        &.destructive{
+          color: darken($destructive_color, 10%);
+        }
       }
     }
   }
 
   .dropdown__overlay{
-    // background-color: rgba(red, .1);
     position: fixed;
     height: 100%;
     width: 100%;

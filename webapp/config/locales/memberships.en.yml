@@ -22,3 +22,9 @@ en:
         show: "%{user} can now only show %{agent} agent."
         edit: "%{user} can now edit %{agent} agent."
       update_failed: Ooops, update failed.
+      confirm_destroy:
+        access: Delete
+        title: Are you sure?
+        content_html: You're about to delete %{user} rights on agent %{agent}.
+        btn: Delete
+      destroy_succeed: "%{user} has successfully been removed from colaborators."

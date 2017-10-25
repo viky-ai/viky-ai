@@ -1,0 +1,7 @@
+<%
+  message = t('views.memberships.destroy_succeed', user: @membership.user.name_or_username)
+%>
+App.Message.notice("<%= escape_javascript(message) %> ");
+
+$("#modal_container").html("<%= escape_javascript(@html) %>");
+$('#modal_container .modal').show();
