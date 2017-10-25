@@ -21,7 +21,7 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package)
   DONE;
 }
 
-og_status NlpInputPartWordFlush(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpInputPartWordFlush(package_t package)
 {
   IFE(OgAutFlush(package->ha_word));
   DONE;
@@ -82,6 +82,6 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
     while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
 
-  return (0);
+  DONE;
 }
 

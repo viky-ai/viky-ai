@@ -272,6 +272,9 @@ static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
 
+  NlpInputPartWordFlush(package);
+  NlpInputPartAliasFlush(package);
+
   OgHeapFlush(package->hinterpretation_ba);
   OgHeapFlush(package->hinterpretation_compile);
   OgHeapFlush(package->hinterpretation);

@@ -75,8 +75,8 @@ struct package
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
 
-  /** HashTable key: string (interpretation id) , value: input_part index */
-  GHashTable *interpretation_id_hash;
+  /** Automaton : "<interpretation_id>\1<Iinput_part>" */
+  void *ha_interpretation_id;
 
 };
 
@@ -232,7 +232,7 @@ struct request_input_part
   struct interpret_package *interpret_package;   // used for sorting only
   int Iinput_part;   // used for sorting only
 
-  og_bool consumed;
+  int consumed;
 };
 
 struct request_interpretation
@@ -348,13 +348,14 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipword.c */
 og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpInputPartWordFlush(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartAliasFlush(package_t package);
 og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id,
     size_t Iinput_part);
 og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
