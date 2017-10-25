@@ -53,7 +53,7 @@ You must replace <code>the-superbot-api-token</code> with your personal API key.
 
 # Errors
 
-<aside class="notice">Error responses always have a message associated with in the `message` field, and, in case of a severe 500 status error they also bring the stack trace in the `application_trace` field.</aside>
+<aside class="notice">Error responses always have a message associated with in the <code>message</code> field, and, in case of a severe 500 status error they also bring the stack trace in the <code>application_trace</code> field.</aside>
 
 The Viky.ai API uses the following error codes:
 

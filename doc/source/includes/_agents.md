@@ -5,6 +5,7 @@
 ```shell
 curl "<API_BASE_URI>/agents/superman/superbot/interpret?sentence=hello"
   -H "Agent-Token: the-agent-token"
+  -H "Accept-Language: en-gb"
 ```
 
 > JSON response:
@@ -44,6 +45,6 @@ sentence | yes |  | I'm looking for a train to Paris | The sentence to be proces
 language | no | en-US | en-US, en;q=0.9 | The language code in which the sentence is written.
 
 <aside class="success">
-Remember — the language can be specified also in the request header `Accept-Language` using all country variants and q-weighting factors, e.g.:<br/>
+Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.:<br/>
 <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
 </aside>
