@@ -44,3 +44,47 @@
 <span class="badge badge--large">Large</span>
   <% end %>
 </section>
+
+<section>
+  <h2>Merged badges</h2>
+  <p>
+    Merged badges are compatible with color & size variants.<br />
+    Merged badges are not compatible with <code>.badge--outline</code> variants.
+  </p>
+  <%= highlight_html do %>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--success">success</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--warning">warning</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--danger">danger</span>
+</span>
+<br />
+<br />
+<span class="merged-badges">
+  <span class="badge badge--small">Badge</span>
+  <span class="badge badge--small badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge badge--medium">Badge</span>
+  <span class="badge badge--medium badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge badge--large">Badge</span>
+  <span class="badge badge--large badge--primary">primary</span>
+</span>
+  <% end %>
+</section>

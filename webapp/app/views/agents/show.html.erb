@@ -48,11 +48,7 @@
             <img src="<%= @agent.owner.image_url(:square) %>" />
           </div>
           <div class="user__info">
-            <% if @agent.owner.name.blank? %>
-              <%= @agent.owner.username %>
-            <% else %>
-              <%= @agent.owner.name %>
-            <% end %>
+            <%= @agent.owner.name_or_username %>
             <span class="badge badge--primary">
               <%= t('views.agents.show.owner') %>
             </span><br />
@@ -67,18 +63,18 @@
               <img src="<%= collaborator.image_url(:square) %>" />
             </div>
             <div class="user__info">
-              <% if collaborator.name.blank? %>
-                <%= collaborator.username %>
-              <% else %>
-                <%= collaborator.name %>
-              <% end %>
-              <span class="badge">
-                <%= t('views.agents.show.collaborator') %> /
-                <% if collaborator.can? :edit, @agent %>
-                  <%= t('views.agents.show.edit') %>
-                <% else %>
-                  <%= t('views.agents.show.show') %>
-                <% end %>
+              <%= collaborator.name_or_username %>
+              <span class="merged-badges">
+                <span class="badge">
+                  <%= t('views.agents.show.collaborator') %>
+                </span>
+                <span class="badge badge--primary">
+                  <% if collaborator.can? :edit, @agent %>
+                    <%= t('views.agents.show.edit') %>
+                  <% else %>
+                    <%= t('views.agents.show.show') %>
+                  <% end %>
+                </span>
               </span>
               <br />
               <small><%= collaborator.email %></small>

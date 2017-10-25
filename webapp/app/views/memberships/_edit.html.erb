@@ -9,13 +9,17 @@
   </div>
   <div class="user__info">
     <%= user.name_or_username %>
-    <span class="badge">
-      <%= t('views.agents.show.collaborator') %> /
-      <% if user.can? :edit, agent %>
-        <%= t('views.agents.show.edit') %>
-      <% else %>
-        <%= t('views.agents.show.show') %>
-      <% end %>
+    <span class="merged-badges">
+      <span class="badge">
+        <%= t('views.agents.show.collaborator') %>
+      </span>
+      <span class="badge badge--primary">
+        <% if user.can? :edit, agent %>
+          <%= t('views.agents.show.edit') %>
+        <% else %>
+          <%= t('views.agents.show.show') %>
+        <% end %>
+      </span>
     </span><br />
     <small><%= user.email %></small>
   </div>

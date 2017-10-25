@@ -76,3 +76,14 @@
     font-size: 1em;
   }
 }
+.merged-badges{
+  .badge:first-child{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .badge:last-child{
+    margin-left: -0.275em;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
