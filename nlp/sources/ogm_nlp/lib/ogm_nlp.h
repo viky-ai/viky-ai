@@ -56,8 +56,7 @@ struct package
   og_heap halias;
   og_heap hinput_part;
   void *ha_word;
-  /** HashTable key: string (package id) , value: input_part index */
-  GHashTable *interpretation_id_hash;
+  void *ha_interpretation_id;
 
 };
 
@@ -250,13 +249,14 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipword.c */
 og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpInputPartWordFlush(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartAliasFlush(package_t package);
 og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id,
     size_t Iinput_part);
 og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);

@@ -253,6 +253,8 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
+  IFE(NlpInputPartWordFlush(package));
+  IFE(NlpInputPartAliasFlush(package));
   OgHeapFlush(package->hexpression);
   OgHeapFlush(package->hinterpretation);
   OgHeapFlush(package->halias);
