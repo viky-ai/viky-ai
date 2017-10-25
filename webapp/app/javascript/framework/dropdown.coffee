@@ -67,7 +67,7 @@ class Dropdown
     replace_selector = node.data('replace-selector')
     btn = node.closest('.dropdown').find(".dropdown__trigger #{replace_selector}")
     btn.html(replace_with)
-    # materialize current option
+    # Materialize current option
     node.closest('ul').find('a').removeClass('current')
     node.addClass('current')
     @close(node.closest('.dropdown'))
@@ -76,9 +76,14 @@ class Dropdown
     event.preventDefault()
     node = @get_link_with_behaviors(event)
     form_selector = node.data('form-selector')
-    action = $(form_selector).attr('action')
-    params = $(form_selector).serialize()
-    Turbolinks.visit("#{action}?#{params}")
+
+    if $(form_selector).data('remote')
+      form = document.querySelector(form_selector);
+      Rails.fire(form, 'submit')
+    else
+      action = $(form_selector).attr('action')
+      params = $(form_selector).serialize()
+      Turbolinks.visit("#{action}?#{params}")
 
 Setup = ->
   new Dropdown()

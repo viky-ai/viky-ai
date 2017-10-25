@@ -3,11 +3,7 @@
     <img src="<%= collaborator.image_url(:square) %>" />
   </div>
   <div class="user__info">
-    <% if collaborator.name.blank? %>
-      <%= collaborator.username %>
-    <% else %>
-      <%= collaborator.name %>
-    <% end %>
+    <%= collaborator.name_or_username %>
     <span class="badge">
       <%= t('views.agents.show.collaborator') %>
     </span><br />
@@ -23,7 +19,11 @@
     <div class="dropdown__trigger">
       <button class="btn">
         <span class="btn__label">
-          <% if collaborator.can? :edit, agent %>Can edit<% else %>Can show<% end %>
+          <% if collaborator.can? :edit, agent %>
+            <%= t('views.memberships.can_edit') %>
+          <% else %>
+            <%= t('views.memberships.can_show') %>
+          <% end %>
         </span>
         <span class="icon icon--x-small">
           <%= icon_arrow_down %>
@@ -34,30 +34,27 @@
       <ul>
         <li>
           <a href="#" <% if !collaborator.can? :edit, agent %>class="current"<% end %>
-             data-behavior="populate-input, replace-trigger-label"
+             data-behavior="populate-input, replace-trigger-label, submit-form"
              data-replace-with="Can show"
              data-replace-selector=".btn__label"
              data-input-selector="input[name='membership[rights]']"
-             data-input-value="show">
-            Can show
+             data-input-value="show"
+             data-form-selector="<%= "#membership-form-#{collaborator.username}" %>">
+            <%= t('views.memberships.can_show') %>
           </a>
         </li>
         <li>
           <a href="#" <% if collaborator.can? :edit, agent %>class="current"<% end %>
-             data-behavior="populate-input, replace-trigger-label"
+             data-behavior="populate-input, replace-trigger-label, submit-form"
              data-replace-with="Can edit"
              data-replace-selector=".btn__label"
              data-input-selector="input[name='membership[rights]']"
-             data-input-value="edit">
-            Can edit
+             data-input-value="edit"
+             data-form-selector="<%= "#membership-form-#{collaborator.username}" %>">
+            <%= t('views.memberships.can_edit') %>
           </a>
         </li>
       </ul>
     </div>
   </div>
-  <%= f.button "Update", class: "btn btn--primary",
-    data: {
-      disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-    }
-  %>
 <% end %>

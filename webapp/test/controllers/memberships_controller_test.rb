@@ -131,7 +131,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     patch user_agent_membership_url(users(:admin), agents(:weather), memberships(:four)),
       params: {
-        membership: { username: users(:show_on_agent_weather).username, rights: 'edit' },
+        membership: { rights: 'edit' },
         format: :js
       }
     assert_response :success
@@ -142,7 +142,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     patch user_agent_membership_url(users(:admin), agents(:weather), memberships(:four)),
       params: {
-        membership: { username: users(:show_on_agent_weather).username, rights: 'edit' },
+        membership: { rights: 'edit' },
         format: :js
       }
     assert_redirected_to agents_url
@@ -154,7 +154,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     patch user_agent_membership_url(users(:admin), agents(:weather), memberships(:four)),
       params: {
-        membership: { username: users(:show_on_agent_weather).username, rights: 'edit' },
+        membership: { rights: 'edit' },
         format: :js
       }
     assert_redirected_to agents_url
@@ -166,7 +166,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     patch user_agent_membership_url(users(:admin), agents(:weather), memberships(:four)),
       params: {
-        membership: { username: users(:show_on_agent_weather).username, rights: 'edit' },
+        membership: { rights: 'edit' },
         format: :js
       }
     assert_redirected_to agents_url

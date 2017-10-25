@@ -38,6 +38,10 @@ class User < ApplicationRecord
     agent.owner.id == id
   end
 
+  def name_or_username
+    name.blank? ? username : name
+  end
+
   def invitation_status
     istatus = :not_invited
     if confirmed_at.nil? && !invitation_sent_at.nil?

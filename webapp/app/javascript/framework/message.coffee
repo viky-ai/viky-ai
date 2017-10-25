@@ -1,6 +1,8 @@
 $ = require('jquery');
 
 class Message
+  TIMEOUT: null
+
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)
     Message.show() if $('.message').length == 1
@@ -25,7 +27,11 @@ class Message
     @show()
 
   @show: ->
+    clearTimeout(@TIMEOUT) if @TIMEOUT
     $('.message').show().addClass('message--show')
+    @TIMEOUT = setTimeout ->
+      Message.hide()
+    , 5000
 
   @hide: ->
     $('.message').removeClass('message--show').addClass('message--hide')
