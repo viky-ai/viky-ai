@@ -82,7 +82,7 @@ class AgentsController < ApplicationController
   end
 
   def transfer_ownership
-    result = @agent.transfer_ownership_to(params[:users][:new_owner])
+    result = @agent.transfer_ownership_to(params[:users][:new_owner_id])
 
     respond_to do |format|
       if result[:success]

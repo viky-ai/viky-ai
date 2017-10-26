@@ -14,11 +14,12 @@ class MembershipsController < ApplicationController
   def create
     errors = []
 
-    usernames = memberships_params[:usernames].split(';')
-    dest_users = User.where(username: usernames)
+    user_ids = memberships_params[:user_ids].split(';')
+    dest_users = User.where(id: user_ids)
 
     search_initial_values = dest_users.map do |user|
       {
+        user_id: user.id,
         name: user.name,
         username: user.username,
         email: user.email,
@@ -131,7 +132,7 @@ class MembershipsController < ApplicationController
     end
 
     def memberships_params
-      params.require(:memberships).permit(:usernames, :rights)
+      params.require(:memberships).permit(:user_ids, :rights)
     end
 
     def set_agent

@@ -319,7 +319,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather).agentname),
       params: {
-        users: { new_owner: 'locked' },
+        users: { new_owner_id: users('locked').id },
         format: :json
       }
     assert_redirected_to agents_url
@@ -332,7 +332,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:confirmed), agents(:weather_confirmed).agentname),
       params: {
-        users: { new_owner: 'locked' },
+        users: { new_owner_id: users('locked').id },
         format: :json
       }
     assert_response :forbidden
@@ -344,7 +344,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather)),
       params: {
-        users: { new_owner: 'locked' },
+        users: { new_owner_id: users('locked').id },
         format: :json
       }
     assert_response :forbidden
@@ -356,7 +356,7 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     post transfer_ownership_user_agent_path(users(:admin), agents(:weather)),
       params: {
-        users: { new_owner: 'locked' },
+        users: { new_owner_id: users('locked').id },
         format: :json
       }
     assert_response :forbidden

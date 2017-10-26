@@ -15,14 +15,14 @@ class UserSearchInput
     input.selectize({
       maxItems: max_items
       delimiter: ';'
-      valueField: 'username'
+      valueField: 'user_id'
       labelField: 'email'
       searchField: ['email', 'username']
       placeholder: input.data('placeholder')
       dropdownParent: 'body'
       hideSelected: true
       options: initial_values
-      items: initial_values.map((value) -> value.username)
+      items: initial_values.map((value) -> value.user_id)
       create: false
       render: {
         option: (item, escape) ->

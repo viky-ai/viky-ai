@@ -80,7 +80,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        memberships: { usernames: users(:locked).username, rights: 'show' },
+        memberships: { user_ids: users(:locked).id, rights: 'show' },
         format: :json
       }
     assert_redirected_to agents_url
@@ -92,7 +92,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:confirmed), agents(:weather_confirmed)),
       params: {
-        memberships: { usernames: users(:locked).username, rights: 'show' },
+        memberships: { user_ids: users(:locked).id, rights: 'show' },
         format: :json
       }
     assert_response :forbidden
@@ -104,7 +104,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        memberships: { usernames: users(:locked).username, rights: 'show' },
+        memberships: { user_ids: users(:locked).id, rights: 'show' },
         format: :json
       }
     assert_response :forbidden
@@ -116,7 +116,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
 
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
-        memberships: { usernames: users(:locked).username, rights: 'show' },
+        memberships: { user_ids: users(:locked).id, rights: 'show' },
         format: :json
       }
     assert_response :forbidden

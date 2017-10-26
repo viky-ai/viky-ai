@@ -32,8 +32,8 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def transfer_ownership_to(new_owner_username)
-    transfert = AgentTransfert.new(self, new_owner_username)
+  def transfer_ownership_to(new_owner_id)
+    transfert = AgentTransfert.new(self, new_owner_id)
     transfert.proceed
     {
       success: transfert.valid?,

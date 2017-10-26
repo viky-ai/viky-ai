@@ -2,13 +2,12 @@ class AgentTransfert
 
   attr_accessor :errors, :agent, :previous_owner, :new_owner
 
-  def initialize(agent, new_owner_username)
+  def initialize(agent, new_owner_id)
     @errors = []
     @agent = agent
-    @new_owner_username = new_owner_username
 
     @previous_owner = @agent.owner
-    @new_owner = User.find_by_username(@new_owner_username)
+    @new_owner = User.where(id: new_owner_id).first
   end
 
   def valid?
@@ -40,11 +39,11 @@ class AgentTransfert
 
     def validate
       @errors = []
-      validate_new_owner_username
+      validate_new_owner
       validate_agent_slug_availability if valid?
     end
 
-    def validate_new_owner_username
+    def validate_new_owner
       if @new_owner.nil?
         @errors << I18n.t('errors.agent.transfer_ownership.invalid_username')
       end

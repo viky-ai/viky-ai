@@ -35,7 +35,7 @@
           <div class="control control--merged">
 
             <div class="merged-control-container">
-              <input type="text" name="memberships[usernames]" id="input-user-search"
+                <input type="text" name="memberships[user_ids]" id="input-user-search"
                 data-remote-url="<%= user_agent_search_users_to_share_agent_path(@agent.owner, @agent) %>"
                 data-placeholder="<%= t('views.memberships.new.placeholder') %>"
                 data-initial-values="<%= search_initial_values.to_json %>" />
