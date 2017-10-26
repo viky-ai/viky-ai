@@ -1,6 +1,7 @@
 en:
   views:
     nav:
+      doc: Documentation
       agents: Agents
       backend:
         title: Backend
