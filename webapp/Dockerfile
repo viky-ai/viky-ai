@@ -1,8 +1,8 @@
 # Using docker multi stage (docker >= 17.05)
 # https://codefresh.io/blog/node_docker_multistage/
 
-# docker build --target image_ruby_run  -t docker-registry.pertimm.corp:50001/voqal.ai/platform/app .
-# docker build --target image_ruby_test -t docker-registry.pertimm.corp:50001/voqal.ai/platform/app_test .
+# docker build --target image_ruby_run  -t docker-registry.pertimm.net/voqal.ai/platform/app .
+# docker build --target image_ruby_test -t docker-registry.pertimm.net/voqal.ai/platform/app_test .
 
 #################################################
 # nodejs-base : tar.gz

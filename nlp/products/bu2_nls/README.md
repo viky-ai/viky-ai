@@ -73,7 +73,7 @@ bundle exec rake test
 Docker
 ============
 
-# Build Nls image
+# Build Nlp image
 
 ```
 cd ${OG_REPO_PATH}
@@ -81,10 +81,10 @@ buildinit.pl
 genmake.pl linux64 all
 factory.pl -p bu2_nls fullclean
 nettoyer.sh
-docker build -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
+docker build --target run_image -t docker-registry.pertimm.net/voqal.ai/platform/nlp .
 ```
 
-# Run Nls container
+# Run Nlp container
 ```
-docker run -ti -p 9345:9345 --name nls docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/voqal.ai/platform/nlp
 ```

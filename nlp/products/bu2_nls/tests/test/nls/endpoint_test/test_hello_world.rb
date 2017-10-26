@@ -4,7 +4,7 @@ module Nls
 
   module EndpointTest
 
-    class TestHelloWorld < Common
+    class TestHelloWorld < NlsTestCommon
 
       def test_hello_world
 

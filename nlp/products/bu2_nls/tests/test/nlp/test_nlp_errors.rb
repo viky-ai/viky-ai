@@ -2,7 +2,7 @@ require 'test_helper'
 
 module Nlp
 
-  class TestNlpErrors < Common
+  class TestNlpErrors < NlpTestCommon
 
     def input_ref()
       JSON.parse(File.read(fixture_path('package_base.json')))

@@ -4,7 +4,7 @@ module Nls
 
   module FeedInit
 
-    class TestInitErrors < Common
+    class TestInitErrors < NlsTestCommon
 
       def setup
 
