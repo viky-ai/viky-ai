@@ -1,4 +1,20 @@
 <%= form_with model: [current_user, agent], data: { type: 'json' }, class: 'js-agent-form' do |f| %>
+
+
+  <% if ["edit", "update"].include? action_name %>
+    <div class="field field--api-token">
+      <div class="control control--merged">
+        <span class="addon">API token</span>
+        <%= f.text_field :api_token, id: :agent_api_token, readonly: true %>
+        <a href="<%= generate_token_user_agent_path(current_user, agent) %>" class="btn"
+           data-action="generate-token" title="<%= t('views.agents.form.api_token.generate_btn') %>">
+          <span class="icon icon--x-small"><%= icon_loading %></span>
+        </a>
+      </div>
+      <%= display_errors(agent, :api_token) %>
+    </div>
+  <% end %>
+
   <div class="field">
     <div class="control">
       <%= f.label :name %>
@@ -27,22 +43,6 @@
       <%= display_errors(agent, :description) %>
     </div>
   </div>
-
-  <% if ["edit", "update"].include? action_name %>
-    <div class="field">
-      <%= f.label :api_token %>
-      <div class="control control--merged">
-        <br />
-        <%= f.text_field :api_token, id: :agent_api_token, readonly: true %>
-        <span class="btn-group">
-          <a href="<%= generate_token_user_agent_path(current_user, agent) %>" class="btn" data-action="generate-token">
-            <%= t('views.agents.form.api_token.generate_btn') %>
-          </a>
-        </span>
-      </div>
-      <%= display_errors(agent, :api_token) %>
-    </div>
-  <% end %>
 
   <div class="field">
     <div class="control">
@@ -104,6 +104,7 @@
 
     </div>
   </div>
+
 
   <%= hidden_field_tag :origin, @origin %>
   <div class="actions">

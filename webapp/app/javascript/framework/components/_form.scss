@@ -128,6 +128,14 @@
   textarea:-ms-input-placeholder{
     opacity: .3;
   }
+
+  input[readonly='readonly']{
+    color: #aaa;
+    font-family: monospace;
+    text-align: center;
+  }
+
+
   .addon{
     line-height: 1.5;
     font-weight: 300;
