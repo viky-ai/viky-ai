@@ -60,6 +60,12 @@ class MembershipsController < ApplicationController
       end
     end
 
+    if errors.empty?
+      dest_users.each do |collaborator|
+        MembershipMailer.create_membership(@agent.owner, @agent, collaborator).deliver_later
+      end
+    end
+
 
     respond_to do |format|
       if errors.empty?

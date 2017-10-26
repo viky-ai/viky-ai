@@ -1,0 +1,5 @@
+en:
+  mailer:
+    membership:
+      create_membership:
+        subject: New shared agent
