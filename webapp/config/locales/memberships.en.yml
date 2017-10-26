@@ -13,6 +13,8 @@ en:
         placeholder: Search by email or username (at least 3 characters).
         success_message: "Agent %{agent} shared with : %{users}."
         empty_dest_message: Please select a valid user.
+        unknown_user: "Impossible to create share : unknown user given"
+        fail_message: "Impossible to create share for : %{users}"
       note_html: >
         <p>
           You are the only one to have access to these sharing options.<br />

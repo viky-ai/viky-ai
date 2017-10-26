@@ -166,4 +166,19 @@ class MembershipsTest < ApplicationSystemTestCase
     assert page.has_text?('Impossible to create share for : show_on_agent_weather')
   end
 
+
+  test 'Share agent with unkonwn user' do
+    go_to_agents_index
+
+    first('.dropdown__trigger > button').click
+    click_link 'Share'
+    within(".modal") do
+      click_link 'Invite collaborators'
+      assert page.has_content?('Share with')
+      page.execute_script "document.getElementById('input-user-search').value = '123456789'"
+      click_button 'Invite'
+    end
+    assert page.has_text?('Impossible to create share : unknown user given')
+  end
+
 end
