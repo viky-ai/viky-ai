@@ -62,7 +62,7 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
       int sep = -1;
       for (int i = 0; i < iout; i++)
       {
-        if (out[i] == 1)
+        if (out[i] == '\1')
         {
           sep = i;
           break;

@@ -296,8 +296,8 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 {
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddAlias: adding alias '%s' as input_part",
-        string_alias);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part",
+        length_string_alias, string_alias);
   }
 
   for (int i = 0; i < expression->aliases_nb; i++)
