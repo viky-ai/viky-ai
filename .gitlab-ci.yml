@@ -157,6 +157,7 @@ deploy_branch:
   variables:
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
     VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
