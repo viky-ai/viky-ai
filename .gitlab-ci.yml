@@ -10,6 +10,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
+  DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
@@ -38,10 +39,18 @@ build_webapp:
   script:
     - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/version.json"
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --target image_ruby_run  -t ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} webapp
-    - docker build --pull --target image_ruby_test -t ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_test -t ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG} webapp
     - docker push ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG}
     - docker push ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
+
+build_doc:
+  stage: build
+  image: docker:dind
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} webapp
+    - docker push ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG}
 
 build_nlp:
   stage: build
@@ -93,6 +102,16 @@ push_webapp:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
     - docker tag ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_APP}:latest
     - docker push ${DOCKER_IMAGE_APP}:latest
+
+push_webapp:
+  stage: docker_push
+  image: docker:dind
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_DOC}:latest
+    - docker push ${DOCKER_IMAGE_DOC}:latest
 
 push_nlp:
   stage: docker_push

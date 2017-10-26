@@ -4,6 +4,8 @@
 # docker build --target image_ruby_run  -t docker-registry.pertimm.net/voqal.ai/platform/app .
 # docker build --target image_ruby_test -t docker-registry.pertimm.net/voqal.ai/platform/app_test .
 
+ARG RUBY_BASE_VERSION=latest
+
 #################################################
 # nodejs-base : tar.gz
 #################################################
@@ -16,7 +18,7 @@ RUN tar czPf /nodejs.tgz /usr/local/bin/ /usr/local/lib/ /opt/yarn/
 #################################################
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
-FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base AS image_ruby_deps
+FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_deps
 
 
 # App specific

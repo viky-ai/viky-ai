@@ -3,10 +3,12 @@
 
 # docker build --target image_doc_run -t docker-registry.pertimm.net/voqal.ai/platform/doc .
 
+ARG RUBY_BASE_VERSION=latest
+
 #################################################
 # image_doc_build : image_ruby_deps  + build doc
 #################################################
-FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base AS image_doc_build
+FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_doc_build
 
 # Needed system dependencies for Slate gem compilation
 RUN set -ex; \
