@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x -e
 
+# remove previously started server pid
+rm -f ./tmp/pids/server.pid
+
 # Setup DB
 ./bin/rails db:create db:migrate
 
