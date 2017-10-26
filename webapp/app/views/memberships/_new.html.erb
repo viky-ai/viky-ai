@@ -36,7 +36,7 @@
 
             <div class="merged-control-container">
               <input type="text" name="memberships[usernames]" id="input-user-search"
-                data-remote-url="<%= search_users_for_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
+                data-remote-url="<%= user_agent_search_users_to_share_agent_path(@agent.owner, @agent) %>"
                 data-placeholder="<%= t('views.memberships.new.placeholder') %>"
                 data-initial-values="<%= search_initial_values.to_json %>" />
             </div>

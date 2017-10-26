@@ -2,21 +2,27 @@ $ = require('jquery');
 
 class UserSearchInput
   constructor: ->
+    $('body').on 'modal:open', (event) =>
+      @setup() if $("#modal_container .js-user-search").length == 1
+
     $('body').on 'modal:update', (event) =>
       @setup() if $("#modal_container .js-user-search").length == 1
 
   setup: ->
-    $('#input-user-search').selectize({
-      maxItems: null
+    input = $('#input-user-search')
+    max_items = if input.data('max-items') then input.data('max-items') else null
+    initial_values = if input.data('initial-values') then input.data('initial-values') else []
+    input.selectize({
+      maxItems: max_items
       delimiter: ';'
       valueField: 'username'
       labelField: 'email'
       searchField: ['email', 'username']
-      placeholder: $('#input-user-search').data('placeholder')
+      placeholder: input.data('placeholder')
       dropdownParent: 'body'
       hideSelected: true
-      options: $('#input-user-search').data('initial-values')
-      items: $('#input-user-search').data('initial-values').map((value) -> value.username)
+      options: initial_values
+      items: initial_values.map((value) -> value.username)
       create: false
       render: {
         option: (item, escape) ->
@@ -32,7 +38,7 @@ class UserSearchInput
           callback()
         else
           $.ajax({
-            url: $('#input-user-search').data('remote-url') + "?q=" + encodeURIComponent(query),
+            url: input.data('remote-url') + "?q=" + encodeURIComponent(query),
             type: 'GET',
             error: ->
               callback()

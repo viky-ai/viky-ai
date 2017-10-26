@@ -116,10 +116,10 @@ class AgentsController < ApplicationController
         @users = []
         unless query.nil?
           if query.size > 2
-            @users = User.confirmed.where(
-              "id != ? AND ( email LIKE ? OR username LIKE ? )",
-              @agent.owner_id, "%#{query}%", "%#{query}%"
-            ).limit(10)
+            @users = User.confirmed
+              .where.not(id: @agent.owner_id)
+              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
+              .limit(10)
           end
         end
       }

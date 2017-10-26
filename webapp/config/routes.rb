@@ -28,6 +28,7 @@ Rails.application.routes.draw do
           post :transfer_ownership
           get :search_users_for_transfer_ownership
         end
+        get :search_users_to_share_agent, controller: 'memberships'
       end
     end
   end
