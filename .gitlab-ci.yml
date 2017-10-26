@@ -22,7 +22,7 @@ build_ruby_base:
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/load_balancer
+    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/ruby_base
     - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG}
 
 build_loadbalancer:
@@ -30,7 +30,7 @@ build_loadbalancer:
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/deployment/docker_tools/ruby_base
+    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/deployment/docker_tools/load_balancer
     - docker push ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG}
 
 build_webapp:
@@ -49,7 +49,7 @@ build_doc:
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} doc
     - docker push ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG}
 
 build_nlp:
@@ -103,7 +103,7 @@ push_webapp:
     - docker tag ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_APP}:latest
     - docker push ${DOCKER_IMAGE_APP}:latest
 
-push_webapp:
+push_doc:
   stage: docker_push
   image: docker:dind
   variables:

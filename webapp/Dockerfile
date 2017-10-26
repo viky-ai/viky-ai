@@ -7,19 +7,9 @@
 ARG RUBY_BASE_VERSION=latest
 
 #################################################
-# nodejs-base : tar.gz
-#################################################
-
-FROM node:8.6-stretch AS nodejs-base
-
-# archive nodejs
-RUN tar czPf /nodejs.tgz /usr/local/bin/ /usr/local/lib/ /opt/yarn/
-
-#################################################
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
 FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_deps
-
 
 # App specific
 RUN mkdir -p /webapp
