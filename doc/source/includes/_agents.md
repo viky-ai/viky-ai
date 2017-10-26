@@ -39,12 +39,12 @@ This endpoint retrieves all the intents extracted from the `sentence` string pas
 
 Parameter | Mandatory | Default | Example | Description
 --------- | --------- | ------- | ------- | -----------
-:user_id | yes |  | superman | The username of the agent's owner.
-:id | yes |  | superbot | The name of the agent.
-sentence | yes |  | I'm looking for a train to Paris | The sentence to be processed by the AI.
-language | no | en-US | en-US, en;q=0.9 | The language code in which the sentence is written.
+:user_id  | yes |  | superman | The username of the agent's owner.
+:id       | yes |  | superbot | The name of the agent.
+sentence  | yes |  | I'm looking for a train to Paris | The sentence to be processed by the AI.
+language  | no | en-US | en-US, en;q=0.9 | The language code in which the sentence is written.
 
 <aside class="success">
-Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.:<br/>
-<code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
+  Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.:<br/>
+  <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
 </aside>

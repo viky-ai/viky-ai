@@ -14,6 +14,7 @@ search: true
 ---
 
 # Introduction
+
 Welcome to the Viky.ai API! You can use our API to access bot building and AI endpoints.
 We have language bindings in Shell and more to come in Ruby, Javascript and other languages!
 

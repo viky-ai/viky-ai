@@ -113,11 +113,11 @@ To ensure having all the webapp related processes up and running during developm
 
     foreman start
 
-which reads the `Procfile` behind the scenes, bringing the web server and workers up:
+## Doc
 
-    sidekiq_redis:  redis-server --port 7372
-    workers:        bundle exec sidekiq -C config/sidekiq.yml
-    webpack:        ./bin/webpack-dev-server
-    web:            bundle exec rails s -p 3000
-    nlp_server:     docker pull docker-registry.pertimm.net/voqal.ai/platform/nlp:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.net/voqal.ai/platform/nlp
-    doc:            cd ../doc && bundle exec middleman build --build-dir=../webapp/public/doc/
+Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
+
+    bundle install
+
+
+
