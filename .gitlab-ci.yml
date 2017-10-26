@@ -30,7 +30,7 @@ build_loadbalancer:
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/deployment/docker_tools/load_balancer
+    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/load_balancer
     - docker push ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG}
 
 build_webapp:
@@ -49,7 +49,7 @@ build_doc:
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} doc
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_doc_run -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} doc
     - docker push ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG}
 
 build_nlp:
