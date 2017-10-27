@@ -54,9 +54,9 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
   snprintf(nlpc_name, DPcPathSize, "%s_request_interpretation", param->name);
-  ctrl_nlp_th->hrequest_interpretation = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_interpretation),
+  ctrl_nlp_th->hrequest_expression = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_expression),
   DOgNlpRequestInterpretationNumber);
-  IFN(ctrl_nlp_th->hrequest_interpretation)
+  IFN(ctrl_nlp_th->hrequest_expression)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
@@ -77,12 +77,12 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapFlush(ctrl_nlp_th->hba));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_input_part));
-  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_interpretation));
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_expression));
   ctrl_nlp_th->hinterpret_package = NULL;
   ctrl_nlp_th->hrequest_word = NULL;
   ctrl_nlp_th->hba = NULL;
   ctrl_nlp_th->hrequest_input_part = NULL;
-  ctrl_nlp_th->hrequest_interpretation = NULL;
+  ctrl_nlp_th->hrequest_expression = NULL;
   DONE;
 }
 
@@ -218,7 +218,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapReset(ctrl_nlp_th->hba));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
-  IFE(OgHeapReset(ctrl_nlp_th->hrequest_interpretation));
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_expression));
 
   ctrl_nlp_th->request_sentence = NULL;
 

@@ -51,8 +51,8 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
   while (at_least_one_input_part_added);
 
-  IFE(NlpRequestInterpretationsExplicit(ctrl_nlp_th));
-  IFE(NlpRequestInterpretationsLog(ctrl_nlp_th));
+  IFE(NlpRequestExpressionsExplicit(ctrl_nlp_th));
+  IFE(NlpRequestExpressionsLog(ctrl_nlp_th));
   DONE;
 }
 
@@ -180,7 +180,7 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "found expression '%.*s' with input_parts %d:%d at level %d",
       DPcPathSize, expression->text, i, expression->input_parts_nb, level);
     }
-    IFE(NlpRequestInterpretationAdd(ctrl_nlp_th, expression, level));
+    IFE(NlpRequestExpressionAdd(ctrl_nlp_th, expression, level));
 
     int at_least_one_input_part_added_here = 0;
     IFE(at_least_one_input_part_added_here = NlpMatchInterpretation(ctrl_nlp_th, expression->interpretation));

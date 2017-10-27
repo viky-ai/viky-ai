@@ -250,7 +250,7 @@ struct request_input_part
   int consumed;
 };
 
-struct request_interpretation
+struct request_expression
 {
   /** from zero (only words) to N */
   int level;
@@ -288,7 +288,7 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_input_part;
 
   /** Heap of struct request_interpretation */
-  og_heap hrequest_interpretation;
+  og_heap hrequest_expression;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -390,9 +390,9 @@ og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 
 /* nlprinterpretation.c */
-og_status NlpRequestInterpretationAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level);
-og_status NlpRequestInterpretationsExplicit(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level);
+og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
-og_status NlpRequestInterpretationsLog(og_nlp_th ctrl_nlp_th);
-og_status NlpRequestInterpretationLog(og_nlp_th ctrl_nlp_th, struct request_interpretation *request_interpretation);
+og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_interpretation);
 
