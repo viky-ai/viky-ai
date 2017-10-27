@@ -65,7 +65,7 @@ build_nlp:
 # Test
 test_webapp:
   stage: test
-  image: docker:dind
+  image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
     GIT_STRATEGY: none
     VOQALAPP_DB_USERNAME: superman
@@ -80,12 +80,8 @@ test_webapp:
     - postgres:9.6-alpine
     - redis:4.0-alpine
   script:
-    - mkdir -p /tmp/docker_build
-    - cd /tmp/docker_build
-    - echo "FROM ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}" > Dockerfile
-    - echo "RUN ./bin/docker_run_test.sh" >> Dockerfile
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull .
+    - cd /webapp
+    - ./bin/docker_run_test.sh
 
 test_nlp:
   stage: test
