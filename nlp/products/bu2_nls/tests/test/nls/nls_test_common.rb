@@ -39,6 +39,46 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
+    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
+      {
+        "packages" => ["#{package}"],
+        "sentence" => "#{sentence}",
+        "Accept-Language" => "fr-FR"
+      }
+    end
+
+    def expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")
+      {
+        "interpretations"=>
+        [
+          {
+            "package" => "#{package}",
+            "id" => "#{id}",
+            "slug" => "#{slug}",
+            "score" => 1.0
+          }
+        ]
+      }
+    end
+
+    def expected_update_package(package_name)
+      {
+        "status" => "Package '#{package_name}' successfully updated"
+      }
+    end
+
+    def expected_delete_package(package_name)
+      {
+        "status" => "Package '#{package_name}' successfully deleted"
+      }
+    end
+
+    def expected_added_package(package_name)
+      {
+        "status" => "Package '#{package_name}' successfully updated"
+      }
+    end
+
     def several_packages_several_intents
 
       datetime1 = Package.new('datetime1')

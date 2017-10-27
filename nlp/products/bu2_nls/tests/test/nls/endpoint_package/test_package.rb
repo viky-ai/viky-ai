@@ -21,7 +21,7 @@ module Nls
         url_delete = Nls.url_packages + "/" + import_package2.id
         actual = Nls.delete(url_delete)
 
-        assert_json Nls.expected_delete_package(import_package2.id), actual
+        assert_json expected_delete_package(import_package2.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -43,7 +43,7 @@ module Nls
 
         actual = Nls.package_update(json_package_to_update)
 
-        assert_json Nls.expected_update_package(json_package_to_update.id), actual
+        assert_json expected_update_package(json_package_to_update.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -66,7 +66,7 @@ module Nls
 
         actual = Nls.package_update(json_package_to_update)
 
-        assert_json Nls.expected_update_package(json_package_to_update.id), actual
+        assert_json expected_update_package(json_package_to_update.id), actual
 
         json_dump = Nls.query_get(Nls.url_dump)
 
@@ -121,7 +121,7 @@ module Nls
 
           # updating
           actual_update_result = Nls.package_update(json_package_to_update)
-          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating #{i}"
+          assert_json expected_update_package(json_package_to_update.id), actual_update_result, "updating #{i}"
 
           # re-querying
           actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
@@ -129,7 +129,7 @@ module Nls
 
           # re-updating
           actual_update_result = Nls.package_update(json_package_to_update)
-          assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating #{i}"
+          assert_json expected_update_package(json_package_to_update.id), actual_update_result, "re-updating #{i}"
 
         end
       end
@@ -154,7 +154,7 @@ module Nls
 
         # updating
         actual_update_result = Nls.package_update(json_package_to_update)
-        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "updating"
+        assert_json expected_update_package(json_package_to_update.id), actual_update_result, "updating"
 
         # re-querying
         actual_interpret_result = Nls.interpret_package(json_package_to_update, sentence)
@@ -162,7 +162,7 @@ module Nls
 
         # re-updating
         actual_update_result = Nls.package_update(json_package_to_update)
-        assert_json Nls.expected_update_package(json_package_to_update.id), actual_update_result, "re-updating"
+        assert_json expected_update_package(json_package_to_update.id), actual_update_result, "re-updating"
 
       end
 
