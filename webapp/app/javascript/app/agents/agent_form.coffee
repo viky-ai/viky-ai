@@ -8,6 +8,9 @@ class AgentForm
 
     $("body").on 'ajax:success', (event) =>
       [data, status, xhr] = event.detail
+      if data.notice
+        $("#modal_container").html(data.html).find('.modal').show()
+        App.Message.notice(data.notice)
       if data.status == 422
         $("#modal_container").html(data.html).find('.modal').show()
         $('body').trigger 'modal:update'

@@ -71,7 +71,13 @@ class MembershipsController < ApplicationController
       if errors.empty?
         users = dest_users.collect { |user| user.username }.join(', ')
         format.json{
-          redirect_to agents_path, notice: t('views.memberships.new.success_message', agent: @agent.agentname, users: users)
+          render json: {
+            html: render_to_string(
+              partial: 'index',
+              formats: :html,
+              locals: { agent: @agent }),
+            notice:  t('views.memberships.new.success_message', agent: @agent.agentname, users: users)
+          }
         }
       else
         format.json{

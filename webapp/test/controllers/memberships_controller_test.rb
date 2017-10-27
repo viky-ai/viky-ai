@@ -83,8 +83,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
         memberships: { user_ids: users(:locked).id, rights: 'show' },
         format: :json
       }
-    assert_redirected_to agents_url
-    assert_equal "Agent weather shared with : locked.", flash[:notice]
+    assert_response :success
   end
 
   test "Create access: User has no relation to agent" do
