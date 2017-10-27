@@ -1,6 +1,10 @@
 // CSS reset
 import 'normalize.css'
 
+// Selectize
+import 'selectize'
+import 'selectize/dist/css/selectize.css'
+
 // CSS framework
 import './main'
 

@@ -189,6 +189,84 @@
   <% end %>
 </section>
 
+
+<section>
+  <h2>Selectize</h2>
+  <%= highlight_html do %>
+
+<div class="field">
+  <div class="control">
+    <label>Simple</label>
+    <input type="text" class="input-selectize" />
+  </div>
+</div>
+
+<div class="field">
+  <div class="control">
+    <label>Multiple</label>
+    <input type="text" class="input-selectize-multiple" />
+  </div>
+</div>
+
+<div class="field">
+  <label>Single & Merged control</label>
+  <div class="control control--merged">
+    <span class="addon">This in an addon</span>
+    <div class="merged-control-container">
+      <input type="text" class="input-selectize" />
+    </div>
+    <button class="btn btn--primary">Validate</button>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+
+<script>
+  $('.input-selectize').selectize({
+    maxItems: 1,
+    persist: false,
+    valueField: 'email',
+    labelField: 'email',
+    placeholder: "Search",
+    searchField: ['email'],
+    create: false,
+    render: {
+      option: function(item, escape){
+        return "<div>" + escape(item.email) + "</div>";
+      }
+    },
+    load: function(query, callback){
+      return callback([
+        { email: "jean-marie.vallet@pertimm.com" },
+        { email: "olivier.despesse@pertimm.com" }
+      ]);
+    }
+  });
+  $('.input-selectize-multiple').selectize({
+    persist: false,
+    valueField: 'email',
+    labelField: 'email',
+    placeholder: "Search",
+    searchField: ['email'],
+    create: false,
+    render: {
+      option: function(item, escape){
+        return "<div>" + escape(item.email) + "</div>";
+      }
+    },
+    load: function(query, callback){
+      return callback([
+        { email: "jean-marie.vallet@pertimm.com" },
+        { email: "olivier.despesse@pertimm.com" }
+      ]);
+    }
+  });
+</script>
+
+
+
 <section>
   <h2>Color picker</h2>
   <h3>Basic</h3>
