@@ -11,7 +11,7 @@ import './main'
 // Coffee
 import './password';
 import './dropdown';
-import './modal';
+window.App.Modal = require('./modal')
 import './form_delete_validation'
 import './color_picker'
 window.App.Message = require('./message')

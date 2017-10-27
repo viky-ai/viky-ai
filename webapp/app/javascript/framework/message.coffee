@@ -1,5 +1,18 @@
 $ = require('jquery');
 
+class MessageRouter
+  constructor: ->
+    $("body").on 'ajax:error', (event) =>
+      [data, status, xhr] = event.detail
+      App.Message.alert(data.message) if data.message
+
+    $("body").on 'ajax:success', (event) =>
+      [data, status, xhr] = event.detail
+      App.Message.notice(data.message) if data.message
+
+$(document).on('turbolinks:load', -> new MessageRouter())
+
+
 class Message
   TIMEOUT: null
 

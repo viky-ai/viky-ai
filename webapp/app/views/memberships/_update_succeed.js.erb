@@ -6,4 +6,6 @@
   )
 %>
 App.Message.notice("<%= escape_javascript(message) %>");
-$("#membership-<%= @membership.id %>").html("<%= escape_javascript(@html) %>");
+$("#membership-<%= @membership.id %>").html("<%= escape_javascript(@modal_content) %>");
+$("body").trigger("Agent:injectOrigin");
+$("#agent-<%= @membership.agent.id %>").replaceWith("<%= escape_javascript(@agent_html) %>");

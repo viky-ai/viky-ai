@@ -1,5 +1,20 @@
 $ = require('jquery');
 
+class ModalRouter
+  constructor: ->
+    $("body").on 'ajax:error', (event) =>
+      [data, status, xhr] = event.detail
+      if data.replace_modal_content_with
+        App.Modal.update(data.replace_modal_content_with)
+
+    $("body").on 'ajax:success', (event) =>
+      [data, status, xhr] = event.detail
+      if data.replace_modal_content_with
+        App.Modal.update(data.replace_modal_content_with)
+
+$(document).on('turbolinks:load', -> new ModalRouter())
+
+
 class Modal
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)
@@ -28,9 +43,7 @@ class Modal
           if data.status == 403
             App.Message.alert(JSON.parse(data.responseText).message)
           else
-            @update(data.responseText)
-            $('body').trigger('modal:update')
-            $('body').trigger('modal:load')
+            Modal.update(data.responseText)
 
     if action is "open-remote-modal"
       event.preventDefault()
@@ -41,8 +54,7 @@ class Modal
             App.Message.alert(JSON.parse(data.responseText).message)
           else
             @prepare(data.responseText)
-            $('body').trigger('modal:open')
-            $('body').trigger('modal:load')
+            Modal.update(data.responseText)
 
     if action is "close-modal"
       event.preventDefault()
@@ -52,17 +64,19 @@ class Modal
     $('.app-wrapper').removeClass('modal-background-effect')
     $('.modal').hide()
     $(document).off 'keyup'
+    $('body').trigger('modal:close')
 
-  update: (html_content) ->
+  @update: (html_content) ->
     $('#modal_container').html(html_content)
     $('#modal_container .modal').show()
+    $('body').trigger('modal:load')
 
   prepare: (html_content) ->
     $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
-    @update(html_content)
     $('.app-wrapper').addClass('modal-background-effect')
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 
+module.exports = Modal
 
 Setup = ->
   new Modal()

@@ -29,7 +29,7 @@
       </div>
 
       <br />
-      <%= form_with url: user_agent_memberships_path, scope: :memberships, data: { type: 'json' }, class: 'js-user-search' do |f| %>
+      <%= form_with url: user_agent_memberships_path, scope: :memberships, class: 'js-user-search' do |f| %>
         <div class="field">
           <%= f.label :user_id, "Share with" %>
           <div class="control control--merged">

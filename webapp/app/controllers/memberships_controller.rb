@@ -66,28 +66,25 @@ class MembershipsController < ApplicationController
       end
     end
 
-
     respond_to do |format|
       if errors.empty?
         users = dest_users.collect { |user| user.username }.join(', ')
-        format.json{
-          render json: {
-            html: render_to_string(
-              partial: 'index',
-              formats: :html,
-              locals: { agent: @agent }),
-            notice:  t('views.memberships.new.success_message', agent: @agent.agentname, users: users)
-          }
+        format.js {
+          @modal_content = render_to_string(
+            partial: 'index',
+            locals: { agent: @agent }
+          )
+          @agent_html = build_agent_content(@agent)
+          @message = t('views.memberships.new.success_message', agent: @agent.agentname, users: users)
+          render partial: 'create_succeed'
         }
       else
-        format.json{
-          render json: {
-            html: render_to_string(
-              partial: 'new',
-              formats: :html,
-              locals: { search_initial_values: search_initial_values, errors: errors }),
-            status: 422,
-          }
+        format.js {
+          @html = render_to_string(
+            partial: 'new',
+            locals: { search_initial_values: search_initial_values, errors: errors }
+          )
+          render partial: 'create_failed'
         }
       end
     end
@@ -117,7 +114,8 @@ class MembershipsController < ApplicationController
     respond_to do |format|
       if @membership.update(membership_params)
         format.js{
-          @html = render_to_string(partial: 'edit', formats: :html, locals: { membership: @membership })
+          @modal_content = render_to_string(partial: 'edit', locals: { membership: @membership })
+          @agent_html = build_agent_content(@agent)
           render partial: 'update_succeed'
         }
       else
@@ -140,7 +138,8 @@ class MembershipsController < ApplicationController
     end
     respond_to do |format|
       format.js{
-        @html = render_to_string(partial: 'index', formats: :html, locals: { agent: @agent })
+        @modal_content = render_to_string(partial: 'index', formats: :html, locals: { agent: @agent })
+        @agent_html = build_agent_content(@agent)
       }
     end
   end
@@ -163,6 +162,22 @@ class MembershipsController < ApplicationController
     def set_agent
       owner = User.friendly.find(params[:user_id])
       @agent = owner.agents.friendly.find(params[:agent_id])
+    end
+
+    def build_agent_content(agent)
+
+      if params[:origin] == 'show'
+        render_to_string(
+          partial: '/agents/agent',
+          locals: { agent: agent }
+        )
+      else
+        render_to_string(
+          partial: '/agents/agent_box',
+          locals: { agent: agent, editable: true }
+        )
+      end
+
     end
 
 end

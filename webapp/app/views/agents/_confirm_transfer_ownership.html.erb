@@ -11,7 +11,7 @@
       <p>
         <%= t('views.agents.confirm_transfer_ownership.content_html', name: agent.name) %>
       </p>
-      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, data: { type: 'json' }, class: 'js-user-search' do |transfer_form| %>
+      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, class: 'js-user-search' do |transfer_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>

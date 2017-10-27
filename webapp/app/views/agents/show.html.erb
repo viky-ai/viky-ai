@@ -19,74 +19,12 @@
     <% end %>
     <% if current_user.can? :edit, @agent %>
       <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>"
-         class="btn btn--small btn--primary" data-action="open-remote-modal">
+         class="btn btn--small" data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
       </a>
     <% end %>
   </div>
 </header>
 
-<% if @agent.image.nil? %>
-  <% css_class = "background-color-gradient__#{@agent.color}" %>
-<% else %>
-  <% css_class = "agent__visual--image" %>
-  <% css_style = "background-image: url(#{@agent.image_url(:background)});" %>
-<% end %>
-<div class="agent">
-  <div class="agent__visual <%= css_class %>" style="<%= css_style %>">
-    <h2>
-      <%= @agent.name %>
-      <br /><small><%= @agent.owner.username %>/<%= @agent.agentname %></small>
-    </h2>
-  </div>
-  <div class="agent__info">
-    <% unless @agent.description.blank? %>
-      <h3><%= t('views.agents.show.description') %></h3>
-      <p><%= @agent.description %></p>
-    <% end %>
+<%= render 'agent', agent: @agent %>
 
-    <h3><%= t('views.agents.show.sharing_overview') %></h3>
-    <ul class="user-list">
-      <li>
-        <div class="user">
-          <div class="user__avatar">
-            <img src="<%= @agent.owner.image_url(:square) %>" />
-          </div>
-          <div class="user__info">
-            <%= @agent.owner.name_or_username %>
-            <span class="badge badge--primary">
-              <%= t('views.agents.show.owner') %>
-            </span><br />
-            <small><%= @agent.owner.email %></small>
-          </div>
-        </div>
-      </li>
-      <% @agent.collaborators.each do |collaborator| %>
-        <li>
-          <div class="user">
-            <div class="user__avatar">
-              <img src="<%= collaborator.image_url(:square) %>" />
-            </div>
-            <div class="user__info">
-              <%= collaborator.name_or_username %>
-              <span class="merged-badges">
-                <span class="badge">
-                  <%= t('views.agents.show.collaborator') %>
-                </span>
-                <span class="badge badge--primary">
-                  <% if collaborator.can? :edit, @agent %>
-                    <%= t('views.agents.show.edit') %>
-                  <% else %>
-                    <%= t('views.agents.show.show') %>
-                  <% end %>
-                </span>
-              </span>
-              <br />
-              <small><%= collaborator.email %></small>
-            </div>
-          </div>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>

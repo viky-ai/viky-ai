@@ -30,9 +30,8 @@ class AgentsController < ApplicationController
         @origin = 'index'
         format.json{
           render json: {
-            html: render_to_string(partial: 'new', formats: :html),
-            status: 422
-          }
+            replace_modal_content_with: render_to_string(partial: 'new', formats: :html),
+          }, status: 422
         }
       end
     end
@@ -54,9 +53,8 @@ class AgentsController < ApplicationController
       else
         format.json{
           render json: {
-            html: render_to_string(partial: 'edit', formats: :html),
-            status: 422
-          }
+            replace_modal_content_with: render_to_string(partial: 'edit', formats: :html),
+          }, status: 422
         }
       end
     end
@@ -97,13 +95,12 @@ class AgentsController < ApplicationController
       else
         format.json {
           render json: {
-            html: render_to_string(
+            replace_modal_content_with: render_to_string(
               partial: 'confirm_transfer_ownership',
               formats: :html,
               locals: { agent: @agent, errors: result[:errors] }
-            ),
-            status: 422
-          }
+            )
+          }, status: 422
         }
       end
     end

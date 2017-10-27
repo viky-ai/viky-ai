@@ -1,20 +1,25 @@
 $ = require('jquery');
 
+class AutoAgentOrigin
+  constructor: ->
+    $("body").on "Agent:injectOrigin", (event) =>
+        @inject()
+
+    $("body").on "modal:load", (event) =>
+      @inject() if $(".modal form").length != 0
+
+  inject: ->
+    for form in $(".modal form")
+      input = "<input type='hidden' name='origin' value='#{$('body').data('controller-action')}' />"
+      $(form).append(input)
+
+
+$(document).on('turbolinks:load', -> new AutoAgentOrigin())
+
+
+
 class AgentForm
   constructor: ->
-    $("body").on 'ajax:error', (event) =>
-      [data, status, xhr] = event.detail
-      App.Message.alert(data.message) if data.message
-
-    $("body").on 'ajax:success', (event) =>
-      [data, status, xhr] = event.detail
-      if data.notice
-        $("#modal_container").html(data.html).find('.modal').show()
-        App.Message.notice(data.notice)
-      if data.status == 422
-        $("#modal_container").html(data.html).find('.modal').show()
-        $('body').trigger 'modal:update'
-
     $("body").on "ajax:before", (event) =>
       @update_delete_image() if $(event.target).hasClass('js-agent-form')
 

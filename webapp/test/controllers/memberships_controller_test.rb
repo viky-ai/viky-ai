@@ -81,7 +81,7 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
         memberships: { user_ids: users(:locked).id, rights: 'show' },
-        format: :json
+        format: :js
       }
     assert_response :success
   end
@@ -92,10 +92,10 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     post user_agent_memberships_url(users(:confirmed), agents(:weather_confirmed)),
       params: {
         memberships: { user_ids: users(:locked).id, rights: 'show' },
-        format: :json
+        format: :js
       }
-    assert_response :forbidden
-    assert response.body.include?("Unauthorized operation.")
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
   test "Create access: Collaborator (show)" do
@@ -104,10 +104,10 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
         memberships: { user_ids: users(:locked).id, rights: 'show' },
-        format: :json
+        format: :js
       }
-    assert_response :forbidden
-    assert response.body.include?("Unauthorized operation.")
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
   test "Create access: Collaborator (edit)" do
@@ -116,10 +116,10 @@ class MembershipsControllerTest < ActionDispatch::IntegrationTest
     post user_agent_memberships_url(users(:admin), agents(:weather)),
       params: {
         memberships: { user_ids: users(:locked).id, rights: 'show' },
-        format: :json
+        format: :js
       }
-    assert_response :forbidden
-    assert response.body.include?("Unauthorized operation.")
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
   end
 
   #
