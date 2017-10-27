@@ -33,18 +33,48 @@ This endpoint retrieves all the intents extracted from the `sentence` string pas
 
 ### HTTP Request
 
-`GET /agents/:user_id/:id/interpret`
+`GET /agents/:username/:agentname/interpret`
 
 ### Query Parameters
 
-Parameter | Mandatory | Default | Example | Description
---------- | --------- | ------- | ------- | -----------
-:user_id  | yes |  | superman | The username of the agent's owner.
-:id       | yes |  | superbot | The name of the agent.
-sentence  | yes |  | I'm looking for a train to Paris | The sentence to be processed by the AI.
-language  | no | en-US | en-US, en;q=0.9 | The language code in which the sentence is written.
 
-<aside class="success">
-  Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.:<br/>
-  <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Mandatory</th>
+      <th>Example</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:username</td>
+      <td>yes</td>
+      <td>superman</td>
+      <td>The username of the agent's owner.</td>
+    </tr>
+    <tr>
+      <td>:agentname</td>
+      <td>yes</td>
+      <td>superbot</td>
+      <td>The name of the agent.</td>
+    </tr>
+    <tr>
+      <td>sentence</td>
+      <td>yes</td>
+      <td>I'm looking for a train to Paris</td>
+      <td>The sentence to be processed by the AI.</td>
+    </tr>
+    <tr>
+      <td>language</td>
+      <td>no</td>
+      <td>en-US, en;q=0.9</td>
+      <td>The language code in which the sentence is written. Default value: <code>en-US</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<aside class="notice">
+  Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.: <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
 </aside>

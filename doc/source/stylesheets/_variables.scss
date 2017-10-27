@@ -101,3 +101,16 @@ $search-box-border-color: #666 !default;
     word-break: break-all;
     hyphens: auto;
 }
+
+
+// viky.ai
+$nav-bg: #171f2b;
+$nav-subitem-bg: darken($nav-bg, 10%);
+$nav-active-bg: darken(#3bb8d7, 5%);
+$nav-active-parent-bg: $nav-subitem-bg;
+
+$main-bg: #fff;
+
+$aside-notice-bg: #fff;
+$aside-warning-bg: #fff;
+$aside-success-bg: #fff;
