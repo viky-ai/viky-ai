@@ -119,6 +119,7 @@ struct expression_compile
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
+  json_t *json_solution;
 };
 
 struct expression
@@ -144,6 +145,7 @@ struct expression
     struct input_part *input_parts;
   };
 
+  json_t *json_solution;
 };
 
 struct interpretation_compile
@@ -152,6 +154,7 @@ struct interpretation_compile
   int id_start, id_length;
   int slug_start, slug_length;
   int expression_start, expressions_nb;
+  json_t *json_solution;
 };
 
 struct interpretation
@@ -161,6 +164,7 @@ struct interpretation
 
   og_string id;
   og_string slug;
+  json_t *json_solution;
 
   int expressions_nb;
   struct expression *expressions;

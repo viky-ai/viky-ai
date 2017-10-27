@@ -270,6 +270,10 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
 {
   IFN(input_part) DPcErr;
 
+  struct input_part *all_input_part = OgHeapGetCell(package->hinput_part, 0);
+  IFN(all_input_part) DPcErr;
+  int Iinput_part = (input_part - all_input_part);
+
   switch (input_part->type)
   {
     case nlp_input_part_type_Nil:
@@ -280,14 +284,14 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     {
       og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word_start);
       IFN(string_word) DPcErr;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part word '%s'", string_word);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part word '%s'", Iinput_part, string_word);
       break;
     }
     case nlp_input_part_type_Interpretation:
     {
       struct alias *alias = input_part->alias;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      input_part interpretation '%s' '%s' in package '%s'",
-          alias->slug, alias->id, alias->package_id);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part interpretation '%s' '%s' in package '%s'",
+          Iinput_part, alias->slug, alias->id, alias->package_id);
       break;
     }
   }

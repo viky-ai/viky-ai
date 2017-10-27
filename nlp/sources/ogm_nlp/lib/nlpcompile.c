@@ -230,6 +230,7 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   json_t *json_id = NULL;
   json_t *json_slug = NULL;
   json_t *json_expressions = NULL;
+  json_t *json_solution = NULL;
 
   for (void *iter = json_object_iter(json_interpretation); iter;
       iter = json_object_iter_next(json_interpretation, iter))
@@ -251,6 +252,10 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     else if (Ogstricmp(key, "expressions") == 0)
     {
       json_expressions = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "solution") == 0)
+    {
+      json_solution = json_object_iter_value(iter);
     }
     else
     {
@@ -295,6 +300,8 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     DPcErr;
   }
 
+  // solution can be of any json type and can be non existant
+
   // At that point, we can create the interpretation structure
   const char *string_id = json_string_value(json_id);
   const char *string_slug = json_string_value(json_slug);
@@ -317,6 +324,8 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   interpretation->slug_start = OgHeapGetCellsUsed(package->hinterpretation_ba);
   interpretation->slug_length = strlen(string_slug);
   IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
+
+  interpretation->json_solution = json_solution;
 
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
 
@@ -368,6 +377,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_text = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
+  json_t *json_solution = NULL;
 
   for (void *iter = json_object_iter(json_expression); iter; iter = json_object_iter_next(json_expression, iter))
   {
@@ -388,6 +398,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "locale") == 0)
     {
       json_locale = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "solution") == 0)
+    {
+      json_solution = json_object_iter_value(iter);
     }
     else
     {
@@ -463,6 +477,8 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     }
 
   }
+
+  expression->json_solution = json_solution;
 
   DONE;
 }

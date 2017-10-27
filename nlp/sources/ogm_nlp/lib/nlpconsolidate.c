@@ -66,6 +66,8 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
     interpretation->slug = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->slug_start);
     IFN(interpretation->slug) DPcErr;
 
+    interpretation->json_solution = interpretation_compile->json_solution;
+
     interpretation->expressions_nb = interpretation_compile->expressions_nb;
     if (interpretation->expressions_nb > 0)
     {
@@ -100,6 +102,7 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
     {
       expression->aliases = NULL;
     }
+    expression->json_solution = expression_compile->json_solution;
   }
 
   // convert _compile heaps to simple one
@@ -221,7 +224,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateExpression: parsing '%s'", s);
   }
 
-  for (int i = 0, state = 1, start = 0, end = 0; !end; i++)
+  int state = 1;
+  for (int i = 0, start = 0, end = 0; !end; i++)
   {
     int c = ' ';
     if (i < is)
@@ -286,6 +290,12 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
         break;
       }
     }
+  }
+
+  if (state != 1)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateExpression: error parsing expression '%s' : state %d != 1", s, state);
+    DPcErr;
   }
 
   DONE;
