@@ -17,14 +17,15 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
   // level dependent
   int levelFlag = DOgMsgDestInLog;
 
-  og_char_buffer textBuffer[DOgMlogMaxMessageSize];
-  va_list vl;
-
   // prefix with lt number
   og_char_buffer format_extended[DPcPathSize];
   snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
 
+
+  og_char_buffer textBuffer[DOgMlogMaxMessageSize];
+
   // var_args processing
+  va_list vl;
   va_start(vl, format);
   vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
   va_end(vl);

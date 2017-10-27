@@ -14,7 +14,7 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package)
   aut_param->hmutex = ctrl_nlp_th->hmutex;
   aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
   aut_param->loginfo.where = ctrl_nlp_th->loginfo->where;
-  aut_param->state_number = 0x1000;
+  aut_param->state_number = 0x10;
   sprintf(aut_param->name, "package_ha_word");
   package->ha_word = OgAutInit(aut_param);
   IFn(package->ha_word) DPcErr;
@@ -54,7 +54,7 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Words for package '%s' '%s':", package->slug, package->id);
 
-  if ((retour = OgAutScanf(package->ha_word, 0, "", &iout, out, &nstate0, &nstate1, states)))
+  if ((retour = OgAufScanf(package->ha_word, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
@@ -79,7 +79,7 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : %d",sep, out, Iinput_part);
     }
-    while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
+    while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
 
   DONE;

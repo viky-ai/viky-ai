@@ -16,39 +16,17 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
 struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression *expression, size_t *pIinput_part);
 
-static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
+static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, package_t package)
 {
-//  // freeze ba heap
-//  IFE(OgHeapFreeze(package->hinterpretation_ba));
-//  IFE(OgHeapFreeze(package->hexpression_ba));
-//  IFE(OgHeapFreeze(package->halias_ba));
-//  IFE(OgHeapFreeze(package->hinput_part_ba));
-//
-//  // freeze compile heap
-//  IFE(OgHeapFreeze(package->hinterpretation_compile));
-//  IFE(OgHeapFreeze(package->hexpression_compile));
-//  IFE(OgHeapFreeze(package->halias_compile));
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hinterpretation_ba));
 
-// prealloc heap to avoid realloc
+  // prealloc heap to avoid realloc
   int interpretation_compile_used = OgHeapGetCellsUsed(package->hinterpretation_compile);
   IFE(interpretation_compile_used);
   if (interpretation_compile_used > 0)
   {
     IFE(OgHeapAddCells(package->hinterpretation, interpretation_compile_used));
-  }
-
-  int expression_compile_used = OgHeapGetCellsUsed(package->hexpression_compile);
-  IFE(expression_compile_used);
-  if (expression_compile_used > 0)
-  {
-    IFE(OgHeapAddCells(package->hexpression, expression_compile_used));
-  }
-
-  int alias_compile_used = OgHeapGetCellsUsed(package->halias_compile);
-  IFE(alias_compile_used);
-  if (alias_compile_used > 0)
-  {
-    IFE(OgHeapAddCells(package->halias, alias_compile_used));
   }
 
   // convert _compile heaps to simple one
@@ -80,6 +58,29 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
     }
   }
 
+  // free compile heap
+  IFE(OgHeapFlush(package->hinterpretation_compile));
+  package->hinterpretation_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hinterpretation));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hexpression_ba));
+
+  // prealloc heap to avoid realloc
+  int expression_compile_used = OgHeapGetCellsUsed(package->hexpression_compile);
+  IFE(expression_compile_used);
+  if (expression_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->hexpression, expression_compile_used));
+  }
+
   // convert _compile heaps to simple one
   struct expression_compile *all_expression_compile = OgHeapGetCell(package->hexpression_compile, 0);
   struct expression *all_expression = OgHeapGetCell(package->hexpression, 0);
@@ -105,6 +106,29 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
     expression->json_solution = expression_compile->json_solution;
   }
 
+  // free compile heap
+  IFE(OgHeapFlush(package->hexpression_compile));
+  package->hexpression_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hexpression));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->halias_ba));
+
+  // prealloc heap to avoid realloc
+  int alias_compile_used = OgHeapGetCellsUsed(package->halias_compile);
+  IFE(alias_compile_used);
+  if (alias_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->halias, alias_compile_used));
+  }
+
   // convert _compile heaps to simple one
   struct alias_compile *all_alias_compile = OgHeapGetCell(package->halias_compile, 0);
   struct alias *all_alias = OgHeapGetCell(package->halias, 0);
@@ -127,19 +151,23 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
     IFN(alias->package_id) DPcErr;
   }
 
-  // free used heap
-  IFE(OgHeapFlush(package->hinterpretation_compile));
-  package->hinterpretation_compile = NULL;
-  IFE(OgHeapFlush(package->hexpression_compile));
-  package->hexpression_compile = NULL;
+  // free compile heap
   IFE(OgHeapFlush(package->halias_compile));
   package->halias_compile = NULL;
 
-//  // freeze final heap
-//  IFE(OgHeapFreeze(package->hinterpretation));
-//  IFE(OgHeapFreeze(package->hexpression));
-//  IFE(OgHeapFreeze(package->halias));
-//  IFE(OgHeapFreeze(package->hinput_part));
+  // freeze final heap
+  IFE(OgHeapFreeze(package->halias));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  IFE(NlpConsolidatePrepareAlias(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareExpression(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareInterpretation(ctrl_nlp_th, package));
 
   DONE;
 }
@@ -153,9 +181,22 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
     struct expression *expression = all_expression + i;
 
     // resolve input_part_start to pointer
-    expression->input_parts = OgHeapGetCell(package->hinput_part, expression->input_part_start);
-    IFN(expression->input_parts) DPcErr;
+    if (expression->input_part_start >= 0)
+    {
+      expression->input_parts = OgHeapGetCell(package->hinput_part, expression->input_part_start);
+      IFN(expression->input_parts) DPcErr;
+    }
+    else
+    {
+      expression->input_parts = NULL;
+    }
   }
+
+  IFE(OgAuf(package->ha_interpretation_id, FALSE));
+  IFE(OgAufClean(package->ha_interpretation_id));
+
+  IFE(OgAuf(package->ha_word, FALSE));
+  IFE(OgAufClean(package->ha_word));
 
   package->consolidate_done = TRUE;
 

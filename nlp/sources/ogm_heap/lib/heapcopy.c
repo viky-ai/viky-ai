@@ -21,8 +21,12 @@ PUBLIC(size_t) OgHeapCopy(og_heap heap_from, og_heap heap_to)
 
   if (heap_to->freezed)
   {
-    OgMsg(heap_to->hmsg, "", DOgMsgDestInLog, "OgHeapCopy on '%s': is freezed you copy cells to",
-        heap_to->name);
+    og_heap ctrl_heap = heap_to;
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapCopy on '%s': is freezed you copy cells to",
+        ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
     DPcErr;
   }
 

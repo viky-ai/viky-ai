@@ -25,8 +25,11 @@ PUBLIC(og_status) OgHeapReset(og_heap ctrl_heap)
 
   if (ctrl_heap->freezed)
   {
-    OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog, "OgHeapReset on '%s': is freezed you cannot reset heap",
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapReset on '%s': is freezed you cannot reset heap",
         ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
     DPcErr;
   }
 

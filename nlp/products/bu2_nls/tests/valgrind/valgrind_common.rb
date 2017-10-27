@@ -13,7 +13,7 @@ module Valgrind
       @main_package = @available_packages["datetime1"]
       @main_uuid = @main_package.id
 
-   end
+    end
 
     def interpret_queries(nb_request_factor)
 

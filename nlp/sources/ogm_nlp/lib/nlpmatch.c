@@ -107,7 +107,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
   NlpLog(DOgNlpTraceMatch, "  Looking for input parts in package '%s' '%s' from word:", package->slug, package->id)
 
-  if ((retour = OgAutScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
+  if ((retour = OgAufScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
@@ -118,7 +118,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       NlpLog(DOgNlpTraceMatch, "    found input part %d", Iinput_part)
       IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part));
     }
-    while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
+    while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
 
   DONE;
@@ -248,7 +248,7 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct int
       package->id)
 
   int found_input_part = 0;
-  if ((retour = OgAutScanf(package->ha_interpretation_id, input_length, input, &iout, out, &nstate0, &nstate1, states)))
+  if ((retour = OgAufScanf(package->ha_interpretation_id, input_length, input, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
@@ -261,7 +261,7 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct int
       found_input_part = 1;
 
     }
-    while ((retour = OgAutScann(package->ha_interpretation_id, &iout, out, nstate0, &nstate1, states)));
+    while ((retour = OgAufScann(package->ha_interpretation_id, &iout, out, nstate0, &nstate1, states)));
   }
 
   return (found_input_part);

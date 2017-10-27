@@ -28,15 +28,11 @@
 
 #define DOgNlpMaximumOwnedLock      16
 
-#define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
+#define NlpLog(nlptrace, nlpformat, ...) \
+  if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
-    NlpLogImplementation(ctrl_nlp_th, nlpformat, __VA_ARGS__); \
-  } \
-
-
-
-
-
+    NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
+  }
 
 
 struct package
