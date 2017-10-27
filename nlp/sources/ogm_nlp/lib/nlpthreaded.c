@@ -26,6 +26,9 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   memcpy(ctrl_nlp_th->loginfo, &param->loginfo, sizeof(struct og_loginfo));
   snprintf(ctrl_nlp_th->name, DPcPathSize, "%s", param->name);
 
+  //Only for debugging
+  ctrl_nlp_th->loginfo->trace = 0xffff;
+
   og_char_buffer nlpc_name[DPcPathSize];
 
   struct og_msg_param msg_param[1];

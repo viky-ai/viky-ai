@@ -6,16 +6,15 @@
  */
 #include "ogm_nlp.h"
 
-static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1,
-    gconstpointer ptr_request_expression2, gpointer user_data);
-static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, json_t *json_interpretations);
+static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
+    gpointer user_data);
+static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_interpretations);
 
 og_status NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level)
 {
   size_t Irequest_expression;
-  struct request_expression *request_expression = OgHeapNewCell(ctrl_nlp_th->hrequest_expression,
-      &Irequest_expression);
+  struct request_expression *request_expression = OgHeapNewCell(ctrl_nlp_th->hrequest_expression, &Irequest_expression);
   IFn(request_expression) DPcErr;
   IF(Irequest_expression) DPcErr;
   request_expression->expression = expression;
@@ -35,8 +34,8 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1,
-    gconstpointer ptr_request_expression2, gpointer user_data)
+static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
+    gpointer user_data)
 {
   struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
   struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
@@ -70,20 +69,17 @@ og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_int
   DONE;
 }
 
-static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, json_t *json_interpretations)
+static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_interpretations)
 {
   struct expression *expression = request_expression->expression;
   struct interpretation *interpretation = expression->interpretation;
 
   package_t package = interpretation->package;
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-        "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s' '%s'", interpretation->slug,
-        interpretation->id, package->slug, package->id);
-  }
+  NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestInterpretation: found interpretation '%s' '%s' in package '%s' '%s'",
+      interpretation->slug, interpretation->id, package->slug, package->id)
+
   json_t *json_interpretation = json_object();
 
   json_t *json_package_id = json_string(package->id);
@@ -145,8 +141,7 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: '%.*s' in interpretation '%s' '%s'",
-      request_expression->level, DPcPathSize, expression->text, expression->interpretation->slug,
-      expression->interpretation->id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: '%.*s' in interpretation '%s' '%s'", request_expression->level,
+      DPcPathSize, expression->text, expression->interpretation->slug, expression->interpretation->id);
   DONE;
 }

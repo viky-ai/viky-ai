@@ -159,8 +159,8 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
-  NlpLogInfo(ctrl_nlp_th, DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages",
-      ctrl_nlp_th->package_in_used);
+
+  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages", ctrl_nlp_th->package_in_used)
 
   // flush package mark as deleted
   package_t package = NULL;
@@ -290,11 +290,11 @@ static og_status NlpPackageFlush(package_t package)
   OgHeapFlush(package->hinput_part_ba);
   OgHeapFlush(package->hinput_part);
 
-  unsigned char * slug = (unsigned char * ) package->slug;
+  unsigned char * slug = (unsigned char *) package->slug;
   DPcFree(slug);
   package->slug = NULL;
 
-  unsigned char * id = (unsigned char * ) package->id;
+  unsigned char * id = (unsigned char *) package->id;
   DPcFree(id);
   package->id = NULL;
 

@@ -28,9 +28,9 @@
 
 #define DOgNlpMaximumOwnedLock      16
 
-#define Nlplog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
+#define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, nlpformat, __VA_ARGS__); \
+    NlpLogImplementation(ctrl_nlp_th, nlpformat, __VA_ARGS__); \
   } \
 
 
@@ -316,8 +316,7 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
 og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlplog.c */
-og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
-og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
+og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...);
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, og_string label, package_t package);
 og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation);

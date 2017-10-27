@@ -140,11 +140,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 {
   og_string s = ctrl_nlp_th->request_sentence;
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpParseAddWord: adding word '%.*s' at start %d", word_length,
-        s + word_start, word_start);
-  }
+  NlpLog(DOgNlpTraceMatch, "NlpParseAddWord: adding word '%.*s' at start %d", word_length, s + word_start, word_start)
 
   size_t Irequest_word;
   struct request_word *request_word = OgHeapNewCell(ctrl_nlp_th->hrequest_word, &Irequest_word);

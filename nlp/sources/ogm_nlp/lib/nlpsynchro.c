@@ -22,7 +22,7 @@ og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
       og_status status = OgSysiReadUnLock(poped_lock->rwlock);
       IF(status)
       {
-        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiReadUnLock failed");
+        NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiReadUnLock failed","")
       }
 
     }
@@ -31,13 +31,12 @@ og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
       og_status status = OgSysiWriteUnLock(poped_lock->rwlock);
       IF(status)
       {
-        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiWriteUnLock failed");
+        NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiWriteUnLock failed","")
       }
     }
     else
     {
-      NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : unsupported lock type : %d",
-          poped_lock->type);
+      NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : unsupported lock type : %d", poped_lock->type)
     }
 
   }

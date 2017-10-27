@@ -9,67 +9,28 @@
 /**
  * Log message at info level if trace_component is enable
  */
-og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...)
+og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
 {
   // consistency checking
   IFN(ctrl_nlp_th) DPcErr;
 
-  if (ctrl_nlp_th->loginfo->trace & trace_component)
-  {
-    // level dependent
-    int levelFlag = DOgMsgDestInLog + DOgMsgSeverityInfo;
-    og_char_buffer *levelText = "[INFO]";
+  // level dependent
+  int levelFlag = DOgMsgDestInLog;
 
-    og_char_buffer textBuffer[DOgErrorSize];
-    va_list vl;
+  og_char_buffer textBuffer[DOgMlogMaxMessageSize];
+  va_list vl;
 
-    // prefix with lt number
-    og_char_buffer format_extended[DPcPathSize];
-    snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
+  // prefix with lt number
+  og_char_buffer format_extended[DPcPathSize];
+  snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
 
-    // var_args processing
-    va_start(vl, format);
-    vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
-    va_end(vl);
+  // var_args processing
+  va_start(vl, format);
+  vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
+  va_end(vl);
 
-    // log message
-    IFE(OgMsg(ctrl_nlp_th->hmsg, levelText, levelFlag, textBuffer));
-
-  }
-
-  DONE;
-}
-
-/**
- * Log message at info level if trace_component is enable
- */
-og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...)
-{
-  // consistency checking
-  IFN(ctrl_nlp_th) DPcErr;
-
-  if (ctrl_nlp_th->loginfo->trace & trace_component)
-  {
-    // level dependent
-    int levelFlag = DOgMsgDestInLog + DOgMsgSeverityDebug;
-    og_char_buffer *levelText = "[DEBUG]";
-
-    og_char_buffer textBuffer[DOgErrorSize];
-    va_list vl;
-
-    // prefix with lt number
-    og_char_buffer format_extended[DPcPathSize];
-    snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
-
-    // var_args processing
-    va_start(vl, format);
-    vsnprintf(textBuffer, DOgMlogMaxMessageSize, format_extended, vl);
-    va_end(vl);
-
-    // log message
-    IFE(OgMsg(ctrl_nlp_th->hmsg, levelText, levelFlag, textBuffer));
-
-  }
+  // log message
+  IFE(OgMsg(ctrl_nlp_th->hmsg, "", levelFlag, textBuffer));
 
   DONE;
 }
@@ -140,7 +101,8 @@ og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t pa
   og_string interpretation_slug = OgHeapGetCell(package->hinterpretation_ba, interpretation->slug_start);
   IFN(interpretation_slug) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation compile '%s' '%s':", interpretation_slug, interpretation_id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation compile '%s' '%s':", interpretation_slug,
+      interpretation_id);
 
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
@@ -184,8 +146,8 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   og_string string_slug = OgHeapGetCell(package->halias_ba, alias->slug_start);
   og_string string_id = OgHeapGetCell(package->halias_ba, alias->id_start);
   og_string string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug, string_id,
-      string_package);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug,
+      string_id, string_package);
 
   DONE;
 }
@@ -237,7 +199,7 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
 
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
-    if(package->consolidate_done)
+    if (package->consolidate_done)
     {
 
       IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, expression->input_parts + i));

@@ -96,9 +96,13 @@ static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *
 
 static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package)
 {
-  IFE(NlpPackageLog(ctrl_nlp_th, "dump", package));
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package id '%s', slug '%s' :", package->id, package->slug);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceDump)
+  {
+    IFE(NlpPackageLog(ctrl_nlp_th, "dump", package));
+  }
+
+  NlpLog(DOgNlpTraceDump, "Package id '%s', slug '%s' :", package->id, package->slug)
 
   json_t *json_package_id = json_string(package->id);
   IF(json_object_set_new(json_package, "id", json_package_id))
@@ -142,8 +146,7 @@ static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t p
 {
   IFN(interpretation) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s' :", interpretation->slug,
-      interpretation->id);
+  NlpLog(DOgNlpTraceDump, "  Interpretation '%s' '%s' :", interpretation->slug, interpretation->id)
 
   json_t *json_interpretation = json_object();
   IF(json_array_append_new(json_interpretations, json_interpretation))
@@ -209,7 +212,7 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
   og_char_buffer string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Phrase '%s' with locale %s", expression->text, string_locale);
+  NlpLog(DOgNlpTraceDump, "    Expression '%s' with locale %s", expression->text, string_locale)
 
   json_t *json_locale = json_string(string_locale);
   IF(json_object_set_new(json_expression, "locale", json_locale))

@@ -219,10 +219,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   og_string s = expression->text;
   int is = strlen(s);
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateExpression: parsing '%s'", s);
-  }
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateExpression: parsing '%s'", s);
 
   int state = 1;
   for (int i = 0, start = 0, end = 0; !end; i++)
@@ -304,11 +301,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part",
-        length_string_alias, string_alias);
-  }
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part", length_string_alias,
+      string_alias)
 
   for (int i = 0; i < expression->aliases_nb; i++)
   {
@@ -333,11 +327,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_word, int length_string_word)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddWord: adding word '%.*s' as input_part",
-        length_string_word, string_word);
-  }
+
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: adding word '%.*s' as input_part", length_string_word,
+      string_word)
 
   size_t Iinput_part;
   struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);

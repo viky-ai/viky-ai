@@ -105,11 +105,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Looking for input parts in package '%s' '%s' from word:",
-        package->slug, package->id);
-  }
+  NlpLog(DOgNlpTraceMatch, "  Looking for input parts in package '%s' '%s' from word:", package->slug, package->id)
 
   if ((retour = OgAutScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
   {
@@ -119,10 +115,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       int Iinput_part;
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-      if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-      {
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    found input part %d", Iinput_part);
-      }
+      NlpLog(DOgNlpTraceMatch, "    found input part %d", Iinput_part)
       IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part));
     }
     while ((retour = OgAutScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
@@ -175,11 +168,8 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     if (!found_expression) continue;
 
     // here we have found an expression, thus an interpretation
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-    {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "found expression '%.*s' with input_parts %d:%d at level %d",
-      DPcPathSize, expression->text, i, expression->input_parts_nb, level);
-    }
+    NlpLog(DOgNlpTraceMatch, "found expression '%.*s' with input_parts %d:%d at level %d", DPcPathSize,
+        expression->text, i, expression->input_parts_nb, level)
     IFE(NlpRequestExpressionAdd(ctrl_nlp_th, expression, level));
 
     int at_least_one_input_part_added_here = 0;
@@ -220,11 +210,8 @@ static int NlpRequestInputPartCmp(const void *void_request_input_part1, const vo
 
 static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Looking for input parts for interpretation '%s' '%s':",
-        interpretation->slug, interpretation->id);
-  }
+  NlpLog(DOgNlpTraceMatch, "Looking for input parts for interpretation '%s' '%s':", interpretation->slug,
+      interpretation->id)
 
   unsigned char input[DPcAutMaxBufferSize + 9];
   int input_length = strlen(interpretation->id);
@@ -257,11 +244,8 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct int
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Looking for input parts in package '%s' '%s' from interpretation:",
-        package->slug, package->id);
-  }
+  NlpLog(DOgNlpTraceMatch, "  Looking for input parts in package '%s' '%s' from interpretation:", package->slug,
+      package->id)
 
   int found_input_part = 0;
   if ((retour = OgAutScanf(package->ha_interpretation_id, input_length, input, &iout, out, &nstate0, &nstate1, states)))
@@ -272,10 +256,7 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct int
       int Iinput_part;
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-      if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-      {
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    found input part %d", Iinput_part);
-      }
+      NlpLog(DOgNlpTraceMatch, "    found input part %d", Iinput_part)
       IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, interpretation, interpret_package, Iinput_part));
       found_input_part = 1;
 
