@@ -16,21 +16,26 @@
     }
   }
 }
-.selectize-input{
-  input{
-    font-size: 16px;
-    height: 26px;
-  }
-  &.has-items > div.item {
-    font-size: 16px;
-    background-color: #eee;
-    text-shadow: 0 1px 0 #fff;
-    box-shadow: 0 0 1px rgba(black, .2) inset;
-    color: #000;
-    padding: 4px 8px;
-    border-radius: 2px;
+
+.field{
+  .selectize-input{
+    line-height: 1em;
+    input{
+      font-size: 16px;
+      height: 26px;
+    }
+    &.has-items > div.item {
+      font-size: 16px;
+      background-color: #eee;
+      text-shadow: 0 1px 0 #fff;
+      box-shadow: 0 0 1px rgba(black, .2) inset;
+      color: #000;
+      padding: 4px 8px;
+      border-radius: 2px;
+    }
   }
 }
+
 .selectize-dropdown{
   font-size: 16px;
   z-index: 600;
