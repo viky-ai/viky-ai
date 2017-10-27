@@ -8,7 +8,7 @@
 
   <a href="<%= user_agent_path(agent.owner, agent.agentname) %>"
      class="agent-box__header <%= css_class %>"
-     style="<%= css_style %>"">
+     style="<%= css_style %>">
     <span class="agent-box__header__role">
       <% if current_user.owner? agent %>
         <span class="badge badge--small badge--white badge--outline">

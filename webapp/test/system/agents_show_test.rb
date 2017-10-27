@@ -63,4 +63,31 @@ class AgentsShowTest < ApplicationSystemTestCase
     end
   end
 
+
+  test 'Share from agent show if owner' do
+    go_to_agents_index
+    click_link 'T-800'
+    click_link 'Share'
+    click_link 'Invite collaborators'
+    assert page.has_content?('Share with')
+    within(".modal") do
+      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
+      click_button 'Invite'
+    end
+    assert page.has_text?('Agent terminator shared with : confirmed.')
+    assert_equal '/agents/admin/terminator', current_path
+  end
+
+
+  test 'Cannot share from agent show if not owner' do
+    visit new_user_session_path
+    fill_in 'Email', with: users(:edit_on_agent_weather).email
+    fill_in 'Password', with: 'BimBamBoom'
+    click_button 'Log in'
+    assert page.has_text?("Agents")
+
+    click_link 'My awesome weather bot'
+    assert_equal '/agents/admin/weather', current_path
+    assert page.has_no_link?('Share')
+  end
 end
