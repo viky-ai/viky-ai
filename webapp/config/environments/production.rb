@@ -66,8 +66,8 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  #config.action_mailer.default_url_options = { host: ENV['VOQALAPP_BASEURL'] } if !ENV['VOQALAPP_BASEURL'].blank?
-  config.action_mailer.asset_host = ENV['VOQALAPP_BASEURL'] if !ENV['VOQALAPP_BASEURL'].blank?
+  config.action_mailer.default_url_options = { host: ENV.fetch("VOQALAPP_BASEURL") { "www.viky.ai" } }
+  config.action_mailer.asset_host = ENV.fetch("VOQALAPP_BASEURL") { "www.viky.ai" }
 
   config.action_mailer.show_previews = true
 
