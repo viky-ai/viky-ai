@@ -42,5 +42,7 @@ RUN bundle exec middleman build --clean --build-dir=/doc
 #################################################
 FROM nginx:stable-alpine AS image_doc_run
 
+COPY nginx_default.conf /etc/nginx/conf.d/default.conf
+
 # copy doc to nginx web server
-COPY --from=image_doc_build /doc /usr/share/nginx/html/
+COPY --from=image_doc_build /doc /doc
