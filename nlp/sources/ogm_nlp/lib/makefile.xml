@@ -20,6 +20,7 @@
     <file>nlpparse.c</file>
     <file>nlprip.c</file>
     <file>nlprexpression.c</file>
+    <file>nlprposition.c</file>
   </sources>
   <platforms>
     <platform name="linux">

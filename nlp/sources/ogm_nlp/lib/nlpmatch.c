@@ -13,8 +13,8 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     unsigned char *input, struct interpret_package *interpret_package);
 static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level);
 static int NlpRequestInputPartCmp(const void *void_request_input_part1, const void *void_request_input_part2);
-static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation);
-static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation,
+static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int input_length, unsigned char *input, struct interpret_package *interpret_package);
 
 /**
@@ -168,12 +168,16 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     if (!found_expression) continue;
 
     // here we have found an expression, thus an interpretation
-    NlpLog(DOgNlpTraceMatch, "found expression '%.*s' with input_parts %d:%d at level %d", DPcPathSize,
-        expression->text, i, expression->input_parts_nb, level)
-    IFE(NlpRequestExpressionAdd(ctrl_nlp_th, expression, level));
+    struct request_expression *request_expression = NlpRequestExpressionAdd(ctrl_nlp_th, expression, level, request_input_part);
+
+    char string_positions[DPcPathSize];
+    NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
+        request_expression->request_positions_nb, DPcPathSize, string_positions);
+    NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with input_parts %d:%d at level %d", DPcPathSize,
+        expression->text, string_positions, i, expression->input_parts_nb, level)
 
     int at_least_one_input_part_added_here = 0;
-    IFE(at_least_one_input_part_added_here = NlpMatchInterpretation(ctrl_nlp_th, expression->interpretation));
+    IFE(at_least_one_input_part_added_here = NlpMatchInterpretation(ctrl_nlp_th, request_expression));
     if (at_least_one_input_part_added_here) at_least_one_input_part_added = 1;
 
     // Can be reallocated by NlpMatchInterpretation
@@ -184,7 +188,7 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
       request_input_part[j].consumed = 1;
     }
 
-    i += expression->input_parts_nb - 1;
+    //i += expression->input_parts_nb - 1;
   }
 
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
@@ -208,8 +212,9 @@ static int NlpRequestInputPartCmp(const void *void_request_input_part1, const vo
   return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
 }
 
-static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation)
+static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
+  struct interpretation *interpretation = request_expression->expression->interpretation;
   NlpLog(DOgNlpTraceMatch, "Looking for input parts for interpretation '%s' '%s':", interpretation->slug,
       interpretation->id)
 
@@ -226,7 +231,7 @@ static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretati
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
 
-    og_bool input_part_added = NlpMatchInterpretationInPackage(ctrl_nlp_th, interpretation, input_length, input,
+    og_bool input_part_added = NlpMatchInterpretationInPackage(ctrl_nlp_th, request_expression, input_length, input,
         interpret_package);
     IFE(input_part_added);
     if (input_part_added) at_least_one_input_part_added = TRUE;
@@ -235,7 +240,7 @@ static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct interpretati
   return at_least_one_input_part_added;
 }
 
-static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct interpretation *interpretation,
+static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int input_length, unsigned char *input, struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
@@ -257,7 +262,7 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct int
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
       NlpLog(DOgNlpTraceMatch, "    found input part %d", Iinput_part)
-      IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, interpretation, interpret_package, Iinput_part));
+      IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression, interpret_package, Iinput_part));
       found_input_part = 1;
 
     }

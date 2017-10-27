@@ -11,15 +11,28 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
 
-og_status NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level)
+struct request_expression *NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level,
+    struct request_input_part *request_input_part)
 {
   size_t Irequest_expression;
   struct request_expression *request_expression = OgHeapNewCell(ctrl_nlp_th->hrequest_expression, &Irequest_expression);
-  IFn(request_expression) DPcErr;
-  IF(Irequest_expression) DPcErr;
+  IFn(request_expression) return NULL;
+  IF(Irequest_expression) return NULL;
   request_expression->expression = expression;
   request_expression->level = level;
-  DONE;
+  request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
+  IF(request_expression->request_position_start) return NULL;
+  request_expression->request_positions_nb = 0;
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_input_part[i].request_position_start);
+    IFN(request_position) return NULL;
+    IF(OgHeapAppend(ctrl_nlp_th->hrequest_position,request_input_part[i].request_positions_nb,request_position)) return NULL;
+    request_expression->request_positions_nb += request_input_part[i].request_positions_nb;
+  }
+  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) return NULL;
+  return request_expression;
 }
 
 og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
@@ -139,9 +152,14 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 {
   IFN(request_expression) DPcErr;
 
+  char string_positions[DPcPathSize];
+  NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
+      request_expression->request_positions_nb, DPcPathSize, string_positions);
+
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: '%.*s' in interpretation '%s' '%s'", request_expression->level,
-      DPcPathSize, expression->text, expression->interpretation->slug, expression->interpretation->id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: [%s] '%.*s' in interpretation '%s' '%s'",
+      request_expression->level, string_positions, DPcPathSize, expression->text, expression->interpretation->slug,
+      expression->interpretation->id);
   DONE;
 }
