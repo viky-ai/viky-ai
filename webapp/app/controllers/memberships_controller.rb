@@ -129,7 +129,9 @@ class MembershipsController < ApplicationController
 
   def destroy
     @membership = Membership.find(params[:id])
-    @membership.destroy
+    if @membership.destroy
+      MembershipMailer.destroy_membership(@agent.owner, @agent, @membership.user).deliver_later
+    end
     respond_to do |format|
       format.js{
         @html = render_to_string(partial: 'index', formats: :html, locals: { agent: @agent })

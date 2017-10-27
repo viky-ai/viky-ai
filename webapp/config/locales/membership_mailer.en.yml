@@ -3,3 +3,5 @@ en:
     membership:
       create_membership:
         subject: New shared agent
+      destroy_membership:
+        subject: Agent access revoked
