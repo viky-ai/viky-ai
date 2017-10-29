@@ -406,7 +406,9 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
     DPcErr;
   }
 
+  int self_index = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   struct interpret_package interpret_package[1];
+  interpret_package->self_index = self_index;
   interpret_package->package = package;
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));

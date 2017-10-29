@@ -8,31 +8,92 @@
 
 static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
     gpointer user_data);
+static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int request_expression_used);
+static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2);
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
 
-struct request_expression *NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level,
-    struct request_input_part *request_input_part)
+og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level,
+    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression)
 {
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  int request_position_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
+
   size_t Irequest_expression;
   struct request_expression *request_expression = OgHeapNewCell(ctrl_nlp_th->hrequest_expression, &Irequest_expression);
-  IFn(request_expression) return NULL;
-  IF(Irequest_expression) return NULL;
+  IFn(request_expression) DPcErr;
+  IF(Irequest_expression) DPcErr;
+  request_expression->self_index = Irequest_expression;
   request_expression->expression = expression;
   request_expression->level = level;
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
-  IF(request_expression->request_position_start) return NULL;
+  IF(request_expression->request_position_start) DPcErr;
+
+  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
+  IFN(request_input_part) DPcErr;
   request_expression->request_positions_nb = 0;
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
     struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-        request_input_part[i].request_position_start);
-    IFN(request_position) return NULL;
-    IF(OgHeapAppend(ctrl_nlp_th->hrequest_position,request_input_part[i].request_positions_nb,request_position)) return NULL;
-    request_expression->request_positions_nb += request_input_part[i].request_positions_nb;
+        request_input_part[match_zone_input_part[i].current].request_position_start);
+    IFN(request_position) DPcErr;
+    IF(OgHeapAppend(ctrl_nlp_th->hrequest_position,request_input_part[match_zone_input_part[i].current].request_positions_nb,request_position)) DPcErr;
+    request_expression->request_positions_nb +=
+        request_input_part[match_zone_input_part[i].current].request_positions_nb;
   }
-  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) return NULL;
-  return request_expression;
+  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
+
+  int must_add_request_expression = TRUE;
+
+  og_bool request_position_overlap = NlpRequestPositionOverlap(ctrl_nlp_th, request_expression->request_position_start,
+      request_expression->request_positions_nb);
+  if (request_position_overlap) must_add_request_expression = FALSE;
+
+  if (must_add_request_expression)
+  {
+    og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
+        request_expression_used);
+    IF(request_expression_exists) DPcErr;
+    if (request_expression_exists) must_add_request_expression = FALSE;
+  }
+
+  og_bool request_expression_added = TRUE;
+  if (must_add_request_expression)
+  {
+    *prequest_expression = request_expression;
+  }
+  else
+  {
+    OgHeapSetCellsUsed(ctrl_nlp_th->hrequest_expression, request_expression_used);
+    OgHeapSetCellsUsed(ctrl_nlp_th->hrequest_position, request_position_used);
+    request_expression_added = FALSE;
+    *prequest_expression = NULL;
+  }
+  return(request_expression_added);
+}
+
+static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int request_expression_used)
+{
+  struct request_expression *all_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+  for (int i = 0; i < request_expression_used; i++)
+  {
+    og_bool is_same_request_expression = NlpRequestExpressionSame(ctrl_nlp_th, request_expression,
+        all_request_expression + i);
+    if (is_same_request_expression) return TRUE;
+  }
+  return FALSE;
+}
+
+static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2)
+{
+  if (request_expression1->expression != request_expression2->expression) return FALSE;
+  return (NlpRequestPositionSame(ctrl_nlp_th, request_expression1->request_position_start,
+      request_expression1->request_positions_nb, request_expression2->request_position_start,
+      request_expression2->request_positions_nb));
 }
 
 og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
@@ -57,7 +118,7 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (request_expression2->level - request_expression1->level);
   }
-  // Just to make sure it is
+  // Just to make sure it is different
   return request_expression2 - request_expression1;
 }
 
@@ -132,13 +193,11 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
   DONE;
 }
 
-og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th)
+og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title)
 {
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s", title);
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
-
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of found expressions:");
-
-  for (int i = 0; i < request_expression_used; i++)
+  for (int i = request_expression_start; i < request_expression_used; i++)
   {
     struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, i);
     IFN(request_expression) DPcErr;

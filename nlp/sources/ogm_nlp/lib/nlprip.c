@@ -33,7 +33,7 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct req
   struct request_input_part *request_input_part = NlpRequestInputPartAdd(ctrl_nlp_th, interpret_package, Iinput_part);
   IFN(request_input_part) DPcErr;
   request_input_part->type = nlp_input_part_type_Interpretation;
-  request_input_part->request_expression = request_expression;
+  request_input_part->Irequest_expression = request_expression->self_index;
 
   request_input_part->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_input_part->request_position_start) DPcErr;
@@ -59,11 +59,11 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
   return request_input_part;
 }
 
-og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th)
+og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title)
 {
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request input parts:");
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s", title);
   int request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
-  for (int i = 0; i < request_input_part_used; i++)
+  for (int i = request_input_part_start; i < request_input_part_used; i++)
   {
     IFE(NlpRequestInputPartLog(ctrl_nlp_th, i));
   }
@@ -75,8 +75,6 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 {
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
   IFN(request_input_part) DPcErr;
-
-  package_t package = request_input_part->input_part->expression->interpretation->package;
 
   char string_positions[DPcPathSize];
   NlpRequestPositionString(ctrl_nlp_th, request_input_part->request_position_start,
@@ -102,15 +100,17 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
     case nlp_input_part_type_Interpretation:
     {
       // TODO log request_expression instead
-      struct interpretation *interpretation = request_input_part->request_expression->expression->interpretation;
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, request_input_part->Irequest_expression);
+      IFN(request_expression) DPcErr;
+      struct interpretation *interpretation = request_expression->expression->interpretation;
       snprintf(string_input_part, DPcPathSize, "[%s] interpretation: '%s' '%s'", string_positions, interpretation->slug,
           interpretation->id);
       break;
     }
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d %4d: %s in package '%s' '%s'", Irequest_input_part,
-      request_input_part->Iinput_part, string_input_part, package->slug, package->id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%2d %4d %4d: %s", request_input_part->interpret_package->self_index,
+      Irequest_input_part, request_input_part->Iinput_part, string_input_part);
 
   DONE;
 }

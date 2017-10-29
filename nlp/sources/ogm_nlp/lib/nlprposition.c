@@ -24,9 +24,34 @@ og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_sta
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);
   IFN(request_position) DPcErr;
   g_qsort_with_data(request_position, request_positions_nb, sizeof(struct request_position), NlpRequestPositionCmp,
-      NULL);
+  NULL);
 
   DONE;
+}
+
+og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2)
+{
+  if (request_positions_nb1 != request_positions_nb2) return FALSE;
+
+  struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start1);
+  IFN(request_position1) DPcErr;
+  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start2);
+  IFN(request_position2) DPcErr;
+
+  if (memcmp(request_position1, request_position2, request_positions_nb1 * sizeof(struct request_position))) return FALSE;
+  return TRUE;
+}
+
+og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb)
+{
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);
+  IFN(request_position) DPcErr;
+  for (int i = 0; i + 1 < request_positions_nb; i++)
+  {
+    if (!memcmp(request_position + i, request_position + i + 1, sizeof(struct request_position))) return TRUE;
+  }
+  return FALSE;
 }
 
 static int NlpRequestPositionCmp(gconstpointer ptr_request_position1, gconstpointer ptr_request_position2,
@@ -43,21 +68,20 @@ static int NlpRequestPositionCmp(gconstpointer ptr_request_position1, gconstpoin
   return request_position1->length - request_position2->length;
 }
 
-
-int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size, char *string)
+int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
+    char *string)
 {
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);
   IFN(request_position) DPcErr;
-  int length=0;
-  string[length]=0;
-  for (int i=0; i<request_positions_nb; i++)
+  int length = 0;
+  string[length] = 0;
+  for (int i = 0; i < request_positions_nb; i++)
   {
     length = strlen(string);
-    snprintf(string+length,size-length,"%s%d:%d",(i?" ":""),request_position[i].start,request_position[i].length);
+    snprintf(string + length, size - length, "%s%d:%d", (i ? " " : ""), request_position[i].start,
+        request_position[i].length);
   }
 
   DONE;
 }
-
-
 
