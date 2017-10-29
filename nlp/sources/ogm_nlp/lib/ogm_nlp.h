@@ -88,8 +88,14 @@ struct package
 
 typedef struct package *package_t;
 
+enum nlp_alias_type
+{
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any
+};
+
 struct alias_compile
 {
+  enum nlp_alias_type type;
   int alias_start, alias_length;
   int slug_start, slug_length;       // interpretation slug
   int id_start, id_length;           // interpretation id
@@ -98,6 +104,8 @@ struct alias_compile
 
 struct alias
 {
+  enum nlp_alias_type type;
+
   /** alias name */
   og_string alias;
   int alias_length;
@@ -428,6 +436,6 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
-int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
-    char *string);
+int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
+    int size, char *string);
 

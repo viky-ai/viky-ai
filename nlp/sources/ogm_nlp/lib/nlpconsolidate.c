@@ -141,14 +141,24 @@ static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t pac
     alias->alias = OgHeapGetCell(package->halias_ba, alias_compile->alias_start);
     IFN(alias->alias) DPcErr;
 
-    alias->slug = OgHeapGetCell(package->halias_ba, alias_compile->slug_start);
-    IFN(alias->slug) DPcErr;
+    alias->type = alias_compile->type;
+    if (alias->type == nlp_alias_type_type_Interpretation)
+    {
+      alias->slug = OgHeapGetCell(package->halias_ba, alias_compile->slug_start);
+      IFN(alias->slug) DPcErr;
 
-    alias->id = OgHeapGetCell(package->halias_ba, alias_compile->id_start);
-    IFN(alias->id) DPcErr;
+      alias->id = OgHeapGetCell(package->halias_ba, alias_compile->id_start);
+      IFN(alias->id) DPcErr;
 
-    alias->package_id = OgHeapGetCell(package->halias_ba, alias_compile->package_id_start);
-    IFN(alias->package_id) DPcErr;
+      alias->package_id = OgHeapGetCell(package->halias_ba, alias_compile->package_id_start);
+      IFN(alias->package_id) DPcErr;
+    }
+    else
+    {
+      alias->slug = NULL;
+      alias->id = NULL;
+      alias->package_id = NULL;
+    }
   }
 
   // free compile heap
@@ -353,14 +363,22 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
     if (length_string_alias != alias->alias_length) continue;
     if (memcmp(string_alias, alias->alias, length_string_alias)) continue;
 
-    size_t Iinput_part;
-    struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
-    IFN(input_part) DPcErr;
-    input_part->type = nlp_input_part_type_Interpretation;
-    input_part->alias = alias;
+    if (alias->type == nlp_alias_type_type_Interpretation)
+    {
+      size_t Iinput_part;
+      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
+      IFN(input_part) DPcErr;
+      input_part->type = nlp_input_part_type_Interpretation;
+      input_part->alias = alias;
 
-    IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
-    alias_added = TRUE;
+      IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
+      alias_added = TRUE;
+    }
+    else
+    {
+      // alias of type any
+      alias_added = TRUE;
+    }
     break;
   }
 

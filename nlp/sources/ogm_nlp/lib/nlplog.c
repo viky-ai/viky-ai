@@ -21,7 +21,6 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
   og_char_buffer format_extended[DPcPathSize];
   snprintf(format_extended, DPcPathSize, "%s: %s", ctrl_nlp_th->name, format);
 
-
   og_char_buffer textBuffer[DOgMlogMaxMessageSize];
 
   // var_args processing
@@ -144,12 +143,19 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   IFN(alias) DPcErr;
 
   og_string string_alias = OgHeapGetCell(package->halias_ba, alias->alias_start);
-  og_string string_slug = OgHeapGetCell(package->halias_ba, alias->slug_start);
-  og_string string_id = OgHeapGetCell(package->halias_ba, alias->id_start);
-  og_string string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug,
-      string_id, string_package);
 
+  if (alias->type == nlp_alias_type_type_Interpretation)
+  {
+    og_string string_slug = OgHeapGetCell(package->halias_ba, alias->slug_start);
+    og_string string_id = OgHeapGetCell(package->halias_ba, alias->id_start);
+    og_string string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug,
+        string_id, string_package);
+  }
+  else
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' any", string_alias);
+  }
   DONE;
 }
 
@@ -221,10 +227,15 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
 
 {
   IFN(alias) DPcErr;
-
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", alias->alias, alias->slug, alias->id,
-      alias->package_id);
-
+  if (alias->type == nlp_alias_type_type_Interpretation)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", alias->alias, alias->slug,
+        alias->id, alias->package_id);
+  }
+  else
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' any", alias->alias);
+  }
   DONE;
 }
 

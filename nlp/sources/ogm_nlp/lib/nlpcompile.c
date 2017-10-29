@@ -503,6 +503,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   json_t *json_slug = NULL;
   json_t *json_id = NULL;
   json_t *json_package = NULL;
+  json_t *json_alias_type = NULL;
 
   for (void *iter = json_object_iter(json_alias); iter; iter = json_object_iter_next(json_alias, iter))
   {
@@ -523,6 +524,10 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     else if (Ogstricmp(key, "package") == 0)
     {
       json_package = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "type") == 0)
+    {
+      json_alias_type = json_object_iter_value(iter);
     }
     else
     {
@@ -549,60 +554,96 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     DPcErr;
   }
 
-  if (json_is_string(json_slug))
+  alias->type = nlp_alias_type_type_Interpretation;
+  if (json_is_string(json_alias_type))
   {
-    const char *string_slug = json_string_value(json_slug);
-    alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
-    alias->slug_length = strlen(string_slug);
-    if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+    const char *string_alias_type = json_string_value(json_alias_type);
+    if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
+  }
+
+  if (alias->type == nlp_alias_type_type_Interpretation)
+  {
+    if (json_is_string(json_slug))
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+      const char *string_slug = json_string_value(json_slug);
+      alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->slug_length = strlen(string_slug);
+      if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->slug_length + 1, string_slug));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is not a string");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->halias_ba, alias->slug_length + 1, string_slug));
+
+    if (json_is_string(json_id))
+    {
+      const char *string_id = json_string_value(json_id);
+      alias->id_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->id_length = strlen(string_id);
+      if (alias->id_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->id_length + 1, string_id));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is not a string");
+      DPcErr;
+    }
+
+    if (json_is_string(json_package))
+    {
+      const char *string_package = json_string_value(json_package);
+      alias->package_id_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->package_id_length = strlen(string_package);
+      if (alias->package_id_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->package_id_length + 1, string_package));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is not a string");
+      DPcErr;
+    }
   }
   else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is not a string");
-    DPcErr;
-  }
-
-  if (json_is_string(json_id))
-  {
-    const char *string_id = json_string_value(json_id);
-    alias->id_start = OgHeapGetCellsUsed(package->halias_ba);
-    alias->id_length = strlen(string_id);
-    if (alias->id_length > DOgNlpInterpretationExpressionMaxLength)
+    if (json_slug != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is too long");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type 'any' should not have a slug");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->halias_ba, alias->id_length + 1, string_id));
-  }
-  else
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is not a string");
-    DPcErr;
-  }
-
-  if (json_is_string(json_package))
-  {
-    const char *string_package = json_string_value(json_package);
-    alias->package_id_start = OgHeapGetCellsUsed(package->halias_ba);
-    alias->package_id_length = strlen(string_package);
-    if (alias->package_id_length > DOgNlpInterpretationExpressionMaxLength)
+    if (json_id != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is too long");
+      NlpThrowErrorTh(ctrl_nlp_th,
+          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation id");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->halias_ba, alias->package_id_length + 1, string_package));
-  }
-  else
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is not a string");
-    DPcErr;
-  }
+    if (json_package != NULL)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th,
+          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation package");
+      DPcErr;
+    }
+    alias->slug_start = (-1);
+    alias->slug_length = 0;
+    alias->id_start = (-1);
+    alias->id_length = 0;
+    alias->package_id_start = (-1);
+    alias->package_id_length = 0;
 
+  }
   DONE;
 }
 
