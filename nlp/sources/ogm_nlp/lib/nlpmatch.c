@@ -152,8 +152,6 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
   for (int i = 0; i < request_input_part_used; i++)
   {
     struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, i);
-    if (request_input_part->consumed == 2) continue;
-
     struct expression *expression = request_input_part->input_part->expression;
 
     if (expression->input_parts != request_input_part->input_part) continue;
@@ -174,7 +172,6 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     for (; j < request_input_part_used; j++)
     {
       struct request_input_part *rip = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, j);
-      if (rip->consumed == 2) continue;
       struct input_part *input_part = expression->input_parts;
       input_part += Iinput_part;
       if (input_part != rip->input_part)
@@ -212,12 +209,6 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     //i = j - 1;
   }
 
-  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
-  for (int i = 0; i < request_input_part_used; i++)
-  {
-    if (request_input_part[i].consumed == 1) request_input_part[i].consumed = 2;
-  }
-
   if (at_least_one_input_part_added)
   {
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -252,10 +243,6 @@ static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, int Irequest_
   int at_least_one_input_part_added = 0;
   for (int i = 0; i < match_zone_input_part[start].length; i++)
   {
-
-    int Iinput_start = match_zone_input_part[start].start + i;
-    struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Iinput_start);
-    if (request_input_part->consumed == 2) continue;
     match_zone_input_part[start].current = match_zone_input_part[start].start + i;
     int at_least_one_input_part_added_here;
     at_least_one_input_part_added_here = NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, Irequest_input_part,
@@ -303,13 +290,6 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int level, int Irequest_inp
           DPcPathSize, expression->text, string_positions, string_input_parts, level, highlight)
     }
     IFE(at_least_one_input_part_added = NlpMatchInterpretation(ctrl_nlp_th, request_expression));
-  }
-
-  request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
-  IFN(request_input_part) DPcErr;
-  for (int i = 0; i < expression->input_parts_nb; i++)
-  {
-    request_input_part[match_zone_input_part[i].current].consumed = 1;
   }
 
   return at_least_one_input_part_added;

@@ -99,8 +99,8 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
     }
     case nlp_input_part_type_Interpretation:
     {
-      // TODO log request_expression instead
-      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, request_input_part->Irequest_expression);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
       IFN(request_expression) DPcErr;
       struct interpretation *interpretation = request_expression->expression->interpretation;
       snprintf(string_input_part, DPcPathSize, "[%s] interpretation: '%s' '%s'", string_positions, interpretation->slug,

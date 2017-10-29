@@ -245,8 +245,6 @@ struct request_input_part
 
   int request_position_start;
   int request_positions_nb;
-
-  int consumed;
 };
 
 struct request_position

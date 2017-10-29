@@ -366,8 +366,8 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 
   if (!alias_added)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'", length_string_alias,
-        string_alias, expression->text);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'",
+        length_string_alias, string_alias, expression->text);
     DPcErr;
   }
 
