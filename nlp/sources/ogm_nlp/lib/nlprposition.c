@@ -85,3 +85,39 @@ int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, 
   DONE;
 }
 
+int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
+    int size, char *string)
+{
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);
+
+  og_string s = ctrl_nlp_th->request_sentence;
+  int is = strlen(s);
+
+  int position = 0;
+
+  IFN(request_position) DPcErr;
+  int length = 0;
+  string[length] = 0;
+  for (int i = 0; i < request_positions_nb; i++)
+  {
+    if (position < request_position[i].start)
+    {
+      length = strlen(string);
+      snprintf(string + length, size - length, "%.*s", request_position[i].start - position, s + position);
+      position = request_position[i].start;
+
+    }
+    length = strlen(string);
+    snprintf(string + length, size - length, "[%.*s]", request_position[i].length, s + request_position[i].start);
+    position = request_position[i].start + request_position[i].length;
+  }
+
+  if (position < is)
+  {
+    length = strlen(string);
+    snprintf(string + length, size - length, "%.*s", is - position, s + position);
+    position = is;
+  }
+
+  DONE;
+}

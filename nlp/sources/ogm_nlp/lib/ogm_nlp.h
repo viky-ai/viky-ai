@@ -430,4 +430,6 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
+int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
+    char *string);
 

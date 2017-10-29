@@ -71,7 +71,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     request_expression_added = FALSE;
     *prequest_expression = NULL;
   }
-  return(request_expression_added);
+  return (request_expression_added);
 }
 
 static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -215,10 +215,13 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
       request_expression->request_positions_nb, DPcPathSize, string_positions);
 
+  char highlight[DPcPathSize];
+  NlpRequestPositionStringPretty(ctrl_nlp_th, request_expression->request_position_start,
+      request_expression->request_positions_nb, DPcPathSize, highlight);
+
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: [%s] '%.*s' in interpretation '%s' '%s'",
-      request_expression->level, string_positions, DPcPathSize, expression->text, expression->interpretation->slug,
-      expression->interpretation->id);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: [%s] '%.*s' in interpretation '%s': '%s'", request_expression->level,
+      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight);
   DONE;
 }

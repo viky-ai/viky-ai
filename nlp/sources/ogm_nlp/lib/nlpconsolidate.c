@@ -345,6 +345,7 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
   NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part", length_string_alias,
       string_alias)
 
+  og_bool alias_added = FALSE;
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     struct alias *alias = expression->aliases + i;
@@ -359,7 +360,15 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
     input_part->alias = alias;
 
     IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
+    alias_added = TRUE;
+    break;
+  }
 
+  if (!alias_added)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'", length_string_alias,
+        string_alias, expression->text);
+    DPcErr;
   }
 
   DONE;

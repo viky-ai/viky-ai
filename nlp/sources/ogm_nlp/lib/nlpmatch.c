@@ -294,8 +294,13 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int level, int Irequest_inp
       char string_positions[DPcPathSize];
       NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
           request_expression->request_positions_nb, DPcPathSize, string_positions);
-      NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d", DPcPathSize,
-          expression->text, string_positions, string_input_parts, level)
+
+      char highlight[DPcPathSize];
+      NlpRequestPositionStringPretty(ctrl_nlp_th, request_expression->request_position_start,
+          request_expression->request_positions_nb, DPcPathSize, highlight);
+
+      NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d : '%s'",
+          DPcPathSize, expression->text, string_positions, string_input_parts, level, highlight)
     }
     IFE(at_least_one_input_part_added = NlpMatchInterpretation(ctrl_nlp_th, request_expression));
   }
