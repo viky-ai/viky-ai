@@ -55,6 +55,8 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
   IFn(request_input_part->input_part = OgHeapGetCell(interpret_package->package->hinput_part, Iinput_part)) return NULL;
   request_input_part->interpret_package = interpret_package;
   request_input_part->Iinput_part = Iinput_part;
+  request_input_part->Ioriginal_request_input_part = Irequest_input_part;
+  request_input_part->level = ctrl_nlp_th->level;
 
   return request_input_part;
 }

@@ -15,7 +15,7 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
 
-og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression, int level,
+og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
     struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression)
 {
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
@@ -27,7 +27,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   IF(Irequest_expression) DPcErr;
   request_expression->self_index = Irequest_expression;
   request_expression->expression = expression;
-  request_expression->level = level;
+  request_expression->level = ctrl_nlp_th->level;
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
 
@@ -62,6 +62,15 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   og_bool request_expression_added = TRUE;
   if (must_add_request_expression)
   {
+    request_expression->orip_start = (-1);
+    request_expression->orips_nb = 0;
+    for (int i = 0; i < expression->input_parts_nb; i++)
+    {
+      og_status status = NlpNlpRequestExpressionAddOrip(ctrl_nlp_th, request_expression,
+          request_input_part[match_zone_input_part[i].current].Ioriginal_request_input_part);
+      IFE(status);
+    }
+
     *prequest_expression = request_expression;
   }
   else
@@ -101,6 +110,11 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
   IFN(request_expression) DPcErr;
+
+  if (request_expression_used > 0)
+  {
+    IFE(OgNlpInterpretTreeLog(ctrl_nlp_th, request_expression + request_expression_used - 1));
+  }
 
   g_qsort_with_data(request_expression, request_expression_used, sizeof(struct request_expression),
       NlpRequestExpressionCmp, NULL);
@@ -202,14 +216,18 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
     struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, i);
     IFN(request_expression) DPcErr;
 
-    IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression));
+    IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
   }
   DONE;
 }
 
-og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset)
 {
   IFN(request_expression) DPcErr;
+
+  char string_offset[DPcPathSize];
+  memset(string_offset, ' ', offset);
+  string_offset[offset] = 0;
 
   char string_positions[DPcPathSize];
   NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
@@ -221,7 +239,8 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %2d: [%s] '%.*s' in interpretation '%s': '%s'", request_expression->level,
-      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d: [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
+      request_expression->level, string_positions, DPcPathSize, expression->text, expression->interpretation->slug,
+      highlight);
   DONE;
 }

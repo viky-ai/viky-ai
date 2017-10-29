@@ -11,12 +11,12 @@ static og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int input_length,
     unsigned char *input, struct interpret_package *interpret_package);
-static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level);
+static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
 static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length, int level);
+    struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length);
 static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int start, int length, int level);
-static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int level, int Irequest_input_part,
+    struct match_zone_input_part *match_zone_input_part, int start, int length);
+static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part);
 static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstpointer ptr_request_input_part2,
     gpointer user_data);
@@ -45,12 +45,12 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
 
   // Getting all matching expressions and thus interpretations and getting all new input_parts
-  int level = 0;
+  ctrl_nlp_th->level = 0;
   int at_least_one_input_part_added = 0;
   do
   {
-    IFE(at_least_one_input_part_added = NlpMatchExpressions(ctrl_nlp_th, level));
-    level++;
+    IFE(at_least_one_input_part_added = NlpMatchExpressions(ctrl_nlp_th));
+    ctrl_nlp_th->level++;
   }
   while (at_least_one_input_part_added);
 
@@ -123,7 +123,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
   DONE;
 }
 
-static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
+static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
 {
   og_bool at_least_one_input_part_added = 0;
 
@@ -139,12 +139,14 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
 
     g_qsort_with_data(all_request_input_part, request_input_part_used, sizeof(struct request_input_part),
         NlpRequestInputPartCmp, ctrl_nlp_th);
+
+    IFE(NlpOriginalRequestInputPartsCalculate(ctrl_nlp_th));
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following input parts:", level);
+    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following input parts:", ctrl_nlp_th->level);
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, buffer));
   }
 
@@ -203,7 +205,7 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     }
     if (!expression_matches_at_least_once) continue;
     int at_least_one_input_part_added_here = NlpMatchExpressionsZone(ctrl_nlp_th, i, match_zone_input_part,
-        expression->input_parts_nb, level);
+        expression->input_parts_nb);
     IFE(at_least_one_input_part_added_here);
     if (at_least_one_input_part_added_here) at_least_one_input_part_added = 1;
     //i = j - 1;
@@ -214,10 +216,10 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       char buffer[DPcPathSize];
-      snprintf(buffer, DPcPathSize, "List of new request expression at level %d:", level);
+      snprintf(buffer, DPcPathSize, "List of new request expression at level %d:", ctrl_nlp_th->level);
       IFE(NlpRequestExpressionsLog(ctrl_nlp_th, request_expression_used, buffer));
 
-      snprintf(buffer, DPcPathSize, "List of new request input parts deducted at level %d:", level);
+      snprintf(buffer, DPcPathSize, "List of new request input parts deducted at level %d:", ctrl_nlp_th->level);
       IFE(NlpRequestInputPartsLog(ctrl_nlp_th, request_input_part_used, buffer));
     }
 
@@ -227,18 +229,18 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th, int level)
 }
 
 static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length, int level)
+    struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length)
 {
   return (NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, Irequest_input_part, match_zone_input_part, 0,
-      match_zone_input_part_length, level));
+      match_zone_input_part_length));
 }
 
 static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int start, int length, int level)
+    struct match_zone_input_part *match_zone_input_part, int start, int length)
 {
   if (length == 0)
   {
-    return (NlpMatchExpression(ctrl_nlp_th, level, Irequest_input_part, match_zone_input_part));
+    return (NlpMatchExpression(ctrl_nlp_th, Irequest_input_part, match_zone_input_part));
   }
   int at_least_one_input_part_added = 0;
   for (int i = 0; i < match_zone_input_part[start].length; i++)
@@ -246,21 +248,21 @@ static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, int Irequest_
     match_zone_input_part[start].current = match_zone_input_part[start].start + i;
     int at_least_one_input_part_added_here;
     at_least_one_input_part_added_here = NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, Irequest_input_part,
-        match_zone_input_part, start + 1, length - 1, level);
+        match_zone_input_part, start + 1, length - 1);
     IFE(at_least_one_input_part_added_here);
     if (at_least_one_input_part_added_here) at_least_one_input_part_added = 1;
   }
   return (at_least_one_input_part_added);
 }
 
-static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int level, int Irequest_input_part,
+static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part)
 {
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
   IFN(request_input_part) DPcErr;
   struct expression *expression = request_input_part->input_part->expression;
   struct request_expression *request_expression = NULL;
-  og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, level, match_zone_input_part,
+  og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
       &request_expression);
   IF(request_expression_added) DPcErr;
 
@@ -287,7 +289,7 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int level, int Irequest_inp
           request_expression->request_positions_nb, DPcPathSize, highlight);
 
       NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d : '%s'",
-          DPcPathSize, expression->text, string_positions, string_input_parts, level, highlight)
+          DPcPathSize, expression->text, string_positions, string_input_parts, ctrl_nlp_th->level, highlight)
     }
     IFE(at_least_one_input_part_added = NlpMatchInterpretation(ctrl_nlp_th, request_expression));
   }

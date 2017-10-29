@@ -70,6 +70,22 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
   }
+  snprintf(nlpc_name, DPcPathSize, "%s_original_request_input_part", param->name);
+  ctrl_nlp_th->horiginal_request_input_part = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct original_request_input_part),
+  DOgNlpRequestInputPartNumber);
+  IFN(ctrl_nlp_th->horiginal_request_input_part)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_orip", param->name);
+  ctrl_nlp_th->horip = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct orip),
+  DOgNlpRequestInputPartNumber);
+  IFN(ctrl_nlp_th->horip)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
 
   DONE;
 }
@@ -89,6 +105,8 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_input_part));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_expression));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_position));
+  IFE(OgHeapFlush(ctrl_nlp_th->horiginal_request_input_part));
+  IFE(OgHeapFlush(ctrl_nlp_th->horip));
 
   ctrl_nlp_th->hinterpret_package = NULL;
   ctrl_nlp_th->hrequest_word = NULL;
@@ -96,6 +114,9 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->hrequest_input_part = NULL;
   ctrl_nlp_th->hrequest_expression = NULL;
   ctrl_nlp_th->hrequest_position = NULL;
+  ctrl_nlp_th->horiginal_request_input_part = NULL;
+  ctrl_nlp_th->horip = NULL;
+
   DONE;
 }
 
@@ -218,6 +239,8 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_expression));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_position));
+  IFE(OgHeapReset(ctrl_nlp_th->horiginal_request_input_part));
+  IFE(OgHeapReset(ctrl_nlp_th->horip));
 
   ctrl_nlp_th->request_sentence = NULL;
 
