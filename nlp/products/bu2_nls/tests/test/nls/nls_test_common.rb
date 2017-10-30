@@ -39,11 +39,11 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
+    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie", locale = "fr-FR")
       {
         "packages" => ["#{package}"],
         "sentence" => "#{sentence}",
-        "Accept-Language" => "fr-FR"
+        "Accept-Language" => locale
       }
     end
 
@@ -81,62 +81,64 @@ module Nls
 
     def several_packages_several_intents
 
+      Interpretation.default_locale = "fr-FR"
+
       datetime1 = Package.new('datetime1')
       datetime1_hello1 = Interpretation.new('hello1')
-      datetime1_hello1 << Expression.new('Hello Brice')
-      datetime1_hello1 << Expression.new('Hello Jean Marie')
+      datetime1_hello1 << Expression.new('Hello Brice', [], Interpretation.default_locale)
+      datetime1_hello1 << Expression.new('Hello Jean Marie', [], Interpretation.default_locale)
       datetime1 << datetime1_hello1
 
       datetime1_hello2 = Interpretation.new('hello2')
-      datetime1_hello2 << Expression.new('Hello Nicolas')
-      datetime1_hello2 << Expression.new('Hello Olivier')
+      datetime1_hello2 << Expression.new('Hello Nicolas', [], Interpretation.default_locale)
+      datetime1_hello2 << Expression.new('Hello Olivier', [], Interpretation.default_locale)
       datetime1 << datetime1_hello2
 
       datetime1_hello3 = Interpretation.new('hello3')
-      datetime1_hello3 << Expression.new('Hello Sebastien')
-      datetime1_hello3 << Expression.new('Hello Enrico')
-      datetime1_hello3 << Expression.new('Hello Mouadh')
+      datetime1_hello3 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
+      datetime1_hello3 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
+      datetime1_hello3 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
       datetime1 << datetime1_hello3
       @available_packages[datetime1.slug] = datetime1
       @packages_dump << datetime1.to_h
 
       datetime2 = Package.new('datetime2')
       datetime2_hello1 = Interpretation.new('hello1')
-      datetime2_hello1 << Expression.new('Hello Nicolas')
-      datetime2_hello1 << Expression.new('Hello Olivier')
+      datetime2_hello1 << Expression.new('Hello Nicolas', [], Interpretation.default_locale)
+      datetime2_hello1 << Expression.new('Hello Olivier', [], Interpretation.default_locale)
       datetime2 << datetime2_hello1
       @available_packages[datetime2.slug] = datetime2
       @packages_dump << datetime2.to_h
 
       datetime3 = Package.new('datetime3')
       datetime3_hello2 = Interpretation.new('hello2')
-      datetime3_hello2 << Expression.new('Hello Sebastien')
-      datetime3_hello2 << Expression.new('Hello Enrico')
-      datetime3_hello2 << Expression.new('Hello Mouadh')
+      datetime3_hello2 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
+      datetime3_hello2 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
+      datetime3_hello2 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
       datetime3 << datetime3_hello2
       @available_packages[datetime3.slug] = datetime3
       @packages_dump << datetime3.to_h
 
       datetime4 = Package.new('samesentence1')
       datetime4_hello4 = Interpretation.new('hello4')
-      datetime4_hello4 << Expression.new('Hello Sebastien')
-      datetime4_hello4 << Expression.new('Hello Enrico')
-      datetime4_hello4 << Expression.new('Hello Mouadh')
+      datetime4_hello4 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
+      datetime4_hello4 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
+      datetime4_hello4 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
       datetime4 << datetime4_hello4
       @available_packages[datetime4.slug] = datetime4
       @packages_dump << datetime4.to_h
 
       datetime5 = Package.new('samesentence2')
       datetime5_hello5 = Interpretation.new('hello5')
-      datetime5_hello5 << Expression.new('Hello Sebastien')
-      datetime5_hello5 << Expression.new('Hello Enrico')
-      datetime5_hello5 << Expression.new('Hello Mouadh')
+      datetime5_hello5 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
+      datetime5_hello5 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
+      datetime5_hello5 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
       datetime5 << datetime5_hello5
       @available_packages[datetime5.slug] = datetime5
       @packages_dump << datetime5.to_h
 
       @available_packages.values.each do |package|
-        package.to_file(importDir)
+      package.to_file(importDir)
       end
 
     end
@@ -144,7 +146,7 @@ module Nls
     def full_minimal_package(package_slug, interpretation_slug, expression)
       package = Package.new(package_slug)
       interpretation = Interpretation.new(interpretation_slug)
-      interpretation << Expression.new(expression)
+      interpretation << Expression.new(expression, [], Interpretation.default_locale)
       package << interpretation
       package
     end
@@ -152,7 +154,7 @@ module Nls
     def package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
       json_package = Package.new(slug, id: uuid)
       json_interpretation = Interpretation.new(interpretation)
-      json_interpretation << Expression.new(expression)
+      json_interpretation << Expression.new(expression, [], Interpretation.default_locale)
       json_package << json_interpretation
       json_package
     end

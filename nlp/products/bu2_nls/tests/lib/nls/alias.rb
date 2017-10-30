@@ -4,25 +4,22 @@ module Nls
 
   class Alias
 
-    attr_reader :stringAlias
-    attr_reader :slug
-    attr_reader :id
-    attr_reader :package
+    attr_reader :name
+    attr_reader :interpretation
     attr_accessor :expression
 
-    def initialize(stringAlias, slug, id, package)
-      @stringAlias = stringAlias
-      @slug = slug
-      @id = id
-      @package = package
+    def initialize(interpretation, name = nil)
+      name = interpretation.slug if name.nil?
+      @name = name
+      @interpretation = interpretation
     end
 
     def to_h
       {
-        "alias" => @stringAlias,
-        "slug" => @slug,
-        "id" => @id,
-        "package" => @package
+        "alias" => @name,
+        "slug" => @interpretation.slug,
+        "id" => @interpretation.id.to_s,
+        "package" => @interpretation.package.id.to_s
       }
     end
 
