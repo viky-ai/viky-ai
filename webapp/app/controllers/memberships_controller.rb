@@ -12,63 +12,10 @@ class MembershipsController < ApplicationController
   end
 
   def create
-    errors = []
-
-    user_ids = memberships_params[:user_ids].split(';')
-    if user_ids.empty?
-      errors << t('views.memberships.new.empty_dest_message')
-    end
-
-    if errors.empty?
-      begin
-        dest_users = User.find(user_ids)
-      rescue
-        dest_users = User.where(id: user_ids)
-        errors << t('views.memberships.new.unknown_user')
-      end
-
-      search_initial_values = dest_users.collect do |user|
-        {
-          user_id: user.id,
-          name: user.name,
-          username: user.username,
-          email: user.email,
-          images: user.image
-        }
-      end
-
-      if errors.empty?
-        memberships = dest_users.collect do |user|
-          Membership.new(
-            user_id: user.id,
-            agent_id: @agent.id,
-            rights: memberships_params[:rights]
-          )
-        end
-        memberships_in_errors = []
-        ActiveRecord::Base.transaction do
-          memberships.each do |membership|
-            if !membership.save
-              memberships_in_errors << User.find(membership.user_id).username
-            end
-          end
-          raise ActiveRecord::Rollback unless memberships_in_errors.empty?
-        end
-        if !memberships_in_errors.empty?
-          errors << t('views.memberships.new.fail_message', users: memberships_in_errors.join(', '))
-        end
-      end
-    end
-
-    if errors.empty?
-      dest_users.each do |collaborator|
-        MembershipMailer.create_membership(@agent.owner, @agent, collaborator).deliver_later
-      end
-    end
-
+    memberships_creator = MembershipsCreator.new(@agent, memberships_params[:user_ids].split(';'), memberships_params[:rights])
     respond_to do |format|
-      if errors.empty?
-        users = dest_users.collect { |user| user.username }.join(', ')
+      if memberships_creator.create
+        users = memberships_creator.new_collaborators.collect { |user| user.username }.join(', ')
         format.js {
           @modal_content = render_to_string(
             partial: 'index',
@@ -79,10 +26,19 @@ class MembershipsController < ApplicationController
           render partial: 'create_succeed'
         }
       else
+        search_initial_values = memberships_creator.new_collaborators.collect do |user|
+          {
+            user_id: user.id,
+            name: user.name,
+            username: user.username,
+            email: user.email,
+            images: user.image
+          }
+        end
         format.js {
           @html = render_to_string(
             partial: 'new',
-            locals: { search_initial_values: search_initial_values, errors: errors }
+            locals: { search_initial_values: search_initial_values, errors: memberships_creator.errors }
           )
           render partial: 'create_failed'
         }

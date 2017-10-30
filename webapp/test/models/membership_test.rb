@@ -22,4 +22,43 @@ class MembershipTest < ActiveSupport::TestCase
     assert exception_agent.message.include? "PG::ForeignKeyViolation"
   end
 
+
+  test "Share agent with a user" do
+    user = users(:confirmed)
+    agent_weather = agents(:weather)
+    rights = 'edit'
+
+    memberships_creator = MembershipsCreator.new(agent_weather, [user.id], rights)
+    assert memberships_creator.create
+    assert_equal 1, memberships_creator.new_collaborators.size
+    assert_equal user.id, memberships_creator.new_collaborators.first.id
+
+    new_membership = Membership.where(user_id: user.id, agent_id: agent_weather.id).first
+    assert_equal user.id, new_membership.user_id
+    assert_equal agent_weather.id, new_membership.agent_id
+    assert_equal rights, new_membership.rights
+  end
+
+
+  test "Error on share agent because of empty user" do
+    agent_weather = agents(:weather)
+    rights = 'edit'
+
+    memberships_creator = MembershipsCreator.new(agent_weather, [], rights)
+    assert !memberships_creator.create
+    assert_equal "Please select a valid user.", memberships_creator.errors.first
+    assert memberships_creator.new_collaborators.empty?
+  end
+
+
+  test "Error on share agent because of unkonwn user" do
+    unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
+    agent_weather = agents(:weather)
+    rights = 'edit'
+
+    memberships_creator = MembershipsCreator.new(agent_weather, [unknown_user.id], rights)
+    assert !memberships_creator.create
+    assert_equal "Impossible to create share : unknown user given", memberships_creator.errors.first
+    assert memberships_creator.new_collaborators.empty?
+  end
 end

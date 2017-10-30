@@ -105,35 +105,6 @@ class MembershipsTest < ApplicationSystemTestCase
   #
   # Share agent
   #
-  test 'Share agent user' do
-    go_to_agents_index
-
-    first('.dropdown__trigger > button').click
-    click_link 'Share'
-    within(".modal") do
-      click_link 'Invite collaborators'
-      assert page.has_content?('Share with')
-      page.execute_script "document.getElementById('input-user-search').value = '#{users('confirmed').id}'"
-      click_button 'Invite'
-    end
-    assert page.has_text?('Agent weather shared with : confirmed.')
-  end
-
-
-  test 'Share agent empty user' do
-    go_to_agents_index
-
-    first('.dropdown__trigger > button').click
-    click_link 'Share'
-    within(".modal") do
-      click_link 'Invite collaborators'
-      assert page.has_content?('Share with')
-      click_button 'Invite'
-    end
-    assert page.has_text?('Please select a valid user.')
-  end
-
-
   test 'Share agent with multiple users at the same time' do
     go_to_agents_index
 
@@ -165,20 +136,4 @@ class MembershipsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Impossible to create share for : show_on_agent_weather')
   end
-
-
-  test 'Share agent with unkonwn user' do
-    go_to_agents_index
-
-    first('.dropdown__trigger > button').click
-    click_link 'Share'
-    within(".modal") do
-      click_link 'Invite collaborators'
-      assert page.has_content?('Share with')
-      page.execute_script "document.getElementById('input-user-search').value = '123456789'"
-      click_button 'Invite'
-    end
-    assert page.has_text?('Impossible to create share : unknown user given')
-  end
-
 end
