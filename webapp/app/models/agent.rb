@@ -41,7 +41,7 @@ class Agent < ApplicationRecord
   end
 
   def owner
-    users.includes(:memberships).where('memberships.rights' => 'all').first
+    users.includes(:memberships).find_by('memberships.rights' => 'all')
   end
 
   def collaborators

@@ -7,7 +7,7 @@ class AgentTransfert
     @agent = agent
 
     @previous_owner = @agent.owner
-    @new_owner = User.where(id: new_owner_id).first
+    @new_owner = User.find_by(id: new_owner_id)
   end
 
   def valid?
@@ -18,7 +18,7 @@ class AgentTransfert
     validate
     if valid?
       ActiveRecord::Base.transaction do
-        Membership.where(user_id: @agent.owner_id).where(agent_id: @agent.id).first.destroy
+        Membership.where(user_id: @agent.owner_id).find_by(agent_id: @agent.id).destroy
         new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
         if new_membership.save
           @agent.owner_id = @new_owner.id

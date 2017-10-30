@@ -22,7 +22,7 @@ class Backend::UserSearch
     is_empty = true
     options.each do |key, value|
       unless [:sort_by].include?(key)
-        is_empty = false unless value.blank?
+        is_empty = false if value.present?
       end
     end
     return is_empty

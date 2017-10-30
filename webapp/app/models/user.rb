@@ -30,7 +30,7 @@ class User < ApplicationRecord
     if action == :show
       true
     else
-      rights = memberships.where(agent_id: agent.id).first.rights
+      rights = memberships.find_by(agent_id: agent.id).rights
       action == :edit && rights == 'edit' ? true : false
     end
   end
