@@ -51,14 +51,44 @@ class MembershipTest < ActiveSupport::TestCase
   end
 
 
-  test "Error on share agent because of unkonwn user" do
+  test "Error on share agent because of unknown user" do
     unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
     agent_weather = agents(:weather)
     rights = 'edit'
 
     memberships_creator = MembershipsCreator.new(agent_weather, [unknown_user.id], rights)
     assert !memberships_creator.create
-    assert_equal "Impossible to create share : unknown user given", memberships_creator.errors.first
+    assert_equal "User must exist", memberships_creator.errors.first
     assert memberships_creator.new_collaborators.empty?
+  end
+
+
+  test "Error on share agent because of unknown agent" do
+    user = users(:confirmed)
+    unknown_agent = Agent.new(id: '64b95d18-83b2-4c36-8629-7fbfd84add53', name: 'Unknown agent', agentname: 'unknown_agent')
+    rights = 'edit'
+
+    memberships_creator = MembershipsCreator.new(unknown_agent, [user.id], rights)
+    assert !memberships_creator.create
+    assert_equal "Agent must exist", memberships_creator.errors.first
+    assert memberships_creator.new_collaborators.one?
+
+    new_membership = Membership.where(user_id: user.id, agent_id: unknown_agent.id).first
+    assert new_membership.nil?
+  end
+
+
+  test "Error on share agent because of unkonwn rights" do
+    user = users(:confirmed)
+    agent_weather = agents(:weather)
+    unknown_rights = 'unknown_rights'
+
+    memberships_creator = MembershipsCreator.new(agent_weather, [user.id], unknown_rights)
+    assert !memberships_creator.create
+    assert_equal "Rights is not included in the list", memberships_creator.errors.first
+    assert memberships_creator.new_collaborators.one?
+
+    new_membership = Membership.where(user_id: user.id, agent_id: agent_weather.id).first
+    assert new_membership.nil?
   end
 end
