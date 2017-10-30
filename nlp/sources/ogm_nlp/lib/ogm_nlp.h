@@ -148,6 +148,8 @@ struct expression
     struct input_part *input_parts;
   };
 
+  int alias_any_input_part_position;
+
   json_t *json_solution;
 };
 
@@ -276,6 +278,12 @@ struct orip
   int Ioriginal_request_input_part;
 };
 
+struct request_any
+{
+  int request_word_start;
+  int request_words_nb;
+};
+
 struct request_expression
 {
   int self_index;
@@ -291,6 +299,10 @@ struct request_expression
 
   int orip_start;
   int orips_nb;
+
+  /** all possible any for request expression */
+  int request_any_start;
+  int request_anys_nb;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -339,6 +351,8 @@ struct og_ctrl_nlp_threaded
 
   /** Heap of struct request_position */
   og_heap hrequest_position;
+
+  og_heap hrequest_any;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -464,9 +478,22 @@ int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_s
 
 /* nlporip.c */
 og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th);
-og_status NlpNlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Ioriginal_request_input_part);
 
 /* nlptree.c */
-og_status OgNlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlpany.c */
+og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_bool NlpRequestAnyGetClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression, int *pIrequest_any);
+int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+
+
+
+
+
 

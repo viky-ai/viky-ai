@@ -66,7 +66,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     request_expression->orips_nb = 0;
     for (int i = 0; i < expression->input_parts_nb; i++)
     {
-      og_status status = NlpNlpRequestExpressionAddOrip(ctrl_nlp_th, request_expression,
+      og_status status = NlpRequestExpressionAddOrip(ctrl_nlp_th, request_expression,
           request_input_part[match_zone_input_part[i].current].Ioriginal_request_input_part);
       IFE(status);
     }
@@ -113,7 +113,10 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
 
   if (request_expression_used > 0)
   {
-    IFE(OgNlpInterpretTreeLog(ctrl_nlp_th, request_expression + request_expression_used - 1));
+    struct request_expression *last_request_expression = request_expression + request_expression_used - 1;
+    IFE(NlpRequestAnysAdd(ctrl_nlp_th, last_request_expression));
+    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
   }
 
   g_qsort_with_data(request_expression, request_expression_used, sizeof(struct request_expression),

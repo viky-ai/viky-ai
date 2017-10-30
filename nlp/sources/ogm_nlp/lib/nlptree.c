@@ -6,20 +6,20 @@
  */
 #include "ogm_nlp.h"
 
-static og_status OgNlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int offset);
+static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression, int offset);
 static og_status NlpRequestInputPartWordLog(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part,
     int offset);
 
-og_status OgNlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Tree representation for expression:");
-  IFE(OgNlpInterpretTreeLogRecursive(ctrl_nlp_th, request_expression, 0));
+  IFE(NlpInterpretTreeLogRecursive(ctrl_nlp_th, request_expression, request_expression, 0));
   DONE;
 }
 
-static og_status OgNlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int offset)
+static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression, int offset)
 {
   IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, offset));
 
@@ -41,6 +41,7 @@ static og_status OgNlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct re
     struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
         Irequest_input_part);
     IFN(request_input_part) DPcErr;
+
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
@@ -53,8 +54,33 @@ static og_status OgNlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct re
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
-      IFE(OgNlpInterpretTreeLogRecursive(ctrl_nlp_th, sub_request_expression, offset + 2));
+      IFE(NlpInterpretTreeLogRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression, offset + 2));
+    }
 
+    if (request_expression->expression->alias_any_input_part_position == i + 1)
+    {
+      int Irequest_any;
+      og_bool found_request_any = NlpRequestAnyGetClosest(ctrl_nlp_th, root_request_expression, request_expression,
+          &Irequest_any);
+      if (found_request_any)
+      {
+        struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, Irequest_any);
+        IFN(request_any) DPcErr;
+
+        char string_any[DPcPathSize];
+        NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
+
+        char highlight[DPcPathSize];
+        NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
+
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: [%s] any: '%s'", string_offset,
+            request_input_part->level, string_any, highlight);
+      }
+      else
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeLogRecursive: no request_any found");
+        DPcErr;
+      }
     }
 
   }

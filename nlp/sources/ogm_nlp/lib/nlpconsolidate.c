@@ -266,6 +266,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   expression->input_parts_nb = 0;
   expression->input_parts = NULL;
   expression->input_part_start = -1;
+  expression->alias_any_input_part_position = -1;
 
   og_string s = expression->text;
   int is = strlen(s);
@@ -376,7 +377,17 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
     }
     else
     {
-      // alias of type any
+      // this says that the any alias is before the input_part position expression->input_parts_nb
+      // a value of -1 means no alias, a value of zero means before the first input_part
+      // a value of n means before the nth input_part (or at the end if it is equal to expression->input_parts_nb
+      if (expression->alias_any_input_part_position >= 0)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th,
+            "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while only one alias per expression is allowed",
+            length_string_alias, string_alias, expression->text);
+
+      }
+      expression->alias_any_input_part_position = expression->input_parts_nb;
       alias_added = TRUE;
     }
     break;

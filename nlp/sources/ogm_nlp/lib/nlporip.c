@@ -26,7 +26,7 @@ og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
 DONE;
 }
 
-og_status NlpNlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Ioriginal_request_input_part)
 {
   size_t Iorip;
