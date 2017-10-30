@@ -284,15 +284,7 @@ struct request_any
   int request_words_nb;
 
   /** used to optimize the attachement any <-> request_expression */
-  GQueue queue_list_request_expression[1];
-  //int list_request_expression_start;
-  //int list_request_expressions_nb;
-  int consumed;
-};
-
-struct list_request_expression
-{
-  int Irequest_expression;
+  GQueue queue_request_expression[1];
   int consumed;
 };
 
@@ -367,7 +359,6 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_position;
 
   og_heap hrequest_any;
-  og_heap hlist_request_expression;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -500,6 +491,8 @@ og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expr
 og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpany.c */
+og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th);
 og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,

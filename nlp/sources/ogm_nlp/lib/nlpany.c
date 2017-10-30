@@ -13,6 +13,23 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_exp
 static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size,
     char *string);
 
+og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th)
+{
+  return NlpInterpretAnyReset(ctrl_nlp_th);
+}
+
+og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th)
+{
+  int request_any_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_any);
+  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
+  IFN(request_any) DPcErr;
+  for (int i = 0; i < request_any_used; i++)
+  {
+    g_queue_clear(request_any->queue_request_expression);
+  }
+  DONE;
+}
+
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
@@ -68,7 +85,7 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     request_any->request_word_start = i;
     request_any->request_words_nb = j - i;
 
-    g_queue_init(request_any->queue_list_request_expression);
+    g_queue_init(request_any->queue_request_expression);
     request_any->consumed = 0;
 
     if (request_expression->request_anys_nb == 0)
@@ -148,16 +165,7 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_exp
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression)
 {
-  size_t Ilist_request_expression;
-  struct list_request_expression *list_request_expression = OgHeapNewCell(ctrl_nlp_th->hlist_request_expression,
-      &Ilist_request_expression);
-  IFn(list_request_expression) DPcErr;
-
-  list_request_expression->Irequest_expression = request_expression->self_index;
-  list_request_expression->consumed = 0;
-
-  g_queue_push_tail(request_any->queue_list_request_expression, GINT_TO_POINTER(Ilist_request_expression));
-
+  g_queue_push_tail(request_any->queue_request_expression, GINT_TO_POINTER(request_expression->self_index));
   DONE;
 }
 
@@ -199,18 +207,12 @@ static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct re
   int length = 0;
   string[length] = 0;
 
-  for (GList *iter = request_any->queue_list_request_expression->head; iter; iter = iter->next)
+  for (GList *iter = request_any->queue_request_expression->head; iter; iter = iter->next)
   {
-    int Ilist_request_expression = GPOINTER_TO_INT(iter->data);
-
-    struct list_request_expression *list_request_expression = OgHeapGetCell(ctrl_nlp_th->hlist_request_expression,
-        Ilist_request_expression);
-    IFn(list_request_expression) DPcErr;
-
+    int Irequest_expression = GPOINTER_TO_INT(iter->data);
     length = strlen(string);
-    snprintf(string + length, size - length, "%s%d",
-        (iter != request_any->queue_list_request_expression->head ? " " : ""),
-        list_request_expression->Irequest_expression);
+    snprintf(string + length, size - length, "%s%d", (iter != request_any->queue_request_expression->head ? " " : ""),
+        Irequest_expression);
   }
 
   DONE;

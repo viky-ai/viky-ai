@@ -45,28 +45,22 @@ static og_bool OgRequestAnyOptimizeMatchSingle1(og_nlp_th ctrl_nlp_th,
   struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, Irequest_any);
   if (request_any->consumed) return FALSE;
 
-  struct list_request_expression *single_list_request_expression = NULL;
-  int nb_possible_request_expressions_to_match = 0;
-  for (GList *iter = request_any->queue_list_request_expression->head; iter; iter = iter->next)
-  {
-    int Ilist_request_expression = GPOINTER_TO_INT(iter->data);
+  struct request_expression *single_request_expression = NULL;
 
-    struct list_request_expression *list_request_expression = OgHeapGetCell(ctrl_nlp_th->hlist_request_expression,
-        Ilist_request_expression);
-    IFn(list_request_expression) DPcErr;
+  int nb_possible_request_expressions_to_match = 0;
+  for (GList *iter = request_any->queue_request_expression->head; iter; iter = iter->next)
+  {
+    int Irequest_expression = GPOINTER_TO_INT(iter->data);
     struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-        list_request_expression->Irequest_expression);
+        Irequest_expression);
     IFN(request_expression) DPcErr;
     if (request_expression->Irequest_any >= 0) continue;
     nb_possible_request_expressions_to_match++;
-    single_list_request_expression = list_request_expression;
+    single_request_expression = request_expression;
   }
   if (nb_possible_request_expressions_to_match == 1)
   {
-    struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-        single_list_request_expression->Irequest_expression);
-    IFN(request_expression) DPcErr;
-    request_expression->Irequest_any = Irequest_any;
+    single_request_expression->Irequest_any = Irequest_any;
     request_any->consumed = 1;
     return TRUE;
   }
