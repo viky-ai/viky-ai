@@ -124,9 +124,9 @@ class UserTest < ActiveSupport::TestCase
 
   test "invitation status" do
     u = users(:invited)
-    travel_to (u.invitation_sent_at + User.invite_for + 1.seconds)
+    travel_to(u.invitation_sent_at + User.invite_for + 1.seconds)
     assert_equal :expired, u.invitation_status
-    travel_to (u.invitation_sent_at + User.invite_for - 1.seconds)
+    travel_to(u.invitation_sent_at + User.invite_for - 1.seconds)
     assert_equal :valid, u.invitation_status
     travel_back
   end

@@ -17,7 +17,7 @@ class AgentImageUploader < Shrine
     validate_mime_type_inclusion ['image/jpeg', 'image/png', 'image/gif']
   end
 
-  process(:store) do |io, context|
+  process(:store) do |io, _context|
     {
       original: io,
       background: resize_to_fill!(io.download, 640, 360, gravity: "Center")

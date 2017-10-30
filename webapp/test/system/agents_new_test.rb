@@ -43,7 +43,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    assert_equal expected, all('.agent-box h2').collect {|n| n.text}
+    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert_equal "Wall-e", first(".background-color-gradient__red h2").text
   end
 
@@ -70,7 +70,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    assert_equal expected, all('.agent-box h2').collect {|n| n.text}
+    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert all('.agent-box__header').last[:style].include? "background-image"
   end
 

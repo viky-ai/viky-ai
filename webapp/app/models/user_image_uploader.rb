@@ -13,7 +13,7 @@ class UserImageUploader < Shrine
   plugin :pretty_location
   plugin :default_url
 
-  Attacher.default_url do |options|
+  Attacher.default_url do
     ActionController::Base.helpers.asset_path("default_avatar.png")
   end
 
@@ -22,7 +22,7 @@ class UserImageUploader < Shrine
     validate_mime_type_inclusion ['image/jpeg', 'image/png', 'image/gif']
   end
 
-  process(:store) do |io, context|
+  process(:store) do |io, _context|
     {
       original: io,
       square: resize_to_fill!(io.download, 600, 600, gravity: "Center")

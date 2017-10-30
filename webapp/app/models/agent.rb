@@ -18,8 +18,7 @@ class Agent < ApplicationRecord
   before_destroy :check_collaborators_presence
 
   def self.search(q = {})
-    conditions = where("1 = 1")
-    conditions = joins(:memberships).where("user_id = ?", q[:user_id])
+    conditions = where("1 = 1").joins(:memberships).where("user_id = ?", q[:user_id])
     conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
     conditions
   end

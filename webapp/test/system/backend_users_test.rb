@@ -69,9 +69,9 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
 
-    assert_equal expected, all("tbody tr").map {|tr|
+    assert_equal expected, (all("tbody tr").map {|tr|
       tr.all('td').first.text.split(' ').first
-    }
+    })
   end
 
 

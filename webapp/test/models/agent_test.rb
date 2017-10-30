@@ -257,10 +257,9 @@ class AgentTest < ActiveSupport::TestCase
 
 
   test "Transfer agent ownership whereas another agent exists with this agentname" do
-    user_admin = users(:admin)
     user_confirmed = users(:confirmed)
     weather_agent = agents(:weather)
-    assert_equal 0, user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" }
+    assert_equal 0, (user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" })
 
     result = weather_agent.transfer_ownership_to(user_confirmed.id)
     assert !result[:success]
@@ -269,12 +268,11 @@ class AgentTest < ActiveSupport::TestCase
 
     assert weather_agent.save
 
-    assert_equal 0, user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" }
+    assert_equal 0, (user_confirmed.agents.count { |agent| agent.name == "My awesome weather bot" })
   end
 
 
   test "Transfer agent ownership whereas new owner doesn't exit" do
-    user_admin = users(:admin)
     new_owner = User.new(email: 'not-admin@viky.ai', password: 'Hello baby', username: 'mrwho')
     weather_agent = agents(:terminator)
 
