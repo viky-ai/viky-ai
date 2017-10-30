@@ -28,9 +28,10 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->self_index = Irequest_expression;
   request_expression->expression = expression;
   request_expression->level = ctrl_nlp_th->level;
+  request_expression->Irequest_any = (-1);
+
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
-
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
   IFN(request_input_part) DPcErr;
   request_expression->request_positions_nb = 0;
@@ -115,7 +116,9 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
   {
     struct request_expression *last_request_expression = request_expression + request_expression_used - 1;
     IFE(NlpRequestAnysAdd(ctrl_nlp_th, last_request_expression));
+    IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, last_request_expression));
     IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
+    IFE(OgRequestAnyOptimizeMatch(ctrl_nlp_th, last_request_expression));
     IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
   }
 
@@ -242,8 +245,8 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d: [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
-      request_expression->level, string_positions, DPcPathSize, expression->text, expression->interpretation->slug,
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
+      request_expression->self_index, request_expression->level, string_positions, DPcPathSize, expression->text, expression->interpretation->slug,
       highlight);
   DONE;
 }

@@ -94,6 +94,14 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
   }
+  snprintf(nlpc_name, DPcPathSize, "%s_list_request_expression", param->name);
+  ctrl_nlp_th->hlist_request_expression = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct list_request_expression),
+  DOgNlpRequestExpressionNumber);
+  IFN(ctrl_nlp_th->hlist_request_expression)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
 
   DONE;
 }
@@ -116,6 +124,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapFlush(ctrl_nlp_th->horip));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_any));
+  IFE(OgHeapFlush(ctrl_nlp_th->hlist_request_expression));
 
   ctrl_nlp_th->hinterpret_package = NULL;
   ctrl_nlp_th->hrequest_word = NULL;
@@ -126,6 +135,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->horiginal_request_input_part = NULL;
   ctrl_nlp_th->horip = NULL;
   ctrl_nlp_th->hrequest_any = NULL;
+  ctrl_nlp_th->hlist_request_expression = NULL;
 
   DONE;
 }
@@ -252,6 +262,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapReset(ctrl_nlp_th->horip));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_any));
+  IFE(OgHeapReset(ctrl_nlp_th->hlist_request_expression));
 
   ctrl_nlp_th->request_sentence = NULL;
 

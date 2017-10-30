@@ -282,6 +282,18 @@ struct request_any
 {
   int request_word_start;
   int request_words_nb;
+
+  /** used to optimize the attachement any <-> request_expression */
+  GQueue queue_list_request_expression[1];
+  //int list_request_expression_start;
+  //int list_request_expressions_nb;
+  int consumed;
+};
+
+struct list_request_expression
+{
+  int Irequest_expression;
+  int consumed;
 };
 
 struct request_expression
@@ -303,6 +315,8 @@ struct request_expression
   /** all possible any for request expression */
   int request_any_start;
   int request_anys_nb;
+
+  int Irequest_any;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -353,6 +367,7 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_position;
 
   og_heap hrequest_any;
+  og_heap hlist_request_expression;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -485,13 +500,18 @@ og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expr
 og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpany.c */
+og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
+    struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-og_bool NlpRequestAnyGetClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression, int *pIrequest_any);
+og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression);
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 
+/* nlpanyopt.c */
+int OgRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
 
 
 

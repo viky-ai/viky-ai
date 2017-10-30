@@ -10,6 +10,8 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     int Irequest_position_before);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct request_any *request_any);
+static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size,
+    char *string);
 
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
@@ -62,8 +64,13 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     size_t Irequest_any;
     struct request_any *request_any = OgHeapNewCell(ctrl_nlp_th->hrequest_any, &Irequest_any);
     IFn(request_any) DPcErr;
+
     request_any->request_word_start = i;
     request_any->request_words_nb = j - i;
+
+    g_queue_init(request_any->queue_list_request_expression);
+    request_any->consumed = 0;
+
     if (request_expression->request_anys_nb == 0)
     {
       request_expression->request_any_start = Irequest_any;
@@ -75,30 +82,36 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
   DONE;
 }
 
-og_bool NlpRequestAnyGetClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression, int *pIrequest_any)
+og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression)
 {
   struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
   IFN(request_any) DPcErr;
 
-  int Iclosest_request_any = (-1);
   int minimum_distance = 0xfffffff;
   for (int i = 0; i < root_request_expression->request_anys_nb; i++)
   {
     int Irequest_any = root_request_expression->request_any_start + i;
     int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any + Irequest_any);
     IFE(distance);
-    if (minimum_distance >= distance)
+    if (minimum_distance > distance)
     {
       minimum_distance = distance;
-      Iclosest_request_any = Irequest_any;
     }
   }
 
-  *pIrequest_any = Iclosest_request_any;
+  for (int i = 0; i < root_request_expression->request_anys_nb; i++)
+  {
+    int Irequest_any = root_request_expression->request_any_start + i;
+    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any + Irequest_any);
+    IFE(distance);
+    if (minimum_distance == distance)
+    {
+      IFE(NlpRequestAnyAddRequestExpression(ctrl_nlp_th, request_any + Irequest_any, request_expression));
+    }
+  }
 
-  if (Iclosest_request_any >= 0) return TRUE;
-  return FALSE;
+  DONE;
 }
 
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -132,17 +145,72 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_exp
   return (minimum_distance);
 }
 
+og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
+    struct request_expression *request_expression)
+{
+  size_t Ilist_request_expression;
+  struct list_request_expression *list_request_expression = OgHeapNewCell(ctrl_nlp_th->hlist_request_expression,
+      &Ilist_request_expression);
+  IFn(list_request_expression) DPcErr;
+
+  list_request_expression->Irequest_expression = request_expression->self_index;
+  list_request_expression->consumed = 0;
+
+  g_queue_push_tail(request_any->queue_list_request_expression, GINT_TO_POINTER(Ilist_request_expression));
+
+  DONE;
+}
+
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of possible any for expression:");
+  if (request_expression->request_anys_nb == 0)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "No any for expression");
+    DONE;
+  }
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of possible any for expression:");
 
-  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
+  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
 
   for (int i = 0; i < request_expression->request_anys_nb; i++)
   {
     char string_any[DPcPathSize];
-    NlpRequestAnyString(ctrl_nlp_th, request_any + request_expression->request_any_start + i, DPcPathSize, string_any);
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " [%s]", string_any);
+    NlpRequestAnyString(ctrl_nlp_th, request_any + i, DPcPathSize, string_any);
+
+    char string_request_expression[DPcPathSize];
+    NlpRequestAnyRequestExpressionString(ctrl_nlp_th, request_any + i, DPcPathSize, string_request_expression);
+
+    char highlight[DPcPathSize];
+    NlpRequestAnyStringPretty(ctrl_nlp_th, request_any + i, DPcPathSize, highlight);
+
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " [%s] -> [%s]: '%s'", string_any, string_request_expression,
+        highlight);
+  }
+
+  DONE;
+}
+
+static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size,
+    char *string)
+{
+  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_word) DPcErr;
+
+  int length = 0;
+  string[length] = 0;
+
+  for (GList *iter = request_any->queue_list_request_expression->head; iter; iter = iter->next)
+  {
+    int Ilist_request_expression = GPOINTER_TO_INT(iter->data);
+
+    struct list_request_expression *list_request_expression = OgHeapGetCell(ctrl_nlp_th->hlist_request_expression,
+        Ilist_request_expression);
+    IFn(list_request_expression) DPcErr;
+
+    length = strlen(string);
+    snprintf(string + length, size - length, "%s%d",
+        (iter != request_any->queue_list_request_expression->head ? " " : ""),
+        list_request_expression->Irequest_expression);
   }
 
   DONE;
@@ -184,16 +252,13 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
     if (position < request_word[irw].start)
     {
       length = strlen(string);
-      snprintf(string + length, size - length, "%.*s",
-          request_word[irw].start - position, s + position);
+      snprintf(string + length, size - length, "%.*s", request_word[irw].start - position, s + position);
       position = request_word[irw].start;
 
     }
     length = strlen(string);
-    snprintf(string + length, size - length, "[%.*s]", request_word[irw].length,
-        s + request_word[irw].start);
-    position = request_word[irw].start
-        + request_word[irw].length;
+    snprintf(string + length, size - length, "[%.*s]", request_word[irw].length, s + request_word[irw].start);
+    position = request_word[irw].start + request_word[irw].length;
   }
 
   if (position < is)
