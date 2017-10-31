@@ -74,18 +74,7 @@ module Nls
         # execution de la requete
         actual = Nls.interpret(request)
 
-        expected =
-        {
-          "interpretations" =>
-            [
-            {
-            "package" => aller_de_a.id.to_s,
-            "id" => i_want_go_from_to.id.to_s,
-            "slug" => "want-go-from-to",
-            "score" => 1.0
-            }
-            ]
-        }
+        expected = expected_interpret_result(i_want_go_from_to)
 
         assert_equal expected, actual
 
@@ -141,18 +130,7 @@ module Nls
         # execution de la requete
         actual = Nls.interpret(request)
 
-        expected =
-        {
-          "interpretations" =>
-          [
-          {
-          "package" => go_town.id.to_s,
-          "id" => i_go_town.id.to_s,
-          "slug" => "go-town",
-          "score" => 1.0
-          }
-          ]
-        }
+        expected = expected_interpret_result(i_go_town)
 
         assert_equal expected, actual
 
@@ -235,18 +213,7 @@ module Nls
 
         # ap actual
 
-        expected =
-        {
-          "interpretations" =>
-          [
-          {
-          "package" => want_hotel.id.to_s,
-          "id" => i_want_hotel_with_feature.id.to_s,
-          "slug" => "want-hotel-with-feature",
-          "score" => 1.0
-          }
-          ]
-        }
+        expected = expected_interpret_result(i_want_hotel_with_feature)
 
         assert_equal expected, actual
 

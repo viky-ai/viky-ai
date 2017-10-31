@@ -39,7 +39,7 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie", locale = "fr-FR")
+    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie", locale = Interpretation.default_locale)
       request = {}
       if package.kind_of? Array
         request['packages'] = package
@@ -51,14 +51,14 @@ module Nls
       request
     end
 
-    def expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")
+    def expected_interpret_result(interpretation)
       {
         "interpretations"=>
         [
           {
-            "package" => "#{package}",
-            "id" => "#{id}",
-            "slug" => "#{slug}",
+            "package" => "#{interpretation.package.id.to_s}",
+            "id" => "#{interpretation.id.to_s}",
+            "slug" => "#{interpretation.slug}",
             "score" => 1.0
           }
         ]
