@@ -23,6 +23,7 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
           &Irequest_position));
   request_input_part->request_position_start = Irequest_position;
   request_input_part->request_positions_nb = 1;
+  request_input_part->request_position_distance = 0;
 
   DONE;
 }

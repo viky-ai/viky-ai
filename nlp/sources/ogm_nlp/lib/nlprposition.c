@@ -68,6 +68,19 @@ static int NlpRequestPositionCmp(gconstpointer ptr_request_position1, gconstpoin
   return request_position1->length - request_position2->length;
 }
 
+og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb)
+{
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);
+  IFN(request_position) DPcErr;
+  int distance = 0;
+  for (int i = 0; i + 1 < request_positions_nb; i++)
+  {
+    int interval_distance = request_position[i + 1].start - request_position[i].start + request_position[i].length;
+    distance += interval_distance;
+  }
+  return distance;
+}
+
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string)
 {

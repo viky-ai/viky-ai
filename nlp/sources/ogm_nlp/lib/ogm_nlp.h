@@ -258,6 +258,7 @@ struct request_input_part
 
   int request_position_start;
   int request_positions_nb;
+  int request_position_distance;
 
   int Ioriginal_request_input_part;
 };
@@ -300,6 +301,7 @@ struct request_expression
 
   int request_position_start;
   int request_positions_nb;
+  int input_parts_compacity;
 
   int orip_start;
   int orips_nb;
@@ -515,6 +517,7 @@ og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_sta
 og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
+og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
 int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
