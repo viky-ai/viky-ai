@@ -92,6 +92,8 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     expression->text = OgHeapGetCell(package->hexpression_ba, expression_compile->text_start);
     IFN(expression->text) DPcErr;
 
+    expression->keep_order = expression_compile->keep_order;
+
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;
     if (expression->aliases_nb > 0)

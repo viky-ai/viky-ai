@@ -119,6 +119,7 @@ struct alias
 struct expression_compile
 {
   int text_start;
+  og_bool keep_order;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -131,6 +132,8 @@ struct expression
   struct interpretation *interpretation;
 
   og_string text;
+
+  og_bool keep_order;
 
   int locale;
 
@@ -311,6 +314,9 @@ struct request_expression
   int request_anys_nb;
 
   int Irequest_any;
+
+  /** used locally for various scanning */
+  int analyzed;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -500,6 +506,8 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
     struct interpret_package *interpret_package, int Iinput_part);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
+og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 
@@ -518,6 +526,8 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start
     int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
+og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
 int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
@@ -547,7 +557,8 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
 /* nlpanyopt.c */
 int OgRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
 
-
+/* nlpreopt.c */
+og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
 
 
 

@@ -81,6 +81,17 @@ og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position
   return distance;
 }
 
+og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2)
+{
+  struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_position_start1 + request_positions_nb1 - 1);
+  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_position_start2 + request_positions_nb2 - 1);
+  if (request_position1->start + request_position1->length <= request_position2->start) return TRUE;
+  return FALSE;
+}
+
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string)
 {

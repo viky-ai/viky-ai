@@ -348,6 +348,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: compiling expression [\n%s]", json_expression_string)
 
   json_t *json_text = NULL;
+  json_t *json_keep_order = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -360,6 +361,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     if (Ogstricmp(key, "expression") == 0)
     {
       json_text = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "keep-order") == 0)
+    {
+      json_keep_order = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -428,6 +433,27 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: locale is not a string");
     DPcErr;
   }
+
+  expression->keep_order = FALSE;
+  if (json_keep_order == NULL)
+  {
+    expression->keep_order = FALSE;
+  }
+  else if (json_is_string(json_keep_order))
+  {
+    const char *string_keep_order = json_string_value(json_keep_order);
+    if (!Ogstricmp(string_keep_order,"true")) expression->keep_order = TRUE;
+  }
+  else if (json_is_null(json_keep_order))
+  {
+    expression->keep_order = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep_order is not a string");
+    DPcErr;
+  }
+
 
   IFN(json_aliases)
   {

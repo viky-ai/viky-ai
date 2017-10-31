@@ -50,6 +50,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   do
   {
     IFE(at_least_one_input_part_added = NlpMatchExpressions(ctrl_nlp_th));
+    IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
     ctrl_nlp_th->level++;
   }
   while (at_least_one_input_part_added);
