@@ -35,12 +35,23 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct req
   request_input_part->type = nlp_input_part_type_Interpretation;
   request_input_part->Irequest_expression = request_expression->self_index;
 
-  request_input_part->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
-  IF(request_input_part->request_position_start) DPcErr;
-  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+  // prealloc due to app call
+  request_input_part->request_position_start = OgHeapAddCells(ctrl_nlp_th->hrequest_position,
+      request_expression->request_positions_nb);
+
+  struct request_position *request_position_from = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
-  IFE(OgHeapAppend(ctrl_nlp_th->hrequest_position, request_expression->request_positions_nb, request_position));
+  IFN(request_position_from) DPcErr;
+
+  struct request_position *request_position_to = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_input_part->request_position_start);
+  IFN(request_position_to) DPcErr;
+
+  memcpy(request_position_to, request_position_from,
+      sizeof(struct request_position) * request_expression->request_positions_nb);
+
   request_input_part->request_positions_nb = request_expression->request_positions_nb;
+
   DONE;
 }
 

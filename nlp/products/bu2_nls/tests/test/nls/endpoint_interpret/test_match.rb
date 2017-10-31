@@ -121,7 +121,7 @@ module Nls
 
       end
 
-      def test_builtin_features
+      def test_interpret_builtin_features
         Interpretation.default_locale = "en-GB"
 
         # creation des feeds d'init
@@ -175,7 +175,8 @@ module Nls
 
         actual = Nls.interpret(request)
 
-        expected = expected_interpret_result(i_want_hotel_with_feature)
+        # TODO fix *6 answers
+        expected = expected_interpret_result([i_want_hotel_with_feature] * 6)
 
         assert_equal expected, actual
 

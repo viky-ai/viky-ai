@@ -32,8 +32,8 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
   snprintf(nlpc_name, DPcPathSize, "%s_request_word", param->name);
-  ctrl_nlp_th->hrequest_word = OgHeapSliceInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_word),
-  DOgNlpRequestWordNumber, DOgNlpRequestWordNumber);
+  ctrl_nlp_th->hrequest_word = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_word),
+  DOgNlpRequestWordNumber);
   IFN(ctrl_nlp_th->hrequest_word)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);

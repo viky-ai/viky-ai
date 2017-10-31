@@ -61,16 +61,29 @@ module Nls
     end
 
     def expected_interpret_result(interpretation)
-      {
-        "interpretations"=>
-        [
-          {
-            "package" => "#{interpretation.package.id.to_s}",
-            "id" => "#{interpretation.id.to_s}",
-            "slug" => "#{interpretation.slug}",
+
+      interpretation_answers = []
+      if interpretation.kind_of? Array
+        interpretation.each do |i|
+          interpretation_answers << {
+            "package" => "#{i.package.id.to_s}",
+            "id" => "#{i.id.to_s}",
+            "slug" => "#{i.slug}",
             "score" => 1.0
           }
-        ]
+        end
+      else
+        i = interpretation
+        interpretation_answers << {
+          "package" => "#{i.package.id.to_s}",
+          "id" => "#{i.id.to_s}",
+          "slug" => "#{i.slug}",
+          "score" => 1.0
+        }
+      end
+
+      {
+        "interpretations" => interpretation_answers
       }
     end
 

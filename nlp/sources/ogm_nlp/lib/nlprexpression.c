@@ -32,17 +32,30 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
-  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
-  IFN(request_input_part) DPcErr;
+  struct request_input_part *request_input_parts = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
+  IFN(request_input_parts) DPcErr;
   request_expression->request_positions_nb = 0;
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
-    struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-        request_input_part[match_zone_input_part[i].current].request_position_start);
-    IFN(request_position) DPcErr;
-    IF(OgHeapAppend(ctrl_nlp_th->hrequest_position,request_input_part[match_zone_input_part[i].current].request_positions_nb,request_position)) DPcErr;
-    request_expression->request_positions_nb +=
-        request_input_part[match_zone_input_part[i].current].request_positions_nb;
+    struct request_input_part *request_input_part = request_input_parts + match_zone_input_part[i].current;
+
+    // prealloc due to app call
+    int Irequest_position_start = OgHeapAddCells(ctrl_nlp_th->hrequest_position,
+        request_input_part->request_positions_nb);
+
+    struct request_position *request_position_from = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_input_part->request_position_start);
+    IFN(request_position_from) DPcErr;
+
+    struct request_position *request_position_to = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        Irequest_position_start);
+    IFN(request_position_to) DPcErr;
+
+    memcpy(request_position_to, request_position_from,
+        sizeof(struct request_position) * request_input_part->request_positions_nb);
+
+    request_expression->request_positions_nb += request_input_part->request_positions_nb;
+
   }
   IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
 
@@ -67,8 +80,9 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     request_expression->orips_nb = 0;
     for (int i = 0; i < expression->input_parts_nb; i++)
     {
-      og_status status = NlpRequestExpressionAddOrip(ctrl_nlp_th, request_expression,
-          request_input_part[match_zone_input_part[i].current].Ioriginal_request_input_part);
+      struct request_input_part *request_input_part = request_input_parts + match_zone_input_part[i].current;
+
+      og_status status = NlpRequestExpressionAddOrip(ctrl_nlp_th, request_expression, request_input_part->Ioriginal_request_input_part);
       IFE(status);
     }
 
