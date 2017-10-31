@@ -2,7 +2,7 @@ require 'test_helper'
 
 module Nlp
 
-  class TestNlpCompile < Common
+  class TestNlpCompile < NlpTestCommon
 
     def test_compile
 

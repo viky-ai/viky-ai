@@ -4,7 +4,7 @@ module Nls
 
   module EndpointTest
 
-    class TestParallel < Common
+    class TestParallel < NlsTestCommon
 
       def test_parallel_get
 

@@ -2,17 +2,17 @@
 # https://codefresh.io/blog/node_docker_multistage/
 
 # Run
-# docker build --target run_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls .
-# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+# docker build --target run_image -t docker-registry.pertimm.net/voqal.ai/platform/nlp .
+# docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/voqal.ai/platform/nlp
 
 # Tests
-# docker build --target test_image -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test .
-# docker run -t docker-registry.pertimm.corp:50001/voqal.ai/platform/nls_test
+# docker build --target test_image -t docker-registry.pertimm.net/voqal.ai/platform/nlp_test .
+# docker run -t docker-registry.pertimm.net/voqal.ai/platform/nlp_test
 
 # ============================================================================
 # Compile and package Nls
 # ============================================================================
-FROM docker-registry.pertimm.corp:50001/pertimm/docker-ebusiness-build-stack AS build_image
+FROM docker-registry.pertimm.net/tools/docker-ebusiness-build-stack AS build_image
 
 ENV OG_REPO_PATH=/builds/nls
 ENV OG_TOOL_PATH=${OG_REPO_PATH}/tools

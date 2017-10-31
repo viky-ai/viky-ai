@@ -21,6 +21,11 @@
 #define DOgNlpTraceMemory                 0x2
 #define DOgNlpTraceSynchro                0x4
 #define DOgNlpTraceDefault               (DOgNlpTraceMinimal+DOgNlpTraceMemory)
+#define DOgNlpTraceCompile                0x8
+#define DOgNlpTraceConsolidate            0x10
+#define DOgNlpTraceInterpret              0x20
+#define DOgNlpTraceDump                   0x40
+#define DOgNlpTracePackage                0x80
 
 /** Default value for configuration file information **/
 #define DOgNlpMaxListeningThreads          4
@@ -95,6 +100,8 @@ DEFPUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_s
 
 DEFPUBLIC(og_status) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input,
     struct og_nlp_compile_output *output);
+DEFPUBLIC(int) OgNlpConsolidate(og_nlp_th ctrl_nlp_th);
+
 DEFPUBLIC(og_status) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
     struct og_nlp_dump_output *output);
 

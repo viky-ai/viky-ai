@@ -121,53 +121,63 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.interpret_package(package, sentence, opts = {})
+      body = {
+        "packages" => ["#{package.id}"],
+        "sentence" => "#{sentence}",
+        "Accept-Language" => "fr-FR"
+      }
+      interpret(body)
+    end
+
     def self.delete(url, params = {})
       response = RestClient.delete(url, params: params)
       JSON.parse(response.body)
     end
 
-    def self.package(body, params = {})
-      package_url = "#{base_url}/packages/" + body["id"]
-      response = RestClient.post(package_url, body.to_json, content_type: :json, params: params)
+    def self.package_update(package, params = {})
+      package_url = "#{base_url}/packages/#{package.id}"
+      response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
     end
 
-    def self.json_interpret_body
+    def self.json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
       {
-        "packages" => ["voqal.ai:datetime1"],
-        "sentence" => "Hello Jean Marie",
+        "packages" => ["#{package}"],
+        "sentence" => "#{sentence}",
         "Accept-Language" => "fr-FR"
       }
     end
 
-    def self.expected_interpret_result
+    def self.expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")
       {
-        "intents"=>
+        "interpretations"=>
         [
-        {
-        "package" => "voqal.ai:datetime1",
-        "id" => "0d981484-9313-11e7-abc4-cec278b6b50b1",
-        "score" => 1
-        }
+          {
+            "package" => "#{package}",
+            "id" => "#{id}",
+            "slug" => "#{slug}",
+            "score" => 1.0
+          }
         ]
       }
     end
 
-    def self.expected_update_package
+    def self.expected_update_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime2' successfully updated"
+        "status" => "Package '#{package_name}' successfully updated"
       }
     end
 
-    def self.expected_delete_package
+    def self.expected_delete_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime2' successfully deleted"
+        "status" => "Package '#{package_name}' successfully deleted"
       }
     end
 
-    def self.expected_added_package
+    def self.expected_added_package(package_name)
       {
-        "status" => "Package 'voqal.ai:datetime' successfully updated"
+        "status" => "Package '#{package_name}' successfully updated"
       }
     end
 
@@ -175,6 +185,10 @@ module Nls
       pwd_local = ENV['NLS_INSTALL_PATH']
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
       pwd_local
+    end
+
+    def self.createUUID
+      UUIDTools::UUID.timestamp_create
     end
 
     private

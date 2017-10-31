@@ -10,32 +10,69 @@
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
 
-#define DOgNlpPackageNumber         0x10
-#define DOgNlpPackageBaNumber       0x100
-#define DOgNlpPackageIntentNumber   0x10
-#define DOgNlpPackagePhraseNumber   (DOgNlpPackageIntentNumber*0x10)
-#define DOgNlpIntentPhraseMaxLength 0x800
+#define DOgNlpPackageNumber 0x10
+#define DOgNlpPackageBaNumber 0x100
+#define DOgNlpPackageInterpretationNumber 0x10
+#define DOgNlpPackageExpressionNumber (DOgNlpPackageInterpretationNumber*0x10)
+#define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
+#define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
+
+#define DOgNlpInterpretationExpressionMaxLength 0x800
+
+
 
 #define DOgNlpMaximumOwnedLock      16
 
-struct sentence
+
+struct alias
 {
-  int text_start, text_length;
-  int locale;
+  int alias_start, alias_length;
+  int slug_start, slug_length; // interpretation slug
+  int id_start, id_length; // interpretation id
+  int package_start, package_length;
 };
 
-struct intent
+struct expression
+{
+  int text_start, text_length;
+  int alias_start, aliases_nb;
+  int locale;
+  int input_part_start, input_parts_nb;
+  int activated;
+};
+
+struct interpretation
 {
   int id_start, id_length;
-  int sentence_start, sentences_nb;
+  int slug_start, slug_length;
+  int expression_start, expressions_nb;
 };
 
 struct package
 {
+  // =======================================
+  // memory management
+
+  /**
+   * Each time a package is obtain by #NlpPackageGet ref_counter is incremented by one.
+   * NlpPackageMarkAsUnused function decrement counter by one and free it it as been marked as remove.
+   *
+   * Warn : ref_counter can be updated currently (see: https://developer.gnome.org/glib/stable/glib-Atomic-Operations.html)
+   */
+  int ref_counter;
+
+  /** Package has been remove, it is waiting to bee freed, until ref_counter == 0 */
+  og_bool is_removed;
+
+  // =======================================
+
   int id_start, id_length;
+  int slug_start, slug_length;
   og_heap hba;
-  og_heap hintent;
-  og_heap hsentence;
+  og_heap hinterpretation;
+  og_heap hexpression;
+  og_heap halias;
+  og_heap hinput_part;
 };
 
 typedef struct package *package_t;
@@ -43,6 +80,21 @@ typedef struct package *package_t;
 struct interpret_package
 {
   package_t package;
+};
+
+enum nlp_input_part_type
+{
+  nlp_input_part_type_Nil = 0,
+  nlp_input_part_type_Word,
+  nlp_input_part_type_Interpretation
+};
+
+struct input_part
+{
+  enum nlp_input_part_type type;
+  int word_start, word_length;
+  package_t interpretation_package;
+  int Iinterpretation;
 };
 
 
@@ -95,6 +147,13 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
 
+  /**
+   * List of package_t currently used by the og_ctrl_nlp_threaded
+   * (reset clean this list at the end of the request), it is better
+   * to mark it as used soon as possible
+   */
+  GQueue package_in_used[1];
+
 };
 
 struct og_ctrl_nlp
@@ -107,8 +166,6 @@ struct og_ctrl_nlp
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
 
-  /** List of deleted package wait for been freed when they are not used any more */
-  GQueue deleted_packages[1];
 };
 
 /* nlperr.c */
@@ -120,8 +177,10 @@ og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_stri
 og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpPackageIntentLog(og_nlp_th ctrl_nlp_th, package_t package, int Iintent);
-og_status NlpPackageSentenceLog(og_nlp_th ctrl_nlp_th, package_t package, int Isentence);
+og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
+og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
+og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias);
+og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -131,17 +190,13 @@ og_status OgNlpSynchroWriteLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in);
 
-/* nlpdump.c */
-og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *dump_json);
-og_status NlpPackageIntentDump(og_nlp_th ctrl_nlp_th, package_t package, int Iintent, json_t *dump_json);
-og_status NlpPackageSentenceDump(og_nlp_th ctrl_nlp_th, package_t package, int Isentence, json_t *dump_json);
-
 /* nlpackage.c */
-package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id);
-og_status NlpPackageFlush(package_t package);
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug);
 og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
-og_status NlpFlushPackageMarkedAsDeletedNosync(og_nlp ctrl_nlp);
+og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th);
+void NlpPackageDestroyIfNotUsed(gpointer package_void);
 
 /* nlpinterpret.c */
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);
@@ -149,5 +204,9 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th);
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th);
 
 /* nlpcompile.c */
-og_status NlpCompilePackageIntent(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_intent);
+og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_interpretation);
 og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_package);
+
+/* nlpconsolidate.c */
+og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
+

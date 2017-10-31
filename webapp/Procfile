@@ -1,5 +1,5 @@
-sidekiq_redis:  redis-server --port 7372
+sidekiq_redis:  docker run --rm -p "7372:6379" --name voqal-redis redis:4.0.1-alpine
 workers:        bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:        ./bin/webpack-dev-server
 web:            bundle exec rails s -p 3000
-nlp_server:     docker pull docker-registry.pertimm.corp:50001/voqal.ai/platform/nls:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+nlp_server:     docker pull docker-registry.pertimm.net/voqal.ai/platform/nlp:latest ; docker run --name foreman_nlp_server --sig-proxy=true --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.net/voqal.ai/platform/nlp

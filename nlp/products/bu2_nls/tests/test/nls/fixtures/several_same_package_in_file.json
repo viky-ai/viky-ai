@@ -1,14 +1,16 @@
 [
   {
     "id": "package_1",
-    "intents":
+    "slug": "package_1",
+    "interpretations":
     [
       {
         "id": "intent_1_1",
-        "sentences":
+        "slug": "intent_1_1",
+        "expressions":
         [
           {
-            "sentence": "sentence_1_1_1",
+            "expression": "expression_1_1_1",
             "locale": "fr-FR"
           }
         ]
@@ -17,14 +19,16 @@
   },
   {
     "id": "package_1",
-    "intents":
+    "slug": "package_1",
+    "interpretations":
     [
       {
         "id": "intent_2_1",
-        "sentences":
+        "slug": "intent_2_1",
+        "expressions":
         [
           {
-            "sentence": "sentence_2_1_1",
+            "expression": "expression_2_1_1",
             "locale": "fr-FR"
           }
         ]

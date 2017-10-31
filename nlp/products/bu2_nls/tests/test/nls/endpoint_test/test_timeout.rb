@@ -4,7 +4,7 @@ module Nls
 
   module EndpointTest
 
-    class TestTimeout < Common
+    class TestTimeout < NlsTestCommon
 
       def test_timeout_with_wait
 

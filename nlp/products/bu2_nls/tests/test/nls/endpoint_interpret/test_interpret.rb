@@ -6,30 +6,51 @@ module Nls
 
   module EndpointInterpret
 
-    class TestInterpret < Common
+    class TestInterpret < NlsTestCommon
 
       def test_interpret_simple
 
-        cp_import_fixture("several_packages_several_intents.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        actual = Nls.interpret(Nls.json_interpret_body)
+        package = available_packages['datetime2']
 
-        assert_equal Nls.expected_interpret_result, actual
+        interpretation = package.interpretation('hello1')
+        sentence = 'Hello Nicolas'
+
+        actual = Nls.interpret_package(package, sentence)
+
+        expected = {
+          "interpretations" => [ interpretation.to_match  ]
+        }
+
+        assert_equal expected, actual
 
       end
 
       def test_interpret_several_package_same_sentence
 
-        cp_import_fixture("several_packages_same_sentence.json")
+        several_packages_several_intents
 
         Nls.restart
 
+        package_1 = available_packages['datetime1']
+        package_2 = available_packages['datetime3']
+        package_3 = available_packages['samesentence1']
+        package_4 = available_packages['samesentence2']
+
+        sentence = "Hello Sebastien"
+
+        json_interpretation_1 = package_1.interpretation('hello3')
+        json_interpretation_2 = package_2.interpretation('hello2')
+        json_interpretation_3 = package_3.interpretation('hello4')
+        json_interpretation_4 = package_4.interpretation('hello5')
+
         param =
         {
-          "packages" => ["package_2","package_3","package_1","package_9"],
-          "sentence" => "sentence_8",
+          "packages" => [package_1.id, package_2.id, package_3.id, package_4.id],
+          "sentence" => sentence,
           "Accept-Language" => "fr-FR"
         }
 
@@ -37,28 +58,12 @@ module Nls
 
         expected =
         {
-          "intents" =>
+          "interpretations" =>
           [
-          {
-          "package" => "package_2",
-          "id" => "intent_2_8",
-          "score" => 1
-          },
-          {
-          "package" => "package_3",
-          "id" => "intent_3_8",
-          "score" => 1
-          },
-          {
-          "package" => "package_1",
-          "id" => "intent_1_8",
-          "score" => 1
-          },
-          {
-          "package" => "package_9",
-          "id" => "intent_9_8",
-          "score" => 1
-          }
+            json_interpretation_1.to_match,
+            json_interpretation_2.to_match,
+            json_interpretation_3.to_match,
+            json_interpretation_4.to_match
           ]
         }
 
@@ -68,41 +73,31 @@ module Nls
 
       def test_interpret_parallel_query
 
-        createHugePackagesFile("several_packages_parallelize.json", 10)
+        interpretations = []
+
+        # Prepare data
+        package = Package.new("package_test_interpret_parallel_query")
+        1000.times do |j|
+          interpretation = Interpretation.new("interpretation_#{j}")
+          interpretation << Expression.new("sentence_#{j}")
+          interpretations << interpretation
+          package << interpretation
+        end
+        package.to_file(importDir)
 
         Nls.restart
 
-        sentences_array = [];
+        # Run parallel queries
+        Parallel.map(interpretations, in_threads: 20) do |interpretation|
 
-        for package in 1..10
-          for intent in 1..10
-            for sentence in 1..10
-              sentences_array << ["package_#{package}","intent_#{package}_#{intent}","sentence_#{package}_#{intent}_#{sentence}"]
-            end
-          end
-        end
+          package = interpretation.package
+          sentence = interpretation.expressions.first.expression
 
-        Parallel.map(sentences_array, in_threads: 20) do |sentence_array|
-
-          param =
-          {
-            "packages" => [sentence_array[0]],
-            "sentence" => sentence_array[2],
-            "Accept-Language" => "fr-FR"
-          }
-
-          actual = Nls.interpret(param)
+          actual = Nls.interpret_package(package, sentence)
 
           expected =
           {
-            "intents" =>
-            [
-            {
-            "package" => sentence_array[0],
-            "id" => sentence_array[1],
-            "score" => 1
-            }
-            ]
+            "interpretations" => [ interpretation.to_match ]
           }
 
           assert_equal expected, actual
@@ -112,21 +107,15 @@ module Nls
 
       def test_empty_sentence
 
-        cp_import_fixture("package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime1"],
-          "sentence" => "",
-          "Accept-Language" => "fr-FR"
-        }
-
+        package = available_packages['datetime1']
         expected_error = "NlsCheckRequestString : empty text in request"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls.interpret(param)
+          Nls.interpret_package(package, "")
         end
         assert_response_has_error expected_error, exception, "Post"
 
@@ -134,25 +123,21 @@ module Nls
 
       def test_too_long_sentence
 
-        cp_import_fixture("package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime"],
-          "sentence" => "abcdefghij",
-          "Accept-Language" => "fr-FR"
-        }
+        package = available_packages['datetime1']
 
+        sentence = "abcdefghij"
         210.times do
-          param["sentence"] << "abcdefghij"
+          sentence << "abcdefghij"
         end
 
         expected_error = "NlsCheckRequestString : too long text in request"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls.interpret(param)
+          Nls.interpret_package(package, sentence)
         end
         assert_response_has_error expected_error, exception, "Post"
 
@@ -170,13 +155,14 @@ module Nls
 
         expected =
         {
-          "intents" =>
+          "interpretations" =>
           [
-            {
-              "package" => "voqal.ai:datetime",
-              "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-              "score" => 1
-            }
+          {
+          "package" => "voqal.ai:datetime",
+          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
+          "slug" => "special_char",
+          "score" => 1.0
+          }
           ]
         }
 
@@ -185,22 +171,16 @@ module Nls
 
       def test_no_sentence_match
 
-        cp_import_fixture("package_without_error.json")
+        several_packages_several_intents
 
         Nls.restart
 
-        param =
-        {
-          "packages" => ["voqal.ai:datetime"],
-          "sentence" => "azerty",
-          "Accept-Language" => "fr-FR"
-        }
-
-        actual = Nls.interpret(param)
+        package = available_packages['datetime1']
+        actual = Nls.interpret_package(package, "azerty")
 
         expected =
         {
-          "intents" => []
+          "interpretations" => []
         }
 
         assert_equal expected, actual

@@ -11,6 +11,9 @@ module Valgrind
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
       command << "valgrind --tool=massif"
       command << "--time-unit=ms"
+      command << "--threshold=0.1"
+      command << "--max-snapshots=200"
+      command << "--detailed-freq=1"
       command << "--massif-out-file=massif-output.txt"
       command << "./ogm_nls"
 
@@ -20,8 +23,11 @@ module Valgrind
       # launch the server
       Nls::Nls.start(command: command.join(' '))
 
+      # wait
+      sleep(0.5)
+
       # launch queries
-      interpret_queries(1000, 300, 300)
+      interpret_queries(10)
 
       # stop server
       Nls::Nls.stop

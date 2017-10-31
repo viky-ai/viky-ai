@@ -2,58 +2,65 @@ require 'test_helper'
 
 module Valgrind
 
-  class ValgrindCommon < Nls::Common
+  class ValgrindCommon < Nls::NlsTestCommon
 
     def setup
 
       resetDir
 
-      # copy import file
-      cp_import_fixture("several_packages_several_intents.json")
+      several_packages_several_intents
 
-    end
+      @main_package = @available_packages["datetime1"]
+      @main_uuid = @main_package.id
 
-    def interpret_queries(nb_simple, nb_timeout, nb_pkg_update)
+   end
 
+    def interpret_queries(nb_request_factor)
+
+      # dump packages
+      (30 * nb_request_factor).times do |i|
+        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
+        assert !actual_dump_result.nil?, "dump #{i}"
+      end
+
+      # launch simple query
       interpret_simple_query=
       {
-        "packages" => ["voqal.ai:datetime1"],
+        "packages" => [ @main_uuid ],
         "sentence" => "Hello Jean Marie",
         "Accept-Language" => "fr-FR"
       }
 
-      # launch simple query
-      nb_simple.times do
+      (100 * nb_request_factor).times do
         response = Nls::Nls.interpret(interpret_simple_query)
         assert !response.nil?
       end
 
+      # package update
+      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
+
+      expected_update_result =
+      {
+        "status" => "Package '#{@main_uuid}' successfully updated"
+      }
+
+      (30 * nb_request_factor).times do |i|
+        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
+        assert_json expected_update_result, actual_update_result, "updating #{i}"
+      end
+
+      # launch hello world query with timeout
       hello_world_query = {
         timeout: 20,
         timeout_in: "NlpPackageGet"
       }
 
-      # launch hello world query with timeout
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
-      nb_timeout.times do |i|
+      (30 * nb_request_factor).times do |i|
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls::Nls.interpret(interpret_simple_query, hello_world_query)
         end
         assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-
-      json_package_to_update = JSON.parse(File.read(fixture_path("package_to_update.json")))
-      url_add = Nls::Nls.url_packages + "/voqal.ai:datetime2"
-
-      expected_update_result =
-      {
-        "status" => "Package 'voqal.ai:datetime2' successfully updated"
-      }
-
-      nb_pkg_update.times do |i|
-        actual_update_result = Nls::Nls.query_post(url_add, json_package_to_update)
-        assert_json expected_update_result, actual_update_result, "updating #{i}"
       end
 
     end

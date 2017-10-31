@@ -96,12 +96,9 @@ In Ubuntu you should:
 2. check to have the configuration file `/etc/docker/daemon.json` containing:
 ```
 {
-    "registry-mirrors": [
-      "http://docker-mirror.pertimm.corp:50000"
-    ],
-    "insecure-registries" : [
-      "docker-registry.pertimm.corp:50001"
-    ]
+  "registry-mirrors": [
+    "http://docker-mirror.pertimm.corp:50000"
+  ]
 }
 ```
 3. add your current user into the `docker` system group: `sudo usermod -a -G groupName userName`
@@ -120,4 +117,4 @@ which reads the `Procfile` behind the scenes, bringing the web server and worker
     workers:        bundle exec sidekiq -C config/sidekiq.yml
     webpack:        ./bin/webpack-dev-server
     web:            bundle exec rails s -p 3000
-    nlp_server:     docker run -ti --volume "$(pwd)/import:/nl/import" -p "9345:9345" docker-registry.pertimm.corp:50001/voqal.ai/platform/nls
+    nlp_server:     docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/voqal.ai/platform/nlp
