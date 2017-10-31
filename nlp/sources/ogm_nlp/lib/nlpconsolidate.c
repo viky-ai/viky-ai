@@ -270,29 +270,53 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
 
   og_string s = expression->text;
   int is = strlen(s);
+  og_string s_end = s + is;
 
   NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateExpression: parsing '%s'", s);
 
   int state = 1;
-  for (int i = 0, start = 0, end = 0; !end; i++)
+  og_bool end = FALSE;
+  int i = -1;
+  int start = 0;
+  while (!end)
   {
-    int c = ' ';
-    if (i < is)
+    gunichar c = ' ';
+    og_string s_pos = g_utf8_find_next_char(s + i, s_end);
+    if (s_pos == NULL)
     {
-      c = s[i];
+      end = TRUE;
+      c = ' ';
+      i = is;
     }
     else
     {
-      end = 1;
-      c = ' ';
+      i = s_pos - s;
+      c = g_utf8_get_char_validated(s_pos, is - i);
+      if ((c == (gunichar) -1) || (c == (gunichar) -2))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateExpression : invalid UTF-8 character '%s' '%s' : '%s'",
+            interpretation->slug, interpretation->id, s_pos);
+        DPcErr;
+      }
     }
 
     switch (state)
     {
       case 1:   // between words or interpretations
       {
-        if (c == ' ')
+        og_bool punct_length = 0;
+        og_bool is_skipped = FALSE;
+        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &punct_length);
+        IFE(is_punct);
+        if (is_punct)
         {
+          if (!is_skipped)
+          {
+            // add punctuation word
+            IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+            state = 1;
+          }
+          i += punct_length - 1;
           state = 1;
         }
         else if (c == '@' && i + 1 < is && s[i + 1] == '{')
@@ -331,9 +355,22 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
       }
       case 4:   // middle or end of word
       {
-        if (c == ' ')
+        og_bool punct_length = 0;
+        og_bool is_skip = FALSE;
+        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skip, &punct_length);
+        IFE(is_punct);
+        if (is_punct)
         {
+          // add previously parsed word
           IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + start, i - start));
+
+          if (!is_skip)
+          {
+            // add punctuation word
+            IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+            state = 1;
+          }
+          i += punct_length - 1;
           state = 1;
         }
         break;

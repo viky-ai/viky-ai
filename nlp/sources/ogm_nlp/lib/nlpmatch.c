@@ -31,7 +31,7 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct req
 og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 {
   // The request sentence is in : ctrl_nlp_th->request_sentence
-  IFE(NlpParse(ctrl_nlp_th));
+  IFE(NlpParseRequestSentence(ctrl_nlp_th));
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpLogRequestWords(ctrl_nlp_th));

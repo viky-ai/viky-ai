@@ -319,6 +319,37 @@ struct match_zone_input_part
   int current;
 };
 
+struct og_nlp_punctuation_word
+{
+  /** string bytes lentgh */
+  int length;
+
+  /** UTF-8 punctuation word value*/
+  og_string string;
+};
+
+#define DOgNlpParsePunctCharMaxNb 16
+#define DOgNlpParsePunctWordMaxNb 32
+struct og_nlp_parse_conf
+{
+  /** Single unicode char skipped */
+  gunichar punct_char[DOgNlpParsePunctCharMaxNb];
+  int punct_char_used;
+
+  /** Single unicode char treated as word */
+  gunichar punct_char_word[DOgNlpParsePunctCharMaxNb];
+  int punct_char_word_used;
+
+  /** Multiple char ward in utf-8  treated as word */
+  struct og_nlp_punctuation_word punct_word[DOgNlpParsePunctWordMaxNb];
+  int punct_word_used;
+};
+
+struct og_nlp_parse_callback
+{
+
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -381,6 +412,9 @@ struct og_ctrl_nlp
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
+
+  /** Parsing configuration */
+  struct og_nlp_parse_conf parse_conf[1];
 
 };
 
@@ -453,7 +487,11 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpparse.c */
-og_status NlpParse(og_nlp_th ctrl_nlp_th);
+og_status NlpParseConfInit(og_nlp ctrl_nlp);
+og_status NlpParseConfFlush(og_nlp ctrl_nlp);
+og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th);
+og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
+    int *p_punct_length_bytes);
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,

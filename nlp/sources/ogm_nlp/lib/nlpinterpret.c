@@ -71,8 +71,9 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
   snprintf(nlpc_name, DPcPathSize, "%s_original_request_input_part", param->name);
-  ctrl_nlp_th->horiginal_request_input_part = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct original_request_input_part),
-  DOgNlpRequestInputPartNumber);
+  ctrl_nlp_th->horiginal_request_input_part = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name,
+      sizeof(struct original_request_input_part),
+      DOgNlpRequestInputPartNumber);
   IFN(ctrl_nlp_th->horiginal_request_input_part)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
@@ -392,6 +393,13 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   if (json_is_string(json_sentence))
   {
     ctrl_nlp_th->request_sentence = json_string_value(json_sentence);
+
+    if (!g_utf8_validate(ctrl_nlp_th->request_sentence, -1, NULL))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: sentence contain invalid UTF-8 : '%s'",
+          ctrl_nlp_th->request_sentence);
+      DPcErr;
+    }
 
     NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildSentence: sentence '%s'", ctrl_nlp_th->request_sentence)
   }

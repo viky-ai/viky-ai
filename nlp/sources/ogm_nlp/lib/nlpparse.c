@@ -6,16 +6,12 @@
  */
 #include "ogm_nlp.h"
 
-struct punctuation_word
-{
-  int length;
-  char *string;
-};
+static inline og_bool NlpParseUnicharIsSpace(struct og_nlp_parse_conf *parse_conf, gunichar c);
+static inline og_bool NlpParseUnicharIsPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
+static inline og_bool NlpParseUnicharIsSpaceOrPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
+static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
+    og_string current_word, og_bool *p_skip);
 
-static og_bool NlpParseIsSpace(int c);
-static og_bool NlpParseIsPunctuation(int c);
-static og_bool NlpParseIsSpaceOrPunctuation(int c);
-static int NlpParseIsPunctuationWord(int is, og_string s);
 static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length);
 
 /**
@@ -23,37 +19,48 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
  *  we want to parse the sentence. For the moment, nothing fancy
  *  we simply use space and some punctuations as separator
  */
-og_status NlpParse(og_nlp_th ctrl_nlp_th)
+og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
 {
+  struct og_nlp_parse_conf *parse_conf = ctrl_nlp_th->ctrl_nlp->parse_conf;
+
   og_string s = ctrl_nlp_th->request_sentence;
   int is = strlen(s);
+  og_string s_end = s + is;
 
-  for (int i = 0, state = 1, start = 0, end = 0; !end; i++)
+  int state = 1;
+  og_bool end = FALSE;
+  int i = -1;
+  int start = 0;
+  while (!end)
   {
-    int c = ' ';
-    if (i < is)
+    og_string s_pos = g_utf8_find_next_char(s + i, s_end);
+    if (s_pos == NULL)
     {
-      c = s[i];
+      end = TRUE;
+      i = is;
     }
     else
     {
-      end = 1;
-      c = ' ';
+      i = s_pos - s;
     }
 
     switch (state)
     {
       case 1:   // between words
       {
-        int length = 0;
-        if ((length = NlpParseIsPunctuationWord(is - i, s + i)))
+
+        og_bool is_skipped = FALSE;
+        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped);
+        IFE(length);
+        if (length > 0)
         {
-          IFE(NlpParseAddWord(ctrl_nlp_th, i, length));
-          i += length - 1;
-        }
-        else if (NlpParseIsSpaceOrPunctuation(c))
-        {
+          if (!is_skipped)
+          {
+            // add punctuation word
+            IFE(NlpParseAddWord(ctrl_nlp_th, i, length));
+          }
           state = 1;
+          i += length - 1;
         }
         else
         {
@@ -64,18 +71,21 @@ og_status NlpParse(og_nlp_th ctrl_nlp_th)
       }
       case 2:   // in word
       {
-        int length = 0;
-        if ((length = NlpParseIsPunctuationWord(is - i, s + i)))
+        og_bool is_skipped = FALSE;
+        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped);
+        IFE(length);
+        if (length > 0)
         {
+          // add previously word
           IFE(NlpParseAddWord(ctrl_nlp_th, start, i - start));
-          IFE(NlpParseAddWord(ctrl_nlp_th, i, length));
+
+          if (!is_skipped)
+          {
+            // add punctuation word
+            IFE(NlpParseAddWord(ctrl_nlp_th, i, length));
+          }
+          state = 1;
           i += length - 1;
-          state = 1;
-        }
-        else if (NlpParseIsSpaceOrPunctuation(c))
-        {
-          IFE(NlpParseAddWord(ctrl_nlp_th, start, i - start));
-          state = 1;
         }
         else
         {
@@ -90,50 +100,235 @@ og_status NlpParse(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static og_bool NlpParseIsSpace(int c)
+static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word)
 {
-  if (OgUniIsspace(c)) return TRUE;
-  return FALSE;
+  struct og_nlp_parse_conf *parse_conf = ctrl_nlp->parse_conf;
+
+  int utf8_word_size = strlen(utf8_word);
+  if (g_utf8_find_next_char(utf8_word, utf8_word + utf8_word_size) == NULL)
+  {
+    // single unicode char treated as word
+
+    if (parse_conf->punct_char_word_used >= DOgNlpParsePunctCharMaxNb)
+    {
+      NlpThrowError(ctrl_nlp, "NlpParseAddPunctWord : too many punctuation char treated as word %d",
+      DOgNlpParsePunctCharMaxNb);
+      DPcErr;
+    }
+
+    parse_conf->punct_char_word[parse_conf->punct_char_word_used++] = g_utf8_get_char(utf8_word);
+
+  }
+  else
+  {
+    // multiple char word
+    if (parse_conf->punct_word_used >= DOgNlpParsePunctWordMaxNb)
+    {
+      NlpThrowError(ctrl_nlp, "NlpParseAddPunctWord : too many punctuation word %d", DOgNlpParsePunctWordMaxNb);
+      DPcErr;
+    }
+
+    struct og_nlp_punctuation_word *punct_word = parse_conf->punct_word + parse_conf->punct_word_used++;
+    punct_word->length = strlen(utf8_word);
+    punct_word->string = strdup(utf8_word);
+  }
+
+  DONE;
 }
 
-static og_bool NlpParseIsPunctuation(int c)
+static og_status NlpParseAddPunctChar(og_nlp ctrl_nlp, og_string utf8_punct_char)
 {
-  int punctuation[] = { ',', '\'', 0 };
-  for (int i = 0; punctuation[i]; i++)
+  struct og_nlp_parse_conf *parse_conf = ctrl_nlp->parse_conf;
+  if (parse_conf->punct_char_used >= DOgNlpParsePunctCharMaxNb)
   {
-    if (c == punctuation[i]) return TRUE;
+    NlpThrowError(ctrl_nlp, "NlpParseAddPunct : too many punctuation char %d", DOgNlpParsePunctCharMaxNb);
+    DPcErr;
+  }
+
+  parse_conf->punct_char[parse_conf->punct_char_used++] = g_utf8_get_char(utf8_punct_char);
+
+  DONE;
+}
+
+static int NlpParseConfPuncWordSort(const void *void_word1, const void *void_word2)
+{
+  const struct og_nlp_punctuation_word *word1 = void_word1;
+  const struct og_nlp_punctuation_word *word2 = void_word2;
+
+  return word2->length - word1->length;
+}
+
+og_status NlpParseConfInit(og_nlp ctrl_nlp)
+{
+  // punct char
+  IFE(NlpParseAddPunctChar(ctrl_nlp, ","));
+  IFE(NlpParseAddPunctChar(ctrl_nlp, "'"));
+
+  // add punct trated as word
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "&"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "+"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "-"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "<"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "<="));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, ">"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, ">="));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "<>"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "!="));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "*"));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "/"));
+
+  // sort longer word fist
+  qsort(ctrl_nlp->parse_conf->punct_word, DOgNlpParsePunctWordMaxNb, sizeof(struct og_nlp_punctuation_word),
+      NlpParseConfPuncWordSort);
+
+  DONE;
+}
+
+og_status NlpParseConfFlush(og_nlp ctrl_nlp)
+{
+  struct og_nlp_parse_conf *parse_conf = ctrl_nlp->parse_conf;
+
+  for (int i = 0; i < parse_conf->punct_word_used; i++)
+  {
+    struct og_nlp_punctuation_word *punct_word = parse_conf->punct_word + i;
+    unsigned char *word = (unsigned char *) punct_word->string;
+    punct_word->string = NULL;
+    DPcFree(word);
+  }
+
+  DONE;
+}
+
+static inline og_bool NlpParseUnicharIsSpace(struct og_nlp_parse_conf *parse_conf, gunichar c)
+{
+  // skipped punctation
+  return g_unichar_isspace(c);
+}
+
+static inline og_bool NlpParseUnicharIsPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
+{
+  // skipped punctation
+  for (int i = 0; i < parse_conf->punct_char_used; i++)
+  {
+    if (c == parse_conf->punct_char[i]) return TRUE;
   }
   return FALSE;
 }
 
-static og_bool NlpParseIsSpaceOrPunctuation(int c)
+static inline og_bool NlpParseUnicharIsSpaceOrPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
 {
-  if (NlpParseIsSpace(c)) return TRUE;
-  if (NlpParseIsPunctuation(c)) return TRUE;
-  return (FALSE);
+  return (NlpParseUnicharIsSpace(parse_conf, c) || NlpParseUnicharIsPunctuation(parse_conf, c));
 }
 
-static int NlpParseIsPunctuationWord(int is, og_string s)
+static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
+    og_string current_word, og_bool *p_skip)
 {
-  struct punctuation_word punctuation_word[] = { { 1, "&" },   //
-      { 1, "+" },   //
-      { 1, "-" },   //
-      { 1, "=" },   //
-      { 1, "<" },   //
-      { 2, "<=" },   //
-      { 1, ">" },   //
-      { 2, ">=" },   //
-      { 2, "<>" },   //
-      { 2, "!=" },   //
-      { 1, "*" },   //
-      { 1, "/" },   //
-      { 0, "" }   //
-  };
-  for (int i = 0; punctuation_word[i].length; i++)
+  if (p_skip) *p_skip = FALSE;
+
+  // treat end of string as skipped punct
+  if (max_word_size <= 0 || current_word == '\0')
   {
-    if (is >= punctuation_word[i].length && !memcmp(s, punctuation_word[i].string, punctuation_word[i].length)) return punctuation_word[i].length;
+    if (p_skip) *p_skip = TRUE;
+    return 1;
   }
+
+  gunichar first_char = g_utf8_get_char_validated(current_word, max_word_size);
+  if (first_char > 0)
+  {
+    og_bool single_punct_word_found = FALSE;
+
+    // check skipped puntation
+    if (NlpParseUnicharIsSpaceOrPunctuation(parse_conf, first_char))
+    {
+      single_punct_word_found = TRUE;
+      if (p_skip) *p_skip = TRUE;
+    }
+
+    if (!single_punct_word_found)
+    {
+      // code define single char punctuation word
+      for (int i = 0; i < parse_conf->punct_char_word_used; i++)
+      {
+        if (first_char == parse_conf->punct_char_word[i])
+        {
+          single_punct_word_found = TRUE;
+          break;
+        }
+      }
+    }
+
+    if (!single_punct_word_found)
+    {
+      // unicode define punctuation word
+      GUnicodeType type = g_unichar_type(first_char);
+      switch (type)
+      {
+        case G_UNICODE_MATH_SYMBOL:
+          single_punct_word_found = TRUE;
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (!single_punct_word_found)
+    {
+      GUnicodeBreakType break_type = g_unichar_break_type(first_char);
+      switch (break_type)
+      {
+        case G_UNICODE_BREAK_IDEOGRAPHIC:
+        case G_UNICODE_BREAK_EMOJI_BASE:
+        case G_UNICODE_BREAK_EMOJI_MODIFIER:
+          single_punct_word_found = TRUE;
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (single_punct_word_found)
+    {
+      og_string current_word_pos = g_utf8_find_next_char(current_word, current_word + max_word_size);
+      if (current_word_pos == NULL)
+      {
+        return max_word_size;
+      }
+      else
+      {
+        return current_word_pos - current_word;
+      }
+    }
+
+  }
+
+  for (int i = 0; i < parse_conf->punct_word_used; i++)
+  {
+    struct og_nlp_punctuation_word *punct_word = parse_conf->punct_word + i;
+    if (max_word_size >= punct_word->length && !memcmp(current_word, punct_word->string, punct_word->length))
+    {
+      return punct_word->length;
+    }
+  }
+
   return 0;
+}
+
+og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
+    int *p_punct_length_bytes)
+{
+  if (p_punct_length_bytes) *p_punct_length_bytes = 0;
+
+  struct og_nlp_parse_conf *parse_conf = ctrl_nlp_th->ctrl_nlp->parse_conf;
+
+  int word_length_bytes = NlpParseIsPunctuationInternal(parse_conf, max_word_size, current_word, p_skip);
+  IFE(word_length_bytes);
+  if (word_length_bytes > 0)
+  {
+    if (p_punct_length_bytes) *p_punct_length_bytes = word_length_bytes;
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length)
