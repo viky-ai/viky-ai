@@ -6,9 +6,7 @@
  */
 #include "ogm_nlp.h"
 
-static inline og_bool NlpParseUnicharIsSpace(struct og_nlp_parse_conf *parse_conf, gunichar c);
-static inline og_bool NlpParseUnicharIsPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
-static inline og_bool NlpParseUnicharIsSpaceOrPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
+static inline og_bool NlpParseUnicharIsSkipPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
 static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
     og_string current_word, og_bool *p_skip);
 
@@ -160,22 +158,16 @@ static int NlpParseConfPuncWordSort(const void *void_word1, const void *void_wor
 
 og_status NlpParseConfInit(og_nlp ctrl_nlp)
 {
-  // punct char
+
+  // punct char skipped
   IFE(NlpParseAddPunctChar(ctrl_nlp, ","));
   IFE(NlpParseAddPunctChar(ctrl_nlp, "'"));
 
-  // add punct trated as word
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "&"));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "+"));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "-"));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "<"));
+  // add punct treated as word
   IFE(NlpParseAddPunctWord(ctrl_nlp, "<="));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, ">"));
   IFE(NlpParseAddPunctWord(ctrl_nlp, ">="));
   IFE(NlpParseAddPunctWord(ctrl_nlp, "<>"));
   IFE(NlpParseAddPunctWord(ctrl_nlp, "!="));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "*"));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "/"));
 
   // sort longer word fist
   qsort(ctrl_nlp->parse_conf->punct_word, DOgNlpParsePunctWordMaxNb, sizeof(struct og_nlp_punctuation_word),
@@ -199,25 +191,41 @@ og_status NlpParseConfFlush(og_nlp ctrl_nlp)
   DONE;
 }
 
-static inline og_bool NlpParseUnicharIsSpace(struct og_nlp_parse_conf *parse_conf, gunichar c)
-{
-  // skipped punctation
-  return g_unichar_isspace(c);
-}
-
-static inline og_bool NlpParseUnicharIsPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
+static inline og_bool NlpParseUnicharIsSkipPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
 {
   // skipped punctation
   for (int i = 0; i < parse_conf->punct_char_used; i++)
   {
     if (c == parse_conf->punct_char[i]) return TRUE;
   }
-  return FALSE;
-}
 
-static inline og_bool NlpParseUnicharIsSpaceOrPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
-{
-  return (NlpParseUnicharIsSpace(parse_conf, c) || NlpParseUnicharIsPunctuation(parse_conf, c));
+  // space char
+  if (g_unichar_isspace(c))
+  {
+    return TRUE;
+  }
+
+  // unicode define punctuation word
+  og_bool skip_punct = FALSE;
+  GUnicodeType type = g_unichar_type(c);
+  switch (type)
+  {
+    case G_UNICODE_CONTROL:
+    case G_UNICODE_FORMAT:
+    case G_UNICODE_UNASSIGNED:
+    case G_UNICODE_PRIVATE_USE:
+    case G_UNICODE_SURROGATE:
+      skip_punct = TRUE;
+      break;
+    default:
+      break;
+  }
+  if (skip_punct)
+  {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
@@ -232,13 +240,22 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
     return 1;
   }
 
+  for (int i = 0; i < parse_conf->punct_word_used; i++)
+  {
+    struct og_nlp_punctuation_word *punct_word = parse_conf->punct_word + i;
+    if (max_word_size >= punct_word->length && !memcmp(current_word, punct_word->string, punct_word->length))
+    {
+      return punct_word->length;
+    }
+  }
+
   gunichar first_char = g_utf8_get_char_validated(current_word, max_word_size);
   if (first_char > 0)
   {
     og_bool single_punct_word_found = FALSE;
 
     // check skipped puntation
-    if (NlpParseUnicharIsSpaceOrPunctuation(parse_conf, first_char))
+    if (NlpParseUnicharIsSkipPunctuation(parse_conf, first_char))
     {
       single_punct_word_found = TRUE;
       if (p_skip) *p_skip = TRUE;
@@ -263,7 +280,18 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
       GUnicodeType type = g_unichar_type(first_char);
       switch (type)
       {
+        case G_UNICODE_OTHER_NUMBER:
+        case G_UNICODE_CONNECT_PUNCTUATION:
+        case G_UNICODE_DASH_PUNCTUATION:
+        case G_UNICODE_OPEN_PUNCTUATION:
+        case G_UNICODE_CLOSE_PUNCTUATION:
+        case G_UNICODE_INITIAL_PUNCTUATION:
+        case G_UNICODE_FINAL_PUNCTUATION:
+        case G_UNICODE_OTHER_PUNCTUATION:
+        case G_UNICODE_CURRENCY_SYMBOL:
+        case G_UNICODE_MODIFIER_SYMBOL:
         case G_UNICODE_MATH_SYMBOL:
+        case G_UNICODE_OTHER_SYMBOL:
           single_punct_word_found = TRUE;
           break;
         default:
@@ -299,15 +327,6 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
       }
     }
 
-  }
-
-  for (int i = 0; i < parse_conf->punct_word_used; i++)
-  {
-    struct og_nlp_punctuation_word *punct_word = parse_conf->punct_word + i;
-    if (max_word_size >= punct_word->length && !memcmp(current_word, punct_word->string, punct_word->length))
-    {
-      return punct_word->length;
-    }
   }
 
   return 0;

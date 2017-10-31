@@ -304,29 +304,32 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
     {
       case 1:   // between words or interpretations
       {
-        og_bool punct_length = 0;
-        og_bool is_skipped = FALSE;
-        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &punct_length);
-        IFE(is_punct);
-        if (is_punct)
-        {
-          if (!is_skipped)
-          {
-            // add punctuation word
-            IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
-            state = 1;
-          }
-          i += punct_length - 1;
-          state = 1;
-        }
-        else if (c == '@' && i + 1 < is && s[i + 1] == '{')
+        if (c == '@' && i + 1 < is && s[i + 1] == '{')
         {
           state = 2;
         }
         else
         {
-          start = i;
-          state = 4;
+          og_bool punct_length = 0;
+          og_bool is_skipped = FALSE;
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &punct_length);
+          IFE(is_punct);
+          if (is_punct)
+          {
+            if (!is_skipped)
+            {
+              // add punctuation word
+              IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+              state = 1;
+            }
+            i += punct_length - 1;
+            state = 1;
+          }
+          else
+          {
+            start = i;
+            state = 4;
+          }
         }
         break;
       }
