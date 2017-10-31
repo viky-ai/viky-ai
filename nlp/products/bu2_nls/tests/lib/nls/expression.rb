@@ -13,9 +13,20 @@ module Nls
       @locale = locale
 
       @aliases = []
-      aliases.each do |_alias|
-        add_alias(_alias)
+      if aliases.kind_of? Array
+        aliases.each do |_alias|
+          add_alias(_alias)
+        end
+      elsif aliases.kind_of? Hash
+        # hash of alias_name => interpretation
+        aliases.each do |alias_name, interpretation|
+          _alias = Alias.new(interpretation, alias_name)
+          add_alias(_alias)
+        end
+      else
+        raise
       end
+
     end
 
     def add_alias(new_alias)

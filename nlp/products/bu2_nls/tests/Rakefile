@@ -1,9 +1,13 @@
 require 'rake/testtask'
 
+display_warning = true
+display_warning = false if !ENV['CI_JOB_ID'].nil?
+
 Rake::TestTask.new do |task|
   task.libs << %w(lib)
   task.libs << %w(test)
   task.pattern = 'test/**/test_*.rb'
+  task.warning = display_warning
 end
 
 task :default => :test
@@ -15,6 +19,7 @@ Rake::TestTask.new do |task|
   task.libs << %w(test)
   task.libs << %w(valgrind)
   task.pattern = 'valgrind/**/test_massif.rb'
+  task.warning = display_warning
 end
 
 Rake::TestTask.new do |task|
@@ -24,5 +29,6 @@ Rake::TestTask.new do |task|
   task.libs << %w(test)
   task.libs << %w(valgrind)
   task.pattern = 'valgrind/**/test_memcheck.rb'
+  task.warning = display_warning
 end
 

@@ -39,12 +39,21 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie", locale = Interpretation.default_locale)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale)
       request = {}
       if package.kind_of? Array
-        request['packages'] = package
+        package_ids = package.map do |p|
+          if p.kind_of? Package
+            p.id.to_s
+          else
+            p
+          end
+        end
+        request['packages'] = package_ids
       else
-        request['packages'] = [package]
+        package_id = package
+        package_id = package.id.to_s if package.kind_of? Package
+        request['packages'] = [package_id]
       end
       request['sentence'] = sentence
       request['Accept-Language'] = locale

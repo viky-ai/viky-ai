@@ -8,7 +8,7 @@ module Nls
 
     class TestNlpMatch < NlsTestCommon
 
-      def test_interpret_request
+      def test_interpret_aller_de_a
 
         Interpretation.default_locale = "en-GB"
 
@@ -17,49 +17,40 @@ module Nls
 
         i_new_york = Interpretation.new("new-york").new_textual(["New York", "NYC"])
         aller_de_a << i_new_york
-        alias_newyork = Alias.new(i_new_york)
 
         i_barca = Interpretation.new("barcelona").new_textual(["Barcelona", "Barca"])
         aller_de_a << i_barca
-        alias_barca = Alias.new(i_barca)
 
-        i_town = Interpretation.new("town").new_expression("@{new-york}", [alias_newyork])
-        i_town.new_expression("@{barcelona}", [alias_barca])
+        i_town = Interpretation.new("town")
+                    .new_expression("@{new-york}",  'new-york': i_new_york)
+                    .new_expression("@{barcelona}", barcelona: i_barca)
         aller_de_a << i_town
-        alias_town = Alias.new(i_town)
 
         i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
         aller_de_a << i_prep_from
-        alias_prep_from = Alias.new(i_prep_from)
 
         i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
         aller_de_a << i_prep_to
-        alias_prep_to = Alias.new(i_prep_to)
 
-        prep_from_town_array = [ alias_prep_from, alias_town ]
+        prep_from_town_array = { 'prep-from': i_prep_from, town: i_town }
         i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_array)
         aller_de_a << i_prep_from_town
-        alias_from = Alias.new(i_prep_from_town, "from")
 
-        prep_to_town_array = [ alias_prep_to, alias_town ]
+        prep_to_town_array = { 'prep-to': i_prep_to, town: i_town }
         i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_array)
         aller_de_a << i_prep_to_town
-        alias_to = Alias.new(i_prep_to_town, "to")
 
         i_go = Interpretation.new("go").new_textual(["go"])
         aller_de_a << i_go
-        alias_go = Alias.new(i_go)
 
-        go_from_to_array = [alias_go, alias_from, alias_to]
+        go_from_to_array = { go: i_go, from: i_prep_from_town, to: i_prep_to_town }
         i_go_from_to = Interpretation.new("go-from-to").new_expression("@{go} @{from} @{to}", go_from_to_array)
         aller_de_a << i_go_from_to
-        alias_go_from_to = Alias.new(i_go_from_to)
 
         i_want = Interpretation.new("want").new_textual(["I want to"])
         aller_de_a << i_want
-        alias_want = Alias.new(i_want)
 
-        want_go_from_to_array = [ alias_want, alias_go_from_to ]
+        want_go_from_to_array = { want: i_want, 'go-from-to': i_go_from_to }
         i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", want_go_from_to_array)
         aller_de_a << i_want_go_from_to
 
@@ -69,7 +60,9 @@ module Nls
         Nls.restart
 
         # creation de la requete
-        request = json_interpret_body(aller_de_a.id, "I want to go from Barcelona to New York", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
+        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
+
+        ap request
 
         # execution de la requete
         actual = Nls.interpret(request)
@@ -125,7 +118,7 @@ module Nls
         Nls.restart
 
         # creation de la requete
-        request = json_interpret_body(go_town.id, "go to Paris New York Barcelona", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
+        request = json_interpret_body(go_town, "go to Paris New York Barcelona", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
 
         # execution de la requete
         actual = Nls.interpret(request)
@@ -203,7 +196,7 @@ module Nls
         Nls.restart
 
         puts "\n\nrequest \n\n"
-        request = json_interpret_body([want_hotel.id.to_s, pg_building_feature.id.to_s], "I want an hotel with swimming pool with sea view", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
+        request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
 
         # ap request
 
