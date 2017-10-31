@@ -29,11 +29,11 @@ module Nls
 
           @@nls_background = Thread.new {
 
-            Thread.current.name = "nls start : #{command}"
+            Thread.current.name = "Nls : #{command}"
             begin
               Nls.exec(command, { log: log })
             rescue => e
-              puts "Nls start crashed : #{e.inspect}"
+              puts "Nls crashed : #{e.inspect}"
               starting = false
             end
 
@@ -164,23 +164,20 @@ module Nls
 
           pid = wait_thr[:pid]
 
-          #c = Term::ANSIColor
-
-          stdout_str = "" ;
-          stderr_str = "" ;
+          stdstr = "" ;
 
           stdout.each do |line|
             if log
               print "#{line}"
             end
-            stdout_str << line ;
+            stdstr << line ;
           end
 
           stderr.each do |line|
             if log
               print "#{line}"
             end
-            stderr_str << line ;
+            stdstr << line ;
           end
 
           # Process::Status object returned.
@@ -192,10 +189,8 @@ module Nls
           end
 
           if take_care_of_return && !exit_status.success?
-            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\r#{stdout_str}\r#{stderr_str}"
+            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd}, pid:#{pid})\n\n#{stdstr}\n"
           end
-
-          return pid
 
         end
 
