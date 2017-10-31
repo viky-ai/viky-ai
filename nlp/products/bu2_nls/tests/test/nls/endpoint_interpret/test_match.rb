@@ -32,26 +32,26 @@ module Nls
         i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
         aller_de_a << i_prep_to
 
-        prep_from_town_array = { 'prep-from': i_prep_from, town: i_town }
-        i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_array)
+        prep_from_town_hash = { 'prep-from': i_prep_from, town: i_town }
+        i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_hash)
         aller_de_a << i_prep_from_town
 
-        prep_to_town_array = { 'prep-to': i_prep_to, town: i_town }
-        i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_array)
+        prep_to_town_hash = { 'prep-to': i_prep_to, town: i_town }
+        i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_hash)
         aller_de_a << i_prep_to_town
 
         i_go = Interpretation.new("go").new_textual(["go"])
         aller_de_a << i_go
 
-        go_from_to_array = { go: i_go, from: i_prep_from_town, to: i_prep_to_town }
-        i_go_from_to = Interpretation.new("go-from-to").new_expression("@{go} @{from} @{to}", go_from_to_array)
+        go_from_to_hash = { go: i_go, from: i_prep_from_town, to: i_prep_to_town }
+        i_go_from_to = Interpretation.new("go-from-to").new_expression("@{go} @{from} @{to}", go_from_to_hash)
         aller_de_a << i_go_from_to
 
         i_want = Interpretation.new("want").new_textual(["I want to"])
         aller_de_a << i_want
 
-        want_go_from_to_array = { want: i_want, 'go-from-to': i_go_from_to }
-        i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", want_go_from_to_array)
+        want_go_from_to_hash = { want: i_want, 'go-from-to': i_go_from_to }
+        i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", want_go_from_to_hash)
         aller_de_a << i_want_go_from_to
 
         # ecriture du package dans le repertoire de feed
@@ -61,8 +61,6 @@ module Nls
 
         # creation de la requete
         request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
-
-        ap request
 
         # execution de la requete
         actual = Nls.interpret(request)
@@ -82,35 +80,29 @@ module Nls
 
         i_new_york = Interpretation.new("new-york").new_textual(["New York", "NYC"])
         go_town << i_new_york
-        alias_newyork = Alias.new(i_new_york)
 
         i_barca = Interpretation.new("barcelona").new_textual(["Barcelona", "Barca"])
         go_town << i_barca
-        alias_barca = Alias.new(i_barca)
 
         i_paris = Interpretation.new("paris").new_textual(["Paris", "Capital of France"])
         go_town << i_paris
-        alias_paris = Alias.new(i_paris)
 
-        i_town = Interpretation.new("town").new_expression("@{new-york}", [alias_newyork])
-        i_town.new_expression("@{barcelona}", [alias_barca])
-        i_town.new_expression("@{paris}", [alias_paris])
+        i_town = Interpretation.new("town")
+                        .new_expression("@{new-york}", { 'new-york': i_new_york })
+                        .new_expression("@{barcelona}", { barcelona: i_barca })
+                        .new_expression("@{paris}", { paris: i_paris })
         go_town << i_town
-        alias_town = Alias.new(i_town)
 
         i_towns = Interpretation.new("towns")
-        alias_towns = Alias.new(i_towns)
-        i_towns.new_expression("@{town} @{towns}", [alias_town, alias_towns])
-        i_towns.new_expression("@{town}", [alias_town])
+        i_towns.new_expression("@{town} @{towns}", { town: i_town, towns: i_towns })
+               .new_expression("@{town}", { town: i_town })
         go_town << i_towns
 
         i_go = Interpretation.new("go").new_textual(["go to"])
         go_town << i_go
-        alias_go = Alias.new(i_go)
 
-        i_go_town = Interpretation.new("go-town").new_expression("@{go} @{towns}",[alias_go, alias_towns])
+        i_go_town = Interpretation.new("go-town").new_expression("@{go} @{towns}", { go: i_go, towns: i_towns })
         go_town << i_go_town
-        alias_go = Alias.new(i_go_town)
 
         # ecriture du package dans le repertoire de feed
         go_town.to_file(importDir)
@@ -118,7 +110,7 @@ module Nls
         Nls.restart
 
         # creation de la requete
-        request = json_interpret_body(go_town, "go to Paris New York Barcelona", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
+        request = json_interpret_body(go_town, "go to Paris New York Barcelona", Interpretation.default_locale)
 
         # execution de la requete
         actual = Nls.interpret(request)
@@ -137,32 +129,26 @@ module Nls
 
         i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"])
         pg_building_feature << i_sea_view
-        alias_sea_view = Alias.new(i_sea_view)
 
         i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
         pg_building_feature << i_swimming_pool
-        alias_swimming_pool = Alias.new(i_swimming_pool)
 
-        i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}",[alias_swimming_pool])
-        i_building_feature.new_expression("@{sea-view}",[alias_sea_view])
+        i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}",{'swimming-pool': i_swimming_pool})
+        i_building_feature.new_expression("@{sea-view}",{'sea-view': i_sea_view})
         pg_building_feature << i_building_feature
-        alias_building_feature = Alias.new(i_building_feature)
 
         i_building_features = Interpretation.new("building-features")
-        alias_building_features = Alias.new(i_building_features)
-        i_building_features.new_expression("@{building-feature} @{building-features}", [alias_building_feature, alias_building_features])
-        i_building_features.new_expression("@{building-feature}", [alias_building_feature])
+        i_building_features.new_expression("@{building-feature} @{building-features}", {'building-feature': i_building_feature, 'building-features': i_building_features})
+                           .new_expression("@{building-feature}", {'building-feature': i_building_feature})
         pg_building_feature << i_building_features
 
         i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
         pg_building_feature << i_preposition_building_feature
-        alias_preposition_building_feature = Alias.new(i_preposition_building_feature)
 
-        pg_building_feature_array = [alias_preposition_building_feature, alias_building_features]
-        i_pg_building_feature = Interpretation.new("pg-building-feature").new_expression("@{preposition-building-feature} @{building-features}", pg_building_feature_array)
-        i_pg_building_feature.new_expression("@{building-features}", [alias_building_features])
+        pg_building_feature_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-features': i_building_features}
+        i_pg_building_feature = Interpretation.new("pg-building-feature").new_expression("@{preposition-building-feature} @{building-features}", pg_building_feature_hash)
+        i_pg_building_feature.new_expression("@{building-features}", {'building-features': i_building_features})
         pg_building_feature << i_pg_building_feature
-        alias_pg_building_feature = Alias.new(i_pg_building_feature)
 
         pg_building_feature.to_file(importDir)
 
@@ -170,41 +156,24 @@ module Nls
 
         i_want = Interpretation.new("want").new_textual(["I want", "I need", "I search", "I'm looking for"])
         want_hotel << i_want
-        alias_want = Alias.new(i_want)
 
         i_hotel = Interpretation.new("hotel").new_textual(["an hotel"])
         want_hotel << i_hotel
-        alias_hotel = Alias.new(i_hotel)
 
-        i_want_hotel = Interpretation.new("want-hotel").new_expression("@{want} @{hotel}", [alias_want, alias_hotel])
+        i_want_hotel = Interpretation.new("want-hotel").new_expression("@{want} @{hotel}", {want: i_want, hotel: i_hotel})
         want_hotel << i_want_hotel
-        alias_want_hotel = Alias.new(i_want_hotel)
 
-        i_want_hotel_with_feature = Interpretation.new("want-hotel-with-feature").new_expression("@{want-hotel} @{pg-building-feature}", [alias_want_hotel, alias_pg_building_feature])
+        i_want_hotel_with_feature = Interpretation.new("want-hotel-with-feature")
+                                                  .new_expression("@{want-hotel} @{pg-building-feature}", {'want-hotel': i_want_hotel, 'pg-building-feature': i_pg_building_feature})
         want_hotel << i_want_hotel_with_feature
 
         want_hotel.to_file(importDir)
 
-        puts "want hotel\n"
-
-        # ap want_hotel.to_h
-
-        puts "building feature\n"
-
-        # ap pg_building_feature.to_h
-
         Nls.restart
 
-        puts "\n\nrequest \n\n"
-        request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
-
-        # ap request
-
-        puts "\n\nresult\n\n"
+        request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view", Interpretation.default_locale)
 
         actual = Nls.interpret(request)
-
-        # ap actual
 
         expected = expected_interpret_result(i_want_hotel_with_feature)
 
