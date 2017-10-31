@@ -40,11 +40,15 @@ module Nls
     end
 
     def json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie", locale = "fr-FR")
-      {
-        "packages" => ["#{package}"],
-        "sentence" => "#{sentence}",
-        "Accept-Language" => locale
-      }
+      request = {}
+      if package.kind_of? Array
+        request['packages'] = package
+      else
+        request['packages'] = [package]
+      end
+      request['sentence'] = sentence
+      request['Accept-Language'] = locale
+      request
     end
 
     def expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")

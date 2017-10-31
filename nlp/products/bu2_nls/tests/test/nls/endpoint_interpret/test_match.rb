@@ -157,6 +157,100 @@ module Nls
         assert_equal expected, actual
 
       end
+
+      def test_builtin_features
+        Interpretation.default_locale = "en-GB"
+
+        # creation des feeds d'init
+        pg_building_feature = Package.new("pg-building-feature")
+
+        i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"])
+        pg_building_feature << i_sea_view
+        alias_sea_view = Alias.new(i_sea_view)
+
+        i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
+        pg_building_feature << i_swimming_pool
+        alias_swimming_pool = Alias.new(i_swimming_pool)
+
+        i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}",[alias_swimming_pool])
+        i_building_feature.new_expression("@{sea-view}",[alias_sea_view])
+        pg_building_feature << i_building_feature
+        alias_building_feature = Alias.new(i_building_feature)
+
+        i_building_features = Interpretation.new("building-features")
+        alias_building_features = Alias.new(i_building_features)
+        i_building_features.new_expression("@{building-feature} @{building-features}", [alias_building_feature, alias_building_features])
+        i_building_features.new_expression("@{building-feature}", [alias_building_feature])
+        pg_building_feature << i_building_features
+
+        i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
+        pg_building_feature << i_preposition_building_feature
+        alias_preposition_building_feature = Alias.new(i_preposition_building_feature)
+
+        pg_building_feature_array = [alias_preposition_building_feature, alias_building_features]
+        i_pg_building_feature = Interpretation.new("pg-building-feature").new_expression("@{preposition-building-feature} @{building-features}", pg_building_feature_array)
+        i_pg_building_feature.new_expression("@{building-features}", [alias_building_features])
+        pg_building_feature << i_pg_building_feature
+        alias_pg_building_feature = Alias.new(i_pg_building_feature)
+
+        pg_building_feature.to_file(importDir)
+
+        want_hotel = Package.new("want-hotel")
+
+        i_want = Interpretation.new("want").new_textual(["I want", "I need", "I search", "I'm looking for"])
+        want_hotel << i_want
+        alias_want = Alias.new(i_want)
+
+        i_hotel = Interpretation.new("hotel").new_textual(["an hotel"])
+        want_hotel << i_hotel
+        alias_hotel = Alias.new(i_hotel)
+
+        i_want_hotel = Interpretation.new("want-hotel").new_expression("@{want} @{hotel}", [alias_want, alias_hotel])
+        want_hotel << i_want_hotel
+        alias_want_hotel = Alias.new(i_want_hotel)
+
+        i_want_hotel_with_feature = Interpretation.new("want-hotel-with-feature").new_expression("@{want-hotel} @{pg-building-feature}", [alias_want_hotel, alias_pg_building_feature])
+        want_hotel << i_want_hotel_with_feature
+
+        want_hotel.to_file(importDir)
+
+        puts "want hotel\n"
+
+        # ap want_hotel.to_h
+
+        puts "building feature\n"
+
+        # ap pg_building_feature.to_h
+
+        Nls.restart
+
+        puts "\n\nrequest \n\n"
+        request = json_interpret_body([want_hotel.id.to_s, pg_building_feature.id.to_s], "I want an hotel with swimming pool with sea view", "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5")
+
+        # ap request
+
+        puts "\n\nresult\n\n"
+
+        actual = Nls.interpret(request)
+
+        # ap actual
+
+        expected =
+        {
+          "interpretations" =>
+          [
+          {
+          "package" => want_hotel.id.to_s,
+          "id" => i_want_hotel_with_feature.id.to_s,
+          "slug" => "want-hotel-with-feature",
+          "score" => 1.0
+          }
+          ]
+        }
+
+        assert_equal expected, actual
+
+      end
     end
   end
 
