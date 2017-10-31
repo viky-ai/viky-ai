@@ -113,6 +113,12 @@ To ensure having all the webapp related processes up and running during developm
 
     foreman start
 
+If you obtain an authorization error from `docker`, you probably have to do:
+
+    docker login
+
+and give your `username` and `password` of the Pertimm services.
+
 ## Doc
 
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:

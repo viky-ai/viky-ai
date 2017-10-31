@@ -1,6 +1,6 @@
 require 'net/http'
 
-class Nls::Interpret
+class Nlp::Interpret
   include ActiveModel::Validations
   validates_with InterpretValidator
 
@@ -13,27 +13,26 @@ class Nls::Interpret
   end
 
   def interpret
-    return unless valid?
-    @intents = post_to_nls("#{@endpoint}/interpret/")['intents'] || []
+    @intents = post_to_nlp("#{@endpoint}/interpret/")['intents'] || []
     @intents.each {|i| i["name"] = i["slug"].split("/").last}
   end
 
-  def post_to_nls(url)
+  def post_to_nlp(url)
     resp = {}
     uri = URI.parse url
     http = Net::HTTP.new uri.host, uri.port
     begin
-      Rails.logger.info "Started POST to NLS \"#{url}\" at #{DateTime.now}"
-      Rails.logger.info "  Parameters: #{options}"
-      out = http.post(uri.path, options.to_json, JSON_HEADERS)
-      Rails.logger.info "  Completed from NLS #{out.code}"
+      Rails.logger.info "Started POST to NLP \"#{url}\" at #{DateTime.now}"
+      Rails.logger.info "  Parameters: #{@options}"
+      out = http.post(uri.path, @options.to_json, JSON_HEADERS)
+      Rails.logger.info "  Completed from NLP #{out.code}"
       if out.code == '200'
         resp = JSON.parse(out.body)
       else
-        errors.add(:nls, JSON.parse(out.body)['errors'])
+        errors.add(:nlp, JSON.parse(out.body)['errors'])
       end
     rescue StandardError => sterr
-      errors.add(:nls, sterr.message)
+      errors.add(:nlp, sterr.message)
     end
     resp
   end
@@ -48,10 +47,8 @@ class Nls::Interpret
       end
 
       opts["Accept-Language"] = opts[:language] || "en-US"
-      opts.delete :language
-
       opts["packages"] = [opts[:id]]
-      opts
+      opts.select {|k,v| ["Accept-Language", "packages", "sentence"].include?(k)}
     end
 
 end
