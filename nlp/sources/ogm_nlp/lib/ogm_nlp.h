@@ -556,6 +556,7 @@ int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression
 og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 
 /* nlpanyopt.c */
@@ -563,6 +564,11 @@ int OgRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *
 
 /* nlpreopt.c */
 og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
+
+/* nlptreejson.c */
+og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_interpretation);
+
 
 
 

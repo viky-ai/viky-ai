@@ -113,11 +113,14 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
         char string_any[DPcPathSize];
         NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
 
+        char string_any_position[DPcPathSize];
+        NlpRequestAnyPositionString(ctrl_nlp_th, request_any, DPcPathSize, string_any_position);
+
         char highlight[DPcPathSize];
         NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
 
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: [%s] any: '%s'", string_offset,
-            request_input_part->level, string_any, highlight);
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
+            request_input_part->level, string_any, string_any_position, highlight);
       }
       else
       {

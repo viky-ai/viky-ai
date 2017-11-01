@@ -185,14 +185,17 @@ int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression
     char string_any[DPcPathSize];
     NlpRequestAnyString(ctrl_nlp_th, request_any + i, DPcPathSize, string_any);
 
+    char string_any_position[DPcPathSize];
+    NlpRequestAnyPositionString(ctrl_nlp_th, request_any + i, DPcPathSize, string_any_position);
+
     char string_request_expression[DPcPathSize];
     NlpRequestAnyRequestExpressionString(ctrl_nlp_th, request_any + i, DPcPathSize, string_request_expression);
 
     char highlight[DPcPathSize];
     NlpRequestAnyStringPretty(ctrl_nlp_th, request_any + i, DPcPathSize, highlight);
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " [%s] -> [%s]: '%s'", string_any, string_request_expression,
-        highlight);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " '%s' [%s] -> [%s]: '%s'", string_any, string_any_position,
+        string_request_expression, highlight);
   }
 
   DONE;
@@ -219,6 +222,26 @@ static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct re
 }
 
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
+{
+  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_word) DPcErr;
+
+  int length = 0;
+  string[length] = 0;
+  for (int i = 0; i < request_any->request_words_nb; i++)
+  {
+    int Irequest_word = request_any->request_word_start + i;
+    og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word[Irequest_word].start);
+    IFN(string_request_word) DPcErr;
+
+    length = strlen(string);
+    snprintf(string + length, size - length, "%s%s", (i ? " " : ""), string_request_word);
+  }
+
+  DONE;
+}
+
+int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
 {
   struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(request_word) DPcErr;

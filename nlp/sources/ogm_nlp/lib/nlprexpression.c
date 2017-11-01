@@ -314,6 +314,8 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
+  //IFE(NlpInterpretTreeJson(ctrl_nlp_th, request_expression, json_interpretation));
+
   IF(json_array_append_new(json_interpretations, json_interpretation))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error appending json_interpretation to array");
