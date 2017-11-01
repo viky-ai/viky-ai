@@ -31,6 +31,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->expression = expression;
   request_expression->level = ctrl_nlp_th->level;
   request_expression->Irequest_any = (-1);
+  request_expression->keep_as_result = FALSE;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -93,11 +94,16 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IF(request_expression_exists) DPcErr;
     if (request_expression_exists)
     {
-      //OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      //    "comparing new request expression %d with same request expression %d:",
-      //    request_expression->input_parts_compacity, same_request_expression->input_parts_compacity);
-      //IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
-      //IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+      og_bool must_log_compared_expressions = TRUE;
+      if (request_expression->request_positions_nb == 1) must_log_compared_expressions = FALSE;
+      if (must_log_compared_expressions)
+      {
+//        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+//            "comparing new request expression %d with same request expression %d:",
+//            request_expression->input_parts_compacity, same_request_expression->input_parts_compacity);
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
+      }
       must_add_request_expression = FALSE;
     }
   }
@@ -164,7 +170,7 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
   struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
   IFN(orip) DPcErr;
 
-  for (int i = 0; i+1 < request_expression->orips_nb; i++)
+  for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     int Ioriginal_request_input_part1 = orip[request_expression->orip_start + i].Ioriginal_request_input_part;
     int Irequest_input_part1 = original_request_input_part[Ioriginal_request_input_part1].Irequest_input_part;
@@ -172,13 +178,13 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
         Irequest_input_part1);
     IFN(request_input_part1) DPcErr;
 
-    int Ioriginal_request_input_part2 = orip[request_expression->orip_start + i +1].Ioriginal_request_input_part;
+    int Ioriginal_request_input_part2 = orip[request_expression->orip_start + i + 1].Ioriginal_request_input_part;
     int Irequest_input_part2 = original_request_input_part[Ioriginal_request_input_part2].Irequest_input_part;
     struct request_input_part *request_input_part2 = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
         Irequest_input_part2);
     IFN(request_input_part2) DPcErr;
 
-    og_bool is_ordered = NlpRequestInputPartsAreOrdered(ctrl_nlp_th,request_input_part1,request_input_part2);
+    og_bool is_ordered = NlpRequestInputPartsAreOrdered(ctrl_nlp_th, request_input_part1, request_input_part2);
     IFE(is_ordered);
     if (!is_ordered) return FALSE;
   }
@@ -189,21 +195,47 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
 og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
 {
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
-  struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
-  IFN(request_expression) DPcErr;
+  if (request_expression_used <= 0) DONE;
 
-  if (request_expression_used > 0)
+  struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+  IFN(request_expressions) DPcErr;
+
+  GQueue *sorted_request_expressions = ctrl_nlp_th->sorted_request_expressions;
+  for (int i = 0; i < request_expression_used; i++)
   {
-    struct request_expression *last_request_expression = request_expression + request_expression_used - 1;
-    IFE(NlpRequestAnysAdd(ctrl_nlp_th, last_request_expression));
-    IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, last_request_expression));
-    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
-    IFE(OgRequestAnyOptimizeMatch(ctrl_nlp_th, last_request_expression));
-    IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
+    g_queue_push_tail(sorted_request_expressions, request_expressions + i);
+  }
+  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
+
+  struct request_expression *first_request_expression = sorted_request_expressions->head->data;
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    if (request_expression->level == first_request_expression->level
+        && request_expression->request_positions_nb == first_request_expression->request_positions_nb)
+    {
+      request_expression->keep_as_result = TRUE;
+    }
   }
 
-  g_qsort_with_data(request_expression, request_expression_used, sizeof(struct request_expression),
-      NlpRequestExpressionCmp, NULL);
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    if (!request_expression->keep_as_result) break;
+    IFE(NlpRequestAnysAdd(ctrl_nlp_th, request_expression));
+    IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
+    IFE(OgRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
+  }
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "First request expression found:")
+    struct request_expression *last_request_expression = sorted_request_expressions->head->data;
+    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
+
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions:"));
+  }
 
   DONE;
 }
@@ -218,8 +250,12 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (request_expression2->level - request_expression1->level);
   }
-  // Just to make sure it is different
-  return request_expression2 - request_expression1;
+  if (request_expression1->request_positions_nb != request_expression2->request_positions_nb)
+  {
+    return (request_expression2->request_positions_nb - request_expression1->request_positions_nb);
+  }
+// Just to make sure it is different
+  return request_expression1 - request_expression2;
 }
 
 /*
@@ -227,19 +263,13 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
  */
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations)
 {
-  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
-
-  struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
-  IFN(request_expression) DPcErr;
-
-  int top_level = request_expression->level;
-
-  for (int i = 0; i < request_expression_used; i++)
+  GQueue *sorted_request_expressions = ctrl_nlp_th->sorted_request_expressions;
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
-    if (request_expression[i].level != top_level) break;
-    IFE(NlpRequestInterpretationBuild(ctrl_nlp_th, request_expression + i, json_interpretations));
+    struct request_expression *request_expression = iter->data;
+    if (!request_expression->keep_as_result) break;
+    IFE(NlpRequestInterpretationBuild(ctrl_nlp_th, request_expression, json_interpretations));
   }
-
   DONE;
 }
 
@@ -293,6 +323,19 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
   DONE;
 }
 
+og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title)
+{
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s", title);
+
+  GQueue *sorted_request_expressions = ctrl_nlp_th->sorted_request_expressions;
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+  }
+  DONE;
+}
+
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s", title);
@@ -325,8 +368,8 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
-      request_expression->self_index, request_expression->level, string_positions, DPcPathSize, expression->text,
-      expression->interpretation->slug, highlight);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
+      request_expression->self_index, request_expression->level, (request_expression->keep_as_result ? "*" : ""),
+      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight);
   DONE;
 }

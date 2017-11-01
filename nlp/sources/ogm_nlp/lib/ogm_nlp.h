@@ -317,6 +317,8 @@ struct request_expression
 
   /** used locally for various scanning */
   int analyzed;
+
+  og_bool keep_as_result;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -405,6 +407,7 @@ struct og_ctrl_nlp_threaded
    * to mark it as used as soon as possible
    */
   GQueue package_in_used[1];
+  GQueue sorted_request_expressions[1];
 
   int new_request_expression_start;
   int new_request_input_part_start;
@@ -516,6 +519,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
 og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
+og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 

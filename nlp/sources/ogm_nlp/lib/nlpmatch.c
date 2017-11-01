@@ -55,8 +55,11 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
   while (at_least_one_input_part_added);
 
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
+  }
   IFE(NlpRequestExpressionsExplicit(ctrl_nlp_th));
-  IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
   DONE;
 }
 
@@ -147,7 +150,8 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following input parts:", ctrl_nlp_th->level);
+    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following input parts:",
+        ctrl_nlp_th->level);
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, buffer));
   }
 

@@ -53,6 +53,7 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   }
 
   g_queue_init(ctrl_nlp_th->package_in_used);
+  g_queue_init(ctrl_nlp_th->sorted_request_expressions);
 
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 

@@ -60,10 +60,10 @@ module Nls
         {
           "interpretations" =>
           [
-            json_interpretation_4.to_match,
-            json_interpretation_3.to_match,
+            json_interpretation_1.to_match,
             json_interpretation_2.to_match,
-            json_interpretation_1.to_match
+            json_interpretation_3.to_match,
+            json_interpretation_4.to_match
           ]
         }
 

@@ -176,7 +176,7 @@ module Nls
         actual = Nls.interpret(request)
 
         # TODO fix *6 answers
-        expected = expected_interpret_result([i_want_hotel_with_feature] * 6)
+        expected = expected_interpret_result([i_want_hotel_with_feature] * 2)
 
         assert_equal expected, actual
 
