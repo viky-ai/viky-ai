@@ -26,7 +26,7 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
   memset(output, 0, sizeof(struct og_nlp_compile_output));
 
   og_char_buffer json_compile_request_string[DOgMlogMaxMessageSize / 2];
-  IFE(NlpJsonToBuffer(input->json_input, json_compile_request_string, DOgMlogMaxMessageSize / 2, NULL));
+  IFE(NlpJsonToBuffer(input->json_input, json_compile_request_string, DOgMlogMaxMessageSize / 2, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceCompile, "OgNlpCompile: json_compile_request_string is [\n%s]", json_compile_request_string)
 
@@ -71,7 +71,7 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
 og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_package)
 {
   og_char_buffer json_package_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_package, json_package_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_package, json_package_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackage: compiling package [\n%s]", json_package_string)
 
@@ -205,7 +205,7 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
 og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_interpretation)
 {
   og_char_buffer json_interpretation_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_interpretation, json_interpretation_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_interpretation, json_interpretation_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretation: compiling interpretation [\n%s]",
       json_interpretation_string)
@@ -344,7 +344,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation, json_t *json_expression)
 {
   og_char_buffer json_expression_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL, JSON_INDENT(2)));
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: compiling expression [\n%s]", json_expression_string)
 
   json_t *json_text = NULL;
@@ -510,7 +510,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
 {
 
   og_char_buffer json_alias_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_alias, json_alias_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_alias, json_alias_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpressionAlias: compiling alias [\n%s]", json_alias_string)
 

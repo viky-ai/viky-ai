@@ -71,5 +71,8 @@ ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_tokyo
 ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_barcelona.json
 ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris.json
 ognlp -c packages/packages_pg-building-feature-any.json -i requests/r_with_features_any.json
+ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris_explanation.json
+ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris_trace.json
 ```
+
 

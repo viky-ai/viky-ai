@@ -443,17 +443,25 @@ og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlplog.c */
 og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...);
-og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
+og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
+    size_t flags);
 og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, og_string label, package_t package);
 og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation);
+og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation);
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
 og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part);
+og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 
 og_status NlpPackageCompileLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation);
+og_status NlpPackageCompileInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation);
 og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression);
+og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression_compile *expression);
 og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias_compile *alias);
 

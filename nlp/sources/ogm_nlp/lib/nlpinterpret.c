@@ -140,7 +140,7 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
   memset(output, 0, sizeof(struct og_nlp_interpret_output));
 
   og_char_buffer json_interpret_request[DOgMlogMaxMessageSize / 2];
-  IFE(NlpJsonToBuffer(input->json_input, json_interpret_request, DOgMlogMaxMessageSize / 2, NULL));
+  IFE(NlpJsonToBuffer(input->json_input, json_interpret_request, DOgMlogMaxMessageSize / 2, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceInterpret, "OgNlpInterpret: ctrl_nlp_th->json_interpret_request_string is [\n%s]",
       json_interpret_request)
@@ -201,7 +201,7 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   IFE(NlpInterpretRequestReset(ctrl_nlp_th));
 
   og_char_buffer json_request_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
   NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: interpreting request [\n%s]", json_request_string)
 

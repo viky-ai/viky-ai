@@ -44,12 +44,13 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
  * @param p_truncated flag to indicate if json is truncated or not
  * @return status
  */
-og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated)
+og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
+    size_t flags)
 {
   og_string truncated_ends = " ... (truncated) ";
   int truncated_ends_size = strlen(truncated_ends);
 
-  int expected_size = json_dumpb(json, buffer, buffer_size - truncated_ends_size - 1, JSON_INDENT(2));
+  int expected_size = json_dumpb(json, buffer, buffer_size - truncated_ends_size - 1, flags);
   IF(expected_size)
   {
     DPcErr;
@@ -109,9 +110,22 @@ og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t pa
     struct expression_compile *expression = OgHeapGetCell(package->hexpression_compile,
         interpretation->expression_start + i);
     IFN(expression) DPcErr;
-
     IFE(NlpPackageCompileExpressionLog(ctrl_nlp_th, package, expression));
   }
+
+  IFE(NlpPackageCompileInterpretationSolutionLog(ctrl_nlp_th, package, interpretation));
+
+  DONE;
+}
+
+og_status NlpPackageCompileInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation)
+{
+  IFN(interpretation->json_solution) DONE;
+
+  og_char_buffer json_interpretation_string[DOgMlogMaxMessageSize / 2];
+  IFE(NlpJsonToBuffer(interpretation->json_solution, json_interpretation_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    solution: %s", json_interpretation_string);
   DONE;
 }
 
@@ -133,6 +147,8 @@ og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t packag
 
     IFE(NlpPackageCompileAliasLog(ctrl_nlp_th, package, alias));
   }
+
+  IFE(NlpPackageCompileExpressionSolutionLog(ctrl_nlp_th, package, expression));
 
   DONE;
 }
@@ -156,6 +172,17 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' any", string_alias);
   }
+  DONE;
+}
+
+og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression)
+{
+  IFN(expression->json_solution) DONE;
+
+  og_char_buffer json_solution_string[DOgMlogMaxMessageSize / 2];
+  IFE(NlpJsonToBuffer(expression->json_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      solution: %s", json_solution_string);
   DONE;
 }
 
@@ -185,6 +212,20 @@ og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, 
   {
     IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, interpretation->expressions + i));
   }
+
+  IFE(NlpPackageInterpretationSolutionLog(ctrl_nlp_th, package, interpretation));
+
+  DONE;
+}
+
+og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation)
+{
+  IFN(interpretation->json_solution) DONE;
+
+  og_char_buffer json_interpretation_string[DOgMlogMaxMessageSize / 2];
+  IFE(NlpJsonToBuffer(interpretation->json_solution, json_interpretation_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    solution: %s", json_interpretation_string);
   DONE;
 }
 
@@ -219,6 +260,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
       IFE(NlpPackageInputPartLog(ctrl_nlp_th, package, input_parts + i));
     }
   }
+
+  IFE(NlpPackageExpressionSolutionLog(ctrl_nlp_th, package, expression));
 
   DONE;
 }
@@ -270,6 +313,16 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     }
   }
 
+  DONE;
+}
+
+og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+{
+  IFN(expression->json_solution) DONE;
+
+  og_char_buffer json_solution_string[DOgMlogMaxMessageSize / 2];
+  IFE(NlpJsonToBuffer(expression->json_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      solution: %s", json_solution_string);
   DONE;
 }
 
