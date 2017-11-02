@@ -76,6 +76,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
       id: agent_id
     })
 
+    # Generate token
+    assert_routing({
+      method: 'get',
+      path: "agents/#{user_id}/#{agent_id}/generate_token"
+    },
+    {
+      controller: 'agents',
+      action: 'generate_token',
+      user_id: user_id,
+      id: agent_id
+    })
   end
 
 end

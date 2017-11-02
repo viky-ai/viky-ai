@@ -36,6 +36,8 @@ en:
         background_image_chooser: Or upload an image
         remove_image_background_btn: Remove image
         upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
+        api_token:
+          generate_btn: Re-generate
       new:
         title: Create a new agent
         btn: Create

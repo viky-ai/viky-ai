@@ -287,4 +287,46 @@ class AgentTest < ActiveSupport::TestCase
     ]
     assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
   end
+
+
+  test "A new agent always has a token" do
+    agent = Agent.new(
+      name: "Agent A",
+      agentname: "agenta",
+      description: "Agent A decription"
+    )
+    Membership.new(user: users(:admin), agent: agent).save
+
+    agent.save
+    assert !agent.api_token.nil?
+  end
+
+
+  test "A token is always required" do
+    agent = agents(:terminator)
+
+    agent.api_token = nil
+    agent.save
+
+    expected = [
+      "can't be blank",
+      "is too short (minimum is 32 characters)"
+    ]
+    assert_equal expected, agent.errors.messages[:api_token]
+  end
+
+
+  test "Api token is unique" do
+    agent = Agent.new(
+      name: "Agent A",
+      agentname: "agenta",
+      description: "Agent A decription",
+      api_token: agents(:terminator).api_token
+    )
+    Membership.new(user: users(:admin), agent: agent).save
+
+    agent.save
+    assert ["has already been taken"], agent.errors.messages[:api_token]
+  end
+
 end

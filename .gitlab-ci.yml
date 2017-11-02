@@ -1,4 +1,5 @@
 stages:
+  - prerequist
   - build
   - test
   - docker_push
@@ -8,35 +9,63 @@ stages:
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
-  VOQALAPP_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/app
-  VOQALNLP_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/nlp
+  DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
+  DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
+  DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
+  DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
+  DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
 
 # Build docker image
+
+build_ruby_base:
+  stage: prerequist
+  image: docker:dind
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/ruby_base
+    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG}
+
+build_loadbalancer:
+  stage: build
+  image: docker:dind
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/load_balancer
+    - docker push ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG}
+
 build_webapp:
   stage: build
   image: docker:dind
   script:
     - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/version.json"
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --target image_ruby_run  -t ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} webapp
-    - docker build --pull --target image_ruby_test -t ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} webapp
-    - docker push ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker push ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} webapp
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_test -t ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG} webapp
+    - docker push ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG}
+    - docker push ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
+
+build_doc:
+  stage: build
+  image: docker:dind
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_doc_run -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} doc
+    - docker push ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG}
 
 build_nlp:
   stage: build
   image: docker:dind
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --target run_image  -t ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} nlp
-    - docker build --pull --target test_image -t ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG} nlp
-    - docker push ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-    - docker push ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+    - docker build --pull --target run_image  -t ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG} nlp
+    - docker build --pull --target test_image -t ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG} nlp
+    - docker push ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG}
+    - docker push ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
 
 # Test
 test_webapp:
   stage: test
-  image: ${VOQALAPP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+  image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
     GIT_STRATEGY: none
     VOQALAPP_DB_USERNAME: superman
@@ -56,7 +85,7 @@ test_webapp:
 
 test_nlp:
   stage: test
-  image: ${VOQALNLP_DOCKER_IMAGE}_test:${CI_COMMIT_REF_SLUG}
+  image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
   variables:
     GIT_STRATEGY: none
   script:
@@ -71,8 +100,18 @@ push_webapp:
     GIT_STRATEGY: none
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${VOQALAPP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALAPP_DOCKER_IMAGE}:latest
-    - docker push ${VOQALAPP_DOCKER_IMAGE}:latest
+    - docker tag ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_APP}:latest
+    - docker push ${DOCKER_IMAGE_APP}:latest
+
+push_doc:
+  stage: docker_push
+  image: docker:dind
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_DOC}:latest
+    - docker push ${DOCKER_IMAGE_DOC}:latest
 
 push_nlp:
   stage: docker_push
@@ -81,8 +120,28 @@ push_nlp:
     GIT_STRATEGY: none
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${VOQALNLP_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${VOQALNLP_DOCKER_IMAGE}:latest
-    - docker push ${VOQALNLP_DOCKER_IMAGE}:latest
+    - docker tag ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_NLP}:latest
+    - docker push ${DOCKER_IMAGE_NLP}:latest
+
+push_ruby_base:
+  stage: docker_push
+  image: docker:dind
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+
+push_loadbalancer:
+  stage: docker_push
+  image: docker:dind
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
+    - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
 
 # Deploy any branches on rancher dev
 deploy_branch:
@@ -98,6 +157,7 @@ deploy_branch:
   variables:
     VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
     VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment

@@ -53,6 +53,13 @@ class AgentForm
       link.closest('.btn-group').find('a').removeClass('btn--primary')
       link.addClass('btn--primary')
 
+    if action == 'generate-token'
+      event.preventDefault()
+      $.ajax
+        url: link.attr('href')
+        success: (data, textStatus) ->
+          $('#agent_api_token').val(data.api_token)
+
   get_link_target: (event) ->
     if $(event.target).is('a')
       return $(event.target)

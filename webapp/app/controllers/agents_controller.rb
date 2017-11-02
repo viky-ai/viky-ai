@@ -120,6 +120,11 @@ class AgentsController < ApplicationController
     end
   end
 
+  def generate_token
+    @agent.ensure_api_token
+    render json: { api_token: @agent.api_token }
+  end
+
 
   private
 
@@ -137,7 +142,7 @@ class AgentsController < ApplicationController
 
     def agent_params
       params.require(:agent).permit(
-        :name, :agentname, :description, :color, :image, :remove_image
+        :name, :agentname, :description, :color, :image, :remove_image, :api_token
       )
     end
 

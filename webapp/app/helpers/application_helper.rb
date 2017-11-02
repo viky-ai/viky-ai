@@ -20,4 +20,12 @@ module ApplicationHelper
     return html.join.html_safe
   end
 
+  def doc_url
+    if Rails.env.production?
+      '/doc/'
+    else
+      'http://localhost:4567'
+    end
+  end
+
 end

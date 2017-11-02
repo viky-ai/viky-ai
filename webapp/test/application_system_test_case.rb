@@ -16,4 +16,5 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     admin_login
     assert page.has_text?("Agents")
   end
+
 end

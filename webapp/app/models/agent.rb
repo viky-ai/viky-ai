@@ -11,9 +11,11 @@ class Agent < ApplicationRecord
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :users, presence: true
   validates :owner_id, presence: true
+  validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
   validate :owner_presence_in_users
 
+  before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
 
@@ -39,6 +41,12 @@ class Agent < ApplicationRecord
       success: transfert.valid?,
       errors: transfert.errors.flatten
     }
+  end
+
+  def ensure_api_token
+    begin
+      self.api_token = SecureRandom.hex
+    end while self.class.exists?(api_token: api_token)
   end
 
 

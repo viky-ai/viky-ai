@@ -4,57 +4,12 @@
 # docker build --target image_ruby_run  -t docker-registry.pertimm.net/voqal.ai/platform/app .
 # docker build --target image_ruby_test -t docker-registry.pertimm.net/voqal.ai/platform/app_test .
 
-#################################################
-# nodejs-base : tar.gz
-#################################################
-
-FROM node:8.6-stretch AS nodejs-base
-
-# archive nodejs
-RUN tar czPf /nodejs.tgz /usr/local/bin/ /usr/local/lib/ /opt/yarn/
+ARG RUBY_BASE_VERSION=latest
 
 #################################################
-# image_ruby_base : ruby + app dependencies
+# image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
-FROM ruby:2.4.2-slim-stretch AS image_ruby_base
-
-# Same has buildpack-deps-stretch-curl
-RUN set -ex; \
-    apt-get update ; \
-    apt-get install -y --no-install-recommends \
-      build-essential \
-      ca-certificates \
-      curl \
-      dirmngr \
-      gnupg2 \
-      wget \
-      vim \
-    ; \
-    rm -rf /var/lib/apt/lists/*
-
-# Needed system dependencies for gem compilation
-RUN set -ex; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-      file \
-      graphicsmagick-imagemagick-compat \
-      libcurl4-openssl-dev \
-      libfontconfig \
-      libpq-dev \
-      libyaml-dev \
-      zlib1g-dev \
-    ; \
-    rm -rf /var/lib/apt/lists/*
-
-WORKDIR /
-
-# Copy Node and Yarn install
-COPY --from=nodejs-base /nodejs.tgz /
-RUN tar xzPf /nodejs.tgz
-
-ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.6.0
-ENV YARN_VERSION 1.1.0
+FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_deps
 
 # App specific
 RUN mkdir -p /webapp
@@ -78,13 +33,14 @@ RUN bundle install --without development test --deployment --jobs=$(nproc)
 #################################################
 # image_ruby_run : image_ruby_base + code + assets
 #################################################
-FROM image_ruby_base AS image_ruby_run
+FROM image_ruby_deps AS image_ruby_run
 
 # Copy application code
 COPY . /webapp
 
 # Use a dummy SECRET_KEY_BASE
 ENV SECRET_KEY_BASE=dummy
+ENV RAILS_ENV=production
 
 # Precompile assets
 RUN ./bin/rails assets:precompile
@@ -94,7 +50,6 @@ RUN mkdir -p /webapp/tmp/
 RUN mkdir -p /webapp/tmp/pids/
 RUN mkdir -p /webapp/log/
 
-ENV RAILS_ENV=production
 ENV RAILS_SERVE_STATIC_FILES=true
 ENV RAILS_LOG_TO_STDOUT=1
 
@@ -110,7 +65,7 @@ FROM wernight/phantomjs AS phantomjs-base
 #################################################
 # image_ruby_test : image_ruby_base + test dependencies
 #################################################
-FROM image_ruby_base AS image_ruby_test
+FROM image_ruby_deps AS image_ruby_test
 
 # copy phantomjs
 COPY --from=phantomjs-base /usr/local/bin/phantomjs /usr/local/bin/phantomjs
@@ -125,5 +80,3 @@ ENV RAILS_ENV=test
 
 # Run test
 CMD ["./bin/docker_run_test.sh"]
-
-# docker

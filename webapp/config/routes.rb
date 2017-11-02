@@ -24,6 +24,7 @@ Rails.application.routes.draw do
           get :confirm_transfer_ownership
           post :transfer_ownership
           get :search_users_for_transfer_ownership
+          get :generate_token
         end
       end
     end
@@ -46,4 +47,15 @@ Rails.application.routes.draw do
     root to: 'agents#index', as: :authenticated_root
   end
 
+  # API with versioning
+  namespace :api do
+    namespace :v1 do
+      scope '/agents' do
+        get '/:user_id/:id/interpret', to: 'nlp#interpret'
+      end
+    end
+  end
+
+  match "/404", to: "errors#not_found", via: :all
+  match "/500", to: "errors#internal_error", via: :all
 end

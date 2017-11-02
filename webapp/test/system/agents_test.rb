@@ -129,4 +129,32 @@ class AgentsTest < ApplicationSystemTestCase
     assert_equal '/agents', current_path
   end
 
+
+  #
+  # Token
+  #
+  test "Api Token is shown in edit" do
+    go_to_agents_index
+
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    assert page.has_text?('Configure agent')
+
+    assert page.has_text?('API token')
+    assert_not_nil find("#agent_api_token")[:readonly]
+    prev_value = find("#agent_api_token").value
+
+    first(".field--api-token a").click
+    assert_not page.has_text?(prev_value)
+
+    click_button 'Update'
+    assert page.has_text?('Your agent has been successfully updated.')
+
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    after_value = find("#agent_api_token").value
+
+    assert_not_equal prev_value, after_value
+  end
+
 end

@@ -29,5 +29,7 @@ module Webapp
     config.active_job.queue_adapter     = :sidekiq
     config.active_job.queue_name_prefix = "webapp"
     config.active_job.queue_name_delimiter = "_"
+
+    config.exceptions_app = self.routes
   end
 end

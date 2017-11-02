@@ -27,6 +27,7 @@ ADD sources/external_dependencies   /builds/nls/sources/external_dependencies
 ADD tools                           /builds/nls/tools
 
 RUN buildinit.pl
+RUN factory.pl -c external_dependencies fullclean
 RUN factory.pl -c external_dependencies redebug
 
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
