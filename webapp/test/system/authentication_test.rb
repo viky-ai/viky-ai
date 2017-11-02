@@ -117,12 +117,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Log in failed with not confirmed email' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'notconfirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'notconfirmed@viky.ai', 'BimBamBoom'
 
     assert_equal new_user_session_path, current_path
     assert page.has_content?("You have to confirm your email address before continuing.")
@@ -130,12 +125,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Log in failed with bad password' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBam'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBam'
 
     assert_equal new_user_session_path, current_path
     assert page.has_content?("Invalid Email or password.")
@@ -143,12 +133,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Successful log in' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
@@ -156,17 +141,11 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Successful log in then log out' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
-
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
 
-    first('.nav__footer svg').click # Logout
+    logout
     assert page.has_content?("Signed out successfully.")
   end
 
@@ -331,10 +310,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     assert u.save(validate: false)
     travel_to(u.invitation_sent_at + 1.seconds)
 
-    visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     assert page.has_content? "You are already signed in."
@@ -361,7 +337,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     expected = 'Your password and username were set successfully. You are now signed in.'
     assert page.has_content? expected
 
-    first('.nav__footer svg').click # Logout
+    logout
 
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"

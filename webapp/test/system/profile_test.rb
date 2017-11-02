@@ -122,7 +122,7 @@ class ProfileTest < ApplicationSystemTestCase
     assert page.has_content?("Authentication parameters")
     assert !page.has_content?("Password is too short (minimum is 6 characters)")
 
-    first('.nav__footer svg').click # Logout
+    logout
     click_link "Log in"
     fill_in 'Email', with: 'admin@viky.ai'
     fill_in 'Password', with: 'shortshort'

@@ -12,12 +12,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
 
   test 'User index not allowed if user is not admin' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     visit backend_users_path
     assert page.has_content?('You do not have permission to access this interface.')
@@ -152,20 +147,13 @@ class BackendUsersTest < ApplicationSystemTestCase
     visit new_user_invitation_path
     assert page.has_content? "You need to sign in or sign up before continuing."
 
-    visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     assert_equal '/', current_path
     assert page.has_content? "You do not have permission to access this interface."
 
-    first('.nav__footer svg').click # Logout
-
-    visit new_user_session_path
-    fill_in 'Email', with: 'admin@viky.ai'
-    fill_in 'Password', with: 'AdminBoom'
-    click_button 'Log in'
+    logout
+    login_as 'admin@viky.ai', 'AdminBoom'
 
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")

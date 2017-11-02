@@ -80,10 +80,8 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Cannot share from agent show if not owner' do
-    visit new_user_session_path
-    fill_in 'Email', with: users(:edit_on_agent_weather).email
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
+    login_as users(:edit_on_agent_weather).email, 'BimBamBoom'
+
     assert page.has_text?("Agents")
 
     click_link 'My awesome weather bot'
