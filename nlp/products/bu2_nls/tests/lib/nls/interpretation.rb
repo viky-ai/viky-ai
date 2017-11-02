@@ -55,8 +55,8 @@ module Nls
       to_h.to_json(options)
     end
 
-    def new_expression(text, aliases = [], locale = nil)
-      add_expression(Expression.new(text, aliases, locale))
+    def new_expression(text, aliases = [], locale = nil, keep_order = nil)
+      add_expression(Expression.new(text, aliases, locale, keep_order))
       self
     end
 

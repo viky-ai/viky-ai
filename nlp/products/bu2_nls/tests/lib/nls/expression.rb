@@ -6,11 +6,14 @@ module Nls
     attr_reader :expression
     attr_reader :locale
     attr_reader :aliases
+    attr_reader :keep_order
     attr_accessor :interpretation
 
-    def initialize(expression, aliases = [], locale = nil)
+    def initialize(expression, aliases = [],locale = nil, keep_order = nil)
       @expression = expression
       @locale = locale
+      @keep_order = nil
+      @keep_order = 1 if keep_order == "true"
 
       @aliases = []
       if aliases.kind_of? Array
@@ -20,7 +23,11 @@ module Nls
       elsif aliases.kind_of? Hash
         # hash of alias_name => interpretation
         aliases.each do |alias_name, interpretation|
-          _alias = Alias.new(interpretation, alias_name)
+          if interpretation.nil?
+            _alias = Alias.new(interpretation, alias_name, "true")
+          else
+            _alias = Alias.new(interpretation, alias_name)
+          end
           add_alias(_alias)
         end
       else
@@ -43,12 +50,21 @@ module Nls
       hash = {}
       hash['expression'] = @expression
       hash['locale'] = @locale if !@locale.nil?
+      hash['keep-order'] = "true" if !@keep_order.nil?
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash
     end
 
     def to_json(options = {})
       to_h.to_json(options)
+    end
+
+    def self.no_locale
+      nil
+    end
+
+    def self.keep_order
+      "true"
     end
 
   end
