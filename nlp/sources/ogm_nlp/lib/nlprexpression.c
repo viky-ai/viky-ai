@@ -300,6 +300,8 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
+  IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpRequestInterpretationBuild));
+
   json_t *json_interpretation_slug = json_string(interpretation->slug);
   IF(json_object_set_new(json_interpretation, "slug", json_interpretation_slug))
   {

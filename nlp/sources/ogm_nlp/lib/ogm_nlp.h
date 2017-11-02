@@ -210,7 +210,13 @@ struct input_part
 
 enum nlp_synchro_test_timeout_in
 {
-  nlp_timeout_in_NONE = 0, nlp_timeout_in_NlpPackageAddOrReplace, nlp_timeout_in_NlpPackageGet
+  nlp_timeout_in_NONE = 0,
+  nlp_timeout_in_NlpPackageAddOrReplace,
+  nlp_timeout_in_NlpPackageGet,
+  nlp_timeout_in_NlpInterpretRequestParse,
+  nlp_timeout_in_NlpMatchExpressions,
+  nlp_timeout_in_NlpRequestInterpretationBuild,
+  nlp_timeout_in_NlpInterpretRequestReset
 };
 
 enum nlp_synchro_lock_type

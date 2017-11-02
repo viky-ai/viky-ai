@@ -230,6 +230,8 @@ static og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
 
   }
 
+  IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpMatchExpressions));
+
   return (at_least_one_input_part_added);
 }
 
