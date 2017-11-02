@@ -67,5 +67,9 @@ module Nls
       "true"
     end
 
+    def self.no_order
+      nil
+    end
+
   end
 end
