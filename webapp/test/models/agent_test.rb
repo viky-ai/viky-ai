@@ -232,27 +232,21 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "Transfer agent ownership" do
+  test "Transfer agent ownership and keep edit rights for previous owner" do
     user_admin = users(:admin)
     user_confirmed = users(:confirmed)
     terminator_agent = agents(:terminator)
 
     assert_equal user_admin.id, terminator_agent.owner_id
-    assert terminator_agent.users.one? do |user|
-      user.id == user_admin.id
-    end
-    assert 0, terminator_agent.users.count do |user|
-      user.id == user_confirmed.id
-    end
+    assert terminator_agent.users.one? { |user| user.id == user_admin.id }
+    assert terminator_agent.users.none? { |user| user.id == user_confirmed.id }
+
     result = terminator_agent.transfer_ownership_to(user_confirmed.id)
     assert result[:success]
+
     assert_equal user_confirmed.id, terminator_agent.owner_id
-    assert terminator_agent.users.one? do |user|
-      user.id == user_confirmed.id
-    end
-    assert 0, terminator_agent.users.count do |user|
-      user.id == user_admin.id
-    end
+    assert Membership.where(user_id: user_admin.id, agent_id: terminator_agent.id, rights: 'edit').one?
+    assert terminator_agent.users.one? { |user| user.id == user_confirmed.id }
   end
 
 

@@ -18,19 +18,24 @@ class AgentTransfert
     validate
     if valid?
       ActiveRecord::Base.transaction do
-        Membership.where(user_id: @agent.owner_id).find_by(agent_id: @agent.id).destroy
+        previous_ownership = Membership.find_by(user_id: @agent.owner_id, agent_id: @agent.id)
+        previous_ownership.rights = 'edit'
+        previous_ownership.save
+
         new_membership = Membership.find_by(agent_id: @agent.id, user_id: @new_owner.id)
         if new_membership.present?
           new_membership.rights = 'all'
         else
           new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
         end
+
         if new_membership.save
           @agent.owner_id = @new_owner.id
           unless @agent.save
             @errors << @agent.errors.full_messages
             raise ActiveRecord::Rollback
           end
+          @agent.users.reload
         else
           @errors << new_membership.errors.full_messages
           raise ActiveRecord::Rollback
