@@ -18,18 +18,9 @@ class AgentTransfert
     validate
     if valid?
       ActiveRecord::Base.transaction do
-        previous_ownership = Membership.find_by(user_id: @agent.owner_id, agent_id: @agent.id)
-        previous_ownership.rights = 'edit'
-        previous_ownership.save
-
-        new_membership = Membership.find_by(agent_id: @agent.id, user_id: @new_owner.id)
-        if new_membership.present?
-          new_membership.rights = 'all'
-        else
-          new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
-        end
-
-        if new_membership.save
+        downgrade_previous_ownership
+        new_ownership = create_new_ownership
+        if new_ownership.save
           @agent.owner_id = @new_owner.id
           unless @agent.save
             @errors << @agent.errors.full_messages
@@ -37,7 +28,7 @@ class AgentTransfert
           end
           @agent.users.reload
         else
-          @errors << new_membership.errors.full_messages
+          @errors << new_ownership.errors.full_messages
           raise ActiveRecord::Rollback
         end
       end
@@ -63,6 +54,22 @@ class AgentTransfert
       if Agent.where(owner_id: @new_owner.id, agentname: @agent.agentname).count != 0
         @errors << I18n.t('errors.agent.transfer_ownership.duplicate_agentname')
       end
+    end
+
+    def downgrade_previous_ownership
+      previous_ownership = Membership.find_by(user_id: @agent.owner_id, agent_id: @agent.id)
+      previous_ownership.rights = 'edit'
+      previous_ownership.save
+    end
+
+    def create_new_ownership
+      new_membership = Membership.find_by(agent_id: @agent.id, user_id: @new_owner.id)
+      if new_membership.present?
+        new_membership.rights = 'all'
+      else
+        new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
+      end
+      new_membership
     end
 
 end
