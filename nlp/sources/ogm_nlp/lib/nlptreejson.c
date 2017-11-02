@@ -18,17 +18,40 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
     json_t *json_interpretation)
 {
 
-  json_t *json_expression = json_object();
-  IF(json_object_set_new(json_interpretation, "expression", json_expression))
+  json_t *json_explanation = json_object();
+  IF(json_object_set_new(json_interpretation, "explanation", json_explanation))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_text");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_explanation");
+    DPcErr;
+  }
+
+  json_t *json_expression = json_object();
+  IF(json_object_set_new(json_explanation, "expression", json_expression))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression");
     DPcErr;
   }
 
   json_t *json_expression_text = json_string(request_expression->expression->text);
-  IF(json_object_set_new(json_expression, "expression", json_expression_text))
+  IF(json_object_set_new(json_expression, "text", json_expression_text))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_text");
+    DPcErr;
+  }
+  struct interpretation *interpretation = request_expression->expression->interpretation;
+  json_t *json_interpretation_slug = json_string(interpretation->slug);
+  IF(json_object_set_new(json_expression, "slug", json_interpretation_slug))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_interpretation_slug");
+    DPcErr;
+  }
+  char highlight[DPcPathSize];
+  NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
+      request_expression->request_positions_nb, DPcPathSize, highlight);
+  json_t *json_expression_highlight = json_string(highlight);
+  IF(json_object_set_new(json_expression, "highlight", json_expression_highlight))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_highlight");
     DPcErr;
   }
 
@@ -67,12 +90,12 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
       json_t *json_sub_expression_text = json_string(string_request_word);
       IF(json_object_set_new(json_sub_expression, "word", json_sub_expression_text))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_sub_expression_text");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
         DPcErr;
       }
       IF(json_array_append_new(json_expressions, json_sub_expression))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson : error appending json_word");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
         DPcErr;
       }
     }
@@ -87,12 +110,29 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
       json_t *json_sub_expression_text = json_string(sub_request_expression->expression->text);
       IF(json_object_set_new(json_sub_expression, "text", json_sub_expression_text))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_sub_expression_text");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
         DPcErr;
       }
+      struct interpretation *interpretation = request_expression->expression->interpretation;
+      json_t *json_interpretation_slug = json_string(interpretation->slug);
+      IF(json_object_set_new(json_sub_expression, "slug", json_interpretation_slug))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_interpretation_slug");
+        DPcErr;
+      }
+      char highlight[DPcPathSize];
+      NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
+          request_expression->request_positions_nb, DPcPathSize, highlight);
+      json_t *json_expression_highlight = json_string(highlight);
+      IF(json_object_set_new(json_sub_expression, "highlight", json_expression_highlight))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_highlight");
+        DPcErr;
+      }
+
       IF(json_array_append_new(json_expressions, json_sub_expression))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson : error appending json_word");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
         DPcErr;
       }
       og_status status = NlpInterpretTreeJsonRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression,
@@ -114,15 +154,23 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
         json_t *json_sub_expression_any = json_string(string_any);
         IF(json_object_set_new(json_sub_expression, "any", json_sub_expression_any))
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_sub_expression_any");
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_any");
           DPcErr;
         }
-        IF(json_array_append_new(json_expressions, json_sub_expression))
+        char highlight[DPcPathSize];
+        NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
+        json_t *json_expression_highlight = json_string(highlight);
+        IF(json_object_set_new(json_sub_expression, "highlight", json_expression_highlight))
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson : error appending json_sub_expression");
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_highlight");
           DPcErr;
         }
 
+        IF(json_array_append_new(json_expressions, json_sub_expression))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
+          DPcErr;
+        }
 
       }
     }
@@ -131,7 +179,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 
   IF(json_object_set_new(json_expression, "expressions", json_expressions))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expressions");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression");
     DPcErr;
   }
 

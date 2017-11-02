@@ -290,7 +290,7 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
           request_expression->request_positions_nb, DPcPathSize, string_positions);
 
       char highlight[DPcPathSize];
-      NlpRequestPositionStringPretty(ctrl_nlp_th, request_expression->request_position_start,
+      NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
           request_expression->request_positions_nb, DPcPathSize, highlight);
 
       NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d : '%s'",

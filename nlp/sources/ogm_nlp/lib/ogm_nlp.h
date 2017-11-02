@@ -385,6 +385,7 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  og_bool show_explanation;
   og_heap hrequest_word;
   og_heap hba;
 
@@ -534,7 +535,7 @@ og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_positio
     int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
-int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
+int NlpRequestPositionStringHighlight(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
     int size, char *string);
 
 /* nlporip.c */
@@ -568,7 +569,4 @@ og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
 /* nlptreejson.c */
 og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretation);
-
-
-
 

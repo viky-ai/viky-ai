@@ -109,7 +109,7 @@ int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, 
   DONE;
 }
 
-int NlpRequestPositionStringPretty(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
+int NlpRequestPositionStringHighlight(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
     int size, char *string)
 {
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);

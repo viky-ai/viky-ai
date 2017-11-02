@@ -314,7 +314,10 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
-  //IFE(NlpInterpretTreeJson(ctrl_nlp_th, request_expression, json_interpretation));
+  if (ctrl_nlp_th->show_explanation)
+  {
+    IFE(NlpInterpretTreeJson(ctrl_nlp_th, request_expression, json_interpretation));
+  }
 
   IF(json_array_append_new(json_interpretations, json_interpretation))
   {
@@ -365,7 +368,7 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
       request_expression->request_positions_nb, DPcPathSize, string_positions);
 
   char highlight[DPcPathSize];
-  NlpRequestPositionStringPretty(ctrl_nlp_th, request_expression->request_position_start,
+  NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
       request_expression->request_positions_nb, DPcPathSize, highlight);
 
   struct expression *expression = request_expression->expression;

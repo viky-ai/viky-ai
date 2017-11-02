@@ -46,6 +46,13 @@ ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_y
 ognlp -c packages/packages_pg-building-feature-any.json -i requests/r_with_features_any.json
 ```
 
+Showing explanation :
+
+```
+ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris_explanation.json
+```
+
+
 Summary of list of examples
 =====
 

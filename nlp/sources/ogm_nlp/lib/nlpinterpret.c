@@ -244,16 +244,17 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_any));
 
   ctrl_nlp_th->request_sentence = NULL;
+  ctrl_nlp_th->show_explanation = FALSE;
 
   DONE;
 }
-
 
 static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_request)
 {
   json_t *json_packages = NULL;
   json_t *json_sentence = NULL;
   json_t *json_accept_language = NULL;
+  json_t *json_show_explanation = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -273,6 +274,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     {
       json_accept_language = json_object_iter_value(iter);
     }
+    else if (Ogstricmp(key, "show-explanation") == 0)
+    {
+      json_show_explanation = json_object_iter_value(iter);
+    }
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: unknow key '%s'", key);
@@ -291,6 +296,25 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: no sentence");
     DPcErr;
+  }
+
+  IFX(json_show_explanation)
+  {
+    if (json_is_string(json_show_explanation))
+    {
+      og_string string_show_explanation = json_string_value(json_show_explanation);
+      if (!Ogstricmp(string_show_explanation, "true"))
+      {
+        ctrl_nlp_th->show_explanation = TRUE;
+      }
+
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: showing explanation in answer")
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a string");
+      DPcErr;
+    }
   }
 
   // The Accept-Language string can be non extant
