@@ -93,6 +93,8 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
 
+  ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
+
   DONE;
 }
 
@@ -245,6 +247,8 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
+  ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
+
 
   DONE;
 }
@@ -255,6 +259,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_sentence = NULL;
   json_t *json_accept_language = NULL;
   json_t *json_show_explanation = NULL;
+  json_t *json_trace = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -277,6 +282,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else if (Ogstricmp(key, "show-explanation") == 0)
     {
       json_show_explanation = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "trace") == 0)
+    {
+      json_trace = json_object_iter_value(iter);
     }
     else
     {
@@ -309,6 +318,25 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
       }
 
       NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: showing explanation in answer")
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a string");
+      DPcErr;
+    }
+  }
+
+  IFX(json_trace)
+  {
+    if (json_is_string(json_trace))
+    {
+      og_string string_trace = json_string_value(json_trace);
+      char *nil;
+      ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
+      ctrl_nlp_th->loginfo->trace = strtol(string_trace, &nil, 16);
+
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: trace changed from %x to %x", ctrl_nlp_th->regular_trace,
+          ctrl_nlp_th->loginfo->trace)
     }
     else
     {

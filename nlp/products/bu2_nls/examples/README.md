@@ -52,6 +52,12 @@ Showing explanation :
 ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris_explanation.json
 ```
 
+Set trace for a request (two requests, one with trace and the other without) :
+
+```
+ognlp -c packages/aller_de_a_plus_any.json -i requests/r_i_want_to_go_from_new_york_to_paris_trace.json
+```
+
 
 Summary of list of examples
 =====

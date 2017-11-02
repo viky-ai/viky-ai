@@ -386,6 +386,7 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   og_bool show_explanation;
+  unsigned int regular_trace;
   og_heap hrequest_word;
   og_heap hba;
 
