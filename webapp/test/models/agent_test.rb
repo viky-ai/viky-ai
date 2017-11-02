@@ -283,6 +283,15 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Transfer agent ownership to collaborator who already have a membership" do
+    new_owner = users(:show_on_agent_weather)
+    weather_agent = agents(:weather)
+
+    result = weather_agent.transfer_ownership_to(new_owner.id)
+    assert result[:success]
+  end
+
+
   test "Search agent empty" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)

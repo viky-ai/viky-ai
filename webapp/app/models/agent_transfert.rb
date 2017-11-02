@@ -19,7 +19,12 @@ class AgentTransfert
     if valid?
       ActiveRecord::Base.transaction do
         Membership.where(user_id: @agent.owner_id).find_by(agent_id: @agent.id).destroy
-        new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
+        new_membership = Membership.find_by(agent_id: @agent.id, user_id: @new_owner.id)
+        if new_membership.present?
+          new_membership.rights = 'all'
+        else
+          new_membership = Membership.new(agent_id: @agent.id, user_id: @new_owner.id, rights: 'all')
+        end
         if new_membership.save
           @agent.owner_id = @new_owner.id
           unless @agent.save
