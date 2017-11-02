@@ -113,7 +113,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
         NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
         DPcErr;
       }
-      struct interpretation *interpretation = request_expression->expression->interpretation;
+      struct interpretation *interpretation = sub_request_expression->expression->interpretation;
       json_t *json_interpretation_slug = json_string(interpretation->slug);
       IF(json_object_set_new(json_sub_expression, "slug", json_interpretation_slug))
       {
@@ -121,8 +121,8 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
         DPcErr;
       }
       char highlight[DPcPathSize];
-      NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
-          request_expression->request_positions_nb, DPcPathSize, highlight);
+      NlpRequestPositionStringHighlight(ctrl_nlp_th, sub_request_expression->request_position_start,
+          sub_request_expression->request_positions_nb, DPcPathSize, highlight);
       json_t *json_expression_highlight = json_string(highlight);
       IF(json_object_set_new(json_sub_expression, "highlight", json_expression_highlight))
       {
