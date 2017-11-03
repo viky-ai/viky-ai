@@ -9,7 +9,7 @@ class Nlp::Interpret
 
   def initialize(options = {})
     @options = clean_options options
-    @endpoint = "#{ENV['VOQALAPP_NLS_URL']}/api/v1"
+    @endpoint = "#{ENV['VOQALAPP_NLP_URL']}/api/v1"
   end
 
   def interpret

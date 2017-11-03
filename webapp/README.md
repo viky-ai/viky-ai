@@ -30,7 +30,7 @@ VOQALAPP_DB_PORT=5432
 VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
 VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 
-VOQALAPP_NLS_URL='http://localhost:9345'
+VOQALAPP_NLP_URL='http://localhost:9345'
 ```
 
 ## Run in production environment
