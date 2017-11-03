@@ -1,4 +1,4 @@
-class AgentTransfert
+class AgentTransfer
 
   attr_accessor :errors, :agent, :previous_owner, :new_owner
 
@@ -32,7 +32,7 @@ class AgentTransfert
           raise ActiveRecord::Rollback
         end
       end
-      AgentMailer.transfert_ownership(@previous_owner, @new_owner, @agent).deliver_later
+      AgentMailer.transfer_ownership(@previous_owner, @new_owner, @agent).deliver_later
     end
   end
 

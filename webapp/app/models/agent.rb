@@ -34,11 +34,11 @@ class Agent < ApplicationRecord
   end
 
   def transfer_ownership_to(new_owner_id)
-    transfert = AgentTransfert.new(self, new_owner_id)
-    transfert.proceed
+    transfer = AgentTransfer.new(self, new_owner_id)
+    transfer.proceed
     {
-      success: transfert.valid?,
-      errors: transfert.errors.flatten
+      success: transfer.valid?,
+      errors: transfer.errors.flatten
     }
   end
 
