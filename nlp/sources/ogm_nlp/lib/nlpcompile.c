@@ -303,6 +303,7 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
 
   interpretation->json_solution = json_solution;
+  json_incref(interpretation->json_solution);
 
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
 
@@ -475,6 +476,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
 
   expression->json_solution = json_solution;
+  json_incref(expression->json_solution);
 
   DONE;
 }

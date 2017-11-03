@@ -24,6 +24,7 @@
     <file>nlprip.c</file>
     <file>nlprexpression.c</file>
     <file>nlpreopt.c</file>
+    <file>nlpsol.c</file>
     <file>nlprposition.c</file>
     <file>nlptree.c</file>
     <file>nlptreejson.c</file>

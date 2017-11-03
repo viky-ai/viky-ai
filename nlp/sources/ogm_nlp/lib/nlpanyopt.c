@@ -6,32 +6,32 @@
  */
 #include "ogm_nlp.h"
 
-static int OgRequestAnyOptimizeMatchSingle(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
-static og_bool OgRequestAnyOptimizeMatchSingle1(og_nlp_th ctrl_nlp_th,
+static int NlpRequestAnyOptimizeMatchSingle(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
+static og_bool NlpRequestAnyOptimizeMatchSingle1(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, int Irequest_any);
 
 /*
  * One case is not implemented : the case when several 'any' are possible for all request_expression
  * if this is the case we would need to choose randomly a request_expression for a given 'any'
  */
-int OgRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression)
+int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression)
 {
   og_bool some_request_expression_matched;
   do
   {
-    some_request_expression_matched = OgRequestAnyOptimizeMatchSingle(ctrl_nlp_th, root_request_expression);
+    some_request_expression_matched = NlpRequestAnyOptimizeMatchSingle(ctrl_nlp_th, root_request_expression);
     IFE(some_request_expression_matched);
   }
   while (some_request_expression_matched);
   DONE;
 }
 
-static int OgRequestAnyOptimizeMatchSingle(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression)
+static int NlpRequestAnyOptimizeMatchSingle(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression)
 {
   og_bool some_request_expression_matched = FALSE;
   for (int i = 0; i < root_request_expression->request_anys_nb; i++)
   {
-    og_bool at_least_one_request_expression_matched = OgRequestAnyOptimizeMatchSingle1(ctrl_nlp_th,
+    og_bool at_least_one_request_expression_matched = NlpRequestAnyOptimizeMatchSingle1(ctrl_nlp_th,
         root_request_expression, root_request_expression->request_any_start + i);
     IFE(at_least_one_request_expression_matched);
     if (at_least_one_request_expression_matched) some_request_expression_matched = TRUE;
@@ -39,7 +39,7 @@ static int OgRequestAnyOptimizeMatchSingle(og_nlp_th ctrl_nlp_th, struct request
 
   return some_request_expression_matched;
 }
-static og_bool OgRequestAnyOptimizeMatchSingle1(og_nlp_th ctrl_nlp_th,
+static og_bool NlpRequestAnyOptimizeMatchSingle1(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, int Irequest_any)
 {
   struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, Irequest_any);

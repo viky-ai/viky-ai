@@ -325,6 +325,8 @@ struct request_expression
   int analyzed;
 
   og_bool keep_as_result;
+
+  json_t *json_solution;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -525,6 +527,8 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
     struct interpret_package *interpret_package, int Iinput_part);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
+struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int Iorip);
 og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
@@ -576,7 +580,7 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 
 /* nlpanyopt.c */
-int OgRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
+int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
 
 /* nlpreopt.c */
 og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
@@ -584,4 +588,9 @@ og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
 /* nlptreejson.c */
 og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretation);
+
+/* nlpsol.c */
+og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
+    char *string);
 

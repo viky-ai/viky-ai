@@ -224,7 +224,8 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
     if (!request_expression->keep_as_result) break;
     IFE(NlpRequestAnysAdd(ctrl_nlp_th, request_expression));
     IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
-    IFE(OgRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
+    IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
+    IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -373,10 +374,13 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
       request_expression->request_positions_nb, DPcPathSize, highlight);
 
+  char solution[DPcPathSize];
+  NlpSolutionString(ctrl_nlp_th, request_expression, DPcPathSize, solution);
+
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'", string_offset,
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s", string_offset,
       request_expression->self_index, request_expression->level, (request_expression->keep_as_result ? "*" : ""),
-      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight);
+      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight, (solution[0]?" ":""), solution);
   DONE;
 }

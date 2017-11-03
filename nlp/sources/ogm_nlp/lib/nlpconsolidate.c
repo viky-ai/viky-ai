@@ -106,6 +106,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
       expression->aliases = NULL;
     }
     expression->json_solution = expression_compile->json_solution;
+
   }
 
   // free compile heap
