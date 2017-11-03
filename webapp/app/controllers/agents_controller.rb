@@ -138,8 +138,12 @@ class AgentsController < ApplicationController
     end
 
     def set_owner_and_agent
-      @owner = User.friendly.find(params[:user_id])
-      @agent = @owner.agents.friendly.find(params[:id])
+      begin
+        @owner = User.friendly.find(params[:user_id])
+        @agent = @owner.agents.friendly.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        redirect_to '/404'
+      end
     end
 
     def agent_params

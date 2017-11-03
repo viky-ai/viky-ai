@@ -88,4 +88,11 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert_equal '/agents/admin/weather', current_path
     assert page.has_no_link?('Share')
   end
+
+
+  test 'Access to unkown agent' do
+    go_to_agents_index
+    visit user_agent_path('admin', 'unknown-agent')
+    assert_equal '/404', current_path
+  end
 end
