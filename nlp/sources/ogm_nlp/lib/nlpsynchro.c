@@ -155,6 +155,22 @@ PUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_stri
     {
       ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpPackageAddOrReplace;
     }
+    else if (strcmp(timeout_in, "NlpInterpretRequestParse") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpInterpretRequestParse;
+    }
+    else if (strcmp(timeout_in, "NlpMatchExpressions") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpMatchExpressions;
+    }
+    else if (strcmp(timeout_in, "NlpRequestInterpretationBuild") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpRequestInterpretationBuild;
+    }
+    else if (strcmp(timeout_in, "NlpInterpretRequestReset") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpInterpretRequestReset;
+    }
     else if (strcmp(timeout_in, "NlpPackageGet") == 0)
     {
       ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpPackageGet;

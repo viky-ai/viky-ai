@@ -117,40 +117,6 @@ module Nls
         pg_building_feature
       end
 
-      def create_building_feature_any
-        pg_building_feature = Package.new("pg-building-feature")
-
-        i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"])
-        pg_building_feature << i_sea_view
-
-        i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
-        pg_building_feature << i_swimming_pool
-
-        i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}",{'swimming-pool': i_swimming_pool})
-                                                                   .new_expression("@{sea-view}",{'sea-view': i_sea_view})
-        pg_building_feature << i_building_feature
-
-        i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
-        pg_building_feature << i_preposition_building_feature
-
-        pg_building_feature_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': i_building_feature}
-        pg_building_feature_any_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': Alias.any}
-        i_pg_building_feature = Interpretation.new("pg-building-feature")
-                                                .new_expression("@{preposition-building-feature} @{building-feature}", pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
-                                                .new_expression("@{preposition-building-feature} @{building-feature}", pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
-                                                .new_expression("@{building-feature}", {'building-feature': i_building_feature})
-        pg_building_feature << i_pg_building_feature
-
-
-        i_pg_building_features = Interpretation.new("pg-building-features")
-        pg_building_features_hash = {'pg-building-feature': i_pg_building_feature, 'pg-building-features': i_pg_building_features}
-        i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", pg_building_features_hash)
-                              .new_expression("@{pg-building-feature}", {'pg-building-feature': i_pg_building_feature})
-        pg_building_feature << i_pg_building_features
-
-        pg_building_feature
-      end
-
       def create_go_town_recursive
         go_town = Package.new("go-town")
 
