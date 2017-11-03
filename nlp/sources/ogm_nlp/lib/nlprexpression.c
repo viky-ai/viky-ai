@@ -287,6 +287,12 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
 
   json_t *json_interpretation = json_object();
 
+  IF(json_array_append_new(json_interpretations, json_interpretation))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error appending json_interpretation to array");
+    DPcErr;
+  }
+
   json_t *json_package_id = json_string(package->id);
   IF(json_object_set_new(json_interpretation, "package", json_package_id))
   {
@@ -301,6 +307,7 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
+  // simulate a timeout right here
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpRequestInterpretationBuild));
 
   json_t *json_interpretation_slug = json_string(interpretation->slug);
@@ -331,11 +338,6 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     IFE(NlpInterpretTreeJson(ctrl_nlp_th, request_expression, json_interpretation));
   }
 
-  IF(json_array_append_new(json_interpretations, json_interpretation))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error appending json_interpretation to array");
-    DPcErr;
-  }
 
   DONE;
 }

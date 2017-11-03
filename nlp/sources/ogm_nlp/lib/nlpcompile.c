@@ -199,6 +199,9 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
   // publish package
   IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));
 
+  // mark temporary package done
+  ctrl_nlp_th->package_in_progress = NULL;
+
   DONE;
 }
 

@@ -240,8 +240,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hba));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
 
-  IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpInterpretRequestReset));
-
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_expression));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_position));
   IFE(OgHeapReset(ctrl_nlp_th->horiginal_request_input_part));
@@ -251,7 +249,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
-
 
   DONE;
 }

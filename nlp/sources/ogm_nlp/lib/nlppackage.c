@@ -10,12 +10,13 @@ static og_status NlpPackageFlush(package_t package);
 
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string string_slug)
 {
-  package_t package = (package_t) malloc(sizeof(struct package));
-  IFn(package)
+  ctrl_nlp_th->package_in_progress = (package_t) malloc(sizeof(struct package));
+  IFn(ctrl_nlp_th->package_in_progress )
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageCreate: malloc error on package");
     return NULL;
   }
+  package_t package = ctrl_nlp_th->package_in_progress;
   memset(package, 0, sizeof(struct package));
   package->ctrl_nlp = ctrl_nlp_th->ctrl_nlp;
   package->ref_counter = 0;
@@ -71,6 +72,7 @@ static og_status NlpPackageAddOrReplaceNosync(og_nlp_th ctrl_nlp_th, package_t p
   // update package and remove preview package : see NlpPackageDestroyIfNotUsed
   gpointer key = (unsigned char *) package->id;
   g_hash_table_replace(ctrl_nlp->packages_hash, key, package);
+  ctrl_nlp_th->package_in_progress = NULL;
 
   DONE;
 }
@@ -276,19 +278,30 @@ static og_status NlpPackageFlush(package_t package)
   NlpInputPartAliasFlush(package);
 
   OgHeapFlush(package->hinterpretation_ba);
+  package->hinterpretation_ba = NULL;
   OgHeapFlush(package->hinterpretation_compile);
+  package->hinterpretation_compile = NULL;
   OgHeapFlush(package->hinterpretation);
+  package->hinterpretation = NULL;
 
   OgHeapFlush(package->hexpression_ba);
+  package->hexpression_ba = NULL;
   OgHeapFlush(package->hexpression_compile);
+  package->hexpression_compile = NULL;
   OgHeapFlush(package->hexpression);
+  package->hexpression = NULL;
 
   OgHeapFlush(package->halias_ba);
+  package->halias_ba = NULL;
   OgHeapFlush(package->halias_compile);
+  package->halias_compile = NULL;
   OgHeapFlush(package->halias);
+  package->halias = NULL;
 
   OgHeapFlush(package->hinput_part_ba);
+  package->hinput_part_ba = NULL;
   OgHeapFlush(package->hinput_part);
+  package->hinput_part = NULL;
 
   unsigned char * slug = (unsigned char *) package->slug;
   DPcFree(slug);

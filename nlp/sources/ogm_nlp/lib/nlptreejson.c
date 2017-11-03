@@ -87,17 +87,19 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
       IFN(string_request_word) DPcErr;
 
       json_t *json_sub_expression = json_object();
+      IF(json_array_append_new(json_expressions, json_sub_expression))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
+        DPcErr;
+      }
+
       json_t *json_sub_expression_text = json_string(string_request_word);
       IF(json_object_set_new(json_sub_expression, "word", json_sub_expression_text))
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
         DPcErr;
       }
-      IF(json_array_append_new(json_expressions, json_sub_expression))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
-        DPcErr;
-      }
+
     }
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
     {

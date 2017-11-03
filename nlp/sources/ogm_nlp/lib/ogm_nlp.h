@@ -215,8 +215,7 @@ enum nlp_synchro_test_timeout_in
   nlp_timeout_in_NlpPackageGet,
   nlp_timeout_in_NlpInterpretRequestParse,
   nlp_timeout_in_NlpMatchExpressions,
-  nlp_timeout_in_NlpRequestInterpretationBuild,
-  nlp_timeout_in_NlpInterpretRequestReset
+  nlp_timeout_in_NlpRequestInterpretationBuild
 };
 
 enum nlp_synchro_lock_type
@@ -386,6 +385,10 @@ struct og_ctrl_nlp_threaded
 
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
   struct nlp_synchro_current_lock current_lock[1];
+
+
+  /** Package beeing created */
+  package_t package_in_progress;
 
   /** Loop level for the matching **/
   int level;

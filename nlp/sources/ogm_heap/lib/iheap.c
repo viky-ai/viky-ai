@@ -114,7 +114,7 @@ PUBLIC(og_status) OgHeapFreeze(og_heap ctrl_heap)
   }
 
   // reduce cells number to cells used
-  IFE(OgHeapReallocInternal(ctrl_heap, cells_number_min));
+ // IFE(OgHeapReallocInternal(ctrl_heap, cells_number_min));
 
   ctrl_heap->freezed = TRUE;
 
