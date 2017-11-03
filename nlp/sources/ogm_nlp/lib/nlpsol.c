@@ -10,6 +10,10 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
     struct request_expression *request_expression);
 static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_solution, GQueue *solutions);
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_solution, GList *iter_solutions);
 
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
@@ -178,20 +182,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
     {
       // Combining the objects into a single object
       json_t *json_solution = json_object();
-      for (GList *iter = solutions->head; iter; iter = iter->next)
-      {
-        json_t *json_sub_solution = iter->data;
-        const char *key;
-        json_t *value;
-        json_object_foreach(json_sub_solution, key, value)
-        {
-          IF(json_object_set(json_solution, key, value))
-          {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: error key '%s'", key);
-            DPcErr;
-          }
-        }
-      }
+      IFE(NlpSolutionMergeObjects(ctrl_nlp_th, request_expression, json_solution, solutions));
       request_expression->json_solution = json_solution;
     }
     else
@@ -202,5 +193,65 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
   g_queue_clear(solutions);
 
   return TRUE;
+}
+
+static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_solution, GQueue *solutions)
+{
+  GList *iter_solutions = solutions->head;
+  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, json_solution, iter_solutions);
+}
+
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_solution, GList *iter_solutions)
+{
+  IFN(iter_solutions) DONE;
+  json_t *json_solution_first = iter_solutions->data;
+  const char *key;
+  json_t *value;
+  json_object_foreach(json_solution_first, key, value)
+  {
+    if (json_object_get(json_solution, key)) continue;
+    og_bool several_values = FALSE;
+    for (GList *iter = iter_solutions->next; iter; iter = iter->next)
+    {
+      json_t *json_sub_solution = iter->data;
+      json_t *sub_value = json_object_get(json_sub_solution, key);
+      if (sub_value) {
+        several_values = TRUE;
+        break;
+      }
+    }
+    if (several_values)
+    {
+      json_t *json_array_values = json_array();
+      for (GList *iter = iter_solutions; iter; iter = iter->next)
+      {
+        json_t *json_sub_solution = iter->data;
+        json_t *sub_value = json_object_get(json_sub_solution, key);
+        IFN(sub_value) continue;
+        IF(json_array_append_new(json_array_values, sub_value))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
+          DPcErr;
+        }
+
+      }
+      IF(json_object_set(json_solution, key, json_array_values))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: error setting key '%s'", key);
+        DPcErr;
+      }
+    }
+    else
+    {
+      IF(json_object_set(json_solution, key, value))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: error setting key '%s'", key);
+        DPcErr;
+      }
+    }
+  }
+  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, json_solution, iter_solutions->next);
 }
 
