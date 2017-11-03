@@ -20,10 +20,27 @@ class User < ApplicationRecord
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
   before_validation :clean_username
+  before_destroy :check_agents_presence
 
-  # overload devise method to send async emails
-  def send_devise_notification(notification, *args)
-    devise_mailer.send(notification, self, *args).deliver_later
+  def can?(action, agent)
+    return false unless [:edit, :show].include? action
+    return false if memberships.where(agent_id: agent.id).count == 0
+    return true if agent.owner.id == id
+
+    if action == :show
+      true
+    else
+      rights = memberships.find_by(agent_id: agent.id).rights
+      action == :edit && rights == 'edit' ? true : false
+    end
+  end
+
+  def owner?(agent)
+    agent.owner.id == id
+  end
+
+  def name_or_username
+    name.blank? ? username : name
   end
 
   def invitation_status
@@ -61,12 +78,28 @@ class User < ApplicationRecord
     conditions
   end
 
+  def can_be_destroyed?
+    agents.includes(:memberships).where('memberships.rights' => 'all').count == 0
+  end
+
+  # overload devise method to send async emails
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
+  end
+
 
   private
 
     def clean_username
       unless username.nil?
         self.username = username.parameterize(separator: '-')
+      end
+    end
+
+    def check_agents_presence
+      unless can_be_destroyed?
+        errors.add(:base, I18n.t('errors.user.delete.agents_presence'))
+        throw(:abort)
       end
     end
 

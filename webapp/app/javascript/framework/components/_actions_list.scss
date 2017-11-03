@@ -1,0 +1,15 @@
+ul.actions-list {
+  list-style-type: none;
+  padding: 0;
+  & > li {
+    @include display_flex();
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    padding: 1em 0;
+    border-bottom: 1px solid #eee;
+    &:last-child{
+      border: none;
+    }
+  }
+}

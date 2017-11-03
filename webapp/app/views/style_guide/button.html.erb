@@ -1,5 +1,12 @@
+<div class="sg-intro">
+  <h1>Buttons</h1>
+  <p>
+    Buttons make common actions immediately visible and easy to perform with one click or tap.
+  </p>
+</div>
+
 <section>
-  <h2>Buttons</h2>
+  <h2>Default</h2>
   <p>
      The <code>.btn</code> class can be used on:
   </p>
@@ -16,23 +23,29 @@
 <input type="submit" value="Submit input" class="btn" />
 <input type="reset" value="Submit reset" class="btn" />
   <% end %>
+</section>
 
-  <h3>Role variants</h3>
+<section>
+  <h2>Role variants</h2>
   <%= highlight_html do %>
 <button class="btn">Default</button>
 <button class="btn btn--primary">Primary</button>
 <button class="btn btn--destructive">Destructive</button>
 <button class="btn btn--plain">Plain</button>
   <% end %>
+</section>
 
-  <h3>Outline variants</h3>
+<section>
+  <h2>Outline variants</h2>
   <%= highlight_html do %>
 <button class="btn btn--outline">Default</button>
 <button class="btn btn--outline btn--primary">Primary</button>
 <button class="btn btn--outline btn--destructive">Destructive</button>
   <% end %>
+</section>
 
-  <h3>Disable variants</h3>
+<section>
+  <h2>Disable variants</h2>
   <%= highlight_html do %>
 <span class="btn btn--disabled" disabled>Default</span>
 <span class="btn btn--disabled btn--primary" disabled>Primary</span>
@@ -42,20 +55,26 @@
 <span class="btn btn--disabled btn--outline btn--primary" disabled>Primary</span>
 <span class="btn btn--disabled btn--outline btn--destructive" disabled>Destructive</span>
   <% end %>
+</section>
 
-  <h3>Scale variants</h3>
+<section>
+  <h2>Scale variants</h2>
   <%= highlight_html do %>
 <button class="btn btn--small">Small</button>
 <button class="btn">Normal</button>
 <button class="btn btn--large">Large</button>
   <% end %>
+</section>
 
-  <h3>Full width variant</h3>
+<section>
+  <h2>Full width variant</h2>
   <%= highlight_html do %>
 <button class="btn btn--full">Full width</button>
   <% end %>
+</section>
 
-  <h3>Use icon inside buttons</h3>
+<section>
+  <h2>With icon</h2>
   <%= highlight_html do %>
 <button class="btn btn--small">
   <span class="icon icon--small"><%= icon_check %></span>
@@ -99,7 +118,7 @@
 </section>
 
 <section>
-  <h3>Buttons group</h3>
+  <h2>Buttons group</h2>
   <%= highlight_html do %>
 <div class="btn-group">
   <button class="btn">Option A</button>

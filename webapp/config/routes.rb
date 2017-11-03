@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   scope '/agents' do
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
+        resources :memberships, only: [:index, :new, :create, :update, :destroy] do
+          get :confirm_destroy
+        end
         member do
           get :confirm_destroy
           get :confirm_transfer_ownership
@@ -26,6 +29,7 @@ Rails.application.routes.draw do
           get :search_users_for_transfer_ownership
           get :generate_token
         end
+        get :search_users_to_share_agent, controller: 'memberships'
       end
     end
   end
@@ -37,7 +41,7 @@ Rails.application.routes.draw do
   end
 
   get 'style-guide', to: 'style_guide#index'
-
+  get 'style-guide/:page_id', to: "style_guide#page"
 
   unauthenticated :user do
     root to: "marketing#index", as: :unauthenticated_root

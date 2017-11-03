@@ -1,0 +1,27 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.memberships.confirm_destroy.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+      <p>
+        <%= t('views.memberships.confirm_destroy.content_html', user: @membership.user.name_or_username, agent: @membership.agent.name) %>
+      </p>
+      <%= form_for(
+            membership,
+            url: user_agent_membership_path(membership.agent.owner, membership.agent, membership),
+            method: :delete, remote: true) do |delete_form| %>
+
+        <%= delete_form.button t('views.memberships.confirm_destroy.btn'), class: "btn btn--destructive" %>
+        <a href="<%= user_agent_memberships_path(membership.agent.owner, membership.agent) %>"
+           data-action="update-remote-modal" class="btn btn--plain">
+          <%= t('cancel') %>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>

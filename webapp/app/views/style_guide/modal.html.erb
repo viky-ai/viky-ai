@@ -1,13 +1,14 @@
+<div class="sg-intro">
+  <h1>Modal</h1>
+</div>
+
 <section>
-  <h2>Modal</h2>
+  <h2>Markup</h2>
   <%= highlight_html do %>
 <p>
   <a href="#" class="btn btn--primary"
      data-action="open-modal"
      data-modal-selector="#modal">Open modal baby!</a>
-  <a href="#" class="btn btn--destructive"
-     data-action="open-modal"
-     data-modal-selector="#large-content-modal">Be careful, there is large content inside this modal</a>
 </p>
 <div class="modal" style="display: none;" id="modal">
   <div class="modal__overlay" data-action='close-modal'></div>
@@ -21,13 +22,24 @@
         Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
       </p>
       <p>
-        <a href="#" class="btn btn--primary">Yes, i'm ok this</a>
-        <a href="#" class="btn">No, i disagree</a>
+        <a href="#" class="btn btn--primary" data-action='close-modal'>Yes, i'm ok this</a>
+        <a href="#" class="btn" data-action='close-modal'>No, i disagree</a>
       </p>
     </div>
   </div>
 </div>
+  <% end %>
+</section>
 
+
+<section>
+  <h2>Large content</h2>
+  <%= highlight_html do %>
+<p>
+  <a href="#" class="btn btn--destructive"
+     data-action="open-modal"
+     data-modal-selector="#large-content-modal">Be careful, there is large content inside this modal</a>
+</p>
 <div class="modal" style="display: none;" id="large-content-modal">
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
@@ -61,13 +73,41 @@
         Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
       </p>
       <p>
-        <a href="#" class="btn btn--primary">Yes, i'm ok this</a>
-        <a href="#" class="btn">No, i disagree</a>
+        <a href="#" class="btn btn--primary" data-action='close-modal'>Yes, i'm ok this</a>
+        <a href="#" class="btn" data-action='close-modal'>No, i disagree</a>
       </p>
     </div>
   </div>
 </div>
-
   <% end %>
+</section>
 
+
+<section>
+  <h2>Size variant</h2>
+  <%= highlight_html do %>
+<p>
+  <a href="#" class="btn btn--primary"
+     data-action="open-modal"
+     data-modal-selector="#modal-large">Open large modal!</a>
+</p>
+<div class="modal modal--large" style="display: none;" id="modal-large">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+       Laborum beatae ratione
+      <button class="modal__main__title__close" data-action='close-modal'><%= icon_close %></button>
+    </h5>
+    <div class="modal__main__content">
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
+      </p>
+      <p>
+        <a href="#" class="btn btn--primary" data-action='close-modal'>Yes, i'm ok this</a>
+        <a href="#" class="btn" data-action='close-modal'>No, i disagree</a>
+      </p>
+    </div>
+  </div>
+</div>
+  <% end %>
 </section>

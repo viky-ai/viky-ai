@@ -12,12 +12,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
 
   test 'User index not allowed if user is not admin' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     visit backend_users_path
     assert page.has_content?('You do not have permission to access this interface.')
@@ -29,7 +24,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     admin_login
 
     visit backend_users_path
-    assert page.has_content?('5 users')
+    assert page.has_content?('7 users')
     assert_equal '/backend/users', current_path
   end
 
@@ -60,16 +55,18 @@ class BackendUsersTest < ApplicationSystemTestCase
     expected = [
       'admin@viky.ai',
       'confirmed@viky.ai',
+      'edit_on_agent_weather@viky.ai',
       'invited@viky.ai',
       'locked@viky.ai',
-      'notconfirmed@viky.ai'
+      'notconfirmed@viky.ai',
+      'show_on_agent_weather@viky.ai'
     ]
 
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
 
-    assert_equal expected, all("tbody tr").map {|tr|
+    assert_equal expected, (all("tbody tr").map {|tr|
       tr.all('td').first.text.split(' ').first
-    }
+    })
   end
 
 
@@ -108,7 +105,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     admin_login
 
     click_link('Backend')
-    assert page.has_content?('5 users')
+    assert page.has_content?("#{before_count} users")
 
     all('a.btn--destructive').last.click
 
@@ -133,9 +130,9 @@ class BackendUsersTest < ApplicationSystemTestCase
     admin_login
 
     click_link('Backend')
-    assert page.has_content?('5 users')
+    assert page.has_content?("#{before_count} users")
 
-    all('a.btn--destructive')[1].click
+    all('a.btn--destructive')[2].click
     assert page.has_content?('Are you sure?')
     assert page.has_content?("You're about to delete user with the email: locked@viky.ai.")
     fill_in 'validation', with: 'DELETE'
@@ -150,20 +147,13 @@ class BackendUsersTest < ApplicationSystemTestCase
     visit new_user_invitation_path
     assert page.has_content? "You need to sign in or sign up before continuing."
 
-    visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     assert_equal '/', current_path
     assert page.has_content? "You do not have permission to access this interface."
 
-    first('.nav__footer svg').click # Logout
-
-    visit new_user_session_path
-    fill_in 'Email', with: 'admin@viky.ai'
-    fill_in 'Password', with: 'AdminBoom'
-    click_button 'Log in'
+    logout
+    login_as 'admin@viky.ai', 'AdminBoom'
 
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
@@ -180,7 +170,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     click_link('Backend')
 
-    assert page.has_content?('5 users')
+    assert page.has_content?('7 users')
 
     all("tbody tr").each do |tr|
       user_line = tr.all('td').map {|td| td.text}.join

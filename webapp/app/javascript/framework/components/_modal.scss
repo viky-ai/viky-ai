@@ -79,4 +79,10 @@
     }
   }
 
+  &.modal--large{
+    .modal__main{
+      width: 800px;
+    }
+  }
+
 }

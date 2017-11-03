@@ -1,0 +1,63 @@
+<div class="modal modal--large" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+
+    <h5 class="modal__main__title">
+      <%= t('views.memberships.index.title_html', agent: agent.name) %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+
+    <div class="modal__main__content">
+
+      <div class="tabs tabs--on-center">
+        <ul>
+          <li>
+            <a href="<%= user_agent_memberships_path(agent.owner, agent) %>" data-action="update-remote-modal"
+               class="current">
+              <%= t('views.memberships.tabs.index') %>
+            </a>
+          </li>
+          <li>
+            <a href="<%= new_user_agent_membership_path(agent.owner, agent) %>" data-action="update-remote-modal">
+              <%= t('views.memberships.tabs.new') %>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <ul class="actions-list">
+        <li>
+          <div class="user">
+            <div class="user__avatar">
+              <img src="<%= agent.owner.image_url(:square) %>" />
+            </div>
+            <div class="user__info">
+              <%= agent.owner.name_or_username %>
+              <span class="badge badge--primary">
+                <%= t('views.agents.show.owner') %>
+              </span><br />
+              <small><%= agent.owner.email %></small>
+            </div>
+          </div>
+        </li>
+        <% agent.memberships.where.not(rights: 'all').each do |membership| %>
+          <li id="membership-<%= membership.id %>">
+            <%= render partial: 'edit', locals: { membership: membership } %>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="note">
+        <div class="note__icon">
+          <span class="icon"><%= icon_information %></span>
+        </div>
+        <div class="note__content">
+          <%= t('views.memberships.note_html') %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

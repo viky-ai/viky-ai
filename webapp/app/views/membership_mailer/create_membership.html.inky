@@ -1,0 +1,30 @@
+<spacer size="32"></spacer>
+<row>
+  <center>
+    <img src="<%= image_url("logo/logo.png")%>" style="width: 200px;" alt="viky.ai" />
+  </center>
+</row>
+<spacer size="32"></spacer>
+
+<container class="radius">
+  <spacer size="32"></spacer>
+
+  <row>
+    <columns>
+
+      <h2>Congrats!</h2>
+
+      <p>
+        <%= @owner.email %> shared with you agent <a href="<%= user_agent_url(@owner, @agent) %>"><%= @agent.name %></a>.
+      </p>
+
+      <p>
+        Thanks,<br />
+        The viky.ai Team.
+      </p>
+
+    </columns>
+  </row>
+</container>
+
+<spacer size="96"></spacer>

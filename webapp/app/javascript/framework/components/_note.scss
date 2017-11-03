@@ -1,0 +1,21 @@
+.note{
+  color: #666;
+  text-shadow: 0 1px 0 #fff;
+  font-size: .9em;
+  padding: .5em;
+  background-color: #f9f9f9;
+  border-radius: 3px;
+
+  @include display_flex();
+  .note__icon{
+    svg{
+      fill: #888;
+    }
+  }
+  .note__content{
+    margin-left: .5em;
+    p{
+      margin: 0 0 .5em 0;
+    }
+  }
+}

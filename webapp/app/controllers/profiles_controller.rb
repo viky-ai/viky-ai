@@ -33,8 +33,14 @@ class ProfilesController < ApplicationController
   end
 
   def destroy
-    @profile.destroy
-    redirect_to unauthenticated_root_path, notice: t('views.profile.confirm_destroy.success_message')
+    if @profile.destroy
+      redirect_to unauthenticated_root_path, notice: t('views.profile.confirm_destroy.success_message')
+    else
+      redirect_to edit_profile_path, alert: t(
+        'views.profile.confirm_destroy.errors_message',
+        errors: @profile.errors.full_messages.join(', ')
+      )
+    end
   end
 
 

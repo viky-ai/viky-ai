@@ -1,0 +1,82 @@
+<%
+  user = membership.user
+  agent = membership.agent
+%>
+
+<div class="user">
+  <div class="user__avatar">
+    <img src="<%= user.image_url(:square) %>" />
+  </div>
+  <div class="user__info">
+    <%= user.name_or_username %>
+    <span class="merged-badges">
+      <span class="badge">
+        <%= t('views.agents.show.collaborator') %>
+      </span>
+      <span class="badge badge--primary">
+        <% if user.can? :edit, agent %>
+          <%= t('views.agents.show.edit') %>
+        <% else %>
+          <%= t('views.agents.show.show') %>
+        <% end %>
+      </span>
+    </span><br />
+    <small><%= user.email %></small>
+  </div>
+</div>
+
+<%= form_with model: [agent.owner, agent, membership],
+      id: "membership-form-#{membership.user.username}" do |f| %>
+
+  <%= f.hidden_field :user_id %>
+  <%= f.hidden_field :rights %>
+  <div class="dropdown">
+    <div class="dropdown__trigger">
+      <button class="btn">
+        <span class="btn__label">
+          <% if user.can? :edit, agent %>
+            <%= t('views.memberships.can_edit') %>
+          <% else %>
+            <%= t('views.memberships.can_show') %>
+          <% end %>
+        </span>
+        <span class="icon icon--x-small">
+          <%= icon_arrow_down %>
+        </span>
+      </button>
+    </div>
+    <div class="dropdown__content dropdown__content--hidden">
+      <ul>
+        <li>
+          <a href="#" <% if !user.can? :edit, agent %>class="current"<% end %>
+             data-behavior="populate-input, replace-trigger-label, submit-form"
+             data-replace-with="Can show"
+             data-replace-selector=".btn__label"
+             data-input-selector="input[name='membership[rights]']"
+             data-input-value="show"
+             data-form-selector="<%= "#membership-form-#{user.username}" %>">
+            <%= t('views.memberships.can_show') %>
+          </a>
+        </li>
+        <li>
+          <a href="#" <% if user.can? :edit, agent %>class="current"<% end %>
+             data-behavior="populate-input, replace-trigger-label, submit-form"
+             data-replace-with="Can edit"
+             data-replace-selector=".btn__label"
+             data-input-selector="input[name='membership[rights]']"
+             data-input-value="edit"
+             data-form-selector="<%= "#membership-form-#{user.username}" %>">
+            <%= t('views.memberships.can_edit') %>
+          </a>
+        </li>
+        <li class="separator">
+          <a href="<%= user_agent_membership_confirm_destroy_path(agent.owner, agent, membership) %>"
+             class="destructive"
+             data-action="update-remote-modal">
+            <%= t('views.memberships.confirm_destroy.access') %>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+<% end %>

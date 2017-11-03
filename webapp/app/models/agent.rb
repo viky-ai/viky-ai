@@ -9,7 +9,6 @@ class Agent < ApplicationRecord
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
-  validates :users, presence: true
   validates :owner_id, presence: true
   validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
@@ -18,10 +17,10 @@ class Agent < ApplicationRecord
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
+  before_destroy :check_collaborators_presence
 
   def self.search(q = {})
-    conditions = where("1 = 1")
-    conditions = joins(:memberships).where("user_id = ?", q[:user_id])
+    conditions = where("1 = 1").joins(:memberships).where("user_id = ?", q[:user_id])
     conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
     conditions
   end
@@ -34,13 +33,25 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def transfer_ownership_to(new_owner_username)
-    transfert = AgentTransfert.new(self, new_owner_username)
+  def transfer_ownership_to(new_owner_id)
+    transfert = AgentTransfert.new(self, new_owner_id)
     transfert.proceed
     {
       success: transfert.valid?,
       errors: transfert.errors.flatten
     }
+  end
+
+  def owner
+    users.includes(:memberships).find_by('memberships.rights' => 'all')
+  end
+
+  def collaborators
+    users.includes(:memberships).where.not('memberships.rights' => 'all')
+  end
+
+  def can_be_destroyed?
+    collaborators.count == 0
   end
 
   def ensure_api_token
@@ -52,14 +63,21 @@ class Agent < ApplicationRecord
 
   private
 
+    def check_collaborators_presence
+      unless can_be_destroyed?
+        errors.add(:base, I18n.t('errors.agent.delete.collaborators_presence'))
+        throw(:abort)
+      end
+    end
+
     def owner_presence_in_users
-      unless (users.empty? || users.collect(&:id).include?(owner_id))
-        errors.add(:users, "list does not includes agent owner")
+      unless memberships.select {|m| m.rights == 'all'}.size == 1
+        errors.add(:users, I18n.t('errors.agent.owner_presence_in_users'))
       end
     end
 
     def add_owner_id
-      self.owner_id = users.first.id unless users.empty?
+      self.owner_id = memberships.first.user_id unless memberships.empty?
     end
 
     def clean_agentname

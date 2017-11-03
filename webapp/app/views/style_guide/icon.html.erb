@@ -1,0 +1,71 @@
+<div class="sg-intro">
+  <h1>Icons</h1>
+  <p>
+    Icons are used to visually communicate core parts of the product and available actions. They can act as wayfinding tools to help users more easily understand where they are in the product, and common interaction patterns that are available.
+  </p>
+</div>
+
+<section>
+  <h2>Avalaible icons list</h2>
+  <p>
+    The <code>icon</code> element is a container for any svg icons available
+    via ruby <code>icon_*</code> view helpers.
+  </p>
+  <ul class="icon-list clearfix">
+    <% [
+        "icon_check",
+        "icon_close",
+        "icon_information",
+        "icon_alert",
+        "icon_loading",
+        "icon_arrow_down",
+        "icon_add",
+        "icon_add_circle",
+        "icon_search",
+        "icon_delete",
+        "icon_edit",
+        "icon_open_in_new",
+        "icon_logout",
+        "icon_dots",
+        'icon_settings',
+        'icon_share'
+       ].each do |helper| %>
+    <li>
+      <span class="icon icon--large"><%= send(helper) %></span>
+<pre>
+&lt;span class="icon"&gt;
+  &lt;%= <%= helper %> %&gt;
+&lt;/span&gt;
+</pre>
+    </li>
+    <% end %>
+  </ul>
+</section>
+
+<section>
+  <h2>Size variants</h2>
+  <%= highlight_html do %>
+<span class="icon icon--x-small">
+  <%= icon_check %>
+</span>
+<span class="icon icon--small">
+  <%= icon_check %>
+</span>
+<span class="icon">
+  <%= icon_check %>
+</span>
+<span class="icon icon--large">
+  <%= icon_check %>
+</span>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Spin animation</h2>
+  <%= highlight_html do %>
+<span class="icon icon--spin">
+  <%= icon_loading %>
+</span>
+  <% end %>
+</section>

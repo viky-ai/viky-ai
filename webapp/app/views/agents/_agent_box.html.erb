@@ -1,0 +1,88 @@
+<div class="agent-box" id="agent-<%= agent.id %>">
+  <% if agent.image.nil? %>
+    <% css_class = "background-color-gradient__#{agent.color}" %>
+  <% else %>
+    <% css_class = "agent-box__header--image" %>
+    <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
+  <% end %>
+
+  <a href="<%= user_agent_path(agent.owner, agent.agentname) %>"
+     class="agent-box__header <%= css_class %>"
+     style="<%= css_style %>">
+    <span class="agent-box__header__role">
+      <% if current_user.owner? agent %>
+        <span class="badge badge--small badge--white badge--outline">
+          <%= t('views.agents.show.owner') %>
+        </span>
+      <% else %>
+        <span class="badge badge--small badge--white badge--outline">
+          <%= t('views.agents.show.collaborator') %>
+          <% if current_user.can? :edit, agent %>
+            <%= t('views.agents.show.edit') %>
+          <% else %>
+            <%= t('views.agents.show.show') %>
+          <% end %>
+        </span>
+      <% end %>
+    </span>
+    <h2><%= agent.name %></h2>
+    <h3><%= agent.owner.username %>/<%= agent.agentname %></h3>
+  </a>
+
+  <div class="agent-box__content">
+    <div class="agent-box__content__info">
+      <p class="primary">
+        <%= t('views.agents.show.x_collaborators', count: agent.collaborators.count) %>
+      </p>
+      <p class="secondary">
+        <% if agent.updated_at == agent.created_at %>
+          <%= t('views.agents.index.created_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+        <% else %>
+          <%= t('views.agents.index.updated_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+        <% end %>
+      </p>
+    </div>
+
+    <div class="agent-box__content__actions">
+      <% if editable %>
+        <% if current_user.can? :edit, agent %>
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--small"><span class="icon"><%= icon_dots %></span></button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+              <ul>
+                <li>
+                  <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'index') %>"
+                     data-action="open-remote-modal">
+                    <span class="icon icon--x-small"><%= icon_settings %></span>
+                    <%= t('views.agents.index.configure') %>
+                  </a>
+                </li>
+                <% if current_user.owner? agent %>
+                  <li>
+                    <a href="<%= user_agent_memberships_path(agent.owner, agent) %>"
+                       data-action="open-remote-modal">
+                      <span class="icon icon--x-small"><%= icon_share %></span>
+                      <%= t('views.agents.index.share') %>
+                    </a>
+                  </li>
+                  <% if agent.can_be_destroyed? %>
+                    <li class="separator">
+                      <a href="<%= confirm_destroy_user_agent_path(agent.owner, agent) %>"
+                         data-action="open-remote-modal" class="destructive">
+                        <span class="icon icon--x-small"><%= icon_delete %></span>
+                        <%= t('views.agents.index.delete') %>
+                      </a>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+</div>

@@ -15,7 +15,7 @@ class AuthenticationTest < ApplicationSystemTestCase
       "Email can't be blank",
       "Password can't be blank"
     ]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
     assert_equal '/users', current_path
   end
 
@@ -33,7 +33,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     expected = [
       "Password is too short (minimum is 6 characters)"
     ]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
     assert_equal '/users', current_path
   end
 
@@ -51,7 +51,7 @@ class AuthenticationTest < ApplicationSystemTestCase
       "Username is too short (minimum is 3 characters)",
       "Username can't be blank",
     ]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
     assert_equal '/users', current_path
   end
 
@@ -83,7 +83,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Sign up'
 
     expected = ["Email has already been taken"]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
     assert_equal '/users', current_path
   end
 
@@ -117,12 +117,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Log in failed with not confirmed email' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'notconfirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'notconfirmed@viky.ai', 'BimBamBoom'
 
     assert_equal new_user_session_path, current_path
     assert page.has_content?("You have to confirm your email address before continuing.")
@@ -130,12 +125,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Log in failed with bad password' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBam'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBam'
 
     assert_equal new_user_session_path, current_path
     assert page.has_content?("Invalid Email or password.")
@@ -143,12 +133,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Successful log in' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
@@ -156,17 +141,11 @@ class AuthenticationTest < ApplicationSystemTestCase
 
 
   test 'Successful log in then log out' do
-    visit new_user_session_path
-
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-
-    click_button 'Log in'
-
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
     assert_equal '/', current_path
     assert page.has_content?("Signed in successfully.")
 
-    first('.nav__footer svg').click # Logout
+    logout
     assert page.has_content?("Signed out successfully.")
   end
 
@@ -218,7 +197,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     # Forgot to fill email
     click_button 'Send me reset password instructions'
     expected = ["Email can't be blank"]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
 
     # Fill email, email is send
     fill_in 'Email', with: 'confirmed@viky.ai'
@@ -253,7 +232,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     click_button 'Resend confirmation instructions'
 
     expected = ["Email was already confirmed, please try signing in"]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
   end
 
 
@@ -319,7 +298,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     fill_in 'Email', with: 'confirmed@viky.ai'
     click_button 'Resend unlock instructions'
     expected = ["Email was not locked"]
-    assert_equal expected, all('.help--error').collect {|n| n.text}
+    assert_equal expected, (all('.help--error').collect { |n| n.text})
   end
 
 
@@ -329,12 +308,9 @@ class AuthenticationTest < ApplicationSystemTestCase
     raw_token, enc_token = Devise.token_generator.generate(User, :invitation_token)
     u.invitation_token = enc_token
     assert u.save(validate: false)
-    travel_to (u.invitation_sent_at + 1.seconds)
+    travel_to(u.invitation_sent_at + 1.seconds)
 
-    visit new_user_session_path
-    fill_in 'Email', with: 'confirmed@viky.ai'
-    fill_in 'Password', with: 'BimBamBoom'
-    click_button 'Log in'
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     assert page.has_content? "You are already signed in."
@@ -348,7 +324,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     raw_token, enc_token = Devise.token_generator.generate(User, :invitation_token)
     u.invitation_token = enc_token
     assert u.save(validate: false)
-    travel_to (u.invitation_sent_at + 1.seconds)
+    travel_to(u.invitation_sent_at + 1.seconds)
 
     visit accept_user_invitation_path(invitation_token: raw_token)
     fill_in 'Password', with: 'The Great Magic Password'
@@ -361,7 +337,7 @@ class AuthenticationTest < ApplicationSystemTestCase
     expected = 'Your password and username were set successfully. You are now signed in.'
     assert page.has_content? expected
 
-    first('.nav__footer svg').click # Logout
+    logout
 
     visit accept_user_invitation_path(invitation_token: u.invitation_token)
     assert page.has_content? "The invitation token provided is not valid!"

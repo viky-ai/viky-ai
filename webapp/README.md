@@ -47,9 +47,9 @@ VOQALAPP_NLP_URL='http://localhost:9345'
 ## Mail
 
 We use postmarkapp.com in order to send emails in `production` and `development` environment. Environment variable `POSTMARK_TOKEN` must be defined for `production` environment (default one is set for `development`).
-Emails from Devise are sent with `support@voqal.ai` sender.
+Emails from Devise are sent with `support@viky.ai` sender.
 
-Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
+Email address `postmarkapp@viky.ai` is used to connect to postmarkapp.com UIs.
 
 Mail delivery is performed through a high priority queue named `webapp_mailers` (see _Background jobs_ paragraph for details).
 

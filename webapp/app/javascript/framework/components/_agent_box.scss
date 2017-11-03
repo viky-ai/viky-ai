@@ -3,10 +3,11 @@
   border-radius: 2px;
   .agent-box__header{
     display: block;
-    padding: 6em 0 0 0;
+    padding: 7em 0 0 0;
     text-decoration: none;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
+    position: relative;
     h2,h3{
       font-size:1em;
       margin: 0;
@@ -25,10 +26,17 @@
       font-size: .9em;
       padding-bottom: .5em;
     }
+    .agent-box__header__role{
+      position: absolute;
+      top: .2em;
+      right: .5em;
+    }
     &.agent-box__header--image{
-      background-size: cover;
+      background-size: 100% auto;
       background-position: center center;
+      transition: background-size .15s;
       h2, h3{
+        transition: background .15s;
         background-color: rgba(black, .35);
         text-shadow: 0 1px 0 rgba(black, .5);
       }
@@ -48,6 +56,7 @@
   a.agent-box__header--image{
     &:hover,
     &:focus{
+      background-size: 110% auto;
       h2, h3{
         color: #fff;
         background-color: rgba(black, .5);
@@ -56,17 +65,29 @@
   }
 
   .agent-box__content{
-    padding: .5em 1em;
-    border-top: none;
-    background-color: #fff;
     @include display_flex();
     align-items: center;
     justify-content: space-between;
+
+    padding: .5em 1em;
+    border-top: none;
+    background-color: #fff;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
-    span{
-      color: #aaa;
-      font-size: .9em;
+    line-height: 1em;
+    .agent-box__content__info{
+      padding: .2em 0;
+      p.primary{
+        margin: 0 0 .25em 0;
+        font-size: .9em;
+      }
+      p.secondary{
+        margin: 0;
+        color: #aaa;
+        font-size: .8em;
+      }
+    }
+    .agent-box__content__actions{
     }
   }
 }

@@ -1,24 +1,25 @@
 $ = require('jquery');
 
-class TransfertAgentForm
+class UserSearchInput
   constructor: ->
-    $("body").on 'ajax:success', (event) =>
-      [data, status, xhr] = event.detail
-      if data.status == 422
-        @setup() if $("#modal_container .js-agent-transfert").length == 1
-
-    $('body').on 'modal:open', (event) =>
-      @setup() if $("#modal_container .js-agent-transfert").length == 1
+    $('body').on 'modal:load', (event) =>
+      @setup() if $("#modal_container .js-user-search").length == 1
 
   setup: ->
-    $('#input-new-owner').selectize({
-      maxItems: 1
-      valueField: 'username'
+    input = $('#input-user-search')
+    max_items = if input.data('max-items') then input.data('max-items') else null
+    initial_values = if input.data('initial-values') then input.data('initial-values') else []
+    input.selectize({
+      maxItems: max_items
+      delimiter: ';'
+      valueField: 'user_id'
       labelField: 'email'
       searchField: ['email', 'username']
-      placeholder: $('#input-new-owner').data('placeholder')
+      placeholder: input.data('placeholder')
       dropdownParent: 'body'
-      options: []
+      hideSelected: true
+      options: initial_values
+      items: initial_values.map((value) -> value.user_id)
       create: false
       render: {
         option: (item, escape) ->
@@ -34,7 +35,7 @@ class TransfertAgentForm
           callback()
         else
           $.ajax({
-            url: $('#input-new-owner').data('remote-url') + "?q=" + encodeURIComponent(query),
+            url: input.data('remote-url') + "?q=" + encodeURIComponent(query),
             type: 'GET',
             error: ->
               callback()
@@ -43,9 +44,7 @@ class TransfertAgentForm
           });
     });
 
-
 Setup = ->
-  if $('body').data('controller-name') == "agents"
-    new TransfertAgentForm()
+  new UserSearchInput()
 
 $(document).on('turbolinks:load', Setup)

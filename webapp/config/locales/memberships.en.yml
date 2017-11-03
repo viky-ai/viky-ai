@@ -1,0 +1,32 @@
+en:
+  views:
+    memberships:
+      can_edit: Can edit
+      can_show: Can show
+      tabs:
+        index: Sharing overview
+        new: Invite collaborators
+      index:
+        title_html: "<strong>%{agent}</strong> agent sharing options"
+      new:
+        title_html: "<strong>%{agent}</strong> agent sharing options"
+        placeholder: Search by email or username (at least 3 characters).
+        success_message: "Agent %{agent} shared with : %{users}."
+        empty_dest_message: Please select a valid user.
+        unknown_user: "Impossible to create share : unknown user given"
+        fail_message: "Impossible to create share for : %{user}"
+      note_html: >
+        <p>
+          You are the only one to have access to these sharing options.<br />
+          Indeed, only the agent owner can invite collaborators or change collaborator rights.
+        </p>
+      update_succeed:
+        show: "%{user} can now only show %{agent} agent."
+        edit: "%{user} can now edit %{agent} agent."
+      update_failed: Ooops, update failed.
+      confirm_destroy:
+        access: Delete
+        title: Are you sure?
+        content_html: You're about to delete %{user} rights on agent %{agent}.
+        btn: Delete
+      destroy_succeed: "%{user} has successfully been removed from colaborators."

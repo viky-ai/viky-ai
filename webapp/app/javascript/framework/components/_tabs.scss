@@ -1,0 +1,44 @@
+.tabs{
+  margin: .5em 0;
+  ul{
+    list-style: none;
+    padding: 0;
+    border-bottom: 1px solid #ddd;
+    @include display_flex();
+    li{
+      a{
+        display: block;
+        margin-bottom: -1px;
+        padding: .25em 2em;
+        border-bottom: 2px solid transparent;
+        text-decoration: none;
+        color: #444;
+        &:hover,
+        &:focus{
+          color: #000;
+          border-color: #666;
+        }
+        &.current{
+          color: darken($primary_color, 10%);
+          border-color: $primary_color;
+        }
+      }
+    }
+  }
+  &.tabs--on-center{
+    ul{
+      justify-content: center;
+    }
+  }
+  &.tabs--on-right{
+    ul{
+      justify-content: flex-end;
+    }
+  }
+  &.tabs--small{
+    font-size: .8em;
+  }
+  &.tabs--large{
+    font-size: 1.2em;
+  }
+}
