@@ -317,6 +317,15 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
+  if (request_expression->json_solution)
+  {
+    IF(json_object_set_new(json_interpretation, "solution", request_expression->json_solution))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_solution");
+      DPcErr;
+    }
+  }
+
   if (ctrl_nlp_th->show_explanation)
   {
     IFE(NlpInterpretTreeJson(ctrl_nlp_th, request_expression, json_interpretation));
@@ -379,8 +388,9 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s", string_offset,
-      request_expression->self_index, request_expression->level, (request_expression->keep_as_result ? "*" : ""),
-      string_positions, DPcPathSize, expression->text, expression->interpretation->slug, highlight, (solution[0]?" ":""), solution);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s",
+      string_offset, request_expression->self_index, request_expression->level,
+      (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
+      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution);
   DONE;
 }
