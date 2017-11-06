@@ -10,16 +10,16 @@ module Valgrind
 
       Nls::Interpretation.default_locale = "en-GB"
 
-      # several_packages_several_intents
-      pg_building_feature_any = create_building_feature_any
-      pg_building_feature_any.to_file(importDir)
-
-      @main_package = @available_packages["pg-building-feature"]
-      @main_uuid = @main_package.id
-
     end
 
     def interpret_queries(nb_request_factor, skip_timeout = nil)
+
+      # several_packages_several_intents
+      pg_building_feature_any = create_building_feature_any
+      Nls::Nls.package_update(pg_building_feature_any)
+
+      @main_package = @available_packages["pg-building-feature"]
+      @main_uuid = @main_package.id
 
       interpret_query=
       {

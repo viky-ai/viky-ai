@@ -60,38 +60,6 @@ module Nls
       request
     end
 
-    def expected_interpret_result(interpretation)
-
-      interpretation_answers = []
-      if interpretation.kind_of? Array
-        interpretation.each do |i|
-          interpretation_answers << {
-            "package" => "#{i.package.id.to_s}",
-            "id" => "#{i.id.to_s}",
-            "slug" => "#{i.slug}",
-            "score" => 1.0
-          }
-        end
-      else
-        i = interpretation
-        interpretation_answers << {
-          "package" => "#{i.package.id.to_s}",
-          "id" => "#{i.id.to_s}",
-          "slug" => "#{i.slug}",
-          "score" => 1.0
-        }
-      end
-
-      {
-        "interpretations" => interpretation_answers
-      }
-    end
-
-    def add_solution_to_result(result, id_array, solution)
-      result["interpretations"][id_array]["solution"] = solution
-      result
-    end
-
     def expected_update_package(package_name)
       {
         "status" => "Package '#{package_name}' successfully updated"
