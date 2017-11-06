@@ -115,7 +115,7 @@ To ensure having all the webapp related processes up and running during developm
 
 If you obtain an authorization error from `docker`, you probably have to do:
 
-    docker login
+    docker login docker-registry.pertimm.net
 
 and give your `username` and `password` of the Pertimm services.
 
@@ -124,6 +124,4 @@ and give your `username` and `password` of the Pertimm services.
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
 
     bundle install
-
-
 
