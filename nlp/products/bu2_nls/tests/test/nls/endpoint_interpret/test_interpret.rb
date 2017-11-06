@@ -17,12 +17,10 @@ module Nls
 
         package = available_packages['datetime2']
 
-        interpretation = package.interpretation('hello1')
+        expected = Answers.new(package.interpretation('hello1'))
         sentence = 'Hello Nicolas'
 
         actual = Nls.interpret_package(package, sentence)
-
-        expected = Answers.new(interpretation)
 
         assert_equal expected.to_h, actual
 
@@ -43,11 +41,6 @@ module Nls
 
         sentence = "Hello Sebastien"
 
-        json_interpretation_1 = package_1.interpretation('hello3')
-        json_interpretation_2 = package_2.interpretation('hello2')
-        json_interpretation_3 = package_3.interpretation('hello4')
-        json_interpretation_4 = package_4.interpretation('hello5')
-
         param =
         {
           "packages" => [package_1.id, package_2.id, package_3.id, package_4.id],
@@ -57,10 +50,10 @@ module Nls
 
         actual = Nls.interpret(param)
 
-        expected = Answers.new(json_interpretation_1)
-        expected.add_answer(json_interpretation_2)
-        expected.add_answer(json_interpretation_3)
-        expected.add_answer(json_interpretation_4)
+        expected = Answers.new(package_1.interpretation('hello3'))
+        expected.add_answer(package_2.interpretation('hello2'))
+        expected.add_answer(package_3.interpretation('hello4'))
+        expected.add_answer(package_4.interpretation('hello5'))
 
         assert_equal expected.to_h, actual
 
