@@ -32,8 +32,8 @@ class Modal
 
     if action is "open-modal"
       event.preventDefault()
-      modal_selector =
-      @prepare($(node.data('modal-selector')).clone())
+      @prepare()
+      Modal.update($(node.data('modal-selector')).clone())
 
     if action is "update-remote-modal"
       event.preventDefault()
@@ -53,7 +53,7 @@ class Modal
           if data.status == 403
             App.Message.alert(JSON.parse(data.responseText).message)
           else
-            @prepare(data.responseText)
+            @prepare()
             Modal.update(data.responseText)
 
     if action is "close-modal"
@@ -71,7 +71,7 @@ class Modal
     $('#modal_container .modal').show()
     $('body').trigger('modal:load')
 
-  prepare: (html_content) ->
+  prepare: ->
     $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
     $('.app-wrapper').addClass('modal-background-effect')
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
