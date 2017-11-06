@@ -121,7 +121,7 @@ PUBLIC(og_nls) OgNlsInit(struct og_nls_param *param)
   nlpi_param->hmutex = ctrl_nls->hmutex;
   nlpi_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
-  nlpi_param->name = "nls_cltr_main_nlpth";
+  nlpi_param->name = "nls_ctrl_main_nlpth";
   ctrl_nls->hnlpi_main = OgNlpThreadedInit(ctrl_nls->hnlp, nlpi_param);
   IFN(ctrl_nls->hnlpi_main) return NULL;
 

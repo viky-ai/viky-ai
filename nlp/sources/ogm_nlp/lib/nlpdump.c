@@ -7,10 +7,14 @@
 #include "ogm_nlp.h"
 
 static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package);
-static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *dump_json);
-static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *dump_json);
-static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Ialias, json_t *json_aliases);
-static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output);
+static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, json_t *json_interpretations);
+static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
+    json_t *json_expressions);
+static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias,
+    json_t *json_aliases);
+static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
+    struct og_nlp_dump_output *output);
 
 static gint str_compar(gconstpointer a, gconstpointer b)
 {
@@ -75,7 +79,8 @@ static og_status NlpDumpNoSyncFreeSafe(og_nlp_th ctrl_nlp_th, GList *sorted_key_
   DONE;
 }
 
-static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
+static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
+    struct og_nlp_dump_output *output)
 {
 
   GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->ctrl_nlp->packages_hash);
@@ -91,33 +96,34 @@ static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *
 
 static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package)
 {
-  IFE(NlpPackageLog(ctrl_nlp_th, package));
 
-  const char *package_id = OgHeapGetCell(package->hba, package->id_start);
-  IFN(package_id) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package id '%s' :", package_id);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceDump)
+  {
+    IFE(NlpPackageLog(ctrl_nlp_th, "dump", package));
+  }
 
-  const char *package_slug = OgHeapGetCell(package->hba, package->slug_start);
-  IFN(package_slug) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Package slug '%s' :", package_slug);
+  NlpLog(DOgNlpTraceDump, "Package id '%s', slug '%s' :", package->id, package->slug)
 
-  json_t *json_package_id = json_string(package_id);
+  json_t *json_package_id = json_string(package->id);
   IF(json_object_set_new(json_package, "id", json_package_id))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package id '%s'", package_id);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package id '%s'", package->id);
     DPcErr;
   }
 
-  json_t *json_package_slug = json_string(package_slug);
+  json_t *json_package_slug = json_string(package->slug);
   IF(json_object_set_new(json_package, "slug", json_package_slug))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package slug '%s'", package_id);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package slug '%s'", package->slug);
     DPcErr;
   }
 
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
   if (interpretation_used > 0)
   {
+    struct interpretation *all_interpretations = (struct interpretation *) OgHeapGetCell(package->hinterpretation, 0);
+    IFN(all_interpretations) DPcErr;
+
     json_t *json_interpretations = json_array();
     IF(json_object_set_new(json_package, "interpretations", json_interpretations))
     {
@@ -127,7 +133,7 @@ static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t
 
     for (int i = 0; i < interpretation_used; i++)
     {
-      IFE(NlpPackageInterpretationDump(ctrl_nlp_th, package, i, json_interpretations));
+      IFE(NlpPackageInterpretationDump(ctrl_nlp_th, package, all_interpretations + i, json_interpretations));
     }
 
   }
@@ -135,18 +141,12 @@ static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t
   DONE;
 }
 
-og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation, json_t *json_interpretations)
+static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, json_t *json_interpretations)
 {
-  struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, Iinterpretation);
   IFN(interpretation) DPcErr;
 
-  char *interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
-  IFN(interpretation_id) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation id '%s' :", interpretation_id);
-
-  char *interpretation_slug = OgHeapGetCell(package->hba, interpretation->slug_start);
-  IFN(interpretation_slug) DPcErr;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation slug '%s' :", interpretation_slug);
+  NlpLog(DOgNlpTraceDump, "  Interpretation '%s' '%s' :", interpretation->slug, interpretation->id)
 
   json_t *json_interpretation = json_object();
   IF(json_array_append_new(json_interpretations, json_interpretation))
@@ -155,17 +155,19 @@ og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  json_t *json_interpretation_id = json_string(interpretation_id);
+  json_t *json_interpretation_id = json_string(interpretation->id);
   IF(json_object_set_new(json_interpretation, "id", json_interpretation_id))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation id %s", interpretation_id);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation id %s",
+        interpretation->id);
     DPcErr;
   }
 
-  json_t *json_interpretation_slug = json_string(interpretation_slug);
+  json_t *json_interpretation_slug = json_string(interpretation->slug);
   IF(json_object_set_new(json_interpretation, "slug", json_interpretation_slug))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation slug %s", interpretation_slug);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation slug %s",
+        interpretation->slug);
     DPcErr;
   }
 
@@ -180,7 +182,7 @@ og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
 
     for (int i = 0; i < interpretation->expressions_nb; i++)
     {
-      IFE(NlpPackageExpressionDump(ctrl_nlp_th, package, interpretation->expression_start + i, json_expressions));
+      IFE(NlpPackageExpressionDump(ctrl_nlp_th, package, interpretation->expressions + i, json_expressions));
     }
 
   }
@@ -188,10 +190,9 @@ og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
   DONE;
 }
 
-og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression, json_t *json_expressions)
-
+static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
+    json_t *json_expressions)
 {
-  struct expression *expression = OgHeapGetCell(package->hexpression, Iexpression);
   IFN(expression) DPcErr;
 
   json_t *json_expression = json_object();
@@ -200,19 +201,18 @@ og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression");
     DPcErr;
   }
-  og_string text = OgHeapGetCell(package->hba, expression->text_start);
-  json_t *json_text = json_string(text);
 
+  json_t *json_text = json_string(expression->text);
   IF(json_object_set_new(json_expression, "expression", json_text))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression");
     DPcErr;
   }
 
-  unsigned char string_locale[DPcPathSize];
+  og_char_buffer string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Phrase '%s' with locale %s", text, string_locale);
+  NlpLog(DOgNlpTraceDump, "    Expression '%s' with locale %s", expression->text, string_locale)
 
   json_t *json_locale = json_string(string_locale);
   IF(json_object_set_new(json_expression, "locale", json_locale))
@@ -232,7 +232,7 @@ og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int
 
     for (int i = 0; i < expression->aliases_nb; i++)
     {
-      IFE(NlpPackageAliasDump(ctrl_nlp_th, package, expression->alias_start + i, json_aliases));
+      IFE(NlpPackageAliasDump(ctrl_nlp_th, package, expression->aliases + i, json_aliases));
     }
 
   }
@@ -240,9 +240,9 @@ og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, int
   DONE;
 }
 
-og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Ialias, json_t *json_aliases)
+static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias,
+    json_t *json_aliases)
 {
-  struct alias *alias = OgHeapGetCell(package->halias, Ialias);
   IFN(alias) DPcErr;
 
   json_t *json_alias = json_object();
@@ -251,36 +251,44 @@ og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, int Iali
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias");
     DPcErr;
   }
-  og_string string_alias = OgHeapGetCell(package->hba, alias->alias_start);
-  json_t *json_alias_name = json_string(string_alias);
+  json_t *json_alias_name = json_string(alias->alias);
   IF(json_object_set_new(json_alias, "alias", json_alias_name))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias name");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias name '%s'", alias->alias);
     DPcErr;
   }
 
-  og_string string_slug = OgHeapGetCell(package->hba, alias->slug_start);
-  json_t *json_slug = json_string(string_slug);
-  IF(json_object_set_new(json_alias, "slug", json_slug))
+  if(alias->type == nlp_alias_type_Any)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias slug");
-    DPcErr;
+    json_t *json_type_any = json_string("any");
+    IF(json_object_set_new(json_alias, "type", json_type_any))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias type 'any'");
+      DPcErr;
+    }
   }
-
-  og_string string_id = OgHeapGetCell(package->hba, alias->id_start);
-  json_t *json_id = json_string(string_id);
-  IF(json_object_set_new(json_alias, "id", json_id))
+  else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias id");
-    DPcErr;
-  }
+    json_t *json_slug = json_string(alias->slug);
+    IF(json_object_set_new(json_alias, "slug", json_slug))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias slug '%s'", alias->slug);
+      DPcErr;
+    }
 
-  og_string string_package = OgHeapGetCell(package->hba, alias->package_start);
-  json_t *json_package = json_string(string_package);
-  IF(json_object_set_new(json_alias, "package", json_package))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias package");
-    DPcErr;
+    json_t *json_id = json_string(alias->id);
+    IF(json_object_set_new(json_alias, "id", json_id))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias id '%s'", alias->id);
+      DPcErr;
+    }
+
+    json_t *json_package = json_string(alias->package_id);
+    IF(json_object_set_new(json_alias, "package", json_package))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias package", alias->package_id);
+      DPcErr;
+    }
   }
 
   DONE;

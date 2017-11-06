@@ -414,10 +414,6 @@ void DoExit(struct og_nls_prog *nls_prog)
   OgMsgErr(nls_prog->hmsg, "ogm_nls_error", 1, 0, 0, DOgMsgSeverityEmergency, 0);
   OgMsg(nls_prog->hmsg, "exiting_on_error", mb, "Program ogm_nls exiting on error.");
 
-  OgNlsFlush(nls_prog->hnls);
-
-  OgLogFlush(nls_prog->hmsg);
-
   exit(1);
 }
 

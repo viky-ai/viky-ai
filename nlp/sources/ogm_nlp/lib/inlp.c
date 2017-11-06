@@ -48,7 +48,13 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 
   ctrl_nlp->rw_lock_packages_hash = OgSysiInit(sysi_param);
 
-  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, g_free, NlpPackageDestroyIfNotUsed);
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, NULL, NlpPackageDestroyIfNotUsed);
+
+  IF(NlpParseConfInit(ctrl_nlp))
+  {
+    NlpThrowError(ctrl_nlp, "OgNlpInit: NlpParseConfInit invalid parse configuration");
+    return NULL;
+  }
 
   return ctrl_nlp;
 }
@@ -70,6 +76,8 @@ PUBLIC(int) OgNlpFlush(og_nlp ctrl_nlp)
 {
 
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "OgNlpFlush in progress");
+
+  NlpParseConfFlush(ctrl_nlp);
 
   g_hash_table_destroy(ctrl_nlp->packages_hash);
   ctrl_nlp->packages_hash = NULL;

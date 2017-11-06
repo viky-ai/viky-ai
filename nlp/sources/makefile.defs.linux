@@ -127,7 +127,7 @@ ifeq "$(GCC_VERSION_GE_v49)" "1"
 
     # Use address-sanitizer :
     # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
-    DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address #-DDOG_HEAP_FORCE_RESET
+    DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address -DDOG_HEAP_FORCE_RESET
     LIBS += -lasan -llsan -lubsan
 
     # Run with :

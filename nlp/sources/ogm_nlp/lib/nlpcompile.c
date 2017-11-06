@@ -9,14 +9,14 @@
 static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_id,
     json_t *json_slug, json_t *json_interpretations);
 
-static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation,
-    json_t *json_expressions);
-static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation,
-    json_t *json_expression);
-static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
-    json_t *json_aliases);
-static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
-    json_t *json_alias);
+static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expressions);
+static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expression);
+static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_aliases);
+static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_alias);
 
 PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input,
     struct og_nlp_compile_output *output)
@@ -26,13 +26,9 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
   memset(output, 0, sizeof(struct og_nlp_compile_output));
 
   og_char_buffer json_compile_request_string[DOgMlogMaxMessageSize / 2];
-  IFE(NlpJsonToBuffer(input->json_input, json_compile_request_string, DOgMlogMaxMessageSize / 2, NULL));
+  IFE(NlpJsonToBuffer(input->json_input, json_compile_request_string, DOgMlogMaxMessageSize / 2, NULL, JSON_INDENT(2)));
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "OgNlpCompile: json_compile_request_string is [\n%s]",
-        json_compile_request_string);
-  }
+  NlpLog(DOgNlpTraceCompile, "OgNlpCompile: json_compile_request_string is [\n%s]", json_compile_request_string)
 
   // package input can be a json object (a package) or an array (a list of package)
   if (json_is_object(input->json_input))
@@ -75,12 +71,9 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
 og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_package)
 {
   og_char_buffer json_package_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_package, json_package_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_package, json_package_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackage: compiling package [\n%s]", json_package_string);
-  }
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackage: compiling package [\n%s]", json_package_string)
 
   json_t *json_id = NULL;
   json_t *json_slug = NULL;
@@ -90,10 +83,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
   {
     og_string key = json_object_iter_key(iter);
 
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-    {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackage: found key='%s'", key);
-    }
+    NlpLog(DOgNlpTraceCompile, "NlpCompilePackage: found key='%s'", key)
 
     if (Ogstricmp(key, "id") == 0)
     {
@@ -174,11 +164,9 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
   // At that point, we can create the package structure
   og_string string_id = json_string_value(json_id);
   og_string string_slug = json_string_value(json_slug);
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageInterpretations: package id is '%s', slug is '%s'",
-        string_id, string_slug);
-  }
+
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretations: package id is '%s', slug is '%s'", string_id,
+      string_slug)
 
   // We do not use a package heap because we dont want synchronization on that heap
   package_t package = NlpPackageCreate(ctrl_nlp_th, string_id, string_slug);
@@ -200,42 +188,41 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
     }
   }
 
-  if (input->package_update)
-  {
-    IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
-  }
-
-  IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
   {
-    IFE(NlpPackageLog(ctrl_nlp_th, package));
+    IFE(NlpPackageCompileLog(ctrl_nlp_th, package));
   }
+
+  // freeze memory structure
+  IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
+
+  // publish package
+  IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));
+
+  // mark temporary package done
+  ctrl_nlp_th->package_in_progress = NULL;
+
   DONE;
 }
 
 og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_interpretation)
 {
   og_char_buffer json_interpretation_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_interpretation, json_interpretation_string, DPcPathSize, NULL));
+  IFE(NlpJsonToBuffer(json_interpretation, json_interpretation_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageInterpretation: compiling interpretation [\n%s]",
-        json_interpretation_string);
-  }
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretation: compiling interpretation [\n%s]",
+      json_interpretation_string)
 
   json_t *json_id = NULL;
   json_t *json_slug = NULL;
   json_t *json_expressions = NULL;
+  json_t *json_solution = NULL;
 
   for (void *iter = json_object_iter(json_interpretation); iter;
       iter = json_object_iter_next(json_interpretation, iter))
   {
     og_string key = json_object_iter_key(iter);
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-    {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageInterpretation: found key='%s'", key);
-    }
+    NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretation: found key='%s'", key)
 
     if (Ogstricmp(key, "id") == 0)
     {
@@ -248,6 +235,10 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     else if (Ogstricmp(key, "expressions") == 0)
     {
       json_expressions = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "solution") == 0)
+    {
+      json_solution = json_object_iter_value(iter);
     }
     else
     {
@@ -292,38 +283,40 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     DPcErr;
   }
 
+  // solution can be of any json type and can be non existant
+
   // At that point, we can create the interpretation structure
   const char *string_id = json_string_value(json_id);
   const char *string_slug = json_string_value(json_slug);
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-        "NlpCompilePackageInterpretation: interpretation id is '%s', slug is '%s'", string_id, string_slug);
-  }
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretation: interpretation id is '%s', slug is '%s'", string_id,
+      string_slug)
 
   size_t Iinterpretation;
-  struct interpretation *interpretation = OgHeapNewCell(package->hinterpretation, &Iinterpretation);
+  struct interpretation_compile *interpretation = OgHeapNewCell(package->hinterpretation_compile, &Iinterpretation);
   IFn(interpretation) DPcErr;
   IFE(Iinterpretation);
 
-  interpretation->id_start = OgHeapGetCellsUsed(package->hba);
+  interpretation->id_start = OgHeapGetCellsUsed(package->hinterpretation_ba);
   interpretation->id_length = strlen(string_id);
-  IFE(OgHeapAppend(package->hba, interpretation->id_length + 1, string_id));
+  IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->id_length + 1, string_id));
 
-  interpretation->slug_start = OgHeapGetCellsUsed(package->hba);
+  interpretation->slug_start = OgHeapGetCellsUsed(package->hinterpretation_ba);
   interpretation->slug_length = strlen(string_slug);
-  IFE(OgHeapAppend(package->hba, interpretation->slug_length + 1, string_slug));
+  IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
+
+  interpretation->json_solution = json_solution;
+  json_incref(interpretation->json_solution);
 
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
 
   DONE;
 }
 
-static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation,
-    json_t *json_expressions)
+static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expressions)
 {
-  interpretation->expression_start = OgHeapGetCellsUsed(package->hexpression);
+  interpretation->expression_start = OgHeapGetCellsUsed(package->hexpression_compile);
 
   int array_size = json_array_size(json_expressions);
   for (int i = 0; i < array_size; i++)
@@ -345,37 +338,37 @@ static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package
     }
   }
 
-  interpretation->expressions_nb = OgHeapGetCellsUsed(package->hexpression) - interpretation->expression_start;
+  int expressions_used = OgHeapGetCellsUsed(package->hexpression_compile);
+  interpretation->expressions_nb = expressions_used - interpretation->expression_start;
 
   DONE;
 }
 
-static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation,
-    json_t *json_expression)
+static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_expression)
 {
   og_char_buffer json_expression_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL));
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageExpression: compiling expression [\n%s]",
-        json_expression_string);
-  }
+  IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL, JSON_INDENT(2)));
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: compiling expression [\n%s]", json_expression_string)
 
   json_t *json_text = NULL;
+  json_t *json_keep_order = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
+  json_t *json_solution = NULL;
 
   for (void *iter = json_object_iter(json_expression); iter; iter = json_object_iter_next(json_expression, iter))
   {
     const char *key = json_object_iter_key(iter);
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-    {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageExpression: found key='%s'", key);
-    }
+    NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: found key='%s'", key)
 
     if (Ogstricmp(key, "expression") == 0)
     {
       json_text = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "keep-order") == 0)
+    {
+      json_keep_order = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -384,6 +377,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "locale") == 0)
     {
       json_locale = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "solution") == 0)
+    {
+      json_solution = json_object_iter_value(iter);
     }
     else
     {
@@ -399,21 +396,21 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
 
   size_t Iphrase;
-  struct expression *expression = OgHeapNewCell(package->hexpression, &Iphrase);
+  struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iphrase);
   IFn(expression) DPcErr;
   IFE(Iphrase);
 
   if (json_is_string(json_text))
   {
     const char *string_text = json_string_value(json_text);
-    expression->text_start = OgHeapGetCellsUsed(package->hba);
-    expression->text_length = strlen(string_text);
-    if (expression->text_length > DOgNlpInterpretationExpressionMaxLength)
+    expression->text_start = OgHeapGetCellsUsed(package->hexpression_ba);
+    int text_length = strlen(string_text);
+    if (text_length > DOgNlpInterpretationExpressionMaxLength)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: text is too long");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, expression->text_length + 1, string_text));
+    IFE(OgHeapAppend(package->hexpression_ba, text_length + 1, string_text));
   }
   else
   {
@@ -441,6 +438,27 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
+  expression->keep_order = FALSE;
+  if (json_keep_order == NULL)
+  {
+    expression->keep_order = FALSE;
+  }
+  else if (json_is_string(json_keep_order))
+  {
+    const char *string_keep_order = json_string_value(json_keep_order);
+    if (!Ogstricmp(string_keep_order,"true")) expression->keep_order = TRUE;
+  }
+  else if (json_is_null(json_keep_order))
+  {
+    expression->keep_order = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep_order is not a string");
+    DPcErr;
+  }
+
+
   IFN(json_aliases)
   {
     expression->alias_start = (-1);
@@ -460,11 +478,14 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
 
   }
 
+  expression->json_solution = json_solution;
+  json_incref(expression->json_solution);
+
   DONE;
 }
 
-static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
-    json_t *json_aliases)
+static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_aliases)
 {
 
   expression->alias_start = (-1);
@@ -489,19 +510,17 @@ static int NlpCompilePackageExpressionAliases(og_nlp_th ctrl_nlp_th, package_t p
   DONE;
 }
 
-static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
-    json_t *json_alias)
+static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression, json_t *json_alias)
 {
 
   og_char_buffer json_alias_string[DPcPathSize];
-  IFE(NlpJsonToBuffer(json_alias, json_alias_string, DPcPathSize, NULL));
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageExpressionAlias: compiling alias [\n%s]",
-        json_alias_string);
-  }
+  IFE(NlpJsonToBuffer(json_alias, json_alias_string, DPcPathSize, NULL, JSON_INDENT(2)));
+
+  NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpressionAlias: compiling alias [\n%s]", json_alias_string)
+
   size_t Ialias;
-  struct alias *alias = OgHeapNewCell(package->halias, &Ialias);
+  struct alias_compile *alias = OgHeapNewCell(package->halias_compile, &Ialias);
   IFn(alias) DPcErr;
   IFE(Ialias);
 
@@ -515,14 +534,12 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   json_t *json_slug = NULL;
   json_t *json_id = NULL;
   json_t *json_package = NULL;
+  json_t *json_alias_type = NULL;
 
   for (void *iter = json_object_iter(json_alias); iter; iter = json_object_iter_next(json_alias, iter))
   {
     const char *key = json_object_iter_key(iter);
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceCompile)
-    {
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCompilePackageExpressionAlias: found key='%s'", key);
-    }
+    NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpressionAlias: found key='%s'", key)
     if (Ogstricmp(key, "alias") == 0)
     {
       json_alias_name = json_object_iter_value(iter);
@@ -539,6 +556,10 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     {
       json_package = json_object_iter_value(iter);
     }
+    else if (Ogstricmp(key, "type") == 0)
+    {
+      json_alias_type = json_object_iter_value(iter);
+    }
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: unknown key '%s'", key);
@@ -549,14 +570,14 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   if (json_is_string(json_alias_name))
   {
     const char *string_alias = json_string_value(json_alias_name);
-    alias->alias_start = OgHeapGetCellsUsed(package->hba);
+    alias->alias_start = OgHeapGetCellsUsed(package->halias_ba);
     alias->alias_length = strlen(string_alias);
     if (alias->alias_length > DOgNlpInterpretationExpressionMaxLength)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias is too long");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, alias->alias_length + 1, string_alias));
+    IFE(OgHeapAppend(package->halias_ba, alias->alias_length + 1, string_alias));
   }
   else
   {
@@ -564,60 +585,96 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     DPcErr;
   }
 
-  if (json_is_string(json_slug))
+  alias->type = nlp_alias_type_type_Interpretation;
+  if (json_is_string(json_alias_type))
   {
-    const char *string_slug = json_string_value(json_slug);
-    alias->slug_start = OgHeapGetCellsUsed(package->hba);
-    alias->slug_length = strlen(string_slug);
-    if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+    const char *string_alias_type = json_string_value(json_alias_type);
+    if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
+  }
+
+  if (alias->type == nlp_alias_type_type_Interpretation)
+  {
+    if (json_is_string(json_slug))
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+      const char *string_slug = json_string_value(json_slug);
+      alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->slug_length = strlen(string_slug);
+      if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->slug_length + 1, string_slug));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is not a string");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, alias->slug_length + 1, string_slug));
+
+    if (json_is_string(json_id))
+    {
+      const char *string_id = json_string_value(json_id);
+      alias->id_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->id_length = strlen(string_id);
+      if (alias->id_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->id_length + 1, string_id));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is not a string");
+      DPcErr;
+    }
+
+    if (json_is_string(json_package))
+    {
+      const char *string_package = json_string_value(json_package);
+      alias->package_id_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->package_id_length = strlen(string_package);
+      if (alias->package_id_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->package_id_length + 1, string_package));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is not a string");
+      DPcErr;
+    }
   }
   else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is not a string");
-    DPcErr;
-  }
-
-  if (json_is_string(json_id))
-  {
-    const char *string_id = json_string_value(json_id);
-    alias->id_start = OgHeapGetCellsUsed(package->hba);
-    alias->id_length = strlen(string_id);
-    if (alias->id_length > DOgNlpInterpretationExpressionMaxLength)
+    if (json_slug != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is too long");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type 'any' should not have a slug");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, alias->id_length + 1, string_id));
-  }
-  else
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is not a string");
-    DPcErr;
-  }
-
-  if (json_is_string(json_package))
-  {
-    const char *string_package = json_string_value(json_package);
-    alias->package_start = OgHeapGetCellsUsed(package->hba);
-    alias->package_length = strlen(string_package);
-    if (alias->package_length > DOgNlpInterpretationExpressionMaxLength)
+    if (json_id != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is too long");
+      NlpThrowErrorTh(ctrl_nlp_th,
+          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation id");
       DPcErr;
     }
-    IFE(OgHeapAppend(package->hba, alias->package_length + 1, string_package));
-  }
-  else
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: package is not a string");
-    DPcErr;
-  }
+    if (json_package != NULL)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th,
+          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation package");
+      DPcErr;
+    }
+    alias->slug_start = (-1);
+    alias->slug_length = 0;
+    alias->id_start = (-1);
+    alias->id_length = 0;
+    alias->package_id_start = (-1);
+    alias->package_id_length = 0;
 
+  }
   DONE;
 }
 

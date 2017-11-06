@@ -10,7 +10,8 @@
 
 PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_param *param)
 {
-  struct og_ctrl_nlp_threaded *ctrl_nlp_th = (struct og_ctrl_nlp_threaded *) malloc(sizeof(struct og_ctrl_nlp_threaded));
+  struct og_ctrl_nlp_threaded *ctrl_nlp_th = (struct og_ctrl_nlp_threaded *) malloc(
+      sizeof(struct og_ctrl_nlp_threaded));
   IFn(ctrl_nlp_th)
   {
     og_char_buffer erreur[DOgErrorSize];
@@ -25,6 +26,9 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   ctrl_nlp_th->hmutex = param->hmutex;
   memcpy(ctrl_nlp_th->loginfo, &param->loginfo, sizeof(struct og_loginfo));
   snprintf(ctrl_nlp_th->name, DPcPathSize, "%s", param->name);
+
+  //Only for debugging
+  //ctrl_nlp_th->loginfo->trace = 0xffff;
 
   og_char_buffer nlpc_name[DPcPathSize];
 
@@ -50,6 +54,7 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   }
 
   g_queue_init(ctrl_nlp_th->package_in_used);
+  g_queue_init(ctrl_nlp_th->sorted_request_expressions);
 
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
@@ -62,6 +67,10 @@ PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
   IFE(OgNlpSynchroUnLockAll(ctrl_nlp_th));
+
+  // free current package beeing created
+  NlpPackageDestroyIfNotUsed(ctrl_nlp_th->package_in_progress);
+  ctrl_nlp_th->package_in_progress = NULL;
 
   IFE(NlpInterpretReset(ctrl_nlp_th));
 

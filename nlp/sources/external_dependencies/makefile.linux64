@@ -7,7 +7,7 @@ CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 
-EXTERNALS_LIB = glib jansson uriparser
+EXTERNALS_LIB = glib jansson uriparser duktape
 
 .PHONY: $(EXTERNALS_LIB) fullclean clean debug build redebug rebuild all
 
@@ -19,6 +19,9 @@ uriparser:
 
 glib:
 	$(MAKE) -f glib.makefile $(MAKECMDGOALS)
+	
+duktape:
+	$(MAKE) -f duktape.makefile $(MAKECMDGOALS)
 
 fullclean: $(EXTERNALS_LIB)
 

@@ -23,9 +23,18 @@ PUBLIC(og_status) OgHeapReset(og_heap ctrl_heap)
 {
   IFn(ctrl_heap) DONE;
 
+  if (ctrl_heap->freezed)
+  {
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapReset on '%s': is freezed you cannot reset heap",
+        ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    DPcErr;
+  }
+
   // To facilitate debugging with asan, heap is reallocated instead of just being reset so that asan detects buffer overflows.
 #ifdef DOG_HEAP_FORCE_RESET
-  OgMsg(ctrl_heap->hmsg, "", DOgMsgDestInLog,"OgHeapReset : force realloc for debug for heap %s",ctrl_heap->name);
   ctrl_heap->cells_used = 0;
   IFE(OgHeapReallocInternal(ctrl_heap, 1));
   DONE;

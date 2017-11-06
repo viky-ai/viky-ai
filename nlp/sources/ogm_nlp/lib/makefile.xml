@@ -5,21 +5,35 @@
   <project_name>ogm_nlp</project_name>
   <sources>
     <file>inlp.c</file>
+    <file>nlpany.c</file>
+    <file>nlpanyopt.c</file>
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
     <file>nlperr.c</file>
+    <file>nlpipalias.c</file>
+    <file>nlpipword.c</file>
     <file>nlplog.c</file>
     <file>nlpinterpret.c</file>
+    <file>nlpmatch.c</file>
+    <file>nlporip.c</file>
     <file>nlppackage.c</file>
+    <file>nlpparse.c</file>
+    <file>nlprip.c</file>
+    <file>nlprexpression.c</file>
+    <file>nlpreopt.c</file>
+    <file>nlpsol.c</file>
+    <file>nlprposition.c</file>
+    <file>nlptree.c</file>
+    <file>nlptreejson.c</file>
   </sources>
   <platforms>
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logheap -logmsg -loggen -ljansson -lglib-2.0 -logsysi</option>
+      <option name="ADD_LIBR">-logaut -loguni -logheap -logmsg -loggen -ljansson -lglib-2.0 -logsysi</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

@@ -40,6 +40,8 @@ Build
 =====
 
 If you want to build with ASAN set `export OG_ASAN_ENABLE=1`, https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer
+Your need also to export possibly this variable:
+export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:detect_stack_use_after_return=1:debug=0
 
 ```
 buildinit.pl -u

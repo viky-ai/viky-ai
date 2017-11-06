@@ -170,8 +170,6 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
-  IFE(OgNlpConsolidate(info->hnlpi));
-
   if (info->dump == TRUE)
   {
     if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");
@@ -218,7 +216,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
     nlp_send_errors_as_json(info);
     DPcErr;
   }
-  else
+  else if (!info->interpret_filename[0])
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
@@ -270,13 +268,15 @@ static og_status nlp_dump(struct og_info *info)
 
 static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
 {
-  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Compiling '%s'", json_interpret_filename);
+  OgMsg(info->hmsg, "", DOgMsgDestInLog, "Reading '%s'", json_interpret_filename);
 
   json_error_t error[1];
   json_auto_t *json = json_load_file(json_interpret_filename, JSON_REJECT_DUPLICATES, error);
   IFN(json)
   {
-    OgErr(info->herr, "nlp_interpret: error while reading 'json_compilation_filename'");
+    char erreur[DPcPathSize];
+    sprintf(erreur,"nlp_interpret: error while reading '%s'",json_interpret_filename);
+    OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
   }

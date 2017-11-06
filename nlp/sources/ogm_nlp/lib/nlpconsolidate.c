@@ -7,40 +7,240 @@
 #include "ogm_nlp.h"
 
 static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
-static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
+static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, struct expression *expression);
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias);
 static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_word, int length_string_word);
 struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_t package,
-    struct expression *expression);
+    struct expression *expression, size_t *pIinput_part);
 
-PUBLIC(int) OgNlpConsolidate(og_nlp_th ctrl_nlp_th)
+static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, package_t package)
 {
-  GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->ctrl_nlp->packages_hash);
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hinterpretation_ba));
 
-  for (GList *iter = key_list; iter; iter = iter->next)
+  // prealloc heap to avoid realloc
+  int interpretation_compile_used = OgHeapGetCellsUsed(package->hinterpretation_compile);
+  IFE(interpretation_compile_used);
+  if (interpretation_compile_used > 0)
   {
-    og_string package_id = iter->data;
+    IFE(OgHeapAddCells(package->hinterpretation, interpretation_compile_used));
+  }
 
-    package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
-    IFN(package) DPcErr;
+  // convert _compile heaps to simple one
+  struct interpretation_compile *all_interpretation_compile = OgHeapGetCell(package->hinterpretation_compile, 0);
+  struct interpretation *all_interpretation = OgHeapGetCell(package->hinterpretation, 0);
+  for (int i = 0; i < interpretation_compile_used; i++)
+  {
+    struct interpretation_compile *interpretation_compile = all_interpretation_compile + i;
+    struct interpretation *interpretation = all_interpretation + i;
+    interpretation->package = package;
 
-    IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
+    interpretation->id = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->id_start);
+    IFN(interpretation->id) DPcErr;
+
+    interpretation->slug = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->slug_start);
+    IFN(interpretation->slug) DPcErr;
+
+    interpretation->json_solution = interpretation_compile->json_solution;
+
+    interpretation->expressions_nb = interpretation_compile->expressions_nb;
+    if (interpretation->expressions_nb > 0)
+    {
+      interpretation->expressions = OgHeapGetCell(package->hexpression, interpretation_compile->expression_start);
+      IFN(interpretation->expressions) DPcErr;
+    }
+    else
+    {
+      interpretation->expressions = NULL;
+    }
+  }
+
+  // free compile heap
+  IFE(OgHeapFlush(package->hinterpretation_compile));
+  package->hinterpretation_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hinterpretation));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hexpression_ba));
+
+  // prealloc heap to avoid realloc
+  int expression_compile_used = OgHeapGetCellsUsed(package->hexpression_compile);
+  IFE(expression_compile_used);
+  if (expression_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->hexpression, expression_compile_used));
+  }
+
+  // convert _compile heaps to simple one
+  struct expression_compile *all_expression_compile = OgHeapGetCell(package->hexpression_compile, 0);
+  struct expression *all_expression = OgHeapGetCell(package->hexpression, 0);
+  for (int i = 0; i < expression_compile_used; i++)
+  {
+    struct expression_compile *expression_compile = all_expression_compile + i;
+    struct expression *expression = all_expression + i;
+
+    expression->text = OgHeapGetCell(package->hexpression_ba, expression_compile->text_start);
+    IFN(expression->text) DPcErr;
+
+    expression->keep_order = expression_compile->keep_order;
+
+    expression->locale = expression_compile->locale;
+    expression->aliases_nb = expression_compile->aliases_nb;
+    if (expression->aliases_nb > 0)
+    {
+      expression->aliases = OgHeapGetCell(package->halias, expression_compile->alias_start);
+      IFN(expression->aliases) DPcErr;
+    }
+    else
+    {
+      expression->aliases = NULL;
+    }
+    expression->json_solution = expression_compile->json_solution;
 
   }
+
+  // free compile heap
+  IFE(OgHeapFlush(package->hexpression_compile));
+  package->hexpression_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hexpression));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->halias_ba));
+
+  // prealloc heap to avoid realloc
+  int alias_compile_used = OgHeapGetCellsUsed(package->halias_compile);
+  IFE(alias_compile_used);
+  if (alias_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->halias, alias_compile_used));
+  }
+
+  // convert _compile heaps to simple one
+  struct alias_compile *all_alias_compile = OgHeapGetCell(package->halias_compile, 0);
+  struct alias *all_alias = OgHeapGetCell(package->halias, 0);
+  for (int i = 0; i < alias_compile_used; i++)
+  {
+    struct alias_compile *alias_compile = all_alias_compile + i;
+    struct alias *alias = all_alias + i;
+
+    alias->alias_length = alias_compile->alias_length;
+    alias->alias = OgHeapGetCell(package->halias_ba, alias_compile->alias_start);
+    IFN(alias->alias) DPcErr;
+
+    alias->type = alias_compile->type;
+    if (alias->type == nlp_alias_type_type_Interpretation)
+    {
+      alias->slug = OgHeapGetCell(package->halias_ba, alias_compile->slug_start);
+      IFN(alias->slug) DPcErr;
+
+      alias->id = OgHeapGetCell(package->halias_ba, alias_compile->id_start);
+      IFN(alias->id) DPcErr;
+
+      alias->package_id = OgHeapGetCell(package->halias_ba, alias_compile->package_id_start);
+      IFN(alias->package_id) DPcErr;
+    }
+    else
+    {
+      alias->slug = NULL;
+      alias->id = NULL;
+      alias->package_id = NULL;
+    }
+  }
+
+  // free compile heap
+  IFE(OgHeapFlush(package->halias_compile));
+  package->halias_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->halias));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  IFE(NlpConsolidatePrepareAlias(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareExpression(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareInterpretation(ctrl_nlp_th, package));
+
+  DONE;
+}
+
+static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  int expression_used = OgHeapGetCellsUsed(package->hexpression);
+  struct expression *all_expression = OgHeapGetCell(package->hexpression, 0);
+  for (int i = 0; i < expression_used; i++)
+  {
+    struct expression *expression = all_expression + i;
+
+    // resolve input_part_start to pointer
+    if (expression->input_part_start >= 0)
+    {
+      expression->input_parts = OgHeapGetCell(package->hinput_part, expression->input_part_start);
+      IFN(expression->input_parts) DPcErr;
+    }
+    else
+    {
+      expression->input_parts = NULL;
+    }
+  }
+
+  IFE(OgAuf(package->ha_interpretation_id, FALSE));
+  IFE(OgAufClean(package->ha_interpretation_id));
+
+  IFE(OgAuf(package->ha_word, FALSE));
+  IFE(OgAufClean(package->ha_word));
+
+  package->consolidate_done = TRUE;
 
   DONE;
 }
 
 og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
 {
+
+  IFE(NlpConsolidatePrepare(ctrl_nlp_th, package));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
+  {
+    IFE(NlpPackageLog(ctrl_nlp_th, "before consolidate", package));
+  }
+
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
   for (int i = 0; i < interpretation_used; i++)
   {
     IFE(NlpConsolidateInterpretation(ctrl_nlp_th, package, i));
   }
-  IFE(NlpPackageLog(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidateFinalize(ctrl_nlp_th, package));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
+  {
+    IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
+    IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
+    IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
+  }
+
   DONE;
 }
 
@@ -48,52 +248,91 @@ static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t p
 {
   struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, Iinterpretation);
   IFN(interpretation) DPcErr;
+  interpretation->package = package;
 
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
-    IFE(NlpConsolidateExpression(ctrl_nlp_th, package, interpretation->expression_start + i));
+    struct expression *expression = interpretation->expressions + i;
+
+    IFE(NlpConsolidateExpression(ctrl_nlp_th, package, interpretation, expression));
   }
 
   DONE;
 }
 
-static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression)
+static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation, struct expression *expression)
 {
-  struct expression *expression = OgHeapGetCell(package->hexpression, Iexpression);
   IFN(expression) DPcErr;
 
-  int is = expression->text_length;
-  og_string s = OgHeapGetCell(package->hba, expression->text_start);
+  expression->interpretation = interpretation;
+  expression->input_parts_nb = 0;
+  expression->input_parts = NULL;
+  expression->input_part_start = -1;
+  expression->alias_any_input_part_position = -1;
 
-  for (int i = 0, state = 1, start = 0, end = 0; !end; i++)
+  og_string s = expression->text;
+  int is = strlen(s);
+  og_string s_end = s + is;
+
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateExpression: parsing '%s'", s);
+
+  int state = 1;
+  og_bool end = FALSE;
+  int i = -1;
+  int start = 0;
+  while (!end)
   {
-    int c = ' ';
-    if (i < is)
+    gunichar c = ' ';
+    og_string s_pos = g_utf8_find_next_char(s + i, s_end);
+    if (s_pos == NULL)
     {
-      c = s[i];
+      end = TRUE;
+      c = ' ';
+      i = is;
     }
     else
     {
-      end = 1;
-      c = ' ';
+      i = s_pos - s;
+      c = g_utf8_get_char_validated(s_pos, is - i);
+      if ((c == (gunichar) -1) || (c == (gunichar) -2))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateExpression : invalid UTF-8 character '%s' '%s' : '%s'",
+            interpretation->slug, interpretation->id, s_pos);
+        DPcErr;
+      }
     }
 
     switch (state)
     {
       case 1:   // between words or interpretations
       {
-        if (c == ' ')
-        {
-          state = 1;
-        }
-        else if (c == '@' && i + 1 < is && s[i + 1] == '{')
+        if (c == '@' && i + 1 < is && s[i + 1] == '{')
         {
           state = 2;
         }
         else
         {
-          start = i;
-          state = 4;
+          og_bool punct_length = 0;
+          og_bool is_skipped = FALSE;
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &punct_length);
+          IFE(is_punct);
+          if (is_punct)
+          {
+            if (!is_skipped)
+            {
+              // add punctuation word
+              IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+              state = 1;
+            }
+            i += punct_length - 1;
+            state = 1;
+          }
+          else
+          {
+            start = i;
+            state = 4;
+          }
         }
         break;
       }
@@ -122,14 +361,33 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
       }
       case 4:   // middle or end of word
       {
-        if (c == ' ')
+        og_bool punct_length = 0;
+        og_bool is_skip = FALSE;
+        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skip, &punct_length);
+        IFE(is_punct);
+        if (is_punct)
         {
+          // add previously parsed word
           IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + start, i - start));
+
+          if (!is_skip)
+          {
+            // add punctuation word
+            IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+            state = 1;
+          }
+          i += punct_length - 1;
           state = 1;
         }
         break;
       }
     }
+  }
+
+  if (state != 1)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateExpression: error parsing expression '%s' : state %d != 1", s, state);
+    DPcErr;
   }
 
   DONE;
@@ -138,78 +396,50 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part",
-        length_string_alias, string_alias);
-  }
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddAlias: adding alias '%.*s' as input_part", length_string_alias,
+      string_alias)
 
-  og_string package_id = OgHeapGetCell(package->hba, package->id_start);
-
-  // Fist we check the availability of the alias
-  int found = 0;
+  og_bool alias_added = FALSE;
   for (int i = 0; i < expression->aliases_nb; i++)
   {
-    struct alias *alias = OgHeapGetCell(package->halias, expression->alias_start + i);
-    IFN(alias) DPcErr;
-    og_string string_alias_name = OgHeapGetCell(package->hba, alias->alias_start);
-    IFN(string_alias_name) DPcErr;
-    if (length_string_alias != alias->alias_length) continue;
-    if (memcmp(string_alias, string_alias_name, length_string_alias)) continue;
-    // Getting package and interpretation for further use
-    og_string alias_package_id = OgHeapGetCell(package->hba, alias->package_start);
+    struct alias *alias = expression->aliases + i;
 
-    package_t alias_package = 0;
-    if (!strcmp(package_id, alias_package_id))
+    if (length_string_alias != alias->alias_length) continue;
+    if (memcmp(string_alias, alias->alias, length_string_alias)) continue;
+
+    if (alias->type == nlp_alias_type_type_Interpretation)
     {
-      alias_package = package;
+      size_t Iinput_part;
+      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
+      IFN(input_part) DPcErr;
+      input_part->type = nlp_input_part_type_Interpretation;
+      input_part->alias = alias;
+
+      IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
+      alias_added = TRUE;
     }
     else
     {
-      alias_package = NlpPackageGet(ctrl_nlp_th, alias_package_id);
-    }
-    IFN(alias_package)
-    {
-      og_string text = OgHeapGetCell(package->hba, expression->text_start);
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-          "NlpConsolidateAddAlias: alias '%.*s' for expression '%s', cannot be found, expression is disactivated",
-          length_string_alias, string_alias, text);
-      expression->activated = 0;
-      DONE;
-    }
-    og_string alias_interpretation_id = OgHeapGetCell(package->hba, alias->id_start);
-    int interpretation_used = OgHeapGetCellsUsed(alias_package->hinterpretation);
-    for (int j = 0; j < interpretation_used; j++)
-    {
-      struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, j);
-      IFN(interpretation) DPcErr;
-      if (interpretation->id_length != alias->id_length) continue;
-      og_string interpretation_id = OgHeapGetCell(package->hba, interpretation->id_start);
-      IFN(interpretation_id) DPcErr;
-      if (memcmp(alias_interpretation_id, interpretation_id, interpretation->id_length)) continue;
-      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression);
-      IFN(input_part) DPcErr;
-      input_part->type = nlp_input_part_type_Interpretation;
-      input_part->interpretation_package = alias_package;
-      input_part->Iinterpretation = j;
-      expression->activated = 1;
-      found = 1;
-    }
-    if (!found)
-    {
-      og_string text = OgHeapGetCell(package->hba, expression->text_start);
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-          "NlpConsolidateAddAlias: alias '%.*s' for expression '%s', cannot be found, expression is disactivated",
-          length_string_alias, string_alias, text);
-      expression->activated = 0;
-      DONE;
-    }
+      // this says that the any alias is before the input_part position expression->input_parts_nb
+      // a value of -1 means no alias, a value of zero means before the first input_part
+      // a value of n means before the nth input_part (or at the end if it is equal to expression->input_parts_nb
+      if (expression->alias_any_input_part_position >= 0)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th,
+            "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while only one alias per expression is allowed",
+            length_string_alias, string_alias, expression->text);
 
+      }
+      expression->alias_any_input_part_position = expression->input_parts_nb;
+      alias_added = TRUE;
+    }
     break;
   }
-  if (!found)
+
+  if (!alias_added)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found", length_string_alias, string_alias);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'",
+        length_string_alias, string_alias, expression->text);
     DPcErr;
   }
 
@@ -219,36 +449,40 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_word, int length_string_word)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpConsolidateAddAlias: adding word '%.*s' as input_part",
-        length_string_word, string_word);
-  }
 
-  struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression);
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: adding word '%.*s' as input_part", length_string_word,
+      string_word)
+
+  size_t Iinput_part;
+  struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
   IFN(input_part) DPcErr;
   input_part->type = nlp_input_part_type_Word;
-  input_part->word_start = OgHeapGetCellsUsed(package->hba);
-  input_part->word_length = length_string_word;
-  IFE(OgHeapAppend(package->hba, input_part->word_length, string_word));
-  IFE(OgHeapAppend(package->hba, 1, ""));
+  input_part->word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
+  IFE(OgHeapAppend(package->hinput_part_ba, length_string_word, string_word));
+  IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
+
+  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, string_word, length_string_word, Iinput_part));
 
   DONE;
 }
 
 struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_t package,
-    struct expression *expression)
+    struct expression *expression, size_t *pIinput_part)
 {
+  *pIinput_part = (-1);
   size_t Iinput_part;
   struct input_part *input_part = OgHeapNewCell(package->hinput_part, &Iinput_part);
   IFn(input_part) return (NULL);
   IF(Iinput_part) return (NULL);
+  input_part->expression = expression;
 
   if (expression->input_parts_nb == 0)
   {
     expression->input_part_start = Iinput_part;
   }
   expression->input_parts_nb++;
+
+  *pIinput_part = Iinput_part;
   return (input_part);
 }
 

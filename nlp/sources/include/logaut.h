@@ -159,6 +159,7 @@ DEFPUBLIC(int) OgAutScann(pr_(void *) pr_(int *) pr_(unsigned char *) pr_(int)
 DEFPUBLIC(int) OgAutIsFinal(pr_(void *) pr(oindex));
 
 DEFPUBLIC(int) OgAuf(pr_(void *) pr(int));
+DEFPUBLIC(int) OgAufClean(void * handle);
 DEFPUBLIC(int) OgAufWrite(pr_(void *) pr(char *));
 DEFPUBLIC(int) OgAufRead(pr_(void *) pr(char *));
 DEFPUBLIC(int) OgAufTry(pr_(void *) pr_(int) pr(unsigned char *));

@@ -1,13 +1,7 @@
 build/
 ship/
 
-
-# glib Stuff for all subdirectories
-**/*/*.log
-**/*/*.o
-**/*/*.lo
-**/*/*.la
-
+# Glib temp file
 sources/external_dependencies/glib/**/*/Makefile.in
 sources/external_dependencies/glib/**/*/Makefile
 sources/external_dependencies/glib/**/*/TAGS
@@ -29,3 +23,9 @@ sources/external_dependencies/glib/**/*/*.test
 sources/external_dependencies/glib/**/*/*.log
 sources/external_dependencies/glib/**/*/*.trs
 
+
+# Duktape temp file
+external_dependencies/duktape/dist
+external_dependencies/duktape/tests
+external_dependencies/duktape/website
+external_dependencies/duktape/references

@@ -29,11 +29,11 @@ module Nls
 
           @@nls_background = Thread.new {
 
-            Thread.current.name = "nls start : #{command}"
+            Thread.current.name = "Nls : #{command}"
             begin
               Nls.exec(command, { log: log })
             rescue => e
-              puts "Nls start crashed : #{e.inspect}"
+              puts "Nls crashed : #{e.inspect}"
               starting = false
             end
 
@@ -135,50 +135,15 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.package_delete(package)
+      package_url = "#{base_url}/packages/#{package.id}"
+      delete(package_url)
+    end
+
     def self.package_update(package, params = {})
       package_url = "#{base_url}/packages/#{package.id}"
       response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
-    end
-
-    def self.json_interpret_body(package = "voqal.ai:datetime1", sentence = "Hello Jean Marie")
-      {
-        "packages" => ["#{package}"],
-        "sentence" => "#{sentence}",
-        "Accept-Language" => "fr-FR"
-      }
-    end
-
-    def self.expected_interpret_result(package = "voqal.ai:datetime1", id = "0d981484-9313-11e7-abc4-cec278b6b50b1", slug = "hello1")
-      {
-        "interpretations"=>
-        [
-          {
-            "package" => "#{package}",
-            "id" => "#{id}",
-            "slug" => "#{slug}",
-            "score" => 1.0
-          }
-        ]
-      }
-    end
-
-    def self.expected_update_package(package_name)
-      {
-        "status" => "Package '#{package_name}' successfully updated"
-      }
-    end
-
-    def self.expected_delete_package(package_name)
-      {
-        "status" => "Package '#{package_name}' successfully deleted"
-      }
-    end
-
-    def self.expected_added_package(package_name)
-      {
-        "status" => "Package '#{package_name}' successfully updated"
-      }
     end
 
     def self.pwd
@@ -187,15 +152,19 @@ module Nls
       pwd_local
     end
 
-    def self.createUUID
-      UUIDTools::UUID.timestamp_create
+    def self.remove_all_packages
+      dump_result = query_get(url_dump)
+      dump_result.each do |package|
+        package_url = "#{base_url}/packages/#{package["id"]}"
+        Nls.delete(package_url)
+      end
     end
 
     private
 
     def self.exec(cmd, opts = {})
 
-      # defaulr values
+      # default values
       take_care_of_return  = true
       log                  = false
 
@@ -208,23 +177,20 @@ module Nls
 
           pid = wait_thr[:pid]
 
-          #c = Term::ANSIColor
-
-          stdout_str = "" ;
-          stderr_str = "" ;
+          stdstr = "" ;
 
           stdout.each do |line|
             if log
               print "#{line}"
             end
-            stdout_str << line ;
+            stdstr << line ;
           end
 
           stderr.each do |line|
             if log
               print "#{line}"
             end
-            stderr_str << line ;
+            stdstr << line ;
           end
 
           # Process::Status object returned.
@@ -236,10 +202,8 @@ module Nls
           end
 
           if take_care_of_return && !exit_status.success?
-            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\r#{stdout_str}\r#{stderr_str}"
+            raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd}, pid:#{pid})\n\n#{stdstr}\n"
           end
-
-          return pid
 
         end
 

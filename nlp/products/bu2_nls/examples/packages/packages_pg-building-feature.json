@@ -1,0 +1,156 @@
+{
+  "id": "11c64c90-be17-11e7-adc1-509a4c4698dc",
+  "slug": "pg-building-feature",
+  "interpretations": [
+    {
+      "id": "11c6e6be-be17-11e7-adc1-509a4c4698dc",
+      "slug": "sea-view",
+      "expressions": [
+        {
+          "expression": "sea view",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "sea front",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ocean view",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ocean front",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "11c6e952-be17-11e7-adc1-509a4c4698dc",
+      "slug": "swimming-pool",
+      "expressions": [
+        {
+          "expression": "swimming pool",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "pool",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "11c6eb64-be17-11e7-adc1-509a4c4698dc",
+      "slug": "building-feature",
+      "expressions": [
+        {
+          "expression": "@{swimming-pool}",
+          "aliases": [
+            {
+              "alias": "swimming-pool",
+              "slug": "swimming-pool",
+              "id": "11c6e952-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        },
+        {
+          "expression": "@{sea-view}",
+          "aliases": [
+            {
+              "alias": "sea-view",
+              "slug": "sea-view",
+              "id": "11c6e6be-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "11c6ed80-be17-11e7-adc1-509a4c4698dc",
+      "slug": "preposition-building-feature",
+      "expressions": [
+        {
+          "expression": "with",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "at",
+          "locale": "en-GB"
+        }
+      ]
+    },
+
+
+    {
+      "id": "11c6ee66-be17-11e7-adc1-509a4c4698dc",
+      "slug": "pg-building-feature",
+      "expressions": [
+        {
+          "expression": "@{preposition-building-feature} @{building-feature}",
+          "keep-order" : "true",
+          "aliases": [
+            {
+              "alias": "preposition-building-feature",
+              "slug": "preposition-building-feature",
+              "id": "11c6ed80-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            },
+            {
+              "alias": "building-feature",
+              "slug": "building-feature",
+              "id": "11c6eb64-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        },
+        {
+          "expression": "@{building-feature}",
+          "aliases": [
+            {
+              "alias": "building-feature",
+              "slug": "building-feature",
+              "id": "11c6eb64-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "11c6ec9a-be17-11e7-adc1-509a4c4698dc",
+      "slug": "pg-building-features",
+      "expressions": [
+        {
+          "expression": "@{pg-building-feature} @{pg-building-features}",
+          "aliases": [
+            {
+              "alias": "pg-building-feature",
+              "slug": "pg-building-feature",
+              "id": "11c6ee66-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            },
+            {
+              "alias": "pg-building-features",
+              "slug": "pg-building-features",
+              "id": "11c6ec9a-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        },
+        {
+          "expression": "@{pg-building-feature}",
+          "aliases": [
+            {
+              "alias": "pg-building-feature",
+              "slug": "pg-building-feature",
+              "id": "11c6ee66-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

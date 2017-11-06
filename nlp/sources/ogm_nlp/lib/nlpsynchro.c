@@ -22,7 +22,7 @@ og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
       og_status status = OgSysiReadUnLock(poped_lock->rwlock);
       IF(status)
       {
-        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiReadUnLock failed");
+        NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiReadUnLock failed","")
       }
 
     }
@@ -31,13 +31,12 @@ og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th)
       og_status status = OgSysiWriteUnLock(poped_lock->rwlock);
       IF(status)
       {
-        NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiWriteUnLock failed");
+        NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : OgSysiWriteUnLock failed","")
       }
     }
     else
     {
-      NlpLogInfo(ctrl_nlp_th, DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : unsupported lock type : %d",
-          poped_lock->type);
+      NlpLog(DOgNlpTraceSynchro, "OgNlpSynchroUnLockAll : unsupported lock type : %d", poped_lock->type)
     }
 
   }
@@ -155,6 +154,18 @@ PUBLIC(og_status) OgNlpSynchroTestRegisterTimeout(og_nlp_th ctrl_nlp_th, og_stri
     if (strcmp(timeout_in, "NlpPackageAddOrReplace") == 0)
     {
       ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpPackageAddOrReplace;
+    }
+    else if (strcmp(timeout_in, "NlpInterpretRequestParse") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpInterpretRequestParse;
+    }
+    else if (strcmp(timeout_in, "NlpMatchExpressions") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpMatchExpressions;
+    }
+    else if (strcmp(timeout_in, "NlpRequestInterpretationBuild") == 0)
+    {
+      ctrl_nlp_th->timeout_in = nlp_timeout_in_NlpRequestInterpretationBuild;
     }
     else if (strcmp(timeout_in, "NlpPackageGet") == 0)
     {

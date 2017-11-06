@@ -1,0 +1,84 @@
+{
+  "id": "11c6fda2-be17-11e7-adc1-509a4c4698dc",
+  "slug": "want-hotel",
+  "interpretations": [
+    {
+      "id": "11c6feb0-be17-11e7-adc1-509a4c4698dc",
+      "slug": "want",
+      "expressions": [
+        {
+          "expression": "I want",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "I need",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "I search",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "I'm looking for",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "11c6ffdc-be17-11e7-adc1-509a4c4698dc",
+      "slug": "hotel",
+      "expressions": [
+        {
+          "expression": "an hotel",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "11c700b8-be17-11e7-adc1-509a4c4698dc",
+      "slug": "want-hotel",
+      "expressions": [
+        {
+          "expression": "@{want} @{hotel}",
+          "aliases": [
+            {
+              "alias": "want",
+              "slug": "want",
+              "id": "11c6feb0-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c6fda2-be17-11e7-adc1-509a4c4698dc"
+            },
+            {
+              "alias": "hotel",
+              "slug": "hotel",
+              "id": "11c6ffdc-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c6fda2-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "11c70194-be17-11e7-adc1-509a4c4698dc",
+      "slug": "want-hotel-with-feature",
+      "expressions": [
+        {
+          "expression": "@{want-hotel} @{pg-building-feature}",
+          "aliases": [
+            {
+              "alias": "want-hotel",
+              "slug": "want-hotel",
+              "id": "11c700b8-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c6fda2-be17-11e7-adc1-509a4c4698dc"
+            },
+            {
+              "alias": "pg-building-feature",
+              "slug": "pg-building-feature",
+              "id": "11c6ee66-be17-11e7-adc1-509a4c4698dc",
+              "package": "11c64c90-be17-11e7-adc1-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

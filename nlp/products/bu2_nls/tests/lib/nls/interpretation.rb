@@ -4,6 +4,7 @@ module Nls
 
   class Interpretation
 
+    @@default_locale = "fr-FR"
     attr_reader :id
     attr_reader :slug
     attr_reader :expressions
@@ -52,6 +53,26 @@ module Nls
 
     def to_json(options = {})
       to_h.to_json(options)
+    end
+
+    def new_expression(text, aliases = [], locale = nil, keep_order = nil)
+      add_expression(Expression.new(text, aliases, locale, keep_order))
+      self
+    end
+
+    def new_textual(texts = [], locale = @@default_locale)
+      texts.each do |t|
+        add_expression(Expression.new(t, [], locale))
+      end
+      self
+    end
+
+    def self.default_locale=(locale)
+      @@default_locale = locale
+    end
+
+    def self.default_locale
+      @@default_locale
     end
 
   end

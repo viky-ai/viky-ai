@@ -37,8 +37,10 @@ PUBLIC(void *) OgHeapNewCell(og_heap handle, size_t *p_cell_index)
   // get pointer
   void *cell = OgHeapGetCell(handle, cell_index);
 
+  memset(cell, 0, sizeof(handle->cell_size));
+
   // set cell index
-  if(p_cell_index != NULL)
+  if (p_cell_index != NULL)
   {
     if(cell != NULL)
     {
@@ -64,6 +66,15 @@ PUBLIC(void *) OgHeapNewCell(og_heap handle, size_t *p_cell_index)
 PUBLIC(size_t) OgHeapAddCells(og_heap ctrl_heap, int nb_cells)
 {
   size_t cell_start, cell_index;
+
+  if (ctrl_heap->freezed)
+  {
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapAddCells on '%s': is freezed you cannot add cells", ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    DPcErr;
+  }
 
   if (nb_cells < 1)
   {

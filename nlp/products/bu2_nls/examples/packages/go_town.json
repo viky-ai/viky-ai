@@ -1,0 +1,159 @@
+{
+  "id": "0d981484-9313-11e7-abc4-cec278b6b51c",
+  "slug": "aller-ville",
+  "interpretations": [
+
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b6b50c",
+      "slug": "go-towns",
+      "expressions": [
+        {
+          "expression": "@{go} @{towns}",
+          "aliases": [
+            {
+              "alias": "go",
+              "slug": "go",
+              "id": "0d981484-9313-11e7-abc4-cec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "towns",
+              "slug": "towns",
+              "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b6b50f",
+      "slug": "go",
+      "expressions": [
+        {
+          "expression": "go to",
+          "locale": "en-GB"
+        }
+      ]
+    },
+
+    {
+      "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
+      "slug": "towns",
+      "expressions": [
+        {
+          "expression": "@{town} @{towns}",
+          "aliases": [
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "towns",
+              "slug": "towns",
+              "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        },
+        {
+          "expression": "@{town}",
+          "aliases": [
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+
+
+
+    {
+      "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+      "slug": "town",
+      "expressions": [
+        {
+          "expression": "@{new-york}",
+          "aliases": [
+            {
+              "alias": "new-york",
+              "slug": "new-york",
+              "id": "0d981484-9313-11e7-abc5-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        },
+        {
+          "expression": "@{barcelona}",
+          "aliases": [
+            {
+              "alias": "barcelona",
+              "slug": "barcelona",
+              "id": "0d981484-9313-11e7-abc6-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        },
+        {
+          "expression": "@{paris}",
+          "aliases": [
+            {
+              "alias": "paris",
+              "slug": "paris",
+              "id": "0d981484-9313-11e7-abc7-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc5-cec278b6b50e",
+      "slug": "new-york",
+      "expressions": [
+        {
+          "expression": "New York",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "NYC",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc6-cec278b6b50e",
+      "slug": "barcelona",
+      "expressions": [
+        {
+          "expression": "Barcelona",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "Barca",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc7-cec278b6b50e",
+      "slug": "paris",
+      "expressions": [
+        {
+          "expression": "Paris",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "Capital of France",
+          "locale": "en-GB"
+        }
+      ]
+    }
+  ]
+}

@@ -191,7 +191,7 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   msg_param->hmutex = lt->hmutex;
   msg_param->loginfo.trace = DOgMsgTraceMinimal + DOgMsgTraceMemory;
   msg_param->loginfo.where = ctrl_nls->loginfo->where;
-  snprintf(lt_name, DPcPathSize, "lt_%2d_msg", lt->ID);
+  snprintf(lt_name, DPcPathSize, "lt_%.2d_msg", lt->ID);
   msg_param->module_name = lt_name;
   IFn(lt->hmsg=OgMsgInit(msg_param)) DPcErr;
   IFE(OgMsgTuneInherit(lt->hmsg, ctrl_nls->hmsg));
@@ -208,7 +208,7 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   uci_param->loginfo.where = ctrl_nls->loginfo->where;
   IFn(lt->hucis=OgUciServerInit(uci_param)) DPcErr;
 
-  snprintf(lt_name, DPcPathSize, "lt_%2d_json_answer", lt->ID);
+  snprintf(lt_name, DPcPathSize, "lt_%.2d_json_answer", lt->ID);
   lt->h_json_answer = OgHeapInit(lt->hmsg, lt_name, sizeof(unsigned char), DPcPathSize / 4);
   IFN(lt->h_json_answer) DPcErr;
 
@@ -219,7 +219,7 @@ og_status NlsLtInit(struct og_listening_thread *lt)
   nlpi_param->hmutex = lt->hmutex;
   nlpi_param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   nlpi_param->loginfo.where = ctrl_nls->loginfo->where;
-  snprintf(lt_name, DPcPathSize, "lt_%2d_nlpth", lt->ID);
+  snprintf(lt_name, DPcPathSize, "lt_%.2d_nlpth", lt->ID);
   nlpi_param->name = lt_name;
   lt->hnlp_th = OgNlpThreadedInit(ctrl_nls->hnlp, nlpi_param);
   IFN(lt->hnlp_th) DPcErr;

@@ -43,6 +43,7 @@ DEFPUBLIC(og_heap) OgHeapSliceInit(void *hmsg, unsigned char *name, size_t cell_
 DEFPUBLIC(og_status) OgHeapFlush(og_heap handle);
 DEFPUBLIC(og_status) OgHeapCheckNotSliced(og_heap handle);
 DEFPUBLIC(og_status) OgHeapCheckSliced(og_heap handle);
+DEFPUBLIC(og_status) OgHeapFreeze(og_heap ctrl_heap);
 DEFPUBLIC(size_t) OgHeapAddCell(og_heap handle);
 DEFPUBLIC(size_t) OgHeapAddCells(og_heap handle, int nb_cells);
 DEFPUBLIC(void *) OgHeapNewCell(og_heap handle, size_t *p_cell_index);

@@ -5,6 +5,8 @@
  *  Version 1.0
  */
 #include <lognlp.h>
+#include <logaut.h>
+#include <loguni.h>
 #include <logheap.h>
 #include <logsysi.h>
 #include <logis639_3166.h>
@@ -17,39 +19,25 @@
 #define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
 
+#define DOgNlpRequestWordNumber 0x10
+#define DOgNlpRequestInputPartNumber 0x10
+#define DOgNlpRequestExpressionNumber 0x10
+#define DOgNlpRequestPositionNumber (DOgNlpRequestExpressionNumber*2+DOgNlpRequestInputPartNumber)
+#define DOgNlpBaNumber 0x100
+
 #define DOgNlpInterpretationExpressionMaxLength 0x800
-
-
 
 #define DOgNlpMaximumOwnedLock      16
 
-
-struct alias
-{
-  int alias_start, alias_length;
-  int slug_start, slug_length; // interpretation slug
-  int id_start, id_length; // interpretation id
-  int package_start, package_length;
-};
-
-struct expression
-{
-  int text_start, text_length;
-  int alias_start, aliases_nb;
-  int locale;
-  int input_part_start, input_parts_nb;
-  int activated;
-};
-
-struct interpretation
-{
-  int id_start, id_length;
-  int slug_start, slug_length;
-  int expression_start, expressions_nb;
-};
+#define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
+  { \
+    NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
+  }
 
 struct package
 {
+  struct og_ctrl_nlp *ctrl_nlp;
+
   // =======================================
   // memory management
 
@@ -66,49 +54,173 @@ struct package
 
   // =======================================
 
-  int id_start, id_length;
-  int slug_start, slug_length;
-  og_heap hba;
+  og_bool consolidate_done;
+
+  og_string id;
+  og_string slug;
+
+  /** hinterpretation_ba : String heap for interpretation, read-only after compilation step */
+  og_heap hinterpretation_ba;
+  og_heap hinterpretation_compile;
   og_heap hinterpretation;
+
+  /** hexpression_ba : String heap for expression, read-only after compilation step */
+  og_heap hexpression_ba;
+  og_heap hexpression_compile;
   og_heap hexpression;
+
+  /** halias_ba : String heap for alias, read-only after compilation step */
+  og_heap halias_ba;
+  og_heap halias_compile;
   og_heap halias;
+
+  /** hinput_part_ba : String heap for input_part, read-only after compilation step */
+  og_heap hinput_part_ba;
   og_heap hinput_part;
+
+  /** Automaton : "<string_word>\1<Iinput_part>" */
+  void *ha_word;
+
+  /** Automaton : "<interpretation_id>\1<Iinput_part>" */
+  void *ha_interpretation_id;
+
 };
 
 typedef struct package *package_t;
 
+enum nlp_alias_type
+{
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any
+};
+
+struct alias_compile
+{
+  enum nlp_alias_type type;
+  int alias_start, alias_length;
+  int slug_start, slug_length;       // interpretation slug
+  int id_start, id_length;           // interpretation id
+  int package_id_start, package_id_length;
+};
+
+struct alias
+{
+  enum nlp_alias_type type;
+
+  /** alias name */
+  og_string alias;
+  int alias_length;
+
+  /** interpretation */
+  og_string slug;
+  og_string id;
+  og_string package_id;
+};
+
+struct expression_compile
+{
+  int text_start;
+  og_bool keep_order;
+  int alias_start, aliases_nb;
+  int locale;
+  int input_part_start, input_parts_nb;
+  json_t *json_solution;
+};
+
+struct expression
+{
+  /** Parent */
+  struct interpretation *interpretation;
+
+  og_string text;
+
+  og_bool keep_order;
+
+  int locale;
+
+  int aliases_nb;
+  struct alias *aliases;
+
+  int input_parts_nb;
+
+  union
+  {
+    /** during consolidation process */
+    int input_part_start;
+
+    /** after consolidation process */
+    struct input_part *input_parts;
+  };
+
+  int alias_any_input_part_position;
+
+  json_t *json_solution;
+};
+
+struct interpretation_compile
+{
+  package_t package;
+  int id_start, id_length;
+  int slug_start, slug_length;
+  int expression_start, expressions_nb;
+  json_t *json_solution;
+};
+
+struct interpretation
+{
+  /** Parent */
+  package_t package;
+
+  og_string id;
+  og_string slug;
+  json_t *json_solution;
+
+  int expressions_nb;
+  struct expression *expressions;
+};
+
 struct interpret_package
 {
+  int self_index;
   package_t package;
 };
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0,
-  nlp_input_part_type_Word,
-  nlp_input_part_type_Interpretation
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation
 };
 
 struct input_part
 {
-  enum nlp_input_part_type type;
-  int word_start, word_length;
-  package_t interpretation_package;
-  int Iinterpretation;
-};
+  /** Parent */
+  struct expression *expression;
 
+  enum nlp_input_part_type type;
+  union
+  {
+
+    /** nlp_input_part_type_Word */
+    int word_start;
+
+    /** nlp_input_part_type_Interpretation */
+    struct alias *alias;
+
+  };
+
+};
 
 enum nlp_synchro_test_timeout_in
 {
   nlp_timeout_in_NONE = 0,
   nlp_timeout_in_NlpPackageAddOrReplace,
-  nlp_timeout_in_NlpPackageGet
+  nlp_timeout_in_NlpPackageGet,
+  nlp_timeout_in_NlpInterpretRequestParse,
+  nlp_timeout_in_NlpMatchExpressions,
+  nlp_timeout_in_NlpRequestInterpretationBuild
 };
 
 enum nlp_synchro_lock_type
 {
-  nlp_synchro_lock_type_read,
-  nlp_synchro_lock_type_write
+  nlp_synchro_lock_type_read, nlp_synchro_lock_type_write
 };
 
 struct nlp_synchro_lock
@@ -122,6 +234,137 @@ struct nlp_synchro_current_lock
 {
   int used;
   struct nlp_synchro_lock lock[DOgNlpMaximumOwnedLock];
+};
+
+struct request_word
+{
+  int start;
+  int length;
+  int start_position;
+  int length_position;
+};
+
+struct request_input_part
+{
+  /** from zero (only words) to N */
+  int level;
+
+  enum nlp_input_part_type type;
+  union
+  {
+    /** sliced heap, used when type=nlp_input_part_type_Word */
+    struct request_word *request_word;
+
+    /** used when type=nlp_input_part_type_Interpretation */
+    int Irequest_expression;
+  };
+
+  /** direct link to input_part, package can be retrieved in the structure */
+  struct input_part *input_part;
+  struct interpret_package *interpret_package;   // used for sorting only
+  int Iinput_part;   // used for sorting only
+
+  int request_position_start;
+  int request_positions_nb;
+  int request_position_distance;
+
+  int Ioriginal_request_input_part;
+};
+
+struct request_position
+{
+  int start;
+  int length;
+};
+
+struct original_request_input_part
+{
+  int Irequest_input_part;
+};
+
+struct orip
+{
+  int Ioriginal_request_input_part;
+};
+
+struct request_any
+{
+  int request_word_start;
+  int request_words_nb;
+
+  /** used to optimize the attachement any <-> request_expression */
+  GQueue queue_request_expression[1];
+  int consumed;
+};
+
+struct request_expression
+{
+  int self_index;
+
+  /** from zero (only words) to N */
+  int level;
+
+  /** matched expression */
+  struct expression *expression;
+
+  int request_position_start;
+  int request_positions_nb;
+  int input_parts_compacity;
+
+  int orip_start;
+  int orips_nb;
+
+  /** all possible any for request expression */
+  int request_any_start;
+  int request_anys_nb;
+
+  int Irequest_any;
+
+  /** used locally for various scanning */
+  int analyzed;
+
+  og_bool keep_as_result;
+
+  json_t *json_solution;
+};
+
+#define DOgMatchZoneInputPartSize 0x100
+struct match_zone_input_part
+{
+  int start;
+  int length;
+  int current;
+};
+
+struct og_nlp_punctuation_word
+{
+  /** string bytes lentgh */
+  int length;
+
+  /** UTF-8 punctuation word value*/
+  og_string string;
+};
+
+#define DOgNlpParsePunctCharMaxNb 16
+#define DOgNlpParsePunctWordMaxNb 32
+struct og_nlp_parse_conf
+{
+  /** Single unicode char skipped */
+  gunichar punct_char[DOgNlpParsePunctCharMaxNb];
+  int punct_char_used;
+
+  /** Single unicode char treated as word */
+  gunichar punct_char_word[DOgNlpParsePunctCharMaxNb];
+  int punct_char_word_used;
+
+  /** Multiple char ward in utf-8  treated as word */
+  struct og_nlp_punctuation_word punct_word[DOgNlpParsePunctWordMaxNb];
+  int punct_word_used;
+};
+
+struct og_nlp_parse_callback
+{
+
 };
 
 struct og_ctrl_nlp_threaded
@@ -143,16 +386,44 @@ struct og_ctrl_nlp_threaded
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
   struct nlp_synchro_current_lock current_lock[1];
 
+
+  /** Package beeing created */
+  package_t package_in_progress;
+
+  /** Loop level for the matching **/
+  int level;
+
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  og_bool show_explanation;
+  unsigned int regular_trace;
+  og_heap hrequest_word;
+  og_heap hba;
+
+  /** Heap of struct request_input_part */
+  og_heap hrequest_input_part;
+  og_heap horiginal_request_input_part;
+  og_heap horip;
+
+  /** Heap of struct request_expression */
+  og_heap hrequest_expression;
+
+  /** Heap of struct request_position */
+  og_heap hrequest_position;
+
+  og_heap hrequest_any;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
    * (reset clean this list at the end of the request), it is better
-   * to mark it as used soon as possible
+   * to mark it as used as soon as possible
    */
   GQueue package_in_used[1];
+  GQueue sorted_request_expressions[1];
+
+  int new_request_expression_start;
+  int new_request_input_part_start;
 
 };
 
@@ -166,6 +437,9 @@ struct og_ctrl_nlp
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
 
+  /** Parsing configuration */
+  struct og_nlp_parse_conf parse_conf[1];
+
 };
 
 /* nlperr.c */
@@ -173,14 +447,31 @@ og_status NlpThrowError(og_nlp ctrl_nlp, og_string format, ...);
 og_status NlpThrowErrorTh(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlplog.c */
-og_status NlpLogInfo(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
-og_status NlpLogDebug(og_nlp_th ctrl_nlp_th, og_bitfield trace_component, og_string format, ...);
-og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated);
-og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
-og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iexpression);
-og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, int Ialias);
-og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
+og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...);
+og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
+    size_t flags);
+og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, og_string label, package_t package);
+og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation);
+og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation *interpretation);
+og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
+og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part);
+og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+
+og_status NlpPackageCompileLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation);
+og_status NlpPackageCompileInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation);
+og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression);
+og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression_compile *expression);
+og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias_compile *alias);
+
+og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -191,7 +482,7 @@ og_status OgNlpSynchroWriteUnLock(og_nlp_th ctrl_nlp_th, ogsysi_rwlock rwlock);
 og_status OgNlpSynchroTestSleepIfTimeoutNeeded(og_nlp_th ctrl_nlp_th, enum nlp_synchro_test_timeout_in timeout_in);
 
 /* nlpackage.c */
-package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, const char *string_id, const char *string_slug);
+package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string string_slug);
 og_status NlpPackageAddOrReplace(og_nlp_th ctrl_nlp_th, package_t package);
 package_t NlpPackageGet(og_nlp_th ctrl_nlp_th, og_string package_id);
 og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package);
@@ -209,4 +500,100 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
 /* nlpconsolidate.c */
 og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpipword.c */
+og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartWordFlush(package_t package);
+og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
+    int Iinput_part);
+og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpipalias.c */
+og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpInputPartAliasFlush(package_t package);
+og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string interpretation_id,
+    size_t Iinput_part);
+og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpmatch.c */
+og_status NlpMatch(og_nlp_th ctrl_nlp_th);
+
+/* nlpparse.c */
+og_status NlpParseConfInit(og_nlp ctrl_nlp);
+og_status NlpParseConfFlush(og_nlp ctrl_nlp);
+og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th);
+og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
+    int *p_punct_length_bytes);
+
+/* nlprip.c */
+og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
+    struct interpret_package *interpret_package, int Iinput_part);
+og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct interpret_package *interpret_package, int Iinput_part);
+struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int Iorip);
+og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2);
+og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
+og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
+
+/* nlprexpression.c */
+og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
+    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
+og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
+og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
+og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
+og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
+
+/* nlprposition.c */
+og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
+og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
+og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
+og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
+og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
+int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
+    char *string);
+int NlpRequestPositionStringHighlight(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
+    int size, char *string);
+
+/* nlporip.c */
+og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int Ioriginal_request_input_part);
+
+/* nlptree.c */
+og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlpany.c */
+og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th);
+og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
+    struct request_expression *request_expression);
+int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression);
+int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+
+/* nlpanyopt.c */
+int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
+
+/* nlpreopt.c */
+og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
+
+/* nlptreejson.c */
+og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_interpretation);
+
+/* nlpsol.c */
+og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
+    char *string);
 

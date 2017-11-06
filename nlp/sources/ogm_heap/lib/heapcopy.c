@@ -19,6 +19,17 @@ PUBLIC(size_t) OgHeapCopy(og_heap heap_from, og_heap heap_to)
   struct og_ctrl_heap *ctrl_heap_from = heap_from;
   struct og_ctrl_heap *ctrl_heap_to = heap_to;
 
+  if (heap_to->freezed)
+  {
+    og_heap ctrl_heap = heap_to;
+    og_char_buffer erreur[DOgErrorSize];
+    snprintf(erreur, DOgErrorSize, "OgHeapCopy on '%s': is freezed you copy cells to",
+        ctrl_heap->name);
+    OgErr(ctrl_heap->herr, erreur);
+    OG_LOG_BACKTRACE(ctrl_heap->hmsg, erreur);
+    DPcErr;
+  }
+
   if (ctrl_heap_to->type != DOgHeapTypeNormal)
   {
     og_char_buffer erreur[DOgErrorSize];
