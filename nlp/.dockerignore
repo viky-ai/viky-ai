@@ -1,2 +1,8 @@
 build/
 ship/
+
+# Duktape temp file
+external_dependencies/duktape/dist
+external_dependencies/duktape/tests
+external_dependencies/duktape/website
+external_dependencies/duktape/references
