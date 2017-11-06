@@ -19,6 +19,9 @@ uriparser:
 
 glib:
 	$(MAKE) -f glib.makefile $(MAKECMDGOALS)
+	
+duktape:
+	$(MAKE) -f duktape.makefile $(MAKECMDGOALS)
 
 fullclean: $(EXTERNALS_LIB)
 
