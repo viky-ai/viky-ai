@@ -10,3 +10,6 @@
 	path = nlp/sources/external_dependencies/glib
   url = http://gitlab.pertimm.corp/voqal.ai/dependencies/glib.git
   branch = 2.54.1
+[submodule "nlp/sources/external_dependencies/duktape"]
+	path = nlp/sources/external_dependencies/duktape
+	url = http://gitlab.pertimm.corp/voqal.ai/dependencies/duktape.git
