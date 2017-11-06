@@ -11,13 +11,14 @@
       <p>
         <%= t('views.agents.confirm_transfer_ownership.content_html', name: agent.name) %>
       </p>
-      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, data: { type: 'json' }, class: 'js-agent-transfert' do |transfer_form| %>
+      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, class: 'js-user-search' do |transfer_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>
-            <input type="text" name="users[new_owner]" id="input-new-owner"
+            <input type="text" name="users[new_owner_id]" id="input-user-search"
               data-remote-url="<%= search_users_for_transfer_ownership_user_agent_path(current_user, agent) %>"
-              data-placeholder="<%= t('views.agents.confirm_transfer_ownership.placeholder') %>" />
+              data-placeholder="<%= t('views.agents.confirm_transfer_ownership.placeholder') %>"
+              data-max-items="1" />
             <% unless errors.empty? %>
               <div class="help help--error">
                 <span class="icon icon--x-small"><%= icon_alert %></span>

@@ -19,8 +19,14 @@ class Backend::UsersController < Backend::ApplicationController
 
   def destroy
     @user = User.friendly.find(params[:id])
-    @user.destroy
-    redirect_to backend_users_url, notice: t('views.backend.users.destroy.message', email: @user.email)
+    if @user.destroy
+      redirect_to backend_users_url, notice: t('views.backend.users.destroy.success_message', email: @user.email)
+    else
+      redirect_to backend_users_url, alert: t(
+        'views.backend.users.destroy.errors_message',
+        errors: @user.errors.full_messages.join(', ')
+      )
+    end
   end
 
 end

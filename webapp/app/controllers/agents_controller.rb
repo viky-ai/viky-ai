@@ -1,5 +1,5 @@
 class AgentsController < ApplicationController
-  before_action :set_user_and_agent, except: [:index, :new, :create]
+  before_action :set_owner_and_agent, except: [:index, :new, :create]
   before_action :check_user_rights, except: [:index, :new, :create]
 
   def index
@@ -19,7 +19,7 @@ class AgentsController < ApplicationController
 
   def create
     @agent = Agent.new(agent_params)
-    @agent.users << current_user
+    @agent.memberships << Membership.new(user_id: current_user.id, rights: 'all')
 
     respond_to do |format|
       if @agent.save
@@ -30,9 +30,8 @@ class AgentsController < ApplicationController
         @origin = 'index'
         format.json{
           render json: {
-            html: render_to_string(partial: 'new', formats: :html),
-            status: 422
-          }
+            replace_modal_content_with: render_to_string(partial: 'new', formats: :html),
+          }, status: 422
         }
       end
     end
@@ -54,9 +53,8 @@ class AgentsController < ApplicationController
       else
         format.json{
           render json: {
-            html: render_to_string(partial: 'edit', formats: :html),
-            status: 422
-          }
+            replace_modal_content_with: render_to_string(partial: 'edit', formats: :html),
+          }, status: 422
         }
       end
     end
@@ -67,8 +65,14 @@ class AgentsController < ApplicationController
   end
 
   def destroy
-    @agent.destroy
-    redirect_to agents_path, notice: t('views.agents.destroy.message', name: @agent.name)
+    if @agent.destroy
+      redirect_to agents_path, notice: t('views.agents.destroy.success_message', name: @agent.name)
+    else
+      redirect_to agents_path, alert: t(
+        'views.agents.destroy.errors_message',
+        errors: @agent.errors.full_messages.join(', ')
+      )
+    end
   end
 
   def confirm_transfer_ownership
@@ -76,7 +80,7 @@ class AgentsController < ApplicationController
   end
 
   def transfer_ownership
-    result = @agent.transfer_ownership_to(params[:users][:new_owner])
+    result = @agent.transfer_ownership_to(params[:users][:new_owner_id])
 
     respond_to do |format|
       if result[:success]
@@ -91,13 +95,12 @@ class AgentsController < ApplicationController
       else
         format.json {
           render json: {
-            html: render_to_string(
+            replace_modal_content_with: render_to_string(
               partial: 'confirm_transfer_ownership',
               formats: :html,
               locals: { agent: @agent, errors: result[:errors] }
-            ),
-            status: 422
-          }
+            )
+          }, status: 422
         }
       end
     end
@@ -110,34 +113,47 @@ class AgentsController < ApplicationController
         @users = []
         unless query.nil?
           if query.size > 2
-            @users = User.confirmed.where(
-              "id != ? AND ( email LIKE ? OR username LIKE ? )",
-              @agent.owner_id, "%#{query}%", "%#{query}%"
-            ).limit(10)
+            @users = User.confirmed
+              .where.not(id: @agent.owner_id)
+              .where("email LIKE ? OR username LIKE ?", "%#{query}%", "%#{query}%")
+              .limit(10)
           end
         end
       }
     end
   end
 
+  def generate_token
+    @agent.ensure_api_token
+    render json: { api_token: @agent.api_token }
+  end
+
 
   private
 
     def check_user_rights
-      unless current_user.id == @user.id
-        flash[:alert] = t('views.agents.index.authorisation_refused')
-        redirect_to agents_path
+      case action_name
+      when "show"
+        access_denied unless current_user.can? :show, @agent
+      when "edit", "update"
+        access_denied unless current_user.can? :edit, @agent
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
+        access_denied unless current_user.owner?(@agent)
       end
     end
 
-    def set_user_and_agent
-      @user = User.friendly.find(params[:user_id])
-      @agent = @user.agents.friendly.find(params[:id])
+    def set_owner_and_agent
+      begin
+        @owner = User.friendly.find(params[:user_id])
+        @agent = @owner.agents.friendly.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        redirect_to '/404'
+      end
     end
 
     def agent_params
       params.require(:agent).permit(
-        :name, :agentname, :description, :color, :image, :remove_image
+        :name, :agentname, :description, :color, :image, :remove_image, :api_token
       )
     end
 

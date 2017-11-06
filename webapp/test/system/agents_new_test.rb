@@ -43,7 +43,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    assert_equal expected, all('.agent-box h2').collect {|n| n.text}
+    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert_equal "Wall-e", first(".background-color-gradient__red h2").text
   end
 
@@ -70,7 +70,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
-    assert_equal expected, all('.agent-box h2').collect {|n| n.text}
+    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert all('.agent-box__header').last[:style].include? "background-image"
   end
 
@@ -107,6 +107,15 @@ class AgentsNewTest < ApplicationSystemTestCase
       assert page.has_text?(error)
     end
     assert_equal 1, all('.help--error').size
+  end
+
+
+  test "No Api Token is shown in creation" do
+    go_to_agents_creation
+    within(".modal") do
+      assert !page.has_text?("Api token")
+      assert_nil first("#agent_api_token")
+    end
   end
 
 end

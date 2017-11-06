@@ -1,0 +1,102 @@
+@import '../framework/abstracts/mixins';
+
+body,
+html{
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  line-height: 1.5em;
+  position: relative;
+}
+
+html{
+  background-color: lighten(#0E131A, 8%);
+  background-image:
+    url(images/sky.svg),
+    url(images/sky.svg),
+    url(images/sky.svg),
+    linear-gradient(to bottom, rgba(black, .3), rgba(black, 0));
+  background-size:
+    150px 75px,
+    200px 100px,
+    300px 150px,
+    100% 100%;
+}
+
+.container{
+  @include display_flex();
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+@-webkit-keyframes lifeAnimation {
+    0% { top: -30px; }
+   50% { top: -35px; }
+  100% { top: -30px; }
+}
+@-moz-keyframes lifeAnimation {
+    0% { top: -30px; }
+   50% { top: -35px; }
+  100% { top: -30px; }
+}
+@keyframes lifeAnimation {
+    0% { top: -30px; }
+   50% { top: -35px; }
+  100% { top: -30px; }
+}
+
+.message{
+  padding-bottom: 3em;
+  max-width: 40em;
+  .message__logo{
+    text-align: center;
+    svg{
+      width: 8em;
+    }
+  }
+  .message__box{
+    position: relative;
+    color: #fff;
+    background-color: rgba(black, .25);
+    border-radius: 3px;
+    border: 1px solid rgba(#000, .75);
+    box-shadow: 0 1px 0 rgba(#fff, .05);
+
+    &::after{
+      content: " ";
+      width: 52.5px;
+      height: 75px;
+      position: absolute;
+      top: -80px;
+      right: 20px;
+      background-image: url(images/robot-trouble-white.png);
+      background-size: 52.5px 75px;
+      -webkit-animation: 2s ease-in-out infinite lifeAnimation;
+         -moz-animation: 2s ease-in-out infinite lifeAnimation;
+              animation: 2s ease-in-out infinite lifeAnimation;
+    }
+  }
+
+  h1{
+    font-weight: 300;
+    font-size: 2em;
+    margin: 0;
+    padding: 1.5rem;
+    background-color: rgba(black, .5);
+  }
+  h2{
+    font-weight: 300;
+    font-size: 1.5em;
+    padding: 1rem 1.5rem;
+    margin: 0;
+    background-color: rgba(black, .25);
+  }
+  p{
+    margin: 0;
+    padding: 1rem 1.5rem;
+  }
+  a{
+    color: #fff;
+  }
+}

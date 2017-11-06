@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171016114217) do
+ActiveRecord::Schema.define(version: 20171030155848) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,8 @@ ActiveRecord::Schema.define(version: 20171016114217) do
     t.uuid "owner_id"
     t.string "color", default: "black"
     t.text "image_data"
+    t.string "api_token"
+    t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
 
@@ -45,6 +47,7 @@ ActiveRecord::Schema.define(version: 20171016114217) do
     t.uuid "agent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "rights", default: "show"
     t.index ["agent_id", "user_id"], name: "index_memberships_on_agent_id_and_user_id", unique: true
   end
 
@@ -92,4 +95,7 @@ ActiveRecord::Schema.define(version: 20171016114217) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "agents", "users", column: "owner_id"
+  add_foreign_key "memberships", "agents", on_delete: :cascade
+  add_foreign_key "memberships", "users", on_delete: :cascade
 end

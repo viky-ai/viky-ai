@@ -43,11 +43,13 @@ class UserTest < ActiveSupport::TestCase
   test "search & order_by" do
     s = Backend::UserSearch.new
     expected = [
+      'edit_on_agent_weather@viky.ai',
+      'show_on_agent_weather@viky.ai',
       'locked@viky.ai',
       'admin@viky.ai',
       'confirmed@viky.ai',
       'invited@viky.ai',
-      'notconfirmed@viky.ai'
+      'notconfirmed@viky.ai',
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
 
@@ -56,9 +58,11 @@ class UserTest < ActiveSupport::TestCase
     expected = [
       'admin@viky.ai',
       'confirmed@viky.ai',
+      'edit_on_agent_weather@viky.ai',
       'invited@viky.ai',
       'locked@viky.ai',
-      'notconfirmed@viky.ai'
+      'notconfirmed@viky.ai',
+      'show_on_agent_weather@viky.ai'
     ]
     assert_equal expected, User.search(s.options).all.collect(&:email)
   end
@@ -66,11 +70,13 @@ class UserTest < ActiveSupport::TestCase
 
   test "search & status" do
     s = Backend::UserSearch.new
-    assert_equal 5, User.search(s.options).count
+    assert_equal 7, User.search(s.options).count
 
     s = Backend::UserSearch.new(status: 'confirmed')
-    assert_equal 3, User.search(s.options).count
+    assert_equal 5, User.search(s.options).count
     expected = [
+      'edit_on_agent_weather@viky.ai',
+      'show_on_agent_weather@viky.ai',
       'locked@viky.ai',
       'admin@viky.ai',
       'confirmed@viky.ai'
@@ -93,7 +99,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "search by email" do
     s = Backend::UserSearch.new
-    assert_equal 5, User.search(s.options).count
+    assert_equal 7, User.search(s.options).count
 
     s = Backend::UserSearch.new(email: 'lock')
     assert_equal 1, User.search(s.options).count
@@ -115,11 +121,12 @@ class UserTest < ActiveSupport::TestCase
     assert !s.empty?
   end
 
+
   test "invitation status" do
     u = users(:invited)
-    travel_to (u.invitation_sent_at + User.invite_for + 1.seconds)
+    travel_to(u.invitation_sent_at + User.invite_for + 1.seconds)
     assert_equal :expired, u.invitation_status
-    travel_to (u.invitation_sent_at + User.invite_for - 1.seconds)
+    travel_to(u.invitation_sent_at + User.invite_for - 1.seconds)
     assert_equal :valid, u.invitation_status
     travel_back
   end
@@ -154,6 +161,67 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "admin@viky.ai", user.email
     user = User.friendly.find("new-new-admin")
     assert_equal "admin@viky.ai", user.email
+  end
+
+
+  test "Test user agent rights" do
+    admin_user = users(:admin)
+    weather_agent = agents(:weather)
+    weather_confirmed_agent = agents(:weather_confirmed)
+
+    assert admin_user.can?(:edit, weather_agent)
+    assert admin_user.can?(:show, weather_agent)
+    assert admin_user.owner?(weather_agent)
+
+    assert !admin_user.can?(:delete, weather_agent)
+
+    assert !admin_user.can?(:edit, weather_confirmed_agent)
+    assert !admin_user.can?(:show, weather_confirmed_agent)
+    assert !admin_user.owner?(weather_confirmed_agent)
+
+    show_on_agent_weather_user = users(:show_on_agent_weather)
+    assert !show_on_agent_weather_user.can?(:edit, weather_agent)
+    assert show_on_agent_weather_user.can?(:show, weather_agent)
+    assert !show_on_agent_weather_user.owner?(weather_agent)
+
+    assert !show_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
+    assert !show_on_agent_weather_user.can?(:show, weather_confirmed_agent)
+    assert !show_on_agent_weather_user.owner?(weather_confirmed_agent)
+
+    edit_on_agent_weather_user = users(:edit_on_agent_weather)
+    assert edit_on_agent_weather_user.can?(:edit, weather_agent)
+    assert edit_on_agent_weather_user.can?(:show, weather_agent)
+    assert !edit_on_agent_weather_user.owner?(weather_agent)
+
+    assert !edit_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
+    assert !edit_on_agent_weather_user.can?(:show, weather_confirmed_agent)
+    assert !edit_on_agent_weather_user.owner?(weather_confirmed_agent)
+  end
+
+
+  test "Can not destroy if user own agent" do
+    admin_user = users(:admin)
+
+    assert_equal 5, Membership.all.count
+    assert !admin_user.destroy
+
+    expected = ["You must delete all the agents you own"]
+    assert_equal expected, admin_user.errors.full_messages
+
+    assert !admin_user.can_be_destroyed?
+  end
+
+
+  test "Can destroy if user is only a collaborator" do
+    collaborator = users(:show_on_agent_weather)
+
+    assert_equal 3, Agent.all.count
+    assert_equal 5, Membership.all.count
+
+    assert collaborator.destroy
+
+    assert_equal 3, Agent.all.count
+    assert_equal 4, Membership.all.count
   end
 
 

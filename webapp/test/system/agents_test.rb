@@ -27,7 +27,19 @@ class AgentsTest < ApplicationSystemTestCase
   #
   # Delete
   #
-  test 'Button to delete agent is present' do
+  test 'Button to delete agent is not present' do
+    go_to_agents_index
+    first('.dropdown__trigger > button').click
+    assert !page.has_link?("Delete")
+  end
+
+  test 'Button to delete agent is (not) present' do
+    # Make agent deletable
+    agent = agents(:weather)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+
     go_to_agents_index
     first('.dropdown__trigger > button').click
     assert page.has_link?("Delete")
@@ -35,6 +47,12 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Delete with confirmation' do
+    # Make agent deletable
+    agent = agents(:weather)
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+
     before_count = Agent.count
     go_to_agents_index
 
@@ -128,5 +146,30 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('My awesome weather bot')
     assert_equal '/agents', current_path
   end
+  #
+  # Token
+  #
+  test "Api Token is shown in edit" do
+    go_to_agents_index
 
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    assert page.has_text?('Configure agent')
+
+    assert page.has_text?('API token')
+    assert_not_nil find("#agent_api_token")[:readonly]
+    prev_value = find("#agent_api_token").value
+
+    first(".field--api-token a").click
+    assert_not page.has_text?(prev_value)
+
+    click_button 'Update'
+    assert page.has_text?('Your agent has been successfully updated.')
+
+    first('.dropdown__trigger > button').click
+    click_link 'Configure'
+    after_value = find("#agent_api_token").value
+
+    assert_not_equal prev_value, after_value
+  end
 end

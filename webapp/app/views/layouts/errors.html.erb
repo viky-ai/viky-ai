@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>viky.ai</title>
+    <%= csrf_meta_tags %>
+    <meta name="turbolinks-cache-control" content="no-cache">
+    <%= render 'layouts/favicon' %>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <%= stylesheet_pack_tag 'errors', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'errors', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="message">
+        <div class="message__logo">
+          <%= logo_on_dark %>
+        </div>
+        <div class="message__box">
+          <%= yield %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

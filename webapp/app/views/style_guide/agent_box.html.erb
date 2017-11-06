@@ -1,0 +1,445 @@
+<div class="sg-intro">
+  <h1>Agent Box</h1>
+  <p>
+    Agent boxes are displayed via agent box grid. They are used to summarize agent info and allow user to identify conversational agent.
+  </p>
+</div>
+
+<section>
+  <h2>Agent Box</h2>
+  <%= highlight_html do %>
+<div class="agent-box">
+  <a href="#" class="agent-box__header background-color-gradient__brown">
+    <span class="agent-box__header__role">
+      <span class="badge badge--small badge--white badge--outline">
+        Owner
+      </span>
+    </span>
+    <h2>My awesome first agent</h2>
+    <h3>username/agentname</h3>
+  </a>
+  <div class="agent-box__content">
+    <div class="agent-box__content__info">
+      <p class="primary">3 collaborators</p>
+      <p class="secondary">Created about 2 hours ago.</p>
+    </div>
+    <div class="agent-box__content__actions">
+      <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Agent box grid & color variants</h2>
+  <p>
+    Uses <code>.agents-box-grid--full</code> css class for full width layout.
+    Uses <code>.agents-box-grid--sidebar</code> css class for layout with sidebar.
+  </p>
+  <p>
+    Available color variants for <code>.agent-box__header</code>:
+  </p>
+  <ul>
+    <li><code>.background-color-gradient__black</code></li>
+    <li><code>.background-color-gradient__brown</code></li>
+    <li><code>.background-color-gradient__red</code></li>
+    <li><code>.background-color-gradient__pink</code></li>
+    <li><code>.background-color-gradient__purple</code></li>
+    <li><code>.background-color-gradient__deep-purple</code></li>
+    <li><code>.background-color-gradient__indigo</code></li>
+    <li><code>.background-color-gradient__blue</code></li>
+    <li><code>.background-color-gradient__light-blue</code></li>
+    <li><code>.background-color-gradient__cyan</code></li>
+    <li><code>.background-color-gradient__teal</code></li>
+    <li><code>.background-color-gradient__green</code></li>
+    <li><code>.background-color-gradient__light-green</code></li>
+    <li><code>.background-color-gradient__lime</code></li>
+    <li><code>.background-color-gradient__yellow</code></li>
+    <li><code>.background-color-gradient__amber</code></li>
+    <li><code>.background-color-gradient__orange</code></li>
+    <li><code>.background-color-gradient__deep-orange</code></li>
+  </ul>
+  <%= highlight_html do %>
+<div class="agents-box-grid agents-box-grid--full">
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__black">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__black</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__brown">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__brown</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__red">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__red</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__pink">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__pink</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__purple">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__purple</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__deep-purple">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__deep-purple</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__indigo">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__indigo</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__blue">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__blue</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__light-blue">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__light-blue</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__cyan">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__cyan</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__teal">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__teal</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__green">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__green</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__light-green">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__light-green</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__lime">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__lime</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__yellow">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__yellow</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__amber">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__amber</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__orange">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__orange</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-box">
+    <a href="#" class="agent-box__header background-color-gradient__deep-orange">
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--white badge--outline">
+          Owner
+        </span>
+      </span>
+      <h2>background-color-gradient__deep-orange</h2>
+      <h3>username/agentname</h3>
+    </a>
+    <div class="agent-box__content">
+      <div class="agent-box__content__info">
+        <p class="primary">3 collaborators</p>
+        <p class="secondary">Created about 2 hours ago.</p>
+      </div>
+      <div class="agent-box__content__actions">
+        <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+
+</section>

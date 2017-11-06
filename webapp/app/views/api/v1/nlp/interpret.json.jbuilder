@@ -1,0 +1,1 @@
+json.intents @nlp.intents

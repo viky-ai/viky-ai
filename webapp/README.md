@@ -29,6 +29,8 @@ VOQALAPP_DB_PORT=5432
 
 VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
 VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
+
+VOQALAPP_NLP_URL='http://localhost:9345'
 ```
 
 ## Run in production environment
@@ -45,9 +47,9 @@ VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 ## Mail
 
 We use postmarkapp.com in order to send emails in `production` and `development` environment. Environment variable `POSTMARK_TOKEN` must be defined for `production` environment (default one is set for `development`).
-Emails from Devise are sent with `support@voqal.ai` sender.
+Emails from Devise are sent with `support@viky.ai` sender.
 
-Email address `postmarkapp@voqal.ai` is used to connect to postmarkapp.com UIs.
+Email address `postmarkapp@viky.ai` is used to connect to postmarkapp.com UIs.
 
 Mail delivery is performed through a high priority queue named `webapp_mailers` (see _Background jobs_ paragraph for details).
 
@@ -96,9 +98,9 @@ In Ubuntu you should:
 2. check to have the configuration file `/etc/docker/daemon.json` containing:
 ```
 {
-  "registry-mirrors": [
-    "http://docker-mirror.pertimm.corp:50000"
-  ]
+    "registry-mirrors": [
+      "http://docker-mirror.pertimm.corp:50000"
+    ]
 }
 ```
 3. add your current user into the `docker` system group: `sudo usermod -a -G groupName userName`
@@ -111,10 +113,15 @@ To ensure having all the webapp related processes up and running during developm
 
     foreman start
 
-which reads the `Procfile` behind the scenes, bringing the web server and workers up:
+If you obtain an authorization error from `docker`, you probably have to do:
 
-    sidekiq_redis:  redis-server --port 7372
-    workers:        bundle exec sidekiq -C config/sidekiq.yml
-    webpack:        ./bin/webpack-dev-server
-    web:            bundle exec rails s -p 3000
-    nlp_server:     docker run -it --volume "$(pwd)/import:/nls/import" -p "9345:9345" -t docker-registry.pertimm.net/voqal.ai/platform/nlp
+    docker login docker-registry.pertimm.net
+
+and give your `username` and `password` of the Pertimm services.
+
+## Doc
+
+Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
+
+    bundle install
+

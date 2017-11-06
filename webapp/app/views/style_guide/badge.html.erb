@@ -1,0 +1,102 @@
+<div class="sg-intro">
+  <h1>Badge</h1>
+  <p>
+    Badges are used to inform user of the status of a piece of information.
+    They must hold a small amounts of information.
+  </p>
+</div>
+
+<section>
+  <h2>Default</h2>
+  <%= highlight_html do %>
+<span class="badge">Default</span>
+  <% end %>
+</section>
+
+<section>
+  <h2>Color variants</h2>
+  <%= highlight_html do %>
+<span class="badge">Default</span>
+<span class="badge badge--grey">Grey</span>
+<span class="badge badge--black">Black</span>
+<span class="badge badge--primary">Primary</span>
+<span class="badge badge--success">Success</span>
+<span class="badge badge--warning">Warning</span>
+<span class="badge badge--danger">Danger</span>
+  <% end %>
+</section>
+
+<section>
+  <h2>Outline variants</h2>
+  <%= highlight_html do %>
+<span class="badge badge--outline">Default</span>
+<span class="badge badge--grey badge--outline">Grey</span>
+<span class="badge badge--black badge--outline">Black</span>
+<span class="badge badge--primary badge--outline">Primary</span>
+<span class="badge badge--success badge--outline">Success</span>
+<span class="badge badge--warning badge--outline">Warning</span>
+<span class="badge badge--danger badge--outline">Danger</span>
+  <% end %>
+</section>
+
+<section>
+  <h2>Size variants</h2>
+  <%= highlight_html do %>
+<span class="badge badge--small">Default</span>
+<span class="badge">Default</span>
+<span class="badge badge--medium">Medium</span>
+<span class="badge badge--large">Large</span>
+  <% end %>
+</section>
+
+<section>
+  <h2>Merged badges</h2>
+  <p>
+    Merged badges are compatible with color & size variants.<br />
+    Merged badges are not compatible with <code>.badge--outline</code> variants.
+  </p>
+  <%= highlight_html do %>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--grey">grey</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--black">black</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--success">success</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--warning">warning</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--danger">danger</span>
+</span>
+<br />
+<br />
+<span class="merged-badges">
+  <span class="badge badge--small">Badge</span>
+  <span class="badge badge--small badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge">Badge</span>
+  <span class="badge badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge badge--medium">Badge</span>
+  <span class="badge badge--medium badge--primary">primary</span>
+</span>
+<span class="merged-badges">
+  <span class="badge badge--large">Badge</span>
+  <span class="badge badge--large badge--primary">primary</span>
+</span>
+  <% end %>
+</section>
