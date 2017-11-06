@@ -1,7 +1,5 @@
 class ErrorsController < ActionController::Base
 
-  layout "marketing"
-
   def not_found
     @title = "404 - viky.ai"
     @message = t('errors.not_found.comment')

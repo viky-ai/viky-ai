@@ -9,9 +9,9 @@ en:
   errors:
     internal_error:
       title: Error 500
-      comment: An error was rised server side
-      action_message_html: Please get back to the <a href="/">home page</a>.
+      comment: Oops, an error was rised on server side.
+      action_message_html: Sorry, we will try to fix that. Please go back to your <a href="/">Agents list</a>.
     not_found:
       title: Error 404
-      comment: The requested resource does not exist
-      action_message_html: Please get back to the <a href="/">home page</a>.
+      comment: The requested page does not exist.
+      action_message_html: Please go back to your <a href="/">Agents list</a>.
