@@ -35,10 +35,10 @@ module Valgrind
       }
 
       # dump packages
-      (30 * nb_request_factor).times do |i|
-        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
-        assert !actual_dump_result.nil?, "dump #{i}"
-      end
+#      (30 * nb_request_factor).times do |i|
+#        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
+#        assert !actual_dump_result.nil?, "dump #{i}"
+#      end
 
       # launch simple query
       (1 * nb_request_factor).times do
@@ -46,85 +46,85 @@ module Valgrind
         assert !response.nil?
       end
 
-      # package update
-      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
-
-      expected_update_result =
-      {
-        "status" => "Package '#{@main_uuid}' successfully updated"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
-        assert_json expected_update_result, actual_update_result, "updating #{i}"
-      end
-
-      # launch queries with timeouts
-
-      # timeout NlpPackageGet for nlp recursive query
-      params = {
-        timeout: 20,
-        timeout_in: "NlpPackageGet"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_query, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      # timeout NlpInterpretRequestParse
-      params = {
-        timeout: 20,
-        timeout_in: "NlpInterpretRequestParse"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_query, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      # timeout NlpMatchExpressions
-      params = {
-        timeout: 20,
-        timeout_in: "NlpMatchExpressions"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_query, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      # timeout NlpRequestInterpretationBuild
-      params = {
-        timeout: 20,
-        timeout_in: "NlpRequestInterpretationBuild"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_query, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      # timeout NlpPackageAddOrReplace
-      params = {
-        timeout: 20,
-        timeout_in: "NlpPackageAddOrReplace"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.package_update(@main_package, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
+#      # package update
+#      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
+#
+#      expected_update_result =
+#      {
+#        "status" => "Package '#{@main_uuid}' successfully updated"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
+#        assert_json expected_update_result, actual_update_result, "updating #{i}"
+#      end
+#
+#      # launch queries with timeouts
+#
+#      # timeout NlpPackageGet for nlp recursive query
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpPackageGet"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
+#
+#      # timeout NlpInterpretRequestParse
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpInterpretRequestParse"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
+#
+#      # timeout NlpMatchExpressions
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpMatchExpressions"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
+#
+#      # timeout NlpRequestInterpretationBuild
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpRequestInterpretationBuild"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
+#
+#      # timeout NlpPackageAddOrReplace
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpPackageAddOrReplace"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.package_update(@main_package, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
 
 
     end

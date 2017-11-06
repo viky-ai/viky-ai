@@ -9,10 +9,11 @@ module Nls
     class TestInterpret < NlsTestCommon
 
       def test_interpret_simple
+        Nls.remove_all_packages
 
-        several_packages_several_intents
-
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         package = available_packages['datetime2']
 
@@ -21,19 +22,19 @@ module Nls
 
         actual = Nls.interpret_package(package, sentence)
 
-        expected = {
-          "interpretations" => [ interpretation.to_match  ]
-        }
+        expected = Answers.new(interpretation)
 
-        assert_equal expected, actual
+        assert_equal expected.to_h, actual
 
       end
 
       def test_interpret_several_package_same_sentence
 
-        several_packages_several_intents
+        Nls.remove_all_packages
 
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         package_1 = available_packages['datetime1']
         package_2 = available_packages['datetime3']
@@ -56,30 +57,23 @@ module Nls
 
         actual = Nls.interpret(param)
 
-        expected =
-        {
-          "interpretations" =>
-          [
-            json_interpretation_1.to_match,
-            json_interpretation_2.to_match,
-            json_interpretation_3.to_match,
-            json_interpretation_4.to_match
-          ]
-        }
+        expected = Answers.new(json_interpretation_1)
+        expected.add_answer(json_interpretation_2)
+        expected.add_answer(json_interpretation_3)
+        expected.add_answer(json_interpretation_4)
 
-        assert_equal expected, actual
+        assert_equal expected.to_h, actual
 
       end
 
       def test_interpret_parallel_query
-
+        # ici on laisse le serveur charger ses packages au demarrage car le package d'init est trop gros pour un update
         interpretations = []
 
         # Prepare data
         package = Package.new("package_test_interpret_parallel_query")
         1000.times do |j|
-          interpretation = Interpretation.new("interpretation_#{j}")
-          interpretation << Expression.new("sentence_#{j}")
+          interpretation = Interpretation.new("interpretation_#{j}").new_textual(["sentence_#{j}"])
           interpretations << interpretation
           package << interpretation
         end
@@ -95,21 +89,19 @@ module Nls
 
           actual = Nls.interpret_package(package, sentence)
 
-          expected =
-          {
-            "interpretations" => [ interpretation.to_match ]
-          }
+          expected = Answers.new(interpretation)
 
-          assert_equal expected, actual
+          assert_equal expected.to_h, actual
 
         end
       end
 
       def test_empty_sentence
+        Nls.remove_all_packages
 
-        several_packages_several_intents
-
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         package = available_packages['datetime1']
         expected_error = "NlsCheckRequestString : empty text in request"
@@ -122,10 +114,11 @@ module Nls
       end
 
       def test_too_long_sentence
+        Nls.remove_all_packages
 
-        several_packages_several_intents
-
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         package = available_packages['datetime1']
 
@@ -170,10 +163,11 @@ module Nls
       end
 
       def test_no_sentence_match
+        Nls.remove_all_packages
 
-        several_packages_several_intents
-
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         package = available_packages['datetime1']
         actual = Nls.interpret_package(package, "azerty")
