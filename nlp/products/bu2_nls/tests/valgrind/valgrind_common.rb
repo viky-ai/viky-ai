@@ -8,115 +8,97 @@ module Valgrind
 
       resetDir
 
-      several_packages_several_intents
+      Nls::Interpretation.default_locale = "en-GB"
 
-      @main_package = @available_packages["datetime1"]
+      # several_packages_several_intents
+      pg_building_feature_any = create_building_feature_any
+      pg_building_feature_any.to_file(importDir)
+
+      @main_package = @available_packages["pg-building-feature"]
       @main_uuid = @main_package.id
 
     end
 
     def interpret_queries(nb_request_factor)
 
-      # dump packages
-      (30 * nb_request_factor).times do |i|
-        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
-        assert !actual_dump_result.nil?, "dump #{i}"
-      end
-
-      # launch simple query
-      interpret_simple_query=
+      interpret_query=
       {
         "packages" => [ @main_uuid ],
-        "sentence" => "Hello Jean Marie",
-        "Accept-Language" => "fr-FR"
+        "sentence" => "with swimming pool with golf with sea view with spa",
+        "Accept-Language" => Nls::Interpretation.default_locale
       }
-
-      (100 * nb_request_factor).times do
-        response = Nls::Nls.interpret(interpret_simple_query)
-        assert !response.nil?
-      end
-
-      # package update
-      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
-
-      expected_update_result =
-      {
-        "status" => "Package '#{@main_uuid}' successfully updated"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
-        assert_json expected_update_result, actual_update_result, "updating #{i}"
-      end
-
-      # launch queries with timeouts
 
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
-      # timeout NlpPackageGet for hello world query
-      hello_world_query = {
+      params = {
+        timeout: 20000,
+      }
+
+      # dump packages
+#      (30 * nb_request_factor).times do |i|
+#        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
+#        assert !actual_dump_result.nil?, "dump #{i}"
+#      end
+
+      # launch simple query
+#      (1 * nb_request_factor).times do
+#        response = Nls::Nls.interpret(interpret_query, params)
+#        assert !response.nil?
+#      end
+
+      # package update
+#      url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
+#
+#      expected_update_result =
+#      {
+#        "status" => "Package '#{@main_uuid}' successfully updated"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        actual_update_result = Nls::Nls.query_post(url_add, @main_package)
+#        assert_json expected_update_result, actual_update_result, "updating #{i}"
+#      end
+
+      # launch queries with timeouts
+
+      # timeout NlpPackageGet for nlp recursive query
+      params = {
         timeout: 20,
         timeout_in: "NlpPackageGet"
       }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(interpret_simple_query, hello_world_query)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      # timeout NlpPackageAddOrReplace
-      params = {
-        timeout: 20,
-        timeout_in: "NlpPackageAddOrReplace"
-      }
-
-      json_package_to_update = full_minimal_package("titi1", "toto1", "Hello zorglub")
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.package_update(json_package_to_update, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
-
-      resetDir
-      Nls::Interpretation.default_locale = "en-GB"
-
-      # feed building feature_any
-      pg_building_feature_any = create_building_feature_any
-      pg_building_feature_any.to_file(importDir)
-
-      Nls::Nls.restart
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
 
       # timeout NlpInterpretRequestParse
-      params = {
-        timeout: 20,
-        timeout_in: "NlpInterpretRequestParse"
-      }
-
-      request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa", Nls::Interpretation.default_locale)
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(request, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpInterpretRequestParse"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
 
       # timeout NlpMatchExpressions
-      params = {
-        timeout: 20,
-        timeout_in: "NlpMatchExpressions"
-      }
-
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(request, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpMatchExpressions"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.interpret(interpret_query, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
 
       # timeout NlpRequestInterpretationBuild
       params = {
@@ -126,23 +108,24 @@ module Valgrind
 
       (30 * nb_request_factor).times do |i|
         exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(request, params)
+          Nls::Nls.interpret(interpret_query, params)
         end
         assert_response_has_error expected_error, exception, "Timeout #{i}"
       end
 
-      # timeout NlpInterpretRequestReset
-      params = {
-        timeout: 20,
-        timeout_in: "NlpInterpretRequestReset"
-      }
+#      # timeout NlpPackageAddOrReplace
+#      params = {
+#        timeout: 20,
+#        timeout_in: "NlpPackageAddOrReplace"
+#      }
+#
+#      (30 * nb_request_factor).times do |i|
+#        exception = assert_raises RestClient::ExceptionWithResponse do
+#          Nls::Nls.package_update(@main_package, params)
+#        end
+#        assert_response_has_error expected_error, exception, "Timeout #{i}"
+#      end
 
-      (30 * nb_request_factor).times do |i|
-        exception = assert_raises RestClient::ExceptionWithResponse do
-          Nls::Nls.interpret(request, params)
-        end
-        assert_response_has_error expected_error, exception, "Timeout #{i}"
-      end
 
     end
 

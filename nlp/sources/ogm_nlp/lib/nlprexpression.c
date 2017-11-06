@@ -225,7 +225,7 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestAnysAdd(ctrl_nlp_th, request_expression));
     IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
     IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
-    //IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
+    IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)

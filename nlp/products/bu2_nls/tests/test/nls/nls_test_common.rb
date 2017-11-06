@@ -87,6 +87,11 @@ module Nls
       }
     end
 
+    def add_solution_to_result(result, id_array, solution)
+      result["interpretations"][id_array]["solution"] = solution
+      result
+    end
+
     def expected_update_package(package_name)
       {
         "status" => "Package '#{package_name}' successfully updated"
@@ -199,6 +204,7 @@ module Nls
       i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", pg_building_features_hash)
                             .new_expression("@{pg-building-feature}", {'pg-building-feature': i_pg_building_feature})
       pg_building_feature << i_pg_building_features
+      @available_packages[pg_building_feature.slug] = pg_building_feature
 
       pg_building_feature
     end
