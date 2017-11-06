@@ -8,6 +8,7 @@ class MembershipTest < ActiveSupport::TestCase
     assert_equal ["User has already been taken"], membership.errors.full_messages
   end
 
+
   test "Check integrity constraints of membership" do
     unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
     exception_user = assert_raises do
@@ -15,7 +16,11 @@ class MembershipTest < ActiveSupport::TestCase
     end
     assert exception_user.message.include? "PG::ForeignKeyViolation"
 
-    unknown_agent = Agent.new(id: '64b95d18-83b2-4c36-8629-7fbfd84add53', name: 'Unknown agent', agentname: 'unknown_agent')
+    unknown_agent = Agent.new(
+      id: '64b95d18-83b2-4c36-8629-7fbfd84add53',
+      name: 'Unknown agent',
+      agentname: 'unknown_agent'
+    )
     exception_agent = assert_raises do
       Membership.new(user: users(:confirmed), agent: unknown_agent).save
     end
@@ -65,7 +70,11 @@ class MembershipTest < ActiveSupport::TestCase
 
   test "Error on share agent because of unknown agent" do
     user = users(:confirmed)
-    unknown_agent = Agent.new(id: '64b95d18-83b2-4c36-8629-7fbfd84add53', name: 'Unknown agent', agentname: 'unknown_agent')
+    unknown_agent = Agent.new(
+      id: '64b95d18-83b2-4c36-8629-7fbfd84add53',
+      name: 'Unknown agent',
+      agentname: 'unknown_agent'
+    )
     rights = 'edit'
 
     memberships_creator = MembershipsCreator.new(unknown_agent, [user.id], rights)

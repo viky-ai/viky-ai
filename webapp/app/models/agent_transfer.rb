@@ -59,7 +59,7 @@ class AgentTransfer
     def downgrade_previous_ownership
       previous_ownership = Membership.find_by(user_id: @agent.owner_id, agent_id: @agent.id)
       previous_ownership.rights = 'edit'
-      previous_ownership.save
+      previous_ownership.save!
     end
 
     def create_new_ownership

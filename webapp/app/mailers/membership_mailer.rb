@@ -10,10 +10,10 @@ class MembershipMailer < ApplicationMailer
     )
   end
 
-  def destroy_membership(owner, agent, new_collaborator)
+  def destroy_membership(owner, agent, revoked_collaborator)
     @agent = agent
     @owner = owner
-    @revoked_collaborator = new_collaborator
+    @revoked_collaborator = revoked_collaborator
     mail(
       to: @revoked_collaborator.email,
       subject: I18n.t('mailer.membership.destroy_membership.subject')

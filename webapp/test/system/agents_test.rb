@@ -146,6 +146,8 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('My awesome weather bot')
     assert_equal '/agents', current_path
   end
+
+
   #
   # Token
   #
