@@ -258,25 +258,37 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
     DPcErr;
   }
 
-  json_t *json_slug = json_string(alias->slug);
-  IF(json_object_set_new(json_alias, "slug", json_slug))
+  if(alias->type == nlp_alias_type_Any)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias slug '%s'", alias->slug);
-    DPcErr;
+    json_t *json_type_any = json_string("any");
+    IF(json_object_set_new(json_alias, "type", json_type_any))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias type 'any'");
+      DPcErr;
+    }
   }
-
-  json_t *json_id = json_string(alias->id);
-  IF(json_object_set_new(json_alias, "id", json_id))
+  else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias id '%s'", alias->id);
-    DPcErr;
-  }
+    json_t *json_slug = json_string(alias->slug);
+    IF(json_object_set_new(json_alias, "slug", json_slug))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias slug '%s'", alias->slug);
+      DPcErr;
+    }
 
-  json_t *json_package = json_string(alias->package_id);
-  IF(json_object_set_new(json_alias, "package", json_package))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias package", alias->package_id);
-    DPcErr;
+    json_t *json_id = json_string(alias->id);
+    IF(json_object_set_new(json_alias, "id", json_id))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias id '%s'", alias->id);
+      DPcErr;
+    }
+
+    json_t *json_package = json_string(alias->package_id);
+    IF(json_object_set_new(json_alias, "package", json_package))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias package", alias->package_id);
+      DPcErr;
+    }
   }
 
   DONE;
