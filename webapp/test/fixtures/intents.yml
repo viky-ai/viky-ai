@@ -1,0 +1,4 @@
+weather_greeting:
+  intentname: weather_greeting
+  description: My awesome weather bot description
+  agent: weather

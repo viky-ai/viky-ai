@@ -57,4 +57,13 @@ class IntentTest < ActiveSupport::TestCase
 
     assert_equal 'h3ll-o', intent.intentname
   end
+
+  test 'Check intent slug' do
+    intent = intents(:weather_greeting)
+    original_intentname = intent.intentname
+    intent.intentname = 'bonjour'
+    assert intent.save
+
+    assert_equal intent.id, Intent.friendly.find(original_intentname).id
+  end
 end

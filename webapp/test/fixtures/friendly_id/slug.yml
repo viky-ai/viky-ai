@@ -6,3 +6,7 @@ two:
   slug: admin
   sluggable_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc"
   sluggable_type: User
+
+three:
+  slug: weather_greeting
+  sluggable: weather_greeting (Intent)

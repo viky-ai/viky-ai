@@ -1,4 +1,6 @@
 class Intent < ApplicationRecord
+  extend FriendlyId
+  friendly_id :intentname, use: :history, slug_column: 'intentname'
 
   belongs_to :agent
 
