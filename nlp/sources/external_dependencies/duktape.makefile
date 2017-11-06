@@ -1,5 +1,6 @@
 #
 # Extrenal lib duktape
+# sudo apt-get install python-yaml
 #
 
 CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
