@@ -135,6 +135,11 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.package_delete(package)
+      package_url = "#{base_url}/packages/#{package.id}"
+      delete(package_url)
+    end
+
     def self.package_update(package, params = {})
       package_url = "#{base_url}/packages/#{package.id}"
       response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
@@ -147,11 +152,19 @@ module Nls
       pwd_local
     end
 
+    def self.remove_all_packages
+      dump_result = query_get(url_dump)
+      dump_result.each do |package|
+        package_url = "#{base_url}/packages/#{package["id"]}"
+        Nls.delete(package_url)
+      end
+    end
+
     private
 
     def self.exec(cmd, opts = {})
 
-      # defaulr values
+      # default values
       take_care_of_return  = true
       log                  = false
 

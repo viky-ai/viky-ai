@@ -169,8 +169,10 @@ module Nls
       @packages_dump << datetime5.to_h
 
       @available_packages.values.each do |package|
-      package.to_file(importDir)
+        package.to_file(importDir)
       end
+
+      @available_packages.values
 
     end
 

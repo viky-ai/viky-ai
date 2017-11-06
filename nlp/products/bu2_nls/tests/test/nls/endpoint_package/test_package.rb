@@ -18,8 +18,7 @@ module Nls
 
         Nls.restart
 
-        url_delete = Nls.url_packages + "/" + import_package2.id
-        actual = Nls.delete(url_delete)
+        actual = Nls.package_delete(import_package2)
 
         assert_json expected_delete_package(import_package2.id), actual
 

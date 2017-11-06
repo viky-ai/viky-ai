@@ -150,13 +150,12 @@ module Nls
       end
 
       def test_interpret_aller_de_a
+        Nls.remove_all_packages
 
         Interpretation.default_locale = "en-GB"
 
         aller_de_a = create_aller_de_a
-        aller_de_a.to_file(importDir)
-
-        Nls.restart
+        Nls.package_update(aller_de_a)
 
         # resultat attendu
         expected = expected_interpret_result(aller_de_a["want-go-from-to"])
@@ -169,12 +168,12 @@ module Nls
       end
 
       def test_interpret_aller_de_a_any
+        Nls.remove_all_packages
+
         Interpretation.default_locale = "en-GB"
 
         aller_de_a = create_aller_de_a_any
-        aller_de_a.to_file(importDir)
-
-        Nls.restart
+        Nls.package_update(aller_de_a)
 
         #resultat attendu
 
@@ -201,14 +200,13 @@ module Nls
       end
 
       def test_interpret_recursive
+        Nls.remove_all_packages
 
         Interpretation.default_locale = "en-GB"
 
         # creation du feed d'init
         go_town = create_go_town_recursive
-        go_town.to_file(importDir)
-
-        Nls.restart
+        Nls.package_update(go_town)
 
         expected = expected_interpret_result(go_town["go-town"])
 
@@ -220,11 +218,13 @@ module Nls
       end
 
       def test_interpret_builtin_features
+        Nls.remove_all_packages
+
         Interpretation.default_locale = "en-GB"
 
         # feed building features
         pg_building_feature = create_building_feature
-        pg_building_feature.to_file(importDir)
+        Nls.package_update(pg_building_feature)
 
         # feed want hotel
         want_hotel = Package.new("want-hotel")
@@ -243,10 +243,7 @@ module Nls
                                                   .new_expression("@{want-hotel} @{pg-building-features}", want_hotel_with_feature_hash)
         want_hotel << i_want_hotel_with_feature
 
-        want_hotel.to_file(importDir)
-
-        # deroulement du test
-        Nls.restart
+        Nls.package_update(want_hotel)
 
         #resultat attendu
         expected = expected_interpret_result(i_want_hotel_with_feature)
@@ -259,13 +256,13 @@ module Nls
       end
 
       def test_building_features
+        Nls.remove_all_packages
+
         Interpretation.default_locale = "en-GB"
 
         # feed building features
         pg_building_feature = create_building_feature
-        pg_building_feature.to_file(importDir)
-
-        Nls.restart
+        Nls.package_update(pg_building_feature)
 
         # resultat attendu
         expected = expected_interpret_result(pg_building_feature["pg-building-features"])
@@ -277,14 +274,13 @@ module Nls
       end
 
       def test_building_features_any
+        Nls.remove_all_packages
+
         Interpretation.default_locale = "en-GB"
 
         # feed building feature_any
         pg_building_feature_any = create_building_feature_any
-        pg_building_feature_any.to_file(importDir)
-
-        # deroulement du test
-        Nls.restart
+        Nls.package_update(pg_building_feature_any)
 
         # resultat attendu
         expected = expected_interpret_result(pg_building_feature_any["pg-building-features"])
