@@ -7,6 +7,9 @@ install Valgrind massif and memcheck
 install massif visualizer
 `sudo apt-get install massif-visualizer`
 
+install kcachegrind for callgrind
+`sudo apt-get install kcachegrind`
+
 Massif
 ======
 
@@ -22,3 +25,9 @@ Memcheck
 
 launch the command
 `rake test_memcheck`
+
+callgrind
+=========
+
+launch the command
+`rake test_callgrind`
