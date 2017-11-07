@@ -1,0 +1,53 @@
+.intents-list{
+  list-style: none;
+  padding: 0;
+  & > li{
+    @include clearfix();
+    background-color: #fff;
+    margin-bottom: .5em;
+
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
+    border-radius: 2px;
+    background-color: #fff;
+    border-radius: 2px;
+
+    & > a{
+      display: block;
+      float:left;
+      width: calc(100% - 190px);
+      line-height: 1.8em;
+      padding: .5rem 1rem;
+      text-decoration: none;
+      border-left: 5px solid transparent;
+      .intents-list__item__name{
+        display: block;
+      }
+      .intents-list__item__desc{
+        display: block;
+        color: #aaa;
+        font-size: .8em;
+        line-height: 1.4em;
+      }
+      &:focus,
+      &:hover{
+        border-left: 5px solid $primary-color;
+        .intents-list__item__name{
+          text-decoration: underline;
+        }
+      }
+    }
+    .intents-list__item__stats{
+      float:left;
+      font-size: .8em;
+      line-height: 1.8rem;
+      padding: .5rem;
+      color: #aaa;
+      text-align:right;
+      width: 130px;
+    }
+    .intents-list__item__actions{
+      float:right;
+      padding: .5rem;
+    }
+  }
+}

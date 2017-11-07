@@ -20,11 +20,12 @@ class StyleGuideController < ApplicationController
       { name: "Card",         slug: "card"         },
       { name: "Note",         slug: "note"         },
       { name: "Blankslate",   slug: "blankslate"   },
-      { name: "Agent",        slug: "agent"        },
-      { name: "Agent box",    slug: "agent_box"    },
       { name: "Modal",        slug: "modal"        },
       { name: "Tabs",         slug: "tabs"         },
-      { name: "Nav",          slug: "nav"          }
+      { name: "Nav",          slug: "nav"          },
+      { name: "Agent",        slug: "agent"        },
+      { name: "Agent box",    slug: "agent_box"    },
+      { name: "Intents list", slug: "intents_list" }
     ]
   end
 
