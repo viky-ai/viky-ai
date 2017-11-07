@@ -66,4 +66,13 @@ class IntentTest < ActiveSupport::TestCase
 
     assert_equal intent.id, Intent.friendly.find(original_intentname).id
   end
+
+  test 'Intent destroy' do
+    intent = intents(:weather_greeting)
+    intent_id = intent.id
+
+    assert_equal 1, Intent.where(id: intent_id).count
+    assert intent.destroy
+    assert_equal 0, Intent.where(id: intent_id).count
+  end
 end
