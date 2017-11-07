@@ -336,6 +336,14 @@ struct match_zone_input_part
   int current;
 };
 
+#define DOgAliasSolutionSize 0x100
+struct alias_solution
+{
+  struct alias *alias;
+  json_t *json_solution;
+};
+
+
 struct og_nlp_punctuation_word
 {
   /** string bytes lentgh */
@@ -594,6 +602,9 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
 
 /* nlpsol.c */
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
+og_status NlpRequestSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
     char *string);
+og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int size, char *string);
+
+
 

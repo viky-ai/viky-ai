@@ -96,7 +96,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "from": "`town.name`"
           }
         },
         {
@@ -115,7 +115,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "from": "`town.any`"
           }
         }
       ]
@@ -142,7 +142,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "to": "`town.name`"
           }
         },
         {
@@ -161,7 +161,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "to": "`town.any`"
           }
         }
       ]

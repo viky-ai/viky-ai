@@ -386,7 +386,7 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
       request_expression->request_positions_nb, DPcPathSize, highlight);
 
   char solution[DPcPathSize];
-  NlpSolutionString(ctrl_nlp_th, request_expression, DPcPathSize, solution);
+  NlpRequestSolutionString(ctrl_nlp_th, request_expression, DPcPathSize, solution);
 
   struct expression *expression = request_expression->expression;
 
