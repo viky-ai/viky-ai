@@ -137,10 +137,13 @@
 <section>
   <h2>Reorganize list state</h2>
   <p>
-    Link to intent is disabled via CSS class <code>.disabled</code>. <code>div.intents-list__item__stats</code> and <code>div.intents-list__item__actions</code> are hidden. <code>div.intents-list__item__draggable</code> is displayed in order to show the draggable handle.
+    Link to intent is disabled via CSS class <code>.disabled</code>. HTML <code>div</code> with CSS class<code>.intents-list__item__stats</code> and <code>.intents-list__item__actions</code> are hidden. HTML <code>div</code> with CSS class <code>.intents-list__item__draggable</code> are displayed in order to show the draggable handle.
+  </p>
+  <p>
+    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
   <%= highlight_html do %>
-<ul class="intents-list">
+<ul class="intents-list" id="sortable-list">
   <li>
     <a href="#" class="disabled">
       <span class="intents-list__item__name">travel-from-to</span>
@@ -187,5 +190,11 @@
     </div>
   </li>
 </ul>
+<script>
+  Sortable.create($('#sortable-list')[0], {
+    handle: '.btn--drag',
+    animation: 100
+  });
+</script>
   <% end %>
 </section>

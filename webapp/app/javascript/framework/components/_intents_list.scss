@@ -1,6 +1,9 @@
 .intents-list{
   list-style: none;
   padding: 0;
+  .sortable-chosen{
+    background-color: rgba($primary-color,.05);
+  }
   & > li{
     @include clearfix();
     background-color: #fff;

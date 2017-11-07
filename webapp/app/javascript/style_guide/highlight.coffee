@@ -1,5 +1,3 @@
-$ = require('jquery');
-
 Setup = ->
   Prism.highlightAll()
 
