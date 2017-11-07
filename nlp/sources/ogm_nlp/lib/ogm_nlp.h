@@ -11,6 +11,7 @@
 #include <logsysi.h>
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
+#include <duktape.h>
 
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
@@ -433,6 +434,8 @@ struct og_ctrl_nlp_threaded
   int new_request_expression_start;
   int new_request_input_part_start;
 
+  duk_context *duk_context;
+
 };
 
 struct og_ctrl_nlp
@@ -605,6 +608,9 @@ og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression 
 og_status NlpRequestSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
     char *string);
 og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int size, char *string);
+
+/* nlpduk.c */
+char *NlpDukTypeString(duk_int_t type);
 
 
 

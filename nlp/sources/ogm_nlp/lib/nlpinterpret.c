@@ -95,6 +95,8 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
 
   ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
 
+  ctrl_nlp_th->duk_context = duk_create_heap_default();
+
   DONE;
 }
 
@@ -128,6 +130,8 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->horiginal_request_input_part = NULL;
   ctrl_nlp_th->horip = NULL;
   ctrl_nlp_th->hrequest_any = NULL;
+
+  duk_destroy_heap(ctrl_nlp_th->duk_context);
 
   DONE;
 }

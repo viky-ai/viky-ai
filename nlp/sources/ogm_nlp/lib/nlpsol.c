@@ -339,6 +339,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution)
 {
+  og_bool solution_built = FALSE;
   GQueue solutions[1];
   int alias_solutions_nb = 0;
   struct alias_solution alias_solutions[DOgAliasSolutionSize];
@@ -362,6 +363,73 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     }
   }
 
-  DONE;
+  // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
+  for (GList *iter = solutions->head; iter; iter = iter->next)
+  {
+    struct alias_solution *alias_solution = iter->data;
+    json_t *json_solution = alias_solution->json_solution;
+    og_char_buffer json_solution_string[DOgMlogMaxMessageSize / 2];
+    IFE(NlpJsonToBuffer(json_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+    og_char_buffer var_command[DOgMlogMaxMessageSize];
+    snprintf(var_command, DOgMlogMaxMessageSize, "var %s = %s;", alias_solution->alias->alias, json_solution_string);
+    NlpLog(DOgNlpTraceSolution, "Sending variable to duktape: %s", var_command);
+    if (duk_peval_lstring(ctrl_nlp_th->duk_context, var_command, strlen(var_command)) != 0)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS: duk_peval_lstring eval failed: %s",
+          duk_safe_to_string(ctrl_nlp_th->duk_context, -1));
+      DPcErr;
+    }
+  }
+
+  NlpLog(DOgNlpTraceSolution, "Transforming solution by executing JS code");
+  // Now we scan the json_package_solution to get some executable code
+  // If there are, we create a copy of the json structure and amend it with the result of the execution of the code
+  json_t *json_new_solution = json_deep_copy(json_package_solution);
+
+  for (void *iter = json_object_iter(json_new_solution); iter; iter = json_object_iter_next(json_new_solution, iter))
+  {
+    json_t *value = json_object_iter_value(iter);
+    if (json_is_string(value))
+    {
+      og_string string_value = json_string_value(value);
+      int string_value_length = strlen(string_value);
+      if (string_value[0] == '`' && string_value[string_value_length - 1] == '`')
+      {
+        NlpLog(DOgNlpTraceSolution, "string to evaluate : '%.*s'", string_value_length - 2, string_value + 1);
+        if (duk_peval_lstring(ctrl_nlp_th->duk_context, string_value + 1, string_value_length - 2) != 0)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS: duk_peval_lstring eval failed: %s",
+              duk_safe_to_string(ctrl_nlp_th->duk_context, -1));
+          DPcErr;
+        }
+        duk_int_t type = duk_get_type(ctrl_nlp_th->duk_context, -1);
+        NlpLog(DOgNlpTraceSolution, "type is %s", NlpDukTypeString(type));
+        if (type == DUK_TYPE_STRING)
+        {
+          og_string computed_string_value = duk_get_string(ctrl_nlp_th->duk_context, -1);
+          NlpLog(DOgNlpTraceSolution, "computed value is '%s'", computed_string_value);
+
+          json_t *json_computed_value = json_string(computed_string_value);
+          IF(json_object_iter_set_new(json_new_solution, iter, json_computed_value))
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : Error creating json_computed_value '%s'",
+                computed_string_value);
+            DPcErr;
+          }
+          solution_built = TRUE;
+        }
+      }
+    }
+  }
+
+  if (solution_built)
+  {
+    request_expression->json_solution = json_new_solution;
+  }
+  else
+  {
+    json_decref(json_new_solution);
+  }
+  return (solution_built);
 }
 

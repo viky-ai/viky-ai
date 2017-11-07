@@ -7,6 +7,7 @@
     <file>inlp.c</file>
     <file>nlpany.c</file>
     <file>nlpanyopt.c</file>
+    <file>nlpduk.c</file>
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>
@@ -33,7 +34,7 @@
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaut -loguni -logheap -logmsg -loggen -ljansson -lglib-2.0 -logsysi</option>
+      <option name="ADD_LIBR">-logaut -loguni -logheap -logmsg -loggen -lduktape -ljansson -lglib-2.0 -logsysi</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>
