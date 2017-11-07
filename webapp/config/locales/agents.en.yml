@@ -60,4 +60,6 @@ en:
           other: '%{count} collaborators'
         description: Description
         sharing_overview: Sharing overview
+      intent:
+        new: Add intent
 

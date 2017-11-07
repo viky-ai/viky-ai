@@ -1,0 +1,7 @@
+en:
+  views:
+    intents:
+      new:
+        title: Create intent
+        btn: Create
+        success_message: Intent has been successfully created.

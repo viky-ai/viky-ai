@@ -2,11 +2,15 @@ en:
   activerecord:
     models:
       agent: Agent
+      intent: Intent
     attributes:
       agent:
         name: Name
         agentname: ID
         color: Color
+      intent:
+        intentname: ID
+        description: Description
   errors:
     user:
       delete:

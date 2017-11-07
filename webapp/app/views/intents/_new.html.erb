@@ -1,0 +1,47 @@
+<div class="modal modal--large" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+
+    <h5 class="modal__main__title">
+      <%= t('views.intents.new.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+
+    <div class="modal__main__content">
+
+      <%= form_with model: [current_user, @agent, @intent], data: { type: 'json' }, class: 'js-intent-form' do |f| %>
+        <div class="field">
+          <%= f.label :intentname %>
+          <span class="badge badge--small badge--outline"><%= t('required') %></span>
+          <div class="control">
+            <%= f.text_field :intentname, id: :intent_intentname %>
+          </div>
+          <%= display_errors(@intent, :intentname) %>
+        </div>
+
+        <div class="field">
+          <%= f.label :description %>
+          <div class="control">
+            <%= f.text_area :description, id: :intent_description %>
+          </div>
+          <%= display_errors(@intent, :description) %>
+        </div>
+
+        <div class="actions">
+          <% btn_label = t('views.intents.new.btn') %>
+          <%= f.button btn_label, class: "btn btn--primary",
+                       data: {
+                           disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                       }
+          %>
+          <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+</div>
+

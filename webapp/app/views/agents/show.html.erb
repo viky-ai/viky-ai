@@ -28,3 +28,7 @@
 </header>
 
 <%= render 'agent', agent: @agent %>
+
+<a href="<%= new_user_agent_intent_path(current_user, @agent) %>" class="btn btn--primary" data-action="open-remote-modal">
+  <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.intent.new') %>
+</a>
