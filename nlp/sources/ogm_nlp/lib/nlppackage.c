@@ -162,7 +162,7 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
 
-  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages", ctrl_nlp_th->package_in_used)
+  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages", ctrl_nlp_th->package_in_used->length)
 
   // flush package mark as deleted
   package_t package = NULL;

@@ -252,6 +252,18 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
+
+  duk_idx_t duk_context_index = duk_get_top(ctrl_nlp_th->duk_context);
+  NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestReset: duk top index is %d", duk_context_index)
+  if (duk_context_index > 0)
+  {
+    duk_pop_n(ctrl_nlp_th->duk_context, duk_context_index);
+  }
+
+  // We need to call it twice to make sure everything
+  duk_gc(ctrl_nlp_th->duk_context, 0);
+  duk_gc(ctrl_nlp_th->duk_context, 0);
+
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
 
   DONE;

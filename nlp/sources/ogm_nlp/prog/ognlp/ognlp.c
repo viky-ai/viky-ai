@@ -280,6 +280,9 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
     nlp_send_errors_as_json(info);
     DPcErr;
   }
+
+  IFE(OgNlpThreadedReset(info->hnlpi));
+
   struct og_nlp_interpret_input input[1];
   struct og_nlp_interpret_output output[1];
 
@@ -311,6 +314,8 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
       DPcErr;
     }
   }
+
+  IFE(OgNlpThreadedReset(info->hnlpi));
 
   DONE;
 }
