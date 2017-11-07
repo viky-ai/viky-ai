@@ -38,6 +38,9 @@ a.btn,
   &.btn--disabled:active{
     transform: none;
   }
+  &.btn--drag{
+    cursor: move;
+  }
 
   &.btn--outline{
     background-image: none;

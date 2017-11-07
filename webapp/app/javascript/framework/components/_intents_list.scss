@@ -12,6 +12,9 @@
     border-radius: 2px;
 
     & > a{
+      &.disabled{
+        pointer-events: none;
+      }
       display: block;
       float:left;
       width: calc(100% - 190px);
@@ -48,6 +51,10 @@
     .intents-list__item__actions{
       float:right;
       padding: .5rem;
+    }
+    .intents-list__item__draggable{
+      float:right;
+      padding: .5em;
     }
   }
 }

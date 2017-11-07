@@ -6,6 +6,7 @@
 </div>
 
 <section>
+  <h2>Default list state</h2>
   <%= highlight_html do %>
 <ul class="intents-list">
   <li>
@@ -126,6 +127,63 @@
           </ul>
         </div>
       </div>
+    </div>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Reorganize list state</h2>
+  <p>
+    Link to intent is disabled via CSS class <code>.disabled</code>. <code>div.intents-list__item__stats</code> and <code>div.intents-list__item__actions</code> are hidden. <code>div.intents-list__item__draggable</code> is displayed in order to show the draggable handle.
+  </p>
+  <%= highlight_html do %>
+<ul class="intents-list">
+  <li>
+    <a href="#" class="disabled">
+      <span class="intents-list__item__name">travel-from-to</span>
+      <span class="intents-list__item__desc">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
+      </span>
+    </a>
+    <div class="intents-list__item__draggable">
+      <a href="#" class="btn btn--outline btn--small btn--drag">
+        <span class="icon icon--x-small">
+          <%= icon_drag_handle %>
+        </span>
+        Move
+      </a>
+    </div>
+  </li>
+  <li>
+    <a href="#" class="disabled">
+      <span class="intents-list__item__name">buy-something</span>
+    </a>
+    <div class="intents-list__item__draggable">
+      <a href="#" class="btn btn--outline btn--small btn--drag">
+        <span class="icon icon--x-small">
+          <%= icon_drag_handle %>
+        </span>
+        Move
+      </a>
+    </div>
+  </li>
+  <li>
+    <a href="#" class="disabled">
+      <span class="intents-list__item__name">date</span>
+      <span class="intents-list__item__desc">
+        Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
+      </span>
+    </a>
+    <div class="intents-list__item__draggable">
+      <a href="#" class="btn btn--outline btn--small btn--drag">
+        <span class="icon icon--x-small">
+          <%= icon_drag_handle %>
+        </span>
+        Move
+      </a>
     </div>
   </li>
 </ul>
