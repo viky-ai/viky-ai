@@ -32,6 +32,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->level = ctrl_nlp_th->level;
   request_expression->Irequest_any = (-1);
   request_expression->keep_as_result = FALSE;
+  g_queue_init(request_expression->tmp_solutions);
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;

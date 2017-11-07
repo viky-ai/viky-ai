@@ -12,7 +12,7 @@ module Valgrind
 
     end
 
-    def interpret_queries(nb_request_factor, skip_timeout = nil)
+    def interpret_queries(nb_request_factor, skip_timeout = false)
 
       # several_packages_several_intents
       pg_building_feature_any = create_building_feature_any
@@ -35,13 +35,13 @@ module Valgrind
       }
 
       # dump packages
-      (30 * nb_request_factor).times do |i|
+      (10 * nb_request_factor).times do |i|
         actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
         assert !actual_dump_result.nil?, "dump #{i}"
       end
 
       # launch simple query
-      (1 * nb_request_factor).times do
+      (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(interpret_query, params)
         assert !response.nil?
       end
@@ -54,14 +54,14 @@ module Valgrind
         "status" => "Package '#{@main_uuid}' successfully updated"
       }
 
-      (30 * nb_request_factor).times do |i|
+      (10 * nb_request_factor).times do |i|
         actual_update_result = Nls::Nls.query_post(url_add, @main_package)
         assert_json expected_update_result, actual_update_result, "updating #{i}"
       end
 
       # launch queries with timeouts
 
-      if skip_timeout.nil?
+      if !skip_timeout
 
         # timeout NlpPackageGet for nlp recursive query
         params = {
@@ -69,7 +69,7 @@ module Valgrind
           timeout_in: "NlpPackageGet"
         }
 
-        (30 * nb_request_factor).times do |i|
+        (10 * nb_request_factor).times do |i|
           exception = assert_raises RestClient::ExceptionWithResponse do
             Nls::Nls.interpret(interpret_query, params)
           end
@@ -82,7 +82,7 @@ module Valgrind
           timeout_in: "NlpInterpretRequestParse"
         }
 
-        (30 * nb_request_factor).times do |i|
+        (10 * nb_request_factor).times do |i|
           exception = assert_raises RestClient::ExceptionWithResponse do
             Nls::Nls.interpret(interpret_query, params)
           end
@@ -95,7 +95,7 @@ module Valgrind
           timeout_in: "NlpMatchExpressions"
         }
 
-        (30 * nb_request_factor).times do |i|
+        (10 * nb_request_factor).times do |i|
           exception = assert_raises RestClient::ExceptionWithResponse do
             Nls::Nls.interpret(interpret_query, params)
           end
@@ -108,7 +108,7 @@ module Valgrind
           timeout_in: "NlpRequestInterpretationBuild"
         }
 
-        (30 * nb_request_factor).times do |i|
+        (10 * nb_request_factor).times do |i|
           exception = assert_raises RestClient::ExceptionWithResponse do
             Nls::Nls.interpret(interpret_query, params)
           end
@@ -121,7 +121,7 @@ module Valgrind
           timeout_in: "NlpPackageAddOrReplace"
         }
 
-        (30 * nb_request_factor).times do |i|
+        (10 * nb_request_factor).times do |i|
           exception = assert_raises RestClient::ExceptionWithResponse do
             Nls::Nls.package_update(@main_package, params)
           end

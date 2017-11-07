@@ -106,9 +106,27 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 
   DONE;
 }
+static void jsondecref(gpointer data, gpointer user_data)
+{
+  json_decref(data);
+}
 
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 {
+  // TODO SMA libérer les éléments avant de vider la queue
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  if (request_expression_used > 0)
+  {
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    for (int i = 0; i < request_expression_used; i++)
+    {
+      struct request_expression *request_expression = request_expressions + i;
+      g_queue_foreach (request_expression->tmp_solutions,jsondecref, NULL);
+      g_queue_clear(request_expression->tmp_solutions);
+    }
+  }
+
+
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
@@ -235,6 +253,19 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   {
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     NlpPackageMarkAsUnused(ctrl_nlp_th, interpret_package->package);
+  }
+
+  // TODO SMA libérer les éléments avant de vider la queue
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  if (request_expression_used > 0)
+  {
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    for (int i = 0; i < request_expression_used; i++)
+    {
+      struct request_expression *request_expression = request_expressions + i;
+      g_queue_foreach (request_expression->tmp_solutions,jsondecref, NULL);
+      g_queue_clear(request_expression->tmp_solutions);
+    }
   }
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);

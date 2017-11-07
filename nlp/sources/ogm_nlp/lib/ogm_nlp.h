@@ -326,6 +326,8 @@ struct request_expression
 
   og_bool keep_as_result;
 
+  GQueue tmp_solutions[1];
+
   json_t *json_solution;
 };
 

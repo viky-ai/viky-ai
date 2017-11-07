@@ -134,7 +134,7 @@ static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *
 
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  GQueue solutions[1];
+  GQueue *solutions = request_expression->tmp_solutions;
   int alias_solutions_nb = 0;
   struct alias_solution alias_solutions[DOgAliasSolutionSize];
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression, solutions, alias_solutions, &alias_solutions_nb));
@@ -191,7 +191,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
       //TODO: append array and add objects into newly formed array
     }
   }
-  g_queue_clear(solutions);
+  // g_queue_clear(solutions);
 
   return TRUE;
 }
@@ -228,7 +228,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         }
         struct alias_solution *alias_solution = alias_solutions + alias_solutions_nb;
         alias_solution->alias = alias;
-        alias_solution->json_solution = sub_request_expression->json_solution;
+        alias_solution->json_solution = json_incref(sub_request_expression->json_solution);
+
         g_queue_push_tail(solutions, alias_solution);
         alias_solutions_nb++;
       }
@@ -264,7 +265,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       }
       struct alias_solution *alias_solution = alias_solutions + alias_solutions_nb;
       alias_solution->alias = alias;
-      alias_solution->json_solution = json_solution_any;
+      alias_solution->json_solution = json_incref(json_solution_any);
       g_queue_push_tail(solutions, alias_solution);
       alias_solutions_nb++;
     }

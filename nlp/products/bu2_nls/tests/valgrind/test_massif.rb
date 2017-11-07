@@ -11,7 +11,7 @@ module Valgrind
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
       command << "valgrind --tool=massif"
       command << "--time-unit=ms"
-      command << "--threshold=0.1"
+      command << "--threshold=0.01"
       command << "--max-snapshots=200"
       command << "--detailed-freq=1"
       command << "--massif-out-file=massif-output.txt"
