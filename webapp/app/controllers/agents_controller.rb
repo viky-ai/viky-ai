@@ -9,6 +9,7 @@ class AgentsController < ApplicationController
   end
 
   def show
+    @intents = @agent.intents
   end
 
   def new

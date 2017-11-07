@@ -29,6 +29,61 @@
 
 <%= render 'agent', agent: @agent %>
 
+
+<br />
+
 <a href="<%= new_user_agent_intent_path(current_user, @agent) %>" class="btn btn--primary" data-action="open-remote-modal">
   <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.intent.new') %>
 </a>
+
+<ul class="intents-list" id="sortable-list">
+  <% @intents.each do |intent| %>
+  <li>
+
+    <a href="#" class="disabled">
+      <span class="intents-list__item__name"><%= intent.intentname %></span>
+      <span class="intents-list__item__desc"><%= intent.description %></span>
+    </a>
+
+    <div class="intents-list__item__actions">
+      <div class="dropdown">
+        <div class="dropdown__trigger">
+          <button class="btn btn--small">
+            <span class="icon icon--x-small">
+              <%= icon_dots %>
+            </span>
+          </button>
+        </div>
+        <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+          <ul>
+            <li>
+              <a href="#">
+                <span class="icon icon--x-small">
+                  <%= icon_settings %>
+                </span>Configure
+              </a>
+            </li>
+            <li class="separator">
+              <a href="#" class="destructive">
+                <span class="icon icon--x-small">
+                  <%= icon_delete %>
+                </span>Delete
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="intents-list__item__draggable" style="display:none;">
+      <a href="#" class="btn btn--outline btn--small btn--drag">
+        <span class="icon icon--x-small">
+          <%= icon_drag_handle %>
+        </span>
+        Move
+      </a>
+    </div>
+
+  </li>
+  <% end %>
+</ul>
