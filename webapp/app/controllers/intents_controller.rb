@@ -1,15 +1,10 @@
 class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
-  before_action :check_user_rights, except: [:show]
-  before_action :set_intent, except: [:show, :new, :create, :confirm_destroy]
+  before_action :check_user_rights
+  before_action :set_intent, except: [:new, :create, :confirm_destroy]
 
   def show
-    unless current_user.can?(:show, @agent)
-      access_denied
-      return
-    end
-    @intent = @agent.intents.friendly.find(params[:id])
   end
 
   def new
@@ -96,6 +91,13 @@ class IntentsController < ApplicationController
   end
 
   def check_user_rights
-    access_denied unless current_user.can?(:edit, @agent)
+    case action_name
+    when 'show'
+      access_denied unless current_user.can? :show, @agent
+    when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy'
+      access_denied unless current_user.can? :edit, @agent
+    else
+      access_denied
+    end
   end
 end
