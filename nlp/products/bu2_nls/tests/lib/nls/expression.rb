@@ -50,7 +50,7 @@ module Nls
       hash = {}
       hash['expression'] = @expression
       hash['locale'] = @locale if !@locale.nil?
-      hash['keep-order'] = "true" if !@keep_order.nil?
+      hash['keep-order'] = true if !@keep_order.nil?
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash
     end

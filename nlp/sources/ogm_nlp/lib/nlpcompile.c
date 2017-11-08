@@ -443,10 +443,9 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   {
     expression->keep_order = FALSE;
   }
-  else if (json_is_string(json_keep_order))
+  else if (json_is_boolean(json_keep_order))
   {
-    const char *string_keep_order = json_string_value(json_keep_order);
-    if (!Ogstricmp(string_keep_order,"true")) expression->keep_order = TRUE;
+    expression->keep_order = json_boolean_value(json_keep_order);
   }
   else if (json_is_null(json_keep_order))
   {
@@ -454,7 +453,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
   else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep_order is not a string");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep-order is not a boolean");
     DPcErr;
   }
 
