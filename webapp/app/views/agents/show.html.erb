@@ -30,17 +30,30 @@
 <%= render 'agent', agent: @agent %>
 
 
-<br />
+<div class="intents-list-header">
+  <h4><%= t('views.intents.index.list_title') %></h4>
+  <div>
+    <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
+      <span class="icon icon--small"><%= icon_drag_handle %></span>
+      <%= t('views.intents.index.start_reorganize') %>
+    </a>
+    <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
+      <span class="icon icon--small"><%= icon_drag_handle %></span>
+      <%= t('views.intents.index.stop_reorganize') %>
+    </a>
+    <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
+       class="btn btn--primary js-new-intent"
+       data-action="open-remote-modal">
+      <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
+    </a>
+  </div>
+</div>
 
-<a href="<%= new_user_agent_intent_path(current_user, @agent) %>" class="btn btn--primary" data-action="open-remote-modal">
-  <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.agents.intent.new') %>
-</a>
-
-<ul class="intents-list" id="sortable-list">
+<ul class="intents-list" id="intents-list">
   <% @intents.each do |intent| %>
   <li>
 
-    <a href="#" class="disabled">
+    <a href="#" class="js-intent-show-link">
       <span class="intents-list__item__name"><%= intent.intentname %></span>
       <span class="intents-list__item__desc"><%= intent.description %></span>
     </a>
@@ -60,14 +73,16 @@
               <a href="<%= edit_user_agent_intent_path(current_user, @agent, intent) %>" data-action="open-remote-modal">
                 <span class="icon icon--x-small">
                   <%= icon_settings %>
-                </span><%= t('views.intents.index.configure') %>
+                </span>
+                <%= t('views.intents.index.configure') %>
               </a>
             </li>
             <li class="separator">
               <a href="#" class="destructive">
                 <span class="icon icon--x-small">
                   <%= icon_delete %>
-                </span>Delete
+                </span>
+                <%= t('views.intents.index.delete') %>
               </a>
             </li>
           </ul>
@@ -80,7 +95,7 @@
         <span class="icon icon--x-small">
           <%= icon_drag_handle %>
         </span>
-        Move
+        <%= t('views.intents.index.move') %>
       </a>
     </div>
 

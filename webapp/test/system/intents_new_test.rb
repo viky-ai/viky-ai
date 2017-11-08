@@ -1,11 +1,12 @@
 require 'application_system_test_case'
 
 class IntentsNewTest < ApplicationSystemTestCase
+
   test 'Create an intent' do
     go_to_agents_index
     assert page.has_text?('admin/terminator')
     click_link 'T-800'
-    click_link 'Add intent'
+    click_link 'New intent'
 
     within('.modal') do
       assert page.has_text? 'Create intent'
@@ -20,7 +21,7 @@ class IntentsNewTest < ApplicationSystemTestCase
     go_to_agents_index
     assert page.has_text?('admin/terminator')
     click_link 'T-800'
-    click_link 'Add intent'
+    click_link 'New intent'
 
     within('.modal') do
       assert page.has_text? 'Create intent'
@@ -31,4 +32,5 @@ class IntentsNewTest < ApplicationSystemTestCase
       assert page.has_text?('ID can\'t be blank')
     end
   end
+
 end

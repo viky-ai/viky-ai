@@ -2,7 +2,13 @@ en:
   views:
     intents:
       index:
+        list_title: Agent intents
+        start_reorganize: Reorganize intents
+        stop_reorganize: Done, i finished reorganizing intents
+        new: New intent
         configure: Configure
+        delete: Delete
+        move: Move
       new:
         title: Create intent
         btn: Create
