@@ -43,11 +43,13 @@
         <%= t('views.intents.index.stop_reorganize') %>
       </a>
     <% end %>
+    <% if current_user.can? :edit, @agent %>
     <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
        class="btn btn--primary js-new-intent"
        data-action="open-remote-modal">
       <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
     </a>
+    <% end %>
   </div>
 </div>
 
@@ -60,7 +62,7 @@
       <span class="intents-list__item__name"><%= intent.intentname %></span>
       <span class="intents-list__item__desc"><%= intent.description %></span>
     </a>
-
+    <% if current_user.can? :edit, @agent %>
     <div class="intents-list__item__actions">
       <div class="dropdown">
         <div class="dropdown__trigger">
@@ -90,6 +92,7 @@
         </div>
       </div>
     </div>
+    <% end %>
 
     <div class="intents-list__item__draggable" style="display:none;">
       <span class="btn btn--outline btn--small btn--drag">

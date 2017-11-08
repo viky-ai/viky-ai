@@ -1,6 +1,7 @@
 class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
+  before_action :check_user_rights
   before_action :set_intent, except: [:new, :create, :confirm_destroy]
 
   def new
@@ -104,5 +105,9 @@ class IntentsController < ApplicationController
 
   def set_intent
     @intent = @agent.intents.friendly.find(params[:id])
+  end
+
+  def check_user_rights
+    access_denied unless current_user.can?(:edit, @agent)
   end
 end
