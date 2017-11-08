@@ -26,6 +26,32 @@ class IntentsController < ApplicationController
     end
   end
 
+  def edit
+    @agent = Agent.friendly.find(params[:agent_id])
+    @intent = @agent.intents.friendly.find(params[:id])
+    render partial: 'edit'
+  end
+
+  def update
+    @agent = Agent.friendly.find(params[:agent_id])
+    @intent = @agent.intents.friendly.find(params[:id])
+
+    respond_to do |format|
+      if @intent.update(intent_params)
+        format.json {
+          redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.edit.success_message')
+        }
+      else
+        format.json {
+          render json: {
+            replace_modal_content_with: render_to_string(partial: 'edit', formats: :html),
+          }, status: 422
+        }
+      end
+    end
+
+  end
+
   private
 
   def intent_params

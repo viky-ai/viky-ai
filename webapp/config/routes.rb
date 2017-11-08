@@ -22,7 +22,7 @@ Rails.application.routes.draw do
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy
         end
-        resources :intents, only: [:new, :create] do
+        resources :intents, only: [:new, :create, :edit, :update] do
         end
         member do
           get :confirm_destroy

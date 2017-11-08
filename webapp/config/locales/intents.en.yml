@@ -1,7 +1,13 @@
 en:
   views:
     intents:
+      index:
+        configure: Configure
       new:
         title: Create intent
         btn: Create
         success_message: Intent has been successfully created.
+      edit:
+        title: Edit intent
+        btn: Update
+        success_message: Your intent has been successfully updated.
