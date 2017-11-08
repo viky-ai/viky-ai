@@ -1,6 +1,7 @@
 require 'application_system_test_case'
 
 class IntentsTest < ApplicationSystemTestCase
+
   test 'Update an intent' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
@@ -21,4 +22,29 @@ class IntentsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Your intent has been successfully updated.')
   end
+
+
+  test 'reorganize intents' do
+    go_to_agent_show('admin', 'weather')
+    assert page.has_no_text? 'Reorganize intents'
+
+    intent = Intent.new(intentname: 'test')
+    intent.agent = agents(:weather)
+    assert intent.save
+    visit user_agent_path('admin', 'weather')
+    assert_equal ['test', 'weather_greeting'], all('.intents-list__item__name').collect(&:text)
+    assert_equal 0, all('.btn--drag').size
+
+    click_link('Reorganize intents')
+    assert page.has_text? 'Done, i finished reorganizing intents'
+
+    assert_equal 2, all('.btn--drag').size
+
+    # Does not work...
+    # first('.btn--drag').native.drag_by(0, 100)
+
+    click_link('Done, i finished reorganizing intents')
+    assert_equal 0, all('.btn--drag').size
+  end
+
 end

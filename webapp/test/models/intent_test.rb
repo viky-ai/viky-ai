@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class IntentTest < ActiveSupport::TestCase
+
   test 'Basic intent creation & agent association' do
     intent = Intent.new(
       intentname: 'greeting',
@@ -9,9 +10,12 @@ class IntentTest < ActiveSupport::TestCase
     intent.agent = agents(:weather)
     assert intent.save
 
+    assert_equal 1, intent.position
     assert_equal 'greeting', intent.intentname
     assert_equal agents(:weather).id, intent.agent.id
+    assert_equal 2, agents(:weather).intents.count
   end
+
 
   test 'intentname and agent are mandatory' do
     intent = Intent.new(description: 'Hello random citizen !')
@@ -23,6 +27,7 @@ class IntentTest < ActiveSupport::TestCase
     }
     assert_equal expected, intent.errors.messages
   end
+
 
   test 'Unique intentname per agent' do
     intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !')
@@ -39,6 +44,7 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal expected, other_intent.errors.messages
   end
 
+
   test 'Check intentname minimal length' do
     intent = Intent.new(intentname: 'h', description: 'Hello random citizen !')
     intent.agent = agents(:weather)
@@ -50,6 +56,7 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal expected, intent.errors.messages
   end
 
+
   test 'Check intentname is cleaned' do
     intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !')
     intent.agent = agents(:weather)
@@ -57,6 +64,7 @@ class IntentTest < ActiveSupport::TestCase
 
     assert_equal 'h3ll-o', intent.intentname
   end
+
 
   test 'Check intent slug' do
     intent = intents(:weather_greeting)
@@ -67,6 +75,7 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal intent.id, Intent.friendly.find(original_intentname).id
   end
 
+
   test 'Intent destroy' do
     intent = intents(:weather_greeting)
     intent_id = intent.id
@@ -75,4 +84,5 @@ class IntentTest < ActiveSupport::TestCase
     assert intent.destroy
     assert_equal 0, Intent.where(id: intent_id).count
   end
+
 end

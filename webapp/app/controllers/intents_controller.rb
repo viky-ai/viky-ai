@@ -1,4 +1,5 @@
 class IntentsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:update_positions]
 
   def new
     @agent = Agent.friendly.find(params[:agent_id])
@@ -49,7 +50,16 @@ class IntentsController < ApplicationController
         }
       end
     end
+  end
 
+  def update_positions
+    @agent = Agent.friendly.find(params[:agent_id])
+    intents_count = params[:ids].size
+    params[:ids].each_with_index do |id, position|
+      if Intent.where(agent_id: @agent.id, id: id).count == 1
+        Intent.where(agent_id: @agent.id, id: id).first.update(position: intents_count - position - 1)
+      end
+    end
   end
 
   private

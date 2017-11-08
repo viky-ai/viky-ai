@@ -7,12 +7,19 @@ class Intent < ApplicationRecord
   validates :intentname, uniqueness: { scope: [:agent_id] }, length: { in: 3..25 }, presence: true
 
   before_validation :clean_intentname
+  before_create :set_position
 
   private
 
-  def clean_intentname
-    unless intentname.nil?
-      self.intentname = intentname.parameterize(separator: '-')
+    def clean_intentname
+      unless intentname.nil?
+        self.intentname = intentname.parameterize(separator: '-')
+      end
     end
-  end
+
+    def set_position
+      unless agent.nil?
+        self.position = agent.intents.count
+      end
+    end
 end

@@ -26,8 +26,15 @@ class IntentList
     $('.js-intent-show-link').addClass('disabled')
 
     @sortable = Sortable.create($('#intents-list')[0], {
-      handle: '.btn--drag',
+      handle: '.btn--drag'
       animation: 100
+      onUpdate: ->
+        ids = []
+        ids.push($(item).data('id')) for item in $('#intents-list > li')
+        $.ajax
+          url: $('#intents-list').data('update-positions-path')
+          method: 'POST'
+          data: { ids: ids }
     });
 
   stop_sortable: ->

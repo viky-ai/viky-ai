@@ -25,4 +25,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     assert page.has_text?("Agents")
   end
 
+  def go_to_agent_show(user, agent)
+    admin_login
+    visit user_agent_path(user, agent)
+    assert page.has_text?("Agent intents")
+  end
+
 end

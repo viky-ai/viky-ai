@@ -6,7 +6,7 @@
   <div class="header__tools">
     <% if User.confirmed.count > 1 %>
       <% if current_user.owner? @agent %>
-        <a href="<%= confirm_transfer_ownership_user_agent_path(current_user, @agent) %>"
+        <a href="<%= confirm_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
            class="btn btn--small btn--destructive" data-action="open-remote-modal">
           <span class="icon icon--x-small"><%= icon_transfert %></span>
           <%= t('views.agents.edit.transfer_ownership') %>
@@ -19,7 +19,7 @@
       <% end %>
     <% end %>
     <% if current_user.can? :edit, @agent %>
-      <a href="<%= edit_user_agent_path(current_user, @agent, origin: 'show') %>"
+      <a href="<%= edit_user_agent_path(@agent.owner, @agent, origin: 'show') %>"
          class="btn btn--small" data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
       </a>
@@ -33,14 +33,16 @@
 <div class="intents-list-header">
   <h4><%= t('views.intents.index.list_title') %></h4>
   <div>
-    <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
-      <span class="icon icon--small"><%= icon_drag_handle %></span>
-      <%= t('views.intents.index.start_reorganize') %>
-    </a>
-    <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
-      <span class="icon icon--small"><%= icon_drag_handle %></span>
-      <%= t('views.intents.index.stop_reorganize') %>
-    </a>
+    <% if @agent.intents.count > 1 %>
+      <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
+        <span class="icon icon--small"><%= icon_drag_handle %></span>
+        <%= t('views.intents.index.start_reorganize') %>
+      </a>
+      <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
+        <span class="icon icon--small"><%= icon_drag_handle %></span>
+        <%= t('views.intents.index.stop_reorganize') %>
+      </a>
+    <% end %>
     <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
        class="btn btn--primary js-new-intent"
        data-action="open-remote-modal">
@@ -49,9 +51,10 @@
   </div>
 </div>
 
-<ul class="intents-list" id="intents-list">
+<ul class="intents-list" id="intents-list"
+    data-update-positions-path="<%= update_positions_user_agent_intents_path(@agent.owner, @agent) %>">
   <% @intents.each do |intent| %>
-  <li>
+  <li data-id="<%= intent.id %>">
 
     <a href="#" class="js-intent-show-link">
       <span class="intents-list__item__name"><%= intent.intentname %></span>
@@ -70,7 +73,7 @@
         <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
           <ul>
             <li>
-              <a href="<%= edit_user_agent_intent_path(current_user, @agent, intent) %>" data-action="open-remote-modal">
+              <a href="<%= edit_user_agent_intent_path(@agent.owner, @agent, intent) %>" data-action="open-remote-modal">
                 <span class="icon icon--x-small">
                   <%= icon_settings %>
                 </span>

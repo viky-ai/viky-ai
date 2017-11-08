@@ -19,11 +19,7 @@ Rails.application.routes.draw do
   scope '/agents' do
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
-        resources :memberships, only: [:index, :new, :create, :update, :destroy] do
-          get :confirm_destroy
-        end
-        resources :intents, only: [:new, :create, :edit, :update] do
-        end
+
         member do
           get :confirm_destroy
           get :confirm_transfer_ownership
@@ -31,10 +27,23 @@ Rails.application.routes.draw do
           get :search_users_for_transfer_ownership
           get :generate_token
         end
+
         get :search_users_to_share_agent, controller: 'memberships'
+
+        resources :memberships, only: [:index, :new, :create, :update, :destroy] do
+          get :confirm_destroy
+        end
+
+        resources :intents, only: [:new, :create, :edit, :update] do
+          collection do
+            post :update_positions
+          end
+        end
+
       end
     end
   end
+
   get 'agents', to: 'agents#index'
 
   require 'sidekiq/web'
