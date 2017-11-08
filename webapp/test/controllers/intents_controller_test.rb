@@ -2,6 +2,24 @@ require 'test_helper'
 
 class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
+  # Show
+  #
+  test 'Show access' do
+    sign_in users(:show_on_agent_weather)
+    get user_agent_intent_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_greeting))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Show forbidden' do
+    sign_in users(:confirmed)
+    get user_agent_intent_url(users(:confirmed), agents(:terminator), intents(:weather_greeting))
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
+  #
   # Create
   #
   test 'Create access' do
