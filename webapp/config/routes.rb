@@ -19,7 +19,6 @@ Rails.application.routes.draw do
   scope '/agents' do
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
-
         member do
           get :confirm_destroy
           get :confirm_transfer_ownership
@@ -34,12 +33,11 @@ Rails.application.routes.draw do
           get :confirm_destroy
         end
 
-        resources :intents, only: [:new, :create, :edit, :update] do
+        resources :intents, only: [:new, :create, :edit, :update, :destroy] do
           collection do
             post :update_positions
           end
         end
-
       end
     end
   end

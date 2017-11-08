@@ -7,8 +7,8 @@ en:
         stop_reorganize: Done, i finished reorganizing intents
         new: New intent
         configure: Configure
-        delete: Delete
         move: Move
+        delete: "Delete"
       new:
         title: Create intent
         btn: Create
@@ -17,3 +17,10 @@ en:
         title: Edit intent
         btn: Update
         success_message: Your intent has been successfully updated.
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete intent: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "Intent with the name: %{name} has successfully been deleted."
+        errors_message: "Deletion failed: %{errors}."

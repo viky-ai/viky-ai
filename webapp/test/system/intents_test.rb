@@ -1,7 +1,6 @@
 require 'application_system_test_case'
 
 class IntentsTest < ApplicationSystemTestCase
-
   test 'Update an intent' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
@@ -21,6 +20,31 @@ class IntentsTest < ApplicationSystemTestCase
       click_button 'Update'
     end
     assert page.has_text?('Your intent has been successfully updated.')
+  end
+
+  test 'Delete an intent' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    within '.intents-list' do
+      first('.dropdown__trigger > button').trigger('click')
+      click_link 'Delete'
+    end
+
+    within('.modal') do
+      assert page.has_text?('Are you sure?')
+      click_button('Delete')
+      assert page.has_text?('Please enter the text exactly as it is displayed to confirm.')
+
+      fill_in 'validation', with: 'DELETE'
+      click_button('Delete')
+    end
+    assert page.has_text?('Intent with the name: weather_greeting has successfully been deleted.')
+
+    agent = agents(:weather)
+    assert_equal user_agent_path(agent.owner, agent), current_path
   end
 
 

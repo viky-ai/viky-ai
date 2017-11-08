@@ -76,16 +76,14 @@
               <a href="<%= edit_user_agent_intent_path(@agent.owner, @agent, intent) %>" data-action="open-remote-modal">
                 <span class="icon icon--x-small">
                   <%= icon_settings %>
-                </span>
-                <%= t('views.intents.index.configure') %>
+                </span><%= t('views.intents.index.configure') %>
               </a>
             </li>
             <li class="separator">
-              <a href="#" class="destructive">
+              <a href="<%= user_agent_intent_confirm_destroy_path(@agent.owner, @agent, intent) %>" data-action="open-remote-modal" class="destructive">
                 <span class="icon icon--x-small">
                   <%= icon_delete %>
-                </span>
-                <%= t('views.intents.index.delete') %>
+                </span><%= t('views.intents.index.delete') %>
               </a>
             </li>
           </ul>
