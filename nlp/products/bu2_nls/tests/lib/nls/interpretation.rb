@@ -8,6 +8,7 @@ module Nls
     attr_reader :id
     attr_reader :slug
     attr_reader :expressions
+    attr_reader :solutions
     attr_accessor :package
 
     def initialize(slug, opts = {})
@@ -20,6 +21,8 @@ module Nls
       @id = opts[:id]
 
       @expressions = []
+
+      @solutions = nil
 
     end
 
@@ -35,11 +38,12 @@ module Nls
     alias_method '<<', 'add_expression'
 
     def to_h
-      {
-        "id" => @id.to_s,
-        "slug" => @slug,
-        "expressions" => @expressions.map{|v| v.to_h}
-      }
+      hash = {}
+      hash["id"] = @id.to_s
+      hash["slug"] = @slug
+      hash["expressions"] = @expressions.map{|v| v.to_h}
+      hash["solution"] = @solutions.to_h if !@solutions.nil?
+      hash
     end
 
     def to_match(score = 1.0)
@@ -63,6 +67,15 @@ module Nls
     def new_textual(texts = [], locale = @@default_locale)
       texts.each do |t|
         add_expression(Expression.new(t, [], locale))
+      end
+      self
+    end
+
+    def add_solution(key,value)
+      if @solutions.nil?
+        @solutions = Solutions.new(key,value)
+      else
+        @solutions.add_solution(key,value)
       end
       self
     end

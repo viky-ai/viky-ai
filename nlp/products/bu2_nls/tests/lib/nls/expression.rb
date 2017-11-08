@@ -7,6 +7,7 @@ module Nls
     attr_reader :locale
     attr_reader :aliases
     attr_reader :keep_order
+    attr_reader :solutions
     attr_accessor :interpretation
 
     def initialize(expression, aliases = [],locale = nil, keep_order = nil)
@@ -14,6 +15,8 @@ module Nls
       @locale = locale
       @keep_order = nil
       @keep_order = 1 if keep_order == "true"
+
+      @solutions = nil
 
       @aliases = []
       if aliases.kind_of? Array
@@ -46,12 +49,23 @@ module Nls
     end
     alias_method '<<', 'add_alias'
 
+    def add_solution(key,value)
+      if @solutions.nil?
+        @solutions = Solutions.new(key,value)
+      else
+        @solutions.add_solution(key,value)
+      end
+      self
+    end
+
+
     def to_h
       hash = {}
       hash['expression'] = @expression
       hash['locale'] = @locale if !@locale.nil?
       hash['keep-order'] = true if !@keep_order.nil?
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
+      hash["solution"] = @solutions.to_h if !@solutions.nil?
       hash
     end
 

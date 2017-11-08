@@ -87,6 +87,65 @@ module Nls
         aller_de_a
       end
 
+      def create_aller_de_a_any_solutions_js
+        aller_de_a = Package.new("aller-de-a")
+
+        i_new_york = Interpretation.new("new-york").new_textual(["New York", "NYC"]).add_solution("name","New York")
+        aller_de_a << i_new_york
+
+        i_barca = Interpretation.new("barcelona").new_textual(["Barcelona", "Barca"]).add_solution("name","Barcelona")
+        aller_de_a << i_barca
+
+        i_town = Interpretation.new("town")
+                    .new_expression("@{new-york}",  'new-york': i_new_york)
+                    .new_expression("@{barcelona}", barcelona: i_barca)
+        aller_de_a << i_town
+
+        i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
+        aller_de_a << i_prep_from
+
+        i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
+        aller_de_a << i_prep_to
+
+        i_prep_to_town = Interpretation.new("prep-to-town")
+        prep_to_town_hash = { 'prep-to': i_prep_to, town: i_town }
+        prep_to_town_exp1 = Expression.new("@{prep-to} @{town}", prep_to_town_hash)
+        prep_to_town_exp1.add_solution("to", "`town.name`")
+        i_prep_to_town << prep_to_town_exp1
+        prep_to_town_hash = { 'prep-to': i_prep_to, town: Alias.any }
+        prep_to_town_exp2 = Expression.new("@{prep-to} @{town}", prep_to_town_hash)
+        prep_to_town_exp2.add_solution("to", "`town.any`")
+        i_prep_to_town << prep_to_town_exp2
+        aller_de_a << i_prep_to_town
+
+        i_prep_from_town = Interpretation.new("prep-from-town")
+        prep_from_town_hash = { 'prep-from': i_prep_from, town: i_town }
+        prep_from_town_exp1 = Expression.new("@{prep-from} @{town}", prep_from_town_hash)
+        prep_from_town_exp1.add_solution("from", "`town.name`")
+        i_prep_from_town << prep_from_town_exp1
+        prep_from_town_hash = { 'prep-from': i_prep_from, town: Alias.any }
+        prep_from_town_exp2 = Expression.new("@{prep-from} @{town}", prep_from_town_hash)
+        prep_from_town_exp2.add_solution("from", "`town.any`")
+        i_prep_from_town << prep_from_town_exp2
+        aller_de_a << i_prep_from_town
+
+        i_go = Interpretation.new("go").new_textual(["go"])
+        aller_de_a << i_go
+
+        go_from_to_hash = { go: i_go, from: i_prep_from_town, to: i_prep_to_town }
+        i_go_from_to = Interpretation.new("go-from-to").new_expression("@{go} @{from} @{to}", go_from_to_hash)
+        aller_de_a << i_go_from_to
+
+        i_want = Interpretation.new("want").new_textual(["I want to"])
+        aller_de_a << i_want
+
+        want_go_from_to_hash = { want: i_want, 'go-from-to': i_go_from_to }
+        i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", want_go_from_to_hash)
+        aller_de_a << i_want_go_from_to
+
+        aller_de_a
+      end
+
       def create_building_feature
         pg_building_feature = Package.new("pg-building-feature")
 
@@ -289,6 +348,35 @@ module Nls
         actual = Nls.interpret(request)
         assert_equal expected.to_h, actual
       end
+
+      def test_with_solutions_with_js
+        Nls.remove_all_packages
+
+        Interpretation.default_locale = "en-GB"
+
+        # feed building feature_any
+        aller_de_a = create_aller_de_a_any_solutions_js
+        Nls.package_update(aller_de_a)
+
+        # ap aller_de_a.to_h
+
+        # resultat attendu
+        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "New York", "to" => "Paris"})
+
+        # ap expected.to_h
+
+        # creation et exécution de la requete
+        request = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
+        # ap request
+
+        actual = Nls.interpret(request)
+        # ap actual
+        assert_equal expected.to_h, actual
+
+
+
+      end
+
     end
   end
 

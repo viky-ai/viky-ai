@@ -10,12 +10,9 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
     struct request_expression *request_expression);
 static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    GQueue *solutions, struct alias_solution *alias_solutions, int *palias_solutions_nb);
-static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    json_t *json_solution, GQueue *solutions);
-static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    json_t *json_solution, GList *iter_solutions);
+static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, GList *iter_solutions);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 
@@ -119,14 +116,12 @@ static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *
   og_bool solution_built = FALSE;
   if (request_expression->expression->json_solution != NULL)
   {
-    request_expression->json_solution = request_expression->expression->json_solution;
-    json_incref(request_expression->json_solution);
+    request_expression->json_solution = json_deep_copy(request_expression->expression->json_solution);
     solution_built = TRUE;
   }
   else if (request_expression->expression->interpretation->json_solution != NULL)
   {
-    request_expression->json_solution = request_expression->expression->interpretation->json_solution;
-    json_incref(request_expression->json_solution);
+    request_expression->json_solution = json_deep_copy(request_expression->expression->interpretation->json_solution);
     solution_built = TRUE;
   }
   return solution_built;
@@ -135,9 +130,7 @@ static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   GQueue *solutions = request_expression->tmp_solutions;
-  int alias_solutions_nb = 0;
-  struct alias_solution alias_solutions[DOgAliasSolutionSize];
-  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression, solutions, alias_solutions, &alias_solutions_nb));
+  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
@@ -158,7 +151,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
   else if (nb_solutions == 1)
   {
     struct alias_solution *alias_solution = solutions->head->data;
-    request_expression->json_solution = alias_solution->json_solution;
+    request_expression->json_solution = json_incref(alias_solution->json_solution);
   }
   else
   {
@@ -179,12 +172,12 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
         DPcErr;
       }
     }
+
     if (nb_arrays <= 0)
     {
       // Combining the objects into a single object
-      json_t *json_solution = json_object();
-      IFE(NlpSolutionMergeObjects(ctrl_nlp_th, request_expression, json_solution, solutions));
-      request_expression->json_solution = json_solution;
+      request_expression->json_solution = json_object();
+      IFE(NlpSolutionMergeObjects(ctrl_nlp_th, request_expression));
     }
     else
     {
@@ -196,11 +189,9 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
   return TRUE;
 }
 
-static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    GQueue *solutions, struct alias_solution *alias_solutions, int *palias_solutions_nb)
+static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   int alias_solutions_nb = 0;
-  g_queue_init(solutions);
 
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
@@ -226,11 +217,11 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           DPcErr;
 
         }
-        struct alias_solution *alias_solution = alias_solutions + alias_solutions_nb;
+        struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
         alias_solution->alias = alias;
         alias_solution->json_solution = json_incref(sub_request_expression->json_solution);
 
-        g_queue_push_tail(solutions, alias_solution);
+        g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
         alias_solutions_nb++;
       }
     }
@@ -263,25 +254,23 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         DPcErr;
 
       }
-      struct alias_solution *alias_solution = alias_solutions + alias_solutions_nb;
+      struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
       alias_solution->alias = alias;
-      alias_solution->json_solution = json_incref(json_solution_any);
-      g_queue_push_tail(solutions, alias_solution);
+      alias_solution->json_solution = json_solution_any;
+      g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
       alias_solutions_nb++;
     }
   }
   DONE;
 }
 
-static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    json_t *json_solution, GQueue *solutions)
+static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  GList *iter_solutions = solutions->head;
-  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, json_solution, iter_solutions);
+  GList *iter_solutions = request_expression->tmp_solutions->head;
+  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, iter_solutions);
 }
 
-static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    json_t *json_solution, GList *iter_solutions)
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, GList *iter_solutions)
 {
   IFN(iter_solutions) DONE;
   struct alias_solution *alias_solution_first = iter_solutions->data;
@@ -290,7 +279,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
   json_t *value;
   json_object_foreach(json_solution_first, key, value)
   {
-    if (json_object_get(json_solution, key)) continue;
+    if (json_object_get(request_expression->json_solution, key)) continue;
     og_bool several_values = FALSE;
     for (GList *iter = iter_solutions->next; iter; iter = iter->next)
     {
@@ -306,45 +295,45 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
     if (several_values)
     {
       json_t *json_array_values = json_array();
+      IF(json_object_set_new(request_expression->json_solution, key, json_array_values))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: error setting key '%s'", key);
+        DPcErr;
+      }
+
       for (GList *iter = iter_solutions; iter; iter = iter->next)
       {
         struct alias_solution *alias_solution = iter->data;
         json_t *json_sub_solution = alias_solution->json_solution;
         json_t *sub_value = json_object_get(json_sub_solution, key);
         IFN(sub_value) continue;
-        IF(json_array_append_new(json_array_values, sub_value))
+        IF(json_array_append(json_array_values, sub_value))
         {
           NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
           DPcErr;
         }
+      }
 
-      }
-      IF(json_object_set(json_solution, key, json_array_values))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: error setting key '%s'", key);
-        DPcErr;
-      }
     }
     else
     {
-      IF(json_object_set(json_solution, key, value))
+      IF(json_object_set(request_expression->json_solution, key, value))
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: error setting key '%s'", key);
         DPcErr;
       }
     }
   }
-  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, json_solution, iter_solutions->next);
+
+  return NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, iter_solutions->next);
+
 }
 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution)
 {
   og_bool solution_built = FALSE;
-  GQueue solutions[1];
-  int alias_solutions_nb = 0;
-  struct alias_solution alias_solutions[DOgAliasSolutionSize];
-  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression, solutions, alias_solutions, &alias_solutions_nb));
+  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
@@ -354,7 +343,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
     NlpLog(DOgNlpTraceSolution, "NlpSolutionComputeJS: list of solutions for expression:");
     IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 0));
-    for (GList *iter = solutions->head; iter; iter = iter->next)
+    for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
     {
       struct alias_solution *alias_solution = iter->data;
       json_t *json_solution = alias_solution->json_solution;
@@ -365,7 +354,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   }
 
   // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
-  for (GList *iter = solutions->head; iter; iter = iter->next)
+  for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
     json_t *json_solution = alias_solution->json_solution;

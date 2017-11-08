@@ -106,10 +106,6 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 
   DONE;
 }
-static void jsondecref(gpointer data, gpointer user_data)
-{
-  json_decref(data);
-}
 
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 {
@@ -121,11 +117,16 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
     for (int i = 0; i < request_expression_used; i++)
     {
       struct request_expression *request_expression = request_expressions + i;
-      g_queue_foreach (request_expression->tmp_solutions,jsondecref, NULL);
+      for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
+      {
+        struct alias_solution *alias_solution = iter->data;
+        json_decrefp(&alias_solution->json_solution);
+        g_slice_free(struct alias_solution, alias_solution);
+        iter->data = NULL;
+      }
       g_queue_clear(request_expression->tmp_solutions);
     }
   }
-
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
@@ -263,8 +264,17 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
     for (int i = 0; i < request_expression_used; i++)
     {
       struct request_expression *request_expression = request_expressions + i;
-      g_queue_foreach (request_expression->tmp_solutions,jsondecref, NULL);
+      for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
+      {
+        struct alias_solution *alias_solution = iter->data;
+        json_decrefp(&alias_solution->json_solution);
+        g_slice_free(struct alias_solution, alias_solution);
+        iter->data = NULL;
+      }
       g_queue_clear(request_expression->tmp_solutions);
+
+      json_decrefp(&request_expression->json_solution);
+
     }
   }
 
