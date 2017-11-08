@@ -1,0 +1,269 @@
+{
+  "id": "0d981484-9313-11e7-abc4-cec278b6b51c",
+  "slug": "aller-de-a",
+  "interpretations": [
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b7b50c",
+      "slug": "want-go-from-to",
+      "expressions": [
+        {
+          "expression": "@{want-go} @{from-to}",
+          "aliases": [
+            {
+              "alias": "want-go",
+              "slug": "want-go",
+              "id": "0d981484-9313-11e9-abc4-cec278b7b50c",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "from-to",
+              "slug": "from-to",
+              "id": "0d981484-9313-11e7-abc4-cec278b6b50c",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e9-abc4-cec278b7b50c",
+      "slug": "want-go",
+      "expressions": [
+        {
+          "expression": "@{want} @{go}",
+          "aliases": [
+            {
+              "alias": "want",
+              "slug": "want",
+              "id": "0d981484-9313-11e7-abc4-cec278b8b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "go",
+              "slug": "go",
+              "id": "0d981484-9313-11e7-abc4-cec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b8b50f",
+      "slug": "want",
+      "expressions": [
+        {
+          "expression": "i want to",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b6b50f",
+      "slug": "go",
+      "expressions": [
+        {
+          "expression": "go",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b6b50c",
+      "slug": "from-to",
+      "expressions": [
+        {
+          "expression": "@{from} @{to}",
+          "aliases": [
+            {
+              "alias": "from",
+              "slug": "prep-from-town",
+              "id": "0d981484-9314-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "to",
+              "slug": "prep-to-town",
+              "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9314-11e8-abc4-cec278b6b50e",
+      "slug": "prep-from-town",
+      "expressions": [
+        {
+          "expression": "@{prep-from} @{town}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "prep-from",
+              "slug": "prep-from",
+              "id": "0d981484-9313-11e7-abc4-dec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ],
+          "solution": {
+            "from": "`town.name`"
+          }
+        },
+        {
+          "expression": "@{prep-from} @{town}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "prep-from",
+              "slug": "prep-from",
+              "id": "0d981484-9313-11e7-abc4-dec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "town",
+              "type": "any"
+            }
+          ],
+          "solution": {
+            "from": "`town.any`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
+      "slug": "prep-to-town",
+      "expressions": [
+        {
+          "expression": "@{prep-to} @{town}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "prep-to",
+              "slug": "prep-to",
+              "id": "0d981484-9313-11e7-abc4-eec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ],
+          "solution": {
+            "to": "`town.name`"
+          }
+        },
+        {
+          "expression": "@{prep-to} @{town}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "prep-to",
+              "slug": "prep-to",
+              "id": "0d981484-9313-11e7-abc4-eec278b6b50f",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "town",
+              "type": "any"
+            }
+          ],
+          "solution": {
+            "to": "`town.any`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-dec278b6b50f",
+      "slug": "prep-from",
+      "expressions": [
+        {
+          "expression": "from",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc4-eec278b6b50f",
+      "slug": "prep-to",
+      "expressions": [
+        {
+          "expression": "to",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e8-abc4-cec278b6b50e",
+      "slug": "town",
+      "expressions": [
+        {
+          "expression": "@{new-york}",
+          "aliases": [
+            {
+              "alias": "new-york",
+              "slug": "new-york",
+              "id": "0d981484-9313-11e7-abc5-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        },
+        {
+          "expression": "@{barcelona}",
+          "aliases": [
+            {
+              "alias": "barcelona",
+              "slug": "barcelona",
+              "id": "0d981484-9313-11e7-abc6-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0d981484-9313-11e7-abc5-cec278b6b50e",
+      "slug": "new-york",
+      "expressions": [
+        {
+          "expression": "New York",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "NYC",
+          "locale": "en-GB"
+        }
+      ],
+      "solution": {
+        "name": "New York"
+      }
+    },
+    {
+      "id": "0d981484-9313-11e7-abc6-cec278b6b50e",
+      "slug": "barcelona",
+      "expressions": [
+        {
+          "expression": "Barcelona",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "Barca",
+          "locale": "en-GB"
+        }
+      ],
+      "solution": {
+        "name": "Barcelona"
+      }
+    }
+  ]
+}
