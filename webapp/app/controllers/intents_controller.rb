@@ -1,17 +1,16 @@
 class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
+  before_action :set_agent
+  before_action :set_intent, except: [:new, :create, :confirm_destroy]
 
   def new
-    @agent = Agent.friendly.find(params[:agent_id])
     @intent = Intent.new
     render partial: 'new'
   end
 
   def create
     @intent = Intent.new(intent_params)
-    @agent = current_user.agents.friendly.find(params[:agent_id])
     @intent.agent = @agent
-
     respond_to do |format|
       if @intent.save
         format.json do
@@ -28,15 +27,10 @@ class IntentsController < ApplicationController
   end
 
   def edit
-    @agent = Agent.friendly.find(params[:agent_id])
-    @intent = @agent.intents.friendly.find(params[:id])
     render partial: 'edit'
   end
 
   def update
-    @agent = Agent.friendly.find(params[:agent_id])
-    @intent = @agent.intents.friendly.find(params[:id])
-
     respond_to do |format|
       if @intent.update(intent_params)
         format.json {
@@ -83,15 +77,11 @@ class IntentsController < ApplicationController
   end
 
   def confirm_destroy
-    @agent = Agent.friendly.find(params[:agent_id])
     @intent = @agent.intents.friendly.find(params[:intent_id])
     render partial: 'confirm_destroy', locals: { intent: @intent }
   end
 
   def destroy
-    @agent = Agent.friendly.find(params[:agent_id])
-    @intent = @agent.intents.friendly.find(params[:id])
-
     if @intent.destroy
       redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.destroy.success_message', name: @intent.intentname)
     else
@@ -106,5 +96,13 @@ class IntentsController < ApplicationController
 
   def intent_params
     params.require(:intent).permit(:intentname, :description)
+  end
+
+  def set_agent
+    @agent = Agent.friendly.find(params[:agent_id])
+  end
+
+  def set_intent
+    @intent = @agent.intents.friendly.find(params[:id])
   end
 end
