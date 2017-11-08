@@ -190,6 +190,12 @@ enum nlp_input_part_type
   nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation
 };
 
+struct input_part_word
+{
+    int raw_word_start;
+    int word_start;
+};
+
 struct input_part
 {
   /** Parent */
@@ -198,9 +204,8 @@ struct input_part
   enum nlp_input_part_type type;
   union
   {
-
     /** nlp_input_part_type_Word */
-    int word_start;
+    struct input_part_word word[1];
 
     /** nlp_input_part_type_Interpretation */
     struct alias *alias;
@@ -241,6 +246,8 @@ struct request_word
 {
   int start;
   int length;
+  int raw_start;
+  int raw_length;
   int start_position;
   int length_position;
 };
@@ -346,7 +353,6 @@ struct alias_solution
   json_t *json_solution;
 };
 
-
 struct og_nlp_punctuation_word
 {
   /** string bytes lentgh */
@@ -396,7 +402,6 @@ struct og_ctrl_nlp_threaded
 
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
   struct nlp_synchro_current_lock current_lock[1];
-
 
   /** Package beeing created */
   package_t package_in_progress;
@@ -613,6 +618,4 @@ og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int si
 
 /* nlpduk.c */
 char *NlpDukTypeString(duk_int_t type);
-
-
 

@@ -299,7 +299,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     }
     case nlp_input_part_type_Word:
     {
-      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word_start);
+      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
       IFN(string_word) DPcErr;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part word '%s'", Iinput_part, string_word);
       break;

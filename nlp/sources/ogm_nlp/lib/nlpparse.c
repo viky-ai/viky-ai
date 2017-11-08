@@ -356,15 +356,26 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
   NlpLog(DOgNlpTraceMatch, "NlpParseAddWord: adding word '%.*s' at start %d", word_length, s + word_start, word_start)
 
+  char normalized_string_word[DPcPathSize];
+  int length_normalized_string_word = OgUtf8Normalize(word_length, s + word_start, DPcPathSize, normalized_string_word);
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: normalized word '%.*s'", length_normalized_string_word,
+      normalized_string_word)
+
   size_t Irequest_word;
   struct request_word *request_word = OgHeapNewCell(ctrl_nlp_th->hrequest_word, &Irequest_word);
   IFn(request_word) DPcErr;
   IF(Irequest_word) DPcErr;
 
   request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
-  request_word->length = word_length;
-  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, s + word_start));
+  request_word->length = length_normalized_string_word;
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, normalized_string_word));
   IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
+
+  request_word->raw_start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+  request_word->raw_length = word_length;
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->raw_length, s + word_start));
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
+
   request_word->start_position = word_start;
   request_word->length_position = word_length;
 

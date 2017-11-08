@@ -456,12 +456,23 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
   size_t Iinput_part;
   struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
   IFN(input_part) DPcErr;
+
+  char normalized_string_word[DPcPathSize];
+  int length_normalized_string_word = OgUtf8Normalize(length_string_word, string_word, DPcPathSize, normalized_string_word);
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: normalized word '%.*s'", length_normalized_string_word,
+      normalized_string_word)
+
   input_part->type = nlp_input_part_type_Word;
-  input_part->word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
+
+  input_part->word->word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
+  IFE(OgHeapAppend(package->hinput_part_ba, length_normalized_string_word, normalized_string_word));
+  IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
+
+  input_part->word->raw_word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
   IFE(OgHeapAppend(package->hinput_part_ba, length_string_word, string_word));
   IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
 
-  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, string_word, length_string_word, Iinput_part));
+  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, normalized_string_word, length_normalized_string_word, Iinput_part));
 
   DONE;
 }
