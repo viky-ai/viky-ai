@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         end
 
         resources :intents, only: [:new, :create, :edit, :update, :destroy] do
+          get :confirm_destroy
           collection do
             post :update_positions
           end

@@ -82,6 +82,26 @@ class IntentsController < ApplicationController
     end
   end
 
+  def confirm_destroy
+    @agent = Agent.friendly.find(params[:agent_id])
+    @intent = @agent.intents.friendly.find(params[:intent_id])
+    render partial: 'confirm_destroy', locals: { intent: @intent }
+  end
+
+  def destroy
+    @agent = Agent.friendly.find(params[:agent_id])
+    @intent = @agent.intents.friendly.find(params[:id])
+
+    if @intent.destroy
+      redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.destroy.success_message', name: @intent.intentname)
+    else
+      redirect_to user_agent_path(current_user, @agent), alert: t(
+          'views.intents.destroy.errors_message',
+          errors: @intent.errors.full_messages.join(', ')
+      )
+    end
+  end
+
   private
 
   def intent_params
