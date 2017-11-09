@@ -1,8 +1,8 @@
-.nav{
+.v-nav{
   background-color: lighten(#0E131A, 5%);
   color: #fff;
 }
-.nav__header{
+.v-nav__header{
   padding: 2em;
   p{
     text-align: center;
@@ -15,7 +15,7 @@
     }
   }
 }
-.nav__content{
+.v-nav__content{
   height: calc(100% - 24px - 4em - 60px);
   overflow-y: auto;
   padding-bottom: 1em;
@@ -60,7 +60,7 @@
     }
   }
 }
-.nav__footer{
+.v-nav__footer{
   @include display_flex();
   justify-content: space-between;
   align-items: center;

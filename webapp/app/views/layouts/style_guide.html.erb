@@ -16,14 +16,14 @@
 
   <body class="app sg">
     <div class="app-wrapper">
-      <nav class="nav">
-        <div class="nav__header">
+      <aside class="v-nav">
+        <div class="v-nav__header">
           <p>
             Style Guide
             <%= logo_on_dark %>
           </p>
         </div>
-        <div class="nav__content">
+        <div class="v-nav__content">
           <ul>
             <% @pages.each_with_index do |page, i| %>
               <li>
@@ -38,7 +38,7 @@
             <% end %>
           </ul>
         </div>
-      </nav>
+      </aside>
 
       <main>
         <%= yield %>

@@ -5,10 +5,6 @@
 .app-wrapper{
   @include display_flex();
   height: 100%;
-  & > nav{
-    width: 200px;
-    height: 100%;
-  }
   & > main{
     @include flex(1);
     overflow: auto;
@@ -16,13 +12,16 @@
     padding: 1.5em 2em 2em 2em;
     position: relative;
   }
+  & > aside{
+    height: 100%;
+    width: 200px;
+  }
 }
 
 
 .pagination{
   margin: 2em 0;
   text-align: center;
-
   .current-page{
     background-image: none;
     border-color: #000;

@@ -17,9 +17,10 @@
         class="app <% if controller_path.include?('style_guide') %>sg<% end %>">
 
     <div class="app-wrapper">
-      <nav class="nav">
+
+      <aside class="v-nav">
         <%= render 'layouts/nav' %>
-      </nav>
+      </aside>
 
       <main>
         <%= yield %>
@@ -45,10 +46,13 @@
             </div>
           </div>
         <% end %>
-
       </main>
 
-
+      <% if content_for?(:right_aside) %>
+        <aside>
+          <%= yield :right_aside %>
+        </aside>
+      <% end %>
 
     </div>
   </body>

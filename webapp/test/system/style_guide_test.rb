@@ -5,7 +5,7 @@ class StyleGuideTest < ApplicationSystemTestCase
   test "Navigate to style guide" do
     admin_login
 
-    within(".nav") do
+    within(".v-nav") do
       click_link "Style guide"
     end
 

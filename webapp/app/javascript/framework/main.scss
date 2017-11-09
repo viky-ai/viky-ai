@@ -5,6 +5,8 @@
 @import 'base/typography';
 @import 'base/turbolinks';
 
+@import 'layout/app';
+
 @import 'components/avatar';
 @import 'components/badge';
 @import 'components/button';
@@ -25,5 +27,3 @@
 @import 'components/actions_list';
 @import 'components/note';
 @import 'components/intents_list';
-
-@import 'layout/app';
