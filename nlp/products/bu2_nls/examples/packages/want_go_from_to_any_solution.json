@@ -7,7 +7,7 @@
       "slug": "want-go-from-to",
       "expressions": [
         {
-          "expression": "@{want-go} @{from-to}",
+          "expression": "@{want-go} @{from} @{to}",
           "aliases": [
             {
               "alias": "want-go",
@@ -16,9 +16,15 @@
               "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
             },
             {
-              "alias": "from-to",
-              "slug": "from-to",
-              "id": "0d981484-9313-11e7-abc4-cec278b6b50c",
+              "alias": "from",
+              "slug": "prep-from-town",
+              "id": "0d981484-9314-11e8-abc4-cec278b6b50e",
+              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
+            },
+            {
+              "alias": "to",
+              "slug": "prep-to-town",
+              "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
               "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
             }
           ]
@@ -65,29 +71,6 @@
         {
           "expression": "go",
           "locale": "en-GB"
-        }
-      ]
-    },
-    {
-      "id": "0d981484-9313-11e7-abc4-cec278b6b50c",
-      "slug": "from-to",
-      "expressions": [
-        {
-          "expression": "@{from} @{to}",
-          "aliases": [
-            {
-              "alias": "from",
-              "slug": "prep-from-town",
-              "id": "0d981484-9314-11e8-abc4-cec278b6b50e",
-              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
-            },
-            {
-              "alias": "to",
-              "slug": "prep-to-town",
-              "id": "0d981484-9315-11e8-abc4-cec278b6b50e",
-              "package": "0d981484-9313-11e7-abc4-cec278b6b51c"
-            }
-          ]
         }
       ]
     },

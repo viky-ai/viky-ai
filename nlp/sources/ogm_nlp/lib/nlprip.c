@@ -145,8 +145,8 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
     }
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%2d %4d %4d: %s", request_input_part->interpret_package->self_index,
-      Irequest_input_part, request_input_part->Iinput_part, string_input_part);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%2d %4d %4d:%d %s", request_input_part->interpret_package->self_index,
+      Irequest_input_part, request_input_part->Iinput_part, request_input_part->level, string_input_part);
 
   DONE;
 }
