@@ -1,8 +1,9 @@
 class Api::V1::NlpController < Api::V1::ApplicationController
   before_action :authenticate_agent_access!
 
+  # GET /agents/:user_id/:id/interpret.json
   def interpret
-    @nlp = Nlp::Interpret.new(nlp_parameters)
+    @nlp = Nlp::Interpret.new(interpret_parameters)
 
     if @nlp.valid?
       @nlp.interpret
@@ -27,9 +28,10 @@ class Api::V1::NlpController < Api::V1::ApplicationController
       params.merge({language: language})
     end
 
-    def nlp_parameters
+    def interpret_parameters
       params.permit(
-        :sentence, :language, :agent_token, :user_id, :id, :format
+        :user_id, :id, :format, :sentence, :language, :agent_token
       )
     end
+
 end

@@ -1,22 +1,27 @@
 require 'net/http'
 
-class Nlp::Interpret
+class Nlp::Package
   include ActiveModel::Validations
-  validates_with InterpretValidator
+  validates_with PackageValidator
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
-  attr_reader :options, :intents
+  attr_reader :options, :data
 
   def initialize(options = {})
     @options = clean_options options
     @endpoint = "#{ENV['VOQALAPP_NLP_URL']}"
   end
 
-  def interpret
-    @intents = post_to_nlp("#{@endpoint}/interpret/")['intents'] || []
-    @intents.each {|i| i["name"] = i["slug"].split("/").last}
+  def update
+    ret = false
+    return ret unless valid?
+
+    @data = post_to_nlp("#{@endpoint}/packages/#{@options[:agent_id]}") || {}
+    outfilename = File.join(Rails.root, 'import', "#{@options[:agent_id]}.json")
+    File.open(outfilename, 'w') { |file| file.write @data.to_json }
   end
 
+  # :user_id, :id, :format, :slug, :interpretations
   def post_to_nlp(url)
     resp = {}
     uri = URI.parse url
@@ -45,10 +50,6 @@ class Nlp::Interpret
       (opts || {}).transform_values do |v|
         v.respond_to?(:strip) ? v.strip : v
       end
-
-      opts["Accept-Language"] = opts[:language] || "en-US"
-      opts["packages"] = [opts[:id]]
-      opts.select {|k,v| ["Accept-Language", "packages", "sentence"].include?(k)}
     end
 
 end
