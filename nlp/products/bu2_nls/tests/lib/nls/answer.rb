@@ -15,16 +15,20 @@ module Nls
       @id = interpretation.id.to_s
       @slug = interpretation.slug
       @score = 1.0
-      @solutions = {}
-      @solutions = solution if !solution.nil?
+      @solutions = solution
     end
 
     def add_solution(tag, value)
-      @solutions[tag] = value
+      if @solutions.nil?
+        @solutions = Solutions.new(tag, value)
+      else
+        @solutions.add_solution(key,value)
+      end
+      self
     end
 
     def clear_solutions
-      @solutions = {}
+      @solutions = nil
     end
 
     def to_h
@@ -33,7 +37,7 @@ module Nls
       hash_interpretation['id'] = @id
       hash_interpretation['slug'] = @slug
       hash_interpretation['score'] = @score
-      hash_interpretation['solution'] = @solutions if !@solutions.empty?
+      hash_interpretation['solution'] = @solutions.to_h if !@solutions.nil?
       hash_interpretation
     end
 

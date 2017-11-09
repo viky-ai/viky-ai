@@ -10,32 +10,40 @@ module Nls
     attr_reader :solutions
     attr_accessor :interpretation
 
-    def initialize(expression, aliases = [],locale = nil, keep_order = nil)
+    def initialize(expression, opts = {})
       @expression = expression
-      @locale = locale
-      @keep_order = nil
-      @keep_order = 1 if keep_order == "true"
+
+      @locale = nil
+      @locale = opts[:locale] if opts.has_key?(:locale)
+
+      @keep_order = false
+      @keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
 
       @solutions = nil
+      @solutions = opts[:solutions] if opts.has_key?(:solutions)
 
       @aliases = []
-      if aliases.kind_of? Array
-        aliases.each do |_alias|
-          add_alias(_alias)
-        end
-      elsif aliases.kind_of? Hash
-        # hash of alias_name => interpretation
-        aliases.each do |alias_name, interpretation|
-          if interpretation.nil?
-            _alias = Alias.new(interpretation, alias_name, "true")
-          else
-            _alias = Alias.new(interpretation, alias_name)
+      if opts.has_key?(:aliases)
+        aliases = opts[:aliases]
+        if aliases.kind_of? Array
+          aliases.each do |_alias|
+            add_alias(_alias)
           end
-          add_alias(_alias)
+        elsif aliases.kind_of? Hash
+          # hash of alias_name => interpretation
+          aliases.each do |alias_name, interpretation|
+            if interpretation.nil?
+              _alias = Alias.new(interpretation, alias_name, "true")
+            else
+              _alias = Alias.new(interpretation, alias_name)
+            end
+            add_alias(_alias)
+          end
+        else
+          raise
         end
-      else
-        raise
       end
+
 
     end
 
@@ -63,7 +71,7 @@ module Nls
       hash = {}
       hash['expression'] = @expression
       hash['locale'] = @locale if !@locale.nil?
-      hash['keep-order'] = true if !@keep_order.nil?
+      hash['keep-order'] = true if @keep_order
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash["solution"] = @solutions.to_h if !@solutions.nil?
       hash
@@ -78,7 +86,7 @@ module Nls
     end
 
     def self.keep_order
-      "true"
+      true
     end
 
     def self.no_order

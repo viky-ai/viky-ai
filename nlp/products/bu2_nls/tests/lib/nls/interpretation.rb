@@ -23,6 +23,7 @@ module Nls
       @expressions = []
 
       @solutions = nil
+      @solutions = opts[:solution] if opts.has_key?(:solution)
 
     end
 
@@ -59,14 +60,24 @@ module Nls
       to_h.to_json(options)
     end
 
-    def new_expression(text, aliases = [], locale = nil, keep_order = nil)
-      add_expression(Expression.new(text, aliases, locale, keep_order))
+    def new_expression(text, opts = {} )
+      aliases = []
+      aliases = opts[:aliases] if opts.has_key?(:aliases)
+      locale = nil
+      locale = opts[:locale] if opts.has_key?(:locale)
+      keep_order = false
+      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      solutions = nil
+      solutions = opts[:solutions] if opts.has_key?(:solutions)
+      add_expression(Expression.new(text, {aliases: aliases, locale: locale, keep_order: keep_order, solutions: solutions}))
       self
     end
 
-    def new_textual(texts = [], locale = @@default_locale)
+    def new_textual(texts = [], opts = {})
+      locale = @@default_locale
+      locale = opts[:locale] if opts.has_key?(:locale)
       texts.each do |t|
-        add_expression(Expression.new(t, [], locale))
+        add_expression(Expression.new(t, {locale: locale}))
       end
       self
     end

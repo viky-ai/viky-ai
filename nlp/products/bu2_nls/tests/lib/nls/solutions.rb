@@ -14,6 +14,10 @@ module Nls
       @solutions
     end
 
+    def clear_solutions
+      @solutions = {}
+    end
+
     def add_solution(key,value)
       @solutions[key] = value
     end
