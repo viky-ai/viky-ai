@@ -3,6 +3,7 @@ class Intent < ApplicationRecord
   friendly_id :intentname, use: :history, slug_column: 'intentname'
 
   belongs_to :agent
+  has_many :interpretations, dependent: :destroy
 
   validates :intentname, uniqueness: { scope: [:agent_id] }, length: { in: 3..25 }, presence: true
 
