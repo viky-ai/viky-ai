@@ -5,6 +5,9 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     @fixtures_path = File.join(
       Rails.root, 'test', 'fixtures', 'controllers', 'api', 'v1', 'nlp'
     )
+    @fixtures_layer_path = File.join(
+      Rails.root, 'test', 'fixtures', 'models', 'nlp'
+    )
   end
 
 
@@ -43,7 +46,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token can be specified in the request header and in the request parameters" do
-    nlp_layer_interpret_200 = JSON.parse(File.read(File.join(@fixtures_path, "nlp_layer_interpret_200.json")))
+    nlp_layer_interpret_200 = JSON.parse(File.read(File.join(@fixtures_layer_path, "nlp_layer_interpret_200.json")))
     nlp_interpret_200 = JSON.parse(File.read(File.join(@fixtures_path, "nlp_interpret_200.json")))
     Nlp::Interpret.any_instance.stubs('post_to_nlp').returns(nlp_layer_interpret_200)
 
@@ -64,7 +67,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token in the request header overloads agent token in the request parameters" do
-    nlp_layer_interpret_200 = JSON.parse(File.read(File.join(@fixtures_path, "nlp_layer_interpret_200.json")))
+    nlp_layer_interpret_200 = JSON.parse(File.read(File.join(@fixtures_layer_path, "nlp_layer_interpret_200.json")))
     Nlp::Interpret.any_instance.stubs('post_to_nlp').returns(nlp_layer_interpret_200)
 
     u = users(:admin)

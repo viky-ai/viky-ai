@@ -1,0 +1,22 @@
+{
+  "id": "0d981484-9313-11e9-abc4-cec278b6b50b4",
+  "slug": "user/mybot",
+  "interpretations":
+  [
+    {
+      "id": "0d981484-9313-11e7-abc4-cec278b6b50b4",
+      "slug": "user/mybot/hello1",
+      "expressions":
+      [
+        {
+          "expression": "Hello tout le monde",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "Hello chacun",
+          "locale": "fr-FR"
+        }
+      ]
+    }
+  ]
+}
