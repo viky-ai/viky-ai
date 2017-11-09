@@ -358,23 +358,45 @@ module Nls
         aller_de_a = create_aller_de_a_any_solutions_js
         Nls.package_update(aller_de_a)
 
-        # ap aller_de_a.to_h
+        # ap aller_de_a.to_h.to_json
 
-        # resultat attendu
         expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "New York", "to" => "Paris"})
-
         # ap expected.to_h
-
-        # creation et exécution de la requete
         request = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
         # ap request
-
         actual = Nls.interpret(request)
         # ap actual
         assert_equal expected.to_h, actual
 
+        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Paris", "to" => "New York"})
+        request = json_interpret_body(aller_de_a, "I want to go from Paris to New York", Interpretation.default_locale)
+        actual = Nls.interpret(request)
+        assert_equal expected.to_h, actual
 
+        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Barcelona", "to" => "New York"})
+        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
+        actual = Nls.interpret(request)
+        assert_equal expected.to_h, actual
 
+      end
+
+      def test_crossed_packages_funny_query
+        Nls.remove_all_packages
+        Interpretation.default_locale = "en-GB"
+
+        # feed building feature_any
+        aller_de_a = create_aller_de_a_any_solutions_js
+        Nls.package_update(aller_de_a)
+
+        # feed building features
+        pg_building_feature = create_building_feature
+        Nls.package_update(pg_building_feature)
+
+        request = json_interpret_body([aller_de_a, pg_building_feature], "I want to go from New York to Barcelona with swimming pool", Interpretation.default_locale)
+        actual = Nls.interpret(request)
+        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "New York", "to" => "Barcelona"})
+        assert_equal expected.to_h, actual
+        # ap actual
       end
 
     end
