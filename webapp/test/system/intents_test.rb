@@ -1,9 +1,7 @@
 require 'application_system_test_case'
 
 class IntentsTest < ApplicationSystemTestCase
-  ##
-  ## New
-  ##
+
   test 'Create an intent' do
     go_to_agents_index
     assert page.has_text?('admin/terminator')
@@ -11,7 +9,7 @@ class IntentsTest < ApplicationSystemTestCase
     click_link 'New intent'
 
     within('.modal') do
-      assert page.has_text? 'Create intent'
+      assert page.has_text? 'Create a new intent'
       fill_in 'ID', with: 'sunny_day'
       fill_in 'Description', with: 'Questions about the next sunny day'
       click_button 'Create'
@@ -26,7 +24,7 @@ class IntentsTest < ApplicationSystemTestCase
     click_link 'New intent'
 
     within('.modal') do
-      assert page.has_text? 'Create intent'
+      assert page.has_text? 'Create a new intent'
       fill_in 'ID', with: ''
       fill_in 'Description', with: 'Questions about the next sunny day'
       click_button 'Create'

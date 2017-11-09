@@ -33,7 +33,7 @@ Rails.application.routes.draw do
           get :confirm_destroy
         end
 
-        resources :intents do
+        resources :intents, except: [:index] do
           get :confirm_destroy
           collection do
             post :update_positions

@@ -8,9 +8,9 @@ en:
         new: New intent
         configure: Configure
         move: Move
-        delete: "Delete"
+        delete: Delete
       new:
-        title: Create intent
+        title: Create a new intent
         btn: Create
         success_message: Intent has been successfully created.
       edit:

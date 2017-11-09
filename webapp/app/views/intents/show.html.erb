@@ -1,6 +1,10 @@
 <header class="header">
   <div class="header__breadcrumb">
-    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> / <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
-    <strong><%= @intent.intentname %></strong> (<%= @agent.owner.username %>/<%= @agent.agentname %>)
+    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
+    <strong>
+      <%= @intent.intentname %>
+    </strong>
+    (<%= @agent.owner.username %>/<%= @agent.agentname %>/intents/<%= @intent.intentname %>)
   </div>
 </header>

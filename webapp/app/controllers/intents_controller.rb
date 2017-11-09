@@ -2,7 +2,7 @@ class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_intent, except: [:new, :create, :confirm_destroy]
+  before_action :set_intent, except: [:new, :create, :confirm_destroy, :update_positions]
 
   def show
   end
@@ -51,7 +51,6 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    @agent = Agent.friendly.find(params[:agent_id])
     intents_count = params[:ids].size
     params[:ids].each_with_index do |id, position|
       if Intent.where(agent_id: @agent.id, id: id).count == 1
@@ -67,37 +66,40 @@ class IntentsController < ApplicationController
 
   def destroy
     if @intent.destroy
-      redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.destroy.success_message', name: @intent.intentname)
+      redirect_to user_agent_path(current_user, @agent), notice: t(
+        'views.intents.destroy.success_message', name: @intent.intentname
+      )
     else
       redirect_to user_agent_path(current_user, @agent), alert: t(
-          'views.intents.destroy.errors_message',
-          errors: @intent.errors.full_messages.join(', ')
+        'views.intents.destroy.errors_message',
+        errors: @intent.errors.full_messages.join(', ')
       )
     end
   end
 
+
   private
 
-  def intent_params
-    params.require(:intent).permit(:intentname, :description)
-  end
-
-  def set_agent
-    @agent = Agent.friendly.find(params[:agent_id])
-  end
-
-  def set_intent
-    @intent = @agent.intents.friendly.find(params[:id])
-  end
-
-  def check_user_rights
-    case action_name
-    when 'show'
-      access_denied unless current_user.can? :show, @agent
-    when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy'
-      access_denied unless current_user.can? :edit, @agent
-    else
-      access_denied
+    def intent_params
+      params.require(:intent).permit(:intentname, :description)
     end
-  end
+
+    def set_agent
+      @agent = Agent.friendly.find(params[:agent_id])
+    end
+
+    def set_intent
+      @intent = @agent.intents.friendly.find(params[:id])
+    end
+
+    def check_user_rights
+      case action_name
+      when 'show'
+        access_denied unless current_user.can? :show, @agent
+      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
+        access_denied unless current_user.can? :edit, @agent
+      else
+        access_denied
+      end
+    end
 end

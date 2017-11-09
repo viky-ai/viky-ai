@@ -6,7 +6,7 @@ class Agent < ApplicationRecord
 
   has_many :memberships
   has_many :users, through: :memberships
-  has_many :intents
+  has_many :intents, dependent: :destroy
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true

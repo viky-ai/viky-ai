@@ -29,26 +29,25 @@
 
 <%= render 'agent', agent: @agent %>
 
-
 <div class="intents-list-header">
   <h4><%= t('views.intents.index.list_title') %></h4>
   <div>
-    <% if @agent.intents.count > 1 %>
-      <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
-        <span class="icon icon--small"><%= icon_drag_handle %></span>
-        <%= t('views.intents.index.start_reorganize') %>
-      </a>
-      <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
-        <span class="icon icon--small"><%= icon_drag_handle %></span>
-        <%= t('views.intents.index.stop_reorganize') %>
-      </a>
-    <% end %>
     <% if current_user.can? :edit, @agent %>
-    <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
-       class="btn btn--primary js-new-intent"
-       data-action="open-remote-modal">
-      <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
-    </a>
+      <% if @agent.intents.count > 1 %>
+        <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
+          <span class="icon icon--small"><%= icon_drag_handle %></span>
+          <%= t('views.intents.index.start_reorganize') %>
+        </a>
+        <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
+          <span class="icon icon--small"><%= icon_drag_handle %></span>
+          <%= t('views.intents.index.stop_reorganize') %>
+        </a>
+      <% end %>
+      <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
+         class="btn btn--primary js-new-intent"
+         data-action="open-remote-modal">
+        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
+      </a>
     <% end %>
   </div>
 </div>
@@ -56,53 +55,56 @@
 <ul class="intents-list" id="intents-list"
     data-update-positions-path="<%= update_positions_user_agent_intents_path(@agent.owner, @agent) %>">
   <% @intents.each do |intent| %>
-  <li data-id="<%= intent.id %>">
+    <li data-id="<%= intent.id %>">
 
-    <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>" class="js-intent-show-link">
-      <span class="intents-list__item__name"><%= intent.intentname %></span>
-      <span class="intents-list__item__desc"><%= intent.description %></span>
-    </a>
-    <% if current_user.can? :edit, @agent %>
-    <div class="intents-list__item__actions">
-      <div class="dropdown">
-        <div class="dropdown__trigger">
-          <button class="btn btn--small">
+      <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>" class="js-intent-show-link">
+        <span class="intents-list__item__name"><%= intent.intentname %></span>
+        <span class="intents-list__item__desc"><%= intent.description %></span>
+      </a>
+
+      <% if current_user.can? :edit, @agent %>
+        <div class="intents-list__item__actions">
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--small">
+                <span class="icon icon--x-small">
+                  <%= icon_dots %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+              <ul>
+                <li>
+                  <a href="<%= edit_user_agent_intent_path(@agent.owner, @agent, intent) %>"
+                     data-action="open-remote-modal">
+                    <span class="icon icon--x-small">
+                      <%= icon_settings %>
+                    </span><%= t('views.intents.index.configure') %>
+                  </a>
+                </li>
+                <li class="separator">
+                  <a href="<%= user_agent_intent_confirm_destroy_path(@agent.owner, @agent, intent) %>"
+                     data-action="open-remote-modal" class="destructive">
+                    <span class="icon icon--x-small">
+                      <%= icon_delete %>
+                    </span><%= t('views.intents.index.delete') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="intents-list__item__draggable" style="display:none;">
+          <span class="btn btn--outline btn--small btn--drag">
             <span class="icon icon--x-small">
-              <%= icon_dots %>
+              <%= icon_drag_handle %>
             </span>
-          </button>
+            <%= t('views.intents.index.move') %>
+          </span>
         </div>
-        <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
-          <ul>
-            <li>
-              <a href="<%= edit_user_agent_intent_path(@agent.owner, @agent, intent) %>" data-action="open-remote-modal">
-                <span class="icon icon--x-small">
-                  <%= icon_settings %>
-                </span><%= t('views.intents.index.configure') %>
-              </a>
-            </li>
-            <li class="separator">
-              <a href="<%= user_agent_intent_confirm_destroy_path(@agent.owner, @agent, intent) %>" data-action="open-remote-modal" class="destructive">
-                <span class="icon icon--x-small">
-                  <%= icon_delete %>
-                </span><%= t('views.intents.index.delete') %>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <% end %>
+      <% end %>
 
-    <div class="intents-list__item__draggable" style="display:none;">
-      <span class="btn btn--outline btn--small btn--drag">
-        <span class="icon icon--x-small">
-          <%= icon_drag_handle %>
-        </span>
-        <%= t('views.intents.index.move') %>
-      </span>
-    </div>
-
-  </li>
+    </li>
   <% end %>
 </ul>
