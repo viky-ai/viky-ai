@@ -4,25 +4,25 @@
     <strong><%= @agent.name %></strong> (<%= @agent.owner.username %>/<%= @agent.agentname %>)
   </div>
   <div class="header__tools">
+    <% if current_user.can? :edit, @agent %>
+      <a href="<%= edit_user_agent_path(@agent.owner, @agent, origin: 'show') %>"
+         class="btn btn--small btn--outline" data-action="open-remote-modal">
+        <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
+      </a>
+    <% end %>
     <% if User.confirmed.count > 1 %>
       <% if current_user.owner? @agent %>
-        <a href="<%= confirm_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
-           class="btn btn--small btn--destructive" data-action="open-remote-modal">
-          <span class="icon icon--x-small"><%= icon_transfert %></span>
-          <%= t('views.agents.edit.transfer_ownership') %>
-        </a>
         <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>"
-           class="btn btn--small" data-action="open-remote-modal">
+           class="btn btn--small btn--outline" data-action="open-remote-modal">
           <span class="icon icon--x-small"><%= icon_share %></span>
           <%= t('views.agents.index.share') %>
         </a>
+        <a href="<%= confirm_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
+           class="btn btn--small btn--outline" data-action="open-remote-modal">
+          <span class="icon icon--x-small"><%= icon_transfert %></span>
+          <%= t('views.agents.edit.transfer_ownership') %>
+        </a>
       <% end %>
-    <% end %>
-    <% if current_user.can? :edit, @agent %>
-      <a href="<%= edit_user_agent_path(@agent.owner, @agent, origin: 'show') %>"
-         class="btn btn--small" data-action="open-remote-modal">
-        <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
-      </a>
     <% end %>
   </div>
 </header>
