@@ -3,6 +3,7 @@ en:
     models:
       agent: Agent
       intent: Intent
+      interpretation: Interpretation
     attributes:
       agent:
         name: Name
@@ -11,6 +12,8 @@ en:
       intent:
         intentname: ID
         description: Description
+      interpretation:
+        expression: Expression
   errors:
     user:
       delete:

@@ -5,6 +5,7 @@ class IntentsController < ApplicationController
   before_action :set_intent, except: [:new, :create, :confirm_destroy, :update_positions]
 
   def show
+    @interpretation = Interpretation.new
   end
 
   def new
