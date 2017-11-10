@@ -16,11 +16,9 @@
         data-controller-action="<%= action_name %>"
         class="app <% if controller_path.include?('style_guide') %>sg<% end %>">
 
-    <div class="app-wrapper">
+    <%= render 'layouts/nav' %>
 
-      <aside class="v-nav">
-        <%= render 'layouts/nav' %>
-      </aside>
+    <div class="app-wrapper">
 
       <main>
         <%= yield %>

@@ -4,7 +4,7 @@
 
 .app-wrapper{
   @include display_flex();
-  height: 100%;
+  height: calc(100% - 3.5em);
   & > main{
     @include flex(1);
     overflow: auto;
@@ -16,6 +16,10 @@
     height: 100%;
     width: 200px;
   }
+}
+
+.app-wrapper--without-h-nav{
+  height: 100%;
 }
 
 

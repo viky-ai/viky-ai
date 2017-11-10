@@ -4,6 +4,44 @@
 </div>
 
 <section>
+  <h2>Horizontal navigation</h2>
+  <%= highlight_html do %>
+<div class="h-nav">
+  <div class="h-nav__header">
+    <a href="#" class="logo">
+      <%= logo_on_dark %>
+    </a>
+  </div>
+
+  <div class="h-nav__content">
+    <ul>
+      <li><a href="#">Item A</a></li>
+      <li><a href="#" class="current">Item B</a></li>
+      <li><a href="#">Item C</a></li>
+      <li><a href="#">Item D</a></li>
+      <li><a href="#">Item E</a></li>
+    </ul>
+  </div>
+
+  <div class="h-nav__content">
+    <ul>
+      <li><a href="#">Username</a></li>
+      <li>
+        <a href="#">
+          Log out
+          <span class="icon">
+            <%= icon_logout %>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+  <% end %>
+</section>
+
+<section>
   <h2>Vertical navigation</h2>
   <%= highlight_html do %>
 <div class="v-nav">
@@ -27,10 +65,6 @@
       <li><a href="#">Item D</a></li>
       <li><a href="#">Item E</a></li>
     </ul>
-  </div>
-  <div class="v-nav__footer">
-    Lorem ipsum dolor sit amet<br />
-    Consectetur adipisicing elit.
   </div>
 </div>
   <% end %>
