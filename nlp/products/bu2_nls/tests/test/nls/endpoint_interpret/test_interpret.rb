@@ -89,6 +89,20 @@ module Nls
         end
       end
 
+      def test_load_huge_package
+        Nls.remove_all_packages
+
+        # Prepare data
+        package = Package.new("package_test_interpret_parallel_query")
+        1000.times do |j|
+          interpretation = Interpretation.new("interpretation_#{j}").new_textual(["sentence_#{j}"])
+          package << interpretation
+        end
+
+        Nls.package_update(package)
+
+      end
+
       def test_empty_sentence
         Nls.remove_all_packages
 
