@@ -43,7 +43,12 @@ GEM
     arel (8.0.0)
     awesome_print (1.8.0)
     bcrypt (3.1.11)
-    bindex (0.5.0)
+    better_errors (2.4.0)
+      coderay (>= 1.0.0)
+      erubi (>= 1.0.0)
+      rack (>= 0.9.0)
+    binding_of_caller (0.7.3)
+      debug_inspector (>= 0.0.1)
     builder (3.2.3)
     byebug (9.1.0)
     capybara (2.15.1)
@@ -54,6 +59,7 @@ GEM
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
     cliver (0.3.2)
+    coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0)
@@ -65,6 +71,7 @@ GEM
     connection_pool (2.2.1)
     css_parser (1.6.0)
       addressable
+    debug_inspector (0.0.3)
     devise (4.3.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -247,11 +254,6 @@ GEM
       execjs (>= 0.3.0, < 3)
     warden (1.2.7)
       rack (>= 1.0)
-    web-console (3.5.1)
-      actionview (>= 5.0)
-      activemodel (>= 5.0)
-      bindex (>= 0.4.0)
-      railties (>= 5.0)
     webpacker (3.0.1)
       activesupport (>= 4.2)
       rack-proxy (>= 0.6.1)
@@ -267,6 +269,8 @@ PLATFORMS
 
 DEPENDENCIES
   awesome_print
+  better_errors
+  binding_of_caller
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
@@ -299,7 +303,6 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   turbolinks (~> 5)
   uglifier (>= 1.3.0)
-  web-console (>= 3.3.0)
   webpacker
 
 BUNDLED WITH
