@@ -1,3 +1,7 @@
-<li>
-  <%= interpretation.expression %>
+<li name="<%= interpretation.id %>">
+  <%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], method: :delete) do |f| %>
+    <%= interpretation.expression %>
+    <%= f.button t('views.interpretations.index.delete_btn'), class: 'btn btn--destructive' %>
+  <% end %>
+  </form>
 </li>

@@ -3,3 +3,6 @@ en:
     interpretations:
       new:
         btn: "Add"
+      index:
+        delete_btn: "Delete"
+      delete_failed: "Ooops, delete failed."

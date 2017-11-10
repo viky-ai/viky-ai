@@ -28,4 +28,15 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Expression can\'t be blank')
   end
 
+  test 'Delete an interpretation' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_text?('Hello world')
+    click_button 'Delete'
+    assert page.has_no_text?('Hello world')
+  end
 end
