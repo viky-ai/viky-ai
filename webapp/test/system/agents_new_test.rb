@@ -4,7 +4,7 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   def go_to_agents_creation
     admin_login
-    within(".v-nav") do
+    within(".h-nav") do
       click_link 'Agents'
     end
     click_link('New agent')

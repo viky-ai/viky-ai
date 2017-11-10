@@ -17,7 +17,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def logout
-    first('.v-nav__footer svg').click
+    all('.h-nav a').last.click
   end
 
   def go_to_agents_index

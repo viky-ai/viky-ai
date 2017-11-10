@@ -4,7 +4,7 @@ class ProfileTest < ApplicationSystemTestCase
 
   def go_to_profile
     admin_login
-    within(".v-nav") do
+    within(".h-nav") do
       click_link "admin"
     end
     assert page.has_text?("Your profile")
