@@ -7,7 +7,6 @@
     <file>iuci.c</file>
     <file>iucic.c</file>
     <file>iucis.c</file>
-    <file>uciba.c</file>
     <file>ucicba.c</file>
     <file>ucimem.c</file>
     <file>ucircreq.c</file>
@@ -28,7 +27,7 @@
     <platform name="linux">
       <option name="NAME">oguci</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-loggen -loghttp -logsock -logmsg</option>
+      <option name="ADD_LIBR">-loggen -logheap -loghttp -logsock -logmsg</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

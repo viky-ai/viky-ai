@@ -5,6 +5,7 @@
  *  Version 1.1
 */
 #include <loguci.h>
+#include <logheap.h>
 
 
 //#define OgThnMessageLog OgThrMessageLog
@@ -46,9 +47,10 @@ struct og_ctrl_uci {
   int header_mandatory;
   void *hhttp;
   int chunked;
+  
   /** Buffer for all operations **/
-  unsigned char *Ba;
-  int BaSize,BaUsed;
+  og_heap hba;
+
   };
 
 
