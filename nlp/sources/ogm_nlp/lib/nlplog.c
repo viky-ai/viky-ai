@@ -239,7 +239,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s", text, string_locale,
+      expression->keep_order ? " keep-order" : "");
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));
