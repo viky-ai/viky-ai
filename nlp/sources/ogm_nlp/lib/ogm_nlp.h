@@ -318,8 +318,7 @@ struct request_expression
   int request_position_start;
   int request_positions_nb;
 
-  // different measures to be used in scoring
-  int input_parts_compacity;
+  // overlapping rate of the tree of the request_expression
   int overlap_mark;
 
   int orip_start;

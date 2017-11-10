@@ -13,9 +13,9 @@ static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_
 static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2);
 static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_bool NlpRequestExpressionOverlappedInputParts(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, int *poverlap_mark);
-static og_bool NlpRequestOverlappedInputParts(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression);
+static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2, int *poverlap_mark);
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
@@ -37,6 +37,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->Irequest_any = (-1);
   request_expression->keep_as_result = FALSE;
   g_queue_init(request_expression->tmp_solutions);
+  request_expression->overlap_mark = 0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -67,7 +68,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   }
   IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
 
-  // Necessary for NlpRequestExpressionOverlappedInputParts and NlpRequestExpressionIsOrdered
+  // Necessary for NlpRequestExpressionOverlapMark and NlpRequestExpressionIsOrdered
   request_expression->orip_start = (-1);
   request_expression->orips_nb = 0;
   for (int i = 0; i < expression->input_parts_nb; i++)
@@ -93,45 +94,32 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   if (must_add_request_expression)
   {
-    og_bool have_overlapped_input_parts = NlpRequestExpressionOverlappedInputParts(ctrl_nlp_th, request_expression,
-        &request_expression->overlap_mark);
-    IFE(have_overlapped_input_parts);
-    //if (have_overlapped_input_parts) must_add_request_expression = FALSE;
+    og_bool request_position_overlap = NlpRequestPositionOverlap(ctrl_nlp_th,
+        request_expression->request_position_start, request_expression->request_positions_nb);
+    if (request_position_overlap) must_add_request_expression = FALSE;
   }
 
   if (must_add_request_expression)
   {
-    request_expression->input_parts_compacity = 0;
-    for (int i = 0; i < expression->input_parts_nb; i++)
+    // Must be called before NlpRequestExpressionExists
+    IFE(NlpRequestExpressionOverlapMark(ctrl_nlp_th, request_expression));
+    struct request_expression *same_request_expression;
+    og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
+        request_expression_used, &same_request_expression);
+    IF(request_expression_exists) DPcErr;
+    if (request_expression_exists)
     {
-      request_expression->input_parts_compacity +=
-          request_input_parts[match_zone_input_part[i].current].request_position_distance;
-    }
-
-    og_bool request_position_overlap = NlpRequestPositionOverlap(ctrl_nlp_th,
-        request_expression->request_position_start, request_expression->request_positions_nb);
-    if (request_position_overlap) must_add_request_expression = FALSE;
-
-    if (must_add_request_expression)
-    {
-      struct request_expression *same_request_expression;
-      og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
-          request_expression_used, &same_request_expression);
-      IF(request_expression_exists) DPcErr;
-      if (request_expression_exists)
+      og_bool must_log_compared_expressions = TRUE;
+      if (request_expression->request_positions_nb == 1) must_log_compared_expressions = FALSE;
+      if (must_log_compared_expressions)
       {
-        og_bool must_log_compared_expressions = TRUE;
-        if (request_expression->request_positions_nb == 1) must_log_compared_expressions = FALSE;
-        if (must_log_compared_expressions)
-        {
 //          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
 //              "comparing new request expression %d with same request expression %d:",
 //              request_expression->input_parts_compacity, same_request_expression->input_parts_compacity);
 //          IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
 //          IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
-        }
-        must_add_request_expression = FALSE;
       }
+      must_add_request_expression = FALSE;
     }
   }
 
@@ -214,12 +202,12 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
   return TRUE;
 }
 
-static og_bool NlpRequestExpressionOverlappedInputParts(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, int *poverlap_mark)
+static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression)
 {
-  *poverlap_mark = 0;
+  request_expression->overlap_mark = 0;
 
-  if (request_expression->orips_nb <= 1) return FALSE;
+  if (request_expression->orips_nb <= 1) DONE;
 
   struct original_request_input_part *original_request_input_part = OgHeapGetCell(
       ctrl_nlp_th->horiginal_request_input_part, 0);
@@ -243,19 +231,16 @@ static og_bool NlpRequestExpressionOverlappedInputParts(og_nlp_th ctrl_nlp_th,
       struct request_input_part *request_input_part2 = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
           Irequest_input_part2);
       IFN(request_input_part2) DPcErr;
-      int local_overlap_mark;
-      og_bool are_overlapped = NlpRequestOverlappedInputParts(ctrl_nlp_th, request_input_part1, request_input_part2,
-          &local_overlap_mark);
-      *poverlap_mark += local_overlap_mark;
-      IFE(are_overlapped);
-      if (are_overlapped) return TRUE;
+      int inputr_parts_overlap_mark;
+      IFE(NlpRequestExpressionInputPartsOverlapMark(ctrl_nlp_th, request_input_part1, request_input_part2, &inputr_parts_overlap_mark));
+      request_expression->overlap_mark += inputr_parts_overlap_mark;
     }
   }
 
-  return FALSE;
+  DONE;
 }
 
-static og_bool NlpRequestOverlappedInputParts(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2, int *poverlap_mark)
 {
   struct request_position *request_position;
