@@ -11,11 +11,13 @@ module StyleGuideHelper
       html << ERB::Util.html_escape(string)
       html << "</div>"
 
+      html << "<div class='code'>"
       html << "<pre>"
       html << "<code class='language-html'>"
       html << escape_once(string.strip)
       html << "</code>"
       html << "</pre>"
+      html << "</div>"
       html << "</div>"
     end
 

@@ -5,6 +5,11 @@ import 'normalize.css'
 import 'selectize'
 import 'selectize/dist/css/selectize.css'
 
+// PrismJs & Auto highlight
+import 'prismjs/themes/prism.css';
+require('prismjs');
+import './highlight';
+
 // CSS framework
 import './main'
 
@@ -16,6 +21,7 @@ import './form_delete_validation'
 import './color_picker'
 window.App.Message = require('./message')
 import './user_search'
+import './console'
 
 // Expose jQuery
 window.$ = require('jquery');

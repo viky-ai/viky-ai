@@ -1,0 +1,39 @@
+
+.console{
+  @include display_flex();
+  flex-direction: column;
+  height: 100%;
+
+  background-color: #fff;
+  .console__header{
+    padding: 1em 1em 1em 1em;
+    border-bottom: 1px solid rgba(#000, .1);
+    small{
+      font-size: 1em;
+      color: #aaa;
+    }
+    code{
+      font-family: monospace;
+    }
+  }
+
+  form{
+    margin: 1.25em 1em;
+  }
+
+  .tabs{
+    margin: 0;
+  }
+  .console__output{
+    height: 100%;
+    overflow-y: auto;
+    #console-explain{
+      padding: 1em;
+    }
+    pre{
+      font-size: .75em;
+      margin: 0;
+      background-color: #fff;
+    }
+  }
+}

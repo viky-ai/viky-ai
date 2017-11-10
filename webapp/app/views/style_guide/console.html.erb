@@ -1,0 +1,99 @@
+<div class="sg-intro">
+  <h1>Console</h1>
+  <p>Agent test UI.</p>
+</div>
+
+<section>
+  <%= highlight_html do %>
+<div class="console">
+  <div class="console__header">
+    Console <small>- Test your agent live!</small>
+    <div class="console__endpoint">
+      <span class="badge badge--small badge--success">GET</span>
+      <code>/api/v1/interpret.json</code>
+    </div>
+  </div>
+  <form>
+    <div class="field">
+      <div class="control">
+
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--outline btn--small">
+              FR-fr
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li><a href="#" class="current">FR-fr</a></li>
+              <li><a href="#">EN-uk</a></li>
+              <li><a href="#">None</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--outline btn--small">
+              Verbose OFF
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li><a href="#" class="current">Verbose OFF</a></li>
+              <li><a href="#">Verbose ON</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="field">
+      <div class="control control--merged">
+        <input type="text" placeholder="Say something..." name="sentence" />
+        <button class="btn btn--primary">
+          <span class="icon icon--small">
+            <%= icon_check %>
+          </span>
+        </button>
+      </div>
+    </div>
+  </form>
+  <div class="tabs tabs--small tabs--on-center">
+    <ul>
+      <li><a href="#" class="current" data-action="console-switch-to-explain">Explain</a></li>
+      <li><a href="#" data-action="console-switch-to-json">JSON</a></li>
+    </ul>
+  </div>
+  <div class="console__output">
+    <div id="console-explain">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi doloribus tenetur, ut repudiandae velit dolor, sunt beatae aspernatur quod, laudantium consequatur architecto sit quaerat molestias, inventore nisi eos a porro.
+    </div>
+    <div id="console-json" style="display:none;">
+      <pre><code class='language-javascript'>{
+  "intents": [
+    {
+      "id": "db3dd17d-fd3f-42a7-9d65-fd5a09894015",
+      "slug": "admin/terminator/hello",
+      "name": "hello",
+      "score": 0.7
+    },
+    {
+      "id": "affdd17d-fd3f-90a7-9d65-fd5a09893033",
+      "slug": "admin/terminator/hello-world",
+      "name": "hello-world",
+      "score": 0.5
+    }
+  ]
+}</code></pre>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>

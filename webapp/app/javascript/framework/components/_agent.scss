@@ -6,7 +6,7 @@
   grid-template-columns: 1fr;
   grid-gap: 1em;
 
-  @media (min-width: 900px){
+  @media (min-width: 700px){
     -ms-grid-columns: 20em 1fr;
     grid-template-columns: 20em 1fr;
   }
@@ -47,11 +47,10 @@
     }
   }
 
-
   .agent__info{
     font-size: .9em;
     padding: 0 1em 0.5em 1em;
-    @media (min-width: 1000px){
+    @media (min-width: 700px){
       padding: 0 0 .5em 0;
     }
     h3{
@@ -73,15 +72,23 @@
       -ms-grid-columns: 1fr;
       grid-template-columns: 1fr;
       grid-gap: .75em 1.25em;
-      @media (min-width: 1200px){
+      @media (min-width: 900px){
         -ms-grid-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
       }
+      @media (min-width: 1100px){
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+      }
       @media (min-width: 1400px){
+        -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (min-width: 1700px){
         -ms-grid-columns: 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr;
       }
-      @media (min-width: 1600px){
+      @media (min-width: 1900px){
         -ms-grid-columns: 1fr 1fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 1fr 1fr;
       }

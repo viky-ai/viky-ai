@@ -13,8 +13,17 @@
     position: relative;
   }
   & > aside{
-    height: 100%;
     width: 200px;
+    &.console-container{
+      display: none;
+      height: 100%;
+      width: 30%;
+      min-width: 400px;
+      box-shadow: -2px 0 2px rgba(#000, .075);
+      @media (min-width: 1100px){
+        display: block;
+      }
+    }
   }
 }
 
