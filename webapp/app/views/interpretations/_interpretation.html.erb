@@ -1,7 +1,7 @@
-<li name="<%= interpretation.id %>">
-  <%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], method: :delete) do |f| %>
-    <%= interpretation.expression %>
-    <%= f.button t('views.interpretations.index.delete_btn'), class: 'btn btn--destructive' %>
-  <% end %>
-  </form>
-</li>
+<div id="interpretation-<%= interpretation.id %>">
+  <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
+      interpretation.intent.agent.owner,
+      interpretation.intent.agent,
+      interpretation.intent,
+      interpretation), remote: true %>
+</div>

@@ -39,7 +39,7 @@ Rails.application.routes.draw do
             post :update_positions
           end
 
-          resources :interpretations, only: [:create, :destroy]
+          resources :interpretations, only: [:show, :create, :edit, :update, :destroy]
         end
       end
     end

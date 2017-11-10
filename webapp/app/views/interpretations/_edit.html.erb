@@ -1,0 +1,15 @@
+<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation]) do |f| %>
+    <%= f.text_field :expression %>
+    <%= display_errors(interpretation, :expression) %>
+    <%= f.button 'Update' %>
+<% end %>
+
+<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], method: :delete) do |f| %>
+    <%= f.button t('views.interpretations.index.delete_btn'), class: 'btn btn--destructive' %>
+<% end %>
+
+<%= link_to 'Cancel', user_agent_intent_interpretation_path(
+    interpretation.intent.agent.owner,
+    interpretation.intent.agent,
+    interpretation.intent,
+    interpretation), remote: true %>
