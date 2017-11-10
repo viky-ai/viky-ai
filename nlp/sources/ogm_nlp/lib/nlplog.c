@@ -71,7 +71,7 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
 
   buffer[expected_size] = 0;
 
-  if (p_truncated) *p_truncated = TRUE;
+  if (p_truncated) *p_truncated = FALSE;
 
   DONE;
 }

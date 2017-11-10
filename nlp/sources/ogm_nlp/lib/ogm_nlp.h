@@ -387,6 +387,12 @@ struct og_nlp_parse_callback
 
 };
 
+struct og_ctrl_nlp_js
+{
+  duk_context *duk_context;
+  duk_idx_t init_stack_idx;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -444,7 +450,8 @@ struct og_ctrl_nlp_threaded
   int new_request_expression_start;
   int new_request_input_part_start;
 
-  duk_context *duk_context;
+  /** js intepreter */
+  struct og_ctrl_nlp_js js[1];
 
 };
 
@@ -621,4 +628,13 @@ og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int si
 
 /* nlpduk.c */
 char *NlpDukTypeString(duk_int_t type);
+
+/* nlpjavascript.c */
+og_status NlpJsInit(og_nlp_th ctrl_nlp_th);
+og_status NlpJsReset(og_nlp_th ctrl_nlp_th);
+og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th);
+og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
+og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
+og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
 

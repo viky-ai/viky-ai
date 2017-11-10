@@ -7,7 +7,6 @@
     <file>inlp.c</file>
     <file>nlpany.c</file>
     <file>nlpanyopt.c</file>
-    <file>nlpduk.c</file>
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>
@@ -17,6 +16,7 @@
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>
     <file>nlplog.c</file>
+    <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
     <file>nlpmatch.c</file>
     <file>nlporip.c</file>

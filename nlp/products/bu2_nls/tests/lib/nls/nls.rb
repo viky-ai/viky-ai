@@ -1,6 +1,17 @@
 require 'open3'
 require 'term/ansicolor'
 
+# Show request body on error
+RestClient::ExceptionWithResponse.class_eval do
+
+  # override message method
+  def message
+    full_message = (@message || default_message)
+    full_message + "\n" + http_body if http_body
+  end
+
+end
+
 module Nls
 
   class Nls
@@ -119,6 +130,9 @@ module Nls
     def self.interpret(body, params = {})
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
+#    rescue RestClient::ExceptionWithResponse => e
+#      puts e.http_body
+#      raise
     end
 
     def self.interpret_package(package, sentence, opts = {})

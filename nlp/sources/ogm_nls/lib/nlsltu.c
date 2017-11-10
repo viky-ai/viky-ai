@@ -122,7 +122,7 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
     if (contentSize > 0)
     {
       json_error_t error[1];
-      request->body = json_loads(output->content + headerSize, contentSize, error);
+      request->body = json_loadb(output->content + headerSize, contentSize, JSON_REJECT_DUPLICATES, error);
       if (!request->body)
       {
         NlsJSONThrowError(lt, "OgListeningProcessSearchRequest", error);

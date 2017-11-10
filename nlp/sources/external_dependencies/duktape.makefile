@@ -32,17 +32,22 @@ clean:
 	rm -f  $(SRCPATH)/include/duktape.h
 	rm -f  $(DBINPATH)/libduktape.so*
 
-make: duktape/dist/Makefile.sharedlibrary
-	cd duktape/dist/ && $(MAKE) -f Makefile.sharedlibrary
+duktape/dist/libduktape.so: duktape/dist/duktape.c duktape/dist/duktape.h duktape/dist/duk_config.h
+	cd duktape/dist/ && gcc -shared -fPIC -Wall -Wextra -O2 -Wl,-soname,libduktape.so \
+		                      -o libduktape.so duktape.c
 
-duktape/dist/Makefile.sharedlibrary:
-	cd duktape && $(MAKE) dist
+duktape/dist/duktape.c duktape/dist/duktape.h duktape/dist/duk_config.h:
+	cd duktape && python tools/configure.py \
+		--output-directory=dist \
+		--platform linux \
+		--compiler gcc \
+		--architecture x64 \
+		--option-yaml 'DUK_USE_FASTINT: true'
 
-$(DBINPATH)/libduktape.so: make
-	cd duktape/dist/ && ln -nfs libduktape.so.* libduktape.so
-	cp -af duktape/dist/libduktape.so* $(DBINPATH)/
+$(DBINPATH)/libduktape.so: duktape/dist/libduktape.so
+	cp -af duktape/dist/libduktape.so $(DBINPATH)/
 
-$(SRCPATH)/include/duktape.h: duktape/dist/Makefile.sharedlibrary
+$(SRCPATH)/include/duktape.h: duktape/dist/duktape.h duktape/dist/duk_config.h
 	mkdir -p $(SRCPATH)/include/
-	cp -af duktape/dist/src/duk_config.h $(SRCPATH)/include/
-	cp -af duktape/dist/src/duktape.h    $(SRCPATH)/include/
+	cp -af duktape/dist/duk_config.h $(SRCPATH)/include/
+	cp -af duktape/dist/duktape.h    $(SRCPATH)/include/

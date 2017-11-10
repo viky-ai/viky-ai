@@ -18,6 +18,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
 {
 
   // setup request memory for future interpretation
+  ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
 
   og_char_buffer nlpc_name[DPcPathSize];
   snprintf(nlpc_name, DPcPathSize, "%s_interpret_package", param->name);
@@ -93,10 +94,6 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
 
-  ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
-
-  ctrl_nlp_th->duk_context = duk_create_heap_default();
-
   DONE;
 }
 
@@ -149,8 +146,6 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->horiginal_request_input_part = NULL;
   ctrl_nlp_th->horip = NULL;
   ctrl_nlp_th->hrequest_any = NULL;
-
-  duk_destroy_heap(ctrl_nlp_th->duk_context);
 
   DONE;
 }
@@ -293,17 +288,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
-
-  duk_idx_t duk_context_index = duk_get_top(ctrl_nlp_th->duk_context);
-  NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestReset: duk top index is %d", duk_context_index)
-  if (duk_context_index > 0)
-  {
-    duk_pop_n(ctrl_nlp_th->duk_context, duk_context_index);
-  }
-
-  // We need to call it twice to make sure everything
-  duk_gc(ctrl_nlp_th->duk_context, 0);
-  duk_gc(ctrl_nlp_th->duk_context, 0);
 
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
 
