@@ -170,7 +170,7 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   }
   else
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' any", string_alias);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' %s", string_alias, NlpAliasTypeString(alias->type));
   }
   DONE;
 }
@@ -278,7 +278,7 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
   }
   else
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' any", alias->alias);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s", alias->alias, NlpAliasTypeString(alias->type));
   }
   DONE;
 }
@@ -310,6 +310,12 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
       struct alias *alias = input_part->alias;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part interpretation '%s' '%s' in package '%s'",
           Iinput_part, alias->slug, alias->id, alias->package_id);
+      break;
+    }
+    case nlp_input_part_type_Digit:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part, NlpAliasTypeString(alias->type));
       break;
     }
   }
@@ -349,5 +355,23 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d", Irequest_word, string_request_word,
       request_word->start_position, request_word->length_position);
   DONE;
+}
+
+const char *NlpAliasTypeString(enum nlp_alias_type type)
+{
+
+  switch (type)
+  {
+    case nlp_alias_type_Nil:
+      return "nil";
+    case nlp_alias_type_type_Interpretation:
+      return "interpretation";
+    case nlp_alias_type_Any:
+      return "any";
+    case nlp_alias_type_Digit:
+      return "digit";
+
+  }
+  return "alias_unknown";
 }
 

@@ -79,6 +79,8 @@ struct package
   og_heap hinput_part_ba;
   og_heap hinput_part;
 
+  og_heap hdigit_input_part;
+
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
 
@@ -91,7 +93,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Digit
 };
 
 struct alias_compile
@@ -187,13 +189,13 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Digit
 };
 
 struct input_part_word
 {
-    int raw_word_start;
-    int word_start;
+  int raw_word_start;
+  int word_start;
 };
 
 struct input_part
@@ -212,6 +214,11 @@ struct input_part
 
   };
 
+};
+
+struct digit_input_part
+{
+  int Iinput_part;
 };
 
 enum nlp_synchro_test_timeout_in
@@ -250,6 +257,8 @@ struct request_word
   int raw_length;
   int start_position;
   int length_position;
+  og_bool is_digit;
+  int digit_value;
 };
 
 struct request_input_part
@@ -499,6 +508,7 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
 
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
+const char *NlpAliasTypeString(enum nlp_alias_type type);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -533,6 +543,7 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
+og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */

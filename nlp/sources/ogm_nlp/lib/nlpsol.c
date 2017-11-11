@@ -59,6 +59,10 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
+      if (request_word->is_digit)
+      {
+        must_combine_solution = TRUE;
+      }
     }
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
     {
@@ -247,6 +251,42 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         alias_solutions_nb++;
       }
     }
+    else if (request_input_part->type == nlp_input_part_type_Word)
+    {
+      struct request_word *request_word = request_input_part->request_word;
+      og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+      IFN(string_request_word) DPcErr;
+      if (request_word->is_digit)
+      {
+        json_t *json_solution_digit = json_object();
+        json_t *json_solution_integer_digit = json_integer(request_word->digit_value);
+        IF(json_object_set_new(json_solution_digit, "digit", json_solution_integer_digit))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: error setting json_solution_integer_digit");
+          DPcErr;
+        }
+
+        struct alias *alias = request_expression->expression->aliases + i;
+        char solution[DPcPathSize];
+        NlpSolutionString(ctrl_nlp_th, json_solution_digit, DPcPathSize, solution);
+        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
+            alias->alias, solution);
+        if (alias_solutions_nb >= DOgAliasSolutionSize)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+              alias_solutions_nb, DOgAliasSolutionSize);
+          DPcErr;
+
+        }
+        struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+        alias_solution->alias = alias;
+        alias_solution->json_solution = json_solution_digit;
+        g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+        alias_solutions_nb++;
+
+      }
+    }
+
     if (request_expression->expression->alias_any_input_part_position == i + 1)
     {
       struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
@@ -413,7 +453,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
         IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, &json_sultion_computed_value))
         {
           struct expression *ex = request_expression->expression;
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
+          NlpThrowErrorTh(ctrl_nlp_th,
+              "NlpSolutionComputeJS : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
               ex->text, ex->interpretation->slug, ex->interpretation->id);
           DPcErr;
         }

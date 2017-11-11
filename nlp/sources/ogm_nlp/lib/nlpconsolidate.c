@@ -418,7 +418,7 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
       alias_added = TRUE;
     }
-    else
+    else if (alias->type == nlp_alias_type_Any)
     {
       // this says that the any alias is before the input_part position expression->input_parts_nb
       // a value of -1 means no alias, a value of zero means before the first input_part
@@ -431,6 +431,17 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 
       }
       expression->alias_any_input_part_position = expression->input_parts_nb;
+      alias_added = TRUE;
+    }
+    else if (alias->type == nlp_alias_type_Digit)
+    {
+      size_t Iinput_part;
+      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
+      IFN(input_part) DPcErr;
+      input_part->type = nlp_input_part_type_Digit;
+      input_part->alias = alias;
+
+      IFE(NlpInputPartAliasDigitAdd(ctrl_nlp_th, package, Iinput_part));
       alias_added = TRUE;
     }
     break;

@@ -589,6 +589,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   {
     const char *string_alias_type = json_string_value(json_alias_type);
     if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
+    else if (!Ogstricmp(string_alias_type, "digit")) alias->type = nlp_alias_type_Digit;
   }
 
   if (alias->type == nlp_alias_type_type_Interpretation)
@@ -664,19 +665,22 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   {
     if (json_slug != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type 'any' should not have a slug");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type '%s' should not have a slug",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     if (json_id != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation id");
+          "NlpCompilePackageExpressionAlias: alias of type '%s' should not have an interpretation id",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     if (json_package != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation package");
+          "NlpCompilePackageExpressionAlias: alias of type '%s' should not have an interpretation package",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     alias->slug_start = (-1);

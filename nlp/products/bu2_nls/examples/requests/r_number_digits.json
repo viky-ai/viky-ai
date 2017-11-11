@@ -1,0 +1,37 @@
+[
+  {
+    "packages":
+    [
+      "package-numbers"
+    ],
+    "sentence": "123"
+  },
+  {
+    "packages":
+    [
+      "package-numbers"
+    ],
+    "sentence": "12,3"
+  },
+  {
+    "packages":
+    [
+      "package-numbers"
+    ],
+    "sentence": "12.3"
+  },
+  {
+    "packages":
+    [
+      "package-numbers"
+    ],
+    "sentence": "123.200"
+  },
+  {
+    "packages":
+    [
+      "package-numbers"
+    ],
+    "sentence": "145 200"
+  }
+]

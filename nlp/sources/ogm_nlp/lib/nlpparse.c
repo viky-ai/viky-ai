@@ -160,7 +160,6 @@ og_status NlpParseConfInit(og_nlp ctrl_nlp)
 {
 
   // punct char skipped
-  IFE(NlpParseAddPunctChar(ctrl_nlp, ","));
   IFE(NlpParseAddPunctChar(ctrl_nlp, "'"));
 
   // add punct treated as word
@@ -378,6 +377,20 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
   request_word->start_position = word_start;
   request_word->length_position = word_length;
+
+  request_word->is_digit = TRUE;
+  for (int i = 0; i < length_normalized_string_word; i++)
+  {
+    if (!OgUniIsdigit(normalized_string_word[i]))
+    {
+      request_word->is_digit = FALSE;
+      break;
+    }
+  }
+  if (request_word->is_digit)
+  {
+    request_word->digit_value = atoi(normalized_string_word);
+  }
 
   DONE;
 }

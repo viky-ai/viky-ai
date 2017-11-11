@@ -193,7 +193,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   IFN(json)
   {
     char erreur[DPcPathSize];
-    sprintf(erreur,"nlp_compile: error while reading '%s'",json_compilation_filename);
+    sprintf(erreur, "nlp_compile: error while reading '%s': %s", json_compilation_filename, error->text);
     OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
@@ -256,7 +256,7 @@ static og_status nlp_dump(struct og_info *info)
       IF(status)
       {
         char buffer[DPcPathSize];
-        sprintf(buffer, "nlp_dump: error on json_dump_file");
+        sprintf(buffer, "nlp_dump: error on dump file '%s'", info->output_filename);
         OgErr(info->herr, buffer);
         DPcErr;
       }
@@ -275,7 +275,7 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   IFN(json)
   {
     char erreur[DPcPathSize];
-    sprintf(erreur,"nlp_interpret: error while reading '%s'",json_interpret_filename);
+    sprintf(erreur, "nlp_interpret: error while reading '%s': %s", json_interpret_filename, error->text);
     OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
@@ -363,10 +363,9 @@ static int OgUse(struct og_info *info)
   ibuffer += sprintf(buffer + ibuffer, "   -t<n>: trace options for "
       "logging (default 0x%x)\n", info->param->loginfo.trace);
   ibuffer += sprintf(buffer + ibuffer, "    <n> has a combined hexadecimal value of:\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: conf, 0x8: input\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x10: ignore, 0x20: reparse, 0x40: match, 0x80: select\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x100: output\n");
-
+  ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: synchro, 0x8: compile\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x10: consolidate, 0x20: interpret, 0x40: dump, 0x80: package\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x100: match, 0x200: parse, 0x400: solution, 0x800: JS\n");
   OgLogConsole(info->hmsg, "%.*s", ibuffer, buffer);
 
   DONE;

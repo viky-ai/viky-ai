@@ -1,0 +1,27 @@
+{
+  "id": "package-numbers",
+  "slug": "package-numbers",
+  "interpretations":
+  [
+    {
+      "slug": "digits_number",
+      "expressions":
+      [
+        {
+          "expression": "@{digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            }
+          ],
+          "solution": {
+            "number": "`digits.digit`"
+          }
+
+        }
+      ]
+    }
+  ]
+}

@@ -129,7 +129,13 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
-      snprintf(string_input_part, DPcPathSize, "[%s] word:%s %d:%d", string_positions, string_request_word,
+      char digit[DPcPathSize];
+      digit[0] = 0;
+      if (request_word->is_digit)
+      {
+        snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
+      }
+      snprintf(string_input_part, DPcPathSize, "[%s] word:%s%s %d:%d", string_positions, string_request_word, digit,
           request_word->start_position, request_word->length_position);
       break;
     }
@@ -143,6 +149,13 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
           interpretation->id);
       break;
     }
+    case nlp_input_part_type_Digit:
+    {
+      // should not be used
+      snprintf(string_input_part, DPcPathSize, "digit");
+      break;
+    }
+
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%2d %4d %4d:%d %s", request_input_part->interpret_package->self_index,

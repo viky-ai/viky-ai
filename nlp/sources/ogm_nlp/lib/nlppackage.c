@@ -56,6 +56,9 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string
   snprintf(heap_name, DPcPathSize, "package_input_part_%s", package->id);
   IFn(package->hinput_part = OgHeapInit(hmsg, heap_name, sizeof(struct input_part), 1)) return NULL;
 
+  snprintf(heap_name, DPcPathSize, "package_digit_input_part_%s", package->id);
+  IFn(package->hdigit_input_part = OgHeapInit(hmsg, heap_name, sizeof(struct digit_input_part), 1)) return NULL;
+
   IF(NlpInputPartWordInit(ctrl_nlp_th, package)) return NULL;
   IF(NlpInputPartAliasInit(ctrl_nlp_th, package)) return NULL;
 
@@ -302,6 +305,9 @@ static og_status NlpPackageFlush(package_t package)
   package->hinput_part_ba = NULL;
   OgHeapFlush(package->hinput_part);
   package->hinput_part = NULL;
+
+  OgHeapFlush(package->hdigit_input_part);
+  package->hdigit_input_part = NULL;
 
   unsigned char * slug = (unsigned char *) package->slug;
   DPcFree(slug);

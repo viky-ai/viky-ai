@@ -150,9 +150,16 @@ static og_status NlpRequestInputPartWordLog(og_nlp_th ctrl_nlp_th, struct reques
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s'", string_offset,
+  char digit[DPcPathSize];
+  digit[0] = 0;
+  if (request_word->is_digit)
+  {
+    snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s'%s", string_offset,
       request_input_part->Ioriginal_request_input_part, request_input_part->level, string_positions, DPcPathSize,
-      string_request_word);
+      string_request_word, digit);
   DONE;
 }
 
