@@ -79,6 +79,13 @@ number in digits:
 ```
 
 
+number in digits or letters:
+
+```
+./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_numbers.json
+```
+
+
 Summary of list of examples
 =====
 
@@ -101,6 +108,7 @@ Summary of list of examples
 ./ognlp -c packages/package_number_letters.json -i requests/r_number_letters_fr.json
 ./ognlp -c packages/package_number_digits.json -i requests/r_number_digit.json
 ./ognlp -c packages/package_number_digits.json -i requests/r_number_digits.json
+./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_numbers.json
 ```
 
 

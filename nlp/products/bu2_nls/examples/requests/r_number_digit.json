@@ -1,7 +1,7 @@
 {
   "packages":
   [
-    "package-digits-numbers"
+    "package-number-digits"
   ],
   "sentence": "456.123"
 }

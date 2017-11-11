@@ -1,0 +1,20 @@
+[
+  {
+    "packages":
+    [
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "456.123"
+  },
+  {
+    "packages":
+    [
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "quatre vingt dix huit"
+  }
+]

@@ -2,35 +2,35 @@
   {
     "packages":
     [
-      "package-digits-numbers"
+      "package-number-digits"
     ],
     "sentence": "123"
   },
   {
     "packages":
     [
-      "package-digits-numbers"
+      "package-number-digits"
     ],
     "sentence": "12,3"
   },
   {
     "packages":
     [
-      "package-digits-numbers"
+      "package-number-digits"
     ],
     "sentence": "12.3"
   },
   {
     "packages":
     [
-      "package-digits-numbers"
+      "package-number-digits"
     ],
     "sentence": "123.200"
   },
   {
     "packages":
     [
-      "package-digits-numbers"
+      "package-number-digits"
     ],
     "sentence": "145 200"
   }

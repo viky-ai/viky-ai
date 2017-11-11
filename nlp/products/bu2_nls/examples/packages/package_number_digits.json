@@ -1,6 +1,6 @@
 {
-  "id": "package-digits-numbers",
-  "slug": "package-digits-numbers",
+  "id": "package-number-digits",
+  "slug": "package-number-digits",
   "interpretations":
   [
     {
@@ -56,7 +56,7 @@
             {
               "alias": "dot",
               "slug": "dot",
-              "package": "package-digits-numbers"
+              "package": "package-number-digits"
             },
             {
               "alias": "digits_after",
@@ -75,7 +75,7 @@
             {
               "alias": "coma",
               "slug": "coma",
-              "package": "package-digits-numbers"
+              "package": "package-number-digits"
             },
             {
               "alias": "digits_after",
@@ -104,7 +104,7 @@
             {
               "alias": "several_digits",
               "slug": "several_digits",
-              "package": "package-digits-numbers"
+              "package": "package-number-digits"
             }
           ],
           "solution":
@@ -125,6 +125,45 @@
           {
             "number": "`digits.digit`"
           }
+        }
+      ]
+    },
+    {
+      "slug": "number_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits_number}",
+          "aliases":
+          [
+            {
+              "alias": "digits_number",
+              "slug": "digits_number",
+              "package": "package-number-digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{digits_sep_digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits_sep_digits",
+              "slug": "digits_sep_digits",
+              "package": "package-number-digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{several_digits}",
+          "aliases":
+          [
+            {
+              "alias": "several_digits",
+              "slug": "several_digits",
+              "package": "package-number-digits"
+            }
+          ]
         }
       ]
     }
