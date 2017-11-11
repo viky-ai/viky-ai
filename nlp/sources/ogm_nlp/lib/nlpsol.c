@@ -413,7 +413,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
         IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, &json_sultion_computed_value))
         {
           struct expression *ex = request_expression->expression;
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : Error creating json_sultion_computed_value for expression '%s' in '%s' '%s'",
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
               ex->text, ex->interpretation->slug, ex->interpretation->id);
           DPcErr;
         }

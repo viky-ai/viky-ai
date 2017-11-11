@@ -65,6 +65,11 @@ Better linguistic structuration:
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_to_great_paris_i_really_want_to_go_from_wonderful_new_york.json
 ```
 
+number in letters:
+
+```
+./ognlp --c packages/package_number_letters.json -i requests/r_number_letters_fr.json
+```
 
 
 Summary of list of examples
@@ -86,6 +91,7 @@ Summary of list of examples
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_to_great_paris_from_wonderful_new_york_i_really_want_to_go.json
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_i_really_want_to_go_to_great_paris_from_wonderful_new_york.json
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_to_great_paris_i_really_want_to_go_from_wonderful_new_york.json
+./ognlp --c packages/package_number_letters.json -i requests/r_number_letters_fr.json
 ```
 
 

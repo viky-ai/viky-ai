@@ -305,7 +305,6 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
-    json_decref(output->json_output);
     IF(status)
     {
       char buffer[DPcPathSize];
