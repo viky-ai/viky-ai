@@ -1,8 +1,26 @@
 {
-  "id": "package-numbers",
-  "slug": "package-numbers",
+  "id": "package-digits-numbers",
+  "slug": "package-digits-numbers",
   "interpretations":
   [
+    {
+      "slug": "dot",
+      "expressions":
+      [
+        {
+          "expression": "."
+        }
+      ]
+    },
+    {
+      "slug": "coma",
+      "expressions":
+      [
+        {
+          "expression": ","
+        }
+      ]
+    },
     {
       "slug": "digits_number",
       "expressions":
@@ -16,10 +34,97 @@
               "type": "digit"
             }
           ],
-          "solution": {
+          "solution":
+          {
             "number": "`digits.digit`"
           }
-
+        }
+      ]
+    },
+    {
+      "slug": "digits_sep_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits_before} @{dot} @{digits_after}",
+          "aliases":
+          [
+            {
+              "alias": "digits_before",
+              "type": "digit"
+            },
+            {
+              "alias": "dot",
+              "slug": "dot",
+              "package": "package-digits-numbers"
+            },
+            {
+              "alias": "digits_after",
+              "type": "digit"
+            }
+          ]
+        },
+        {
+          "expression": "@{digits_before} @{coma} @{digits_after}",
+          "aliases":
+          [
+            {
+              "alias": "digits_before",
+              "type": "digit"
+            },
+            {
+              "alias": "coma",
+              "slug": "coma",
+              "package": "package-digits-numbers"
+            },
+            {
+              "alias": "digits_after",
+              "type": "digit"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "number": "`Number(digits_before.digit+'.'+digits_after.digit)`"
+      }
+    },
+    {
+      "slug": "several_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits} @{several_digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            },
+            {
+              "alias": "several_digits",
+              "slug": "several_digits",
+              "package": "package-digits-numbers"
+            }
+          ],
+          "solution":
+          {
+            "number": "`digits.digit+''+several_digits.number`"
+          }
+        },
+        {
+          "expression": "@{digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            }
+          ],
+          "solution":
+          {
+            "number": "`digits.digit`"
+          }
         }
       ]
     }

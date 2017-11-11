@@ -545,6 +545,7 @@ og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_strin
     int Iinput_part);
 og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);

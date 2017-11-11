@@ -449,8 +449,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
         int string_value_js_size = string_value_length - 2;
 
         // evaluate javascript
-        json_t *json_sultion_computed_value = NULL;
-        IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, &json_sultion_computed_value))
+        json_t *json_solution_computed_value = NULL;
+        IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, &json_solution_computed_value))
         {
           struct expression *ex = request_expression->expression;
           NlpThrowErrorTh(ctrl_nlp_th,
@@ -459,7 +459,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
           DPcErr;
         }
 
-        IF(json_object_iter_set_new(json_new_solution, iter, json_sultion_computed_value))
+        IF(json_object_iter_set_new(json_new_solution, iter, json_solution_computed_value))
         {
           NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : json_object_iter_set_new failed");
           DPcErr;

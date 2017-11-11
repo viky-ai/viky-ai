@@ -27,7 +27,6 @@ og_status NlpInputPartWordFlush(package_t package)
   DONE;
 }
 
-
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part)
 {
@@ -75,11 +74,26 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
       }
 
       int Iinput_part;
-      unsigned char *p = out+sep+1;
+      unsigned char *p = out + sep + 1;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : %d",sep, out, Iinput_part);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : %d", sep, out, Iinput_part);
     }
     while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
+  }
+
+  DONE;
+}
+
+og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Digit input parts for package '%s' '%s':", package->slug, package->id);
+  struct digit_input_part *digit_input_part_all = OgHeapGetCell(package->hdigit_input_part, 0);
+  int digit_input_part_used = OgHeapGetCellsUsed(package->hdigit_input_part);
+
+  for (int i = 0; i < digit_input_part_used; i++)
+  {
+    struct digit_input_part *digit_input_part = digit_input_part_all+i;
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d", digit_input_part->Iinput_part);
   }
 
   DONE;

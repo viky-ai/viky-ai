@@ -239,6 +239,7 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
     IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
     IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
     IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
+    IFE(NlpDigitInputPartLog(ctrl_nlp_th, package));
   }
 
   DONE;

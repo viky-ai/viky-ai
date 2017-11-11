@@ -118,7 +118,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     int digit_input_part_used = OgHeapGetCellsUsed(package->hdigit_input_part);
     for (int i = 0; i < digit_input_part_used; i++)
     {
-      struct digit_input_part *digit_input_part = digit_input_part_all;
+      struct digit_input_part *digit_input_part = digit_input_part_all+i;
       // There is not need to have a special input part here for digit words
       IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, digit_input_part->Iinput_part));
     }
