@@ -1,0 +1,10 @@
+{
+  "packages":
+  [
+      "package-date",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+  ],
+  "sentence": "25 mars 1962"
+}

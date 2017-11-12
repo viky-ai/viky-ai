@@ -58,7 +58,6 @@ List of values in solutions :
 ```
 
 Better linguistic structuration:
-
 ```
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_to_great_paris_from_wonderful_new_york_i_really_want_to_go.json
 ./ognlp -c packages/want_go_from_to_any_solution.json -i requests/r_i_really_want_to_go_to_great_paris_from_wonderful_new_york.json
@@ -66,14 +65,12 @@ Better linguistic structuration:
 ```
 
 Number in letters:
-
 ```
 ./ognlp -c packages/package_number_letters.json -i requests/r_number_letters_0_99_fr.json
 ./ognlp -c packages/package_number_letters.json -i requests/r_number_letters_100_199_fr.json
 ```
 
 Number in digits:
-
 ```
 ./ognlp -c packages/package_number_digits.json -i requests/r_number_digit.json
 ./ognlp -c packages/package_number_digits.json -i requests/r_number_digits.json
@@ -81,19 +78,21 @@ Number in digits:
 
 
 Number in digits or letters:
-
 ```
 ./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_numbers.json
 ```
 
 hotel example:
-
 ```
 ./ognlp -c packages/package_building_features-v2.json -i requests/r_building_features-v2.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_number_people.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_building_features-v2.json -c packages/package_hotel_features.json -i requests/r_hotel_features.json
 ```
 
+Dates:
+```
+./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_date.json -i requests/r_date_day_month_year.json
+```
 
 Summary of list of examples
 =====
@@ -122,6 +121,7 @@ Summary of list of examples
 ./ognlp -c packages/package_building_features-v2.json -i requests/r_building_features-v2.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_number_people.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_building_features-v2.json -c packages/package_hotel_features.json -i requests/r_hotel_features.json
+./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_date.json -i requests/r_date_day_month_year.json
 ```
 
 

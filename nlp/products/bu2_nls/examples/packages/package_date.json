@@ -1,0 +1,436 @@
+{
+  "id": "package-date",
+  "slug": "package-date",
+  "interpretations":
+  [
+    {
+      "slug": "date_january",
+      "expressions":
+      [
+        {
+          "expression": "january",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "janvier",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "janv",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jan"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 1
+      }
+    },
+    {
+      "slug": "date_february",
+      "expressions":
+      [
+        {
+          "expression": "february",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "février",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fevr",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fev"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 2
+      }
+    },
+    {
+      "slug": "date_march",
+      "expressions":
+      [
+        {
+          "expression": "march",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mars",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "mar"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 3
+      }
+    },
+    {
+      "slug": "date_april",
+      "expressions":
+      [
+        {
+          "expression": "april",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "avril",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "avr"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 4
+      }
+    },
+    {
+      "slug": "date_may",
+      "expressions":
+      [
+        {
+          "expression": "may",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mai",
+          "locale": "fr-FR"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 5
+      }
+    },
+    {
+      "slug": "date_june",
+      "expressions":
+      [
+        {
+          "expression": "june",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juin",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jun"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 6
+      }
+    },
+    {
+      "slug": "date_july",
+      "expressions":
+      [
+        {
+          "expression": "july",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juillet",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 7
+      }
+    },
+    {
+      "slug": "date_august",
+      "expressions":
+      [
+        {
+          "expression": "august",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "août",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 8
+      }
+    },
+    {
+      "slug": "date_september",
+      "expressions":
+      [
+        {
+          "expression": "september",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "septembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "sept"
+        },
+        {
+          "expression": "sep"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 9
+      }
+    },
+    {
+      "slug": "date_october",
+      "expressions":
+      [
+        {
+          "expression": "october",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "octobre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "oct"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 10
+      }
+    },
+    {
+      "slug": "date_november",
+      "expressions":
+      [
+        {
+          "expression": "november",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "novembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "nov"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 11
+      }
+    },
+    {
+      "slug": "date_december",
+      "expressions":
+      [
+        {
+          "expression": "december",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "décembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "dec"
+        }
+      ],
+      "solution":
+      {
+        "month_number": 12
+      }
+    },
+    {
+      "slug": "date_month_number",
+      "expressions":
+      [
+        {
+          "expression": "@{date_january}",
+          "aliases":
+          [
+            {
+              "alias": "date_january",
+              "slug": "date_january",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_february}",
+          "aliases":
+          [
+            {
+              "alias": "date_february",
+              "slug": "date_february",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_march}",
+          "aliases":
+          [
+            {
+              "alias": "date_march",
+              "slug": "date_march",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_april}",
+          "aliases":
+          [
+            {
+              "alias": "date_april",
+              "slug": "date_april",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_may}",
+          "aliases":
+          [
+            {
+              "alias": "date_may",
+              "slug": "date_may",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_june}",
+          "aliases":
+          [
+            {
+              "alias": "date_june",
+              "slug": "date_june",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_july}",
+          "aliases":
+          [
+            {
+              "alias": "date_july",
+              "slug": "date_july",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_august}",
+          "aliases":
+          [
+            {
+              "alias": "date_august",
+              "slug": "date_august",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_september}",
+          "aliases":
+          [
+            {
+              "alias": "date_september",
+              "slug": "date_september",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_october}",
+          "aliases":
+          [
+            {
+              "alias": "date_october",
+              "slug": "date_october",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_november}",
+          "aliases":
+          [
+            {
+              "alias": "date_november",
+              "slug": "date_november",
+              "package": "package-date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_december}",
+          "aliases":
+          [
+            {
+              "alias": "date_december",
+              "slug": "date_december",
+              "package": "package-date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "date_day_month_year",
+      "expressions":
+      [
+        {
+          "expression": "@{day} @{month} @{year}",
+          "aliases":
+          [
+            {
+              "alias": "day",
+              "slug": "number",
+              "package": "package-number"
+            },
+            {
+              "alias": "month",
+              "slug": "date_month_number",
+              "package": "package-date"
+            },
+            {
+              "alias": "year",
+              "slug": "number",
+              "package": "package-number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`day.number+'/'+month.month_number+'/'+year.number`"
+      }
+    }
+  ]
+}
