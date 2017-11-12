@@ -36,6 +36,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   {
     IFE(NlpLogRequestWords(ctrl_nlp_th));
   }
+  IFE(NlpGlueBuild(ctrl_nlp_th));
 
   // Scanning all the words and create the list of input parts that match the words
   IFE(NlpMatchWords(ctrl_nlp_th));
@@ -88,13 +89,13 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   input[input_length] = 0;
 
   char digit[DPcPathSize];
-  digit[0]=0;
+  digit[0] = 0;
   if (request_word->is_digit)
   {
-    snprintf(digit,DPcPathSize," -> %d", request_word->digit_value);
+    snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
   }
 
-  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word,digit);
+  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, digit);
 
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
@@ -118,7 +119,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     int digit_input_part_used = OgHeapGetCellsUsed(package->hdigit_input_part);
     for (int i = 0; i < digit_input_part_used; i++)
     {
-      struct digit_input_part *digit_input_part = digit_input_part_all+i;
+      struct digit_input_part *digit_input_part = digit_input_part_all + i;
       // There is not need to have a special input part here for digit words
       IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, digit_input_part->Iinput_part));
     }

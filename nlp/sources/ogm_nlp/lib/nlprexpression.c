@@ -13,6 +13,7 @@ static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_
 static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2);
 static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression);
 static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
@@ -89,6 +90,16 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
       og_bool is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, request_expression);
       IFE(is_ordered);
       if (!is_ordered) must_add_request_expression = FALSE;
+    }
+  }
+
+  if (must_add_request_expression)
+  {
+    if (request_expression->expression->glued)
+    {
+      og_bool is_glued = NlpRequestExpressionIsGlued(ctrl_nlp_th, request_expression);
+      IFE(is_glued);
+      if (!is_glued) must_add_request_expression = FALSE;
     }
   }
 
@@ -201,6 +212,45 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
 
   return TRUE;
 }
+
+
+
+
+
+static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
+      ctrl_nlp_th->horiginal_request_input_part, 0);
+  IFN(original_request_input_part) DPcErr;
+
+  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
+  IFN(orip) DPcErr;
+
+  for (int i = 0; i + 1 < request_expression->orips_nb; i++)
+  {
+    int Ioriginal_request_input_part1 = orip[request_expression->orip_start + i].Ioriginal_request_input_part;
+    int Irequest_input_part1 = original_request_input_part[Ioriginal_request_input_part1].Irequest_input_part;
+    struct request_input_part *request_input_part1 = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
+        Irequest_input_part1);
+    IFN(request_input_part1) DPcErr;
+
+    int Ioriginal_request_input_part2 = orip[request_expression->orip_start + i + 1].Ioriginal_request_input_part;
+    int Irequest_input_part2 = original_request_input_part[Ioriginal_request_input_part2].Irequest_input_part;
+    struct request_input_part *request_input_part2 = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
+        Irequest_input_part2);
+    IFN(request_input_part2) DPcErr;
+
+    og_bool is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+    IFE(is_glued);
+    if (!is_glued) return FALSE;
+  }
+
+  return TRUE;
+}
+
+
+
+
 
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression)

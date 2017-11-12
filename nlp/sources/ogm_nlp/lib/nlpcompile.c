@@ -354,6 +354,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
 
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
+  json_t *json_glued = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -371,6 +372,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     {
       json_keep_order = json_object_iter_value(iter);
     }
+    else if (Ogstricmp(key, "glued") == 0)
+    {
+      json_glued = json_object_iter_value(iter);
+    }
     else if (Ogstricmp(key, "aliases") == 0)
     {
       json_aliases = json_object_iter_value(iter);
@@ -385,7 +390,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: unknow key '%s'", key);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: unknown key '%s'", key);
       DPcErr;
     }
   }
@@ -455,6 +460,25 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   else
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep-order is not a boolean");
+    DPcErr;
+  }
+
+  expression->glued = FALSE;
+  if (json_glued == NULL)
+  {
+    expression->glued = FALSE;
+  }
+  else if (json_is_boolean(json_glued))
+  {
+    expression->glued = json_boolean_value(json_glued);
+  }
+  else if (json_is_null(json_glued))
+  {
+    expression->glued = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glued is not a boolean");
     DPcErr;
   }
 

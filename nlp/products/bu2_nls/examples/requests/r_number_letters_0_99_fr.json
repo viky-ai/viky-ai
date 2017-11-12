@@ -4,6 +4,13 @@
     [
       "package-number-letters"
     ],
+    "sentence": "zero"
+  },
+  {
+    "packages":
+    [
+      "package-number-letters"
+    ],
     "sentence": "un"
   },
   {

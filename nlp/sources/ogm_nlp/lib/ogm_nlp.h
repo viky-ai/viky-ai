@@ -123,6 +123,7 @@ struct expression_compile
 {
   int text_start;
   og_bool keep_order;
+  og_bool glued;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -137,6 +138,7 @@ struct expression
   og_string text;
 
   og_bool keep_order;
+  og_bool glued;
 
   int locale;
 
@@ -390,9 +392,14 @@ struct og_nlp_parse_conf
   int punct_word_used;
 };
 
-struct og_nlp_parse_callback
+/** Glue status for positions :
+ * stuck: equal position (no character in between)
+ * glued: no words in between
+ * loose means some words in between
+ **/
+enum nlp_glue_status
 {
-
+  nlp_glue_status_Loose = 0, nlp_glue_status_Glued, nlp_glue_status_Stuck
 };
 
 struct og_ctrl_nlp_js
@@ -461,6 +468,8 @@ struct og_ctrl_nlp_threaded
   /** js intepreter */
   struct og_ctrl_nlp_js js[1];
 
+  /** HashTable key: int (word position) , value: int (word position) */
+  GHashTable *glue_hash;
 };
 
 struct og_ctrl_nlp
@@ -573,6 +582,8 @@ struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct 
     int Iorip);
 og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
+og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
 
@@ -593,6 +604,8 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
@@ -648,4 +661,12 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
+
+/* nlpglue.c */
+og_status NlpGlueInit(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueReset(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueBuild(og_nlp_th ctrl_nlp_th);
+enum nlp_glue_status NlpGluedGetStatusForPositions(og_nlp_th ctrl_nlp_th, int position1, int position2);
+
 

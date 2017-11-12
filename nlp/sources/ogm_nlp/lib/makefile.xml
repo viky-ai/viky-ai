@@ -13,6 +13,7 @@
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
     <file>nlperr.c</file>
+    <file>nlpglue.c</file>
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>
     <file>nlplog.c</file>

@@ -170,7 +170,8 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   }
   else
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' %s", string_alias, NlpAliasTypeString(alias->type));
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' %s", string_alias,
+        NlpAliasTypeString(alias->type));
   }
   DONE;
 }
@@ -239,8 +240,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s", text, string_locale,
-      expression->keep_order ? " keep-order" : "");
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s", text, string_locale,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "");
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));
@@ -315,7 +316,8 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     case nlp_input_part_type_Digit:
     {
       struct alias *alias = input_part->alias;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part, NlpAliasTypeString(alias->type));
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part,
+          NlpAliasTypeString(alias->type));
       break;
     }
   }

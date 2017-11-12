@@ -16,5 +16,14 @@
       "package-number-letters"
     ],
     "sentence": "quatre vingt dix huit"
+  },
+  {
+    "packages":
+    [
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "cent quatre vingt dix sept"
   }
 ]

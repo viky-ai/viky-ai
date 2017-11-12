@@ -68,7 +68,8 @@ Better linguistic structuration:
 number in letters:
 
 ```
-./ognlp --c packages/package_number_letters.json -i requests/r_number_letters_fr.json
+./ognlp --c packages/package_number_letters.json -i requests/r_number_letters_0_99_fr.json
+./ognlp --c packages/package_number_letters.json -i requests/r_number_letters_100_199_fr.json
 ```
 
 number in digits:

@@ -4,6 +4,24 @@
   "interpretations":
   [
     {
+      "slug": "number_0",
+      "expressions":
+      [
+        {
+          "expression": "zero",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "zéro",
+          "locale": "fr-FR"
+        }
+      ],
+      "solution":
+      {
+        "number": 0
+      }
+    },
+    {
       "slug": "number_1",
       "expressions":
       [
@@ -21,10 +39,14 @@
         },
         {
           "expression": "et un",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         },
         {
           "expression": "et une",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         }
       ],
@@ -317,6 +339,8 @@
         },
         {
           "expression": "dix sept",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         }
       ],
@@ -335,6 +359,8 @@
         },
         {
           "expression": "dix huit",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         }
       ],
@@ -353,6 +379,8 @@
         },
         {
           "expression": "dix neuf",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         }
       ],
@@ -461,6 +489,8 @@
         },
         {
           "expression": "soixante dix",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         },
         {
@@ -483,6 +513,8 @@
         },
         {
           "expression": "quatre vingt",
+          "keep-order": true,
+          "glued": true,
           "locale": "fr-FR"
         },
         {
@@ -740,6 +772,8 @@
       [
         {
           "expression": "@{number_20} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -752,13 +786,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_20}",
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "slug": "number_20",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_20.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_30_39",
@@ -766,6 +811,8 @@
       [
         {
           "expression": "@{number_30} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -778,13 +825,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_30}",
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "slug": "number_30",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_30.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_40_49",
@@ -792,6 +850,8 @@
       [
         {
           "expression": "@{number_40} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -804,13 +864,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_40}",
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "slug": "number_40",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_40.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_50_59",
@@ -818,6 +889,8 @@
       [
         {
           "expression": "@{number_50} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -830,13 +903,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_50}",
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "slug": "number_50",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_50.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_60_69",
@@ -844,6 +928,8 @@
       [
         {
           "expression": "@{number_60} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -856,13 +942,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_60}",
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "slug": "number_60",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_60.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_70_79",
@@ -870,6 +967,8 @@
       [
         {
           "expression": "@{number_70} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -889,7 +988,20 @@
           }
         },
         {
+          "expression": "@{number_70}",
+          "aliases":
+          [
+            {
+              "alias": "number_70",
+              "slug": "number_70",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
           "expression": "@{number_60} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -916,6 +1028,8 @@
       [
         {
           "expression": "@{number_80} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -928,13 +1042,24 @@
               "slug": "number_1_9",
               "package": "package-number-letters"
             }
+          ],
+          "solution":
+          {
+            "number": "`number_80.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_80}",
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "slug": "number_80",
+              "package": "package-number-letters"
+            }
           ]
         }
-      ],
-      "solution":
-      {
-        "number": "`number_80.number+number_1_9.number`"
-      }
+      ]
     },
     {
       "slug": "number_90_99",
@@ -942,6 +1067,8 @@
       [
         {
           "expression": "@{number_90} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -961,7 +1088,20 @@
           }
         },
         {
+          "expression": "@{number_90}",
+          "aliases":
+          [
+            {
+              "alias": "number_90",
+              "slug": "number_90",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
           "expression": "@{number_80} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -983,7 +1123,7 @@
       ]
     },
     {
-      "slug": "number_letters",
+      "slug": "number_1_99",
       "expressions":
       [
         {
@@ -1092,6 +1232,143 @@
             {
               "alias": "number_90_99",
               "slug": "number_90_99",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "number_100",
+      "expressions":
+      [
+        {
+          "expression": "hundred",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "cent",
+          "locale": "fr-FR"
+        }
+      ],
+      "solution":
+      {
+        "number": 100
+      }
+    },
+    {
+      "slug": "number_100_199",
+      "expressions":
+      [
+        {
+          "expression": "@{number_100} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100",
+              "slug": "number_100",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_1_99",
+              "slug": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_100.number+number_1_99.number`"
+          }
+        },
+        {
+          "expression": "@{number_100}",
+          "aliases":
+          [
+            {
+              "alias": "number_100",
+              "slug": "number_100",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "number_100_999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_9} @{number_100_199}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_9",
+              "slug": "number_1_9",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_100_199",
+              "slug": "number_100_199",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1_9.number*100+number_100_199.number-100`"
+          }
+        },
+        {
+          "expression": "@{number_100_199}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100_199",
+              "slug": "number_100_199",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "number_letters",
+      "expressions":
+      [
+        {
+          "expression": "@{number_0}",
+          "aliases":
+          [
+            {
+              "alias": "number_0",
+              "slug": "number_0",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1_99}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_99",
+              "slug": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_100_999}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_999",
+              "slug": "number_100_999",
               "package": "package-number-letters"
             }
           ]

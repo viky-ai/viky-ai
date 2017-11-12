@@ -95,6 +95,14 @@ og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_inp
       request_input_part2->request_positions_nb);
 }
 
+og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2)
+{
+  return NlpRequestPositionsAreGlued(ctrl_nlp_th, request_input_part1->request_position_start,
+      request_input_part1->request_positions_nb, request_input_part2->request_position_start,
+      request_input_part2->request_positions_nb);
+}
+
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s", title);
