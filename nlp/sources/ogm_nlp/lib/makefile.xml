@@ -7,6 +7,7 @@
     <file>inlp.c</file>
     <file>nlpany.c</file>
     <file>nlpanyopt.c</file>
+    <file>nlpcheck.c</file>
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>

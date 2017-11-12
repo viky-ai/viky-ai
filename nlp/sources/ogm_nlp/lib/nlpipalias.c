@@ -79,7 +79,7 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package)
       }
       if (sep < 0)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInputPartAliasLog: error in ha_word");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInputPartAliasLog: error in ha_interpretation_id");
         DPcErr;
       }
 

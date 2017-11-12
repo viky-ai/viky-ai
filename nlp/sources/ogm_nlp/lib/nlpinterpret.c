@@ -453,6 +453,7 @@ static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t 
 
   }
 
+  IFE(NlpCheckPackages(ctrl_nlp_th));
   DONE;
 }
 

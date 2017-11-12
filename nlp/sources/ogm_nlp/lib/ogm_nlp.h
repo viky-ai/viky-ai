@@ -669,4 +669,6 @@ og_status NlpGlueReset(og_nlp_th ctrl_nlp_th);
 og_status NlpGlueBuild(og_nlp_th ctrl_nlp_th);
 enum nlp_glue_status NlpGluedGetStatusForPositions(og_nlp_th ctrl_nlp_th, int position1, int position2);
 
+/* nlpcheck.c */
+og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 

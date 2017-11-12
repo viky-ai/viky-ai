@@ -1,0 +1,129 @@
+{
+  "id": "number_people",
+  "slug": "number_people",
+  "interpretations":
+  [
+    {
+      "slug": "preposition_number_people",
+      "expressions":
+      [
+        {
+          "expression": "with",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "for",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "avec",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "slug": "people",
+      "expressions":
+      [
+        {
+          "expression": "people",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "person",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "persons",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "personne",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "personnes",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "slug": "number_people",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_number_people} @{number} @{people}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_number_people",
+              "slug": "preposition_number_people",
+              "package": "number_people"
+            },
+            {
+              "alias": "number",
+              "slug": "number",
+              "package": "package-number"
+            },
+            {
+              "alias": "people",
+              "slug": "people",
+              "package": "number_people"
+            }
+          ],
+          "solution":
+          {
+            "number-people": "`number.number`"
+          }
+        },
+        {
+          "expression": "@{number} @{people}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "number",
+              "slug": "number",
+              "package": "package-number"
+            },
+            {
+              "alias": "people",
+              "slug": "people",
+              "package": "number_people"
+            }
+          ],
+          "solution":
+          {
+            "number-people": "`number.number`"
+          }
+        },
+        {
+          "expression": "@{preposition_number_people} @{number}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_number_people",
+              "slug": "preposition_number_people",
+              "package": "number_people"
+            },
+            {
+              "alias": "number",
+              "slug": "number",
+              "package": "package-number"
+            }
+          ],
+          "solution":
+          {
+            "number-people": "`number.number`"
+          }
+        }
+      ]
+    }
+  ]
+}

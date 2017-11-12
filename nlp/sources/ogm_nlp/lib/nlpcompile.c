@@ -106,7 +106,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
   IFN(json_id)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without is");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without id");
     DPcErr;
   }
   if (!json_is_string(json_id))
