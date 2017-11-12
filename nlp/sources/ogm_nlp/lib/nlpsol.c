@@ -368,12 +368,35 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
       {
         struct alias_solution *alias_solution = iter->data;
         json_t *json_sub_solution = alias_solution->json_solution;
-        json_t *sub_value = json_object_get(json_sub_solution, key);
-        IFN(sub_value) continue;
-        IF(json_array_append(json_array_values, sub_value))
+        json_t *json_sub_value = json_object_get(json_sub_solution, key);
+        IFN(json_sub_value) continue;
+        if (json_is_array(json_sub_value))
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
-          DPcErr;
+          int array_size = json_array_size(json_sub_value);
+          for (int i = 0; i < array_size; i++)
+          {
+            json_t *json_sub_value_array = json_array_get(json_sub_value, i);
+            IFN(json_sub_value_array)
+            {
+              NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: null json_sub_value_array at position %d",
+                  i);
+              DPcErr;
+            }
+            IF(json_array_append(json_array_values, json_sub_value_array))
+            {
+              NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
+              DPcErr;
+            }
+          }
+          json_decref(json_sub_value);
+        }
+        else
+        {
+          IF(json_array_append(json_array_values, json_sub_value))
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
+            DPcErr;
+          }
         }
       }
 
