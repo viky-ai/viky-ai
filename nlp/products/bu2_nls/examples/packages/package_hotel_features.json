@@ -1,0 +1,72 @@
+{
+  "id": "hotel_features",
+  "slug": "hotel_features",
+  "interpretations":
+  [
+    {
+      "slug": "hotel_features",
+      "expressions":
+      [
+        {
+          "expression": "@{hotel_feature}",
+          "aliases":
+          [
+            {
+              "alias": "hotel_feature",
+              "slug": "hotel_feature",
+              "package": "hotel_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{hotel_features} @{hotel_feature}",
+          "aliases":
+          [
+            {
+              "alias": "hotel_features",
+              "slug": "hotel_features",
+              "package": "hotel_features"
+            },
+            {
+              "alias": "hotel_feature",
+              "slug": "hotel_feature",
+              "package": "hotel_features"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "hotel_feature",
+      "expressions":
+      [
+        {
+          "expression": "@{building_feature}",
+          "aliases":
+          [
+            {
+              "alias": "building_feature",
+              "slug": "building_feature",
+              "package": "building_features"
+            }
+          ],
+          "solution":
+          {
+            "hotel_feature": "`building_feature.building_feature`"
+          }
+        },
+        {
+          "expression": "@{number_people}",
+          "aliases":
+          [
+            {
+              "alias": "number_people",
+              "slug": "number_people",
+              "package": "number_people"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

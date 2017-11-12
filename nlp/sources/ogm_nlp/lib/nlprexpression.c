@@ -14,10 +14,9 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
     struct request_expression *request_expression2);
 static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression);
-static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
-    struct request_input_part *request_input_part2, int *poverlap_mark);
+static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th,
+    struct request_input_part *request_input_part1, struct request_input_part *request_input_part2, int *poverlap_mark);
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
 
@@ -114,6 +113,16 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   {
     // Must be called before NlpRequestExpressionExists
     IFE(NlpRequestExpressionOverlapMark(ctrl_nlp_th, request_expression));
+    // When there is a recursive expression, any overlapping should be remove
+    // as it adds nothing to the results, because this is a repetition of the same object
+    if (request_expression->overlap_mark > 0 && request_expression->expression->interpretation->is_recursive)
+    {
+      must_add_request_expression = FALSE;
+    }
+  }
+
+  if (must_add_request_expression)
+  {
     struct request_expression *same_request_expression;
     og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
         request_expression_used, &same_request_expression);
@@ -213,10 +222,6 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
   return TRUE;
 }
 
-
-
-
-
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   struct original_request_input_part *original_request_input_part = OgHeapGetCell(
@@ -248,12 +253,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
   return TRUE;
 }
 
-
-
-
-
-static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression)
+static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   request_expression->overlap_mark = 0;
 
@@ -282,7 +282,9 @@ static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
           Irequest_input_part2);
       IFN(request_input_part2) DPcErr;
       int inputr_parts_overlap_mark;
-      IFE(NlpRequestExpressionInputPartsOverlapMark(ctrl_nlp_th, request_input_part1, request_input_part2, &inputr_parts_overlap_mark));
+      IFE(
+          NlpRequestExpressionInputPartsOverlapMark(ctrl_nlp_th, request_input_part1, request_input_part2,
+              &inputr_parts_overlap_mark));
       request_expression->overlap_mark += inputr_parts_overlap_mark;
     }
   }
@@ -290,8 +292,8 @@ static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th,
   DONE;
 }
 
-static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
-    struct request_input_part *request_input_part2, int *poverlap_mark)
+static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th,
+    struct request_input_part *request_input_part1, struct request_input_part *request_input_part2, int *poverlap_mark)
 {
   struct request_position *request_position;
 

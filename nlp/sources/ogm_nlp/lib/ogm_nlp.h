@@ -158,6 +158,8 @@ struct expression
 
   int alias_any_input_part_position;
 
+  og_bool is_recursive;
+
   json_t *json_solution;
 };
 
@@ -181,6 +183,8 @@ struct interpretation
 
   int expressions_nb;
   struct expression *expressions;
+
+  og_bool is_recursive;
 };
 
 struct interpret_package

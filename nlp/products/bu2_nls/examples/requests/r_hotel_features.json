@@ -1,0 +1,14 @@
+[
+  {
+    "packages":
+    [
+      "hotel_features",
+      "building_features",
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "with swimming pool with spa for 3 people with sea view"
+  }
+]

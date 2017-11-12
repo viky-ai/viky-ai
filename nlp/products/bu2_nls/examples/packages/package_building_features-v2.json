@@ -94,6 +94,17 @@
       "expressions":
       [
         {
+          "expression": "@{building_feature}",
+          "aliases":
+          [
+            {
+              "alias": "building_feature",
+              "slug": "building_feature",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
           "expression": "@{preposition_building_feature} @{building_feature}",
           "keep-order": true,
           "aliases":
@@ -129,17 +140,6 @@
           {
             "building_feature": "`building_feature.any`"
           }
-        },
-        {
-          "expression": "@{building_feature}",
-          "aliases":
-          [
-            {
-              "alias": "building_feature",
-              "slug": "building_feature",
-              "package": "building_features"
-            }
-          ]
         }
       ]
     }

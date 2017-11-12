@@ -56,6 +56,7 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     {
       interpretation->expressions = NULL;
     }
+    interpretation->is_recursive = FALSE;
   }
 
   // free compile heap
@@ -107,7 +108,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
       expression->aliases = NULL;
     }
     expression->json_solution = expression_compile->json_solution;
-
+    expression->is_recursive = FALSE;
   }
 
   // free compile heap
@@ -417,6 +418,12 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       input_part->type = nlp_input_part_type_Interpretation;
       input_part->alias = alias;
 
+      if (!strcmp(alias->id, expression->interpretation->id))
+      {
+        expression->is_recursive = TRUE;
+        expression->interpretation->is_recursive = TRUE;
+      }
+
       IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
       alias_added = TRUE;
     }
@@ -471,7 +478,8 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
   IFN(input_part) DPcErr;
 
   char normalized_string_word[DPcPathSize];
-  int length_normalized_string_word = OgUtf8Normalize(length_string_word, string_word, DPcPathSize, normalized_string_word);
+  int length_normalized_string_word = OgUtf8Normalize(length_string_word, string_word, DPcPathSize,
+      normalized_string_word);
   NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: normalized word '%.*s'", length_normalized_string_word,
       normalized_string_word)
 
