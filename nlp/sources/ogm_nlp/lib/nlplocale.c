@@ -47,7 +47,7 @@ og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *
     }
     if (c == ',')
     {
-      IFE(NlpAddAcceptLanguage(ctrl_nlp_th, s + start, i));
+      IFE(NlpAddAcceptLanguage(ctrl_nlp_th, s + start, i-start));
       start = i + 1;
     }
   }
@@ -150,8 +150,8 @@ static og_status NlpAcceptLanguageGetQualityFactor(og_nlp_th ctrl_nlp_th, unsign
   unsigned char string_float[DPcPathSize];
 
   memcpy(string_q, s, sep);
-  OgTrimString(string_q, string_q);
   string_q[sep] = 0;
+  OgTrimString(string_q, string_q);
   if (strcmp(string_q, "q"))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpAcceptLanguageGetQualityFactor: string '%s' is not a quality factor declaration",
