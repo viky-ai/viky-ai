@@ -10,7 +10,7 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package, int Iinput_part);
 
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part)
+    struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_digit)
 {
   struct request_input_part *request_input_part = NlpRequestInputPartAdd(ctrl_nlp_th, interpret_package, Iinput_part);
   IFN(request_input_part) DPcErr;
@@ -24,6 +24,7 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
   request_input_part->request_position_start = Irequest_position;
   request_input_part->request_positions_nb = 1;
   request_input_part->request_position_distance = 0;
+  request_input_part->interpret_word_as_digit = interpret_word_as_digit;
 
   DONE;
 }

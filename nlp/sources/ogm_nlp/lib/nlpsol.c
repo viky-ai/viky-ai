@@ -256,7 +256,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
-      if (request_word->is_digit)
+      if (request_word->is_digit && request_input_part->interpret_word_as_digit)
       {
         json_t *json_solution_digit = json_object();
         json_t *json_solution_integer_digit = json_integer(request_word->digit_value);

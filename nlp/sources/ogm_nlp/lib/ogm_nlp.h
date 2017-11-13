@@ -292,6 +292,8 @@ struct request_input_part
   int request_position_distance;
 
   int Ioriginal_request_input_part;
+
+  og_bool interpret_word_as_digit;
 };
 
 struct request_position
@@ -579,7 +581,7 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_digit);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,

@@ -121,31 +121,29 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     {
       struct digit_input_part *digit_input_part = digit_input_part_all + i;
       // There is not need to have a special input part here for digit words
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, digit_input_part->Iinput_part));
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, digit_input_part->Iinput_part,TRUE));
     }
-
   }
-  else
+
+  unsigned char out[DPcAutMaxBufferSize + 9];
+  oindex states[DPcAutMaxBufferSize + 9];
+  int retour, nstate0, nstate1, iout;
+
+  if ((retour = OgAufScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
   {
-    unsigned char out[DPcAutMaxBufferSize + 9];
-    oindex states[DPcAutMaxBufferSize + 9];
-    int retour, nstate0, nstate1, iout;
-
-    if ((retour = OgAufScanf(package->ha_word, input_length, input, &iout, out, &nstate0, &nstate1, states)))
+    do
     {
-      do
-      {
-        IFE(retour);
-        int Iinput_part;
-        unsigned char *p = out;
-        IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-        NlpLog(DOgNlpTraceMatch, "    found input part %d in request package %d", Iinput_part,
-            interpret_package->self_index)
-        IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part));
-      }
-      while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
+      IFE(retour);
+      int Iinput_part;
+      unsigned char *p = out;
+      IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
+      NlpLog(DOgNlpTraceMatch, "    found input part %d in request package %d", Iinput_part,
+          interpret_package->self_index)
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part,FALSE));
     }
+    while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
+
   DONE;
 }
 
