@@ -8,7 +8,7 @@ module Nls
     attr_reader :id
     attr_reader :slug
     attr_reader :expressions
-    attr_reader :solutions
+    attr_accessor :solution
     attr_accessor :package
 
     def initialize(slug, opts = {})
@@ -22,8 +22,8 @@ module Nls
 
       @expressions = []
 
-      @solutions = nil
-      @solutions = opts[:solutions] if opts.has_key?(:solutions)
+      @solution = nil
+      @solution = opts[:solution] if opts.has_key?(:solution)
 
     end
 
@@ -43,7 +43,13 @@ module Nls
       hash["id"] = @id.to_s
       hash["slug"] = @slug
       hash["expressions"] = @expressions.map{|v| v.to_h}
-      hash["solution"] = @solutions.to_h if !@solutions.nil?
+      if !@solution.nil?
+        if @solution.respond_to?(:to_h)
+          hash['solution'] = @solution.to_h
+        else
+          hash['solution'] = @solution
+        end
+      end
       hash
     end
 
@@ -86,15 +92,6 @@ module Nls
         end
       else
         add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order}))
-      end
-      self
-    end
-
-    def add_solution(key,value)
-      if @solutions.nil?
-        @solutions = Solutions.new(key,value)
-      else
-        @solutions.add_solution(key,value)
       end
       self
     end

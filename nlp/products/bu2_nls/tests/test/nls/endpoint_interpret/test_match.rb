@@ -90,10 +90,10 @@ module Nls
       def create_aller_de_a_any_solutions_js
         aller_de_a = Package.new("aller-de-a")
 
-        i_new_york = Interpretation.new("new-york", {solutions: Solutions.new("name","New York")}).new_textual(["New York", "NYC"])
+        i_new_york = Interpretation.new("new-york", solution: { "name": "New York" }).new_textual(["New York", "NYC"])
         aller_de_a << i_new_york
 
-        i_barca = Interpretation.new("barcelona", {solutions: Solutions.new("name","Barcelona")}).new_textual(["Barcelona", "Barca"])
+        i_barca = Interpretation.new("barcelona", solution: { "name": "Barcelona" } ).new_textual(["Barcelona", "Barca"])
         aller_de_a << i_barca
 
         i_town = Interpretation.new("town")
@@ -110,13 +110,13 @@ module Nls
         prep_to_town_params = {
           aliases: {'prep-to': i_prep_to, town: i_town},
           keep_order: Expression.keep_order,
-          solutions: Solutions.new("to", "`town.name`")
+          solution: { "to": "`town.name`" }
         }
         i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_params)
         prep_to_town_params = {
           aliases: {'prep-to': i_prep_to, town: Alias.any},
           keep_order: Expression.keep_order,
-          solutions: Solutions.new("to", "`town.any`")
+          solution: { "to": "`town.any`" }
         }
         i_prep_to_town.new_expression("@{prep-to} @{town}", prep_to_town_params)
         aller_de_a << i_prep_to_town
@@ -124,13 +124,13 @@ module Nls
         prep_from_town_params = {
           aliases: { 'prep-from': i_prep_from, town: i_town },
           keep_order: Expression.keep_order,
-          solutions: Solutions.new("from", "`town.name`")
+          solution: { "from": "`town.name`" }
         }
         i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_params)
         prep_from_town_params = {
           aliases: { 'prep-from': i_prep_from, town: Alias.any },
           keep_order: Expression.keep_order,
-          solutions: Solutions.new("from", "`town.any`")
+          solution: { "from": "`town.any`" }
         }
         i_prep_from_town.new_expression("@{prep-from} @{town}", prep_from_town_params)
         aller_de_a << i_prep_from_town
@@ -249,15 +249,13 @@ module Nls
         assert_equal expected.to_h, actual1
 
         # creation et exécution de la requete 2
-        expected.clear_all_solutions
-        expected.add_solution(0, "any", ["New York", "Barcelona"])
+        expected.first.solution = { "any" => ["New York", "Barcelona"] }
         request2 = json_interpret_body(aller_de_a, "I want to go from New York to Barcelona", Interpretation.default_locale)
         actual2 = Nls.interpret(request2)
         assert_equal expected.to_h, actual2
 
         # creation et exécution de la requete 3
-        expected.clear_all_solutions
-        expected.add_solution(0, "any", ["New York", "Paris"])
+        expected.first.solution = { "any" => ["New York", "Paris"] }
         request3 = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
         actual3 = Nls.interpret(request3)
         assert_equal expected.to_h, actual3

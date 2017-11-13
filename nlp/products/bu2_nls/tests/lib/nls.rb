@@ -4,7 +4,6 @@ require 'uuidtools'
 require 'json'
 
 require 'nls/alias'
-require 'nls/solutions'
 require 'nls/interpretation'
 require 'nls/expression'
 require 'nls/package'

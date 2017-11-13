@@ -8,27 +8,14 @@ module Nls
     attr_reader :id
     attr_reader :slug
     attr_reader :score
-    attr_reader :solutions
+    attr_accessor :solution
 
     def initialize(interpretation, solution = nil)
       @package = interpretation.package.id.to_s
       @id = interpretation.id.to_s
       @slug = interpretation.slug
       @score = 1.0
-      @solutions = solution
-    end
-
-    def add_solution(tag, value)
-      if @solutions.nil?
-        @solutions = Solutions.new(tag, value)
-      else
-        @solutions.add_solution(key,value)
-      end
-      self
-    end
-
-    def clear_solutions
-      @solutions = nil
+      @solution = solution
     end
 
     def to_h
@@ -37,7 +24,13 @@ module Nls
       hash_interpretation['id'] = @id
       hash_interpretation['slug'] = @slug
       hash_interpretation['score'] = @score
-      hash_interpretation['solution'] = @solutions.to_h if !@solutions.nil?
+      if !@solution.nil?
+        if @solution.respond_to?(:to_h)
+          hash_interpretation['solution'] = @solution.to_h
+        else
+          hash_interpretation['solution'] = @solution
+        end
+      end
       hash_interpretation
     end
 

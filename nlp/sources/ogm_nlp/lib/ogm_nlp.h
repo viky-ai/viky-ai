@@ -419,6 +419,10 @@ struct og_ctrl_nlp_js
 {
   duk_context *duk_context;
   duk_idx_t init_stack_idx;
+
+  /** For better error message list current defined variable */
+  GStringChunk *varibale_values;
+  GQueue variable_list[1];
 };
 
 struct og_ctrl_nlp_threaded

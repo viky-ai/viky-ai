@@ -8,7 +8,7 @@ module Nls
     attr_reader :aliases
     attr_reader :keep_order
     attr_reader :glued
-    attr_reader :solutions
+    attr_accessor :solution
     attr_accessor :interpretation
 
     def initialize(expression, opts = {})
@@ -23,8 +23,8 @@ module Nls
       @glued = false
       @glued = opts[:glued] if opts.has_key?(:glued)
 
-      @solutions = nil
-      @solutions = opts[:solutions] if opts.has_key?(:solutions)
+      @solution = nil
+      @solution = opts[:solution] if opts.has_key?(:solution)
 
       @aliases = []
       if opts.has_key?(:aliases)
@@ -61,24 +61,20 @@ module Nls
     end
     alias_method '<<', 'add_alias'
 
-    def add_solution(key,value)
-      if @solutions.nil?
-        @solutions = Solutions.new(key,value)
-      else
-        @solutions.add_solution(key,value)
-      end
-      self
-    end
-
-
     def to_h
       hash = {}
       hash['expression'] = @expression
       hash['keep-order'] = true if @keep_order
       hash['glued'] = true if @glued
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
-      hash["solution"] = @solutions.to_h if !@solutions.nil?
       hash['locale'] = @locale if !@locale.nil?
+      if !@solution.nil?
+        if @solution.respond_to?(:to_h)
+          hash['solution'] = @solution.to_h
+        else
+          hash['solution'] = @solution
+        end
+      end
       hash
     end
 

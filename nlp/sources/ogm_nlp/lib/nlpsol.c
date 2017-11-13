@@ -6,9 +6,10 @@
  */
 #include "ogm_nlp.h"
 
-static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression);
-static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th,
+    struct request_expression *root_request_expression, struct request_expression *request_expression);
+static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution);
+static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, json_t *json_package_solution);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -44,8 +45,8 @@ og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression 
   DONE;
 }
 
-static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression)
+static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th,
+    struct request_expression *root_request_expression, struct request_expression *request_expression)
 {
   og_bool must_combine_solution = FALSE;
 
@@ -84,16 +85,19 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
     }
   }
 
+  json_t *json_package_solution = request_expression->expression->json_solution;
+  if (json_package_solution == NULL)
+  {
+    json_package_solution = request_expression->expression->interpretation->json_solution;
+  }
+
+  og_bool need_js_compute = NlpSolutionNeedJsComputeRecusive(ctrl_nlp_th, json_package_solution);
+
   og_bool solution_built = FALSE;
 
   if (must_combine_solution)
   {
-    json_t *json_package_solution = request_expression->expression->json_solution;
-    if (json_package_solution == NULL)
-    {
-      json_package_solution = request_expression->expression->interpretation->json_solution;
-    }
-    if (json_package_solution != NULL)
+    if (need_js_compute)
     {
       IFE(solution_built = NlpSolutionComputeJS(ctrl_nlp_th, request_expression, json_package_solution));
     }
@@ -104,7 +108,14 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
   }
   else
   {
-    IFE(solution_built = NlpSolutionAdd(ctrl_nlp_th, request_expression));
+    if (need_js_compute)
+    {
+      IFE(solution_built = NlpSolutionComputeJS(ctrl_nlp_th, request_expression, json_package_solution));
+    }
+    else
+    {
+      IFE(solution_built = NlpSolutionAdd(ctrl_nlp_th, request_expression, json_package_solution));
+    }
   }
 
   return solution_built;
@@ -137,17 +148,12 @@ og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int si
   DONE;
 }
 
-static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, json_t *json_package_solution)
 {
   og_bool solution_built = FALSE;
-  if (request_expression->expression->json_solution != NULL)
+  if (json_package_solution != NULL)
   {
-    request_expression->json_solution = json_deep_copy(request_expression->expression->json_solution);
-    solution_built = TRUE;
-  }
-  else if (request_expression->expression->interpretation->json_solution != NULL)
-  {
-    request_expression->json_solution = json_deep_copy(request_expression->expression->interpretation->json_solution);
+    request_expression->json_solution = json_deep_copy(json_package_solution);
     solution_built = TRUE;
   }
   return solution_built;
@@ -338,6 +344,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
   IFN(iter_solutions) DONE;
   struct alias_solution *alias_solution_first = iter_solutions->data;
   json_t *json_solution_first = alias_solution_first->json_solution;
+
   const char *key;
   json_t *value;
   json_object_foreach(json_solution_first, key, value)
@@ -355,6 +362,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
         break;
       }
     }
+
     if (several_values)
     {
       json_t *json_array_values = json_array();
@@ -382,13 +390,12 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
                   i);
               DPcErr;
             }
-            IF(json_array_append(json_array_values, json_sub_value_array))
+            IF(json_array_append_new(json_array_values, json_sub_value_array))
             {
               NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
               DPcErr;
             }
           }
-          json_decref(json_sub_value);
         }
         else
         {
@@ -415,6 +422,76 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
 
 }
 
+static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_new_solution, json_t **json_solution_computed_value)
+{
+  og_bool solution_built = FALSE;
+
+  if (json_solution_computed_value == NULL)
+  {
+    return FALSE;
+  }
+
+  if (json_is_object(json_new_solution))
+  {
+    for (void *iter = json_object_iter(json_new_solution); iter; iter = json_object_iter_next(json_new_solution, iter))
+    {
+      json_t *value = json_object_iter_value(iter);
+
+      json_t *local_json_solution_computed_value = NULL;
+      IFE(NlpSolutionComputeJSRecursive(ctrl_nlp_th, request_expression, value, &local_json_solution_computed_value));
+
+      if (local_json_solution_computed_value != NULL)
+      {
+
+        // avoid loop in final json
+        if (local_json_solution_computed_value != value && local_json_solution_computed_value != json_new_solution)
+        {
+
+          IF(json_object_iter_set_new(json_new_solution, iter, local_json_solution_computed_value))
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJSRecursive : json_object_iter_set_new failed");
+            DPcErr;
+          }
+        }
+
+      }
+
+    }
+
+    *json_solution_computed_value = json_new_solution;
+
+  }
+  else if (json_is_string(json_new_solution))
+  {
+
+    og_string string_value = json_string_value(json_new_solution);
+    int string_value_length = strlen(string_value);
+
+    // check if we need to evaluate javascript
+    if (string_value[0] == '`' && string_value[string_value_length - 1] == '`')
+    {
+      og_string string_value_js = string_value + 1;
+      int string_value_js_size = string_value_length - 2;
+
+      // evaluate javascript
+      IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, json_solution_computed_value))
+      {
+        struct expression *ex = request_expression->expression;
+        NlpThrowErrorTh(ctrl_nlp_th,
+            "NlpSolutionComputeJSRecursive : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
+            ex->text, ex->interpretation->slug, ex->interpretation->id);
+        DPcErr;
+      }
+
+      solution_built = TRUE;
+
+    }
+  }
+
+  return solution_built;
+}
+
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution)
 {
@@ -422,7 +499,6 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   // reset local variable
   IFE(NlpJsStackWipe(ctrl_nlp_th));
 
-  og_bool solution_built = FALSE;
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
@@ -453,59 +529,78 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
   NlpLog(DOgNlpTraceSolution, "Transforming solution by executing JS code");
 
+  og_bool solution_built = FALSE;
+
   // Now we scan the json_package_solution to get some executable code
   // If there are, we create a copy of the json structure and amend it with the result of the execution of the code
   json_t *json_new_solution = json_deep_copy(json_package_solution);
 
-  for (void *iter = json_object_iter(json_new_solution); iter; iter = json_object_iter_next(json_new_solution, iter))
+  json_t *json_solution_computed_value = NULL;
+  IFE(NlpSolutionComputeJSRecursive(ctrl_nlp_th, request_expression, json_new_solution, &json_solution_computed_value));
+
+  if (json_solution_computed_value != NULL)
   {
-    json_t *value = json_object_iter_value(iter);
-    if (json_is_string(value))
+    if (!json_is_null(json_solution_computed_value))
     {
-      og_string string_value = json_string_value(value);
-      int string_value_length = strlen(string_value);
-
-      // check if we need to evaluate javascript
-      if (string_value[0] == '`' && string_value[string_value_length - 1] == '`')
-      {
-        og_string string_value_js = string_value + 1;
-        int string_value_js_size = string_value_length - 2;
-
-        // evaluate javascript
-        json_t *json_solution_computed_value = NULL;
-        IF(NlpJsEval(ctrl_nlp_th, string_value_js_size, string_value_js, &json_solution_computed_value))
-        {
-          struct expression *ex = request_expression->expression;
-          NlpThrowErrorTh(ctrl_nlp_th,
-              "NlpSolutionComputeJS : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
-              ex->text, ex->interpretation->slug, ex->interpretation->id);
-          DPcErr;
-        }
-
-        IF(json_object_iter_set_new(json_new_solution, iter, json_solution_computed_value))
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionComputeJS : json_object_iter_set_new failed");
-          DPcErr;
-        }
-        solution_built = TRUE;
-
-      }
-
+      request_expression->json_solution = json_solution_computed_value;
+      solution_built = TRUE;
     }
+    else
+    {
+      request_expression->json_solution = NULL;
+      json_decref(json_solution_computed_value);
+    }
+
+    if (json_new_solution != json_solution_computed_value)
+    {
+      json_decref(json_new_solution);
+    }
+  }
+  else
+  {
+    request_expression->json_solution = json_new_solution;
+    solution_built = TRUE;
   }
 
   // reset local variable
   IFE(NlpJsStackWipe(ctrl_nlp_th));
 
-  if (solution_built)
+  return solution_built;
+}
+
+static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution)
+{
+  if (json_package_solution == NULL || json_is_null(json_package_solution))
   {
-    request_expression->json_solution = json_new_solution;
+    return FALSE;
   }
-  else
+
+  if (json_is_object(json_package_solution))
   {
-    json_decref(json_new_solution);
+    for (void *iter = json_object_iter(json_package_solution); iter;
+        iter = json_object_iter_next(json_package_solution, iter))
+    {
+      json_t *value = json_object_iter_value(iter);
+      og_bool need_js_compute = NlpSolutionNeedJsComputeRecusive(ctrl_nlp_th, value);
+      IFE(need_js_compute);
+      if (need_js_compute) return TRUE;
+    }
+
   }
-  return (solution_built);
+  else if (json_is_string(json_package_solution))
+  {
+
+    og_string string_value = json_string_value(json_package_solution);
+    int string_value_length = strlen(string_value);
+
+    // check if we need to evaluate javascript
+    if (string_value[0] == '`' && string_value[string_value_length - 1] == '`')
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
