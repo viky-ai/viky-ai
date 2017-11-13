@@ -25,6 +25,7 @@ Rails.application.routes.draw do
           post :transfer_ownership
           get :search_users_for_transfer_ownership
           get :generate_token
+          get :interpret, to: 'console#interpret'
         end
 
         get :search_users_to_share_agent, controller: 'memberships'

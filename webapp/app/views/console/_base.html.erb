@@ -1,0 +1,31 @@
+<aside class="console-container">
+  <div class="console">
+    <div class="console__header">
+      <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
+      <div class="console__endpoint">
+        <span class="badge badge--small badge--success">GET</span>
+        <code>/api/v1/interpret.json</code>
+      </div>
+    </div>
+
+    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get do |f| %>
+      <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
+      <div class='field'>
+        <div class='control control--merged'>
+          <input type='text' placeholder='<%= t('views.console.sentence_placeholder') %>'
+                 name='interpret[sentence]' value="" />
+          <button class='btn btn--primary'
+                  data-disable-with='<span class="icon icon--small icon--spin"><%= icon_loading %></span>'>
+            <span class='icon icon--small'>
+              <%= icon_check %>
+            </span>
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="tabs tabs--small tabs--on-center" id="console-tabs"></div>
+    <div class="console__output" id="console-output"></div>
+
+  </div>
+</aside>

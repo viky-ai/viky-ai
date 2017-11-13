@@ -29,6 +29,9 @@
     overflow-y: auto;
     #console-explain{
       padding: 1em;
+      p{
+        margin: 0;
+      }
     }
     pre{
       font-size: .75em;

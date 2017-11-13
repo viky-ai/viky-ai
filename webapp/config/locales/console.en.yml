@@ -1,0 +1,12 @@
+en:
+  views:
+    console:
+      title: Console
+      tagline: Test your agent live
+      sentence_placeholder: Say something...
+      tabs:
+        explain: Explain
+        json: JSON
+      error_occurred: Oops, an error occurred.
+      no_intent_found: No intent found.
+

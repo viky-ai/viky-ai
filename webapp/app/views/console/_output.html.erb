@@ -1,0 +1,23 @@
+<div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
+  <% if data[:status] == 200 %>
+    <% body = JSON.parse(data[:body]) %>
+    <% if body['intents'].empty? %>
+      <p>
+        <%= t('views.console.no_intent_found') %>
+      </p>
+    <% else %>
+      <ul>
+        <% body['intents'].each do |intent| %>
+          <li><%= intent["name"] %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% else %>
+    <p>
+      <%= t('views.console.error_occurred') %>
+    </p>
+  <% end %>
+</div>
+<div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
+  <pre><code class='language-javascript' id="json"><%= JSON.pretty_generate(body) %></code></pre>
+</div>

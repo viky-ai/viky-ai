@@ -12,6 +12,7 @@ class Console
       link.addClass('current')
       $("#console-explain").show()
       $("#console-json").hide()
+      $("#console-current-tab-input").val("explain") if $("#console-current-tab-input")
 
     if link.data('action') == 'console-switch-to-json'
       event.preventDefault()
@@ -19,6 +20,7 @@ class Console
       link.addClass('current')
       $("#console-explain").hide()
       $("#console-json").show()
+      $("#console-current-tab-input").val("json") if $("#console-current-tab-input")
 
 Setup = ->
   new Console()
