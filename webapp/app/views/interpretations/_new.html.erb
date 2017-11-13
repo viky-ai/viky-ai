@@ -1,5 +1,5 @@
 <%= render partial: '/interpretations/form', locals: { agent: @agent, intent: @intent, interpretation: @interpretation } %>
 
-<ul id="interpretations-list">
+<ul id="interpretations-list" class="interpretations-list">
   <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations %>
 </ul>

@@ -1,0 +1,100 @@
+<div class="sg-intro">
+  <h1>Interpretation list</h1>
+  <p>
+    Displayed in intent main page.
+  </p>
+</div>
+
+<section>
+  <h2>Default list state</h2>
+  <%= highlight_html do %>
+<ul class="interpretations-list">
+  <li class="interpretations-list__item__name">
+    <a href="#">Hello citizen</a>
+  </li>
+  <li class="interpretations-list__item__name">
+    <a href="#">Good morning</a>
+  </li>
+  <li class="interpretations-list__item__name">
+    <a href="#">How can I help you ?</a>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+<section>
+  <h2>Update list state</h2>
+  <p>
+    Click on an item will switch to update state.
+  </p>
+  <%= highlight_html do %>
+    <ul class="interpretations-list">
+      <li class="interpretations-list__item__edit">
+        <div class="field field--inline">
+          <div class="control">
+            <input value="Hello citizen" type="text"/>
+          </div>
+          <div class="control">
+            <button class="btn">
+              Update
+            </button>
+          </div>
+          <div class="control">
+            <button class="btn btn--destructive">
+              Delete
+            </button>
+          </div>
+          <div class="control">
+            <a href="#" class="btn btn--plain">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </li>
+      <li class="interpretations-list__item__edit">
+        <div class="field field--inline">
+          <div class="control">
+            <input value="Good morning" type="text"/>
+          </div>
+          <div class="control">
+            <button class="btn">
+              Update
+            </button>
+          </div>
+          <div class="control">
+            <button class="btn btn--destructive">
+              Delete
+            </button>
+          </div>
+          <div class="control">
+            <a href="#" class="btn btn--plain">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </li>
+      <li class="interpretations-list__item__edit">
+        <div class="field field--inline">
+          <div class="control">
+            <input value="How can I help you ?" type="text"/>
+          </div>
+          <div class="control">
+            <button class="btn">
+              Update
+            </button>
+          </div>
+          <div class="control">
+            <button class="btn btn--destructive">
+              Delete
+            </button>
+          </div>
+          <div class="control">
+            <a href="#" class="btn btn--plain">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  <% end %>
+</section>

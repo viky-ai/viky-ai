@@ -1,7 +1,7 @@
-<div id="interpretation-<%= interpretation.id %>">
+<li id="interpretation-<%= interpretation.id %>" class="interpretations-list__item__name">
   <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
       interpretation.intent.agent.owner,
       interpretation.intent.agent,
       interpretation.intent,
       interpretation), remote: true %>
-</div>
+</li>

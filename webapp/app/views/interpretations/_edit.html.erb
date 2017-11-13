@@ -1,15 +1,20 @@
-<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation]) do |f| %>
-    <%= f.text_field :expression %>
+<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], class: 'field field--inline') do |f| %>
+    <div class="control">
+      <%= f.text_field :expression %>
+    </div>
+    <div class="control">
+      <%= f.button 'Update', class: 'btn' %>
+    </div>
+    <div class="control">
+      <%= f.button t('views.interpretations.index.delete_btn'), formmethod: 'DELETE', class: 'btn btn--destructive' %>
+    </div>
+    <div class="control">
+      <%= link_to 'Cancel', user_agent_intent_interpretation_path(
+          interpretation.intent.agent.owner,
+          interpretation.intent.agent,
+          interpretation.intent,
+          interpretation), remote: true,
+          class: 'btn btn--plain' %>
+    </div>
     <%= display_errors(interpretation, :expression) %>
-    <%= f.button 'Update' %>
 <% end %>
-
-<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], method: :delete) do |f| %>
-    <%= f.button t('views.interpretations.index.delete_btn'), class: 'btn btn--destructive' %>
-<% end %>
-
-<%= link_to 'Cancel', user_agent_intent_interpretation_path(
-    interpretation.intent.agent.owner,
-    interpretation.intent.agent,
-    interpretation.intent,
-    interpretation), remote: true %>

@@ -1,18 +1,14 @@
 <%= form_with model: [agent.owner, agent, intent, interpretation], id: 'interpretations-form' do |f| %>
     <div class="field">
-      <div class="control">
-        <%= f.label :expression %>
-        <br />
+      <%= f.label :expression %>
+      <div class="control control--merged">
         <%= f.text_field :expression, id: :expression%>
-        <%= display_errors(interpretation, :expression) %>
+          <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
+                       data: {
+                           disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                       }
+          %>
       </div>
-    </div>
-
-    <div class="actions">
-      <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
-                   data: {
-                       disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-                   }
-      %>
+      <%= display_errors(interpretation, :expression) %>
     </div>
 <% end %>
