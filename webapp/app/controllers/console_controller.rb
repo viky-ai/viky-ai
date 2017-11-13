@@ -40,10 +40,18 @@ class ConsoleController < ApplicationController
       req.update_param(:sentence, sentence)
       response = Rails.application.call(req.env)
       status, headers, body = response
-      {
-        status: status,
-        body: body.first
-      }
+
+      if status == 200
+        {
+          status: status,
+          body: body.first
+        }
+      else
+        {
+          status: status,
+          body: body.body
+        }
+      end
     end
 
 end

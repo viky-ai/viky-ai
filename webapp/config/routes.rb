@@ -68,7 +68,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       scope '/agents' do
-        get '/:user_id/:id/interpret', to: 'nlp#interpret'
+        get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
     end
   end
