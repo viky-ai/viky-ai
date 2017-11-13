@@ -1,1 +1,146 @@
-../../../../examples/packages/package_building_features-v2.json
+{
+  "id": "building_features",
+  "interpretations":
+  [
+    {
+      "id": "sea_view",
+      "expressions":
+      [
+        {
+          "expression": "sea view",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "sea front",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ocean view",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ocean front",
+          "locale": "en-GB"
+        }
+      ],
+      "solution":
+      {
+        "building_feature": "sea_view"
+      }
+    },
+    {
+      "id": "swimming_pool",
+      "expressions":
+      [
+        {
+          "expression": "swimming pool",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "pool",
+          "locale": "en-GB"
+        }
+      ],
+      "solution":
+      {
+        "building_feature": "swimming_pool"
+      }
+    },
+    {
+      "id": "building_feature",
+      "expressions":
+      [
+        {
+          "expression": "@{swimming_pool}",
+          "aliases":
+          [
+            {
+              "alias": "swimming_pool",
+              "id": "swimming_pool",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{sea_view}",
+          "aliases":
+          [
+            {
+              "alias": "sea_view",
+              "id": "sea_view",
+              "package": "building_features"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preposition_building_feature",
+      "expressions":
+      [
+        {
+          "expression": "with",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "at",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "building_feature",
+      "expressions":
+      [
+        {
+          "expression": "@{building_feature}",
+          "aliases":
+          [
+            {
+              "alias": "building_feature",
+              "id": "building_feature",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_building_feature} @{building_feature}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_building_feature",
+              "id": "preposition_building_feature",
+              "package": "building_features"
+            },
+            {
+              "alias": "building_feature",
+              "id": "building_feature",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_building_feature} @{building_feature}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_building_feature",
+              "id": "preposition_building_feature",
+              "package": "building_features"
+            },
+            {
+              "alias": "building_feature",
+              "type": "any"
+            }
+          ],
+          "solution":
+          {
+            "building_feature": "`building_feature.any`"
+          }
+        }
+      ]
+    }
+  ]
+}
