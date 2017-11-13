@@ -28,6 +28,7 @@ struct og_info
   og_nlp_th hnlpi;
   char output_filename[DPcPathSize];
   char interpret_filename[DPcPathSize];
+  char packages_directory[DPcPathSize];
   int dump;
 };
 
@@ -108,7 +109,7 @@ static int nlp(struct og_info *info, int argc, char * argv[])
 
   /* parsing options to exclusion of compilation and interpretation files */
   optionIndex = 0;
-  while ((carlu = getopt_long(argc, argv, "c:i:o:t:dh?", longOptions, &optionIndex)) != EOF)
+  while ((carlu = getopt_long(argc, argv, "c:r:i:o:t:dh?", longOptions, &optionIndex)) != EOF)
   {
     struct og_filename filename[1];
     switch (carlu)
@@ -120,6 +121,9 @@ static int nlp(struct og_info *info, int argc, char * argv[])
         filename->length = strlen(optarg);
         IFE(OgHeapAppend(info->hfilename_ba, filename->length + 1, optarg));   // +1 because we want to keep the zero
         IFE(OgHeapAppend(info->hfilename, 1, filename));
+        break;
+      case 'r': /* directory of packages files 'optarg' */
+        strcpy(info->packages_directory, optarg);
         break;
       case 'i': /* interpret file 'optarg' */
         strcpy(info->interpret_filename, optarg);
@@ -168,6 +172,31 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     struct og_filename *filename = OgHeapGetCell(info->hfilename, i);
     char *compilation_filename = OgHeapGetCell(info->hfilename_ba, filename->start);
     IFE(nlp_compile(info, compilation_filename));
+  }
+
+  if (info->packages_directory[0])
+  {
+    char import_file[DPcPathSize], search_path[DPcPathSize];
+    struct og_file str_file[1];
+    struct og_stat filestat;
+    int retour;
+
+    memset(str_file, 0, sizeof(struct og_file));
+    sprintf(search_path, "%s/%s", info->packages_directory, "*.json");
+    IFE(retour = OgFindFirstFile(str_file, search_path));
+    if (retour)
+    {
+      do
+      {
+        sprintf(import_file, "%s/%s", info->packages_directory, str_file->File_Path);
+        IFx(OgStat(import_file,DOgStatMask_mtime,&filestat)) continue;
+        if (filestat.is_dir) continue;
+        IFE(nlp_compile(info, import_file));
+      }
+      while (OgFindNextFile(str_file));
+      OgFindClose(str_file);
+    }
+
   }
 
   if (info->dump == TRUE)
@@ -355,7 +384,8 @@ static int OgUse(struct og_info *info)
 
   ibuffer += sprintf(buffer, "Usage : oginterpret [options]\n");
   ibuffer += sprintf(buffer + ibuffer, "options are:\n");
-  ibuffer += sprintf(buffer + ibuffer, "   -c,  --compile=<compilation_filename>: input context filters\n");
+  ibuffer += sprintf(buffer + ibuffer, "   -c,  --compile=<packages filename>\n");
+  ibuffer += sprintf(buffer + ibuffer, "   -r,  --repository=<directory containing packages>\n");
   ibuffer += sprintf(buffer + ibuffer, "   -i,  --interpret=<input_filename>: specify input filename\n");
   ibuffer += sprintf(buffer + ibuffer, "   -o,  --output=<output_filename>: "
       "specify output filename (defaut is stdout)\n");
