@@ -21,6 +21,7 @@
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
 
 #define DOgNlpRequestWordNumber 0x10
+#define DOgNlpAcceptLanguageNumber 0x8
 #define DOgNlpRequestInputPartNumber 0x10
 #define DOgNlpRequestExpressionNumber 0x10
 #define DOgNlpRequestPositionNumber (DOgNlpRequestExpressionNumber*2+DOgNlpRequestInputPartNumber)
@@ -267,6 +268,12 @@ struct request_word
   int digit_value;
 };
 
+struct accept_language
+{
+  int locale;
+  float quality_factor;
+};
+
 struct request_input_part
 {
   /** from zero (only words) to N */
@@ -442,6 +449,7 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  og_heap haccept_language;
   og_bool show_explanation;
   unsigned int regular_trace;
   og_heap hrequest_word;
@@ -677,4 +685,8 @@ enum nlp_glue_status NlpGluedGetStatusForPositions(og_nlp_th ctrl_nlp_th, int po
 
 /* nlpcheck.c */
 og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
+
+/* nlplocale.c */
+og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
+int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
 

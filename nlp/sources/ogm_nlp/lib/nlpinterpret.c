@@ -12,7 +12,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t *json_sentence);
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages);
 static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const char *package_id);
-static og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param)
 {
@@ -25,6 +24,14 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   ctrl_nlp_th->hinterpret_package = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct interpret_package),
   DOgNlpPackageNumber);
   IFN(ctrl_nlp_th->hinterpret_package)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_accept_language", param->name);
+  ctrl_nlp_th->haccept_language = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct accept_language),
+  DOgNlpAcceptLanguageNumber);
+  IFN(ctrl_nlp_th->haccept_language)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
@@ -132,6 +139,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapFlush(ctrl_nlp_th->haccept_language));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapFlush(ctrl_nlp_th->hba));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_input_part));
@@ -282,6 +290,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyReset(ctrl_nlp_th));
   IFE(OgHeapReset(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapReset(ctrl_nlp_th->haccept_language));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapReset(ctrl_nlp_th->hba));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
@@ -472,13 +481,6 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
   interpret_package->package = package;
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
-  DONE;
-}
-
-// TODO : mettre dans nlplang.c
-static og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language)
-{
-
   DONE;
 }
 

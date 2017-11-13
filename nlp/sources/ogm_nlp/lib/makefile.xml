@@ -17,6 +17,7 @@
     <file>nlpglue.c</file>
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>
+    <file>nlplocale.c</file>
     <file>nlplog.c</file>
     <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
