@@ -7,6 +7,7 @@ module Nls
     attr_reader :locale
     attr_reader :aliases
     attr_reader :keep_order
+    attr_reader :glued
     attr_reader :solutions
     attr_accessor :interpretation
 
@@ -18,6 +19,9 @@ module Nls
 
       @keep_order = false
       @keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+
+      @glued = false
+      @glued = opts[:glued] if opts.has_key?(:glued)
 
       @solutions = nil
       @solutions = opts[:solutions] if opts.has_key?(:solutions)
@@ -32,10 +36,10 @@ module Nls
         elsif aliases.kind_of? Hash
           # hash of alias_name => interpretation
           aliases.each do |alias_name, interpretation|
-            if interpretation.nil?
-              _alias = Alias.new(interpretation, alias_name, "true")
+            if interpretation.kind_of? String
+              _alias = Alias.new(nil, {name: alias_name, type: interpretation}) #alias_name, "true")
             else
-              _alias = Alias.new(interpretation, alias_name)
+              _alias = Alias.new(interpretation, {name: alias_name})
             end
             add_alias(_alias)
           end
@@ -70,10 +74,11 @@ module Nls
     def to_h
       hash = {}
       hash['expression'] = @expression
-      hash['locale'] = @locale if !@locale.nil?
       hash['keep-order'] = true if @keep_order
+      hash['glued'] = true if @glued
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash["solution"] = @solutions.to_h if !@solutions.nil?
+      hash['locale'] = @locale if !@locale.nil?
       hash
     end
 
@@ -89,8 +94,12 @@ module Nls
       true
     end
 
+    def self.glued
+      true
+    end
+
     def self.no_order
-      nil
+      false
     end
 
   end

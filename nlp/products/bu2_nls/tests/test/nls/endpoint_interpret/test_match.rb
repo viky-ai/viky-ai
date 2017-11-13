@@ -90,10 +90,10 @@ module Nls
       def create_aller_de_a_any_solutions_js
         aller_de_a = Package.new("aller-de-a")
 
-        i_new_york = Interpretation.new("new-york", {solution: Solutions.new("name","New York")}).new_textual(["New York", "NYC"])
+        i_new_york = Interpretation.new("new-york", {solutions: Solutions.new("name","New York")}).new_textual(["New York", "NYC"])
         aller_de_a << i_new_york
 
-        i_barca = Interpretation.new("barcelona", {solution: Solutions.new("name","Barcelona")}).new_textual(["Barcelona", "Barca"])
+        i_barca = Interpretation.new("barcelona", {solutions: Solutions.new("name","Barcelona")}).new_textual(["Barcelona", "Barca"])
         aller_de_a << i_barca
 
         i_town = Interpretation.new("town")

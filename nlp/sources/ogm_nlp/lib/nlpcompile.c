@@ -115,15 +115,22 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
     DPcErr;
   }
 
-  IFN(json_slug)
+//  IFN(json_slug)
+//  {
+//    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
+//    DPcErr;
+//  }
+  if(json_slug)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
-    DPcErr;
+    if (!json_is_string(json_slug))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package 'slug' is not a string");
+      DPcErr;
+    }
   }
-  if (!json_is_string(json_slug))
+  else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package 'slug' is not a string");
-    DPcErr;
+    json_slug = json_string(json_string_value(json_id));
   }
 
   // check unicity
@@ -248,32 +255,32 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
 
   }
 
-  IFN(json_slug)
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation has no 'slug'");
-    DPcErr;
-  }
-  if (!json_is_string(json_slug))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'slug' is not a string");
-    DPcErr;
-  }
-  const char *string_slug = json_string_value(json_slug);
-  const char *string_id;
-
-  // interpretation id is mandatory
   IFN(json_id)
   {
-    string_id = json_string_value(json_slug);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation has no 'id'");
+    DPcErr;
   }
-  else if (!json_is_string(json_id))
+  if (!json_is_string(json_id))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'id' is not a string");
     DPcErr;
   }
+  const char *string_id = json_string_value(json_id);
+  const char *string_slug;
+
+  // interpretation id is mandatory
+  IFN(json_slug)
+  {
+    string_slug = json_string_value(json_id);
+  }
+  else if (!json_is_string(json_slug))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'slug' is not a string");
+    DPcErr;
+  }
   else
   {
-    string_id = json_string_value(json_id);
+    string_slug = json_string_value(json_slug);
   }
   // interpretation expressions is mandatory
   IFN(json_expressions)
@@ -618,7 +625,20 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
 
   if (alias->type == nlp_alias_type_type_Interpretation)
   {
-    if (json_is_string(json_slug))
+    if (json_slug == NULL)
+    {
+      const char *string_slug = json_string_value(json_id);
+      alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->slug_length = strlen(string_slug);
+      if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->slug_length + 1, string_slug));
+
+    }
+    else if (json_is_string(json_slug))
     {
       const char *string_slug = json_string_value(json_slug);
       alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
@@ -636,20 +656,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       DPcErr;
     }
 
-    if (json_id == NULL)
-    {
-      const char *string_id = json_string_value(json_slug);
-      alias->id_start = OgHeapGetCellsUsed(package->halias_ba);
-      alias->id_length = strlen(string_id);
-      if (alias->id_length > DOgNlpInterpretationExpressionMaxLength)
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: id is too long");
-        DPcErr;
-      }
-      IFE(OgHeapAppend(package->halias_ba, alias->id_length + 1, string_id));
-
-    }
-    else if (json_is_string(json_id))
+    if (json_is_string(json_id))
     {
       const char *string_id = json_string_value(json_id);
       alias->id_start = OgHeapGetCellsUsed(package->halias_ba);

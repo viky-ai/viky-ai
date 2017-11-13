@@ -23,7 +23,7 @@ module Nls
       @expressions = []
 
       @solutions = nil
-      @solutions = opts[:solution] if opts.has_key?(:solution)
+      @solutions = opts[:solutions] if opts.has_key?(:solutions)
 
     end
 
@@ -76,8 +76,16 @@ module Nls
     def new_textual(texts = [], opts = {})
       locale = @@default_locale
       locale = opts[:locale] if opts.has_key?(:locale)
-      texts.each do |t|
-        add_expression(Expression.new(t, {locale: locale}))
+      glued = false
+      glued = opts[:glued] if opts.has_key?(:glued)
+      keep_order = false
+      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      if texts.kind_of? Array
+        texts.each do |t|
+          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order}))
+        end
+      else
+        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order}))
       end
       self
     end

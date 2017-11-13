@@ -1,10 +1,9 @@
 {
   "id": "package-number",
-  "slug": "package-number",
   "interpretations":
   [
     {
-      "slug": "number",
+      "id": "number",
       "expressions":
       [
         {
@@ -13,7 +12,7 @@
           [
             {
               "alias": "number_digits",
-              "slug": "number_digits",
+              "id": "number_digits",
               "package": "package-number-digits"
             }
           ]
@@ -24,7 +23,7 @@
           [
             {
               "alias": "number_letters",
-              "slug": "number_letters",
+              "id": "number_letters",
               "package": "package-number-letters"
             }
           ]

@@ -1,10 +1,9 @@
 {
   "id": "number_people",
-  "slug": "number_people",
   "interpretations":
   [
     {
-      "slug": "preposition_number_people",
+      "id": "preposition_number_people",
       "expressions":
       [
         {
@@ -26,7 +25,7 @@
       ]
     },
     {
-      "slug": "people",
+      "id": "people",
       "expressions":
       [
         {
@@ -52,7 +51,7 @@
       ]
     },
     {
-      "slug": "number_people",
+      "id": "number_people",
       "expressions":
       [
         {
@@ -62,17 +61,17 @@
           [
             {
               "alias": "preposition_number_people",
-              "slug": "preposition_number_people",
+              "id": "preposition_number_people",
               "package": "number_people"
             },
             {
               "alias": "number",
-              "slug": "number",
+              "id": "number",
               "package": "package-number"
             },
             {
               "alias": "people",
-              "slug": "people",
+              "id": "people",
               "package": "number_people"
             }
           ],
@@ -88,12 +87,12 @@
           [
             {
               "alias": "number",
-              "slug": "number",
+              "id": "number",
               "package": "package-number"
             },
             {
               "alias": "people",
-              "slug": "people",
+              "id": "people",
               "package": "number_people"
             }
           ],
@@ -109,12 +108,12 @@
           [
             {
               "alias": "preposition_number_people",
-              "slug": "preposition_number_people",
+              "id": "preposition_number_people",
               "package": "number_people"
             },
             {
               "alias": "number",
-              "slug": "number",
+              "id": "number",
               "package": "package-number"
             }
           ],

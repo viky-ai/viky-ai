@@ -1,10 +1,9 @@
 {
   "id": "building_features",
-  "slug": "building_features",
   "interpretations":
   [
     {
-      "slug": "sea_view",
+      "id": "sea_view",
       "expressions":
       [
         {
@@ -30,7 +29,7 @@
       }
     },
     {
-      "slug": "swimming_pool",
+      "id": "swimming_pool",
       "expressions":
       [
         {
@@ -48,7 +47,7 @@
       }
     },
     {
-      "slug": "building_feature",
+      "id": "building_feature",
       "expressions":
       [
         {
@@ -57,7 +56,7 @@
           [
             {
               "alias": "swimming_pool",
-              "slug": "swimming_pool",
+              "id": "swimming_pool",
               "package": "building_features"
             }
           ]
@@ -68,7 +67,7 @@
           [
             {
               "alias": "sea_view",
-              "slug": "sea_view",
+              "id": "sea_view",
               "package": "building_features"
             }
           ]
@@ -76,7 +75,7 @@
       ]
     },
     {
-      "slug": "preposition_building_feature",
+      "id": "preposition_building_feature",
       "expressions":
       [
         {
@@ -90,7 +89,7 @@
       ]
     },
     {
-      "slug": "building_feature",
+      "id": "building_feature",
       "expressions":
       [
         {
@@ -99,7 +98,7 @@
           [
             {
               "alias": "building_feature",
-              "slug": "building_feature",
+              "id": "building_feature",
               "package": "building_features"
             }
           ]
@@ -111,12 +110,12 @@
           [
             {
               "alias": "preposition_building_feature",
-              "slug": "preposition_building_feature",
+              "id": "preposition_building_feature",
               "package": "building_features"
             },
             {
               "alias": "building_feature",
-              "slug": "building_feature",
+              "id": "building_feature",
               "package": "building_features"
             }
           ]
@@ -128,7 +127,7 @@
           [
             {
               "alias": "preposition_building_feature",
-              "slug": "preposition_building_feature",
+              "id": "preposition_building_feature",
               "package": "building_features"
             },
             {

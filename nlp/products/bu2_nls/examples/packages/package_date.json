@@ -1,10 +1,9 @@
 {
   "id": "package-date",
-  "slug": "package-date",
   "interpretations":
   [
     {
-      "slug": "date_january",
+      "id": "date_january",
       "expressions":
       [
         {
@@ -29,7 +28,7 @@
       }
     },
     {
-      "slug": "date_february",
+      "id": "date_february",
       "expressions":
       [
         {
@@ -54,7 +53,7 @@
       }
     },
     {
-      "slug": "date_march",
+      "id": "date_march",
       "expressions":
       [
         {
@@ -75,7 +74,7 @@
       }
     },
     {
-      "slug": "date_april",
+      "id": "date_april",
       "expressions":
       [
         {
@@ -96,7 +95,7 @@
       }
     },
     {
-      "slug": "date_may",
+      "id": "date_may",
       "expressions":
       [
         {
@@ -114,7 +113,7 @@
       }
     },
     {
-      "slug": "date_june",
+      "id": "date_june",
       "expressions":
       [
         {
@@ -135,7 +134,7 @@
       }
     },
     {
-      "slug": "date_july",
+      "id": "date_july",
       "expressions":
       [
         {
@@ -156,7 +155,7 @@
       }
     },
     {
-      "slug": "date_august",
+      "id": "date_august",
       "expressions":
       [
         {
@@ -177,7 +176,7 @@
       }
     },
     {
-      "slug": "date_september",
+      "id": "date_september",
       "expressions":
       [
         {
@@ -201,7 +200,7 @@
       }
     },
     {
-      "slug": "date_october",
+      "id": "date_october",
       "expressions":
       [
         {
@@ -222,7 +221,7 @@
       }
     },
     {
-      "slug": "date_november",
+      "id": "date_november",
       "expressions":
       [
         {
@@ -243,7 +242,7 @@
       }
     },
     {
-      "slug": "date_december",
+      "id": "date_december",
       "expressions":
       [
         {
@@ -264,7 +263,7 @@
       }
     },
     {
-      "slug": "date_month_number",
+      "id": "date_month_number",
       "expressions":
       [
         {
@@ -273,7 +272,7 @@
           [
             {
               "alias": "date_january",
-              "slug": "date_january",
+              "id": "date_january",
               "package": "package-date"
             }
           ]
@@ -284,7 +283,7 @@
           [
             {
               "alias": "date_february",
-              "slug": "date_february",
+              "id": "date_february",
               "package": "package-date"
             }
           ]
@@ -295,7 +294,7 @@
           [
             {
               "alias": "date_march",
-              "slug": "date_march",
+              "id": "date_march",
               "package": "package-date"
             }
           ]
@@ -306,7 +305,7 @@
           [
             {
               "alias": "date_april",
-              "slug": "date_april",
+              "id": "date_april",
               "package": "package-date"
             }
           ]
@@ -317,7 +316,7 @@
           [
             {
               "alias": "date_may",
-              "slug": "date_may",
+              "id": "date_may",
               "package": "package-date"
             }
           ]
@@ -328,7 +327,7 @@
           [
             {
               "alias": "date_june",
-              "slug": "date_june",
+              "id": "date_june",
               "package": "package-date"
             }
           ]
@@ -339,7 +338,7 @@
           [
             {
               "alias": "date_july",
-              "slug": "date_july",
+              "id": "date_july",
               "package": "package-date"
             }
           ]
@@ -350,7 +349,7 @@
           [
             {
               "alias": "date_august",
-              "slug": "date_august",
+              "id": "date_august",
               "package": "package-date"
             }
           ]
@@ -361,7 +360,7 @@
           [
             {
               "alias": "date_september",
-              "slug": "date_september",
+              "id": "date_september",
               "package": "package-date"
             }
           ]
@@ -372,7 +371,7 @@
           [
             {
               "alias": "date_october",
-              "slug": "date_october",
+              "id": "date_october",
               "package": "package-date"
             }
           ]
@@ -383,7 +382,7 @@
           [
             {
               "alias": "date_november",
-              "slug": "date_november",
+              "id": "date_november",
               "package": "package-date"
             }
           ]
@@ -394,7 +393,7 @@
           [
             {
               "alias": "date_december",
-              "slug": "date_december",
+              "id": "date_december",
               "package": "package-date"
             }
           ]
@@ -402,7 +401,7 @@
       ]
     },
     {
-      "slug": "date_day_month_year",
+      "id": "date_day_month_year",
       "expressions":
       [
         {
@@ -411,17 +410,17 @@
           [
             {
               "alias": "day",
-              "slug": "number",
+              "id": "number",
               "package": "package-number"
             },
             {
               "alias": "month",
-              "slug": "date_month_number",
+              "id": "date_month_number",
               "package": "package-date"
             },
             {
               "alias": "year",
-              "slug": "number",
+              "id": "number",
               "package": "package-number"
             }
           ]

@@ -1,10 +1,9 @@
 {
   "id": "hotel_features",
-  "slug": "hotel_features",
   "interpretations":
   [
     {
-      "slug": "hotel_features",
+      "id": "hotel_features",
       "expressions":
       [
         {
@@ -13,7 +12,7 @@
           [
             {
               "alias": "hotel_feature",
-              "slug": "hotel_feature",
+              "id": "hotel_feature",
               "package": "hotel_features"
             }
           ]
@@ -24,12 +23,12 @@
           [
             {
               "alias": "hotel_features",
-              "slug": "hotel_features",
+              "id": "hotel_features",
               "package": "hotel_features"
             },
             {
               "alias": "hotel_feature",
-              "slug": "hotel_feature",
+              "id": "hotel_feature",
               "package": "hotel_features"
             }
           ]
@@ -37,7 +36,7 @@
       ]
     },
     {
-      "slug": "hotel_feature",
+      "id": "hotel_feature",
       "expressions":
       [
         {
@@ -46,7 +45,7 @@
           [
             {
               "alias": "building_feature",
-              "slug": "building_feature",
+              "id": "building_feature",
               "package": "building_features"
             }
           ],
@@ -61,7 +60,7 @@
           [
             {
               "alias": "number_people",
-              "slug": "number_people",
+              "id": "number_people",
               "package": "number_people"
             }
           ]

@@ -1,10 +1,9 @@
 {
   "id": "package-number-digits",
-  "slug": "package-number-digits",
   "interpretations":
   [
     {
-      "slug": "dot",
+      "id": "dot",
       "expressions":
       [
         {
@@ -13,7 +12,7 @@
       ]
     },
     {
-      "slug": "coma",
+      "id": "coma",
       "expressions":
       [
         {
@@ -22,7 +21,7 @@
       ]
     },
     {
-      "slug": "digits_number",
+      "id": "digits_number",
       "expressions":
       [
         {
@@ -42,7 +41,7 @@
       ]
     },
     {
-      "slug": "digits_sep_digits",
+      "id": "digits_sep_digits",
       "expressions":
       [
         {
@@ -55,7 +54,7 @@
             },
             {
               "alias": "dot",
-              "slug": "dot",
+              "id": "dot",
               "package": "package-number-digits"
             },
             {
@@ -74,7 +73,7 @@
             },
             {
               "alias": "coma",
-              "slug": "coma",
+              "id": "coma",
               "package": "package-number-digits"
             },
             {
@@ -90,7 +89,7 @@
       }
     },
     {
-      "slug": "several_digits",
+      "id": "several_digits",
       "expressions":
       [
         {
@@ -103,7 +102,7 @@
             },
             {
               "alias": "several_digits",
-              "slug": "several_digits",
+              "id": "several_digits",
               "package": "package-number-digits"
             }
           ],
@@ -129,7 +128,7 @@
       ]
     },
     {
-      "slug": "number_digits",
+      "id": "number_digits",
       "expressions":
       [
         {
@@ -138,7 +137,7 @@
           [
             {
               "alias": "digits_number",
-              "slug": "digits_number",
+              "id": "digits_number",
               "package": "package-number-digits"
             }
           ]
@@ -149,7 +148,7 @@
           [
             {
               "alias": "digits_sep_digits",
-              "slug": "digits_sep_digits",
+              "id": "digits_sep_digits",
               "package": "package-number-digits"
             }
           ]
@@ -160,7 +159,7 @@
           [
             {
               "alias": "several_digits",
-              "slug": "several_digits",
+              "id": "several_digits",
               "package": "package-number-digits"
             }
           ]

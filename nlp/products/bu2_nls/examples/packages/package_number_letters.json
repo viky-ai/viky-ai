@@ -1,10 +1,9 @@
 {
   "id": "package-number-letters",
-  "slug": "package-number-letters",
   "interpretations":
   [
     {
-      "slug": "number_0",
+      "id": "number_0",
       "expressions":
       [
         {
@@ -22,7 +21,7 @@
       }
     },
     {
-      "slug": "number_1",
+      "id": "number_1",
       "expressions":
       [
         {
@@ -56,7 +55,7 @@
       }
     },
     {
-      "slug": "number_2",
+      "id": "number_2",
       "expressions":
       [
         {
@@ -74,7 +73,7 @@
       }
     },
     {
-      "slug": "number_3",
+      "id": "number_3",
       "expressions":
       [
         {
@@ -92,7 +91,7 @@
       }
     },
     {
-      "slug": "number_4",
+      "id": "number_4",
       "expressions":
       [
         {
@@ -110,7 +109,7 @@
       }
     },
     {
-      "slug": "number_5",
+      "id": "number_5",
       "expressions":
       [
         {
@@ -128,7 +127,7 @@
       }
     },
     {
-      "slug": "number_6",
+      "id": "number_6",
       "expressions":
       [
         {
@@ -146,7 +145,7 @@
       }
     },
     {
-      "slug": "number_7",
+      "id": "number_7",
       "expressions":
       [
         {
@@ -164,7 +163,7 @@
       }
     },
     {
-      "slug": "number_8",
+      "id": "number_8",
       "expressions":
       [
         {
@@ -182,7 +181,7 @@
       }
     },
     {
-      "slug": "number_9",
+      "id": "number_9",
       "expressions":
       [
         {
@@ -200,7 +199,7 @@
       }
     },
     {
-      "slug": "number_10",
+      "id": "number_10",
       "expressions":
       [
         {
@@ -218,7 +217,7 @@
       }
     },
     {
-      "slug": "number_11",
+      "id": "number_11",
       "expressions":
       [
         {
@@ -240,7 +239,7 @@
       }
     },
     {
-      "slug": "number_12",
+      "id": "number_12",
       "expressions":
       [
         {
@@ -258,7 +257,7 @@
       }
     },
     {
-      "slug": "number_13",
+      "id": "number_13",
       "expressions":
       [
         {
@@ -276,7 +275,7 @@
       }
     },
     {
-      "slug": "number_14",
+      "id": "number_14",
       "expressions":
       [
         {
@@ -294,7 +293,7 @@
       }
     },
     {
-      "slug": "number_15",
+      "id": "number_15",
       "expressions":
       [
         {
@@ -312,7 +311,7 @@
       }
     },
     {
-      "slug": "number_16",
+      "id": "number_16",
       "expressions":
       [
         {
@@ -330,7 +329,7 @@
       }
     },
     {
-      "slug": "number_17",
+      "id": "number_17",
       "expressions":
       [
         {
@@ -350,7 +349,7 @@
       }
     },
     {
-      "slug": "number_18",
+      "id": "number_18",
       "expressions":
       [
         {
@@ -370,7 +369,7 @@
       }
     },
     {
-      "slug": "number_19",
+      "id": "number_19",
       "expressions":
       [
         {
@@ -390,7 +389,7 @@
       }
     },
     {
-      "slug": "number_20",
+      "id": "number_20",
       "expressions":
       [
         {
@@ -408,7 +407,7 @@
       }
     },
     {
-      "slug": "number_30",
+      "id": "number_30",
       "expressions":
       [
         {
@@ -426,7 +425,7 @@
       }
     },
     {
-      "slug": "number_40",
+      "id": "number_40",
       "expressions":
       [
         {
@@ -444,7 +443,7 @@
       }
     },
     {
-      "slug": "number_50",
+      "id": "number_50",
       "expressions":
       [
         {
@@ -462,7 +461,7 @@
       }
     },
     {
-      "slug": "number_60",
+      "id": "number_60",
       "expressions":
       [
         {
@@ -480,7 +479,7 @@
       }
     },
     {
-      "slug": "number_70",
+      "id": "number_70",
       "expressions":
       [
         {
@@ -504,7 +503,7 @@
       }
     },
     {
-      "slug": "number_80",
+      "id": "number_80",
       "expressions":
       [
         {
@@ -528,7 +527,7 @@
       }
     },
     {
-      "slug": "number_90",
+      "id": "number_90",
       "expressions":
       [
         {
@@ -546,7 +545,7 @@
       }
     },
     {
-      "slug": "number_1_9",
+      "id": "number_1_9",
       "expressions":
       [
         {
@@ -555,7 +554,7 @@
           [
             {
               "alias": "number_1",
-              "slug": "number_1",
+              "id": "number_1",
               "package": "package-number-letters"
             }
           ]
@@ -566,7 +565,7 @@
           [
             {
               "alias": "number_2",
-              "slug": "number_2",
+              "id": "number_2",
               "package": "package-number-letters"
             }
           ]
@@ -577,7 +576,7 @@
           [
             {
               "alias": "number_3",
-              "slug": "number_3",
+              "id": "number_3",
               "package": "package-number-letters"
             }
           ]
@@ -588,7 +587,7 @@
           [
             {
               "alias": "number_4",
-              "slug": "number_4",
+              "id": "number_4",
               "package": "package-number-letters"
             }
           ]
@@ -599,7 +598,7 @@
           [
             {
               "alias": "number_5",
-              "slug": "number_5",
+              "id": "number_5",
               "package": "package-number-letters"
             }
           ]
@@ -610,7 +609,7 @@
           [
             {
               "alias": "number_6",
-              "slug": "number_6",
+              "id": "number_6",
               "package": "package-number-letters"
             }
           ]
@@ -621,7 +620,7 @@
           [
             {
               "alias": "number_7",
-              "slug": "number_7",
+              "id": "number_7",
               "package": "package-number-letters"
             }
           ]
@@ -632,7 +631,7 @@
           [
             {
               "alias": "number_8",
-              "slug": "number_8",
+              "id": "number_8",
               "package": "package-number-letters"
             }
           ]
@@ -643,7 +642,7 @@
           [
             {
               "alias": "number_9",
-              "slug": "number_9",
+              "id": "number_9",
               "package": "package-number-letters"
             }
           ]
@@ -651,7 +650,7 @@
       ]
     },
     {
-      "slug": "number_10_19",
+      "id": "number_10_19",
       "expressions":
       [
         {
@@ -660,7 +659,7 @@
           [
             {
               "alias": "number_10",
-              "slug": "number_10",
+              "id": "number_10",
               "package": "package-number-letters"
             }
           ]
@@ -671,7 +670,7 @@
           [
             {
               "alias": "number_11",
-              "slug": "number_11",
+              "id": "number_11",
               "package": "package-number-letters"
             }
           ]
@@ -682,7 +681,7 @@
           [
             {
               "alias": "number_12",
-              "slug": "number_12",
+              "id": "number_12",
               "package": "package-number-letters"
             }
           ]
@@ -693,7 +692,7 @@
           [
             {
               "alias": "number_13",
-              "slug": "number_13",
+              "id": "number_13",
               "package": "package-number-letters"
             }
           ]
@@ -704,7 +703,7 @@
           [
             {
               "alias": "number_14",
-              "slug": "number_14",
+              "id": "number_14",
               "package": "package-number-letters"
             }
           ]
@@ -715,7 +714,7 @@
           [
             {
               "alias": "number_15",
-              "slug": "number_15",
+              "id": "number_15",
               "package": "package-number-letters"
             }
           ]
@@ -726,7 +725,7 @@
           [
             {
               "alias": "number_16",
-              "slug": "number_16",
+              "id": "number_16",
               "package": "package-number-letters"
             }
           ]
@@ -737,7 +736,7 @@
           [
             {
               "alias": "number_17",
-              "slug": "number_17",
+              "id": "number_17",
               "package": "package-number-letters"
             }
           ]
@@ -748,7 +747,7 @@
           [
             {
               "alias": "number_18",
-              "slug": "number_18",
+              "id": "number_18",
               "package": "package-number-letters"
             }
           ]
@@ -759,7 +758,7 @@
           [
             {
               "alias": "number_19",
-              "slug": "number_19",
+              "id": "number_19",
               "package": "package-number-letters"
             }
           ]
@@ -767,7 +766,7 @@
       ]
     },
     {
-      "slug": "number_20_29",
+      "id": "number_20_29",
       "expressions":
       [
         {
@@ -778,12 +777,12 @@
           [
             {
               "alias": "number_20",
-              "slug": "number_20",
+              "id": "number_20",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -798,7 +797,7 @@
           [
             {
               "alias": "number_20",
-              "slug": "number_20",
+              "id": "number_20",
               "package": "package-number-letters"
             }
           ]
@@ -806,7 +805,7 @@
       ]
     },
     {
-      "slug": "number_30_39",
+      "id": "number_30_39",
       "expressions":
       [
         {
@@ -817,12 +816,12 @@
           [
             {
               "alias": "number_30",
-              "slug": "number_30",
+              "id": "number_30",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -837,7 +836,7 @@
           [
             {
               "alias": "number_30",
-              "slug": "number_30",
+              "id": "number_30",
               "package": "package-number-letters"
             }
           ]
@@ -845,7 +844,7 @@
       ]
     },
     {
-      "slug": "number_40_49",
+      "id": "number_40_49",
       "expressions":
       [
         {
@@ -856,12 +855,12 @@
           [
             {
               "alias": "number_40",
-              "slug": "number_40",
+              "id": "number_40",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -876,7 +875,7 @@
           [
             {
               "alias": "number_40",
-              "slug": "number_40",
+              "id": "number_40",
               "package": "package-number-letters"
             }
           ]
@@ -884,7 +883,7 @@
       ]
     },
     {
-      "slug": "number_50_59",
+      "id": "number_50_59",
       "expressions":
       [
         {
@@ -895,12 +894,12 @@
           [
             {
               "alias": "number_50",
-              "slug": "number_50",
+              "id": "number_50",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -915,7 +914,7 @@
           [
             {
               "alias": "number_50",
-              "slug": "number_50",
+              "id": "number_50",
               "package": "package-number-letters"
             }
           ]
@@ -923,7 +922,7 @@
       ]
     },
     {
-      "slug": "number_60_69",
+      "id": "number_60_69",
       "expressions":
       [
         {
@@ -934,12 +933,12 @@
           [
             {
               "alias": "number_60",
-              "slug": "number_60",
+              "id": "number_60",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -954,7 +953,7 @@
           [
             {
               "alias": "number_60",
-              "slug": "number_60",
+              "id": "number_60",
               "package": "package-number-letters"
             }
           ]
@@ -962,7 +961,7 @@
       ]
     },
     {
-      "slug": "number_70_79",
+      "id": "number_70_79",
       "expressions":
       [
         {
@@ -973,12 +972,12 @@
           [
             {
               "alias": "number_70",
-              "slug": "number_70",
+              "id": "number_70",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -993,7 +992,7 @@
           [
             {
               "alias": "number_70",
-              "slug": "number_70",
+              "id": "number_70",
               "package": "package-number-letters"
             }
           ]
@@ -1006,12 +1005,12 @@
           [
             {
               "alias": "number_60",
-              "slug": "number_60",
+              "id": "number_60",
               "package": "package-number-letters"
             },
             {
               "alias": "number_10_19",
-              "slug": "number_10_19",
+              "id": "number_10_19",
               "package": "package-number-letters"
             }
           ],
@@ -1023,7 +1022,7 @@
       ]
     },
     {
-      "slug": "number_80_89",
+      "id": "number_80_89",
       "expressions":
       [
         {
@@ -1034,12 +1033,12 @@
           [
             {
               "alias": "number_80",
-              "slug": "number_80",
+              "id": "number_80",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -1054,7 +1053,7 @@
           [
             {
               "alias": "number_80",
-              "slug": "number_80",
+              "id": "number_80",
               "package": "package-number-letters"
             }
           ]
@@ -1062,7 +1061,7 @@
       ]
     },
     {
-      "slug": "number_90_99",
+      "id": "number_90_99",
       "expressions":
       [
         {
@@ -1073,12 +1072,12 @@
           [
             {
               "alias": "number_90",
-              "slug": "number_90",
+              "id": "number_90",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ],
@@ -1093,7 +1092,7 @@
           [
             {
               "alias": "number_90",
-              "slug": "number_90",
+              "id": "number_90",
               "package": "package-number-letters"
             }
           ]
@@ -1106,12 +1105,12 @@
           [
             {
               "alias": "number_80",
-              "slug": "number_80",
+              "id": "number_80",
               "package": "package-number-letters"
             },
             {
               "alias": "number_10_19",
-              "slug": "number_10_19",
+              "id": "number_10_19",
               "package": "package-number-letters"
             }
           ],
@@ -1123,7 +1122,7 @@
       ]
     },
     {
-      "slug": "number_1_99",
+      "id": "number_1_99",
       "expressions":
       [
         {
@@ -1132,7 +1131,7 @@
           [
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             }
           ]
@@ -1143,7 +1142,7 @@
           [
             {
               "alias": "number_10_19",
-              "slug": "number_10_19",
+              "id": "number_10_19",
               "package": "package-number-letters"
             }
           ]
@@ -1154,7 +1153,7 @@
           [
             {
               "alias": "number_20_29",
-              "slug": "number_20_29",
+              "id": "number_20_29",
               "package": "package-number-letters"
             }
           ]
@@ -1165,7 +1164,7 @@
           [
             {
               "alias": "number_30_39",
-              "slug": "number_30_39",
+              "id": "number_30_39",
               "package": "package-number-letters"
             }
           ]
@@ -1176,7 +1175,7 @@
           [
             {
               "alias": "number_40_49",
-              "slug": "number_40_49",
+              "id": "number_40_49",
               "package": "package-number-letters"
             }
           ]
@@ -1187,7 +1186,7 @@
           [
             {
               "alias": "number_50_59",
-              "slug": "number_50_59",
+              "id": "number_50_59",
               "package": "package-number-letters"
             }
           ]
@@ -1198,7 +1197,7 @@
           [
             {
               "alias": "number_60_69",
-              "slug": "number_60_69",
+              "id": "number_60_69",
               "package": "package-number-letters"
             }
           ]
@@ -1209,7 +1208,7 @@
           [
             {
               "alias": "number_70_79",
-              "slug": "number_70_79",
+              "id": "number_70_79",
               "package": "package-number-letters"
             }
           ]
@@ -1220,7 +1219,7 @@
           [
             {
               "alias": "number_80_89",
-              "slug": "number_80_89",
+              "id": "number_80_89",
               "package": "package-number-letters"
             }
           ]
@@ -1231,7 +1230,7 @@
           [
             {
               "alias": "number_90_99",
-              "slug": "number_90_99",
+              "id": "number_90_99",
               "package": "package-number-letters"
             }
           ]
@@ -1239,7 +1238,7 @@
       ]
     },
     {
-      "slug": "number_100",
+      "id": "number_100",
       "expressions":
       [
         {
@@ -1257,7 +1256,7 @@
       }
     },
     {
-      "slug": "number_100_199",
+      "id": "number_100_199",
       "expressions":
       [
         {
@@ -1268,12 +1267,12 @@
           [
             {
               "alias": "number_100",
-              "slug": "number_100",
+              "id": "number_100",
               "package": "package-number-letters"
             },
             {
               "alias": "number_1_99",
-              "slug": "number_1_99",
+              "id": "number_1_99",
               "package": "package-number-letters"
             }
           ],
@@ -1288,7 +1287,7 @@
           [
             {
               "alias": "number_100",
-              "slug": "number_100",
+              "id": "number_100",
               "package": "package-number-letters"
             }
           ]
@@ -1296,7 +1295,7 @@
       ]
     },
     {
-      "slug": "number_100_999",
+      "id": "number_100_999",
       "expressions":
       [
         {
@@ -1307,12 +1306,12 @@
           [
             {
               "alias": "number_1_9",
-              "slug": "number_1_9",
+              "id": "number_1_9",
               "package": "package-number-letters"
             },
             {
               "alias": "number_100_199",
-              "slug": "number_100_199",
+              "id": "number_100_199",
               "package": "package-number-letters"
             }
           ],
@@ -1329,7 +1328,7 @@
           [
             {
               "alias": "number_100_199",
-              "slug": "number_100_199",
+              "id": "number_100_199",
               "package": "package-number-letters"
             }
           ]
@@ -1337,7 +1336,7 @@
       ]
     },
     {
-      "slug": "number_letters",
+      "id": "number_letters",
       "expressions":
       [
         {
@@ -1346,7 +1345,7 @@
           [
             {
               "alias": "number_0",
-              "slug": "number_0",
+              "id": "number_0",
               "package": "package-number-letters"
             }
           ]
@@ -1357,7 +1356,7 @@
           [
             {
               "alias": "number_1_99",
-              "slug": "number_1_99",
+              "id": "number_1_99",
               "package": "package-number-letters"
             }
           ]
@@ -1368,7 +1367,7 @@
           [
             {
               "alias": "number_100_999",
-              "slug": "number_100_999",
+              "id": "number_100_999",
               "package": "package-number-letters"
             }
           ]
