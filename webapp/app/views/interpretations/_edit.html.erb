@@ -3,13 +3,13 @@
       <%= f.text_field :expression %>
     </div>
     <div class="control">
-      <%= f.button 'Update', class: 'btn' %>
+      <%= f.button t('views.interpretations.index.update_btn'), class: 'btn' %>
     </div>
     <div class="control">
       <%= f.button t('views.interpretations.index.delete_btn'), formmethod: 'DELETE', class: 'btn btn--destructive' %>
     </div>
     <div class="control">
-      <%= link_to 'Cancel', user_agent_intent_interpretation_path(
+      <%= link_to t('views.interpretations.index.cancel_btn'), user_agent_intent_interpretation_path(
           interpretation.intent.agent.owner,
           interpretation.intent.agent,
           interpretation.intent,

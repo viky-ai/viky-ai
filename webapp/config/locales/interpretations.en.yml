@@ -5,4 +5,6 @@ en:
         btn: "Add"
       index:
         delete_btn: "Delete"
+        update_btn: "Update"
+        cancel_btn: "Cancel"
       delete_failed: "Ooops, delete failed."
