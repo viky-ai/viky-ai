@@ -1,0 +1,34 @@
+[
+  {
+    "packages":
+    [
+      "want_hotel_features",
+      "package-want",
+      "package-hotel",
+      "hotel_features",
+      "building_features",
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "i want an hotel with swimming pool with spa for 3 people with sea view",
+    "Accept-Language": "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
+  },
+  {
+    "packages":
+    [
+      "want_hotel_features",
+      "package-want",
+      "package-hotel",
+      "hotel_features",
+      "building_features",
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "je veux un hôtel avec piscine avec spa pour trois personnes avec vue sur la mer",
+    "Accept-Language": "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
+  }
+]

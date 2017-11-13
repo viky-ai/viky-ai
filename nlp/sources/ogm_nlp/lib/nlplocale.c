@@ -18,13 +18,16 @@ og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *
 {
   og_string string_accept_language = NULL;
 
+  // the Accept-Language request is not mandatory
+  IFN(json_accept_language) DONE;
+
   if (json_is_string(json_accept_language))
   {
     string_accept_language = json_string_value(json_accept_language);
   }
   else
   {
-    NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildAcceptLanguage: json_accept_language is not a string");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildAcceptLanguage: json_accept_language is not a string");
     DPcErr;
   }
 
@@ -64,7 +67,7 @@ static og_status NlpAddAcceptLanguage(og_nlp_th ctrl_nlp_th, og_string s, int is
 {
   if (is >= DPcPathSize)
   {
-    NlpLog(DOgNlpTraceInterpret, "NlpAddAcceptLanguage: string '%.*s' too long, length=%d", DPcPathSize, s, is);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpAddAcceptLanguage: string '%.*s' too long, length=%d", DPcPathSize, s, is);
     DPcErr;
   }
 
@@ -151,7 +154,7 @@ static og_status NlpAcceptLanguageGetQualityFactor(og_nlp_th ctrl_nlp_th, unsign
   string_q[sep] = 0;
   if (strcmp(string_q, "q"))
   {
-    NlpLog(DOgNlpTraceInterpret, "NlpAcceptLanguageGetQualityFactor: string '%s' is not a quality factor declaration",
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpAcceptLanguageGetQualityFactor: string '%s' is not a quality factor declaration",
         string_quality_factor);
     DPcErr;
   }

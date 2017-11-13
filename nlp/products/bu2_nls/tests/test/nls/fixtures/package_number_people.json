@@ -8,19 +8,19 @@
       [
         {
           "expression": "with",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "for",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "avec",
-          "locale": "fr-FR"
+          "locale": "fr"
         },
         {
           "expression": "pour",
-          "locale": "fr-FR"
+          "locale": "fr"
         }
       ]
     },
@@ -30,23 +30,23 @@
       [
         {
           "expression": "people",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "person",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "persons",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "personne",
-          "locale": "fr-FR"
+          "locale": "fr"
         },
         {
           "expression": "personnes",
-          "locale": "fr-FR"
+          "locale": "fr"
         }
       ]
     },

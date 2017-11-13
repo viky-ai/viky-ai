@@ -8,19 +8,27 @@
       [
         {
           "expression": "sea view",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "sea front",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "ocean view",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "ocean front",
-          "locale": "en-GB"
+          "locale": "en"
+        },
+        {
+          "expression": "vue mer",
+          "locale": "fr"
+        },
+        {
+          "expression": "vue sur la mer",
+          "locale": "fr"
         }
       ],
       "solution":
@@ -34,11 +42,15 @@
       [
         {
           "expression": "swimming pool",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "pool",
-          "locale": "en-GB"
+          "locale": "en"
+        },
+        {
+          "expression": "piscine",
+          "locale": "fr"
         }
       ],
       "solution":
@@ -80,11 +92,15 @@
       [
         {
           "expression": "with",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "at",
-          "locale": "en-GB"
+          "locale": "en"
+        },
+        {
+          "expression": "avec",
+          "locale": "fr"
         }
       ]
     },

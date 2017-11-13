@@ -1,0 +1,28 @@
+{
+  "id": "package-hotel",
+  "interpretations":
+  [
+    {
+      "id": "hotel",
+      "expressions":
+      [
+        {
+          "expression": "hôtel",
+          "locale": "fr"
+        },
+        {
+          "expression": "chambre",
+          "locale": "fr"
+        },
+        {
+          "expression": "hotel",
+          "locale": "en"
+        },
+        {
+          "expression": "room",
+          "locale": "en"
+        }
+      ]
+    }
+  ]
+}
