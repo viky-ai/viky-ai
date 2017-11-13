@@ -29,7 +29,6 @@
 /public/uploads
 /public/doc
 /coverage/
-/import/*
 
 .env
 *.rdb

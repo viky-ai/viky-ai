@@ -17,9 +17,13 @@ class Nlp::Package
     return ret unless valid?
 
     @data = post_to_nlp("#{@endpoint}/packages/#{@options[:agent_id]}") || {}
+
+    # TODO: storing the agent file from this module is a temporary solution.
+    # This is to be removed in the future.
     if errors.empty?
-      outfilename = File.join(Rails.root, 'import', "#{@options[:agent_id]}.json")
-      File.open(outfilename, 'w') { |file| file.write @data.to_json }
+      outdirname = File.join(Rails.root, 'import')
+      FileUtils.mkdir outdirname unless File.exist?(outdirname)
+      File.open(File.join(outdirname, "#{@options[:agent_id]}.json"), 'w') { |file| file.write @data.to_json }
     end
   end
 
