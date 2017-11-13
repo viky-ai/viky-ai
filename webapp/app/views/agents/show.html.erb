@@ -57,7 +57,7 @@
   <% @intents.each do |intent| %>
     <li data-id="<%= intent.id %>">
 
-      <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>" class="js-intent-show-link">
+      <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent, locale: Interpretation::Locales.first) %>" class="js-intent-show-link">
         <span class="intents-list__item__name"><%= intent.intentname %></span>
         <span class="intents-list__item__desc"><%= intent.description %></span>
       </a>

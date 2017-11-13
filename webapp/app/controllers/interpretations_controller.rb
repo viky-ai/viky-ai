@@ -82,7 +82,7 @@ class InterpretationsController < ApplicationController
   private
 
     def interpretation_params
-      params.require(:interpretation).permit(:expression)
+      params.require(:interpretation).permit(:expression, :locale)
     end
 
     def check_user_rights

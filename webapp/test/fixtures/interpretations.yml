@@ -1,3 +1,9 @@
 weather_greeting_hello:
   expression: Hello world
   intent: weather_greeting
+  locale: 'en_US'
+
+weather_greeting_bonjour:
+  expression: Bonjour tout le monde
+  intent: weather_greeting
+  locale: 'fr_FR'

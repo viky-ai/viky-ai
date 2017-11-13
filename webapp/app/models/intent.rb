@@ -10,6 +10,10 @@ class Intent < ApplicationRecord
   before_validation :clean_intentname
   before_create :set_position
 
+  def interpretations_with_local(locale)
+    interpretations.where(locale: locale)
+  end
+
   private
 
     def clean_intentname

@@ -6,6 +6,7 @@ class IntentsController < ApplicationController
 
   def show
     @interpretation = Interpretation.new
+    @locale = params[:locale]
   end
 
   def new

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171109092932) do
+ActiveRecord::Schema.define(version: 20171113144756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20171109092932) do
     t.uuid "intent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale"
     t.index ["intent_id"], name: "index_interpretations_on_intent_id"
   end
 
