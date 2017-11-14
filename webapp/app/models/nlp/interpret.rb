@@ -22,7 +22,7 @@ class Nlp::Interpret
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     out = http.post(uri.path, nlp_params.to_json, JSON_HEADERS)
-    Rails.logger.info "  Completed from NLP #{out.code}"
+    Rails.logger.info "  Completed from NLP, status: #{out.code}"
     {
       status: out.code,
       body: JSON.parse(out.body)
@@ -57,7 +57,8 @@ class Nlp::Interpret
   private
 
     def set_default
-      self.verbose = "false" if verbose.blank?
+      self.language = "*"     if language.blank?
+      self.verbose  = "false" if verbose.blank?
     end
 
     def ownername_and_agentname_consistency

@@ -10,8 +10,6 @@ class ConsoleController < ApplicationController
     verbose     = interpret_params[:verbose]
     current_tab = interpret_params[:current_tab]
 
-    logger.ap verbose
-
     data = get_interpretation(owner, agent, sentence, verbose)
 
     respond_to do |format|

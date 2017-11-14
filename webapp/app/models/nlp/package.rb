@@ -1,60 +1,64 @@
 require 'net/http'
 
 class Nlp::Package
-  include ActiveModel::Validations
-  validates_with PackageValidator
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
-  attr_reader :options, :data
 
-  def initialize(options = {})
-    @options = clean_options options
-    @endpoint = "#{ENV['VOQALAPP_NLP_URL']}"
+  def initialize(agent)
+    @agent = agent
   end
 
-  def update
-    ret = false
-    return ret unless valid?
-
-    @data = post_to_nlp("#{@endpoint}/packages/#{@options[:agent_id]}") || {}
-
-    # TODO: storing the agent file from this module is a temporary solution.
-    # This is to be removed in the future.
-    if errors.empty?
-      outdirname = File.join(Rails.root, 'import')
-      FileUtils.mkdir outdirname unless File.exist?(outdirname)
-      File.open(File.join(outdirname, "#{@options[:agent_id]}.json"), 'w') { |file| file.write @data.to_json }
-    end
+  def destroy
+    FileUtils.rm(path)
   end
 
-  def post_to_nlp(url)
-    resp = {}
-    uri = URI.parse url
-    http = Net::HTTP.new uri.host, uri.port
-    begin
+  def push
+    unless Rails.env.test?
+      json = generate_json
+      push_in_import_directory(json)
+
       Rails.logger.info "Started POST to NLP \"#{url}\" at #{DateTime.now}"
-      Rails.logger.info "  Parameters: #{@options}"
-      out = http.post(uri.path, @options.to_json, JSON_HEADERS)
-      Rails.logger.info "  Completed from NLP #{out.code}"
-      if out.code == '200'
-        resp = JSON.parse(out.body)
-      else
-        errors.add(:nlp, JSON.parse(out.body)['errors'])
-      end
-    rescue StandardError => sterr
-      errors.add(:nlp, sterr.message)
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      out = http.post(uri.path, json, JSON_HEADERS)
+      Rails.logger.info "  Completed from NLP, status: #{out.code}"
+      {
+        status: out.code,
+        body: JSON.parse(out.body)
+      }
     end
-    resp
   end
 
+  def generate_json
+    JSON.pretty_generate(
+      JSON.parse(
+        ApplicationController.render(
+          template: 'agents/package',
+          assigns: { agent: @agent },
+          format: :json
+        )
+      )
+    )
+  end
+
+  def endpoint
+    ENV.fetch("VOQALAPP_NLP_URL") { 'http://localhost:9345' }
+  end
+
+  def url
+    "#{endpoint}/packages/#{@agent.id}"
+  end
+
+  def path
+    outdirname = File.join(Rails.root, 'import')
+    FileUtils.mkdir outdirname unless File.exist?(outdirname)
+    File.join(outdirname, "#{@agent.id}.json")
+  end
 
   private
 
-    # clean parameters up to match NLP expectations
-    def clean_options(opts)
-      (opts || {}).transform_values do |v|
-        v.respond_to?(:strip) ? v.strip : v
-      end
+    def push_in_import_directory(json)
+      File.open(path, 'w') { |file| file.write json }
     end
 
 end
