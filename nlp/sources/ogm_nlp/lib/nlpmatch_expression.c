@@ -16,7 +16,6 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
 static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstpointer ptr_request_input_part2,
     gpointer user_data);
 
-
 og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
 {
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
@@ -97,11 +96,22 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
       }
     }
     if (!expression_matches_at_least_once) continue;
-    IFE(NlpMatchExpressionsZone(ctrl_nlp_th, i, match_zone_input_part,expression->input_parts_nb));
+    IFE(NlpMatchExpressionsZone(ctrl_nlp_th, i, match_zone_input_part, expression->input_parts_nb));
     //i = j - 1;
   }
 
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpMatchExpressions));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    int new_request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+    if (new_request_expression_used > ctrl_nlp_th->new_request_expression_start)
+    {
+      char buffer[DPcPathSize];
+      snprintf(buffer, DPcPathSize, "List of new request expression at level %d:", ctrl_nlp_th->level);
+      IFE(NlpRequestExpressionsLog(ctrl_nlp_th, ctrl_nlp_th->new_request_expression_start, buffer));
+    }
+  }
 
   DONE;
 }
@@ -123,7 +133,9 @@ static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, int Irequest_
   for (int i = 0; i < match_zone_input_part[start].length; i++)
   {
     match_zone_input_part[start].current = match_zone_input_part[start].start + i;
-    IFE(NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, Irequest_input_part, match_zone_input_part, start + 1, length - 1));
+    IFE(
+        NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, Irequest_input_part, match_zone_input_part, start + 1,
+            length - 1));
   }
   DONE;
 }

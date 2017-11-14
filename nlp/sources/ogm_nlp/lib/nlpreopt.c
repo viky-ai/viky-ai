@@ -10,13 +10,19 @@ static og_status NlpRequestExpressionsOptimizeAny(og_nlp_th ctrl_nlp_th);
 static og_status NlpRequestExpressionOptimizeAny(og_nlp_th ctrl_nlp_th, struct request_expression *request_expressions,
     int Irequest_expression, int request_expression_used);
 static og_status NlpRequestExpressionsOptimizeCompact(og_nlp_th ctrl_nlp_th);
-static og_status NlpRequestExpressionOptimizeCompact(og_nlp_th ctrl_nlp_th, struct request_expression *request_expressions,
-    int Irequest_expression, int request_expression_used);
+static og_status NlpRequestExpressionOptimizeCompact(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expressions, int Irequest_expression, int request_expression_used);
 
 og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th)
 {
   // Ancune de ces heuristiques n'est convaincante, mais on se garde la possibilité de les utiliser
   // dans tous les cas, ces fonctions ne font que des logs.
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    char buffer[DPcPathSize];
+    snprintf(buffer, DPcPathSize, "List of all request expression at level %d:", ctrl_nlp_th->level);
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
+  }
   DONE;
   IFE(NlpRequestExpressionsOptimizeAny(ctrl_nlp_th));
   IFE(NlpRequestExpressionsOptimizeCompact(ctrl_nlp_th));
@@ -137,10 +143,8 @@ static og_status NlpRequestExpressionsOptimizeCompact(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-
-
-static og_status NlpRequestExpressionOptimizeCompact(og_nlp_th ctrl_nlp_th, struct request_expression *request_expressions,
-    int Irequest_expression, int request_expression_used)
+static og_status NlpRequestExpressionOptimizeCompact(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expressions, int Irequest_expression, int request_expression_used)
 {
   struct request_expression *first_request_expression = request_expressions + Irequest_expression;
 
@@ -184,10 +188,4 @@ static og_status NlpRequestExpressionOptimizeCompact(og_nlp_th ctrl_nlp_th, stru
   g_queue_clear(queue_request_expression);
   DONE;
 }
-
-
-
-
-
-
 

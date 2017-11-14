@@ -30,9 +30,6 @@ og_bool NlpMatchInterpretations(og_nlp_th ctrl_nlp_th)
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       char buffer[DPcPathSize];
-      snprintf(buffer, DPcPathSize, "List of new request expression at level %d:", ctrl_nlp_th->level);
-      IFE(NlpRequestExpressionsLog(ctrl_nlp_th, ctrl_nlp_th->new_request_expression_start, buffer));
-
       snprintf(buffer, DPcPathSize, "List of new request input parts deducted at level %d:", ctrl_nlp_th->level);
       IFE(NlpRequestInputPartsLog(ctrl_nlp_th, ctrl_nlp_th->new_request_input_part_start, buffer));
     }
