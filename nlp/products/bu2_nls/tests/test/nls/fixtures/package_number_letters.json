@@ -535,6 +535,12 @@
           "locale": "en"
         },
         {
+          "expression": "quatre vingt dix",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
           "expression": "nonante",
           "locale": "fr"
         }
