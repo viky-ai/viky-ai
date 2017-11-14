@@ -5,8 +5,8 @@ Setup
 
 Copy directories packages and requests into the working directory:
 ```
-cp -a ${OG_REPO_PATH}/products/bu2_nls/examples/packages $OG_REPO_PATH/ship/debug
-cp -a ${OG_REPO_PATH}/products/bu2_nls/examples/requests $OG_REPO_PATH/ship/debug
+ln -nfs ${OG_REPO_PATH}/products/bu2_nls/examples/packages $OG_REPO_PATH/ship/debug/packages
+ln -nfs ${OG_REPO_PATH}/products/bu2_nls/examples/requests $OG_REPO_PATH/ship/debug/requests
 cd $OG_REPO_PATH/ship/debug
 ```
 

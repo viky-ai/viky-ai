@@ -69,13 +69,14 @@ module Nls
         }
 
         # TODO fix test timeout
-        query_param = { timeout: 5000 }
+        query_param = { timeout: 2000 }
 
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "with swimming pool with spa for four people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 4
+        query[:sentence] = "with swimming pool with spa for 4 people with sea view"
+        expected["interpretations"][0]["solution"]["number-people"] = 4.0
+
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
@@ -84,8 +85,12 @@ module Nls
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-      end
+#        query[:sentence] = "with swimming pool with spa for fifty two people with sea view"
+#        expected["interpretations"][0]["solution"]["number-people"] = 52
+#        actual = Nls.interpret(query, query_param)
+#        assert_equal expected, actual
 
+      end
     end
   end
 end

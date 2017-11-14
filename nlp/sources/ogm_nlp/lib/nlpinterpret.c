@@ -115,7 +115,6 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 {
-  // TODO SMA libérer les éléments avant de vider la queue
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   if (request_expression_used > 0)
   {
@@ -263,7 +262,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
     NlpPackageMarkAsUnused(ctrl_nlp_th, interpret_package->package);
   }
 
-  // TODO SMA libérer les éléments avant de vider la queue
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   if (request_expression_used > 0)
   {

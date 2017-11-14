@@ -209,6 +209,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
     {
       // Combining the objects into a single object
       request_expression->json_solution = json_object();
+
       IFE(NlpSolutionMergeObjects(ctrl_nlp_th, request_expression));
     }
     else
@@ -390,7 +391,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
                   i);
               DPcErr;
             }
-            IF(json_array_append_new(json_array_values, json_sub_value_array))
+            IF(json_array_append(json_array_values, json_sub_value_array))
             {
               NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive : Error while adding json_array_values");
               DPcErr;
