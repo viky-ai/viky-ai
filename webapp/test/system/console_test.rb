@@ -3,7 +3,7 @@ require "application_system_test_case"
 class ConsoleTest < ApplicationSystemTestCase
 
 
-  test 'User index not allowed if user is not logged in' do
+  test 'console basic interaction' do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
@@ -25,7 +25,7 @@ class ConsoleTest < ApplicationSystemTestCase
   end
 
 
-  test "console is persisted during agent angivation, operation" do
+  test "console is persisted during agent nagivation, operation" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 

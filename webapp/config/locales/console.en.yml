@@ -9,4 +9,8 @@ en:
         json: JSON
       error_occurred: Oops, an error occurred.
       no_intent_found: No intent found.
+      intent_found:
+        one: "1 intent found."
+        other: "%{count} intents found."
+
 

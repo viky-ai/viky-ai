@@ -1,18 +1,34 @@
 <div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
   <% if data[:status] == 200 %>
     <% json = JSON.parse(data[:body]) %>
-    <% if json['intents'].empty? %>
+
+    <% if json['intent'].empty? %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
         <%= t('views.console.no_intent_found') %>
       </p>
     <% else %>
-      <ul>
-        <% json['intents'].each do |intent| %>
-          <li><%= intent["name"] %></li>
+      <p>
+        <span class="badge badge--success"><%= data[:status] %></span>
+        <%= t('views.console.intent_found', count: json['intent'].count) %>
+      </p>
+      <ul class="intents">
+        <% json['intent'].each do |intent| %>
+          <li>
+            <%
+              username = intent["slug"].split('/')[0]
+              agentname = intent["slug"].split('/')[1]
+              intentname = intent["slug"].split('/')[2]
+            %>
+            <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
+              <span class="name"><%= intent["name"] %></span>
+              <span class="score">(<%= intent["score"] %>)</span>
+            </a>
+          </li>
         <% end %>
       </ul>
     <% end %>
+
   <% else %>
     <p>
       <span class="badge badge--danger"><%= data[:status] %></span>
