@@ -11,7 +11,7 @@
       <p>
         <%= t('views.intents.confirm_destroy.content_html', name: intent.intentname) %>
       </p>
-      <%= form_for(intent, url: user_agent_intent_path(intent.agent.owner, intent.agent, intent), method: :delete, html: { data: { validation: :delete }}) do |delete_form| %>
+      <%= form_for(intent, url: user_agent_intent_path(intent.agent.owner, intent.agent, intent), method: :delete, html: { data: { validation: :delete }}, remote: true) do |delete_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('confirm_destroy.label') %></label>
