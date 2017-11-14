@@ -46,11 +46,13 @@ duktape/dist/duktape.c duktape/dist/duktape.h duktape/dist/duk_config.h:
 		--architecture x64 \
 		--option-yaml 'DUK_USE_FASTINT: true'
 
-duktape/dist/duk_module_node.c duktape/dist/duk_module_node.h: duktape/extras/module-node/duk_module_node.c duktape/extras/module-node/duk_module_node.h
+duktape/dist/duk_module_node.c duktape/dist/duk_module_node.h: duktape/dist/duktape.h duktape/extras/module-node/duk_module_node.c duktape/extras/module-node/duk_module_node.h
+	mkdir -p duktape/dist/
 	cp -af duktape/extras/module-node/duk_module_node.c duktape/dist/
 	cp -af duktape/extras/module-node/duk_module_node.h duktape/dist/
 
-duktape/dist/duk_console.c duktape/dist/duk_console.h: duktape/extras/console/duk_console.c duktape/extras/console/duk_console.h
+duktape/dist/duk_console.c duktape/dist/duk_console.h: duktape/dist/duktape.h duktape/extras/console/duk_console.c duktape/extras/console/duk_console.h
+	mkdir -p duktape/dist/
 	cp -af duktape/extras/console/duk_console.c duktape/dist/
 	cp -af duktape/extras/console/duk_console.h duktape/dist/
 
