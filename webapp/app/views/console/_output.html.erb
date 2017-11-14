@@ -2,7 +2,7 @@
   <% if data[:status] == 200 %>
     <% json = JSON.parse(data[:body]) %>
 
-    <% if json['intent'].empty? %>
+    <% if json['intents'].empty? %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
         <%= t('views.console.no_intent_found') %>
@@ -10,16 +10,12 @@
     <% else %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
-        <%= t('views.console.intent_found', count: json['intent'].count) %>
+        <%= t('views.console.intent_found', count: json['intents'].count) %>
       </p>
       <ul class="intents">
-        <% json['intent'].each do |intent| %>
+        <% json['intents'].each do |intent| %>
           <li>
-            <%
-              username = intent["slug"].split('/')[0]
-              agentname = intent["slug"].split('/')[1]
-              intentname = intent["slug"].split('/')[2]
-            %>
+            <% username, agentname, intentname = intent["slug"].split('/') %>
             <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
               <span class="name"><%= intent["name"] %></span>
               <span class="score">(<%= intent["score"] %>)</span>
