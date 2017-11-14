@@ -1,6 +1,6 @@
 <div class="tabs">
   <ul>
-    <% for locale in Interpretation::Locales %>
+    <% for locale in  @intent.locales %>
       <li>
         <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale) %>"
            <% if @locale == locale %>class="current"<% end %>>
