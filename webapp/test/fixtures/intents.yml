@@ -1,4 +1,5 @@
 weather_greeting:
   intentname: weather_greeting
+  locales: <%= ['en_US'].to_json.inspect  %>
   description: My awesome weather bot description
   agent: weather

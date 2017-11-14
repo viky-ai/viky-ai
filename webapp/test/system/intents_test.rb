@@ -84,7 +84,7 @@ class IntentsTest < ApplicationSystemTestCase
     go_to_agent_show('admin', 'weather')
     assert page.has_no_text? 'Reorganize intents'
 
-    intent = Intent.new(intentname: 'test')
+    intent = Intent.new(intentname: 'test', locales: ['en_US'])
     intent.agent = agents(:weather)
     assert intent.save
     visit user_agent_path('admin', 'weather')

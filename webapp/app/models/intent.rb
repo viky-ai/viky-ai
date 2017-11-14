@@ -5,7 +5,10 @@ class Intent < ApplicationRecord
   belongs_to :agent
   has_many :interpretations, dependent: :destroy
 
+  serialize :locales, JSON
+
   validates :intentname, uniqueness: { scope: [:agent_id] }, length: { in: 3..25 }, presence: true
+  validates :locales, presence: true
 
   before_validation :clean_intentname
   before_create :set_position
