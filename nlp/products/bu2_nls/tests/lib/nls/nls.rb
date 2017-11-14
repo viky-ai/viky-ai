@@ -113,6 +113,10 @@ module Nls
       "#{base_url}/dump"
     end
 
+    def self.url_list
+      "#{base_url}/list"
+    end
+
     def self.url_packages
       "#{base_url}/packages"
     end
@@ -160,6 +164,11 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.dump
+      response = RestClient.get(url_dump, params: {})
+      JSON.parse(response.body)
+    end
+
     def self.pwd
       pwd_local = ENV['NLS_INSTALL_PATH']
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
@@ -167,9 +176,9 @@ module Nls
     end
 
     def self.remove_all_packages
-      dump_result = query_get(url_dump)
-      dump_result.each do |package|
-        package_url = "#{base_url}/packages/#{package["id"]}"
+      list_result = query_get(url_list)
+      list_result.each do |package|
+        package_url = "#{base_url}/packages/#{package}"
         Nls.delete(package_url)
       end
     end

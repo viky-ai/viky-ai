@@ -42,7 +42,7 @@ module Nls
 
         assert_json expected_update_package(json_package_to_update.id), actual
 
-        json_dump = Nls.query_get(Nls.url_dump)
+        json_dump = Nls.dump
 
         expected_dump  = []
         expected_dump << import_package.to_h

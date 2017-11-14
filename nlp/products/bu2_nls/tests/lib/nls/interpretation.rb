@@ -86,12 +86,14 @@ module Nls
       glued = opts[:glued] if opts.has_key?(:glued)
       keep_order = false
       keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      solutions = nil
+      solutions = opts[:solutions] if opts.has_key?(:solutions)
       if texts.kind_of? Array
         texts.each do |t|
-          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order}))
+          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
         end
       else
-        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order}))
+        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
       end
       self
     end

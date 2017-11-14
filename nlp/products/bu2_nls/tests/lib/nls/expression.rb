@@ -60,6 +60,7 @@ module Nls
       new_alias.expression = self
     end
     alias_method '<<', 'add_alias'
+      
 
     def to_h
       hash = {}

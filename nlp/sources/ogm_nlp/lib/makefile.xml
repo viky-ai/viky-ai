@@ -24,6 +24,7 @@
     <file>nlpmatch.c</file>
     <file>nlporip.c</file>
     <file>nlppackage.c</file>
+    <file>nlppackagelist.c</file>
     <file>nlpparse.c</file>
     <file>nlprip.c</file>
     <file>nlprexpression.c</file>

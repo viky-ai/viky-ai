@@ -78,6 +78,12 @@ struct og_nlp_dump_input
   json_t *package_names;
 };
 
+struct og_nlp_package_list
+{
+    /** Array of string : all packages existing in server */
+    json_t *package_names;
+};
+
 struct og_nlp_dump_output
 {
   json_t *json_output;
@@ -115,6 +121,9 @@ DEFPUBLIC(og_status) OgNlpPackageAdd(og_nlp_th ctrl_nlp_th, struct og_nlp_compil
 DEFPUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id);
 
 DEFPUBLIC(og_status) OgNlpFlushPackageMarkedAsDeleted(og_nlp_th ctrl_nlp_th);
+
+DEFPUBLIC(og_status) OgNlpPackageList(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
+    struct og_nlp_package_list *output);
 
 #define _LOGNLPALIVE_
 #endif

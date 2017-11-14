@@ -37,13 +37,13 @@ module Nls
     def to_h
       hash = {}
       if @type == "normal"
-        hash['alias'] = @name
+        hash['alias'] = "#{@name}"
         hash['slug'] = @interpretation.slug
         hash['id'] = @interpretation.id.to_s
         hash['package'] = @interpretation.package.id.to_s
       else
-        hash['alias'] = @name
-        hash['type'] = @type
+        hash['alias'] = "#{@name}"
+        hash['type'] = "#{@type}"
       end
       hash
     end

@@ -47,7 +47,7 @@ og_status NlsEndpointPackagesDelete(struct og_listening_thread *lt, struct og_nl
   og_string package_id = json_string_value(json_object_get(request->parameters, "package_id"));
   if (package_id == NULL)
   {
-    NlsThrowError(lt, "NlsEndpointPackagesPost: no such param 'package_id'.");
+    NlsThrowError(lt, "NlsEndpointPackagesDelete: no such param 'package_id'.");
     DPcErr;
   }
 
