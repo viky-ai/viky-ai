@@ -6,9 +6,13 @@ class ConsoleController < ApplicationController
 
     access_denied unless current_user.can? :show, agent
 
-    sentence = interpret_params[:sentence]
-    data = get_interpretation(owner, agent, sentence)
+    sentence    = interpret_params[:sentence]
+    verbose     = interpret_params[:verbose]
     current_tab = interpret_params[:current_tab]
+
+    logger.ap verbose
+
+    data = get_interpretation(owner, agent, sentence, verbose)
 
     respond_to do |format|
       format.js {
@@ -29,18 +33,21 @@ class ConsoleController < ApplicationController
 
     def interpret_params
       params.require(:interpret).permit(
-        :sentence, :current_tab
+        :sentence, :verbose, :current_tab
       )
     end
 
-    def get_interpretation(owner, agent, sentence)
+    def get_interpretation(owner, agent, sentence, verbose)
       req = Rack::Request.new({ "rack.input" => {}, "REQUEST_METHOD" => "GET" })
       req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
-      req.update_param(:agent_token, agent.api_token)
-      req.update_param(:sentence, sentence)
 
-      path = request.base_url + req.path_info + '?' +
-        { agent_token: agent.api_token, sentence: sentence}.to_query
+      params = {
+        agent_token: agent.api_token,
+        sentence: sentence
+      }
+      params[:verbose] = verbose if verbose == "true"
+      params.each { |k, v| req.update_param(k, v) }
+      path = request.base_url + req.path_info + '?' + params.to_query
 
       response = Rails.application.call(req.env)
       status, headers, body = response

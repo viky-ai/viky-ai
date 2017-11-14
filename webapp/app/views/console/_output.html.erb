@@ -19,6 +19,11 @@
             <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
               <span class="name"><%= intent["name"] %></span>
               <span class="score">(<%= intent["score"] %>)</span>
+              <% unless intent["explanation"].nil? %>
+                <div class="highlight">
+                  <%= highlight(intent["explanation"]["expression"]["highlight"]) %>
+                </div>
+              <% end %>
             </a>
           </li>
         <% end %>
@@ -33,7 +38,9 @@
   <% end %>
 
   <p class="endpoint">
-    <a href="<%= data[:path] %>">Go to API endpoint</a>
+    <a href="<%= data[:path] %>" target="_blank">
+      <%= t('views.console.go_to_api_endpoint') %>
+    </a>
   </p>
 
 </div>

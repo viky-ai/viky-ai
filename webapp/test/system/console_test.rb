@@ -25,6 +25,71 @@ class ConsoleTest < ApplicationSystemTestCase
   end
 
 
+  test 'console basic interaction with content & verbose mode' do
+    go_to_agents_index
+    click_link "My awesome weather bot admin/weather"
+
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "Hello world viki.ai"
+      first('button').click
+
+      Nlp::Interpret.any_instance.stubs('proceed').returns(
+        {
+          status: 200,
+          body: {
+            intents: [
+              {
+                "id": intents(:weather_greeting).id,
+                "slug": "admin/weather/weather_greeting",
+                "name": "weather_greeting",
+                "score": 1.0
+              }
+            ]
+          }
+        }
+      )
+      assert page.has_content?('1 intent found.')
+
+      Nlp::Interpret.any_instance.stubs('proceed').returns(
+        {
+          status: 200,
+          body: {
+            intents: [
+              {
+                "id": intents(:weather_greeting).id,
+                "slug": "admin/weather/weather_greeting",
+                "name": "weather_greeting",
+                "score": 1.0,
+                "explanation": {
+                  "expression": {
+                    "text": "Hello world",
+                    "slug": "weather_greeting",
+                    "highlight": "[Hello world] viki.ai",
+                    "expressions": [
+                      {
+                        "word": "Hello"
+                      },
+                      {
+                        "word": "world"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      )
+      first('.dropdown__trigger > .btn').trigger('click')
+      click_link 'Verbose ON'
+
+      assert page.has_content?('1 intent found.')
+      assert page.has_content?('Hello world viki.ai')
+    end
+
+  end
+
+
   test "console is persisted during agent nagivation, operation" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"

@@ -4,12 +4,55 @@
       <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
       <div class="console__endpoint">
         <span class="badge badge--small badge--success">GET</span>
-        <code>/api/v1/interpret.json</code>
+        <code>/api/v1/<%= @agent.owner.username %>/<%= @agent.agentname %>/interpret.json</code>
       </div>
     </div>
 
-    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get do |f| %>
+    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
       <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
+      <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
+      <script>$('.js-verbose-input').val("false");</script>
+      <div class="field">
+        <div class="control">
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <span class="btn btn--outline btn--small">
+                <span class="btn__label"><%= t('views.console.verbose_off') %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </span>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <li>
+                  <a href="#" class="current"
+                    data-behavior="populate-input, replace-trigger-label, submit-form"
+                    data-input-selector=".js-verbose-input"
+                    data-input-value="false"
+                    data-form-selector="#js-console-form"
+                    data-replace-with="<%= t('views.console.verbose_off') %>"
+                    data-replace-selector=".btn__label">
+                    <%= t('views.console.verbose_off') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="#"
+                    data-behavior="populate-input, replace-trigger-label, submit-form"
+                    data-input-selector=".js-verbose-input"
+                    data-input-value="true"
+                    data-form-selector="#js-console-form"
+                    data-replace-with="<%= t('views.console.verbose_on') %>"
+                    data-replace-selector=".btn__label">
+                    <%= t('views.console.verbose_on') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class='field'>
         <div class='control control--merged'>
           <input type='text' placeholder='<%= t('views.console.sentence_placeholder') %>'

@@ -7,12 +7,14 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token
+  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates_inclusion_of :format, in: %w( json )
+  validates_inclusion_of :verbose, in: [ "true", "false" ]
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
+  before_validation :set_default
 
   def proceed
     Rails.logger.info "Started POST to NLP \"#{url}\" at #{DateTime.now}"
@@ -31,7 +33,8 @@ class Nlp::Interpret
     {
       "Accept-Language" => language,
       "packages" => [agent.id],
-      "sentence" => sentence
+      "sentence" => sentence,
+      "show-explanation" => verbose
     }
   end
 
@@ -52,6 +55,10 @@ class Nlp::Interpret
   end
 
   private
+
+    def set_default
+      self.verbose = "false" if verbose.blank?
+    end
 
     def ownername_and_agentname_consistency
       unless ownername.blank? || agentname.blank?

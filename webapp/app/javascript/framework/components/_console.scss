@@ -13,6 +13,7 @@
       color: #aaa;
     }
     code{
+      font-size: .9em;
       font-family: monospace;
     }
   }
@@ -42,12 +43,25 @@
           border-left: 4px solid transparent;
           box-shadow: 0 1px 2px rgba(black, .2);
           border-radius: 2px;
+          margin-bottom: .75em;
           .name{
             text-decoration: underline;
           }
           .score{
             color: #aaa;
             font-size: .9em;
+          }
+          .highlight{
+            color: #666;
+            font-size: .9em;
+            font-family: monospace;
+            match{
+              background-color: yellow;
+              padding: .1em .2em 0 .2em;
+              border-radius: 1px;
+              margin: 0 2px;
+              border: 1px solid rgba(#000, .05);
+            }
           }
           &:hover{
             border-left: 4px solid $primary-color;

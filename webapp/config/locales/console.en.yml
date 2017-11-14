@@ -12,5 +12,8 @@ en:
       intent_found:
         one: "1 intent found."
         other: "%{count} intents found."
+      verbose_on: Verbose ON
+      verbose_off: Verbose OFF
+      go_to_api_endpoint: Go to API endpoint
 
 

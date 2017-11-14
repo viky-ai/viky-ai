@@ -40,7 +40,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
 
     def interpret_parameters
       params.permit(
-        :ownername, :agentname, :format, :sentence, :language, :agent_token
+        :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose
       )
     end
 
