@@ -32,6 +32,19 @@
       p{
         margin: 0;
       }
+      .endpoint{
+        margin-top: 3em;
+        padding-top: 1em;
+        font-size: .8em;
+        text-align: center;
+        border-top: 1px dotted #eee;
+        a{
+          color: #bbb;
+          &:hover{
+            color: #222;
+          }
+        }
+      }
     }
     pre{
       font-size: .75em;

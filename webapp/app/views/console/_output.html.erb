@@ -19,6 +19,11 @@
       <%= t('views.console.error_occurred') %>
     </p>
   <% end %>
+
+  <p class="endpoint">
+    <a href="<%= data[:path] %>">Go to API endpoint</a>
+  </p>
+
 </div>
 <div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
   <pre><code class='language-javascript' id="json"><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>

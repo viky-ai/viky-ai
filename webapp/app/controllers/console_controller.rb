@@ -38,16 +38,22 @@ class ConsoleController < ApplicationController
       req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
       req.update_param(:agent_token, agent.api_token)
       req.update_param(:sentence, sentence)
+
+      path = request.base_url + req.path_info + '?' +
+        { agent_token: agent.api_token, sentence: sentence}.to_query
+
       response = Rails.application.call(req.env)
       status, headers, body = response
 
       if status == 200
         {
+          path: path,
           status: status,
           body: body.first
         }
       else
         {
+          path: path,
           status: status,
           body: body.body
         }
