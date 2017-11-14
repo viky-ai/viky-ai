@@ -73,9 +73,9 @@ module Nls
       locale = opts[:locale] if opts.has_key?(:locale)
       keep_order = false
       keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
-      solutions = nil
-      solutions = opts[:solutions] if opts.has_key?(:solutions)
-      add_expression(Expression.new(text, {aliases: aliases, locale: locale, keep_order: keep_order, solutions: solutions}))
+      solution = nil
+      solution = opts[:solution] if opts.has_key?(:solution)
+      add_expression(Expression.new(text, {aliases: aliases, locale: locale, keep_order: keep_order, solution: solution}))
       self
     end
 

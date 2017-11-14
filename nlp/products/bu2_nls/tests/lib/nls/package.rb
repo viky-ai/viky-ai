@@ -73,10 +73,10 @@ module Nls
 
       id = opts[:id]
 
-      solutions = nil
-      solutions = opts[:solution] if opts.has_key?(:solution)
+      solution = nil
+      solution = opts[:solution] if opts.has_key?(:solution)
 
-      interpretation = Interpretation.new(text, {id: id, solution: solutions})
+      interpretation = Interpretation.new(text, {id: id, solution: solution})
 
       add_interpretation(interpretation)
 

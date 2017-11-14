@@ -185,6 +185,31 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
     DPcErr;
   }
 
+  // solution explain
+  json_t *json_package_solution = request_expression->expression->json_solution;
+  if (json_package_solution == NULL)
+  {
+    json_package_solution = request_expression->expression->interpretation->json_solution;
+  }
+
+  if (json_package_solution)
+  {
+    IF(json_object_set_new(json_expression, "package_solution", json_package_solution))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting package_solution on json_expression");
+      DPcErr;
+    }
+  }
+
+  if (request_expression->json_solution)
+  {
+    IF(json_object_set_new(json_expression, "computed_solution", request_expression->json_solution))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting computed_solution on json_expression");
+      DPcErr;
+    }
+  }
+
   DONE;
 }
 
