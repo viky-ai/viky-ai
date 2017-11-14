@@ -22,6 +22,9 @@
     <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
     <file>nlpmatch.c</file>
+    <file>nlpmatch_word.c</file>
+    <file>nlpmatch_expression.c</file>
+    <file>nlpmatch_interpretation.c</file>
     <file>nlporip.c</file>
     <file>nlppackage.c</file>
     <file>nlppackagelist.c</file>

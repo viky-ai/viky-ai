@@ -584,6 +584,15 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
 /* nlpmatch.c */
 og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
+/* nlpmatch_word.c */
+og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_expression.c */
+og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_interpretation.c */
+og_bool NlpMatchInterpretations(og_nlp_th ctrl_nlp_th);
+
 /* nlpparse.c */
 og_status NlpParseConfInit(og_nlp ctrl_nlp);
 og_status NlpParseConfFlush(og_nlp ctrl_nlp);
