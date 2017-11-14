@@ -2,6 +2,7 @@ en:
   controllers:
     api:
       format_not_acceptable: "Format not acceptable. JSON only is accepted."
+      access_denied: "Access denied: wrong token."
   nlp:
     interpret:
       invalid_agent_token: is not valid

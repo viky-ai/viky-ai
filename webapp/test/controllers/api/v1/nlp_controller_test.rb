@@ -36,13 +36,14 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
     get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: { sentence: "test" }
-    assert_equal '422', response.code
-    expected = ["Agent token can't be blank", "Agent token is not valid"]
+    assert_equal '401', response.code
+    expected = ["Access denied: wrong token."]
     assert_equal expected, JSON.parse(response.body)["errors"]
 
     get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: { sentence: "test", agent_token: "blablabla" }
-    expected = ["Agent token is not valid"]
+    assert_equal '401', response.code
+    expected = ["Access denied: wrong token."]
     assert_equal expected, JSON.parse(response.body)["errors"]
   end
 
@@ -91,7 +92,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     get "/api/v1/agents/#{u.username}/#{a.agentname}/interpret.json",
       params: { sentence: "test", agent_token: wrong_token },
       headers: { "Agent-Token" => a.api_token }
-    assert response.code == '422'
+    assert response.code == '401'
   end
 
 
