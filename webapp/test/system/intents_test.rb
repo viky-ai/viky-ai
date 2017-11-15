@@ -84,7 +84,7 @@ class IntentsTest < ApplicationSystemTestCase
     go_to_agent_show('admin', 'weather')
     assert page.has_no_text? 'Reorganize intents'
 
-    intent = Intent.new(intentname: 'test', locales: ['en_US'])
+    intent = Intent.new(intentname: 'test', locales: ['en-US'])
     intent.agent = agents(:weather)
     assert intent.save
     visit user_agent_path('admin', 'weather')
@@ -112,12 +112,12 @@ class IntentsTest < ApplicationSystemTestCase
 
     click_link 'terminator_find'
     assert page.has_text?('+')
-    assert page.has_no_text?('fr_FR')
+    assert page.has_no_text?('fr-FR')
     click_link '+'
     within('.modal') do
       assert page.has_text?('Choose a locale')
-      click_link('fr_FR')
+      click_link('fr-FR')
     end
-    assert page.has_text?('fr_FR')
+    assert page.has_text?('fr-FR')
   end
 end

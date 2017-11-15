@@ -6,7 +6,7 @@ class IntentTest < ActiveSupport::TestCase
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
-      locales: ['en_US']
+      locales: ['en-US']
     )
     intent.agent = agents(:weather)
     assert intent.save
@@ -32,11 +32,11 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Unique intentname per agent' do
-    intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !', locales: ['en_US'])
+    intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !', locales: ['en-US'])
     intent.agent = agents(:weather)
     assert intent.save
 
-    other_intent = Intent.new(intentname: 'hello', description: 'Another way to greet you...', locales: ['en_US'])
+    other_intent = Intent.new(intentname: 'hello', description: 'Another way to greet you...', locales: ['en-US'])
     other_intent.agent = agents(:weather)
     assert !other_intent.save
 
@@ -48,7 +48,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname minimal length' do
-    intent = Intent.new(intentname: 'h', description: 'Hello random citizen !', locales: ['en_US'])
+    intent = Intent.new(intentname: 'h', description: 'Hello random citizen !', locales: ['en-US'])
     intent.agent = agents(:weather)
     assert !intent.save
 
@@ -60,7 +60,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname is cleaned' do
-    intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !', locales: ['en_US'])
+    intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !', locales: ['en-US'])
     intent.agent = agents(:weather)
     assert intent.save
 
@@ -91,10 +91,10 @@ class IntentTest < ActiveSupport::TestCase
   test 'Add a locale to an intent' do
     intent = intents(:terminator_find)
 
-    assert_equal %w[en_US], intent.locales
-    intent.locales << 'fr_FR'
+    assert_equal %w[en-US], intent.locales
+    intent.locales << 'fr-FR'
     assert intent.save
-    assert_equal %w[en_US fr_FR], intent.locales
+    assert_equal %w[en-US fr-FR], intent.locales
   end
 
 

@@ -1,14 +1,14 @@
 weather_greeting_hello:
   expression: Hello world
   intent: weather_greeting
-  locale: 'en_US'
+  locale: 'en-US'
 
 weather_greeting_bonjour:
   expression: Bonjour tout le monde
   intent: weather_greeting
-  locale: 'fr_FR'
+  locale: 'fr-FR'
 
 terminator_find_sarah:
   expression: Where is Sarah Connor ?
   intent: terminator_find
-  locale: 'en_US'
+  locale: 'en-US'

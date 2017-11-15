@@ -2,7 +2,7 @@ require 'test_helper'
 
 class InterpretationTest < ActiveSupport::TestCase
   test 'Basic interpretation creation & intent association' do
-    interpretation = Interpretation.new(expression: 'Good morning', locale: 'fr_FR')
+    interpretation = Interpretation.new(expression: 'Good morning', locale: 'fr-FR')
     interpretation.intent = intents(:weather_greeting)
     assert interpretation.save
 
@@ -45,9 +45,9 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Filter interpretations by locale' do
     intent = intents(:weather_greeting)
-    en_interpretations = intent.interpretations_with_local('en_US')
+    en_interpretations = intent.interpretations_with_local('en-US')
     assert_equal 1, en_interpretations.count
-    fr_interpretations = intent.interpretations_with_local('fr_FR')
+    fr_interpretations = intent.interpretations_with_local('fr-FR')
     assert_equal 1, fr_interpretations.count
   end
 

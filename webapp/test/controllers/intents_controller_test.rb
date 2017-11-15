@@ -108,14 +108,14 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Add locale' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr_FR')
-    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'fr_FR')
+    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr-FR')
+    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'fr-FR')
     assert_nil flash[:alert]
   end
 
   test 'Add locale forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr_FR')
+    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr-FR')
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
