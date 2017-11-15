@@ -74,10 +74,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
-    int Ioriginal_request_input_part = orip[request_expression->orip_start + i].Ioriginal_request_input_part;
-    int Irequest_input_part = original_request_input_part[Ioriginal_request_input_part].Irequest_input_part;
-    struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-        Irequest_input_part);
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part) DPcErr;
 
     if (request_input_part->type == nlp_input_part_type_Word)
