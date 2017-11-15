@@ -8,3 +8,5 @@ en:
         update_btn: "Update"
         cancel_btn: "Cancel"
       delete_failed: "Ooops, delete failed."
+      locales:
+        no_locale: No locale

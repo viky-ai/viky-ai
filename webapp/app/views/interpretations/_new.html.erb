@@ -1,12 +1,12 @@
 <div class="tabs">
   <ul>
-    <% for locale in  @intent.locales %>
+    <% for possible_locale in  @intent.locales %>
       <li>
-        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale) %>"
-           <% if @locale == locale %>class="current"<% end %>>
-          <%= locale %>
-          <% count = @intent.interpretations_with_local(locale).count%>
-          <span class="badge" data-count="<%= count %>" <% if @locale == locale %>id="current-locale-tab-badge"<% end %>>
+        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: possible_locale) %>"
+           <% if @locale == possible_locale %>class="current"<% end %>>
+          <%= possible_locale %>
+          <% count = @intent.interpretations_with_local(possible_locale).count%>
+          <span class="badge" data-count="<%= count %>" <% if @locale == possible_locale %>id="current-locale-tab-badge"<% end %>>
             <%= count %>
           </span>
         </a>
