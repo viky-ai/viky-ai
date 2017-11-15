@@ -22,6 +22,7 @@ import './color_picker'
 window.App.Message = require('./message')
 import './user_search'
 import './console'
+window.App.FocusInput = require('./focus')
 
 // Expose jQuery
 window.$ = require('jquery');
