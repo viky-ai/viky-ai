@@ -10,6 +10,16 @@ class Intent < ApplicationRecord
   before_validation :clean_intentname
   before_create :set_position
 
+  after_save do
+    if saved_change_to_attribute?(:intentname)
+      Nlp::Package.new(self.agent).push
+    end
+  end
+
+  after_destroy do
+    Nlp::Package.new(self.agent).push
+  end
+
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
   end

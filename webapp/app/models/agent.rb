@@ -20,6 +20,16 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence
 
+  after_save do
+    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?("owner_id")
+      Nlp::Package.new(self).push
+    end
+  end
+
+  after_destroy do
+    Nlp::Package.new(self).destroy
+  end
+
   def self.search(q = {})
     conditions = where("1 = 1").joins(:memberships).where("user_id = ?", q[:user_id])
     conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
