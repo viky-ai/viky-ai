@@ -87,6 +87,7 @@ hotel example:
 ./ognlp -c packages/package_building_features-v2.json -i requests/r_building_features-v2.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -i requests/r_number_people.json
 ./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_building_features-v2.json -c packages/package_hotel_features.json -i requests/r_hotel_features.json
+./ognlp -c packages/package_number_people.json -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_building_features-v2.json -c packages/package_hotel_features.json -c  packages/package_want.json -c packages/package_hotel.json -c packages/package_want_hotel_features.json -i requests/r_want_hotel_features.json
 ```
 
 Dates:
