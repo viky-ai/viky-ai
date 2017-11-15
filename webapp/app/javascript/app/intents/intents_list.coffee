@@ -22,6 +22,7 @@ class IntentList
     $('.js-stop-reorganize-intents').show()
 
     $('.intents-list__item__actions').hide()
+    $('.intents-list__item__stats').hide()
     $('.intents-list__item__draggable').show()
     $('.js-intent-show-link').addClass('disabled')
 
@@ -43,6 +44,7 @@ class IntentList
     $('.js-stop-reorganize-intents').hide()
 
     $('.intents-list__item__actions').show()
+    $('.intents-list__item__stats').show()
     $('.intents-list__item__draggable').hide()
     $('.js-intent-show-link').removeClass('disabled')
     @sortable.destroy()
