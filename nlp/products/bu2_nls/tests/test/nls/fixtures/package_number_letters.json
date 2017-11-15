@@ -808,6 +808,28 @@
           }
         },
         {
+          "expression": "@{number_20} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_10_19.number`"
+          }
+        },
+        {
           "expression": "@{number_20}",
           "aliases":
           [
@@ -844,6 +866,28 @@
           "solution":
           {
             "number": "`number_30.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_30} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_10_19.number`"
           }
         },
         {
@@ -886,6 +930,28 @@
           }
         },
         {
+          "expression": "@{number_40} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_10_19.number`"
+          }
+        },
+        {
           "expression": "@{number_40}",
           "aliases":
           [
@@ -922,6 +988,28 @@
           "solution":
           {
             "number": "`number_50.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_50} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_10_19.number`"
           }
         },
         {
