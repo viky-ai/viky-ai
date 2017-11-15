@@ -95,11 +95,19 @@
           "locale": "en"
         },
         {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
           "expression": "at",
           "locale": "en"
         },
         {
           "expression": "avec",
+          "locale": "fr"
+        },
+        {
+          "expression": "et",
           "locale": "fr"
         }
       ]

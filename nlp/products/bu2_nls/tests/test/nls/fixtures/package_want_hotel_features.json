@@ -1,0 +1,33 @@
+{
+  "id": "want_hotel_features",
+  "interpretations":
+  [
+    {
+      "id": "want_hotel_features",
+      "expressions":
+      [
+        {
+          "expression": "@{want} @{hotel} @{hotel_features}",
+          "aliases":
+          [
+            {
+              "alias": "want",
+              "id": "want",
+              "package": "package-want"
+            },
+            {
+              "alias": "hotel",
+              "id": "hotel",
+              "package": "package-hotel"
+            },
+            {
+              "alias": "hotel_features",
+              "id": "hotel_features",
+              "package": "hotel_features"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

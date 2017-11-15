@@ -34,6 +34,7 @@ static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
   // Fake corrections to test the ltras integration
   og_string string_request_word_corrected = NULL;
   if (!strcmp(string_request_word, "pol")) string_request_word_corrected = "pool";
+  if (!strcmp(string_request_word, "peple")) string_request_word_corrected = "people";
 
   IFN(string_request_word_corrected) DONE;
 
