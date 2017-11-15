@@ -1,12 +1,12 @@
 <div class="tabs">
   <ul>
-    <% for possible_locale in  @intent.locales %>
+    <% for intent_locale in  @intent.locales %>
       <li>
-        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: possible_locale) %>"
-           <% if @locale == possible_locale %>class="current"<% end %>>
-          <%= possible_locale %>
-          <% count = @intent.interpretations_with_local(possible_locale).count%>
-          <span class="badge" data-count="<%= count %>" <% if @locale == possible_locale %>id="current-locale-tab-badge"<% end %>>
+        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: intent_locale) %>"
+           <% if @locale == intent_locale %>class="current"<% end %>>
+          <%= intent_locale %>
+          <% count = @intent.interpretations_with_local(intent_locale).count%>
+          <span class="badge" data-count="<%= count %>" <% if @locale == intent_locale %>id="current-locale-tab-badge"<% end %>>
             <%= count %>
           </span>
         </a>
@@ -21,13 +21,17 @@
   </ul>
 </div>
 
+<<<<<<< feature/webapp-intent
 <%= render partial: '/interpretations/form', locals: {
   agent: @agent,
   intent: @intent,
   interpretation: @interpretation,
   locale: @locale
 } %>
+=======
+<%= render partial: '/interpretations/form', locals: { agent: @agent, intent: @intent, interpretation: @interpretation, current_locale: @current_locale } %>
+>>>>>>> #15958 (changed) Fix inability to add multiple interpretations
 
 <ul id="interpretations-list" class="interpretations-list">
-  <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@locale) %>
+  <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@current_locale) %>
 </ul>

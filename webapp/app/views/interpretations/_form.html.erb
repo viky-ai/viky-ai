@@ -3,7 +3,7 @@
       <%= f.label :expression %>
       <div class="control control--merged">
         <%= f.text_field :expression, id: :expression%>
-        <%= f.hidden_field :locale, value: locale %>
+        <%= f.hidden_field :locale, value: @current_locale %>
           <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
                        data: {
                            disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
@@ -11,5 +11,6 @@
           %>
       </div>
       <%= display_errors(interpretation, :expression) %>
+      <%= display_errors(interpretation, :locale) %>
     </div>
 <% end %>
