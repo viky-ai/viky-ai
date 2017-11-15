@@ -28,3 +28,7 @@ en:
       destroy:
         success_message: "Intent with the name: %{name} has successfully been deleted."
         errors_message: "Deletion failed: %{errors}."
+      add_locale:
+        title: Choose a locale
+        empty_message: The intent already contains every locales.
+        errors_message: "Add locale failed : %{errors}."

@@ -25,3 +25,5 @@ en:
         invalid_username: Please select a valid new owner
       delete:
         collaborators_presence: You must remove all collaborators before delete an agent
+    intents:
+      unknown_locale: "unknown '%{current_locale}'"

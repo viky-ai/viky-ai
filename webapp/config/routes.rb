@@ -35,6 +35,8 @@ Rails.application.routes.draw do
         end
 
         resources :intents, except: [:index] do
+          get :select_new_locale
+          post :add_locale
           get :confirm_destroy
           collection do
             post :update_positions

@@ -103,4 +103,21 @@ class IntentsTest < ApplicationSystemTestCase
     assert_equal 0, all('.btn--drag').size
   end
 
+
+  test 'Add locale to an intent' do
+    go_to_agents_index
+    assert page.has_text?('admin/terminator')
+    click_link 'T-800'
+    assert page.has_text?('terminator_find')
+
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+    assert page.has_no_text?('fr_FR')
+    click_link '+'
+    within('.modal') do
+      assert page.has_text?('Choose a locale')
+      click_link('fr_FR')
+    end
+    assert page.has_text?('fr_FR')
+  end
 end

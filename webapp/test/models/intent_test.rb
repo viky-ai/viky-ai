@@ -87,4 +87,25 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal 0, Intent.where(id: intent_id).count
   end
 
+
+  test 'Add a locale to an intent' do
+    intent = intents(:terminator_find)
+
+    assert_equal %w[en_US], intent.locales
+    intent.locales << 'fr_FR'
+    assert intent.save
+    assert_equal %w[en_US fr_FR], intent.locales
+  end
+
+
+  test 'Add an unknown locale to an intent' do
+    intent = intents(:weather_greeting)
+    intent.locales << 'xx-XX'
+
+    assert !intent.save
+    expected = {
+      locales: ["unknown 'xx-XX'"]
+    }
+    assert_equal expected, intent.errors.messages
+  end
 end

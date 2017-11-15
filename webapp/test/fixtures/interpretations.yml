@@ -7,3 +7,8 @@ weather_greeting_bonjour:
   expression: Bonjour tout le monde
   intent: weather_greeting
   locale: 'fr_FR'
+
+terminator_find_sarah:
+  expression: Where is Sarah Connor ?
+  intent: terminator_find
+  locale: 'en_US'

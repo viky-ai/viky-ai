@@ -1,0 +1,31 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.intents.add_locale.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+      <% if available_locales.empty? %>
+      <p>
+        <%= t('views.intents.add_locale.empty_message') %>
+      </p>
+      <% else %>
+        <ul>
+          <% for locale in available_locales %>
+            <li>
+              <%= link_to(locale, user_agent_intent_add_locale_path(locale_to_add: locale), method: :post, data: {action: 'close-modal'}) %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+
+      <div class="actions">
+        <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -80,6 +80,24 @@ class IntentsController < ApplicationController
     end
   end
 
+  def select_new_locale
+    available_locales = Interpretation::Locales - @intent.locales
+    render partial: 'select_new_locale', locals: { available_locales: available_locales }
+  end
+
+
+  def add_locale
+    locale_to_add = params[:locale_to_add]
+    @intent.locales << locale_to_add
+    if @intent.save
+      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale_to_add)
+    else
+      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales.first), alert: t(
+          'views.intents.add_locale.errors_message',
+          errors: @intent.errors.full_messages.join(', ')
+      )
+    end
+  end
 
   private
 
@@ -92,14 +110,15 @@ class IntentsController < ApplicationController
     end
 
     def set_intent
-      @intent = @agent.intents.friendly.find(params[:id])
+      intent_id = params[:intent_id]|| params[:id]
+      @intent = @agent.intents.friendly.find(intent_id)
     end
 
     def check_user_rights
       case action_name
       when 'show'
         access_denied unless current_user.can? :show, @agent
-      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
+      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale'
         access_denied unless current_user.can? :edit, @agent
       else
         access_denied
