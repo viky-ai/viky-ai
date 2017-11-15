@@ -715,4 +715,6 @@ og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expressi
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
 
+/* nlpltras.c */
+og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
