@@ -63,13 +63,6 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression,
     json_t *json_expression)
 {
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
-
   json_t *json_expressions = json_array();
 
   for (int i = 0; i < request_expression->orips_nb; i++)

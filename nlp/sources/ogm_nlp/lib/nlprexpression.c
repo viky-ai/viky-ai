@@ -220,13 +220,6 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
 
 static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
-
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
@@ -244,13 +237,6 @@ static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct reque
 
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
-
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
@@ -271,13 +257,6 @@ static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct r
   request_expression->overlap_mark = 0;
 
   if (request_expression->orips_nb <= 1) DONE;
-
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
 
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
