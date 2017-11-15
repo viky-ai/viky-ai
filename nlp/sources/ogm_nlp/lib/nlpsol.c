@@ -6,10 +6,11 @@
  */
 #include "ogm_nlp.h"
 
-static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th,
-    struct request_expression *root_request_expression, struct request_expression *request_expression);
+static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression);
 static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution);
-static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, json_t *json_package_solution);
+static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_package_solution);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -45,8 +46,8 @@ og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression 
   DONE;
 }
 
-static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th,
-    struct request_expression *root_request_expression, struct request_expression *request_expression)
+static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    struct request_expression *request_expression)
 {
   og_bool must_combine_solution = FALSE;
 
@@ -148,7 +149,8 @@ og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int si
   DONE;
 }
 
-static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, json_t *json_package_solution)
+static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_package_solution)
 {
   og_bool solution_built = FALSE;
   if (json_package_solution != NULL)
@@ -296,38 +298,43 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
     if (request_expression->expression->alias_any_input_part_position == i + 1)
     {
-      struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-      IFN(request_any) DPcErr;
-
-      char string_any[DPcPathSize];
-      NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
-
-      json_t *json_solution_any = json_object();
-      json_t *json_solution_string_any = json_string(string_any);
-      IF(json_object_set_new(json_solution_any, "any", json_solution_string_any))
+      // Any might not exist or be attached to this request_expression, in that case Irequest_any = -1
+      // This means that all the words have been used or that the positions of unused words are incompatible
+      if (request_expression->Irequest_any >= 0)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: error setting json_sub_expression_any");
-        DPcErr;
-      }
+        struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+        IFN(request_any) DPcErr;
 
-      struct alias *alias = request_expression->expression->aliases
-          + request_expression->expression->alias_any_input_part_position;
-      char solution[DPcPathSize];
-      NlpSolutionString(ctrl_nlp_th, json_solution_any, DPcPathSize, solution);
-      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias->alias,
-          solution);
-      if (alias_solutions_nb >= DOgAliasSolutionSize)
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-            alias_solutions_nb, DOgAliasSolutionSize);
-        DPcErr;
+        char string_any[DPcPathSize];
+        NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
 
+        json_t *json_solution_any = json_object();
+        json_t *json_solution_string_any = json_string(string_any);
+        IF(json_object_set_new(json_solution_any, "any", json_solution_string_any))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: error setting json_sub_expression_any");
+          DPcErr;
+        }
+
+        struct alias *alias = request_expression->expression->aliases
+            + request_expression->expression->alias_any_input_part_position;
+        char solution[DPcPathSize];
+        NlpSolutionString(ctrl_nlp_th, json_solution_any, DPcPathSize, solution);
+        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
+            alias->alias, solution);
+        if (alias_solutions_nb >= DOgAliasSolutionSize)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+              alias_solutions_nb, DOgAliasSolutionSize);
+          DPcErr;
+
+        }
+        struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+        alias_solution->alias = alias;
+        alias_solution->json_solution = json_solution_any;
+        g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+        alias_solutions_nb++;
       }
-      struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
-      alias_solution->alias = alias;
-      alias_solution->json_solution = json_solution_any;
-      g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
-      alias_solutions_nb++;
     }
   }
   DONE;

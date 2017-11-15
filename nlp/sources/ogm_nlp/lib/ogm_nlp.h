@@ -157,6 +157,8 @@ struct expression
     struct input_part *input_parts;
   };
 
+  // if value is 0 or more, it means the expression contains an any alias
+  // otherwise value is -1
   int alias_any_input_part_position;
 
   og_bool is_recursive;
@@ -357,7 +359,11 @@ struct request_expression
   /** used locally for various scanning */
   int analyzed;
 
+  /** Mark of an expression as not to be use anymore **/
+  int deleted;
+
   og_bool keep_as_result;
+  og_bool contains_any;
 
   GQueue tmp_solutions[1];
 
@@ -702,4 +708,8 @@ og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 /* nlplocale.c */
 og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
+
+/* nlpclean.c */
+og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
+
 

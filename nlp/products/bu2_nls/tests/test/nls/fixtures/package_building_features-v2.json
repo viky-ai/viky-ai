@@ -59,7 +59,7 @@
       }
     },
     {
-      "id": "building_feature",
+      "id": "building_feature_entity",
       "expressions":
       [
         {
@@ -109,18 +109,18 @@
       "expressions":
       [
         {
-          "expression": "@{building_feature}",
+          "expression": "@{building_feature_entity}",
           "aliases":
           [
             {
-              "alias": "building_feature",
-              "id": "building_feature",
+              "alias": "building_feature_entity",
+              "id": "building_feature_entity",
               "package": "building_features"
             }
           ]
         },
         {
-          "expression": "@{preposition_building_feature} @{building_feature}",
+          "expression": "@{preposition_building_feature} @{building_feature_entity}",
           "keep-order": true,
           "aliases":
           [
@@ -130,14 +130,14 @@
               "package": "building_features"
             },
             {
-              "alias": "building_feature",
-              "id": "building_feature",
+              "alias": "building_feature_entity",
+              "id": "building_feature_entity",
               "package": "building_features"
             }
           ]
         },
         {
-          "expression": "@{preposition_building_feature} @{building_feature}",
+          "expression": "@{preposition_building_feature} @{building_feature_entity}",
           "keep-order": true,
           "aliases":
           [
@@ -147,13 +147,13 @@
               "package": "building_features"
             },
             {
-              "alias": "building_feature",
+              "alias": "building_feature_entity",
               "type": "any"
             }
           ],
           "solution":
           {
-            "building_feature": "`building_feature.any`"
+            "building_feature": "`building_feature_entity.any`"
           }
         }
       ]
