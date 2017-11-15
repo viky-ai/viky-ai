@@ -89,6 +89,49 @@ module Nls
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
+        query = {
+          "packages":
+          [
+            "want_hotel_features",
+            "package-want",
+            "package-hotel",
+            "hotel_features",
+            "building_features",
+            "number_people",
+            "package-number",
+            "package-number-digits",
+            "package-number-letters"
+          ],
+          "sentence": "je veux un hotel avec piscine et spa pour 3 personnes et une vue sur la mer",
+          "Accept-Language": "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
+        }
+
+        expected = {
+          "interpretations" => [
+                  {
+                       "package" => "want_hotel_features",
+                            "id" => "want_hotel_features",
+                          "slug" => "want_hotel_features",
+                         "score" => 0.9027777545981936,
+                      "solution" => {
+                          "book" => "hotel",
+                          "hotel_feature" => [
+                              "spa",
+                              "swimming_pool",
+                              "sea_view"
+                          ],
+                          "number-people" => 3.0
+                      }
+                  }
+              ]
+
+        }
+
+        query_param = { timeout: 2000 }
+        actual = Nls.interpret(query, query_param)
+        assert_equal expected, actual
+
+
       end
     end
   end
