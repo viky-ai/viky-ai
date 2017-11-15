@@ -17,12 +17,13 @@ class Nlp::Interpret
   before_validation :set_default
 
   def proceed
-    Rails.logger.info "Started POST to NLP \"#{url}\" at #{DateTime.now}"
-    Rails.logger.info "  Parameters: #{nlp_params}"
+    parameters = nlp_params
+    Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
+    Rails.logger.info "  | Parameters: #{parameters}"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    out = http.post(uri.path, nlp_params.to_json, JSON_HEADERS)
-    Rails.logger.info "  Completed from NLP, status: #{out.code}"
+    out = http.post(uri.path, parameters.to_json, JSON_HEADERS)
+    Rails.logger.info "  | Completed #{out.code}"
     {
       status: out.code,
       body: JSON.parse(out.body)

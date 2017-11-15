@@ -8,8 +8,23 @@ class Nlp::Package
     @agent = agent
   end
 
+  def self.push_all
+    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
+    Agent.all.each do |agent|
+      result = Nlp::Package.new(agent).push
+    end
+  end
+
   def destroy
-    FileUtils.rm(path)
+    unless Rails.env.test?
+      FileUtils.rm(path)
+      Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      req = Net::HTTP::Delete.new(uri.path)
+      res = http.request(req)
+      Rails.logger.info "  | Completed from NLP, status: #{res.code}"
+    end
   end
 
   def push
@@ -17,14 +32,14 @@ class Nlp::Package
       json = generate_json
       push_in_import_directory(json)
 
-      Rails.logger.info "Started POST to NLP \"#{url}\" at #{DateTime.now}"
+      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
-      out = http.post(uri.path, json, JSON_HEADERS)
-      Rails.logger.info "  Completed from NLP, status: #{out.code}"
+      res = http.post(uri.path, json, JSON_HEADERS)
+      Rails.logger.info "  | Completed #{res.code}\n"
       {
-        status: out.code,
-        body: JSON.parse(out.body)
+        status: res.code,
+        body: JSON.parse(res.body)
       }
     end
   end
