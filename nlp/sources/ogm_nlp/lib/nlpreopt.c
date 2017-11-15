@@ -79,29 +79,29 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
   }
 
   int length = g_queue_get_length(queue_request_expression);
-  if (length <= 1) DONE;
-
-  // We sort by biggest request expressions, and, for each of them we remove
-  // all the expressions that are contained in them
-  g_queue_sort(queue_request_expression, (GCompareDataFunc) NlpRequestExpressionOptimizeIncludedCmp, NULL);
-
-  for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
+  if (length > 1)
   {
-    struct request_expression *request_expression = iter->data;
-    IFE(NlpRequestExpressionOptimizeIncludedRemove(ctrl_nlp_th, request_expression, iter));
-  }
+    // We sort by biggest request expressions, and, for each of them we remove
+    // all the expressions that are contained in them
+    g_queue_sort(queue_request_expression, (GCompareDataFunc) NlpRequestExpressionOptimizeIncludedCmp, NULL);
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-        "NlpRequestExpressionOptimizeIncluded: cleaning the following request expressions:");
     for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
     {
       struct request_expression *request_expression = iter->data;
-      IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+      IFE(NlpRequestExpressionOptimizeIncludedRemove(ctrl_nlp_th, request_expression, iter));
+    }
+
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+    {
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+          "NlpRequestExpressionOptimizeIncluded: cleaning the following request expressions:");
+      for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
+      {
+        struct request_expression *request_expression = iter->data;
+        IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+      }
     }
   }
-
   g_queue_clear(queue_request_expression);
 
   DONE;

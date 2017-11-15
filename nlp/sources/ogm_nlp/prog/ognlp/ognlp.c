@@ -210,6 +210,11 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_interpret(info, info->interpret_filename));
   }
 
+  IFE(OgNlpThreadedReset(info->hnlpi));
+  IFE(OgNlpThreadedFlush(info->hnlpi));
+  IFE(OgHeapFlush(info->hfilename_ba));
+  IFE(OgHeapFlush(info->hfilename));
+
   DONE;
 }
 
