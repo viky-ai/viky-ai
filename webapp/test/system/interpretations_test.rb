@@ -54,7 +54,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_link?('Hello world')
     within('#interpretations-list') do
       click_link 'Hello world'
-      click_button 'Delete'
+      assert page.has_text?('Cancel')
+      all('button').last.click
     end
     assert page.has_no_link?('Hello world')
   end

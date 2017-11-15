@@ -1,43 +1,30 @@
 .interpretations-list{
   list-style: none;
-  padding: 0 0 1em;
+  padding: 0 0 1em 0;
 
-  & > .interpretations-list__item__name {
-    transition: box-shadow .2s;
-    @include clearfix();
+  li{
     background-color: #fff;
     margin-bottom: .5em;
-
     box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
     border-radius: 2px;
+  }
 
-    & > a {
-      display: block;
-      float:left;
-      width: calc(100% - 190px);
-      line-height: 1.8em;
-      padding: .5rem 1rem;
-      text-decoration: none;
-      border-left: 5px solid transparent;
-      &:focus,
-      &:hover{
-        border-left: 5px solid $primary-color;
-      }
+  a.interpretations-list__show {
+    border-radius: 2px;
+    display: block;
+    line-height: 1.8em;
+    padding: .5rem .6rem;
+    text-decoration: none;
+    border-left: 5px solid transparent;
+    &:focus,
+    &:hover{
+      border-left: 5px solid $primary-color;
+      text-decoration: underline;
     }
   }
 
-  & > .interpretations-list__item__edit {
-    background-color: #fff;
-    margin-bottom: .5em;
-
-    box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
-    padding-left: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-
-    border-left: 5px solid $primary-color;
-
-    input {
-    }
+  form{
+    border-radius: 2px;
+    padding: .275em;
   }
 }

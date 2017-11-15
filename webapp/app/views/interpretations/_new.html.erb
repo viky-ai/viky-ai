@@ -1,19 +1,18 @@
 <div class="tabs">
   <ul>
     <% for locale in  Interpretation::Locales %>
-        <li>
-          <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale) %>"
-             <% if @locale == locale %>
-             class="current"
-             <% end %>
-           >
-            <%= locale %>
-          </a>
-        </li>
+      <li>
+        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale) %>"
+           <% if @locale == locale %>
+           class="current"
+           <% end %>
+         >
+          <%= locale %>
+        </a>
+      </li>
     <% end %>
   </ul>
 </div>
-
 
 <%= render partial: '/interpretations/form', locals: { agent: @agent, intent: @intent, interpretation: @interpretation, locale: @locale } %>
 

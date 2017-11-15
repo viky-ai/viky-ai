@@ -26,8 +26,8 @@ class StyleGuideController < ApplicationController
       { name: "Agent",                  slug: "agent"        },
       { name: "Agent box",              slug: "agent_box"    },
       { name: "Intents list",           slug: "intents_list" },
-      { name: "Console",                slug: "console"      },
-      { name: "Interpretations list",   slug: "interpretations_list" }
+      { name: "Interpretations list",   slug: "interpretations_list" },
+      { name: "Console",                slug: "console"      }
     ]
   end
 
