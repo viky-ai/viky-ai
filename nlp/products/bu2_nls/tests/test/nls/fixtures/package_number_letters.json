@@ -3,6 +3,21 @@
   "interpretations":
   [
     {
+      "id": "and",
+      "expressions":
+      [
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+
+      ]
+    },
+    {
       "id": "number_0",
       "expressions":
       [
@@ -253,7 +268,7 @@
       ],
       "solution":
       {
-        "number": 11
+        "number": 12
       }
     },
     {
@@ -1265,6 +1280,33 @@
       "id": "number_100_199",
       "expressions":
       [
+        {
+          "expression": "@{number_100} @{and} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100",
+              "id": "number_100",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "and",
+              "id": "and",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_100.number+number_1_99.number`"
+          }
+        },
         {
           "expression": "@{number_100} @{number_1_99}",
           "keep-order": true,
