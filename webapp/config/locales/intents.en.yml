@@ -9,6 +9,10 @@ en:
         configure: Configure
         move: Move
         delete: Delete
+        interpretations:
+          zero: "0 interpretation"
+          one: "1 interpretation"
+          other: "%{count} interpretations"
       new:
         title: Create a new intent
         btn: Create

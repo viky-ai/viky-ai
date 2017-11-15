@@ -62,6 +62,10 @@
         <span class="intents-list__item__desc"><%= intent.description %></span>
       </a>
 
+      <div class="intents-list__item__stats">
+        <%= t('views.intents.index.interpretations', count: intent.interpretations.count) %>
+      </div>
+
       <% if current_user.can? :edit, @agent %>
         <div class="intents-list__item__actions">
           <div class="dropdown">
