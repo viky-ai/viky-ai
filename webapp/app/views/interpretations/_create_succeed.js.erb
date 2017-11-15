@@ -1,4 +1,7 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
 $("#interpretations-list").append("<%= escape_javascript(@html) %>");
 
+$("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') + 1);
+$("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') + 1);
+
 App.FocusInput.atStart("#expression");

@@ -1,1 +1,4 @@
 $("#interpretation-<%= @interpretation.id %>").remove();
+
+$("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') - 1);
+$("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') - 1);
