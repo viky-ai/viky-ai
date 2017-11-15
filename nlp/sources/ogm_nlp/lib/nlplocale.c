@@ -9,6 +9,9 @@
 static og_status NlpAddAcceptLanguage(og_nlp_th ctrl_nlp_th, og_string s, int is);
 static og_status NlpAcceptLanguageGetQualityFactor(og_nlp_th ctrl_nlp_th, unsigned char *string_quality_factor,
     float *pquality_factor);
+static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
+    struct request_expression *root_request_expression, struct request_expression *request_expression);
+static og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /*
  * handles string such as : "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
@@ -47,7 +50,7 @@ og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *
     }
     if (c == ',')
     {
-      IFE(NlpAddAcceptLanguage(ctrl_nlp_th, s + start, i-start));
+      IFE(NlpAddAcceptLanguage(ctrl_nlp_th, s + start, i - start));
       start = i + 1;
     }
   }
@@ -175,7 +178,7 @@ int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string)
   string[length] = 0;
   for (int i = 0; i < accept_language_used; i++)
   {
-    struct accept_language *accept_language = accept_language_all + i ;
+    struct accept_language *accept_language = accept_language_all + i;
 
     unsigned char string_locale[DPcPathSize];
     OgIso639_3166ToCode(accept_language->locale, string_locale);
@@ -186,5 +189,95 @@ int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string)
   }
   DONE;
 
+}
+
+og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  IFE(NlpCalculateLocaleScoreRecursive(ctrl_nlp_th, request_expression, request_expression));
+  DONE;
+}
+
+static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
+    struct request_expression *root_request_expression, struct request_expression *request_expression)
+{
+  double locale_score = 0.0;
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+
+    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
+      IFN(sub_request_expression) DPcErr;
+      IFE(NlpCalculateLocaleScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+      locale_score += sub_request_expression->locale_score;
+    }
+    else
+    {
+      locale_score += 1;
+    }
+    // This is the generic locale_score coming from the packages
+    // we use a mean score for the scores
+    request_expression->locale_score = locale_score / request_expression->orips_nb;
+    IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
+
+  }
+  DONE;
+}
+
+static og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  int locale = request_expression->expression->locale;
+  if (locale == DOgLangNil) DONE;
+  int accept_language_used = OgHeapGetCellsUsed(ctrl_nlp_th->haccept_language);
+  IFn(accept_language_used) DONE;
+
+  struct accept_language *accept_language_all = OgHeapGetCell(ctrl_nlp_th->haccept_language, 0);
+  IFN(accept_language_all) DPcErr;
+
+  og_bool found_quality_factor = FALSE;
+  double quality_factor = 1.0;
+
+  // First we get the exact match of the language
+  for (int i = 0; i < accept_language_used; i++)
+  {
+    struct accept_language *accept_language = accept_language_all + i;
+    if (locale == accept_language->locale)
+    {
+      found_quality_factor = TRUE;
+      quality_factor = accept_language->quality_factor;
+    }
+  }
+
+  // Then we want to match only on language
+  if (!found_quality_factor)
+  {
+    for (int i = 0; i < accept_language_used; i++)
+    {
+      struct accept_language *accept_language = accept_language_all + i;
+      if (OgIso639_3166ToLang(locale) == accept_language->locale)
+      {
+        found_quality_factor = TRUE;
+        quality_factor = accept_language->quality_factor;
+      }
+    }
+  }
+  // Last we use the '*' language
+  if (!found_quality_factor)
+  {
+    for (int i = 0; i < accept_language_used; i++)
+    {
+      struct accept_language *accept_language = accept_language_all + i;
+      if (accept_language->locale == DOgLangNil)
+      {
+        found_quality_factor = TRUE;
+        quality_factor = accept_language->quality_factor;
+      }
+    }
+  }
+  request_expression->locale_score *= quality_factor;
+  DONE;
 }
 

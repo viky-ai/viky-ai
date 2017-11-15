@@ -120,7 +120,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 //    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
 //    DPcErr;
 //  }
-  if(json_slug)
+  if (json_slug)
   {
     if (!json_is_string(json_slug))
     {
@@ -431,10 +431,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  expression->locale = 0;
+  expression->locale = DOgLangNil;
   if (json_locale == NULL)
   {
-    expression->locale = 0;
+    expression->locale = DOgLangNil;
   }
   else if (json_is_string(json_locale))
   {
@@ -443,7 +443,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
   else if (json_is_null(json_locale))
   {
-    expression->locale = 0;
+    expression->locale = DOgLangNil;
   }
   else
   {

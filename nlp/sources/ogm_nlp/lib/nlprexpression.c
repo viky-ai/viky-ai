@@ -358,6 +358,7 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
     IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
     IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
+    IFE(NlpCalculateLocaleScore(ctrl_nlp_th, request_expression));
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -453,7 +454,9 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
-  json_t *json_score = json_real(1.0);
+  // For the moment, the only score is a locale score
+  // Later we will add other calculation including level, coverage, spellchecking
+  json_t *json_score = json_real(request_expression->locale_score);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score");
@@ -533,11 +536,17 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   any[0] = 0;
   if (request_expression->contains_any) sprintf(any, " any");
 
+  char locale_score[DPcPathSize];
+  locale_score[0] = 0;
+  if (request_expression->locale_score > 0.0) sprintf(locale_score, " locale_score=%.2f",
+      request_expression->locale_score);
+
   struct expression *expression = request_expression->expression;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s",
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
-      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark);
+      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, locale_score);
   DONE;
 }
+

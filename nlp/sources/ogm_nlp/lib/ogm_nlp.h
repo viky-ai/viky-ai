@@ -365,6 +365,8 @@ struct request_expression
   og_bool keep_as_result;
   og_bool contains_any;
 
+  double locale_score;
+
   GQueue tmp_solutions[1];
 
   json_t *json_solution;
@@ -708,6 +710,7 @@ og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 /* nlplocale.c */
 og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
+og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
