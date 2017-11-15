@@ -36,7 +36,7 @@ module Valgrind
 
       # dump packages
       (10 * nb_request_factor).times do |i|
-        actual_dump_result = Nls::Nls.query_get(Nls::Nls.url_dump)
+        actual_dump_result = Nls::Nls.dump
         assert !actual_dump_result.nil?, "dump #{i}"
       end
 

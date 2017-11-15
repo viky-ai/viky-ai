@@ -37,6 +37,42 @@ module Nls
 
       end
 
+      def test_nls_dump_several_complex_packages
+        Nls.remove_all_packages
+
+        package_number_digits = JSON.parse(File.read(fixture_path("package_number_digits.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_number_digits['id']}"
+        Nls.query_post(package_url, package_number_digits)
+
+        package_number_letters = JSON.parse(File.read(fixture_path("package_number_letters.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_number_letters['id']}"
+        Nls.query_post(package_url, package_number_letters)
+
+        package_number = JSON.parse(File.read(fixture_path("package_number.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_number['id']}"
+        Nls.query_post(package_url, package_number)
+
+        package_number_people = JSON.parse(File.read(fixture_path("package_number_people.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_number_people['id']}"
+        Nls.query_post(package_url, package_number_people)
+
+        package_hotel_features = JSON.parse(File.read(fixture_path("package_hotel_features.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_hotel_features['id']}"
+        Nls.query_post(package_url, package_hotel_features)
+
+        package_building_features = JSON.parse(File.read(fixture_path("package_building_features-v2.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_building_features['id']}"
+        Nls.query_post(package_url, package_building_features)
+
+        10.times do |i|
+          actual_dump_result = Nls.dump
+          assert !actual_dump_result.nil?
+        end
+
+
+      end
+
+
     end
   end
 end

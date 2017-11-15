@@ -189,7 +189,7 @@ static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t p
 
   if(interpretation->json_solution)
   {
-    IF(json_object_set_new(json_interpretation, "solution", interpretation->json_solution))
+    IF(json_object_set(json_interpretation, "solution", interpretation->json_solution))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping solutions");
       DPcErr;
@@ -270,7 +270,7 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
 
   if(expression->json_solution)
   {
-    IF(json_object_set_new(json_expression, "solution", expression->json_solution))
+    IF(json_object_set(json_expression, "solution", expression->json_solution))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping solution");
       DPcErr;
