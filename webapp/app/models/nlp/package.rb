@@ -1,4 +1,5 @@
 require 'net/http'
+include ActiveSupport::Benchmarkable
 
 class Nlp::Package
 
@@ -29,18 +30,20 @@ class Nlp::Package
 
   def push
     unless Rails.env.test?
-      json = generate_json
-      push_in_import_directory(json)
+      benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
+        json = generate_json
+        push_in_import_directory(json)
 
-      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      res = http.post(uri.path, json, JSON_HEADERS)
-      Rails.logger.info "  | Completed #{res.code}\n"
-      {
-        status: res.code,
-        body: JSON.parse(res.body)
-      }
+        Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        res = http.post(uri.path, json, JSON_HEADERS)
+        Rails.logger.info "  | Completed #{res.code}"
+        {
+          status: res.code,
+          body: JSON.parse(res.body)
+        }
+      end
     end
   end
 
@@ -69,6 +72,11 @@ class Nlp::Package
     FileUtils.mkdir outdirname unless File.exist?(outdirname)
     File.join(outdirname, "#{@agent.id}.json")
   end
+
+  def logger
+    Rails.logger
+  end
+
 
   private
 
