@@ -2,10 +2,11 @@ require 'test_helper'
 
 class InterpretationTest < ActiveSupport::TestCase
   test 'Basic interpretation creation & intent association' do
-    interpretation = Interpretation.new(expression: 'Good morning', locale: 'fr-FR')
+    interpretation = Interpretation.new(expression: 'Good morning', locale: 'en-US')
     interpretation.intent = intents(:weather_greeting)
     assert interpretation.save
 
+    assert_equal 1, interpretation.position
     assert_equal 'Good morning', interpretation.expression
     assert_equal intents(:weather_greeting).id, interpretation.intent.id
     assert_equal 3, intents(:weather_greeting).interpretations.count
