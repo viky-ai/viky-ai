@@ -17,12 +17,11 @@ class Nlp::Package
     return ret unless valid?
 
     @data = post_to_nlp("#{@endpoint}/packages/#{@options[:agent_id]}") || {}
-    if errors.empty?
-      outfilename = File.join(Rails.root, 'import', "#{@options[:agent_id]}.json")
-      File.open(outfilename, 'w') { |file| file.write @data.to_json }
-    end
+    outfilename = File.join(Rails.root, 'import', "#{@options[:agent_id]}.json")
+    File.open(outfilename, 'w') { |file| file.write @data.to_json }
   end
 
+  # :user_id, :id, :format, :slug, :interpretations
   def post_to_nlp(url)
     resp = {}
     uri = URI.parse url
