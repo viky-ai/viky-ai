@@ -11,9 +11,46 @@
     <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
       <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
       <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
+      <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
+
       <script>$('.js-verbose-input').val("false");</script>
+      <script>$('.js-language-input').val("*");</script>
+
       <div class="field">
         <div class="control">
+
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <span class="btn btn--outline btn--small">
+                <span class="btn__label"><%= t('views.console.all_locales') %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </span>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <% Interpretation::Locales.each do |l| %>
+                  <li>
+                    <a href="#" <% if l == "*" %>class="current"<% end %>
+                      data-behavior="populate-input, replace-trigger-label, submit-form"
+                      data-input-selector=".js-language-input"
+                      data-input-value="<%= l %>"
+                      data-form-selector="#js-console-form"
+                      data-replace-with="<% if l == "*" %><%= t('views.console.all_locales') %><% else %><%= l %><% end %>"
+                      data-replace-selector=".btn__label">
+                      <% if l == "*" %>
+                        <%= t('views.console.all_locales') %>
+                      <% else %>
+                        <%= l %>
+                      <% end %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
           <div class="dropdown">
             <div class="dropdown__trigger">
               <span class="btn btn--outline btn--small">

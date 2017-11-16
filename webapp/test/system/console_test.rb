@@ -80,7 +80,7 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      first('.dropdown__trigger > .btn').trigger('click')
+      all('.dropdown__trigger > .btn')[1].trigger('click')
       click_link 'Verbose ON'
 
       assert page.has_content?('1 intent found.')

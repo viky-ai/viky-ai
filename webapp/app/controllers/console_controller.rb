@@ -8,9 +8,10 @@ class ConsoleController < ApplicationController
 
     sentence    = interpret_params[:sentence]
     verbose     = interpret_params[:verbose]
+    language    = interpret_params[:language]
     current_tab = interpret_params[:current_tab]
 
-    data = get_interpretation(owner, agent, sentence, verbose)
+    data = get_interpretation(owner, agent, sentence, verbose, language)
 
     respond_to do |format|
       format.js {
@@ -31,17 +32,18 @@ class ConsoleController < ApplicationController
 
     def interpret_params
       params.require(:interpret).permit(
-        :sentence, :verbose, :current_tab
+        :sentence, :verbose, :language, :current_tab
       )
     end
 
-    def get_interpretation(owner, agent, sentence, verbose)
+    def get_interpretation(owner, agent, sentence, verbose, language)
       req = Rack::Request.new({ "rack.input" => {}, "REQUEST_METHOD" => "GET" })
       req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
 
       params = {
         agent_token: agent.api_token,
-        sentence: sentence
+        sentence: sentence,
+        language: language
       }
       params[:verbose] = verbose if verbose == "true"
       params.each { |k, v| req.update_param(k, v) }
