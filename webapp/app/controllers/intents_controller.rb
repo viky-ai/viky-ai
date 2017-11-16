@@ -6,7 +6,7 @@ class IntentsController < ApplicationController
 
   def show
     @interpretation = Interpretation.new
-    @current_locale = params[:locale]
+    @current_locale = params[:locale] || @intent.locales.first
   end
 
   def new
