@@ -24,6 +24,11 @@
         display: block;
       }
     }
+    &.console-container--fullscreen{
+      width: 100%;
+      box-shadow: none;
+      display: block;
+    }
   }
 }
 

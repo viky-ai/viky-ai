@@ -6,6 +6,7 @@
 
   background-color: #fff;
   .console__header{
+    position: relative;
     padding: 1em 1em 1em 1em;
     border-bottom: 1px solid rgba(#000, .1);
     small{
@@ -15,6 +16,11 @@
     code{
       font-size: .9em;
       font-family: monospace;
+    }
+    .console__header__fullscreen_btn{
+      position: absolute;
+      top: .5em;
+      right: .25em;
     }
   }
 

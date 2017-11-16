@@ -16,5 +16,7 @@ en:
       verbose_off: Verbose OFF
       go_to_api_endpoint: Go to API endpoint
       all_locales: "Language: Auto"
+      fullscreen_enter: Enter in fullscreen mode
+      fullscreen_leave: Leave fullscreen mode
 
 

@@ -6,6 +6,23 @@
         <span class="badge badge--small badge--success">GET</span>
         <code>/api/v1/<%= @agent.owner.username %>/<%= @agent.agentname %>/interpret.json</code>
       </div>
+
+      <a href="#" id="console-enter-fullscreen"
+         data-action="console-enter-fullscreen"
+         title="<%= t('views.console.fullscreen_enter') %>"
+         class="console__header__fullscreen_btn btn btn--plain">
+        <span class="icon">
+          <%= icon_fullscreen %>
+        </span>
+      </a>
+      <a href="#" id="console-leave-fullscreen"
+         data-action="console-leave-fullscreen"
+         title="<%= t('views.console.fullscreen_leave') %>"
+         class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
+        <span class="icon">
+          <%= icon_fullscreen_exit %>
+        </span>
+      </a>
     </div>
 
     <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
