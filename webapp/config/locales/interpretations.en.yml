@@ -3,6 +3,7 @@ en:
     interpretations:
       new:
         btn: "Add"
+        placeholder: Add an expression
       index:
         delete_btn: "Delete"
         update_btn: "Update"

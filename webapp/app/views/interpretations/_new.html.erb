@@ -1,41 +1,43 @@
-<div class="tabs">
-  <ul>
-    <% for intent_locale in  @intent.locales %>
-      <% if intent_locale == '*' %>
-        <% link_name = t('views.interpretations.locales.no_locale') %>
-      <% else %>
-        <% link_name = intent_locale %>
+<div class="interpretation-new-form-container">
+  <div class="tabs">
+    <ul>
+      <% for intent_locale in  @intent.locales %>
+        <% if intent_locale == '*' %>
+          <% link_name = t('views.interpretations.locales.no_locale') %>
+        <% else %>
+          <% link_name = intent_locale %>
+        <% end %>
+          <li>
+          <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: intent_locale) %>"
+             <% if @current_locale == intent_locale %>class="current"<% end %>>
+            <%= link_name %>
+            <% count = @intent.interpretations_with_local(intent_locale).count%>
+            <span class="badge" data-count="<%= count %>" <% if @current_locale == intent_locale %>id="current-locale-tab-badge"<% end %>>
+              <%= count %>
+            </span>
+          </a>
+        </li>
       <% end %>
+      <% if current_user.can? :edit, @agent %>
         <li>
-        <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: intent_locale) %>"
-           <% if @current_locale == intent_locale %>class="current"<% end %>>
-          <%= link_name %>
-          <% count = @intent.interpretations_with_local(intent_locale).count%>
-          <span class="badge" data-count="<%= count %>" <% if @current_locale == intent_locale %>id="current-locale-tab-badge"<% end %>>
-            <%= count %>
-          </span>
-        </a>
-      </li>
-    <% end %>
-    <% if current_user.can? :edit, @agent %>
-      <li>
-        <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
-            data-action="open-remote-modal">
-          +
-        </a>
-      </li>
-    <% end %>
-  </ul>
-</div>
+          <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
+              data-action="open-remote-modal">
+            +
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 
-<% if current_user.can? :edit, @agent %>
-  <%= render partial: '/interpretations/form', locals: {
-    agent: @agent,
-    intent: @intent,
-    interpretation: @interpretation,
-    current_locale: @current_locale
-  } %>
-<% end %>
+  <% if current_user.can? :edit, @agent %>
+    <%= render partial: '/interpretations/form', locals: {
+      agent: @agent,
+      intent: @intent,
+      interpretation: @interpretation,
+      current_locale: @current_locale
+    } %>
+  <% end %>
+</div>
 
 <%= render partial: '/interpretations/interpretations_list', locals: {
     agent: @agent,

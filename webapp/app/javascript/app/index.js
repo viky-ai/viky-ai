@@ -7,3 +7,4 @@ import './intents/intents_list';
 import './agents/agent_form';
 import './agents/main';
 import './console/console';
+import './interpretations/main';
