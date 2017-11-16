@@ -43,7 +43,11 @@ Rails.application.routes.draw do
             post :update_positions
           end
 
-          resources :interpretations, only: [:show, :create, :edit, :update, :destroy]
+          resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
+            collection do
+              post :update_positions
+            end
+          end
         end
       end
     end

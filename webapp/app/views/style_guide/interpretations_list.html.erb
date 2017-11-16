@@ -8,17 +8,32 @@
 <section>
   <h2>Default list state</h2>
   <%= highlight_html do %>
-<ul class="interpretations-list">
+<ul id="sortable-list_example-1" class="interpretations-list">
   <li>
-    <a href="#" class="interpretations-list__show">Hello citizen</a>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
+    <a href="#" class="interpretations-list__show">Hello citizen Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi delectus eius eos magni nemo odit officia quae rem! Animi, illum obcaecati. Alias aspernatur blanditiis ea hic illum molestias natus tenetur?</a>
   </li>
   <li>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
     <a href="#" class="interpretations-list__show">Good morning</a>
   </li>
   <li>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
     <a href="#" class="interpretations-list__show">How can I help you ?</a>
   </li>
 </ul>
+<script>
+  Sortable.create($('#sortable-list_example-1')[0], {
+      handle: '.interpretations-list__draggable',
+      animation: 100
+  });
+</script>
   <% end %>
 </section>
 
@@ -28,8 +43,11 @@
     Click on an item will switch to update state.
   </p>
   <%= highlight_html do %>
-<ul class="interpretations-list">
+<ul id="sortable-list_example-2" class="interpretations-list">
   <li>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
     <form action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
@@ -48,6 +66,9 @@
     </form>
   </li>
   <li>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
     <form action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
@@ -66,6 +87,9 @@
     </form>
   </li>
   <li>
+    <div class="interpretations-list__draggable">
+      <span><%= icon_reorder %></span>
+    </div>
     <form action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
@@ -84,5 +108,11 @@
     </form>
   </li>
 </ul>
+<script>
+  Sortable.create($('#sortable-list_example-2')[0], {
+    handle: '.interpretations-list__draggable',
+    animation: 100
+  });
+</script>
   <% end %>
 </section>

@@ -1,10 +1,14 @@
-<li id="interpretation-<%= interpretation.id %>">
+<li id="interpretation-<%= interpretation.id %>"
+    data-id="<%= interpretation.id %>">
   <% if current_user.can? :edit, interpretation.intent.agent %>
-    <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
-        interpretation.intent.agent.owner,
-        interpretation.intent.agent,
-        interpretation.intent,
-        interpretation), remote: true, class: 'interpretations-list__show' %>
+      <div class="interpretations-list__draggable">
+        <span><%= icon_reorder %></span>
+      </div>
+      <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
+            interpretation.intent.agent.owner,
+            interpretation.intent.agent,
+            interpretation.intent,
+            interpretation), remote: true, class: 'interpretations-list__show' %>
   <% else %>
       <%= link_to interpretation.expression, '#', class: 'interpretations-list__show' %>
   <% end %>

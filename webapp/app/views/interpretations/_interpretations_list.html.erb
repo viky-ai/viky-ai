@@ -1,3 +1,4 @@
-<ul id="interpretations-list" class="interpretations-list">
+<ul id="interpretations-list" class="interpretations-list"
+    data-update-positions-path="<%= update_positions_user_agent_intent_interpretations_path(@agent.owner, @agent, @intent) %>">
   <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@current_locale).order(position: :desc, created_at: :desc) %>
 </ul>

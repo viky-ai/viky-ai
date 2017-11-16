@@ -6,24 +6,50 @@
     margin-bottom: .5em;
     box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
     border-radius: 2px;
+    @include display_flex();
   }
+
+
+  .interpretations-list__draggable {
+    @include display_flex();
+    align-items: center;
+    padding: 0 .1em;
+
+    border-right: 1px solid #eee;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    span{
+      line-height: 1em;
+    }
+    svg{
+      fill: #ccc;
+    }
+    &:hover{
+      background-color: $primary-color;
+      cursor: move;
+      svg{
+        fill: #fff;
+      }
+    }
+  }
+
 
   a.interpretations-list__show {
     border-radius: 2px;
     display: block;
-    line-height: 1.8em;
-    padding: .5rem .6rem;
+    line-height: 1.4em;
+    padding: .7rem .8rem;
     text-decoration: none;
-    border-left: 5px solid transparent;
+    width: 100%;
     &:focus,
     &:hover{
-      border-left: 5px solid $primary-color;
       text-decoration: underline;
     }
   }
 
-  form{
+  form {
     border-radius: 2px;
     padding: .275em;
+    width: 100%;
   }
 }

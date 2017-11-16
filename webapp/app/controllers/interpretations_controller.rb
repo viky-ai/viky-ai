@@ -1,10 +1,11 @@
 class InterpretationsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_intent_and_interpretation, except: [:create]
+  before_action :set_intent
+  before_action :set_interpretation, except: [:create, :update_positions]
 
   def create
-    @intent = @agent.intents.friendly.find(params[:intent_id])
     interpretation = Interpretation.new(interpretation_params)
     interpretation.intent = @intent
     @current_locale = interpretation.locale
@@ -68,16 +69,26 @@ class InterpretationsController < ApplicationController
     end
   end
 
+  def update_positions
+    params[:ids].reverse.each_with_index do |id, position|
+      interpretation = Interpretation.find(id)
+      interpretation.update(position: position)
+    end
+  end
+
   private
 
     def set_agent
       @agent = Agent.friendly.find(params[:agent_id])
     end
 
-    def set_intent_and_interpretation
+    def set_intent
       @intent = @agent.intents.friendly.find(params[:intent_id])
-      @interpretation = @intent.interpretations.find(params[:id])
     end
+
+  def set_interpretation
+    @interpretation = @intent.interpretations.find(params[:id])
+  end
 
     def interpretation_params
       params.require(:interpretation).permit(:expression, :locale)
@@ -87,7 +98,7 @@ class InterpretationsController < ApplicationController
       case action_name
       when 'show'
         access_denied unless current_user.can? :show, @agent
-      when 'create', 'edit', 'update', 'destroy'
+      when 'create', 'edit', 'update', 'destroy', 'update_positions'
         access_denied unless current_user.can? :edit, @agent
       else
         access_denied
