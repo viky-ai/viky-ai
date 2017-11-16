@@ -14,14 +14,16 @@ class Nlp::Package
   end
 
   def self.push_all
-    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
-    Agent.all.each do |agent|
-      result = Nlp::Package.new(agent).push
+    if Nlp::Package.sync_active && !Rails.env.test?
+      FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
+      Agent.all.each do |agent|
+        result = Nlp::Package.new(agent).push
+      end
     end
   end
 
   def destroy
-    unless Rails.env.test?
+    if Nlp::Package.sync_active && !Rails.env.test?
       FileUtils.rm(path)
       Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
       uri = URI.parse(url)
@@ -33,7 +35,7 @@ class Nlp::Package
   end
 
   def push
-    unless Rails.env.test?
+    if Nlp::Package.sync_active && !Rails.env.test?
       benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
         json = generate_json
         push_in_import_directory(json)
