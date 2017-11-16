@@ -1,7 +1,11 @@
 <li id="interpretation-<%= interpretation.id %>">
-  <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
-      interpretation.intent.agent.owner,
-      interpretation.intent.agent,
-      interpretation.intent,
-      interpretation), remote: true, class: 'interpretations-list__show' %>
+  <% if current_user.can? :edit, interpretation.intent.agent %>
+    <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
+        interpretation.intent.agent.owner,
+        interpretation.intent.agent,
+        interpretation.intent,
+        interpretation), remote: true, class: 'interpretations-list__show' %>
+  <% else %>
+      <%= link_to interpretation.expression, '#', class: 'interpretations-list__show' %>
+  <% end %>
 </li>
