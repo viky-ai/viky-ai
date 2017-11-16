@@ -1,5 +1,5 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
-$("#interpretations-list").append("<%= escape_javascript(@html) %>");
+$("#interpretations-list").prepend("<%= escape_javascript(@html) %>");
 $("#empty-interpretations-list-last-locale").css({'display': 'none'})
 $("#empty-interpretations-list-more-locale").css({'display': 'none'})
 

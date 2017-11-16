@@ -26,7 +26,7 @@ class Intent < ApplicationRecord
   end
 
   def interpretations_with_local(locale)
-    interpretations.where(locale: locale)
+    interpretations.where(locale: locale).order(created_at: :desc)
   end
 
   private
