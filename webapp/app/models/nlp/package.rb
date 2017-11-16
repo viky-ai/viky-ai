@@ -2,6 +2,10 @@ require 'net/http'
 include ActiveSupport::Benchmarkable
 
 class Nlp::Package
+  # Used to disable nlp sync if necessary via
+  # Nlp::Package.sync_active = false
+  class_attribute :sync_active
+  self.sync_active = true
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 

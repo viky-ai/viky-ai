@@ -1,13 +1,13 @@
 class ConvertLocalesTypography < ActiveRecord::Migration[5.1]
 
   def up
-    convert_interpretation('_', '-')
-    convert_intent('_', '-')
-  end
-
-  def down
-    convert_interpretation('-', '_')
-    convert_intent('-', '_')
+    Nlp::Package.sync_active = false
+    begin
+      convert_interpretation('_', '-')
+      convert_intent('_', '-')
+    ensure
+      Nlp::Package.sync_active = true
+    end
   end
 
   private
@@ -37,4 +37,5 @@ class ConvertLocalesTypography < ActiveRecord::Migration[5.1]
         ActiveRecord::Base.record_timestamps = true
       end
     end
+
 end
