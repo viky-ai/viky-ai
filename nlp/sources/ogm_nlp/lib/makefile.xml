@@ -19,6 +19,7 @@
     <file>nlpipword.c</file>
     <file>nlplocale.c</file>
     <file>nlplog.c</file>
+    <file>nlpltrac.c</file>
     <file>nlpltras.c</file>
     <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
