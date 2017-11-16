@@ -108,4 +108,35 @@ class IntentTest < ActiveSupport::TestCase
     }
     assert_equal expected, intent.errors.messages
   end
+
+
+  test 'Remove a locale from an intent' do
+    intent = intents(:weather_greeting)
+    assert_equal %w[en-US fr-FR], intent.locales
+    intent.locales -= ['fr-FR']
+    assert intent.save
+    assert_equal %w[en-US], intent.locales
+  end
+
+
+  test 'Remove an unknown locale from an intent' do
+    intent = intents(:weather_greeting)
+    assert_equal %w[en-US fr-FR], intent.locales
+    intent.locales -= ['xx-XX']
+    assert intent.save
+    assert_equal %w[en-US fr-FR], intent.locales
+  end
+
+
+  test 'Remove the last locale from an intent' do
+    intent = intents(:weather_greeting)
+    intent.locales -= ['fr-FR']
+    assert intent.save
+    intent.locales -= ['en-US']
+    assert !intent.save
+    expected = {
+        locales: ['can\'t be blank']
+    }
+    assert_equal expected, intent.errors.messages
+  end
 end

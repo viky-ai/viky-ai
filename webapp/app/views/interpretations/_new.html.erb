@@ -28,6 +28,8 @@
   current_locale: @current_locale
 } %>
 
-<ul id="interpretations-list" class="interpretations-list">
-  <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@current_locale) %>
-</ul>
+<%= render partial: '/interpretations/interpretations_list', locals: {
+    agent: @agent,
+    intent: @intent,
+    current_locale: @current_locale
+} %>

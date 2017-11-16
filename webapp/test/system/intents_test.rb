@@ -120,4 +120,40 @@ class IntentsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('fr-FR')
   end
+
+
+  test 'Remove locale of an intent' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_link?('en-US')
+    assert page.has_link?('fr-FR')
+
+    click_link 'en-US'
+
+    within('#interpretations-list') do
+      click_link 'Hello world'
+      assert page.has_text?('Cancel')
+      all('button').last.click
+    end
+
+    assert page.has_text?('Do you want to remove it ?')
+    click_link 'Remove empty locale'
+    assert page.has_no_link?('en-US')
+    assert page.has_link?('fr-FR')
+
+
+    assert page.has_text?('Bonjour tout le monde')
+
+    within('#interpretations-list') do
+      click_link 'Bonjour tout le monde'
+      assert page.has_text?('Cancel')
+      all('button').last.click
+    end
+
+    assert page.has_text?('This is the last local for this intent.')
+  end
 end

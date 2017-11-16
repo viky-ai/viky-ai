@@ -1,4 +1,12 @@
 $("#interpretation-<%= @interpretation.id %>").remove();
 
+if ($("#interpretations-list").children().length == 0) {
+  if ($(".tabs > ul").children().length <= 2) {
+    $("#empty-interpretations-list-last-locale").css({'display': ''})
+  } else {
+    $("#empty-interpretations-list-more-locale").css({'display': ''})
+  }
+}
+
 $("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') - 1);
 $("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') - 1);

@@ -99,6 +99,21 @@ class IntentsController < ApplicationController
     end
   end
 
+  def remove_locale
+    locale_to_remove = params[:locale_to_remove]
+    locale_to_remove_index = @intent.locales.index(locale_to_remove)
+    previous_locale_index = locale_to_remove_index <= 0 ? 0 : locale_to_remove_index - 1
+    @intent.locales -= [locale_to_remove]
+    if @intent.save
+      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales[previous_locale_index])
+    else
+      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales[locale_to_remove_index]), alert: t(
+          'views.intents.remove_locale.errors_message',
+          errors: @intent.errors.full_messages.join(', ')
+      )
+    end
+  end
+
   private
 
     def intent_params
@@ -118,7 +133,7 @@ class IntentsController < ApplicationController
       case action_name
       when 'show'
         access_denied unless current_user.can? :show, @agent
-      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale'
+      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale', 'remove_locale'
         access_denied unless current_user.can? :edit, @agent
       else
         access_denied

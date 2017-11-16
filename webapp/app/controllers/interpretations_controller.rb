@@ -3,20 +3,20 @@ class InterpretationsController < ApplicationController
 
   def create
     agent = Agent.friendly.find(params[:agent_id])
-    intent = agent.intents.friendly.find(params[:intent_id])
+    @intent = agent.intents.friendly.find(params[:intent_id])
     interpretation = Interpretation.new(interpretation_params)
-    interpretation.intent = intent
+    interpretation.intent = @intent
     @current_locale = interpretation.locale
     respond_to do |format|
       if interpretation.save
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { intent: intent, agent: agent, interpretation: Interpretation.new, current_locale: @current_locale })
+          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: agent, interpretation: Interpretation.new, current_locale: @current_locale })
           @html = render_to_string(partial: 'interpretation', locals: { interpretation: interpretation })
           render partial: 'create_succeed'
         end
       else
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { intent: intent, agent: agent, interpretation: interpretation, current_locale: @current_locale })
+          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: agent, interpretation: interpretation, current_locale: @current_locale })
           render partial: 'create_failed'
         end
       end

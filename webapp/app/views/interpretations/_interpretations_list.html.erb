@@ -1,0 +1,25 @@
+<div id="empty-interpretations-list-last-locale" class="blankslate" <% if !(@intent.interpretations_with_local(@current_locale).empty? && @intent.locales.size == 1) %>style="display:none;"<% end %>>
+  <div class="blankslate__content">
+    <p>
+      <%= t('views.intents.remove_locale.last_locale_message') %>
+    </p>
+  </div>
+</div>
+
+<div id="empty-interpretations-list-more-locale" class="blankslate" <% if !(@intent.interpretations_with_local(@current_locale).empty? && @intent.locales.size > 1) %>style="display:none;"<% end %>>
+  <div class="blankslate__content">
+    <p>
+      <%= t('views.intents.remove_locale.message') %>
+    </p>
+    <%= link_to(
+            t('views.intents.remove_locale.btn'),
+            user_agent_intent_remove_locale_path(@agent.owner, @agent, @intent, locale_to_remove: @current_locale),
+            method: :delete,
+            class: 'btn btn--destructive'
+        ) %>
+  </div>
+</div>
+
+<ul id="interpretations-list" class="interpretations-list">
+  <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@current_locale) %>
+</ul>

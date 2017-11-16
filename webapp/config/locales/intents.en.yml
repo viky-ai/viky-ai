@@ -32,3 +32,8 @@ en:
         title: Choose a locale
         empty_message: The intent already contains every locales.
         errors_message: "Add locale failed : %{errors}."
+      remove_locale:
+        message: 'In this intent there is no interpretation using the current locale. Do you want to remove it ?'
+        last_locale_message: 'This is the last local for this intent. You must add another locale before you can remove it.'
+        btn: 'Remove empty locale'
+        errors_message: "Remove locale failed : %{errors}."
