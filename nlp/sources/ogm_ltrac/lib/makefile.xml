@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>lib</type>
+  <project_name>ogm_ltrac</project_name>
+  <sources>
+    <file>iltrac.c</file>
+    <file>ltrac.c</file>
+    <file>ltraca.c</file>
+    <file>ltracdic.c</file>
+    <file>ltracdicb.c</file>
+    <file>ltracdics.c</file>
+    <file>ltracdicp.c</file>
+    <file>ltracread.c</file>
+  </sources>
+  <platforms>
+    <platform name="linux">
+      <option name="NAME">ogltrac</option>
+      <option name="ADD_CFLAGS"/>
+      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -loglip</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+  </platforms>
+</makefile>

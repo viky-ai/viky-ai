@@ -9,7 +9,7 @@ class Nlp::Interpret
 
   def initialize(options = {})
     @options = clean_options options
-    @endpoint = "#{ENV['VOQALAPP_NLP_URL']}/api/v1"
+    @endpoint = "#{ENV['VOQALAPP_NLP_URL']}"
   end
 
   def interpret
@@ -40,7 +40,7 @@ class Nlp::Interpret
 
   private
 
-    # clean parameters up to match NLS expectations
+    # clean parameters up to match NLP expectations
     def clean_options(opts)
       (opts || {}).transform_values do |v|
         v.respond_to?(:strip) ? v.strip : v

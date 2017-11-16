@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ltras>
+  <space_insertion_costs>
+    <space_insertion_cost occurence="1">0.005</space_insertion_cost>
+  </space_insertion_costs>
+  <space_deletion_costs>
+    <space_deletion_cost occurence="1">0.005</space_deletion_cost>
+  </space_deletion_costs>
+
+  <parameters>
+
+    <!-- Levenshtein cost -->
+    <parameter name="insertion_cost">0.1</parameter>
+    <parameter name="same_letter_insertion_cost">0.02</parameter>
+    <parameter name="deletion_cost">0.1</parameter>
+    <parameter name="same_letter_deletion_cost">0.02</parameter>
+    <parameter name="substitution_cost">0.1</parameter>
+    <parameter name="accents_substitution_cost">0.01</parameter>
+    <parameter name="swap_cost">0.1</parameter>
+    <parameter name="space_cost">0.005</parameter>
+    <parameter name="case_cost">0.001</parameter>
+    <parameter name="punctuation_cost">0.000</parameter>
+
+    <!-- Split -->
+    <parameter name="split_max_nb_splits">1</parameter>
+
+    <!-- Cut -->
+    <parameter name="cut_use_swap_automaton">no</parameter>
+    <parameter name="cut_max_nb_solutions">1</parameter>
+    <parameter name="cut_max_nb_candidates">1000</parameter>
+
+    <!-- Paste -->
+    <parameter name="paste_max_nb_pasted_words">2</parameter>
+
+    <!-- Del -->
+    <parameter name="del_max_nb_deleted_letters">1</parameter>
+    <parameter name="del_min_word_length">1</parameter>
+
+    <!-- Swap -->
+    <parameter name="swap_max_nb_swaps">1</parameter>
+
+    <!-- Phon -->
+    <parameter name="phon_min_nb_letters">4</parameter>
+    <parameter name="phon_max_nb_solutions">10</parameter>
+
+    <!-- Exc -->
+    <parameter name="exc_use_phonetics">no</parameter>
+    <parameter name="exc_score">0.99</parameter>
+    <parameter name="exc_phonetic_cost_reduction_ratio">0.5</parameter>
+
+    <!-- Lem1 -->
+    <parameter name="lem_check_words_in_dictionary">yes</parameter>
+
+    <!-- Term -->
+    <parameter name="term_max_nb_solutions">3</parameter>
+    <parameter name="term_check_words_in_dictionary">yes</parameter>
+    <parameter name="term_max_nb_generated_solutions">50</parameter>
+    <parameter name="term_min_frequency">0</parameter>
+
+  </parameters>
+
+  <minimum_scores>
+    <minimum_score length="2" score="1.00"/>
+    <minimum_score length="3" score="0.99"/>
+    <minimum_score length="4" score="0.85"/>
+    <minimum_score length="5" score="0.80"/>
+    <minimum_score length="6" score="0.75"/>
+    <minimum_score length="8" score="0.70"/>
+    <minimum_score length="10" score="0.65"/>
+    <minimum_score length="20" score="0.60"/>
+  </minimum_scores>
+
+  <minimum_final_scores>
+    <minimum_final_score length="2" score="1.00"/>
+    <minimum_final_score length="3" score="0.99"/>
+    <minimum_final_score length="4" score="0.85"/>
+    <minimum_final_score length="5" score="0.8"/>
+    <minimum_final_score length="6" score="0.75"/>
+    <minimum_final_score length="8" score="0.70"/>
+    <minimum_final_score length="10" score="0.65"/>
+    <minimum_final_score length="20" score="0.60"/>
+  </minimum_final_scores>
+
+  <maximum_transformations>
+    <maximum_transformation nb_request_words="1" number="100"/>
+    <maximum_transformation nb_request_words="2" number="8"/>
+    <maximum_transformation nb_request_words="3" number="5"/>
+    <maximum_transformation nb_request_words="4" number="4"/>
+    <maximum_transformation nb_request_words="5" number="3"/>
+    <maximum_transformation nb_request_words="6" number="3"/>
+    <maximum_transformation nb_request_words="7" number="2"/>
+    <maximum_transformation nb_request_words="10" number="1"/>
+  </maximum_transformations>
+
+  <ltras_modules>
+
+    <ltras_module>
+      <name>add</name>
+      <function_name>OgLtrasModuleAdd</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>cut</name>
+      <function_name>OgLtrasModuleCut</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>del</name>
+      <function_name>OgLtrasModuleDelete</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>exc</name>
+      <function_name>OgLtrasModuleExcept</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>paste</name>
+      <function_name>OgLtrasModulePaste</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>phon</name>
+      <function_name>OgLtrasModulePhon</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>ref</name>
+      <function_name>OgLtrasModuleReference</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>split</name>
+      <function_name>OgLtrasModuleSplit</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>swap</name>
+      <function_name>OgLtrasModuleSwap</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+    <ltras_module>
+      <name>term</name>
+      <function_name>OgLtrasModuleTerm</function_name>
+      <library_name>libogltras</library_name>
+    </ltras_module>
+
+  </ltras_modules>
+
+</ltras>

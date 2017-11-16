@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<phonet_configuration>
+  <option name="appending character">`</option>
+  <option name="appending character">'</option>
+  <option name="non-alpha character to space">1</option>
+
+  <classes>
+    <class character="a">
+      <c>a</c><c>à</c><c>â</c><c>á</c><c>ã</c><c>ä</c><c>å</c><c>æ</c>
+    </class>
+    <class character="e">
+      <c>e</c><c>é</c><c>è</c><c>ê</c><c>ë</c>
+    </class>
+    <class character="i">
+      <c>i</c><c>î</c><c>ï</c><c>ì</c><c>í</c>
+    </class>
+    <class character="o">
+      <c>o</c><c>ô</c><c>ö</c><c>ò</c><c>ó</c><c>õ</c>
+    </class>
+    <class character="u">
+      <c>u</c><c>ù</c><c>ü</c><c>ú</c><c>û</c>
+    </class>
+    <class character="y">
+      <c>y</c><c>ý</c><c>ÿ</c>
+    </class>
+    <class character="{"> <!-- e, i, y -->
+      <c>e</c><c>é</c><c>è</c><c>ê</c><c>ë</c><c>i</c><c>î</c><c>ï</c><c>ì</c><c>í</c><c>y</c><c>ý</c><c>ÿ</c>
+    </class>
+    <class character="("> <!-- ensemble des voyelles -->
+      <c>a</c><c>à</c><c>â</c><c>á</c><c>ã</c><c>ä</c><c>å</c><c>æ</c><c>e</c><c>é</c><c>è</c><c>ê</c><c>ë</c><c>i</c><c>î</c><c>ï</c><c>ì</c><c>í</c><c>o</c><c>ô</c><c>ö</c><c>ò</c><c>ó</c><c>õ</c><c>u</c><c>ù</c><c>ü</c><c>ú</c><c>û</c><c>y</c><c>ý</c><c>ÿ</c>
+    </class>
+    <class character=")"> <!-- ensemble des consonnes -->
+      <c>b</c><c>c</c><c>ç</c><c>d</c><c>f</c><c>g</c><c>h</c><c>j</c><c>k</c><c>l</c>
+      <c>m</c><c>n</c><c>ñ</c><c>p</c><c>q</c><c>r</c><c>s</c><c>t</c><c>v</c><c>w</c>
+      <c>x</c><c>z</c>
+    </class>
+    <class character="k">
+      <c>k</c><c>q</c><c>g</c><c>c</c>
+    </class>
+    <class character="t">
+      <c>t</c><c>d</c><c>p</c>
+    </class>
+    <class character="z">
+      <c>z</c><c>s</c><c>j</c><c>ç</c><c>x</c>
+    </class>
+    <class character="f">
+      <c>f</c><c>b</c><c>v</c><c>w</c>
+    </class>
+    <class character="l">
+      <c>l</c><c>n</c><c>m</c><c>r</c>
+    </class>
+  </classes>
+
+  <rules step="1"> <!-- suppression g, c, e et s en fin de mot -->
+    <rule left="" key="e" right="[" phonetic=""/>
+    <rule left="" key="ge" right="[" phonetic=""/>
+    <rule left="" key="ce" right="[" phonetic=""/>
+    <rule left="" key="es" right="[" phonetic=""/>
+    <rule left="" key="ges" right="[" phonetic=""/>
+    <rule left="" key="ces" right="[" phonetic=""/>
+  </rules>
+  <rules step="2"> <!-- on traite les caractères qui dépendent des voyelles d'abord -->
+    <rule left="" key="qu" right="" phonetic="k"/>
+    <rule left="" key="gu" right="" phonetic="k"/>
+    <rule left="" key="cu" right="" phonetic="k"/>
+    <rule left="" key="g" right="{" phonetic="z"/>
+    <rule left="" key="c" right="{" phonetic="z"/>
+    <rule left="" key="sh" right="" phonetic="z"/>
+    <rule left="" key="sch" right="" phonetic="z"/>
+  </rules>
+  <rules step="3"> <!-- remplacement de toutes les voyelles par a -->
+    <rule left="" key="(" right="" phonetic="a"/>
+  </rules>
+  <rules step="4"> <!-- dédoublonnage des voyelles -->
+    <rule left="" key="aa" right="" phonetic="a"/>
+  </rules>
+  <rules step="5"> <!-- dédoublonnage des voyelles -->
+    <rule left="" key="aa" right="" phonetic="a"/>
+  </rules>
+  <rules step="6"> <!-- dédoublonnage des voyelles -->
+    <rule left="" key="aa" right="" phonetic="a"/>
+  </rules>
+  <rules step="7"> <!-- remplacement des consonnes par classe -->
+    <rule left="" key="h" right="" phonetic=""/>
+    <rule left="" key="k" right="" phonetic="k"/>
+    <rule left="" key="t" right="" phonetic="t"/>
+    <rule left="" key="j" right="" phonetic="j"/>
+    <rule left="" key="f" right="" phonetic="f"/>
+    <rule left="" key="z" right="" phonetic="z"/>
+    <rule left="" key="l" right="" phonetic="l"/>
+  </rules>
+  <rules step="8"> <!-- dédoublonnage des consonnes -->
+    <rule left="" key="kk" right="" phonetic="k"/>
+    <rule left="" key="tt" right="" phonetic="t"/>
+    <rule left="" key="jj" right="" phonetic="j"/>
+    <rule left="" key="ff" right="" phonetic="f"/>
+    <rule left="" key="zz" right="" phonetic="z"/>
+    <rule left="" key="ll" right="" phonetic="l"/>
+  </rules>
+  <rules step="9"> <!-- dédoublonnage des consonnes -->
+    <rule left="" key="kk" right="" phonetic="k"/>
+    <rule left="" key="tt" right="" phonetic="t"/>
+    <rule left="" key="jj" right="" phonetic="j"/>
+    <rule left="" key="ff" right="" phonetic="f"/>
+    <rule left="" key="zz" right="" phonetic="z"/>
+    <rule left="" key="ll" right="" phonetic="l"/>
+  </rules>
+  <rules step="10"> <!-- dédoublonnage des consonnes -->
+    <rule left="" key="kk" right="" phonetic="k"/>
+    <rule left="" key="tt" right="" phonetic="t"/>
+    <rule left="" key="jj" right="" phonetic="j"/>
+    <rule left="" key="ff" right="" phonetic="f"/>
+    <rule left="" key="zz" right="" phonetic="z"/>
+    <rule left="" key="ll" right="" phonetic="l"/>
+  </rules>
+  <rules step="11"> <!-- tz devient z -->
+    <rule left="" key="t" right="z" phonetic=""/>
+  </rules>
+  <rules step="12"> <!-- suppression de consonnes en fin de mot -->
+    <rule left="" key="t" right="[" phonetic=""/>
+    <rule left="" key="z" right="[" phonetic=""/>
+  </rules>
+
+</phonet_configuration>
