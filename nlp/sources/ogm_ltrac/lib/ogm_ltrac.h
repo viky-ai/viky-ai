@@ -5,11 +5,9 @@
  *  Version 1.0
 */
 #include <logltrac.h>
-#include <logsidx.h>
 #include <loglip.h>
 #include <logaut.h>
 #include <logpho.h>
-#include <logattribute.h>
 
 
 

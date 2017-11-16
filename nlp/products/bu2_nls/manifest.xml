@@ -32,6 +32,14 @@
     <component name="ogm_addr/lib" />
     <component name="ogm_http/lib" />
     <component name="ogm_uci/lib" />
+    <component name="ogm_xml/lib" />
+    <component name="ogm_ltrap/lib" />
+    <component name="ogm_lip/lib" />
+    <component name="ogm_stm/lib" />
+    <component name="ogm_pho/lib" />
+    <component name="ogm_rqp/lib" />
+    <component name="ogm_ltrac/lib" />
+    <component name="ogm_ltras/lib" />
     <component name="ogm_nlp/lib" />
     <component name="ogm_nls/lib" />
 
@@ -51,6 +59,7 @@
         <bin name="ognlp" source="%OG_REPO_PATH%/build/%TARGET%/bin/ognlp" />
 
         <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./" platform="linux" />
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" platform="linux" />
 
         <directory name="control" />
         <directory name="log" />

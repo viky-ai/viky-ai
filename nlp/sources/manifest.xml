@@ -15,20 +15,28 @@
 
   <component name="ogm_addr/lib" info="Handles listening to multiple IP/ports" />
   <component name="ogm_aut/lib" info="Finite State Automaton library" />
-  <component name="ogm_auta/lib" info="" />
+  <component name="ogm_auta/lib" info="Automaton library application (common usage)" />
   <component name="ogm_gen/lib" info="Historical Pertimm 'generic libs'" />
   <component name="ogm_ghbn/lib" info="a gethostbyname with a memory DNS" />
   <component name="ogm_heap/lib" info="Memory heap management library" />
   <component name="ogm_heap/prog/ogheap" info="Memory heap management library test program" />
   <component name="ogm_http/lib" info="HTTP tools" />
+  <component name="ogm_lip/lib" info="Linguistic Parser" />
+  <component name="ogm_ltrac/lib" info="Linguistic compilation library" />
+  <component name="ogm_ltrap/lib" info="Linguistic transformations parse library" />
+  <component name="ogm_ltras/lib" info="Linguistic transformations search library" />
   <component name="ogm_msg/lib" info="Messages Handling" />
+  <component name="ogm_pho/lib" info="Phonetizer library" />
+  <component name="ogm_rqp/lib" info="Request Parsing tools" />
   <component name="ogm_sig/lib" info="Signals" />
   <component name="ogm_sock/lib" info="Socket tools" />
+  <component name="ogm_stm/lib" info="String Matching Library (Levenshtein edit distance)" />
   <component name="ogm_sysi/lib" info="Synchronisation read/write library" />
   <component name="ogm_sysi/prog/ogsysi" info="Synchronisation read/write library test program" />
   <component name="ogm_thr/lib" info="Threads, Semaphores and Mutex handling" />
   <component name="ogm_uci/lib" info="Upper Communication Interface" />
   <component name="ogm_uni/lib" info="Unicode tools" />
+  <component name="ogm_xml/lib" info="XML parser" />
   <component name="ogm_xpt/lib" info="Experimental, handles exceptions" />
   <component name="ogm_zlib/lib" info="ZipLib" />
 

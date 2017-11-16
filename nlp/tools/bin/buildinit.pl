@@ -70,6 +70,13 @@ if (!$update) {
   die("Build directory cannot be deleted ($buildpath)") if (-d $buildpath);
 }
 
+# Copy libxml2 header
+if ( ! -d "/usr/include/libxml2/libxml/") {
+  die("libxml2-dev package is mandatory : apt-get install libxml2-dev");
+}
+system("mkdir -p $ENV{OG_REPO_PATH}/sources/include/libxml/");
+system("cp -a /usr/include/libxml2/libxml/*.h $ENV{OG_REPO_PATH}/sources/include/libxml/");
+
 system("mkdir -p $buildpath/debug/bin");
 system("mkdir -p $buildpath/debug/link");
 system("mkdir -p $buildpath/release/bin");

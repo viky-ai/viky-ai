@@ -57,7 +57,7 @@
     <platform name="linux">
       <option name="NAME">ogltras</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-lm -logaut -loggen -logheap -logldi -loglip -logltrap -logmsg -logpho -logrqp -logstm -loguni -logxml</option>
+      <option name="ADD_LIBR">-lm -logaut -loggen -logheap -loglip -logltrap -logmsg -logpho -logrqp -logstm -loguni -logxml</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

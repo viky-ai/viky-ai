@@ -8,8 +8,6 @@
 #include <loguni.h>
 #include <logxml.h>
 #include <logmsg.h>
-#include <logdla.h>
-#include <logfreq.h>
 #include <logauta.h>
 #include <logheap.h>
 
@@ -39,9 +37,9 @@ struct punctword {
 struct og_ctrl_lip {
   void *herr, *hmsg; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
   void *hentity;
-  
+
   struct og_lip_input *input;
 
   int PawoNumber;
@@ -54,7 +52,7 @@ struct og_ctrl_lip {
 
   void *ha_lang;
   struct language language[DOgLangMax];
- 
+
   /** for OgLipOutputXml **/
   struct og_lip_input output_xml_input[1];
   FILE *fdout;

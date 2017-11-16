@@ -11,13 +11,13 @@
     <file>ltracdicb.c</file>
     <file>ltracdics.c</file>
     <file>ltracdicp.c</file>
-    <file>ltracread.c</file>    
+    <file>ltracread.c</file>
   </sources>
   <platforms>
     <platform name="linux">
       <option name="NAME">ogltrac</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -logattribute -logsidx -loglip</option>
+      <option name="ADD_LIBR">-logaut -loggen -logmsg -logpho -loguni -loglip</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

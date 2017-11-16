@@ -78,10 +78,6 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
       strcpy(dictionaries_directory,param->dictionaries_directory);
     }
   }
-  else if (param->dictionaries_in_data_directory)
-  {
-    sprintf(dictionaries_directory,"%s/%s",ctrl_ltrac->data_directory,DOgSidxLtraDirectory);
-  }
   else
   {
     if (ctrl_ltrac->WorkingDirectory[0])
@@ -115,10 +111,7 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
     strcpy(ctrl_ltrac->log_phon,"log/ltra_phon.log");
   }
 
-  if(OgSidxHasLtrafRequestsFile(ctrl_ltrac->data_directory))
-  {
-    ctrl_ltrac->has_ltraf_requests = TRUE;
-  }
+  ctrl_ltrac->has_ltraf_requests = TRUE;
 
   IF(LtracInitInitLip(ctrl_ltrac)) return NULL;
 

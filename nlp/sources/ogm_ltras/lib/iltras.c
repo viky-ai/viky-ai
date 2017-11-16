@@ -196,31 +196,9 @@ struct og_ltras_param *param;
         , "OgLtrasInit: impossible to open '%s'",pho_param->conf_filename);
   }
 
-  struct og_ldi_param ldi_param[1];
-  memset(ldi_param,0,sizeof(struct og_ldi_param));
-  ldi_param->herr=ctrl_ltras->herr;
-  ldi_param->hmsg=ctrl_ltras->hmsg;
-  ldi_param->hmutex=ctrl_ltras->hmutex;
-  ldi_param->loginfo.trace = DOgLdiTraceMinimal+DOgLdiTraceMemory;
-  ldi_param->loginfo.where = ctrl_ltras->loginfo->where;
-  strcpy(ldi_param->WorkingDirectory,ctrl_ltras->WorkingDirectory);
-  if (ctrl_ltras->WorkingDirectory[0]) sprintf(ldi_param->configuration_file,"%s/conf/ldi_conf.xml",ctrl_ltras->WorkingDirectory);
-  else strcpy(ldi_param->configuration_file,"conf/ldi_conf.xml");
-  if (OgFileExists(ldi_param->configuration_file))
-  {
-    if (ctrl_ltras->hltras_to_inherit)
-    {
-      /** ldi is reentrant and thread-safe by inheriting automatons handles **/
-      struct og_ctrl_ltras *inheriting_ltras = (struct og_ctrl_ltras *) ctrl_ltras->hltras_to_inherit;
-      ldi_param->hldi_to_inherit = inheriting_ltras->hldi;
-    }
-    IFn(ctrl_ltras->hldi=OgLdiInit(ldi_param)) return(0);
-  }
-  else
-  {
-    OgMsg(ctrl_ltras->hmsg,"",DOgMsgDestInLog
-        , "OgLtrasInit: impossible to open '%s'",ldi_param->configuration_file);
-  }
+
+  // BRU disable LDI to avoid deps in viky.ai
+  ctrl_ltras->hldi = NULL;
 
   aut_param->state_number = 0x800;
   sprintf(aut_param->name,"suggest");
@@ -666,7 +644,7 @@ IFE(OgAutFlush(ctrl_ltras->ha_param));
 IFE(OgAutFlush(ctrl_ltras->ha_suggest));
 IFE(OgLipFlush(ctrl_ltras->hlip));
 IFE(OgPhoFlush(ctrl_ltras->hpho));
-IFE(OgLdiFlush(ctrl_ltras->hldi));
+// IFE(OgLdiFlush(ctrl_ltras->hldi));
 IFE(OgStmFlush(ctrl_ltras->hstm));
 IFE(OgRqpFlush(ctrl_ltras->hrqp));
 

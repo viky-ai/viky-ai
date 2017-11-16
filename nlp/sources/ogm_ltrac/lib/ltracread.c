@@ -304,7 +304,7 @@ static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf 
     unsigned a, b;
     struct ltraf *og_l;
 
-    if (ctrl_ltrac->loginfo->trace & DOgSidxTraceMemory)
+    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceMemory)
     {
       OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAllocLtraf: max Ltraf number (%d) reached",
           ctrl_ltrac->LtrafNumber);
@@ -323,7 +323,7 @@ static og_status LtracAllocLtraf(struct og_ctrl_ltrac *ctrl_ltrac, struct ltraf 
     ctrl_ltrac->Ltraf = og_l;
     ctrl_ltrac->LtrafNumber = b;
 
-    if (ctrl_ltrac->loginfo->trace & DOgSidxTraceMemory)
+    if (ctrl_ltrac->loginfo->trace & DOgLtracTraceMemory)
     {
       OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "LtracAllocLtraf: new Ltraf number is %d\n",
           ctrl_ltrac->LtrafNumber);
