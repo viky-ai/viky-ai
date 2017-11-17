@@ -12,6 +12,7 @@
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
 #include <duktape.h>
+#include <math.h>
 
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100

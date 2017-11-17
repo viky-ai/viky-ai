@@ -68,7 +68,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
         request_position_start, request_expression->request_position_start);
     DPcErr;
   }
-  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position,0);
+  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position, 0);
   IFN(request_positions) DPcErr;
 
   int request_position_current = request_position_start;
@@ -76,12 +76,12 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   {
     struct request_input_part *request_input_part = request_input_parts + match_zone_input_part[i].current;
     struct request_position *request_position_from = request_positions + request_input_part->request_position_start;
-    struct request_position *request_position_to = request_positions +request_position_current;
+    struct request_position *request_position_to = request_positions + request_position_current;
     memcpy(request_position_to, request_position_from,
-            sizeof(struct request_position) * request_input_part->request_positions_nb);
+        sizeof(struct request_position) * request_input_part->request_positions_nb);
     request_position_current += request_input_part->request_positions_nb;
   }
-  request_expression->request_positions_nb += request_position_current-request_position_start;
+  request_expression->request_positions_nb += request_position_current - request_position_start;
 
   IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
 
@@ -465,7 +465,9 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
 
   // For the moment, the only score is a locale score
   // Later we will add other calculation including level, coverage, spellchecking
-  json_t *json_score = json_real(request_expression->locale_score);
+  // round the score to 2 digit after dot
+  double roundedscore = roundf(request_expression->locale_score * 100.0) / 100.0;
+  json_t *json_score = json_real(roundedscore);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score");
