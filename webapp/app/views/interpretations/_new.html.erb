@@ -19,12 +19,14 @@
         </li>
       <% end %>
       <% if current_user.can? :edit, @agent %>
-        <li>
-          <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
-              data-action="open-remote-modal">
-            +
-          </a>
-        </li>
+        <% if @intent.locales.count != Interpretation::Locales.count %>
+          <li>
+            <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
+                data-action="open-remote-modal">
+              +
+            </a>
+          </li>
+        <% end %>
       <% end %>
     </ul>
   </div>

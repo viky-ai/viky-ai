@@ -9,9 +9,9 @@
     </h5>
     <div class="modal__main__content">
       <% if available_locales.empty? %>
-      <p>
-        <%= t('views.intents.add_locale.empty_message') %>
-      </p>
+        <p>
+          <%= t('views.intents.add_locale.empty_message') %>
+        </p>
       <% else %>
         <ul>
           <% for possible_locale in available_locales %>
@@ -32,8 +32,6 @@
           <% end %>
         </ul>
       <% end %>
-
-
       <div class="actions">
         <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
       </div>
