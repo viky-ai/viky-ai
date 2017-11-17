@@ -17,7 +17,7 @@ class IntentsController < ApplicationController
   def create
     @intent = Intent.new(intent_params)
     @intent.agent = @agent
-    @intent.locales = [Interpretation::Locales.last]
+    @intent.locales = ["fr-FR"]
     respond_to do |format|
       if @intent.save
         format.json do
@@ -89,6 +89,7 @@ class IntentsController < ApplicationController
   def add_locale
     locale_to_add = params[:locale_to_add]
     @intent.locales << locale_to_add
+
     if @intent.save
       redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale_to_add)
     else

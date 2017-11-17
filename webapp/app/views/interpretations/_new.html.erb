@@ -1,7 +1,7 @@
 <div class="interpretation-new-form-container">
   <div class="tabs">
     <ul>
-      <% for intent_locale in  @intent.locales %>
+      <% for intent_locale in @intent.locales_by_usage %>
         <% if intent_locale == '*' %>
           <% link_name = t('views.interpretations.locales.no_locale') %>
         <% else %>

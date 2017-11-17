@@ -12,7 +12,6 @@ class Intent < ApplicationRecord
   validate :check_locales
 
   before_validation :clean_intentname
-  before_validation :sort_locales
   before_create :set_position
 
   after_save do
@@ -27,6 +26,12 @@ class Intent < ApplicationRecord
 
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
+  end
+
+  def locales_by_usage
+    locales.sort_by do |locale|
+      interpretations.where(locale: locale).count * -1
+    end
   end
 
   private
@@ -45,10 +50,6 @@ class Intent < ApplicationRecord
           end
         end
       end
-    end
-
-    def sort_locales
-      self.locales.sort! if self.locales.respond_to?(:sort!)
     end
 
     def set_position

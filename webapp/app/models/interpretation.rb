@@ -1,5 +1,5 @@
 class Interpretation < ApplicationRecord
-  Locales = %w[en-US fr-FR *].sort.freeze
+  Locales = %w[fr-FR en-US *].freeze
 
   belongs_to :intent
 
