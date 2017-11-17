@@ -29,10 +29,9 @@ en:
         success_message: "Intent with the name: %{name} has successfully been deleted."
         errors_message: "Deletion failed: %{errors}."
       add_locale:
-        title: Choose a language
+        title: Choose a language to add
         empty_message: The intent already contains every available languages.
         errors_message: "Add language failed: %{errors}."
-
       blankslate:
         message_show_html: <p>No expression entered for the "%{language}" tab.</p>
         message_edit_html: >
