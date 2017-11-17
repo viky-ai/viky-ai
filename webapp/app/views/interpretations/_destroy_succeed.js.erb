@@ -1,12 +1,5 @@
 $("#interpretation-<%= @interpretation.id %>").remove();
 
-if ($("#interpretations-list").children().length == 0) {
-  if ($(".tabs > ul > li").length == 2) {
-    $("#blankslate-start").show()
-  } else {
-    $("#blankslate-start-or-remove").show()
-  }
-}
-
-$("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') - 1);
-$("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') - 1);
+App.InterpretationsList.updateBlankslates();
+App.InterpretationsList.decrementTabBadge();
+App.InterpretationsList.updateDraggable();

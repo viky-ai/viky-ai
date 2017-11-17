@@ -1,10 +1,8 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
 $("#interpretations-list").prepend("<%= escape_javascript(@html) %>");
 
-$("#blankslate-start-or-remove").hide()
-$("#blankslate-start").hide()
-
-$("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') + 1);
-$("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') + 1);
+App.InterpretationsList.updateBlankslates();
+App.InterpretationsList.incrementTabBadge();
+App.InterpretationsList.updateDraggable();
 
 App.FocusInput.atStart("#expression");
