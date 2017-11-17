@@ -33,16 +33,6 @@
   <h4><%= t('views.intents.index.list_title') %></h4>
   <div>
     <% if current_user.can? :edit, @agent %>
-      <% if @agent.intents.count > 1 %>
-        <a href="#" class="btn js-start-reorganize-intents" data-action="start-reorganize-intents">
-          <span class="icon icon--small"><%= icon_drag_handle %></span>
-          <%= t('views.intents.index.start_reorganize') %>
-        </a>
-        <a href="#" class="btn js-stop-reorganize-intents" data-action="stop-reorganize-intents" style="display:none;">
-          <span class="icon icon--small"><%= icon_drag_handle %></span>
-          <%= t('views.intents.index.stop_reorganize') %>
-        </a>
-      <% end %>
       <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
          class="btn btn--primary js-new-intent"
          data-action="open-remote-modal">
@@ -56,6 +46,10 @@
     data-update-positions-path="<%= update_positions_user_agent_intents_path(@agent.owner, @agent) %>">
   <% @intents.each do |intent| %>
     <li data-id="<%= intent.id %>">
+
+      <div class="intents-list__draggable">
+        <span><%= icon_reorder %></span>
+      </div>
 
       <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>" class="js-intent-show-link">
         <span class="intents-list__item__name"><%= intent.intentname %></span>
@@ -98,17 +92,7 @@
             </div>
           </div>
         </div>
-
-        <div class="intents-list__item__draggable" style="display:none;">
-          <span class="btn btn--outline btn--small btn--drag">
-            <span class="icon icon--x-small">
-              <%= icon_drag_handle %>
-            </span>
-            <%= t('views.intents.index.move') %>
-          </span>
-        </div>
       <% end %>
-
     </li>
   <% end %>
 </ul>

@@ -5,28 +5,24 @@
   .sortable-chosen{
     box-shadow: 0 1px 7px rgba(#000, .25);
   }
+
   & > li{
     transition: box-shadow .2s;
-    @include clearfix();
+    @include display_flex();
+
     background-color: #fff;
     margin-bottom: .5em;
 
     box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
     border-radius: 2px;
-    background-color: #fff;
-    border-radius: 2px;
 
     & > a{
-      &.disabled{
-        pointer-events: none;
-      }
       display: block;
       float:left;
       width: calc(100% - 190px);
       line-height: 1.8em;
       padding: .5rem 1rem;
       text-decoration: none;
-      border-left: 5px solid transparent;
       border-radius: 2px;
       .intents-list__item__name{
         display: block;
@@ -39,7 +35,6 @@
       }
       &:focus,
       &:hover{
-        border-left: 5px solid $primary-color;
         .intents-list__item__name{
           text-decoration: underline;
         }
@@ -58,9 +53,28 @@
       float:right;
       padding: .5rem;
     }
-    .intents-list__item__draggable{
-      float:right;
-      padding: .5em;
+  }
+
+  .intents-list__draggable {
+    @include display_flex();
+    align-items: center;
+    padding: 0 .1em;
+
+    border-right: 1px solid #eee;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    span{
+      line-height: 1em;
+    }
+    svg{
+      fill: #ccc;
+    }
+    &:hover{
+      background-color: $primary-color;
+      cursor: move;
+      svg{
+        fill: #fff;
+      }
     }
   }
 }
