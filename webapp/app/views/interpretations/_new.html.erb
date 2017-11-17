@@ -30,7 +30,7 @@
   </div>
 
   <% if current_user.can? :edit, @agent %>
-    <%= render partial: '/interpretations/form', locals: {
+    <%= render partial: 'interpretations/form', locals: {
       agent: @agent,
       intent: @intent,
       interpretation: @interpretation,
@@ -40,6 +40,18 @@
 </div>
 
 <%= render partial: '/interpretations/interpretations_list', locals: {
+    agent: @agent,
+    intent: @intent,
+    current_locale: @current_locale
+} %>
+
+<%= render partial: 'interpretations/blankslate_start', locals: {
+    agent: @agent,
+    intent: @intent,
+    current_locale: @current_locale
+} %>
+
+<%= render partial: 'interpretations/blankslate_start_or_remove', locals: {
     agent: @agent,
     intent: @intent,
     current_locale: @current_locale

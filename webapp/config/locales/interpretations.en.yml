@@ -10,4 +10,4 @@ en:
         cancel_btn: "Cancel"
       delete_failed: "Ooops, delete failed."
       locales:
-        no_locale: No locale
+        no_locale: No language

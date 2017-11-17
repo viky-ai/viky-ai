@@ -1,7 +1,8 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
 $("#interpretations-list").prepend("<%= escape_javascript(@html) %>");
-$("#empty-interpretations-list-last-locale").css({'display': 'none'})
-$("#empty-interpretations-list-more-locale").css({'display': 'none'})
+
+$("#blankslate-start-or-remove").hide()
+$("#blankslate-start").hide()
 
 $("#current-locale-tab-badge").html($("#current-locale-tab-badge").data('count') + 1);
 $("#current-locale-tab-badge").data('count',  $("#current-locale-tab-badge").data('count') + 1);

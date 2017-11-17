@@ -115,7 +115,7 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_no_text?('fr-FR')
     click_link '+'
     within('.modal') do
-      assert page.has_text?('Choose a locale')
+      assert page.has_text?('Choose a language')
       click_link('fr-FR')
     end
     assert page.has_text?('fr-FR')
@@ -141,7 +141,7 @@ class IntentsTest < ApplicationSystemTestCase
     end
 
     assert page.has_text?('Do you want to remove it ?')
-    click_link 'Remove empty locale'
+    click_link 'Yes, remove "en-US" tab'
     assert page.has_no_link?('en-US')
     assert page.has_link?('fr-FR')
 
@@ -154,6 +154,6 @@ class IntentsTest < ApplicationSystemTestCase
       all('button').last.click
     end
 
-    assert page.has_text?('This is the last local for this intent.')
+    assert page.has_text?('Start adding expressions using the form below.')
   end
 end

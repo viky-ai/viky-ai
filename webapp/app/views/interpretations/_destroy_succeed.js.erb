@@ -1,10 +1,10 @@
 $("#interpretation-<%= @interpretation.id %>").remove();
 
 if ($("#interpretations-list").children().length == 0) {
-  if ($(".tabs > ul").children().length <= 2) {
-    $("#empty-interpretations-list-last-locale").css({'display': ''})
+  if ($(".tabs > ul > li").length == 2) {
+    $("#blankslate-start").show()
   } else {
-    $("#empty-interpretations-list-more-locale").css({'display': ''})
+    $("#blankslate-start-or-remove").show()
   }
 }
 

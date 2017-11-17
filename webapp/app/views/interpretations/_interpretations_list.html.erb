@@ -1,35 +1,3 @@
-<div id="empty-interpretations-list-last-locale" class="blankslate" <% if !(@intent.interpretations_with_local(@current_locale).empty? && @intent.locales.size == 1) %>style="display:none;"<% end %>>
-  <div class="blankslate__content">
-    <p>
-      <% if current_user.can? :edit, @agent %>
-        <%= t('views.intents.remove_locale.last_locale_message') %>
-      <% else %>
-        <%= t('views.intents.remove_locale.message') %>
-      <% end %>
-    </p>
-  </div>
-</div>
-
-<div id="empty-interpretations-list-more-locale" class="blankslate" <% if !(@intent.interpretations_with_local(@current_locale).empty? && @intent.locales.size > 1) %>style="display:none;"<% end %>>
-  <div class="blankslate__content">
-    <p>
-      <%= t('views.intents.remove_locale.message') %> <br/>
-      <% if current_user.can? :edit, @agent %>
-        <%= t('views.intents.remove_locale.message_question') %>
-      <% end %>
-    </p>
-    <% if current_user.can? :edit, @agent %>
-      <%= link_to(
-              t('views.intents.remove_locale.btn'),
-              user_agent_intent_remove_locale_path(@agent.owner, @agent, @intent, locale_to_remove: @current_locale),
-              method: :delete,
-              remote: true,
-              class: 'btn btn--destructive'
-          ) %>
-    <% end %>
-  </div>
-</div>
-
 <ul id="interpretations-list" class="interpretations-list">
   <%= render partial: '/interpretations/interpretation', collection: @intent.interpretations_with_local(@current_locale) %>
 </ul>
