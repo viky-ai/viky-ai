@@ -3,11 +3,8 @@ require 'application_system_test_case'
 class IntentsTest < ApplicationSystemTestCase
 
   test 'Create an intent' do
-    go_to_agents_index
-    assert page.has_text?('admin/terminator')
-    click_link 'T-800'
+    go_to_agent_show('admin', 'terminator')
     click_link 'New intent'
-
     within('.modal') do
       assert page.has_text? 'Create a new intent'
       fill_in 'ID', with: 'sunny_day'
@@ -17,12 +14,10 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Intent has been successfully created.')
   end
 
-  test 'Errors on intent creation' do
-    go_to_agents_index
-    assert page.has_text?('admin/terminator')
-    click_link 'T-800'
-    click_link 'New intent'
 
+  test 'Errors on intent creation' do
+    go_to_agent_show('admin', 'terminator')
+    click_link 'New intent'
     within('.modal') do
       assert page.has_text? 'Create a new intent'
       fill_in 'ID', with: ''
@@ -33,13 +28,9 @@ class IntentsTest < ApplicationSystemTestCase
     end
   end
 
+
   test 'Update an intent' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-
-    assert page.has_text?('weather_greeting')
-
+    go_to_agent_show('admin', 'weather')
     within '.intents-list' do
       first('.dropdown__trigger > button').trigger('click')
       click_link 'Configure'
@@ -54,12 +45,9 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Your intent has been successfully updated.')
   end
 
-  test 'Delete an intent' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
 
+  test 'Delete an intent' do
+    go_to_agent_show('admin', 'weather')
     within '.intents-list' do
       first('.dropdown__trigger > button').trigger('click')
       click_link 'Delete'
@@ -100,12 +88,9 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Add locale to an intent' do
-    go_to_agents_index
-    assert page.has_text?('admin/terminator')
-    click_link 'T-800'
-    assert page.has_text?('terminator_find')
-
+    go_to_agent_show('admin', 'terminator')
     click_link 'terminator_find'
+
     assert page.has_text?('+')
     assert page.has_no_text?('fr-FR')
     click_link '+'
@@ -118,17 +103,13 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Remove locale of an intent' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
+    go_to_agent_show('admin', 'weather')
     click_link 'weather_greeting'
+
     assert page.has_link?('en-US')
     assert page.has_link?('fr-FR')
 
     click_link 'en-US'
-
     within('#interpretations-list') do
       click_link 'Hello world'
       assert page.has_text?('Cancel')
@@ -140,7 +121,6 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_no_link?('en-US')
     assert page.has_link?('fr-FR')
 
-
     assert page.has_text?('Bonjour tout le monde')
 
     within('#interpretations-list') do
@@ -148,7 +128,6 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       all('button').last.click
     end
-
     assert page.has_text?('Start adding expressions using the form below.')
   end
 end
