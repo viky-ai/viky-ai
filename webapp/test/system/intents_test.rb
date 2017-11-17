@@ -80,7 +80,7 @@ class IntentsTest < ApplicationSystemTestCase
   end
 
 
-  test 'reorganize intents' do
+  test 'Reorganize intents' do
     go_to_agent_show('admin', 'weather')
     assert page.has_no_text? 'Reorganize intents'
 
@@ -89,18 +89,13 @@ class IntentsTest < ApplicationSystemTestCase
     assert intent.save
     visit user_agent_path('admin', 'weather')
     assert_equal ['test', 'weather_greeting'], all('.intents-list__item__name').collect(&:text)
-    assert_equal 0, all('.btn--drag').size
 
-    click_link('Reorganize intents')
-    assert page.has_text? 'Done, i finished reorganizing intents'
-
-    assert_equal 2, all('.btn--drag').size
+    assert_equal 2, all('.intents-list__draggable').size
 
     # Does not work...
-    # first('.btn--drag').native.drag_by(0, 100)
+    # first('.intents-list__draggable').native.drag_by(0, 100)
 
-    click_link('Done, i finished reorganizing intents')
-    assert_equal 0, all('.btn--drag').size
+    # assert_equal ['weather_greeting', 'test'], all('.intents-list__item__name').collect(&:text)
   end
 
 
