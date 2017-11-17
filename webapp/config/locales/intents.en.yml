@@ -37,7 +37,7 @@ en:
         message_edit_html: >
           <p>Start adding expressions using the form below.</p>
           <p class="separator"><span>or</span></p>
-          <p>No expression entered for the "%{language}" tab. You may want to do some housework. Do you want to remove it ?</p>
+          <p>No expression entered for the "%{language}" tab. You may want to do some housework. Do you want to remove&nbsp;it&nbsp;?</p>
         start_html: <p>Start adding expressions using the form below.</p>
         no_expression_html: <p>No expression entered for the "%{language}" tab.</p>
         btn: 'Yes, remove "%{language}" tab'
