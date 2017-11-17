@@ -53,7 +53,7 @@ class Intent < ApplicationRecord
 
     def set_position
       unless agent.nil?
-        self.position = agent.intents.count
+        self.position = agent.intents.maximum(:position) + 1
       end
     end
 end
