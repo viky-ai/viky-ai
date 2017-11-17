@@ -32,3 +32,4 @@
 
 .env
 *.rdb
+.idea/
