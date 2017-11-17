@@ -23,6 +23,7 @@
               t('views.intents.remove_locale.btn'),
               user_agent_intent_remove_locale_path(@agent.owner, @agent, @intent, locale_to_remove: @current_locale),
               method: :delete,
+              remote: true,
               class: 'btn btn--destructive'
           ) %>
     <% end %>

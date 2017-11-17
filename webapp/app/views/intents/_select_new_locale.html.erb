@@ -22,10 +22,11 @@
               <% end %>
             <li>
               <%= link_to(
-                      name,
-                      user_agent_intent_add_locale_path(locale_to_add: possible_locale),
-                      method: :post,
-                      data: {action: 'close-modal'}
+                    name,
+                    user_agent_intent_add_locale_path(locale_to_add: possible_locale),
+                    method: :post,
+                    remote: true,
+                    data: {action: 'close-modal'}
                   ) %>
             </li>
           <% end %>
