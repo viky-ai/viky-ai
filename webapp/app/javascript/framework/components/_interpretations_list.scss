@@ -15,25 +15,19 @@
 
 
   .interpretations-list__draggable {
-    @include display_flex();
-    align-items: center;
-    padding: 0 .1em;
+    width: 20px;
 
-    border-right: 1px solid #eee;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
-    span{
-      line-height: 1em;
-    }
-    svg{
-      fill: #ccc;
-    }
+    border: 4px solid #fff;
+
+    background-image: url(../images/grip@2x.png);
+    background-size: 4px 4px;
+    opacity: .15;
+
     &:hover{
-      background-color: $primary-color;
+      opacity: .5;
       cursor: move;
-      svg{
-        fill: #fff;
-      }
     }
   }
 

@@ -1,9 +1,7 @@
 <li id="interpretation-<%= interpretation.id %>"
     data-id="<%= interpretation.id %>">
   <% if current_user.can? :edit, interpretation.intent.agent %>
-    <div class="interpretations-list__draggable">
-      <span><%= icon_reorder %></span>
-    </div>
+    <div class="interpretations-list__draggable"></div>
     <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
           interpretation.intent.agent.owner,
           interpretation.intent.agent,
