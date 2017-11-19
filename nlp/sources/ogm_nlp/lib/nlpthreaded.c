@@ -60,6 +60,8 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
 
   IF(NlpJsInit(ctrl_nlp_th)) return NULL;
 
+  IF(NlpLtracInit(ctrl_nlp_th)) return NULL;
+
   return ctrl_nlp_th;
 
 }

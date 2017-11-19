@@ -61,36 +61,17 @@ int LtracDicPhonAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
 
 
 
-PUBLIC(int) OgLtracDicPhonLog(void *handle)
+PUBLIC(int) OgLtracDicPhonLog(void *handle, void *ha_phon)
 {
 struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *)handle;
-struct og_aut_param caut_param,*aut_param=&caut_param;
 int iout; unsigned char *p,out[DPcAutMaxBufferSize+9];
 int ibuffer; unsigned char buffer[DPcPathSize];
 int language_code,frequency;
 int iword; unsigned char word[DPcPathSize];
 oindex states[DPcAutMaxBufferSize+9];
 int retour,nstate0,nstate1;
-char erreur[DOgErrorSize];
-void *ha_phon;
-FILE *fd;
 
 IFn(handle) DONE;
-
-memset(aut_param,0,sizeof(struct og_aut_param));
-aut_param->herr=ctrl_ltrac->herr;
-aut_param->hmutex=ctrl_ltrac->hmutex;
-aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-aut_param->loginfo.where = ctrl_ltrac->loginfo->where;
-aut_param->state_number = 0;
-sprintf(aut_param->name,"ltrac phon");
-IFn(ha_phon=OgAutInit(aut_param)) DPcErr;
-IFE(OgAufRead(ha_phon,ctrl_ltrac->name_phon));
-
-IFn(fd=fopen(ctrl_ltrac->log_phon,"w")) {
-  sprintf(erreur,"OgLtracDicPhonLog: impossible to open '%s' for writing",ctrl_ltrac->log_phon);
-  OgErr(ctrl_ltrac->herr,erreur); DPcErr;
-  }
 
 if ((retour=OgAufScanf(ha_phon,0,"",&iout,out,&nstate0,&nstate1,states))) {
   do {
@@ -113,13 +94,10 @@ if ((retour=OgAufScanf(ha_phon,0,"",&iout,out,&nstate0,&nstate1,states))) {
 
     char slang_country[DPcPathSize];
 
-      fprintf(fd, "%s | %s %d %s\n", buffer, OgIso639_3166ToCode(language_code, slang_country), frequency, word);
+    OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "%s | %s %d %s", buffer, OgIso639_3166ToCode(language_code, slang_country), frequency, word);
     }
   while((retour=OgAufScann(ha_phon,&iout,out,nstate0,&nstate1,states)));
   }
-
-fclose(fd);
-IFE(OgAutFlush(ha_phon));
 
 DONE;
 }

@@ -7,15 +7,17 @@
 #include "ogm_ltrac.h"
 #include <logis639_3166.h>
 
-static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index);
-static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index);
+static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
+    int index);
+static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
+    int index);
 static og_status LtracDicSwapAddTwoSameLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
     int index, int *index_double1, int index_double2);
 static og_status LtracDicSwapAddOrigin(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input);
 
 int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input)
 {
-  if(dic_input->is_expression) DONE;
+  if (dic_input->is_expression) DONE;
 
   int is = dic_input->value_length;
 
@@ -30,7 +32,7 @@ int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
   for (int i = 0; i < dic_input->value_length; i += 2)
   {
     IFE(LtracDicSwapAddOneLetter(ctrl_ltrac, dic_input, i));
-    if(i < dic_input->value_length - 2)
+    if (i < dic_input->value_length - 2)
     {
       IFE(LtracDicSwapAddTwoLetters(ctrl_ltrac, dic_input, i));
     }
@@ -40,7 +42,8 @@ int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
   DONE;
 }
 
-static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index)
+static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
+    int index)
 {
   int ientry;
   unsigned char *p, entry[DPcPathSize];
@@ -70,7 +73,8 @@ static og_status LtracDicSwapAddOneLetter(struct og_ctrl_ltrac *ctrl_ltrac, stru
 }
 
 // carfour => carrefour, rhumatogue => rhumatologue
-static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input, int index)
+static og_status LtracDicSwapAddTwoLetters(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_input,
+    int index)
 {
   int ientry;
   unsigned char *p, entry[DPcPathSize];
@@ -110,20 +114,20 @@ static og_status LtracDicSwapAddTwoSameLetters(struct og_ctrl_ltrac *ctrl_ltrac,
   og_string s = dic_input->value;
   int is = dic_input->value_length;
 
-  if(index > 0)
+  if (index > 0)
   {
     int c1 = (s[index] << 8) + s[index + 1];
     int c2 = (s[index - 2] << 8) + s[index - 1];
-    if(c1 == c2)
+    if (c1 == c2)
     {
-      if(*index_double1 == -1)
+      if (*index_double1 == -1)
       {
         *index_double1 = index;
       }
       else
       {
         // We avoid to suppress once gain when we have 3 identical successive letters
-        if((index > 2) && (*index_double1 != (index - 2)))
+        if ((index > 2) && (*index_double1 != (index - 2)))
         {
           index_double2 = index;
           memcpy(buffer, s, *index_double1);
@@ -170,11 +174,9 @@ static og_status LtracDicSwapAddOrigin(struct og_ctrl_ltrac *ctrl_ltrac, struct 
   DONE;
 }
 
-
-PUBLIC(int) OgLtracDicSwapLog(void *handle)
+PUBLIC(int) OgLtracDicSwapLog(void *handle, void *ha_swap)
 {
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
-  struct og_aut_param caut_param, *aut_param = &caut_param;
   int language_code, position, frequency;
   int iout;
   unsigned char *p, out[DPcAutMaxBufferSize + 9];
@@ -184,29 +186,8 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
   unsigned char word[DPcPathSize];
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1;
-  char erreur[DOgErrorSize];
-  void *ha_swap;
-  FILE *fd;
 
   IFn(handle) DONE;
-
-  memset(aut_param, 0, sizeof(struct og_aut_param));
-  aut_param->herr = ctrl_ltrac->herr;
-  aut_param->hmutex = ctrl_ltrac->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
-  aut_param->loginfo.where = ctrl_ltrac->loginfo->where;
-  aut_param->state_number = 0;
-  sprintf(aut_param->name, "ltrac swap");
-  IFn(ha_swap=OgAutInit(aut_param)) DPcErr;
-  IFE(OgAufRead(ha_swap, ctrl_ltrac->name_swap));
-
-  IFn(fd=fopen(ctrl_ltrac->log_swap,"w"))
-  {
-    sprintf(erreur, "OgLtracDicBaseLog: impossible to open '%s' for writing", ctrl_ltrac->log_swap);
-    OgErr(ctrl_ltrac->herr, erreur);
-    DPcErr;
-  }
-
 
   if ((retour = OgAufScanf(ha_swap, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {
@@ -236,15 +217,12 @@ PUBLIC(int) OgLtracDicSwapLog(void *handle)
       }
 
       char slang_country[DPcPathSize];
-      fprintf(fd, "%s | %s %d %d %s\n", buffer, OgIso639_3166ToCode(language_code, slang_country), position,
-          frequency, word);
+      OgMsg(ctrl_ltrac->hmsg, "", DOgMsgDestInLog, "%s | %s %d %d %s", buffer,
+          OgIso639_3166ToCode(language_code, slang_country), position, frequency, word);
 
     }
     while ((retour = OgAufScann(ha_swap, &iout, out, nstate0, &nstate1, states)));
   }
-
-  fclose(fd);
-  IFE(OgAutFlush(ha_swap));
 
   DONE;
 }

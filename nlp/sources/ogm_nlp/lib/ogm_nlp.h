@@ -36,6 +36,13 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+struct ltra_dictionaries
+{
+  void *ha_base;
+  void *ha_swap;
+  void *ha_phon;
+};
+
 struct package
 {
   struct og_ctrl_nlp *ctrl_nlp;
@@ -88,6 +95,8 @@ struct package
   /** Automaton : "<interpretation_id>\1<Iinput_part>" */
   void *ha_interpretation_id;
 
+  /** Automatons for ltrac/ltraf */
+  struct ltra_dictionaries ltra_dictionaries[1];
 };
 
 typedef struct package *package_t;
@@ -496,6 +505,9 @@ struct og_ctrl_nlp_threaded
 
   /** HashTable key: int (word position) , value: int (word position) */
   GHashTable *glue_hash;
+
+  void *hltrac;
+
 };
 
 struct og_ctrl_nlp
@@ -503,6 +515,8 @@ struct og_ctrl_nlp
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
+  char WorkingDirectory[DPcPathSize];
+  char configuration_file[DPcPathSize];
 
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
@@ -719,6 +733,8 @@ og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
 og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
 /* nlpltrac.c */
+og_status NlpLtracInit(og_nlp_th ctrl_nlp_th);
+og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
-
+og_status NlpLtracPackageFlush(package_t package);
 
