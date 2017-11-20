@@ -93,7 +93,7 @@ test_nlp:
     - bundle exec rake test
 
 # Tag docker image to lasted
-push_webapp:
+tag_webapp:
   stage: docker_tag
   only:
     - develop
@@ -105,7 +105,7 @@ push_webapp:
     - docker tag ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_APP}:latest
     - docker push ${DOCKER_IMAGE_APP}:latest
 
-push_doc:
+tag_doc:
   stage: docker_tag
   only:
     - develop
@@ -117,7 +117,7 @@ push_doc:
     - docker tag ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_DOC}:latest
     - docker push ${DOCKER_IMAGE_DOC}:latest
 
-push_nlp:
+tag_nlp:
   stage: docker_tag
   only:
     - develop
@@ -129,7 +129,7 @@ push_nlp:
     - docker tag ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_NLP}:latest
     - docker push ${DOCKER_IMAGE_NLP}:latest
 
-push_ruby_base:
+tag_ruby_base:
   stage: docker_tag
   only:
     - develop
@@ -141,7 +141,7 @@ push_ruby_base:
     - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
     - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
 
-push_loadbalancer:
+tag_loadbalancer:
   stage: docker_tag
   only:
     - develop
@@ -154,7 +154,7 @@ push_loadbalancer:
     - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
 
 # Deploy any branches on rancher dev
-deploy_branch:
+deploy_dev:
   stage: deploy
   except:
     - master
@@ -177,7 +177,7 @@ deploy_branch:
     - rancher --debug --environment dev up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
 
 # Deploy master on rancher preprod
-deploy_master:
+deploy_preprod:
   stage: deploy
   only:
     - master
