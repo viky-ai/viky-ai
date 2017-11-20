@@ -95,6 +95,9 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
     }
 
   }
+
+  // This is necessary to keep this information as we add word to the list through ltras
+  ctrl_nlp_th->basic_request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   DONE;
 }
 

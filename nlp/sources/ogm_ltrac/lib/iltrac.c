@@ -65,7 +65,7 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
   if (OgFileExists(pho_param->conf_directory))
   {
     ctrl_ltrac->hpho = NULL;
-    //IFn(ctrl_ltrac->hpho=OgPhoInit(pho_param)) return(0);
+    IFn(ctrl_ltrac->hpho=OgPhoInit(pho_param)) return(0);
   }
   else
   {

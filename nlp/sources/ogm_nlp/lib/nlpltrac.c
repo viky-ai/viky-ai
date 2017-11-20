@@ -53,6 +53,10 @@ static og_status NlpLtracPackageWrite(og_nlp_th ctrl_nlp_th, package_t package)
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Swap ltra dictionary for package '%s' '%s':", package->slug,
         package->id);
     IFE(OgLtracDicSwapLog(ctrl_nlp_th->hltrac, package->ltra_dictionaries->ha_swap));
+
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Phon ltra dictionary for package '%s' '%s':", package->slug,
+        package->id);
+    IFE(OgLtracDicPhonLog(ctrl_nlp_th->hltrac, package->ltra_dictionaries->ha_phon));
   }
 
   DONE;

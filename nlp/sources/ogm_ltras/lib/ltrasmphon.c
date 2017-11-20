@@ -77,7 +77,6 @@ aut_param->state_number = 0x0;
 sprintf(aut_param->name,"ltra_module_phon_results");
 IFn(ctrl_phon->ha_results=OgAutInit(aut_param)) return(0);
 
-IFn(ctrl_phon->ha_phon=OgLtrasHaPhon(ctrl_phon->hltras)) return(0);
 ctrl_phon->hpho = OgLtrasHpho(ctrl_phon->hltras);
 ctrl_phon->hstm = OgLtrasHstm(ctrl_phon->hltras);
 
@@ -111,6 +110,8 @@ int OgLtrasModulePhon(struct og_ltra_module_input *module_input
   struct og_ltra_trfs *trfs;
   char buffer[DPcPathSize];
   int i, found, TrfUsed;
+
+  IFn(ctrl_phon->ha_phon=OgLtrasHaPhon(ctrl_phon->hltras)) return(0);
 
   ogint64_t micro_clock_start = OgMicroClock();
 

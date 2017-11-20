@@ -471,6 +471,7 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  int basic_request_word_used;
   og_heap haccept_language;
   og_bool show_explanation;
   unsigned int regular_trace;

@@ -66,28 +66,14 @@ static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   IFN(string_request_word) DPcErr;
   int string_request_word_length = strlen(string_request_word);
 
-  // Fake corrections to test the ltras integration
-  og_string string_request_word_corrected = NULL;
-  //if (!strcmp(string_request_word, "pol")) string_request_word_corrected = "pool";
-  //if (!strcmp(string_request_word, "peple")) string_request_word_corrected = "people";
-
-  IFN(string_request_word_corrected)
+  int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
+  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
+  IFN(interpret_packages) DPcErr;
+  for (int i = 0; i < interpret_package_used; i++)
   {
-    int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
-    struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
-    IFN(interpret_packages) DPcErr;
-    for (int i = 0; i < interpret_package_used; i++)
-    {
-      struct interpret_package *interpret_package = interpret_packages + i;
-      og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, string_request_word_length,
-          string_request_word, interpret_package);
-      IFE(status);
-    }
-  }
-  else
-  {
-    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(string_request_word_corrected),
-        string_request_word_corrected);
+    struct interpret_package *interpret_package = interpret_packages + i;
+    og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, string_request_word_length, string_request_word,
+        interpret_package);
     IFE(status);
   }
   DONE;
@@ -144,7 +130,7 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
     IFE(status);
   }
 
-  IFE(OgLtrasTrfsDestroy(ctrl_nlp_th->hltras,trfs));
+  IFE(OgLtrasTrfsDestroy(ctrl_nlp_th->hltras, trfs));
   DONE;
 }
 

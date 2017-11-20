@@ -35,6 +35,8 @@ module Nls
         package_url = "#{Nls.base_url}/packages/#{package_building_features['id']}"
         Nls.query_post(package_url, package_building_features)
 
+        # swimmming, pol, peple and viiaw are corrected
+        # viiaw is corrected by the ltras phon module
         query = {
           "packages":
           [
@@ -45,7 +47,7 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "with a nice swimming pol with spa for 3 peple and sea view"
+          "sentence": "with a nice swimmming pol with spa for 3 peple and sea viiaw"
         }
 
         expected = {
