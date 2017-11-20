@@ -70,7 +70,7 @@ module Nls
                        "package" => "want_hotel_features",
                             "id" => "want_hotel_features",
                           "slug" => "want_hotel_features",
-                         "score" => 0.838888888557752,
+                         "score" => 0.84,
                       "solution" => {
                           "book" => "hotel",
                           "hotel_feature" => [
@@ -112,7 +112,7 @@ module Nls
                        "package" => "want_hotel_features",
                             "id" => "want_hotel_features",
                           "slug" => "want_hotel_features",
-                         "score" => 0.9027777545981936,
+                         "score" => 0.90,
                       "solution" => {
                           "book" => "hotel",
                           "hotel_feature" => [
