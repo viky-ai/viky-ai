@@ -80,7 +80,7 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      all('.dropdown__trigger > .btn')[1].trigger('click')
+      all('.dropdown__trigger > .btn')[1].click
       click_link 'Verbose ON'
 
       assert page.has_content?('1 intent found.')
@@ -122,7 +122,7 @@ class ConsoleTest < ApplicationSystemTestCase
     # Edit intent
     #
     within '.intents-list' do
-      first('.dropdown__trigger > button').trigger('click')
+      first('.dropdown__trigger > button').click
       click_link 'Configure'
     end
 
