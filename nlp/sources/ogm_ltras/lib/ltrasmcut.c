@@ -58,7 +58,7 @@ void *OgLtrasModuleCutInit(struct og_ltra_module_param *param)
     aut_param->hmutex = ctrl_cut->hmutex;
     aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
     aut_param->loginfo.where = ctrl_cut->loginfo->where;
-    aut_param->state_number = 0x1000;
+    aut_param->state_number = 0x0;
     sprintf(aut_param->name, "ltras_module_cut");
     IFn(ctrl_cut->ha_cut = OgAutInit(aut_param))
     return (0);

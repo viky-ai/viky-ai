@@ -100,7 +100,7 @@ static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsig
         // Init for insertion of a punctuation
         if (lev_params->punctuation_cost > 0)
         {
-          if (OgLipIsPunctuation(&ctrl_stm->lip_conf, c))
+          if (StmIsPunctuation(ctrl_stm, c))
           {
             ctrl_stm->score[0][i] = lev_params->punctuation_cost + ctrl_stm->score[0][i - 1];
           }
@@ -137,7 +137,7 @@ static og_status StmInitInsertionAndDeletion(struct og_ctrl_stm *ctrl_stm, unsig
       // Init for deletion of a punctuation
       if (lev_params->punctuation_cost > 0)
       {
-        if (OgLipIsPunctuation(&ctrl_stm->lip_conf, c))
+        if (StmIsPunctuation(ctrl_stm, c))
         {
           ctrl_stm->score[i][0] = lev_params->punctuation_cost + ctrl_stm->score[i - 1][0];
         }
@@ -387,17 +387,37 @@ og_status StmComputeLevenshteinBoard(struct og_ctrl_stm *ctrl_stm, unsigned char
   DONE;
 }
 
+/*
+ * TODO: Is is a copy of NlpParseUnicharIsSkipPunctuation
+ * but we need to use a callback
+ */
 static og_bool StmIsPunctuation(struct og_ctrl_stm *ctrl_stm, int c)
 {
-  og_bool is_punctuation = OgLipIsPunctuation(&ctrl_stm->lip_conf, c);
-  if (is_punctuation) return TRUE;
+  if (g_unichar_isspace(c))
+  {
+    return TRUE;
+  }
 
-  char buffer[2];
-  buffer[0] = (char) (c >> 8);
-  buffer[1] = (char) (c & 0x00ff);
-  int length = 0;
-  og_bool is_punctuation_word = OgLipIsPunctuationWord(&ctrl_stm->lip_conf, 2, buffer, &length);
-  return is_punctuation_word;
+  // unicode define punctuation word
+  og_bool skip_punct = FALSE;
+  GUnicodeType type = g_unichar_type(c);
+  switch (type)
+  {
+    case G_UNICODE_CONTROL:
+    case G_UNICODE_FORMAT:
+    case G_UNICODE_UNASSIGNED:
+    case G_UNICODE_PRIVATE_USE:
+    case G_UNICODE_SURROGATE:
+      skip_punct = TRUE;
+      break;
+    default:
+      break;
+  }
+  if (skip_punct)
+  {
+    return TRUE;
+  }
+  return FALSE;
 }
 
 // Change the substitution cost only if the letters are equivalents and the new substitution cost is lower

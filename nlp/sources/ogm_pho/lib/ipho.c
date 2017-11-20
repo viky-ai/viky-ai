@@ -6,8 +6,6 @@
  */
 #include "ogm_pho.h"
 
-#define DOgRulesNumber            0xf000  /** 60k **/
-
 static og_status PhoParseOgmSsiConf(struct og_ctrl_pho *ctrl_pho);
 static og_status PhoCopyLangContext(struct lang_context *lang_context_to_copy, struct lang_context *new_lang_context);
 
@@ -136,7 +134,7 @@ og_status PhoInitLangContext(struct og_ctrl_pho *ctrl_pho, struct lang_context *
   aut_param->hmutex = ctrl_pho->hmutex;
   aut_param->loginfo.trace = DOgAutTraceMinimal;
   aut_param->loginfo.where = ctrl_pho->loginfo->where;
-  aut_param->state_number = DOgRulesNumber;
+  aut_param->state_number = 0x0;
   sprintf(aut_param->name, "rules");
   IFn(lang_context->ha_rules=OgAutInit(aut_param)) return (0);
 

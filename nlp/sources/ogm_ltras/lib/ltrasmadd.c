@@ -51,7 +51,7 @@ msg_param->module_name="ltra_module_add";
 IFn(ctrl_add->hmsg=OgMsgInit(msg_param)) return(0);
 IF(OgMsgTuneInherit(ctrl_add->hmsg,param->hmsg)) return(0);
 
-IFn(ctrl_add->ha_swap=OgLtrasHaSwap(ctrl_add->hltras)) return(0);
+//IFn(ctrl_add->ha_swap=OgLtrasHaSwap(ctrl_add->hltras)) return(0);
 ctrl_add->hstm = OgLtrasHstm(ctrl_add->hltras);
 
 IF(OgLtrasGetLevenshteinCosts(ctrl_add->hltras, ctrl_add->levenshtein_costs)) return(0);
@@ -87,6 +87,8 @@ int OgLtrasModuleAdd(struct og_ltra_module_input *module_input
 
   IFE(OgLtrasTrfsDuplicate(hltras, input, &trfs));
   *output = trfs;
+
+  IFn(ctrl_add->ha_swap=OgLtrasHaSwap(ctrl_add->hltras)) DONE;
 
   for (i = 0; i < TrfUsed; i++)
   {

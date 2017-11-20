@@ -507,6 +507,7 @@ struct og_ctrl_nlp_threaded
   GHashTable *glue_hash;
 
   void *hltrac;
+  void *hltras;
 
 };
 
@@ -737,4 +738,11 @@ og_status NlpLtracInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpLtracPackageFlush(package_t package);
+
+/* nlpltras.c */
+og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
+og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+
+
+
 

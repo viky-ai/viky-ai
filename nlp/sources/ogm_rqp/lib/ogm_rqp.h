@@ -12,8 +12,8 @@
 
 
 #define DOgNodeNumber       0x400  /* 1k */
-#define DOgBaSize           0x100000 /* 1m */
-#define DOgBxSize           0x10000 /* 64k */
+#define DOgBaSize           0x1000 /* 1m */
+#define DOgBxSize           0x1000 /* 64k */
 
 
 struct node {

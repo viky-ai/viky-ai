@@ -18,11 +18,11 @@
 #define DOgMaxXmlPath               10
 #define DOgMaxXmlStringPath         0x1000 /* 4k */
 
-#define DOgRuleNumber               0x0400 /* 1k */
-#define DOgMatchingNumber           0x0400 /* 1k */
-#define DOgBaSize                   0x0400 /* 1k */
-#define DOgBaClassSize              0x0400 /* 1k */
-#define DOgChar_classNumber         0x0010 /* 16 */
+#define DOgRuleNumber               0x10 /* 16 */
+#define DOgMatchingNumber           0x10 /* 16 */
+#define DOgBaSize                   0x10 /* 16 */
+#define DOgBaClassSize              0x10 /* 16 */
+#define DOgChar_classNumber         0x10 /* 16 */
 
 #define DOgMaxAppendingCharacters   0x0200 /* 512 */
 

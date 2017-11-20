@@ -7,7 +7,6 @@
 
 #include <logstm.h>
 #include <logauta.h>
-#include <loglip.h>
 #include <logheap.h>
 #include <glib.h>
 
@@ -23,8 +22,6 @@
 #define DOgStmDefaultCaseCost  0.001
 #define DOgStmDefaultPunctuationCost  0.0
 
-#define DOgStmSpaceCostLength 256
-
 struct og_ctrl_stm
 {
   void *herr, *hmsg;
@@ -32,8 +29,6 @@ struct og_ctrl_stm
   struct og_loginfo cloginfo;
   struct og_loginfo *loginfo;
 
-  void *hlip;
-  struct og_lip_conf lip_conf;
   char WorkingDirectory[DPcPathSize];
 
   LEV_OPERATION path[DOgStmMaxWordLength + 9][DOgStmMaxWordLength + 9];

@@ -69,7 +69,7 @@ void *OgLtrasModuleExceptInit(struct og_ltra_module_param *param)
     aut_param->hmutex = ctrl_except->hmutex;
     aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
     aut_param->loginfo.where = ctrl_except->loginfo->where;
-    aut_param->state_number = 0x1000;
+    aut_param->state_number = 0x0;
     sprintf(aut_param->name, "ltras_module_except");
     IFn(ctrl_except->ha_except = OgAutInit(aut_param))
     return (0);

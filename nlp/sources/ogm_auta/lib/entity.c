@@ -1,22 +1,22 @@
 /*
- *	Handling entity names and macros.
- *	Copyright (c) 2005-2007 Pertimm by Patrick Constant
- *	Dev : May 2005, November 2007
- *	Version 1.1
+ *  Handling entity names and macros.
+ *  Copyright (c) 2005-2007 Pertimm by Patrick Constant
+ *  Dev : May 2005, November 2007
+ *  Version 1.1
 */
 #include "ogm_auta.h"
 
 
 /*
  * Quoted from http://www.iana.org/assignments/character-sets
- * The MIBenum value is a unique value for use in MIBs to identify 
+ * The MIBenum value is a unique value for use in MIBs to identify
  * coded character sets. RFC 3808 defines MIB as "Management Information Base"
  * TODO: update with :
  * http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
 */
 
 struct og_entity {
-  char *name; int value; 
+  char *name; int value;
   };
 
 
@@ -24,21 +24,21 @@ struct og_entity {
 struct og_ctrl_entity {
   void *herr; ogmutex_t *hmutex;
   struct og_loginfo cloginfo;
-  struct og_loginfo *loginfo; 
+  struct og_loginfo *loginfo;
   void *ha;
   };
 
 
 /*
- *  This table is order in some kind of frequency order 
+ *  This table is order in some kind of frequency order
  *  so that is is as fast as possible for frequent entity.
- *  see also logchset.h for more information. We start with 
+ *  see also logchset.h for more information. We start with
  *  the "preferred MIME" name and then put the aliases.
 */
 
 static struct og_entity OgEntity[] = {
-  {"emsp"   ,32}, 
-  {"ensp"   ,32}, 
+  {"emsp"   ,32},
+  {"ensp"   ,32},
   {"nbsp"   ,160}, /* no-break space = non-breaking space, U+00A0 ISOnum */
   {"iexcl"  ,161}, /* inverted exclamation mark, U+00A1 ISOnum */
   {"cent"   ,162}, /* cent sign, U+00A2 ISOnum */
@@ -210,7 +210,7 @@ static struct og_entity OgEntity[] = {
   {"real"     ,8476}, /* blackletter capital R = real part symbol, U+211C ISOamso */
   {"trade"    ,8482}, /* trade mark sign, U+2122 ISOnum */
   {"alefsym"  ,8501}, /* alef symbol = first transfinite cardinal, U+2135 NEW */
-/* alef symbol is NOT the same as hebrew letter alef, 
+/* alef symbol is NOT the same as hebrew letter alef,
    U+05D0 although the same glyph could be used to depict both characters */
 
 /* Arrows */
@@ -221,12 +221,12 @@ static struct og_entity OgEntity[] = {
   {"harr"     ,8596}, /* left right arrow, U+2194 ISOamsa */
   {"crarr"    ,8629}, /* downwards arrow with corner leftwards = carriage return, U+21B5 NEW */
   {"lArr"     ,8656}, /* leftwards double arrow, U+21D0 ISOtech */
-/* ISO 10646 does not say that lArr is the same as the 'is implied by' 
-   arrow but also does not have any other character for that function. 
+/* ISO 10646 does not say that lArr is the same as the 'is implied by'
+   arrow but also does not have any other character for that function.
    So lArr can be used for 'is implied by' as ISOtech suggests */
   {"uArr"     ,8657}, /* upwards double arrow, U+21D1 ISOamsa */
   {"rArr"     ,8658}, /* rightwards double arrow, U+21D2 ISOtech */
-/* ISO 10646 does not say this is the 'implies' character 
+/* ISO 10646 does not say this is the 'implies' character
    but does not have another character with this function so ?
    rArr can be used for 'implies' as ISOtech suggests */
   {"dArr"     ,8659}, /* downwards double arrow, U+21D3 ISOamsa */
@@ -243,10 +243,10 @@ static struct og_entity OgEntity[] = {
   {"ni"       ,8715}, /* contains as member, U+220B ISOtech */
 /* should there be a more memorable name than 'ni'? */
   {"prod"     ,8719}, /* n-ary product = product sign, U+220F ISOamsb */
-/* prod is NOT the same character as U+03A0 'greek capital letter pi' 
+/* prod is NOT the same character as U+03A0 'greek capital letter pi'
    though the same glyph might be used for both */
   {"sum"      ,8721}, /* n-ary sumation, U+2211 ISOamsb */
-/* sum is NOT the same character as U+03A3 'greek capital letter sigma' 
+/* sum is NOT the same character as U+03A3 'greek capital letter sigma'
    though the same glyph might be used for both */
   {"minus"    ,8722}, /* minus sign, U+2212 ISOtech */
   {"lowast"   ,8727}, /* asterisk operator, U+2217 ISOtech */
@@ -271,9 +271,9 @@ static struct og_entity OgEntity[] = {
   {"ge"       ,8805}, /* greater-than or equal to, U+2265 ISOtech */
   {"sub"      ,8834}, /* subset of, U+2282 ISOtech */
   {"sup"      ,8835}, /* superset of, U+2283 ISOtech */
-/* note that nsup, 'not a superset of, U+2283' is not covered 
-   by the Symbol font encoding and is not included. 
-   Should it be, for symmetry?  It is in ISOamsn  */ 
+/* note that nsup, 'not a superset of, U+2283' is not covered
+   by the Symbol font encoding and is not included.
+   Should it be, for symmetry?  It is in ISOamsn  */
   {"nsub"     ,8836}, /* not a subset of, U+2284 ISOamsn */
   {"sube"     ,8838}, /* subset of or equal to, U+2286 ISOtech */
   {"supe"     ,8839}, /* superset of or equal to, U+2287 ISOtech */
@@ -289,10 +289,10 @@ static struct og_entity OgEntity[] = {
   {"lfloor"   ,8970}, /* left floor = apl downstile, U+230A ISOamsc  */
   {"rfloor"   ,8971}, /* right floor, U+230B ISOamsc  */
   {"lang"     ,9001}, /* left-pointing angle bracket = bra, U+2329 ISOtech */
-/* lang is NOT the same character as U+003C 'less than' 
+/* lang is NOT the same character as U+003C 'less than'
    or U+2039 'single left-pointing angle quotation mark' */
   {"rang"     ,9002}, /* right-pointing angle bracket = ket, U+232A ISOtech */
-/* rang is NOT the same character as U+003E 'greater than' 
+/* rang is NOT the same character as U+003E 'greater than'
    or U+203A 'single right-pointing angle quotation mark' */
 
 /* Geometric Shapes */
@@ -377,11 +377,11 @@ ctrl_entity->cloginfo = param->loginfo;
 ctrl_entity->loginfo = &ctrl_entity->cloginfo;
 
 memset(aut_param,0,sizeof(struct og_aut_param));
-aut_param->herr=ctrl_entity->herr; 
+aut_param->herr=ctrl_entity->herr;
 aut_param->hmutex=ctrl_entity->hmutex;
-aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory; 
+aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
 aut_param->loginfo.where = ctrl_entity->loginfo->where;
-aut_param->state_number = 0x4000;
+aut_param->state_number = 0x100;
 sprintf(aut_param->name,"entity");
 IFn(ctrl_entity->ha=OgAutInit(aut_param)) return(0);
 
@@ -428,7 +428,7 @@ if (entity[0]=='#') {
     }
   else {
     *pcode=atoi(entity+1);
-    }  
+    }
   return(1);
   }
 
@@ -436,8 +436,8 @@ sprintf(buffer,"c:%s:",entity);
 PcStrlwr(buffer);
 
 if ((retour=OgAutScanf(ctrl_entity->ha,-1,buffer,&iout,out,&nstate0,&nstate1,states))) {
-  do { 
-    IFE(retour); 
+  do {
+    IFE(retour);
     *pcode=atoi(out);
     return(1);
     }
@@ -450,7 +450,7 @@ return(0);
 
 
 PUBLIC(int) OgEntityGetString(handle,code,entity)
-void *handle; int code; char *entity; 
+void *handle; int code; char *entity;
 {
 struct og_ctrl_entity *ctrl_entity = (struct og_ctrl_entity *)handle;
 unsigned char out[DPcAutMaxBufferSize+9];
@@ -462,8 +462,8 @@ entity[0]=0;
 sprintf(buffer,"n:%d:",code);
 
 if ((retour=OgAutScanf(ctrl_entity->ha,-1,buffer,&iout,out,&nstate0,&nstate1,states))) {
-  do { 
-    IFE(retour); 
+  do {
+    IFE(retour);
     strcpy(entity,out);
     return(1);
     }

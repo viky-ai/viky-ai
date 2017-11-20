@@ -38,37 +38,8 @@ PUBLIC(void *) OgStmInit(struct og_stm_param *param)
   IF(OgMsgTuneInherit(ctrl_stm->hmsg,param->hmsg)) return(0);
 
   strcpy(ctrl_stm->WorkingDirectory, param->WorkingDirectory);
-  struct og_lip_param lip_param[1];
-  memset(lip_param,0,sizeof(struct og_lip_param));
-  lip_param->herr=ctrl_stm->herr;
-  lip_param->hmsg=ctrl_stm->hmsg;
-  lip_param->hmutex=ctrl_stm->hmutex;
-  lip_param->loginfo.trace = DOgLipTraceMinimal+DOgLipTraceMemory;
-  lip_param->loginfo.where = ctrl_stm->loginfo->where;
-  lip_param->conf = &ctrl_stm->lip_conf;
-
-  if(ctrl_stm->WorkingDirectory[0])
-  {
-    sprintf(lip_param->language_dictionary,"%s/ling/languages.auf",ctrl_stm->WorkingDirectory);
-  }
-  else
-  {
-    strcpy(lip_param->language_dictionary,"ling/languages.auf");
-  }
-
-  if (ctrl_stm->WorkingDirectory[0])
-  {
-    sprintf(lip_param->filename, "%s/conf/%s", ctrl_stm->WorkingDirectory, DOgLipConfPunctuationFileName);
-  }
-  else
-  {
-    sprintf(lip_param->filename, "conf/%s", DOgLipConfPunctuationFileName);
-  }
-
-  IFn(ctrl_stm->hlip=OgLipInit(lip_param)) return(0);
 
   og_char_buffer lt_heap_name[DOgAutNameSize];
-
   snprintf(lt_heap_name, DOgAutNameSize, "stm_hequivalent_letters_costs");
   IFn(ctrl_stm->hequivalent_letters_costs = OgHeapSliceInit(ctrl_stm->hmsg, lt_heap_name, sizeof(double), 2, 8)) return NULL;
 

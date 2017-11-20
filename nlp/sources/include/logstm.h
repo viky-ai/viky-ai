@@ -22,7 +22,7 @@
 
 #define DOgStmMaxWordLength         80
 
-#define DOgStmSpaceCostLength     256
+#define DOgStmSpaceCostLength     8
 
 struct og_stm_param
 {

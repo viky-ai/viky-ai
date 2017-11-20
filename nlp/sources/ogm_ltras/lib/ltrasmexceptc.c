@@ -255,6 +255,7 @@ static int LtrasModuleExceptAdd1(struct og_ltras_except_xml_info *info, int Ifor
   }
   input->iB = iform;
   input->B = form;
+  input->lang = DOgLangNil;
 
 //  int language_code = DOgLangNil;
 //  if (module_input->language_code != 0)

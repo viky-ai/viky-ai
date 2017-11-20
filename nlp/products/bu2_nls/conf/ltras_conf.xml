@@ -61,7 +61,7 @@
 
   <minimum_scores>
     <minimum_score length="2" score="1.00"/>
-    <minimum_score length="3" score="0.99"/>
+    <minimum_score length="3" score="0.97"/>
     <minimum_score length="4" score="0.85"/>
     <minimum_score length="5" score="0.80"/>
     <minimum_score length="6" score="0.75"/>
@@ -72,7 +72,7 @@
 
   <minimum_final_scores>
     <minimum_final_score length="2" score="1.00"/>
-    <minimum_final_score length="3" score="0.99"/>
+    <minimum_final_score length="3" score="0.97"/>
     <minimum_final_score length="4" score="0.85"/>
     <minimum_final_score length="5" score="0.8"/>
     <minimum_final_score length="6" score="0.75"/>

@@ -233,6 +233,7 @@ DEFPUBLIC(og_status) OgLtrasFlowChart(void *hltras, struct og_ltras_input *input
  * @return handle of base automaton.
  */
 DEFPUBLIC(void *) OgLtrasHaBase(void *hltras);
+DEFPUBLIC(int) OgLtrasHaBaseSet(void *hltras, void *ha_base);
 
 
 /**
@@ -242,6 +243,7 @@ DEFPUBLIC(void *) OgLtrasHaBase(void *hltras);
  * @return handle of swap automaton.
  */
 DEFPUBLIC(void *) OgLtrasHaSwap(void *hltras);
+DEFPUBLIC(int) OgLtrasHaSwapSet(void *hltras, void *ha_swap);
 
 /**
  * Initialize handle of phon automaton
@@ -250,6 +252,7 @@ DEFPUBLIC(void *) OgLtrasHaSwap(void *hltras);
  * @return handle of phon automaton.
  */
 DEFPUBLIC(void *) OgLtrasHaPhon(void *hltras);
+DEFPUBLIC(int) OgLtrasHaPhonSet(void *hltras, void *ha_phon);
 
 /**
  * Get ltras automaton of false transformations rules contained in ltras_false.xml

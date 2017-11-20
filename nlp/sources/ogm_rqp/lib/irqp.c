@@ -65,7 +65,7 @@ aut_param->herr=ctrl_rqp->herr;
 aut_param->hmutex=ctrl_rqp->hmutex;
 aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
 aut_param->loginfo.where = ctrl_rqp->loginfo->where;
-aut_param->state_number = 0x1000;
+aut_param->state_number = 0x100;
 sprintf(aut_param->name,"subtree id");
 IFn(ctrl_rqp->ha_subtree_id=OgAutInit(aut_param)) return(0);
 

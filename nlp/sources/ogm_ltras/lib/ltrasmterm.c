@@ -144,6 +144,8 @@ int OgLtrasModuleTerm(struct og_ltra_module_input *module_input
 
   ogint64_t micro_clock_start = OgMicroClock();
 
+  ctrl_term->ha_base=OgLtrasHaBase(ctrl_term->hltras);
+
   ctrl_term->score_factor = OgLtrasScoreFactor(ctrl_term->hltras);
 
   /** Max number of solutions validated by the term module **/

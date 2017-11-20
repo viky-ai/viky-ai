@@ -3,15 +3,12 @@
  *  Copyright (c) 2009-2010 Pertimm, by Patrick Constant
  *  Dev : November 2009, February 2010
  *  Version 1.1
-*/
+ */
 #include "ogm_ltras.h"
-
 
 static int LtrasAddModules(struct og_ctrl_ltras *ctrl_ltras);
 static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras);
 static og_bool OgLtrasCheckDictionaryDir(struct og_ctrl_ltras *ctrl_ltras, og_string ltras_auf_pattern);
-
-
 
 PUBLIC(void *) OgLtrasInit(param)
 struct og_ltras_param *param;
@@ -149,7 +146,7 @@ struct og_ltras_param *param;
   else
   {
 
-    aut_param->state_number = 0x800;
+    aut_param->state_number = 0x0;
     sprintf(aut_param->name,"false");
     IFn(ctrl_ltras->ha_false=OgAutInit(aut_param)) return(0);
 
@@ -164,6 +161,7 @@ struct og_ltras_param *param;
     IF(LtrasFalseReadConf(ctrl_ltras,ltras_false)) return(0);
   }
 
+#if 1
   struct og_pho_param pho_param[1];
   memset(pho_param,0,sizeof(struct og_pho_param));
   pho_param->herr=ctrl_ltras->herr;
@@ -195,12 +193,12 @@ struct og_ltras_param *param;
     OgMsg(ctrl_ltras->hmsg,"",DOgMsgDestInLog
         , "OgLtrasInit: impossible to open '%s'",pho_param->conf_filename);
   }
-
+#endif
 
   // BRU disable LDI to avoid deps in viky.ai
   ctrl_ltras->hldi = NULL;
 
-  aut_param->state_number = 0x800;
+  aut_param->state_number = 0x0;
   sprintf(aut_param->name,"suggest");
   IFn(ctrl_ltras->ha_suggest=OgAutInit(aut_param)) return(0);
 
@@ -235,214 +233,81 @@ struct og_ltras_param *param;
   return((void *)ctrl_ltras);
 }
 
-
 int LtrasReset(struct og_ctrl_ltras *ctrl_ltras)
 {
-ctrl_ltras->NodeUsed=0;
-/** Keeping the Ba part for modules **/
-ctrl_ltras->BaUsed=ctrl_ltras->BaModuleUsed;
-DONE;
+  ctrl_ltras->NodeUsed = 0;
+  /** Keeping the Ba part for modules **/
+  ctrl_ltras->BaUsed = ctrl_ltras->BaModuleUsed;
+  DONE;
 }
-
-
 
 PUBLIC(void *) OgLtrasHaBase(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-struct og_aut_param caut_param,*aut_param=&caut_param;
-char ha_name[DPcPathSize];
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->ha_base);
+}
 
-if (ctrl_ltras->ha_base_accessed) return(ctrl_ltras->ha_base);
-ctrl_ltras->ha_base_accessed=1;
-
-if (ctrl_ltras->hltras_to_inherit) {
-  ctrl_ltras->ha_base=OgLtrasHaBase(ctrl_ltras->hltras_to_inherit);
-  }
-else {
-  memset(aut_param,0,sizeof(struct og_aut_param));
-    aut_param->herr=ctrl_ltras->herr;
-    aut_param->hmutex=ctrl_ltras->hmutex;
-    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-    aut_param->state_number = 0;
-    sprintf(aut_param->name,"ltra_base");
-    IFn(ctrl_ltras->ha_base=OgAutInit(aut_param)) return(0);
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_base.auf",ctrl_ltras->dictionaries_directory);
-    else strcpy(ha_name,"ling/ltra_base.auf");
-
-    if (!OgFileExists(ha_name))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaBase : impossible to open '%s'", ha_name);
-      OgAutFlush(ctrl_ltras->ha_base);
-      ctrl_ltras->ha_base = NULL;
-      return NULL;
-    }
-
-    char version_file[DPcPathSize];
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
-    else strcpy(version_file,"ling/ltraf_version.txt");
-
-    if (!OgFileExists(version_file))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaBase : old version of dictionaries still with attribute_numbers, dictionary won't be loaded");
-    }
-    else
-    {
-      IF(OgAufRead(ctrl_ltras->ha_base, ha_name)) return NULL;
-    }
-  }
-/** Needs to be calculated as soon as the ha_base automaton is loaded **/
-IF(LtrasGetMaxWordFrequency(ctrl_ltras)) return(0);
-
-return(ctrl_ltras->ha_base);
+PUBLIC(int) OgLtrasHaBaseSet(void *hltras, void *ha_base)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)hltras;
+  ctrl_ltras->ha_base = ha_base;
+  DONE;
 }
 
 PUBLIC(void *) OgLtrasHaSwap(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-struct og_aut_param caut_param,*aut_param=&caut_param;
-char ha_name[DPcPathSize];
-
-if (ctrl_ltras->ha_swap_accessed) return(ctrl_ltras->ha_swap);
-ctrl_ltras->ha_swap_accessed=1;
-
-if (ctrl_ltras->hltras_to_inherit) {
-  ctrl_ltras->ha_swap=OgLtrasHaSwap(ctrl_ltras->hltras_to_inherit);
-  }
-else {
-    memset(aut_param,0,sizeof(struct og_aut_param));
-    aut_param->herr=ctrl_ltras->herr;
-    aut_param->hmutex=ctrl_ltras->hmutex;
-    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-    aut_param->state_number = 0;
-    sprintf(aut_param->name,"ltra_swap");
-    IFn(ctrl_ltras->ha_swap=OgAutInit(aut_param)) return(0);
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_swap.auf",ctrl_ltras->dictionaries_directory);
-    else strcpy(ha_name,"ling/ltra_swap.auf");
-
-    if (!OgFileExists(ha_name))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaSwap : impossible to open '%s'", ha_name);
-      OgAutFlush(ctrl_ltras->ha_swap);
-      ctrl_ltras->ha_swap = NULL;
-      return NULL;
-    }
-
-    char version_file[DPcPathSize];
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
-    else strcpy(version_file,"ling/ltraf_version.txt");
-
-
-    if (!OgFileExists(version_file))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaSwap : old version of dictionaries still with attribute_numbers, dictionary won't be laoded");
-    }
-    else
-    {
-      IF(OgAufRead(ctrl_ltras->ha_swap, ha_name)) return NULL;
-    }
-  }
-
-return(ctrl_ltras->ha_swap);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->ha_swap);
 }
 
-
-
+PUBLIC(int) OgLtrasHaSwapSet(void *hltras, void *ha_swap)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)hltras;
+  ctrl_ltras->ha_swap = ha_swap;
+  DONE;
+}
 
 PUBLIC(void *) OgLtrasHaPhon(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-struct og_aut_param caut_param,*aut_param=&caut_param;
-char ha_name[DPcPathSize];
-
-if (ctrl_ltras->ha_phon_accessed) return(ctrl_ltras->ha_phon);
-ctrl_ltras->ha_phon_accessed=1;
-
-if (ctrl_ltras->hltras_to_inherit) {
-  ctrl_ltras->ha_phon=OgLtrasHaPhon(ctrl_ltras->hltras_to_inherit);
-  }
-else {
-    memset(aut_param,0,sizeof(struct og_aut_param));
-    aut_param->herr=ctrl_ltras->herr;
-    aut_param->hmutex=ctrl_ltras->hmutex;
-    aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
-    aut_param->loginfo.where = ctrl_ltras->loginfo->where;
-    aut_param->state_number = 0;
-    sprintf(aut_param->name,"ltra_phon");
-    IFn(ctrl_ltras->ha_phon=OgAutInit(aut_param)) return(0);
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(ha_name,"%s/ltra_phon.auf",ctrl_ltras->dictionaries_directory);
-    else strcpy(ha_name,"ling/ltra_phon.auf");
-
-    if (!OgFileExists(ha_name))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaPhon : impossible to open '%s'", ha_name);
-      OgAutFlush(ctrl_ltras->ha_phon);
-      ctrl_ltras->ha_phon = NULL;
-      return NULL;
-    }
-
-    char version_file[DPcPathSize];
-    if (ctrl_ltras->dictionaries_directory[0]) sprintf(version_file,"%s/ltraf_version.txt",ctrl_ltras->dictionaries_directory);
-    else strcpy(version_file,"ling/ltraf_version.txt");
-
-
-    if (!OgFileExists(version_file))
-    {
-      OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasHaPhon : old version of dictionaries still with attribute_numbers, dictionary won't be laoded");
-    }
-    else
-    {
-      IF(OgAufRead(ctrl_ltras->ha_phon, ha_name)) return NULL;
-    }
-  }
-
-return(ctrl_ltras->ha_phon);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->ha_phon);
 }
 
-
-
+PUBLIC(int) OgLtrasHaPhonSet(void *hltras, void *ha_phon)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)hltras;
+  ctrl_ltras->ha_phon = ha_phon;
+  DONE;
+}
 
 PUBLIC(void *) OgLtrasHaFalse(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->ha_false);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->ha_false);
 }
-
-
-
 
 PUBLIC(void *) OgLtrasHpho(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->hpho);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->hpho);
 }
-
-
-
 
 PUBLIC(void *) OgLtrasHldi(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->hldi);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->hldi);
 }
-
-
-
 
 PUBLIC(void *) OgLtrasHstm(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->hstm);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->hstm);
 }
-
-
-
 
 PUBLIC(double) OgLtrasScoreFactor(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->input->score_factor);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  return (ctrl_ltras->input->score_factor);
 }
 
 PUBLIC(double) OgLtrasFrequencyRatio(void *handle)
@@ -457,29 +322,23 @@ PUBLIC(int) OgLtrasMaxNbSolutions(void *handle)
   return (ctrl_ltras->input->max_nb_solutions);
 }
 
-
 PUBLIC(og_bool) OgLtrasScoreFactorIsLogPosActivated(void *handle)
 {
-  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-  return(ctrl_ltras->input->log_pos);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  return (ctrl_ltras->input->log_pos);
 }
-
 
 PUBLIC(int) OgLtrasMaxWordFrequency(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->max_word_frequency);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  return (ctrl_ltras->max_word_frequency);
 }
-
 
 PUBLIC(char *) OgLtrasWorkingDirectory(void *handle)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-return(ctrl_ltras->WorkingDirectory);
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
+  return(ctrl_ltras->WorkingDirectory);
 }
-
-
-
 
 PUBLIC(og_status) OgLtrasGetFrequencyFromNormalizedFrequency(void *handle, double normalized_frequency,
     double *pfrequency)
@@ -493,16 +352,14 @@ PUBLIC(og_status) OgLtrasGetFrequencyFromNormalizedFrequency(void *handle, doubl
   DONE;
 }
 
-
-
-PUBLIC(og_status) OgLtrasGetMaximumTransformation(void *handle,int *pmaximum_transformation_length,int **pmaximum_transformation)
+PUBLIC(og_status) OgLtrasGetMaximumTransformation(void *handle, int *pmaximum_transformation_length,
+    int **pmaximum_transformation)
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-*pmaximum_transformation_length = DOgLtrasMaximumTransformationLength;
-*pmaximum_transformation = ctrl_ltras->maximum_transformation;
-DONE;
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  *pmaximum_transformation_length = DOgLtrasMaximumTransformationLength;
+  *pmaximum_transformation = ctrl_ltras->maximum_transformation;
+  DONE;
 }
-
 
 static int LtrasAddModules(struct og_ctrl_ltras *ctrl_ltras)
 {
@@ -563,7 +420,6 @@ static int LtrasAddModules(struct og_ctrl_ltras *ctrl_ltras)
   DONE;
 }
 
-
 static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras)
 {
   unsigned char *p, out[DPcAutMaxBufferSize + 9];
@@ -611,55 +467,51 @@ static int LtrasGetMaxWordFrequency(struct og_ctrl_ltras *ctrl_ltras)
   DONE;
 }
 
-
-
-
-
-
 PUBLIC(og_status) OgLtrasFlush(handle)
-void *handle;
+  void *handle;
 {
-struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;
-struct module *module;
-int i;
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) handle;
+  struct module *module;
+  int i;
 
-IFn(handle) DONE;
+  IFn(handle) DONE;
 
-for (i=0; i<ctrl_ltras->ModuleUsed; i++) {
-  module = ctrl_ltras->Module + i;
-  IFn(module->init) continue;
-  IFn(module->flush) continue;
-  IFE(module->flush(module->handle));
+  for (i = 0; i < ctrl_ltras->ModuleUsed; i++)
+  {
+    module = ctrl_ltras->Module + i;
+    IFn(module->init) continue;
+    IFn(module->flush) continue;
+    IFE(module->flush(module->handle));
   }
 
-if (!ctrl_ltras->hltras_to_inherit) {
-  IFE(OgAutFlush(ctrl_ltras->ha_base));
-  IFE(OgAutFlush(ctrl_ltras->ha_swap));
-  IFE(OgAutFlush(ctrl_ltras->ha_phon));
-  IFE(OgAutFlush(ctrl_ltras->ha_false));
+  if (!ctrl_ltras->hltras_to_inherit)
+  {
+    //IFE(OgAutFlush(ctrl_ltras->ha_base));
+    //IFE(OgAutFlush(ctrl_ltras->ha_swap));
+    //IFE(OgAutFlush(ctrl_ltras->ha_phon));
+    IFE(OgAutFlush(ctrl_ltras->ha_false));
   }
 
-IFE(OgAutFlush(ctrl_ltras->ha_oper));
-IFE(OgAutFlush(ctrl_ltras->ha_param));
-IFE(OgAutFlush(ctrl_ltras->ha_suggest));
-IFE(OgLipFlush(ctrl_ltras->hlip));
-IFE(OgPhoFlush(ctrl_ltras->hpho));
+  IFE(OgAutFlush(ctrl_ltras->ha_oper));
+  IFE(OgAutFlush(ctrl_ltras->ha_param));
+  IFE(OgAutFlush(ctrl_ltras->ha_suggest));
+  IFE(OgLipFlush(ctrl_ltras->hlip));
+  IFE(OgPhoFlush(ctrl_ltras->hpho));
 // IFE(OgLdiFlush(ctrl_ltras->hldi));
-IFE(OgStmFlush(ctrl_ltras->hstm));
-IFE(OgRqpFlush(ctrl_ltras->hrqp));
+  IFE(OgStmFlush(ctrl_ltras->hstm));
+  IFE(OgRqpFlush(ctrl_ltras->hrqp));
 
-IFE(OgMsgFlush(ctrl_ltras->hmsg));
+  IFE(OgMsgFlush(ctrl_ltras->hmsg));
 
-IFE(OgHeapFlush(ctrl_ltras->hba1));
-IFE(OgHeapFlush(ctrl_ltras->hba2));
-DPcFree(ctrl_ltras->Module);
-DPcFree(ctrl_ltras->Node);
-DPcFree(ctrl_ltras->Ba);
+  IFE(OgHeapFlush(ctrl_ltras->hba1));
+  IFE(OgHeapFlush(ctrl_ltras->hba2));
+  DPcFree(ctrl_ltras->Module);
+  DPcFree(ctrl_ltras->Node);
+  DPcFree(ctrl_ltras->Ba);
 
-DPcFree(ctrl_ltras);
-DONE;
+  DPcFree(ctrl_ltras);
+  DONE;
 }
-
 
 static og_bool OgLtrasCheckDictionaryDir(struct og_ctrl_ltras *ctrl_ltras, og_string ltras_auf_pattern)
 {

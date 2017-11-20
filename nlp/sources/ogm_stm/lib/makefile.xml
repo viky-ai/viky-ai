@@ -20,7 +20,7 @@
     <platform name="linux">
       <option name="NAME">ogstm</option>
       <option name="ADD_CFLAGS">-I$(OG_REPO_PATH)/sources/include/glib-2.0</option>
-      <option name="ADD_LIBR">-lglib-2.0 -logheap -loggen -logmsg -loguni -loglip</option>
+      <option name="ADD_LIBR">-lglib-2.0 -logheap -loggen -logmsg -loguni</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

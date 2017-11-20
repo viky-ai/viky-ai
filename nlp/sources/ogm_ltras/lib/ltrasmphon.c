@@ -73,7 +73,7 @@ aut_param->herr=ctrl_phon->herr;
 aut_param->hmutex=ctrl_phon->hmutex;
 aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
 aut_param->loginfo.where = ctrl_phon->loginfo->where;
-aut_param->state_number = 0x4000;
+aut_param->state_number = 0x0;
 sprintf(aut_param->name,"ltra_module_phon_results");
 IFn(ctrl_phon->ha_results=OgAutInit(aut_param)) return(0);
 
