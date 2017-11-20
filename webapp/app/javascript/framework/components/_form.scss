@@ -115,6 +115,7 @@
   input[type='email'],
   input[type='password'],
   textarea{
+    min-width: 1em;
     width: 100%;
     line-height: 1.5;
     font-weight: 300;

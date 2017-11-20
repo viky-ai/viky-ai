@@ -62,6 +62,7 @@ class Modal
 
   close: ->
     $('.app-wrapper').removeClass('modal-background-effect')
+    $('nav').removeClass('modal-background-effect')
     $('.modal').hide()
     $(document).off 'keyup'
     $('body').trigger('modal:close')
@@ -74,6 +75,7 @@ class Modal
   prepare: ->
     $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
     $('.app-wrapper').addClass('modal-background-effect')
+    $('nav').addClass('modal-background-effect')
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 
 module.exports = Modal

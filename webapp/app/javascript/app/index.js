@@ -1,5 +1,6 @@
 // App specific
 window.Sortable = require('sortablejs');
+import './nav/nav';
 import './profile/main';
 import './authentication/main';
 import './intents/intent_form';

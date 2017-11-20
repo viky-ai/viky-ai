@@ -9,8 +9,11 @@
     @include flex(1);
     overflow: auto;
     height: 100%;
-    padding: 1.5em 2em 2em 2em;
+    padding: .75em;
     position: relative;
+    @media (min-width: 500px){
+      padding: 1.5em 2em 2em 2em;
+    }
   }
   & > aside{
     width: 200px;

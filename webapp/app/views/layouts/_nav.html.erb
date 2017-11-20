@@ -14,30 +14,71 @@
         </a>
       </li>
       <% if current_user.admin %>
-        <li>
+        <li class="secondary">
           <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
             <%= t('views.nav.backend.users') %>
           </a>
         </li>
-        <li>
+        <li class="more" style="display:none;">
+          <div class="dropdown">
+            <a href="#" class="dropdown__trigger">
+              <span class="icon">
+                <%= icon_dots %>
+              </span>
+            </a>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <li>
+                  <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
+                    <%= t('views.nav.backend.users') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="/style-guide/icon" data-turbolinks="false">
+                    <%= t('views.nav.backend.style_guide') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="/backend/jobs/" data-turbolinks="false" target="_blank">
+                    <%= t('views.nav.backend.sidekiq_ui') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/rails/mailers/" data-turbolinks="false" target="_blank">
+                    <%= t('views.nav.backend.mailer_test') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+                  </a>
+                </li>
+                <li>
+                  <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
+                    <%= t('views.nav.doc') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li class="secondary">
           <a href="/style-guide/icon" data-turbolinks="false">
             <%= t('views.nav.backend.style_guide') %>
           </a>
         </li>
-        <li>
+        <li class="secondary">
           <a href="/backend/jobs/" data-turbolinks="false" target="_blank">
             <%= t('views.nav.backend.sidekiq_ui') %>
             <span class="icon icon--x-small"><%= icon_open_in_new %></span>
           </a>
         </li>
-        <li>
+        <li class="secondary">
           <a href="/rails/mailers/" data-turbolinks="false" target="_blank">
             <%= t('views.nav.backend.mailer_test') %>
             <span class="icon icon--x-small"><%= icon_open_in_new %></span>
           </a>
         </li>
       <% end %>
-      <li>
+      <li class="secondary">
         <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
           <%= t('views.nav.doc') %>
           <span class="icon icon--x-small"><%= icon_open_in_new %></span>

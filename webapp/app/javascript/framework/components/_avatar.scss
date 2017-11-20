@@ -16,8 +16,8 @@
 .user{
   @include display_flex();
   align-items: center;
-  .avatar{
-    margin-right: .5em;
+  span{
+    margin-left: .5em;
   }
 }
 
