@@ -78,7 +78,7 @@ class IntentsTest < ApplicationSystemTestCase
     visit user_agent_path('admin', 'weather')
     assert_equal ['test', 'weather_greeting'], all('.intents-list__item__name').collect(&:text)
 
-    assert_equal 2, all('.intents-list__draggable').size
+    assert_equal 2, all('.intents-list__item__draggable').size
 
     # Does not work...
     # first('.intents-list__draggable').native.drag_by(0, 100)
