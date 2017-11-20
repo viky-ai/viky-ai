@@ -2,7 +2,7 @@ stages:
   - prerequist
   - build
   - test
-  - docker_push
+  - docker_tag
   - deploy
   - admin
 
@@ -92,9 +92,11 @@ test_nlp:
     - cd /tests
     - bundle exec rake test
 
-# Push tested docker image
+# Tag docker image to lasted
 push_webapp:
-  stage: docker_push
+  stage: docker_tag
+  only:
+    - develop
   image: docker:dind
   variables:
     GIT_STRATEGY: none
@@ -104,7 +106,9 @@ push_webapp:
     - docker push ${DOCKER_IMAGE_APP}:latest
 
 push_doc:
-  stage: docker_push
+  stage: docker_tag
+  only:
+    - develop
   image: docker:dind
   variables:
     GIT_STRATEGY: none
@@ -114,7 +118,9 @@ push_doc:
     - docker push ${DOCKER_IMAGE_DOC}:latest
 
 push_nlp:
-  stage: docker_push
+  stage: docker_tag
+  only:
+    - develop
   image: docker:dind
   variables:
     GIT_STRATEGY: none
@@ -124,7 +130,9 @@ push_nlp:
     - docker push ${DOCKER_IMAGE_NLP}:latest
 
 push_ruby_base:
-  stage: docker_push
+  stage: docker_tag
+  only:
+    - develop
   image: docker:dind
   variables:
     GIT_STRATEGY: none
@@ -134,7 +142,9 @@ push_ruby_base:
     - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
 
 push_loadbalancer:
-  stage: docker_push
+  stage: docker_tag
+  only:
+    - develop
   image: docker:dind
   variables:
     GIT_STRATEGY: none
@@ -146,6 +156,9 @@ push_loadbalancer:
 # Deploy any branches on rancher dev
 deploy_branch:
   stage: deploy
+  except:
+    - master
+    - tags
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   dependencies:
     - build_webapp
@@ -163,9 +176,37 @@ deploy_branch:
     - cd deployment
     - rancher --debug --environment dev up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
 
+# Deploy master on rancher preprod
+deploy_master:
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  dependencies:
+    - build_webapp
+    - build_nlp
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    on_stop: delete_env
+  variables:
+    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
+    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+  script:
+    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - cd deployment
+    - rancher --debug --environment preprod up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade
+
+
 # remove environment
 delete_env:
   stage: admin
+  except:
+    - master
+    - tags
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
