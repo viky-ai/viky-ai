@@ -1,6 +1,23 @@
 require "test_helper"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+
+  Capybara.register_driver(:headless_chrome) do |app|
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      chromeOptions: {
+        args: %w{headless window-size=1200,600}
+      }
+    )
+    driver_options = {
+      browser: :chrome,
+      desired_capabilities: capabilities
+    }
+    if `cat /etc/os-release` =~ /ubuntu/i
+      driver_options[:driver_path] = '/usr/lib/chromium-browser/chromedriver'
+    end
+    Capybara::Selenium::Driver.new(app, driver_options)
+  end
+
   driven_by :headless_chrome
   #driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
 

@@ -3,7 +3,7 @@ $("#interpretation-<%= @interpretation.id %>").addClass('deleted');
 setTimeout(function(){
   $("#interpretation-<%= @interpretation.id %>").remove();
   App.InterpretationsList.updateBlankslates();
-  App.InterpretationsList.decrementTabBadge();
   App.InterpretationsList.updateDraggable();
 }, 200);
 
+App.InterpretationsList.decrementTabBadge();
