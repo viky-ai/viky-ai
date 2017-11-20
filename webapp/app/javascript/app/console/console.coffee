@@ -27,6 +27,7 @@ class Console
       $("main").show()
       $("nav.h-nav").show()
       $(".toggle-console").show()
+      $("body").trigger("console:leave-fullscreen")
 
   get_link_target: (event) ->
     if $(event.target).is('a')

@@ -1,10 +1,15 @@
 .tabs{
   margin: .5em 0;
+  max-width: 100%;
+  overflow-x: auto;
+
   ul{
     list-style: none;
     padding: 0;
     border-bottom: 1px solid #ddd;
     @include display_flex();
+
+
     li{
       a{
         display: block;
@@ -13,6 +18,7 @@
         border-bottom: 2px solid transparent;
         text-decoration: none;
         color: #444;
+        white-space: nowrap;
         &:hover,
         &:focus{
           color: #000;

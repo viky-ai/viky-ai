@@ -6,6 +6,8 @@ class Nav
       @update()
       $(window).bind 'load resize orientationchange', =>
         @update()
+      $("body").on "console:leave-fullscreen", =>
+        @update()
 
   update: ->
     $('nav .secondary').show()
