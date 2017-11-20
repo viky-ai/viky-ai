@@ -2,7 +2,7 @@ $ = require('jquery');
 
 class Console
   constructor: ->
-    $(".console-container").on 'click', (event) => @dispatch(event)
+    $("body").on 'click', (event) => @dispatch(event)
 
   dispatch: (event) ->
     link = @get_link_target(event)
@@ -16,6 +16,7 @@ class Console
       $(".app-wrapper").addClass("app-wrapper--without-h-nav")
       $("main").hide()
       $("nav.h-nav").hide()
+      $(".toggle-console").hide()
 
     if action == 'console-leave-fullscreen'
       event.preventDefault()
@@ -25,6 +26,7 @@ class Console
       $(".app-wrapper").removeClass("app-wrapper--without-h-nav")
       $("main").show()
       $("nav.h-nav").show()
+      $(".toggle-console").show()
 
   get_link_target: (event) ->
     if $(event.target).is('a')

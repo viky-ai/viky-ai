@@ -1,4 +1,27 @@
+.toggle-console{
+  display: block;
+  position: fixed;
 
+  font-size: .8em;
+  background-color: $success-color;
+  color: rgba(#fff, .9);
+  text-decoration: none;
+  transform: rotate(-90deg);
+  right: -1.25em;
+  top: 7em;
+  padding: .1em .5em;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  &:hover,
+  &:focus{
+    background-color: darken($success-color, 5%);
+    color: #fff;
+  }
+
+  @media (min-width: 1100px){
+    display: none !important;
+  }
+}
 .console{
   @include display_flex();
   flex-direction: column;

@@ -1,3 +1,5 @@
+<a href="#" data-action="console-enter-fullscreen" class="toggle-console">Console</a>
+
 <aside class="console-container">
   <div class="console" id="console-<%= @agent.id %>" data-turbolinks-permanent>
     <div class="console__header">
@@ -20,7 +22,7 @@
          title="<%= t('views.console.fullscreen_leave') %>"
          class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
         <span class="icon">
-          <%= icon_fullscreen_exit %>
+          <%= icon_close %>
         </span>
       </a>
     </div>
