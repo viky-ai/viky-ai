@@ -68,10 +68,8 @@
     <% @intents.each do |intent| %>
       <li data-id="<%= intent.id %>">
 
-        <% if current_user.can? :edit, @agent %>
-          <div class="intents-list__draggable">
-            <span><%= icon_reorder %></span>
-          </div>
+        <% if current_user.can?(:edit, @agent) && @intents.count > 1 %>
+          <div class="intents-list__draggable"></div>
         <% end %>
 
         <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>">
