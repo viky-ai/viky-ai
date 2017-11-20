@@ -10,14 +10,14 @@
         </div>
         <div class="blankslate__content">
           <% if current_user.can? :edit, agent %>
-            <%= t('views.intents.blankslate.start_html') %>
+            <%= t('views.interpretations.blankslate.start_html') %>
           <% else %>
             <% if current_locale == '*' %>
               <% language = t('views.interpretations.locales.no_locale') %>
             <% else %>
               <% language = current_locale %>
             <% end %>
-            <%= t('views.intents.blankslate.no_expression_html', language: language) %>
+            <%= t('views.interpretations.blankslate.no_expression_html', language: language) %>
           <% end %>
         </div>
       </div>

@@ -16,13 +16,13 @@
             <% language = @current_locale %>
           <% end %>
           <% if current_user.can? :edit, @agent %>
-            <%= t('views.intents.blankslate.message_edit_html', language: language) %>
+            <%= t('views.interpretations.blankslate.message_edit_html', language: language) %>
           <% else %>
-            <%= t('views.intents.blankslate.message_show_html', language: language) %>
+            <%= t('views.interpretations.blankslate.message_show_html', language: language) %>
           <% end %>
           <% if current_user.can? :edit, @agent %>
             <%= link_to(
-              t('views.intents.blankslate.btn', language: language),
+              t('views.interpretations.blankslate.btn', language: language),
               user_agent_intent_remove_locale_path(@agent.owner, @agent, @intent, locale_to_remove: @current_locale),
               method: :delete,
               remote: true,

@@ -33,12 +33,9 @@ en:
         empty_message: The intent already contains every available languages.
         errors_message: "Add language failed: %{errors}."
       blankslate:
-        message_show_html: <p>No expression entered for the "%{language}" tab.</p>
         message_edit_html: >
-          <p>Start adding expressions using the form below.</p>
-          <p class="separator"><span>or</span></p>
-          <p>No expression entered for the "%{language}" tab. You may want to do some housework. Do you want to remove&nbsp;it&nbsp;?</p>
-        start_html: <p>Start adding expressions using the form below.</p>
-        no_expression_html: <p>No expression entered for the "%{language}" tab.</p>
-        btn: 'Yes, remove "%{language}" tab'
-        errors_message: "Remove language failed: %{errors}."
+          No intent entered for the "%{agent}" agent.<br />
+          Create the first intention with the button above.
+        message_show_html: >
+          No intent entered for the "%{agent}" agent.
+
