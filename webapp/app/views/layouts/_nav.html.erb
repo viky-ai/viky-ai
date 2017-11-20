@@ -9,7 +9,7 @@
   <div class="h-nav__content">
     <ul>
       <li>
-        <a href="<%= agents_path %>" <% if controller_path.include?('agent') %>class="current"<% end %>>
+        <a href="<%= agents_path %>" <% if ['agents', 'intents'].include? controller_path %>class="current"<% end %>>
           <%= t('views.nav.agents') %>
         </a>
       </li>
