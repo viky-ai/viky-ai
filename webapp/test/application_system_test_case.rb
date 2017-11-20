@@ -12,7 +12,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       browser: :chrome,
       desired_capabilities: capabilities
     }
-    if `cat /etc/os-release` =~ /ubuntu/i
+    if File.exist?('/etc/os-release') && `cat /etc/os-release` =~ /ubuntu/i
       driver_options[:driver_path] = '/usr/lib/chromium-browser/chromedriver'
     end
     Capybara::Selenium::Driver.new(app, driver_options)
