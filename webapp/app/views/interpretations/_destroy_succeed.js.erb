@@ -1,4 +1,8 @@
-$("#interpretation-<%= @interpretation.id %>").remove();
+$("#interpretation-<%= @interpretation.id %>").addClass('deleted');
+
+setTimeout(function(){
+  $("#interpretation-<%= @interpretation.id %>").remove();
+}, 200);
 
 App.InterpretationsList.updateBlankslates();
 App.InterpretationsList.decrementTabBadge();

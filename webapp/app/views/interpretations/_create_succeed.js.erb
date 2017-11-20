@@ -1,5 +1,10 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
-$("#interpretations-list").prepend("<%= escape_javascript(@html) %>");
+
+var html = $("<%= escape_javascript(@html) %>").addClass('hidden');
+$("#interpretations-list").prepend(html);
+setTimeout(function(){
+  $("#interpretations-list li").first().removeClass('hidden');
+}, 0);
 
 App.InterpretationsList.updateBlankslates();
 App.InterpretationsList.incrementTabBadge();
