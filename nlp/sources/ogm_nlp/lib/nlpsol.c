@@ -8,7 +8,7 @@
 
 static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
-static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution);
+static og_bool NlpSolutionNeedJsComputeRecursive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution);
 static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -92,7 +92,7 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
     json_package_solution = request_expression->expression->interpretation->json_solution;
   }
 
-  og_bool need_js_compute = NlpSolutionNeedJsComputeRecusive(ctrl_nlp_th, json_package_solution);
+  og_bool need_js_compute = NlpSolutionNeedJsComputeRecursive(ctrl_nlp_th, json_package_solution);
 
   og_bool solution_built = FALSE;
 
@@ -576,7 +576,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   return solution_built;
 }
 
-static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution)
+static og_bool NlpSolutionNeedJsComputeRecursive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution)
 {
   if (json_package_solution == NULL || json_is_null(json_package_solution))
   {
@@ -589,7 +589,7 @@ static og_bool NlpSolutionNeedJsComputeRecusive(og_nlp_th ctrl_nlp_th, json_t *j
         iter = json_object_iter_next(json_package_solution, iter))
     {
       json_t *value = json_object_iter_value(iter);
-      og_bool need_js_compute = NlpSolutionNeedJsComputeRecusive(ctrl_nlp_th, value);
+      og_bool need_js_compute = NlpSolutionNeedJsComputeRecursive(ctrl_nlp_th, value);
       IFE(need_js_compute);
       if (need_js_compute) return TRUE;
     }
