@@ -7,9 +7,9 @@ class IntentForm
 
   setup: ->
     if $('.field_with_errors input').length == 0
-      $('#intent_intentname').focus()
+      App.FocusInput.atEnd('#intent_intentname')
     else
-      $('.field_with_errors input').first().focus()
+      App.FocusInput.atEnd('.field_with_errors input')
 
 Setup = ->
   if $('body').data('controller-name') == "agents"
