@@ -35,7 +35,7 @@ en:
       blankslate:
         message_edit_html: >
           No intent entered for the "%{agent}" agent.<br />
-          Create the first intention with the button above.
+          Create the first intent with the button above.
         message_show_html: >
           No intent entered for the "%{agent}" agent.
 
