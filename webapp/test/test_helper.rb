@@ -29,10 +29,12 @@ Capybara.register_driver :headless_chrome do |app|
     }
   )
 
-  Capybara::Selenium::Driver.new(
-    app,
+  driver_options = {
     browser: :chrome,
-    driver_path: '/usr/lib/chromium-browser/chromedriver',
     desired_capabilities: capabilities
-  )
+  }
+  if `cat /etc/os-release` =~ /ubuntu/i
+    driver_options[:driver_path] = '/usr/lib/chromium-browser/chromedriver'
+  end
+  Capybara::Selenium::Driver.new(app, driver_options)
 end
