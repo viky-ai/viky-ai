@@ -45,6 +45,14 @@ RUN factory.pl -s bu2_nls   debug
 # ============================================================================
 FROM ubuntu:xenial AS run_image
 
+# Add libxml2 needed for XSD validation
+RUN set -ex; \
+    apt-get update ; \
+    apt-get install -y --no-install-recommends \
+      libxml2 \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /
 
 COPY --from=build_image /builds/nls/ship /
