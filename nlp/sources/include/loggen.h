@@ -14,7 +14,7 @@
 #define DOgGenBanner        "ogm_gen V4.66, Copyright (c) 1998-2008 Pertimm, Inc."
 #define DOgGenVersion       466
 
-
+#include <lpcgentype.h>
 #include <time.h>
 #include <ctype.h>
 #include <string.h>
@@ -540,8 +540,8 @@ DEFPUBLIC(int) OgAtoOgDate(int, char *, struct og_date *);
 DEFPUBLIC(int) OgAtoOgDateReal(int, char *, int, unsigned char *);
 DEFPUBLIC(char *) OgGmtime(const time_t *time);
 
-DEFPUBLIC(int) OgFileExists(char *);
-DEFPUBLIC(int) OgDirExists(char *);
+DEFPUBLIC(int) OgFileExists(og_string filename);
+DEFPUBLIC(int) OgDirExists(og_string filename);
 DEFPUBLIC(int) OgRemoveEndSlash(char *);
 DEFPUBLIC(int) CleanFilename(char *, char *);
 DEFPUBLIC(int) OgRenameToStalled(char *, int, char *);
@@ -565,7 +565,7 @@ DEFPUBLIC(void) OgOgMessageLog(int, char *, char *);
 
 DEFPUBLIC(void) OgMessageBox(void *, char *, char *, unsigned);
 
-DEFPUBLIC(int) OgFindFirstFile(struct og_file *, char *);
+DEFPUBLIC(int) OgFindFirstFile(struct og_file *, og_string filename);
 DEFPUBLIC(int) OgFindNextFile(struct og_file *);
 DEFPUBLIC(int) OgFindClose(struct og_file *);
 

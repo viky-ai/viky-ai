@@ -1,8 +1,8 @@
 /*
- *	This is filename handling for indexing chain.
- *	Copyright (c) 1997-2000	Ogmios by M'hammed El Ajli and Patrick Constant
- *	Dev : October 1997, January 1998, January 2000
- *	Version 1.2
+ *  This is filename handling for indexing chain.
+ *  Copyright (c) 1997-2000  Ogmios by M'hammed El Ajli and Patrick Constant
+ *  Dev : October 1997, January 1998, January 2000
+ *  Version 1.2
 */
 #include <logpath.h>
 #include <loggen.h>
@@ -13,7 +13,7 @@
 
 
 
-PUBLIC(int) OgFileExists(char *filepath)
+PUBLIC(int) OgFileExists(og_string filepath)
 {
 int retour;
 struct og_file str_file[1];
@@ -32,7 +32,7 @@ if(retour) {
 
 
 
-PUBLIC(int) OgDirExists(char *pathname)
+PUBLIC(int) OgDirExists(og_string pathname)
 {
 struct stat sb;
 if (stat(pathname, &sb) == 0 && S_ISDIR(sb.st_mode)) return(1);
@@ -61,7 +61,7 @@ DONE;
 /*
  *  Changes "\\" into "\" (or "//" into "/" if necessary.
  *  returns 1 if change have been done 0 otherwise.
- *  Since "\\" can exist at the beginning of the 
+ *  Since "\\" can exist at the beginning of the
  *  file name in the case of a Windows network filename,
  *  we start the analysis at the second character.
  *  Used in ogm_ocea and in the file monitors.
@@ -77,14 +77,14 @@ for (; file1[i]!=0; i++) {
   c = file1[i];
   switch(state) {
     case 1:
-      if (c=='\\' || c=='/') state=2; 
+      if (c=='\\' || c=='/') state=2;
       file2[j++] = c;
       break;
-    case 2: 
+    case 2:
       if (c=='\\' || c=='/') retour=1;
-      else { 
+      else {
         file2[j++] = c;
-        state=1; 
+        state=1;
         }
       break;
     }
@@ -118,7 +118,7 @@ OgMessageLog(DOgMlogInLog, where, 0
             ,"Renaming '%s' into '%s' because of a problem"
             , filename, stalled_name);
 
-if (rename(filename, stalled_name)) { OgSleep(200); 
+if (rename(filename, stalled_name)) { OgSleep(200);
   if (rename(filename, stalled_name)) {
     DPcSprintf(erreur,"OgRenameToStalled: impossible to rename '%s' into '%s'"
               , filename, stalled_name);
@@ -146,15 +146,15 @@ PUBLIC(void) next_filename_to_create(char *dir,char *ext,char *fileName)
 
 
 /*
- *	return 0 is file name found
- *	else return -1
+ *  return 0 is file name found
+ *  else return -1
 */
 
 PUBLIC(int) DelFilesInDir(char *path, char *ext, unsigned long int *highest)
 {
-  char		*ptstr;
-  char		filedelName[30];
-  char		PathOfFile[512];
+  char    *ptstr;
+  char    filedelName[30];
+  char    PathOfFile[512];
   unsigned long int next =0;
   struct og_file cstr_file;
   struct og_file *str_file = &cstr_file;
@@ -166,16 +166,16 @@ PUBLIC(int) DelFilesInDir(char *path, char *ext, unsigned long int *highest)
 
   /* No file found returns -1 */
   IFE(retour=OgFindFirstFile(str_file,PathOfFile)); if(!retour) return(-1);
-  do {  
+  do {
     if((ptstr=strrchr(str_file->File_Path,'.'))==NULL){
-	  OgFindClose(str_file);
-	  return(-1);
-	}	
-	sprintf(filedelName,"%s/%s",path,str_file->File_Path)	;
-	*ptstr='\0';
+    OgFindClose(str_file);
+    return(-1);
+  }
+  sprintf(filedelName,"%s/%s",path,str_file->File_Path)  ;
+  *ptstr='\0';
      next=atol(str_file->File_Path);
     if (*highest<=next){remove(filedelName);}
-	*ptstr='.';
+  *ptstr='.';
   }while ( OgFindNextFile(str_file) );
   OgFindClose(str_file);
   return(0);
@@ -184,8 +184,8 @@ PUBLIC(int) DelFilesInDir(char *path, char *ext, unsigned long int *highest)
 
 
 /*
- *	return 0 is file name found
- *	else return -1
+ *  return 0 is file name found
+ *  else return -1
 */
 
 PUBLIC(int) next_filenumber_to_create(char *path, char *ext, unsigned long *highest)
@@ -201,34 +201,34 @@ PUBLIC(int) next_filenumber_to_create(char *path, char *ext, unsigned long *high
   memset(str_file,0,sizeof(struct og_file));
 
   sprintf(PathOfFile, "%s/*%s",path,ext);
-  
+
 
   /* No file found returns -1 */
   IFE(retour=OgFindFirstFile(str_file,PathOfFile)); if(!retour) return(-1);
   do {
     if((ptstr=strrchr(str_file->File_Path,'.'))==NULL){
                 OgFindClose(str_file);
-		return(-1);
-	}	
-	*ptstr='\0';
+    return(-1);
+  }
+  *ptstr='\0';
     next=atol(str_file->File_Path);
     if (*highest<=next){*highest = next+1;}
-	*ptstr='.';	
+  *ptstr='.';
   }while ( OgFindNextFile(str_file) );
   OgFindClose(str_file);
   return(0);
 }
-  
+
 
 /*
- *	Finds the filename which has the lowest number in its name
- *	the filename has the form : 00000154.ogm for example
- *	'path' is the directory where this file is.
- *	'ext' is the extension of this file
- *	'fileName' is the returned file name (including the path).
- *	'fileSize' is obsolete (should be removed).
- *  Returns	0 is the file is file found
- *		    1 or -1 if no file found
+ *  Finds the filename which has the lowest number in its name
+ *  the filename has the form : 00000154.ogm for example
+ *  'path' is the directory where this file is.
+ *  'ext' is the extension of this file
+ *  'fileName' is the returned file name (including the path).
+ *  'fileSize' is obsolete (should be removed).
+ *  Returns  0 is the file is file found
+ *        1 or -1 if no file found
 */
 
 PUBLIC(int) find_lowest_filename(char *path, char *ext, char *fileName,
@@ -256,8 +256,8 @@ do {
   /** If a char in the name is not a digit, file is not interesting **/
   for (i=0; s[i]; i++) { if (!isdigit(s[i])) break; } if (s[i]) continue;
   current_value=atol(str_file->File_Path);
-  *ptstr='.'; 
-  if (lowest>=current_value){            
+  *ptstr='.';
+  if (lowest>=current_value){
     lowest=current_value; retour=0;
     sprintf(fileName,"%s/%s",path,str_file->File_Path);
     }
@@ -265,12 +265,12 @@ do {
 while ( OgFindNextFile(str_file) );
 OgFindClose(str_file);
 return(retour);
-}	
+}
 
 
 /*
- *	Finds the number of files that have 
- *	extension 'ext'. returns 0 if no file found.
+ *  Finds the number of files that have
+ *  extension 'ext'. returns 0 if no file found.
 */
 
 
@@ -280,7 +280,7 @@ int retour,nb_files=0;
 char pattern_path[1024];
 struct og_file cstr_file;
 struct og_file *str_file = &cstr_file;
-  
+
 memset(str_file,0,sizeof(struct og_file));
 
 sprintf(pattern_path, "%s/*%s",path,ext);
@@ -294,25 +294,25 @@ do {
 while (OgFindNextFile(str_file) );
 OgFindClose(str_file);
 return(nb_files);
-}	
+}
 
 
 /*
- *	Function that waits till a file cant be read.
- *	This file has been typically found by function
- *	'find_lowest_filename'. The found file is create
- *	by a file rename which doesn't release its handle
- *	on the file immediately. This results in an error
- *	in the file opening. This case is rare because
- *	the renaming is very fast. By waiting a few milli-seconds
- *	we give the time for the renaming to release the handle,
- *	and so, the file can be opened.
- *	Returns the number of time the file has been tried
- *	('nb_calls'), before it is accessed. 
- *	if nb_calls>1, there has been a conflict with the renaming.
- *	Returns -1 if the file couldn't be accessed
- *	we use fopen instead of access, because 
- *	access works when fopen doesn't...
+ *  Function that waits till a file cant be read.
+ *  This file has been typically found by function
+ *  'find_lowest_filename'. The found file is create
+ *  by a file rename which doesn't release its handle
+ *  on the file immediately. This results in an error
+ *  in the file opening. This case is rare because
+ *  the renaming is very fast. By waiting a few milli-seconds
+ *  we give the time for the renaming to release the handle,
+ *  and so, the file can be opened.
+ *  Returns the number of time the file has been tried
+ *  ('nb_calls'), before it is accessed.
+ *  if nb_calls>1, there has been a conflict with the renaming.
+ *  Returns -1 if the file couldn't be accessed
+ *  we use fopen instead of access, because
+ *  access works when fopen doesn't...
 */
 
 PUBLIC(int) wait_on_rename(char *filename)
@@ -325,17 +325,17 @@ while (1) {
   /** access mode 4 is read permission **/
   IFx(fd=fopen(filename,"rb")) { fclose(fd); break; }
   if (nb_calls++>20) { nb_calls=(-1); break; }
-  OgSleep(5); 
+  OgSleep(5);
   }
-return(nb_calls); 
+return(nb_calls);
 }
 
 
 
 
 /*
- *	Permet de faire l'équivalent de 
- *	system("REN DELETED\\*.dl0 DELETED\\*.dl1");
+ *  Permet de faire l'ï¿½quivalent de
+ *  system("REN DELETED\\*.dl0 DELETED\\*.dl1");
 */
 
 PUBLIC(int) patterned_rename(char *where,char *path,char *ext1,char *ext2)
@@ -347,7 +347,7 @@ char pattern_path[1024];
 struct og_file cstr_file;
 struct og_file *str_file = &cstr_file;
 
-  
+
 memset(str_file,0,sizeof(struct og_file));
 
 sprintf(pattern_path, "%s/*%s",path,ext1);
@@ -403,8 +403,8 @@ do {
   sprintf(file_path,"%s/%s",path,str_file->File_Path);
   IF(unlink(file_path)) {
     MessageInfoLog(0,where,0,"patterned_delete: impossible to delete file '%s'\n",
-		str_file->File_Path);
-	continue;
+    str_file->File_Path);
+  continue;
     }
   }
 while (OgFindNextFile(str_file));

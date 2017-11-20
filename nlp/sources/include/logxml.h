@@ -69,8 +69,7 @@ DEFPUBLIC(int) OgXmlTopTag(pr_(void *) pr_(int) pr_(unsigned char *) pr_(int) pr
 DEFPUBLIC(int) OgXmlSqueeze(int ibin, unsigned char *bin, int *ibout, unsigned char *bout);
 
 DEFPUBLIC(int) OgXmlCheckXsd(void *hmsg, og_string xsd, og_string xml);
-DEFPUBLIC(og_status) OgXmlXsdValidateFile(void *hmsg, void *herr, char *working_directory, char *xml_file,
-    char *xsd_path);
+DEFPUBLIC(og_status) OgXmlXsdValidateFile(void *hmsg, void *herr, og_string working_directory, og_string xml_file, og_string xsd_path);
 
 #define _LOGXMLALIVE_
 #endif

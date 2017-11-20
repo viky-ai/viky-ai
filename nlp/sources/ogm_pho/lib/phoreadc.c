@@ -29,11 +29,11 @@ static int PhoReadConf1(void *ptr, int type, int ib, unsigned char *b);
 STATICF(int) PhoReadConf1TagAttribute(pr_(void *) pr(struct og_read_tag *));
 STATICF(int) PhoReadConf1RuleReset(pr(struct og_xml_info *));
 
-static int PhoReadConf(struct lang_context *lang_context, char *conf_file, int filelang);
-static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, char *filename);
-static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsigned char *filename, int *pfilelang);
-static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, unsigned char *filename);
-static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, char *filename, int lang);
+static int PhoReadConf(struct lang_context *lang_context, og_string conf_file, int filelang);
+static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, og_string filename);
+static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, og_string filename, int *pfilelang);
+static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, og_string filename);
+static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, og_string filename, int lang);
 
 struct og_tree_xml_tag PhoReadConfTag[] =  {
                                                   /* phonet_configuration (20)*/
@@ -54,10 +54,58 @@ struct og_tree_xml_tag PhoReadConfTag[] =  {
   };
 
 
+static og_status PhoConfScanDir(struct og_ctrl_pho *ctrl_pho, og_string recusive_dir)
+{
+  GError *error = NULL;
+  GDir *dir = g_dir_open(ctrl_pho->conf_directory, 0, &error);
+  if (dir == NULL || error != NULL)
+  {
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoConfScanDir: impossible to g_dir_open '%s' : %s", recusive_dir,
+        error->message);
+
+    g_error_free(error);
+
+    if (dir != NULL)
+    {
+      g_dir_close(dir);
+    }
+
+    CONT;
+  }
+
+  // iterate over file in dir
+  og_string filename = NULL;
+  while ((filename = g_dir_read_name(dir)))
+  {
+    og_status status = CORRECT;
+
+    og_bool is_dir = g_file_test(filename, G_FILE_TEST_IS_DIR);
+    if (is_dir)
+    {
+      status = PhoConfScanDir(ctrl_pho, filename);
+    }
+    else
+    {
+      status = PhoReadConfFile(ctrl_pho, is_dir, strlen(filename), filename);
+    }
+
+    // on error
+    IF(status)
+    {
+      g_dir_close(dir);
+      DPcErr;
+    }
+
+  }
+
+  g_dir_close(dir);
+
+  DONE;
+}
+
 og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho)
 {
-
-  IFE(OgScanDir(ctrl_pho->conf_directory, PhoReadConfFile, (void * ) ctrl_pho, ctrl_pho->loginfo->where));
+  IFE(PhoConfScanDir(ctrl_pho, ctrl_pho->conf_directory));
 
   unsigned char configuration_file[DPcPathSize];
   snprintf(configuration_file, DPcPathSize, "%s/%s", ctrl_pho->conf_directory, ctrl_pho->conf_filename);
@@ -66,7 +114,7 @@ og_status PhoReadConfFiles(struct og_ctrl_pho *ctrl_pho)
   DONE;
 }
 
-static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, char *filename)
+static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, og_string filename)
 {
   struct og_ctrl_pho *ctrl_pho = (struct og_ctrl_pho *) ptr;
 
@@ -89,7 +137,7 @@ static og_status PhoReadConfFile(void *ptr, int is_dir, int filename_length, cha
 }
 
 
-static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, char *filename, int filelang)
+static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, og_string filename, int filelang)
 {
   if (!OgFileExists(filename)) DONE;
   IFE(PhoConfFileValidXsd(ctrl_pho, filename));
@@ -107,10 +155,10 @@ static og_status PhoReadConfFileLang(struct og_ctrl_pho *ctrl_pho, char *filenam
   DONE;
 }
 
-static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsigned char *filename, int *pfilelang)
+static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, og_string filename, int *pfilelang)
 {
   int configuration_directory_length = strlen(ctrl_pho->conf_directory);
-  unsigned char *reduced_filename = filename + configuration_directory_length + 1;
+  og_string reduced_filename = filename + configuration_directory_length + 1;
   int reduced_filename_length = strlen(reduced_filename);
 
 
@@ -146,7 +194,7 @@ static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, unsi
 }
 
 
-static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, unsigned char *filename)
+static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, og_string filename)
 {
   if (!OgFileExists(filename)) DONE;
 
@@ -164,7 +212,7 @@ static og_bool PhoConfFileValidXsd(struct og_ctrl_pho *ctrl_pho, unsigned char *
 
 
 
-static int PhoReadConf(struct lang_context *lang_context, char *conf_file, int filelang)
+static int PhoReadConf(struct lang_context *lang_context, og_string conf_file, int filelang)
 {
 
   struct og_ctrl_pho *ctrl_pho = lang_context->ctrl_pho;

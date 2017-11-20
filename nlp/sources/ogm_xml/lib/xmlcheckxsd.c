@@ -114,7 +114,7 @@ PUBLIC(int) OgXmlCheckXsd(void *hmsg, og_string xsd, og_string xml)
   return is_valid;
 }
 
-PUBLIC(og_status) OgXmlXsdValidateFile(void *hmsg, void *herr, char *working_directory, char *xml_file, char *xsd_path)
+PUBLIC(og_status) OgXmlXsdValidateFile(void *hmsg, void *herr, og_string working_directory, og_string xml_file, og_string xsd_path)
 {
 
   unsigned char xsd_file[DPcPathSize];
