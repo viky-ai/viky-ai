@@ -29,9 +29,6 @@ a.btn,
     border-color: #bbb;
     outline:0;
   }
-  &:active{
-    transform: translateY(1px);
-  }
   &.btn--disabled{
     background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
   }
