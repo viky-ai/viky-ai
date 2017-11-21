@@ -88,6 +88,10 @@ class Nlp::Package
     File.join(outdirname, "#{@agent.id}.json")
   end
 
+  def logger
+    Rails.logger
+  end
+
 
   private
 
