@@ -16,7 +16,7 @@ module Nls
       @available_packages = {}
       @packages_dump = []
 
-      FileUtils.rm_r(importDir, :force => true)
+      FileUtils.rm_r(importDir, force: true)
       FileUtils.mkdir_p(importDir)
     end
 
