@@ -46,6 +46,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   {
     request_expression->contains_any = FALSE;
   }
+  memset(request_expression->score,0,sizeof(struct request_score));
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -466,7 +467,7 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
   // For the moment, the only score is a locale score
   // Later we will add other calculation including level, coverage, spellchecking
   // round the score to 2 digit after dot
-  double roundedscore = roundf(request_expression->locale_score * 100.0) / 100.0;
+  double roundedscore = roundf(request_expression->score->locale * 100.0) / 100.0;
   json_t *json_score = json_real(roundedscore);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {
@@ -549,8 +550,8 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   char locale_score[DPcPathSize];
   locale_score[0] = 0;
-  if (request_expression->locale_score > 0.0) sprintf(locale_score, " locale_score=%.2f",
-      request_expression->locale_score);
+  if (request_expression->score->locale > 0.0) sprintf(locale_score, " locale_score=%.2f",
+      request_expression->score->locale);
 
   struct expression *expression = request_expression->expression;
 

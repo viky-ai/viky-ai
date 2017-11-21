@@ -341,6 +341,15 @@ struct request_any
   int consumed;
 };
 
+struct request_score
+{
+  double coverage;
+  double locale;
+  double spelling;
+  double overlap;
+  double any;
+};
+
 struct request_expression
 {
   int self_index;
@@ -375,7 +384,7 @@ struct request_expression
   og_bool keep_as_result;
   og_bool contains_any;
 
-  double locale_score;
+  struct request_score score[1];
 
   GQueue tmp_solutions[1];
 
@@ -744,7 +753,4 @@ og_status NlpLtracPackageFlush(package_t package);
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
-
-
-
 

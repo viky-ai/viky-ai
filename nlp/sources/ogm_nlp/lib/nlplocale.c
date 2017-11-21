@@ -212,7 +212,7 @@ static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
       IFE(NlpCalculateLocaleScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
-      locale_score += sub_request_expression->locale_score;
+      locale_score += sub_request_expression->score->locale;
     }
     else
     {
@@ -220,7 +220,7 @@ static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
     }
     // This is the generic locale_score coming from the packages
     // we use a mean score for the scores
-    request_expression->locale_score = locale_score / request_expression->orips_nb;
+    request_expression->score->locale = locale_score / request_expression->orips_nb;
     IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
 
   }
@@ -277,7 +277,7 @@ static og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expr
       }
     }
   }
-  request_expression->locale_score *= quality_factor;
+  request_expression->score->locale *= quality_factor;
   DONE;
 }
 
