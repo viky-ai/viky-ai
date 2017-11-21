@@ -50,4 +50,30 @@ class InterpretTest < ActiveSupport::TestCase
     assert interpret.valid?
   end
 
+  test 'Validate endpoint' do
+    weather = agents(:weather)
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_token: weather.api_token,
+      sentence: 'hello',
+      format: 'json'
+    )
+    endpoint = ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    assert_equal endpoint, interpret.endpoint
+  end
+
+
+  test 'Validate interpret URL' do
+    weather = agents(:weather)
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_token: weather.api_token,
+      sentence: 'hello',
+      format: 'json'
+    )
+    assert_equal "#{interpret.endpoint}/interpret/", interpret.url
+  end
+
 end
