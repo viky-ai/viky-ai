@@ -1360,6 +1360,28 @@
       }
     },
     {
+      "id": "number_1000",
+      "expressions":
+      [
+        {
+          "expression": "thousand",
+          "locale": "en"
+        },
+        {
+          "expression": "mille",
+          "locale": "fr"
+        },
+        {
+          "expression": "mil",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1000
+      }
+    },
+    {
       "id": "number_100_199",
       "expressions":
       [
@@ -1467,6 +1489,237 @@
       ]
     },
     {
+      "id": "number_1_999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_100_999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100_999",
+              "id": "number_100_999",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1099",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{and} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "and",
+              "id": "and",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1100_1999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{number_100_999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_100_999",
+              "id": "number_100_999",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_100_999.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_1099}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1099",
+              "id": "number_1000_1099",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1100_1999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1100_1999",
+              "id": "number_1100_1999",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_999999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_999} @{number_1000_1999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_999",
+              "id": "number_1_999",
+              "package": "package-number-letters"
+            },
+            {
+              "alias": "number_1000_1999",
+              "id": "number_1000_1999",
+              "package": "package-number-letters"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1_999.number*1000+number_1000_1999.number-1000`"
+          }
+        },
+        {
+          "expression": "@{number_1000_1999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1999",
+              "id": "number_1000_1999",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_999999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_999999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000_999999",
+              "id": "number_1000_999999",
+              "package": "package-number-letters"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1_999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_999",
+              "id": "number_1_999",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "number_letters",
       "expressions":
       [
@@ -1482,23 +1735,12 @@
           ]
         },
         {
-          "expression": "@{number_1_99}",
+          "expression": "@{number_1_999999}",
           "aliases":
           [
             {
-              "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_100_999}",
-          "aliases":
-          [
-            {
-              "alias": "number_100_999",
-              "id": "number_100_999",
+              "alias": "number_1_999999",
+              "id": "number_1_999999",
               "package": "package-number-letters"
             }
           ]
