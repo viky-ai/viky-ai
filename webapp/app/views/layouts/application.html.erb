@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>viky.ai</title>
+    <title>
+      viky.ai
+      <% unless @agent.nil? %>
+        - <%= @agent.owner.username %>/<%= @agent.agentname %><% unless @intent.nil? %>/<%= @intent.intentname %><% end %>
+      <% end %>
+      <% if controller_path == "profiles" %>
+        - <%= t('views.profile.breadcrumb') %>
+      <% end %>
+      <% if controller_path == "backend/users" %>
+        - <%= t('views.backend.breadcrumb.user_management') %>
+      <% end %>
+    </title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbolinks-cache-control" content="no-cache">
