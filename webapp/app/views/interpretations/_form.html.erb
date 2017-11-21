@@ -5,7 +5,7 @@
       <%= f.text_field :expression, id: :expression, placeholder: t('views.interpretations.new.placeholder') %>
       <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
             data: {
-               disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+               disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
             } %>
     </div>
     <%= display_errors(interpretation, :expression) %>

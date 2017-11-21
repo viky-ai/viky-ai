@@ -1,14 +1,20 @@
 .blankslate{
-  padding: 1em;
   max-width: 34em;
   margin: 1em auto;
   @include display_flex();
   align-items: center;
+  @media (min-width: 550px){
+    padding: 1em;
+  }
 
   .blankslate__illustration{
+    display:none;
     margin-right: 2em;
     img{
       max-width: 80px;
+    }
+    @media (min-width: 550px){
+      display:block;
     }
   }
   .blankslate__content{

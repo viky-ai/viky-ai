@@ -10,10 +10,10 @@
   <div class="user__info">
     <%= user.name_or_username %>
     <span class="merged-badges">
-      <span class="badge">
+      <span class="badge badge--small">
         <%= t('views.agents.show.collaborator') %>
       </span>
-      <span class="badge badge--primary">
+      <span class="badge badge--primary badge--small">
         <% if user.can? :edit, agent %>
           <%= t('views.agents.show.edit') %>
         <% else %>
@@ -45,7 +45,7 @@
         </span>
       </button>
     </div>
-    <div class="dropdown__content dropdown__content--hidden">
+    <div class="dropdown__content dropdown__content--on-right dropdown__content--hidden">
       <ul>
         <li>
           <a href="#" <% if !user.can? :edit, agent %>class="current"<% end %>

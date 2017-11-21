@@ -39,7 +39,11 @@
     overflow-y: auto;
 
     .modal__main__content{
-      padding: .5em 2em 2em 2em;
+      padding: .5em 1em 1em 1em;
+
+      @media (min-width: 500px){
+        padding: .5em 2em 2em 2em;
+      }
       form:first-child{
         margin-top: 1em;
       }
@@ -48,7 +52,12 @@
     h5.modal__main__title{
       margin: 0;
       font-size: 1.125em;
-      padding: 1rem 2rem;
+      padding: 1rem;
+
+      @media (min-width: 500px){
+        padding: 1rem 2rem;
+      }
+
       font-weight: 300;
       border-bottom: 1px solid #eee;
       position: relative;

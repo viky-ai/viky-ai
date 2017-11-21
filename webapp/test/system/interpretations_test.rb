@@ -73,7 +73,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       click_link 'Hello world'
       assert page.has_text?('Cancel')
-      all('button').last.click
+      all('a').last.click
     end
     assert page.has_no_link?('Cancel')
     assert_equal "0", first('#current-locale-tab-badge').text

@@ -113,7 +113,7 @@ class IntentsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       click_link 'Hello world'
       assert page.has_text?('Cancel')
-      all('button').last.click
+      all('a').last.click
     end
 
     assert page.has_text?('Do you want to remove it ?')
@@ -126,7 +126,7 @@ class IntentsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       click_link 'Bonjour tout le monde'
       assert page.has_text?('Cancel')
-      all('button').last.click
+      all('a').last.click
     end
     assert page.has_text?('Start adding expressions using the form below.')
   end
