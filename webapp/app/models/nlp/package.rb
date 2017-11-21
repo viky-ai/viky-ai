@@ -14,42 +14,51 @@ class Nlp::Package
   end
 
   def self.push_all
-    if Nlp::Package.sync_active && !Rails.env.test?
-      FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
-      Agent.all.each do |agent|
-        result = Nlp::Package.new(agent).push
-      end
+    return if Rails.env.test?
+    unless Nlp::Package.sync_active
+      Rails.logger.info '  Skipping push_all packages to NLP because sync is deactivated'
+      return
+    end
+    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
+    Agent.all.each do |agent|
+      Nlp::Package.new(agent).push
     end
   end
 
   def destroy
-    if Nlp::Package.sync_active && !Rails.env.test?
-      FileUtils.rm(path)
-      Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      req = Net::HTTP::Delete.new(uri.path)
-      res = http.request(req)
-      Rails.logger.info "  | Completed from NLP, status: #{res.code}"
+    return if Rails.env.test?
+    unless Nlp::Package.sync_active
+      Rails.logger.info "  Skipping destroy of package #{@agent.id} to NLP because sync is deactivated"
+      return
     end
+    FileUtils.rm(path)
+    Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    req = Net::HTTP::Delete.new(uri.path)
+    res = http.request(req)
+    Rails.logger.info "  | Completed from NLP, status: #{res.code}"
   end
 
   def push
-    if Nlp::Package.sync_active && !Rails.env.test?
-      benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
-        json = generate_json
-        push_in_import_directory(json)
+    return if Rails.env.test?
+    unless Nlp::Package.sync_active
+      Rails.logger.info "  Skipping push of package #{@agent.id} to NLP because sync is deactivated"
+      return
+    end
+    benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
+      json = generate_json
+      push_in_import_directory(json)
 
-        Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-        uri = URI.parse(url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        res = http.post(uri.path, json, JSON_HEADERS)
-        Rails.logger.info "  | Completed #{res.code}"
-        {
-          status: res.code,
-          body: JSON.parse(res.body)
-        }
-      end
+      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      res = http.post(uri.path, json, JSON_HEADERS)
+      Rails.logger.info "  | Completed #{res.code}"
+      {
+        status: res.code,
+        body: JSON.parse(res.body)
+      }
     end
   end
 
@@ -77,10 +86,6 @@ class Nlp::Package
     outdirname = File.join(Rails.root, 'import')
     FileUtils.mkdir outdirname unless File.exist?(outdirname)
     File.join(outdirname, "#{@agent.id}.json")
-  end
-
-  def logger
-    Rails.logger
   end
 
 
