@@ -21,7 +21,7 @@ class Agent < ApplicationRecord
   before_destroy :check_collaborators_presence
 
   after_save do
-    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?("owner_id")
+    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?(:owner_id)
       Nlp::Package.new(self).push
     end
   end

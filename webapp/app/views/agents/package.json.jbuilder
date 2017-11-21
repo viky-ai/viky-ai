@@ -5,6 +5,6 @@ json.interpretations @agent.intents do |intent|
   json.slug "#{@agent.owner.username}/#{@agent.agentname}/#{intent.intentname}"
   json.expressions intent.interpretations do |interpretation|
     json.expression interpretation.expression
-    json.locale interpretation.locale.gsub("_", "-")
+    json.locale interpretation.locale
   end
 end
