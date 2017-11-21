@@ -1,7 +1,7 @@
 <%= form_with model: [agent.owner, agent, intent, interpretation], id: 'interpretations-form' do |f| %>
+  <%= f.hidden_field :locale, value: @current_locale %>
   <div class="field">
     <div class="control control--merged">
-      <%= f.hidden_field :locale, value: @current_locale %>
       <%= f.text_field :expression, id: :expression, placeholder: t('views.interpretations.new.placeholder') %>
       <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
             data: {
