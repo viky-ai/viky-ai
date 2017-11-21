@@ -36,7 +36,7 @@ module Nls
         Nls.query_post(package_url, package_building_features)
 
         query = {
-          "packages":
+          "packages" =>
           [
             "hotel_features",
             "building_features",
@@ -45,7 +45,7 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "with a nice swimming pol with spa for 3 peple and sea view"
+          "sentence" => "with a nice swimming pol with spa for 3 peple and sea view"
         }
 
         expected = {

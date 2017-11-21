@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="tests/test"/>
+	<buildpathentry kind="src" path="tests/valgrind"/>
+	<buildpathentry kind="src" path="tests/lib"/>
+	<buildpathentry kind="con" path="org.eclipse.dltk.launching.INTERPRETER_CONTAINER"/>
+</buildpath>
