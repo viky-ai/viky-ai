@@ -48,7 +48,7 @@ module Nls
         Nls.query_post(package_url, package_hotel)
 
         query = {
-          "packages":
+          "packages" =>
           [
             "want_hotel_features",
             "package-want",
@@ -60,8 +60,8 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "I want an hotel with a nice swimming pool with spa for 3 people and sea view",
-          "Accept-Language": "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
+          "sentence" => "I want an hotel with a nice swimming pool with spa for 3 people and sea view",
+          "Accept-Language" => "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
         }
 
         expected = {
@@ -90,7 +90,7 @@ module Nls
         assert_equal expected, actual
 
         query = {
-          "packages":
+          "packages" =>
           [
             "want_hotel_features",
             "package-want",
@@ -102,8 +102,8 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "je veux un hotel avec piscine et spa pour 3 personnes et une vue sur la mer",
-          "Accept-Language": "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
+          "sentence" => "je veux un hotel avec piscine et spa pour 3 personnes et une vue sur la mer",
+          "Accept-Language" => "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
         }
 
         expected = {

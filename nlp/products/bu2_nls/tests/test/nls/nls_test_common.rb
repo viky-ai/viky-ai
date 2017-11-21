@@ -153,26 +153,27 @@ module Nls
       i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
       pg_building_feature << i_swimming_pool
 
-      i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}", {aliases: {'swimming-pool': i_swimming_pool}})
-                                                                 .new_expression("@{sea-view}", {aliases: {'sea-view': i_sea_view}})
+      i_building_feature = Interpretation.new("building-feature")
+      i_building_feature.new_expression("@{swimming-pool}", {aliases: {'swimming-pool' => i_swimming_pool}})
+      i_building_feature.new_expression("@{sea-view}", {aliases: {'sea-view'  => i_sea_view}})
       pg_building_feature << i_building_feature
 
       i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
       pg_building_feature << i_preposition_building_feature
 
-      pg_building_feature_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': i_building_feature}
-      pg_building_feature_any_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': Alias.any}
+      pg_building_feature_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'  => i_building_feature}
+      pg_building_feature_any_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'=> Alias.any}
       i_pg_building_feature = Interpretation.new("pg-building-feature")
-                                              .new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash, keep_order: Expression.keep_order}) # pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
-                                              .new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_any_hash, keep_order: Expression.keep_order}) # pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
-                                              .new_expression("@{building-feature}", {aliases: {'building-feature': i_building_feature}})
+      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash, keep_order: Expression.keep_order}) # pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
+      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_any_hash, keep_order: Expression.keep_order}) # pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
+      i_pg_building_feature.new_expression("@{building-feature}", {aliases: {'building-feature'  => i_building_feature}})
       pg_building_feature << i_pg_building_feature
 
 
       i_pg_building_features = Interpretation.new("pg-building-features")
-      pg_building_features_hash = {'pg-building-feature': i_pg_building_feature, 'pg-building-features': i_pg_building_features}
+      pg_building_features_hash = {'pg-building-feature' => i_pg_building_feature, 'pg-building-features'  => i_pg_building_features}
       i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", {aliases: pg_building_features_hash})
-                            .new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature': i_pg_building_feature}})
+      i_pg_building_features.new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature'  => i_pg_building_feature}})
       pg_building_feature << i_pg_building_features
       @available_packages[pg_building_feature.slug] = pg_building_feature
 
