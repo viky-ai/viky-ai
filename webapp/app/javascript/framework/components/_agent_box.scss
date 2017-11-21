@@ -117,6 +117,7 @@
     }
   }
   &.agents-box-grid--with-sidebar{
+    margin: 0;
     @media (min-width: 700px){
       -ms-grid-columns: 1fr 1fr;
       grid-template-columns: 1fr 1fr;

@@ -95,7 +95,13 @@
             <div class="avatar">
               <img src="<%= current_user.image_url(:square) %>">
             </div>
-            <span><%= current_user.username %></span>
+            <span>
+              <% if current_user.name.blank? %>
+                <%= current_user.username %>
+              <% else %>
+                <%= current_user.name %>
+              <% end %>
+            </span>
           </div>
         </a>
       </li>
