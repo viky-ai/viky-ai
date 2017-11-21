@@ -1,0 +1,112 @@
+<div class="sg-intro">
+  <h1>Interpretation list</h1>
+  <p>
+    Displayed in intent main page.
+  </p>
+</div>
+
+<section>
+  <h2>Default list state</h2>
+  <p>
+    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+  </p>
+  <%= highlight_html do %>
+<ul id="sortable-list_example-1" class="interpretations-list">
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show">Hello citizen Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi delectus eius eos magni nemo odit officia quae rem! Animi, illum obcaecati. Alias aspernatur blanditiis ea hic illum molestias natus tenetur?</a>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show">Good morning</a>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show">How can I help you ?</a>
+  </li>
+</ul>
+<script>
+  Sortable.create($('#sortable-list_example-1')[0], {
+      handle: '.interpretations-list__draggable',
+      animation: 100
+  });
+</script>
+  <% end %>
+</section>
+
+<section>
+  <h2>Update list state</h2>
+  <p>
+    Click on an item will switch to update state.
+  </p>
+  <p>
+    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+  </p>
+  <%= highlight_html do %>
+<ul id="sortable-list_example-2" class="interpretations-list">
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <form action="#" class="interpretations-list__edit">
+      <div class="field">
+        <div class="control control--merged">
+          <input value="Hello citizen" type="text"/>
+          <button class="btn">
+            Update
+          </button>
+          <a href="#" class="btn">
+            Cancel
+          </a>
+          <button class="btn btn--destructive">
+            <span class='icon icon--small'><%= icon_delete %></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <form action="#" class="interpretations-list__edit">
+      <div class="field">
+        <div class="control control--merged">
+          <input value="Good morning" type="text"/>
+          <button class="btn">
+            Update
+          </button>
+          <a href="#" class="btn">
+            Cancel
+          </a>
+          <button class="btn btn--destructive">
+            <span class='icon icon--small'><%= icon_delete %></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <form action="#" class="interpretations-list__edit">
+      <div class="field">
+        <div class="control control--merged">
+          <input value="How can I help you ?" type="text"/>
+          <button class="btn">
+            Update
+          </button>
+          <a href="#" class="btn">
+            Cancel
+          </a>
+          <button class="btn btn--destructive">
+            <span class='icon icon--small'><%= icon_delete %></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </li>
+</ul>
+<script>
+  Sortable.create($('#sortable-list_example-2')[0], {
+    handle: '.interpretations-list__draggable',
+    animation: 100
+  });
+</script>
+  <% end %>
+</section>

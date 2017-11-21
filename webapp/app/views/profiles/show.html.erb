@@ -32,7 +32,6 @@
 
   <div class="grid_main">
 
-    <h2><%= t('views.profile.edit.agents.title') %></h2>
     <div class="agents-box-grid agents-box-grid--with-sidebar">
       <% @agents.each do |agent| %>
         <%= render '/agents/agent_box', agent: agent, editable: false %>

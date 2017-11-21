@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>viky.ai</title>
+    <title>viky.ai - Style Guide</title>
     <%= csrf_meta_tags %>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbolinks-cache-control" content="no-cache">
@@ -15,15 +15,15 @@
   </head>
 
   <body class="app sg">
-    <div class="app-wrapper">
-      <nav class="nav">
-        <div class="nav__header">
+    <div class="app-wrapper app-wrapper--without-h-nav">
+      <aside class="v-nav">
+        <div class="v-nav__header">
           <p>
             Style Guide
             <%= logo_on_dark %>
           </p>
         </div>
-        <div class="nav__content">
+        <div class="v-nav__content">
           <ul>
             <% @pages.each_with_index do |page, i| %>
               <li>
@@ -38,7 +38,7 @@
             <% end %>
           </ul>
         </div>
-      </nav>
+      </aside>
 
       <main>
         <%= yield %>

@@ -33,7 +33,7 @@ This endpoint retrieves all the intents extracted from the `sentence` string pas
 
 ### HTTP Request
 
-`GET /agents/:username/:agentname/interpret`
+`GET /agents/:username/:agentname/interpret.json`
 
 ### Query Parameters
 
@@ -70,7 +70,7 @@ This endpoint retrieves all the intents extracted from the `sentence` string pas
       <td>language</td>
       <td>no</td>
       <td>en-US, en;q=0.9</td>
-      <td>The language code in which the sentence is written. Default value: <code>en-US</code></td>
+      <td>The language code in which the sentence is written.</td>
     </tr>
   </tbody>
 </table>

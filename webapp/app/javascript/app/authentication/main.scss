@@ -82,7 +82,11 @@
 }
 
 .login-ui-wrapper{
-  max-width: 26em;
+
+  max-width: 90%;
+  @media (min-width: 26em){
+    max-width: 26em;
+  }
   margin: 0 auto;
   min-height: 100%;
 

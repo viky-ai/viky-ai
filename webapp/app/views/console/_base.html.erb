@@ -1,0 +1,130 @@
+<a href="#" data-action="console-enter-fullscreen" class="toggle-console">Console</a>
+
+<aside class="console-container">
+  <div class="console" id="console-<%= @agent.id %>" data-turbolinks-permanent>
+    <div class="console__header">
+      <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
+      <div class="console__endpoint">
+        <span class="badge badge--small badge--success">GET</span>
+        <code>/api/v1/<%= @agent.owner.username %>/<%= @agent.agentname %>/interpret.json</code>
+      </div>
+
+      <a href="#" id="console-enter-fullscreen"
+         data-action="console-enter-fullscreen"
+         title="<%= t('views.console.fullscreen_enter') %>"
+         class="console__header__fullscreen_btn btn btn--plain">
+        <span class="icon">
+          <%= icon_fullscreen %>
+        </span>
+      </a>
+      <a href="#" id="console-leave-fullscreen"
+         data-action="console-leave-fullscreen"
+         title="<%= t('views.console.fullscreen_leave') %>"
+         class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
+        <span class="icon">
+          <%= icon_close %>
+        </span>
+      </a>
+    </div>
+
+    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
+      <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
+      <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
+      <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
+
+      <script>$('.js-verbose-input').val("false");</script>
+      <script>$('.js-language-input').val("*");</script>
+
+      <div class="field">
+        <div class="control">
+
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <span class="btn btn--outline btn--small">
+                <span class="btn__label"><%= t('views.console.all_locales') %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </span>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <% Interpretation::Locales.each do |l| %>
+                  <li>
+                    <a href="#" <% if l == "*" %>class="current"<% end %>
+                      data-behavior="populate-input, replace-trigger-label, submit-form"
+                      data-input-selector=".js-language-input"
+                      data-input-value="<%= l %>"
+                      data-form-selector="#js-console-form"
+                      data-replace-with="<% if l == "*" %><%= t('views.console.all_locales') %><% else %><%= l %><% end %>"
+                      data-replace-selector=".btn__label">
+                      <% if l == "*" %>
+                        <%= t('views.console.all_locales') %>
+                      <% else %>
+                        <%= l %>
+                      <% end %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <span class="btn btn--outline btn--small">
+                <span class="btn__label"><%= t('views.console.verbose_off') %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </span>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <li>
+                  <a href="#" class="current"
+                    data-behavior="populate-input, replace-trigger-label, submit-form"
+                    data-input-selector=".js-verbose-input"
+                    data-input-value="false"
+                    data-form-selector="#js-console-form"
+                    data-replace-with="<%= t('views.console.verbose_off') %>"
+                    data-replace-selector=".btn__label">
+                    <%= t('views.console.verbose_off') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="#"
+                    data-behavior="populate-input, replace-trigger-label, submit-form"
+                    data-input-selector=".js-verbose-input"
+                    data-input-value="true"
+                    data-form-selector="#js-console-form"
+                    data-replace-with="<%= t('views.console.verbose_on') %>"
+                    data-replace-selector=".btn__label">
+                    <%= t('views.console.verbose_on') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='field'>
+        <div class='control control--merged'>
+          <input type='text' placeholder='<%= t('views.console.sentence_placeholder') %>'
+                 name='interpret[sentence]' value="" />
+          <button class='btn btn--primary'
+                  data-disable-with='<span class="icon icon--small icon--spin"><%= icon_loading %></span>'>
+            <span class='icon icon--small'>
+              <%= icon_check %>
+            </span>
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="tabs tabs--small tabs--on-center" id="console-tabs"></div>
+    <div class="console__output" id="console-output"></div>
+
+  </div>
+</aside>

@@ -31,7 +31,7 @@ class StyleGuideMenu
       menu.push "  </a>"
       menu.push "</li>"
       i++
-    $('nav ul.style-guide').html(menu.join(''))
+    $('.v-nav ul.style-guide').html(menu.join(''))
 
 
 Setup = ->

@@ -32,7 +32,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be filtered' do
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
 
     find('.dropdown__trigger', text: 'All').click
     all('.dropdown__content li').each do |filter_name|
@@ -48,7 +48,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be sorted by email' do
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
 
     find('.dropdown__trigger', text: 'Sort by last log in').click
     find('.dropdown__content', text: 'Sort by email').click
@@ -73,7 +73,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be found by email' do
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
 
     fill_in 'search_email', with: 'ocked'
     click_button '#search'
@@ -87,7 +87,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Users can be found by email trimmed' do
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
 
     fill_in 'search_email', with: ' ocked   '
     click_button '#search'
@@ -104,7 +104,7 @@ class BackendUsersTest < ApplicationSystemTestCase
 
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
     assert page.has_content?("#{before_count} users")
 
     all('a.btn--destructive').last.click
@@ -129,7 +129,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     before_count = User.count
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
     assert page.has_content?("#{before_count} users")
 
     all('a.btn--destructive')[2].click
@@ -168,7 +168,7 @@ class BackendUsersTest < ApplicationSystemTestCase
   test 'Invitations can be resent to not confirmed users only' do
     admin_login
 
-    click_link('Backend')
+    click_link('Users management')
 
     assert page.has_content?('7 users')
 

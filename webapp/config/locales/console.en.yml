@@ -1,0 +1,22 @@
+en:
+  views:
+    console:
+      title: Console
+      tagline: Test your agent live
+      sentence_placeholder: Say something...
+      tabs:
+        explain: Explain
+        json: JSON
+      error_occurred: Oops, an error occurred.
+      no_intent_found: No intent found.
+      intent_found:
+        one: "1 intent found."
+        other: "%{count} intents found."
+      verbose_on: Verbose ON
+      verbose_off: Verbose OFF
+      go_to_api_endpoint: Go to API endpoint
+      all_locales: "Language: Auto"
+      fullscreen_enter: Enter in fullscreen mode
+      fullscreen_leave: Leave fullscreen mode
+
+

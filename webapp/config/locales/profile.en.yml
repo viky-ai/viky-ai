@@ -8,8 +8,6 @@ en:
           title: General informations
         avatar:
           title: Your avatar
-        agents:
-          title: My agents
         authentication:
           title: Authentication parameters
           waiting_email_confirmation: "Currently waiting confirmation for: %{email}"

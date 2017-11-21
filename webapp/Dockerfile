@@ -57,18 +57,18 @@ EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
 
 #################################################
-# phantomjs-base
-#################################################
-
-FROM wernight/phantomjs AS phantomjs-base
-
-#################################################
 # image_ruby_test : image_ruby_base + test dependencies
 #################################################
 FROM image_ruby_deps AS image_ruby_test
 
-# copy phantomjs
-COPY --from=phantomjs-base /usr/local/bin/phantomjs /usr/local/bin/phantomjs
+## Install chrome-driver
+RUN set -ex; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      chromium \
+      chromium-driver \
+    ; \
+    rm -rf /var/lib/apt/lists/*
 
 # Install test dependencies
 RUN bundle install --with test --deployment --jobs=$(nproc)

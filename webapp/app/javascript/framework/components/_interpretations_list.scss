@@ -1,0 +1,64 @@
+.interpretations-list{
+  list-style: none;
+  padding: 0 0 1em 0;
+
+  .sortable-chosen{
+    box-shadow: 0 1px 7px rgba(#000, .25);
+  }
+
+  li{
+    background-color: #fff;
+    margin-bottom: .5em;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
+    border-radius: 2px;
+    @include display_flex();
+
+    transition: opacity .2s, transform .2s;
+    opacity: 1;
+    &.hidden{
+      transform: translateX(-100px);
+      opacity: 0.5;
+    }
+    &.deleted{
+      transform: translateY(50px);
+      opacity: 0;
+    }
+  }
+
+  .interpretations-list__draggable {
+    width: 20px;
+
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border: 4px solid #fff;
+
+    background-image: url(../images/grip@2x.png);
+    background-size: 4px 4px;
+    opacity: .15;
+
+    &:hover{
+      opacity: .5;
+      cursor: move;
+    }
+  }
+
+
+  a.interpretations-list__show {
+    border-radius: 2px;
+    display: block;
+    line-height: 1.4em;
+    padding: .7rem .8rem;
+    text-decoration: none;
+    width: 100%;
+    &:focus,
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+
+  form {
+    border-radius: 2px;
+    padding: .275em;
+    width: 100%;
+  }
+}

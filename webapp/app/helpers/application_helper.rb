@@ -28,4 +28,12 @@ module ApplicationHelper
     end
   end
 
+  def highlight(text)
+    if text.count("[") == text.count("]")
+      text.gsub("[", "<match>").gsub("]", "</match>").html_safe
+    else
+      text
+    end
+  end
+
 end

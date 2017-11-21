@@ -35,6 +35,11 @@ class Dropdown
   open: (dropdown) ->
     dropdown.find('.dropdown__content').removeClass('dropdown__content--hidden')
     dropdown.find('.dropdown__overlay').show()
+    dropdown.find('.dropdown__content').removeClass('dropdown__content--on-top')
+    criteria = $('body').height() - dropdown.offset().top - dropdown.height() - dropdown.find(".dropdown__content").height()
+    dropdown.find('.dropdown__content').addClass('dropdown__content--on-top') if criteria < 0
+
+
 
   close: (dropdown) ->
     dropdown.find('.dropdown__content').addClass('dropdown__content--hidden')

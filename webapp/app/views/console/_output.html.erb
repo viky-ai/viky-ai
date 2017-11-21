@@ -1,0 +1,49 @@
+<div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
+  <% if data[:status] == 200 %>
+    <% json = JSON.parse(data[:body]) %>
+
+    <% if json['intents'].empty? %>
+      <p>
+        <span class="badge badge--success"><%= data[:status] %></span>
+        <%= t('views.console.no_intent_found') %>
+      </p>
+    <% else %>
+      <p>
+        <span class="badge badge--success"><%= data[:status] %></span>
+        <%= t('views.console.intent_found', count: json['intents'].count) %>
+      </p>
+      <ul class="intents">
+        <% json['intents'].each do |intent| %>
+          <li>
+            <% username, agentname, intentname = intent["slug"].split('/') %>
+            <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
+              <span class="name"><%= intent["name"] %></span>
+              <span class="score">(<%= intent["score"] %>)</span>
+              <% unless intent["explanation"].nil? %>
+                <div class="highlight">
+                  <%= highlight(intent["explanation"]["expression"]["highlight"]) %>
+                </div>
+              <% end %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+  <% else %>
+    <p>
+      <span class="badge badge--danger"><%= data[:status] %></span>
+      <%= t('views.console.error_occurred') %>
+    </p>
+  <% end %>
+
+  <p class="endpoint">
+    <a href="<%= data[:path] %>" target="_blank">
+      <%= t('views.console.go_to_api_endpoint') %>
+    </a>
+  </p>
+
+</div>
+<div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
+  <pre><code class='language-javascript' id="json"><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>
+</div>
