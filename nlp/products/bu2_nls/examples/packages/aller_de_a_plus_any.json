@@ -84,7 +84,7 @@
       "expressions": [
         {
           "expression": "@{prep-from} @{town}",
-          "keep-order" : "true",
+          "keep-order" : true,
           "aliases": [
             {
               "alias": "prep-from",
@@ -102,7 +102,7 @@
         },
         {
           "expression": "@{prep-from} @{town}",
-          "keep-order" : "true",
+          "keep-order" : true,
           "aliases": [
             {
               "alias": "prep-from",
@@ -124,7 +124,7 @@
       "expressions": [
         {
           "expression": "@{prep-to} @{town}",
-          "keep-order" : "true",
+          "keep-order" : true,
           "aliases": [
             {
               "alias": "prep-to",
@@ -142,7 +142,7 @@
         },
         {
           "expression": "@{prep-to} @{town}",
-          "keep-order" : "true",
+          "keep-order" : true,
           "aliases": [
             {
               "alias": "prep-to",

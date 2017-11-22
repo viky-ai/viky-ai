@@ -1,0 +1,248 @@
+{
+  "id": "f51594a0-c4a8-11e7-8058-509a4c4698dc",
+  "slug": "aller-de-a",
+  "interpretations": [
+    {
+      "id": "f5159612-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "new-york",
+      "expressions": [
+        {
+          "expression": "New York",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "NYC",
+          "locale": "en-GB"
+        }
+      ],
+      "solution": {
+        "name": "New York"
+      }
+    },
+    {
+      "id": "f51597ac-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "barcelona",
+      "expressions": [
+        {
+          "expression": "Barcelona",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "Barca",
+          "locale": "en-GB"
+        }
+      ],
+      "solution": {
+        "name": "Barcelona"
+      }
+    },
+    {
+      "id": "f51598ec-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "town",
+      "expressions": [
+        {
+          "expression": "@{new-york}",
+          "aliases": [
+            {
+              "alias": "new-york",
+              "slug": "new-york",
+              "id": "f5159612-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ]
+        },
+        {
+          "expression": "@{barcelona}",
+          "aliases": [
+            {
+              "alias": "barcelona",
+              "slug": "barcelona",
+              "id": "f51597ac-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f5159b44-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "prep-from",
+      "expressions": [
+        {
+          "expression": "from",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "f5159c48-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "prep-to",
+      "expressions": [
+        {
+          "expression": "to",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "f5159d42-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "prep-to-town",
+      "expressions": [
+        {
+          "expression": "@{prep-to} @{town}",
+          "aliases": [
+            {
+              "alias": "prep-to",
+              "slug": "prep-to",
+              "id": "f5159c48-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "f51598ec-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ],
+          "solution": {
+            "to": "`town.name`"
+          }
+        },
+        {
+          "expression": "@{prep-to} @{town}",
+          "aliases": [
+            {
+              "alias": "prep-to",
+              "slug": "prep-to",
+              "id": "f5159c48-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "town",
+              "type": "any"
+            }
+          ],
+          "solution": {
+            "to": "`town.any`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "f5159ec8-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "prep-from-town",
+      "expressions": [
+        {
+          "expression": "@{prep-from} @{town}",
+          "aliases": [
+            {
+              "alias": "prep-from",
+              "slug": "prep-from",
+              "id": "f5159b44-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "town",
+              "slug": "town",
+              "id": "f51598ec-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ],
+          "solution": {
+            "from": "`town.name`"
+          }
+        },
+        {
+          "expression": "@{prep-from} @{town}",
+          "aliases": [
+            {
+              "alias": "prep-from",
+              "slug": "prep-from",
+              "id": "f5159b44-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "town",
+              "type": "any"
+            }
+          ],
+          "solution": {
+            "from": "`town.any`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "f515a026-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "go",
+      "expressions": [
+        {
+          "expression": "go",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "f515a120-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "go-from-to",
+      "expressions": [
+        {
+          "expression": "@{go} @{from} @{to}",
+          "aliases": [
+            {
+              "alias": "go",
+              "slug": "go",
+              "id": "f515a026-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "from",
+              "slug": "prep-from-town",
+              "id": "f5159ec8-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "to",
+              "slug": "prep-to-town",
+              "id": "f5159d42-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f515a238-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "want",
+      "expressions": [
+        {
+          "expression": "I want to",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "f515a332-c4a8-11e7-8058-509a4c4698dc",
+      "slug": "want-go-from-to",
+      "expressions": [
+        {
+          "expression": "@{want} @{go-from-to}",
+          "aliases": [
+            {
+              "alias": "want",
+              "slug": "want",
+              "id": "f515a238-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            },
+            {
+              "alias": "go-from-to",
+              "slug": "go-from-to",
+              "id": "f515a120-c4a8-11e7-8058-509a4c4698dc",
+              "package": "f51594a0-c4a8-11e7-8058-509a4c4698dc"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

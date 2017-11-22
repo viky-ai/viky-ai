@@ -92,7 +92,7 @@
       "expressions": [
         {
           "expression": "@{preposition-building-feature} @{building-feature}",
-          "keep-order": "true",
+          "keep-order": true,
           "aliases": [
             {
               "alias": "preposition-building-feature",

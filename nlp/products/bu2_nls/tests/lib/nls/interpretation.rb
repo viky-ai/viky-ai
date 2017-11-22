@@ -8,6 +8,7 @@ module Nls
     attr_reader :id
     attr_reader :slug
     attr_reader :expressions
+    attr_accessor :solution
     attr_accessor :package
 
     def initialize(slug, opts = {})
@@ -20,6 +21,9 @@ module Nls
       @id = opts[:id]
 
       @expressions = []
+
+      @solution = nil
+      @solution = opts[:solution] if opts.has_key?(:solution)
 
     end
 
@@ -35,11 +39,18 @@ module Nls
     alias_method '<<', 'add_expression'
 
     def to_h
-      {
-        "id" => @id.to_s,
-        "slug" => @slug,
-        "expressions" => @expressions.map{|v| v.to_h}
-      }
+      hash = {}
+      hash["id"] = @id.to_s
+      hash["slug"] = @slug
+      hash["expressions"] = @expressions.map{|v| v.to_h}
+      if !@solution.nil?
+        if @solution.respond_to?(:to_h)
+          hash['solution'] = @solution.to_h
+        else
+          hash['solution'] = @solution
+        end
+      end
+      hash
     end
 
     def to_match(score = 1.0)
@@ -55,14 +66,34 @@ module Nls
       to_h.to_json(options)
     end
 
-    def new_expression(text, aliases = [], locale = nil, keep_order = nil)
-      add_expression(Expression.new(text, aliases, locale, keep_order))
+    def new_expression(text, opts = {} )
+      aliases = []
+      aliases = opts[:aliases] if opts.has_key?(:aliases)
+      locale = nil
+      locale = opts[:locale] if opts.has_key?(:locale)
+      keep_order = false
+      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      solution = nil
+      solution = opts[:solution] if opts.has_key?(:solution)
+      add_expression(Expression.new(text, {aliases: aliases, locale: locale, keep_order: keep_order, solution: solution}))
       self
     end
 
-    def new_textual(texts = [], locale = @@default_locale)
-      texts.each do |t|
-        add_expression(Expression.new(t, [], locale))
+    def new_textual(texts = [], opts = {})
+      locale = @@default_locale
+      locale = opts[:locale] if opts.has_key?(:locale)
+      glued = false
+      glued = opts[:glued] if opts.has_key?(:glued)
+      keep_order = false
+      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      solutions = nil
+      solutions = opts[:solutions] if opts.has_key?(:solutions)
+      if texts.kind_of? Array
+        texts.each do |t|
+          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
+        end
+      else
+        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
       end
       self
     end

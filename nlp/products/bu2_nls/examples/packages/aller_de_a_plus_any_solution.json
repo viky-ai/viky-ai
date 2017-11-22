@@ -80,7 +80,7 @@
       "expressions": [
         {
           "expression": "@{prep-from} @{town}",
-          "keep-order": "true",
+          "keep-order": true,
           "aliases": [
             {
               "alias": "prep-from",
@@ -96,12 +96,12 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "from": "`town.name`"
           }
         },
         {
           "expression": "@{prep-from} @{town}",
-          "keep-order": "true",
+          "keep-order": true,
           "aliases": [
             {
               "alias": "prep-from",
@@ -115,7 +115,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "from": "`town.any`"
           }
         }
       ]
@@ -126,7 +126,7 @@
       "expressions": [
         {
           "expression": "@{prep-to} @{town}",
-          "keep-order": "true",
+          "keep-order": true,
           "aliases": [
             {
               "alias": "prep-to",
@@ -142,12 +142,12 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "to": "`town.name`"
           }
         },
         {
           "expression": "@{prep-to} @{town}",
-          "keep-order": "true",
+          "keep-order": true,
           "aliases": [
             {
               "alias": "prep-to",
@@ -161,7 +161,7 @@
             }
           ],
           "solution": {
-            "to": "@{town}"
+            "to": "`town.any`"
           }
         }
       ]

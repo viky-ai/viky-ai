@@ -216,6 +216,7 @@ DEFPUBLIC(int) OgUtf8Strlwr(int is1, unsigned char *s1, int *pis2, unsigned char
 DEFPUBLIC(int) OgUtf8Strupr(int is1, unsigned char *s1, int *pis2, unsigned char *s2);
 DEFPUBLIC(int) OgUtf8Struna(int is1, unsigned char *s1, int *pis2, unsigned char *s2);
 
+DEFPUBLIC(int) OgUtf8Normalize(int src_length, const unsigned char *src, int dest_size, unsigned char *dest);
 
 #define _LOGUNIALIVE_
 #endif

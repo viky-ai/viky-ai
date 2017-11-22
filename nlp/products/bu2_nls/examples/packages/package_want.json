@@ -1,0 +1,32 @@
+{
+  "id": "package-want",
+  "interpretations":
+  [
+    {
+      "id": "want",
+      "expressions":
+      [
+        {
+          "expression": "je veux",
+          "locale": "fr"
+        },
+        {
+          "expression": "j'aimerai",
+          "locale": "fr"
+        },
+        {
+          "expression": "I want",
+          "locale": "en"
+        },
+        {
+          "expression": "I'd like",
+          "locale": "en"
+        },
+        {
+          "expression": "I would like",
+          "locale": "en"
+        }
+      ]
+    }
+  ]
+}

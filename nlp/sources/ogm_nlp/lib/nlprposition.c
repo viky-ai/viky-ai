@@ -86,9 +86,30 @@ og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_positio
 {
   struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_position_start1 + request_positions_nb1 - 1);
-  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-      request_position_start2 + request_positions_nb2 - 1);
+  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start2);
   if (request_position1->start + request_position1->length <= request_position2->start) return TRUE;
+  return FALSE;
+}
+
+og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2)
+{
+  struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_position_start1 + request_positions_nb1 - 1);
+  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start2);
+  int position1 = request_position1->start + request_position1->length;
+  int position2 = request_position2->start;
+
+  enum nlp_glue_status glue_status = NlpGluedGetStatusForPositions(ctrl_nlp_th, position1, position2);
+  switch (glue_status)
+  {
+    case nlp_glue_status_Loose:
+      return FALSE;
+    case nlp_glue_status_Glued:
+      return TRUE;
+    case nlp_glue_status_Stuck:
+      return TRUE;
+  }
   return FALSE;
 }
 

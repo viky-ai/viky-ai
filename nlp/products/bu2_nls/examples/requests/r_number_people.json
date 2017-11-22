@@ -1,0 +1,42 @@
+[
+  {
+    "packages":
+    [
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "pour 4 personnes"
+  },
+  {
+    "packages":
+    [
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "for three people"
+  },
+  {
+    "packages":
+    [
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "3 people"
+  },
+  {
+    "packages":
+    [
+      "number_people",
+      "package-number",
+      "package-number-digits",
+      "package-number-letters"
+    ],
+    "sentence": "pour vingt trois"
+  }
+]

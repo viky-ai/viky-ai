@@ -11,6 +11,8 @@
 #include <logsysi.h>
 #include <logis639_3166.h>
 #include <glib-2.0/glib.h>
+#include <duktape.h>
+#include <math.h>
 
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
@@ -20,6 +22,7 @@
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
 
 #define DOgNlpRequestWordNumber 0x10
+#define DOgNlpAcceptLanguageNumber 0x8
 #define DOgNlpRequestInputPartNumber 0x10
 #define DOgNlpRequestExpressionNumber 0x10
 #define DOgNlpRequestPositionNumber (DOgNlpRequestExpressionNumber*2+DOgNlpRequestInputPartNumber)
@@ -78,6 +81,8 @@ struct package
   og_heap hinput_part_ba;
   og_heap hinput_part;
 
+  og_heap hdigit_input_part;
+
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
 
@@ -90,7 +95,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Digit
 };
 
 struct alias_compile
@@ -120,6 +125,7 @@ struct expression_compile
 {
   int text_start;
   og_bool keep_order;
+  og_bool glued;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -134,6 +140,7 @@ struct expression
   og_string text;
 
   og_bool keep_order;
+  og_bool glued;
 
   int locale;
 
@@ -151,7 +158,11 @@ struct expression
     struct input_part *input_parts;
   };
 
+  // if value is 0 or more, it means the expression contains an any alias
+  // otherwise value is -1
   int alias_any_input_part_position;
+
+  og_bool is_recursive;
 
   json_t *json_solution;
 };
@@ -176,6 +187,8 @@ struct interpretation
 
   int expressions_nb;
   struct expression *expressions;
+
+  og_bool is_recursive;
 };
 
 struct interpret_package
@@ -186,7 +199,13 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Digit
+};
+
+struct input_part_word
+{
+  int raw_word_start;
+  int word_start;
 };
 
 struct input_part
@@ -197,15 +216,19 @@ struct input_part
   enum nlp_input_part_type type;
   union
   {
-
     /** nlp_input_part_type_Word */
-    int word_start;
+    struct input_part_word word[1];
 
     /** nlp_input_part_type_Interpretation */
     struct alias *alias;
 
   };
 
+};
+
+struct digit_input_part
+{
+  int Iinput_part;
 };
 
 enum nlp_synchro_test_timeout_in
@@ -240,8 +263,18 @@ struct request_word
 {
   int start;
   int length;
+  int raw_start;
+  int raw_length;
   int start_position;
   int length_position;
+  og_bool is_digit;
+  int digit_value;
+};
+
+struct accept_language
+{
+  int locale;
+  float quality_factor;
 };
 
 struct request_input_part
@@ -269,6 +302,8 @@ struct request_input_part
   int request_position_distance;
 
   int Ioriginal_request_input_part;
+
+  og_bool interpret_word_as_digit;
 };
 
 struct request_position
@@ -309,7 +344,9 @@ struct request_expression
 
   int request_position_start;
   int request_positions_nb;
-  int input_parts_compacity;
+
+  // overlapping rate of the tree of the request_expression
+  int overlap_mark;
 
   int orip_start;
   int orips_nb;
@@ -323,7 +360,15 @@ struct request_expression
   /** used locally for various scanning */
   int analyzed;
 
+  /** Mark of an expression as not to be use anymore **/
+  int deleted;
+
   og_bool keep_as_result;
+  og_bool contains_any;
+
+  double locale_score;
+
+  GQueue tmp_solutions[1];
 
   json_t *json_solution;
 };
@@ -334,6 +379,13 @@ struct match_zone_input_part
   int start;
   int length;
   int current;
+};
+
+#define DOgAliasSolutionSize 0x100
+struct alias_solution
+{
+  struct alias *alias;
+  json_t *json_solution;
 };
 
 struct og_nlp_punctuation_word
@@ -362,9 +414,24 @@ struct og_nlp_parse_conf
   int punct_word_used;
 };
 
-struct og_nlp_parse_callback
+/** Glue status for positions :
+ * stuck: equal position (no character in between)
+ * glued: no words in between
+ * loose means some words in between
+ **/
+enum nlp_glue_status
 {
+  nlp_glue_status_Loose = 0, nlp_glue_status_Glued, nlp_glue_status_Stuck
+};
 
+struct og_ctrl_nlp_js
+{
+  duk_context *duk_context;
+  duk_idx_t init_stack_idx;
+
+  /** For better error message list current defined variable */
+  GStringChunk *varibale_values;
+  GQueue variable_list[1];
 };
 
 struct og_ctrl_nlp_threaded
@@ -386,7 +453,6 @@ struct og_ctrl_nlp_threaded
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
   struct nlp_synchro_current_lock current_lock[1];
 
-
   /** Package beeing created */
   package_t package_in_progress;
 
@@ -396,6 +462,7 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  og_heap haccept_language;
   og_bool show_explanation;
   unsigned int regular_trace;
   og_heap hrequest_word;
@@ -425,6 +492,11 @@ struct og_ctrl_nlp_threaded
   int new_request_expression_start;
   int new_request_input_part_start;
 
+  /** js intepreter */
+  struct og_ctrl_nlp_js js[1];
+
+  /** HashTable key: int (word position) , value: int (word position) */
+  GHashTable *glue_hash;
 };
 
 struct og_ctrl_nlp
@@ -472,6 +544,7 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
 
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
+const char *NlpAliasTypeString(enum nlp_alias_type type);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -506,7 +579,9 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
+og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
@@ -518,6 +593,15 @@ og_status NlpInputPartAliasLog(og_nlp_th ctrl_nlp_th, package_t package);
 /* nlpmatch.c */
 og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
+/* nlpmatch_word.c */
+og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_expression.c */
+og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_interpretation.c */
+og_bool NlpMatchInterpretations(og_nlp_th ctrl_nlp_th);
+
 /* nlpparse.c */
 og_status NlpParseConfInit(og_nlp ctrl_nlp);
 og_status NlpParseConfFlush(og_nlp ctrl_nlp);
@@ -527,12 +611,14 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_digit);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Iorip);
 og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2);
+og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
@@ -554,6 +640,8 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
@@ -594,6 +682,44 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
 
 /* nlpsol.c */
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
+og_status NlpRequestSolutionString(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int size,
     char *string);
+og_status NlpSolutionString(og_nlp_th ctrl_nlp_th, json_t *json_solution, int size, char *string);
+
+/* nlpduk.c */
+char *NlpDukTypeString(duk_int_t type);
+
+/* nlpjavascript.c */
+og_status NlpJsInit(og_nlp_th ctrl_nlp_th);
+og_status NlpJsReset(og_nlp_th ctrl_nlp_th);
+og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th);
+og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
+og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
+og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
+
+/* nlpglue.c */
+og_status NlpGlueInit(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueReset(og_nlp_th ctrl_nlp_th);
+og_status NlpGlueBuild(og_nlp_th ctrl_nlp_th);
+enum nlp_glue_status NlpGluedGetStatusForPositions(og_nlp_th ctrl_nlp_th, int position1, int position2);
+
+/* nlpcheck.c */
+og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
+
+/* nlplocale.c */
+og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
+int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
+og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlpclean.c */
+og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
+
+/* nlpltras.c */
+og_status NlpLtras(og_nlp_th ctrl_nlp_th);
+
+/* nlpltrac.c */
+og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
+
 

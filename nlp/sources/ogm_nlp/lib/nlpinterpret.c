@@ -12,18 +12,26 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t *json_sentence);
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages);
 static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const char *package_id);
-static og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param)
 {
 
   // setup request memory for future interpretation
+  ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
 
   og_char_buffer nlpc_name[DPcPathSize];
   snprintf(nlpc_name, DPcPathSize, "%s_interpret_package", param->name);
   ctrl_nlp_th->hinterpret_package = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct interpret_package),
   DOgNlpPackageNumber);
   IFN(ctrl_nlp_th->hinterpret_package)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_accept_language", param->name);
+  ctrl_nlp_th->haccept_language = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct accept_language),
+  DOgNlpAcceptLanguageNumber);
+  IFN(ctrl_nlp_th->haccept_language)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
@@ -93,7 +101,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
     DPcErr;
   }
 
-  ctrl_nlp_th->regular_trace = ctrl_nlp_th->loginfo->trace;
+  IFE(NlpGlueInit(ctrl_nlp_th));
 
   DONE;
 }
@@ -107,9 +115,30 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 
 og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
 {
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  if (request_expression_used > 0)
+  {
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    for (int i = 0; i < request_expression_used; i++)
+    {
+      struct request_expression *request_expression = request_expressions + i;
+      for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
+      {
+        struct alias_solution *alias_solution = iter->data;
+        json_decrefp(&alias_solution->json_solution);
+        g_slice_free(struct alias_solution, alias_solution);
+        iter->data = NULL;
+      }
+      g_queue_clear(request_expression->tmp_solutions);
+    }
+  }
+
+  IFE(NlpGlueFlush(ctrl_nlp_th));
+
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapFlush(ctrl_nlp_th->haccept_language));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapFlush(ctrl_nlp_th->hba));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_input_part));
@@ -233,9 +262,33 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
     NlpPackageMarkAsUnused(ctrl_nlp_th, interpret_package->package);
   }
 
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  if (request_expression_used > 0)
+  {
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    for (int i = 0; i < request_expression_used; i++)
+    {
+      struct request_expression *request_expression = request_expressions + i;
+      for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
+      {
+        struct alias_solution *alias_solution = iter->data;
+        json_decrefp(&alias_solution->json_solution);
+        g_slice_free(struct alias_solution, alias_solution);
+        iter->data = NULL;
+      }
+      g_queue_clear(request_expression->tmp_solutions);
+
+      json_decrefp(&request_expression->json_solution);
+
+    }
+  }
+
+  IFE(NlpGlueReset(ctrl_nlp_th));
+
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyReset(ctrl_nlp_th));
   IFE(OgHeapReset(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapReset(ctrl_nlp_th->haccept_language));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapReset(ctrl_nlp_th->hba));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_input_part));
@@ -248,6 +301,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
+
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
 
   DONE;
@@ -406,6 +460,7 @@ static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t 
 
   }
 
+  IFE(NlpCheckPackages(ctrl_nlp_th));
   DONE;
 }
 
@@ -424,13 +479,6 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
   interpret_package->package = package;
 
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
-  DONE;
-}
-
-// TODO : mettre dans nlplang.c
-static og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language)
-{
-
   DONE;
 }
 

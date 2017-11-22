@@ -67,5 +67,21 @@ module Nls
       end
     end
 
+    def new_interpretation(text, opts = {} )
+      # default values
+      opts[:id] = UUIDTools::UUID.timestamp_create if !opts.has_key?(:id)
+
+      id = opts[:id]
+
+      solution = nil
+      solution = opts[:solution] if opts.has_key?(:solution)
+
+      interpretation = Interpretation.new(text, {id: id, solution: solution})
+
+      add_interpretation(interpretation)
+
+      interpretation
+    end
+
   end
 end

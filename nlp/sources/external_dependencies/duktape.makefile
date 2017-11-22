@@ -32,17 +32,36 @@ clean:
 	rm -f  $(SRCPATH)/include/duktape.h
 	rm -f  $(DBINPATH)/libduktape.so*
 
-make: duktape/dist/Makefile.sharedlibrary
-	cd duktape/dist/ && $(MAKE) -f Makefile.sharedlibrary
+SRCS_C=duktape/dist/duktape.c duktape/dist/duk_module_node.c duktape/dist/duk_console.c
 
-duktape/dist/Makefile.sharedlibrary:
-	cd duktape && $(MAKE) dist
+duktape/dist/libduktape.so: $(SRCS_C)
+	cd duktape/dist/ && gcc -shared -g -Og -fPIC -Wall -Wextra -Wno-maybe-uninitialized -Wl,-soname,libduktape.so \
+		                      -o libduktape.so duktape.c duk_module_node.c duk_console.c
 
-$(DBINPATH)/libduktape.so: make
-	cd duktape/dist/ && ln -nfs libduktape.so.* libduktape.so
-	cp -af duktape/dist/libduktape.so* $(DBINPATH)/
+duktape/dist/duktape.c duktape/dist/duktape.h duktape/dist/duk_config.h:
+	cd duktape && python tools/configure.py \
+		--output-directory=dist \
+		--platform linux \
+		--compiler gcc \
+		--architecture x64 \
+		--option-yaml 'DUK_USE_FASTINT: true'
 
-$(SRCPATH)/include/duktape.h: duktape/dist/Makefile.sharedlibrary
+duktape/dist/duk_module_node.c duktape/dist/duk_module_node.h: duktape/dist/duktape.h duktape/extras/module-node/duk_module_node.c duktape/extras/module-node/duk_module_node.h
+	mkdir -p duktape/dist/
+	cp -af duktape/extras/module-node/duk_module_node.c duktape/dist/
+	cp -af duktape/extras/module-node/duk_module_node.h duktape/dist/
+
+duktape/dist/duk_console.c duktape/dist/duk_console.h: duktape/dist/duktape.h duktape/extras/console/duk_console.c duktape/extras/console/duk_console.h
+	mkdir -p duktape/dist/
+	cp -af duktape/extras/console/duk_console.c duktape/dist/
+	cp -af duktape/extras/console/duk_console.h duktape/dist/
+
+$(DBINPATH)/libduktape.so: duktape/dist/libduktape.so
+	cp -af duktape/dist/libduktape.so $(DBINPATH)/
+
+$(SRCPATH)/include/duktape.h: duktape/dist/duktape.h duktape/dist/duk_config.h duktape/dist/duk_console.h duktape/dist/duk_module_node.h
 	mkdir -p $(SRCPATH)/include/
-	cp -af duktape/dist/src/duk_config.h $(SRCPATH)/include/
-	cp -af duktape/dist/src/duktape.h    $(SRCPATH)/include/
+	cp -af duktape/dist/duk_config.h $(SRCPATH)/include/
+	cp -af duktape/dist/duk_module_node.h $(SRCPATH)/include/
+	cp -af duktape/dist/duk_console.h     $(SRCPATH)/include/
+	cp -af duktape/dist/duktape.h         $(SRCPATH)/include/

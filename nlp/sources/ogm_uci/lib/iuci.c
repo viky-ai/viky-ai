@@ -17,7 +17,6 @@ struct og_http_param chttp_param, *http_param=&chttp_param;
 struct og_msg_param msg_param[1];
 struct og_ctrl_uci *ctrl_uci;
 char erreur[DOgErrorSize];
-int size;
 
 IFn(ctrl_uci=(struct og_ctrl_uci *)malloc(sizeof(struct og_ctrl_uci))) {
   sprintf(erreur,"OgUciInit: malloc error on ctrl_uci");
@@ -39,13 +38,7 @@ msg_param->module_name="uci";
 IFn(ctrl_uci->hmsg=OgMsgInit(msg_param)) return(0);
 IF(OgMsgTuneInherit(ctrl_uci->hmsg,param->hmsg)) return(0);
 
-ctrl_uci->BaSize = DOgBaSize;
-if (ctrl_uci->BaSize < param->socket_buffer_size) ctrl_uci->BaSize = param->socket_buffer_size;
-size = ctrl_uci->BaSize*sizeof(unsigned char);
-IFn(ctrl_uci->Ba=(unsigned char *)malloc(size)) {
-  sprintf(erreur,"OgEmlInit: malloc error on Ba (%d bytes)",size);
-  OgErr(ctrl_uci->herr,erreur); return(0);
-  }
+IFn(ctrl_uci->hba = OgHeapInit(ctrl_uci->hmsg, "uci_hba", sizeof(unsigned char), DOgBaSize)) return NULL;
 ctrl_uci->header_mandatory = param->header_mandatory;
 
 memset(http_param,0,sizeof(struct og_http_param));
@@ -69,8 +62,8 @@ void *handle;
 struct og_ctrl_uci *ctrl_uci = (struct og_ctrl_uci *)handle;
 
 IFE(OgHttpFlush(ctrl_uci->hhttp));
+IFE(OgHeapFlush(ctrl_uci->hba));
 IFE(OgMsgFlush(ctrl_uci->hmsg));
-DPcFree(ctrl_uci->Ba);
 
 DPcFree(ctrl_uci);
 DONE;

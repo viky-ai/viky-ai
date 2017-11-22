@@ -21,6 +21,8 @@
 /sources/include/jansson.h
 /sources/include/duk_config.h
 /sources/include/duktape.h
+/sources/include/duk_module_node.h
+/sources/include/duk_console.h
 
 
 

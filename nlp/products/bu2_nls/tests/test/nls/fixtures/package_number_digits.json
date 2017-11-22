@@ -1,0 +1,170 @@
+{
+  "id": "package-number-digits",
+  "interpretations":
+  [
+    {
+      "id": "dot",
+      "expressions":
+      [
+        {
+          "expression": "."
+        }
+      ]
+    },
+    {
+      "id": "coma",
+      "expressions":
+      [
+        {
+          "expression": ","
+        }
+      ]
+    },
+    {
+      "id": "digits_number",
+      "expressions":
+      [
+        {
+          "expression": "@{digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            }
+          ],
+          "solution":
+          {
+            "number": "`digits.digit`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "digits_sep_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits_before} @{dot} @{digits_after}",
+          "aliases":
+          [
+            {
+              "alias": "digits_before",
+              "type": "digit"
+            },
+            {
+              "alias": "dot",
+              "id": "dot",
+              "package": "package-number-digits"
+            },
+            {
+              "alias": "digits_after",
+              "type": "digit"
+            }
+          ]
+        },
+        {
+          "expression": "@{digits_before} @{coma} @{digits_after}",
+          "aliases":
+          [
+            {
+              "alias": "digits_before",
+              "type": "digit"
+            },
+            {
+              "alias": "coma",
+              "id": "coma",
+              "package": "package-number-digits"
+            },
+            {
+              "alias": "digits_after",
+              "type": "digit"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "number": "`Number(digits_before.digit+'.'+digits_after.digit)`"
+      }
+    },
+    {
+      "id": "several_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits} @{several_digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            },
+            {
+              "alias": "several_digits",
+              "id": "several_digits",
+              "package": "package-number-digits"
+            }
+          ],
+          "solution":
+          {
+            "number": "`digits.digit+''+several_digits.number`"
+          }
+        },
+        {
+          "expression": "@{digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits",
+              "type": "digit"
+            }
+          ],
+          "solution":
+          {
+            "number": "`digits.digit`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_digits",
+      "expressions":
+      [
+        {
+          "expression": "@{digits_number}",
+          "aliases":
+          [
+            {
+              "alias": "digits_number",
+              "id": "digits_number",
+              "package": "package-number-digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{digits_sep_digits}",
+          "aliases":
+          [
+            {
+              "alias": "digits_sep_digits",
+              "id": "digits_sep_digits",
+              "package": "package-number-digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{several_digits}",
+          "aliases":
+          [
+            {
+              "alias": "several_digits",
+              "id": "several_digits",
+              "package": "package-number-digits"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

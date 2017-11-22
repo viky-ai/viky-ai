@@ -26,7 +26,7 @@ module Valgrind
       sleep(0.5)
 
       # launch queries
-      interpret_queries(1)
+      interpret_queries(1, true)
 
       `callgrind_control -i on`
       `callgrind_control --zero`
@@ -34,7 +34,7 @@ module Valgrind
       sleep(0.5)
 
       # launch queries
-      interpret_queries(1)
+      interpret_queries(1, true)
 
       sleep(0.5)
 

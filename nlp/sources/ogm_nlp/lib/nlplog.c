@@ -47,31 +47,30 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
     size_t flags)
 {
-  og_string truncated_ends = " ... (truncated) ";
+  og_string truncated_ends = "...(truncated)";
   int truncated_ends_size = strlen(truncated_ends);
 
-  int expected_size = json_dumpb(json, buffer, buffer_size - truncated_ends_size - 1, flags);
+  int max_buffer_size = buffer_size - truncated_ends_size - 1;
+  int expected_size = json_dumpb(json, buffer, max_buffer_size, flags);
   IF(expected_size)
   {
     DPcErr;
   }
 
+  buffer[max_buffer_size] = 0;
+
   // truncated json
-  if (expected_size >= (buffer_size - truncated_ends_size - 1))
+  if (expected_size > max_buffer_size)
   {
     if (p_truncated) *p_truncated = TRUE;
-
-    if (truncated_ends_size > buffer_size)
-    {
-      snprintf(buffer + buffer_size - truncated_ends_size - 1, truncated_ends_size, "%s", truncated_ends);
-    }
-
-    DONE;
+    snprintf(buffer + max_buffer_size, truncated_ends_size, "%s", truncated_ends);
+  }
+  else
+  {
+    buffer[expected_size] = 0;
   }
 
-  buffer[expected_size] = 0;
-
-  if (p_truncated) *p_truncated = TRUE;
+  if (p_truncated) *p_truncated = FALSE;
 
   DONE;
 }
@@ -170,7 +169,8 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
   }
   else
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' any", string_alias);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' %s", string_alias,
+        NlpAliasTypeString(alias->type));
   }
   DONE;
 }
@@ -239,7 +239,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s", text, string_locale,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "");
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));
@@ -277,7 +278,7 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
   }
   else
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' any", alias->alias);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s", alias->alias, NlpAliasTypeString(alias->type));
   }
   DONE;
 }
@@ -299,7 +300,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     }
     case nlp_input_part_type_Word:
     {
-      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word_start);
+      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
       IFN(string_word) DPcErr;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part word '%s'", Iinput_part, string_word);
       break;
@@ -309,6 +310,13 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
       struct alias *alias = input_part->alias;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part interpretation '%s' '%s' in package '%s'",
           Iinput_part, alias->slug, alias->id, alias->package_id);
+      break;
+    }
+    case nlp_input_part_type_Digit:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part,
+          NlpAliasTypeString(alias->type));
       break;
     }
   }
@@ -348,5 +356,23 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d", Irequest_word, string_request_word,
       request_word->start_position, request_word->length_position);
   DONE;
+}
+
+const char *NlpAliasTypeString(enum nlp_alias_type type)
+{
+
+  switch (type)
+  {
+    case nlp_alias_type_Nil:
+      return "nil";
+    case nlp_alias_type_type_Interpretation:
+      return "interpretation";
+    case nlp_alias_type_Any:
+      return "any";
+    case nlp_alias_type_Digit:
+      return "digit";
+
+  }
+  return "alias_unknown";
 }
 
