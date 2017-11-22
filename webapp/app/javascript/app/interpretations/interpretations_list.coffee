@@ -23,7 +23,7 @@ class InterpretationsList
 
   @updateBlankslates: ->
     if $("#interpretations-list > li").length == 0
-      if $(".tabs > ul > li").length == 2
+      if $(".interpretation-new-form-container .tabs > ul > li").length == 2
         $("#blankslate-start").show()
       else
         $("#blankslate-start-or-remove").show()
