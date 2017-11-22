@@ -38,7 +38,7 @@ module Nls
         # swimmming, pol, peple and viiaw are corrected
         # viiaw is corrected by the ltras phon module
         query = {
-          "packages":
+          "packages" =>
           [
             "hotel_features",
             "building_features",

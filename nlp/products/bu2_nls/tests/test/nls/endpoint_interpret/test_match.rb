@@ -18,8 +18,8 @@ module Nls
         aller_de_a << i_barca
 
         i_town = Interpretation.new("town")
-                    .new_expression("@{new-york}", {aliases: {'new-york': i_new_york}})
-                    .new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
+        i_town.new_expression("@{new-york}", {aliases: {'new-york'  => i_new_york}})
+        i_town.new_expression("@{barcelona}", {aliases: { barcelona: i_barca }})
         aller_de_a << i_town
 
         i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
@@ -28,11 +28,11 @@ module Nls
         i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
         aller_de_a << i_prep_to
 
-        prep_from_town_hash = { 'prep-from': i_prep_from, town: i_town }
+        prep_from_town_hash = { 'prep-from' => i_prep_from, town: i_town }
         i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", {aliases: prep_from_town_hash})
         aller_de_a << i_prep_from_town
 
-        prep_to_town_hash = { 'prep-to': i_prep_to, town: i_town }
+        prep_to_town_hash = { 'prep-to'  => i_prep_to, town: i_town }
         i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", {aliases: prep_to_town_hash})
         aller_de_a << i_prep_to_town
 
@@ -46,7 +46,7 @@ module Nls
         i_want = Interpretation.new("want").new_textual(["I want to"])
         aller_de_a << i_want
 
-        want_go_from_to_hash = { want: i_want, 'go-from-to': i_go_from_to }
+        want_go_from_to_hash = { want: i_want, 'go-from-to'  => i_go_from_to }
         i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", {aliases: want_go_from_to_hash})
         aller_de_a << i_want_go_from_to
 
@@ -62,11 +62,11 @@ module Nls
         i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
         aller_de_a << i_prep_to
 
-        prep_from_town_hash = { 'prep-from': i_prep_from, town: Alias.any }
+        prep_from_town_hash = { 'prep-from'  => i_prep_from, town: Alias.any }
         i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", {aliases: prep_from_town_hash})
         aller_de_a << i_prep_from_town
 
-        prep_to_town_hash = { 'prep-to': i_prep_to, town: Alias.any }
+        prep_to_town_hash = { 'prep-to'  => i_prep_to, town: Alias.any }
         i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", {aliases: prep_to_town_hash})
         aller_de_a << i_prep_to_town
 
@@ -80,7 +80,7 @@ module Nls
         i_want = Interpretation.new("want").new_textual(["I want to"])
         aller_de_a << i_want
 
-        want_go_from_to_hash = { want: i_want, 'go-from-to': i_go_from_to }
+        want_go_from_to_hash = { want: i_want, 'go-from-to'  => i_go_from_to }
         i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", {aliases: want_go_from_to_hash})
         aller_de_a << i_want_go_from_to
 
@@ -90,15 +90,15 @@ module Nls
       def create_aller_de_a_any_solutions_js
         aller_de_a = Package.new("aller-de-a")
 
-        i_new_york = Interpretation.new("new-york", solution: { "name": "New York" }).new_textual(["New York", "NYC"])
+        i_new_york = Interpretation.new("new-york", solution: { "name" => "New York" }).new_textual(["New York", "NYC"])
         aller_de_a << i_new_york
 
-        i_barca = Interpretation.new("barcelona", solution: { "name": "Barcelona" } ).new_textual(["Barcelona", "Barca"])
+        i_barca = Interpretation.new("barcelona", solution: { "name" => "Barcelona" } ).new_textual(["Barcelona", "Barca"])
         aller_de_a << i_barca
 
         i_town = Interpretation.new("town")
-                    .new_expression("@{new-york}", {aliases: {'new-york': i_new_york}})
-                    .new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
+        i_town.new_expression("@{new-york}", {aliases: {'new-york' => i_new_york}})
+        i_town.new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
         aller_de_a << i_town
 
         i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
@@ -108,29 +108,29 @@ module Nls
         aller_de_a << i_prep_to
 
         prep_to_town_params = {
-          aliases: {'prep-to': i_prep_to, town: i_town},
+          aliases: {'prep-to' => i_prep_to, town: i_town},
           keep_order: Expression.keep_order,
-          solution: { "to": "`town.name`" }
+          solution: { "to" => "`town.name`" }
         }
         i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_params)
         prep_to_town_params = {
-          aliases: {'prep-to': i_prep_to, town: Alias.any},
+          aliases: {'prep-to' => i_prep_to, town: Alias.any},
           keep_order: Expression.keep_order,
-          solution: { "to": "`town.any`" }
+          solution: { "to" => "`town.any`" }
         }
         i_prep_to_town.new_expression("@{prep-to} @{town}", prep_to_town_params)
         aller_de_a << i_prep_to_town
 
         prep_from_town_params = {
-          aliases: { 'prep-from': i_prep_from, town: i_town },
+          aliases: { 'prep-from' => i_prep_from, town: i_town },
           keep_order: Expression.keep_order,
-          solution: { "from": "`town.name`" }
+          solution: { "from" => "`town.name`" }
         }
         i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_params)
         prep_from_town_params = {
-          aliases: { 'prep-from': i_prep_from, town: Alias.any },
+          aliases: { 'prep-from' => i_prep_from, town: Alias.any },
           keep_order: Expression.keep_order,
-          solution: { "from": "`town.any`" }
+          solution: { "from" => "`town.any`" }
         }
         i_prep_from_town.new_expression("@{prep-from} @{town}", prep_from_town_params)
         aller_de_a << i_prep_from_town
@@ -145,7 +145,7 @@ module Nls
         i_want = Interpretation.new("want").new_textual(["I want to"])
         aller_de_a << i_want
 
-        want_go_from_to_hash = { want: i_want, 'go-from-to': i_go_from_to }
+        want_go_from_to_hash = { want: i_want, 'go-from-to' => i_go_from_to }
         i_want_go_from_to = Interpretation.new("want-go-from-to").new_expression("@{want} @{go-from-to}", {aliases: want_go_from_to_hash})
         aller_de_a << i_want_go_from_to
 
@@ -161,22 +161,24 @@ module Nls
         i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
         pg_building_feature << i_swimming_pool
 
-        i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}", {aliases: {'swimming-pool': i_swimming_pool}})
-                                                                   .new_expression("@{sea-view}", {aliases: {'sea-view': i_sea_view}})
+        i_building_feature = Interpretation.new("building-feature")
+        i_building_feature.new_expression("@{swimming-pool}", {aliases: {'swimming-pool' => i_swimming_pool}})
+        i_building_feature.new_expression("@{sea-view}", {aliases: {'sea-view' => i_sea_view}})
         pg_building_feature << i_building_feature
 
         i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
         pg_building_feature << i_preposition_building_feature
 
-        pg_building_feature_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': i_building_feature}
-        i_pg_building_feature = Interpretation.new("pg-building-feature").new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash})
-                                                                         .new_expression("@{building-feature}", {aliases: {'building-feature': i_building_feature}})
+        pg_building_feature_hash = {'preposition-building-feature' => i_preposition_building_feature, 'building-feature' => i_building_feature}
+        i_pg_building_feature = Interpretation.new("pg-building-feature")
+        i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash})
+        i_pg_building_feature.new_expression("@{building-feature}", {aliases: {'building-feature' => i_building_feature}})
         pg_building_feature << i_pg_building_feature
 
         i_pg_building_features = Interpretation.new("pg-building-features")
-        pg_building_features_hash = {'pg-building-feature': i_pg_building_feature, 'pg-building-features': i_pg_building_features}
+        pg_building_features_hash = {'pg-building-feature' => i_pg_building_feature, 'pg-building-features' => i_pg_building_features}
         i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", {aliases: pg_building_features_hash})
-                              .new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature': i_pg_building_feature}})
+        i_pg_building_features.new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature' => i_pg_building_feature}})
         pg_building_feature << i_pg_building_features
 
         pg_building_feature
@@ -195,14 +197,14 @@ module Nls
         go_town << i_paris
 
         i_town = Interpretation.new("town")
-                        .new_expression("@{new-york}", {aliases: {'new-york': i_new_york}})
-                        .new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
-                        .new_expression("@{paris}", {aliases: {paris: i_paris}})
+        i_town.new_expression("@{new-york}", {aliases: {'new-york' => i_new_york}})
+        i_town.new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
+        i_town.new_expression("@{paris}", {aliases: {paris: i_paris}})
         go_town << i_town
 
         i_towns = Interpretation.new("towns")
         i_towns.new_expression("@{town} @{towns}", {aliases: {town: i_town, towns: i_towns}})
-               .new_expression("@{town}", {aliases: {town: i_town}})
+        i_towns.new_expression("@{town}", {aliases: {town: i_town}})
         go_town << i_towns
 
         i_go = Interpretation.new("go").new_textual(["go to"])
@@ -300,9 +302,9 @@ module Nls
         i_want_hotel = Interpretation.new("want-hotel").new_expression("@{want} @{hotel}", {aliases: {want: i_want, hotel: i_hotel}})
         want_hotel << i_want_hotel
 
-        want_hotel_with_feature_hash = {'want-hotel': i_want_hotel, 'pg-building-features': pg_building_feature["pg-building-features"]}
+        want_hotel_with_feature_hash = {'want-hotel' => i_want_hotel, 'pg-building-features' => pg_building_feature["pg-building-features"]}
         i_want_hotel_with_feature = Interpretation.new("want-hotel-with-feature")
-                                                  .new_expression("@{want-hotel} @{pg-building-features}", {aliases: want_hotel_with_feature_hash}) # , want_hotel_with_feature_hash)
+        i_want_hotel_with_feature.new_expression("@{want-hotel} @{pg-building-features}", {aliases: want_hotel_with_feature_hash}) # , want_hotel_with_feature_hash)
         want_hotel << i_want_hotel_with_feature
 
         Nls.package_update(want_hotel)

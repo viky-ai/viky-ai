@@ -36,7 +36,7 @@ module Nls
         Nls.query_post(package_url, package_building_features)
 
         query = {
-          "packages":
+          "packages" =>
           [
             "hotel_features",
             "building_features",
@@ -45,7 +45,7 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "with swimming pool with spa for 3 people with sea view"
+          "sentence" => "with swimming pool with spa for 3 people with sea view"
         }
 
         expected = {
@@ -74,31 +74,31 @@ module Nls
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "with swimming pool with spa for 4 people with sea view"
+        query['sentence'] = "with swimming pool with spa for 4 people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 4.0
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "with swimming pool with spa for 51 people with sea view"
+        query['sentence'] = "with swimming pool with spa for 51 people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 51
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "with swimming pool with spa for fifty two people with sea view"
+        query['sentence'] = "with swimming pool with spa for fifty two people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 52
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "with swimming pool with spa for two hundred and fifty two people with sea view"
+        query['sentence'] = "with swimming pool with spa for two hundred and fifty two people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 252
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
 
-        query[:sentence] = "avec piscine avec spa pour quarante et une personnes avec vue sur la mer"
+        query['sentence'] = "avec piscine avec spa pour quarante et une personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 41
         actual = Nls.interpret(query, query_param)
 
-        query[:sentence] = "avec piscine avec spa pour quatre vingt douze personnes avec vue sur la mer"
+        query['sentence'] = "avec piscine avec spa pour quatre vingt douze personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 92
         actual = Nls.interpret(query, query_param)
 
@@ -108,7 +108,7 @@ module Nls
 #        ap actual
 #        ap expected
 
-        query[:sentence] = "avec piscine avec spa pour quarante douze personnes avec vue sur la mer"
+        query['sentence'] = "avec piscine avec spa pour quarante douze personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 52
         actual = Nls.interpret(query, query_param)
         assert_equal expected, actual
