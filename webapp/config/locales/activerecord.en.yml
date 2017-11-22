@@ -14,6 +14,9 @@ en:
         description: Description
       interpretation:
         expression: Expression
+        keep_order: Keep order
+        glued: Glued
+        solution: Solution
   errors:
     user:
       delete:

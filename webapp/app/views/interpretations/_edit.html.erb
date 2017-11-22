@@ -33,5 +33,24 @@
             data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
     </div>
     <%= display_errors(interpretation, :expression) %>
-  </div>
+    </div>
+    <div class="field">
+      <div class="field field--inline">
+        <div class="control">
+          <%= f.check_box :keep_order %>
+          <%= f.label :keep_order %>
+        </div>
+        <div class="control">
+          <%= f.check_box :glued %>
+          <%= f.label :glued %>
+        </div>
+      </div>
+      <div class="control">
+        <%= f.label :solution %>
+        <%= f.text_area :solution, rows: '3', maxlength: '2000', spellcheck: 'false' %>
+      </div>
+      <%= display_errors(interpretation, :keep_order) %>
+      <%= display_errors(interpretation, :glued) %>
+      <%= display_errors(interpretation, :solution) %>
+    </div>
 <% end %>

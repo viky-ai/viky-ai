@@ -52,6 +52,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       click_link 'Hello world'
       fill_in 'interpretation[expression]', with: 'Hello every body'
+      check('interpretation[keep_order]')
+      check('interpretation[glued]')
+      fill_in 'interpretation[solution]', with: '10'
       click_button 'Update'
     end
 
@@ -77,5 +80,24 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
     assert page.has_no_link?('Cancel')
     assert_equal "0", first('#current-locale-tab-badge').text
+  end
+
+
+  test 'Json error on solution' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_link?('Hello world')
+
+    within('#interpretations-list') do
+      click_link 'Hello world'
+      fill_in 'interpretation[solution]', with: 'azerty'
+      click_button 'Update'
+    end
+
+    assert page.has_text?('Solution invalid json')
   end
 end
