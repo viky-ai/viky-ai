@@ -46,6 +46,8 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
   }
   IFE(NlpRequestExpressionsExplicit(ctrl_nlp_th));
+
+  IFE(NlpWhyCalculate(ctrl_nlp_th));
   DONE;
 }
 

@@ -102,6 +102,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   }
 
   IFE(NlpGlueInit(ctrl_nlp_th));
+  IFE(NlpWhyNotMatchingInit(ctrl_nlp_th,param->name));
 
   DONE;
 }
@@ -134,6 +135,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   }
 
   IFE(NlpGlueFlush(ctrl_nlp_th));
+  IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
@@ -247,6 +249,12 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   IFE(NlpMatch(ctrl_nlp_th));
   IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
 
+  int nm_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hnm_expression);
+  if (nm_expression_used > 0)
+  {
+    IFE(NlpWhyJson(ctrl_nlp_th, json_answer));
+  }
+
   NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: finished interpreting request [\n%s]", json_request_string)
 
   DONE;
@@ -284,6 +292,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   }
 
   IFE(NlpGlueReset(ctrl_nlp_th));
+  IFE(NlpWhyNotMatchingReset(ctrl_nlp_th));
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyReset(ctrl_nlp_th));
@@ -313,6 +322,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_sentence = NULL;
   json_t *json_accept_language = NULL;
   json_t *json_show_explanation = NULL;
+  json_t *json_why_not_matching = NULL;
   json_t *json_trace = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
@@ -336,6 +346,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else if (Ogstricmp(key, "show-explanation") == 0)
     {
       json_show_explanation = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "why-not-matching") == 0)
+    {
+      json_why_not_matching = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "trace") == 0)
     {
@@ -406,6 +420,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   IFE(NlpInterpretRequestBuildSentence(ctrl_nlp_th, json_sentence));
   IFE(NlpInterpretRequestBuildPackages(ctrl_nlp_th, json_packages));
   IFE(NlpInterpretRequestBuildAcceptLanguage(ctrl_nlp_th, json_accept_language));
+  IFE(NlpWhyNotMatchingBuild(ctrl_nlp_th, json_why_not_matching));
 
   DONE;
 }

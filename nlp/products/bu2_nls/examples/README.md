@@ -95,6 +95,12 @@ Dates:
 ./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_date.json -i requests/r_date_day_month_year.json
 ```
 
+why-not-working:
+```
+./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_date_why.json -i requests/r_date_why.json
+```
+
+
 Summary of list of examples
 =====
 

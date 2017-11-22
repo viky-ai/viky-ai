@@ -230,7 +230,6 @@ og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t p
 }
 
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
-
 {
   IFN(expression) DPcErr;
 

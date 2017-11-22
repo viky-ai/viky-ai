@@ -508,6 +508,7 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
   struct input_part *input_part = OgHeapNewCell(package->hinput_part, &Iinput_part);
   IFn(input_part) return (NULL);
   IF(Iinput_part) return (NULL);
+  input_part->self_index = Iinput_part;
   input_part->expression = expression;
 
   if (expression->input_parts_nb == 0)

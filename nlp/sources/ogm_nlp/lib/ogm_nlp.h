@@ -219,6 +219,8 @@ struct input_part_word
 
 struct input_part
 {
+  int self_index;
+
   /** Parent */
   struct expression *expression;
 
@@ -454,6 +456,26 @@ struct og_ctrl_nlp_js
   GQueue variable_list[1];
 };
 
+/** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
+struct nm_expression
+{
+  struct expression *expression;
+  int m_input_part_start;
+// m_input_parts_nb is always expression->input_parts_nb
+};
+
+struct m_input_part
+{
+  struct input_part *input_part;
+  int m_expression_start;
+  int m_expressions_nb;
+};
+
+struct m_expression
+{
+  int Irequest_input_part;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -522,6 +544,9 @@ struct og_ctrl_nlp_threaded
   void *hltrac;
   void *hltras;
 
+  void *hnm_expression;
+  void *hm_input_part;
+  void *hm_expression;
 };
 
 struct og_ctrl_nlp
@@ -759,4 +784,19 @@ og_status NlpLtracPackageFlush(package_t package);
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+
+/* nlpwhy.c */
+og_status NlpWhyNotMatchingInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpWhyNotMatchingReset(og_nlp_th ctrl_nlp_th);
+og_status NlpWhyNotMatchingFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpWhyNotMatchingBuild(og_nlp_th ctrl_nlp_th, json_t *json_why_not_matching);
+og_status NlpWhyNotMatchingLog(og_nlp_th ctrl_nlp_th);
+og_status NlpWhyNotMatchingExpressionLog(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression);
+
+/* nlpwhycal.c */
+og_status NlpWhyCalculate(og_nlp_th ctrl_nlp_th);
+
+/* nlpwhyjson.c */
+og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_interpretation);
+
 
