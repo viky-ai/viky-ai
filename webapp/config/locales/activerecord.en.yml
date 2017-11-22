@@ -27,3 +27,5 @@ en:
         collaborators_presence: You must remove all collaborators before delete an agent
     intents:
       unknown_locale: "unknown '%{current_locale}'"
+    interpretation:
+      invalid_json: "invalid json"

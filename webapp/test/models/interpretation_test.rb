@@ -9,6 +9,9 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal 1, interpretation.position
     assert_equal 'Good morning', interpretation.expression
     assert_equal intents(:weather_greeting).id, interpretation.intent.id
+    assert_equal false, interpretation.keep_order
+    assert_equal false, interpretation.glued
+    assert interpretation.solution.nil?
     assert_equal 3, intents(:weather_greeting).interpretations.count
   end
 
@@ -52,4 +55,14 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal 1, fr_interpretations.count
   end
 
+
+  test 'Check interpretation solution is valid' do
+    interpretation = interpretations(:weather_greeting_hello)
+    interpretation.solution = (['a'] * 2001).join('')
+    assert !interpretation.valid?
+    expected = {
+      solution: ['is too long (maximum is 2000 characters)', 'invalid json']
+    }
+    assert_equal expected, interpretation.errors.messages
+  end
 end

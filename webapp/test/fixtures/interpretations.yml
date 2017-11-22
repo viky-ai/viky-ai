@@ -2,6 +2,9 @@ weather_greeting_hello:
   expression: Hello world
   intent: weather_greeting
   locale: 'en-US'
+  keep_order: true
+  glued: true
+  solution: '{"who": "`greeting.who`"}'
 
 weather_greeting_bonjour:
   expression: Bonjour tout le monde
