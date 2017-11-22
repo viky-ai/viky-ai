@@ -26,7 +26,9 @@ module Nls
       hash_interpretation['slug'] = @slug
       hash_interpretation['score'] = @score
       if !@solution.nil?
-        if @solution.respond_to?(:to_h)
+        if @solution.kind_of? Array
+          hash_interpretation['solution'] = @solution
+        elsif @solution.respond_to?(:to_h)
           hash_interpretation['solution'] = @solution.to_h
         else
           hash_interpretation['solution'] = @solution

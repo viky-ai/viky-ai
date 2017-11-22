@@ -5,6 +5,7 @@ require 'dotenv/load'
 require 'minitest/autorun'
 require 'minitest/reporters'
 
+require 'active_support/all'
 require 'rest-client'
 require 'awesome_print'
 require 'json'
@@ -16,7 +17,13 @@ reporters = [
   Minitest::Reporters::SpecReporter.new(color: true)
 ]
 
-Minitest::Reporters.use! reporters
+backtrace_filter = Minitest::ExtensibleBacktraceFilter.default_filter
+backtrace_filter.add_filter(/lib\/m/)
+backtrace_filter.add_filter(/bin\/m/)
+backtrace_filter.add_filter(/lib\/bundler/)
+backtrace_filter.add_filter(/exe\/bundle/)
+backtrace_filter.add_filter(/bin\/bundle/)
+Minitest::Reporters.use!(reporters, ENV, backtrace_filter)
 
 require 'nls'
 require 'test_common'

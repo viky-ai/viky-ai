@@ -39,7 +39,7 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false)
       request = {}
       if package.kind_of? Array
         package_ids = package.map do |p|
@@ -57,6 +57,7 @@ module Nls
       end
       request['sentence'] = sentence
       request['Accept-Language'] = locale
+      request['show-explanation'] = "true"  if explain
       request
     end
 
@@ -147,33 +148,41 @@ module Nls
     def create_building_feature_any
       pg_building_feature = Package.new("pg-building-feature")
 
-      i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"])
+      i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"], solution: "Sea view" )
       pg_building_feature << i_sea_view
 
-      i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
+      i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"], solution: "swimming pool" )
       pg_building_feature << i_swimming_pool
 
       i_building_feature = Interpretation.new("building-feature")
-      i_building_feature.new_expression("@{swimming-pool}", {aliases: {'swimming-pool' => i_swimming_pool}})
-      i_building_feature.new_expression("@{sea-view}", {aliases: {'sea-view'  => i_sea_view}})
+      i_building_feature.new_expression("@{swimming-pool}", aliases: {'swimming-pool' => i_swimming_pool})
+      i_building_feature.new_expression("@{sea-view}", aliases: {'sea-view'  => i_sea_view})
       pg_building_feature << i_building_feature
 
       i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
       pg_building_feature << i_preposition_building_feature
 
-      pg_building_feature_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'  => i_building_feature}
-      pg_building_feature_any_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'=> Alias.any}
+      pg_building_feature_hash = {'preposition_building_feature'  => i_preposition_building_feature, 'building_feature'  => i_building_feature}
+      pg_building_feature_any_hash = {'preposition_building_feature'  => i_preposition_building_feature, 'building_feature'=> Alias.any}
       i_pg_building_feature = Interpretation.new("pg-building-feature")
-      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash, keep_order: Expression.keep_order}) # pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
-      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_any_hash, keep_order: Expression.keep_order}) # pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
-      i_pg_building_feature.new_expression("@{building-feature}", {aliases: {'building-feature'  => i_building_feature}})
+      i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
+          aliases: pg_building_feature_hash,
+          keep_order: true,
+          solution: { features: "`building_feature`" })
+      i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
+          aliases: pg_building_feature_any_hash,
+          keep_order: true,
+          solution: { features: "`building_feature`" })
+      i_pg_building_feature.new_expression("@{building_feature}",
+          aliases: {'building_feature'  => i_building_feature},
+          solution: { features: "`building_feature`" })
       pg_building_feature << i_pg_building_feature
 
 
       i_pg_building_features = Interpretation.new("pg-building-features")
-      pg_building_features_hash = {'pg-building-feature' => i_pg_building_feature, 'pg-building-features'  => i_pg_building_features}
-      i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", {aliases: pg_building_features_hash})
-      i_pg_building_features.new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature'  => i_pg_building_feature}})
+      pg_building_features_hash = {'feature' => i_pg_building_feature, 'features'  => i_pg_building_features}
+      i_pg_building_features.new_expression("@{feature} @{features}", aliases: pg_building_features_hash )
+      i_pg_building_features.new_expression("@{feature}", aliases: { feature: i_pg_building_feature }, keep_order: true )
       pg_building_feature << i_pg_building_features
       @available_packages[pg_building_feature.slug] = pg_building_feature
 
@@ -223,6 +232,15 @@ module Nls
 
       expected_json = {}
       if expected.kind_of?(Array) || expected.kind_of?(Hash)
+        if expected.kind_of?(Array)
+          expected.map do |e|
+            if e.kind_of?(Hash)
+              e.deep_stringify_keys!
+            end
+          end
+        elsif expected.kind_of?(Hash)
+          expected.deep_stringify_keys!
+        end
         expected_json = expected
       elsif expected.kind_of?(String)
         if File.exist?(expected)
@@ -236,6 +254,15 @@ module Nls
 
       actual_json = {}
       if actual.kind_of?(Array) || actual.kind_of?(Hash)
+        if actual.kind_of?(Array)
+          actual.map do |e|
+            if e.kind_of?(Hash)
+              e.deep_stringify_keys!
+            end
+          end
+        elsif actual.kind_of?(Hash)
+          actual.deep_stringify_keys!
+        end
         actual_json = actual
       elsif actual.kind_of?(String)
         if File.exist?(actual)

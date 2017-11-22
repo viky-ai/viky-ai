@@ -616,7 +616,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   }
 
   alias->type = nlp_alias_type_type_Interpretation;
-  if (json_is_string(json_alias_type))
+  if (json_alias_type != NULL && json_is_string(json_alias_type))
   {
     const char *string_alias_type = json_string_value(json_alias_type);
     if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
