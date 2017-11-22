@@ -12,7 +12,8 @@
 
 struct og_uci_memory {
   ogint64_t total,total_module;
-  ogint64_t ctrl_uci,Ba;
+  ogint64_t ctrl_uci;
+  ogint64_t hba;
   ogint64_t hhttp;
   };
 
@@ -41,11 +42,11 @@ if (must_log) {
 memset(m,0,sizeof(struct og_uci_memory));
 
 m->ctrl_uci=sizeof(struct og_ctrl_uci);
-m->Ba=ctrl_uci->BaSize*sizeof(unsigned char);
+m->hba=OgHeapGetAllocatedMemory(ctrl_uci->hba);
 IFE(OgHttpMem(ctrl_uci->hhttp,0,module_level+2,&m->hhttp));
 
 m->total_module = m->ctrl_uci
-                + m->Ba
+                + m->hba
                 + m->hhttp
                 ;
 
@@ -53,7 +54,7 @@ m->total += m->total_module;
 
 DOgShowMem(m->total_module    ,"total_module uci"," ")
 DOgShowMem(m->ctrl_uci        ,"ctrl_uci","         ")
-DOgShowMem(m->Ba              ,"Ba","               ")
+DOgShowMem(m->hba             ,"hba","              ")
 DOgShowMem(m->hhttp           ,"hhttp","            ")
 
 if (pmem) *pmem=m->total;

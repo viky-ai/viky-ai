@@ -13,8 +13,7 @@ require 'fileutils'
 require 'uuidtools'
 
 reporters = [
-  Minitest::Reporters::SpecReporter.new( color:true),
-  # Minitest::Reporters::HtmlReporter.new(reports_dir: 'html_reports')
+  Minitest::Reporters::SpecReporter.new(color: true)
 ]
 
 Minitest::Reporters.use! reporters

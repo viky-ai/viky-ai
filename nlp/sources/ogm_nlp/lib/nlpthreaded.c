@@ -58,6 +58,11 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
 
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
+  IF(NlpJsInit(ctrl_nlp_th)) return NULL;
+
+  IF(NlpLtracInit(ctrl_nlp_th)) return NULL;
+  IF(NlpLtrasInit(ctrl_nlp_th)) return NULL;
+
   return ctrl_nlp_th;
 
 }
@@ -78,12 +83,19 @@ PUBLIC(og_status) OgNlpThreadedReset(og_nlp_th ctrl_nlp_th)
 
   json_decrefp(&ctrl_nlp_th->json_answer);
 
+  IFE(NlpJsReset(ctrl_nlp_th));
+
   DONE;
 }
 
 PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
 {
   IFE(NlpInterpretFlush(ctrl_nlp_th));
+
+  IFE(NlpJsFlush(ctrl_nlp_th));
+
+  IFE(NlpLtracFlush(ctrl_nlp_th));
+  IFE(NlpLtrasFlush(ctrl_nlp_th));
 
   IFE(OgMsgFlush(ctrl_nlp_th->hmsg));
 

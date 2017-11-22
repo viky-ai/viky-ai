@@ -14,6 +14,7 @@
 /sandbox
 
 # Externals includes
+/sources/include/libxml/
 /sources/include/gio-unix-2.0/
 /sources/include/glib-2.0/
 /sources/include/uriparser/
@@ -21,6 +22,8 @@
 /sources/include/jansson.h
 /sources/include/duk_config.h
 /sources/include/duktape.h
+/sources/include/duk_module_node.h
+/sources/include/duk_console.h
 
 
 

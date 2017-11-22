@@ -1,0 +1,30 @@
+[
+  {
+    "packages":
+    [
+      "building_features"
+    ],
+    "sentence": "with swimming pool"
+  },
+  {
+    "packages":
+    [
+      "building_features"
+    ],
+    "sentence": "with spa"
+  },
+  {
+    "packages":
+    [
+      "building_features"
+    ],
+    "sentence": "with sea view"
+  },
+  {
+    "packages":
+    [
+      "building_features"
+    ],
+    "sentence": "with view of the sea"
+  }
+]

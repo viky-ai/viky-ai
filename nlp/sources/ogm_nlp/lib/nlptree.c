@@ -23,19 +23,9 @@ og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expres
 static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression, int offset)
 {
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
-
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
-    int Ioriginal_request_input_part = orip[request_expression->orip_start + i].Ioriginal_request_input_part;
-    int Irequest_input_part = original_request_input_part[Ioriginal_request_input_part].Irequest_input_part;
-    struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-        Irequest_input_part);
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part) DPcErr;
 
     if (request_input_part->type == nlp_input_part_type_Word) ;
@@ -73,19 +63,9 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
   memset(string_offset, ' ', offset);
   string_offset[offset] = 0;
 
-  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
-      ctrl_nlp_th->horiginal_request_input_part, 0);
-  IFN(original_request_input_part) DPcErr;
-
-  struct orip *orip = OgHeapGetCell(ctrl_nlp_th->horip, 0);
-  IFN(orip) DPcErr;
-
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
-    int Ioriginal_request_input_part = orip[request_expression->orip_start + i].Ioriginal_request_input_part;
-    int Irequest_input_part = original_request_input_part[Ioriginal_request_input_part].Irequest_input_part;
-    struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-        Irequest_input_part);
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part) DPcErr;
 
     if (request_input_part->type == nlp_input_part_type_Word)
@@ -150,9 +130,16 @@ static og_status NlpRequestInputPartWordLog(og_nlp_th ctrl_nlp_th, struct reques
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s'", string_offset,
+  char digit[DPcPathSize];
+  digit[0] = 0;
+  if (request_word->is_digit)
+  {
+    snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s'%s", string_offset,
       request_input_part->Ioriginal_request_input_part, request_input_part->level, string_positions, DPcPathSize,
-      string_request_word);
+      string_request_word, digit);
   DONE;
 }
 

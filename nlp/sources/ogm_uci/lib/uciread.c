@@ -14,8 +14,6 @@ struct og_scan_expect
 };
 
 
-STATICF(int) GetTopLevelTag(pr_(struct og_ctrl_uci *) pr_(int) pr_(unsigned char *) pr_(int *) pr(unsigned char *));
-STATICF(int) GetEndingTopLevelTag(pr_(struct og_ctrl_uci *) pr_(int) pr_(unsigned char *) pr_(int) pr(unsigned char *));
 STATICF(int) RemoveChunk(pr_(struct og_ctrl_uci *) pr(struct og_ucir_output *));
 static int HhScanLineTransferEncoding(void *ptr, int ivalue, unsigned char *value);
 static int HhScanExpect(void *ptr, int ivalue, unsigned char *value);
@@ -30,31 +28,26 @@ int OgUciRead(handle,input,output)
 void *handle; struct og_ucir_input *input;
 struct og_ucir_output *output;
 {
-int itlt=0,found_tlt=0,found_ending_tlt=0; unsigned char tlt[DPcPathSize];
 struct og_ctrl_uci *ctrl_uci = (struct og_ctrl_uci *)handle;
-int read_length,timed_out,found_header=0,state=1;
-unsigned char *socket_buffer = ctrl_uci->Ba;
-int ssocket_buffer = ctrl_uci->BaSize-1;
+int timed_out,found_header=0,state=1;
 int max_buffer_size_to_read=0;
-char erreur[DOgErrorSize];
-int isocket_buffer=0;
-ogint64_t t0,t1;
 
-t0=OgMicroClock();
+IFE(OgHeapReset(ctrl_uci->hba));
 
+ogint64_t t0 = OgMicroClock();
 memset(output,0,sizeof(struct og_ucir_output));
 
 // unset content length
 output->hh.content_length = SIZE_MAX;
 
 while(1) {
-  if (ssocket_buffer-isocket_buffer <= 0) {
-    sprintf(erreur,"OgUciRead: buffer with size %d is full, stop reading the socket",ssocket_buffer);
-    OgErr(ctrl_uci->herr,erreur); DPcErr;
-    }
-  t1=OgMicroClock();
-  read_length=OgTimeoutRecvSocket(ctrl_uci->herr,input->hsocket, socket_buffer+isocket_buffer
-    , ssocket_buffer-isocket_buffer,input->timeout,&timed_out);
+  ogint64_t t1=OgMicroClock();
+
+  unsigned char socket_buffer[DOgBaSize];
+  int ssocket_buffer = DOgBaSize - 1;
+
+  int read_length=OgTimeoutRecvSocket(ctrl_uci->herr,input->hsocket, socket_buffer
+    , ssocket_buffer,input->timeout,&timed_out);
   output->elapsed_recv+=(int)(OgMicroClock()-t1);
   IF(read_length) {
     /** When the trace is zero, we do not even want error message **/
@@ -85,28 +78,36 @@ while(1) {
       }
     break;
     }
-  isocket_buffer += read_length;
+
+  IFE(OgHeapAppend(ctrl_uci->hba, read_length, socket_buffer));
+
+  unsigned char *total_buffer = OgHeapGetCell(ctrl_uci->hba, 0);
+  IFN(total_buffer) DPcErr;
+
+  int read_total = OgHeapGetCellsUsed(ctrl_uci->hba);
+  IFE(read_total);
+
   if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
     OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
-      ,"OgUciRead: read_length=%d read_total=%d",read_length,isocket_buffer);
+      ,"OgUciRead: read_length=%d read_total=%d",read_length,read_total);
     }
 
   /** before header **/
   if (state==1) {
-    IFE(found_header=OgHttpHeaderLength(ctrl_uci->hhttp,isocket_buffer,socket_buffer,&output->header_length));
+    IFE(found_header=OgHttpHeaderLength(ctrl_uci->hhttp,read_total,total_buffer,&output->header_length));
     if (found_header) {
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
         OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: header length 1 = %d",output->header_length);
         }
-      IFE(OgHttpHeaderRead(ctrl_uci->hhttp,isocket_buffer,socket_buffer,&output->hh));
+      IFE(OgHttpHeaderRead(ctrl_uci->hhttp,read_total,total_buffer,&output->hh));
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
         OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: header length 2 = %d",output->hh.header_length);
         OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: content length = %d",output->hh.content_length);
         OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
-          ,"OgUciRead: current header: [%.*s]",isocket_buffer,socket_buffer);
+          ,"OgUciRead: current header: [%.*s]",read_total,total_buffer);
         IFE(OgHttpHeader2Log(ctrl_uci->hhttp,&output->hh));
         }
       struct og_scan_expect expect_info[1];
@@ -124,40 +125,25 @@ while(1) {
     }
   /** header found with content-length **/
   if (state==2) {
-    if (isocket_buffer >= max_buffer_size_to_read) {
+    if (read_total >= max_buffer_size_to_read) {
       if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
         OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
           ,"OgUciRead: reached content length (read %d, max %d)"
-          , isocket_buffer, max_buffer_size_to_read);
+          , read_total, max_buffer_size_to_read);
         }
       break;
-      }
+     }
     }
   /* header found without content-length,
    * or header not found but not mandatory */
   else if (state==3) {
-    if (!found_tlt) {
-      /* Getting the name of the top level tag
-       *   <?xml version="1.0" encoding="UTF-8"?>
-       *   <top_level_tag> */
-      IFE(found_tlt=GetTopLevelTag(ctrl_uci,isocket_buffer,socket_buffer,&itlt,tlt));
-      if (found_tlt) strcpy(output->top_level_tag,tlt);
-      }
-    if (!found_tlt) continue;
-    IFE(found_ending_tlt=GetEndingTopLevelTag(ctrl_uci,isocket_buffer,socket_buffer,itlt,tlt));
-    if (found_ending_tlt) {
-      if (ctrl_uci->loginfo->trace & DOgUciTraceSocketSize) {
-        OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
-          ,"OgUciRead: found ending top level tag '%s'",tlt);
-        }
-      break;
-      }
+     // do nothing
     }
   }
 
-socket_buffer[isocket_buffer]=0;
-output->content=socket_buffer;
-output->content_length=isocket_buffer;
+output->content = OgHeapGetCell(ctrl_uci->hba, 0);
+IFN(output->content) DPcErr;
+output->content_length = OgHeapGetCellsUsed(ctrl_uci->hba);
 
 ctrl_uci->chunked=0;
 IFE(OgHttpHeaderScanValues(ctrl_uci->hhttp,&output->hh,DOgHttpHeaderLineTransferEncoding,HhScanLineTransferEncoding,ctrl_uci));
@@ -175,7 +161,7 @@ if (ctrl_uci->loginfo->trace & DOgUciTraceSocket) {
   OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
     ,"OgUciRead: socket_buffer (%d%s) [\n%.*s|%.*s]"
     , output->content_length, buffer, output->header_length
-    , socket_buffer, max_log_size, socket_buffer+output->header_length);
+    , output->content, max_log_size, output->content + output->header_length);
   if (found_header) {
     OgMsg(ctrl_uci->hmsg,"",DOgMsgDestInLog
       ,"OgUciRead: header found:");
@@ -187,70 +173,6 @@ output->elapsed_total=(int)(OgMicroClock()-t0);
 
 DONE;
 }
-
-
-
-
-
-STATICF(int) GetTopLevelTag(ctrl_uci,is,s,pitlt,tlt)
-struct og_ctrl_uci *ctrl_uci; int is; unsigned char *s;
-int *pitlt; unsigned char *tlt;
-{
-int i,c,state=1,found=0,start=0,itlt=0;
-
-for (i=0; i<is; i++) {
-  c=s[i];
-  switch(state) {
-    case 1:
-      if (i+5<=is && !Ogmemicmp(s+i,"<?xml",5)) state=2;
-      break;
-    case 2:
-      if (c=='>') state=3;
-      break;
-    case 3:
-      if (c=='<') { state=4; start=i+1; }
-      break;
-    case 4:
-      if (c=='>' || PcIsspace(c)) {
-        itlt=i-start;
-        if (itlt<DOgMaxTopLevelTagSize) {
-          memcpy(tlt,s+start,itlt); tlt[itlt]=0;
-          found=1; goto endGetTopLevelTag;
-          }
-        }
-      break;
-    }
-  }
-endGetTopLevelTag:
-*pitlt=itlt;
-
-return(found);
-}
-
-
-
-
-
-
-
-STATICF(int) GetEndingTopLevelTag(ctrl_uci,is,s,itlt,tlt)
-struct og_ctrl_uci *ctrl_uci; int is; unsigned char *s;
-int itlt; unsigned char *tlt;
-{
-unsigned char t[DOgMaxTopLevelTagSize+3];
-int i,it;
-
-sprintf(t,"</%s>",tlt); it=itlt+3;
-
-for (i=is-it; i>=0; i--) {
-  if (!Ogmemicmp(s+i,t,it)) { return(1); break; }
-  }
-
-return(0);
-}
-
-
-
 
 
 /*

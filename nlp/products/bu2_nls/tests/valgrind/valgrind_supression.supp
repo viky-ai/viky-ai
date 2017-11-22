@@ -36,6 +36,27 @@
 }
 
 ###################
+# pthread_cancel
+###################
+{
+    pthread_cancel internal management
+    Memcheck:Leak
+    ...
+    fun:pthread_cancel_init
+    fun:pthread_cancel
+}
+
+###################
+# messagelog
+###################
+{
+    messagelog
+    Memcheck:Leak
+    ...
+    fun:OgMessageLog
+}
+
+###################
 # XSD validation
 ###################
 {

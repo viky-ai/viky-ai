@@ -106,7 +106,7 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
   IFN(json_id)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without is");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without id");
     DPcErr;
   }
   if (!json_is_string(json_id))
@@ -115,15 +115,22 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
     DPcErr;
   }
 
-  IFN(json_slug)
+//  IFN(json_slug)
+//  {
+//    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
+//    DPcErr;
+//  }
+  if (json_slug)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
-    DPcErr;
+    if (!json_is_string(json_slug))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package 'slug' is not a string");
+      DPcErr;
+    }
   }
-  if (!json_is_string(json_slug))
+  else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package 'slug' is not a string");
-    DPcErr;
+    json_slug = json_string(json_string_value(json_id));
   }
 
   // check unicity
@@ -248,7 +255,6 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
 
   }
 
-  // interpretation id is mandatory
   IFN(json_id)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation has no 'id'");
@@ -259,18 +265,23 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'id' is not a string");
     DPcErr;
   }
+  const char *string_id = json_string_value(json_id);
+  const char *string_slug;
 
+  // interpretation id is mandatory
   IFN(json_slug)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation has no 'slug'");
-    DPcErr;
+    string_slug = json_string_value(json_id);
   }
-  if (!json_is_string(json_slug))
+  else if (!json_is_string(json_slug))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'slug' is not a string");
     DPcErr;
   }
-
+  else
+  {
+    string_slug = json_string_value(json_slug);
+  }
   // interpretation expressions is mandatory
   IFN(json_expressions)
   {
@@ -286,9 +297,6 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   // solution can be of any json type and can be non existant
 
   // At that point, we can create the interpretation structure
-  const char *string_id = json_string_value(json_id);
-  const char *string_slug = json_string_value(json_slug);
-
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageInterpretation: interpretation id is '%s', slug is '%s'", string_id,
       string_slug)
 
@@ -353,6 +361,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
 
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
+  json_t *json_glued = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -370,6 +379,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     {
       json_keep_order = json_object_iter_value(iter);
     }
+    else if (Ogstricmp(key, "glued") == 0)
+    {
+      json_glued = json_object_iter_value(iter);
+    }
     else if (Ogstricmp(key, "aliases") == 0)
     {
       json_aliases = json_object_iter_value(iter);
@@ -384,7 +397,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: unknow key '%s'", key);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: unknown key '%s'", key);
       DPcErr;
     }
   }
@@ -418,10 +431,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  expression->locale = 0;
+  expression->locale = DOgLangNil;
   if (json_locale == NULL)
   {
-    expression->locale = 0;
+    expression->locale = DOgLangNil;
   }
   else if (json_is_string(json_locale))
   {
@@ -430,7 +443,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
   else if (json_is_null(json_locale))
   {
-    expression->locale = 0;
+    expression->locale = DOgLangNil;
   }
   else
   {
@@ -443,10 +456,9 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   {
     expression->keep_order = FALSE;
   }
-  else if (json_is_string(json_keep_order))
+  else if (json_is_boolean(json_keep_order))
   {
-    const char *string_keep_order = json_string_value(json_keep_order);
-    if (!Ogstricmp(string_keep_order,"true")) expression->keep_order = TRUE;
+    expression->keep_order = json_boolean_value(json_keep_order);
   }
   else if (json_is_null(json_keep_order))
   {
@@ -454,10 +466,28 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
   else
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep_order is not a string");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: keep-order is not a boolean");
     DPcErr;
   }
 
+  expression->glued = FALSE;
+  if (json_glued == NULL)
+  {
+    expression->glued = FALSE;
+  }
+  else if (json_is_boolean(json_glued))
+  {
+    expression->glued = json_boolean_value(json_glued);
+  }
+  else if (json_is_null(json_glued))
+  {
+    expression->glued = FALSE;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glued is not a boolean");
+    DPcErr;
+  }
 
   IFN(json_aliases)
   {
@@ -590,11 +620,25 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   {
     const char *string_alias_type = json_string_value(json_alias_type);
     if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
+    else if (!Ogstricmp(string_alias_type, "digit")) alias->type = nlp_alias_type_Digit;
   }
 
   if (alias->type == nlp_alias_type_type_Interpretation)
   {
-    if (json_is_string(json_slug))
+    if (json_slug == NULL)
+    {
+      const char *string_slug = json_string_value(json_id);
+      alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->slug_length = strlen(string_slug);
+      if (alias->slug_length > DOgNlpInterpretationExpressionMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: slug is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->slug_length + 1, string_slug));
+
+    }
+    else if (json_is_string(json_slug))
     {
       const char *string_slug = json_string_value(json_slug);
       alias->slug_start = OgHeapGetCellsUsed(package->halias_ba);
@@ -652,19 +696,22 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   {
     if (json_slug != NULL)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type 'any' should not have a slug");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: alias of type '%s' should not have a slug",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     if (json_id != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation id");
+          "NlpCompilePackageExpressionAlias: alias of type '%s' should not have an interpretation id",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     if (json_package != NULL)
     {
       NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageExpressionAlias: alias of type 'any' should not have an interpretation package");
+          "NlpCompilePackageExpressionAlias: alias of type '%s' should not have an interpretation package",
+          NlpAliasTypeString(alias->type));
       DPcErr;
     }
     alias->slug_start = (-1);

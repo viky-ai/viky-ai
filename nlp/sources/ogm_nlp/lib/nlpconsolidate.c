@@ -56,6 +56,7 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     {
       interpretation->expressions = NULL;
     }
+    interpretation->is_recursive = FALSE;
   }
 
   // free compile heap
@@ -93,6 +94,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     IFN(expression->text) DPcErr;
 
     expression->keep_order = expression_compile->keep_order;
+    expression->glued = expression_compile->glued;
 
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;
@@ -106,7 +108,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
       expression->aliases = NULL;
     }
     expression->json_solution = expression_compile->json_solution;
-
+    expression->is_recursive = FALSE;
   }
 
   // free compile heap
@@ -213,6 +215,7 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
 
   package->consolidate_done = TRUE;
 
+  IFE(NlpLtracPackage(ctrl_nlp_th, package));
   DONE;
 }
 
@@ -239,6 +242,7 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
     IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
     IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
     IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
+    IFE(NlpDigitInputPartLog(ctrl_nlp_th, package));
   }
 
   DONE;
@@ -415,10 +419,16 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       input_part->type = nlp_input_part_type_Interpretation;
       input_part->alias = alias;
 
+      if (!strcmp(alias->id, expression->interpretation->id))
+      {
+        expression->is_recursive = TRUE;
+        expression->interpretation->is_recursive = TRUE;
+      }
+
       IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
       alias_added = TRUE;
     }
-    else
+    else if (alias->type == nlp_alias_type_Any)
     {
       // this says that the any alias is before the input_part position expression->input_parts_nb
       // a value of -1 means no alias, a value of zero means before the first input_part
@@ -431,6 +441,17 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 
       }
       expression->alias_any_input_part_position = expression->input_parts_nb;
+      alias_added = TRUE;
+    }
+    else if (alias->type == nlp_alias_type_Digit)
+    {
+      size_t Iinput_part;
+      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
+      IFN(input_part) DPcErr;
+      input_part->type = nlp_input_part_type_Digit;
+      input_part->alias = alias;
+
+      IFE(NlpInputPartAliasDigitAdd(ctrl_nlp_th, package, Iinput_part));
       alias_added = TRUE;
     }
     break;
@@ -456,12 +477,24 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
   size_t Iinput_part;
   struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
   IFN(input_part) DPcErr;
+
+  char normalized_string_word[DPcPathSize];
+  int length_normalized_string_word = OgUtf8Normalize(length_string_word, string_word, DPcPathSize,
+      normalized_string_word);
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddWord: normalized word '%.*s'", length_normalized_string_word,
+      normalized_string_word)
+
   input_part->type = nlp_input_part_type_Word;
-  input_part->word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
+
+  input_part->word->word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
+  IFE(OgHeapAppend(package->hinput_part_ba, length_normalized_string_word, normalized_string_word));
+  IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
+
+  input_part->word->raw_word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
   IFE(OgHeapAppend(package->hinput_part_ba, length_string_word, string_word));
   IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
 
-  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, string_word, length_string_word, Iinput_part));
+  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, normalized_string_word, length_normalized_string_word, Iinput_part));
 
   DONE;
 }

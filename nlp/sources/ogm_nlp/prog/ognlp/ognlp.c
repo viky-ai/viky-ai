@@ -10,6 +10,9 @@
 #include <logpath.h>
 #include <logheap.h>
 #include <jansson.h>
+#include <glib.h>
+
+#define DOgFileConfOgmSsi_Txt  "conf/ogm_ssi.txt"
 
 struct og_filename
 {
@@ -28,6 +31,7 @@ struct og_info
   og_nlp_th hnlpi;
   char output_filename[DPcPathSize];
   char interpret_filename[DPcPathSize];
+  char packages_directory[DPcPathSize];
   int dump;
 };
 
@@ -61,6 +65,11 @@ int main(int argc, char * argv[])
   param->hmutex = info->hmutex;
   param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   param->loginfo.where = "ognlp";
+  gchar *current_dir = g_get_current_dir();
+  snprintf(param->WorkingDirectory, DPcPathSize, "%s", current_dir);
+  snprintf(param->configuration_file, DPcPathSize, "%s/%s", param->WorkingDirectory, DOgFileConfOgmSsi_Txt);
+
+  g_free(current_dir);
 
   if (param->loginfo.trace & DOgNlpTraceMinimal)
   {
@@ -108,7 +117,7 @@ static int nlp(struct og_info *info, int argc, char * argv[])
 
   /* parsing options to exclusion of compilation and interpretation files */
   optionIndex = 0;
-  while ((carlu = getopt_long(argc, argv, "c:i:o:t:dh?", longOptions, &optionIndex)) != EOF)
+  while ((carlu = getopt_long(argc, argv, "c:r:i:o:t:dh?", longOptions, &optionIndex)) != EOF)
   {
     struct og_filename filename[1];
     switch (carlu)
@@ -120,6 +129,9 @@ static int nlp(struct og_info *info, int argc, char * argv[])
         filename->length = strlen(optarg);
         IFE(OgHeapAppend(info->hfilename_ba, filename->length + 1, optarg));   // +1 because we want to keep the zero
         IFE(OgHeapAppend(info->hfilename, 1, filename));
+        break;
+      case 'r': /* directory of packages files 'optarg' */
+        strcpy(info->packages_directory, optarg);
         break;
       case 'i': /* interpret file 'optarg' */
         strcpy(info->interpret_filename, optarg);
@@ -170,6 +182,31 @@ static int nlp(struct og_info *info, int argc, char * argv[])
     IFE(nlp_compile(info, compilation_filename));
   }
 
+  if (info->packages_directory[0])
+  {
+    char import_file[DPcPathSize], search_path[DPcPathSize];
+    struct og_file str_file[1];
+    struct og_stat filestat;
+    int retour;
+
+    memset(str_file, 0, sizeof(struct og_file));
+    sprintf(search_path, "%s/%s", info->packages_directory, "*.json");
+    IFE(retour = OgFindFirstFile(str_file, search_path));
+    if (retour)
+    {
+      do
+      {
+        sprintf(import_file, "%s/%s", info->packages_directory, str_file->File_Path);
+        IFx(OgStat(import_file,DOgStatMask_mtime,&filestat)) continue;
+        if (filestat.is_dir) continue;
+        IFE(nlp_compile(info, import_file));
+      }
+      while (OgFindNextFile(str_file));
+      OgFindClose(str_file);
+    }
+
+  }
+
   if (info->dump == TRUE)
   {
     if (info->output_filename[0] == 0) sprintf(info->output_filename, "/dev/stdout");
@@ -180,6 +217,11 @@ static int nlp(struct og_info *info, int argc, char * argv[])
   {
     IFE(nlp_interpret(info, info->interpret_filename));
   }
+
+  IFE(OgNlpThreadedReset(info->hnlpi));
+  IFE(OgNlpThreadedFlush(info->hnlpi));
+  IFE(OgHeapFlush(info->hfilename_ba));
+  IFE(OgHeapFlush(info->hfilename));
 
   DONE;
 }
@@ -193,7 +235,7 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   IFN(json)
   {
     char erreur[DPcPathSize];
-    sprintf(erreur,"nlp_compile: error while reading '%s'",json_compilation_filename);
+    sprintf(erreur, "nlp_compile: error while reading '%s': %s", json_compilation_filename, error->text);
     OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
@@ -256,7 +298,7 @@ static og_status nlp_dump(struct og_info *info)
       IF(status)
       {
         char buffer[DPcPathSize];
-        sprintf(buffer, "nlp_dump: error on json_dump_file");
+        sprintf(buffer, "nlp_dump: error on dump file '%s'", info->output_filename);
         OgErr(info->herr, buffer);
         DPcErr;
       }
@@ -275,11 +317,14 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   IFN(json)
   {
     char erreur[DPcPathSize];
-    sprintf(erreur,"nlp_interpret: error while reading '%s'",json_interpret_filename);
+    sprintf(erreur, "nlp_interpret: error while reading '%s': %s", json_interpret_filename, error->text);
     OgErr(info->herr, erreur);
     nlp_send_errors_as_json(info);
     DPcErr;
   }
+
+  IFE(OgNlpThreadedReset(info->hnlpi));
+
   struct og_nlp_interpret_input input[1];
   struct og_nlp_interpret_output output[1];
 
@@ -302,7 +347,6 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
-    json_decref(output->json_output);
     IF(status)
     {
       char buffer[DPcPathSize];
@@ -311,6 +355,8 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
       DPcErr;
     }
   }
+
+  IFE(OgNlpThreadedReset(info->hnlpi));
 
   DONE;
 }
@@ -351,7 +397,8 @@ static int OgUse(struct og_info *info)
 
   ibuffer += sprintf(buffer, "Usage : oginterpret [options]\n");
   ibuffer += sprintf(buffer + ibuffer, "options are:\n");
-  ibuffer += sprintf(buffer + ibuffer, "   -c,  --compile=<compilation_filename>: input context filters\n");
+  ibuffer += sprintf(buffer + ibuffer, "   -c,  --compile=<packages filename>\n");
+  ibuffer += sprintf(buffer + ibuffer, "   -r,  --repository=<directory containing packages>\n");
   ibuffer += sprintf(buffer + ibuffer, "   -i,  --interpret=<input_filename>: specify input filename\n");
   ibuffer += sprintf(buffer + ibuffer, "   -o,  --output=<output_filename>: "
       "specify output filename (defaut is stdout)\n");
@@ -359,10 +406,9 @@ static int OgUse(struct og_info *info)
   ibuffer += sprintf(buffer + ibuffer, "   -t<n>: trace options for "
       "logging (default 0x%x)\n", info->param->loginfo.trace);
   ibuffer += sprintf(buffer + ibuffer, "    <n> has a combined hexadecimal value of:\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: conf, 0x8: input\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x10: ignore, 0x20: reparse, 0x40: match, 0x80: select\n");
-  ibuffer += sprintf(buffer + ibuffer, "      0x100: output\n");
-
+  ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: synchro, 0x8: compile\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x10: consolidate, 0x20: interpret, 0x40: dump, 0x80: package\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x100: match, 0x200: parse, 0x400: solution, 0x800: JS\n");
   OgLogConsole(info->hmsg, "%.*s", ibuffer, buffer);
 
   DONE;

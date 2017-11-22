@@ -164,9 +164,9 @@ sub genNBP ($) {
     return(0);
   }
 
-  $projectBranch = "voqal";
+  $projectBranch = "viki.ai-nlp";
 
-  print("Gen ${projectName}_${projectType}_${projectBranch} ($projectDir_new) : Eclipse CDT config.\n");
+  print("Gen viky.ai-nlp-${projectName}_${projectType} ($projectDir_new) : Eclipse CDT config.\n");
   # Debug
   if($VERBOSE) {
     print "- type\n";
@@ -211,17 +211,13 @@ sub genNBP ($) {
   # include conf
   if(${projectType} =~ /lib/ )
   {
-    my $module_name = "${projectName}_${projectType}_${projectBranch}";
-    if ( $projectName =~ /ebusiness-.*/ )
-    {
-      $module_name = "${projectName}_${projectBranch}";
-    }
+    my $module_name = "viky.ai-nlp-${projectName}_${projectType}";
 
     # create project file
     my $include_cproject_file = "${OG_REPO_PATH}/sources/include/.cproject";
     unless ( -e $include_cproject_file)
     {
-      $projectName = "include";
+      $projectName = "viki.ai-nlp-include";
       $conf_template = file($ENV{OG_TOOL_PATH}, "template", "eclipse", "cproject.xml");
       $conf_target = file($include_cproject_file);
       applyTemplate($conf_template, $conf_target);
@@ -235,7 +231,7 @@ sub genNBP ($) {
     my $include_project_file = "${OG_REPO_PATH}/sources/include/.project";
     unless ( -e $include_project_file)
     {
-      $projectName = "include";
+      $projectName = "viki.ai-nlp-include";
       $conf_template = file($ENV{OG_TOOL_PATH}, "template", "eclipse", "project.xml");
       $conf_target = file($include_project_file);
       applyTemplate($conf_template, $conf_target);
@@ -268,10 +264,10 @@ sub applyTemplate ($$) {
     return(-1);
   }
 
-  my $module_name = "${projectName}_${projectType}_${projectBranch}";
-  if ( $projectName =~ /ebusiness-.*/ || $projectName =~ /include/ )
+  my $module_name = "viky.ai-nlp-${projectName}_${projectType}";
+  if ($projectName =~ /include/ )
   {
-    $module_name = "${projectName}_${projectBranch}";
+    $module_name = "viky.ai-nlp-include";
   }
 
   while(<TPL>) {
@@ -329,49 +325,6 @@ sub parseMakefileDesc ($) {
   }
 
   $projectSourceDir = "";
-
-  if ( $projectName =~ /ogm_ssil.*/ )
-  {
-    my $pn = "";
-
-    $pn = realpath(dirname($makefileDesc)."/../../../..");
-    if ( basename($pn) =~ /ebusiness-.*/ )
-    {
-     $projectName = basename($pn);
-     $projectDir_new = $pn;
-    }
-
-    $pn = realpath(dirname($makefileDesc)."/../../..");
-    if ( basename($pn) =~ /ebusiness-.*/ )
-    {
-     $projectName = basename($pn);
-     $projectDir_new = $pn;
-    }
-
-    $pn = realpath(dirname($makefileDesc)."/../..");
-    if ( basename($pn) =~ /ebusiness-.*/ )
-    {
-     $projectName = basename($pn);
-     $projectDir_new = $pn;
-    }
-
-    $pn = realpath(dirname($makefileDesc)."/..");
-    if ( basename($pn) =~ /ebusiness-.*/ )
-    {
-     $projectName = basename($pn);
-     $projectDir_new = $pn;
-    }
-
-    $pn = realpath(dirname($makefileDesc));
-    if ( basename($pn) =~ /ebusiness-.*/ )
-    {
-     $projectName = basename($pn);
-     $projectDir_new = $pn;
-    }
-
-    $projectSourceDir = realpath(dirname($makefileDesc));
-    $projectSourceDir =~ s/$projectDir_new//g;
-  }
 
   my @fileList = $doc->xql("makefile/sources/file");
   @sourceList = ();

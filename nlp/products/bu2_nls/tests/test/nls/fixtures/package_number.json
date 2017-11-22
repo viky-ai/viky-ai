@@ -1,0 +1,34 @@
+{
+  "id": "package-number",
+  "interpretations":
+  [
+    {
+      "id": "number",
+      "expressions":
+      [
+        {
+          "expression": "@{number_digits}",
+          "aliases":
+          [
+            {
+              "alias": "number_digits",
+              "id": "number_digits",
+              "package": "package-number-digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_letters}",
+          "aliases":
+          [
+            {
+              "alias": "number_letters",
+              "id": "number_letters",
+              "package": "package-number-letters"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

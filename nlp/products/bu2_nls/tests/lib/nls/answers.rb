@@ -4,23 +4,17 @@ module Nls
 
   class Answers
 
-    def initialize(interpretation, solution = nil)
+    def initialize(interpretation, solution = nil, score = nil)
       @answers = []
-      @answers << Answer.new(interpretation, solution)
+      @answers << Answer.new(interpretation, solution, score)
     end
 
-    def add_answer(interpretation, solution = nil)
-      @answers << Answer.new(interpretation, solution)
+    def add_answer(interpretation, solution = nil, score = nil)
+      @answers << Answer.new(interpretation, solution, score)
     end
 
-    def clear_all_solutions
-      @answers.each do |answer|
-        answer.clear_solutions
-      end
-    end
-
-    def add_solution(solution_id, tag, value)
-      @answers[solution_id].add_solution(tag, value)
+    def first()
+       @answers[0]
     end
 
     def answer(id_answer)

@@ -1,0 +1,170 @@
+{
+  "id": "building_features",
+  "interpretations":
+  [
+    {
+      "id": "sea_view",
+      "expressions":
+      [
+        {
+          "expression": "sea view",
+          "locale": "en"
+        },
+        {
+          "expression": "sea front",
+          "locale": "en"
+        },
+        {
+          "expression": "ocean view",
+          "locale": "en"
+        },
+        {
+          "expression": "ocean front",
+          "locale": "en"
+        },
+        {
+          "expression": "vue mer",
+          "locale": "fr"
+        },
+        {
+          "expression": "vue sur la mer",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "building_feature": "sea_view"
+      }
+    },
+    {
+      "id": "swimming_pool",
+      "expressions":
+      [
+        {
+          "expression": "swimming pool",
+          "locale": "en"
+        },
+        {
+          "expression": "pool",
+          "locale": "en"
+        },
+        {
+          "expression": "piscine",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "building_feature": "swimming_pool"
+      }
+    },
+    {
+      "id": "building_feature_entity",
+      "expressions":
+      [
+        {
+          "expression": "@{swimming_pool}",
+          "aliases":
+          [
+            {
+              "alias": "swimming_pool",
+              "id": "swimming_pool",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{sea_view}",
+          "aliases":
+          [
+            {
+              "alias": "sea_view",
+              "id": "sea_view",
+              "package": "building_features"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preposition_building_feature",
+      "expressions":
+      [
+        {
+          "expression": "with",
+          "locale": "en"
+        },
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "at",
+          "locale": "en"
+        },
+        {
+          "expression": "avec",
+          "locale": "fr"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "building_feature",
+      "expressions":
+      [
+        {
+          "expression": "@{building_feature_entity}",
+          "aliases":
+          [
+            {
+              "alias": "building_feature_entity",
+              "id": "building_feature_entity",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_building_feature} @{building_feature_entity}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_building_feature",
+              "id": "preposition_building_feature",
+              "package": "building_features"
+            },
+            {
+              "alias": "building_feature_entity",
+              "id": "building_feature_entity",
+              "package": "building_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_building_feature} @{building_feature_entity}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_building_feature",
+              "id": "preposition_building_feature",
+              "package": "building_features"
+            },
+            {
+              "alias": "building_feature_entity",
+              "type": "any"
+            }
+          ],
+          "solution":
+          {
+            "building_feature": "`building_feature_entity.any`"
+          }
+        }
+      ]
+    }
+  ]
+}

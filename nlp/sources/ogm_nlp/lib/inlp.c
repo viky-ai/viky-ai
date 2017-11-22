@@ -27,6 +27,8 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
   ctrl_nlp->herr = param->herr;
   ctrl_nlp->hmutex = param->hmutex;
   memcpy(ctrl_nlp->loginfo, &param->loginfo, sizeof(struct og_loginfo));
+  strcpy(ctrl_nlp->WorkingDirectory, param->WorkingDirectory);
+  strcpy(ctrl_nlp->configuration_file, param->configuration_file);
 
   struct og_msg_param msg_param[1];
   memset(msg_param, 0, sizeof(struct og_msg_param));

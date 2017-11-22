@@ -6,6 +6,7 @@
  * Version 1.2
  */
 #include <loguni.h>
+#include <glib-2.0/glib.h>
 
 PUBLIC(int) OgUniIsalpha(c)  int c; { if (c<DOgUniSize) return(DOgUniIsalpha(c));  else return(0); }
 PUBLIC(int) OgUniIsupper(c)  int c; { if (c<DOgUniSize) return(DOgUniIsupper(c));  else return(0); }
@@ -26,12 +27,12 @@ PUBLIC(int) OgUniUnaccent(c) int c; { if (c<DOgUniSize) return(DOgUniUnaccent(c)
 
 
 
-PUBLIC(int) OgUniIsspaceEx(c)  
-int c; { 
+PUBLIC(int) OgUniIsspaceEx(c)
+int c; {
 if (c<DOgUniSize) return((OgUni[(unsigned short)(c)].ctype&(DOgUni_S|DOgUni_C)));
 else if (0x2002<=c && c<=0x200B) return(1); /* several unicode spaces */
 else if (c==0x202F) return(1); /* NARROW NO-BREAK SPACE */
-else return(0); 
+else return(0);
 }
 
 
@@ -47,10 +48,10 @@ int i,c;
 for (i=0; i+1<is; i+=2) {
   c = (s1[i]<<8) + s1[i+1];
   if (c<DOgUniSize) c=DOgUniTolower(c);
-  s2[i]=(unsigned char)(c>>8); 
-  s2[i+1]=(unsigned char)(c&0xff); 
+  s2[i]=(unsigned char)(c>>8);
+  s2[i+1]=(unsigned char)(c&0xff);
   }
-return(s2); 
+return(s2);
 }
 
 
@@ -67,10 +68,10 @@ int i,c;
 for (i=0; i+1<is; i+=2) {
   c = (s1[i]<<8) + s1[i+1];
   if (c<DOgUniSize) c=DOgUniToupper(c);
-  s2[i]=(unsigned char)(c>>8); 
-  s2[i+1]=(unsigned char)(c&0xff); 
+  s2[i]=(unsigned char)(c>>8);
+  s2[i+1]=(unsigned char)(c&0xff);
   }
-return(s2); 
+return(s2);
 }
 
 
@@ -86,12 +87,33 @@ int i,c;
 for (i=0; i+1<is; i+=2) {
   c = (s1[i]<<8) + s1[i+1];
   if (c<DOgUniSize) c=DOgUniUnaccent(c);
-  s2[i]=(unsigned char)(c>>8); 
-  s2[i+1]=(unsigned char)(c&0xff); 
+  s2[i]=(unsigned char)(c>>8);
+  s2[i+1]=(unsigned char)(c&0xff);
   }
-return(s2); 
+return(s2);
 }
 
+
+PUBLIC(int) OgUtf8Normalize(int src_length, const unsigned char *src, int dest_size, unsigned char *dest)
+{
+  const unsigned char *s = src;
+  const unsigned char *end = src + src_length;
+  int dest_length=0;
+
+  do
+  {
+    int c = g_utf8_get_char(s);
+    if (c<DOgUniSize) c=DOgUniUnaccent(c);
+    if (c<DOgUniSize) c=DOgUniTolower(c);
+    if (dest_length+7 >= dest_size) break;
+    int incr = g_unichar_to_utf8(c,dest+dest_length);
+    dest_length += incr;
+    s = g_utf8_find_next_char(s, end);
+  }while(s != NULL);
+
+  dest[dest_length]=0;
+  return(dest_length);
+}
 
 
 PUBLIC(unsigned short *) OgUnsStrlwr(s)
@@ -101,7 +123,7 @@ int i;
 for (i=0; s[i]!=0; i++) {
   if (s[i]<DOgUniSize) s[i]=DOgUniTolower(s[i]);
   }
-return(s); 
+return(s);
 }
 
 
@@ -112,7 +134,7 @@ int i;
 for (i=0; s[i]!=0; i++) {
   if (s[i]<DOgUniSize) s[i]=DOgUniToupper(s[i]);
   }
-return(s); 
+return(s);
 }
 
 
@@ -124,7 +146,7 @@ int i;
 for (i=0; s[i]!=0; i++) {
   if (s[i]<DOgUniSize) s[i]=DOgUniUnaccent(s[i]);
   }
-return(s); 
+return(s);
 }
 
 

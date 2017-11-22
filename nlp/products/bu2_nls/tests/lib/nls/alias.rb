@@ -6,37 +6,44 @@ module Nls
 
     attr_reader :name
     attr_reader :interpretation
-    attr_reader :is_any
+    attr_reader :type
     attr_accessor :expression
 
-    def initialize(interpretation, name = nil, is_any = nil)
-      if(interpretation.nil? && is_any.nil?)
-        raise "Alias must have an interpretation except if is any"
+    def initialize(interpretation, opts = {}) # name = nil, is_any = nil)
+      @type = "normal"
+      @type = opts[:type] if opts.has_key?(:type)
+
+      name = nil
+      name = opts[:name] if opts.has_key?(:name)
+
+      if(interpretation.nil? && @type == "normal")
+        raise "Normal alias must have an interpretation"
       end
-      if(name.nil? && is_any.nil?)
-        raise "any alias must have a name"
+      if(name.nil? && @type == "any")
+        raise "Alias with type any must have a name"
       end
-      if(is_any.nil?)
+      if(name.nil? && @type == "digit")
+        raise "Alias with type digit must have a name"
+      end
+      if(@type == "normal")
         name = interpretation.slug if name.nil?
         @name = name
         @interpretation = interpretation
-        @is_any =  nil
       else
-        @is_any = 1
         @name = name
       end
     end
 
     def to_h
       hash = {}
-      if @is_any.nil?
-        hash['alias'] = @name
+      if @type == "normal"
+        hash['alias'] = "#{@name}"
         hash['slug'] = @interpretation.slug
         hash['id'] = @interpretation.id.to_s
         hash['package'] = @interpretation.package.id.to_s
       else
-        hash['alias'] = @name
-        hash['type'] = "any"
+        hash['alias'] = "#{@name}"
+        hash['type'] = "#{@type}"
       end
       hash
     end
@@ -46,7 +53,11 @@ module Nls
     end
 
     def self.any
-      nil
+      "any"
+    end
+
+    def self.digit
+      "digit"
     end
 
   end

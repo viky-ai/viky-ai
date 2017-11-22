@@ -8,9 +8,11 @@ module Nls
 
       def test_package_dump
 
-        several_packages_several_intents
+        Nls.remove_all_packages
 
-        Nls.restart
+        several_packages_several_intents.each do |p|
+          Nls.package_update(p)
+        end
 
         actual  = Nls.query_get(Nls.url_dump)
 

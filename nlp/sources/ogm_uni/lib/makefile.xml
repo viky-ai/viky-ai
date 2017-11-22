@@ -35,7 +35,7 @@
     <platform name="linux">
       <option name="NAME">oguni</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logauta -loggen</option>
+      <option name="ADD_LIBR">-logauta -loggen -lglib-2.0</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

@@ -60,38 +60,6 @@ module Nls
       request
     end
 
-    def expected_interpret_result(interpretation)
-
-      interpretation_answers = []
-      if interpretation.kind_of? Array
-        interpretation.each do |i|
-          interpretation_answers << {
-            "package" => "#{i.package.id.to_s}",
-            "id" => "#{i.id.to_s}",
-            "slug" => "#{i.slug}",
-            "score" => 1.0
-          }
-        end
-      else
-        i = interpretation
-        interpretation_answers << {
-          "package" => "#{i.package.id.to_s}",
-          "id" => "#{i.id.to_s}",
-          "slug" => "#{i.slug}",
-          "score" => 1.0
-        }
-      end
-
-      {
-        "interpretations" => interpretation_answers
-      }
-    end
-
-    def add_solution_to_result(result, id_array, solution)
-      result["interpretations"][id_array]["solution"] = solution
-      result
-    end
-
     def expected_update_package(package_name)
       {
         "status" => "Package '#{package_name}' successfully updated"
@@ -116,54 +84,54 @@ module Nls
 
       datetime1 = Package.new('datetime1')
       datetime1_hello1 = Interpretation.new('hello1')
-      datetime1_hello1 << Expression.new('Hello Brice', [], Interpretation.default_locale)
-      datetime1_hello1 << Expression.new('Hello Jean Marie', [], Interpretation.default_locale)
+      datetime1_hello1 << Expression.new('Hello Brice',{locale: Interpretation.default_locale})
+      datetime1_hello1 << Expression.new('Hello Jean Marie',{locale: Interpretation.default_locale})
       datetime1 << datetime1_hello1
 
       datetime1_hello2 = Interpretation.new('hello2')
-      datetime1_hello2 << Expression.new('Hello Nicolas', [], Interpretation.default_locale)
-      datetime1_hello2 << Expression.new('Hello Olivier', [], Interpretation.default_locale)
+      datetime1_hello2 << Expression.new('Hello Nicolas',{locale: Interpretation.default_locale})
+      datetime1_hello2 << Expression.new('Hello Olivier',{locale: Interpretation.default_locale})
       datetime1 << datetime1_hello2
 
       datetime1_hello3 = Interpretation.new('hello3')
-      datetime1_hello3 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
-      datetime1_hello3 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
-      datetime1_hello3 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
+      datetime1_hello3 << Expression.new('Hello Sebastien',{locale: Interpretation.default_locale})
+      datetime1_hello3 << Expression.new('Hello Enrico',{locale: Interpretation.default_locale})
+      datetime1_hello3 << Expression.new('Hello Mouadh',{locale: Interpretation.default_locale})
       datetime1 << datetime1_hello3
       @available_packages[datetime1.slug] = datetime1
       @packages_dump << datetime1.to_h
 
       datetime2 = Package.new('datetime2')
       datetime2_hello1 = Interpretation.new('hello1')
-      datetime2_hello1 << Expression.new('Hello Nicolas', [], Interpretation.default_locale)
-      datetime2_hello1 << Expression.new('Hello Olivier', [], Interpretation.default_locale)
+      datetime2_hello1 << Expression.new('Hello Nicolas',{locale: Interpretation.default_locale})
+      datetime2_hello1 << Expression.new('Hello Olivier',{locale: Interpretation.default_locale})
       datetime2 << datetime2_hello1
       @available_packages[datetime2.slug] = datetime2
       @packages_dump << datetime2.to_h
 
       datetime3 = Package.new('datetime3')
       datetime3_hello2 = Interpretation.new('hello2')
-      datetime3_hello2 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
-      datetime3_hello2 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
-      datetime3_hello2 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
+      datetime3_hello2 << Expression.new('Hello Sebastien',{locale: Interpretation.default_locale})
+      datetime3_hello2 << Expression.new('Hello Enrico',{locale: Interpretation.default_locale})
+      datetime3_hello2 << Expression.new('Hello Mouadh',{locale: Interpretation.default_locale})
       datetime3 << datetime3_hello2
       @available_packages[datetime3.slug] = datetime3
       @packages_dump << datetime3.to_h
 
       datetime4 = Package.new('samesentence1')
       datetime4_hello4 = Interpretation.new('hello4')
-      datetime4_hello4 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
-      datetime4_hello4 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
-      datetime4_hello4 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
+      datetime4_hello4 << Expression.new('Hello Sebastien',{locale: Interpretation.default_locale})
+      datetime4_hello4 << Expression.new('Hello Enrico',{locale: Interpretation.default_locale})
+      datetime4_hello4 << Expression.new('Hello Mouadh',{locale: Interpretation.default_locale})
       datetime4 << datetime4_hello4
       @available_packages[datetime4.slug] = datetime4
       @packages_dump << datetime4.to_h
 
       datetime5 = Package.new('samesentence2')
       datetime5_hello5 = Interpretation.new('hello5')
-      datetime5_hello5 << Expression.new('Hello Sebastien', [], Interpretation.default_locale)
-      datetime5_hello5 << Expression.new('Hello Enrico', [], Interpretation.default_locale)
-      datetime5_hello5 << Expression.new('Hello Mouadh', [], Interpretation.default_locale)
+      datetime5_hello5 << Expression.new('Hello Sebastien',{locale: Interpretation.default_locale})
+      datetime5_hello5 << Expression.new('Hello Enrico',{locale: Interpretation.default_locale})
+      datetime5_hello5 << Expression.new('Hello Mouadh',{locale: Interpretation.default_locale})
       datetime5 << datetime5_hello5
       @available_packages[datetime5.slug] = datetime5
       @packages_dump << datetime5.to_h
@@ -185,26 +153,27 @@ module Nls
       i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
       pg_building_feature << i_swimming_pool
 
-      i_building_feature = Interpretation.new("building-feature").new_expression("@{swimming-pool}",{'swimming-pool': i_swimming_pool})
-                                                                 .new_expression("@{sea-view}",{'sea-view': i_sea_view})
+      i_building_feature = Interpretation.new("building-feature")
+      i_building_feature.new_expression("@{swimming-pool}", {aliases: {'swimming-pool' => i_swimming_pool}})
+      i_building_feature.new_expression("@{sea-view}", {aliases: {'sea-view'  => i_sea_view}})
       pg_building_feature << i_building_feature
 
       i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
       pg_building_feature << i_preposition_building_feature
 
-      pg_building_feature_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': i_building_feature}
-      pg_building_feature_any_hash = {'preposition-building-feature': i_preposition_building_feature, 'building-feature': Alias.any}
+      pg_building_feature_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'  => i_building_feature}
+      pg_building_feature_any_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'=> Alias.any}
       i_pg_building_feature = Interpretation.new("pg-building-feature")
-                                              .new_expression("@{preposition-building-feature} @{building-feature}", pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
-                                              .new_expression("@{preposition-building-feature} @{building-feature}", pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
-                                              .new_expression("@{building-feature}", {'building-feature': i_building_feature})
+      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash, keep_order: Expression.keep_order}) # pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
+      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_any_hash, keep_order: Expression.keep_order}) # pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
+      i_pg_building_feature.new_expression("@{building-feature}", {aliases: {'building-feature'  => i_building_feature}})
       pg_building_feature << i_pg_building_feature
 
 
       i_pg_building_features = Interpretation.new("pg-building-features")
-      pg_building_features_hash = {'pg-building-feature': i_pg_building_feature, 'pg-building-features': i_pg_building_features}
-      i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", pg_building_features_hash)
-                            .new_expression("@{pg-building-feature}", {'pg-building-feature': i_pg_building_feature})
+      pg_building_features_hash = {'pg-building-feature' => i_pg_building_feature, 'pg-building-features'  => i_pg_building_features}
+      i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", {aliases: pg_building_features_hash})
+      i_pg_building_features.new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature'  => i_pg_building_feature}})
       pg_building_feature << i_pg_building_features
       @available_packages[pg_building_feature.slug] = pg_building_feature
 
@@ -215,7 +184,7 @@ module Nls
     def full_minimal_package(package_slug, interpretation_slug, expression)
       package = Package.new(package_slug)
       interpretation = Interpretation.new(interpretation_slug)
-      interpretation << Expression.new(expression, [], Interpretation.default_locale)
+      interpretation << Expression.new(expression, {locale: Interpretation.default_locale})
       package << interpretation
       package
     end
@@ -223,7 +192,7 @@ module Nls
     def package_to_update(uuid, slug = "titi", interpretation = "toto", expression="Hello Brice")
       json_package = Package.new(slug, id: uuid)
       json_interpretation = Interpretation.new(interpretation)
-      json_interpretation << Expression.new(expression, [], Interpretation.default_locale)
+      json_interpretation << Expression.new(expression, {locale: Interpretation.default_locale})
       json_package << json_interpretation
       json_package
     end
