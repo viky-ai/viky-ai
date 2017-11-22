@@ -152,9 +152,22 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
     case DUK_TYPE_NUMBER:
     {
       double computed_number = duk_get_number(ctx, -1);
-      *p_json_anwser = json_real(computed_number);
 
-      NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a number : %g", computed_number);
+      // check if it is an integer
+      if ((json_int_t)((computed_number * 100) / 100) == computed_number)
+      {
+        json_int_t int_computed_number = computed_number;
+        *p_json_anwser = json_integer(computed_number);
+
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a number (int) : %" JSON_INTEGER_FORMAT,
+            int_computed_number);
+      }
+      else
+      {
+        *p_json_anwser = json_real(computed_number);
+
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a number (double): %g", computed_number);
+      }
 
       break;
     }
@@ -257,7 +270,7 @@ og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, j
   og_bool truncated = FALSE;
   og_char_buffer variable_eval_buffer[DOgMlogMaxMessageSize / 2];
 
-  IFE(NlpJsonToBuffer(variable_value, variable_eval_buffer, DOgMlogMaxMessageSize / 2, &truncated, 0));
+  IFE(NlpJsonToBuffer(variable_value, variable_eval_buffer, DOgMlogMaxMessageSize / 2, &truncated, JSON_ENCODE_ANY));
   if (truncated)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsAddVariableJson: truncated : %s", variable_eval_buffer);

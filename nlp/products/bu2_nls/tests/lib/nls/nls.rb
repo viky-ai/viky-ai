@@ -132,11 +132,10 @@ module Nls
     end
 
     def self.interpret(body, params = {})
+      puts "Interpret request :\n #{body.to_json}\n" if verbose?
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
+      puts "Interpret response :\n #{response.body}\n" if verbose?
       JSON.parse(response.body)
-#    rescue RestClient::ExceptionWithResponse => e
-#      puts e.http_body
-#      raise
     end
 
     def self.interpret_package(package, sentence, opts = {})
@@ -159,6 +158,7 @@ module Nls
     end
 
     def self.package_update(package, params = {})
+      package.to_file(import_dir)
       package_url = "#{base_url}/packages/#{package.id}"
       response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
       JSON.parse(response.body)
@@ -169,6 +169,10 @@ module Nls
       JSON.parse(response.body)
     end
 
+    def self.import_dir
+      File.join(File.expand_path(pwd), "import")
+    end
+
     def self.pwd
       pwd_local = ENV['NLS_INSTALL_PATH']
       pwd_local = "#{ENV['OG_REPO_PATH']}/ship/debug" if pwd_local.nil?
@@ -177,9 +181,19 @@ module Nls
 
     def self.remove_all_packages
       list_result = query_get(url_list)
-      list_result.each do |package|
-        package_url = "#{base_url}/packages/#{package}"
+      list_result.each do |package_id|
+        package_url = "#{base_url}/packages/#{package_id}"
         Nls.delete(package_url)
+      end
+      FileUtils.rm(File.join(import_dir, "*.json"), :force => true)
+    end
+
+    def self.verbose?
+      test_verbose = ENV['TEST_VERBOSE']
+      if !test_verbose.nil?
+        return true
+      else
+        return false
       end
     end
 

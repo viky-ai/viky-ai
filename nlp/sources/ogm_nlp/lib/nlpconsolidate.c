@@ -435,9 +435,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       // a value of n means before the nth input_part (or at the end if it is equal to expression->input_parts_nb
       if (expression->alias_any_input_part_position >= 0)
       {
-        NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while only one alias per expression is allowed",
-            length_string_alias, string_alias, expression->text);
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while"
+            " only one alias per expression is allowed in intepretation '%s' '%s'", length_string_alias, string_alias,
+            expression->text, expression->interpretation->slug, expression->interpretation->id);
 
       }
       expression->alias_any_input_part_position = expression->input_parts_nb;
@@ -459,8 +459,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 
   if (!alias_added)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'",
-        length_string_alias, string_alias, expression->text);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'"
+        " in intepretation '%s' '%s'", length_string_alias, string_alias, expression->text,
+        expression->interpretation->slug, expression->interpretation->id);
     DPcErr;
   }
 

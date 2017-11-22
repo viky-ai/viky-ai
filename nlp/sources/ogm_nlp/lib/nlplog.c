@@ -51,7 +51,7 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
   int truncated_ends_size = strlen(truncated_ends);
 
   int max_buffer_size = buffer_size - truncated_ends_size - 1;
-  int expected_size = json_dumpb(json, buffer, max_buffer_size, flags);
+  int expected_size = json_dumpb(json, buffer, max_buffer_size, flags | JSON_ENCODE_ANY);
   IF(expected_size)
   {
     DPcErr;
