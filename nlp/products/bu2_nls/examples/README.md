@@ -100,6 +100,10 @@ why-not-working:
 ./ognlp -c packages/package_number.json -c packages/package_number_digits.json -c packages/package_number_letters.json -c packages/package_date_why.json -i requests/r_date_why.json
 ```
 
+Simple test on language:
+```
+ognlp -c packages/package_language_simple.json -i requests/r_language_simple.json
+```
 
 Summary of list of examples
 =====

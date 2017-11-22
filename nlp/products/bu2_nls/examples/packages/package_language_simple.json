@@ -22,7 +22,7 @@
           [
             {
               "alias": "barcelona",
-              "id": "barcelona",
+              "id": "barcelona"
             }
           ]
         },
@@ -32,7 +32,7 @@
           [
             {
               "alias": "paris",
-              "id": "paris",
+              "id": "paris"
             }
           ]
         }
