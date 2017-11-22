@@ -45,7 +45,7 @@ module Nls
       hash["expressions"] = @expressions.map{|v| v.to_h}
       if !@solution.nil?
         if @solution.respond_to?(:to_h)
-          hash['solution'] = @solution.to_h
+          hash['solution'] = @solution.to_h.deep_stringify_keys
         else
           hash['solution'] = @solution
         end
@@ -86,14 +86,14 @@ module Nls
       glued = opts[:glued] if opts.has_key?(:glued)
       keep_order = false
       keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
-      solutions = nil
-      solutions = opts[:solutions] if opts.has_key?(:solutions)
+      solution = nil
+      solution = opts[:solution] if opts.has_key?(:solution)
       if texts.kind_of? Array
         texts.each do |t|
-          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
+          add_expression(Expression.new(t, {locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
         end
       else
-        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order, solutions: solutions}))
+        add_expression(Expression.new(texts, {locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
       end
       self
     end

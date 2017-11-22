@@ -187,7 +187,7 @@ static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t p
 
   }
 
-  if(interpretation->json_solution)
+  if (interpretation->json_solution)
   {
     IF(json_object_set(json_interpretation, "solution", interpretation->json_solution))
     {
@@ -221,16 +221,16 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
   og_char_buffer string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  if(strcmp(string_locale, "--") != 0)
+  if (strcmp(string_locale, "--") != 0)
   {
-  NlpLog(DOgNlpTraceDump, "    Expression '%s' with locale %s", expression->text, string_locale)
+    NlpLog(DOgNlpTraceDump, "    Expression '%s' with locale %s", expression->text, string_locale)
 
-  json_t *json_locale = json_string(string_locale);
-  IF(json_object_set_new(json_expression, "locale", json_locale))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression locale", string_locale);
-    DPcErr;
-  }
+    json_t *json_locale = json_string(string_locale);
+    IF(json_object_set_new(json_expression, "locale", json_locale))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping expression locale", string_locale);
+      DPcErr;
+    }
   }
 
   if (expression->aliases_nb > 0)
@@ -255,7 +255,7 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping keep_order");
       DPcErr;
-  }
+    }
   }
 
   if (expression->glued)
@@ -268,7 +268,7 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
     }
   }
 
-  if(expression->json_solution)
+  if (expression->json_solution)
   {
     IF(json_object_set(json_expression, "solution", expression->json_solution))
     {
@@ -298,7 +298,7 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
     DPcErr;
   }
 
-  if(alias->type == nlp_alias_type_Any)
+  if (alias->type == nlp_alias_type_Any)
   {
     json_t *json_type_any = json_string("any");
     IF(json_object_set_new(json_alias, "type", json_type_any))
@@ -307,7 +307,7 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
       DPcErr;
     }
   }
-  else if(alias->type == nlp_alias_type_Digit)
+  else if (alias->type == nlp_alias_type_Digit)
   {
     json_t *json_type_digit = json_string("digit");
     IF(json_object_set_new(json_alias, "type", json_type_digit))
@@ -316,7 +316,7 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
       DPcErr;
     }
   }
-  else if(alias->type == nlp_alias_type_type_Interpretation)
+  else if (alias->type == nlp_alias_type_type_Interpretation)
   {
     json_t *json_slug = json_string(alias->slug);
     IF(json_object_set_new(json_alias, "slug", json_slug))

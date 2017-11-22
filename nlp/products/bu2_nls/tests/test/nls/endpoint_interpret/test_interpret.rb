@@ -22,7 +22,7 @@ module Nls
 
         actual = Nls.interpret_package(package, sentence)
 
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -43,8 +43,8 @@ module Nls
 
         param =
         {
-          "packages" => [package_1.id, package_2.id, package_3.id, package_4.id],
-          "sentence" => sentence,
+          packages: [package_1.id.to_s, package_2.id.to_s, package_3.id.to_s, package_4.id.to_s],
+          sentence: sentence,
           "Accept-Language" => "fr-FR"
         }
 
@@ -55,7 +55,7 @@ module Nls
         expected.add_answer(package_3.interpretation('hello4'))
         expected.add_answer(package_4.interpretation('hello5'))
 
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -84,7 +84,7 @@ module Nls
 
           expected = Answers.new(interpretation)
 
-          assert_equal expected.to_h, actual
+          assert_json expected.to_h, actual
 
         end
       end
@@ -155,18 +155,18 @@ module Nls
 
         expected =
         {
-          "interpretations" =>
+          interpretations:
           [
-          {
-          "package" => "voqal.ai:datetime",
-          "id" => "0d981484-9313-11e7-abc4-cec278b6b50b",
-          "slug" => "special_char",
-          "score" => 1.0
-          }
+            {
+              package: "voqal.ai:datetime",
+              id: "0d981484-9313-11e7-abc4-cec278b6b50b",
+              slug: "special_char",
+              score: 1.0
+            }
           ]
         }
 
-        assert_equal expected, actual
+        assert_json expected, actual
       end
 
       def test_no_sentence_match
@@ -181,10 +181,10 @@ module Nls
 
         expected =
         {
-          "interpretations" => []
+          interpretations: []
         }
 
-        assert_equal expected, actual
+        assert_json expected, actual
 
       end
 
