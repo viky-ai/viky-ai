@@ -1,0 +1,18 @@
+[
+  {
+    "packages":
+    [
+      "language-simple"
+    ],
+    "sentence": "Paris",
+    "Accept-Language": "fr;q=0.9"
+  },
+  {
+    "packages":
+    [
+      "language-simple"
+    ],
+    "sentence": "Paris",
+    "Accept-Language": "en;q=0.9"
+  }
+]

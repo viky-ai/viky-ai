@@ -47,6 +47,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     request_expression->contains_any = FALSE;
   }
   memset(request_expression->score, 0, sizeof(struct request_score));
+  request_expression->total_score = 0.0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -371,6 +372,9 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
+  // sort again to take into account scores
+  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     NlpLog(DOgNlpTraceMatch, "First request expression found:")
@@ -401,6 +405,12 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   if (request_expression1->level != request_expression2->level)
   {
     return (request_expression2->level - request_expression1->level);
+  }
+  if (request_expression1->total_score != request_expression2->total_score)
+  {
+    double cmp = request_expression2->total_score - request_expression1->total_score;
+    if (cmp > 0) return 1;
+    else return -1;
   }
 // Just to make sure it is different
   return request_expression1 - request_expression2;
@@ -464,12 +474,8 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
-  // total score is the mean score of all scores
   // round the score to 2 digit after dot
-  double score_number = 5.0;
-  struct request_score *score = request_expression->score;
-  double total_score = (score->coverage + score->locale + score->spelling + score->overlap + score->any) / score_number;
-  double rounded_total_score = roundf(total_score * 100.0) / 100.0;
+  double rounded_total_score = roundf(request_expression->total_score * 100.0) / 100.0;
   json_t *json_score = json_real(rounded_total_score);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {

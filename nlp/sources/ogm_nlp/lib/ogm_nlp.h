@@ -386,6 +386,7 @@ struct request_expression
   og_bool contains_any;
 
   struct request_score score[1];
+  double total_score;
 
   GQueue tmp_solutions[1];
 
