@@ -12,8 +12,7 @@
           [
             {
               "alias": "new-york",
-              "id": "new-york",
-              "package": "language-simple"
+              "id": "new-york"
             }
           ]
         },
@@ -24,7 +23,6 @@
             {
               "alias": "barcelona",
               "id": "barcelona",
-              "package": "language-simple"
             }
           ]
         },
@@ -35,7 +33,6 @@
             {
               "alias": "paris",
               "id": "paris",
-              "package": "language-simple"
             }
           ]
         }

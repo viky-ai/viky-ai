@@ -322,13 +322,6 @@ static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th
   // b a b a -> +100 (full overlap)
   if (start_position2 < start_position1 && start_position1 < end_position2 && end_position2 < end_position1) overlap_mark +=
       100;
-
-//  if (start_position1 < start_position2 && start_position2 < end_position1) return TRUE;
-//  if (start_position1 < end_position2 && end_position2 < end_position1) return TRUE;
-//
-//  if (start_position2 < start_position1 && start_position1 < end_position2) return TRUE;
-//  if (start_position2 < end_position1 && end_position1 < end_position2) return TRUE;
-
   *poverlap_mark = overlap_mark;
 
   return FALSE;

@@ -674,9 +674,11 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       DPcErr;
     }
 
-    if (json_is_string(json_package))
+    if (json_is_string(json_package) || json_package == NULL)
     {
-      const char *string_package = json_string_value(json_package);
+      const char *string_package = NULL;
+      if (json_package == NULL) string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
+      else string_package = json_string_value(json_package);
       alias->package_id_start = OgHeapGetCellsUsed(package->halias_ba);
       alias->package_id_length = strlen(string_package);
       if (alias->package_id_length > DOgNlpInterpretationExpressionMaxLength)
