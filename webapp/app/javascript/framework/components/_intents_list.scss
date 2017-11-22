@@ -1,0 +1,81 @@
+.intents-list{
+  list-style: none;
+  padding: 0;
+  padding-bottom: 1em;
+  .sortable-chosen{
+    box-shadow: 0 1px 7px rgba(#000, .25);
+  }
+
+  & > li{
+    transition: box-shadow .2s;
+    @include display_flex();
+
+    background-color: #fff;
+    margin-bottom: .5em;
+
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
+    border-radius: 2px;
+
+    & > a{
+      display: block;
+      width: calc(100% - 190px);
+      line-height: 1.8em;
+      padding: .5rem 1rem;
+      text-decoration: none;
+      border-radius: 2px;
+      .intents-list__item__name{
+        display: block;
+      }
+      .intents-list__item__desc{
+        display: block;
+        color: #aaa;
+        font-size: .8em;
+        line-height: 1.4em;
+      }
+      &:focus,
+      &:hover{
+        .intents-list__item__name{
+          text-decoration: underline;
+        }
+      }
+    }
+    .intents-list__item__stats{
+      font-size: .8em;
+      line-height: 1.8rem;
+      padding: .5rem;
+      color: #aaa;
+      text-align:right;
+      width: 130px;
+    }
+    .intents-list__item__actions{
+      padding: .5rem;
+    }
+  }
+
+  .intents-list__item__draggable {
+    width: 20px;
+
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    border: 4px solid #fff;
+
+    background-image: url(../images/grip@2x.png);
+    background-size: 4px 4px;
+    opacity: .15;
+
+    &:hover{
+      opacity: .5;
+      cursor: move;
+    }
+  }
+}
+
+.intents-list-header{
+  @include display_flex();
+  justify-content: space-between;
+  margin-top: 2em;
+  h4{
+    margin-bottom: 0;
+    line-height: 1.8em;
+  }
+}

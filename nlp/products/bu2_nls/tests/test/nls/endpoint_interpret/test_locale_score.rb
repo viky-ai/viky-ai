@@ -70,7 +70,7 @@ module Nls
                        "package" => "want_hotel_features",
                             "id" => "want_hotel_features",
                           "slug" => "want_hotel_features",
-                         "score" => 0.84,
+                         "score" => 0.88,
                       "solution" => {
                           "book" => "hotel",
                           "hotel_feature" => [

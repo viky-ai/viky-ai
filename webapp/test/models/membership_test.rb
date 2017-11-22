@@ -10,6 +10,7 @@ class MembershipTest < ActiveSupport::TestCase
 
 
   test "Check integrity constraints of membership" do
+
     unknown_user = User.new(id: '1afbac59-0df7-44ba-bcfc-40540475ff97', name: 'Unknown user')
     exception_user = assert_raises do
       Membership.new(user: unknown_user, agent: agents(:weather)).save
@@ -25,6 +26,7 @@ class MembershipTest < ActiveSupport::TestCase
       Membership.new(user: users(:confirmed), agent: unknown_agent).save
     end
     assert exception_agent.message.include? "PG::ForeignKeyViolation"
+
   end
 
 

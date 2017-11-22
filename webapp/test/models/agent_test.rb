@@ -389,4 +389,17 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.destroy
     assert_equal 2, Membership.all.count
   end
+
+
+  test 'Delete agent with intents' do
+    agent = agents(:weather)
+    agent_id = agent.id
+    assert_equal 1, Intent.where(agent_id: agent_id).count
+    agent.memberships.where.not(rights: 'all').each do |m|
+      assert m.destroy
+    end
+    assert agent.destroy
+    assert_equal 0, Intent.where(agent_id: agent_id).count
+    assert_equal 0, agent.intents.count
+  end
 end

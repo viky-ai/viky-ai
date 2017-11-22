@@ -1,0 +1,41 @@
+en:
+  views:
+    intents:
+      index:
+        list_title: Agent intents
+        start_reorganize: Reorganize intents
+        stop_reorganize: Done, i finished reorganizing intents
+        new: New intent
+        configure: Configure
+        move: Move
+        delete: Delete
+        interpretations:
+          zero: "0 interpretation"
+          one: "1 interpretation"
+          other: "%{count} interpretations"
+      new:
+        title: Create a new intent
+        btn: Create
+        success_message: Intent has been successfully created.
+      edit:
+        title: Edit intent
+        btn: Update
+        success_message: Your intent has been successfully updated.
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete intent: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "Intent with the name: %{name} has successfully been deleted."
+        errors_message: "Deletion failed: %{errors}."
+      add_locale:
+        title: Choose a language to add
+        empty_message: The intent already contains every available languages.
+        errors_message: "Add language failed: %{errors}."
+      blankslate:
+        message_edit_html: >
+          No intent entered for the "%{agent}" agent.<br />
+          Create the first intent with the button above.
+        message_show_html: >
+          No intent entered for the "%{agent}" agent.
+

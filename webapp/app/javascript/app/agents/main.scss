@@ -1,5 +1,9 @@
 @import '../../framework/abstracts/mixins';
 
+.blankslate--agents{
+  margin-top: 6em;
+}
+
 .agent-background-header{
   @include clearfix();
   margin-bottom: .5em;

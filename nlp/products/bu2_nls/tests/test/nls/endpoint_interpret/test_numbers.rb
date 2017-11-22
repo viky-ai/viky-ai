@@ -68,49 +68,59 @@ module Nls
 
         }
 
-        # TODO fix test timeout
-        query_param = { timeout: 2000 }
+        query_param = { }
 
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        expected["interpretations"][0]["score"] = 0.94
+        assert_json expected, actual
 
         query['sentence'] = "with swimming pool with spa for 4 people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 4.0
+        expected["interpretations"][0]["score"] = 0.94
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
         query['sentence'] = "with swimming pool with spa for 51 people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 51
+        expected["interpretations"][0]["score"] = 0.94
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
         query['sentence'] = "with swimming pool with spa for fifty two people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 52
+        expected["interpretations"][0]["score"] = 0.94
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
         query['sentence'] = "with swimming pool with spa for two hundred and fifty two people with sea view"
         expected["interpretations"][0]["solution"]["number-people"] = 252
+        expected["interpretations"][0]["score"] = 0.95
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
         query['sentence'] = "avec piscine avec spa pour quarante et une personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 41
+        expected["interpretations"][0]["score"] = 0.95
         actual = Nls.interpret(query, query_param)
+        assert_json expected, actual
 
         query['sentence'] = "avec piscine avec spa pour quatre vingt douze personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 92
+        expected["interpretations"][0]["score"] = 0.95
         actual = Nls.interpret(query, query_param)
+        assert_json expected, actual
 
         query['sentence'] = "avec piscine avec spa pour sept cent dix huit mille quatre cent quatre vingt quatorze personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 718494
+        expected["interpretations"][0]["score"] = 0.95
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
         query['sentence'] = "avec piscine avec spa pour quarante douze personnes avec vue sur la mer"
         expected["interpretations"][0]["solution"]["number-people"] = 52
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        expected["interpretations"][0]["score"] = 0.94
+        assert_json expected, actual
 
       end
     end

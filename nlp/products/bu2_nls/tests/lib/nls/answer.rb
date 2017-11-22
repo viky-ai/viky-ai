@@ -7,14 +7,15 @@ module Nls
     attr_reader :package
     attr_reader :id
     attr_reader :slug
-    attr_reader :score
+    attr_accessor :score
     attr_accessor :solution
 
-    def initialize(interpretation, solution = nil)
+    def initialize(interpretation, solution = nil, score = nil)
       @package = interpretation.package.id.to_s
       @id = interpretation.id.to_s
       @slug = interpretation.slug
       @score = 1.0
+      @score = score if !score.nil?
       @solution = solution
     end
 

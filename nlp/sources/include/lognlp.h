@@ -31,6 +31,7 @@
 #define DOgNlpTraceSolution               0x400
 #define DOgNlpTraceJs                     0x800
 #define DOgNlpTraceLtras                  0x1000
+#define DOgNlpTraceLtrac                  0x2000
 
 /** Default value for configuration file information **/
 #define DOgNlpMaxListeningThreads          4

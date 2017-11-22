@@ -111,3 +111,34 @@
 </div>
   <% end %>
 </section>
+
+
+<section>
+  <h2>Chooser</h2>
+  <%= highlight_html do %>
+<p>
+  <a href="#" class="btn btn--primary"
+     data-action="open-modal"
+     data-modal-selector="#modal-chooser">Open chooser modal</a>
+</p>
+<div class="modal" style="display: none;" id="modal-chooser">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      Choose one value
+      <button class="modal__main__title__close" data-action='close-modal'><%= icon_close %></button>
+    </h5>
+    <div class="modal__main__chooser">
+      <ul>
+        <li><a href="#">Option A</a></li>
+        <li><a href="#">Option B</a></li>
+        <li><a href="#">Option C</a></li>
+        <li><a href="#">Option D</a></li>
+        <li><a href="#">Option E</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+  <% end %>
+
+</section>

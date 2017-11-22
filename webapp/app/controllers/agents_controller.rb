@@ -9,6 +9,7 @@ class AgentsController < ApplicationController
   end
 
   def show
+    @intents = @agent.intents.order('position desc, created_at desc')
   end
 
   def new

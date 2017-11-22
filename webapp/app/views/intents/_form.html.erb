@@ -1,0 +1,34 @@
+<%= form_with model: [current_user, @agent, @intent], data: { type: 'json' }, class: 'js-intent-form' do |f| %>
+  <div class="field">
+    <%= f.label :intentname %>
+    <span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control">
+      <%= f.text_field :intentname, id: :intent_intentname %>
+    </div>
+    <%= display_errors(@intent, :intentname) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <div class="control">
+      <%= f.text_area :description, id: :intent_description %>
+    </div>
+    <%= display_errors(@intent, :description) %>
+  </div>
+
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.intents.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.intents.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label, class: "btn btn--primary",
+                 data: {
+                     disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                 }
+    %>
+    <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
+  </div>
+<% end %>
+

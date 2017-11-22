@@ -3,12 +3,11 @@ require "application_system_test_case"
 class AgentsNewTest < ApplicationSystemTestCase
 
   def go_to_agents_creation
-    admin_login
-    within(".nav") do
-      click_link 'Agents'
-    end
+    go_to_agents_index
     click_link('New agent')
-    assert page.has_text? 'Create a new agent'
+    within(".modal") do
+      assert page.has_text? 'Create a new agent'
+    end
   end
 
 

@@ -1,35 +1,47 @@
 class Api::V1::NlpController < Api::V1::ApplicationController
-  before_action :authenticate_agent_access!
+  before_action :validate_owner_and_agent
+  before_action :check_agent_token
 
   def interpret
-    @nlp = Nlp::Interpret.new(nlp_parameters)
+    @nlp = Nlp::Interpret.new(interpret_parameters)
 
-    if @nlp.valid?
-      @nlp.interpret
-    else
-      render json: {message: @nlp.errors.messages}, status: 422 and return
+    @nlp.agent_token = request.headers["Agent-Token"]     if @nlp.agent_token.blank?
+    @nlp.language    = request.headers["Accept-Language"] if @nlp.language.blank?
+
+    respond_to do |format|
+      format.json {
+        if @nlp.valid?
+          @response = @nlp.proceed
+          unless @response[:status] == '200'
+            render json: @response[:body], status: @response[:status]
+          end
+        else
+          render json: { errors: @nlp.errors.full_messages }, status: 422
+        end
+      }
     end
   end
 
 
   private
 
-    def authenticate_agent_access!
-      user = User.friendly.find(params[:user_id])
-      agent = user.agents.friendly.find(params[:id])
-
-      agent_token = request.headers["Agent-Token"] || params[:agent_token]
-      language = request.headers["Accept-Language"] || params[:language]
-
-      if agent.nil? || agent.api_token != agent_token
-        render json: {message: t('controllers.api.v1.nls.interpret.wrong_agent_token', agent_name: params[:id])}, status: 401 and return
-      end
-      params.merge({language: language})
+    # Auto render 404.json on ActiveRecord::RecordNotFound exception
+    def validate_owner_and_agent
+      @owner = User.friendly.find(params[:ownername])
+      @agent = @owner.agents.friendly.find(params[:agentname])
     end
 
-    def nlp_parameters
+    def check_agent_token
+      agent_token = params[:agent_token] || request.headers["Agent-Token"]
+      if @agent.api_token != agent_token
+        render json: { errors: [t('controllers.api.access_denied')] }, status: 401
+      end
+    end
+
+    def interpret_parameters
       params.permit(
-        :sentence, :language, :agent_token, :user_id, :id, :format
+        :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose
       )
     end
+
 end

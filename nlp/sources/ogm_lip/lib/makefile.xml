@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE makefile SYSTEM "makefile.dtd">
+<makefile>
+  <type>lib</type>
+  <project_name>ogm_lip</project_name>
+  <sources>
+    <file>ilip.c</file>
+    <file>lip.c</file>
+    <file>lipapi.c</file>
+    <file>lipalang.c</file>
+    <file>lipglang.c</file>
+    <file>liplang.c</file>
+    <file>lipmem.c</file>
+    <file>lipoutputxml.c</file>
+    <file>lippawo.c</file>
+    <file>lippunct.c</file>
+  </sources>
+  <platforms>
+    <platform name="win">
+      <option name="NAME">ogm_lip</option>
+      <option name="ADD_INC"/>
+      <option name="ADD_LIBR">ogm_auta.lib ogm_aut.lib libogheap.lib ogm_thr.lib ogm_gen.lib ogm_msg.lib ogm_xml.lib ogm_uni.lib</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+    <platform name="linux">
+      <option name="NAME">oglip</option>
+      <option name="ADD_CFLAGS"/>
+      <option name="ADD_LIBR">-logaut -logauta -logheap -loggen -logmsg -loguni -logxml</option>
+      <option name="ADD_LIBD">$(ADD_LIBR)</option>
+      <option name="ADD_LIBP">$(ADD_LIBR)</option>
+    </platform>
+  </platforms>
+</makefile>

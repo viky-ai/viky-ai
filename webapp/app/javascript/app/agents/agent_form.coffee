@@ -28,9 +28,9 @@ class AgentForm
 
   setup: ->
     if $('.field_with_errors input').length == 0
-      $('#agent_name').focus()
+      App.FocusInput.atEnd('#agent_name')
     else
-      $('.field_with_errors input').first().focus()
+      App.FocusInput.atEnd('.field_with_errors input')
 
     $(".modal").on 'click', (event) => @dispatch(event)
 

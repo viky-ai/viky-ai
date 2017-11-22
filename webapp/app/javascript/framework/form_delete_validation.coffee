@@ -2,7 +2,7 @@ $ = require('jquery');
 
 class FormValidationDelete
   constructor: ->
-    $("body").on 'submit', (event) =>
+    $("body").on 'submit ajax:before', (event) =>
       form = $(event.target)
       if form.data('validation') == 'delete'
         input = form.find('input[name="validation"]')

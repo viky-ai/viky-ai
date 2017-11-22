@@ -7,6 +7,10 @@ class ErrorsController < ActionController::Base
   end
 
   def internal_error
+    exception  = request.env['action_dispatch.exception']
+    @message = exception.message
+    @application_trace = ActionDispatch::ExceptionWrapper.new(nil, exception).application_trace
+
     @title = "500 - viky.ai"
     render status: 500
   end

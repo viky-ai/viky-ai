@@ -3,7 +3,7 @@
   line-height: 0;
   img{
     border-radius: 100%;
-    width: 30px;
+    width: 24px;
   }
 
   &.avatar--large{
@@ -16,8 +16,8 @@
 .user{
   @include display_flex();
   align-items: center;
-  .avatar{
-    margin-right: .5em;
+  span{
+    margin-left: .5em;
   }
 }
 

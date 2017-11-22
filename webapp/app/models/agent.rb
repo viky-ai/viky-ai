@@ -6,6 +6,7 @@ class Agent < ApplicationRecord
 
   has_many :memberships
   has_many :users, through: :memberships
+  has_many :intents, dependent: :destroy
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
@@ -18,6 +19,16 @@ class Agent < ApplicationRecord
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence
+
+  after_save do
+    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?(:owner_id)
+      Nlp::Package.new(self).push
+    end
+  end
+
+  after_destroy do
+    Nlp::Package.new(self).destroy
+  end
 
   def self.search(q = {})
     conditions = where("1 = 1").joins(:memberships).where("user_id = ?", q[:user_id])

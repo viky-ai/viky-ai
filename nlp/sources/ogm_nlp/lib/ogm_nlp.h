@@ -37,6 +37,13 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+struct ltra_dictionaries
+{
+  void *ha_base;
+  void *ha_swap;
+  void *ha_phon;
+};
+
 struct package
 {
   struct og_ctrl_nlp *ctrl_nlp;
@@ -89,6 +96,8 @@ struct package
   /** Automaton : "<interpretation_id>\1<Iinput_part>" */
   void *ha_interpretation_id;
 
+  /** Automatons for ltrac/ltraf */
+  struct ltra_dictionaries ltra_dictionaries[1];
 };
 
 typedef struct package *package_t;
@@ -269,6 +278,7 @@ struct request_word
   int length_position;
   og_bool is_digit;
   int digit_value;
+  double spelling_score;
 };
 
 struct accept_language
@@ -332,6 +342,15 @@ struct request_any
   int consumed;
 };
 
+struct request_score
+{
+  double coverage;
+  double locale;
+  double spelling;
+  double overlap;
+  double any;
+};
+
 struct request_expression
 {
   int self_index;
@@ -366,7 +385,7 @@ struct request_expression
   og_bool keep_as_result;
   og_bool contains_any;
 
-  double locale_score;
+  struct request_score score[1];
 
   GQueue tmp_solutions[1];
 
@@ -462,6 +481,7 @@ struct og_ctrl_nlp_threaded
   /** interpret request */
   og_heap hinterpret_package;
   og_string request_sentence;
+  int basic_request_word_used;
   og_heap haccept_language;
   og_bool show_explanation;
   unsigned int regular_trace;
@@ -497,6 +517,10 @@ struct og_ctrl_nlp_threaded
 
   /** HashTable key: int (word position) , value: int (word position) */
   GHashTable *glue_hash;
+
+  void *hltrac;
+  void *hltras;
+
 };
 
 struct og_ctrl_nlp
@@ -504,6 +528,8 @@ struct og_ctrl_nlp
   void *herr, *hmsg;
   ogmutex_t *hmutex;
   struct og_loginfo loginfo[1];
+  char WorkingDirectory[DPcPathSize];
+  char configuration_file[DPcPathSize];
 
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
@@ -711,7 +737,10 @@ og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 /* nlplocale.c */
 og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
-og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlpscore.c */
+og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
@@ -720,6 +749,12 @@ og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
 og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
 /* nlpltrac.c */
+og_status NlpLtracInit(og_nlp_th ctrl_nlp_th);
+og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpLtracPackageFlush(package_t package);
 
+/* nlpltras.c */
+og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
+og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
 

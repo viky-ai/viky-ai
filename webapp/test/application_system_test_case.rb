@@ -1,8 +1,24 @@
 require "test_helper"
-require 'capybara/poltergeist'
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :poltergeist
+
+  Capybara.register_driver(:headless_chrome) do |app|
+    capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
+      chromeOptions: {
+        args: %w{headless no-sandbox window-size=1200,720}
+      }
+    )
+    driver_options = {
+      browser: :chrome,
+      desired_capabilities: capabilities
+    }
+    if File.exist?('/etc/os-release') && `cat /etc/os-release` =~ /ubuntu/i
+      driver_options[:driver_path] = '/usr/lib/chromium-browser/chromedriver'
+    end
+    Capybara::Selenium::Driver.new(app, driver_options)
+  end
+
+  driven_by :headless_chrome
   #driven_by :selenium, using: :chrome, screen_size: [1400, 1400]
 
   def login_as(login, password)
@@ -17,12 +33,18 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def logout
-    first('.nav__footer svg').click
+    all('.h-nav a').last.click
   end
 
   def go_to_agents_index
     admin_login
     assert page.has_text?("Agents")
+  end
+
+  def go_to_agent_show(user, agent)
+    admin_login
+    visit user_agent_path(user, agent)
+    assert page.has_text?("Agent intents")
   end
 
 end

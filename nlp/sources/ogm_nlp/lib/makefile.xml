@@ -35,6 +35,7 @@
     <file>nlprexpression.c</file>
     <file>nlpreopt.c</file>
     <file>nlpreclean.c</file>
+    <file>nlpscore.c</file>
     <file>nlpsol.c</file>
     <file>nlprposition.c</file>
     <file>nlptree.c</file>
@@ -44,7 +45,7 @@
     <platform name="linux">
       <option name="NAME">ognlp</option>
       <option name="ADD_CFLAGS"/>
-      <option name="ADD_LIBR">-logaut -loguni -logheap -logmsg -loggen -lduktape -ljansson -lglib-2.0 -logsysi</option>
+      <option name="ADD_LIBR">-logltras -logltrac -logaut -loguni -logheap -logmsg -loggen -lduktape -ljansson -lglib-2.0 -logsysi</option>
       <option name="ADD_LIBD">$(ADD_LIBR)</option>
       <option name="ADD_LIBP">$(ADD_LIBR)</option>
     </platform>

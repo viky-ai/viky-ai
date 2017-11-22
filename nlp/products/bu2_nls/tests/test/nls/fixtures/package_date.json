@@ -428,7 +428,8 @@
       ],
       "solution":
       {
-        "date": "`day.number+'/'+month.month_number+'/'+year.number`"
+
+        "date": "`new Date(year.number+'-'+month.month_number+'-'+day.number)`"
       }
     }
   ]

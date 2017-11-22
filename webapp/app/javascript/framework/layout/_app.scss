@@ -4,25 +4,45 @@
 
 .app-wrapper{
   @include display_flex();
-  height: 100%;
-  & > nav{
-    width: 200px;
-    height: 100%;
-  }
+  height: calc(100% - 3.5em);
   & > main{
     @include flex(1);
     overflow: auto;
     height: 100%;
-    padding: 1.5em 2em 2em 2em;
+    padding: .75em;
     position: relative;
+    @media (min-width: 500px){
+      padding: 1.5em 2em 2em 2em;
+    }
   }
+  & > aside{
+    width: 200px;
+    &.console-container{
+      display: none;
+      height: 100%;
+      width: 30%;
+      box-shadow: -2px 0 2px rgba(#000, .075);
+      @media (min-width: 1100px){
+        min-width: 400px;
+        display: block;
+      }
+    }
+    &.console-container--fullscreen{
+      width: 100%;
+      box-shadow: none;
+      display: block;
+    }
+  }
+}
+
+.app-wrapper--without-h-nav{
+  height: 100%;
 }
 
 
 .pagination{
   margin: 2em 0;
   text-align: center;
-
   .current-page{
     background-image: none;
     border-color: #000;

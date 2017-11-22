@@ -10,6 +10,9 @@
 #include <logpath.h>
 #include <logheap.h>
 #include <jansson.h>
+#include <glib.h>
+
+#define DOgFileConfOgmSsi_Txt  "conf/ogm_ssi.txt"
 
 struct og_filename
 {
@@ -62,6 +65,11 @@ int main(int argc, char * argv[])
   param->hmutex = info->hmutex;
   param->loginfo.trace = DOgNlpTraceMinimal + DOgNlpTraceMemory;
   param->loginfo.where = "ognlp";
+  gchar *current_dir = g_get_current_dir();
+  snprintf(param->WorkingDirectory, DPcPathSize, "%s", current_dir);
+  snprintf(param->configuration_file, DPcPathSize, "%s/%s", param->WorkingDirectory, DOgFileConfOgmSsi_Txt);
+
+  g_free(current_dir);
 
   if (param->loginfo.trace & DOgNlpTraceMinimal)
   {

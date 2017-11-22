@@ -79,7 +79,7 @@ return 0;
 }
 
 
-PUBLIC(int) OgFindFirstFile(struct og_file *str_file, char *path)
+PUBLIC(int) OgFindFirstFile(struct og_file *str_file, og_string path)
 {
 char erreur[DPcSzErr];
 char sys_erreur[DPcSzErr];
