@@ -6,5 +6,8 @@ json.interpretations @agent.intents do |intent|
   json.expressions intent.interpretations do |interpretation|
     json.expression interpretation.expression
     json.locale interpretation.locale
+    json.keep_order interpretation.keep_order if interpretation.keep_order
+    json.glued interpretation.glued if interpretation.glued
+    json.solution JSON.parse(interpretation.solution) unless interpretation.solution.blank?
   end
 end
