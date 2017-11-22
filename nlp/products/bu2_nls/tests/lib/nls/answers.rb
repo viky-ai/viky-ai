@@ -4,13 +4,13 @@ module Nls
 
   class Answers
 
-    def initialize(interpretation, solution = nil)
+    def initialize(interpretation, solution = nil, score = nil)
       @answers = []
-      @answers << Answer.new(interpretation, solution)
+      @answers << Answer.new(interpretation, solution, score)
     end
 
-    def add_answer(interpretation, solution = nil)
-      @answers << Answer.new(interpretation, solution)
+    def add_answer(interpretation, solution = nil, score = nil)
+      @answers << Answer.new(interpretation, solution, score)
     end
 
     def first()

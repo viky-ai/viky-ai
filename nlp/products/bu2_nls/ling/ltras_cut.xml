@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ltras>
+<small_words max_length="3">
+
+  <!-- French small stopword -->
+  <w>a</w>
+  <w>à</w>
+  <w>au</w>
+  <w>aux</w>
+  <w>c</w>
+  <w>d</w>
+  <w>de</w>
+  <w>des</w>
+  <w>du</w>
+  <w>en</w>
+  <w>et</w>
+  <w>l</w>
+  <w>la</w>
+  <w>là</w>
+  <w>le</w>
+  <w>les</w>
+  <w>m</w>
+  <w>ou</w>
+  <w>par</w>
+  <w>sur</w>
+  <w>un</w>
+  <w>une</w>
+
+  <!-- English small stopword -->
+  <w>at</w>
+  <w>in</w>
+  <w>by</w>
+  <w>of</w>
+  <w>on</w>
+  <w>to</w>
+  <w>for</w>
+
+  <!-- English small words -->
+  <w>up</w>
+  <w>my</w>
+  <w>pop</w>
+  <w>far</w>
+  <w>cry</w>
+  <w>red</w>
+  <w>ice</w>
+  <w>tea</w>
+
+</small_words>
+</ltras>

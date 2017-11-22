@@ -95,6 +95,9 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
     }
 
   }
+
+  // This is necessary to keep this information as we add word to the list through ltras
+  ctrl_nlp_th->basic_request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   DONE;
 }
 
@@ -391,6 +394,8 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   {
     request_word->digit_value = atoi(normalized_string_word);
   }
+
+  request_word->spelling_score = 1.0;
 
   DONE;
 }

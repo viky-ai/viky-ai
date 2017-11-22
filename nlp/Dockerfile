@@ -31,6 +31,7 @@ RUN factory.pl -c external_dependencies fullclean
 RUN factory.pl -c external_dependencies redebug
 
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
+ADD products/bu2_nls/ling           /builds/nls/products/bu2_nls/ling
 ADD products/bu2_nls/manifest.xml   /builds/nls/products/bu2_nls/manifest.xml
 ADD products/bu2_nls/LICENSE.TXT    /builds/nls/products/bu2_nls/LICENSE.TXT
 ADD sources                         /builds/nls/sources
@@ -43,6 +44,14 @@ RUN factory.pl -s bu2_nls   debug
 # Setup a lightweigth image only with minimal binaries
 # ============================================================================
 FROM ubuntu:xenial AS run_image
+
+# Add libxml2 needed for XSD validation
+RUN set -ex; \
+    apt-get update ; \
+    apt-get install -y --no-install-recommends \
+      libxml2 \
+    ; \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /
 

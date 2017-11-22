@@ -215,6 +215,7 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
 
   package->consolidate_done = TRUE;
 
+  IFE(NlpLtracPackage(ctrl_nlp_th, package));
   DONE;
 }
 

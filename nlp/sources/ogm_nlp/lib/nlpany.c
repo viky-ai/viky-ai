@@ -65,15 +65,14 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     request_position_after = request_position_before + 1;
   }
 
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(request_word) DPcErr;
 
-  for (int i = 0; i < request_word_used; i++)
+  for (int i = 0; i < ctrl_nlp_th->basic_request_word_used; i++)
   {
     if (request_word[i].start_position < request_position_before->start + request_position_before->length) continue;
     int j = i;
-    for (; j < request_word_used; j++)
+    for (; j < ctrl_nlp_th->basic_request_word_used; j++)
     {
       if (request_word[j].start_position + request_word[j].length_position > request_position_after->start) break;
     }
