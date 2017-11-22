@@ -38,7 +38,7 @@ module Nls
         # swimmming, pol, peple and viiaw are corrected
         # viiaw is corrected by the ltras phon module
         query = {
-          "packages" =>
+          packages:
           [
             "hotel_features",
             "building_features",
@@ -47,7 +47,7 @@ module Nls
             "package-number-digits",
             "package-number-letters"
           ],
-          "sentence": "with a nice swimmming pol with spa for 3 peple and sea viiaw"
+          sentence: "with a nice swimmming pol with spa for 3 peple and sea viiaw"
         }
 
         expected = {
@@ -56,7 +56,7 @@ module Nls
                        "package" => "hotel_features",
                             "id" => "hotel_features",
                           "slug" => "hotel_features",
-                         "score" => 1.0,
+                         "score" => 0.91,
                       "solution" => {
                           "hotel_feature" => [
                               "spa",
@@ -72,7 +72,7 @@ module Nls
 
         query_param = { timeout: 2000 }
         actual = Nls.interpret(query, query_param)
-        assert_equal expected, actual
+        assert_json expected, actual
 
       end
     end

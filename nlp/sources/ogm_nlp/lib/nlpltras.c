@@ -11,7 +11,7 @@ static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
 static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, int word_length, og_string word,
     struct interpret_package *interpret_package);
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
-    og_string corrected_word);
+    og_string corrected_word, double spelling_score);
 
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th)
 {
@@ -126,7 +126,7 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
       IFE(OgUniToCp(ltra_word->length,trfs->Ba+ltra_word->start,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
-    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words);
+    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, trf->final_score);
     IFE(status);
   }
 
@@ -135,7 +135,7 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
 }
 
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
-    og_string corrected_word)
+    og_string corrected_word, double spelling_score)
 {
   struct request_word *request_word_basic = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word_basic);
   IFN(request_word_basic) DPcErr;
@@ -170,6 +170,8 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->length_position = request_word_basic->length_position;
 
   request_word->is_digit = FALSE;
+
+  request_word->spelling_score = spelling_score;
 
   DONE;
 }

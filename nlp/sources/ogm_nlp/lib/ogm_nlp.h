@@ -278,6 +278,7 @@ struct request_word
   int length_position;
   og_bool is_digit;
   int digit_value;
+  double spelling_score;
 };
 
 struct accept_language
@@ -736,7 +737,10 @@ og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th);
 /* nlplocale.c */
 og_status NlpInterpretRequestBuildAcceptLanguage(og_nlp_th ctrl_nlp_th, json_t *json_accept_language);
 int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string);
-og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlpscore.c */
+og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);

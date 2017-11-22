@@ -46,7 +46,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   {
     request_expression->contains_any = FALSE;
   }
-  memset(request_expression->score,0,sizeof(struct request_score));
+  memset(request_expression->score, 0, sizeof(struct request_score));
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -278,11 +278,11 @@ static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct r
       struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, j);
       IFN(request_input_part2) DPcErr;
 
-      int inputr_parts_overlap_mark;
+      int input_parts_overlap_mark;
       IFE(
           NlpRequestExpressionInputPartsOverlapMark(ctrl_nlp_th, request_input_part1, request_input_part2,
-              &inputr_parts_overlap_mark));
-      request_expression->overlap_mark += inputr_parts_overlap_mark;
+              &input_parts_overlap_mark));
+      request_expression->overlap_mark += input_parts_overlap_mark;
     }
   }
 
@@ -368,7 +368,7 @@ og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th)
     IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
     IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
-    IFE(NlpCalculateLocaleScore(ctrl_nlp_th, request_expression));
+    IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -394,13 +394,13 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (request_expression2->request_positions_nb - request_expression1->request_positions_nb);
   }
-  if (request_expression1->level != request_expression2->level)
-  {
-    return (request_expression2->level - request_expression1->level);
-  }
   if (request_expression1->overlap_mark != request_expression2->overlap_mark)
   {
     return (request_expression1->overlap_mark - request_expression2->overlap_mark);
+  }
+  if (request_expression1->level != request_expression2->level)
+  {
+    return (request_expression2->level - request_expression1->level);
   }
 // Just to make sure it is different
   return request_expression1 - request_expression2;
@@ -464,11 +464,13 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     DPcErr;
   }
 
-  // For the moment, the only score is a locale score
-  // Later we will add other calculation including level, coverage, spellchecking
+  // total score is the mean score of all scores
   // round the score to 2 digit after dot
-  double roundedscore = roundf(request_expression->score->locale * 100.0) / 100.0;
-  json_t *json_score = json_real(roundedscore);
+  double score_number = 5.0;
+  struct request_score *score = request_expression->score;
+  double total_score = (score->coverage + score->locale + score->spelling + score->overlap + score->any) / score_number;
+  double rounded_total_score = roundf(total_score * 100.0) / 100.0;
+  json_t *json_score = json_real(rounded_total_score);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_score");
@@ -548,17 +550,21 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   any[0] = 0;
   if (request_expression->contains_any) sprintf(any, " any");
 
-  char locale_score[DPcPathSize];
-  locale_score[0] = 0;
-  if (request_expression->score->locale > 0.0) sprintf(locale_score, " locale_score=%.2f",
-      request_expression->score->locale);
+  char scores[DPcPathSize];
+  scores[0] = 0;
+  struct request_score *score = request_expression->score;
+  if (score->coverage != 0.0 || score->locale != 0.0 || score->spelling != 0.0 || score->overlap != 0.0
+      || score->any != 0.0)
+  {
+    sprintf(scores, " scores=[%.2f %.2f %.2f %.2f %.2f]", score->coverage, score->locale, score->spelling,
+        score->overlap, score->any);
+  }
 
   struct expression *expression = request_expression->expression;
-
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
-      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, locale_score);
+      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores);
   DONE;
 }
 

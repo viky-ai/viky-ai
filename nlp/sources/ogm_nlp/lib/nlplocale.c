@@ -9,9 +9,6 @@
 static og_status NlpAddAcceptLanguage(og_nlp_th ctrl_nlp_th, og_string s, int is);
 static og_status NlpAcceptLanguageGetQualityFactor(og_nlp_th ctrl_nlp_th, unsigned char *string_quality_factor,
     float *pquality_factor);
-static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
-    struct request_expression *root_request_expression, struct request_expression *request_expression);
-static og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /*
  * handles string such as : "fr-FR, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5"
@@ -191,43 +188,8 @@ int NlpAcceptLanguageString(og_nlp_th ctrl_nlp_th, int size, char *string)
 
 }
 
-og_status NlpCalculateLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
-{
-  IFE(NlpCalculateLocaleScoreRecursive(ctrl_nlp_th, request_expression, request_expression));
-  DONE;
-}
 
-static og_status NlpCalculateLocaleScoreRecursive(og_nlp_th ctrl_nlp_th,
-    struct request_expression *root_request_expression, struct request_expression *request_expression)
-{
-  double locale_score = 0.0;
-  for (int i = 0; i < request_expression->orips_nb; i++)
-  {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
-
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
-    {
-      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
-      IFN(sub_request_expression) DPcErr;
-      IFE(NlpCalculateLocaleScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
-      locale_score += sub_request_expression->score->locale;
-    }
-    else
-    {
-      locale_score += 1;
-    }
-    // This is the generic locale_score coming from the packages
-    // we use a mean score for the scores
-    request_expression->score->locale = locale_score / request_expression->orips_nb;
-    IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
-
-  }
-  DONE;
-}
-
-static og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   int locale = request_expression->expression->locale;
   if (locale == DOgLangNil) DONE;
