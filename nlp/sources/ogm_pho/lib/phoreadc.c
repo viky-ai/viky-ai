@@ -54,13 +54,13 @@ struct og_tree_xml_tag PhoReadConfTag[] =  {
   };
 
 
-static og_status PhoConfScanDir(struct og_ctrl_pho *ctrl_pho, og_string recusive_dir)
+static og_status PhoConfScanDir(struct og_ctrl_pho *ctrl_pho, og_string recursive_dir)
 {
   GError *error = NULL;
   GDir *dir = g_dir_open(ctrl_pho->conf_directory, 0, &error);
   if (dir == NULL || error != NULL)
   {
-    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoConfScanDir: impossible to g_dir_open '%s' : %s", recusive_dir,
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog, "PhoConfScanDir: impossible to g_dir_open '%s' : %s", recursive_dir,
         error->message);
 
     g_error_free(error);
@@ -82,11 +82,15 @@ static og_status PhoConfScanDir(struct og_ctrl_pho *ctrl_pho, og_string recusive
     og_bool is_dir = g_file_test(filename, G_FILE_TEST_IS_DIR);
     if (is_dir)
     {
-      status = PhoConfScanDir(ctrl_pho, filename);
+      unsigned char new_recusive_dir[DPcPathSize];
+      snprintf(new_recusive_dir,DPcPathSize,"%s/%s",recursive_dir,filename);
+      status = PhoConfScanDir(ctrl_pho, new_recusive_dir);
     }
     else
     {
-      status = PhoReadConfFile(ctrl_pho, is_dir, strlen(filename), filename);
+      unsigned char full_filename[DPcPathSize];
+      snprintf(full_filename,DPcPathSize,"%s/%s",recursive_dir,filename);
+      status = PhoReadConfFile(ctrl_pho, is_dir, strlen(full_filename), full_filename);
     }
 
     // on error
@@ -186,7 +190,9 @@ static og_bool PhoConfFileValidNameAndGetLang(struct og_ctrl_pho *ctrl_pho, og_s
 
   if (Ogstricmp(ctrl_pho->conf_filename, name) != 0)
   {
-    OgMsg(ctrl_pho->hmsg,"",DOgMsgDestInLog,"PhoConfFileValidNameAndGetLang: filename='%s' is not valid : wrong name '%s' should be '%s'", filename, name, ctrl_pho->conf_filename);
+    OgMsg(ctrl_pho->hmsg, "", DOgMsgDestInLog,
+        "PhoConfFileValidNameAndGetLang: filename='%s' is not valid : wrong name '%s' should be '%s'", filename, name,
+        ctrl_pho->conf_filename);
     return FALSE;
   }
 

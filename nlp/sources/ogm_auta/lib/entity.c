@@ -379,7 +379,7 @@ ctrl_entity->loginfo = &ctrl_entity->cloginfo;
 memset(aut_param,0,sizeof(struct og_aut_param));
 aut_param->herr=ctrl_entity->herr;
 aut_param->hmutex=ctrl_entity->hmutex;
-aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+aut_param->loginfo.trace = DOgAutTraceMinimal;
 aut_param->loginfo.where = ctrl_entity->loginfo->where;
 aut_param->state_number = 0x100;
 sprintf(aut_param->name,"entity");

@@ -12,7 +12,7 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package)
   memset(aut_param, 0, sizeof(struct og_aut_param));
   aut_param->herr = ctrl_nlp_th->herr;
   aut_param->hmutex = ctrl_nlp_th->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
+  aut_param->loginfo.trace = DOgAutTraceMinimal;
   aut_param->loginfo.where = ctrl_nlp_th->loginfo->where;
   aut_param->state_number = 0x10;
   sprintf(aut_param->name, "package_ha_word");

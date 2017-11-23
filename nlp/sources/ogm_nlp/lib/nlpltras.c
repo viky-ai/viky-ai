@@ -22,7 +22,7 @@ og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th)
   param->hmutex = ctrl_nlp_th->hmutex;
 
   param->loginfo.trace = DOgLtrasTraceMinimal;
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtras)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtrasDetail)
   {
     param->loginfo.trace |= DOgLtrasTraceMemory + DOgLtrasTraceModuleFlowChart + DOgLtrasTraceModuleCalls
         + DOgLtrasTraceSelection;
@@ -49,7 +49,6 @@ og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th)
  */
 og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 {
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request words:");
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   for (int i = 0; i < request_word_used; i++)
   {

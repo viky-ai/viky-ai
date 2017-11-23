@@ -22,7 +22,10 @@ og_status NlpWhyCalculate(og_nlp_th ctrl_nlp_th)
   {
     IFE(NlpWhyCalculateNmExpression(ctrl_nlp_th, nm_expressions + i));
   }
-  IFE(NlpWhyNotMatchingLog(ctrl_nlp_th));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
+  {
+    IFE(NlpWhyNotMatchingLog(ctrl_nlp_th));
+  }
   DONE;
 }
 

@@ -134,7 +134,7 @@ struct og_ltras_param *param;
   memset(aut_param,0,sizeof(struct og_aut_param));
   aut_param->herr=ctrl_ltras->herr;
   aut_param->hmutex=ctrl_ltras->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal+DOgAutTraceMemory;
+  aut_param->loginfo.trace = DOgAutTraceMinimal;
   aut_param->loginfo.where = ctrl_ltras->loginfo->where;
   aut_param->state_number = 0;
 
@@ -161,13 +161,12 @@ struct og_ltras_param *param;
     IF(LtrasFalseReadConf(ctrl_ltras,ltras_false)) return(0);
   }
 
-#if 1
   struct og_pho_param pho_param[1];
   memset(pho_param,0,sizeof(struct og_pho_param));
   pho_param->herr=ctrl_ltras->herr;
   pho_param->hmsg=ctrl_ltras->hmsg;
   pho_param->hmutex=ctrl_ltras->hmutex;
-  pho_param->loginfo.trace = DOgPhoTraceMinimal+DOgPhoTraceMemory;
+  pho_param->loginfo.trace = DOgPhoTraceMinimal;
   pho_param->loginfo.where = ctrl_ltras->loginfo->where;
   if (ctrl_ltras->WorkingDirectory[0])
   {
@@ -193,7 +192,6 @@ struct og_ltras_param *param;
     OgMsg(ctrl_ltras->hmsg,"",DOgMsgDestInLog
         , "OgLtrasInit: impossible to open '%s'",pho_param->conf_filename);
   }
-#endif
 
   // BRU disable LDI to avoid deps in viky.ai
   ctrl_ltras->hldi = NULL;

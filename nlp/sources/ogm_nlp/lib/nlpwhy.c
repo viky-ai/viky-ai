@@ -129,7 +129,10 @@ og_status NlpWhyNotMatchingBuild(og_nlp_th ctrl_nlp_th, json_t *json_why_not_mat
     IFE(NlpWhyNotMatchingBuildGetExpression(ctrl_nlp_th, package, expression_text));
   }
 
-  IFE(NlpWhyNotMatchingLog(ctrl_nlp_th));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
+  {
+    IFE(NlpWhyNotMatchingLog(ctrl_nlp_th));
+  }
 
   DONE;
 }
@@ -303,7 +306,7 @@ og_status NlpWhyNotMatchingLog(og_nlp_th ctrl_nlp_th)
   struct nm_expression *nm_expressions = OgHeapGetCell(ctrl_nlp_th->hnm_expression, 0);
   IFN(nm_expressions) DPcErr;
 
-  NlpLog(DOgNlpTraceInterpret, "List of all expressions for why-not-match:")
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of all expressions for why-not-match:");
 
   for (int i = 0; i < nm_expression_used; i++)
   {
@@ -326,7 +329,7 @@ og_status NlpWhyNotMatchingExpressionLog(og_nlp_th ctrl_nlp_th, struct nm_expres
   for (int i = 0; i < input_parts_nb; i++)
   {
     struct m_input_part *m_input_part = m_input_parts + nm_expression->m_input_part_start + i;
-    NlpLog(DOgNlpTraceInterpret, "List of matched expression for input_part %d:", m_input_part->input_part->self_index)
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of matched expression for input_part %d:", m_input_part->input_part->self_index);
     for (int j = 0; j < m_input_part->m_expressions_nb; j++)
     {
       struct m_expression *m_expression = m_expressions + m_input_part->m_expression_start + j;

@@ -49,7 +49,7 @@ void *OgLtrasModuleSplitInit(struct og_ltra_module_param *param)
   memset(aut_param, 0, sizeof(struct og_aut_param));
   aut_param->herr = ctrl_split->herr;
   aut_param->hmutex = ctrl_split->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal + DOgAutTraceMemory;
+  aut_param->loginfo.trace = DOgAutTraceMinimal;
   aut_param->loginfo.where = ctrl_split->loginfo->where;
   aut_param->state_number = 0;
   sprintf(aut_param->name, "ltras_module_cut");

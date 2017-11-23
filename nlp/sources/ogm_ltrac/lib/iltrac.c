@@ -48,7 +48,7 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
   pho_param->herr = ctrl_ltrac->herr;
   pho_param->hmsg = ctrl_ltrac->hmsg;
   pho_param->hmutex = ctrl_ltrac->hmutex;
-  pho_param->loginfo.trace = DOgPhoTraceMinimal + DOgPhoTraceMemory;
+  pho_param->loginfo.trace = DOgPhoTraceMinimal;
   pho_param->loginfo.where = ctrl_ltrac->loginfo->where;
 
   if (ctrl_ltrac->WorkingDirectory[0])

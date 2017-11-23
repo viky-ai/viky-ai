@@ -44,7 +44,7 @@ static og_status NlpLtracPackageWrite(og_nlp_th ctrl_nlp_th, package_t package)
 {
   IFE(OgLtracDicWrite(ctrl_nlp_th->hltrac));
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtras)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtrac)
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Base ltra dictionary for package '%s' '%s':", package->slug,
         package->id);

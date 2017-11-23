@@ -137,9 +137,7 @@ static og_status NlpWhyJsonMInputPart(og_nlp_th ctrl_nlp_th, struct nm_expressio
   for (int i = 0; i < m_input_part->m_expressions_nb; i++)
   {
     struct m_expression *m_expression = m_expressions + m_input_part->m_expression_start + i;
-    IFE(NlpRequestInputPartLog(ctrl_nlp_th, m_expression->Irequest_input_part));
     IFE(NlpWhyJsonMExpression(ctrl_nlp_th, nm_expression, m_input_part, m_expression, json_matches));
-
   }
 
   DONE;
