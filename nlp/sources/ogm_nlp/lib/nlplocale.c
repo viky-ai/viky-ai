@@ -200,7 +200,9 @@ og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression 
   IFN(accept_language_all) DPcErr;
 
   og_bool found_quality_factor = FALSE;
-  double quality_factor = 1.0;
+
+  // No language found means 0.1
+  double quality_factor = 0.1;
 
   // First we get the exact match of the language
   for (int i = 0; i < accept_language_used; i++)

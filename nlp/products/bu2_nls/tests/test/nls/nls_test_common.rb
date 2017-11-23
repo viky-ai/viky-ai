@@ -64,8 +64,8 @@ module Nls
       end
 
       request['sentence'] = sentence
-      request['Accept-Language'] = locale
-      request['show-explanation'] = "true"  if explain
+      request['Accept-Language'] = locale if !locale.nil?
+      request['show-explanation'] = true  if explain
       request
     end
 
@@ -230,6 +230,28 @@ module Nls
 
       match_intepretation = actual['interpretations'].first
 
+      if expected.has_key?(:warnings)
+
+        assert_kind_of Array, actual['warnings'], "Actual answer['warnings'] is not an Array : #{actual.inspect}"
+
+        expected_warnings = expected[:warnings]
+
+        expected_warning_found = false
+        actual['warnings'].each do |warning|
+          if warning.include?(expected_warnings)
+            expected_warning_found = true
+            break
+          end
+        end
+
+        assert expected_warning_found, "Actual answer['warnings'] must contains \"#{expected_warnings}\": \n#{JSON.generate(actual['warnings'])}"
+
+      else
+        if !actual['warnings'].nil?
+          assert false, "Actual answer must be without warnings :\n#{actual['warnings'].join("\n")}"
+        end
+      end
+
       if expected.has_key?(:interpretation)
         expected_interpretation = expected[:interpretation]
         slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
@@ -251,7 +273,7 @@ module Nls
 
       if expected.has_key?(:score)
         expected_score = expected[:score]
-        assert_equal expected_score, match_intepretation['score'], "Matched on wring score"
+        assert_equal expected_score, match_intepretation['score'], "Matched on wrong score"
       end
 
     end
