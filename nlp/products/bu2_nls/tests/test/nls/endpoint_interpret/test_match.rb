@@ -423,6 +423,21 @@ module Nls
         assert_json expected.to_h, actual
       end
 
+
+      def test_string_plus_any
+
+        skip('bug to fix')
+
+        package = Package.new("test_string_plus_any")
+        interpretation = package.new_interpretation("test_string_plus_any")
+        interpretation.new_expression("string @{any}",  aliases: { any: Alias.any }, solution: "`any`" )
+
+        Nls.package_update(package)
+
+        check_interpret("string hello", interpretation: "test_string_plus_any", solution: "hello")
+
+      end
+
     end
   end
 
