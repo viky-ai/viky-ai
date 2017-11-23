@@ -16,17 +16,17 @@
   <div id='expression_options' class="field">
     <div class="field field--inline">
       <div class="control">
-        <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
-        <%= f.label :keep_order, for: "keep_order__#{interpretation.id}"%>
+        <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
+        <%= f.label :keep_order, for: "keep_order__new_interpretation"%>
       </div>
       <div class="control">
-        <%= f.check_box :glued, id: "glued__#{interpretation.id}" %>
-        <%= f.label :glued, for: "glued__#{interpretation.id}" %>
+        <%= f.check_box :glued, id: "glued__new_interpretation" %>
+        <%= f.label :glued, for: "glued__new_interpretation" %>
       </div>
     </div>
     <div class="control">
-      <%= f.label :solution, for: "solution__#{interpretation.id}" %>
-      <%= f.text_area :solution, id: "solution__#{interpretation.id}", rows: '3', maxlength: '2000', spellcheck: 'false' %>
+      <%= f.label :solution, for: "solution__new_interpretation" %>
+      <%= f.text_area :solution, id: "solution__new_interpretation", rows: '3', maxlength: '2000', spellcheck: 'false' %>
     </div>
     <%= display_errors(interpretation, :keep_order) %>
     <%= display_errors(interpretation, :glued) %>
