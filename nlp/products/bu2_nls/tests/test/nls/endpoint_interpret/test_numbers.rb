@@ -44,11 +44,15 @@ module Nls
         check_interpret("quatre vingt douze", interpretation: "number", solution: { number: 92 } )
         check_interpret("sept cent dix huit mille quatre cent quatre vingt quatorze", interpretation: "number", solution: { number: 718494 } )
         check_interpret("quarante douze", interpretation: "number", solution: { number: 52 } )
+#        check_interpret("two thousand and seventeen", interpretation: "number", solution: { number: 2017 } )
       end
 
       def test_ordinal_number
         check_interpret("troisieme", interpretation: "number_ordinal", solution: { number: 3 } )
         check_interpret("third", interpretation: "number_ordinal", solution: { number: 3 } )
+
+#        check_interpret("3ieme", interpretation: "number_ordinal", solution: { number: 3 } )
+#        check_interpret("3rd", interpretation: "number_ordinal", solution: { number: 3 } )
       end
     end
   end

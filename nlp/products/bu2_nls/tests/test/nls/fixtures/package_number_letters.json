@@ -78,14 +78,10 @@
         },
         {
           "expression": "première",
-          "keep-order": true,
-          "glued": true,
           "locale": "fr"
         },
         {
           "expression": "unième",
-          "keep-order": true,
-          "glued": true,
           "locale": "fr"
         },
         {
@@ -1098,6 +1094,82 @@
       "solution":
       {
         "number": 90
+      }
+    },
+    {
+      "id": "number_100",
+      "expressions":
+      [
+        {
+          "expression": "hundred",
+          "locale": "en"
+        },
+        {
+          "expression": "cent",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 100
+      }
+    },
+    {
+      "id": "number_100_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "hundredth",
+          "locale": "en"
+        },
+        {
+          "expression": "centieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 100
+      }
+    },
+    {
+      "id": "number_1000",
+      "expressions":
+      [
+        {
+          "expression": "thousand",
+          "locale": "en"
+        },
+        {
+          "expression": "mille",
+          "locale": "fr"
+        },
+        {
+          "expression": "mil",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1000
+      }
+    },
+    {
+      "id": "number_1000_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "thousandth",
+          "locale": "en"
+        },
+        {
+          "expression": "millieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1000
       }
     },
     {
@@ -2663,82 +2735,6 @@
       ]
     },
     {
-      "id": "number_100",
-      "expressions":
-      [
-        {
-          "expression": "hundred",
-          "locale": "en"
-        },
-        {
-          "expression": "cent",
-          "locale": "fr"
-        }
-      ],
-      "solution":
-      {
-        "number": 100
-      }
-    },
-    {
-      "id": "number_100_ordinal",
-      "expressions":
-      [
-        {
-          "expression": "hundredth",
-          "locale": "en"
-        },
-        {
-          "expression": "centieme",
-          "locale": "fr"
-        }
-      ],
-      "solution":
-      {
-        "number": 100
-      }
-    },
-    {
-      "id": "number_1000",
-      "expressions":
-      [
-        {
-          "expression": "thousand",
-          "locale": "en"
-        },
-        {
-          "expression": "mille",
-          "locale": "fr"
-        },
-        {
-          "expression": "mil",
-          "locale": "fr"
-        }
-      ],
-      "solution":
-      {
-        "number": 1000
-      }
-    },
-    {
-      "id": "number_1000_ordinal",
-      "expressions":
-      [
-        {
-          "expression": "thousandth",
-          "locale": "en"
-        },
-        {
-          "expression": "millieme",
-          "locale": "fr"
-        }
-      ],
-      "solution":
-      {
-        "number": 1000
-      }
-    },
-    {
       "id": "number_100_199",
       "expressions":
       [
@@ -2898,8 +2894,6 @@
         },
         {
           "expression": "@{number_100_199}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -2939,8 +2933,6 @@
         },
         {
           "expression": "@{number_100_199_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -2958,8 +2950,6 @@
       [
         {
           "expression": "@{number_1_99}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -2971,8 +2961,6 @@
         },
         {
           "expression": "@{number_100_999}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -2990,8 +2978,6 @@
       [
         {
           "expression": "@{number_1_99_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3003,8 +2989,6 @@
         },
         {
           "expression": "@{number_100_999_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3210,8 +3194,6 @@
       [
         {
           "expression": "@{number_1000_1099}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3223,8 +3205,6 @@
         },
         {
           "expression": "@{number_1100_1999}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3242,8 +3222,6 @@
       [
         {
           "expression": "@{number_1000_1099_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3255,8 +3233,6 @@
         },
         {
           "expression": "@{number_1100_1999_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3296,8 +3272,6 @@
         },
         {
           "expression": "@{number_1000_1999}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3337,8 +3311,6 @@
         },
         {
           "expression": "@{number_1000_1999_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3356,8 +3328,6 @@
       [
         {
           "expression": "@{number_1000_999999}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3369,8 +3339,6 @@
         },
         {
           "expression": "@{number_1_999}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3388,8 +3356,6 @@
       [
         {
           "expression": "@{number_1000_999999_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3401,8 +3367,6 @@
         },
         {
           "expression": "@{number_1_999_ordinal}",
-          "keep-order": true,
-          "glued": true,
           "aliases":
           [
             {
@@ -3446,17 +3410,6 @@
       "id": "number_letters_ordinal",
       "expressions":
       [
-        {
-          "expression": "@{number_0}",
-          "aliases":
-          [
-            {
-              "alias": "number_0",
-              "id": "number_0",
-              "package": "package_number_letters"
-            }
-          ]
-        },
         {
           "expression": "@{number_1_999999_ordinal}",
           "aliases":

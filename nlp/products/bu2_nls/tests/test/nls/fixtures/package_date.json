@@ -390,8 +390,7 @@
           [
             {
               "alias": "date_january",
-              "id": "date_january",
-              "package": "package-date"
+              "id": "date_january"
             }
           ]
         },
@@ -401,8 +400,7 @@
           [
             {
               "alias": "date_february",
-              "id": "date_february",
-              "package": "package-date"
+              "id": "date_february"
             }
           ]
         },
@@ -412,8 +410,7 @@
           [
             {
               "alias": "date_march",
-              "id": "date_march",
-              "package": "package-date"
+              "id": "date_march"
             }
           ]
         },
@@ -423,8 +420,7 @@
           [
             {
               "alias": "date_april",
-              "id": "date_april",
-              "package": "package-date"
+              "id": "date_april"
             }
           ]
         },
@@ -434,8 +430,7 @@
           [
             {
               "alias": "date_may",
-              "id": "date_may",
-              "package": "package-date"
+              "id": "date_may"
             }
           ]
         },
@@ -445,8 +440,7 @@
           [
             {
               "alias": "date_june",
-              "id": "date_june",
-              "package": "package-date"
+              "id": "date_june"
             }
           ]
         },
@@ -456,8 +450,7 @@
           [
             {
               "alias": "date_july",
-              "id": "date_july",
-              "package": "package-date"
+              "id": "date_july"
             }
           ]
         },
@@ -467,8 +460,7 @@
           [
             {
               "alias": "date_august",
-              "id": "date_august",
-              "package": "package-date"
+              "id": "date_august"
             }
           ]
         },
@@ -478,8 +470,7 @@
           [
             {
               "alias": "date_september",
-              "id": "date_september",
-              "package": "package-date"
+              "id": "date_september"
             }
           ]
         },
@@ -489,8 +480,7 @@
           [
             {
               "alias": "date_october",
-              "id": "date_october",
-              "package": "package-date"
+              "id": "date_october"
             }
           ]
         },
@@ -500,8 +490,7 @@
           [
             {
               "alias": "date_november",
-              "id": "date_november",
-              "package": "package-date"
+              "id": "date_november"
             }
           ]
         },
@@ -511,8 +500,7 @@
           [
             {
               "alias": "date_december",
-              "id": "date_december",
-              "package": "package-date"
+              "id": "date_december"
             }
           ]
         }
@@ -544,8 +532,7 @@
             },
             {
               "alias": "month",
-              "id": "date_month_number",
-              "package": "package-date"
+              "id": "date_month_number"
             },
             {
               "alias": "year",
@@ -562,13 +549,11 @@
           [
             {
               "alias": "month",
-              "id": "date_month_number",
-              "package": "package-date"
+              "id": "date_month_number"
             },
             {
               "alias": "the",
-              "id": "the",
-              "package": "package-date"
+              "id": "the"
             },
             {
               "alias": "day",
@@ -595,13 +580,11 @@
           [
             {
               "alias": "month",
-              "id": "date_month_number",
-              "package": "package-date"
+              "id": "date_month_number"
             },
             {
               "alias": "the",
-              "id": "the",
-              "package": "package-date"
+              "id": "the"
             },
             {
               "alias": "day",
@@ -628,18 +611,16 @@
             },
             {
               "alias": "slash1",
-              "id": "slash",
-              "package": "package-date"
+              "id": "slash"
             },
             {
               "alias": "month",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             },
             {
               "alias": "slash2",
-              "id": "slash",
-              "package": "package-date"
+              "id": "slash"
             },
             {
               "alias": "year",
@@ -668,13 +649,11 @@
           [
             {
               "alias": "preposition_date",
-              "id": "preposition_date",
-              "package": "package_date"
+              "id": "preposition_date"
             },
             {
               "alias": "date_day_month_year",
-              "id": "date_day_month_year",
-              "package": "package_date"
+              "id": "date_day_month_year"
             }
           ]
         }
@@ -692,23 +671,19 @@
           [
             {
               "alias": "preposition_date_begin",
-              "id": "preposition_date_begin",
-              "package": "package_date"
+              "id": "preposition_date_begin"
             },
             {
               "alias": "date_begin",
-              "id": "date_day_month_year",
-              "package": "package_date"
+              "id": "date_day_month_year"
             },
             {
               "alias": "preposition_date_end",
-              "id": "preposition_date_end",
-              "package": "package_date"
+              "id": "preposition_date_end"
             },
             {
               "alias": "date_end",
-              "id": "date_day_month_year",
-              "package": "package_date"
+              "id": "date_day_month_year"
             }
           ],
           "solution":

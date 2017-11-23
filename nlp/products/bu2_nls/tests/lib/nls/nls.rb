@@ -173,7 +173,12 @@ module Nls
       elsif package.kind_of? Hash
         package_id = package['id']
         slug = package['slug']
-        filename = "package_#{slug}_#{package_id}.json"
+        if slug.nil?
+          filename = "package_#{package_id}.json"
+        else
+          filename = "package_#{slug}_#{package_id}.json"
+        end
+
         package_body = JSON.pretty_generate(package)
 
         File.open(File.join(File.expand_path(import_dir), filename), "w") do |f|
@@ -209,7 +214,9 @@ module Nls
         package_url = "#{base_url}/packages/#{package_id}"
         Nls.delete(package_url)
       end
-      FileUtils.rm(File.join(import_dir, "*.json"), :force => true)
+      Dir[File.join(import_dir, "*.json")].each do |file|
+        FileUtils.rm(file, :force => true)
+      end
     end
 
     def self.verbose?

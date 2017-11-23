@@ -35,12 +35,12 @@
       "expressions":
       [
         {
-          "expression": "@{number_digits}",
+          "expression": "@{number_digits_ordinal}",
           "aliases":
           [
             {
-              "alias": "number_digits",
-              "id": "number_digits",
+              "alias": "number_digits_ordinal",
+              "id": "number_digits_ordinal",
               "package": "package_number_digits"
             }
           ]

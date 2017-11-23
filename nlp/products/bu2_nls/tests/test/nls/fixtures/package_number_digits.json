@@ -12,6 +12,113 @@
       ]
     },
     {
+      "id": "st",
+      "expressions":
+      [
+        {
+          "expression": "st",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "er",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "nd",
+      "expressions":
+      [
+        {
+          "expression": "nd",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ieme",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "rd",
+      "expressions":
+      [
+        {
+          "expression": "rd",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ieme",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "th",
+      "expressions":
+      [
+        {
+          "expression": "th",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "ieme",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "ordinal_suffix",
+      "expressions":
+      [
+        {
+          "expression": "@{rd}",
+          "aliases":
+          [
+            {
+              "alias": "rd",
+              "id": "rd",
+              "package": "package_number_digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{nd}",
+          "aliases":
+          [
+            {
+              "alias": "nd",
+              "id": "nd",
+              "package": "package_number_digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{rd}",
+          "aliases":
+          [
+            {
+              "alias": "rd",
+              "id": "rd",
+              "package": "package_number_digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{th}",
+          "aliases":
+          [
+            {
+              "alias": "th",
+              "id": "th",
+              "package": "package_number_digits"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
       "id": "coma",
       "expressions":
       [
@@ -166,6 +273,30 @@
             {
               "alias": "several_digits",
               "id": "several_digits",
+              "package": "package_number_digits"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_digits_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_digits} @{ordinal_suffix}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_digits",
+              "id": "number_digits",
+              "package": "package_number_digits"
+            },
+            {
+              "alias": "ordinal_suffix",
+              "id": "ordinal_suffix",
               "package": "package_number_digits"
             }
           ]
