@@ -105,6 +105,11 @@ Simple test on language:
 ognlp -c packages/package_language_simple.json -i requests/r_language_simple.json
 ```
 
+Simple test on warning:
+```
+ognlp -c packages/package_warning_simple.json -i requests/r_warning_simple.json
+```
+
 Summary of list of examples
 =====
 
