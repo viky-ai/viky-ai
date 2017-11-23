@@ -72,82 +72,79 @@ module Nls
         package
       end
 
-      def test_solution_null
 
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"])
 
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol null", Interpretation.default_locale)
+
+      def check_interpret(sentence, expected)
+
+        raise "expected must be an Hash"   if !expected.kind_of? Hash
+        raise "expected must not be empty" if expected.empty?
+
+        # creation et exécution de la requete
+        request = json_interpret_body(@solution_test_package, sentence, Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
 
+        assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
+        assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
+
+        assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
+
+        match_intepretation = actual['interpretations'].first
+
+        if expected.has_key?(:interpretation)
+          expected_interpretation = expected[:interpretation]
+          slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
+          assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
+        end
+
+        if expected.has_key?(:solution)
+          expected_solution = expected[:solution]
+          if expected_solution.kind_of?(Hash) || expected_solution.kind_of?(Array)
+            expected_solution.deep_stringify_keys!
+          end
+
+          if expected_solution.nil?
+            assert_nil match_intepretation['solution'], "Matched on unexpected solution (nil)"
+          else
+            assert_equal expected_solution, match_intepretation['solution'], "Matched on unexpected solution"
+          end
+        end
+
+        if expected.has_key?(:score)
+          expected_score = expected[:score]
+          assert_equal expected_score, match_intepretation['score'], "Matched on wring score"
+        end
+
+      end
+
+      def test_solution_null
+        check_interpret("sol null", interpretation: "solution_test_js", solution: nil)
       end
 
       def test_solution_simple
-
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"], 'simple')
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol simple", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        check_interpret("sol simple", interpretation: "solution_test_js", solution: "simple")
       end
 
       def test_solution_number
-
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"], 3.1415926535897931)
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol number", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        check_interpret("sol number", interpretation: "solution_test_js", solution: 3.141592653589793)
       end
 
       def test_solution_integer
-
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"], 3)
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol integer", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        check_interpret("sol integer", interpretation: "solution_test_js", solution: 3)
       end
 
       def test_solution_date
-
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"], "2017-12-03T00:00:00.000Z")
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol date", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        check_interpret("sol date", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
       end
 
       def test_solution_complex
 
-        # resultat attendu
-        expected = Answers.new(@solution_test_package["solution_test_js"], { 'js_key'  => 'js_value', 'js_array' => [] } )
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol complex", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        expected_solution = { 'js_key'  => 'js_value', 'js_array' => [] }
+        check_interpret("sol complex", interpretation: "solution_test_js", solution: expected_solution)
       end
 
       def test_solution_nested
-
-        # resultat attendu
-        solution =
+        expected_solution =
         {
           key1:
           {
@@ -156,103 +153,33 @@ module Nls
             key_number: 3.1415926535897931
           }
         }
-
-        expected = Answers.new(@solution_test_package["solution_test_js"], solution )
-
-        # creation et exécutio de la requete
-        request = json_interpret_body(@solution_test_package, "sol nested", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        assert_json expected.to_h, actual
-
+        check_interpret("sol nested", interpretation: "solution_test_js", solution: expected_solution)
       end
 
       def test_solution_combine_unit
 
-        # expected interpretation base
-        expected = Answers.new(@solution_test_package["solution_test_combine"])
+        check_interpret("sol combine 1", solution: { number: 1 })
+        check_interpret("sol combine 2", solution: { number: 2 })
 
-        # combine number 1
-        request = json_interpret_body(@solution_test_package, "sol combine 1", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { number: 1 }
-        assert_json expected.to_h, actual
+        check_interpret("sol combine nosol 1", solution: 1)
+        check_interpret("sol combine nosol 2", solution: 2)
 
-        # combine number 2
-        request = json_interpret_body(@solution_test_package, "sol combine 2", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { number: 2 }
-        assert_json expected.to_h, actual
+        check_interpret("sol combine entity", solution: { name: "entity" })
+        check_interpret("sol combine dummy entity", solution: { name: "entity" })
 
-        # combine number 1
-        request = json_interpret_body(@solution_test_package, "sol combine nosol 1", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = 1
-        assert_json expected.to_h, actual
-
-        # combine number 2
-        request = json_interpret_body(@solution_test_package, "sol combine nosol 2", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = 2
-        assert_json expected.to_h, actual
-
-        # combine entity
-        request = json_interpret_body(@solution_test_package, "sol combine entity", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { name: "entity" }
-        assert_json expected.to_h, actual
-
-        # combine dummy entity
-        request = json_interpret_body(@solution_test_package, "sol combine dummy entity", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { name: "entity" }
-        assert_json expected.to_h, actual
-
-        # combine any
-        request = json_interpret_body(@solution_test_package, "sol combine text anything", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.score = 0.91
-        expected.first.solution = "anything"
-        assert_json expected.to_h, actual
+        check_interpret("sol combine text anything", solution: "anything")
 
       end
 
 
       def test_solution_combine_complex
-
-        # expected interpretation base
-        expected = Answers.new(@solution_test_package["solution_test_combine"])
-
-        request = json_interpret_body(@solution_test_package, "sol combine 1 2 3", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { number: [1, 2, 3]}
-        assert_json expected.to_h, actual
-
-        request = json_interpret_body(@solution_test_package, "sol combine nosol 1 nosl 2 nosol 3", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { match: [1, 2], matches: 3}
-        assert_json expected.to_h, actual
-
-        request = json_interpret_body(@solution_test_package, "sol combine entity 1 2 3", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { number: [1, 2, 3], name: "entity"}
-        assert_json expected.to_h, actual
-
-        request = json_interpret_body(@solution_test_package, "sol combine entity 1 2 3 entity 4", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { number: [1, 2, 3, 4], name: [ "entity", "entity" ] }
-        assert_json expected.to_h, actual
-
-        request = json_interpret_body(@solution_test_package, "sol combine entity dummy no solution", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.solution = { name: "entity" }
-        assert_json expected.to_h, actual
-
-        request = json_interpret_body(@solution_test_package, "sol combine entity 1 2 text everything 3 entity 4", Interpretation.default_locale)
-        actual = Nls.interpret(request)
-        expected.first.score = 0.94
-        expected.first.solution = { number: [1, 2, 3, 4], name: [ "entity", "entity" ], match: "everything" }
-        assert_json expected.to_h, actual
-
+        check_interpret("sol combine 1 2 3", solution: { number: [1, 2, 3] })
+        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2], matches: 3 })
+        check_interpret("sol combine entity 1 2 3", solution: { number: [1, 2, 3], name: "entity"})
+        check_interpret("sol combine entity 1 2 3 entity 4", solution: { number: [1, 2, 3, 4], name: [ "entity", "entity" ] })
+        check_interpret("sol combine entity dummy no solution", solution: { name: "entity" })
+        sol = { number: [1, 2, 3, 4], name: [ "entity", "entity" ], match: "everything" }
+        check_interpret("sol combine entity 1 2 text everything 3 entity 4", solution: sol)
       end
 
     end
