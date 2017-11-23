@@ -46,6 +46,8 @@
       [
         {
           "expression": "@{digits_before} @{dot} @{digits_after}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -65,6 +67,8 @@
         },
         {
           "expression": "@{digits_before} @{coma} @{digits_after}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
@@ -94,6 +98,8 @@
       [
         {
           "expression": "@{digits} @{several_digits}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
