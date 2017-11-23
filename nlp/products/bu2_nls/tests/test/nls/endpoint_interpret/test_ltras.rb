@@ -43,9 +43,9 @@ module Nls
             "hotel_features",
             "building_features",
             "number_people",
-            "package-number",
-            "package-number-digits",
-            "package-number-letters"
+            "package_number",
+            "package_number_digits",
+            "package_number_letters"
           ],
           sentence: "with a nice swimmming pol with spa for 3 peple and sea viiaw"
         }

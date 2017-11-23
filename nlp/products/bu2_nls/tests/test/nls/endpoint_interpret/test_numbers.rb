@@ -23,45 +23,25 @@ module Nls
         package_url = "#{Nls.base_url}/packages/#{package_number['id']}"
         Nls.query_post(package_url, package_number)
 
-        package_number_people = JSON.parse(File.read(fixture_path("package_number_people.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_people['id']}"
-        Nls.query_post(package_url, package_number_people)
-
-        package_hotel_features = JSON.parse(File.read(fixture_path("package_hotel_features.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_hotel_features['id']}"
-        Nls.query_post(package_url, package_hotel_features)
-
-        package_building_features = JSON.parse(File.read(fixture_path("package_building_features-v2.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_building_features['id']}"
-        Nls.query_post(package_url, package_building_features)
-
         query = {
           "packages" =>
           [
-            "hotel_features",
-            "building_features",
-            "number_people",
-            "package-number",
-            "package-number-digits",
-            "package-number-letters"
+            "package_number",
+            "package_number_digits",
+            "package_number_letters"
           ],
-          "sentence" => "with swimming pool with spa for 3 people with sea view"
+          "sentence" => "3"
         }
 
         expected = {
           "interpretations" => [
                   {
-                       "package" => "hotel_features",
-                            "id" => "hotel_features",
-                          "slug" => "hotel_features",
+                       "package" => "package_number",
+                            "id" => "number",
+                          "slug" => "number",
                          "score" => 1.0,
                       "solution" => {
-                          "hotel_feature" => [
-                              "spa",
-                              "swimming_pool",
-                              "sea_view"
-                          ],
-                          "number-people" => 3.0
+                         "number" => 3
                       }
                   }
               ]
@@ -71,56 +51,72 @@ module Nls
         query_param = { }
 
         actual = Nls.interpret(query, query_param)
-        expected["interpretations"][0]["score"] = 0.94
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "with swimming pool with spa for 4 people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 4.0
-        expected["interpretations"][0]["score"] = 0.94
+        query['sentence'] = "4"
+        expected["interpretations"][0]["solution"]["number"] = 4
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "with swimming pool with spa for 51 people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 51
-        expected["interpretations"][0]["score"] = 0.94
+        query['sentence'] = "51"
+        expected["interpretations"][0]["solution"]["number"] = 51
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "with swimming pool with spa for fifty two people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 52
-        expected["interpretations"][0]["score"] = 0.94
+        query['sentence'] = "fifty two"
+        expected["interpretations"][0]["solution"]["number"] = 52
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "with swimming pool with spa for two hundred and fifty two people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 252
-        expected["interpretations"][0]["score"] = 0.95
+        query['sentence'] = "two hundred and fifty two"
+        expected["interpretations"][0]["solution"]["number"] = 252
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "avec piscine avec spa pour quarante et une personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 41
-        expected["interpretations"][0]["score"] = 0.95
+        query['sentence'] = "quarante et une"
+        expected["interpretations"][0]["solution"]["number"] = 41
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "avec piscine avec spa pour quatre vingt douze personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 92
-        expected["interpretations"][0]["score"] = 0.95
+        query['sentence'] = "quatre vingt douze"
+        expected["interpretations"][0]["solution"]["number"] = 92
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "avec piscine avec spa pour sept cent dix huit mille quatre cent quatre vingt quatorze personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 718494
-        expected["interpretations"][0]["score"] = 0.95
+        query['sentence'] = "sept cent dix huit mille quatre cent quatre vingt quatorze"
+        expected["interpretations"][0]["solution"]["number"] = 718494
         actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
-        query['sentence'] = "avec piscine avec spa pour quarante douze personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 52
+        query['sentence'] = "quarante douze"
+        expected["interpretations"][0]["solution"]["number"] = 52
         actual = Nls.interpret(query, query_param)
-        expected["interpretations"][0]["score"] = 0.94
-        assert_json expected, actual
+        assert_json expected["interpretations"].first, actual["interpretations"].first
+
+        expected = {
+          "interpretations" => [
+                  {
+                       "package" => "package_number",
+                            "id" => "number_ordinal",
+                          "slug" => "number_ordinal",
+                         "score" => 1.0,
+                      "solution" => {
+                         "number" => 3
+                      }
+                  }
+              ]
+
+        }
+
+        query['sentence'] = "troisieme"
+        expected["interpretations"][0]["solution"]["number"] = 3
+        actual = Nls.interpret(query, query_param)
+        assert_json expected["interpretations"].first, actual["interpretations"].first
+
+        query['sentence'] = "third"
+        expected["interpretations"][0]["solution"]["number"] = 3
+        actual = Nls.interpret(query, query_param)
+        assert_json expected["interpretations"].first, actual["interpretations"].first
 
       end
     end

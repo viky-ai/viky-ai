@@ -1,5 +1,5 @@
 {
-  "id": "package-number-digits",
+  "id": "package_number_digits",
   "interpretations":
   [
     {
@@ -57,7 +57,7 @@
             {
               "alias": "dot",
               "id": "dot",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             },
             {
               "alias": "digits_after",
@@ -78,7 +78,7 @@
             {
               "alias": "coma",
               "id": "coma",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             },
             {
               "alias": "digits_after",
@@ -109,7 +109,7 @@
             {
               "alias": "several_digits",
               "id": "several_digits",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             }
           ],
           "solution":
@@ -144,7 +144,7 @@
             {
               "alias": "digits_number",
               "id": "digits_number",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             }
           ]
         },
@@ -155,7 +155,7 @@
             {
               "alias": "digits_sep_digits",
               "id": "digits_sep_digits",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             }
           ]
         },
@@ -166,7 +166,7 @@
             {
               "alias": "several_digits",
               "id": "several_digits",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             }
           ]
         }
