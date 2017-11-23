@@ -7,7 +7,8 @@
     "normalize.css": "^7.0.0",
     "prismjs": "^1.7.0",
     "selectize": "^0.12.4",
-    "sortablejs": "^1.7.0"
+    "sortablejs": "^1.7.0",
+    "trix": "^0.11.1"
   },
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"

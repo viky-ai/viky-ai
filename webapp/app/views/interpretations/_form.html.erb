@@ -1,16 +1,18 @@
 <%= form_with model: [agent.owner, agent, intent, interpretation], id: 'interpretations-form' do |f| %>
+
   <%= f.hidden_field :locale, value: @current_locale %>
+
   <div class="field">
-    <div class="control control--merged">
-      <%= f.text_field :expression, id: :expression, placeholder: t('views.interpretations.new.placeholder') %>
-      <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
-            data: {
-               disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
-            } %>
+    <div class="control">
+      <%= f.hidden_field :expression, id: :expression %>
+      <trix-editor input="expression" placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
+      <%= display_errors(interpretation, :expression) %>
+      <%= display_errors(interpretation, :locale) %>
     </div>
-    <%= display_errors(interpretation, :expression) %>
-    <%= display_errors(interpretation, :locale) %>
   </div>
+
+  <div class="aliases" style="display:none;"></div>
+
   <div id='expression_options' class="field">
     <div class="field field--inline">
       <div class="control">
@@ -30,4 +32,9 @@
     <%= display_errors(interpretation, :glued) %>
     <%= display_errors(interpretation, :solution) %>
   </div>
+
+  <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
+        data: {
+           disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+        } %>
 <% end %>
