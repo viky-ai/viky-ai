@@ -133,7 +133,13 @@ module Nls
 
     def self.interpret(body, params = {})
       puts "Interpret request :\n #{body.to_json}\n" if verbose?
+
+      File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|
+        f.write(JSON.pretty_generate(body))
+      end
+
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
+      
       puts "Interpret response :\n #{response.body}\n" if verbose?
       JSON.parse(response.body)
     end
