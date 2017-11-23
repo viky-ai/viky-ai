@@ -457,12 +457,12 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   DONE;
 }
 
-static og_status NlpInterpretRequestBuildPackagesPackageLisCallback(og_nlp_th ctrl_nlp_th, og_string package_id)
+static og_status NlpInterpretRequestBuildPackagesListCallback(og_nlp_th ctrl_nlp_th, og_string package_id)
 {
   NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: package id is '%s'", package_id)
   IF(NlpInterpretRequestBuildPackage(ctrl_nlp_th, package_id))
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackagesPackageLisCallback: "
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackagesListCallback: "
         "NlpInterpretRequestBuildPackage failed on package '%s'", package_id);
     DPcErr;
   }
@@ -480,7 +480,7 @@ static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t 
     if (!strcmp(packages, "*"))
     {
       NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: '*' using all available packages");
-      IFE(NlpPackageListInternal(ctrl_nlp_th, NlpInterpretRequestBuildPackagesPackageLisCallback));
+      IFE(NlpPackageListInternal(ctrl_nlp_th, NlpInterpretRequestBuildPackagesListCallback));
     }
     else
     {

@@ -6,19 +6,31 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package);
+static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package);
 static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation *interpretation, json_t *json_interpretations);
 static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     json_t *json_expressions);
 static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias,
     json_t *json_aliases);
-static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
-    struct og_nlp_dump_output *output);
 
-static gint str_compar(gconstpointer a, gconstpointer b)
+static og_status NlpDumpPackageListCallback(og_nlp_th ctrl_nlp_th, og_string package_id)
 {
-  return strcmp((const char*) a, (const char*) b);
+  package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
+  IFN(package) DONE;
+
+
+  og_status status = NlpPackageDump(ctrl_nlp_th, package);
+
+  NlpPackageMarkAsUnused(ctrl_nlp_th, package);
+
+  IF(status)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpDumpPackageListCallback: NlpPackageDump failed on package '%s'", package_id);
+    DPcErr;
+  }
+
+  DONE;
 }
 
 PUBLIC(int) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, struct og_nlp_dump_output *output)
@@ -27,75 +39,28 @@ PUBLIC(int) OgNlpDump(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input, st
   memset(output, 0, sizeof(struct og_nlp_dump_output));
   ctrl_nlp_th->json_answer = json_array();
 
-  IF(OgNlpSynchroReadLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
+  og_status status = NlpPackageListInternal(ctrl_nlp_th, NlpDumpPackageListCallback);
+  IF(status)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpDump: error on OgNlpSynchroReadLock");
-    DPcErr;
-  }
-
-  og_status dump_status = NlpDumpNoSync(ctrl_nlp_th, input, output);
-
-  IF(OgNlpSynchroReadUnLock(ctrl_nlp_th, ctrl_nlp_th->ctrl_nlp->rw_lock_packages_hash))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpDump: error on OgNlpSynchroReadUnLock");
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpDump : NlpPackageListInternal failed with NlpDumpPackageListCallback");
     DPcErr;
   }
 
   output->json_output = ctrl_nlp_th->json_answer;
 
-  return dump_status;
+  return status;
 }
 
-static og_status NlpDumpNoSyncFreeSafe(og_nlp_th ctrl_nlp_th, GList *sorted_key_kist)
+static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package)
 {
   json_t *json_packages = ctrl_nlp_th->json_answer;
 
-  for (GList *iter = sorted_key_kist; iter; iter = iter->next)
+  json_t *json_package = json_object();
+  IF(json_array_append_new(json_packages, json_package))
   {
-    json_t *json_package = json_object();
-    IF(json_array_append_new(json_packages, json_package))
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package");
-      DPcErr;
-    }
-
-    og_string package_id = iter->data;
-
-    package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
-    IFN(package) DONE;
-
-    og_status dump_status = NlpPackageDump(ctrl_nlp_th, package, json_package);
-
-    NlpPackageMarkAsUnused(ctrl_nlp_th, package);
-
-    IF(dump_status)
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : NlpPackageDump failed on package '%s'", package_id);
-      DPcErr;
-    }
-
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageDump : Error while dumping package : json_array_append_new failed");
+    DPcErr;
   }
-
-  DONE;
-}
-
-static og_status NlpDumpNoSync(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
-    struct og_nlp_dump_output *output)
-{
-
-  GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->ctrl_nlp->packages_hash);
-
-  GList *sorted_key_list = g_list_sort(key_list, str_compar);
-
-  og_status dump_status = NlpDumpNoSyncFreeSafe(ctrl_nlp_th, sorted_key_list);
-
-  g_list_free(sorted_key_list);
-
-  return dump_status;
-}
-
-static og_status NlpPackageDump(og_nlp_th ctrl_nlp_th, package_t package, json_t *json_package)
-{
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceDump)
   {
