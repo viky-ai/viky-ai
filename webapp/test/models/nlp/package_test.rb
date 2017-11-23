@@ -39,9 +39,11 @@ class PackageTest < ActiveSupport::TestCase
   test 'Package generation with locale any' do
     weather = agents(:weather)
     intent = intents(:weather_greeting)
-    interpretation = interpretations(:weather_greeting_hello)
+    interpretation = interpretations(:weather_greeting_bonjour)
     interpretation.locale = '*'
     interpretation.save
+    intent.interpretations = [interpretation]
+    intent.save
 
     p = Nlp::Package.new(weather)
 
@@ -55,15 +57,6 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
-              "locale"     => "fr-FR"
-            },
-            {
-              "expression" => "Hello world",
-              "keep_order" => true,
-              "glued"      => true,
-              "solution"   => {
-                "who" => "`greeting.who`"
-              }
             }
           ]
         }
