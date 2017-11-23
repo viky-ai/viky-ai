@@ -54,7 +54,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       params: { sentence: "test", agent_token: agent.api_token }
     assert_equal '200', response.code
     expected = {
-      'intents' => [
+      'interpretations' => [
         {
           "id"    => intent.id,
           "slug"  => "admin/weather/weather_greeting",

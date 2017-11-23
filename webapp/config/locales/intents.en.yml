@@ -2,10 +2,8 @@ en:
   views:
     intents:
       index:
-        list_title: Agent intents
-        start_reorganize: Reorganize intents
-        stop_reorganize: Done, i finished reorganizing intents
-        new: New intent
+        list_title: Agent interpretations
+        new: New interpretation
         configure: Configure
         move: Move
         delete: Delete
@@ -14,28 +12,28 @@ en:
           one: "1 interpretation"
           other: "%{count} interpretations"
       new:
-        title: Create a new intent
+        title: Create a new interpretation
         btn: Create
-        success_message: Intent has been successfully created.
+        success_message: Interpretation has been successfully created.
       edit:
-        title: Edit intent
+        title: Edit interpretation
         btn: Update
-        success_message: Your intent has been successfully updated.
+        success_message: Your interpretation has been successfully updated.
       confirm_destroy:
         title: Are you sure?
-        content_html: "You're about to delete intent: <strong>%{name}</strong>."
+        content_html: "You're about to delete interpretation: <strong>%{name}</strong>."
         btn: Delete
       destroy:
-        success_message: "Intent with the name: %{name} has successfully been deleted."
+        success_message: "Interpretation with the name: %{name} has successfully been deleted."
         errors_message: "Deletion failed: %{errors}."
       add_locale:
         title: Choose a language to add
-        empty_message: The intent already contains every available languages.
+        empty_message: The interpretation already contains every available languages.
         errors_message: "Add language failed: %{errors}."
       blankslate:
         message_edit_html: >
-          No intent entered for the "%{agent}" agent.<br />
-          Create the first intent with the button above.
+          No interpretation entered for the "%{agent}" agent.<br />
+          Create the first interpretation with the button above.
         message_show_html: >
-          No intent entered for the "%{agent}" agent.
+          No interpretation entered for the "%{agent}" agent.
 

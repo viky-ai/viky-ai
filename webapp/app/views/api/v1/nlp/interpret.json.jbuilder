@@ -1,4 +1,4 @@
-json.intents @response[:body]["interpretations"].each do |interpretation|
+json.interpretations @response[:body]["interpretations"].each do |interpretation|
   id = interpretation["id"]
   intent = Intent.find(id)
   json.id id

@@ -12,7 +12,7 @@ curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentenc
 
 ```json
 {
-  "intents": [
+  "interpretations": [
     {
       "id": "db3dd17d-fd3f-42a7-9d65-fd5a09894015",
       "slug": "superman/superbot/hello",
@@ -29,7 +29,7 @@ curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentenc
 }
 ```
 
-This endpoint retrieves all the intents extracted from the `sentence` string passed as parameter.
+This endpoint retrieves all the interpretations extracted from the `sentence` string passed as parameter.
 
 ### HTTP Request
 

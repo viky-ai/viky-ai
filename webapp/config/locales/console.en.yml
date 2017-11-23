@@ -8,10 +8,10 @@ en:
         explain: Explain
         json: JSON
       error_occurred: Oops, an error occurred.
-      no_intent_found: No intent found.
+      no_intent_found: No interpretation found.
       intent_found:
-        one: "1 intent found."
-        other: "%{count} intents found."
+        one: "1 interpretation found."
+        other: "%{count} interpretations found."
       verbose_on: Verbose ON
       verbose_off: Verbose OFF
       go_to_api_endpoint: Go to API endpoint

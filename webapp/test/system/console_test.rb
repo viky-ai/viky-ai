@@ -14,13 +14,13 @@ class ConsoleTest < ApplicationSystemTestCase
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { intents: [] }
+          body: { interpretations: [] }
         }
       )
 
-      assert page.has_content?('No intent found.')
+      assert page.has_content?('No interpretation found.')
       click_link "JSON"
-      assert page.has_content?('intents')
+      assert page.has_content?('interpretations')
     end
   end
 
@@ -37,7 +37,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            intents: [
+            interpretations: [
               {
                 "id": intents(:weather_greeting).id,
                 "slug": "admin/weather/weather_greeting",
@@ -48,13 +48,13 @@ class ConsoleTest < ApplicationSystemTestCase
           }
         }
       )
-      assert page.has_content?('1 intent found.')
+      assert page.has_content?('1 interpretation found.')
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
           body: {
-            intents: [
+            interpretations: [
               {
                 "id": intents(:weather_greeting).id,
                 "slug": "admin/weather/weather_greeting",
@@ -83,7 +83,7 @@ class ConsoleTest < ApplicationSystemTestCase
       all('.dropdown__trigger > .btn')[1].click
       click_link 'Verbose ON'
 
-      assert page.has_content?('1 intent found.')
+      assert page.has_content?('1 interpretation found.')
       assert page.has_content?('Hello world viki.ai')
     end
 
@@ -100,23 +100,23 @@ class ConsoleTest < ApplicationSystemTestCase
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { intents: [] }
+          body: { interpretations: [] }
         }
       )
-      assert page.has_content?('No intent found.')
+      assert page.has_content?('No interpretation found.')
     end
 
     #
     # Add intent
     #
-    click_link 'New intent'
+    click_link 'New interpretation'
     within('.modal') do
-      assert page.has_text? 'Create a new intent'
+      assert page.has_text? 'Create a new interpretation'
       fill_in 'ID', with: 'my-new-intent'
       click_button 'Create'
     end
     assert page.has_content?('my-new-intent')
-    assert page.has_content?('No intent found.')
+    assert page.has_content?('No interpretation found.')
 
     #
     # Edit intent
@@ -127,19 +127,19 @@ class ConsoleTest < ApplicationSystemTestCase
     end
 
     within('.modal') do
-      assert page.has_text? 'Edit intent'
+      assert page.has_text? 'Edit interpretation'
       fill_in 'ID', with: 'my-new-intent-updated'
       click_button 'Update'
     end
     assert page.has_text?('my-new-intent-updated')
-    assert page.has_content?('No intent found.')
+    assert page.has_content?('No interpretation found.')
 
     #
     # Show intent
     #
     click_link 'my-new-intent-updated'
     assert page.has_text?('admin/weather/my-new-intent-updated')
-    assert page.has_content?('No intent found.')
+    assert page.has_content?('No interpretation found.')
   end
 
 
