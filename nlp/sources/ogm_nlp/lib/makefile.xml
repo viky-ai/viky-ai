@@ -40,6 +40,7 @@
     <file>nlprposition.c</file>
     <file>nlptree.c</file>
     <file>nlptreejson.c</file>
+    <file>nlpwarn.c</file>
     <file>nlpwhy.c</file>
     <file>nlpwhycal.c</file>
     <file>nlpwhyjson.c</file>

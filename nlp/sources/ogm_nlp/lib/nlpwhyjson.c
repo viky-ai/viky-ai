@@ -13,10 +13,10 @@ static og_status NlpWhyJsonMInputPart(og_nlp_th ctrl_nlp_th, struct nm_expressio
 static og_status NlpWhyJsonMExpression(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
     struct m_input_part *m_input_part, struct m_expression *m_expression, json_t *json_matches);
 
-og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_interpretation)
+og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_answer)
 {
   json_t *json_nm_expressions = json_array();
-  IF(json_object_set_new(json_interpretation, "because-not-matching", json_nm_expressions))
+  IF(json_object_set_new(json_answer, "because-not-matching", json_nm_expressions))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJson: error setting json_nm_expressions");
     DPcErr;

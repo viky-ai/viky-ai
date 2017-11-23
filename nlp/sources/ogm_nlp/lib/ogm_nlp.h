@@ -491,6 +491,9 @@ struct og_ctrl_nlp_threaded
 
   /** common request */
   json_t *json_answer;
+  json_t *json_answer_unit;
+  json_t *json_warnings;
+  int nb_warnings;
 
   /** Stack of current lock (struct nlp_synchro_lock) owned by the thread */
   struct nlp_synchro_current_lock current_lock[1];
@@ -802,5 +805,9 @@ og_status NlpWhyCalculate(og_nlp_th ctrl_nlp_th);
 
 /* nlpwhyjson.c */
 og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_interpretation);
+
+/* nlpwarn.c */
+og_status NlpWarningReset(og_nlp_th ctrl_nlp_th);
+og_status NlpWarningAdd(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 

@@ -231,6 +231,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   // reset previews interpretations
   IFE(NlpInterpretRequestReset(ctrl_nlp_th));
 
+  ctrl_nlp_th->json_answer_unit = json_answer;
+
   og_char_buffer json_request_string[DPcPathSize];
   IFE(NlpJsonToBuffer(json_request, json_request_string, DPcPathSize, NULL, JSON_INDENT(2)));
 
@@ -293,6 +295,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpGlueReset(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingReset(ctrl_nlp_th));
+  IFE(NlpWarningReset(ctrl_nlp_th));
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyReset(ctrl_nlp_th));
