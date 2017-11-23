@@ -35,6 +35,44 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
+
+  test 'Package generation with locale any' do
+    weather = agents(:weather)
+    intent = intents(:weather_greeting)
+    interpretation = interpretations(:weather_greeting_hello)
+    interpretation.locale = '*'
+    interpretation.save
+
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      "id"   => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id"   => intent.id,
+          "slug" => "admin/weather/weather_greeting",
+          "expressions" => [
+            {
+              "expression" => "Bonjour tout le monde",
+              "locale"     => "fr-FR"
+            },
+            {
+              "expression" => "Hello world",
+              "keep_order" => true,
+              "glued"      => true,
+              "solution"   => {
+                "who" => "`greeting.who`"
+              }
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(p.generate_json)
+  end
+
+
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
