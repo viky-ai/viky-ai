@@ -8,116 +8,47 @@ module Nls
 
     class TestNumbers < NlsTestCommon
 
-      def test_simple_numbers
+      def setup
+        super
+
         Nls.remove_all_packages
 
-        package_number_digits = JSON.parse(File.read(fixture_path("package_number_digits.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_digits['id']}"
-        Nls.query_post(package_url, package_number_digits)
+        Interpretation.default_locale = "fr-FR"
 
-        package_number_letters = JSON.parse(File.read(fixture_path("package_number_letters.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_letters['id']}"
-        Nls.query_post(package_url, package_number_letters)
+        Nls.package_update(fixture_parse("package_number_digits.json"))
+        Nls.package_update(fixture_parse("package_number_letters.json"))
+        Nls.package_update(fixture_parse("package_number.json"))
+      end
 
-        package_number = JSON.parse(File.read(fixture_path("package_number.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number['id']}"
-        Nls.query_post(package_url, package_number)
+      def test_simple_numbers
+        check_interpret("3", interpretation: "number", solution: { number: 3 } )
+        check_interpret("4", interpretation: "number", solution: { number: 4 } )
+      end
 
-        query = {
-          "packages" =>
-          [
-            "package_number",
-            "package_number_digits",
-            "package_number_letters"
-          ],
-          "sentence" => "3"
-        }
+      def test_simple_number_letters
+        check_interpret("three", interpretation: "number", solution: { number: 3 } )
+        check_interpret("quatre", interpretation: "number", solution: { number: 4 } )
 
-        expected = {
-          "interpretations" => [
-                  {
-                       "package" => "package_number",
-                            "id" => "number",
-                          "slug" => "number",
-                         "score" => 1.0,
-                      "solution" => {
-                         "number" => 3
-                      }
-                  }
-              ]
+      end
 
-        }
+      def test_complex_number
+        check_interpret("51", interpretation: "number", solution: { number: 51 } )
+        check_interpret("32847", interpretation: "number", solution: { number: 32847 } )
+      end
 
-        query_param = { }
+      def test_complex_number_letters
+        check_interpret("fifty two", interpretation: "number", solution: { number: 52 } )
+        check_interpret("two hundred and fifty two", interpretation: "number", solution: { number: 252 } )
+        check_interpret("quarante et un", interpretation: "number", solution: { number: 41 } )
+        check_interpret("quarante et une", interpretation: "number", solution: { number: 41 } )
+        check_interpret("quatre vingt douze", interpretation: "number", solution: { number: 92 } )
+        check_interpret("sept cent dix huit mille quatre cent quatre vingt quatorze", interpretation: "number", solution: { number: 718494 } )
+        check_interpret("quarante douze", interpretation: "number", solution: { number: 52 } )
+      end
 
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "4"
-        expected["interpretations"][0]["solution"]["number"] = 4
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "51"
-        expected["interpretations"][0]["solution"]["number"] = 51
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "fifty two"
-        expected["interpretations"][0]["solution"]["number"] = 52
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "two hundred and fifty two"
-        expected["interpretations"][0]["solution"]["number"] = 252
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "quarante et une"
-        expected["interpretations"][0]["solution"]["number"] = 41
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "quatre vingt douze"
-        expected["interpretations"][0]["solution"]["number"] = 92
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "sept cent dix huit mille quatre cent quatre vingt quatorze"
-        expected["interpretations"][0]["solution"]["number"] = 718494
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "quarante douze"
-        expected["interpretations"][0]["solution"]["number"] = 52
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        expected = {
-          "interpretations" => [
-                  {
-                       "package" => "package_number",
-                            "id" => "number_ordinal",
-                          "slug" => "number_ordinal",
-                         "score" => 1.0,
-                      "solution" => {
-                         "number" => 3
-                      }
-                  }
-              ]
-
-        }
-
-        query['sentence'] = "troisieme"
-        expected["interpretations"][0]["solution"]["number"] = 3
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
-        query['sentence'] = "third"
-        expected["interpretations"][0]["solution"]["number"] = 3
-        actual = Nls.interpret(query, query_param)
-        assert_json expected["interpretations"].first, actual["interpretations"].first
-
+      def test_ordinal_number
+        check_interpret("troisieme", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("third", interpretation: "number_ordinal", solution: { number: 3 } )
       end
     end
   end

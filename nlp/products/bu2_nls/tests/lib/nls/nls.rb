@@ -139,7 +139,7 @@ module Nls
       end
 
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
-      
+
       puts "Interpret response :\n #{response.body}\n" if verbose?
       JSON.parse(response.body)
     end
@@ -164,9 +164,27 @@ module Nls
     end
 
     def self.package_update(package, params = {})
-      package.to_file(import_dir)
-      package_url = "#{base_url}/packages/#{package.id}"
-      response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
+      package_id = nil
+      package_body = nil
+      if package.kind_of? Package
+        package.to_file(import_dir)
+        package_id = "#{package.id}"
+        package_body = JSON.pretty_generate(package.to_h)
+      elsif package.kind_of? Hash
+        package_id = package['id']
+        slug = package['slug']
+        filename = "package_#{slug}_#{package_id}.json"
+        package_body = JSON.pretty_generate(package)
+
+        File.open(File.join(File.expand_path(import_dir), filename), "w") do |f|
+          f.write(package_body)
+        end
+      else
+        raise "Unsupported package format #{package.inspect}"
+      end
+
+      package_url = "#{base_url}/packages/#{package_id}"
+      response = RestClient.post(package_url, package_body, content_type: :json, params: params)
       JSON.parse(response.body)
     end
 

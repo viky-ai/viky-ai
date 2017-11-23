@@ -72,51 +72,6 @@ module Nls
         package
       end
 
-
-
-
-      def check_interpret(sentence, expected)
-
-        raise "expected must be an Hash"   if !expected.kind_of? Hash
-        raise "expected must not be empty" if expected.empty?
-
-        # creation et exécution de la requete
-        request = json_interpret_body("*", sentence, Interpretation.default_locale)
-        actual = Nls.interpret(request)
-
-        assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
-        assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
-
-        assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
-
-        match_intepretation = actual['interpretations'].first
-
-        if expected.has_key?(:interpretation)
-          expected_interpretation = expected[:interpretation]
-          slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
-          assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
-        end
-
-        if expected.has_key?(:solution)
-          expected_solution = expected[:solution]
-          if expected_solution.kind_of?(Hash) || expected_solution.kind_of?(Array)
-            expected_solution.deep_stringify_keys!
-          end
-
-          if expected_solution.nil?
-            assert_nil match_intepretation['solution'], "Matched on unexpected solution (nil)"
-          else
-            assert_equal expected_solution, match_intepretation['solution'], "Matched on unexpected solution"
-          end
-        end
-
-        if expected.has_key?(:score)
-          expected_score = expected[:score]
-          assert_equal expected_score, match_intepretation['score'], "Matched on wring score"
-        end
-
-      end
-
       def test_solution_null
         check_interpret("sol null", interpretation: "solution_test_js", solution: nil)
       end
