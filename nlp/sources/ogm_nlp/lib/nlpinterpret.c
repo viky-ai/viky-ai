@@ -102,7 +102,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   }
 
   IFE(NlpGlueInit(ctrl_nlp_th));
-  IFE(NlpWhyNotMatchingInit(ctrl_nlp_th,param->name));
+  IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
 
   DONE;
 }
@@ -387,6 +387,15 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 
       NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: showing explanation in answer")
     }
+    else if (json_is_boolean(json_show_explanation))
+    {
+      ctrl_nlp_th->show_explanation = json_boolean_value(json_show_explanation);
+      if (ctrl_nlp_th->show_explanation)
+      {
+
+        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: showing explanation in answer")
+      }
+    }
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a string");
@@ -448,34 +457,72 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   DONE;
 }
 
+static og_status NlpInterpretRequestBuildPackagesPackageLisCallback(og_nlp_th ctrl_nlp_th, og_string package_id)
+{
+  NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: package id is '%s'", package_id)
+  IF(NlpInterpretRequestBuildPackage(ctrl_nlp_th, package_id))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackagesPackageLisCallback: "
+        "NlpInterpretRequestBuildPackage failed on package '%s'", package_id);
+    DPcErr;
+  }
+
+  DONE;
+}
+
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages)
 {
-  int array_size = json_array_size(json_packages);
-  for (int i = 0; i < array_size; i++)
+  if (json_is_string(json_packages))
   {
-    json_t *json_package = json_array_get(json_packages, i);
-    IFN(json_package)
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: null json_package at position %d", i);
-      DPcErr;
-    }
+    og_string packages = json_string_value(json_packages);
 
-    if (json_is_string(json_package))
+    // joker '*' means all packages
+    if (!strcmp(packages, "*"))
     {
-      const char *package_id = json_string_value(json_package);
-      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: package id is '%s'", package_id)
-      IFE(NlpInterpretRequestBuildPackage(ctrl_nlp_th, package_id));
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: '*' using all available packages");
+      IFE(NlpPackageListInternal(ctrl_nlp_th, NlpInterpretRequestBuildPackagesPackageLisCallback));
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageInterpretations: json_interpretation at position %d is not a string", i);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: 'packages' is not a array");
       DPcErr;
     }
 
   }
+  else if (json_is_array(json_packages))
+  {
+    int array_size = json_array_size(json_packages);
+    for (int i = 0; i < array_size; i++)
+    {
+      json_t *json_package = json_array_get(json_packages, i);
+      IFN(json_package)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: null json_package at position %d", i);
+        DPcErr;
+      }
+
+      if (json_is_string(json_package))
+      {
+        og_string package_id = json_string_value(json_package);
+        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildPackages: package id is '%s'", package_id)
+        IFE(NlpInterpretRequestBuildPackage(ctrl_nlp_th, package_id));
+      }
+      else
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: 'packages' at position %d is not a string", i);
+        DPcErr;
+      }
+
+    }
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPackages: 'packages' is not a array");
+    DPcErr;
+  }
 
   IFE(NlpCheckPackages(ctrl_nlp_th));
+
   DONE;
 }
 

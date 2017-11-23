@@ -614,6 +614,10 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th);
 void NlpPackageDestroyIfNotUsed(gpointer package_void);
 
+/* nlpackagelist.c */
+typedef og_status (*nlp_package_list_callback)(og_nlp_th ctrl_nlp_th, og_string package_id);
+og_status NlpPackageListInternal(og_nlp_th ctrl_nlp_th, nlp_package_list_callback func);
+
 /* nlpinterpret.c */
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);
 og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th);

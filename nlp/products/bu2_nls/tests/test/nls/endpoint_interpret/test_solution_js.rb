@@ -81,7 +81,7 @@ module Nls
         raise "expected must not be empty" if expected.empty?
 
         # creation et exécution de la requete
-        request = json_interpret_body(@solution_test_package, sentence, Interpretation.default_locale)
+        request = json_interpret_body("*", sentence, Interpretation.default_locale)
         actual = Nls.interpret(request)
 
         assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
@@ -178,6 +178,7 @@ module Nls
         check_interpret("sol combine entity 1 2 3", solution: { number: [1, 2, 3], name: "entity"})
         check_interpret("sol combine entity 1 2 3 entity 4", solution: { number: [1, 2, 3, 4], name: [ "entity", "entity" ] })
         check_interpret("sol combine entity dummy no solution", solution: { name: "entity" })
+
         sol = { number: [1, 2, 3, 4], name: [ "entity", "entity" ], match: "everything" }
         check_interpret("sol combine entity 1 2 text everything 3 entity 4", solution: sol)
       end

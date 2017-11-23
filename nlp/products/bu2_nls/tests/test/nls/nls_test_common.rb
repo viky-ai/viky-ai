@@ -41,7 +41,10 @@ module Nls
 
     def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false)
       request = {}
-      if package.kind_of? Array
+
+      if package == "*"
+        request['packages'] = "*"
+      elsif package.kind_of? Array
         package_ids = package.map do |p|
           if p.kind_of? Package
             p.id.to_s
@@ -55,6 +58,7 @@ module Nls
         package_id = package.id.to_s if package.kind_of? Package
         request['packages'] = [package_id]
       end
+
       request['sentence'] = sentence
       request['Accept-Language'] = locale
       request['show-explanation'] = "true"  if explain
