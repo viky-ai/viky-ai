@@ -44,21 +44,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
       score->locale += sub_request_expression->score->locale;
       score->spelling += 1;
-      if (request_expression->expression->alias_any_input_part_position == i + 1)
-      {
-        if (request_expression->Irequest_any >= 0)
-        {
-          score->any *= 0.8;
-        }
-        else
-        {
-          score->any *= 0.2;
-        }
-      }
-      else
-      {
-        score->any *= sub_request_expression->score->any;
-      }
+      score->any *= sub_request_expression->score->any;
     }
     else
     {
@@ -66,6 +52,18 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       score->spelling += 1;
     }
 
+  }
+
+  if (request_expression->expression->alias_any_input_part_position >= 0)
+  {
+    if (request_expression->Irequest_any >= 0)
+    {
+      score->any *= 0.8;
+    }
+    else
+    {
+      score->any *= 0.2;
+    }
   }
 
   // coverage is calculated in terms of number of matched words

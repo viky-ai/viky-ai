@@ -75,14 +75,11 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
       IFE(sub_solution_built);
       if (sub_solution_built) must_combine_solution = TRUE;
     }
+  }
 
-    if (request_expression->expression->alias_any_input_part_position == i + 1)
-    {
-      if (request_expression->Irequest_any >= 0)
-      {
-        must_combine_solution = TRUE;
-      }
-    }
+  if (request_expression->Irequest_any >= 0)
+  {
+    must_combine_solution = TRUE;
   }
 
   json_t *json_package_solution = request_expression->expression->json_solution;
@@ -266,54 +263,52 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       }
     }
 
-    if (request_expression->expression->alias_any_input_part_position == i + 1)
-    {
-      // Any might not exist or be attached to this request_expression, in that case Irequest_any = -1
-      // This means that all the words have been used or that the positions of unused words are incompatible
-      if (request_expression->Irequest_any >= 0)
-      {
-        struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-        IFN(request_any) DPcErr;
-
-        char string_any[DPcPathSize];
-        IFE(NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any));
-
-        json_t *json_solution_any = json_string(string_any);
-
-        if (request_expression->expression->alias_any_input_part_position >= request_expression->expression->aliases_nb)
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: "
-              "request_expression->expression->alias_any_input_part_position (%d) >="
-              " request_expression->expression->aliases_nb (%d)",
-              request_expression->expression->alias_any_input_part_position,
-              request_expression->expression->aliases_nb);
-          DPcErr;
-        }
-
-        struct alias *alias = request_expression->expression->aliases
-            + request_expression->expression->alias_any_input_part_position;
-
-        char solution[DPcPathSize];
-        IFE(NlpSolutionString(ctrl_nlp_th, json_solution_any, DPcPathSize, solution));
-        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
-            alias->alias, solution);
-
-        if (alias_solutions_nb >= DOgAliasSolutionSize)
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
-              alias_solutions_nb, DOgAliasSolutionSize);
-          DPcErr;
-
-        }
-
-        struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
-        alias_solution->alias = alias;
-        alias_solution->json_solution = json_solution_any;
-        g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
-        alias_solutions_nb++;
-      }
-    }
   }
+
+  // Any might not exist or be attached to this request_expression, in that case Irequest_any = -1
+  // This means that all the words have been used or that the positions of unused words are incompatible
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
+
+    char string_any[DPcPathSize];
+    IFE(NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any));
+
+    json_t *json_solution_any = json_string(string_any);
+
+    if (request_expression->expression->alias_any_input_part_position >= request_expression->expression->aliases_nb)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: "
+          "request_expression->expression->alias_any_input_part_position (%d) >="
+          " request_expression->expression->aliases_nb (%d)",
+          request_expression->expression->alias_any_input_part_position, request_expression->expression->aliases_nb);
+      DPcErr;
+    }
+
+    struct alias *alias = request_expression->expression->aliases
+        + request_expression->expression->alias_any_input_part_position;
+
+    char solution[DPcPathSize];
+    IFE(NlpSolutionString(ctrl_nlp_th, json_solution_any, DPcPathSize, solution));
+    NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias->alias,
+        solution);
+
+    if (alias_solutions_nb >= DOgAliasSolutionSize)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+          alias_solutions_nb, DOgAliasSolutionSize);
+      DPcErr;
+
+    }
+
+    struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+    alias_solution->alias = alias;
+    alias_solution->json_solution = json_solution_any;
+    g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+    alias_solutions_nb++;
+  }
+
   DONE;
 }
 

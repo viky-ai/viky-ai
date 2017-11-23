@@ -468,7 +468,7 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
   }
 
   // round the score to 2 digit after dot
-  double rounded_total_score = roundf(request_expression->total_score * 100.0) / 100.0;
+  double rounded_total_score = floor(request_expression->total_score * 100) / 100;
   json_t *json_score = json_real(rounded_total_score);
   IF(json_object_set_new(json_interpretation, "score", json_score))
   {

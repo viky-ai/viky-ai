@@ -15,6 +15,8 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
     og_string string_word, int length_string_word);
 struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression *expression, size_t *pIinput_part);
+static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression *expression, int *palias_nb);
 
 static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, package_t package)
 {
@@ -436,11 +438,12 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       if (expression->alias_any_input_part_position >= 0)
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while"
-            " only one alias per expression is allowed in intepretation '%s' '%s'", length_string_alias, string_alias,
+            " only one alias per expression is allowed in interpretation '%s' '%s'", length_string_alias, string_alias,
             expression->text, expression->interpretation->slug, expression->interpretation->id);
 
       }
-      expression->alias_any_input_part_position = expression->input_parts_nb;
+      IFE(NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,&expression->alias_any_input_part_position));
+      //expression->alias_any_input_part_position = expression->input_parts_nb;
       alias_added = TRUE;
     }
     else if (alias->type == nlp_alias_type_Digit)
@@ -519,5 +522,18 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
 
   *pIinput_part = Iinput_part;
   return (input_part);
+}
+
+static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression *expression, int *palias_nb)
+{
+  *palias_nb = 0;
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    struct input_part *input_part = OgHeapGetCell(package->hinput_part, expression->input_part_start + i);
+    IFN(input_part) DPcErr;
+    if (input_part->type == nlp_input_part_type_Interpretation) (*palias_nb)++;
+  }
+  DONE;
 }
 
