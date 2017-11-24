@@ -56,7 +56,7 @@ module Nls
 
       def test_extra
 #        check_interpret("december the third, two thousand and seventeen", interpretation: "date_day_month_year", solution: { date: "2017-12-03T00:00:00.000Z" } )
-        check_interpret("december the third, two thousand and seventeen", interpretation: "date_day_month_year", solution: { date: "2017-12-03T00:00:00.000Z" } )
+#        check_interpret("december the third, two thousand and seventeen", interpretation: "date_day_month_year", solution: { date: "2017-12-03T00:00:00.000Z" } )
       end
 
     end

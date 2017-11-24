@@ -43,7 +43,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       IFN(sub_request_expression) DPcErr;
       IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
       score->locale += sub_request_expression->score->locale;
-      score->spelling += 1;
+      score->spelling += sub_request_expression->score->spelling;
       score->any *= sub_request_expression->score->any;
     }
     else
@@ -97,6 +97,6 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 {
   double score_number = 5.0;
   struct request_score *score = request_expression->score;
-  request_expression->total_score = (score->coverage + score->locale + score->spelling + score->overlap + score->any) / score_number;
+  request_expression->total_score = (score->coverage + score->locale + score->spelling*score->spelling + score->overlap + score->any) / score_number;
   DONE;
 }
