@@ -9,6 +9,7 @@ class Interpretation < ApplicationRecord
 
   validate :solution_json_valid
 
+  before_save :cleanup
   before_create :set_position
 
   after_save do
@@ -21,6 +22,12 @@ class Interpretation < ApplicationRecord
 
 
   private
+
+    def cleanup
+      unless expression.nil?
+        self.expression = expression.strip
+      end
+    end
 
     def set_position
       unless intent.nil?
