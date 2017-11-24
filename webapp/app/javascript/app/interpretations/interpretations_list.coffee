@@ -14,6 +14,7 @@ class InterpretationsList
           method: 'POST'
           data: { ids: ids }
     });
+    InterpretationsList.displayCodeEditor($("#solution__new_interpretation")[0])
 
   @updateDraggable: ->
     if $('#interpretations-list li').length > 1
@@ -41,6 +42,11 @@ class InterpretationsList
     $("#current-locale-tab-badge").html(count - 1)
     $("#current-locale-tab-badge").data('count',  count - 1)
 
+  @displayCodeEditor: (textarea)->
+    CodeMirror.fromTextArea(textarea, {
+      lineNumbers: true,
+      mode: "javascript"
+    });
 
 module.exports = InterpretationsList
 

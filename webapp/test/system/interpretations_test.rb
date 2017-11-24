@@ -48,22 +48,23 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_link?('Hello world')
+    click_link 'fr-FR'
+    assert page.has_link?('Bonjour tout le monde')
 
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert_equal '1', first('#current-locale-tab-badge').text
 
     within('#interpretations-list') do
-      click_link 'Hello world'
+      click_link 'Bonjour tout le monde'
       assert page.has_text?('Cancel')
-      first('trix-editor').click.set('Hello every body')
+      first('trix-editor').click.set('Salut à tous')
       check('interpretation[keep_order]')
       check('interpretation[glued]')
-      fill_in 'interpretation[solution]', with: '10'
+      fill_in_editor_field '10'
       click_button 'Update'
     end
 
-    assert page.has_link?('Hello every body')
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert page.has_link?('Salut à tous')
+    assert_equal '1', first('#current-locale-tab-badge').text
   end
 
 
@@ -99,10 +100,24 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     within('#interpretations-list') do
       click_link 'Hello world'
-      fill_in 'interpretation[solution]', with: 'azerty'
+      fill_in_editor_field 'azerty'
       click_button 'Update'
     end
 
     assert page.has_text?('Solution invalid json')
   end
+
+
+  private
+
+    def fill_in_editor_field(text)
+      within '.CodeMirror' do
+        # Click makes CodeMirror element active:
+        current_scope.click
+        # Find the hidden textarea:
+        field = current_scope.find('textarea', visible: false)
+        # Mimic user typing the text:
+        field.send_keys text
+      end
+    end
 end

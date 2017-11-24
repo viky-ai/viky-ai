@@ -1,5 +1,9 @@
 // App specific
 window.Sortable = require('sortablejs');
+window.CodeMirror = require('codemirror');
+
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/lib/codemirror.css'
 
 // Trix
 window.Trix = require('trix');

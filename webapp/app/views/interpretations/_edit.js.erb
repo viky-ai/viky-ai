@@ -1,4 +1,6 @@
 $("#interpretation-<%= @interpretation.id %>").html("<%= escape_javascript(@form) %>");
 App.InterpretationsList.updateDraggable()
+App.InterpretationsList.displayCodeEditor($("#solution__<%= @interpretation.id %>")[0]);
+
 
 // App.FocusInput.atEnd("#interpretation-<%= @interpretation.id %> input[type=text]");

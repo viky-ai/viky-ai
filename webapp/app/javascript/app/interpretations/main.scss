@@ -11,6 +11,10 @@
   }
 }
 
+#interpretations-form .CodeMirror, .interpretations-list__edit .CodeMirror {
+  height: 7em;
+}
+
 trix-editor{
   min-height: 2.5em;
 }
