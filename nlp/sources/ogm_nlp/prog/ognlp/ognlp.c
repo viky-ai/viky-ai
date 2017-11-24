@@ -262,7 +262,6 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
-    json_decrefp(&output->json_output);
     IF(status)
     {
       OgErr(info->herr, "nlp_compile: error on json_dump_file");
@@ -294,7 +293,6 @@ static og_status nlp_dump(struct og_info *info)
     if (info->output_filename != NULL)
     {
       og_status status = json_dump_file(output->json_output, info->output_filename, JSON_INDENT(2));
-      json_decref(output->json_output);
       IF(status)
       {
         char buffer[DPcPathSize];

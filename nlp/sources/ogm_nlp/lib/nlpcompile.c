@@ -60,10 +60,11 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
   }
 
   // Just saying that compilation went well
-  json_t *json = json_object();
-  output->json_output = json;
+  ctrl_nlp_th->json_answer = json_object();
 
-  IFE(json_object_set_new(json, "compilation", json_string("ok")));
+  IFE(json_object_set_new(ctrl_nlp_th->json_answer, "compilation", json_string("ok")));
+
+  output->json_output = ctrl_nlp_th->json_answer;
 
   DONE;
 }
