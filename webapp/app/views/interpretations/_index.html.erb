@@ -60,7 +60,7 @@
 } %>
 
 <div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
-<div class="highlight" id="highlight" style="display:none;"></div>
+<div class="popup-highlight" id="highlight" style="display:none;"></div>
 <div class="popup" id="popup-add-tag" style="display:none;">
   <% if @agent.intents.where.not(id: @intent.id).count == 0 %>
     <p>
