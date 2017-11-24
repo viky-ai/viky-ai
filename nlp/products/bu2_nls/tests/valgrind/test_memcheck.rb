@@ -16,6 +16,7 @@ module Valgrind
       command << "--track-origins=yes"
       command << "--read-var-info=yes"
       command << "--show-reachable=yes"
+      command << "--num-callers=32"
       command << "--keep-stacktraces=alloc-then-free"
       command << "--log-file=valgrind.log"
       command << "--suppressions=#{supression_file}"

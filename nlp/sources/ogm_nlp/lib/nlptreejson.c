@@ -201,7 +201,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 
   if (json_package_solution)
   {
-    IF(json_object_set_new(json_expression, "package_solution", json_package_solution))
+    IF(json_object_set_new(json_expression, "package_solution", json_deep_copy(json_package_solution)))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting package_solution on json_expression");
       DPcErr;
@@ -210,7 +210,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 
   if (request_expression->json_solution)
   {
-    IF(json_object_set_new(json_expression, "computed_solution", request_expression->json_solution))
+    IF(json_object_set(json_expression, "computed_solution", request_expression->json_solution))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting computed_solution on json_expression");
       DPcErr;
