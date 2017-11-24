@@ -135,11 +135,11 @@ module Nls
       puts "Interpret request :\n #{body.to_json}\n" if verbose?
 
       body_to_write = body
-      body["why-not-matching"] = {"expression" => "any"}
-      body["show-explanation"] = false
+      body_to_write["why-not-matching"] = {"expression" => "any"}
+      body_to_write["show-explanation"] = false
 
       File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|
-        f.write(JSON.pretty_generate(body))
+        f.write(JSON.pretty_generate(body_to_write))
       end
 
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)

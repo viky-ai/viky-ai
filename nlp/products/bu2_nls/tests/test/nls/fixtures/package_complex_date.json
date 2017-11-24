@@ -1,0 +1,415 @@
+{
+  "id": "package_complex_date",
+  "interpretations": [
+    {
+      "id": "and",
+      "expressions": [
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_in",
+      "expressions": [
+        {
+          "expression": "in",
+          "locale": "en"
+        },
+        {
+          "expression": "dans",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_for",
+      "expressions": [
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "day",
+      "expressions": [
+        {
+          "expression": "day",
+          "locale": "en"
+        },
+        {
+          "expression": "jour",
+          "locale": "fr"
+        },
+        {
+          "expression": "days",
+          "locale": "en"
+        },
+        {
+          "expression": "jours",
+          "locale": "fr"
+        },
+        {
+          "expression": "journee",
+          "locale": "fr"
+        },
+        {
+          "expression": "journees",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "week",
+      "expressions": [
+        {
+          "expression": "week",
+          "locale": "en"
+        },
+        {
+          "expression": "semaine",
+          "locale": "fr"
+        },
+        {
+          "expression": "weeks",
+          "locale": "en"
+        },
+        {
+          "expression": "semaines",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "quinzaine",
+      "expressions": [
+        {
+          "expression": "quinzaine",
+          "locale": "fr"
+        },
+        {
+          "expression": "quinzaines",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "month",
+      "expressions": [
+        {
+          "expression": "month",
+          "locale": "en"
+        },
+        {
+          "expression": "months",
+          "locale": "en"
+        },
+        {
+          "expression": "mois",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "year",
+      "expressions": [
+        {
+          "expression": "year",
+          "locale": "en"
+        },
+        {
+          "expression": "annee",
+          "locale": "fr"
+        },
+        {
+          "expression": "an",
+          "locale": "fr"
+        },
+        {
+          "expression": "years",
+          "locale": "en"
+        },
+        {
+          "expression": "annees",
+          "locale": "fr"
+        },
+        {
+          "expression": "ans",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "expressions": [
+        {
+          "expression": "@{number} @{day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "day",
+              "id": "day"
+            }
+          ],
+          "solution": {
+            "days": "`number.number`",
+            "months": 0,
+            "years": 0
+          }
+        },
+        {
+          "expression": "@{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ],
+          "solution": {
+            "days": "`number.number*7`",
+            "months": 0,
+            "years": 0
+          }
+        },
+        {
+          "expression": "@{number} @{quinzaine}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "quinzaine",
+              "id": "quinzaine"
+            }
+          ],
+          "solution": {
+            "days": "`number.number*15`",
+            "months": 0,
+            "years": 0
+          }
+        },
+        {
+          "expression": "@{number} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ],
+          "solution": {
+            "days": 0,
+            "months": "`number.number`",
+            "years": 0
+          }
+        },
+        {
+          "expression": "@{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ],
+          "solution": {
+            "days": 0,
+            "months": 0,
+            "years": "`number.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "durations_combinations",
+      "expressions": [
+        {
+          "expression": "@{durations_combinations} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "durations_combinations",
+              "id": "durations_combinations"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ],
+          "solution": {
+            "days": "`durations_combinations.days+duration.days`",
+            "months": "`durations_combinations.months+duration.months`",
+            "years": "`durations_combinations.years+duration.years`"
+          }
+        },
+        {
+          "expression": "@{durations_combinations} @{and} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "durations_combinations",
+              "id": "durations_combinations"
+            },
+            {
+              "alias": "and",
+              "id": "and"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ],
+          "solution": {
+            "days": "`durations_combinations.days+duration.days`",
+            "months": "`durations_combinations.months+duration.months`",
+            "years": "`durations_combinations.years+duration.years`"
+          }
+        },
+        {
+          "expression": "@{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ],
+          "solution": {
+            "days": "`duration.days`",
+            "months": "`duration.months`",
+            "years": "`duration.years`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "period",
+      "expressions": [
+        {
+          "expression": "@{preposition_for} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "duration",
+              "id": "durations_combinations"
+            }
+          ],
+          "solution": {
+            "date_begin": "`new Date()`",
+            "date_end": "`new Date(new Date().getFullYear()+duration.years,new Date().getMonth()+duration.months,new Date().getDate()+duration.days+1)`",
+            "toto": "`new Date( new Date().setMonth(new Date().getMonth()+duration.months) )`",
+            "toto1": "`new Date( new Date().setMonth(new Date().getMonth()+duration.months).setFullYear(new Date().getYear()+duration.Years) )`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "latency",
+      "expressions": [
+        {
+          "expression": "@{preposition_in} @{durations_combinations}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "durations_combinations",
+              "id": "durations_combinations"
+            }
+          ],
+          "solution": {
+            "latency_days": "`durations_combinations.days`",
+            "latency_months": "`durations_combinations.months`",
+            "latency_years": "`durations_combinations.years`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "duration_with_latency",
+      "expressions": [
+        {
+          "expression": "@{preposition_for} @{duration} @{preposition_in} @{delay}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "duration",
+              "id": "durations_combinations"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "delay",
+              "id": "durations_combinations"
+            }
+          ],
+          "solution": {
+            "delay_days": "`delay.days`",
+            "delay_months": "`delay.months`",
+            "delay_years": "`delay.years`",
+            "days": "`duration.days`",
+            "months": "`duration.months`",
+            "years": "`duration.years`"
+          }
+        }
+      ]
+    }
+  ]
+}

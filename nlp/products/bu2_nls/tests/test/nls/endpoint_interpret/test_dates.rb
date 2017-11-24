@@ -56,7 +56,19 @@ module Nls
       end
 
 #      def test_complex_date
-#
+#        check_interpret("dans 3 jours", interpretation: "latency", solution: {
+#          "latency_days" => 3,
+#          "latency_months" => 0,
+#          "latency_years" => 0
+#        })
+#        check_interpret("une semaine dans 1 mois et 3 jours", interpretation: "duration_with_latency", solution: {
+#          "latency_days" => 3,
+#          "latency_months" => 1,
+#          "latency_years" => 0,
+#          "days" => 7,
+#          "months" => 0,
+#          "years" => 0
+#        })
 #      end
 
 #      def test_extra

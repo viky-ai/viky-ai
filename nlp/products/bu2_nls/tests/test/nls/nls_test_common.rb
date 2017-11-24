@@ -214,14 +214,21 @@ module Nls
       json_package
     end
 
-    def check_interpret(sentence, expected)
+    def check_interpret_debug(sentence, expected)
+      check_interpret(sentence, expected, true)
+    end
+
+    def check_interpret(sentence, expected, debug = false)
 
       raise "expected must be an Hash"   if !expected.kind_of? Hash
       raise "expected must not be empty" if expected.empty?
 
+      ap expected if debug
       # creation et exécution de la requete
       request = json_interpret_body("*", sentence, Interpretation.default_locale)
+      ap request if debug
       actual = Nls.interpret(request)
+      ap actual if debug
 
       assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
       assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
