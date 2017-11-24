@@ -1,0 +1,74 @@
+{
+  "id": "double_alias",
+  "interpretations":
+  [
+    {
+      "id": "double_alias",
+      "expressions":
+      [
+        {
+          "expression": "@{animal} @{animal}",
+          "aliases":
+          [
+            {
+              "alias": "animal",
+              "id": "animals"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "animals",
+      "expressions":
+      [
+        {
+          "expression": "@{horse}",
+          "aliases":
+          [
+            {
+              "alias": "horse",
+              "id": "horse"
+            }
+          ]
+        },
+        {
+          "expression": "@{tiger}",
+          "aliases":
+          [
+            {
+              "alias": "tiger",
+              "id": "tiger"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horse",
+      "expressions":
+      [
+        {
+          "expression": "horse"
+        }
+      ],
+      "solution":
+      {
+        "animal": "horse"
+      }
+    },
+    {
+      "id": "tiger",
+      "expressions":
+      [
+        {
+          "expression": "tiger"
+        }
+      ],
+      "solution":
+      {
+        "animal": "tiger"
+      }
+    }
+  ]
+}

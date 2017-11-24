@@ -102,13 +102,29 @@ why-not-working:
 
 Simple test on language:
 ```
-ognlp -c packages/package_language_simple.json -i requests/r_language_simple.json
+./ognlp -c packages/package_language_simple.json -i requests/r_language_simple.json
 ```
 
 Simple test on warning:
 ```
-ognlp -c packages/package_warning_simple.json -i requests/r_warning_simple.json
+./ognlp -c packages/package_warning_simple.json -i requests/r_warning_simple.json
 ```
+
+Interpretation whatever-animal-bad can always be replaced by whatever-animal-good
+```
+./ognlp -c packages/package_deep_any.json -i requests/r_deep_any.json
+```
+
+Double alias are working properly
+```
+./ognlp -c packages/package_double_alias.json -i requests/r_double_alias.json
+```
+
+Exemple sur la limitation de l'algorithme
+```
+./ognlp -c packages/package_limit_algo.json -i requests/r_limit_algo.json
+```
+
 
 Summary of list of examples
 =====

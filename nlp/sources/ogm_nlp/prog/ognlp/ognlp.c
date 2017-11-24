@@ -407,6 +407,7 @@ static int OgUse(struct og_info *info)
   ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: synchro, 0x8: compile\n");
   ibuffer += sprintf(buffer + ibuffer, "      0x10: consolidate, 0x20: interpret, 0x40: dump, 0x80: package\n");
   ibuffer += sprintf(buffer + ibuffer, "      0x100: match, 0x200: parse, 0x400: solution, 0x800: JS\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x1000: ltrac, 0x2000: ltras, 0x4000: ltras detail\n");
   OgLogConsole(info->hmsg, "%.*s", ibuffer, buffer);
 
   DONE;

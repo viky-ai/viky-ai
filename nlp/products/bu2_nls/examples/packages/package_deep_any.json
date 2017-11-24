@@ -1,0 +1,106 @@
+{
+  "id": "deep_any",
+  "interpretations":
+  [
+    {
+      "id": "whatever-animal-bad",
+      "expressions":
+      [
+        {
+          "expression": "@{whatever} @{animal}",
+          "aliases":
+          [
+            {
+              "alias": "whatever",
+              "id": "whatever"
+            },
+            {
+              "alias": "animal",
+              "id": "animals"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "whatever-animal-good",
+      "expressions":
+      [
+        {
+          "expression": "@{whatever} @{animal}",
+          "aliases":
+          [
+            {
+              "alias": "whatever",
+              "type": "any"
+            },
+            {
+              "alias": "animal",
+              "id": "animals"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "whatever",
+      "expressions":
+      [
+        {
+          "expression": "@{whatever}",
+          "aliases":
+          [
+            {
+              "alias": "whatever",
+              "type": "any"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "animals",
+      "expressions":
+      [
+        {
+          "expression": "@{horse}",
+          "aliases":
+          [
+            {
+              "alias": "horse",
+              "id": "horse"
+            }
+          ]
+        },
+        {
+          "expression": "@{tiger}",
+          "aliases":
+          [
+            {
+              "alias": "tiger",
+              "id": "tiger"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horse",
+      "expressions":
+      [
+        {
+          "expression": "horse"
+        }
+      ]
+    },
+    {
+      "id": "tiger",
+      "expressions":
+      [
+        {
+          "expression": "tiger"
+        }
+      ]
+    }
+  ]
+}
