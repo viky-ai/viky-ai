@@ -2,6 +2,8 @@ class Intent < ApplicationRecord
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
 
+  AVAILABLE_COLORS = %w(black red pink purple deep-purple indigo blue light-blue cyan teal green light-green lime yellow amber orange deep-orange brown)
+
   belongs_to :agent
   has_many :interpretations, dependent: :destroy
 
@@ -13,6 +15,7 @@ class Intent < ApplicationRecord
 
   before_validation :clean_intentname
   before_create :set_position
+  before_create :set_color
 
   after_save do
     if saved_change_to_attribute?(:intentname)
@@ -60,5 +63,9 @@ class Intent < ApplicationRecord
           self.position = agent.intents.maximum(:position) + 1
         end
       end
+    end
+
+    def set_color
+      self.color = Intent::AVAILABLE_COLORS[Random.new.rand(0..Intent::AVAILABLE_COLORS.size-1)] if self.color.blank?
     end
 end

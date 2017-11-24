@@ -15,6 +15,7 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal 'greeting', intent.intentname
     assert_equal agents(:weather).id, intent.agent.id
     assert_equal 2, agents(:weather).intents.count
+    assert Intent::AVAILABLE_COLORS.one? { |color| color == intent.color }
   end
 
 
@@ -138,5 +139,17 @@ class IntentTest < ActiveSupport::TestCase
         locales: ['can\'t be blank']
     }
     assert_equal expected, intent.errors.messages
+  end
+
+
+  test 'Do not override color at creation if already set' do
+    intent = Intent.new(
+      intentname: 'greeting',
+      locales: ['en-US'],
+      color: 'blue'
+    )
+    intent.agent = agents(:weather)
+    assert intent.save
+    assert_equal 'blue', intent.color
   end
 end

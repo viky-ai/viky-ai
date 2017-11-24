@@ -72,12 +72,11 @@
     </div>
     <ul>
       <% intent_prefix = @agent.owner.username + "/" + @agent.agentname %>
-      <% colors = %w(black red pink purple deep-purple indigo blue light-blue cyan teal green light-green lime yellow amber orange deep-orange brown ) %>
       <% @agent.intents.where.not(id: @intent.id).each do |intent| %>
         <li data-search="<%= intent_prefix %>/<%= intent.intentname %>" class="enabled">
           <a href="#"
              data-action="add-tag"
-             data-tag="alias-<%= colors[Random.new.rand(0..17)] %>____<%= intent_prefix %>/<%= intent.intentname %>">
+             data-tag="alias-<%= intent.color %>____<%= intent_prefix %>/<%= intent.intentname %>">
             <%= intent_prefix %>/<strong><%= intent.intentname %></strong>
           </a>
         </li>
