@@ -17,6 +17,11 @@
 
 trix-editor{
   min-height: 2.5em;
+  &:focus{
+    border-color: $focus_color;
+    box-shadow: 0 0 0 2px rgba($focus_color, .25);
+    outline:none;
+  }
 }
 trix-toolbar{
   display:none;
@@ -49,8 +54,7 @@ trix-toolbar{
       border: 1px solid transparent;
       border-radius: 2px;
       font-weight: 300;
-      &:focus,
-      &.focus{
+      &:focus{
         border-color: $focus_color;
         box-shadow: 0 0 0 2px rgba($focus_color, .25);
         outline:none;
