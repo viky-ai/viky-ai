@@ -8,7 +8,7 @@
 #include <logltras.h>
 
 static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
-static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, int word_length, og_string word,
+static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
     struct interpret_package *interpret_package);
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
     og_string corrected_word, double spelling_score);
@@ -59,26 +59,19 @@ og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 
 static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
-  IFN(request_word) DPcErr;
-  og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-  IFN(string_request_word) DPcErr;
-  int string_request_word_length = strlen(string_request_word);
-
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
   IFN(interpret_packages) DPcErr;
   for (int i = 0; i < interpret_package_used; i++)
   {
     struct interpret_package *interpret_package = interpret_packages + i;
-    og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, string_request_word_length, string_request_word,
-        interpret_package);
+    og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, interpret_package);
     IFE(status);
   }
   DONE;
 }
 
-static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, int word_length, og_string word,
+static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
     struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
@@ -90,6 +83,11 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
   struct og_ltras_input input[1];
   memset(input, 0, sizeof(struct og_ltras_input));
 
+  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
+  IFN(request_word) DPcErr;
+  og_string word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+  IFN(word) DPcErr;
+  int word_length = request_word->length;
   int uni_length;
   unsigned char uni[DPcPathSize];
   IFE(OgCpToUni(word_length, word , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
