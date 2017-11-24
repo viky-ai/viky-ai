@@ -1,11 +1,18 @@
 // App specific
-window.Sortable = require('sortablejs');
-window.CodeMirror = require('codemirror');
 
+// Sortable (https://github.com/RubaXa/Sortable)
+window.Sortable = require('sortablejs');
+
+// CodeMirror (https://github.com/codemirror/CodeMirror)
+window.CodeMirror = require('codemirror');
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/lib/codemirror.css'
 
-// Trix
+// Mousetrap (https://github.com/ccampbell/mousetrap)
+window.Mousetrap = require('mousetrap/mousetrap.js');
+require('mousetrap/plugins/global-bind/mousetrap-global-bind.js')
+
+// Trix (https://github.com/basecamp/trix)
 window.Trix = require('trix');
 import 'trix/dist/trix.css'
 
@@ -19,5 +26,4 @@ import './agents/main';
 import './console/console';
 import './interpretations/main';
 import './interpretations/interpretation_form';
-
 window.App.InterpretationsList = require('./interpretations/interpretations_list');

@@ -60,6 +60,7 @@
 } %>
 
 <div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
+<div class="highlight" id="highlight" style="display:none;"></div>
 <div class="popup" id="popup-add-tag" style="display:none;">
   <% if @agent.intents.where.not(id: @intent.id).count == 0 %>
     <p>
@@ -73,7 +74,7 @@
       <% intent_prefix = @agent.owner.username + "/" + @agent.agentname %>
       <% colors = %w(black red pink purple deep-purple indigo blue light-blue cyan teal green light-green lime yellow amber orange deep-orange brown ) %>
       <% @agent.intents.where.not(id: @intent.id).each do |intent| %>
-        <li data-search="<%= intent_prefix %>/<%= intent.intentname %>">
+        <li data-search="<%= intent_prefix %>/<%= intent.intentname %>" class="enabled">
           <a href="#"
              data-action="add-tag"
              data-tag="alias-<%= colors[Random.new.rand(0..17)] %>____<%= intent_prefix %>/<%= intent.intentname %>">
@@ -88,7 +89,7 @@
 <div class="popup-overlay" id="popup-remove-tag-overlay" style="display:none;"></div>
 <div class="popup" id="popup-remove-tag" style="display:none;">
   <ul>
-    <li>
+    <li class="enabled">
       <a href="#" data-action="remove-tags">
         <span class="icon icon--small">
           <%= icon_close %>

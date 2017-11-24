@@ -1,54 +1,174 @@
 $ = require('jquery');
 
-class TagAddPopup
+class PopupAddTag
   constructor: ->
-    $('#popup-add-tag input').on 'keyup change', (event) => TagAddPopup.search()
-    $('#popup-add-tag-overlay').on 'click', =>
-      TagAddPopup.hide()
+    @items = []
+    @index = -1
 
-  @show: (id, position) ->
-    TagAddPopup.resetSearch()
+    $('body').on 'popup-add-tag:show', (event, editor_id, position_start, position_end) =>
+      @show(editor_id, position_start, position_end)
+    $('body').on 'popup-add-tag:hide', (event) => @hide()
+    $('#popup-add-tag-overlay').on 'click', => @hide()
+    $('#popup-add-tag input').on 'keyup change', (event) => @search(event)
+
+  show: (id, position_start, position_end) ->
+    $('#popup-add-tag ul li').addClass('enabled')
+
+    @resetSearch()
+    @resetItems()
+    @addKeyListener()
+
     nav = $('nav').height()
     scroll = $('main').scrollTop()
     $('#popup-add-tag a').data('editor-id', id)
     $('#popup-add-tag').show()
-    $('#popup-add-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
+    $('#popup-add-tag').css(
+      top: position_start.bottom + 3 - nav + scroll,
+      left: position_start.left
+    )
     $('#popup-add-tag-overlay').show()
+    $('#highlight').css(
+      top: position_start.bottom - nav + scroll,
+      left: position_start.left,
+      width: "#{(position_end.x - position_start.x)}px"
+    ).show()
 
-  @hide: ->
+    $('#popup-add-tag ul').scrollTop(0)
+
+  hide: ->
+    $('#highlight').hide()
     $('#popup-add-tag').hide()
     $('#popup-add-tag-overlay').hide()
+    @removeKeyListener()
 
-  @search: ->
-    query = $('#popup-add-tag input').val()
-    regexp = new RegExp(query, 'i')
-    for item in $('#popup-add-tag ul li')
-      if regexp.test $(item).data('search')
-        $(item).show()
-      else
-        $(item).hide()
+  resetItems: ->
+    @items = $('#popup-add-tag ul li.enabled a')
+    @items.removeClass('focus')
+    @index = -1
 
-  @resetSearch: ->
+  markNext: ->
+    $("#popup-add-tag").focus()
+    if(@index < @items.length - 1)
+      @index++
+    else
+      @index = 0
+    @items.removeClass('focus')
+    $(@items[@index]).addClass('focus')
+
+    @autoScroll()
+
+  markPrevious: ->
+    if @index > 0
+      @index--
+    else
+      @index = @items.length - 1;
+    @items.removeClass('focus')
+    $(@items[@index]).addClass('focus')
+
+    @autoScroll()
+
+  autoScroll: ->
+    if @index == 0
+      $('#popup-add-tag ul').scrollTop(0)
+    else
+      height = $(@items[@index]).closest('ul').height()
+      pos = $(@items[@index]).position().top + $(@items[@index]).closest('ul').scrollTop()
+      if pos > height
+        $(@items[@index]).closest('ul').scrollTop(pos - height)
+
+  select: ->
+    $(@items[@index]).trigger('click')
+
+  removeKeyListener: ->
+    Mousetrap.unbind('tab')
+    Mousetrap.unbind('down')
+    Mousetrap.unbind('up')
+    Mousetrap.unbind('space')
+    Mousetrap.unbind('esc')
+
+  addKeyListener: ->
+    @removeKeyListener()
+    $(@items[@index]).addClass('focus')
+
+    Mousetrap.bindGlobal 'tab', (event) ->
+      event.preventDefault()
+      $('#popup-add-tag input').focus()
+
+    Mousetrap.bindGlobal 'down', (event) =>
+      event.preventDefault()
+      @markNext()
+
+    Mousetrap.bindGlobal 'up', (event) =>
+      event.preventDefault()
+      @markPrevious()
+
+    Mousetrap.bindGlobal 'space', (event) =>
+      event.preventDefault()
+      @select()
+
+    Mousetrap.bindGlobal 'esc', (event) =>
+      event.preventDefault()
+      @hide()
+
+  search: (event) ->
+    unless [38, 40].includes(event.keyCode)
+      query = $('#popup-add-tag input').val()
+      regexp = new RegExp(query, 'i')
+      for item in $('#popup-add-tag ul li')
+        if regexp.test $(item).data('search')
+          $(item).addClass('enabled')
+        else
+          $(item).removeClass('enabled')
+      $('#popup-add-tag ul').scrollTop(0)
+      @resetItems()
+
+  resetSearch: ->
     $('#popup-add-tag input').val("")
     $('#popup-add-tag ul li').show()
 
 
+
 class TagRemovePopup
   constructor: ->
-    $('#popup-remove-tag-overlay').on 'click', =>
-      TagRemovePopup.hide()
+    $('body').on 'popup-remove-tag:show', (event, id, position) => @show(id, position)
+    $('body').on 'popup-remove-tag:hide', (event) => @hide()
+    $('#popup-remove-tag-overlay').on 'click', => @hide()
 
-  @show: (id, position) ->
+  show: (id, position) ->
     nav = $('nav').height()
     scroll = $('main').scrollTop()
     $('#popup-remove-tag a').data('editor-id', id)
     $('#popup-remove-tag').show()
     $('#popup-remove-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
     $('#popup-remove-tag-overlay').show()
+    @addKeyListener()
 
-  @hide: ->
+  hide: ->
     $('#popup-remove-tag').hide()
     $('#popup-remove-tag-overlay').hide()
+    $('#popup-remove-tag ul li a').removeClass('focus')
+    @removeKeyListener()
+
+  removeKeyListener: ->
+    Mousetrap.unbind('down')
+    Mousetrap.unbind('space')
+    Mousetrap.unbind('esc')
+
+  addKeyListener: ->
+    @removeKeyListener()
+
+    Mousetrap.bindGlobal 'down', (event) =>
+      event.preventDefault()
+      $('#popup-remove-tag ul li a').addClass('focus')
+
+    Mousetrap.bindGlobal 'space', (event) =>
+      event.preventDefault()
+      $('#popup-remove-tag ul li a').first().trigger('click')
+
+    Mousetrap.bindGlobal 'esc', (event) =>
+      event.preventDefault()
+      @hide()
+
 
 
 class AliasesAbstract
@@ -105,16 +225,23 @@ class InterpretationTagger
     $(@editor_element).on 'trix-selection-change', (event) =>
       range = @editor.getSelectedRange()
       if range[0] == range[1]
-        TagAddPopup.hide()
-        TagRemovePopup.hide()
+        $('body').trigger 'popup-add-tag:hide'
+        $('body').trigger 'popup-remove-tag:hide'
       else
         @updateDeletableAlias(range)
         if @deletable_alias.length == 0
-          TagAddPopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
-          TagRemovePopup.hide()
+          $('body').trigger 'popup-remove-tag:hide'
+          $('body').trigger 'popup-add-tag:show', [
+            @editor_id,
+            @editor.getClientRectAtPosition(range[0]),
+            @editor.getClientRectAtPosition(range[1])
+          ]
         else
-          TagRemovePopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
-          TagAddPopup.hide()
+          $('body').trigger 'popup-add-tag:hide'
+          $('body').trigger 'popup-remove-tag:show', [
+            @editor_id,
+            @editor.getClientRectAtPosition(range[0])
+          ]
 
   updateDeletableAlias: (range) =>
     @deletable_alias = []
@@ -171,7 +298,7 @@ $(document).on('trix-initialize', SetupForm)
 
 SetupPopUps = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
-    new TagAddPopup()
+    new PopupAddTag()
     new TagRemovePopup()
 
 $(document).on('turbolinks:load', SetupPopUps)
