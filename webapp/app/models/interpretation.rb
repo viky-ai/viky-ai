@@ -2,6 +2,7 @@ class Interpretation < ApplicationRecord
   Locales = %w[fr-FR en-US *].freeze
 
   belongs_to :intent
+  has_many :interpretation_aliases, dependent: :destroy
 
   validates :expression, presence: true
   validates :locale, inclusion: { in: self::Locales }, presence: true

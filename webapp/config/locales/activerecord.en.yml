@@ -32,3 +32,5 @@ en:
       unknown_locale: "unknown '%{current_locale}'"
     interpretation:
       invalid_json: "invalid json"
+    interpretation_aliase:
+      end_position_lower_than_start: 'must be greater than position start'

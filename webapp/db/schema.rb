@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171122103416) do
+ActiveRecord::Schema.define(version: 20171124103717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,14 @@ ActiveRecord::Schema.define(version: 20171122103416) do
     t.string "locales"
     t.index ["agent_id"], name: "index_intents_on_agent_id"
     t.index ["intentname", "agent_id"], name: "index_intents_on_intentname_and_agent_id", unique: true
+  end
+
+  create_table "interpretation_aliases", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "aliasname"
+    t.integer "position_start"
+    t.integer "position_end"
+    t.uuid "interpretation_id"
+    t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end
 
   create_table "interpretations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -122,6 +130,7 @@ ActiveRecord::Schema.define(version: 20171122103416) do
 
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "intents", "agents", on_delete: :cascade
+  add_foreign_key "interpretation_aliases", "interpretations", on_delete: :cascade
   add_foreign_key "interpretations", "intents", on_delete: :cascade
   add_foreign_key "memberships", "agents", on_delete: :cascade
   add_foreign_key "memberships", "users", on_delete: :cascade

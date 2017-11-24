@@ -5,6 +5,9 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation = Interpretation.new(expression: 'Good morning', locale: 'en-US')
     interpretation.intent = intents(:weather_greeting)
     assert interpretation.save
+    interpretation_alias = InterpretationAlias.new(position_start: 0, position_end: 12)
+    interpretation_alias.interpretation = interpretation
+    assert interpretation_alias.save
 
     assert_equal 1, interpretation.position
     assert_equal 'Good morning', interpretation.expression
@@ -13,6 +16,7 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal false, interpretation.glued
     assert interpretation.solution.nil?
     assert_equal 3, intents(:weather_greeting).interpretations.count
+    assert_equal interpretation_alias.id, interpretation.interpretation_aliases[0].id
   end
 
   test 'Expression and locale can\'t be blank and must be linked to an intent' do
@@ -43,8 +47,10 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_id = interpretation.id
 
     assert_equal 1, Interpretation.where(id: interpretation_id).count
+    assert_equal 1, interpretation.interpretation_aliases.count
     assert interpretation.destroy
     assert_equal 0, Interpretation.where(id: interpretation_id).count
+    assert_equal 0, interpretation.interpretation_aliases.count
   end
 
   test 'Filter interpretations by locale' do
