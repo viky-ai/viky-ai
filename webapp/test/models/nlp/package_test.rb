@@ -18,7 +18,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "Hello world",
               "locale"     => "en-US",
-              "keep_order" => true,
+              "keep-order" => true,
               "glued"      => true,
               "solution"   => {
                 "who" => "`greeting.who`"
@@ -32,6 +32,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
+
     assert_equal expected, JSON.parse(p.generate_json)
   end
 

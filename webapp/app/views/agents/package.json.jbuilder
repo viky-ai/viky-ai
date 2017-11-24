@@ -1,3 +1,5 @@
+json.key_format! -> (key) { key.tr(?_, ?-) }
+
 json.id @agent.id
 json.slug "#{@agent.owner.username}/#{@agent.agentname}"
 json.interpretations @agent.intents do |intent|
