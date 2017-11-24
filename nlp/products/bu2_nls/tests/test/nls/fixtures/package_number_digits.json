@@ -17,11 +17,11 @@
       [
         {
           "expression": "st",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "er",
-          "locale": "fr-FR"
+          "locale": "fr"
         }
       ]
     },
@@ -31,11 +31,19 @@
       [
         {
           "expression": "nd",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "ieme",
-          "locale": "fr-FR"
+          "locale": "fr"
+        },
+        {
+          "expression": "eme",
+          "locale": "fr"
+        },
+        {
+          "expression": "nd",
+          "locale": "fr"
         }
       ]
     },
@@ -45,11 +53,15 @@
       [
         {
           "expression": "rd",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "ieme",
-          "locale": "fr-FR"
+          "locale": "en"
+        },
+        {
+          "expression": "eme",
+          "locale": "en"
         }
       ]
     },
@@ -59,11 +71,15 @@
       [
         {
           "expression": "th",
-          "locale": "en-GB"
+          "locale": "en"
         },
         {
           "expression": "ieme",
-          "locale": "fr-FR"
+          "locale": "en"
+        },
+        {
+          "expression": "eme",
+          "locale": "en"
         }
       ]
     },
@@ -72,13 +88,12 @@
       "expressions":
       [
         {
-          "expression": "@{rd}",
+          "expression": "@{st}",
           "aliases":
           [
             {
-              "alias": "rd",
-              "id": "rd",
-              "package": "package_number_digits"
+              "alias": "st",
+              "id": "st"
             }
           ]
         },
@@ -88,8 +103,7 @@
           [
             {
               "alias": "nd",
-              "id": "nd",
-              "package": "package_number_digits"
+              "id": "nd"
             }
           ]
         },
@@ -99,8 +113,7 @@
           [
             {
               "alias": "rd",
-              "id": "rd",
-              "package": "package_number_digits"
+              "id": "rd"
             }
           ]
         },
@@ -110,8 +123,7 @@
           [
             {
               "alias": "th",
-              "id": "th",
-              "package": "package_number_digits"
+              "id": "th"
             }
           ]
         }
@@ -163,8 +175,7 @@
             },
             {
               "alias": "dot",
-              "id": "dot",
-              "package": "package_number_digits"
+              "id": "dot"
             },
             {
               "alias": "digits_after",
@@ -184,8 +195,7 @@
             },
             {
               "alias": "coma",
-              "id": "coma",
-              "package": "package_number_digits"
+              "id": "coma"
             },
             {
               "alias": "digits_after",
@@ -215,8 +225,7 @@
             },
             {
               "alias": "several_digits",
-              "id": "several_digits",
-              "package": "package_number_digits"
+              "id": "several_digits"
             }
           ],
           "solution":
@@ -250,8 +259,7 @@
           [
             {
               "alias": "digits_number",
-              "id": "digits_number",
-              "package": "package_number_digits"
+              "id": "digits_number"
             }
           ]
         },
@@ -261,8 +269,7 @@
           [
             {
               "alias": "digits_sep_digits",
-              "id": "digits_sep_digits",
-              "package": "package_number_digits"
+              "id": "digits_sep_digits"
             }
           ]
         },
@@ -272,8 +279,7 @@
           [
             {
               "alias": "several_digits",
-              "id": "several_digits",
-              "package": "package_number_digits"
+              "id": "several_digits"
             }
           ]
         }
@@ -291,13 +297,11 @@
           [
             {
               "alias": "number_digits",
-              "id": "number_digits",
-              "package": "package_number_digits"
+              "id": "number_digits"
             },
             {
               "alias": "ordinal_suffix",
-              "id": "ordinal_suffix",
-              "package": "package_number_digits"
+              "id": "ordinal_suffix"
             }
           ]
         }

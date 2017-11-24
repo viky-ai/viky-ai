@@ -134,6 +134,10 @@ module Nls
     def self.interpret(body, params = {})
       puts "Interpret request :\n #{body.to_json}\n" if verbose?
 
+      body_to_write = body
+      body["why-not-matching"] = {"expression" => "any"}
+      body["show-explanation"] = false
+
       File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|
         f.write(JSON.pretty_generate(body))
       end

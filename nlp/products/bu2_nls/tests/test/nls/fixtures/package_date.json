@@ -516,6 +516,64 @@
       ]
     },
     {
+      "id": "date_day_month",
+      "expressions":
+      [
+        {
+          "expression": "@{day} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "day",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`new Date((new Date().getFullYear())+'-'+month.month_number+'-'+day.number)`"
+      }
+    },
+    {
+      "id": "date_month_the_day",
+      "expressions":
+      [
+        {
+          "expression": "@{month} @{the} @{day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            },
+            {
+              "alias": "the",
+              "id": "the"
+            },
+            {
+              "alias": "day",
+              "id": "number_ordinal",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`new Date((new Date().getFullYear())+'-'+month.month_number+'-'+day.number)`"
+      }
+    },
+    {
       "id": "date_day_month_year",
       "expressions":
       [
@@ -562,34 +620,7 @@
             },
             {
               "alias": "coma",
-              "id": "coma",
-              "package": "package_number"
-            },
-            {
-              "alias": "year",
-              "id": "number",
-              "package": "package_number"
-            }
-          ]
-        },
-        {
-          "expression": "@{month} @{the} @{day} @{year}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "month",
-              "id": "date_month_number"
-            },
-            {
-              "alias": "the",
-              "id": "the"
-            },
-            {
-              "alias": "day",
-              "id": "number_ordinal",
-              "package": "package_number"
+              "id": "coma"
             },
             {
               "alias": "year",

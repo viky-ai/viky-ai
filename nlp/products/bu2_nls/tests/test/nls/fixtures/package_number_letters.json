@@ -3,7 +3,7 @@
   "interpretations":
   [
     {
-      "id": "and",
+      "id": "conjonction_and",
       "expressions":
       [
         {
@@ -1182,8 +1182,7 @@
           [
             {
               "alias": "number_1",
-              "id": "number_1",
-              "package": "package_number_letters"
+              "id": "number_1"
             }
           ]
         },
@@ -1193,8 +1192,7 @@
           [
             {
               "alias": "number_2",
-              "id": "number_2",
-              "package": "package_number_letters"
+              "id": "number_2"
             }
           ]
         },
@@ -1204,8 +1202,7 @@
           [
             {
               "alias": "number_3",
-              "id": "number_3",
-              "package": "package_number_letters"
+              "id": "number_3"
             }
           ]
         },
@@ -1215,8 +1212,7 @@
           [
             {
               "alias": "number_4",
-              "id": "number_4",
-              "package": "package_number_letters"
+              "id": "number_4"
             }
           ]
         },
@@ -1226,8 +1222,7 @@
           [
             {
               "alias": "number_5",
-              "id": "number_5",
-              "package": "package_number_letters"
+              "id": "number_5"
             }
           ]
         },
@@ -1237,8 +1232,7 @@
           [
             {
               "alias": "number_6",
-              "id": "number_6",
-              "package": "package_number_letters"
+              "id": "number_6"
             }
           ]
         },
@@ -1248,8 +1242,7 @@
           [
             {
               "alias": "number_7",
-              "id": "number_7",
-              "package": "package_number_letters"
+              "id": "number_7"
             }
           ]
         },
@@ -1259,8 +1252,7 @@
           [
             {
               "alias": "number_8",
-              "id": "number_8",
-              "package": "package_number_letters"
+              "id": "number_8"
             }
           ]
         },
@@ -1270,8 +1262,7 @@
           [
             {
               "alias": "number_9",
-              "id": "number_9",
-              "package": "package_number_letters"
+              "id": "number_9"
             }
           ]
         }
@@ -1287,8 +1278,7 @@
           [
             {
               "alias": "number_1_ordinal",
-              "id": "number_1_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_ordinal"
             }
           ]
         },
@@ -1298,8 +1288,7 @@
           [
             {
               "alias": "number_2_ordinal",
-              "id": "number_2_ordinal",
-              "package": "package_number_letters"
+              "id": "number_2_ordinal"
             }
           ]
         },
@@ -1309,8 +1298,7 @@
           [
             {
               "alias": "number_3_ordinal",
-              "id": "number_3_ordinal",
-              "package": "package_number_letters"
+              "id": "number_3_ordinal"
             }
           ]
         },
@@ -1320,8 +1308,7 @@
           [
             {
               "alias": "number_4_ordinal",
-              "id": "number_4_ordinal",
-              "package": "package_number_letters"
+              "id": "number_4_ordinal"
             }
           ]
         },
@@ -1331,8 +1318,7 @@
           [
             {
               "alias": "number_5_ordinal",
-              "id": "number_5_ordinal",
-              "package": "package_number_letters"
+              "id": "number_5_ordinal"
             }
           ]
         },
@@ -1342,8 +1328,7 @@
           [
             {
               "alias": "number_6_ordinal",
-              "id": "number_6_ordinal",
-              "package": "package_number_letters"
+              "id": "number_6_ordinal"
             }
           ]
         },
@@ -1353,8 +1338,7 @@
           [
             {
               "alias": "number_7_ordinal",
-              "id": "number_7_ordinal",
-              "package": "package_number_letters"
+              "id": "number_7_ordinal"
             }
           ]
         },
@@ -1364,8 +1348,7 @@
           [
             {
               "alias": "number_8_ordinal",
-              "id": "number_8_ordinal",
-              "package": "package_number_letters"
+              "id": "number_8_ordinal"
             }
           ]
         },
@@ -1375,8 +1358,7 @@
           [
             {
               "alias": "number_9_ordinal",
-              "id": "number_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_9_ordinal"
             }
           ]
         }
@@ -1392,8 +1374,7 @@
           [
             {
               "alias": "number_10",
-              "id": "number_10",
-              "package": "package_number_letters"
+              "id": "number_10"
             }
           ]
         },
@@ -1403,8 +1384,7 @@
           [
             {
               "alias": "number_11",
-              "id": "number_11",
-              "package": "package_number_letters"
+              "id": "number_11"
             }
           ]
         },
@@ -1414,8 +1394,7 @@
           [
             {
               "alias": "number_12",
-              "id": "number_12",
-              "package": "package_number_letters"
+              "id": "number_12"
             }
           ]
         },
@@ -1425,8 +1404,7 @@
           [
             {
               "alias": "number_13",
-              "id": "number_13",
-              "package": "package_number_letters"
+              "id": "number_13"
             }
           ]
         },
@@ -1436,8 +1414,7 @@
           [
             {
               "alias": "number_14",
-              "id": "number_14",
-              "package": "package_number_letters"
+              "id": "number_14"
             }
           ]
         },
@@ -1447,8 +1424,7 @@
           [
             {
               "alias": "number_15",
-              "id": "number_15",
-              "package": "package_number_letters"
+              "id": "number_15"
             }
           ]
         },
@@ -1458,8 +1434,7 @@
           [
             {
               "alias": "number_16",
-              "id": "number_16",
-              "package": "package_number_letters"
+              "id": "number_16"
             }
           ]
         },
@@ -1469,8 +1444,7 @@
           [
             {
               "alias": "number_17",
-              "id": "number_17",
-              "package": "package_number_letters"
+              "id": "number_17"
             }
           ]
         },
@@ -1480,8 +1454,7 @@
           [
             {
               "alias": "number_18",
-              "id": "number_18",
-              "package": "package_number_letters"
+              "id": "number_18"
             }
           ]
         },
@@ -1491,8 +1464,7 @@
           [
             {
               "alias": "number_19",
-              "id": "number_19",
-              "package": "package_number_letters"
+              "id": "number_19"
             }
           ]
         }
@@ -1508,8 +1480,7 @@
           [
             {
               "alias": "number_10_ordinal",
-              "id": "number_10_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_ordinal"
             }
           ]
         },
@@ -1519,8 +1490,7 @@
           [
             {
               "alias": "number_11_ordinal",
-              "id": "number_11_ordinal",
-              "package": "package_number_letters"
+              "id": "number_11_ordinal"
             }
           ]
         },
@@ -1530,8 +1500,7 @@
           [
             {
               "alias": "number_12_ordinal",
-              "id": "number_12_ordinal",
-              "package": "package_number_letters"
+              "id": "number_12_ordinal"
             }
           ]
         },
@@ -1541,8 +1510,7 @@
           [
             {
               "alias": "number_13_ordinal",
-              "id": "number_13_ordinal",
-              "package": "package_number_letters"
+              "id": "number_13_ordinal"
             }
           ]
         },
@@ -1552,8 +1520,7 @@
           [
             {
               "alias": "number_14_ordinal",
-              "id": "number_14_ordinal",
-              "package": "package_number_letters"
+              "id": "number_14_ordinal"
             }
           ]
         },
@@ -1563,8 +1530,7 @@
           [
             {
               "alias": "number_15_ordinal",
-              "id": "number_15_ordinal",
-              "package": "package_number_letters"
+              "id": "number_15_ordinal"
             }
           ]
         },
@@ -1574,8 +1540,7 @@
           [
             {
               "alias": "number_16_ordinal",
-              "id": "number_16_ordinal",
-              "package": "package_number_letters"
+              "id": "number_16_ordinal"
             }
           ]
         },
@@ -1585,8 +1550,7 @@
           [
             {
               "alias": "number_17_ordinal",
-              "id": "number_17_ordinal",
-              "package": "package_number_letters"
+              "id": "number_17_ordinal"
             }
           ]
         },
@@ -1596,8 +1560,7 @@
           [
             {
               "alias": "number_18_ordinal",
-              "id": "number_18_ordinal",
-              "package": "package_number_letters"
+              "id": "number_18_ordinal"
             }
           ]
         },
@@ -1607,8 +1570,7 @@
           [
             {
               "alias": "number_19_ordinal",
-              "id": "number_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_19_ordinal"
             }
           ]
         }
@@ -1626,13 +1588,11 @@
           [
             {
               "alias": "number_20",
-              "id": "number_20",
-              "package": "package_number_letters"
+              "id": "number_20"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -1648,13 +1608,11 @@
           [
             {
               "alias": "number_20",
-              "id": "number_20",
-              "package": "package_number_letters"
+              "id": "number_20"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -1668,8 +1626,7 @@
           [
             {
               "alias": "number_20",
-              "id": "number_20",
-              "package": "package_number_letters"
+              "id": "number_20"
             }
           ]
         }
@@ -1687,13 +1644,11 @@
           [
             {
               "alias": "number_20",
-              "id": "number_20",
-              "package": "package_number_letters"
+              "id": "number_20"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -1709,13 +1664,11 @@
           [
             {
               "alias": "number_20",
-              "id": "number_20",
-              "package": "package_number_letters"
+              "id": "number_20"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -1729,8 +1682,7 @@
           [
             {
               "alias": "number_20_ordinal",
-              "id": "number_20_ordinal",
-              "package": "package_number_letters"
+              "id": "number_20_ordinal"
             }
           ]
         }
@@ -1748,13 +1700,11 @@
           [
             {
               "alias": "number_30",
-              "id": "number_30",
-              "package": "package_number_letters"
+              "id": "number_30"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -1770,13 +1720,11 @@
           [
             {
               "alias": "number_30",
-              "id": "number_30",
-              "package": "package_number_letters"
+              "id": "number_30"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -1790,8 +1738,7 @@
           [
             {
               "alias": "number_30",
-              "id": "number_30",
-              "package": "package_number_letters"
+              "id": "number_30"
             }
           ]
         }
@@ -1809,13 +1756,11 @@
           [
             {
               "alias": "number_30",
-              "id": "number_30",
-              "package": "package_number_letters"
+              "id": "number_30"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -1831,13 +1776,11 @@
           [
             {
               "alias": "number_30",
-              "id": "number_30",
-              "package": "package_number_letters"
+              "id": "number_30"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -1851,8 +1794,7 @@
           [
             {
               "alias": "number_30_ordinal",
-              "id": "number_30_ordinal",
-              "package": "package_number_letters"
+              "id": "number_30_ordinal"
             }
           ]
         }
@@ -1870,13 +1812,11 @@
           [
             {
               "alias": "number_40",
-              "id": "number_40",
-              "package": "package_number_letters"
+              "id": "number_40"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -1892,13 +1832,11 @@
           [
             {
               "alias": "number_40",
-              "id": "number_40",
-              "package": "package_number_letters"
+              "id": "number_40"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -1912,8 +1850,7 @@
           [
             {
               "alias": "number_40",
-              "id": "number_40",
-              "package": "package_number_letters"
+              "id": "number_40"
             }
           ]
         }
@@ -1931,13 +1868,11 @@
           [
             {
               "alias": "number_40",
-              "id": "number_40",
-              "package": "package_number_letters"
+              "id": "number_40"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -1953,13 +1888,11 @@
           [
             {
               "alias": "number_40",
-              "id": "number_40",
-              "package": "package_number_letters"
+              "id": "number_40"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -1973,8 +1906,7 @@
           [
             {
               "alias": "number_40_ordinal",
-              "id": "number_40_ordinal",
-              "package": "package_number_letters"
+              "id": "number_40_ordinal"
             }
           ]
         }
@@ -1992,13 +1924,11 @@
           [
             {
               "alias": "number_50",
-              "id": "number_50",
-              "package": "package_number_letters"
+              "id": "number_50"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -2014,13 +1944,11 @@
           [
             {
               "alias": "number_50",
-              "id": "number_50",
-              "package": "package_number_letters"
+              "id": "number_50"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -2034,8 +1962,7 @@
           [
             {
               "alias": "number_50",
-              "id": "number_50",
-              "package": "package_number_letters"
+              "id": "number_50"
             }
           ]
         }
@@ -2053,13 +1980,11 @@
           [
             {
               "alias": "number_50",
-              "id": "number_50",
-              "package": "package_number_letters"
+              "id": "number_50"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -2075,13 +2000,11 @@
           [
             {
               "alias": "number_50",
-              "id": "number_50",
-              "package": "package_number_letters"
+              "id": "number_50"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -2095,8 +2018,7 @@
           [
             {
               "alias": "number_50_ordinal",
-              "id": "number_50_ordinal",
-              "package": "package_number_letters"
+              "id": "number_50_ordinal"
             }
           ]
         }
@@ -2114,13 +2036,11 @@
           [
             {
               "alias": "number_60",
-              "id": "number_60",
-              "package": "package_number_letters"
+              "id": "number_60"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -2134,8 +2054,7 @@
           [
             {
               "alias": "number_60",
-              "id": "number_60",
-              "package": "package_number_letters"
+              "id": "number_60"
             }
           ]
         }
@@ -2153,13 +2072,11 @@
           [
             {
               "alias": "number_60",
-              "id": "number_60",
-              "package": "package_number_letters"
+              "id": "number_60"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -2173,8 +2090,7 @@
           [
             {
               "alias": "number_60_ordinal",
-              "id": "number_60_ordinal",
-              "package": "package_number_letters"
+              "id": "number_60_ordinal"
             }
           ]
         }
@@ -2192,13 +2108,11 @@
           [
             {
               "alias": "number_70",
-              "id": "number_70",
-              "package": "package_number_letters"
+              "id": "number_70"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -2212,8 +2126,7 @@
           [
             {
               "alias": "number_70",
-              "id": "number_70",
-              "package": "package_number_letters"
+              "id": "number_70"
             }
           ]
         },
@@ -2225,13 +2138,11 @@
           [
             {
               "alias": "number_60",
-              "id": "number_60",
-              "package": "package_number_letters"
+              "id": "number_60"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -2253,13 +2164,11 @@
           [
             {
               "alias": "number_70",
-              "id": "number_70",
-              "package": "package_number_letters"
+              "id": "number_70"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -2273,8 +2182,7 @@
           [
             {
               "alias": "number_70_ordinal",
-              "id": "number_70_ordinal",
-              "package": "package_number_letters"
+              "id": "number_70_ordinal"
             }
           ]
         },
@@ -2286,13 +2194,11 @@
           [
             {
               "alias": "number_60",
-              "id": "number_60",
-              "package": "package_number_letters"
+              "id": "number_60"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -2314,13 +2220,11 @@
           [
             {
               "alias": "number_80",
-              "id": "number_80",
-              "package": "package_number_letters"
+              "id": "number_80"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -2334,8 +2238,7 @@
           [
             {
               "alias": "number_80",
-              "id": "number_80",
-              "package": "package_number_letters"
+              "id": "number_80"
             }
           ]
         }
@@ -2353,13 +2256,11 @@
           [
             {
               "alias": "number_80",
-              "id": "number_80",
-              "package": "package_number_letters"
+              "id": "number_80"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -2373,8 +2274,7 @@
           [
             {
               "alias": "number_80_ordinal",
-              "id": "number_80_ordinal",
-              "package": "package_number_letters"
+              "id": "number_80_ordinal"
             }
           ]
         }
@@ -2392,13 +2292,11 @@
           [
             {
               "alias": "number_90",
-              "id": "number_90",
-              "package": "package_number_letters"
+              "id": "number_90"
             },
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ],
           "solution":
@@ -2412,8 +2310,7 @@
           [
             {
               "alias": "number_90",
-              "id": "number_90",
-              "package": "package_number_letters"
+              "id": "number_90"
             }
           ]
         },
@@ -2425,13 +2322,11 @@
           [
             {
               "alias": "number_80",
-              "id": "number_80",
-              "package": "package_number_letters"
+              "id": "number_80"
             },
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ],
           "solution":
@@ -2453,13 +2348,11 @@
           [
             {
               "alias": "number_90",
-              "id": "number_90",
-              "package": "package_number_letters"
+              "id": "number_90"
             },
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ],
           "solution":
@@ -2473,8 +2366,7 @@
           [
             {
               "alias": "number_90_ordinal",
-              "id": "number_90_ordinal",
-              "package": "package_number_letters"
+              "id": "number_90_ordinal"
             }
           ]
         },
@@ -2486,13 +2378,11 @@
           [
             {
               "alias": "number_80",
-              "id": "number_80",
-              "package": "package_number_letters"
+              "id": "number_80"
             },
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ],
           "solution":
@@ -2512,8 +2402,7 @@
           [
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             }
           ]
         },
@@ -2523,8 +2412,7 @@
           [
             {
               "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package_number_letters"
+              "id": "number_10_19"
             }
           ]
         },
@@ -2534,8 +2422,7 @@
           [
             {
               "alias": "number_20_29",
-              "id": "number_20_29",
-              "package": "package_number_letters"
+              "id": "number_20_29"
             }
           ]
         },
@@ -2545,8 +2432,7 @@
           [
             {
               "alias": "number_30_39",
-              "id": "number_30_39",
-              "package": "package_number_letters"
+              "id": "number_30_39"
             }
           ]
         },
@@ -2556,8 +2442,7 @@
           [
             {
               "alias": "number_40_49",
-              "id": "number_40_49",
-              "package": "package_number_letters"
+              "id": "number_40_49"
             }
           ]
         },
@@ -2567,8 +2452,7 @@
           [
             {
               "alias": "number_50_59",
-              "id": "number_50_59",
-              "package": "package_number_letters"
+              "id": "number_50_59"
             }
           ]
         },
@@ -2578,8 +2462,7 @@
           [
             {
               "alias": "number_60_69",
-              "id": "number_60_69",
-              "package": "package_number_letters"
+              "id": "number_60_69"
             }
           ]
         },
@@ -2589,8 +2472,7 @@
           [
             {
               "alias": "number_70_79",
-              "id": "number_70_79",
-              "package": "package_number_letters"
+              "id": "number_70_79"
             }
           ]
         },
@@ -2600,8 +2482,7 @@
           [
             {
               "alias": "number_80_89",
-              "id": "number_80_89",
-              "package": "package_number_letters"
+              "id": "number_80_89"
             }
           ]
         },
@@ -2611,8 +2492,7 @@
           [
             {
               "alias": "number_90_99",
-              "id": "number_90_99",
-              "package": "package_number_letters"
+              "id": "number_90_99"
             }
           ]
         }
@@ -2628,8 +2508,7 @@
           [
             {
               "alias": "number_1_9_ordinal",
-              "id": "number_1_9_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_9_ordinal"
             }
           ]
         },
@@ -2639,8 +2518,7 @@
           [
             {
               "alias": "number_10_19_ordinal",
-              "id": "number_10_19_ordinal",
-              "package": "package_number_letters"
+              "id": "number_10_19_ordinal"
             }
           ]
         },
@@ -2650,8 +2528,7 @@
           [
             {
               "alias": "number_20_29_ordinal",
-              "id": "number_20_29_ordinal",
-              "package": "package_number_letters"
+              "id": "number_20_29_ordinal"
             }
           ]
         },
@@ -2661,8 +2538,7 @@
           [
             {
               "alias": "number_30_39_ordinal",
-              "id": "number_30_39_ordinal",
-              "package": "package_number_letters"
+              "id": "number_30_39_ordinal"
             }
           ]
         },
@@ -2672,8 +2548,7 @@
           [
             {
               "alias": "number_40_49_ordinal",
-              "id": "number_40_49_ordinal",
-              "package": "package_number_letters"
+              "id": "number_40_49_ordinal"
             }
           ]
         },
@@ -2683,8 +2558,7 @@
           [
             {
               "alias": "number_50_59_ordinal",
-              "id": "number_50_59_ordinal",
-              "package": "package_number_letters"
+              "id": "number_50_59_ordinal"
             }
           ]
         },
@@ -2694,8 +2568,7 @@
           [
             {
               "alias": "number_60_69_ordinal",
-              "id": "number_60_69_ordinal",
-              "package": "package_number_letters"
+              "id": "number_60_69_ordinal"
             }
           ]
         },
@@ -2705,8 +2578,7 @@
           [
             {
               "alias": "number_70_79_ordinal",
-              "id": "number_70_79_ordinal",
-              "package": "package_number_letters"
+              "id": "number_70_79_ordinal"
             }
           ]
         },
@@ -2716,8 +2588,7 @@
           [
             {
               "alias": "number_80_89_ordinal",
-              "id": "number_80_89_ordinal",
-              "package": "package_number_letters"
+              "id": "number_80_89_ordinal"
             }
           ]
         },
@@ -2727,8 +2598,7 @@
           [
             {
               "alias": "number_90_99_ordinal",
-              "id": "number_90_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_90_99_ordinal"
             }
           ]
         }
@@ -2739,25 +2609,22 @@
       "expressions":
       [
         {
-          "expression": "@{number_100} @{and} @{number_1_99}",
+          "expression": "@{number_100} @{conjonction_and} @{number_1_99}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package_number_letters"
+              "id": "number_100"
             },
             {
-              "alias": "and",
-              "id": "and",
-              "package": "package_number_letters"
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package_number_letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -2773,13 +2640,11 @@
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package_number_letters"
+              "id": "number_100"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package_number_letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -2793,8 +2658,7 @@
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package_number_letters"
+              "id": "number_100"
             }
           ]
         }
@@ -2805,25 +2669,22 @@
       "expressions":
       [
         {
-          "expression": "@{number_100} @{and} @{number_1_99_ordinal}",
+          "expression": "@{number_100} @{conjonction_and} @{number_1_99_ordinal}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package_number_letters"
+              "id": "number_100"
             },
             {
-              "alias": "and",
-              "id": "and",
-              "package": "package_number_letters"
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
             },
             {
               "alias": "number_1_99_ordinal",
-              "id": "number_1_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_99_ordinal"
             }
           ],
           "solution":
@@ -2839,13 +2700,11 @@
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package_number_letters"
+              "id": "number_100"
             },
             {
               "alias": "number_1_99_ordinal",
-              "id": "number_1_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_99_ordinal"
             }
           ],
           "solution":
@@ -2859,8 +2718,7 @@
           [
             {
               "alias": "number_100_ordinal",
-              "id": "number_100_ordinal",
-              "package": "package_number_letters"
+              "id": "number_100_ordinal"
             }
           ]
         }
@@ -2878,13 +2736,11 @@
           [
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             },
             {
               "alias": "number_100_199",
-              "id": "number_100_199",
-              "package": "package_number_letters"
+              "id": "number_100_199"
             }
           ],
           "solution":
@@ -2898,8 +2754,7 @@
           [
             {
               "alias": "number_100_199",
-              "id": "number_100_199",
-              "package": "package_number_letters"
+              "id": "number_100_199"
             }
           ]
         }
@@ -2917,13 +2772,11 @@
           [
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package_number_letters"
+              "id": "number_1_9"
             },
             {
               "alias": "number_100_199_ordinal",
-              "id": "number_100_199_ordinal",
-              "package": "package_number_letters"
+              "id": "number_100_199_ordinal"
             }
           ],
           "solution":
@@ -2937,8 +2790,7 @@
           [
             {
               "alias": "number_100_199_ordinal",
-              "id": "number_100_199_ordinal",
-              "package": "package_number_letters"
+              "id": "number_100_199_ordinal"
             }
           ]
         }
@@ -2954,8 +2806,7 @@
           [
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package_number_letters"
+              "id": "number_1_99"
             }
           ]
         },
@@ -2965,8 +2816,7 @@
           [
             {
               "alias": "number_100_999",
-              "id": "number_100_999",
-              "package": "package_number_letters"
+              "id": "number_100_999"
             }
           ]
         }
@@ -2982,8 +2832,7 @@
           [
             {
               "alias": "number_1_99_ordinal",
-              "id": "number_1_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_99_ordinal"
             }
           ]
         },
@@ -2993,8 +2842,7 @@
           [
             {
               "alias": "number_100_999_ordinal",
-              "id": "number_100_999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_100_999_ordinal"
             }
           ]
         }
@@ -3005,25 +2853,22 @@
       "expressions":
       [
         {
-          "expression": "@{number_1000} @{and} @{number_1_99}",
+          "expression": "@{number_1000} @{conjonction_and} @{number_1_99}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
-              "alias": "and",
-              "id": "and",
-              "package": "package_number_letters"
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package_number_letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -3039,13 +2884,11 @@
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package_number_letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -3059,8 +2902,7 @@
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             }
           ]
         }
@@ -3071,25 +2913,22 @@
       "expressions":
       [
         {
-          "expression": "@{number_1000} @{and} @{number_1_99_ordinal}",
+          "expression": "@{number_1000} @{conjonction_and} @{number_1_99_ordinal}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
-              "alias": "and",
-              "id": "and",
-              "package": "package_number_letters"
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
             },
             {
               "alias": "number_1_99_ordinal",
-              "id": "number_1_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_99_ordinal"
             }
           ],
           "solution":
@@ -3105,13 +2944,11 @@
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
               "alias": "number_1_99_ordinal",
-              "id": "number_1_99_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_99_ordinal"
             }
           ],
           "solution":
@@ -3125,8 +2962,7 @@
           [
             {
               "alias": "number_1000_ordinal",
-              "id": "number_1000_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1000_ordinal"
             }
           ]
         }
@@ -3144,13 +2980,11 @@
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
               "alias": "number_100_999",
-              "id": "number_100_999",
-              "package": "package_number_letters"
+              "id": "number_100_999"
             }
           ],
           "solution":
@@ -3172,13 +3006,11 @@
           [
             {
               "alias": "number_1000",
-              "id": "number_1000",
-              "package": "package_number_letters"
+              "id": "number_1000"
             },
             {
               "alias": "number_100_999_ordinal",
-              "id": "number_100_999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_100_999_ordinal"
             }
           ],
           "solution":
@@ -3198,8 +3030,7 @@
           [
             {
               "alias": "number_1000_1099",
-              "id": "number_1000_1099",
-              "package": "package_number_letters"
+              "id": "number_1000_1099"
             }
           ]
         },
@@ -3209,8 +3040,7 @@
           [
             {
               "alias": "number_1100_1999",
-              "id": "number_1100_1999",
-              "package": "package_number_letters"
+              "id": "number_1100_1999"
             }
           ]
         }
@@ -3226,8 +3056,7 @@
           [
             {
               "alias": "number_1000_1099_ordinal",
-              "id": "number_1000_1099_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1000_1099_ordinal"
             }
           ]
         },
@@ -3237,8 +3066,7 @@
           [
             {
               "alias": "number_1100_1999_ordinal",
-              "id": "number_1100_1999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1100_1999_ordinal"
             }
           ]
         }
@@ -3256,13 +3084,11 @@
           [
             {
               "alias": "number_1_999",
-              "id": "number_1_999",
-              "package": "package_number_letters"
+              "id": "number_1_999"
             },
             {
               "alias": "number_1000_1999",
-              "id": "number_1000_1999",
-              "package": "package_number_letters"
+              "id": "number_1000_1999"
             }
           ],
           "solution":
@@ -3276,8 +3102,7 @@
           [
             {
               "alias": "number_1000_1999",
-              "id": "number_1000_1999",
-              "package": "package_number_letters"
+              "id": "number_1000_1999"
             }
           ]
         }
@@ -3295,13 +3120,11 @@
           [
             {
               "alias": "number_1_999",
-              "id": "number_1_999",
-              "package": "package_number_letters"
+              "id": "number_1_999"
             },
             {
               "alias": "number_1000_1999_ordinal",
-              "id": "number_1000_1999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1000_1999_ordinal"
             }
           ],
           "solution":
@@ -3315,8 +3138,7 @@
           [
             {
               "alias": "number_1000_1999_ordinal",
-              "id": "number_1000_1999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1000_1999_ordinal"
             }
           ]
         }
@@ -3332,8 +3154,7 @@
           [
             {
               "alias": "number_1000_999999",
-              "id": "number_1000_999999",
-              "package": "package_number_letters"
+              "id": "number_1000_999999"
             }
           ]
         },
@@ -3343,8 +3164,7 @@
           [
             {
               "alias": "number_1_999",
-              "id": "number_1_999",
-              "package": "package_number_letters"
+              "id": "number_1_999"
             }
           ]
         }
@@ -3360,8 +3180,7 @@
           [
             {
               "alias": "number_1000_999999_ordinal",
-              "id": "number_1000_999999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1000_999999_ordinal"
             }
           ]
         },
@@ -3371,8 +3190,7 @@
           [
             {
               "alias": "number_1_999_ordinal",
-              "id": "number_1_999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_999_ordinal"
             }
           ]
         }
@@ -3388,8 +3206,7 @@
           [
             {
               "alias": "number_0",
-              "id": "number_0",
-              "package": "package_number_letters"
+              "id": "number_0"
             }
           ]
         },
@@ -3399,8 +3216,7 @@
           [
             {
               "alias": "number_1_999999",
-              "id": "number_1_999999",
-              "package": "package_number_letters"
+              "id": "number_1_999999"
             }
           ]
         }
@@ -3416,8 +3232,7 @@
           [
             {
               "alias": "number_1_999999_ordinal",
-              "id": "number_1_999999_ordinal",
-              "package": "package_number_letters"
+              "id": "number_1_999999_ordinal"
             }
           ]
         }

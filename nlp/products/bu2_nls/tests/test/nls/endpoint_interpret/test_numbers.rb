@@ -50,6 +50,11 @@ module Nls
       def test_ordinal_number
         check_interpret("troisieme", interpretation: "number_ordinal", solution: { number: 3 } )
         check_interpret("third", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("3 rd", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("1 st", interpretation: "number_ordinal", solution: { number: 1 } )
+        check_interpret("4 eme", interpretation: "number_ordinal", solution: { number: 4 } )
+        check_interpret("236 th", interpretation: "number_ordinal", solution: { number: 236 } )
+        check_interpret("236 ieme", interpretation: "number_ordinal", solution: { number: 236 } )
 
 #        check_interpret("3ieme", interpretation: "number_ordinal", solution: { number: 3 } )
 #        check_interpret("3rd", interpretation: "number_ordinal", solution: { number: 3 } )
