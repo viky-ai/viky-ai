@@ -1,9 +1,9 @@
 {
   "packages": [
-      "package-date",
-      "package-number",
-      "package-number-digits",
-      "package-number-letters"
+      "package_date",
+      "package_number",
+      "package_number_digits",
+      "package_number_letters"
   ],
   "sentence": "3/12/2017",
   "why-not-matching": {

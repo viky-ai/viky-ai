@@ -1,5 +1,5 @@
 {
-  "id": "package-date",
+  "id": "package_date",
   "interpretations":
   [
     {
@@ -293,7 +293,7 @@
             {
               "alias": "date_january",
               "id": "date_january",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -304,7 +304,7 @@
             {
               "alias": "date_february",
               "id": "date_february",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -315,7 +315,7 @@
             {
               "alias": "date_march",
               "id": "date_march",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -326,7 +326,7 @@
             {
               "alias": "date_april",
               "id": "date_april",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -337,7 +337,7 @@
             {
               "alias": "date_may",
               "id": "date_may",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -348,7 +348,7 @@
             {
               "alias": "date_june",
               "id": "date_june",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -359,7 +359,7 @@
             {
               "alias": "date_july",
               "id": "date_july",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -370,7 +370,7 @@
             {
               "alias": "date_august",
               "id": "date_august",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -381,7 +381,7 @@
             {
               "alias": "date_september",
               "id": "date_september",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -392,7 +392,7 @@
             {
               "alias": "date_october",
               "id": "date_october",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -403,7 +403,7 @@
             {
               "alias": "date_november",
               "id": "date_november",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         },
@@ -414,7 +414,7 @@
             {
               "alias": "date_december",
               "id": "date_december",
-              "package": "package-date"
+              "package": "package_date"
             }
           ]
         }
@@ -442,17 +442,17 @@
             {
               "alias": "day",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             },
             {
               "alias": "month",
               "id": "date_month_number",
-              "package": "package-date"
+              "package": "package_date"
             },
             {
               "alias": "year",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             }
           ]
         },
@@ -465,27 +465,27 @@
             {
               "alias": "day",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             },
             {
               "alias": "slash1",
               "id": "slash",
-              "package": "package-date"
+              "package": "package_date"
             },
             {
               "alias": "month",
               "id": "date_month_number",
-              "package": "package-date"
+              "package": "package_date"
             },
             {
               "alias": "slash2",
               "id": "slash",
-              "package": "package-date"
+              "package": "package_date"
             },
             {
               "alias": "year",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             }
           ]
         }

@@ -12,6 +12,10 @@ static og_status NlpWhyJsonMInputPart(og_nlp_th ctrl_nlp_th, struct nm_expressio
     struct m_input_part *m_input_part, json_t *json_input_parts);
 static og_status NlpWhyJsonMExpression(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
     struct m_input_part *m_input_part, struct m_expression *m_expression, json_t *json_matches);
+static og_status NlpWhyJsonNmExpressionDiagnostics(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
+    json_t *json_diagnostics);
+static og_status NlpWhyJsonMInputPartDiagnostic(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
+    struct m_input_part *m_input_part, json_t *json_diagnostics);
 
 og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_answer)
 {
@@ -64,6 +68,13 @@ static og_status NlpWhyJsonNmExpression(og_nlp_th ctrl_nlp_th, struct nm_express
     NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonNmExpression: error setting json_expression");
     DPcErr;
   }
+  json_t *json_diagnostics = json_array();
+  IF(json_object_set_new(json_nm_expression, "diagnostics", json_diagnostics))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJson: error setting json_diagnostics");
+    DPcErr;
+  }
+  IFE(NlpWhyJsonNmExpressionDiagnostics(ctrl_nlp_th, nm_expression, json_diagnostics));
 
   json_t *json_input_parts = json_array();
   IF(json_object_set_new(json_nm_expression, "input-parts", json_input_parts))
@@ -228,6 +239,94 @@ static og_status NlpWhyJsonMExpression(og_nlp_th ctrl_nlp_th, struct nm_expressi
     DPcErr;
   }
 
+  DONE;
+}
+
+static og_status NlpWhyJsonNmExpressionDiagnostics(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
+    json_t *json_diagnostics)
+{
+  struct expression *expression = nm_expression->expression;
+  int input_parts_nb = expression->input_parts_nb;
+  struct m_input_part *m_input_parts = OgHeapGetCell(ctrl_nlp_th->hm_input_part, 0);
+  int nb_missing_input_parts = 0;
+  for (int i = 0; i < input_parts_nb; i++)
+  {
+    struct m_input_part *m_input_part = m_input_parts + nm_expression->m_input_part_start + i;
+    if (m_input_part->m_expressions_nb == 0)
+    {
+      IFE(NlpWhyJsonMInputPartDiagnostic(ctrl_nlp_th, nm_expression, m_input_part, json_diagnostics));
+      nb_missing_input_parts++;
+    }
+  }
+
+  if (nb_missing_input_parts > 0) DONE;
+
+  json_t *json_diagnostic = NULL;
+
+  json_diagnostic = json_string("All input-parts match, but some conditions are not met");
+  IF(json_array_append_new(json_diagnostics, json_diagnostic))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonNmExpressionDiagnostics : error appending json_diagnostic");
+    DPcErr;
+  }
+
+  if (expression->keep_order)
+  {
+    json_diagnostic = json_string("Expression is flagged as 'keep-order', verify the matching by setting it to false");
+    IF(json_array_append_new(json_diagnostics, json_diagnostic))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonNmExpressionDiagnostics : error appending json_diagnostic");
+      DPcErr;
+    }
+  }
+  if (expression->glued)
+  {
+    json_diagnostic = json_string("Expression is flagged as 'glued', verify the matching by setting it to false");
+    IF(json_array_append_new(json_diagnostics, json_diagnostic))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonNmExpressionDiagnostics : error appending json_diagnostic");
+      DPcErr;
+    }
+  }
+
+  DONE;
+}
+
+static og_status NlpWhyJsonMInputPartDiagnostic(og_nlp_th ctrl_nlp_th, struct nm_expression *nm_expression,
+    struct m_input_part *m_input_part, json_t *json_diagnostics)
+{
+  char diagnostic[DPcPathSize];
+
+  package_t package = nm_expression->expression->interpretation->package;
+  struct input_part *input_part = m_input_part->input_part;
+  switch (input_part->type)
+  {
+    case nlp_input_part_type_Nil:
+    {
+      break;
+    }
+    case nlp_input_part_type_Word:
+    {
+      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
+      IFN(string_word) DPcErr;
+      snprintf(diagnostic, DPcPathSize, "Input-part word='%s' does not exist", string_word);
+    }
+    case nlp_input_part_type_Interpretation:
+    case nlp_input_part_type_Digit:
+    {
+      struct alias *alias = m_input_part->input_part->alias;
+      snprintf(diagnostic, DPcPathSize,
+          "Input-part alias='%s' does not exist, check interpretation '%s', in package '%s'", alias->alias, alias->id,
+          alias->package_id);
+      break;
+    }
+  }
+  json_t *json_diagnostic = json_string(diagnostic);
+  IF(json_array_append_new(json_diagnostics, json_diagnostic))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonMInputPartDiagnostic : error appending json_diagnostic");
+    DPcErr;
+  }
   DONE;
 }
 
