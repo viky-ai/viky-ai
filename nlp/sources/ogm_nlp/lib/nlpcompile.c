@@ -116,11 +116,6 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
     DPcErr;
   }
 
-//  IFN(json_slug)
-//  {
-//    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackage: package without slug");
-//    DPcErr;
-//  }
   if (json_slug)
   {
     if (!json_is_string(json_slug))
@@ -313,10 +308,9 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   interpretation->slug_start = OgHeapGetCellsUsed(package->hinterpretation_ba);
   interpretation->slug_length = strlen(string_slug);
   IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
-
+  
   interpretation->json_solution = json_solution;
-  json_incref(interpretation->json_solution);
-
+  
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
 
   DONE;
@@ -510,7 +504,6 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   }
 
   expression->json_solution = json_solution;
-  json_incref(expression->json_solution);
 
   DONE;
 }

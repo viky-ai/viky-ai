@@ -128,6 +128,8 @@ DEFPUBLIC(og_status) OgNlpFlushPackageMarkedAsDeleted(og_nlp_th ctrl_nlp_th);
 DEFPUBLIC(og_status) OgNlpPackageList(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
     struct og_nlp_package_list *output);
 
+DEFPUBLIC(og_status) OgNlpLogJanssonRefCounter(og_nlp_th ctrl_nlp_th, og_string function_name, json_t *json);
+
 #define _LOGNLPALIVE_
 #endif
 

@@ -55,6 +55,10 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    CONT;
+  }
 
   IFE(NlpJsStackWipe(ctrl_nlp_th));
 
@@ -68,6 +72,10 @@ og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    CONT;
+  }
 
   duk_destroy_heap(ctx);
   ctrl_nlp_th->js->duk_context = NULL;
@@ -81,6 +89,10 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
 og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    CONT;
+  }
 
   g_queue_clear(ctrl_nlp_th->js->variable_list);
   g_string_chunk_clear(ctrl_nlp_th->js->varibale_values);
@@ -110,6 +122,11 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
   NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : '%.*s'", js_script_size, js_script);
 
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript ctx initialised");
+    CONT;
+  }
 
   // eval securely
   if (duk_peval_lstring(ctx, js_script, js_script_size) != 0)
@@ -241,7 +258,7 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     variable_eval_size = 4;
   }
 
-  og_string var_template = "var %s = %s;";
+  og_string var_template = "const %s = %s;";
   int var_template_size = strlen(var_template);
   int var_command_size = variable_eval_size + variable_name_size + var_template_size;
 
@@ -251,6 +268,12 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
   NlpLog(DOgNlpTraceJs, "Sending variable to duktape: %s", var_command);
 
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript ctx initialised");
+    CONT;
+  }
+
   if (duk_peval_lstring(ctx, var_command, strlen(var_command)) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsAddVariable: duk_peval_lstring eval failed: %s : '%s'",

@@ -26,7 +26,11 @@ og_status NlpLtracInit(og_nlp_th ctrl_nlp_th)
 
 og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th)
 {
+  if (ctrl_nlp_th->hltrac == NULL) CONT;
+
   IFE(OgLtracFlush(ctrl_nlp_th->hltrac));
+  ctrl_nlp_th->hltrac = NULL;
+
   DONE;
 }
 
@@ -75,6 +79,9 @@ og_status NlpLtracPackageFlush(package_t package)
  */
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package)
 {
+
+  if (ctrl_nlp_th->hltrac == NULL) CONT;
+
   unsigned char out[DPcAutMaxBufferSize + 9];
   unsigned char out_old[DPcAutMaxBufferSize + 9];
   oindex states[DPcAutMaxBufferSize + 9];

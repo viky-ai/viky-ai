@@ -46,7 +46,8 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     interpretation->slug = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->slug_start);
     IFN(interpretation->slug) DPcErr;
 
-    interpretation->json_solution = interpretation_compile->json_solution;
+    interpretation->json_solution = json_deep_copy(interpretation_compile->json_solution);
+    interpretation_compile->json_solution = NULL;
 
     interpretation->expressions_nb = interpretation_compile->expressions_nb;
     if (interpretation->expressions_nb > 0)
@@ -109,7 +110,11 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     {
       expression->aliases = NULL;
     }
-    expression->json_solution = expression_compile->json_solution;
+
+    // solution needs to be copied from the request
+    expression->json_solution = json_deep_copy(expression_compile->json_solution);
+    expression_compile->json_solution = NULL;
+
     expression->is_recursive = FALSE;
   }
 
