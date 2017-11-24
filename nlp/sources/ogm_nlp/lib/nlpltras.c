@@ -123,7 +123,8 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
       IFE(OgUniToCp(ltra_word->length,trfs->Ba+ltra_word->start,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
-    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, trf->final_score);
+    double score_spelling = pow(trf->final_score,4);
+    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, score_spelling);
     IFE(status);
   }
 
