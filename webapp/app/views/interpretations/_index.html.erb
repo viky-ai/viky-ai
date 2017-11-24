@@ -59,32 +59,33 @@
     current_locale: @current_locale
 } %>
 
-
+<div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
 <div class="popup" id="popup-add-tag" style="display:none;">
-  <ul>
-    <li>
-      <a href="#" data-action="add-tag" data-tag="alias-black____shopping/intents/want">
-        shopping/intents/<strong>want</strong>
-      </a>
-    </li>
-    <li>
-      <a href="#" data-action="add-tag" data-tag="alias-red____shopping/intents/town">
-        shopping/intents/<strong>town</strong>
-      </a>
-    </li>
-    <li>
-      <a href="#" data-action="add-tag" data-tag="alias-pink____shopping/intents/prep-from">
-        shopping/intents/<strong>prep-from</strong>
-      </a>
-    </li>
-    <li>
-      <a href="#" data-action="add-tag" data-tag="alias-purple____shopping/intents/prep-to">
-        shopping/intents/<strong>prep-to</strong>
-      </a>
-    </li>
-  </ul>
+  <% if @agent.intents.where.not(id: @intent.id).count == 0 %>
+    <p>
+      <%= t('views.interpretations.popup.add-tag.empty_msg') %>
+    </p>
+  <% else %>
+    <div class="popup__search">
+      <input type="text" value="" placeholder="<%= t('views.interpretations.popup.add-tag.search_placeholder') %>" />
+    </div>
+    <ul>
+      <% intent_prefix = @agent.owner.username + "/" + @agent.agentname %>
+      <% colors = %w(black red pink purple deep-purple indigo blue light-blue cyan teal green light-green lime yellow amber orange deep-orange brown ) %>
+      <% @agent.intents.where.not(id: @intent.id).each do |intent| %>
+        <li data-search="<%= intent_prefix %>/<%= intent.intentname %>">
+          <a href="#"
+             data-action="add-tag"
+             data-tag="alias-<%= colors[Random.new.rand(0..17)] %>____<%= intent_prefix %>/<%= intent.intentname %>">
+            <%= intent_prefix %>/<strong><%= intent.intentname %></strong>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 </div>
 
+<div class="popup-overlay" id="popup-remove-tag-overlay" style="display:none;"></div>
 <div class="popup" id="popup-remove-tag" style="display:none;">
   <ul>
     <li>
@@ -92,7 +93,7 @@
         <span class="icon icon--small">
           <%= icon_close %>
         </span>
-        Remove annotation(s)
+        <%= t('views.interpretations.popup.remove-tags.msg') %>
       </a>
     </li>
   </ul>

@@ -1,23 +1,54 @@
 $ = require('jquery');
 
 class TagAddPopup
+  constructor: ->
+    $('#popup-add-tag input').on 'keyup change', (event) => TagAddPopup.search()
+    $('#popup-add-tag-overlay').on 'click', =>
+      TagAddPopup.hide()
+
   @show: (id, position) ->
+    TagAddPopup.resetSearch()
+    nav = $('nav').height()
+    scroll = $('main').scrollTop()
     $('#popup-add-tag a').data('editor-id', id)
     $('#popup-add-tag').show()
-    $('#popup-add-tag').css(top: position.bottom + 3, left: position.left)
+    $('#popup-add-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
+    $('#popup-add-tag-overlay').show()
 
   @hide: ->
     $('#popup-add-tag').hide()
+    $('#popup-add-tag-overlay').hide()
+
+  @search: ->
+    query = $('#popup-add-tag input').val()
+    regexp = new RegExp(query, 'i')
+    for item in $('#popup-add-tag ul li')
+      if regexp.test $(item).data('search')
+        $(item).show()
+      else
+        $(item).hide()
+
+  @resetSearch: ->
+    $('#popup-add-tag input').val("")
+    $('#popup-add-tag ul li').show()
 
 
 class TagRemovePopup
+  constructor: ->
+    $('#popup-remove-tag-overlay').on 'click', =>
+      TagRemovePopup.hide()
+
   @show: (id, position) ->
+    nav = $('nav').height()
+    scroll = $('main').scrollTop()
     $('#popup-remove-tag a').data('editor-id', id)
     $('#popup-remove-tag').show()
-    $('#popup-remove-tag').css(top: position.bottom + 3, left: position.left)
+    $('#popup-remove-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
+    $('#popup-remove-tag-overlay').show()
 
   @hide: ->
     $('#popup-remove-tag').hide()
+    $('#popup-remove-tag-overlay').hide()
 
 
 class AliasesAbstract
@@ -68,23 +99,22 @@ class InterpretationTagger
           event.preventDefault()
           @addTag(link.data('tag'))
 
-    $(document).on 'trix-change', (event) =>
-      @sync() if event.target == @editor_element
+    $(@editor_element).on 'trix-change', (event) =>
+      @sync()
 
-    $(document).on 'trix-selection-change', (event) =>
-      if event.target == @editor_element
-        range = @editor.getSelectedRange()
-        if range[0] == range[1]
-          TagAddPopup.hide()
+    $(@editor_element).on 'trix-selection-change', (event) =>
+      range = @editor.getSelectedRange()
+      if range[0] == range[1]
+        TagAddPopup.hide()
+        TagRemovePopup.hide()
+      else
+        @updateDeletableAlias(range)
+        if @deletable_alias.length == 0
+          TagAddPopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
           TagRemovePopup.hide()
         else
-          @updateDeletableAlias(range)
-          if @deletable_alias.length == 0
-            TagAddPopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
-            TagRemovePopup.hide()
-          else
-            TagRemovePopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
-            TagAddPopup.hide()
+          TagRemovePopup.show(@editor_id, @editor.getClientRectAtPosition(range[0]))
+          TagAddPopup.hide()
 
   updateDeletableAlias: (range) =>
     @deletable_alias = []
@@ -138,3 +168,10 @@ SetupForm = ->
         new InterpretationTagger(trix)
 
 $(document).on('trix-initialize', SetupForm)
+
+SetupPopUps = ->
+  if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
+    new TagAddPopup()
+    new TagRemovePopup()
+
+$(document).on('turbolinks:load', SetupPopUps)

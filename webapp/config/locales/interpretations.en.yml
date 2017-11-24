@@ -21,3 +21,10 @@ en:
         no_expression_html: <p>No expression entered for the "%{language}" tab.</p>
         btn: 'Yes, remove "%{language}" tab'
         errors_message: "Remove language failed: %{errors}."
+      popup:
+        add-tag:
+          search_placeholder: Find interpretation by slug
+          empty_msg: No available interpretation
+        remove-tags:
+          msg: Remove annotation(s)
+

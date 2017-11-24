@@ -9,8 +9,8 @@
   </div>
 </header>
 
+<%= render 'interpretations/index', current_locale: @locale %>
+
 <% content_for :right_aside do %>
   <%= render '/console/base' %>
 <% end %>
-
-<%= render 'interpretations/index', current_locale: @locale %>

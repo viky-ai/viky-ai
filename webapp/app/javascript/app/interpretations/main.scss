@@ -17,15 +17,61 @@ trix-editor{
 trix-toolbar{
   display:none;
 }
-.popup{
-  max-width: 300px;
+
+
+.popup-overlay{
   position: fixed;
+  top:0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.popup{
+  z-index: 2;
+  max-width: 300px;
+  position: absolute;
   background-color: #fff;
   border-radius: 3px;
-  box-shadow: 0 0 1px rgba(#000, .2), 0 2px 2px rgba(#000, .2);
+  box-shadow: 0 0 1px rgba(#000, .2), 0 2px 4px rgba(#000, .3);
+  font-size: .875em;
+  .popup__search{
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    input{
+      width: 100%;
+      padding: .5em calc(1em - 5px);
+      border: 1px solid transparent;
+      border-radius: 2px;
+      font-weight: 300;
+      &:focus,
+      &.focus{
+        border-color: $focus_color;
+        box-shadow: 0 0 0 2px rgba($focus_color, .25);
+        outline:none;
+      }
+    }
+    input::-webkit-input-placeholder{
+      opacity: .3;
+    }
+    input::-moz-placeholder{
+      opacity: .3;
+    }
+    input:-ms-input-placeholder{
+      opacity: .3;
+    }
+  }
+  p{
+    margin: 0;
+    padding: .5em 1em;
+  }
   ul{
+    max-height: 200px;
+    overflow: auto;
     list-style: none;
     padding: 0;
+    margin: 0;
     li a{
       display:block;
       padding: .5em 1em;
