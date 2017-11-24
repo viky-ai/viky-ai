@@ -100,11 +100,6 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
         request_expression->level, string_any, string_any_position, highlight);
   }
-  else
-  {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: [] any: not found", string_offset,
-        request_expression->level);
-  }
 
   DONE;
 }
