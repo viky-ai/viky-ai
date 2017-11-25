@@ -15,6 +15,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 {
   // The request sentence is in : ctrl_nlp_th->request_sentence
   IFE(NlpParseRequestSentence(ctrl_nlp_th));
+  IFE(NlpAutoComplete(ctrl_nlp_th));
   IFE(NlpLtras(ctrl_nlp_th));
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -45,7 +46,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   {
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
   }
-  IFE(NlpRequestExpressionsExplicit(ctrl_nlp_th));
+  IFE(NlpRequestExpressionsCalculate(ctrl_nlp_th));
 
   IFE(NlpWhyCalculate(ctrl_nlp_th));
   DONE;

@@ -110,21 +110,25 @@ Simple test on warning:
 ./ognlp -c packages/package_warning_simple.json -i requests/r_warning_simple.json
 ```
 
-Interpretation whatever-animal-bad can always be replaced by whatever-animal-good
+Interpretation whatever-animal-bad can always be replaced by whatever-animal-good:
 ```
 ./ognlp -c packages/package_deep_any.json -i requests/r_deep_any.json
 ```
 
-Double alias are working properly
+Double alias are working properly:
 ```
 ./ognlp -c packages/package_double_alias.json -i requests/r_double_alias.json
 ```
 
-Exemple sur la limitation de l'algorithme
+Exemple sur la limitation de l'algorithme:
 ```
 ./ognlp -c packages/package_limit_algo.json -i requests/r_limit_algo.json
 ```
 
+Auto-complete:
+```
+ognlp -c packages/package_autocomplete.json -i requests/r_autocomplete.json
+```
 
 Summary of list of examples
 =====

@@ -510,6 +510,7 @@ struct og_ctrl_nlp_threaded
   int basic_request_word_used;
   og_heap haccept_language;
   og_bool show_explanation;
+  og_bool auto_complete;
   unsigned int regular_trace;
   og_heap hrequest_word;
   og_heap hba;
@@ -685,7 +686,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 /* nlprexpression.c */
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
     struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
-og_status NlpRequestExpressionsExplicit(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
@@ -810,5 +811,8 @@ og_status NlpWhyJson(og_nlp_th ctrl_nlp_th, json_t *json_interpretation);
 /* nlpwarn.c */
 og_status NlpWarningReset(og_nlp_th ctrl_nlp_th);
 og_status NlpWarningAdd(og_nlp_th ctrl_nlp_th, og_string format, ...);
+
+/* nlpac.c */
+og_status NlpAutoComplete(og_nlp_th ctrl_nlp_th);
 
 

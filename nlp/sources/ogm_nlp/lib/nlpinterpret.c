@@ -326,6 +326,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_accept_language = NULL;
   json_t *json_show_explanation = NULL;
   json_t *json_why_not_matching = NULL;
+  json_t *json_auto_complete = NULL;
   json_t *json_trace = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
@@ -353,6 +354,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else if (Ogstricmp(key, "why-not-matching") == 0)
     {
       json_why_not_matching = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "auto-complete") == 0)
+    {
+      json_auto_complete = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "trace") == 0)
     {
@@ -405,6 +410,25 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
       DPcErr;
     }
   }
+
+  IFX(json_auto_complete)
+  {
+    if (json_is_boolean(json_auto_complete))
+    {
+      ctrl_nlp_th->auto_complete = json_boolean_value(json_auto_complete);
+      if (ctrl_nlp_th->auto_complete)
+      {
+
+        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: auto-complete request")
+      }
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_auto_complete is not a boolean");
+      DPcErr;
+    }
+  }
+
 
   IFX(json_trace)
   {

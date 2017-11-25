@@ -54,9 +54,10 @@ og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th)
 og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 {
   if (ctrl_nlp_th->hltras == NULL) CONT;
-
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  for (int i = 0; i < request_word_used; i++)
+  if (ctrl_nlp_th->basic_request_word_used <= 0) DONE;
+  int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+  if (ctrl_nlp_th->auto_complete) nb_basic_request_word_for_ltras--;
+  for (int i = 0; i < nb_basic_request_word_for_ltras; i++)
   {
     IFE(NlpLtrasWord(ctrl_nlp_th, i));
   }
