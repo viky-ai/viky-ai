@@ -33,6 +33,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->expression = expression;
   request_expression->level = ctrl_nlp_th->level;
   request_expression->Irequest_any = (-1);
+  request_expression->auto_complete_request_word = NULL;
   request_expression->keep_as_result = FALSE;
   g_queue_init(request_expression->tmp_solutions);
   request_expression->overlap_mark = 0;
@@ -140,6 +141,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   if (must_add_request_expression)
   {
+    IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
     struct request_expression *same_request_expression;
     og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
         request_expression_used, &same_request_expression);
@@ -150,12 +152,18 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
       if (request_expression->request_positions_nb == 1) must_log_compared_expressions = FALSE;
       if (must_log_compared_expressions)
       {
-          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-              "comparing new request expression with same request expression:");
-          IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
-          IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
+//        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "comparing new request expression with same request expression:");
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
       }
-      must_add_request_expression = FALSE;
+      if (NlpDifferentAutoCompleteRequestWord(ctrl_nlp_th,request_expression,same_request_expression))
+      {
+        NlpLog(DOgNlpTraceInterpret, "Keeping same request expression as different auto-complete");
+      }
+      else
+      {
+        must_add_request_expression = FALSE;
+      }
     }
   }
 
@@ -475,11 +483,21 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
         score->overlap, score->any);
   }
 
+  char ac_request_word[DPcPathSize];
+  ac_request_word[0] = 0;
+  if (request_expression->auto_complete_request_word)
+  {
+    og_string acrw = OgHeapGetCell(ctrl_nlp_th->hba, request_expression->auto_complete_request_word->start);
+    IFN(acrw) DPcErr;
+    snprintf(ac_request_word, DPcPathSize, "acrw='%s'", acrw);
+  }
+
   struct expression *expression = request_expression->expression;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s",
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
-      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores);
+      expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores,
+      ac_request_word);
   DONE;
 }
 

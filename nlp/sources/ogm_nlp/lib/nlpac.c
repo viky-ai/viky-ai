@@ -114,9 +114,55 @@ static og_status NlpAutoCompleteAddWord(og_nlp_th ctrl_nlp_th, int Ilast_request
   request_word->length_position = last_request_word->length_position;
 
   request_word->is_digit = FALSE;
+  request_word->is_auto_complete_word = TRUE;
 
   request_word->spelling_score = spelling_score;
 
   DONE;
+}
+
+og_status NlpGetAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  if (!ctrl_nlp_th->auto_complete) DONE;
+
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+
+    if (request_input_part->type == nlp_input_part_type_Word)
+    {
+      struct request_word *request_word = request_input_part->request_word;
+      if (request_word->is_auto_complete_word)
+      {
+        request_expression->auto_complete_request_word = request_word;
+        DONE;
+      }
+    }
+    else if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
+      IFN(sub_request_expression) DPcErr;
+      IFX(sub_request_expression->auto_complete_request_word)
+      {
+        request_expression->auto_complete_request_word = sub_request_expression->auto_complete_request_word;
+        DONE;
+      }
+      else
+      {
+        IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, sub_request_expression));
+      }
+    }
+  }
+  DONE;
+}
+
+og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2)
+{
+  if (request_expression1->auto_complete_request_word != NULL && request_expression2->auto_complete_request_word != NULL
+      && request_expression1->auto_complete_request_word != request_expression2->auto_complete_request_word) return TRUE;
+  return FALSE;
 }
 

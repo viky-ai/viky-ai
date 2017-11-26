@@ -394,6 +394,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   {
     request_word->digit_value = atoi(normalized_string_word);
   }
+  request_word->is_auto_complete_word = FALSE;
 
   request_word->spelling_score = 1.0;
 

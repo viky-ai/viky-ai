@@ -175,6 +175,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->length_position = request_word_basic->length_position;
 
   request_word->is_digit = FALSE;
+  request_word->is_auto_complete_word = FALSE;
 
   request_word->spelling_score = spelling_score;
 

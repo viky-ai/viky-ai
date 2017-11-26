@@ -109,9 +109,14 @@ static og_status NlpIsSubRequestExpression(og_nlp_th ctrl_nlp_th, GQueue *sorted
   {
     struct request_expression *request_expression = iter->data;
     if (!request_expression->keep_as_result) continue;
+
     og_bool is_sub_expression = FALSE;
     IFE(is_sub_expression = NlpIsSubExpression(ctrl_nlp_th, sub_request_expression, request_expression));
-    if (is_sub_expression) return TRUE;
+    if (is_sub_expression)
+    {
+      if (NlpDifferentAutoCompleteRequestWord(ctrl_nlp_th, sub_request_expression, request_expression)) return FALSE;
+      return TRUE;
+    }
   }
   return FALSE;
 }

@@ -22,5 +22,13 @@
     ],
     "sentence": "ti",
     "auto-complete": true
+  },
+  {
+    "packages":
+    [
+      "autocomplete"
+    ],
+    "sentence": "horse ti",
+    "auto-complete": true
   }
 ]

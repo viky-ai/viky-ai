@@ -281,6 +281,7 @@ struct request_word
   og_bool is_digit;
   int digit_value;
   double spelling_score;
+  og_bool is_auto_complete_word;
 };
 
 struct accept_language
@@ -377,6 +378,7 @@ struct request_expression
   int request_anys_nb;
 
   int Irequest_any;
+  struct request_word *auto_complete_request_word;
 
   /** used locally for various scanning */
   int analyzed;
@@ -814,5 +816,8 @@ og_status NlpWarningAdd(og_nlp_th ctrl_nlp_th, og_string format, ...);
 
 /* nlpac.c */
 og_status NlpAutoComplete(og_nlp_th ctrl_nlp_th);
+og_status NlpGetAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2);
 
 
