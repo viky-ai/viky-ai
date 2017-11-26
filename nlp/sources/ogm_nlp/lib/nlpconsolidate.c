@@ -49,6 +49,17 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     interpretation->json_solution = json_deep_copy(interpretation_compile->json_solution);
     interpretation_compile->json_solution = NULL;
 
+    interpretation->contexts_nb = interpretation_compile->contexts_nb;
+    if (interpretation->contexts_nb > 0)
+    {
+      interpretation->contexts = OgHeapGetCell(package->hcontext, interpretation_compile->context_start);
+      IFN(interpretation->contexts) DPcErr;
+    }
+    else
+    {
+      interpretation->contexts = NULL;
+    }
+
     interpretation->expressions_nb = interpretation_compile->expressions_nb;
     if (interpretation->expressions_nb > 0)
     {
@@ -68,6 +79,41 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
 
   // freeze final heap
   IFE(OgHeapFreeze(package->hinterpretation));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareContext(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hcontext_ba));
+
+  // prealloc heap to avoid realloc
+  int context_compile_used = OgHeapGetCellsUsed(package->hcontext_compile);
+  IFE(context_compile_used);
+  if (context_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->hcontext, context_compile_used));
+  }
+
+  // convert _compile heaps to simple one
+  struct context_compile *all_context_compile = OgHeapGetCell(package->hcontext_compile, 0);
+  struct context *all_context = OgHeapGetCell(package->hcontext, 0);
+  for (int i = 0; i < context_compile_used; i++)
+  {
+    struct context_compile *context_compile = all_context_compile + i;
+    struct context *context = all_context + i;
+
+    context->flag = OgHeapGetCell(package->hcontext_ba, context_compile->flag_start);
+    IFN(context->flag) DPcErr;
+  }
+
+  // free compile heap
+  IFE(OgHeapFlush(package->hcontext_compile));
+  package->hcontext_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hcontext));
 
   DONE;
 }
@@ -188,6 +234,8 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
   IFE(NlpConsolidatePrepareAlias(ctrl_nlp_th, package));
 
   IFE(NlpConsolidatePrepareExpression(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareContext(ctrl_nlp_th, package));
 
   IFE(NlpConsolidatePrepareInterpretation(ctrl_nlp_th, package));
 
@@ -447,7 +495,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
             expression->text, expression->interpretation->slug, expression->interpretation->id);
 
       }
-      IFE(NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,&expression->alias_any_input_part_position));
+      IFE(
+          NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,
+              &expression->alias_any_input_part_position));
       //expression->alias_any_input_part_position = expression->input_parts_nb;
       alias_added = TRUE;
     }

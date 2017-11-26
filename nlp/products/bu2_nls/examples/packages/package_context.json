@@ -1,0 +1,71 @@
+{
+  "id": "context",
+  "interpretations":
+  [
+    {
+      "id": "context_none",
+      "expressions":
+      [
+        {
+          "expression": "oneword"
+        }
+      ],
+      "solution":
+      {
+        "context": "none"
+      }
+    },
+    {
+      "id": "context_one",
+      "contexts":
+      [
+        "context1"
+      ],
+      "expressions":
+      [
+        {
+          "expression": "oneword"
+        }
+      ],
+      "solution":
+      {
+        "context": "one"
+      }
+    },
+    {
+      "id": "context_two",
+      "contexts":
+      [
+        "context2"
+      ],
+      "expressions":
+      [
+        {
+          "expression": "oneword"
+        }
+      ],
+      "solution":
+      {
+        "context": "two"
+      }
+    },
+    {
+      "id": "context_one_two",
+      "contexts":
+      [
+        "context1",
+        "context2"
+      ],
+      "expressions":
+      [
+        {
+          "expression": "oneword"
+        }
+      ],
+      "solution":
+      {
+        "context": "one two"
+      }
+    }
+  ]
+}

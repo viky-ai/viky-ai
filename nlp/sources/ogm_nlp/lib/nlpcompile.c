@@ -9,6 +9,10 @@
 static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *input, json_t *json_id,
     json_t *json_slug, json_t *json_interpretations);
 
+static int NlpCompilePackageContexts(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_contexts);
+static int NlpCompilePackageContext(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_context);
 static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation, json_t *json_expressions);
 static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
@@ -218,6 +222,7 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
 
   json_t *json_id = NULL;
   json_t *json_slug = NULL;
+  json_t *json_contexts = NULL;
   json_t *json_expressions = NULL;
   json_t *json_solution = NULL;
 
@@ -234,6 +239,10 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     else if (Ogstricmp(key, "slug") == 0)
     {
       json_slug = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "contexts") == 0)
+    {
+      json_contexts = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "expressions") == 0)
     {
@@ -290,6 +299,15 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     DPcErr;
   }
 
+  IFX(json_contexts)
+  {
+    if (!json_is_array(json_contexts))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'context' is not an array");
+      DPcErr;
+    }
+  }
+
   // solution can be of any json type and can be non existant
 
   // At that point, we can create the interpretation structure
@@ -308,13 +326,74 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   interpretation->slug_start = OgHeapGetCellsUsed(package->hinterpretation_ba);
   interpretation->slug_length = strlen(string_slug);
   IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
-  
+
   interpretation->json_solution = json_solution;
-  
+
+  IFE(NlpCompilePackageContexts(ctrl_nlp_th, package, interpretation, json_contexts));
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
 
   DONE;
 }
+
+static int NlpCompilePackageContexts(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_contexts)
+{
+  interpretation->context_start = OgHeapGetCellsUsed(package->hcontext_compile);
+
+  int array_size = json_array_size(json_contexts);
+  for (int i = 0; i < array_size; i++)
+  {
+    json_t *json_context = json_array_get(json_contexts, i);
+    IFN(json_context)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackagecontexts: null json_context at position %d", i);
+      DPcErr;
+    }
+    if (json_is_string(json_context))
+    {
+      IFE(NlpCompilePackageContext(ctrl_nlp_th, package, interpretation, json_context));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackagecontexts: json_context at position %d is not string", i);
+      DPcErr;
+    }
+  }
+
+  int contexts_used = OgHeapGetCellsUsed(package->hcontext_compile);
+  interpretation->contexts_nb = contexts_used - interpretation->context_start;
+  DONE;
+}
+
+static int NlpCompilePackageContext(og_nlp_th ctrl_nlp_th, package_t package,
+    struct interpretation_compile *interpretation, json_t *json_context)
+{
+  size_t Icontext;
+  struct context_compile *context = OgHeapNewCell(package->hcontext_compile, &Icontext);
+  IFn(context) DPcErr;
+  IFE(Icontext);
+
+  if (json_is_string(json_context))
+  {
+    const char *string_flag = json_string_value(json_context);
+    context->flag_start = OgHeapGetCellsUsed(package->hcontext_ba);
+    int flag_length = strlen(string_flag);
+    if (flag_length > DOgNlpInterpretationContextFlagMaxLength)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageContext: json_context is too long");
+      DPcErr;
+    }
+    IFE(OgHeapAppend(package->hcontext_ba, flag_length + 1, string_flag));
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageContext: json_context is not a string");
+    DPcErr;
+  }
+  DONE;
+}
+
+
 
 static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation, json_t *json_expressions)
@@ -403,10 +482,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
-  size_t Iphrase;
-  struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iphrase);
+  size_t Iexpression;
+  struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iexpression);
   IFn(expression) DPcErr;
-  IFE(Iphrase);
+  IFE(Iexpression);
 
   if (json_is_string(json_text))
   {

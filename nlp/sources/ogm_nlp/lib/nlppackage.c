@@ -34,6 +34,14 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string
   snprintf(heap_name, DPcPathSize, "package_interpretation_%s", package->id);
   IFn(package->hinterpretation = OgHeapInit(hmsg, heap_name, sizeof(struct interpretation), 1)) return NULL;
 
+  // context
+  snprintf(heap_name, DPcPathSize, "package_context_ba_%s", package->id);
+  IFn(package->hcontext_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_context_compile_%s", package->id);
+  IFn(package->hcontext_compile = OgHeapInit(hmsg, heap_name, sizeof(struct context_compile), DOgNlpPackageContextNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_context_%s", package->id);
+  IFn(package->hcontext = OgHeapInit(hmsg, heap_name, sizeof(struct context), 1)) return NULL;
+
   // expression
   snprintf(heap_name, DPcPathSize, "package_expression_ba_%s", package->id);
   IFn(package->hexpression_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
@@ -165,7 +173,8 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
 
-  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages", ctrl_nlp_th->package_in_used->length)
+  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages",
+      ctrl_nlp_th->package_in_used->length)
 
   // flush package mark as deleted
   package_t package = NULL;
@@ -296,6 +305,20 @@ static og_status NlpPackageInterpretationsFlush(package_t package)
   DONE;
 }
 
+static og_status NlpPackageContextsFlush(package_t package)
+{
+  OgHeapFlush(package->hcontext_ba);
+  package->hcontext_ba = NULL;
+
+  OgHeapFlush(package->hcontext_compile);
+  package->hcontext_compile = NULL;
+
+  OgHeapFlush(package->hcontext);
+  package->hcontext = NULL;
+
+  DONE;
+}
+
 static og_status NlpPackageExpressionsFlush(package_t package)
 {
   OgHeapFlush(package->hexpression_ba);
@@ -328,6 +351,7 @@ static og_status NlpPackageFlush(package_t package)
   NlpLtracPackageFlush(package);
 
   NlpPackageInterpretationsFlush(package);
+  NlpPackageContextsFlush(package);
   NlpPackageExpressionsFlush(package);
 
   OgHeapFlush(package->halias_ba);

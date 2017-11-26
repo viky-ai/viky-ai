@@ -17,6 +17,7 @@
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
 #define DOgNlpPackageInterpretationNumber 0x10
+#define DOgNlpPackageContextNumber (DOgNlpPackageInterpretationNumber*0x1)
 #define DOgNlpPackageExpressionNumber (DOgNlpPackageInterpretationNumber*0x10)
 #define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
@@ -28,7 +29,8 @@
 #define DOgNlpRequestPositionNumber (DOgNlpRequestExpressionNumber*2+DOgNlpRequestInputPartNumber)
 #define DOgNlpBaNumber 0x100
 
-#define DOgNlpInterpretationExpressionMaxLength 0x800
+#define DOgNlpInterpretationExpressionMaxLength   0x800
+#define DOgNlpInterpretationContextFlagMaxLength  0x400
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -73,6 +75,11 @@ struct package
   og_heap hinterpretation_ba;
   og_heap hinterpretation_compile;
   og_heap hinterpretation;
+
+  /** hcontext_ba : String heap for context, read-only after compilation step */
+  og_heap hcontext_ba;
+  og_heap hcontext_compile;
+  og_heap hcontext;
 
   /** hexpression_ba : String heap for expression, read-only after compilation step */
   og_heap hexpression_ba;
@@ -130,6 +137,11 @@ struct alias
   og_string package_id;
 };
 
+struct context_compile
+{
+  int flag_start;
+};
+
 struct expression_compile
 {
   int text_start;
@@ -139,6 +151,11 @@ struct expression_compile
   int locale;
   int input_part_start, input_parts_nb;
   json_t *json_solution;
+};
+
+struct context
+{
+  og_string flag;
 };
 
 struct expression
@@ -181,6 +198,7 @@ struct interpretation_compile
   package_t package;
   int id_start, id_length;
   int slug_start, slug_length;
+  int context_start, contexts_nb;
   int expression_start, expressions_nb;
   json_t *json_solution;
 };
@@ -193,6 +211,9 @@ struct interpretation
   og_string id;
   og_string slug;
   json_t *json_solution;
+
+  int contexts_nb;
+  struct context *contexts;
 
   int expressions_nb;
   struct expression *expressions;
@@ -584,6 +605,7 @@ og_status NlpPackageLog(og_nlp_th ctrl_nlp_th, og_string label, package_t packag
 og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, struct interpretation *interpretation);
 og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation *interpretation);
+og_status NlpPackageContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct context *context);
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
 og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part);
@@ -594,6 +616,7 @@ og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t pa
     struct interpretation_compile *interpretation);
 og_status NlpPackageCompileInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation);
+og_status NlpPackageCompileContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct context_compile *context);
 og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression_compile *expression);
 og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package,
@@ -819,5 +842,4 @@ og_status NlpAutoComplete(og_nlp_th ctrl_nlp_th);
 og_status NlpGetAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2);
-
 
