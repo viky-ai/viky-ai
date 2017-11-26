@@ -39,7 +39,7 @@ module Nls
 
         Interpretation.default_locale = "fr"
 
-        check_interpret(sentence, interpretation: "locale", score: 0.82)
+        check_interpret(sentence, interpretation: "locale", score: 0.85)
 
       end
 

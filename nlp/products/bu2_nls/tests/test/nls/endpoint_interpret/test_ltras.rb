@@ -30,7 +30,7 @@ module Nls
 
         sentence = "with a nice swimmming pol with spa for 3 peple and sea viiaw"
 
-        check_interpret(sentence, interpretation: "ltras", score: 0.91)
+        check_interpret(sentence, interpretation: "ltras", score: 0.93)
 
       end
     end
