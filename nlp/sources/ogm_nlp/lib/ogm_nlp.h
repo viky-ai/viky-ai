@@ -22,6 +22,7 @@
 #define DOgNlpPackageAliasNumber DOgNlpPackageExpressionNumber
 #define DOgNlpPackageInputPartNumber DOgNlpPackageInterpretationNumber
 
+#define DOgNlpRequestContextNumber 0x2
 #define DOgNlpRequestWordNumber 0x10
 #define DOgNlpAcceptLanguageNumber 0x8
 #define DOgNlpRequestInputPartNumber 0x10
@@ -373,6 +374,7 @@ struct request_score
   double spelling;
   double overlap;
   double any;
+  double context;
 };
 
 struct request_expression
@@ -499,6 +501,12 @@ struct m_expression
   int Irequest_input_part;
 };
 
+struct request_context
+{
+    int flag_start;
+    int flag_length;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -571,9 +579,11 @@ struct og_ctrl_nlp_threaded
   void *hltrac;
   void *hltras;
 
-  void *hnm_expression;
-  void *hm_input_part;
-  void *hm_expression;
+  og_heap hnm_expression;
+  og_heap hm_input_part;
+  og_heap hm_expression;
+
+  og_heap hrequest_context;
 };
 
 struct og_ctrl_nlp
@@ -842,4 +852,9 @@ og_status NlpAutoComplete(og_nlp_th ctrl_nlp_th);
 og_status NlpGetAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2);
+
+/* nlpcontext.c */
+og_status NlpContextIsValid(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpContextGetScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
 

@@ -88,6 +88,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   request_expression->score->any = score->any;
 
+  IFE(NlpContextGetScore(ctrl_nlp_th, request_expression));
+
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
   DONE;
@@ -95,8 +97,9 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  double score_number = 5.0;
+  double score_number = 6.0;
   struct request_score *score = request_expression->score;
-  request_expression->total_score = (score->coverage + score->locale + score->spelling*score->spelling + score->overlap + score->any) / score_number;
+  request_expression->total_score = (score->coverage + score->locale + score->spelling * score->spelling
+      + score->overlap + score->any + score->context) / score_number;
   DONE;
 }

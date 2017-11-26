@@ -12,6 +12,8 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t *json_sentence);
 static og_status NlpInterpretRequestBuildPackages(og_nlp_th ctrl_nlp_th, json_t *json_packages);
 static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const char *package_id);
+static og_status NlpInterpretRequestBuildContexts(og_nlp_th ctrl_nlp_th, json_t *json_contexts);
+static og_status NlpInterpretRequestBuildContext(og_nlp_th ctrl_nlp_th, const char *flag);
 
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param)
 {
@@ -24,6 +26,14 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   ctrl_nlp_th->hinterpret_package = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct interpret_package),
   DOgNlpPackageNumber);
   IFN(ctrl_nlp_th->hinterpret_package)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  snprintf(nlpc_name, DPcPathSize, "%s_request_context", param->name);
+  ctrl_nlp_th->hrequest_context = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct request_context),
+  DOgNlpRequestContextNumber);
+  IFN(ctrl_nlp_th->hrequest_context)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "OgNlpInterpretInit : error on OgHeapInit(%s)", nlpc_name);
     DPcErr;
@@ -140,6 +150,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_context));
   IFE(OgHeapFlush(ctrl_nlp_th->haccept_language));
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapFlush(ctrl_nlp_th->hba));
@@ -151,6 +162,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_any));
 
   ctrl_nlp_th->hinterpret_package = NULL;
+  ctrl_nlp_th->hrequest_context = NULL;
   ctrl_nlp_th->hrequest_word = NULL;
   ctrl_nlp_th->hba = NULL;
   ctrl_nlp_th->hrequest_input_part = NULL;
@@ -300,6 +312,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyReset(ctrl_nlp_th));
   IFE(OgHeapReset(ctrl_nlp_th->hinterpret_package));
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_context));
   IFE(OgHeapReset(ctrl_nlp_th->haccept_language));
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_word));
   IFE(OgHeapReset(ctrl_nlp_th->hba));
@@ -322,6 +335,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_request)
 {
   json_t *json_packages = NULL;
+  json_t *json_contexts = NULL;
   json_t *json_sentence = NULL;
   json_t *json_accept_language = NULL;
   json_t *json_show_explanation = NULL;
@@ -338,6 +352,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     if (Ogstricmp(key, "packages") == 0)
     {
       json_packages = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "contexts") == 0)
+    {
+      json_contexts = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "sentence") == 0)
     {
@@ -429,7 +447,6 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     }
   }
 
-
   IFX(json_trace)
   {
     if (json_is_string(json_trace))
@@ -453,6 +470,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpInterpretRequestParse));
 
+  IFE(NlpInterpretRequestBuildContexts(ctrl_nlp_th, json_contexts));
   IFE(NlpInterpretRequestBuildSentence(ctrl_nlp_th, json_sentence));
   IFE(NlpInterpretRequestBuildPackages(ctrl_nlp_th, json_packages));
   IFE(NlpInterpretRequestBuildAcceptLanguage(ctrl_nlp_th, json_accept_language));
@@ -570,4 +588,57 @@ static og_status NlpInterpretRequestBuildPackage(og_nlp_th ctrl_nlp_th, const ch
   IFE(OgHeapAppend(ctrl_nlp_th->hinterpret_package, 1, interpret_package));
   DONE;
 }
+
+static og_status NlpInterpretRequestBuildContexts(og_nlp_th ctrl_nlp_th, json_t *json_contexts)
+{
+  IFN(json_contexts) DONE;
+  if (json_is_array(json_contexts))
+  {
+    int array_size = json_array_size(json_contexts);
+    for (int i = 0; i < array_size; i++)
+    {
+      json_t *json_context = json_array_get(json_contexts, i);
+      IFN(json_context)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildContexts: null json_context at position %d", i);
+        DPcErr;
+      }
+
+      if (json_is_string(json_context))
+      {
+        og_string flag = json_string_value(json_context);
+        NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestBuildContexts: flag is '%s'", flag)
+        IFE(NlpInterpretRequestBuildContext(ctrl_nlp_th, flag));
+      }
+      else
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildContexts: 'contexts' at position %d is not a string", i);
+        DPcErr;
+      }
+
+    }
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildcontexts: 'contexts' is not a array");
+    DPcErr;
+  }
+
+  DONE;
+}
+
+static og_status NlpInterpretRequestBuildContext(og_nlp_th ctrl_nlp_th, const char *flag)
+{
+  struct request_context request_context[1];
+
+  request_context->flag_start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+  request_context->flag_length = strlen(flag);
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, request_context->flag_length, flag));
+  IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
+
+  IFE(OgHeapAppend(ctrl_nlp_th->hrequest_context, 1, request_context));
+
+  DONE;
+}
+
 

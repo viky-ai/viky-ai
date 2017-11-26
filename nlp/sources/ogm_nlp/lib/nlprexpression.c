@@ -141,6 +141,16 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   if (must_add_request_expression)
   {
+    og_bool context_is_valid = NlpContextIsValid(ctrl_nlp_th, request_expression);
+    IFE(context_is_valid);
+    if (!context_is_valid)
+    {
+      must_add_request_expression = FALSE;
+    }
+  }
+
+  if (must_add_request_expression)
+  {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
     struct request_expression *same_request_expression;
     og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
