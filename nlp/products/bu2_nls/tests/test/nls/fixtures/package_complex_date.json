@@ -275,12 +275,7 @@
               "alias": "duration",
               "id": "duration"
             }
-          ],
-          "solution": {
-            "days": "`durations_combinations.days+duration.days`",
-            "months": "`durations_combinations.months+duration.months`",
-            "years": "`durations_combinations.years+duration.years`"
-          }
+          ]
         },
         {
           "expression": "@{durations_combinations} @{and} @{duration}",
@@ -299,12 +294,27 @@
               "alias": "duration",
               "id": "duration"
             }
-          ],
-          "solution": {
-            "days": "`durations_combinations.days+duration.days`",
-            "months": "`durations_combinations.months+duration.months`",
-            "years": "`durations_combinations.years+duration.years`"
-          }
+          ]
+        },
+        {
+          "expression": "@{durations_combinations} @{coma} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases": [
+            {
+              "alias": "durations_combinations",
+              "id": "durations_combinations"
+            },
+            {
+              "alias": "coma",
+              "id": "coma",
+              "package": "package_date"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ]
         },
         {
           "expression": "@{duration}",
@@ -322,7 +332,12 @@
             "years": "`duration.years`"
           }
         }
-      ]
+      ],
+      "solution": {
+        "days": "`durations_combinations.days+duration.days`",
+        "months": "`durations_combinations.months+duration.months`",
+        "years": "`durations_combinations.years+duration.years`"
+      }
     },
     {
       "id": "period",
@@ -342,10 +357,8 @@
             }
           ],
           "solution": {
-            "date_begin": "`new Date()`",
-            "date_end": "`new Date(new Date().getFullYear()+duration.years,new Date().getMonth()+duration.months,new Date().getDate()+duration.days+1)`",
-            "toto": "`new Date( new Date().setMonth(new Date().getMonth()+duration.months) )`",
-            "toto1": "`new Date( new Date().setMonth(new Date().getMonth()+duration.months).setFullYear(new Date().getYear()+duration.Years) )`"
+            "date_begin": "`moment().startOf('second')`",
+            "date_end": "`moment().add(duration.years,'y').add(duration.months,'m').add(duration.days,'d').startOf('second')`"
           }
         }
       ]
@@ -354,7 +367,7 @@
       "id": "latency",
       "expressions": [
         {
-          "expression": "@{preposition_in} @{durations_combinations}",
+          "expression": "@{preposition_in} @{latency}",
           "keep-order": true,
           "glued": true,
           "aliases": [
@@ -363,14 +376,12 @@
               "id": "preposition_in"
             },
             {
-              "alias": "durations_combinations",
+              "alias": "latency",
               "id": "durations_combinations"
             }
           ],
           "solution": {
-            "latency_days": "`durations_combinations.days`",
-            "latency_months": "`durations_combinations.months`",
-            "latency_years": "`durations_combinations.years`"
+            "date": "`moment().add(latency.years,'y').add(latency.months,'M').add(latency.days,'d').startOf('second')`"
           }
         }
       ]
@@ -379,7 +390,7 @@
       "id": "duration_with_latency",
       "expressions": [
         {
-          "expression": "@{preposition_for} @{duration} @{preposition_in} @{delay}",
+          "expression": "@{preposition_for} @{duration} @{preposition_in} @{latency}",
           "keep-order": true,
           "glued": true,
           "aliases": [
@@ -396,17 +407,13 @@
               "id": "preposition_in"
             },
             {
-              "alias": "delay",
+              "alias": "latency",
               "id": "durations_combinations"
             }
           ],
           "solution": {
-            "delay_days": "`delay.days`",
-            "delay_months": "`delay.months`",
-            "delay_years": "`delay.years`",
-            "days": "`duration.days`",
-            "months": "`duration.months`",
-            "years": "`duration.years`"
+            "date_begin": "`moment().add(latency.years,'y').add(latency.months,'M').add(latency.days,'d').startOf('second')`",
+            "date_end": "`moment().add(latency.years+duration.years,'y').add(latency.months+duration.months,'M').add((latency.days+duration.days),'d').startOf('second')`"
           }
         }
       ]
