@@ -41,11 +41,10 @@ class Interpretation < ApplicationRecord
 
     def interpretation_aliases_no_overlap
       if self.interpretation_aliases.count > 1
-        ialias = self.interpretation_aliases.first
-        first_range = (ialias.position_start..ialias.position_end)
-        self.interpretation_aliases.each_with_index do |ialias, i|
-          unless i == 0
-            if (ialias.position_start..ialias.position_end).overlaps?(first_range)
+        self.interpretation_aliases.each_with_index do |ialias|
+          range = (ialias.position_start..ialias.position_end)
+          self.interpretation_aliases.where.not(id: ialias.id).each do |iialias|
+            if (iialias.position_start..ialias.position_end).overlaps?(range)
               errors.add(:interpretation_aliases, I18n.t('errors.interpretation.interpretation_aliases_overlap'))
             end
           end

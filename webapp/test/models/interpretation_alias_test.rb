@@ -49,15 +49,36 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert !interpretation.save
     assert_equal ["Interpretation aliases overlap"], interpretation.errors.full_messages
 
+
+    first_alias = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'who',
+      intent_id: intents(:weather_who).id
+    )
     second_alias = InterpretationAlias.new(
-      position_start: 22,
-      position_end: 27,
+      position_start: 6,
+      position_end: 10,
+      aliasname: 'who',
+      intent_id: intents(:weather_who).id
+    )
+    third_alias = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 12,
       aliasname: 'who',
       intent_id: intents(:weather_who).id
     )
     interpretation.interpretation_aliases = [
       first_alias,
-      second_alias
+      second_alias,
+      third_alias
+    ]
+
+    assert !interpretation.save
+    assert_equal ["Interpretation aliases overlap"], interpretation.errors.full_messages
+
+    interpretation.interpretation_aliases = [
+      first_alias
     ]
     assert interpretation.save
   end
