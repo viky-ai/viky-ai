@@ -135,7 +135,7 @@ module Nls
       puts "Interpret request :\n #{body.to_json}\n" if verbose?
 
       body_to_write = body
-      body_to_write["why-not-matching"] = {"expression" => "any"}
+      body_to_write["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
       body_to_write["show-explanation"] = false
 
       File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|

@@ -214,14 +214,12 @@ module Nls
       json_package
     end
 
-    def check_interpret_debug(sentence, expected)
-      check_interpret(sentence, expected, true)
-    end
-
-    def check_interpret(sentence, expected, debug = false)
+    def check_interpret(sentence, expected)
 
       raise "expected must be an Hash"   if !expected.kind_of? Hash
       raise "expected must not be empty" if expected.empty?
+
+      debug = expected[:debug]
 
       ap expected if debug
       # creation et exécution de la requete

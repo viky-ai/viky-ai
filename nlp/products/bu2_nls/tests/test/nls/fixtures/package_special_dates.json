@@ -1,0 +1,24 @@
+{
+  "id": "package_special_date",
+  "interpretations":
+  [
+    {
+      "id": "christmas",
+      "expressions":
+      [
+        {
+          "expression": "noel",
+          "locale": "fr"
+        },
+        {
+          "expression": "christmas",
+          "locale": "eb"
+        }
+      ],
+      "solution":
+      {
+        "date": "`new Date(25-12-2017)`"
+      }
+    }
+  ]
+}
