@@ -7,11 +7,25 @@ class InterpretationAlias < ApplicationRecord
 
   validate :check_position_start_greater_than_end
   validate :intent_no_loop_reference
+  validate :no_overlap
 
   private
 
+    def no_overlap
+      unless self.interpretation.nil?
+        if self.interpretation.interpretation_aliases.size > 0
+          range = (self.position_start..self.position_end)
+          self.interpretation.interpretation_aliases.each do |ialias|
+            if (ialias.position_start..ialias.position_end).overlaps?(range)
+              errors.add(:position, I18n.t('errors.interpretation.interpretation_aliases_overlap'))
+            end
+          end
+        end
+      end
+    end
+
     def intent_no_loop_reference
-      unless self.intent_id.blank?
+      unless self.intent_id.blank? || self.interpretation_id.blank?
         if self.interpretation.intent.id == self.intent_id
           errors.add(:intent, I18n.t('errors.interpretation_alias.intent_loop_reference'))
         end
