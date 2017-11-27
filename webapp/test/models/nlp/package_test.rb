@@ -15,7 +15,15 @@ class PackageTest < ActiveSupport::TestCase
           "slug" => "admin/weather/weather_greeting",
           "expressions" => [
             {
-              "expression" => "Hello world",
+              "expression" => "Hello @{admin/weather/weather_who}",
+              "aliases"    => [
+                {
+                  "alias"   => "who",
+                  "slug"    => "admin/weather/weather_who",
+                  "id"      => intents(:weather_who).id,
+                  "package" => weather.id
+                }
+              ],
               "locale"     => "en-US",
               "keep-order" => true,
               "glued"      => true,
@@ -89,5 +97,179 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
     assert_equal "#{p.endpoint}/packages/#{weather.id}", p.url
+  end
+
+
+  test 'No interpretation alias' do
+    expected_expression = 'I want to go to Paris from London'
+    interpretation = Interpretation.new(expression: 'I want to go to Paris from London', locale: 'en-US')
+    interpretation.save
+    assert_equal expected_expression, interpretation.expression_with_aliases
+  end
+
+
+  test 'Only interpretation alias' do
+    expected_expression = '@{admin/travel/route}'
+
+    alias_intent = Intent.new
+    interpretation = Interpretation.new
+    interpretation_alias = InterpretationAlias.new
+
+    owner = User.new
+    owner.stubs(:username).returns('admin')
+
+    agent = Agent.new
+    agent.stubs(:agentname).returns('travel')
+    agent.stubs(:owner).returns(owner)
+
+    alias_intent.stubs(:intentname).returns('route')
+    alias_intent.stubs(:agent).returns(agent)
+
+    interpretation_alias.stubs(:position_start).returns(0)
+    interpretation_alias.stubs(:position_end).returns(33)
+    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:intent).returns(alias_intent)
+
+    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    array = [interpretation_alias]
+    array.stubs(:order).returns([interpretation_alias])
+    array.stubs(:count).returns([interpretation_alias].size)
+    interpretation.stubs(:interpretation_aliases).returns(array)
+
+    assert_equal expected_expression, interpretation.expression_with_aliases
+  end
+
+
+  test 'Start with interpretation alias' do
+    expected_expression = '@{admin/travel/want} to go to Paris from London'
+
+    alias_intent = Intent.new
+    interpretation = Interpretation.new
+    interpretation_alias = InterpretationAlias.new
+
+    owner = User.new
+    owner.stubs(:username).returns('admin')
+
+    agent = Agent.new
+    agent.stubs(:agentname).returns('travel')
+    agent.stubs(:owner).returns(owner)
+
+    alias_intent.stubs(:intentname).returns('want')
+    alias_intent.stubs(:agent).returns(agent)
+
+    interpretation_alias.stubs(:position_start).returns(0)
+    interpretation_alias.stubs(:position_end).returns(6)
+    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:intent).returns(alias_intent)
+
+    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    array = [interpretation_alias]
+    array.stubs(:order).returns([interpretation_alias])
+    array.stubs(:count).returns([interpretation_alias].size)
+    interpretation.stubs(:interpretation_aliases).returns(array)
+
+    assert_equal expected_expression, interpretation.expression_with_aliases
+  end
+
+
+  test 'End with interpretation alias' do
+    expected_expression = 'I want to go to Paris from @{admin/travel/london}'
+
+    alias_intent = Intent.new
+    interpretation = Interpretation.new
+    interpretation_alias = InterpretationAlias.new
+
+    owner = User.new
+    owner.stubs(:username).returns('admin')
+
+    agent = Agent.new
+    agent.stubs(:agentname).returns('travel')
+    agent.stubs(:owner).returns(owner)
+
+    alias_intent.stubs(:intentname).returns('london')
+    alias_intent.stubs(:agent).returns(agent)
+
+    interpretation_alias.stubs(:position_start).returns(27)
+    interpretation_alias.stubs(:position_end).returns(33)
+    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:intent).returns(alias_intent)
+
+    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    array = [interpretation_alias]
+    array.stubs(:order).returns([interpretation_alias])
+    array.stubs(:count).returns([interpretation_alias].size)
+    interpretation.stubs(:interpretation_aliases).returns(array)
+
+    assert_equal expected_expression, interpretation.expression_with_aliases
+  end
+
+
+  test 'Middle interpretation alias' do
+    expected_expression = 'I want to go @{admin/travel/prep-to} Paris from London'
+
+    alias_intent = Intent.new
+    interpretation = Interpretation.new
+    interpretation_alias = InterpretationAlias.new
+
+    owner = User.new
+    owner.stubs(:username).returns('admin')
+
+    agent = Agent.new
+    agent.stubs(:agentname).returns('travel')
+    agent.stubs(:owner).returns(owner)
+
+    alias_intent.stubs(:intentname).returns('prep-to')
+    alias_intent.stubs(:agent).returns(agent)
+
+    interpretation_alias.stubs(:position_start).returns(13)
+    interpretation_alias.stubs(:position_end).returns(15)
+    interpretation_alias.stubs(:interpretation).returns(interpretation)
+    interpretation_alias.stubs(:intent).returns(alias_intent)
+
+    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    array = [interpretation_alias]
+    array.stubs(:order).returns([interpretation_alias])
+    array.stubs(:count).returns([interpretation_alias].size)
+    interpretation.stubs(:interpretation_aliases).returns(array)
+
+    assert_equal expected_expression, interpretation.expression_with_aliases
+  end
+
+
+  test 'Repeated interpretation alias' do
+    expected_expression = 'I want to go to @{admin/travel/town} from @{admin/travel/town}'
+
+    alias_intent = Intent.new
+    interpretation = Interpretation.new
+    interpretation_alias1 = InterpretationAlias.new
+    interpretation_alias2 = InterpretationAlias.new
+
+    owner = User.new
+    owner.stubs(:username).returns('admin')
+
+    agent = Agent.new
+    agent.stubs(:agentname).returns('travel')
+    agent.stubs(:owner).returns(owner)
+
+    alias_intent.stubs(:intentname).returns('town')
+    alias_intent.stubs(:agent).returns(agent)
+
+    interpretation_alias1.stubs(:position_start).returns(16)
+    interpretation_alias1.stubs(:position_end).returns(21)
+    interpretation_alias1.stubs(:interpretation).returns(interpretation)
+    interpretation_alias1.stubs(:intent).returns(alias_intent)
+
+    interpretation_alias2.stubs(:position_start).returns(27)
+    interpretation_alias2.stubs(:position_end).returns(33)
+    interpretation_alias2.stubs(:interpretation).returns(interpretation)
+    interpretation_alias2.stubs(:intent).returns(alias_intent)
+
+    interpretation.stubs(:expression).returns('I want to go to Paris from London')
+    array = [interpretation_alias1, interpretation_alias2]
+    array.stubs(:order).returns([interpretation_alias1, interpretation_alias2])
+    array.stubs(:count).returns([interpretation_alias1, interpretation_alias2].size)
+    interpretation.stubs(:interpretation_aliases).returns(array)
+
+    assert_equal expected_expression, interpretation.expression_with_aliases
   end
 end

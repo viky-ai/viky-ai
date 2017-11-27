@@ -26,6 +26,23 @@ class Interpretation < ApplicationRecord
   end
 
 
+  def expression_with_aliases
+    return expression if interpretation_aliases.count == 0
+    ordered_aliases = interpretation_aliases.order(position_start: :asc)
+    result = []
+    expression.split('').each_with_index do |character, index|
+      interpretation_alias = ordered_aliases.first
+      if interpretation_alias.nil? || index < interpretation_alias.position_start
+        result << character
+      end
+      if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
+        result << "@{#{interpretation_alias.intent.agent.owner.username}/#{interpretation_alias.intent.agent.agentname}/#{interpretation_alias.intent.intentname}}"
+        ordered_aliases = ordered_aliases.drop 1
+      end
+    end
+    result.join('')
+  end
+
   private
 
     def cleanup
