@@ -6,14 +6,21 @@ class InterpretationAlias < ApplicationRecord
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
 
   validate :check_position_start_greater_than_end
-
-  # Validate intent_id is not interpretation.intent.id
+  validate :intent_no_loop_reference
 
   private
 
+    def intent_no_loop_reference
+      unless self.intent_id.blank?
+        if self.interpretation.intent.id == self.intent_id
+          errors.add(:intent, I18n.t('errors.interpretation_alias.intent_loop_reference'))
+        end
+      end
+    end
+
     def check_position_start_greater_than_end
       if self.position_start >= self.position_end
-        errors.add(:position_end, I18n.t('errors.interpretation_aliase.end_position_lower_than_start'))
+        errors.add(:position_end, I18n.t('errors.interpretation_alias.end_position_lower_than_start'))
       end
     end
 end

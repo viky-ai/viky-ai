@@ -2,6 +2,67 @@ require 'test_helper'
 
 class InterpretationAliasTest < ActiveSupport::TestCase
 
+  test 'remove intent used as alias remove related interpretation alias' do
+    weather_who_intent = intents(:weather_who)
+    interpretation = interpretations(:weather_greeting_hello)
+
+    assert_equal weather_who_intent.id, interpretation.interpretation_aliases.first.intent.id
+
+    assert weather_who_intent.destroy
+    assert_equal 0, interpretation.interpretation_aliases.count
+  end
+
+
+  test 'intent_id loop reference' do
+    interpretation_alias = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'who',
+      interpretation_id: interpretations(:weather_greeting_bonjour).id,
+      intent_id: intents(:weather_greeting).id
+    )
+
+    assert !interpretation_alias.save
+    assert_equal ["Intent can't be interpretation intent"], interpretation_alias.errors.full_messages
+  end
+
+
+  test 'aliases no overlap' do
+    first_alias = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'who',
+      intent_id: intents(:weather_who).id
+    )
+    second_alias = InterpretationAlias.new(
+      position_start: 5,
+      position_end: 14,
+      aliasname: 'who',
+      intent_id: intents(:weather_who).id
+    )
+
+    interpretation = interpretations(:weather_greeting_bonjour)
+    interpretation.interpretation_aliases = [
+      first_alias,
+      second_alias
+    ]
+    assert !interpretation.save
+    assert_equal ["Interpretation aliases overlap"], interpretation.errors.full_messages
+
+    second_alias = InterpretationAlias.new(
+      position_start: 22,
+      position_end: 27,
+      aliasname: 'who',
+      intent_id: intents(:weather_who).id
+    )
+    interpretation.interpretation_aliases = [
+      first_alias,
+      second_alias
+    ]
+    assert interpretation.save
+  end
+
+
   test 'Basic alias creation & interpretation association' do
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
@@ -63,4 +124,5 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     expected = ['Position end must be greater than position start']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
+
 end

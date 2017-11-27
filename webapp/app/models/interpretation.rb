@@ -11,8 +11,7 @@ class Interpretation < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
 
   validate :solution_json_valid
-
-  # Validate Alias no not overlap
+  validate :interpretation_aliases_no_overlap
 
   before_save :cleanup
   before_create :set_position
@@ -37,6 +36,20 @@ class Interpretation < ApplicationRecord
     def set_position
       unless intent.nil?
         self.position = intent.interpretations_with_local(self.locale).count
+      end
+    end
+
+    def interpretation_aliases_no_overlap
+      if self.interpretation_aliases.count > 1
+        ialias = self.interpretation_aliases.first
+        first_range = (ialias.position_start..ialias.position_end)
+        self.interpretation_aliases.each_with_index do |ialias, i|
+          unless i == 0
+            if (ialias.position_start..ialias.position_end).overlaps?(first_range)
+              errors.add(:interpretation_aliases, I18n.t('errors.interpretation.interpretation_aliases_overlap'))
+            end
+          end
+        end
       end
     end
 
