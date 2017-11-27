@@ -13,11 +13,13 @@ class InterpretationAlias < ApplicationRecord
 
     def no_overlap
       unless self.interpretation.nil?
-        if self.interpretation.interpretation_aliases.size > 0
+        if self.interpretation.interpretation_aliases.size > 1
           range = (self.position_start..self.position_end)
           self.interpretation.interpretation_aliases.each do |ialias|
-            if (ialias.position_start..ialias.position_end).overlaps?(range)
-              errors.add(:position, I18n.t('errors.interpretation.interpretation_aliases_overlap'))
+            unless self.object_id == ialias.object_id
+              if (ialias.position_start..ialias.position_end).overlaps?(range)
+                errors.add(:position, I18n.t('errors.interpretation_alias.overlap'))
+              end
             end
           end
         end

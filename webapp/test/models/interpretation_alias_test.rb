@@ -53,7 +53,45 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
 
 
-    # Create with 2 ranges
+    # Create with 1 range
+    interpretation = Interpretation.new({
+      expression: 'test',
+      intent_id: intents(:weather_greeting).id,
+      locale: 'fr-FR',
+      interpretation_aliases_attributes: [
+        {
+          position_start: 0,
+          position_end: 5,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        }
+      ]
+    })
+    assert interpretation.save
+
+    # Create with 2 ranges without overlap
+    interpretation = Interpretation.new({
+      expression: 'test',
+      intent_id: intents(:weather_greeting).id,
+      locale: 'fr-FR',
+      interpretation_aliases_attributes: [
+        {
+          position_start: 0,
+          position_end: 5,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        },
+        {
+          position_start: 6,
+          position_end: 10,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        }
+      ]
+    })
+    assert interpretation.save
+
+    # Create with 2 ranges with overlap
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
@@ -76,7 +114,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert !interpretation.save
     assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
 
-    # Update with 2 ranges
+    # Update with 2 ranges with overlap
     assert !interpretation.update({
       interpretation_aliases_attributes: [
         {
