@@ -9,6 +9,8 @@
 #include "duk_module_node.h"
 
 static og_string NlpJsDukTypeString(duk_int_t type);
+static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
+static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
 
 static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 {
@@ -33,16 +35,36 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
 
-//  // load nodes modules
-//  duk_push_object(ctx);
-//  duk_push_c_function(ctx, cb_resolve_module, DUK_VARARGS);
-//  duk_put_prop_string(ctx, -2, "resolve");
-//  duk_push_c_function(ctx, cb_load_module, DUK_VARARGS);
-//  duk_put_prop_string(ctx, -2, "load");
-//  duk_module_node_peval_main(ctx, "/data/git/voqal.ai/platform/nlp/ship/debug/");
-//  duk_module_node_init(ctx);
+  // push og_nlp_th pointer as hidden og_nlp_th variable
+  duk_push_pointer(ctx, ctrl_nlp_th);
+  if (!duk_put_global_string(ctx, DUK_HIDDEN_SYMBOL("og_nlp_th")))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: duk_put_global_string(og_nlp_th) failed");
+    DPcErr;
+  }
 
-// stack after init
+  // load nodes modules
+  duk_push_object(ctx);
+  duk_push_c_function(ctx, NlpJsInitResolvModule, DUK_VARARGS);
+  duk_put_prop_string(ctx, -2, "resolve");
+  duk_push_c_function(ctx, NlpJsInitLoadModule, DUK_VARARGS);
+  duk_put_prop_string(ctx, -2, "load");
+  duk_module_node_init(ctx);
+
+  // eval securely
+  og_string require_moment = "const moment = require('moment');";
+  if (duk_peval_string(ctx, require_moment) != 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading module 'moment' failed : %s", require_moment);
+    DPcErr;
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading 'moment' lib done. %s", duk_safe_to_string(ctx, -1));
+  }
+
+  // stack after init
   ctrl_nlp_th->js->init_stack_idx = duk_get_top(ctx);
   if (ctrl_nlp_th->js->init_stack_idx != DUK_INVALID_INDEX)
   {
@@ -50,6 +72,86 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   }
 
   DONE;
+}
+
+static duk_ret_t NlpJsInitResolvModule(duk_context *ctx)
+{
+  og_string module_id = duk_require_string(ctx, 0);
+  og_string parent_id = duk_require_string(ctx, 1);
+
+  // get og_nlp_th pointer
+  duk_get_global_string(ctx, DUK_HIDDEN_SYMBOL("og_nlp_th"));
+  og_nlp_th ctrl_nlp_th = duk_get_pointer(ctx, -1);
+  if (ctrl_nlp_th == NULL)
+  {
+    return duk_type_error(ctx, "NlpJsInitResolvModule: duk_get_global_string(og_nlp_th) failed");
+  }
+
+  // push back file name
+  if (ctrl_nlp_th->ctrl_nlp->WorkingDirectory[0])
+  {
+    duk_push_sprintf(ctx, "%s/node_modules/%s.js", ctrl_nlp_th->ctrl_nlp->WorkingDirectory, module_id);
+  }
+  else
+  {
+    duk_push_sprintf(ctx, "node_modules/%s.js", module_id);
+  }
+
+  NlpLog(DOgNlpTraceJs, "NlpJsInitResolvModule: resolve_cb: id:'%s', parent-id:'%s', resolve-to:'%s'", module_id,
+      parent_id, duk_get_string(ctx, -1));
+
+  return 1;
+}
+
+static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename)
+{
+  size_t full_file_content_size = 0;
+  char *full_file_content = NULL;
+
+  GError *error = NULL;
+  og_bool file_loaded = g_file_get_contents(filename, &full_file_content, &full_file_content_size, &error);
+  if (!file_loaded)
+  {
+    og_string error_msg = "";
+    if (error != NULL && error->message != NULL)
+    {
+      error_msg = error->message;
+    }
+
+    return duk_type_error(ctx, "push_file_as_string: impossible load file '%s' : %s", filename, error_msg);
+  }
+
+  // load javascript file
+  duk_push_lstring(ctx, full_file_content, full_file_content_size);
+
+  // free allocated buffer
+  g_free(full_file_content);
+
+  return 1;
+}
+
+static duk_ret_t NlpJsInitLoadModule(duk_context *ctx)
+{
+  og_string module_id = duk_require_string(ctx, 0);
+  duk_get_prop_string(ctx, 2, "filename");
+  og_string filename = duk_require_string(ctx, -1);
+
+  // get og_nlp_th pointer
+  duk_get_global_string(ctx, DUK_HIDDEN_SYMBOL("og_nlp_th"));
+  og_nlp_th ctrl_nlp_th = duk_get_pointer(ctx, -1);
+  if (ctrl_nlp_th == NULL)
+  {
+    return duk_type_error(ctx, "NlpJsInitLoadModule: duk_get_global_string(og_nlp_th) failed");
+  }
+
+  NlpLog(DOgNlpTraceJs, "NlpJsInitLoadModule: load_cb: id:'%s', filename:'%s'", module_id, filename);
+
+  if (!push_file_as_string(ctx, filename))
+  {
+    return duk_type_error(ctx, "NlpJsInitLoadModule: impossible read file '%s'", filename);
+  }
+
+  return 1;
 }
 
 og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
@@ -171,7 +273,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
       double computed_number = duk_get_number(ctx, -1);
 
       // check if it is an integer
-      if ((json_int_t)((computed_number * 100) / 100) == computed_number)
+      if ((json_int_t) ((computed_number * 100) / 100) == computed_number)
       {
         json_int_t int_computed_number = computed_number;
         *p_json_anwser = json_integer(computed_number);

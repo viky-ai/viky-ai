@@ -58,8 +58,9 @@
         <bin name="ogm_nls" source="%OG_REPO_PATH%/build/%TARGET%/bin/ogm_nls" />
         <bin name="ognlp" source="%OG_REPO_PATH%/build/%TARGET%/bin/ognlp" />
 
-        <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./" platform="linux" />
-        <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" platform="linux" />
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./"  />
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" />
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/node_modules" target="./" />
 
         <directory name="control" />
         <directory name="log" />

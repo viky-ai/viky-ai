@@ -30,6 +30,7 @@ module Nls
         interpretation << Expression.new("sol number", solution: "`Math.PI`")
         interpretation << Expression.new("sol integer", solution: "`3`")
         interpretation << Expression.new("sol date", solution: "`new Date('2017-12-03')`")
+        interpretation << Expression.new("sol moment lib", solution: "`moment('2017-12-03Z')`")
         interpretation << Expression.new("sol complex", solution: "`var temp = { 'js_key': 'js_value', 'js_array': [] }; temp`")
 
         nested_solution =
@@ -90,6 +91,10 @@ module Nls
 
       def test_solution_date
         check_interpret("sol date", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
+      end
+
+      def test_solution_moment
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
       end
 
       def test_solution_complex
