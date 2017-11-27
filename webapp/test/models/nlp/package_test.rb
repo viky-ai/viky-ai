@@ -4,7 +4,6 @@ class PackageTest < ActiveSupport::TestCase
 
   test "package generation" do
     weather = agents(:weather)
-    intent = intents(:weather_greeting)
     p = Nlp::Package.new(weather)
 
     expected = {
@@ -12,7 +11,7 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"   => intent.id,
+          "id"   => intents(:weather_greeting).id,
           "slug" => "admin/weather/weather_greeting",
           "expressions" => [
             {
@@ -27,6 +26,16 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "Bonjour tout le monde",
               "locale"     => "fr-FR"
+            }
+          ]
+        },
+        {
+          "id"   => intents(:weather_who).id,
+          "slug" => "admin/weather/weather_who",
+          "expressions" => [
+            {
+              "expression" => "world",
+              "locale"     => "en-US"
             }
           ]
         }
@@ -45,6 +54,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation.save
     intent.interpretations = [interpretation]
     intent.save
+    assert intents(:weather_who).destroy
 
     p = Nlp::Package.new(weather)
 

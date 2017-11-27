@@ -3,3 +3,4 @@ weather_greeting_hello_who:
   position_start: 6
   position_end: 11
   interpretation: weather_greeting_hello
+  intent: weather_who

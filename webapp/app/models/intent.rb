@@ -6,6 +6,7 @@ class Intent < ApplicationRecord
 
   belongs_to :agent
   has_many :interpretations, dependent: :destroy
+  has_many :interpretation_aliases, dependent: :destroy
 
   serialize :locales, JSON
 

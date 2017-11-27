@@ -4,11 +4,15 @@ class Interpretation < ApplicationRecord
   belongs_to :intent
   has_many :interpretation_aliases, dependent: :destroy
 
+  accepts_nested_attributes_for :interpretation_aliases
+
   validates :expression, presence: true
   validates :locale, inclusion: { in: self::Locales }, presence: true
   validates :solution, length: { maximum: 2000 }
 
   validate :solution_json_valid
+
+  # Validate Alias no not overlap
 
   before_save :cleanup
   before_create :set_position

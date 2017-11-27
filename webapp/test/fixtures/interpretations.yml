@@ -11,7 +11,13 @@ weather_greeting_bonjour:
   intent: weather_greeting
   locale: 'fr-FR'
 
+weather_who_world:
+  expression: world
+  intent: weather_who
+  locale: 'en-US'
+
 terminator_find_sarah:
   expression: Where is Sarah Connor ?
   intent: terminator_find
   locale: 'en-US'
+

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171124145014) do
+ActiveRecord::Schema.define(version: 20171127084247) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,8 @@ ActiveRecord::Schema.define(version: 20171124145014) do
     t.integer "position_start"
     t.integer "position_end"
     t.uuid "interpretation_id"
+    t.uuid "intent_id"
+    t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end
 
@@ -131,6 +133,7 @@ ActiveRecord::Schema.define(version: 20171124145014) do
 
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "intents", "agents", on_delete: :cascade
+  add_foreign_key "interpretation_aliases", "intents", on_delete: :cascade
   add_foreign_key "interpretation_aliases", "interpretations", on_delete: :cascade
   add_foreign_key "interpretations", "intents", on_delete: :cascade
   add_foreign_key "memberships", "agents", on_delete: :cascade
