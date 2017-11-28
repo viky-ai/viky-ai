@@ -27,9 +27,7 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en-US",
               "keep-order" => true,
               "glued"      => true,
-              "solution"   => {
-                "who" => "`greeting.who`"
-              }
+              "solution"   => "`greeting.who`"
             },
             {
               "expression" => "Bonjour tout le monde",

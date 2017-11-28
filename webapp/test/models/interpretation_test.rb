@@ -76,7 +76,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.solution = (['a'] * 2001).join('')
     assert !interpretation.valid?
     expected = {
-      solution: ['is too long (maximum is 2000 characters)', 'invalid json']
+      solution: ['is too long (maximum is 2000 characters)']
     }
     assert_equal expected, interpretation.errors.messages
   end

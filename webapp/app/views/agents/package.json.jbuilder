@@ -18,6 +18,6 @@ json.interpretations @agent.intents do |intent|
     json.locale interpretation.locale unless interpretation.locale == '*'
     json.keep_order interpretation.keep_order if interpretation.keep_order
     json.glued interpretation.glued if interpretation.glued
-    json.solution JSON.parse(interpretation.solution) unless interpretation.solution.blank?
+    json.solution "`#{interpretation.solution}`" unless interpretation.solution.blank?
   end
 end

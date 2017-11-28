@@ -4,7 +4,7 @@ weather_greeting_hello:
   locale: 'en-US'
   keep_order: true
   glued: true
-  solution: '{"who": "`greeting.who`"}'
+  solution: 'greeting.who'
 
 weather_greeting_bonjour:
   expression: Bonjour tout le monde

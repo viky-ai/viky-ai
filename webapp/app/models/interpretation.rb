@@ -10,8 +10,6 @@ class Interpretation < ApplicationRecord
   validates :locale, inclusion: { in: self::Locales }, presence: true
   validates :solution, length: { maximum: 2000 }
 
-  validate :solution_json_valid
-
   before_save :cleanup
   before_create :set_position
 
@@ -53,14 +51,6 @@ class Interpretation < ApplicationRecord
     def set_position
       unless intent.nil?
         self.position = intent.interpretations_with_local(self.locale).count
-      end
-    end
-
-    def solution_json_valid
-      begin
-        JSON.parse(self.solution) unless self.solution.nil? || self.solution.empty?
-      rescue JSON::ParserError
-        errors.add(:solution, I18n.t('errors.interpretation.invalid_json'))
       end
     end
 end

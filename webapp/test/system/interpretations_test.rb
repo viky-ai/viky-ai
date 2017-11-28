@@ -89,25 +89,6 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test 'Json error on solution' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
-    click_link 'weather_greeting'
-    assert page.has_link?('Hello world')
-
-    within('#interpretations-list') do
-      click_link 'Hello world'
-      fill_in_editor_field 'azerty'
-      click_button 'Update'
-    end
-
-    assert page.has_text?('Solution invalid json')
-  end
-
-
   private
 
     def fill_in_editor_field(text)
