@@ -33,7 +33,7 @@ class Interpretation < ApplicationRecord
         result << character
       end
       if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-        result << "@{#{interpretation_alias.intent.slug}}"
+        result << "@{#{interpretation_alias.aliasname}}"
         ordered_aliases = ordered_aliases.drop 1
       end
     end

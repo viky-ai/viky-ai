@@ -15,7 +15,7 @@ module InterpretationHelper
         data = {
           color: "intent-#{interpretation_alias.intent.color}",
           name: interpretation_alias.aliasname,
-          slug: "#{interpretation_alias.intent.agent.owner.username}/#{interpretation_alias.intent.agent.agentname}/#{interpretation_alias.intent.intentname}",
+          slug: interpretation_alias.intent.slug,
           intent_id: interpretation_alias.intent.id,
           alias_id: interpretation_alias.id
         }
@@ -42,7 +42,7 @@ module InterpretationHelper
         result << character
       end
       if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-        slug = "#{interpretation_alias.intent.agent.owner.username}/#{interpretation_alias.intent.agent.agentname}/#{interpretation_alias.intent.intentname}"
+        slug = interpretation_alias.intent.slug
         css_class = "interpretation-resume__alias-#{interpretation_alias.intent.color}"
         text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
         result << "<span class='#{css_class}' title='#{slug}'>#{text}</span>"

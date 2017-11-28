@@ -15,7 +15,7 @@ class PackageTest < ActiveSupport::TestCase
           "slug" => "admin/weather/weather_greeting",
           "expressions" => [
             {
-              "expression" => "Hello @{admin/weather/weather_who}",
+              "expression" => "Hello @{who}",
               "aliases"    => [
                 {
                   "alias"   => "who",
@@ -107,18 +107,15 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'Only interpretation alias' do
-    expected_expression = '@{admin/travel/route}'
+    expected_expression = '@{route}'
 
-    alias_intent = Intent.new
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
-
-    alias_intent.stubs(:slug).returns('admin/travel/route')
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(33)
     interpretation_alias.stubs(:interpretation).returns(interpretation)
-    interpretation_alias.stubs(:intent).returns(alias_intent)
+    interpretation_alias.stubs(:aliasname).returns('route')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
@@ -131,18 +128,15 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'Start with interpretation alias' do
-    expected_expression = '@{admin/travel/want} to go to Paris from London'
+    expected_expression = '@{want} to go to Paris from London'
 
-    alias_intent = Intent.new
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
-
-    alias_intent.stubs(:slug).returns('admin/travel/want')
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(6)
     interpretation_alias.stubs(:interpretation).returns(interpretation)
-    interpretation_alias.stubs(:intent).returns(alias_intent)
+    interpretation_alias.stubs(:aliasname).returns('want')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
@@ -155,18 +149,15 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'End with interpretation alias' do
-    expected_expression = 'I want to go to Paris from @{admin/travel/london}'
+    expected_expression = 'I want to go to Paris from @{london}'
 
-    alias_intent = Intent.new
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
-
-    alias_intent.stubs(:slug).returns('admin/travel/london')
 
     interpretation_alias.stubs(:position_start).returns(27)
     interpretation_alias.stubs(:position_end).returns(33)
     interpretation_alias.stubs(:interpretation).returns(interpretation)
-    interpretation_alias.stubs(:intent).returns(alias_intent)
+    interpretation_alias.stubs(:aliasname).returns('london')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
@@ -179,18 +170,15 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'Middle interpretation alias' do
-    expected_expression = 'I want to go @{admin/travel/prep-to} Paris from London'
+    expected_expression = 'I want to go @{prep-to} Paris from London'
 
-    alias_intent = Intent.new
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
-
-    alias_intent.stubs(:slug).returns('admin/travel/prep-to')
 
     interpretation_alias.stubs(:position_start).returns(13)
     interpretation_alias.stubs(:position_end).returns(15)
     interpretation_alias.stubs(:interpretation).returns(interpretation)
-    interpretation_alias.stubs(:intent).returns(alias_intent)
+    interpretation_alias.stubs(:aliasname).returns('prep-to')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias]
@@ -203,24 +191,21 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'Repeated interpretation alias' do
-    expected_expression = 'I want to go to @{admin/travel/town} from @{admin/travel/town}'
+    expected_expression = 'I want to go to @{town} from @{town}'
 
-    alias_intent = Intent.new
     interpretation = Interpretation.new
     interpretation_alias1 = InterpretationAlias.new
     interpretation_alias2 = InterpretationAlias.new
 
-    alias_intent.stubs(:slug).returns('admin/travel/town')
-
     interpretation_alias1.stubs(:position_start).returns(16)
     interpretation_alias1.stubs(:position_end).returns(21)
     interpretation_alias1.stubs(:interpretation).returns(interpretation)
-    interpretation_alias1.stubs(:intent).returns(alias_intent)
+    interpretation_alias1.stubs(:aliasname).returns('town')
 
     interpretation_alias2.stubs(:position_start).returns(27)
     interpretation_alias2.stubs(:position_end).returns(33)
     interpretation_alias2.stubs(:interpretation).returns(interpretation)
-    interpretation_alias2.stubs(:intent).returns(alias_intent)
+    interpretation_alias2.stubs(:aliasname).returns('town')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias1, interpretation_alias2]
