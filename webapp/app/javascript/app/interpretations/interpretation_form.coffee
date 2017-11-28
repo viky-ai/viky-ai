@@ -191,7 +191,7 @@ class AliasesForm
       if alias.name != undefined
         return alias.name
       else
-        return alias.slug
+        return alias.slug.split('/')[2]
 
   previous_ids: ->
     ids = []
