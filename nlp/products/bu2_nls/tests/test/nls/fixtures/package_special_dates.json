@@ -17,7 +17,7 @@
       ],
       "solution":
       {
-        "date": "`new Date(25-12-2017)`"
+        "date": "`moment(25-12-2017)`"
       }
     }
   ]

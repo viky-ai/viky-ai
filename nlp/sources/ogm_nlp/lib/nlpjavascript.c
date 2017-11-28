@@ -390,6 +390,43 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
   DONE;
 }
 
+og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
+{
+  og_string quote = "'";
+  og_string var_template = "moment.now = function () { return new Date(%s%s%s); }";
+  og_string date_now = ctrl_nlp_th->date_now;
+  if (!date_now)
+  {
+    quote = "";
+    date_now = "";
+  }
+
+  og_char_buffer var_command[DPcPathSize];
+  snprintf(var_command, DPcPathSize, var_template, quote, date_now, quote);
+
+  NlpLog(DOgNlpTraceJs, "Sending command to duktape: %s", var_command);
+
+  duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsSetNow no javascript ctx initialised");
+    CONT;
+  }
+
+  if (duk_peval_lstring(ctx, var_command, strlen(var_command)) != 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsSetNow: duk_peval_lstring eval failed: %s : '%s'", duk_safe_to_string(ctx, -1),
+        var_command);
+    DPcErr;
+  }
+
+  // keep variable value for better error message
+  char *new_var = g_string_chunk_insert(ctrl_nlp_th->js->varibale_values, var_command);
+  g_queue_push_tail(ctrl_nlp_th->js->variable_list, new_var);
+
+  DONE;
+}
+
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value)
 {
   og_bool truncated = FALSE;

@@ -553,6 +553,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     }
   }
 
+  IFE(NlpJsSetNow(ctrl_nlp_th));
+
   // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {

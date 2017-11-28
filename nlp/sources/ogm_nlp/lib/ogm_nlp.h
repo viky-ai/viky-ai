@@ -793,6 +793,7 @@ og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
+og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th);
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
 
 /* nlpglue.c */

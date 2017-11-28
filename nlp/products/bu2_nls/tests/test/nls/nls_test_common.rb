@@ -43,7 +43,7 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now=nil)
       request = {}
 
       if package == "*"
@@ -65,6 +65,7 @@ module Nls
 
       request['sentence'] = sentence
       request['Accept-Language'] = locale if !locale.nil?
+      request['now'] = now if !now.nil?
       request['show-explanation'] = true  if explain
       request
     end
@@ -221,9 +222,11 @@ module Nls
 
       debug = expected[:debug]
 
+      now = expected[:now]
+
       ap expected if debug
       # creation et exécution de la requete
-      request = json_interpret_body("*", sentence, Interpretation.default_locale)
+      request = json_interpret_body("*", sentence, Interpretation.default_locale, false, now)
       ap request if debug
       actual = Nls.interpret(request)
       ap actual if debug

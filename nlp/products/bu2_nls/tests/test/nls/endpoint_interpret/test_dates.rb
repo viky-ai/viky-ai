@@ -8,6 +8,10 @@ module Nls
 
     class TestDates < NlsTestCommon
 
+      def set_now(date)
+        @now = DateTime(date)
+      end
+
       def setup
         super
 
@@ -21,10 +25,12 @@ module Nls
         Nls.package_update(fixture_parse("package_date.json"))
         Nls.package_update(fixture_parse("package_complex_date.json"))
 
+        @now = DateTime.now
+
       end
 
       def now
-        DateTime.now.to_time
+        @now.to_time
       end
 
       def datetime_utc_formatted(date)
@@ -65,63 +71,63 @@ module Nls
 
       def test_complex_date
         date_string = datetime_utc_formatted(now.days_since(3))
-        check_interpret("dans 3 jours", interpretation: "latency", solution: {"date" => "#{date_string}"})
+        check_interpret("dans 3 jours", interpretation: "latency", solution: {"date" => "#{date_string}"}, now: datetime_utc_formatted(now))
         date_string = datetime_utc_formatted(now.days_since(3))
-        check_interpret("dans trois jours", interpretation: "latency", solution: {"date" => "#{date_string}"})
+        check_interpret("dans trois jours", interpretation: "latency", solution: {"date" => "#{date_string}"}, now: datetime_utc_formatted(now))
         date_string = datetime_utc_formatted(now.days_since(3))
-        check_interpret("in 3 days", interpretation: "latency", solution: {"date" => "#{date_string}"})
+        check_interpret("in 3 days", interpretation: "latency", solution: {"date" => "#{date_string}"}, now: datetime_utc_formatted(now))
         date_string = datetime_utc_formatted(now.days_since(3))
-        check_interpret("in three days", interpretation: "latency", solution: {"date" => "#{date_string}"})
+        check_interpret("in three days", interpretation: "latency", solution: {"date" => "#{date_string}"}, now: datetime_utc_formatted(now))
 
         date_begin = datetime_utc_formatted(now.months_since(1).days_since(3))
         date_end = datetime_utc_formatted(now.months_since(1).days_since(10))
         check_interpret("pour 1 semaine dans 1 mois et 3 jours", interpretation: "duration_with_latency", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now.months_since(1).days_since(3))
         date_end = datetime_utc_formatted(now.months_since(1).days_since(10))
         check_interpret("pour une semaine dans un mois et trois jours", interpretation: "duration_with_latency", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now.months_since(1).days_since(3))
         date_end = datetime_utc_formatted(now.months_since(1).days_since(10))
         check_interpret("for one week in one month and three days", interpretation: "duration_with_latency", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now.months_since(1).days_since(3))
         date_end = datetime_utc_formatted(now.months_since(1).days_since(10))
         check_interpret("for 1 week in 1 month and 3 days", interpretation: "duration_with_latency", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
 
         date_begin = datetime_utc_formatted(now)
         date_end = datetime_utc_formatted(now.days_since(7))
         check_interpret("pour une semaine", interpretation: "period", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now)
         date_end = datetime_utc_formatted(now.days_since(7))
         check_interpret("pour 1 semaine", interpretation: "period", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now)
         date_end = datetime_utc_formatted(now.days_since(7))
         check_interpret("for one week", interpretation: "period", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
         date_begin = datetime_utc_formatted(now)
         date_end = datetime_utc_formatted(now.days_since(7))
         check_interpret("for 1 week", interpretation: "period", solution: {
           "date_begin" => "#{date_begin}",
           "date_end" => "#{date_end}"
-        })
+        }, now: datetime_utc_formatted(now))
       end
 
 #      def test_extra
