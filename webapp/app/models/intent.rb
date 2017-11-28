@@ -38,6 +38,10 @@ class Intent < ApplicationRecord
     end
   end
 
+  def slug
+    "#{agent.slug}/#{intentname}"
+  end
+
   private
 
     def clean_intentname

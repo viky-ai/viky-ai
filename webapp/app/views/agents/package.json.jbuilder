@@ -10,7 +10,7 @@ json.interpretations @agent.intents do |intent|
     unless interpretation.interpretation_aliases.empty?
       json.aliases interpretation.interpretation_aliases do |interpretation_alias|
         json.alias interpretation_alias.aliasname unless interpretation_alias.aliasname.blank?
-        json.slug "#{interpretation_alias.intent.agent.owner.username}/#{interpretation_alias.intent.agent.agentname}/#{interpretation_alias.intent.intentname}"
+        json.slug interpretation_alias.intent.slug
         json.id interpretation_alias.intent.id
         json.package @agent.id
       end

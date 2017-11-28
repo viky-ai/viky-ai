@@ -6,7 +6,7 @@
       <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
       <div class="console__endpoint">
         <span class="badge badge--small badge--success">GET</span>
-        <code>/api/v1/<%= @agent.owner.username %>/<%= @agent.agentname %>/interpret.json</code>
+        <code>/api/v1/<%= @agent.slug %>/interpret.json</code>
       </div>
 
       <a href="#" id="console-enter-fullscreen"

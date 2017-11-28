@@ -402,4 +402,10 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 0, Intent.where(agent_id: agent_id).count
     assert_equal 0, agent.intents.count
   end
+
+
+  test 'Test agent slug generation' do
+    agent = agents(:weather)
+    assert_equal 'admin/weather', agent.slug
+  end
 end

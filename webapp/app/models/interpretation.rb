@@ -36,7 +36,7 @@ class Interpretation < ApplicationRecord
         result << character
       end
       if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-        result << "@{#{interpretation_alias.intent.agent.owner.username}/#{interpretation_alias.intent.agent.agentname}/#{interpretation_alias.intent.intentname}}"
+        result << "@{#{interpretation_alias.intent.slug}}"
         ordered_aliases = ordered_aliases.drop 1
       end
     end

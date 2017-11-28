@@ -154,4 +154,10 @@ class IntentTest < ActiveSupport::TestCase
     assert intent.save
     assert_equal 'blue', intent.color
   end
+
+
+  test 'Test intent generation' do
+    intent = intents(:weather_greeting)
+    assert_equal 'admin/weather/weather_greeting', intent.slug
+  end
 end

@@ -115,15 +115,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
 
-    owner = User.new
-    owner.stubs(:username).returns('admin')
-
-    agent = Agent.new
-    agent.stubs(:agentname).returns('travel')
-    agent.stubs(:owner).returns(owner)
-
-    alias_intent.stubs(:intentname).returns('route')
-    alias_intent.stubs(:agent).returns(agent)
+    alias_intent.stubs(:slug).returns('admin/travel/route')
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(33)
@@ -147,15 +139,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
 
-    owner = User.new
-    owner.stubs(:username).returns('admin')
-
-    agent = Agent.new
-    agent.stubs(:agentname).returns('travel')
-    agent.stubs(:owner).returns(owner)
-
-    alias_intent.stubs(:intentname).returns('want')
-    alias_intent.stubs(:agent).returns(agent)
+    alias_intent.stubs(:slug).returns('admin/travel/want')
 
     interpretation_alias.stubs(:position_start).returns(0)
     interpretation_alias.stubs(:position_end).returns(6)
@@ -179,15 +163,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
 
-    owner = User.new
-    owner.stubs(:username).returns('admin')
-
-    agent = Agent.new
-    agent.stubs(:agentname).returns('travel')
-    agent.stubs(:owner).returns(owner)
-
-    alias_intent.stubs(:intentname).returns('london')
-    alias_intent.stubs(:agent).returns(agent)
+    alias_intent.stubs(:slug).returns('admin/travel/london')
 
     interpretation_alias.stubs(:position_start).returns(27)
     interpretation_alias.stubs(:position_end).returns(33)
@@ -211,15 +187,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation = Interpretation.new
     interpretation_alias = InterpretationAlias.new
 
-    owner = User.new
-    owner.stubs(:username).returns('admin')
-
-    agent = Agent.new
-    agent.stubs(:agentname).returns('travel')
-    agent.stubs(:owner).returns(owner)
-
-    alias_intent.stubs(:intentname).returns('prep-to')
-    alias_intent.stubs(:agent).returns(agent)
+    alias_intent.stubs(:slug).returns('admin/travel/prep-to')
 
     interpretation_alias.stubs(:position_start).returns(13)
     interpretation_alias.stubs(:position_end).returns(15)
@@ -244,15 +212,7 @@ class PackageTest < ActiveSupport::TestCase
     interpretation_alias1 = InterpretationAlias.new
     interpretation_alias2 = InterpretationAlias.new
 
-    owner = User.new
-    owner.stubs(:username).returns('admin')
-
-    agent = Agent.new
-    agent.stubs(:agentname).returns('travel')
-    agent.stubs(:owner).returns(owner)
-
-    alias_intent.stubs(:intentname).returns('town')
-    alias_intent.stubs(:agent).returns(agent)
+    alias_intent.stubs(:slug).returns('admin/travel/town')
 
     interpretation_alias1.stubs(:position_start).returns(16)
     interpretation_alias1.stubs(:position_end).returns(21)
