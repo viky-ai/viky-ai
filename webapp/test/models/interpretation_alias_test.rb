@@ -157,8 +157,22 @@ class InterpretationAliasTest < ActiveSupport::TestCase
   end
 
 
+  test 'Aliasname must be present' do
+    interpretation_alias = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      interpretation: interpretations(:weather_greeting_bonjour),
+      intent: intents(:weather_who)
+    )
+    assert !interpretation_alias.save
+    expected = ['Aliasname can\'t be blank']
+    assert_equal expected, interpretation_alias.errors.full_messages
+  end
+
+
   test 'Error on start position after end position' do
     interpretation_alias = InterpretationAlias.new(
+      aliasname: 'who',
       position_start: 2,
       position_end: 1
     )
@@ -173,6 +187,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
   test 'Error on negative start and end positions' do
     interpretation_alias = InterpretationAlias.new(
+      aliasname: 'who',
       position_start: -9,
       position_end: -3
     )
@@ -187,6 +202,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
   test 'Error start and end positions are egals' do
     interpretation_alias = InterpretationAlias.new(
+      aliasname: 'who',
       position_start: 4,
       position_end: 4
     )

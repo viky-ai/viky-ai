@@ -7,8 +7,9 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.intent = intents(:weather_greeting)
     assert interpretation.save
     interpretation_alias = InterpretationAlias.new(
+      aliasname: 'who',
       position_start: 0,
-      position_end: 12,
+      position_end: 12
     )
     interpretation_alias.interpretation = interpretation
     interpretation_alias.intent = intents(:weather_who)
