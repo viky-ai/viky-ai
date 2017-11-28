@@ -3,15 +3,18 @@ weather_greeting:
   locales: <%= ['en-US', 'fr-FR'].to_json.inspect  %>
   description: My awesome weather bot description
   agent: weather
+  color: red
 
 weather_who:
   intentname: weather_who
   locales: <%= ['en-US', 'fr-FR'].to_json.inspect  %>
   description:
   agent: weather
+  color: blue
 
 terminator_find:
   intentname: terminator_find
   locales: <%= ['en-US'].to_json.inspect  %>
   description: Find Sarah Connor
   agent: terminator
+  color: green

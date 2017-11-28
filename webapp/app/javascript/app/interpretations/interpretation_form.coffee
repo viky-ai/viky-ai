@@ -292,6 +292,10 @@ class InterpretationTagger
           event.preventDefault()
           @addTag(link.data('data'))
 
+    # Used for system test
+    $(@editor_element).on 'select-text', (event, start, end) =>
+      @editor.setSelectedRange([start, end])
+
     $(@editor_element).on 'trix-change', (event) =>
       @sync()
 
