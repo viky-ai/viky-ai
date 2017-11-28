@@ -413,7 +413,7 @@
           ],
           "solution": {
             "date_begin": "`moment().add(latency.years,'y').add(latency.months,'M').add(latency.days,'d').startOf('second')`",
-            "date_end": "`moment().add(latency.years+duration.years,'y').add(latency.months+duration.months,'M').add((latency.days+duration.days),'d').startOf('second')`"
+            "date_end": "`moment().add(latency.years+duration.years,'y').add(latency.months+duration.months,'M').add(latency.days+duration.days,'d').startOf('second')`"
           }
         }
       ]
