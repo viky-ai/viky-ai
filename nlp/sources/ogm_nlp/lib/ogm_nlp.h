@@ -543,6 +543,7 @@ struct og_ctrl_nlp_threaded
   og_bool show_explanation;
   og_bool auto_complete;
   unsigned int regular_trace;
+  og_string date_now;
   og_heap hrequest_word;
   og_heap hba;
 

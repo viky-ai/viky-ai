@@ -112,17 +112,23 @@ og_status NlpWhyNotMatchingBuild(og_nlp_th ctrl_nlp_th, json_t *json_why_not_mat
   og_string expression_text = NULL;
   IFX(json_expression)
   {
-    if (!json_is_string(json_expression))
+    if(!json_is_null(json_expression))
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyNotMatchingBuildGetPackage: json_expression is not a string");
-      DPcErr;
+      if (!json_is_string(json_expression))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyNotMatchingBuildGetPackage: json_expression is not a string");
+        DPcErr;
+      }
+      expression_text = json_string_value(json_expression);
     }
-    expression_text = json_string_value(json_expression);
   }
 
   IFX(json_interpretation)
   {
-    IFE(NlpWhyNotMatchingBuildGetInterpretation(ctrl_nlp_th, package, json_interpretation, expression_text));
+    if(!json_is_null(json_interpretation))
+    {
+      IFE(NlpWhyNotMatchingBuildGetInterpretation(ctrl_nlp_th, package, json_interpretation, expression_text));
+    }
   }
   else
   {

@@ -325,6 +325,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_any));
 
   ctrl_nlp_th->request_sentence = NULL;
+  ctrl_nlp_th->date_now = NULL;
   ctrl_nlp_th->show_explanation = FALSE;
 
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
@@ -342,6 +343,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   json_t *json_why_not_matching = NULL;
   json_t *json_auto_complete = NULL;
   json_t *json_trace = NULL;
+  json_t *json_date_now = NULL;
 
   for (void *iter = json_object_iter(json_request); iter; iter = json_object_iter_next(json_request, iter))
   {
@@ -380,6 +382,10 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else if (Ogstricmp(key, "trace") == 0)
     {
       json_trace = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "now") == 0)
+    {
+      json_date_now = json_object_iter_value(iter);
     }
     else
     {
@@ -462,6 +468,20 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
     else
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: json_show_explanation is not a string");
+      DPcErr;
+    }
+  }
+
+  IFX(json_date_now)
+  {
+    if (json_is_string(json_date_now))
+    {
+      ctrl_nlp_th->date_now = json_string_value(json_date_now);
+      NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequestParse: date_now set to %s", ctrl_nlp_th->date_now)
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestParse: date_now is not a string");
       DPcErr;
     }
   }
