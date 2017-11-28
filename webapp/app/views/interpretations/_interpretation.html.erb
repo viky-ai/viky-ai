@@ -2,7 +2,7 @@
     data-id="<%= interpretation.id %>">
   <% if current_user.can? :edit, interpretation.intent.agent %>
     <div class="interpretations-list__draggable"></div>
-    <%= link_to interpretation.expression,  edit_user_agent_intent_interpretation_path(
+    <%= link_to display_expression(interpretation), edit_user_agent_intent_interpretation_path(
           interpretation.intent.agent.owner,
           interpretation.intent.agent,
           interpretation.intent,

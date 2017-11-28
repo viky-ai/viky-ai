@@ -11,21 +11,48 @@
   }
 }
 
-#interpretations-form .CodeMirror, .interpretations-list__edit .CodeMirror {
-  height: 7em;
+#interpretations-form .CodeMirror,
+.interpretations-list__edit .CodeMirror {
+  height: auto;
+  border: 1px solid #eee;
 }
 
-trix-editor{
-  min-height: 2.5em;
-  &:focus{
-    border-color: $focus_color;
-    box-shadow: 0 0 0 2px rgba($focus_color, .25);
-    outline:none;
+
+.trix-control{
+  position: relative;
+
+  trix-toolbar{
+    display:none;
+  }
+
+  trix-editor{
+    min-height: 2.5em;
+    padding-right: 190px;
+    &:focus{
+      border-color: $focus_color;
+      box-shadow: 0 0 0 2px rgba($focus_color, .25);
+      outline:none;
+    }
+  }
+
+  .trix-control__option{
+    padding: .5em;
+    line-height: 1em;
+    position: absolute;
+    right: .25em;
+    top: .25em;
+    border-radius: 2px;
+    background-color: #f5f5f5;
+    label{
+      line-height: 1em;
+      margin: 0;
+      font-weight: 300;
+      font-size: .9em;
+    }
   }
 }
-trix-toolbar{
-  display:none;
-}
+
+
 
 
 .popup-overlay{
@@ -123,6 +150,8 @@ trix-toolbar{
   }
 }
 
+
+
 @each $name, $color in $picker_colors{
   a[href*='#{$name}']{
     color: $color;
@@ -132,17 +161,43 @@ trix-toolbar{
       background-color: rgba($color, .1);
     }
   }
-  .alias-#{$name}{
-    border-left: 2px solid $color;
+  .intent-#{$name}{
     color: $color;
-    padding-left: .5em;
+    &:before{
+      content: " ";
+      display:inline-block;
+      width: .75em;
+      height: .75em;
+      background-color: $color;
+      border-radius: .75em;
+      vertical-align: baseline;
+      margin-right: .5em;
+    }
   }
 }
 
-.aliases{
-  border: 1px solid #eee;
-  background-color: #f9f9f9;
-  padding: .6em;
-  border-radius: 2px;
-  margin: 1em 0;
+
+.interpretation-resume{
+  @each $name, $color in $picker_colors{
+    .interpretation-resume__alias-#{$name}{
+      color: $color;
+      border-bottom: 2px solid $color;
+    }
+  }
 }
+
+
+.aliases{
+  table{
+    line-height: 1em;
+    margin: 0 0 1em 0;
+    th{
+      border-bottom: 1px solid #eee;
+    }
+    td, th{
+      padding: .25em 0.5em .25em 0;
+      vertical-align: middle;
+    }
+  }
+}
+

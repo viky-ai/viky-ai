@@ -12,11 +12,11 @@ class InterpretationAlias < ApplicationRecord
   private
 
     def no_overlap
-      unless self.interpretation.nil?
-        if self.interpretation.interpretation_aliases.size > 1
-          range = (self.position_start..self.position_end)
-          self.interpretation.interpretation_aliases.each do |ialias|
-            unless self.object_id == ialias.object_id
+      unless interpretation.nil?
+        if interpretation.interpretation_aliases.size > 1
+          range = (position_start..position_end)
+          interpretation.interpretation_aliases.each do |ialias|
+            unless object_id == ialias.object_id
               if (ialias.position_start..ialias.position_end).overlaps?(range)
                 errors.add(:position, I18n.t('errors.interpretation_alias.overlap'))
               end
@@ -27,16 +27,18 @@ class InterpretationAlias < ApplicationRecord
     end
 
     def intent_no_loop_reference
-      unless self.intent_id.blank? || self.interpretation_id.blank?
-        if self.interpretation.intent.id == self.intent_id
+      unless intent_id.blank? || interpretation_id.blank?
+        if interpretation.intent.id == intent_id
           errors.add(:intent, I18n.t('errors.interpretation_alias.intent_loop_reference'))
         end
       end
     end
 
     def check_position_start_greater_than_end
-      if self.position_start >= self.position_end
-        errors.add(:position_end, I18n.t('errors.interpretation_alias.end_position_lower_than_start'))
+      unless position_start.blank? || position_end.blank?
+        if position_start >= position_end
+          errors.add(:position_end, I18n.t('errors.interpretation_alias.end_position_lower_than_start'))
+        end
       end
     end
 end

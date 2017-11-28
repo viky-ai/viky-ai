@@ -21,7 +21,7 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal false, interpretation.glued
     assert interpretation.solution.nil?
     assert_equal 3, intents(:weather_greeting).interpretations.count
-    assert_equal interpretation_alias.id, interpretation.interpretation_aliases[0].id
+    assert_equal interpretation_alias.id, interpretation.interpretation_aliases.reload[0].id
   end
 
 

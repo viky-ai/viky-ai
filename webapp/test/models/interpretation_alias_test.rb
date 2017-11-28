@@ -28,31 +28,6 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'aliases no overlap' do
-    first_alias = InterpretationAlias.new(
-      position_start: 8,
-      position_end: 21,
-      aliasname: 'who',
-      intent_id: intents(:weather_who).id
-    )
-    second_alias = InterpretationAlias.new(
-      position_start: 5,
-      position_end: 14,
-      aliasname: 'who',
-      intent_id: intents(:weather_who).id
-    )
-
-    interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation.interpretation_aliases = []
-    assert interpretation.save
-
-    interpretation.interpretation_aliases << first_alias
-    assert interpretation.save
-
-    interpretation.interpretation_aliases << second_alias
-    assert !interpretation.save
-    assert_equal ["Interpretation aliases position overlap"], interpretation.errors.full_messages
-
-
     # Create with 1 range
     interpretation = Interpretation.new({
       expression: 'test',

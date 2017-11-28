@@ -50,9 +50,11 @@
     padding: .7rem .8rem;
     text-decoration: none;
     width: 100%;
+    color: #222;
+    border-right: 3px solid transparent;
     &:focus,
     &:hover{
-      text-decoration: underline;
+      border-right: 3px solid $primary-color;
     }
   }
 

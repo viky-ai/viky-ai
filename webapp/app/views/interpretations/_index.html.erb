@@ -72,11 +72,18 @@
     </div>
     <ul>
       <% intent_prefix = @agent.owner.username + "/" + @agent.agentname %>
-      <% @agent.intents.where.not(id: @intent.id).each do |intent| %>
+      <% @agent.intents.where.not(id: @intent.id).order(position: :desc, created_at: :desc).each do |intent| %>
         <li data-search="<%= intent_prefix %>/<%= intent.intentname %>" class="enabled">
+          <%
+            data = {
+              color:  "intent-#{intent.color}",
+              slug: "#{intent_prefix}/#{intent.intentname}",
+              intent_id: intent.id
+            }
+          %>
           <a href="#"
              data-action="add-tag"
-             data-tag="alias-<%= intent.color %>____<%= intent_prefix %>/<%= intent.intentname %>">
+             data-data='<%= JSON.generate(data) %>'>
             <%= intent_prefix %>/<strong><%= intent.intentname %></strong>
           </a>
         </li>
