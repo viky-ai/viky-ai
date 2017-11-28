@@ -6,26 +6,35 @@
  */
 #include "ogm_nls.h"
 
+static og_status split_error_message(json_t *errors, char *multiple_errors);
+
 /*
  *  Handling errors for listening threads.
  */
 og_status OgListeningThreadError(struct og_listening_thread *lt)
 {
-  json_t *errors = json_array();
+  json_t *root = lt->response->body;
+  if (root == NULL || ((json_is_object(root) && json_object_size(root) > 0) || json_is_array(root)))
+  {
+    // erase preview root;
+    json_decrefp(&root);
+    lt->response->body = json_object();
+    root = lt->response->body;
+  }
 
-  int nb_error = 0;
+  json_t *errors = json_array();
+  json_object_set_new(root, "errors", errors);
+
   char erreur[DOgErrorSize];
   while (OgErrLast(lt->herr, erreur, 0))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
   if (json_array_size(errors) == 0)
@@ -33,12 +42,7 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
     json_array_append_new(errors, json_string("Unexpected errors"));
   }
 
-  json_t * root = json_object();
-  json_object_set_new(root, "errors", errors);
-
   unsigned char *response = json_dumps(root, JSON_INDENT(2));
-
-  json_decrefp(&root);
 
   struct og_ucisw_input winput[1];
   memset(winput, 0, sizeof(struct og_ucisw_input));
@@ -56,6 +60,24 @@ og_status OgListeningThreadError(struct og_listening_thread *lt)
   }
 
   DPcFree(response);
+
+  DONE;
+}
+
+static og_status split_error_message(json_t *json_errors, char *multiple_errors)
+{
+  if (multiple_errors == NULL) CONT;
+
+  char *saveptr = NULL;
+  char *errors = multiple_errors;
+  char *error_line = strtok_r(errors, "\n", &saveptr);
+  while (error_line != NULL)
+  {
+
+    json_array_append_new(json_errors, json_string(error_line));
+
+    error_line = strtok_r(NULL, "\n", &saveptr);
+  }
 
   DONE;
 }

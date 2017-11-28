@@ -33,6 +33,21 @@ module Nls
         interpretation << Expression.new("sol moment lib", solution: "`moment('2017-12-03Z')`")
         interpretation << Expression.new("sol complex", solution: "`var temp = { 'js_key': 'js_value', 'js_array': [] }; temp`")
 
+        date_range_sol = <<-eos
+          var date1 = moment('2017-12-03Z');
+          var date2 = moment('2017-12-15Z');
+          var date_range = moment.range(date1, date2);
+          (
+            {
+              days_diff: date_range.diff('days'),
+              months_diff: date_range.diff('months', true),
+              duration_json: date_range,
+              duration_iso: date_range.toString()
+            }
+          );
+        eos
+        interpretation << Expression.new("sol moment-range lib", solution: "`#{date_range_sol}`")
+
         nested_solution =
         {
           key1: {
@@ -95,6 +110,20 @@ module Nls
 
       def test_solution_moment
         check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
+      end
+
+      def test_solution_moment_range
+        expected_solution = {
+          days_diff: 12,
+          months_diff: 0.4,
+          duration_json: {
+            start: "2017-12-03T00:00:00.000Z",
+            :end => "2017-12-15T00:00:00.000Z"
+          },
+          duration_iso: "2017-12-03T01:00:00+01:00/2017-12-15T01:00:00+01:00"
+        }
+
+        check_interpret("sol moment-range lib", interpretation: "solution_test_js", solution: expected_solution)
       end
 
       def test_solution_complex

@@ -52,16 +52,22 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   duk_module_node_init(ctx);
 
   // eval securely
-  og_string require_moment = "const moment = require('moment');";
-  if (duk_peval_string(ctx, require_moment) != 0)
+  // https://github.com/rotaready/moment-range#node--npm
+  og_string require = ""   // keep format
+          "var moment_lib = require('moment');\n"// moment
+          "var moment_range = require('moment-range');\n"// moment-range
+          "const moment = moment_range.extendMoment(moment_lib);\n"// extends
+          "moment_lib = undefined;\n"// remove unused variables
+          "moment_range = undefined;\n";// remove unused variables
+  if (duk_peval_string(ctx, require) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading module 'moment' failed : %s", require_moment);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading libs failed : %s", require);
     DPcErr;
   }
   else
   {
-    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading 'moment' lib done. %s", duk_safe_to_string(ctx, -1));
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs done. %s", duk_safe_to_string(ctx, -1));
   }
 
   // stack after init
@@ -233,7 +239,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
   // eval securely
   if (duk_peval_lstring(ctx, js_script, js_script_size) != 0)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s : \"%.*s\"", duk_safe_to_string(ctx, -1),
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n%.*s", duk_safe_to_string(ctx, -1),
         js_script_size, js_script);
     for (GList *iter = ctrl_nlp_th->js->variable_list->head; iter; iter = iter->next)
     {
