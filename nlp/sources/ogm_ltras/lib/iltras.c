@@ -477,10 +477,15 @@ PUBLIC(og_status) OgLtrasFlush(handle)
   for (i = 0; i < ctrl_ltras->ModuleUsed; i++)
   {
     module = ctrl_ltras->Module + i;
-    IFn(module->init) continue;
-    IFn(module->flush) continue;
-    IFE(module->flush(module->handle));
+    if (module->init!=NULL && module->flush!=NULL)
+    {
+      IFE(module->flush(module->handle));
+    }
+    module->init = NULL;
+    module->module = NULL;
+    module->flush = NULL;
   }
+  dlclose(ctrl_ltras->hmodules_lib);
 
   if (!ctrl_ltras->hltras_to_inherit)
   {

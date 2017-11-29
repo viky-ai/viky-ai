@@ -116,6 +116,7 @@ struct og_ctrl_ltras
   int nb_suggestion_levels;
   struct suggestion suggestion[DOgLtrasSuggestionSize];
 
+  DOgHinstance hmodules_lib;
   int ModuleNumber;
   int ModuleUsed;
   struct module *Module;
