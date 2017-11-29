@@ -1,10 +1,10 @@
 json.key_format! -> (key) { key.tr(?_, ?-) }
 
 json.id @agent.id
-json.slug "#{@agent.owner.username}/#{@agent.agentname}"
+json.slug @agent.slug
 json.interpretations @agent.intents do |intent|
   json.id intent.id
-  json.slug "#{@agent.owner.username}/#{@agent.agentname}/#{intent.intentname}"
+  json.slug intent.slug
   json.expressions intent.interpretations do |interpretation|
     json.expression interpretation.expression_with_aliases
     unless interpretation.interpretation_aliases.empty?
