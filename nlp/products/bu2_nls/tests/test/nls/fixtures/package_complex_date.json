@@ -345,7 +345,7 @@
           ],
           "solution":
           {
-            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day) } else { moment().isoWeekday(weekday.day+7) }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day).startOf('day') } else { now.isoWeekday(weekday.day+7).startOf('day') }`"
           }
         },
         {
@@ -365,7 +365,7 @@
           ],
           "solution":
           {
-            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day) } else { moment().isoWeekday(weekday.day+7) }`"
+            "date": "`var now = moment(); if(now.isBefore(moment().isoWeekday(weekday.day))) { now.isoWeekday(weekday.day).startOf('day') } else { now.isoWeekday(weekday.day+7).startOf('day') }`"
           }
         }
       ]
@@ -391,7 +391,7 @@
           ],
           "solution":
           {
-            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7) } else { moment().isoWeekday(weekday.day) }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day-7).startOf('day') } else { now.isoWeekday(weekday.day).startOf('day') }`"
           }
         },
         {
@@ -411,7 +411,7 @@
           ],
           "solution":
           {
-            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7) } else { moment().isoWeekday(weekday.day) }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day-7).startOf('day') } else { now.isoWeekday(weekday.day).startOf('day') }`"
           }
         }
       ]
@@ -446,7 +446,7 @@
           ],
           "solution":
           {
-            "date": "`moment().isoWeekday(weekday.day+number.number*7)`"
+            "date": "`moment().isoWeekday(weekday.day+number.number*7).startOf('day')`"
           }
         }
       ]
@@ -508,7 +508,7 @@
       ],
       "solution":
       {
-        "date": "`moment().isoWeekday(weekday.day-number.number*7)`"
+        "date": "`moment().isoWeekday(weekday.day-number.number*7).startOf('day')`"
       }
     },
     {
