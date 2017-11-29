@@ -24,6 +24,7 @@ module Nls
         Nls.package_update(fixture_parse("package_number.json"))
         Nls.package_update(fixture_parse("package_date.json"))
         Nls.package_update(fixture_parse("package_complex_date.json"))
+        Nls.package_update(fixture_parse("package_special_dates.json"))
       end
 
       def test_simple_date
@@ -111,29 +112,17 @@ module Nls
       def test_complex_date_for_period
         now = "2016-02-28T00:00:00+01:00"
 
-        date_end = "2016-03-06T00:00:00+01:00"
-        check_interpret("pour une semaine", interpretation: "period", solution: {
-          "date_begin" => now,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("pour 1 semaine", interpretation: "period", solution: {
-          "date_begin" => now,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("for one week", interpretation: "period", solution: {
-          "date_begin" => now,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("for 1 week", interpretation: "period", solution: {
-          "date_begin" => now,
-          "date_end" => date_end
-        }, now: now)
+        date_range = "P7D"
+        check_interpret("pour une semaine", interpretation: "period", solution: {"date_range" => date_range}, now: now)
+        check_interpret("pour 1 semaine", interpretation: "period", solution: {"date_range" => date_range}, now: now)
+        check_interpret("for one week", interpretation: "period", solution: {"date_range" => date_range}, now: now)
+        check_interpret("for 1 week", interpretation: "period", solution: {"date_range" => date_range}, now: now)
 
-        date_end = "2016-05-28T00:00:00+01:00"
-#        check_interpret("for 3 months", interpretation: "period", solution: {
-#          "date_begin" => now,
-#          "date_end" => date_end
-#        }, now: now)
+        date_range = "P3M"
+        check_interpret("for 3 months", interpretation: "period", solution: {"date_range" => date_range}, now: now)
+
+        date_range = "P3M2D"
+        check_interpret("for 3 months and 2 days", interpretation: "period", solution: {"date_range" => date_range}, now: now)
 
       end
 

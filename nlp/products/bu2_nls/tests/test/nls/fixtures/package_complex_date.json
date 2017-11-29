@@ -835,7 +835,10 @@
               "id": "durations"
             }
           ],
-          "solution": "`({\n 'date_begin': moment(),\n 'date_end': moment().add(moment.duration(duration.duration)) \n})`"
+          "solution":
+          {
+            "date_range": "`duration.duration`"
+          }
         }
       ]
     },
@@ -861,6 +864,33 @@
           "solution":
           {
             "date_range": "`moment.range(moment().add(moment.duration(latency.duration)).startOf(latency.unit),moment().add(moment.duration(latency.duration)).endOf(latency.unit))`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "special_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_for} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`special_date.date`"
           }
         }
       ]
