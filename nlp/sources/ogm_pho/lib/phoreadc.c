@@ -79,18 +79,16 @@ static og_status PhoConfScanDir(struct og_ctrl_pho *ctrl_pho, og_string recursiv
   {
     og_status status = CORRECT;
 
-    og_bool is_dir = g_file_test(filename, G_FILE_TEST_IS_DIR);
+    unsigned char new_fullname[DPcPathSize];
+    snprintf(new_fullname,DPcPathSize,"%s/%s",recursive_dir,filename);
+    og_bool is_dir = g_file_test(new_fullname, G_FILE_TEST_IS_DIR);
     if (is_dir)
     {
-      unsigned char new_recusive_dir[DPcPathSize];
-      snprintf(new_recusive_dir,DPcPathSize,"%s/%s",recursive_dir,filename);
-      status = PhoConfScanDir(ctrl_pho, new_recusive_dir);
+      status = PhoConfScanDir(ctrl_pho, new_fullname);
     }
     else
     {
-      unsigned char full_filename[DPcPathSize];
-      snprintf(full_filename,DPcPathSize,"%s/%s",recursive_dir,filename);
-      status = PhoReadConfFile(ctrl_pho, is_dir, strlen(full_filename), full_filename);
+      status = PhoReadConfFile(ctrl_pho, is_dir, strlen(new_fullname), new_fullname);
     }
 
     // on error
