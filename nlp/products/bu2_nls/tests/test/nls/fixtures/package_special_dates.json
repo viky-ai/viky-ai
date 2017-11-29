@@ -19,6 +19,24 @@
       {
         "date": "`moment(25-12-2017)`"
       }
+    },
+    {
+      "id": "tomorrow",
+      "expressions":
+      [
+        {
+          "expression": "demain",
+          "locale": "fr"
+        },
+        {
+          "expression": "tomorrow",
+          "locale": "eb"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().add(1,'d')`"
+      }
     }
   ]
 }

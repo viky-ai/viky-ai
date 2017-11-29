@@ -57,6 +57,7 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
           "var moment_lib = require('moment');\n"// moment
           "var moment_range = require('moment-range');\n"// moment-range
           "const moment = moment_range.extendMoment(moment_lib);\n"// extends
+          "moment.fn.toJSON = function() { return this.format(); }\n"
           "moment_lib = undefined;\n"// remove unused variables
           "moment_range = undefined;\n";// remove unused variables
   if (duk_peval_string(ctx, require) != 0)

@@ -661,13 +661,13 @@
           ],
           "solution":
           {
-            "date": "`moment(year.number+'-'+month.number+'-'+day.number)`"
+            "date": "`moment(year.number+'-'+month.number+'-'+day.number, 'YYYY-MM-DD')`"
           }
         }
       ],
       "solution":
       {
-        "date": "`moment(year.number+'-'+month.month_number+'-'+day.number)`"
+        "date": "`moment(year.number+'-'+month.month_number+'-'+day.number, 'YYYY-MM-DD')`"
       }
     },
     {
@@ -717,11 +717,7 @@
               "id": "date_day_month_year"
             }
           ],
-          "solution":
-          {
-            "date_begin": "`date_begin.date`",
-            "date_end": "`date_end.date`"
-          }
+          "solution": "`({ \n 'date_begin': date_begin.date, \n 'date_end': date_end.date \n })`"
         }
       ]
     }
