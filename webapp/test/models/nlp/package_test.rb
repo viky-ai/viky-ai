@@ -191,7 +191,7 @@ class PackageTest < ActiveSupport::TestCase
 
 
   test 'Repeated interpretation alias' do
-    expected_expression = 'I want to go to @{town} from @{town}'
+    expected_expression = 'I want to go to @{town_from} from @{town_to}'
 
     interpretation = Interpretation.new
     interpretation_alias1 = InterpretationAlias.new
@@ -200,12 +200,12 @@ class PackageTest < ActiveSupport::TestCase
     interpretation_alias1.stubs(:position_start).returns(16)
     interpretation_alias1.stubs(:position_end).returns(21)
     interpretation_alias1.stubs(:interpretation).returns(interpretation)
-    interpretation_alias1.stubs(:aliasname).returns('town')
+    interpretation_alias1.stubs(:aliasname).returns('town_from')
 
     interpretation_alias2.stubs(:position_start).returns(27)
     interpretation_alias2.stubs(:position_end).returns(33)
     interpretation_alias2.stubs(:interpretation).returns(interpretation)
-    interpretation_alias2.stubs(:aliasname).returns('town')
+    interpretation_alias2.stubs(:aliasname).returns('town_to')
 
     interpretation.stubs(:expression).returns('I want to go to Paris from London')
     array = [interpretation_alias1, interpretation_alias2]

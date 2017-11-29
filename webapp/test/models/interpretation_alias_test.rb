@@ -53,13 +53,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         {
           position_start: 0,
           position_end: 5,
-          aliasname: 'who',
+          aliasname: 'who1',
           intent_id: intents(:weather_who).id
         },
         {
           position_start: 6,
           position_end: 10,
-          aliasname: 'who',
+          aliasname: 'who2',
           intent_id: intents(:weather_who).id
         }
       ]
@@ -75,13 +75,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         {
           position_start: 8,
           position_end: 21,
-          aliasname: 'who',
+          aliasname: 'who1',
           intent_id: intents(:weather_who).id
         },
         {
           position_start: 5,
           position_end: 14,
-          aliasname: 'who',
+          aliasname: 'who2',
           intent_id: intents(:weather_who).id
         }
       ]
@@ -95,13 +95,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         {
           position_start: 8,
           position_end: 21,
-          aliasname: 'who',
+          aliasname: 'who1',
           intent_id: intents(:weather_who).id
         },
         {
           position_start: 5,
           position_end: 14,
-          aliasname: 'who',
+          aliasname: 'who2',
           intent_id: intents(:weather_who).id
         }
       ]
@@ -115,19 +115,19 @@ class InterpretationAliasTest < ActiveSupport::TestCase
         {
           position_start: 0,
           position_end: 5,
-          aliasname: 'who',
+          aliasname: 'who3',
           intent_id: intents(:weather_who).id
         },
         {
           position_start: 6,
           position_end: 10,
-          aliasname: 'who',
+          aliasname: 'who4',
           intent_id: intents(:weather_who).id
         },
         {
           position_start: 8,
           position_end: 12,
-          aliasname: 'who',
+          aliasname: 'who5',
           intent_id: intents(:weather_who).id
         }
       ]
@@ -214,4 +214,53 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal expected, interpretation_alias.errors.full_messages
   end
 
+
+  test 'Check aliasname uniqueness' do
+    interpretation = Interpretation.new({
+      expression: 'test',
+      intent_id: intents(:weather_greeting).id,
+      locale: 'fr-FR',
+      interpretation_aliases_attributes: [
+        {
+          position_start: 0,
+          position_end: 11,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        },
+        {
+          position_start: 15,
+          position_end: 21,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        }
+      ]
+    })
+    assert !interpretation.save
+    expected = ['Interpretation aliases aliasname has already been taken']
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test 'Redefine deleted aliasname' do
+    interpretation = interpretations(:weather_greeting_hello)
+    interpretation.update({
+      interpretation_aliases_attributes: [
+        {
+          id: interpretation_aliases(:weather_greeting_hello_who).id,
+          position_start: 6,
+          position_end: 11,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id,
+          _destroy: true
+        },
+        {
+          position_start: 15,
+          position_end: 21,
+          aliasname: 'who',
+          intent_id: intents(:weather_who).id
+        }
+      ]
+    })
+    assert interpretation.save
+  end
 end
