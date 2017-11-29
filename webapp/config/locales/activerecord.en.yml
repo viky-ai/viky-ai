@@ -17,6 +17,8 @@ en:
         keep_order: Keep order
         glued: Glued
         solution: Solution
+      interpretation_alias:
+        aliasname: Parameter name
   errors:
     user:
       delete:

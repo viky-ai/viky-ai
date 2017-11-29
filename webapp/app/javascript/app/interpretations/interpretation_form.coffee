@@ -180,6 +180,7 @@ class AliasesForm
     @form_container = form_container
     @aliases = aliases
 
+
   update: ->
     @update_deletable_ids()
     @update_table()
@@ -214,46 +215,67 @@ class AliasesForm
     html = []
     name_prefix = "interpretation[interpretation_aliases_attributes][]"
     for id in @deletable_ids()
-      html.push "<input type='hidden' name='#{name_prefix}[aliasname]' value='' />"
-      html.push "<input type='hidden' name='#{name_prefix}[position_start]' value='' />"
-      html.push "<input type='hidden' name='#{name_prefix}[position_end]' value='' />"
-      html.push "<input type='hidden' name='#{name_prefix}[intent_id]' value='' />"
-      html.push "<input type='hidden' name='#{name_prefix}[id]' value='#{id}' />"
-      html.push "<input type='hidden' name='#{name_prefix}[_destroy]' value='1' />"
+      html.push "
+        <input type='hidden' name='#{name_prefix}[aliasname]'      value='' />
+        <input type='hidden' name='#{name_prefix}[position_start]' value='' />
+        <input type='hidden' name='#{name_prefix}[position_end]'   value='' />
+        <input type='hidden' name='#{name_prefix}[intent_id]'      value='' />
+        <input type='hidden' name='#{name_prefix}[id]'             value='#{id}' />
+        <input type='hidden' name='#{name_prefix}[_destroy]'       value='1' />"
     @form_container.closest('form').prepend(html.join(''))
-
 
   update_table: ->
     html = []
-    html.push "<table>"
-    html.push "<thead>"
-    html.push "  <tr>"
-    html.push "    <th>Parameter name</th>"
-    html.push "    <th>Interpretation</th>"
-    html.push "    <th>Selection</th>"
-    html.push "  </tr>"
-    html.push "</thead>"
+    html.push "
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter name</th>
+          <th>Interpretation</th>
+          <th>Selection</th>
+        </tr>
+      </thead>
+      <tbody>"
+
     for alias in @aliases
       name_prefix = "interpretation[interpretation_aliases_attributes][]"
       line = []
-      line.push "<tr>"
-      line.push "  <td id='#{alias.alias_id}'>"
-      line.push "    <div class='field'>"
-      line.push "      <input type='text' name='#{name_prefix}[aliasname]' value='#{@aliasname(alias)}' />"
-      line.push "      <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />"
-      line.push "      <input type='hidden' name='#{name_prefix}[position_end]' value='#{alias.end}' />"
-      line.push "      <input type='hidden' name='#{name_prefix}[intent_id]' value='#{alias.intent_id}' />"
-      if alias.type == 'new'
-        line.push "      <input type='hidden' name='#{name_prefix}[id]' value='' />"
+      line.push "
+        <tr>
+         <td id='#{alias.alias_id}'>
+          <div class='field'>"
+
+      if alias.aliasname_errors
+        line.push "
+            <div class='field_with_errors'>
+              <input type='text' name='#{name_prefix}[aliasname]' value='#{@aliasname(alias)}' />
+            </div>
+            #{alias.aliasname_errors}"
       else
-        line.push "      <input type='hidden' name='#{name_prefix}[id]' value='#{alias.alias_id}' />"
-      line.push "    </div>"
-      line.push "  </td>"
-      line.push "  <td><span class='#{alias.color}'>#{alias.slug}</span></td>"
-      line.push "  <td>#{alias.selection}</td>"
-      line.push "</tr>"
+        line.push "
+            <input type='text' name='#{name_prefix}[aliasname]' value='#{@aliasname(alias)}' />"
+
+      if alias.type == 'new' || alias.alias_id == undefined
+        alias_id_value = ""
+      else
+        alias_id_value = alias.alias_id
+
+      line.push "
+            <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />
+            <input type='hidden' name='#{name_prefix}[position_end]' value='#{alias.end}' />
+            <input type='hidden' name='#{name_prefix}[intent_id]' value='#{alias.intent_id}' />
+            <input type='hidden' name='#{name_prefix}[id]' value='#{alias_id_value}' />
+          </div>
+        </td>
+        <td><span class='#{alias.color}'>#{alias.slug}</span></td>
+        <td>#{alias.selection}</td>
+      </tr>"
+
       html.push line.join("")
-    html.push "</table>"
+
+    html.push "
+      </tbody>
+    </table>"
 
     @form_container.html(html.join(''))
 
@@ -348,7 +370,7 @@ class InterpretationTagger
       position = end
       keys = piece.getAttributesHash().getKeys()
       if keys.length > 0 && keys[0] != 'blockBreak'
-        data = JSON.parse(piece.getAttributes().href)
+        data = JSON.parse(decodeURIComponent(piece.getAttributes().href))
         data.start     = start
         data.end       = end
         data.selection = piece.string

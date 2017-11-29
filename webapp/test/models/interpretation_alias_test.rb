@@ -165,7 +165,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       intent: intents(:weather_who)
     )
     assert !interpretation_alias.save
-    expected = ['Aliasname can\'t be blank']
+    expected = ['Parameter name can\'t be blank']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
 

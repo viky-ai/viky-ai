@@ -5,9 +5,9 @@
   <div class="field">
     <div class="control trix-control">
       <textarea name="interpretation[expression]" style="display:none;"
-        id="<%= "expression-#{interpretation.id}" %>"><%= display_expression_for_trix(interpretation) %></textarea>
+        id="expression-new"><%= display_expression_for_trix(interpretation) %></textarea>
       <trix-editor
-        input="expression"
+        input="expression-new"
         placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
       <div class="trix-control__option">
         <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>

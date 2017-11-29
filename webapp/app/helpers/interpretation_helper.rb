@@ -2,9 +2,9 @@ module InterpretationHelper
 
   def display_expression_for_trix(interpretation)
     expression = interpretation.expression
-    return expression if interpretation.interpretation_aliases.count == 0
+    return expression if interpretation.interpretation_aliases.size == 0
 
-    ordered_aliases = interpretation.interpretation_aliases.order(position_start: :asc)
+    ordered_aliases = interpretation.interpretation_aliases.sort_by {|ialias| ialias.position_start}
     result = []
     expression.split('').each_with_index do |character, index|
       interpretation_alias = ordered_aliases.first
@@ -17,15 +17,19 @@ module InterpretationHelper
           name: interpretation_alias.aliasname,
           slug: interpretation_alias.intent.slug,
           intent_id: interpretation_alias.intent.id,
-          alias_id: interpretation_alias.id
+          aliasname_errors: display_errors(interpretation_alias, :aliasname)
         }
+        data[:alias_id] = interpretation_alias.id unless interpretation_alias.id.nil?
+        unless interpretation_alias.errors[:aliasname].empty?
+          data[:aliasname_errors] = display_errors(interpretation_alias, :aliasname)
+        end
         text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
-        result << "<a href='#{JSON.generate(data)}'>#{text}</a>"
+        result << "<a href=\"#{ERB::Util.url_encode(JSON.generate(data))}\">#{text}</a>"
         ordered_aliases = ordered_aliases.drop(1)
       end
     end
 
-    result.join('').html_safe
+    result.join('')
   end
 
 

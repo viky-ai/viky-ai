@@ -75,6 +75,33 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Errors on interpretation creation with alias' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_text?('Add')
+
+    assert_equal 1, all('.interpretation-resume').count
+    assert_equal "world", first('.interpretation-resume__alias-blue').text
+
+    first('trix-editor').click.set('Salut Marcel')
+    select_text_in_trix("trix-editor", 6, 12)
+    find_link('admin/weather/weather_who').click
+
+    within('.aliases') do
+      assert page.has_text?('admin/weather/weather_who')
+      assert page.has_text?('Marcel')
+      first('input').set("")
+    end
+
+    click_button 'Add'
+    assert page.has_text?("Parameter name can't be blank")
+  end
+
+
   test 'Update an interpretation (simple)' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
