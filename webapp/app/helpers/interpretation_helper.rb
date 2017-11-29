@@ -65,9 +65,11 @@ module InterpretationHelper
 
   def display_expression_for_trix(interpretation)
     expression = interpretation.expression
-    return expression if interpretation.interpretation_aliases.size == 0
+    return expression if interpretation.interpretation_aliases.empty?
 
-    ordered_aliases = interpretation.interpretation_aliases.sort_by {|ialias| ialias.position_start}
+    ordered_aliases = interpretation.interpretation_aliases
+                        .reject { |ialias| ialias._destroy }
+                        .sort_by { |ialias| ialias.position_start }
     result = []
     expression.split('').each_with_index do |character, index|
       interpretation_alias = ordered_aliases.first
@@ -80,7 +82,6 @@ module InterpretationHelper
         ordered_aliases = ordered_aliases.drop(1)
       end
     end
-
     result.join('')
   end
 
@@ -120,7 +121,6 @@ module InterpretationHelper
     if interpretation.glued
       result << " <span class='badge'>#{t('activerecord.attributes.interpretation.glued')}</span>"
     end
-
     result.join('').html_safe
   end
 
