@@ -31,6 +31,28 @@
       ]
     },
     {
+      "id": "preposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "il y a",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "postposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "ago",
+          "locale": "en"
+        }
+      ]
+    },
+    {
       "id": "preposition_for",
       "expressions":
       [
@@ -43,6 +65,451 @@
           "locale": "fr"
         }
       ]
+    },
+    {
+      "id": "monday",
+      "expressions":
+      [
+        {
+          "expression": "monday",
+          "locale": "en"
+        },
+        {
+          "expression": "lundi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 1
+      }
+    },
+    {
+      "id": "tuesday",
+      "expressions":
+      [
+        {
+          "expression": "tuesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mardi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 2
+      }
+    },
+    {
+      "id": "wednesday",
+      "expressions":
+      [
+        {
+          "expression": "wednesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mercredi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 3
+      }
+    },
+    {
+      "id": "thursday",
+      "expressions":
+      [
+        {
+          "expression": "thursday",
+          "locale": "en"
+        },
+        {
+          "expression": "jeudi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 4
+      }
+    },
+    {
+      "id": "friday",
+      "expressions":
+      [
+        {
+          "expression": "friday",
+          "locale": "en"
+        },
+        {
+          "expression": "vendredi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 5
+      }
+    },
+    {
+      "id": "saturday",
+      "expressions":
+      [
+        {
+          "expression": "saturday",
+          "locale": "en"
+        },
+        {
+          "expression": "samedi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 6
+      }
+    },
+    {
+      "id": "sunday",
+      "expressions":
+      [
+        {
+          "expression": "sunday",
+          "locale": "en"
+        },
+        {
+          "expression": "dimanche",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 7
+      }
+    },
+    {
+      "id": "weekday",
+      "expressions":
+      [
+        {
+          "expression": "@{monday}",
+          "aliases":
+          [
+            {
+              "alias": "monday",
+              "id": "monday"
+            }
+          ]
+        },
+        {
+          "expression": "@{tuesday}",
+          "aliases":
+          [
+            {
+              "alias": "tuesday",
+              "id": "tuesday"
+            }
+          ]
+        },
+        {
+          "expression": "@{wednesday}",
+          "aliases":
+          [
+            {
+              "alias": "wednesday",
+              "id": "wednesday"
+            }
+          ]
+        },
+        {
+          "expression": "@{thursday}",
+          "aliases":
+          [
+            {
+              "alias": "thursday",
+              "id": "thursday"
+            }
+          ]
+        },
+        {
+          "expression": "@{friday}",
+          "aliases":
+          [
+            {
+              "alias": "friday",
+              "id": "friday"
+            }
+          ]
+        },
+        {
+          "expression": "@{saturday}",
+          "aliases":
+          [
+            {
+              "alias": "saturday",
+              "id": "saturday"
+            }
+          ]
+        },
+        {
+          "expression": "@{sunday}",
+          "aliases":
+          [
+            {
+              "alias": "sunday",
+              "id": "sunday"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preposition_next",
+      "expressions":
+      [
+        {
+          "expression": "next",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_next",
+      "expressions":
+      [
+        {
+          "expression": "prochain",
+          "locale": "fr"
+        },
+        {
+          "expression": "prochaine",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_last",
+      "expressions":
+      [
+        {
+          "expression": "last",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_last",
+      "expressions":
+      [
+        {
+          "expression": "dernier",
+          "locale": "fr"
+        },
+        {
+          "expression": "derniere",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedent",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedente",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "next_day_of_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{weekday}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day) } else { moment().isoWeekday(weekday.day+7) }`"
+          }
+        },
+        {
+          "expression": "@{weekday} @{postposition_next}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day) } else { moment().isoWeekday(weekday.day+7) }`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "last_day_of_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{weekday}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7) } else { moment().isoWeekday(weekday.day) }`"
+          }
+        },
+        {
+          "expression": "@{weekday} @{postposition_last}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7) } else { moment().isoWeekday(weekday.day) }`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dayofweek_in_number_week",
+      "expressions":
+      [
+        {
+          "expression": "@{weekday} @{preposition_in} @{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment().isoWeekday(weekday.day+number.number*7)`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dayofweek_number_week_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{weekday} @{number} @{week} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        },
+        {
+          "expression": "@{weekday} @{number} @{preposition_ago} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().isoWeekday(weekday.day-number.number*7)`"
+      }
     },
     {
       "id": "day",
