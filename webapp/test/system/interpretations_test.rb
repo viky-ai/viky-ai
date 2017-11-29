@@ -56,6 +56,55 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Create an interpretation with digit and any' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_text?('Add')
+
+    assert_equal 1, all('.interpretation-resume').count
+    assert_equal "world", first('.interpretation-resume__alias-blue').text
+
+    first('trix-editor').click.set("Le 01/01/2018 j'achète de l'Aspirine")
+    select_text_in_trix("trix-editor", 3, 5)
+    find_link('Digit').click
+
+    select_text_in_trix("trix-editor", 6, 8)
+    find_link('Digit').click
+
+    select_text_in_trix("trix-editor", 9, 13)
+    find_link('Digit').click
+
+    select_text_in_trix("trix-editor", 23, 36)
+    find_link('Any').click
+
+    within('.aliases') do
+      inputs = all("input[name*='aliasname']")
+      inputs[0].set('day')
+      inputs[1].set('month')
+      inputs[2].set('year')
+      inputs[3].set('product')
+    end
+
+    click_button 'Add'
+    assert page.has_text?("Le 01/01/2018 j'achète de l'Aspirine")
+
+    assert_equal 2, all('.interpretation-resume').count
+    expected = ["01", "01", "2018", "de l'Aspirine"]
+    assert_equal expected, all('.interpretation-resume__alias-black').collect(&:text)
+
+    click_link "Le 01/01/2018 j'achète de l'Aspirine"
+    assert page.has_text?('Cancel')
+    within('.aliases') do
+      expected = ["day", "month", "year", "product"]
+      assert_equal expected, all("input[name*='aliasname']").collect(&:value)
+    end
+  end
+
+
   test 'Errors on interpretation creation' do
     go_to_agents_index
     assert page.has_text?('admin/weather')

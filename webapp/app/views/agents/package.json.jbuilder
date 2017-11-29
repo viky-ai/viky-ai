@@ -9,10 +9,24 @@ json.interpretations @agent.intents do |intent|
     json.expression interpretation.expression_with_aliases
     unless interpretation.interpretation_aliases.empty?
       json.aliases interpretation.interpretation_aliases do |interpretation_alias|
-        json.alias interpretation_alias.aliasname unless interpretation_alias.aliasname.blank?
-        json.slug interpretation_alias.intent.slug
-        json.id interpretation_alias.intent.id
-        json.package @agent.id
+
+        if interpretation_alias.type_intent?
+          json.alias interpretation_alias.aliasname
+          json.slug interpretation_alias.intent.slug
+          json.id interpretation_alias.intent.id
+          json.package @agent.id
+        end
+
+        if interpretation_alias.type_digit?
+          json.alias interpretation_alias.aliasname
+          json.type 'digit'
+        end
+
+        if interpretation_alias.type_any?
+          json.alias interpretation_alias.aliasname
+          json.type 'any'
+        end
+
       end
     end
     json.locale interpretation.locale unless interpretation.locale == '*'

@@ -2,6 +2,28 @@ require 'test_helper'
 
 class InterpretationAliasTest < ActiveSupport::TestCase
 
+  test 'belongs to validation on diffrent interpretation alias nature' do
+    digit = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'digit',
+      interpretation_id: interpretations(:weather_greeting_bonjour).id,
+      nature: 'type_digit'
+    )
+    assert digit.save
+
+    digit = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'who',
+      interpretation_id: interpretations(:weather_greeting_bonjour).id,
+      nature: 'type_intent'
+    )
+    assert !digit.save
+    assert_equal ["Intent can't be blank"], digit.errors.full_messages
+  end
+
+
   test 'remove intent used as alias remove related interpretation alias' do
     weather_who_intent = intents(:weather_who)
     interpretation = interpretations(:weather_greeting_hello)
@@ -149,6 +171,10 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.intent = weather_who
 
     assert interpretation_alias.save
+    assert_equal "type_intent", interpretation_alias.nature
+    assert interpretation_alias.type_intent?
+    assert !interpretation_alias.type_digit?
+    assert !interpretation_alias.type_any?
     assert_equal 8, interpretation_alias.position_start
     assert_equal 21, interpretation_alias.position_end
     assert_equal 'who', interpretation_alias.aliasname

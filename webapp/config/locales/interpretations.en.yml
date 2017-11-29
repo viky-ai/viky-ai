@@ -24,7 +24,8 @@ en:
       popup:
         add-tag:
           search_placeholder: Find interpretation by slug
-          empty_msg: No available interpretation
         remove-tags:
           msg: Remove annotation(s)
+      digit: Digit
+      any: Any
 

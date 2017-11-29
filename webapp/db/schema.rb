@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171128161639) do
+ActiveRecord::Schema.define(version: 20171129102345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20171128161639) do
     t.integer "position_end"
     t.uuid "interpretation_id"
     t.uuid "intent_id"
+    t.integer "nature", default: 0
     t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
     t.index ["interpretation_id", "aliasname"], name: "index_interpretation_aliases_on_interpretation_id_and_aliasname", unique: true
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"

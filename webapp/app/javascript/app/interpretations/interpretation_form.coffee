@@ -180,17 +180,16 @@ class AliasesForm
     @form_container = form_container
     @aliases = aliases
 
-
   update: ->
     @update_deletable_ids()
-    @update_table()
+    @update_aliases()
 
   aliasname: (alias) ->
-    if $("##{alias.alias_id}").length == 1
-      return $($("##{alias.alias_id} input[name*=aliasname]")).val()
+    if $("##{alias.id}").length == 1
+      return $($("##{alias.id} input[name*=aliasname]")).val()
     else
-      if alias.name != undefined
-        return alias.name
+      if alias.aliasname != undefined
+        return alias.aliasname
       else
         return alias.slug.split('/')[2]
 
@@ -202,7 +201,7 @@ class AliasesForm
 
   current_ids: ->
     ids = []
-    ids.push(alias.alias_id) for alias in @aliases
+    ids.push(alias.id) for alias in @aliases
     return ids
 
   deletable_ids: ->
@@ -220,11 +219,56 @@ class AliasesForm
         <input type='hidden' name='#{name_prefix}[position_start]' value='' />
         <input type='hidden' name='#{name_prefix}[position_end]'   value='' />
         <input type='hidden' name='#{name_prefix}[intent_id]'      value='' />
+        <input type='hidden' name='#{name_prefix}[nature]'         value='' />
         <input type='hidden' name='#{name_prefix}[id]'             value='#{id}' />
         <input type='hidden' name='#{name_prefix}[_destroy]'       value='1' />"
     @form_container.closest('form').prepend(html.join(''))
 
-  update_table: ->
+
+  build_line: (alias) ->
+    name_prefix = "interpretation[interpretation_aliases_attributes][]"
+
+    if alias.state == 'new' || alias.id == undefined
+        alias_id_value = ""
+      else
+        alias_id_value = alias.id
+
+    reference = alias.intent_slug if alias.nature == 'type_intent'
+    reference = "Digit"           if alias.nature == 'type_digit'
+    reference = "Any"             if alias.nature == 'type_any'
+
+    line = []
+    line.push "
+    <tr>
+      <td id='#{alias.id}'>
+        <div class='field'>
+    "
+
+    if alias.aliasname_errors
+      line.push "
+          <div class='field_with_errors'>
+            <input type='text' name='#{name_prefix}[aliasname]'      value='#{@aliasname(alias)}' />
+          </div>
+          #{alias.aliasname_errors}"
+    else
+      line.push "
+          <input type='text' name='#{name_prefix}[aliasname]'        value='#{@aliasname(alias)}' />"
+
+    line.push "
+          <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />
+          <input type='hidden' name='#{name_prefix}[position_end]'   value='#{alias.end}' />
+          <input type='hidden' name='#{name_prefix}[intent_id]'      value='#{alias.intent_id}' />
+          <input type='hidden' name='#{name_prefix}[nature]'         value='#{alias.nature}' />
+          <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
+        </div>
+      </td>
+      <td><span class='#{alias.color}'>#{reference}</span></td>
+      <td>#{alias.selection}</td>
+    </tr>"
+    line.join("")
+
+
+  update_aliases: ->
     html = []
     html.push "
     <table>
@@ -236,43 +280,7 @@ class AliasesForm
         </tr>
       </thead>
       <tbody>"
-
-    for alias in @aliases
-      name_prefix = "interpretation[interpretation_aliases_attributes][]"
-      line = []
-      line.push "
-        <tr>
-         <td id='#{alias.alias_id}'>
-          <div class='field'>"
-
-      if alias.aliasname_errors
-        line.push "
-            <div class='field_with_errors'>
-              <input type='text' name='#{name_prefix}[aliasname]' value='#{@aliasname(alias)}' />
-            </div>
-            #{alias.aliasname_errors}"
-      else
-        line.push "
-            <input type='text' name='#{name_prefix}[aliasname]' value='#{@aliasname(alias)}' />"
-
-      if alias.type == 'new' || alias.alias_id == undefined
-        alias_id_value = ""
-      else
-        alias_id_value = alias.alias_id
-
-      line.push "
-            <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />
-            <input type='hidden' name='#{name_prefix}[position_end]' value='#{alias.end}' />
-            <input type='hidden' name='#{name_prefix}[intent_id]' value='#{alias.intent_id}' />
-            <input type='hidden' name='#{name_prefix}[id]' value='#{alias_id_value}' />
-          </div>
-        </td>
-        <td><span class='#{alias.color}'>#{alias.slug}</span></td>
-        <td>#{alias.selection}</td>
-      </tr>"
-
-      html.push line.join("")
-
+    html.push(@build_line(alias)) for alias in @aliases
     html.push "
       </tbody>
     </table>"
@@ -283,9 +291,6 @@ class AliasesForm
       @form_container.show()
     else
       @form_container.hide()
-
-
-
 
 
 class InterpretationTagger
@@ -385,8 +390,8 @@ class InterpretationTagger
     @editor.setSelectedRange([range[1], range[1]])
 
   addTag: (data) ->
-    data.alias_id = UUID()
-    data.type = "new"
+    data.id = UUID()
+    data.state = "new"
     range = @editor.getSelectedRange()
     @editor.activateAttribute('href', "#{JSON.stringify(data)}")
     @editor.setSelectedRange([range[1], range[1]])
