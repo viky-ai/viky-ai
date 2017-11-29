@@ -17,26 +17,24 @@
       ],
       "solution":
       {
-        "date": "`moment(25-12-2017)`"
+        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
       }
     },
     {
-      "id": "tomorrow",
+      "id": "special_date",
       "expressions":
       [
         {
-          "expression": "demain",
-          "locale": "fr"
-        },
-        {
-          "expression": "tomorrow",
-          "locale": "eb"
+          "expression": "@{christmas}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            }
+          ]
         }
-      ],
-      "solution":
-      {
-        "date": "`moment().add(1,'d')`"
-      }
+      ]
     }
   ]
 }

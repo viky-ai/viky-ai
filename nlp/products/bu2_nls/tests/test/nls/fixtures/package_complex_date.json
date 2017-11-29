@@ -17,6 +17,32 @@
       ]
     },
     {
+      "id": "preposition_the",
+      "expressions":
+      [
+        {
+          "expression": "the",
+          "locale": "en"
+        },
+        {
+          "expression": "le",
+          "locale": "fr"
+        },
+        {
+          "expression": "la",
+          "locale": "fr"
+        },
+        {
+          "expression": "les",
+          "locale": "fr"
+        },
+        {
+          "expression": "l'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
       "id": "preposition_in",
       "expressions":
       [
@@ -345,7 +371,7 @@
           ],
           "solution":
           {
-            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day).startOf('day') } else { now.isoWeekday(weekday.day+7).startOf('day') }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day).startOf('day') } else { moment().isoWeekday(weekday.day+7).startOf('day') }`"
           }
         },
         {
@@ -365,7 +391,7 @@
           ],
           "solution":
           {
-            "date": "`var now = moment(); if(now.isBefore(moment().isoWeekday(weekday.day))) { now.isoWeekday(weekday.day).startOf('day') } else { now.isoWeekday(weekday.day+7).startOf('day') }`"
+            "date": "`var now = moment(); if(now.isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day).startOf('day') } else { moment().isoWeekday(weekday.day+7).startOf('day') }`"
           }
         }
       ]
@@ -391,7 +417,7 @@
           ],
           "solution":
           {
-            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day-7).startOf('day') } else { now.isoWeekday(weekday.day).startOf('day') }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7).startOf('day') } else { moment().isoWeekday(weekday.day).startOf('day') }`"
           }
         },
         {
@@ -411,7 +437,7 @@
           ],
           "solution":
           {
-            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { now.isoWeekday(weekday.day-7).startOf('day') } else { now.isoWeekday(weekday.day).startOf('day') }`"
+            "date": "`var now = moment(); if(now.isBefore(now.isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7).startOf('day') } else { moment().isoWeekday(weekday.day).startOf('day') }`"
           }
         }
       ]
@@ -564,20 +590,6 @@
       ]
     },
     {
-      "id": "quinzaine",
-      "expressions":
-      [
-        {
-          "expression": "quinzaine",
-          "locale": "fr"
-        },
-        {
-          "expression": "quinzaines",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
       "id": "month",
       "expressions":
       [
@@ -647,7 +659,8 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'days')`"
+            "duration": "`moment.duration(number.number,'days')`",
+            "unit": "day"
           }
         },
         {
@@ -668,7 +681,8 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'weeks')`"
+            "duration": "`moment.duration(number.number,'weeks')`",
+            "unit": "week"
           }
         },
         {
@@ -689,7 +703,8 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'months')`"
+            "duration": "`moment.duration(number.number,'months')`",
+            "unit": "month"
           }
         },
         {
@@ -710,24 +725,25 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'years')`"
+            "duration": "`moment.duration(number.number,'years')`",
+            "unit": "year"
           }
         }
       ]
     },
     {
-      "id": "durations_combinations",
+      "id": "durations",
       "expressions":
       [
         {
-          "expression": "@{durations_combinations} @{duration}",
+          "expression": "@{durations} @{duration}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "durations_combinations",
-              "id": "durations_combinations"
+              "alias": "durations",
+              "id": "durations"
             },
             {
               "alias": "duration",
@@ -736,14 +752,14 @@
           ]
         },
         {
-          "expression": "@{durations_combinations} @{and} @{duration}",
+          "expression": "@{durations} @{and} @{duration}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "durations_combinations",
-              "id": "durations_combinations"
+              "alias": "durations",
+              "id": "durations"
             },
             {
               "alias": "and",
@@ -756,14 +772,14 @@
           ]
         },
         {
-          "expression": "@{durations_combinations} @{coma} @{duration}",
+          "expression": "@{durations} @{coma} @{duration}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "durations_combinations",
-              "id": "durations_combinations"
+              "alias": "durations",
+              "id": "durations"
             },
             {
               "alias": "coma",
@@ -789,13 +805,15 @@
           ],
           "solution":
           {
-            "duration": "`duration.duration`"
+            "duration": "`duration.duration`",
+            "unit": "`duration.unit`"
           }
         }
       ],
       "solution":
       {
-        "duration": "`moment.duration(durations_combinations.duration).add(moment.duration(duration.duration))`"
+        "duration": "`moment.duration(durations.duration).add(moment.duration(duration.duration))`",
+        "unit": "`var a=durations.unit; var b=duration.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
       }
     },
     {
@@ -814,7 +832,7 @@
             },
             {
               "alias": "duration",
-              "id": "durations_combinations"
+              "id": "durations"
             }
           ],
           "solution": "`({\n 'date_begin': moment(),\n 'date_end': moment().add(moment.duration(duration.duration)) \n})`"
@@ -837,12 +855,12 @@
             },
             {
               "alias": "latency",
-              "id": "durations_combinations"
+              "id": "durations"
             }
           ],
           "solution":
           {
-            "date": "`moment().add(moment.duration(latency.duration))`"
+            "date_range": "`moment.range(moment().add(moment.duration(latency.duration)).startOf(latency.unit),moment().add(moment.duration(latency.duration)).endOf(latency.unit))`"
           }
         }
       ]
@@ -863,7 +881,7 @@
             },
             {
               "alias": "duration",
-              "id": "durations_combinations"
+              "id": "durations"
             },
             {
               "alias": "preposition_in",
@@ -871,7 +889,7 @@
             },
             {
               "alias": "latency",
-              "id": "durations_combinations"
+              "id": "durations"
             }
           ],
           "solution": "`({\n 'date_begin': moment().add(moment.duration(latency.duration)),\n 'date_end': moment().add(moment.duration(latency.duration)).add(moment.duration(duration.duration))\n})`"

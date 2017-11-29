@@ -59,13 +59,34 @@ module Nls
         check_interpret("du 3/12/2017 au 15/01/2018", interpretation: "date_interval", solution: solution )
       end
 
-      def test_complex_date
+      def test_complex_date_in_period
         now = "2016-02-28T00:00:00+01:00"
-        expected = "2016-03-02T00:00:00+01:00"
-        check_interpret("dans 3 jours", interpretation: "latency", solution: {date: expected}, now: now)
-        check_interpret("dans trois jours", interpretation: "latency", solution: {date: expected}, now: now)
-        check_interpret("in 3 days", interpretation: "latency", solution: {date: expected}, now: now)
-        check_interpret("in three days", interpretation: "latency", solution: {date: expected}, now: now)
+        expected = {"date_range"=>
+            {"start"=>"2016-03-02T00:00:00+01:00", "end"=>"2016-03-02T23:59:59+01:00"}
+        }
+        check_interpret("dans 3 jours", interpretation: "latency", solution: expected, now: now)
+        check_interpret("dans trois jours", interpretation: "latency", solution: expected, now: now)
+        check_interpret("in 3 days", interpretation: "latency", solution: expected, now: now)
+        check_interpret("in three days", interpretation: "latency", solution: expected, now: now)
+
+        expected = {"date_range"=>
+            {"start"=>"2016-03-13T00:00:00+01:00", "end"=>"2016-03-19T23:59:59+01:00"}
+        }
+        check_interpret("dans 2 semaines", interpretation: "latency", solution: expected, now: now)
+
+        expected = {"date_range"=>
+            {"start"=>"2016-03-01T00:00:00+01:00", "end"=>"2016-03-31T23:59:59+01:00"}
+        }
+#        check_interpret("dans 1 mois", interpretation: "latency", solution: expected, now: now)
+
+        expected = {"date_range"=>
+            {"start"=>"2016-06-05T00:00:00+01:00", "end"=>"2016-06-5T23:59:59+01:00"}
+        }
+#        check_interpret("dans 3 mois 1 semaine et 1 jour", interpretation: "latency", solution: expected, now: now)
+      end
+
+      def test_complex_date_in_period_for_period
+        now = "2016-02-28T00:00:00+01:00"
 
         date_begin = "2016-03-31T00:00:00+02:00"
         date_end = "2016-04-07T00:00:00+02:00"
@@ -85,6 +106,10 @@ module Nls
           "date_begin" => date_begin,
           "date_end" => date_end
         }, now: now)
+      end
+
+      def test_complex_date_for_period
+        now = "2016-02-28T00:00:00+01:00"
 
         date_end = "2016-03-06T00:00:00+01:00"
         check_interpret("pour une semaine", interpretation: "period", solution: {
@@ -103,6 +128,13 @@ module Nls
           "date_begin" => now,
           "date_end" => date_end
         }, now: now)
+
+        date_end = "2016-05-28T00:00:00+01:00"
+#        check_interpret("for 3 months", interpretation: "period", solution: {
+#          "date_begin" => now,
+#          "date_end" => date_end
+#        }, now: now)
+
       end
 
       #      def test_extra
