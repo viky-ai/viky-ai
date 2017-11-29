@@ -35,9 +35,6 @@ static og_status NlpCheckPackage(og_nlp_th ctrl_nlp_th, package_t package)
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCheckPackage checking interpretation ids for package '%s' '%s':",
-      package->slug, package->id);
-
   if ((retour = OgAufScanf(package->ha_interpretation_id, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {
     do
