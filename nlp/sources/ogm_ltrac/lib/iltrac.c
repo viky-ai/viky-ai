@@ -83,6 +83,7 @@ PUBLIC(int) OgLtracFlush(handle)
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
   IFn(handle) DONE;
   IFE(OgPhoFlush(ctrl_ltrac->hpho));
+  IFE(OgMsgFlush(ctrl_ltrac->hmsg));
   DPcFree(ctrl_ltrac);
   DONE;
 }

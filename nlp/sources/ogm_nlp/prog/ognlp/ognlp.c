@@ -222,6 +222,7 @@ static int nlp(struct og_info *info, int argc, char * argv[])
   IFE(OgNlpThreadedFlush(info->hnlpi));
   IFE(OgHeapFlush(info->hfilename_ba));
   IFE(OgHeapFlush(info->hfilename));
+  IFE(OgNlpFlush(info->hnlp));
 
   DONE;
 }
