@@ -75,6 +75,13 @@
     fun:OgXmlCheckXsd
 }
 
+{
+    xmlLib use for xsd validation
+    Memcheck:Leak
+    ...
+    fun:xmlSetGenericErrorFunc
+    fun:OgXmlCheckXsd
+}
 
 ###################
 # gobject

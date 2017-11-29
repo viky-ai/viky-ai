@@ -162,9 +162,6 @@ static int NlpParseConfPuncWordSort(const void *void_word1, const void *void_wor
 og_status NlpParseConfInit(og_nlp ctrl_nlp)
 {
 
-  // punct char skipped
-  IFE(NlpParseAddPunctChar(ctrl_nlp, "'"));
-
   // add punct treated as word
   IFE(NlpParseAddPunctWord(ctrl_nlp, "<="));
   IFE(NlpParseAddPunctWord(ctrl_nlp, ">="));
