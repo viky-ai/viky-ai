@@ -165,7 +165,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       intent: intents(:weather_who)
     )
     assert !interpretation_alias.save
-    expected = ['Parameter name can\'t be blank']
+    expected = ['Parameter name can\'t be blank', 'Parameter name is invalid']
     assert_equal expected, interpretation_alias.errors.full_messages
   end
 
@@ -262,5 +262,39 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       ]
     })
     assert interpretation.save
+  end
+
+
+  test 'Aliasname must be a valid Javascript variable' do
+    interpretation_alias = interpretation_aliases(:weather_greeting_hello_who)
+
+    interpretation_alias.aliasname = '7up'
+    assert !interpretation_alias.validate
+    expected = ['Parameter name is invalid']
+    assert_equal expected, interpretation_alias.errors.full_messages
+
+    interpretation_alias.aliasname = 'a-b'
+    assert !interpretation_alias.validate
+    expected = ['Parameter name is invalid']
+    assert_equal expected, interpretation_alias.errors.full_messages
+
+    interpretation_alias.aliasname = 'ab('
+    assert !interpretation_alias.validate
+    expected = ['Parameter name is invalid']
+    assert_equal expected, interpretation_alias.errors.full_messages
+
+    interpretation_alias.aliasname = 'function'
+    assert !interpretation_alias.validate
+    expected = ['Parameter name is invalid']
+    assert_equal expected, interpretation_alias.errors.full_messages
+
+    interpretation_alias.aliasname = 'o_O'
+    assert interpretation_alias.validate
+
+    interpretation_alias.aliasname = 'aBBa'
+    assert interpretation_alias.validate
+
+    interpretation_alias.aliasname = 'ab2'
+    assert interpretation_alias.validate
   end
 end

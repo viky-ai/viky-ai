@@ -10,6 +10,7 @@ class InterpretationAlias < ApplicationRecord
   validate :intent_no_loop_reference
   validate :no_overlap
   validate :check_aliasname_uniqueness
+  validate :check_aliasname_valid_javascript_variable
 
   private
 
@@ -60,5 +61,11 @@ class InterpretationAlias < ApplicationRecord
         break if dup_found
       end
       errors.add(:aliasname, 'has already been taken') if dup_found
+    end
+
+    def check_aliasname_valid_javascript_variable
+      errors.add(:aliasname, 'is invalid') unless aliasname =~ /\A[a-zA-Z$_][a-zA-Z0-9$_]*\z/
+      javascript_reserved_keywords = %w(await break case catch class const continue debugger default delete do else enum export extends finally for function if implements import in instanceof interface let new package private protected public return static super switch this throw try typeof var void while with yield)
+      errors.add(:aliasname, 'is invalid') if javascript_reserved_keywords.any? { |item| item == aliasname }
     end
 end
