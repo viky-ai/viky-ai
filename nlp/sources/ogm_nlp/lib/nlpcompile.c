@@ -155,7 +155,6 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
   IFE(NlpCompilePackageInterpretations(ctrl_nlp_th, input, json_id, json_slug, json_interpretations));
 
-  json_decrefp(&json_slug);
   DONE;
 }
 
