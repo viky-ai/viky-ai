@@ -43,6 +43,44 @@
       ]
     },
     {
+      "id": "preposition_of",
+      "expressions":
+      [
+        {
+          "expression": "of",
+          "locale": "en"
+        },
+        {
+          "expression": "of the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        },
+        {
+          "expression": "du",
+          "locale": "fr"
+        },
+        {
+          "expression": "de la",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "des",
+          "locale": "fr"
+        },
+        {
+          "expression": "d'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
       "id": "preposition_in",
       "expressions":
       [
@@ -88,6 +126,10 @@
         },
         {
           "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "à",
           "locale": "fr"
         }
       ]
@@ -891,6 +933,128 @@
           "solution":
           {
             "date": "`special_date.date`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "week-of_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment.range( moment(special_date.date).startOf('week'), moment(special_date.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month_year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_day_month_year",
+              "id": "date_day_month_year",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment.range( moment(date_day_month_year.date).startOf('week'), moment(date_day_month_year.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_day_month",
+              "id": "date_day_month",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment.range( moment(date_day_month.date).startOf('week'), moment(date_day_month.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_month_the_day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_month_the_day",
+              "id": "date_month_the_day",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment.range( moment(date_month_the_day.date).startOf('week'), moment(date_month_the_day.date).endOf('week') )`"
           }
         }
       ]

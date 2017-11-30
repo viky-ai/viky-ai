@@ -17,7 +17,33 @@
       ],
       "solution":
       {
-        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
+        "date": "`var date=moment(moment().year()+'-12-25', 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+      }
+    },
+    {
+      "id": "valentine",
+      "expressions":
+      [
+        {
+          "expression": "saint valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "st valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "valentine",
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "date": "`var date=moment(moment().year()+'-02-14', 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
       }
     },
     {
@@ -31,6 +57,16 @@
             {
               "alias": "christmas",
               "id": "christmas"
+            }
+          ]
+        },
+        {
+          "expression": "@{valentine}",
+          "aliases":
+          [
+            {
+              "alias": "valentine",
+              "id": "valentine"
             }
           ]
         }
