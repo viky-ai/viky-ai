@@ -40,3 +40,5 @@ en:
       end_position_lower_than_start: 'must be greater than position start'
       intent_loop_reference: "can't be interpretation intent"
       overlap: overlap
+      aliasname_uniqueness: 'has already been taken'
+      aliasname_valid_javascript_variable: 'is invalid'
