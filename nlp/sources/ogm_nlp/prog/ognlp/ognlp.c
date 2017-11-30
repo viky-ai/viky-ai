@@ -360,27 +360,47 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   DONE;
 }
 
+static og_status split_error_message(json_t *json_errors, char *multiple_errors)
+{
+  if (multiple_errors == NULL) CONT;
+
+  char *saveptr = NULL;
+  char *errors = multiple_errors;
+  char *error_line = strtok_r(errors, "\n", &saveptr);
+  while (error_line != NULL)
+  {
+
+    json_array_append_new(json_errors, json_string(error_line));
+
+    error_line = strtok_r(NULL, "\n", &saveptr);
+  }
+
+  DONE;
+}
+
 static int nlp_send_errors_as_json(struct og_info *info)
 {
+  json_t * root = json_object();
   json_t * errors = json_array();
+  json_object_set_new(root, "errors", errors);
 
-  int nb_error = 0;
   char erreur[DOgErrorSize];
   while (OgErrLast(info->herr, erreur, 0))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
-  json_t * root = json_object();
-  json_object_set_new(root, "errors", errors);
+  if (json_array_size(errors) == 0)
+  {
+    json_array_append_new(errors, json_string("Unexpected errors"));
+  }
+
   json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
   json_decrefp(&root);
 

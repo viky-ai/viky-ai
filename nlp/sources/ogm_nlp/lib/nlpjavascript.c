@@ -7,10 +7,13 @@
 
 #include "ogm_nlp.h"
 #include "duk_module_node.h"
+#include "duk_console.h"
 
 static og_string NlpJsDukTypeString(duk_int_t type);
 static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
 static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
+static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename);
+static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th);
 
 static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 {
@@ -43,6 +46,9 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
     DPcErr;
   }
 
+  // init console
+  duk_console_init(ctx, 0);
+
   // load nodes modules
   duk_push_object(ctx);
   duk_push_c_function(ctx, NlpJsInitResolvModule, DUK_VARARGS);
@@ -51,31 +57,40 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   duk_put_prop_string(ctx, -2, "load");
   duk_module_node_init(ctx);
 
-  // eval securely
-  // https://github.com/rotaready/moment-range#node--npm
-  og_string require = ""   // keep format
-          "var moment_lib = require('moment');\n"// moment
-          "var moment_range = require('moment-range');\n"// moment-range
-          "const moment = moment_range.extendMoment(moment_lib);\n"// extends
-          "moment.fn.toJSON = function() { return this.format(); }\n"
-          "moment_lib = undefined;\n"// remove unused variables
-          "moment_range = undefined;\n";// remove unused variables
-  if (duk_peval_string(ctx, require) != 0)
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading libs failed : %s", require);
-    DPcErr;
-  }
-  else
-  {
-    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs done. %s", duk_safe_to_string(ctx, -1));
-  }
+  // load and init libs
+  IFE(NlpJsLoadLibMoment(ctrl_nlp_th));
 
   // stack after init
   ctrl_nlp_th->js->init_stack_idx = duk_get_top(ctx);
   if (ctrl_nlp_th->js->init_stack_idx != DUK_INVALID_INDEX)
   {
     ctrl_nlp_th->js->init_stack_idx = 0;
+  }
+
+  DONE;
+}
+
+static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th)
+{
+  duk_context *ctx = ctrl_nlp_th->js->duk_context;
+
+  // https://github.com/rotaready/moment-range#node--npm
+  og_string require = ""   // keep format
+          "const moment = require('moment');\n"// moment
+          "var moment_range = require('moment-range');\n"// moment-range
+          "moment_range.extendMoment(moment);\n"// extends
+          "moment_range = undefined;\n"// remove unused variables
+          "";
+
+  if (duk_peval_string(ctx, require) != 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading libs 'moment' failed : \n%s", require);
+    DPcErr;
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs 'moment' done.");
   }
 
   DONE;
@@ -240,13 +255,15 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
   // eval securely
   if (duk_peval_lstring(ctx, js_script, js_script_size) != 0)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n%.*s", duk_safe_to_string(ctx, -1),
-        js_script_size, js_script);
-    for (GList *iter = ctrl_nlp_th->js->variable_list->head; iter; iter = iter->next)
+    NlpThrowErrorTh(ctrl_nlp_th, "%.*s", js_script_size, js_script);
+    NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n// Error : %s\n", duk_safe_to_string(ctx, -1));
+    for (GList *iter = ctrl_nlp_th->js->variable_list->tail; iter; iter = iter->next)
     {
       og_string variable = iter->data;
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: %s", variable);
+      NlpThrowErrorTh(ctrl_nlp_th, "%s", variable);
     }
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n%.*s\n// ===== Context =====", duk_safe_to_string(ctx, -1));
+
     DPcErr;
   }
 
@@ -399,19 +416,26 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
 
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
 {
-  og_string quote = "'";
-  og_string var_template = "moment.now = function () { return new Date(%s%s%s); }";
+  // TODO improve NlpJsSetNow call to one time per request
+
   og_string date_now = ctrl_nlp_th->date_now;
-  if (!date_now)
+  og_string offset_setup = ""   //
+          "moment.updateOffset = function (m) { return m.utcOffset(_now_form_request.utcOffset()); };\n"//
+          "moment.now = function () { return _now_form_request.toDate(); };\n"//
+          "moment.fn.toJSON = function() { return this.format(); };\n";
+
+  og_char_buffer now_setup_command[DPcPathSize];
+  if (date_now == NULL || date_now[0] == '\0')
   {
-    quote = "";
-    date_now = "";
+    snprintf(now_setup_command, DPcPathSize, "const _now_form_request = moment.utc();\n%s", offset_setup);
+  }
+  else
+  {
+    snprintf(now_setup_command, DPcPathSize, "const _now_form_request = moment.parseZone('%s');\n%s", date_now, offset_setup);
   }
 
-  og_char_buffer var_command[DPcPathSize];
-  snprintf(var_command, DPcPathSize, var_template, quote, date_now, quote);
 
-  NlpLog(DOgNlpTraceJs, "Sending command to duktape: %s", var_command);
+  NlpLog(DOgNlpTraceJs, "Sending command to duktape: %s", now_setup_command);
 
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
   if (ctx == NULL)
@@ -420,15 +444,15 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
-  if (duk_peval_lstring(ctx, var_command, strlen(var_command)) != 0)
+  if (duk_peval_string(ctx, now_setup_command) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsSetNow: duk_peval_lstring eval failed: %s : '%s'", duk_safe_to_string(ctx, -1),
-        var_command);
+        now_setup_command);
     DPcErr;
   }
 
   // keep variable value for better error message
-  char *new_var = g_string_chunk_insert(ctrl_nlp_th->js->varibale_values, var_command);
+  char *new_var = g_string_chunk_insert(ctrl_nlp_th->js->varibale_values, now_setup_command);
   g_queue_push_tail(ctrl_nlp_th->js->variable_list, new_var);
 
   DONE;

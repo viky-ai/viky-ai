@@ -30,15 +30,17 @@ module Nls
         interpretation << Expression.new("sol number", solution: "`Math.PI`")
         interpretation << Expression.new("sol integer", solution: "`3`")
         interpretation << Expression.new("sol date", solution: "`new Date('2017-12-03')`")
-        interpretation << Expression.new("sol moment lib", solution: "`moment('2017-12-03Z')`")
+
         interpretation << Expression.new("sol complex", solution: "`var temp = { 'js_key': 'js_value', 'js_array': [] }; temp`")
 
-        date_range_sol = <<-eos
-          var date1 = moment('2017-12-03Z');
-          var date2 = moment('2017-12-15Z');
+        moment_date_range_sol = <<-eos
+          var date1 = moment('2017-12-03T00:00:00+03:00');
+          var date2 = moment('2017-12-15T00:00:00+03:00');
           var date_range = moment.range(date1, date2);
           (
             {
+              date1: date1,
+              date2: date2,
               days_diff: date_range.diff('days'),
               months_diff: date_range.diff('months', true),
               duration_json: date_range,
@@ -46,7 +48,8 @@ module Nls
             }
           );
         eos
-        interpretation << Expression.new("sol moment-range lib", solution: "`#{date_range_sol}`")
+        interpretation << Expression.new("sol moment-range lib", solution: "`#{moment_date_range_sol}`")
+        interpretation << Expression.new("sol moment lib", solution: "`;moment('2017-12-03T00:00:00+03:00')`")
 
         nested_solution =
         {
@@ -109,21 +112,32 @@ module Nls
       end
 
       def test_solution_moment
-        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
+        now = "2017-01-01T00:00:00+03:00"
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00+03:00", now: now)
+
+        now = "2017-01-01T00:00:00+06:00"
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T03:00:00+06:00", now: now)
+
+        now = "2017-01-01T00:00:00Z"
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-02T21:00:00Z", now: now)
       end
 
       def test_solution_moment_range
+
+        now = "2017-01-01T00:00:00+03:00"
         expected_solution = {
+          date1: "2017-12-03T00:00:00+03:00",
+          date2: "2017-12-15T00:00:00+03:00",
           days_diff: 12,
           months_diff: 0.4,
           duration_json: {
-            start: "2017-12-03T00:00:00.000Z",
-            :end => "2017-12-15T00:00:00.000Z"
+            start: "2017-12-03T00:00:00+03:00",
+            :end => "2017-12-15T00:00:00+03:00"
           },
-          duration_iso: "2017-12-03T01:00:00+01:00/2017-12-15T01:00:00+01:00"
+          duration_iso: "2017-12-03T00:00:00+03:00/2017-12-15T00:00:00+03:00"
         }
 
-        check_interpret("sol moment-range lib", interpretation: "solution_test_js", solution: expected_solution)
+        check_interpret("sol moment-range lib", interpretation: "solution_test_js", solution: expected_solution, now: now)
       end
 
       def test_solution_complex
