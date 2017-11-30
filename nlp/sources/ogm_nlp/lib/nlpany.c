@@ -187,7 +187,29 @@ og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *requ
         IFN(request_position) DPcErr;
         struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, request_any->request_word_start);
         IFN(request_word) DPcErr;
-        if (request_position->start + request_position->length < request_word->start_position) return TRUE;
+        if (request_position->start + request_position->length < request_word->start_position)
+        {
+          if (i + 1 < request_expression->orips_nb)
+          {
+            struct request_input_part *request_input_part_next = NlpGetRequestInputPart(ctrl_nlp_th, request_expression,
+                i + 1);
+            IFN(request_input_part_next) DPcErr;
+            if (request_input_part_next->type == nlp_input_part_type_Interpretation)
+            {
+              struct request_position *request_position_next = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+                  request_input_part_next->request_position_start);
+              IFN(request_position) DPcErr;
+              struct request_word *request_word_last = OgHeapGetCell(ctrl_nlp_th->hrequest_word,
+                  request_any->request_word_start + request_any->request_words_nb - 1);
+              IFN(request_word_last) DPcErr;
+              if (request_word_last->start_position + request_word_last->length_position < request_position_next->start) return TRUE;
+              else return FALSE;
+            }
+            else return TRUE;
+
+          }
+          else return TRUE;
+        }
         else return FALSE;
       }
     }
