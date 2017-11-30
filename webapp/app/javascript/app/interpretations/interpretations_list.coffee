@@ -46,7 +46,9 @@ class InterpretationsList
     CodeMirror.fromTextArea(textarea, {
       lineNumbers: true,
       mode: "javascript",
-      autoRefresh: true
+      autoRefresh: true,
+      tabSize: 2,
+      insertSoftTab: true
     });
 
 module.exports = InterpretationsList
