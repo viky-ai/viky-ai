@@ -8,7 +8,7 @@ json.interpretations @agent.intents do |intent|
   json.expressions intent.interpretations do |interpretation|
     json.expression interpretation.expression_with_aliases
     unless interpretation.interpretation_aliases.empty?
-      json.aliases interpretation.interpretation_aliases do |interpretation_alias|
+      json.aliases interpretation.interpretation_aliases.order(:position_start) do |interpretation_alias|
 
         if interpretation_alias.type_intent?
           json.alias interpretation_alias.aliasname
