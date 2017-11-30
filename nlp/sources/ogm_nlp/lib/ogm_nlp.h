@@ -361,6 +361,7 @@ struct request_any
 {
   int request_word_start;
   int request_words_nb;
+  int distance;
 
   /** used to optimize the attachement any <-> request_expression */
   GQueue queue_request_expression[1];
