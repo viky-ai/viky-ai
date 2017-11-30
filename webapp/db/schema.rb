@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171129102345) do
+ActiveRecord::Schema.define(version: 20171129153008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 20171129102345) do
     t.boolean "keep_order", default: false
     t.boolean "glued", default: false
     t.text "solution"
+    t.boolean "auto_solution_enabled", default: true
     t.index ["intent_id"], name: "index_interpretations_on_intent_id"
   end
 

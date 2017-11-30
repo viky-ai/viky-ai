@@ -32,6 +32,14 @@ json.interpretations @agent.intents do |intent|
     json.locale interpretation.locale unless interpretation.locale == '*'
     json.keep_order interpretation.keep_order if interpretation.keep_order
     json.glued interpretation.glued if interpretation.glued
-    json.solution "`#{interpretation.solution}`" unless interpretation.solution.blank?
+
+    if interpretation.auto_solution_enabled
+      if interpretation.interpretation_aliases.empty?
+        json.solution "`\"#{interpretation.expression.gsub('"', '\\"')}\"`"
+      end
+    else
+      json.solution "`#{interpretation.solution}`" unless interpretation.solution.blank?
+    end
+
   end
 end

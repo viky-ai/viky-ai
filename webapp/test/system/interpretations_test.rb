@@ -169,6 +169,7 @@ class InterpretationsTest < ApplicationSystemTestCase
       first('trix-editor').click.set('Salut à tous')
       check('interpretation[keep_order]')
       check('interpretation[glued]')
+      uncheck('interpretation[auto_solution_enabled]')
       fill_in_editor_field '10'
       click_button 'Update'
     end

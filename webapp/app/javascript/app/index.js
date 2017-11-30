@@ -5,6 +5,7 @@ window.Sortable = require('sortablejs');
 
 // CodeMirror (https://github.com/codemirror/CodeMirror)
 window.CodeMirror = require('codemirror');
+import 'codemirror/addon/display/autorefresh'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/lib/codemirror.css'
 

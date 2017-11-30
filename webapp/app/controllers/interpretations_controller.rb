@@ -92,7 +92,7 @@ class InterpretationsController < ApplicationController
 
     def interpretation_params
       params.require(:interpretation).permit(
-        :expression, :locale, :keep_order, :glued, :solution,
+        :expression, :locale, :keep_order, :glued, :solution, :auto_solution_enabled,
         :interpretation_aliases_attributes => [
           :id, :nature, :position_start, :position_end, :aliasname, :intent_id, :_destroy
         ]

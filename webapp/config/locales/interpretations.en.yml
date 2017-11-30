@@ -28,4 +28,5 @@ en:
           msg: Remove annotation(s)
       digit: Digit
       any: Any
+      solution_label: Define the solution using JavaScript code
 

@@ -46,6 +46,14 @@ class Interpretation < ApplicationRecord
       unless expression.nil?
         self.expression = expression.strip
       end
+      if auto_solution_enabled
+        self.solution = nil
+      else
+        if solution.blank?
+          self.auto_solution_enabled = true
+          self.solution = nil
+        end
+      end
     end
 
     def set_position

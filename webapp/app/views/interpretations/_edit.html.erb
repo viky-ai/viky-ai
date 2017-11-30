@@ -25,6 +25,9 @@
         &nbsp;
         <%= f.check_box :glued, id: "glued__#{interpretation.id}" %>
         <%= f.label :glued, for: "glued__#{interpretation.id}" %>
+        &nbsp;
+        <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
+        <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>
       </div>
     </div>
     <%= display_errors(interpretation, :expression) %>
@@ -35,10 +38,13 @@
 
   <div class="aliases" style="display: none;"></div>
 
-  <div class="field">
+  <div class="field field--for-solution"
+      <% if interpretation.auto_solution_enabled %>style="display:none;"<% end %>>
     <div class="control">
-      <%= f.label :solution, for: "solution__#{interpretation.id}" %>
-      <%= f.text_area :solution, id: "solution__#{interpretation.id}", rows: '3', maxlength: '2000', spellcheck: 'false' %>
+      <span class="solution-label">
+        <%= t('views.interpretations.solution_label') %>
+      </span>
+      <%= f.text_area :solution, id: "solution__#{interpretation.id}", maxlength: '2000', spellcheck: 'false' %>
     </div>
     <%= display_errors(interpretation, :solution) %>
   </div>

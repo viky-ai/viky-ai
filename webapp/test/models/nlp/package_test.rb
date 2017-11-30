@@ -31,7 +31,8 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "Bonjour tout le monde",
-              "locale"     => "fr-FR"
+              "locale"     => "fr-FR",
+              "solution"   => "`\"Bonjour tout le monde\"`"
             }
           ]
         },
@@ -41,7 +42,8 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "world",
-              "locale"     => "en-US"
+              "locale"     => "en-US",
+              "solution"   => "`\"world\"`"
             }
           ]
         }
@@ -74,6 +76,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
+              "solution"   => "`\"Bonjour tout le monde\"`"
             }
           ]
         }

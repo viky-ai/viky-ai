@@ -11,12 +11,21 @@
   }
 }
 
-#interpretations-form .CodeMirror,
-.interpretations-list__edit .CodeMirror {
-  height: auto;
-  border: 1px solid #eee;
+.solution-label{
+  color: #999;
+  font-size: .875em;
 }
 
+.CodeMirror{
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  &.CodeMirror-focused{
+    border-color: $focus_color;
+    box-shadow: 0 0 0 2px rgba($focus_color, .25);
+    outline:none;
+  }
+}
 
 .trix-control{
   position: relative;
@@ -26,8 +35,13 @@
   }
 
   trix-editor{
-    min-height: 2.5em;
-    padding-right: 190px;
+    padding-top: 2.5em;
+    min-height: 4.5em;
+    @media (min-width: 600px){
+      min-height: 2.5em;
+      padding-top: .4em;
+      padding-right: 290px;
+    }
     &:focus{
       border-color: $focus_color;
       box-shadow: 0 0 0 2px rgba($focus_color, .25);
@@ -39,15 +53,21 @@
     padding: .5em;
     line-height: 1em;
     position: absolute;
-    right: .25em;
-    top: .25em;
     border-radius: 2px;
     background-color: #f5f5f5;
+    width: calc(100% - .5em);
+    top: .25em;
+    left: .25em;
+    @media (min-width: 600px){
+      width: auto;
+      left: auto;
+      right: .25em;
+    }
     label{
       line-height: 1em;
       margin: 0;
       font-weight: 300;
-      font-size: .9em;
+      font-size: .875em;
     }
   }
 }
@@ -195,8 +215,11 @@
       border-bottom: 1px solid #eee;
     }
     td, th{
-      padding: .25em 0.5em .25em 0;
+      padding: .15em 0.5em .15em 0;
       vertical-align: middle;
+    }
+    tbody{
+      font-size: .875em;
     }
   }
 }

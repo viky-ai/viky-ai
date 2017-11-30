@@ -121,6 +121,10 @@ module InterpretationHelper
     if interpretation.glued
       result << " <span class='badge'>#{t('activerecord.attributes.interpretation.glued')}</span>"
     end
+    if interpretation.auto_solution_enabled
+      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
+    end
+
     result.join('').html_safe
   end
 

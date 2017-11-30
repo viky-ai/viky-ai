@@ -398,6 +398,30 @@ class InterpretationTagger
 
 
 
+class InterpretationSolutions
+  constructor: ->
+    # Initial state on 'turbolinks:load' event
+    if $("input[name='interpretation[auto_solution_enabled]']").is(':checked')
+      $('.field--for-solution').hide()
+    else
+      $('.field--for-solution').show()
+
+    $(document).on 'trix-initialize', (event) => @setupListeners(event)
+
+  setupListeners: (event) ->
+    auto_solution_input = $(event.target).closest('form').find("input[name*='auto_solution_enabled']")
+    auto_solution_input.on 'change', (event) => @update(event)
+
+  update: (event) ->
+    auto_solution_input = $(event.target)
+    solution_container = auto_solution_input.closest('form').find('.field--for-solution')
+    if auto_solution_input.is(':checked')
+      solution_container.hide()
+    else
+      solution_container.show()
+
+
+
 SetupForm = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     for trix in $("trix-editor")
@@ -410,5 +434,6 @@ SetupPopUps = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     new PopupAddTag()
     new TagRemovePopup()
+    new InterpretationSolutions()
 
 $(document).on('turbolinks:load', SetupPopUps)

@@ -45,7 +45,8 @@ class InterpretationsList
   @displayCodeEditor: (textarea)->
     CodeMirror.fromTextArea(textarea, {
       lineNumbers: true,
-      mode: "javascript"
+      mode: "javascript",
+      autoRefresh: true
     });
 
 module.exports = InterpretationsList
