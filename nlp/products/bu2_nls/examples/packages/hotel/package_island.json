@@ -1,0 +1,147 @@
+{
+  "id": "island",
+  "interpretations":
+  [
+    {
+      "id": "bali",
+      "expressions":
+      [
+        {
+          "expression": "Bali"
+        }
+      ],
+      "solution":
+      {
+        "island": "Bali"
+      }
+    },
+    {
+      "id": "mauricius",
+      "expressions":
+      [
+        {
+          "expression": "Mauricius",
+          "locale": "en"
+        },
+        {
+          "expression": "Maurice",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "island": "Mauricius"
+      }
+    },
+    {
+      "id": "maldives",
+      "expressions":
+      [
+        {
+          "expression": "Maldives",
+          "locale": "en"
+        },
+        {
+          "expression": "Maldives",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "island": "Maldives"
+      }
+    },
+    {
+      "id": "island_expression",
+      "expressions":
+      [
+        {
+          "expression": "island",
+          "locale": "en"
+        },
+        {
+          "expression": "île",
+          "locale": "fr"
+        },
+        {
+          "expression": "île de",
+          "locale": "fr"
+        },
+        {
+          "expression": "îles",
+          "locale": "fr"
+        },
+        {
+          "expression": "îles des",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "simple_island",
+      "expressions":
+      [
+        {
+          "expression": "@{bali}",
+          "aliases":
+          [
+            {
+              "alias": "bali",
+              "id": "bali"
+            }
+          ]
+        },
+        {
+          "expression": "@{mauricius}",
+          "aliases":
+          [
+            {
+              "alias": "mauricius",
+              "id": "mauricius"
+            }
+          ]
+        },
+        {
+          "expression": "@{maldives}",
+          "aliases":
+          [
+            {
+              "alias": "maldives",
+              "id": "maldives"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "island",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_island}",
+          "aliases":
+          [
+            {
+              "alias": "simple_island",
+              "id": "simple_island"
+            }
+          ]
+        },
+        {
+          "expression": "@{simple_island} @{island_expression}",
+          "aliases":
+          [
+            {
+              "alias": "simple_island",
+              "id": "simple_island"
+            },
+            {
+              "alias": "island_expression",
+              "id": "island_expression"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

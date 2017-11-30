@@ -1,0 +1,99 @@
+{
+  "id": "hotel",
+  "interpretations":
+  [
+    {
+      "id": "simple_hotel",
+      "expressions":
+      [
+        {
+          "expression": "hôtel",
+          "locale": "fr"
+        },
+        {
+          "expression": "chambre",
+          "locale": "fr"
+        },
+        {
+          "expression": "hotel",
+          "locale": "en"
+        },
+        {
+          "expression": "room",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "simple_guest_room",
+      "expressions":
+      [
+        {
+          "expression": "chambre d'hôte",
+          "locale": "fr"
+        },
+        {
+          "expression": "guest room",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "article_hotel",
+      "expressions":
+      [
+        {
+          "expression": "@{article_a} @{simple_hotel}",
+          "aliases":
+          [
+            {
+              "alias": "article_a",
+              "id": "article_a",
+              "package": "grammar"
+            },
+            {
+              "alias": "simple_hotel",
+              "id": "simple_hotel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hotel",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_hotel}",
+          "aliases":
+          [
+            {
+              "alias": "simple_hotel",
+              "id": "simple_hotel"
+            }
+          ]
+        },
+        {
+          "expression": "@{simple_guest_room}",
+          "aliases":
+          [
+            {
+              "alias": "simple_guest_room",
+              "id": "simple_guest_room"
+            }
+          ]
+        },
+        {
+          "expression": "@{article_hotel}",
+          "aliases":
+          [
+            {
+              "alias": "article_hotel",
+              "id": "article_hotel"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

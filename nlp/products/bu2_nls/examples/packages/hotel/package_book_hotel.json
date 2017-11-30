@@ -1,0 +1,118 @@
+{
+  "id": "book_hotel",
+  "interpretations":
+  [
+    {
+      "id": "go_location",
+      "expressions":
+      [
+        {
+          "expression": "@{go} @{location}",
+          "aliases":
+          [
+            {
+              "alias": "go",
+              "id": "go",
+              "package": "go"
+            },
+            {
+              "alias": "location",
+              "id": "location",
+              "package": "location"
+            }
+          ]
+        },
+        {
+          "expression": "@{go} @{location} @{hotel_features}",
+          "aliases":
+          [
+            {
+              "alias": "go",
+              "id": "go",
+              "package": "go"
+            },
+            {
+              "alias": "location",
+              "id": "location",
+              "package": "location"
+            },
+            {
+              "alias": "hotel_features",
+              "id": "hotel_features",
+              "package": "hotel_features"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "book_hotel",
+      "expressions":
+      [
+        {
+          "expression": "@{book} @{hotel}",
+          "aliases":
+          [
+            {
+              "alias": "book",
+              "id": "book",
+              "package": "book"
+            },
+            {
+              "alias": "hotel",
+              "id": "hotel",
+              "package": "hotel"
+            }
+          ]
+        },
+        {
+          "expression": "@{book} @{hotel} @{hotel_features}",
+          "aliases":
+          [
+            {
+              "alias": "book",
+              "id": "book",
+              "package": "book"
+            },
+            {
+              "alias": "hotel",
+              "id": "hotel",
+              "package": "hotel"
+            },
+            {
+              "alias": "hotel_features",
+              "id": "hotel_features",
+              "package": "hotel_features"
+            }
+          ]
+        },
+        {
+          "expression": "@{want} @{hotel} @{hotel_features}",
+          "aliases":
+          [
+            {
+              "alias": "want",
+              "id": "want",
+              "package": "want"
+            },
+            {
+              "alias": "hotel",
+              "id": "hotel",
+              "package": "hotel"
+            },
+            {
+              "alias": "hotel_features",
+              "id": "hotel_features",
+              "package": "hotel_features"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "book": "hotel",
+        "hotel_features": "`hotel_features`"
+      }
+    }
+  ]
+}

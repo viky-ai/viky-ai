@@ -1,0 +1,71 @@
+{
+  "id": "location",
+  "interpretations":
+  [
+    {
+      "id": "location",
+      "expressions":
+      [
+        {
+          "expression": "@{town}",
+          "aliases":
+          [
+            {
+              "alias": "town",
+              "id": "town",
+              "package": "town"
+            }
+          ]
+        },
+        {
+          "expression": "@{island}",
+          "aliases":
+          [
+            {
+              "alias": "island",
+              "id": "island",
+              "package": "island"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "in_location",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_location_in} @{location}",
+          "aliases":
+          [
+            {
+              "alias": "preposition_location_in",
+              "id": "preposition_location_in",
+              "package": "grammar"
+            },
+            {
+              "alias": "location",
+              "id": "location"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_location_in} @{location}",
+          "aliases":
+          [
+            {
+              "alias": "preposition_location_in",
+              "id": "preposition_location_in",
+              "package": "grammar"
+            },
+            {
+              "alias": "location",
+              "type": "any"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,115 @@
+{
+  "id": "grammar",
+  "interpretations":
+  [
+    {
+      "id": "preposition_want_to",
+      "expressions":
+      [
+        {
+          "expression": "to",
+          "locale": "en"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_go_to",
+      "expressions":
+      [
+        {
+          "expression": "to",
+          "locale": "en"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_location_in",
+      "expressions":
+      [
+        {
+          "expression": "in",
+          "locale": "en"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date_for",
+      "expressions":
+      [
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_during_duration",
+      "expressions":
+      [
+        {
+          "expression": "during",
+          "locale": "en"
+        },
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "pendant",
+          "locale": "fr"
+        },
+        {
+          "expression": "durant",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "article_a",
+      "expressions":
+      [
+        {
+          "expression": "a",
+          "locale": "en"
+        },
+        {
+          "expression": "an",
+          "locale": "en"
+        },
+        {
+          "expression": "un",
+          "locale": "fr"
+        },
+        {
+          "expression": "une",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "coma",
+      "expressions":
+      [
+        {
+          "expression": ","
+        }
+      ]
+    }
+  ]
+}

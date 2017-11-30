@@ -1,0 +1,55 @@
+{
+  "id": "please",
+  "interpretations":
+  [
+    {
+      "id": "simple_please",
+      "expressions":
+      [
+        {
+          "expression": "s'il te plait",
+          "locale": "fr"
+        },
+        {
+          "expression": "s'il vous plait",
+          "locale": "fr"
+        },
+        {
+          "expression": "please",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "please",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_please}",
+          "aliases":
+          [
+            {
+              "alias": "simple_please",
+              "id": "simple_please"
+            }
+          ]
+        },
+        {
+          "expression": "@{simple_please} @{coma}",
+          "aliases":
+          [
+            {
+              "alias": "simple_please",
+              "id": "simple_please"
+            },
+            {
+              "alias": "coma",
+              "id": "coma",
+              "package": "grammar"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

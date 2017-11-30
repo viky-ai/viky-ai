@@ -1,0 +1,100 @@
+{
+  "id": "want",
+  "interpretations":
+  [
+    {
+      "id": "simple_want",
+      "expressions":
+      [
+        {
+          "expression": "je veux",
+          "locale": "fr"
+        },
+        {
+          "expression": "je voudrais",
+          "locale": "fr"
+        },
+        {
+          "expression": "je souhaite",
+          "locale": "fr"
+        },
+        {
+          "expression": "j'aimerai",
+          "locale": "fr"
+        },
+        {
+          "expression": "il me faudrait",
+          "locale": "fr"
+        },
+        {
+          "expression": "il me faut",
+          "locale": "fr"
+        },
+        {
+          "expression": "j'ai envie",
+          "locale": "fr"
+        },
+        {
+          "expression": "I want",
+          "locale": "en"
+        },
+        {
+          "expression": "I'd like",
+          "locale": "en"
+        },
+        {
+          "expression": "I would like",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "want_to",
+      "expressions":
+      [
+        {
+          "expression": "@{want} @{preposition_want_to}",
+          "aliases":
+          [
+            {
+              "alias": "want",
+              "id": "want",
+              "package": "want"
+            },
+            {
+              "alias": "preposition_want_to",
+              "id": "preposition_want_to",
+              "package": "grammar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "want",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_want}",
+          "aliases":
+          [
+            {
+              "alias": "simple_want",
+              "id": "simple_want"
+            }
+          ]
+        },
+        {
+          "expression": "@{want_to}",
+          "aliases":
+          [
+            {
+              "alias": "want_to",
+              "id": "want_to"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

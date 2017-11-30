@@ -1,0 +1,105 @@
+{
+  "id": "go",
+  "interpretations":
+  [
+    {
+      "id": "simple_go",
+      "expressions":
+      [
+        {
+          "expression": "aller",
+          "locale": "fr"
+        },
+        {
+          "expression": "partir",
+          "locale": "fr"
+        },
+        {
+          "expression": "voyager",
+          "locale": "fr"
+        },
+        {
+          "expression": "go",
+          "locale": "en"
+        },
+        {
+          "expression": "travel",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "go_to",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_go} @{preposition_go_to}",
+          "aliases":
+          [
+            {
+              "alias": "simple_go",
+              "id": "simple_go"
+            },
+            {
+              "alias": "preposition_go_to",
+              "id": "preposition_go_to",
+              "package": "grammar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "want_go_to",
+      "expressions":
+      [
+        {
+          "expression": "@{want} @{simple_go} @{preposition_go_to}",
+          "aliases":
+          [
+            {
+              "alias": "want",
+              "id": "want",
+              "package": "want"
+            },
+            {
+              "alias": "simple_go",
+              "id": "simple_go"
+            },
+            {
+              "alias": "preposition_go_to",
+              "id": "preposition_go_to",
+              "package": "grammar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "go",
+      "expressions":
+      [
+        {
+          "expression": "@{go_to}",
+          "aliases":
+          [
+            {
+              "alias": "go_to",
+              "id": "go_to"
+            }
+          ]
+        },
+        {
+          "expression": "@{want_go_to}",
+          "aliases":
+          [
+            {
+              "alias": "want_go_to",
+              "id": "want_go_to"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
