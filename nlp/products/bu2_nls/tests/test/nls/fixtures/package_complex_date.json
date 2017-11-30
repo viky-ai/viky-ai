@@ -938,7 +938,7 @@
       ]
     },
     {
-      "id": "week-of_date",
+      "id": "week_of_date",
       "expressions":
       [
         {

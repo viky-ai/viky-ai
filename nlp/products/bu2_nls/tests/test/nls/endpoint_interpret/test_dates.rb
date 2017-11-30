@@ -126,6 +126,26 @@ module Nls
 
       end
 
+      def test_special_dates
+        skip("TODO Bug timezone")
+        now = "2016-02-28T00:00:00+03:00"
+        check_interpret("pour noel", interpretation: "special_date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
+        check_interpret("pour la saint valentin", interpretation: "special_date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+        check_interpret("for valentine", interpretation: "special_date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+      end
+
+      def test_week_of_day
+        now = "2017-11-28T00:00:00+03:00"
+        result = {
+          "date" => {
+                  "start" => "2017-12-24T00:00:00+03:00",
+                  "end" => "2017-12-30T23:59:59+03:00"
+                }
+        }
+
+        check_interpret("la semaine de noel", interpretation: "week_of_date", solution: result, now: now)
+      end
+
       #      def test_extra
       #      end
 

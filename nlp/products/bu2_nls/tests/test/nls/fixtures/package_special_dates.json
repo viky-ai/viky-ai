@@ -7,17 +7,21 @@
       "expressions":
       [
         {
-          "expression": "noel",
+          "expression": "Noël",
           "locale": "fr"
         },
         {
-          "expression": "christmas",
+          "expression": "Christmas",
+          "locale": "en"
+        },
+        {
+          "expression": "Xmas",
           "locale": "en"
         }
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().year()+'-12-25', 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`var date=moment(moment().year()+'-12-25');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
       }
     },
     {
@@ -25,25 +29,37 @@
       "expressions":
       [
         {
-          "expression": "saint valentin",
+          "expression": "Saint Valentin",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
         },
         {
-          "expression": "st valentin",
+          "expression": "St Valentin",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
         },
         {
-          "expression": "valentine",
+          "expression": "Valentine",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine's Day",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine Day",
+          "locale": "en"
+        },
+        {
+          "expression": "St Valentine's Day",
           "locale": "en"
         }
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().year()+'-02-14', 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`var date=moment(moment().year()+'-02-14');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
       }
     },
     {
