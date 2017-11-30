@@ -91,6 +91,26 @@
         {
           "expression": "dans",
           "locale": "fr"
+        },
+        {
+          "expression": "en",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_inthe",
+      "expressions":
+      [
+        {
+          "expression": "in the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "au",
+          "locale": "fr"
         }
       ]
     },
@@ -1089,6 +1109,29 @@
           "solution": "`({\n 'date_begin': moment().add(moment.duration(latency.duration)),\n 'date_end': moment().add(moment.duration(latency.duration)).add(moment.duration(duration.duration))\n})`"
         }
       ]
+    },
+    {
+      "id": "in_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_in} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            }
+          ]
+        }
+      ],
+    "solution": "`({\n 'date_begin': moment().month(month.month_number-1).startOf('month'),\n 'date_end': moment().month(month.month_number-1).endOf('month')\n})`"
     }
   ]
 }

@@ -1,0 +1,111 @@
+{
+  "id": "package_overall_date",
+  "interpretations":
+  [
+    {
+      "id": "date",
+      "expressions":
+      [
+        {
+          "expression": "@{special_date}",
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{dayofweek_number_week_ago}",
+          "aliases":
+          [
+            {
+              "alias": "dayofweek_number_week_ago",
+              "id": "dayofweek_number_week_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{dayofweek_in_number_week}",
+          "aliases":
+          [
+            {
+              "alias": "dayofweek_in_number_week",
+              "id": "dayofweek_in_number_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_day_of_week}",
+          "aliases":
+          [
+            {
+              "alias": "last_day_of_week",
+              "id": "last_day_of_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_day_of_week}",
+          "aliases":
+          [
+            {
+              "alias": "next_day_of_week",
+              "id": "next_day_of_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{single_date}",
+          "aliases":
+          [
+            {
+              "alias": "single_date",
+              "id": "single_date",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_day_month_year}",
+          "aliases":
+          [
+            {
+              "alias": "date_day_month_year",
+              "id": "date_day_month_year",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_month_the_day}",
+          "aliases":
+          [
+            {
+              "alias": "date_month_the_day",
+              "id": "date_month_the_day",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_day_month}",
+          "aliases":
+          [
+            {
+              "alias": "date_day_month",
+              "id": "date_day_month",
+              "package": "package_date"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
