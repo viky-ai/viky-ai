@@ -104,6 +104,28 @@
               "package": "package_date"
             }
           ]
+        },
+        {
+          "expression": "@{daynumber_of_next_month}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_of_next_month",
+              "id": "daynumber_of_next_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{daynumber_of_last_month}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_of_last_month",
+              "id": "daynumber_of_last_month",
+              "package": "package_complex_date"
+            }
+          ]
         }
       ]
     },
@@ -111,6 +133,72 @@
       "id": "date_range",
       "expressions":
       [
+        {
+          "expression": "@{next_week}",
+          "aliases":
+          [
+            {
+              "alias": "next_week",
+              "id": "next_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_week}",
+          "aliases":
+          [
+            {
+              "alias": "last_week",
+              "id": "last_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_month}",
+          "aliases":
+          [
+            {
+              "alias": "next_month",
+              "id": "next_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_month}",
+          "aliases":
+          [
+            {
+              "alias": "last_month",
+              "id": "last_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_year}",
+          "aliases":
+          [
+            {
+              "alias": "next_year",
+              "id": "next_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_year}",
+          "aliases":
+          [
+            {
+              "alias": "last_year",
+              "id": "last_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
         {
           "expression": "@{in_month}",
           "aliases":
