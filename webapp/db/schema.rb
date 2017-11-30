@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(version: 20171129153008) do
     t.uuid "interpretation_id"
     t.uuid "intent_id"
     t.integer "nature", default: 0
+    t.boolean "is_list", default: false
     t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
     t.index ["interpretation_id", "aliasname"], name: "index_interpretation_aliases_on_interpretation_id_and_aliasname", unique: true
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"

@@ -202,6 +202,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       within('.aliases') do
         assert page.has_text?('Hello')
+        all("input[name*='is_list']").first.click
       end
 
       click_button 'Update'
@@ -210,6 +211,13 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_link?('Hello world')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal ["Hello", "world"], all('.interpretation-resume__alias-blue').collect(&:text)
+
+    within('#interpretations-list') do
+      click_link 'Hello world'
+      assert page.has_text?('Cancel')
+      assert all("input[name*='is_list']")[0].checked?
+      assert !all("input[name*='is_list']")[1].checked?
+    end
   end
 
 

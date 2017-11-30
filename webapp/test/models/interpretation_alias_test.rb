@@ -178,6 +178,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal 8, interpretation_alias.position_start
     assert_equal 21, interpretation_alias.position_end
     assert_equal 'who', interpretation_alias.aliasname
+    assert !interpretation_alias.is_list
     assert_equal weather_greeting_bonjour.id, interpretation_alias.interpretation.id
     assert_equal weather_who.id, interpretation_alias.intent.id
   end

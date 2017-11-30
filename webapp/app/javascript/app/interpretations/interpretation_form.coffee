@@ -193,6 +193,15 @@ class AliasesForm
       else
         return alias.slug.split('/')[2]
 
+  isChecked: (alias) ->
+    if $("##{alias.id}").length == 1
+      return $($("#" + alias.id + " input[name*=is_list]")).is(':checked')
+    else
+      if alias.is_list != undefined
+        return alias.is_list
+      else
+        return false
+
   previous_ids: ->
     ids = []
     for input in @form_container.find("input[name*='[id]']")
@@ -220,6 +229,7 @@ class AliasesForm
         <input type='hidden' name='#{name_prefix}[position_end]'   value='' />
         <input type='hidden' name='#{name_prefix}[intent_id]'      value='' />
         <input type='hidden' name='#{name_prefix}[nature]'         value='' />
+        <input type='hidden' name='#{name_prefix}[is_list]'        value='' />
         <input type='hidden' name='#{name_prefix}[id]'             value='#{id}' />
         <input type='hidden' name='#{name_prefix}[_destroy]'       value='1' />"
     @form_container.closest('form').prepend(html.join(''))
@@ -237,10 +247,12 @@ class AliasesForm
     reference = "Digit"           if alias.nature == 'type_digit'
     reference = "Any"             if alias.nature == 'type_any'
 
+    is_list_checked = if @isChecked(alias) then 'checked' else ''
+
     line = []
     line.push "
-    <tr>
-      <td id='#{alias.id}'>
+    <tr id='#{alias.id}'>
+      <td>
         <div class='field'>
     "
 
@@ -263,8 +275,19 @@ class AliasesForm
         </div>
       </td>
       <td><span class='#{alias.color}'>#{reference}</span></td>
-      <td>#{alias.selection}</td>
-    </tr>"
+      <td>#{alias.selection}</td>"
+
+    if alias.nature == 'type_intent'
+      line.push "<td>
+        <label>
+         <input type='checkbox' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
+        </label>
+      </td>"
+    else
+      line.push "<td><input type='hidden' name='#{name_prefix}[is_list]' value='false' /></td>"
+
+    line.push "</tr>"
+
     line.join("")
 
 
@@ -277,6 +300,7 @@ class AliasesForm
           <th>Parameter name</th>
           <th>Interpretation</th>
           <th>Selection</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>"

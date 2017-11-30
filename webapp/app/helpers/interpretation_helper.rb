@@ -37,21 +37,24 @@ module InterpretationHelper
         aliasname: interpretation_alias.aliasname,
         intent_slug: interpretation_alias.intent.slug,
         intent_id: interpretation_alias.intent.id,
-        nature: 'type_intent'
+        nature: 'type_intent',
+        is_list: interpretation_alias.is_list
       }
     end
     if interpretation_alias.type_digit?
       data = {
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
-        nature: 'type_digit'
+        nature: 'type_digit',
+        is_list: interpretation_alias.is_list
       }
     end
     if interpretation_alias.type_any?
       data = {
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
-        nature: 'type_any'
+        nature: 'type_any',
+        is_list: interpretation_alias.is_list
       }
     end
     data[:id] = interpretation_alias.id unless interpretation_alias.id.nil?
