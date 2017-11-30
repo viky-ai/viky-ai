@@ -57,7 +57,7 @@ static og_status NlpWhyCalculateMinputPart(og_nlp_th ctrl_nlp_th, struct nm_expr
   for (int i = 0; i < request_input_part_used; i++)
   {
     struct request_input_part *request_input_part = request_input_parts + i;
-    if (request_input_part->Iinput_part == m_input_part->input_part->self_index)
+    if (request_input_part->input_part == m_input_part->input_part)
     {
       IFE(NlpWhyCalculateMinputPartAdd(ctrl_nlp_th, m_input_part, i));
     }
