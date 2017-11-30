@@ -49,7 +49,7 @@ module Nls
 
       def test_interval_date
         solution = {"date_range" =>
-           {"start"=>"2017-12-03T00:00:00Z", "end"=>"2018-01-15T00:00:00Z"}
+          {"start"=>"2017-12-03T00:00:00Z", "end"=>"2018-01-15T00:00:00Z"}
         }
 
         check_interpret("du 3 decembre 2017 au 15 janvier 2018", interpretation: "date_range", solution: solution )
@@ -65,7 +65,7 @@ module Nls
       def test_complex_date_in_period
         now = "2016-02-28T00:00:00+03:00"
         expected = {"date_range"=>
-            {"start"=>"2016-03-02T00:00:00+03:00", "end"=>"2016-03-02T23:59:59+03:00"}
+          {"start"=>"2016-03-02T00:00:00+03:00", "end"=>"2016-03-02T23:59:59+03:00"}
         }
         check_interpret("dans 3 jours", interpretation: "date_range", solution: expected, now: now)
         check_interpret("dans trois jours", interpretation: "date_range", solution: expected, now: now)
@@ -73,28 +73,29 @@ module Nls
         check_interpret("in three days", interpretation: "date_range", solution: expected, now: now)
 
         expected = {"date_range"=>
-            {"start"=>"2016-03-13T00:00:00+03:00", "end"=>"2016-03-19T23:59:59+03:00"}
+          {"start"=>"2016-03-13T00:00:00+03:00", "end"=>"2016-03-19T23:59:59+03:00"}
         }
         check_interpret("dans 2 semaines", interpretation: "date_range", solution: expected, now: now)
 
         expected = {"date_range"=>
-            {"start"=>"2016-03-01T00:00:00+03:00", "end"=>"2016-03-31T23:59:59+03:00"}
+          {"start"=>"2016-03-01T00:00:00+03:00", "end"=>"2016-03-31T23:59:59+03:00"}
         }
-#        check_interpret("dans 1 mois", interpretation: "latency", solution: expected, now: now)
+        #        check_interpret("dans 1 mois", interpretation: "latency", solution: expected, now: now)
 
         expected = {"date_range"=>
-            {"start"=>"2016-06-05T00:00:00+03:00", "end"=>"2016-06-5T23:59:59+03:00"}
+          {"start"=>"2016-06-05T00:00:00+03:00", "end"=>"2016-06-5T23:59:59+03:00"}
         }
-#        check_interpret("dans 3 mois 1 semaine et 1 jour", interpretation: "latency", solution: expected, now: now)
+        #        check_interpret("dans 3 mois 1 semaine et 1 jour", interpretation: "latency", solution: expected, now:
+# now)
       end
 
       def test_complex_date_in_period_for_period
         now = "2016-02-28T00:00:00+03:00"
 
         result = {
-                "date_range" =>
-                  {"start" => "2016-03-31T00:00:00+03:00", "end"=>"2016-04-07T00:00:00+03:00"}
-                }
+          "date_range" =>
+          {"start" => "2016-03-31T00:00:00+03:00", "end"=>"2016-04-07T00:00:00+03:00"}
+        }
         check_interpret("pour 1 semaine dans 1 mois et 3 jours", interpretation: "date_range", solution: result, now: now)
         check_interpret("pour une semaine dans un mois et trois jours", interpretation: "date_range", solution: result, now: now)
         check_interpret("for one week in one month and three days", interpretation: "date_range", solution: result, now: now)
@@ -129,12 +130,40 @@ module Nls
       def test_week_of_day
         now = "2017-11-28T00:00:00+03:00"
         result = {
-        "date_range" =>
+          "date_range" =>
           {"start" => "2017-12-24T00:00:00+03:00", "end"=>"2017-12-30T23:59:59+03:00"}
         }
 
 
         check_interpret("la semaine de noel", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_next_weekday
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("jeudi prochain", interpretation: "date", solution: {"date" => "2017-11-30T00:00:00+03:00"}, now: now)
+        check_interpret("next thursday", interpretation: "date", solution: {"date" => "2017-11-30T00:00:00+03:00"}, now: now)
+        check_interpret("mardi prochain", interpretation: "date", solution: {"date" => "2017-12-05T00:00:00+03:00"}, now: now)
+        check_interpret("next tuesday", interpretation: "date", solution: {"date" => "2017-12-05T00:00:00+03:00"}, now: now)
+      end
+
+      def test_last_weekday
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("jeudi dernier", interpretation: "date", solution: {"date" => "2017-11-23T00:00:00+03:00"}, now: now)
+        check_interpret("last thursday", interpretation: "date", solution: {"date" => "2017-11-23T00:00:00+03:00"}, now: now)
+        check_interpret("mardi dernier", interpretation: "date", solution: {"date" => "2017-11-28T00:00:00+03:00"}, now: now)
+        check_interpret("last tuesday", interpretation: "date", solution: {"date" => "2017-11-28T00:00:00+03:00"}, now: now)
+      end
+
+      def test_dayweek_in_n_weeks
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("jeudi dans 3 semaines", interpretation: "date", solution: {"date" => "2017-12-21T00:00:00+03:00"}, now: now)
+        check_interpret("thursday in 3 weeks", interpretation: "date", solution: {"date" => "2017-12-21T00:00:00+03:00"}, now: now)
+      end
+
+      def test_dayweek_n_weeks_ago
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("jeudi il y a 3 semaines", interpretation: "date", solution: {"date" => "2017-11-09T00:00:00+03:00"}, now: now)
+        check_interpret("thursday 3 weeks ago", interpretation: "date", solution: {"date" => "2017-11-09T00:00:00+03:00"}, now: now)
       end
 
       #      def test_extra
