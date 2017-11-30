@@ -262,7 +262,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
       og_string variable = iter->data;
       NlpThrowErrorTh(ctrl_nlp_th, "%s", variable);
     }
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n%.*s\n// ===== Context =====", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", duk_safe_to_string(ctx, -1));
 
     DPcErr;
   }
