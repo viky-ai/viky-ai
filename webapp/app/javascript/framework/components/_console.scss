@@ -58,6 +58,13 @@
   .console__output{
     height: 100%;
     overflow-y: auto;
+
+    pre{
+      font-size: .75em;
+      margin: 0;
+      background-color: #fff;
+    }
+
     #console-explain{
       padding: 1em;
       p{
@@ -66,7 +73,7 @@
       .intents{
         list-style: none;
         padding: 0;
-        li a{
+        & > li a{
           display:block;
           padding: .5em 1em;
           text-decoration: none;
@@ -74,14 +81,36 @@
           box-shadow: 0 1px 2px rgba(black, .2);
           border-radius: 2px;
           margin-bottom: .75em;
-          .name{
+          .intent__name{
             text-decoration: underline;
           }
-          .score{
+          .intent__score{
             color: #aaa;
             font-size: .9em;
           }
-          .highlight{
+          ul{
+            list-style-type: none;
+            padding: 0;
+            margin-top: .2em;
+            li{
+              border-bottom: 1px solid #eee;
+              padding: .4em 0 .1em 0;
+              &:last-child{
+                border-bottom: none;
+              }
+            }
+          }
+          &:hover{
+            border-left: 4px solid $primary-color;
+          }
+          .intent__label{
+            color: #888;
+            text-transform: uppercase;
+            font-size: .65em;
+            line-height: 1em;
+            margin-bottom: .15em;
+          }
+          .intent__highlight{
             color: #666;
             font-size: .9em;
             font-family: monospace;
@@ -93,8 +122,11 @@
               border: 1px solid rgba(#000, .05);
             }
           }
-          &:hover{
-            border-left: 4px solid $primary-color;
+          pre{
+            padding: 0;
+            color: #666;
+            font-size: .7em;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
           }
         }
       }
@@ -111,11 +143,6 @@
           }
         }
       }
-    }
-    pre{
-      font-size: .75em;
-      margin: 0;
-      background-color: #fff;
     }
   }
 }

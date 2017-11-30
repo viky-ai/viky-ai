@@ -88,32 +88,37 @@ module InterpretationHelper
 
   def display_expression(interpretation)
     expression = interpretation.expression
-    return expression if interpretation.interpretation_aliases.count == 0
 
-    ordered_aliases = interpretation.interpretation_aliases.order(position_start: :asc)
     result = []
-    result << "<span class='interpretation-resume'>"
-    expression.split('').each_with_index do |character, index|
-      interpretation_alias = ordered_aliases.first
-      if interpretation_alias.nil? || index < interpretation_alias.position_start
-        result << character
-      end
-      if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-        if interpretation_alias.type_intent?
-          title = interpretation_alias.intent.slug
-          color = interpretation_alias.intent.color
-        else
-          color = "black"
-          title = "Digit" if interpretation_alias.type_digit?
-          title = "Any" if interpretation_alias.type_any?
+
+    if interpretation.interpretation_aliases.count == 0
+      result << expression
+    else
+      ordered_aliases = interpretation.interpretation_aliases.order(position_start: :asc)
+
+      result << "<span class='interpretation-resume'>"
+      expression.split('').each_with_index do |character, index|
+        interpretation_alias = ordered_aliases.first
+        if interpretation_alias.nil? || index < interpretation_alias.position_start
+          result << character
         end
-        css_class = "interpretation-resume__alias-#{color}"
-        text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
-        result << "<span class='#{css_class}' title='#{title}'>#{text}</span>"
-        ordered_aliases = ordered_aliases.drop(1)
+        if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
+          if interpretation_alias.type_intent?
+            title = interpretation_alias.intent.slug
+            color = interpretation_alias.intent.color
+          else
+            color = "black"
+            title = "Digit" if interpretation_alias.type_digit?
+            title = "Any" if interpretation_alias.type_any?
+          end
+          css_class = "interpretation-resume__alias-#{color}"
+          text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
+          result << "<span class='#{css_class}' title='#{title}'>#{text}</span>"
+          ordered_aliases = ordered_aliases.drop(1)
+        end
       end
+      result << "</span>"
     end
-    result << "</span>"
 
     if interpretation.keep_order
       result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"

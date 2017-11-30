@@ -17,13 +17,30 @@
           <li>
             <% username, agentname, intentname = intent["slug"].split('/') %>
             <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
-              <span class="name"><%= intent["name"] %></span>
-              <span class="score">(<%= intent["score"] %>)</span>
+              <span class="intent__name"><%= intent["name"] %></span>
+              <span class="intent__score">(<%= intent["score"] %>)</span>
+              <ul>
               <% unless intent["explanation"].nil? %>
-                <div class="highlight">
-                  <%= highlight(intent["explanation"]["expression"]["highlight"]) %>
-                </div>
-              <% end %>
+                  <li>
+                    <div class="intent__label"><%= t('views.console.expression_text') %></div>
+                    <pre><%= highlight(intent["explanation"]["expression"]["text"]) %></pre>
+                  </li>
+                  <li>
+                    <div class="intent__label"><%= t('views.console.scores') %></div>
+                    <pre><%= intent["explanation"]["expression"]["scores"] %></pre>
+                  </li>
+                  <li>
+                    <div class="intent__label"><%= t('views.console.highlight') %></div>
+                    <div class="intent__highlight">
+                      <%= highlight(intent["explanation"]["expression"]["highlight"]) %>
+                    </div>
+                  </li>
+                <% end %>
+                <li>
+                  <div class="intent__label"><%= t('views.console.solution') %></div>
+                  <pre><code class='language-javascript'><%= JSON.pretty_generate(intent["solution"]) %></code></pre>
+                </li>
+              </ul>
             </a>
           </li>
         <% end %>
@@ -45,5 +62,5 @@
 
 </div>
 <div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
-  <pre><code class='language-javascript' id="json"><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>
+  <pre><code class='language-javascript'><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>
 </div>

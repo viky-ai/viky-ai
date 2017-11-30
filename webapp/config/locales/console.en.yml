@@ -18,5 +18,7 @@ en:
       all_locales: "Language: Auto"
       fullscreen_enter: Enter in fullscreen mode
       fullscreen_leave: Leave fullscreen mode
-
-
+      expression_text: Expression expression
+      scores: Scores
+      highlight: Highlight
+      solution: Solution
