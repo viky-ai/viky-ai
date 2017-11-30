@@ -717,7 +717,10 @@
               "id": "date_day_month_year"
             }
           ],
-          "solution": "`({ \n 'date_begin': date_begin.date, \n 'date_end': date_end.date \n })`"
+          "solution":
+          {
+            "date_range": "`moment.range(date_begin.date,date_end.date)`"
+          }
         }
       ]
     }

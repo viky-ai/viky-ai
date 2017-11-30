@@ -39,6 +39,7 @@ module Nls
 
       def test_on_date
         expected = "2017-12-03T00:00:00Z"
+
         check_interpret("le 3 décembre 2017", interpretation: "single_date", solution: {date: expected})
         check_interpret("on december the third, 2017", interpretation: "single_date", solution: {date: expected})
         check_interpret("on 03/12/2017", interpretation: "single_date", solution: {date: expected})
@@ -46,10 +47,10 @@ module Nls
       end
 
       def test_interval_date
-        solution = {
-          "date_begin" => "2017-12-03T00:00:00Z",
-          "date_end" => "2018-01-15T00:00:00Z"
+        solution = {"date_range" =>
+           {"start"=>"2017-12-03T00:00:00Z", "end"=>"2018-01-15T00:00:00Z"}
         }
+
         check_interpret("du 3 decembre 2017 au 15 janvier 2018", interpretation: "date_interval", solution: solution )
         check_interpret("from december the 3 rd, 2017 to january the 15 th, 2018", interpretation: "date_interval", solution: solution )
         sentence = "du trois decembre deux mille dix sept au quinze janvier deux mille dix huit"
@@ -89,24 +90,14 @@ module Nls
       def test_complex_date_in_period_for_period
         now = "2016-02-28T00:00:00+03:00"
 
-        date_begin = "2016-03-31T00:00:00+03:00"
-        date_end = "2016-04-07T00:00:00+03:00"
-        check_interpret("pour 1 semaine dans 1 mois et 3 jours", interpretation: "duration_with_latency", solution: {
-          "date_begin" => date_begin,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("pour une semaine dans un mois et trois jours", interpretation: "duration_with_latency", solution: {
-          "date_begin" => date_begin,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("for one week in one month and three days", interpretation: "duration_with_latency", solution: {
-          "date_begin" => date_begin,
-          "date_end" => date_end
-        }, now: now)
-        check_interpret("for 1 week in 1 month and 3 days", interpretation: "duration_with_latency", solution: {
-          "date_begin" => date_begin,
-          "date_end" => date_end
-        }, now: now)
+        result = {
+                "date_range" =>
+                  {"start" => "2016-03-31T00:00:00+03:00", "end"=>"2016-04-07T00:00:00+03:00"}
+                }
+        check_interpret("pour 1 semaine dans 1 mois et 3 jours", interpretation: "duration_with_latency", solution: result, now: now)
+        check_interpret("pour une semaine dans un mois et trois jours", interpretation: "duration_with_latency", solution: result, now: now)
+        check_interpret("for one week in one month and three days", interpretation: "duration_with_latency", solution: result, now: now)
+        check_interpret("for 1 week in 1 month and 3 days", interpretation: "duration_with_latency", solution: result, now: now)
       end
 
       def test_complex_date_for_period
@@ -137,11 +128,10 @@ module Nls
       def test_week_of_day
         now = "2017-11-28T00:00:00+03:00"
         result = {
-          "date" => {
-                  "start" => "2017-12-24T00:00:00+03:00",
-                  "end" => "2017-12-30T23:59:59+03:00"
-                }
+        "date_range" =>
+          {"start" => "2017-12-24T00:00:00+03:00", "end"=>"2017-12-30T23:59:59+03:00"}
         }
+
 
         check_interpret("la semaine de noel", interpretation: "week_of_date", solution: result, now: now)
       end

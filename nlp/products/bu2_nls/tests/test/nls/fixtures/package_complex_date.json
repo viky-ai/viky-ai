@@ -987,7 +987,7 @@
           ],
           "solution":
           {
-            "date": "`moment.range( moment(special_date.date).startOf('week'), moment(special_date.date).endOf('week') )`"
+            "date_range": "`moment.range( moment(special_date.date).startOf('week'), moment(special_date.date).endOf('week') )`"
           }
         },
         {
@@ -1016,7 +1016,7 @@
           ],
           "solution":
           {
-            "date": "`moment.range( moment(date_day_month_year.date).startOf('week'), moment(date_day_month_year.date).endOf('week') )`"
+            "date_range": "`moment.range( moment(date_day_month_year.date).startOf('week'), moment(date_day_month_year.date).endOf('week') )`"
           }
         },
         {
@@ -1045,7 +1045,7 @@
           ],
           "solution":
           {
-            "date": "`moment.range( moment(date_day_month.date).startOf('week'), moment(date_day_month.date).endOf('week') )`"
+            "date_range": "`moment.range( moment(date_day_month.date).startOf('week'), moment(date_day_month.date).endOf('week') )`"
           }
         },
         {
@@ -1074,7 +1074,7 @@
           ],
           "solution":
           {
-            "date": "`moment.range( moment(date_month_the_day.date).startOf('week'), moment(date_month_the_day.date).endOf('week') )`"
+            "date_range": "`moment.range( moment(date_month_the_day.date).startOf('week'), moment(date_month_the_day.date).endOf('week') )`"
           }
         }
       ]
@@ -1106,7 +1106,10 @@
               "id": "durations"
             }
           ],
-          "solution": "`({\n 'date_begin': moment().add(moment.duration(latency.duration)),\n 'date_end': moment().add(moment.duration(latency.duration)).add(moment.duration(duration.duration))\n})`"
+          "solution":
+          {
+            "date_range": "`moment.range( moment().add(moment.duration(latency.duration)) , moment().add(moment.duration(latency.duration)).add(moment.duration(duration.duration)) )`"
+          }
         }
       ]
     },
@@ -1131,7 +1134,10 @@
           ]
         }
       ],
-    "solution": "`({\n 'date_begin': moment().month(month.month_number-1).startOf('month'),\n 'date_end': moment().month(month.month_number-1).endOf('month')\n})`"
+      "solution":
+      {
+        "date_range": "`moment.range( moment().month(month.month_number-1).startOf('month'),moment().month(month.month_number-1).endOf('month'))`"
+      }
     }
   ]
 }
