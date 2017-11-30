@@ -700,7 +700,7 @@
       ]
     },
     {
-      "id": "duration",
+      "id": "duration_basic",
       "expressions":
       [
         {
@@ -798,7 +798,7 @@
       "expressions":
       [
         {
-          "expression": "@{durations} @{duration}",
+          "expression": "@{durations} @{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -808,13 +808,13 @@
               "id": "durations"
             },
             {
-              "alias": "duration",
-              "id": "duration"
+              "alias": "duration_basic",
+              "id": "duration_basic"
             }
           ]
         },
         {
-          "expression": "@{durations} @{and} @{duration}",
+          "expression": "@{durations} @{and} @{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -828,13 +828,13 @@
               "id": "and"
             },
             {
-              "alias": "duration",
-              "id": "duration"
+              "alias": "duration_basic",
+              "id": "duration_basic"
             }
           ]
         },
         {
-          "expression": "@{durations} @{coma} @{duration}",
+          "expression": "@{durations} @{coma} @{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -849,33 +849,33 @@
               "package": "package_date"
             },
             {
-              "alias": "duration",
-              "id": "duration"
+              "alias": "duration_basic",
+              "id": "duration_basic"
             }
           ]
         },
         {
-          "expression": "@{duration}",
+          "expression": "@{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "duration",
-              "id": "duration"
+              "alias": "duration_basic",
+              "id": "duration_basic"
             }
           ],
           "solution":
           {
-            "duration": "`duration.duration`",
-            "unit": "`duration.unit`"
+            "duration": "`duration_basic.duration`",
+            "unit": "`duration_basic.unit`"
           }
         }
       ],
       "solution":
       {
-        "duration": "`moment.duration(durations.duration).add(moment.duration(duration.duration))`",
-        "unit": "`var a=durations.unit; var b=duration.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
+        "duration": "`moment.duration(durations.duration).add(moment.duration(duration_basic.duration))`",
+        "unit": "`var a=durations.unit; var b=duration_basic.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
       }
     },
     {
@@ -883,7 +883,7 @@
       "expressions":
       [
         {
-          "expression": "@{preposition_for} @{duration}",
+          "expression": "@{preposition_for} @{durations}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -893,13 +893,13 @@
               "id": "preposition_for"
             },
             {
-              "alias": "duration",
+              "alias": "durations",
               "id": "durations"
             }
           ],
           "solution":
           {
-            "date_range": "`duration.duration`"
+            "duration": "`durations.duration`"
           }
         }
       ]
@@ -1084,7 +1084,7 @@
       "expressions":
       [
         {
-          "expression": "@{preposition_for} @{duration} @{preposition_in} @{latency}",
+          "expression": "@{preposition_for} @{durations} @{preposition_in} @{latency}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -1094,7 +1094,7 @@
               "id": "preposition_for"
             },
             {
-              "alias": "duration",
+              "alias": "durations",
               "id": "durations"
             },
             {
@@ -1108,7 +1108,7 @@
           ],
           "solution":
           {
-            "date_range": "`moment.range( moment().add(moment.duration(latency.duration)) , moment().add(moment.duration(latency.duration)).add(moment.duration(duration.duration)) )`"
+            "date_range": "`moment.range( moment().add(moment.duration(latency.duration)) , moment().add(moment.duration(latency.duration)).add(moment.duration(durations.duration)) )`"
           }
         }
       ]
@@ -1118,7 +1118,7 @@
       "expressions":
       [
         {
-          "expression": "@{preposition_in} @{month}",
+          "expression": "@{preposition_in} @{month_value}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -1128,7 +1128,31 @@
               "id": "preposition_in"
             },
             {
-              "alias": "month",
+              "alias": "month_value",
+              "id": "date_month_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_inthe} @{month_word} @{preposition_of} @{month_value}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_inthe",
+              "id": "preposition_inthe"
+            },
+            {
+              "alias": "month_word",
+              "id": "month"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "month_value",
               "id": "date_month_number"
             }
           ]
@@ -1136,7 +1160,7 @@
       ],
       "solution":
       {
-        "date_range": "`moment.range( moment().month(month.month_number-1).startOf('month'),moment().month(month.month_number-1).endOf('month'))`"
+        "date_range": "`moment.range( moment().month(month_value.month_number-1).startOf('month'),moment().month(month_value.month_number-1).endOf('month'))`"
       }
     }
   ]

@@ -106,6 +106,95 @@
           ]
         }
       ]
+    },
+    {
+      "id": "date_range",
+      "expressions":
+      [
+        {
+          "expression": "@{in_month}",
+          "aliases":
+          [
+            {
+              "alias": "in_month",
+              "id": "in_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration_with_latency}",
+          "aliases":
+          [
+            {
+              "alias": "duration_with_latency",
+              "id": "duration_with_latency",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{week_of_date}",
+          "aliases":
+          [
+            {
+              "alias": "week_of_date",
+              "id": "week_of_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{latency}",
+          "aliases":
+          [
+            {
+              "alias": "latency",
+              "id": "latency",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_interval}",
+          "aliases":
+          [
+            {
+              "alias": "date_interval",
+              "id": "date_interval",
+              "package": "package_date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "expressions":
+      [
+        {
+          "expression": "@{period}",
+          "aliases":
+          [
+            {
+              "alias": "period",
+              "id": "period",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration}",
+          "aliases":
+          [
+            {
+              "alias": "duration",
+              "id": "durations",
+              "package": "package_complex_date"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
