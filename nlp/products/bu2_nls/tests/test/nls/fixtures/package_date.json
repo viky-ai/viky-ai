@@ -661,13 +661,13 @@
           ],
           "solution":
           {
-            "date": "`moment(year.number + '-' + month.number + '-' + day.number)`"
+            "date": "`moment(year.number + '-' + month.number + '-' + day.number, 'YYYY-MM-DD')`"
           }
         }
       ],
       "solution":
       {
-        "date": "`moment(year.number + '-' + month.month_number + '-' + day.number)`"
+        "date": "`moment(year.number + '-' + month.month_number + '-' + day.number, 'YYYY-MM-DD')`"
       }
     },
     {

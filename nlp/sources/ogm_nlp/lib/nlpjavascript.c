@@ -231,9 +231,10 @@ og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th)
   return FALSE;
 }
 
-og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser)
+og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_string original_js_script,
+    json_t **p_json_anwser)
 {
-  // ingnore answer
+  // ignore answer
   if (p_json_anwser == NULL)
   {
     DONE;
@@ -243,8 +244,6 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
     *p_json_anwser = NULL;
   }
 
-  NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : '%.*s'", js_script_size, js_script);
-
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
   if (ctx == NULL)
   {
@@ -252,17 +251,53 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_scri
     CONT;
   }
 
-  // eval securely
-  if (duk_peval_lstring(ctx, js_script, js_script_size) != 0)
+  // use a localbuffer
+  int js_script_size = original_js_script_size;
+  og_char_buffer js_script[js_script_size + 1];
+  snprintf(js_script, js_script_size + 1, "%.*s", original_js_script_size, original_js_script);
+
+  // trim
+  og_string trimed_script = g_strstrip(js_script);
+  int trimed_script_length = strlen(trimed_script);
+
+  // 6 is minimal length for (\n\n)\0
+  int enhanced_script_size = trimed_script_length + 6;
+  og_char_buffer enhanced_script[enhanced_script_size];
+  enhanced_script[0] = '\0';
+
+  // starting and ending '{' '}' => surround by '(' ')'
+  if (trimed_script[0] == '{' && trimed_script[trimed_script_length - 1] == '}')
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "%.*s", js_script_size, js_script);
-    NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n// Error : %s\n", duk_safe_to_string(ctx, -1));
+    snprintf(enhanced_script, enhanced_script_size, "(\n%s\n)", trimed_script);
+  }
+  else
+  {
+    snprintf(enhanced_script, enhanced_script_size, "%s", trimed_script);
+  }
+
+  NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n%s\n", enhanced_script);
+
+  // eval securely
+  if (duk_peval_string(ctx, enhanced_script) != 0)
+  {
+    og_string error = duk_safe_to_string(ctx, -1);
+
+    // show now
+    og_char_buffer now[DPcPathSize];
+    now[0] = '\0';
+    if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
+    {
+      snprintf(now, DPcPathSize, "// now is %s\n", duk_safe_to_string(ctx, -1));
+    }
+
+    NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+    NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n%s// Error : %s\n", now, error);
     for (GList *iter = ctrl_nlp_th->js->variable_list->tail; iter; iter = iter->next)
     {
       og_string variable = iter->data;
       NlpThrowErrorTh(ctrl_nlp_th, "%s", variable);
     }
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", error);
 
     DPcErr;
   }
@@ -414,26 +449,65 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
   DONE;
 }
 
+#define DOgNlpJsSetNowNowScriptSize DPcPathSize * 2
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
 {
   // TODO improve NlpJsSetNow call to one time per request
 
   og_string date_now = ctrl_nlp_th->date_now;
-  og_string offset_setup = ""   //
-          "moment.updateOffset = function (m) { return m.utcOffset(_now_form_request.utcOffset()); };\n"//
-          "moment.now = function () { return _now_form_request.toDate(); };\n"//
-          "moment.fn.toJSON = function() { return this.format(); };\n";
 
-  og_char_buffer now_setup_command[DPcPathSize];
+  og_string offset_reset = "// Reset now state \n"   //
+          "moment.now_form_request = null; \n"
+          "moment.updateOffset = function() { }; \n"//
+          "moment.now = function() { \n"//
+          "  return new Date(); \n"//
+          "}; \n"//
+          " \n"//
+          "// Reset now state \n";
+
+  og_string offset_setup = ""   //
+          "// format moment in ISO with timezone  \n"//
+          "moment.fn.toJSON = function() { \n"//
+          "   return this.format(); \n"//
+          "}; \n"//
+          " \n"//
+          "// Set no from request \n"//
+          "moment.now = function() { \n"//
+          "  return moment.now_form_request.toDate(); \n"//
+          "}; \n"//
+          " \n"//
+          "// Adjust utcOffset to now utcOffset, replace setOffsetToParsedOffset() \n"//
+          "moment.updateOffset = function(m, keepLocalTime) { \n"//
+          "  if (!m.updateOffsetInProgress) { \n"//
+          "    m.updateOffsetInProgress = true; \n"//
+          "    m.parseZone = function() { \n"//
+          "      if (this._tzm != null) { \n"//
+          "        //this.utcOffset(this._tzm, false, true); \n"//
+          "        this.utcOffset(moment.now_form_request.utcOffset(), false, true); \n"//
+          "      } else if (typeof this._i === 'string') { \n"//
+          "        this.utcOffset(moment.now_form_request.utcOffset(), true, true); \n"//
+          "      } else { \n"//
+          "        this.utcOffset(moment.now_form_request.utcOffset(), false, true); \n"//
+          "      } \n"//
+          "      return this; \n"//
+          "    } \n"//
+          "    m.parseZone(); \n"//
+          "    m.updateOffsetInProgress = false; \n"//
+          "  } \n"//
+          "}; \n"//
+          "";
+
+  og_char_buffer now_setup_command[DOgNlpJsSetNowNowScriptSize];
   if (date_now == NULL || date_now[0] == '\0')
   {
-    snprintf(now_setup_command, DPcPathSize, "const _now_form_request = moment.utc();\n%s", offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s\nmoment.now_form_request ="
+        " moment.utc();\n%s", offset_reset, offset_setup);
   }
   else
   {
-    snprintf(now_setup_command, DPcPathSize, "const _now_form_request = moment.parseZone('%s');\n%s", date_now, offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s\nmoment.now_form_request ="
+        " moment.parseZone('%s');\n%s", offset_reset, date_now, offset_setup);
   }
-
 
   NlpLog(DOgNlpTraceJs, "Sending command to duktape: %s", now_setup_command);
 
@@ -446,7 +520,7 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
 
   if (duk_peval_string(ctx, now_setup_command) != 0)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsSetNow: duk_peval_lstring eval failed: %s : '%s'", duk_safe_to_string(ctx, -1),
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsSetNow: duk_peval_lstring eval failed: %s :\n%s", duk_safe_to_string(ctx, -1),
         now_setup_command);
     DPcErr;
   }
