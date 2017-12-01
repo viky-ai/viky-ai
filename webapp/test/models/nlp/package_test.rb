@@ -99,36 +99,54 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id" => "#{intents(:weather_who).id}_#{ialias.id}_list",
-          "slug" => "admin/weather/weather_who_#{ialias.id}_list",
+          "id" => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+          "slug" => "admin/weather/weather_who_#{ialias.id}_recursive",
           "expressions" => [
             {
               "expression" => "@{who}",
               "aliases"    => [
                 {
-                  "alias" => "who",
-                  "slug" => "admin/weather/weather_who",
-                  "id"      => intents(:weather_who).id,
+                  "alias"   => "who",
+                  "slug"    => "admin/weather/weather_who_list",
+                  "id"      => "#{intents(:weather_who).id}_list",
                   "package" => weather.id
                 }
               ]
             },
             {
-              "expression" => "@{who_list} @{who}",
+              "expression" => "@{who_recursive} @{who}",
               "aliases"    => [
                 {
-                  "alias" => "who_list",
-                  "slug" => "admin/weather/weather_who_#{ialias.id}_list",
-                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_list",
+                  "alias"   => "who_recursive",
+                  "slug"    => "admin/weather/weather_who_#{ialias.id}_recursive",
+                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 },
                 {
-                  "alias" => "who",
+                  "alias"   => "who",
+                  "slug"    => "admin/weather/weather_who_list",
+                  "id"      => "#{intents(:weather_who).id}_list",
+                  "package" => weather.id
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id"    => "#{intents(:weather_who).id}_list",
+          "slug"  => "admin/weather/weather_who_list",
+          "expressions" => [
+            {
+              "expression" => "@{who_list}",
+              "aliases"    => [
+                {
+                  "alias" => "who_list",
                   "slug" => "admin/weather/weather_who",
                   "id"      => intents(:weather_who).id,
                   "package" => weather.id
                 }
-              ]
+              ],
+              "solution" => "`({ who: who_list })`"
             }
           ]
         },
@@ -141,8 +159,8 @@ class PackageTest < ActiveSupport::TestCase
               "aliases"    => [
                 {
                   "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who_#{ialias.id}_list",
-                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_list",
+                  "slug"    => "admin/weather/weather_who_#{ialias.id}_recursive",
+                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
               ],
