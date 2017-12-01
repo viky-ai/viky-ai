@@ -150,8 +150,8 @@ tag_loadbalancer:
     GIT_STRATEGY: none
   script:
     - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
-    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+    - docker tag ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_LB}:latest
+    - docker push ${DOCKER_IMAGE_TOOLS_LB}:latest
 
 # Deploy any branches on rancher dev
 deploy_dev:
