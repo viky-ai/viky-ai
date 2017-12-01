@@ -26,8 +26,9 @@ static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 
 og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 {
-  ctrl_nlp_th->js->varibale_values = g_string_chunk_new(0x10);
-  g_queue_init(ctrl_nlp_th->js->variable_list);
+  og_char_buffer heap_name[DPcPathSize];
+  snprintf(heap_name, DPcPathSize, "%s_heap_js_variables", ctrl_nlp_th->name);
+  ctrl_nlp_th->js->variables = OgHeapInit(ctrl_nlp_th->hmsg, heap_name, sizeof(unsigned char), 0xFF);
 
   ctrl_nlp_th->js->duk_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
   if (ctrl_nlp_th->js->duk_context == NULL)
@@ -227,8 +228,8 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
   duk_destroy_heap(ctx);
   ctrl_nlp_th->js->duk_context = NULL;
 
-  g_queue_clear(ctrl_nlp_th->js->variable_list);
-  g_string_chunk_free(ctrl_nlp_th->js->varibale_values);
+  OgHeapFlush(ctrl_nlp_th->js->variables);
+  ctrl_nlp_th->js->variables = NULL;
 
   DONE;
 }
@@ -242,6 +243,8 @@ og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
   }
 
   og_bool local_wipped = NlpJsStackLocalWipe(ctrl_nlp_th);
+
+  IFE(OgHeapReset(ctrl_nlp_th->js->variables));
 
   duk_idx_t top = duk_get_top(ctx);
   if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
@@ -261,8 +264,7 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
-  g_queue_clear(ctrl_nlp_th->js->variable_list);
-  g_string_chunk_clear(ctrl_nlp_th->js->varibale_values);
+  IFE(OgHeapResetWithoutReduce(ctrl_nlp_th->js->variables));
 
   duk_idx_t top = duk_get_top(ctx);
   if (top > 0 && top - ctrl_nlp_th->js->init_stack_idx > 0)
@@ -325,7 +327,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     now[0] = '\0';
     if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
     {
-      snprintf(now, DPcPathSize, "// now is %s\n", duk_safe_to_string(ctx, -1));
+      snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
     }
     NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n//=========\n%s%s\n//=========\n", now, enhanced_script);
   }
@@ -340,17 +342,16 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     now[0] = '\0';
     if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
     {
-      snprintf(now, DPcPathSize, "// now is %s\n", duk_safe_to_string(ctx, -1));
+      snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
     }
 
-    NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
-    NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n%s// Error : %s\n", now, error);
-    for (GList *iter = ctrl_nlp_th->js->variable_list->tail; iter; iter = iter->next)
-    {
-      og_string variable = iter->data;
-      NlpThrowErrorTh(ctrl_nlp_th, "%s", variable);
-    }
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", error);
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script));
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n%s// JavaScript error : %s\n", now, error));
+
+    og_string variables = OgHeapGetCell(ctrl_nlp_th->js->variables, 0);
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", variables));
+
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: duk_peval_lstring eval failed: %s :\n// ===== Context =====", error));
 
     DPcErr;
   }
@@ -488,7 +489,7 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     CONT;
   }
 
-  if (duk_peval_lstring(ctx, var_command, strlen(var_command)) != 0)
+  if (duk_peval_string(ctx, var_command) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsAddVariable: duk_peval_lstring eval failed: %s : '%s'",
         duk_safe_to_string(ctx, -1), var_command);
@@ -496,8 +497,8 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
   }
 
   // keep variable value for better error message
-  char *new_var = g_string_chunk_insert(ctrl_nlp_th->js->varibale_values, var_command);
-  g_queue_push_tail(ctrl_nlp_th->js->variable_list, new_var);
+  IFE(OgHeapAppend(ctrl_nlp_th->js->variables, strlen(var_command), var_command));
+  IFE(OgHeapAppend(ctrl_nlp_th->js->variables, 1, "\n"));
 
   DONE;
 }
@@ -585,10 +586,6 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
         now_setup_command);
     DPcErr;
   }
-
-  // keep variable value for better error message
-  char *new_var = g_string_chunk_insert(ctrl_nlp_th->js->varibale_values, now_setup_command);
-  g_queue_push_tail(ctrl_nlp_th->js->variable_list, new_var);
 
   DONE;
 }

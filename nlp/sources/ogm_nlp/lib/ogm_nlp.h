@@ -475,8 +475,7 @@ struct og_ctrl_nlp_js
   duk_idx_t request_stack_idx;
 
   /** For better error message list current defined variable */
-  GStringChunk *varibale_values;
-  GQueue variable_list[1];
+  og_heap variables;
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
