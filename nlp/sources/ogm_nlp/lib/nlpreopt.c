@@ -139,7 +139,10 @@ static og_status NlpRequestExpressionOptimizeIncludedRemove(og_nlp_th ctrl_nlp_t
     IFE(is_bigger);
     if (is_bigger)
     {
-      request_expression->deleted = 1;
+      if (!NlpDifferentAutoCompleteRequestWord(ctrl_nlp_th, request_expression_big, request_expression))
+      {
+        request_expression->deleted = 1;
+      }
     }
   }
   DONE;

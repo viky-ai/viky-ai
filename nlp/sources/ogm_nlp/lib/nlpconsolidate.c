@@ -15,6 +15,8 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
     og_string string_word, int length_string_word);
 struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_t package,
     struct expression *expression, size_t *pIinput_part);
+static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression *expression, int *palias_nb);
 
 static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, package_t package)
 {
@@ -44,7 +46,19 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     interpretation->slug = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->slug_start);
     IFN(interpretation->slug) DPcErr;
 
-    interpretation->json_solution = interpretation_compile->json_solution;
+    interpretation->json_solution = json_deep_copy(interpretation_compile->json_solution);
+    interpretation_compile->json_solution = NULL;
+
+    interpretation->contexts_nb = interpretation_compile->contexts_nb;
+    if (interpretation->contexts_nb > 0)
+    {
+      interpretation->contexts = OgHeapGetCell(package->hcontext, interpretation_compile->context_start);
+      IFN(interpretation->contexts) DPcErr;
+    }
+    else
+    {
+      interpretation->contexts = NULL;
+    }
 
     interpretation->expressions_nb = interpretation_compile->expressions_nb;
     if (interpretation->expressions_nb > 0)
@@ -65,6 +79,41 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
 
   // freeze final heap
   IFE(OgHeapFreeze(package->hinterpretation));
+
+  DONE;
+}
+
+static og_status NlpConsolidatePrepareContext(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // freeze ba heap
+  IFE(OgHeapFreeze(package->hcontext_ba));
+
+  // prealloc heap to avoid realloc
+  int context_compile_used = OgHeapGetCellsUsed(package->hcontext_compile);
+  IFE(context_compile_used);
+  if (context_compile_used > 0)
+  {
+    IFE(OgHeapAddCells(package->hcontext, context_compile_used));
+  }
+
+  // convert _compile heaps to simple one
+  struct context_compile *all_context_compile = OgHeapGetCell(package->hcontext_compile, 0);
+  struct context *all_context = OgHeapGetCell(package->hcontext, 0);
+  for (int i = 0; i < context_compile_used; i++)
+  {
+    struct context_compile *context_compile = all_context_compile + i;
+    struct context *context = all_context + i;
+
+    context->flag = OgHeapGetCell(package->hcontext_ba, context_compile->flag_start);
+    IFN(context->flag) DPcErr;
+  }
+
+  // free compile heap
+  IFE(OgHeapFlush(package->hcontext_compile));
+  package->hcontext_compile = NULL;
+
+  // freeze final heap
+  IFE(OgHeapFreeze(package->hcontext));
 
   DONE;
 }
@@ -107,7 +156,11 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     {
       expression->aliases = NULL;
     }
-    expression->json_solution = expression_compile->json_solution;
+
+    // solution needs to be copied from the request
+    expression->json_solution = json_deep_copy(expression_compile->json_solution);
+    expression_compile->json_solution = NULL;
+
     expression->is_recursive = FALSE;
   }
 
@@ -181,6 +234,8 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
   IFE(NlpConsolidatePrepareAlias(ctrl_nlp_th, package));
 
   IFE(NlpConsolidatePrepareExpression(ctrl_nlp_th, package));
+
+  IFE(NlpConsolidatePrepareContext(ctrl_nlp_th, package));
 
   IFE(NlpConsolidatePrepareInterpretation(ctrl_nlp_th, package));
 
@@ -435,12 +490,15 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       // a value of n means before the nth input_part (or at the end if it is equal to expression->input_parts_nb
       if (expression->alias_any_input_part_position >= 0)
       {
-        NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while only one alias per expression is allowed",
-            length_string_alias, string_alias, expression->text);
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while"
+            " only one alias per expression is allowed in interpretation '%s' '%s'", length_string_alias, string_alias,
+            expression->text, expression->interpretation->slug, expression->interpretation->id);
 
       }
-      expression->alias_any_input_part_position = expression->input_parts_nb;
+      IFE(
+          NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,
+              &expression->alias_any_input_part_position));
+      //expression->alias_any_input_part_position = expression->input_parts_nb;
       alias_added = TRUE;
     }
     else if (alias->type == nlp_alias_type_Digit)
@@ -459,8 +517,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
 
   if (!alias_added)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'",
-        length_string_alias, string_alias, expression->text);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'"
+        " in intepretation '%s' '%s'", length_string_alias, string_alias, expression->text,
+        expression->interpretation->slug, expression->interpretation->id);
     DPcErr;
   }
 
@@ -507,6 +566,7 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
   struct input_part *input_part = OgHeapNewCell(package->hinput_part, &Iinput_part);
   IFn(input_part) return (NULL);
   IF(Iinput_part) return (NULL);
+  input_part->self_index = Iinput_part;
   input_part->expression = expression;
 
   if (expression->input_parts_nb == 0)
@@ -517,5 +577,18 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
 
   *pIinput_part = Iinput_part;
   return (input_part);
+}
+
+static og_status NlpConsolidateGetCurrentAliasNb(og_nlp_th ctrl_nlp_th, package_t package,
+    struct expression *expression, int *palias_nb)
+{
+  *palias_nb = 0;
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    struct input_part *input_part = OgHeapGetCell(package->hinput_part, expression->input_part_start + i);
+    IFN(input_part) DPcErr;
+    if (input_part->type == nlp_input_part_type_Interpretation) (*palias_nb)++;
+  }
+  DONE;
 }
 

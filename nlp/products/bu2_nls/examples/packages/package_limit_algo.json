@@ -1,0 +1,55 @@
+{
+  "id": "limit_algo",
+  "interpretations":
+  [
+    {
+      "id": "slow_swimming_relaxing",
+      "expressions":
+      [
+        {
+          "expression": "@{slow} @{swimming_for_relaxing}",
+          "aliases":
+          [
+            {
+              "alias": "slow",
+              "id": "slow"
+            },
+            {
+              "alias": "swimming_for_relaxing",
+              "id": "swimming_for_relaxing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "swimming_for_relaxing",
+      "expressions":
+      [
+        {
+          "expression": "swimming for relaxing"
+        }
+      ],
+      "solution":
+      {
+        "action": "relaxing swimming"
+      }
+    },
+    {
+      "id": "slow",
+      "expressions":
+      [
+        {
+          "expression": "slow"
+        },
+        {
+          "expression": "swimming slow"
+        }
+      ],
+      "solution":
+      {
+        "speed": "slow"
+      }
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
-  "id": "package-number-letters",
+  "id": "package_number_letters",
   "interpretations":
   [
     {
-      "id": "and",
+      "id": "conjonction_and",
       "expressions":
       [
         {
@@ -65,6 +65,38 @@
       }
     },
     {
+      "id": "number_1_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "first",
+          "locale": "en"
+        },
+        {
+          "expression": "premier",
+          "locale": "fr"
+        },
+        {
+          "expression": "première",
+          "locale": "fr"
+        },
+        {
+          "expression": "unième",
+          "locale": "fr"
+        },
+        {
+          "expression": "et unième",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1
+      }
+    },
+    {
       "id": "number_2",
       "expressions":
       [
@@ -74,6 +106,32 @@
         },
         {
           "expression": "deux",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 2
+      }
+    },
+    {
+      "id": "number_2_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "second",
+          "locale": "en"
+        },
+        {
+          "expression": "deuxieme",
+          "locale": "fr"
+        },
+        {
+          "expression": "second",
+          "locale": "fr"
+        },
+        {
+          "expression": "seconde",
           "locale": "fr"
         }
       ],
@@ -101,6 +159,24 @@
       }
     },
     {
+      "id": "number_3_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "third",
+          "locale": "en"
+        },
+        {
+          "expression": "troisième",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 3
+      }
+    },
+    {
       "id": "number_4",
       "expressions":
       [
@@ -110,6 +186,24 @@
         },
         {
           "expression": "quatre",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 4
+      }
+    },
+    {
+      "id": "number_4_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fourth",
+          "locale": "en"
+        },
+        {
+          "expression": "quatrième",
           "locale": "fr"
         }
       ],
@@ -137,6 +231,24 @@
       }
     },
     {
+      "id": "number_5_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fith",
+          "locale": "en"
+        },
+        {
+          "expression": "cinquieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 5
+      }
+    },
+    {
       "id": "number_6",
       "expressions":
       [
@@ -146,6 +258,24 @@
         },
         {
           "expression": "six",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 6
+      }
+    },
+    {
+      "id": "number_6_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "sixth",
+          "locale": "en"
+        },
+        {
+          "expression": "sixieme",
           "locale": "fr"
         }
       ],
@@ -173,6 +303,24 @@
       }
     },
     {
+      "id": "number_7_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "seventh",
+          "locale": "en"
+        },
+        {
+          "expression": "septieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 7
+      }
+    },
+    {
       "id": "number_8",
       "expressions":
       [
@@ -182,6 +330,24 @@
         },
         {
           "expression": "huit",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 8
+      }
+    },
+    {
+      "id": "number_8_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "eighth",
+          "locale": "en"
+        },
+        {
+          "expression": "huitieme",
           "locale": "fr"
         }
       ],
@@ -209,6 +375,24 @@
       }
     },
     {
+      "id": "number_9_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "ninth",
+          "locale": "en"
+        },
+        {
+          "expression": "neuvieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 9
+      }
+    },
+    {
       "id": "number_10",
       "expressions":
       [
@@ -218,6 +402,24 @@
         },
         {
           "expression": "dix",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 10
+      }
+    },
+    {
+      "id": "number_10_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "tenth",
+          "locale": "en"
+        },
+        {
+          "expression": "dixieme",
           "locale": "fr"
         }
       ],
@@ -249,6 +451,28 @@
       }
     },
     {
+      "id": "number_11_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "eleventh",
+          "locale": "en"
+        },
+        {
+          "expression": "onzieme",
+          "locale": "fr"
+        },
+        {
+          "expression": "et onzieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 11
+      }
+    },
+    {
       "id": "number_12",
       "expressions":
       [
@@ -258,6 +482,24 @@
         },
         {
           "expression": "douze",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 12
+      }
+    },
+    {
+      "id": "number_12_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "twelvth",
+          "locale": "en"
+        },
+        {
+          "expression": "douzieme",
           "locale": "fr"
         }
       ],
@@ -285,6 +527,24 @@
       }
     },
     {
+      "id": "number_13_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "thirteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "treizieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 13
+      }
+    },
+    {
       "id": "number_14",
       "expressions":
       [
@@ -294,6 +554,24 @@
         },
         {
           "expression": "quatorze",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 14
+      }
+    },
+    {
+      "id": "number_14_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fourteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "quatorzieme",
           "locale": "fr"
         }
       ],
@@ -321,6 +599,24 @@
       }
     },
     {
+      "id": "number_15_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fifteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "quinzieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 15
+      }
+    },
+    {
       "id": "number_16",
       "expressions":
       [
@@ -339,6 +635,24 @@
       }
     },
     {
+      "id": "number_16_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "sixteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "seizieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 16
+      }
+    },
+    {
       "id": "number_17",
       "expressions":
       [
@@ -348,6 +662,26 @@
         },
         {
           "expression": "dix sept",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 17
+      }
+    },
+    {
+      "id": "number_17_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "seventeenth",
+          "locale": "en"
+        },
+        {
+          "expression": "dix septieme",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
@@ -379,6 +713,26 @@
       }
     },
     {
+      "id": "number_18_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "eighteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "dix huitieme",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 18
+      }
+    },
+    {
       "id": "number_19",
       "expressions":
       [
@@ -388,6 +742,26 @@
         },
         {
           "expression": "dix neuf",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 19
+      }
+    },
+    {
+      "id": "number_19_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "nineteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "dix neuvieme",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
@@ -417,6 +791,24 @@
       }
     },
     {
+      "id": "number_20_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "twentieth",
+          "locale": "en"
+        },
+        {
+          "expression": "vingtieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 20
+      }
+    },
+    {
       "id": "number_30",
       "expressions":
       [
@@ -426,6 +818,24 @@
         },
         {
           "expression": "trente",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 30
+      }
+    },
+    {
+      "id": "number_30_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "thirteenth",
+          "locale": "en"
+        },
+        {
+          "expression": "trentieme",
           "locale": "fr"
         }
       ],
@@ -453,6 +863,24 @@
       }
     },
     {
+      "id": "number_40_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fortieth",
+          "locale": "en"
+        },
+        {
+          "expression": "quarantieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 40
+      }
+    },
+    {
       "id": "number_50",
       "expressions":
       [
@@ -471,6 +899,24 @@
       }
     },
     {
+      "id": "number_50_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "fiftieth",
+          "locale": "en"
+        },
+        {
+          "expression": "cinquantieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 50
+      }
+    },
+    {
       "id": "number_60",
       "expressions":
       [
@@ -480,6 +926,24 @@
         },
         {
           "expression": "soixante",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 60
+      }
+    },
+    {
+      "id": "number_60_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "sixtieth",
+          "locale": "en"
+        },
+        {
+          "expression": "soixantieme",
           "locale": "fr"
         }
       ],
@@ -513,6 +977,30 @@
       }
     },
     {
+      "id": "number_70_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "seventieth",
+          "locale": "en"
+        },
+        {
+          "expression": "soixante dixieme",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "septantieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 70
+      }
+    },
+    {
       "id": "number_80",
       "expressions":
       [
@@ -528,6 +1016,30 @@
         },
         {
           "expression": "octante",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 80
+      }
+    },
+    {
+      "id": "number_80_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "eightieth",
+          "locale": "en"
+        },
+        {
+          "expression": "quatre vingtieme",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "octantieme",
           "locale": "fr"
         }
       ],
@@ -561,785 +1073,28 @@
       }
     },
     {
-      "id": "number_1_9",
+      "id": "number_90_ordinal",
       "expressions":
       [
         {
-          "expression": "@{number_1}",
-          "aliases":
-          [
-            {
-              "alias": "number_1",
-              "id": "number_1",
-              "package": "package-number-letters"
-            }
-          ]
+          "expression": "ninetieth",
+          "locale": "en"
         },
         {
-          "expression": "@{number_2}",
-          "aliases":
-          [
-            {
-              "alias": "number_2",
-              "id": "number_2",
-              "package": "package-number-letters"
-            }
-          ]
+          "expression": "quatre vingt dixieme",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
         },
         {
-          "expression": "@{number_3}",
-          "aliases":
-          [
-            {
-              "alias": "number_3",
-              "id": "number_3",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_4}",
-          "aliases":
-          [
-            {
-              "alias": "number_4",
-              "id": "number_4",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_5}",
-          "aliases":
-          [
-            {
-              "alias": "number_5",
-              "id": "number_5",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_6}",
-          "aliases":
-          [
-            {
-              "alias": "number_6",
-              "id": "number_6",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_7}",
-          "aliases":
-          [
-            {
-              "alias": "number_7",
-              "id": "number_7",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_8}",
-          "aliases":
-          [
-            {
-              "alias": "number_8",
-              "id": "number_8",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_9}",
-          "aliases":
-          [
-            {
-              "alias": "number_9",
-              "id": "number_9",
-              "package": "package-number-letters"
-            }
-          ]
+          "expression": "nonantieme",
+          "locale": "fr"
         }
-      ]
-    },
-    {
-      "id": "number_10_19",
-      "expressions":
-      [
-        {
-          "expression": "@{number_10}",
-          "aliases":
-          [
-            {
-              "alias": "number_10",
-              "id": "number_10",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_11}",
-          "aliases":
-          [
-            {
-              "alias": "number_11",
-              "id": "number_11",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_12}",
-          "aliases":
-          [
-            {
-              "alias": "number_12",
-              "id": "number_12",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_13}",
-          "aliases":
-          [
-            {
-              "alias": "number_13",
-              "id": "number_13",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_14}",
-          "aliases":
-          [
-            {
-              "alias": "number_14",
-              "id": "number_14",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_15}",
-          "aliases":
-          [
-            {
-              "alias": "number_15",
-              "id": "number_15",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_16}",
-          "aliases":
-          [
-            {
-              "alias": "number_16",
-              "id": "number_16",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_17}",
-          "aliases":
-          [
-            {
-              "alias": "number_17",
-              "id": "number_17",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_18}",
-          "aliases":
-          [
-            {
-              "alias": "number_18",
-              "id": "number_18",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_19}",
-          "aliases":
-          [
-            {
-              "alias": "number_19",
-              "id": "number_19",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_20_29",
-      "expressions":
-      [
-        {
-          "expression": "@{number_20} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_20",
-              "id": "number_20",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_20.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_20} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_20",
-              "id": "number_20",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_20.number+number_10_19.number`"
-          }
-        },
-        {
-          "expression": "@{number_20}",
-          "aliases":
-          [
-            {
-              "alias": "number_20",
-              "id": "number_20",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_30_39",
-      "expressions":
-      [
-        {
-          "expression": "@{number_30} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_30",
-              "id": "number_30",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_30.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_30} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_30",
-              "id": "number_30",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_30.number+number_10_19.number`"
-          }
-        },
-        {
-          "expression": "@{number_30}",
-          "aliases":
-          [
-            {
-              "alias": "number_30",
-              "id": "number_30",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_40_49",
-      "expressions":
-      [
-        {
-          "expression": "@{number_40} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_40",
-              "id": "number_40",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_40.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_40} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_40",
-              "id": "number_40",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_40.number+number_10_19.number`"
-          }
-        },
-        {
-          "expression": "@{number_40}",
-          "aliases":
-          [
-            {
-              "alias": "number_40",
-              "id": "number_40",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_50_59",
-      "expressions":
-      [
-        {
-          "expression": "@{number_50} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_50",
-              "id": "number_50",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_50.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_50} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_50",
-              "id": "number_50",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_50.number+number_10_19.number`"
-          }
-        },
-        {
-          "expression": "@{number_50}",
-          "aliases":
-          [
-            {
-              "alias": "number_50",
-              "id": "number_50",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_60_69",
-      "expressions":
-      [
-        {
-          "expression": "@{number_60} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_60",
-              "id": "number_60",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_60.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_60}",
-          "aliases":
-          [
-            {
-              "alias": "number_60",
-              "id": "number_60",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_70_79",
-      "expressions":
-      [
-        {
-          "expression": "@{number_70} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_70",
-              "id": "number_70",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_70.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_70}",
-          "aliases":
-          [
-            {
-              "alias": "number_70",
-              "id": "number_70",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_60} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_60",
-              "id": "number_60",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_60.number+number_10_19.number`"
-          }
-        }
-      ]
-    },
-    {
-      "id": "number_80_89",
-      "expressions":
-      [
-        {
-          "expression": "@{number_80} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_80",
-              "id": "number_80",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_80.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_80}",
-          "aliases":
-          [
-            {
-              "alias": "number_80",
-              "id": "number_80",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "number_90_99",
-      "expressions":
-      [
-        {
-          "expression": "@{number_90} @{number_1_9}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_90",
-              "id": "number_90",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_90.number+number_1_9.number`"
-          }
-        },
-        {
-          "expression": "@{number_90}",
-          "aliases":
-          [
-            {
-              "alias": "number_90",
-              "id": "number_90",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_80} @{number_10_19}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "number_80",
-              "id": "number_80",
-              "package": "package-number-letters"
-            },
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ],
-          "solution":
-          {
-            "number": "`number_80.number+number_10_19.number`"
-          }
-        }
-      ]
-    },
-    {
-      "id": "number_1_99",
-      "expressions":
-      [
-        {
-          "expression": "@{number_1_9}",
-          "aliases":
-          [
-            {
-              "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_10_19}",
-          "aliases":
-          [
-            {
-              "alias": "number_10_19",
-              "id": "number_10_19",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_20_29}",
-          "aliases":
-          [
-            {
-              "alias": "number_20_29",
-              "id": "number_20_29",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_30_39}",
-          "aliases":
-          [
-            {
-              "alias": "number_30_39",
-              "id": "number_30_39",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_40_49}",
-          "aliases":
-          [
-            {
-              "alias": "number_40_49",
-              "id": "number_40_49",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_50_59}",
-          "aliases":
-          [
-            {
-              "alias": "number_50_59",
-              "id": "number_50_59",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_60_69}",
-          "aliases":
-          [
-            {
-              "alias": "number_60_69",
-              "id": "number_60_69",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_70_79}",
-          "aliases":
-          [
-            {
-              "alias": "number_70_79",
-              "id": "number_70_79",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_80_89}",
-          "aliases":
-          [
-            {
-              "alias": "number_80_89",
-              "id": "number_80_89",
-              "package": "package-number-letters"
-            }
-          ]
-        },
-        {
-          "expression": "@{number_90_99}",
-          "aliases":
-          [
-            {
-              "alias": "number_90_99",
-              "id": "number_90_99",
-              "package": "package-number-letters"
-            }
-          ]
-        }
-      ]
+      ],
+      "solution":
+      {
+        "number": 90
+      }
     },
     {
       "id": "number_100",
@@ -1360,29 +1115,1516 @@
       }
     },
     {
+      "id": "number_100_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "hundredth",
+          "locale": "en"
+        },
+        {
+          "expression": "centieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 100
+      }
+    },
+    {
+      "id": "number_1000",
+      "expressions":
+      [
+        {
+          "expression": "thousand",
+          "locale": "en"
+        },
+        {
+          "expression": "mille",
+          "locale": "fr"
+        },
+        {
+          "expression": "mil",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1000
+      }
+    },
+    {
+      "id": "number_1000_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "thousandth",
+          "locale": "en"
+        },
+        {
+          "expression": "millieme",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "number": 1000
+      }
+    },
+    {
+      "id": "number_1_9",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1}",
+          "aliases":
+          [
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_2}",
+          "aliases":
+          [
+            {
+              "alias": "number_2",
+              "id": "number_2"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_3}",
+          "aliases":
+          [
+            {
+              "alias": "number_3",
+              "id": "number_3"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_4}",
+          "aliases":
+          [
+            {
+              "alias": "number_4",
+              "id": "number_4"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_5}",
+          "aliases":
+          [
+            {
+              "alias": "number_5",
+              "id": "number_5"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_6}",
+          "aliases":
+          [
+            {
+              "alias": "number_6",
+              "id": "number_6"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_7}",
+          "aliases":
+          [
+            {
+              "alias": "number_7",
+              "id": "number_7"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_8}",
+          "aliases":
+          [
+            {
+              "alias": "number_8",
+              "id": "number_8"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_9}",
+          "aliases":
+          [
+            {
+              "alias": "number_9",
+              "id": "number_9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_9_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_2_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_2_ordinal",
+              "id": "number_2_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_3_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_3_ordinal",
+              "id": "number_3_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_4_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_4_ordinal",
+              "id": "number_4_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_5_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_5_ordinal",
+              "id": "number_5_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_6_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_6_ordinal",
+              "id": "number_6_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_7_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_7_ordinal",
+              "id": "number_7_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_8_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_8_ordinal",
+              "id": "number_8_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_9_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_9_ordinal",
+              "id": "number_9_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_10_19",
+      "expressions":
+      [
+        {
+          "expression": "@{number_10}",
+          "aliases":
+          [
+            {
+              "alias": "number_10",
+              "id": "number_10"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_11}",
+          "aliases":
+          [
+            {
+              "alias": "number_11",
+              "id": "number_11"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_12}",
+          "aliases":
+          [
+            {
+              "alias": "number_12",
+              "id": "number_12"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_13}",
+          "aliases":
+          [
+            {
+              "alias": "number_13",
+              "id": "number_13"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_14}",
+          "aliases":
+          [
+            {
+              "alias": "number_14",
+              "id": "number_14"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_15}",
+          "aliases":
+          [
+            {
+              "alias": "number_15",
+              "id": "number_15"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_16}",
+          "aliases":
+          [
+            {
+              "alias": "number_16",
+              "id": "number_16"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_17}",
+          "aliases":
+          [
+            {
+              "alias": "number_17",
+              "id": "number_17"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_18}",
+          "aliases":
+          [
+            {
+              "alias": "number_18",
+              "id": "number_18"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_19}",
+          "aliases":
+          [
+            {
+              "alias": "number_19",
+              "id": "number_19"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_10_19_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_10_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_10_ordinal",
+              "id": "number_10_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_11_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_11_ordinal",
+              "id": "number_11_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_12_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_12_ordinal",
+              "id": "number_12_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_13_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_13_ordinal",
+              "id": "number_13_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_14_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_14_ordinal",
+              "id": "number_14_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_15_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_15_ordinal",
+              "id": "number_15_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_16_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_16_ordinal",
+              "id": "number_16_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_17_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_17_ordinal",
+              "id": "number_17_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_18_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_18_ordinal",
+              "id": "number_18_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_19_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_19_ordinal",
+              "id": "number_19_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_20_29",
+      "expressions":
+      [
+        {
+          "expression": "@{number_20} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_20} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_10_19.number`"
+          }
+        },
+        {
+          "expression": "@{number_20}",
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_20_29_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_20} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_20} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_10_19_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_20_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_20_ordinal",
+              "id": "number_20_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_30_39",
+      "expressions":
+      [
+        {
+          "expression": "@{number_30} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_30} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_10_19.number`"
+          }
+        },
+        {
+          "expression": "@{number_30}",
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_30_39_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_30} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_30} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_10_19_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_30_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_30_ordinal",
+              "id": "number_30_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_40_49",
+      "expressions":
+      [
+        {
+          "expression": "@{number_40} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_40} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_10_19.number`"
+          }
+        },
+        {
+          "expression": "@{number_40}",
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_40_49_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_40} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_40} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_10_19_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_40_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_40_ordinal",
+              "id": "number_40_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_50_59",
+      "expressions":
+      [
+        {
+          "expression": "@{number_50} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_50} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_10_19.number`"
+          }
+        },
+        {
+          "expression": "@{number_50}",
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_50_59_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_50} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_50} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_10_19_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_50_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_50_ordinal",
+              "id": "number_50_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_60_69",
+      "expressions":
+      [
+        {
+          "expression": "@{number_60} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_60}",
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_60_69_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_60} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_60_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_60_ordinal",
+              "id": "number_60_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_70_79",
+      "expressions":
+      [
+        {
+          "expression": "@{number_70} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_70",
+              "id": "number_70"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_70.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_70}",
+          "aliases":
+          [
+            {
+              "alias": "number_70",
+              "id": "number_70"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_60} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_10_19.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_70_79_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_70} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_70",
+              "id": "number_70"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_70.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_70_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_70_ordinal",
+              "id": "number_70_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_60} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_10_19_ordinal.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_80_89",
+      "expressions":
+      [
+        {
+          "expression": "@{number_80} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "id": "number_80"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_80.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_80}",
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "id": "number_80"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_80_89_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_80} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "id": "number_80"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_80.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_80_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_80_ordinal",
+              "id": "number_80_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_90_99",
+      "expressions":
+      [
+        {
+          "expression": "@{number_90} @{number_1_9}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_90",
+              "id": "number_90"
+            },
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_90.number+number_1_9.number`"
+          }
+        },
+        {
+          "expression": "@{number_90}",
+          "aliases":
+          [
+            {
+              "alias": "number_90",
+              "id": "number_90"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_80} @{number_10_19}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "id": "number_80"
+            },
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_80.number+number_10_19.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_90_99_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_90} @{number_1_9_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_90",
+              "id": "number_90"
+            },
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_90.number+number_1_9_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_90_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_90_ordinal",
+              "id": "number_90_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_80} @{number_10_19_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_80",
+              "id": "number_80"
+            },
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_80.number+number_10_19_ordinal.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_1_99",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_9}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_10_19}",
+          "aliases":
+          [
+            {
+              "alias": "number_10_19",
+              "id": "number_10_19"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_20_29}",
+          "aliases":
+          [
+            {
+              "alias": "number_20_29",
+              "id": "number_20_29"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_30_39}",
+          "aliases":
+          [
+            {
+              "alias": "number_30_39",
+              "id": "number_30_39"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_40_49}",
+          "aliases":
+          [
+            {
+              "alias": "number_40_49",
+              "id": "number_40_49"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_50_59}",
+          "aliases":
+          [
+            {
+              "alias": "number_50_59",
+              "id": "number_50_59"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_60_69}",
+          "aliases":
+          [
+            {
+              "alias": "number_60_69",
+              "id": "number_60_69"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_70_79}",
+          "aliases":
+          [
+            {
+              "alias": "number_70_79",
+              "id": "number_70_79"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_80_89}",
+          "aliases":
+          [
+            {
+              "alias": "number_80_89",
+              "id": "number_80_89"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_90_99}",
+          "aliases":
+          [
+            {
+              "alias": "number_90_99",
+              "id": "number_90_99"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_99_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_9_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_9_ordinal",
+              "id": "number_1_9_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_10_19_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_10_19_ordinal",
+              "id": "number_10_19_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_20_29_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_20_29_ordinal",
+              "id": "number_20_29_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_30_39_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_30_39_ordinal",
+              "id": "number_30_39_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_40_49_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_40_49_ordinal",
+              "id": "number_40_49_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_50_59_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_50_59_ordinal",
+              "id": "number_50_59_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_60_69_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_60_69_ordinal",
+              "id": "number_60_69_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_70_79_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_70_79_ordinal",
+              "id": "number_70_79_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_80_89_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_80_89_ordinal",
+              "id": "number_80_89_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_90_99_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_90_99_ordinal",
+              "id": "number_90_99_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "number_100_199",
       "expressions":
       [
         {
-          "expression": "@{number_100} @{and} @{number_1_99}",
+          "expression": "@{number_100} @{conjonction_and} @{number_1_99}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package-number-letters"
+              "id": "number_100"
             },
             {
-              "alias": "and",
-              "id": "and",
-              "package": "package-number-letters"
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package-number-letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -1398,13 +2640,11 @@
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package-number-letters"
+              "id": "number_100"
             },
             {
               "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package-number-letters"
+              "id": "number_1_99"
             }
           ],
           "solution":
@@ -1418,8 +2658,67 @@
           [
             {
               "alias": "number_100",
-              "id": "number_100",
-              "package": "package-number-letters"
+              "id": "number_100"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_100_199_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_100} @{conjonction_and} @{number_1_99_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100",
+              "id": "number_100"
+            },
+            {
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_99_ordinal",
+              "id": "number_1_99_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_100.number+number_1_99_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_100} @{number_1_99_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_100",
+              "id": "number_100"
+            },
+            {
+              "alias": "number_1_99_ordinal",
+              "id": "number_1_99_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_100.number+number_1_99_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_100_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_ordinal",
+              "id": "number_100_ordinal"
             }
           ]
         }
@@ -1437,13 +2736,11 @@
           [
             {
               "alias": "number_1_9",
-              "id": "number_1_9",
-              "package": "package-number-letters"
+              "id": "number_1_9"
             },
             {
               "alias": "number_100_199",
-              "id": "number_100_199",
-              "package": "package-number-letters"
+              "id": "number_100_199"
             }
           ],
           "solution":
@@ -1453,14 +2750,447 @@
         },
         {
           "expression": "@{number_100_199}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_199",
+              "id": "number_100_199"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_100_999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_9} @{number_100_199_ordinal}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "number_100_199",
-              "id": "number_100_199",
-              "package": "package-number-letters"
+              "alias": "number_1_9",
+              "id": "number_1_9"
+            },
+            {
+              "alias": "number_100_199_ordinal",
+              "id": "number_100_199_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1_9.number*100+number_100_199_ordinal.number-100`"
+          }
+        },
+        {
+          "expression": "@{number_100_199_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_199_ordinal",
+              "id": "number_100_199_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_99}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_100_999}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_999",
+              "id": "number_100_999"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_99_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_99_ordinal",
+              "id": "number_1_99_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_100_999_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_100_999_ordinal",
+              "id": "number_100_999_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1099",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{conjonction_and} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000} @{number_1_99}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "number_1_99",
+              "id": "number_1_99"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1099_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{conjonction_and} @{number_1_99_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "conjonction_and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_99_ordinal",
+              "id": "number_1_99_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000} @{number_1_99_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "number_1_99_ordinal",
+              "id": "number_1_99_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_1_99_ordinal.number`"
+          }
+        },
+        {
+          "expression": "@{number_1000_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_ordinal",
+              "id": "number_1000_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1100_1999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{number_100_999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "number_100_999",
+              "id": "number_100_999"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_100_999.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_1100_1999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000} @{number_100_999_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1000",
+              "id": "number_1000"
+            },
+            {
+              "alias": "number_100_999_ordinal",
+              "id": "number_100_999_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1000.number+number_100_999_ordinal.number`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_1099}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1099",
+              "id": "number_1000_1099"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1100_1999}",
+          "aliases":
+          [
+            {
+              "alias": "number_1100_1999",
+              "id": "number_1100_1999"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_1999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_1099_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1099_ordinal",
+              "id": "number_1000_1099_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1100_1999_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1100_1999_ordinal",
+              "id": "number_1100_1999_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_999999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_999} @{number_1000_1999}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_999",
+              "id": "number_1_999"
+            },
+            {
+              "alias": "number_1000_1999",
+              "id": "number_1000_1999"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1_999.number*1000+number_1000_1999.number-1000`"
+          }
+        },
+        {
+          "expression": "@{number_1000_1999}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1999",
+              "id": "number_1000_1999"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1000_999999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1_999} @{number_1000_1999_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_1_999",
+              "id": "number_1_999"
+            },
+            {
+              "alias": "number_1000_1999_ordinal",
+              "id": "number_1000_1999_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_1_999.number*1000+number_1000_1999_ordinal.number-1000`"
+          }
+        },
+        {
+          "expression": "@{number_1000_1999_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_1999_ordinal",
+              "id": "number_1000_1999_ordinal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_999999",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_999999}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_999999",
+              "id": "number_1000_999999"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1_999}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_999",
+              "id": "number_1_999"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_1_999999_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_1000_999999_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1000_999999_ordinal",
+              "id": "number_1000_999999_ordinal"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_1_999_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_1_999_ordinal",
+              "id": "number_1_999_ordinal"
             }
           ]
         }
@@ -1476,30 +3206,33 @@
           [
             {
               "alias": "number_0",
-              "id": "number_0",
-              "package": "package-number-letters"
+              "id": "number_0"
             }
           ]
         },
         {
-          "expression": "@{number_1_99}",
+          "expression": "@{number_1_999999}",
           "aliases":
           [
             {
-              "alias": "number_1_99",
-              "id": "number_1_99",
-              "package": "package-number-letters"
+              "alias": "number_1_999999",
+              "id": "number_1_999999"
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "number_letters_ordinal",
+      "expressions":
+      [
         {
-          "expression": "@{number_100_999}",
+          "expression": "@{number_1_999999_ordinal}",
           "aliases":
           [
             {
-              "alias": "number_100_999",
-              "id": "number_100_999",
-              "package": "package-number-letters"
+              "alias": "number_1_999999_ordinal",
+              "id": "number_1_999999_ordinal"
             }
           ]
         }

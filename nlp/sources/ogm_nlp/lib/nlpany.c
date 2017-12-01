@@ -10,6 +10,8 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     int Irequest_position_before);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct request_any *request_any);
+og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
+    struct request_expression *request_expression);
 static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size,
     char *string);
 
@@ -123,7 +125,11 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
     IFE(distance);
     if (minimum_distance == distance)
     {
-      IFE(NlpRequestAnyAddRequestExpression(ctrl_nlp_th, request_any + Irequest_any, request_expression));
+      request_any[Irequest_any].distance = distance;
+      if (NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any + Irequest_any, request_expression))
+      {
+        IFE(NlpRequestAnyAddRequestExpression(ctrl_nlp_th, request_any + Irequest_any, request_expression));
+      }
     }
   }
 
@@ -161,6 +167,56 @@ static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_exp
   return (minimum_distance);
 }
 
+og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
+    struct request_expression *request_expression)
+{
+  if (!request_expression->expression->keep_order) return TRUE;
+
+  int Ialias = 0;
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      Ialias++;
+      if (request_expression->expression->alias_any_input_part_position == Ialias)
+      {
+        struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+            request_input_part->request_position_start + request_input_part->request_positions_nb - 1);
+        IFN(request_position) DPcErr;
+        struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, request_any->request_word_start);
+        IFN(request_word) DPcErr;
+        if (request_position->start + request_position->length < request_word->start_position)
+        {
+          if (i + 1 < request_expression->orips_nb)
+          {
+            struct request_input_part *request_input_part_next = NlpGetRequestInputPart(ctrl_nlp_th, request_expression,
+                i + 1);
+            IFN(request_input_part_next) DPcErr;
+            if (request_input_part_next->type == nlp_input_part_type_Interpretation)
+            {
+              struct request_position *request_position_next = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+                  request_input_part_next->request_position_start);
+              IFN(request_position) DPcErr;
+              struct request_word *request_word_last = OgHeapGetCell(ctrl_nlp_th->hrequest_word,
+                  request_any->request_word_start + request_any->request_words_nb - 1);
+              IFN(request_word_last) DPcErr;
+              if (request_word_last->start_position + request_word_last->length_position < request_position_next->start) return TRUE;
+              else return FALSE;
+            }
+            else return TRUE;
+
+          }
+          else return TRUE;
+        }
+        else return FALSE;
+      }
+    }
+  }
+  return TRUE;
+}
+
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression)
 {
@@ -193,8 +249,8 @@ int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression
     char highlight[DPcPathSize];
     NlpRequestAnyStringPretty(ctrl_nlp_th, request_any + i, DPcPathSize, highlight);
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " '%s' [%s] -> [%s]: '%s'", string_any, string_any_position,
-        string_request_expression, highlight);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, " '%s' [%s] -> [%s]: '%s', distance=%d", string_any,
+        string_any_position, string_request_expression, highlight, request_any->distance);
   }
 
   DONE;
@@ -248,8 +304,8 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
   {
     length = strlen(string);
     snprintf(string + length, size - length, "%s%d:%d", (i ? " " : ""),
-        request_word[request_any->request_word_start + i].start,
-        request_word[request_any->request_word_start + i].length);
+        request_word[request_any->request_word_start + i].start_position,
+        request_word[request_any->request_word_start + i].length_position);
   }
 
   DONE;
@@ -278,7 +334,8 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
 
     }
     length = strlen(string);
-    snprintf(string + length, size - length, "[%.*s]", request_word[irw].length_position, s + request_word[irw].start_position);
+    snprintf(string + length, size - length, "[%.*s]", request_word[irw].length_position,
+        s + request_word[irw].start_position);
     position = request_word[irw].start_position + request_word[irw].length_position;
   }
 

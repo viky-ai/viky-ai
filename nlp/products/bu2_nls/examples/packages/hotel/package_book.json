@@ -1,0 +1,122 @@
+{
+  "id": "book",
+  "interpretations":
+  [
+    {
+      "id": "simple_book",
+      "expressions":
+      [
+        {
+          "expression": "réserver",
+          "locale": "fr"
+        },
+        {
+          "expression": "réserve",
+          "locale": "fr"
+        },
+        {
+          "expression": "avoir",
+          "locale": "fr"
+        },
+        {
+          "expression": "réserve-moi",
+          "locale": "fr"
+        },
+        {
+          "expression": "réserve moi",
+          "locale": "fr"
+        },
+        {
+          "expression": "book",
+          "locale": "en"
+        },
+        {
+          "expression": "reserve",
+          "locale": "en"
+        },
+        {
+          "expression": "have",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "want_book",
+      "expressions":
+      [
+        {
+          "expression": "@{want} @{simple_book}",
+          "aliases":
+          [
+            {
+              "alias": "want",
+              "id": "want",
+              "package": "want"
+            },
+            {
+              "alias": "simple_book",
+              "id": "simple_book"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "please_book",
+      "expressions":
+      [
+        {
+          "expression": "@{please} @{simple_book}",
+          "aliases":
+          [
+            {
+              "alias": "please",
+              "id": "please",
+              "package": "please"
+            },
+            {
+              "alias": "simple_book",
+              "id": "simple_book"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "book",
+      "expressions":
+      [
+        {
+          "expression": "@{simple_book}",
+          "aliases":
+          [
+            {
+              "alias": "simple_book",
+              "id": "simple_book"
+            }
+          ]
+        },
+        {
+          "expression": "@{want_book}",
+          "aliases":
+          [
+            {
+              "alias": "want_book",
+              "id": "want_book"
+            }
+          ]
+        },
+        {
+          "expression": "@{please_book}",
+          "aliases":
+          [
+            {
+              "alias": "please_book",
+              "id": "please_book"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

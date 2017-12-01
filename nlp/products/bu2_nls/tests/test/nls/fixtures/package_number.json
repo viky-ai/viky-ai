@@ -1,5 +1,5 @@
 {
-  "id": "package-number",
+  "id": "package_number",
   "interpretations":
   [
     {
@@ -13,7 +13,7 @@
             {
               "alias": "number_digits",
               "id": "number_digits",
-              "package": "package-number-digits"
+              "package": "package_number_digits"
             }
           ]
         },
@@ -24,7 +24,35 @@
             {
               "alias": "number_letters",
               "id": "number_letters",
-              "package": "package-number-letters"
+              "package": "package_number_letters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number_ordinal",
+      "expressions":
+      [
+        {
+          "expression": "@{number_digits_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_digits_ordinal",
+              "id": "number_digits_ordinal",
+              "package": "package_number_digits"
+            }
+          ]
+        },
+        {
+          "expression": "@{number_letters_ordinal}",
+          "aliases":
+          [
+            {
+              "alias": "number_letters_ordinal",
+              "id": "number_letters_ordinal",
+              "package": "package_number_letters"
             }
           ]
         }

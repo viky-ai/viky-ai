@@ -1,0 +1,97 @@
+{
+  "id": "autocomplete",
+  "interpretations":
+  [
+    {
+      "id": "two_animals",
+      "expressions":
+      [
+        {
+          "expression": "@{animal} @{animal}",
+          "aliases":
+          [
+            {
+              "alias": "animal",
+              "id": "animals"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "animals",
+      "expressions":
+      [
+        {
+          "expression": "@{horse}",
+          "aliases":
+          [
+            {
+              "alias": "horse",
+              "id": "horse"
+            }
+          ]
+        },
+        {
+          "expression": "@{tiger}",
+          "aliases":
+          [
+            {
+              "alias": "tiger",
+              "id": "tiger"
+            }
+          ]
+        },
+        {
+          "expression": "@{tilapia}",
+          "aliases":
+          [
+            {
+              "alias": "tilapia",
+              "id": "tilapia"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horse",
+      "expressions":
+      [
+        {
+          "expression": "horse"
+        }
+      ],
+      "solution":
+      {
+        "animal": "horse"
+      }
+    },
+    {
+      "id": "tiger",
+      "expressions":
+      [
+        {
+          "expression": "tiger"
+        }
+      ],
+      "solution":
+      {
+        "animal": "tiger"
+      }
+    },
+    {
+      "id": "tilapia",
+      "expressions":
+      [
+        {
+          "expression": "tilapia"
+        }
+      ],
+      "solution":
+      {
+        "animal": "tilapia"
+      }
+    }
+  ]
+}

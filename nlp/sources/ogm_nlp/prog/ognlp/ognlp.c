@@ -222,6 +222,7 @@ static int nlp(struct og_info *info, int argc, char * argv[])
   IFE(OgNlpThreadedFlush(info->hnlpi));
   IFE(OgHeapFlush(info->hfilename_ba));
   IFE(OgHeapFlush(info->hfilename));
+  IFE(OgNlpFlush(info->hnlp));
 
   DONE;
 }
@@ -262,7 +263,6 @@ static int nlp_compile(struct og_info *info, char *json_compilation_filename)
   {
     og_status status = json_dump_file(output->json_output, "/dev/stdout", JSON_INDENT(2));
     printf("\n");
-    json_decrefp(&output->json_output);
     IF(status)
     {
       OgErr(info->herr, "nlp_compile: error on json_dump_file");
@@ -294,7 +294,6 @@ static og_status nlp_dump(struct og_info *info)
     if (info->output_filename != NULL)
     {
       og_status status = json_dump_file(output->json_output, info->output_filename, JSON_INDENT(2));
-      json_decref(output->json_output);
       IF(status)
       {
         char buffer[DPcPathSize];
@@ -361,27 +360,47 @@ static int nlp_interpret(struct og_info *info, char *json_interpret_filename)
   DONE;
 }
 
+static og_status split_error_message(json_t *json_errors, char *multiple_errors)
+{
+  if (multiple_errors == NULL) CONT;
+
+  char *saveptr = NULL;
+  char *errors = multiple_errors;
+  char *error_line = strtok_r(errors, "\n", &saveptr);
+  while (error_line != NULL)
+  {
+
+    json_array_append_new(json_errors, json_string(error_line));
+
+    error_line = strtok_r(NULL, "\n", &saveptr);
+  }
+
+  DONE;
+}
+
 static int nlp_send_errors_as_json(struct og_info *info)
 {
+  json_t * root = json_object();
   json_t * errors = json_array();
+  json_object_set_new(root, "errors", errors);
 
-  int nb_error = 0;
   char erreur[DOgErrorSize];
   while (OgErrLast(info->herr, erreur, 0))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
   int h = 0;
   while (PcErrDiag(&h, erreur))
   {
-    json_array_append_new(errors, json_string(erreur));
-    nb_error++;
+    split_error_message(errors, erreur);
   }
 
-  json_t * root = json_object();
-  json_object_set_new(root, "errors", errors);
+  if (json_array_size(errors) == 0)
+  {
+    json_array_append_new(errors, json_string("Unexpected errors"));
+  }
+
   json_dump_file(root, "/dev/stdout", JSON_INDENT(2));
   json_decrefp(&root);
 
@@ -409,6 +428,7 @@ static int OgUse(struct og_info *info)
   ibuffer += sprintf(buffer + ibuffer, "      0x1: minimal, 0x2: memory, 0x4: synchro, 0x8: compile\n");
   ibuffer += sprintf(buffer + ibuffer, "      0x10: consolidate, 0x20: interpret, 0x40: dump, 0x80: package\n");
   ibuffer += sprintf(buffer + ibuffer, "      0x100: match, 0x200: parse, 0x400: solution, 0x800: JS\n");
+  ibuffer += sprintf(buffer + ibuffer, "      0x1000: ltrac, 0x2000: ltras, 0x4000: ltras detail\n");
   OgLogConsole(info->hmsg, "%.*s", ibuffer, buffer);
 
   DONE;

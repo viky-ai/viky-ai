@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.1">
+
+  <xs:element name="ltras">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="small_words" type="TypeSmallWords"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="TypeSmallWords">
+    <xs:sequence>
+      <xs:element name="w" type="TypeWord" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="max_length" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:simpleType name="TypeWord">
+    <xs:restriction base="xs:normalizedString">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

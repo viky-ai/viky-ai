@@ -50,24 +50,26 @@ IFn(hlib = dlopen(libname, RTLD_LAZY)) {
   sprintf(erreur,"LtrasAddPluginModule: Impossible to load library '%s': %s", libname, sys_erreur);
   OgErr(ctrl_ltras->herr,erreur); DPcErr;
   }
+// Necessary only for a dlclose call
+ctrl_ltras->hmodules_lib = hlib;
 
 module->init = dlsym(hlib, init_function_name);
 IFn(module->init) {
   sys_erreur = dlerror(); IFn(sys_erreur) sys_erreur="no error found";
   sprintf(erreur, "LtrasAddPluginModule: Impossible to load %s: %s",init_function_name,sys_erreur);
-  OgErr(ctrl_ltras->herr,erreur); DPcErr;  
+  OgErr(ctrl_ltras->herr,erreur); DPcErr;
   }
 module->module = dlsym(hlib, function_name);
 IFn(module->module) {
   sys_erreur = dlerror(); IFn(sys_erreur) sys_erreur="no error found";
   sprintf(erreur, "LtrasAddPluginModule: Impossible to load %s: %s",function_name,sys_erreur);
-  OgErr(ctrl_ltras->herr,erreur); DPcErr;  
+  OgErr(ctrl_ltras->herr,erreur); DPcErr;
   }
 module->flush = dlsym(hlib, flush_function_name);
 IFn(module->init) {
   sys_erreur = dlerror(); IFn(sys_erreur) sys_erreur="no error found";
   sprintf(erreur, "LtrasAddPluginModule: Impossible to load %s: %s",flush_function_name,sys_erreur);
-  OgErr(ctrl_ltras->herr,erreur); DPcErr;  
+  OgErr(ctrl_ltras->herr,erreur); DPcErr;
   }
 
 #else
@@ -126,7 +128,7 @@ int i=ctrl_ltras->ModuleNumber;
 beginLtrasAllocModule:
 
 if (ctrl_ltras->ModuleUsed < ctrl_ltras->ModuleNumber) {
-  i = ctrl_ltras->ModuleUsed++; 
+  i = ctrl_ltras->ModuleUsed++;
   }
 
 if (i == ctrl_ltras->ModuleNumber) {

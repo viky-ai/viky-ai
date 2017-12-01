@@ -132,11 +132,20 @@ module Nls
     end
 
     def self.interpret(body, params = {})
+      puts "Interpret request :\n #{body.to_json}\n" if verbose?
+
+      body_to_write = body
+      body_to_write["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
+      body_to_write["show-explanation"] = false
+
+      File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|
+        f.write(JSON.pretty_generate(body_to_write))
+      end
+
       response  = RestClient.post(url_interpret, body.to_json, content_type: :json, params: params)
+
+      puts "Interpret response :\n #{response.body}\n" if verbose?
       JSON.parse(response.body)
-#    rescue RestClient::ExceptionWithResponse => e
-#      puts e.http_body
-#      raise
     end
 
     def self.interpret_package(package, sentence, opts = {})
@@ -159,14 +168,42 @@ module Nls
     end
 
     def self.package_update(package, params = {})
-      package_url = "#{base_url}/packages/#{package.id}"
-      response = RestClient.post(package_url, package.to_json, content_type: :json, params: params)
+      package_id = nil
+      package_body = nil
+      if package.kind_of? Package
+        package.to_file(import_dir)
+        package_id = "#{package.id}"
+        package_body = JSON.pretty_generate(package.to_h)
+      elsif package.kind_of? Hash
+        package_id = package['id']
+        slug = package['slug']
+        if slug.nil?
+          filename = "package_#{package_id}.json"
+        else
+          filename = "package_#{slug}_#{package_id}.json"
+        end
+
+        package_body = JSON.pretty_generate(package)
+
+        File.open(File.join(File.expand_path(import_dir), filename), "w") do |f|
+          f.write(package_body)
+        end
+      else
+        raise "Unsupported package format #{package.inspect}"
+      end
+
+      package_url = "#{base_url}/packages/#{package_id}"
+      response = RestClient.post(package_url, package_body, content_type: :json, params: params)
       JSON.parse(response.body)
     end
 
     def self.dump
       response = RestClient.get(url_dump, params: {})
       JSON.parse(response.body)
+    end
+
+    def self.import_dir
+      File.join(File.expand_path(pwd), "import")
     end
 
     def self.pwd
@@ -177,9 +214,21 @@ module Nls
 
     def self.remove_all_packages
       list_result = query_get(url_list)
-      list_result.each do |package|
-        package_url = "#{base_url}/packages/#{package}"
+      list_result.each do |package_id|
+        package_url = "#{base_url}/packages/#{package_id}"
         Nls.delete(package_url)
+      end
+      Dir[File.join(import_dir, "*.json")].each do |file|
+        FileUtils.rm(file, :force => true)
+      end
+    end
+
+    def self.verbose?
+      test_verbose = ENV['TEST_VERBOSE']
+      if !test_verbose.nil?
+        return true
+      else
+        return false
       end
     end
 

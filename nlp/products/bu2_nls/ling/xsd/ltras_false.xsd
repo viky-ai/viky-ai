@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.1">
+
+  <xs:element name="ltras">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="false_transformations" type="TypeFalseTransformations"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="TypeFalseTransformations">
+    <xs:sequence>
+      <xs:element name="false_transformation" type="TypeFalseTransformation" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TypeFalseTransformation">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="from"   type="TypeToTransformation" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="from_any" />
+      </xs:choice>
+      <xs:choice>
+        <xs:element name="to"     type="TypeToTransformation" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="to_any" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TypeToTransformation">
+    <xs:sequence>
+      <xs:element name="w" type="TypeWord" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="charnorm" type="xs:normalizedString" />
+  </xs:complexType>
+
+  <xs:simpleType name="TypeWord">
+    <xs:restriction base="xs:normalizedString">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+
+
+</xs:schema>

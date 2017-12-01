@@ -48,7 +48,7 @@ PUBLIC(void *) OgLtracInit(struct og_ltrac_param *param)
   pho_param->herr = ctrl_ltrac->herr;
   pho_param->hmsg = ctrl_ltrac->hmsg;
   pho_param->hmutex = ctrl_ltrac->hmutex;
-  pho_param->loginfo.trace = DOgPhoTraceMinimal + DOgPhoTraceMemory;
+  pho_param->loginfo.trace = DOgPhoTraceMinimal;
   pho_param->loginfo.where = ctrl_ltrac->loginfo->where;
 
   if (ctrl_ltrac->WorkingDirectory[0])
@@ -83,6 +83,7 @@ PUBLIC(int) OgLtracFlush(handle)
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
   IFn(handle) DONE;
   IFE(OgPhoFlush(ctrl_ltrac->hpho));
+  IFE(OgMsgFlush(ctrl_ltrac->hmsg));
   DPcFree(ctrl_ltrac);
   DONE;
 }

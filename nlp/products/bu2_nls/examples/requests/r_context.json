@@ -1,0 +1,32 @@
+[
+  {
+    "packages":
+    [
+      "context"
+    ],
+    "sentence": "oneword"
+  },
+  {
+    "packages":
+    [
+      "context"
+    ],
+    "contexts":
+    [
+      "context1"
+    ],
+    "sentence": "oneword"
+  },
+  {
+    "packages":
+    [
+      "context"
+    ],
+    "contexts":
+    [
+      "context1",
+      "context2"
+    ],
+    "sentence": "oneword"
+  }
+]

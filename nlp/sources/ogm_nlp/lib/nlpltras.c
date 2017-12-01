@@ -8,7 +8,7 @@
 #include <logltras.h>
 
 static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
-static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, int word_length, og_string word,
+static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
     struct interpret_package *interpret_package);
 static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
     og_string corrected_word, double spelling_score);
@@ -22,7 +22,7 @@ og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th)
   param->hmutex = ctrl_nlp_th->hmutex;
 
   param->loginfo.trace = DOgLtrasTraceMinimal;
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtras)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtrasDetail)
   {
     param->loginfo.trace |= DOgLtrasTraceMemory + DOgLtrasTraceModuleFlowChart + DOgLtrasTraceModuleCalls
         + DOgLtrasTraceSelection;
@@ -40,7 +40,11 @@ og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th)
 
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th)
 {
+  if (ctrl_nlp_th->hltras == NULL) CONT;
+
   IFE(OgLtrasFlush(ctrl_nlp_th->hltras));
+  ctrl_nlp_th->hltras = NULL;
+
   DONE;
 }
 
@@ -49,9 +53,11 @@ og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th)
  */
 og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 {
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request words:");
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  for (int i = 0; i < request_word_used; i++)
+  if (ctrl_nlp_th->hltras == NULL) CONT;
+  if (ctrl_nlp_th->basic_request_word_used <= 0) DONE;
+  int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+  if (ctrl_nlp_th->auto_complete) nb_basic_request_word_for_ltras--;
+  for (int i = 0; i < nb_basic_request_word_for_ltras; i++)
   {
     IFE(NlpLtrasWord(ctrl_nlp_th, i));
   }
@@ -60,26 +66,19 @@ og_status NlpLtras(og_nlp_th ctrl_nlp_th)
 
 static og_status NlpLtrasWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
-  IFN(request_word) DPcErr;
-  og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-  IFN(string_request_word) DPcErr;
-  int string_request_word_length = strlen(string_request_word);
-
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
   IFN(interpret_packages) DPcErr;
   for (int i = 0; i < interpret_package_used; i++)
   {
     struct interpret_package *interpret_package = interpret_packages + i;
-    og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, string_request_word_length, string_request_word,
-        interpret_package);
+    og_status status = NlpLtrasWordPackage(ctrl_nlp_th, Irequest_word, interpret_package);
     IFE(status);
   }
   DONE;
 }
 
-static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, int word_length, og_string word,
+static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word,
     struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
@@ -91,6 +90,11 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
   struct og_ltras_input input[1];
   memset(input, 0, sizeof(struct og_ltras_input));
 
+  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
+  IFN(request_word) DPcErr;
+  og_string word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+  IFN(word) DPcErr;
+  int word_length = request_word->length;
   int uni_length;
   unsigned char uni[DPcPathSize];
   IFE(OgCpToUni(word_length, word , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
@@ -126,7 +130,8 @@ static og_status NlpLtrasWordPackage(og_nlp_th ctrl_nlp_th, int Irequest_word, i
       IFE(OgUniToCp(ltra_word->length,trfs->Ba+ltra_word->start,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
-    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, trf->final_score);
+    double score_spelling = pow(trf->final_score,4);
+    og_status status = NlpLtrasAddWord(ctrl_nlp_th, Irequest_word, strlen(words), words, score_spelling);
     IFE(status);
   }
 
@@ -170,6 +175,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->length_position = request_word_basic->length_position;
 
   request_word->is_digit = FALSE;
+  request_word->is_auto_complete_word = FALSE;
 
   request_word->spelling_score = spelling_score;
 

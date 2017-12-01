@@ -64,6 +64,71 @@
               "package": "number_people"
             }
           ]
+        },
+        {
+          "expression": "@{in_location}",
+          "aliases":
+          [
+            {
+              "alias": "in_location",
+              "id": "in_location",
+              "package": "location"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_date_for} @{date}",
+          "aliases":
+          [
+            {
+              "alias": "preposition_date_for",
+              "id": "preposition_date_for",
+              "package": "grammar"
+            },
+            {
+              "alias": "date",
+              "id": "date",
+              "package": "package_overall_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_range}",
+          "aliases":
+          [
+            {
+              "alias": "date_range",
+              "id": "date_range",
+              "package": "package_overall_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration}",
+          "aliases":
+          [
+            {
+              "alias": "duration",
+              "id": "duration",
+              "package": "package_overall_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_during_duration} @{duration}",
+          "aliases":
+          [
+            {
+              "alias": "preposition_during_duration",
+              "id": "preposition_during_duration",
+              "package": "grammar"
+            },
+            {
+              "alias": "duration",
+              "id": "duration",
+              "package": "package_overall_date"
+            }
+          ]
         }
       ]
     }

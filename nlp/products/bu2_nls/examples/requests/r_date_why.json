@@ -1,0 +1,12 @@
+{
+  "packages": [
+      "package_date",
+      "package_number",
+      "package_number_digits",
+      "package_number_letters"
+  ],
+  "sentence": "3/12/2017",
+  "why-not-matching": {
+    "expression": "@{day} @{slash1} @{month} @{slash2} @{year}"
+  }
+}

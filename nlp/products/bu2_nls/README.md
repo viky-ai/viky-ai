@@ -70,6 +70,11 @@ bundle install
 bundle exec rake test
 ```
 
+Notes: You can run only one test by telling line number
+```
+bundle exec m test/nls/endpoint_interpret/test_solution_js.rb:138
+```
+
 Docker
 ============
 

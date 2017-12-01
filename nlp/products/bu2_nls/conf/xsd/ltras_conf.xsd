@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+  <xs:element name="ltras">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="equivalent_letters" type="Type_equivalent_letters" minOccurs="0" maxOccurs="1" />
+        <xs:element name="space_insertion_costs" type="Type_space_insertion_costs" minOccurs="0" maxOccurs="1" />
+        <xs:element name="space_deletion_costs" type="Type_space_deletion_costs" minOccurs="0" maxOccurs="1" />
+        <xs:element name="parameters" type="Type_parameters" minOccurs="0" maxOccurs="1" />
+        <xs:element name="minimum_scores" type="Type_minimum_scores" minOccurs="0" maxOccurs="1" />
+        <xs:element name="minimum_final_scores" type="Type_minimum_final_scores" minOccurs="0" maxOccurs="1" />
+        <xs:element name="maximum_transformations" type="Type_maximum_transformations" minOccurs="0" maxOccurs="1" />
+        <xs:element name="ltras_modules" type="Type_ltras_modules" minOccurs="0" maxOccurs="1" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="Type_space_insertion_costs">
+    <xs:sequence>
+      <xs:element name="space_insertion_cost" type="Type_space_insertion_cost" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_space_insertion_cost">
+    <xs:simpleContent>
+      <xs:extension base="Type_score">
+        <xs:attribute name="occurence" type="Type_occurence" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="Type_space_deletion_costs">
+    <xs:sequence>
+      <xs:element name="space_deletion_cost" type="Type_space_deletion_cost" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_space_deletion_cost">
+    <xs:simpleContent>
+      <xs:extension base="Type_score">
+        <xs:attribute name="occurence" type="Type_occurence" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- <equivalent_letters><equivalent_letter><letter>v</letter><letter>w</letter></equivalent_letter></equivalent_letters> -->
+  <xs:complexType name="Type_equivalent_letters">
+    <xs:sequence>
+      <xs:element name="equivalent_letter" type="Type_equivalent_letter" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_equivalent_letter">
+    <xs:sequence>
+      <xs:element name="letter" type="Type_letter" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="cost" type="Type_score" />
+  </xs:complexType>
+
+  <!-- <parameter name="insertion_cost">0.1</parameter> -->
+  <xs:complexType name="Type_parameters">
+    <xs:sequence>
+      <xs:element name="parameter" type="Type_parameter" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_parameter">
+    <xs:simpleContent>
+      <xs:extension base="Type_parameter_content">
+        <xs:attribute name="name" type="xs:NMTOKEN" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="Type_parameter_content">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base='xs:integer' />
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base='xs:float' />
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base='xs:normalizedString'>
+          <xs:enumeration value="yes" />
+          <xs:enumeration value="no" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+
+  <!-- <minimum_score length="2" score="1.00"/> -->
+  <xs:complexType name="Type_minimum_scores">
+    <xs:sequence>
+      <xs:element name="minimum_score" type="Type_minimum_score" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_minimum_score">
+    <xs:attribute name="length" type="xs:integer" />
+    <xs:attribute name="score" type="Type_score" />
+  </xs:complexType>
+
+  <!-- <minimum_final_score length="2" score="1.00"/> -->
+
+  <xs:complexType name="Type_minimum_final_scores">
+    <xs:sequence>
+      <xs:element name="minimum_final_score" type="Type_minimum_final_score" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_minimum_final_score">
+    <xs:attribute name="length" type="xs:integer" />
+    <xs:attribute name="score" type="Type_score" />
+  </xs:complexType>
+
+  <!-- <minimum_final_score length="2" score="1.00"/> -->
+
+  <xs:complexType name="Type_maximum_transformations">
+    <xs:sequence>
+      <xs:element name="maximum_transformation" type="Type_maximum_transformation" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_maximum_transformation">
+    <xs:attribute name="nb_request_words" type="xs:integer" />
+    <xs:attribute name="number" type="xs:integer" />
+  </xs:complexType>
+
+  <!-- <minimum_final_score length="2" score="1.00"/> -->
+
+  <xs:complexType name="Type_ltras_modules">
+    <xs:sequence>
+      <xs:element name="ltras_module" type="Type_ltras_module" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Type_ltras_module">
+    <xs:sequence>
+      <xs:element name="name" type="Type_module_name" minOccurs="1" maxOccurs="1" />
+      <xs:element name="function_name" type="Type_function_name" minOccurs="1" maxOccurs="1" />
+      <xs:element name="library_name" type="Type_library_name" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="Type_module_name">
+    <xs:restriction base='xs:normalizedString'>
+      <xs:enumeration value="add" />
+      <xs:enumeration value="cut" />
+      <xs:enumeration value="compound" />
+      <xs:enumeration value="del" />
+      <xs:enumeration value="exc" />
+      <xs:enumeration value="lem1" />
+      <xs:enumeration value="lem2" />
+      <xs:enumeration value="paste" />
+      <xs:enumeration value="phon" />
+      <xs:enumeration value="ref" />
+      <xs:enumeration value="split" />
+      <xs:enumeration value="swap" />
+      <xs:enumeration value="term" />
+      <xs:enumeration value="tra" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type_function_name">
+    <xs:restriction base='xs:normalizedString'>
+      <xs:enumeration value="OgLtrasModuleAdd" />
+      <xs:enumeration value="OgLtrasModuleCut" />
+      <xs:enumeration value="OgLtrasModuleCompound" />
+      <xs:enumeration value="OgLtrasModuleDelete" />
+      <xs:enumeration value="OgLtrasModuleExcept" />
+      <xs:enumeration value="OgLtrasModuleLem1" />
+      <xs:enumeration value="OgLtrasModuleLem2" />
+      <xs:enumeration value="OgLtrasModulePaste" />
+      <xs:enumeration value="OgLtrasModulePhon" />
+      <xs:enumeration value="OgLtrasModuleReference" />
+      <xs:enumeration value="OgLtrasModuleSplit" />
+      <xs:enumeration value="OgLtrasModuleSwap" />
+      <xs:enumeration value="OgLtrasModuleTerm" />
+      <xs:enumeration value="OgLtrasModuleTra" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type_library_name">
+    <xs:restriction base='xs:normalizedString'>
+      <xs:enumeration value="libogltras" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type_score">
+    <xs:restriction base="xs:float">
+      <xs:minInclusive value="0.00" />
+      <xs:maxInclusive value="1.00" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type_letter">
+    <xs:restriction base='xs:string'>
+      <xs:maxLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Type_occurence">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

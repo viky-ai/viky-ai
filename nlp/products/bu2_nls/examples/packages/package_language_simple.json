@@ -1,0 +1,103 @@
+{
+  "id": "language-simple",
+  "interpretations":
+  [
+    {
+      "id": "town",
+      "expressions":
+      [
+        {
+          "expression": "@{new-york}",
+          "aliases":
+          [
+            {
+              "alias": "new-york",
+              "id": "new-york"
+            }
+          ]
+        },
+        {
+          "expression": "@{barcelona}",
+          "aliases":
+          [
+            {
+              "alias": "barcelona",
+              "id": "barcelona"
+            }
+          ]
+        },
+        {
+          "expression": "@{paris}",
+          "aliases":
+          [
+            {
+              "alias": "paris",
+              "id": "paris"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "new-york",
+      "expressions":
+      [
+        {
+          "expression": "New York",
+          "locale": "en"
+        },
+        {
+          "expression": "New York",
+          "locale": "fr"
+        },
+        {
+          "expression": "NYC"
+        }
+      ],
+      "solution":
+      {
+        "name": "New York"
+      }
+    },
+    {
+      "id": "barcelona",
+      "expressions":
+      [
+        {
+          "expression": "Barcelona",
+          "locale": "en"
+        },
+        {
+          "expression": "Barca",
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "name": "Barcelona"
+      }
+    },
+    {
+      "id": "paris",
+      "expressions":
+      [
+        {
+          "expression": "Paris",
+          "locale": "en",
+          "solution":
+          {
+            "name": "Paris-en"
+          }
+        },
+        {
+          "expression": "Paris",
+          "locale": "fr",
+          "solution":
+          {
+            "name": "Paris-fr"
+          }
+        }
+      ]
+    }
+  ]
+}

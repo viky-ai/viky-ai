@@ -1,0 +1,47 @@
+{
+  "id": "warning-simple",
+  "interpretations":
+  [
+    {
+      "id": "town",
+      "expressions":
+      [
+        {
+          "expression": "@{paris1}",
+          "aliases":
+          [
+            {
+              "alias": "paris1",
+              "id": "paris_on_mars",
+              "package": "towns_in_mars"
+            }
+          ]
+        },
+        {
+          "expression": "@{paris2}",
+          "aliases":
+          [
+            {
+              "alias": "paris2",
+              "id": "paris",
+              "package": "towns_in_mars"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paris",
+      "expressions":
+      [
+        {
+          "expression": "Paris",
+          "solution":
+          {
+            "name": "Paris"
+          }
+        }
+      ]
+    }
+  ]
+}

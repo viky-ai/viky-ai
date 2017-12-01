@@ -118,19 +118,15 @@ static int NlsReadImportFile(og_nls ctrl_nls, char *import_file)
 
   IF(OgNlpCompile(ctrl_nls->hnlpi_main, input, output))
   {
-    json_decrefp(&output->json_output);
     NlsMainThrowError(ctrl_nls, "NlsReadImportFile: error OgNlpCompile from file '%s'", import_file);
     DPcErr;
   }
 
   IFN(output->json_output)
   {
-    json_decrefp(&output->json_output);
     NlsMainThrowError(ctrl_nls, "NlsReadImportFile: OgNlpCompile returns null json from '%s'", import_file);
     DPcErr;
   }
-
-  json_decrefp(&output->json_output);
 
   DONE;
 }

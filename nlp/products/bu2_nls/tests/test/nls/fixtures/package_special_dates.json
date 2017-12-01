@@ -1,0 +1,92 @@
+{
+  "id": "package_special_date",
+  "interpretations":
+  [
+    {
+      "id": "christmas",
+      "expressions":
+      [
+        {
+          "expression": "Noël",
+          "locale": "fr"
+        },
+        {
+          "expression": "Christmas",
+          "locale": "en"
+        },
+        {
+          "expression": "Xmas",
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
+      }
+    },
+    {
+      "id": "valentine",
+      "expressions":
+      [
+        {
+          "expression": "Saint Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "St Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "Valentine",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine's Day",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine Day",
+          "locale": "en"
+        },
+        {
+          "expression": "St Valentine's Day",
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(moment().year()+'-02-14', 'YYYY-MM-DD')`"
+      }
+    },
+    {
+      "id": "special_date",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            }
+          ]
+        },
+        {
+          "expression": "@{valentine}",
+          "aliases":
+          [
+            {
+              "alias": "valentine",
+              "id": "valentine"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

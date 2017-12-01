@@ -142,6 +142,10 @@ static void NlsCancelCleanupOnTimeout(void* context)
 
   OgMsg(lt->hmsg, "", DOgMsgDestInLog, "lt %d: NlsCancelCleanupOnTimeout starting", lt->ID);
 
+  // Log jansson refcount to diagnose
+  // OgNlpLogJanssonRefCounter(lt->hnlp_th, "NlsCancelCleanupOnTimeout lt->request->body", lt->request->body);
+  // OgNlpLogJanssonRefCounter(lt->hnlp_th, "NlsCancelCleanupOnTimeout lt->answer->body", lt->answer->body);
+
   int elapsed = OgMilliClock() - lt->request_running_start;
 
   NlsThrowError(lt, "NlsCancelCleanupOnTimeout : Request timeout after %d ms", elapsed);

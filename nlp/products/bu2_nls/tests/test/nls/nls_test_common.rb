@@ -16,7 +16,7 @@ module Nls
       @available_packages = {}
       @packages_dump = []
 
-      FileUtils.rm_r(importDir, :force => true)
+      FileUtils.rm_r(importDir, force: true)
       FileUtils.mkdir_p(importDir)
     end
 
@@ -35,13 +35,20 @@ module Nls
       File.join(File.expand_path(__dir__), 'fixtures', file)
     end
 
+    def fixture_parse(file)
+      JSON.parse(File.read(fixture_path(file)))
+    end
+
     def cp_import_fixture(file)
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now=nil)
       request = {}
-      if package.kind_of? Array
+
+      if package == "*"
+        request['packages'] = "*"
+      elsif package.kind_of? Array
         package_ids = package.map do |p|
           if p.kind_of? Package
             p.id.to_s
@@ -55,8 +62,11 @@ module Nls
         package_id = package.id.to_s if package.kind_of? Package
         request['packages'] = [package_id]
       end
+
       request['sentence'] = sentence
-      request['Accept-Language'] = locale
+      request['Accept-Language'] = locale if !locale.nil?
+      request['now'] = now if !now.nil?
+      request['show-explanation'] = true  if explain
       request
     end
 
@@ -147,33 +157,41 @@ module Nls
     def create_building_feature_any
       pg_building_feature = Package.new("pg-building-feature")
 
-      i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"])
+      i_sea_view = Interpretation.new("sea-view").new_textual(["sea view", "sea front", "ocean view", "ocean front"], solution: "Sea view" )
       pg_building_feature << i_sea_view
 
-      i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"])
+      i_swimming_pool = Interpretation.new("swimming-pool").new_textual(["swimming pool", "pool"], solution: "swimming pool" )
       pg_building_feature << i_swimming_pool
 
       i_building_feature = Interpretation.new("building-feature")
-      i_building_feature.new_expression("@{swimming-pool}", {aliases: {'swimming-pool' => i_swimming_pool}})
-      i_building_feature.new_expression("@{sea-view}", {aliases: {'sea-view'  => i_sea_view}})
+      i_building_feature.new_expression("@{swimming-pool}", aliases: {'swimming-pool' => i_swimming_pool})
+      i_building_feature.new_expression("@{sea-view}", aliases: {'sea-view'  => i_sea_view})
       pg_building_feature << i_building_feature
 
       i_preposition_building_feature= Interpretation.new("preposition-building-feature").new_textual(["with", "at"])
       pg_building_feature << i_preposition_building_feature
 
-      pg_building_feature_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'  => i_building_feature}
-      pg_building_feature_any_hash = {'preposition-building-feature'  => i_preposition_building_feature, 'building-feature'=> Alias.any}
+      pg_building_feature_hash = {'preposition_building_feature'  => i_preposition_building_feature, 'building_feature'  => i_building_feature}
+      pg_building_feature_any_hash = {'preposition_building_feature'  => i_preposition_building_feature, 'building_feature'=> Alias.any}
       i_pg_building_feature = Interpretation.new("pg-building-feature")
-      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_hash, keep_order: Expression.keep_order}) # pg_building_feature_hash, Expression.no_locale, Expression.keep_order)
-      i_pg_building_feature.new_expression("@{preposition-building-feature} @{building-feature}", {aliases: pg_building_feature_any_hash, keep_order: Expression.keep_order}) # pg_building_feature_any_hash, Expression.no_locale, Expression.keep_order)
-      i_pg_building_feature.new_expression("@{building-feature}", {aliases: {'building-feature'  => i_building_feature}})
+      i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
+          aliases: pg_building_feature_hash,
+          keep_order: true,
+          solution: { features: "`building_feature`" })
+      i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
+          aliases: pg_building_feature_any_hash,
+          keep_order: true,
+          solution: { features: "`building_feature`" })
+      i_pg_building_feature.new_expression("@{building_feature}",
+          aliases: {'building_feature'  => i_building_feature},
+          solution: { features: "`building_feature`" })
       pg_building_feature << i_pg_building_feature
 
 
       i_pg_building_features = Interpretation.new("pg-building-features")
-      pg_building_features_hash = {'pg-building-feature' => i_pg_building_feature, 'pg-building-features'  => i_pg_building_features}
-      i_pg_building_features.new_expression("@{pg-building-feature} @{pg-building-features}", {aliases: pg_building_features_hash})
-      i_pg_building_features.new_expression("@{pg-building-feature}", {aliases: {'pg-building-feature'  => i_pg_building_feature}})
+      pg_building_features_hash = {'feature' => i_pg_building_feature, 'features'  => i_pg_building_features}
+      i_pg_building_features.new_expression("@{feature} @{features}", aliases: pg_building_features_hash )
+      i_pg_building_features.new_expression("@{feature}", aliases: { feature: i_pg_building_feature }, keep_order: true )
       pg_building_feature << i_pg_building_features
       @available_packages[pg_building_feature.slug] = pg_building_feature
 
@@ -196,6 +214,78 @@ module Nls
       json_package << json_interpretation
       json_package
     end
+
+    def check_interpret(sentence, expected)
+
+      raise "expected must be an Hash"   if !expected.kind_of? Hash
+      raise "expected must not be empty" if expected.empty?
+
+      debug = expected[:debug]
+
+      now = expected[:now]
+
+      ap expected if debug
+      # creation et exécution de la requete
+      request = json_interpret_body("*", sentence, Interpretation.default_locale, false, now)
+      ap request if debug
+      actual = Nls.interpret(request)
+      ap actual if debug
+
+      assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
+      assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
+
+      assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
+
+      match_intepretation = actual['interpretations'].first
+
+      if expected.has_key?(:warnings)
+
+        assert_kind_of Array, actual['warnings'], "Actual answer['warnings'] is not an Array : #{actual.inspect}"
+
+        expected_warnings = expected[:warnings]
+
+        expected_warning_found = false
+        actual['warnings'].each do |warning|
+          if warning.include?(expected_warnings)
+            expected_warning_found = true
+            break
+          end
+        end
+
+        assert expected_warning_found, "Actual answer['warnings'] must contains \"#{expected_warnings}\": \n#{JSON.generate(actual['warnings'])}"
+
+      else
+        if !actual['warnings'].nil?
+          assert false, "Actual answer must be without warnings :\n#{actual['warnings'].join("\n")}"
+        end
+      end
+
+      if expected.has_key?(:interpretation)
+        expected_interpretation = expected[:interpretation]
+        slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
+        assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
+      end
+
+      if expected.has_key?(:solution)
+        expected_solution = expected[:solution]
+        if expected_solution.kind_of?(Hash) || expected_solution.kind_of?(Array)
+          expected_solution.deep_stringify_keys!
+        end
+
+        if expected_solution.nil?
+          assert_nil match_intepretation['solution'], "Matched on unexpected solution (nil)"
+        else
+          assert_equal expected_solution, match_intepretation['solution'], "Matched on unexpected solution"
+        end
+      end
+
+      if expected.has_key?(:score)
+        expected_score = expected[:score]
+        assert_equal expected_score, match_intepretation['score'], "Matched on wrong score"
+      end
+
+    end
+
 
     def assert_exception_has_message expected_error, exception, msg = nil
 
@@ -223,6 +313,15 @@ module Nls
 
       expected_json = {}
       if expected.kind_of?(Array) || expected.kind_of?(Hash)
+        if expected.kind_of?(Array)
+          expected.map do |e|
+            if e.kind_of?(Hash)
+              e.deep_stringify_keys!
+            end
+          end
+        elsif expected.kind_of?(Hash)
+          expected.deep_stringify_keys!
+        end
         expected_json = expected
       elsif expected.kind_of?(String)
         if File.exist?(expected)
@@ -236,6 +335,15 @@ module Nls
 
       actual_json = {}
       if actual.kind_of?(Array) || actual.kind_of?(Hash)
+        if actual.kind_of?(Array)
+          actual.map do |e|
+            if e.kind_of?(Hash)
+              e.deep_stringify_keys!
+            end
+          end
+        elsif actual.kind_of?(Hash)
+          actual.deep_stringify_keys!
+        end
         actual_json = actual
       elsif actual.kind_of?(String)
         if File.exist?(actual)

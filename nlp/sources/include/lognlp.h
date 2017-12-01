@@ -30,8 +30,9 @@
 #define DOgNlpTraceParse                  0x200
 #define DOgNlpTraceSolution               0x400
 #define DOgNlpTraceJs                     0x800
-#define DOgNlpTraceLtras                  0x1000
-#define DOgNlpTraceLtrac                  0x2000
+#define DOgNlpTraceLtrac                  0x1000
+#define DOgNlpTraceLtras                  0x2000
+#define DOgNlpTraceLtrasDetail            0x4000
 
 /** Default value for configuration file information **/
 #define DOgNlpMaxListeningThreads          4
@@ -126,6 +127,8 @@ DEFPUBLIC(og_status) OgNlpFlushPackageMarkedAsDeleted(og_nlp_th ctrl_nlp_th);
 
 DEFPUBLIC(og_status) OgNlpPackageList(og_nlp_th ctrl_nlp_th, struct og_nlp_dump_input *input,
     struct og_nlp_package_list *output);
+
+DEFPUBLIC(og_status) OgNlpLogJanssonRefCounter(og_nlp_th ctrl_nlp_th, og_string function_name, json_t *json);
 
 #define _LOGNLPALIVE_
 #endif

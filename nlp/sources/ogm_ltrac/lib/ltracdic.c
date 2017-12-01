@@ -54,7 +54,7 @@ PUBLIC(int) OgLtracDicInit(void *handle, struct og_ltrac_dictionaries *dictionar
   memset(aut_param, 0, sizeof(struct og_aut_param));
   aut_param->herr = ctrl_ltrac->herr;
   aut_param->hmutex = ctrl_ltrac->hmutex;
-  aut_param->loginfo.trace = DOgAutTraceMinimal;// + DOgAutTraceMemory;
+  aut_param->loginfo.trace = DOgAutTraceMinimal;
   aut_param->loginfo.where = ctrl_ltrac->loginfo->where;
   aut_param->state_number = 0x10;
 

@@ -8,121 +8,56 @@ module Nls
 
     class TestNumbers < NlsTestCommon
 
-      def test_simple_numbers
+      def setup
+        super
+
         Nls.remove_all_packages
 
-        package_number_digits = JSON.parse(File.read(fixture_path("package_number_digits.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_digits['id']}"
-        Nls.query_post(package_url, package_number_digits)
+        Interpretation.default_locale = "fr-FR"
 
-        package_number_letters = JSON.parse(File.read(fixture_path("package_number_letters.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_letters['id']}"
-        Nls.query_post(package_url, package_number_letters)
+        Nls.package_update(fixture_parse("package_number_digits.json"))
+        Nls.package_update(fixture_parse("package_number_letters.json"))
+        Nls.package_update(fixture_parse("package_number.json"))
+      end
 
-        package_number = JSON.parse(File.read(fixture_path("package_number.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number['id']}"
-        Nls.query_post(package_url, package_number)
+      def test_simple_numbers
+        check_interpret("3", interpretation: "number", solution: { number: 3 } )
+        check_interpret("4", interpretation: "number", solution: { number: 4 } )
+      end
 
-        package_number_people = JSON.parse(File.read(fixture_path("package_number_people.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_people['id']}"
-        Nls.query_post(package_url, package_number_people)
+      def test_simple_number_letters
+        check_interpret("three", interpretation: "number", solution: { number: 3 } )
+        check_interpret("quatre", interpretation: "number", solution: { number: 4 } )
 
-        package_hotel_features = JSON.parse(File.read(fixture_path("package_hotel_features.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_hotel_features['id']}"
-        Nls.query_post(package_url, package_hotel_features)
+      end
 
-        package_building_features = JSON.parse(File.read(fixture_path("package_building_features-v2.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_building_features['id']}"
-        Nls.query_post(package_url, package_building_features)
+      def test_complex_number
+        check_interpret("51", interpretation: "number", solution: { number: 51 } )
+        check_interpret("32847", interpretation: "number", solution: { number: 32847 } )
+      end
 
-        query = {
-          "packages" =>
-          [
-            "hotel_features",
-            "building_features",
-            "number_people",
-            "package-number",
-            "package-number-digits",
-            "package-number-letters"
-          ],
-          "sentence" => "with swimming pool with spa for 3 people with sea view"
-        }
+      def test_complex_number_letters
+        check_interpret("fifty two", interpretation: "number", solution: { number: 52 } )
+        check_interpret("two hundred and fifty two", interpretation: "number", solution: { number: 252 } )
+        check_interpret("quarante et un", interpretation: "number", solution: { number: 41 } )
+        check_interpret("quarante et une", interpretation: "number", solution: { number: 41 } )
+        check_interpret("quatre vingt douze", interpretation: "number", solution: { number: 92 } )
+        check_interpret("sept cent dix huit mille quatre cent quatre vingt quatorze", interpretation: "number", solution: { number: 718494 } )
+        check_interpret("quarante douze", interpretation: "number", solution: { number: 52 } )
+#        check_interpret("two thousand and seventeen", interpretation: "number", solution: { number: 2017 } )
+      end
 
-        expected = {
-          "interpretations" => [
-                  {
-                       "package" => "hotel_features",
-                            "id" => "hotel_features",
-                          "slug" => "hotel_features",
-                         "score" => 1.0,
-                      "solution" => {
-                          "hotel_feature" => [
-                              "spa",
-                              "swimming_pool",
-                              "sea_view"
-                          ],
-                          "number-people" => 3.0
-                      }
-                  }
-              ]
+      def test_ordinal_number
+        check_interpret("troisieme", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("third", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("3 rd", interpretation: "number_ordinal", solution: { number: 3 } )
+        check_interpret("1 st", interpretation: "number_ordinal", solution: { number: 1 } )
+        check_interpret("4 eme", interpretation: "number_ordinal", solution: { number: 4 } )
+        check_interpret("236 th", interpretation: "number_ordinal", solution: { number: 236 } )
+        check_interpret("236 ieme", interpretation: "number_ordinal", solution: { number: 236 } )
 
-        }
-
-        query_param = { }
-
-        actual = Nls.interpret(query, query_param)
-        expected["interpretations"][0]["score"] = 0.94
-        assert_json expected, actual
-
-        query['sentence'] = "with swimming pool with spa for 4 people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 4.0
-        expected["interpretations"][0]["score"] = 0.94
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-        query['sentence'] = "with swimming pool with spa for 51 people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 51
-        expected["interpretations"][0]["score"] = 0.94
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-        query['sentence'] = "with swimming pool with spa for fifty two people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 52
-        expected["interpretations"][0]["score"] = 0.94
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-        query['sentence'] = "with swimming pool with spa for two hundred and fifty two people with sea view"
-        expected["interpretations"][0]["solution"]["number-people"] = 252
-        expected["interpretations"][0]["score"] = 0.95
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-        query['sentence'] = "avec piscine avec spa pour quarante et une personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 41
-        expected["interpretations"][0]["score"] = 0.95
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-        query['sentence'] = "avec piscine avec spa pour quatre vingt douze personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 92
-        expected["interpretations"][0]["score"] = 0.95
-        actual = Nls.interpret(query, query_param)
-        assert_json expected, actual
-
-#        query[:sentence] = "avec piscine avec spa pour deux cent et douze personnes avec vue sur la mer"
-#        expected["interpretations"][0]["solution"]["number-people"] = 212
-#        expected["interpretations"][0]["score"] = 1.0
-#        actual = Nls.interpret(query, query_param)
-#        ap actual
-#        ap expected
-
-        query['sentence'] = "avec piscine avec spa pour quarante douze personnes avec vue sur la mer"
-        expected["interpretations"][0]["solution"]["number-people"] = 52
-        actual = Nls.interpret(query, query_param)
-        expected["interpretations"][0]["score"] = 0.94
-        assert_json expected, actual
-
+#        check_interpret("3ieme", interpretation: "number_ordinal", solution: { number: 3 } )
+#        check_interpret("3rd", interpretation: "number_ordinal", solution: { number: 3 } )
       end
     end
   end

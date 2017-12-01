@@ -19,7 +19,7 @@ module Valgrind
       Nls::Nls.package_update(pg_building_feature_any)
 
       @main_package = @available_packages["pg-building-feature"]
-      @main_uuid = @main_package.id
+      @main_uuid = @main_package.id.to_s
 
       interpret_query=
       {

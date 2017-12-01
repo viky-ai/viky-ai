@@ -58,7 +58,11 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
 
   ctrl_nlp_th->timeout_in = nlp_timeout_in_NONE;
 
-  IF(NlpJsInit(ctrl_nlp_th)) return NULL;
+  IF(NlpJsInit(ctrl_nlp_th))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "OgNlpThreadedInit failed on NlpJsInit");
+    return NULL;
+  }
 
   IF(NlpLtracInit(ctrl_nlp_th)) return NULL;
   IF(NlpLtrasInit(ctrl_nlp_th)) return NULL;

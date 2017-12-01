@@ -51,7 +51,7 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
   int truncated_ends_size = strlen(truncated_ends);
 
   int max_buffer_size = buffer_size - truncated_ends_size - 1;
-  int expected_size = json_dumpb(json, buffer, max_buffer_size, flags);
+  int expected_size = json_dumpb(json, buffer, max_buffer_size, flags | JSON_ENCODE_ANY);
   IF(expected_size)
   {
     DPcErr;
@@ -104,6 +104,13 @@ og_status NlpPackageCompileInterpretationLog(og_nlp_th ctrl_nlp_th, package_t pa
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation compile '%s' '%s':", interpretation_slug,
       interpretation_id);
 
+  for (int i = 0; i < interpretation->contexts_nb; i++)
+  {
+    struct context_compile *context = OgHeapGetCell(package->hcontext_compile, interpretation->context_start + i);
+    IFN(context) DPcErr;
+    IFE(NlpPackageCompileContextLog(ctrl_nlp_th, package, context));
+  }
+
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
     struct expression_compile *expression = OgHeapGetCell(package->hexpression_compile,
@@ -125,6 +132,14 @@ og_status NlpPackageCompileInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, pack
   og_char_buffer json_interpretation_string[DOgMlogMaxMessageSize / 2];
   IFE(NlpJsonToBuffer(interpretation->json_solution, json_interpretation_string, DOgMlogMaxMessageSize / 2, NULL, 0));
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    solution: %s", json_interpretation_string);
+  DONE;
+}
+
+og_status NlpPackageCompileContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct context_compile *context)
+{
+  IFN(context) DPcErr;
+  og_string flag = OgHeapGetCell(package->hcontext_ba, context->flag_start);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Context compile '%s'", flag);
   DONE;
 }
 
@@ -208,6 +223,11 @@ og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s':", interpretation->slug,
       interpretation->id);
 
+  for (int i = 0; i < interpretation->contexts_nb; i++)
+  {
+    IFE(NlpPackageContextLog(ctrl_nlp_th, package, interpretation->contexts + i));
+  }
+
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
     IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, interpretation->expressions + i));
@@ -229,8 +249,15 @@ og_status NlpPackageInterpretationSolutionLog(og_nlp_th ctrl_nlp_th, package_t p
   DONE;
 }
 
-og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+og_status NlpPackageContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct context *context)
+{
+  IFN(context) DPcErr;
+  og_string flag = context->flag;
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    context '%s'", flag);
+  DONE;
+}
 
+og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
 {
   IFN(expression) DPcErr;
 
@@ -376,3 +403,156 @@ const char *NlpAliasTypeString(enum nlp_alias_type type)
   return "alias_unknown";
 }
 
+static og_status NlpLogJanssonRefCounterRecursive(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_value, int depth);
+static og_status NlpLogJanssonRefCounterRecursiveObject(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_object,
+    int depth);
+static og_status NlpLogJanssonRefCounterRecursiveArray(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_array,
+    int depth);
+static og_status NlpLogJanssonRefCounterSimple(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_value, int depth);
+
+PUBLIC(og_status) OgNlpLogJanssonRefCounter(og_nlp_th ctrl_nlp_th, og_string function_name, json_t *json)
+{
+  NlpLog(DOgNlpTraceMinimal, "OgNlpLogJanssonRefCounter %s:", function_name);
+  IFE(NlpLogJanssonRefCounterRecursive(ctrl_nlp_th, "root", json, 0));
+
+  DONE;
+}
+
+static og_status NlpLogJanssonRefCounterRecursive(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_value, int depth)
+{
+  if (json_value == NULL) CONT;
+
+  switch (json_typeof(json_value))
+  {
+    case JSON_OBJECT:
+      IFE(NlpLogJanssonRefCounterRecursiveObject(ctrl_nlp_th, key, json_value, depth));
+      break;
+    case JSON_ARRAY:
+      IFE(NlpLogJanssonRefCounterRecursiveArray(ctrl_nlp_th, key, json_value, depth));
+      break;
+    default:
+      IFE(NlpLogJanssonRefCounterSimple(ctrl_nlp_th, key, json_value, depth));
+      break;
+  }
+
+  DONE;
+}
+
+static og_status NlpLogJanssonRefCounterRecursiveObject(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_object,
+    int depth)
+{
+  if (json_object == NULL) CONT;
+  if (!json_is_object(json_object))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpLogJanssonRefCounterRecursiveObject is not an object");
+    DPcErr;
+  }
+
+  og_char_buffer header[DPcPathSize];
+  int i = 0;
+  for (i = 0; i < (depth * 2) && DPcPathSize; i++)
+  {
+    header[i] = ' ';
+
+  }
+  header[i] = '\0';
+
+  if (key)
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s \"%s\": {   #refcount: %zu", header, key, json_object->refcount);
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s {   #refcount: %zu", header, json_object->refcount);
+  }
+
+  for (void *iter = json_object_iter(json_object); iter; iter = json_object_iter_next(json_object, iter))
+  {
+    og_string value_key = json_object_iter_key(iter);
+    json_t *value = json_object_iter_value(iter);
+
+    IFE(NlpLogJanssonRefCounterRecursive(ctrl_nlp_th, value_key, value, depth + 1));
+  }
+
+  NlpLog(DOgNlpTraceMinimal, "%s },", header);
+
+  DONE;
+}
+
+static og_status NlpLogJanssonRefCounterRecursiveArray(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_array,
+    int depth)
+{
+  if (json_array == NULL) CONT;
+  if (!json_is_array(json_array))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpLogJanssonRefCounterRecursiveArray is not an array");
+    DPcErr;
+  }
+
+  og_char_buffer header[DPcPathSize];
+  int i = 0;
+  for (i = 0; i < (depth * 2) && DPcPathSize; i++)
+  {
+    header[i] = ' ';
+
+  }
+  header[i] = '\0';
+
+  if (key)
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s \"%s\": [   #refcount: %zu", header, key, json_array->refcount);
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s [   #refcount: %zu", header, json_array->refcount);
+  }
+
+  for (size_t j = 0; j < json_array_size(json_array); j++)
+  {
+    json_t *value = json_array_get(json_array, j);
+
+    IFE(NlpLogJanssonRefCounterRecursive(ctrl_nlp_th, NULL, value, depth + 1));
+  }
+
+  NlpLog(DOgNlpTraceMinimal, "%s ],", header);
+
+  DONE;
+}
+
+static og_status NlpLogJanssonRefCounterSimple(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_value, int depth)
+{
+  if (json_value == NULL) CONT;
+
+  og_char_buffer json_string_value[DPcPathSize];
+  IFE(NlpJsonToBuffer(json_value, json_string_value, DPcPathSize, NULL, 0));
+
+  og_char_buffer header[DPcPathSize];
+  int i = 0;
+  for (i = 0; i < (depth * 2) && DPcPathSize; i++)
+  {
+    header[i] = ' ';
+
+  }
+  header[i] = '\0';
+
+  og_char_buffer refcount[DPcPathSize];
+  if (json_is_boolean(json_value) || json_is_null(json_value))
+  {
+    snprintf(refcount, DPcPathSize, "N/A");
+  }
+  else
+  {
+    snprintf(refcount, DPcPathSize, "%zu", json_value->refcount);
+  }
+
+  if (key)
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s \"%s\": %s   #refcount: %s", header, key, json_string_value, refcount);
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceMinimal, "%s %s   #refcount: %s", header, json_string_value, refcount);
+  }
+
+  DONE;
+}

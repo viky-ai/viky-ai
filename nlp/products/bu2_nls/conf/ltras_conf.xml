@@ -100,11 +100,13 @@
       <library_name>libogltras</library_name>
     </ltras_module>
 
+<!--
     <ltras_module>
       <name>cut</name>
       <function_name>OgLtrasModuleCut</function_name>
       <library_name>libogltras</library_name>
     </ltras_module>
+-->
 
     <ltras_module>
       <name>del</name>
@@ -118,11 +120,13 @@
       <library_name>libogltras</library_name>
     </ltras_module>
 
+<!--
     <ltras_module>
       <name>paste</name>
       <function_name>OgLtrasModulePaste</function_name>
       <library_name>libogltras</library_name>
     </ltras_module>
+-->
 
     <ltras_module>
       <name>phon</name>
@@ -130,6 +134,7 @@
       <library_name>libogltras</library_name>
     </ltras_module>
 
+<!--
     <ltras_module>
       <name>ref</name>
       <function_name>OgLtrasModuleReference</function_name>
@@ -141,6 +146,7 @@
       <function_name>OgLtrasModuleSplit</function_name>
       <library_name>libogltras</library_name>
     </ltras_module>
+-->
 
     <ltras_module>
       <name>swap</name>

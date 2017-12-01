@@ -139,11 +139,6 @@ static og_status OgListeningProcessEndpoint(struct og_listening_thread *lt, stru
   {
     response->http_status = 422;
     response->http_message = "Bad formatted input";
-
-    json_t *errors = json_array();
-    json_array_append_new(errors, json_string(response->http_message));
-    // json_object_set_new(response->body, "errors", errors);
-
   }
   else
   {

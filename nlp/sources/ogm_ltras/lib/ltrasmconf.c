@@ -208,6 +208,7 @@ PUBLIC(og_status) OgLtrasModuleReadConf(void *handle, char *filename)
       DPcErr;
     }
 
+    DPcFree(B);
   }
   else
   {

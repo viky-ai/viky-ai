@@ -61,7 +61,7 @@ module Nls
     end
 
     def to_file(destination_dir)
-      filename = "packages_#{@slug}_#{@id}.json"
+      filename = "package_#{@slug}_#{@id}.json"
       File.open(File.join(File.expand_path(destination_dir), filename), "w") do |f|
         f.write(JSON.pretty_generate(self))
       end

@@ -21,8 +21,8 @@ class TestCommon < Minitest::Test
       errors = actual_response["errors"]
     end
 
-    assert !errors.nil?, "#{header}actual_response must contains error : \n#{JSON.generate(actual_response)}"
-    assert !errors.empty?, "#{header}actual_response errors must not be empty : \n#{JSON.generate(actual_response)}"
+    assert !errors.nil?, "#{header}actual_response must contains error : \n#{actual_response.inspect}"
+    assert !errors.empty?, "#{header}actual_response errors must not be empty : \n#{actual_response.inspect}}"
 
     expected_error_found = false
     errors.each do |error|
@@ -33,7 +33,7 @@ class TestCommon < Minitest::Test
 
     end
 
-    assert expected_error_found, "#{header}actual_response must contains error \"#{expected_error}\": \n#{JSON.generate(actual_response)}"
+    assert expected_error_found, "#{header}actual_response must contains error \"#{expected_error}\": \n#{JSON.generate(errors)}"
 
   end
 

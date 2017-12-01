@@ -13,3 +13,6 @@ gem 'parallel'
 gem 'awesome_print'
 gem 'term-ansicolor'
 gem 'uuidtools'
+
+# single test runner
+gem 'm'

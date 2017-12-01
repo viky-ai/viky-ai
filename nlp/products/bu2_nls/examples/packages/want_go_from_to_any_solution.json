@@ -115,7 +115,7 @@
             }
           ],
           "solution": {
-            "from": "`town.any`"
+            "from": "`town`"
           }
         }
       ]
@@ -161,7 +161,7 @@
             }
           ],
           "solution": {
-            "to": "`town.any`"
+            "to": "`town`"
           }
         }
       ]

@@ -1,0 +1,2264 @@
+{
+  "id": "package_complex_date",
+  "interpretations":
+  [
+    {
+      "id": "and",
+      "expressions":
+      [
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_the",
+      "expressions":
+      [
+        {
+          "expression": "the",
+          "locale": "en"
+        },
+        {
+          "expression": "le",
+          "locale": "fr"
+        },
+        {
+          "expression": "la",
+          "locale": "fr"
+        },
+        {
+          "expression": "les",
+          "locale": "fr"
+        },
+        {
+          "expression": "l'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_of",
+      "expressions":
+      [
+        {
+          "expression": "of",
+          "locale": "en"
+        },
+        {
+          "expression": "of the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        },
+        {
+          "expression": "du",
+          "locale": "fr"
+        },
+        {
+          "expression": "de la",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "des",
+          "locale": "fr"
+        },
+        {
+          "expression": "d'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_in",
+      "expressions":
+      [
+        {
+          "expression": "in",
+          "locale": "en"
+        },
+        {
+          "expression": "dans",
+          "locale": "fr"
+        },
+        {
+          "expression": "en",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_inthe",
+      "expressions":
+      [
+        {
+          "expression": "in the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "au",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "il y a",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "postposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "ago",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "preposition_for",
+      "expressions":
+      [
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "monday",
+      "expressions":
+      [
+        {
+          "expression": "monday",
+          "locale": "en"
+        },
+        {
+          "expression": "lundi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 1
+      }
+    },
+    {
+      "id": "tuesday",
+      "expressions":
+      [
+        {
+          "expression": "tuesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mardi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 2
+      }
+    },
+    {
+      "id": "wednesday",
+      "expressions":
+      [
+        {
+          "expression": "wednesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mercredi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 3
+      }
+    },
+    {
+      "id": "thursday",
+      "expressions":
+      [
+        {
+          "expression": "thursday",
+          "locale": "en"
+        },
+        {
+          "expression": "jeudi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 4
+      }
+    },
+    {
+      "id": "friday",
+      "expressions":
+      [
+        {
+          "expression": "friday",
+          "locale": "en"
+        },
+        {
+          "expression": "vendredi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 5
+      }
+    },
+    {
+      "id": "saturday",
+      "expressions":
+      [
+        {
+          "expression": "saturday",
+          "locale": "en"
+        },
+        {
+          "expression": "samedi",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 6
+      }
+    },
+    {
+      "id": "sunday",
+      "expressions":
+      [
+        {
+          "expression": "sunday",
+          "locale": "en"
+        },
+        {
+          "expression": "dimanche",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "day": 7
+      }
+    },
+    {
+      "id": "weekday",
+      "expressions":
+      [
+        {
+          "expression": "@{monday}",
+          "aliases":
+          [
+            {
+              "alias": "monday",
+              "id": "monday"
+            }
+          ]
+        },
+        {
+          "expression": "@{tuesday}",
+          "aliases":
+          [
+            {
+              "alias": "tuesday",
+              "id": "tuesday"
+            }
+          ]
+        },
+        {
+          "expression": "@{wednesday}",
+          "aliases":
+          [
+            {
+              "alias": "wednesday",
+              "id": "wednesday"
+            }
+          ]
+        },
+        {
+          "expression": "@{thursday}",
+          "aliases":
+          [
+            {
+              "alias": "thursday",
+              "id": "thursday"
+            }
+          ]
+        },
+        {
+          "expression": "@{friday}",
+          "aliases":
+          [
+            {
+              "alias": "friday",
+              "id": "friday"
+            }
+          ]
+        },
+        {
+          "expression": "@{saturday}",
+          "aliases":
+          [
+            {
+              "alias": "saturday",
+              "id": "saturday"
+            }
+          ]
+        },
+        {
+          "expression": "@{sunday}",
+          "aliases":
+          [
+            {
+              "alias": "sunday",
+              "id": "sunday"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preposition_next",
+      "expressions":
+      [
+        {
+          "expression": "next",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_next",
+      "expressions":
+      [
+        {
+          "expression": "prochain",
+          "locale": "fr"
+        },
+        {
+          "expression": "prochaine",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_last",
+      "expressions":
+      [
+        {
+          "expression": "last",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_last",
+      "expressions":
+      [
+        {
+          "expression": "dernier",
+          "locale": "fr"
+        },
+        {
+          "expression": "derniere",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedent",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedente",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "next_day_of_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{weekday}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day).startOf('day') } else { moment().isoWeekday(weekday.day+7).startOf('day') }`"
+          }
+        },
+        {
+          "expression": "@{weekday} @{postposition_next}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day).startOf('day') } else { moment().isoWeekday(weekday.day).add(7,'days').startOf('day') }`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "last_day_of_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{weekday}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day).subtract(7,'days').startOf('day') } else { moment().isoWeekday(weekday.day).startOf('day') }`"
+          }
+        },
+        {
+          "expression": "@{weekday} @{postposition_last}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ],
+          "solution":
+          {
+            "date": "`if(moment().isBefore(moment().isoWeekday(weekday.day))) { moment().isoWeekday(weekday.day-7).startOf('day') } else { moment().isoWeekday(weekday.day).startOf('day') }`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dayofweek_in_number_week",
+      "expressions":
+      [
+        {
+          "expression": "@{weekday} @{preposition_in} @{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment().isoWeekday(weekday.day+number.number*7).startOf('day')`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dayofweek_number_week_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{weekday} @{number} @{week} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        },
+        {
+          "expression": "@{weekday} @{preposition_ago} @{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "weekday",
+              "id": "weekday"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().isoWeekday(weekday.day-number.number*7).startOf('day')`"
+      }
+    },
+    {
+      "id": "day",
+      "expressions":
+      [
+        {
+          "expression": "day",
+          "locale": "en"
+        },
+        {
+          "expression": "jour",
+          "locale": "fr"
+        },
+        {
+          "expression": "days",
+          "locale": "en"
+        },
+        {
+          "expression": "jours",
+          "locale": "fr"
+        },
+        {
+          "expression": "journee",
+          "locale": "fr"
+        },
+        {
+          "expression": "journees",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "week",
+      "expressions":
+      [
+        {
+          "expression": "week",
+          "locale": "en"
+        },
+        {
+          "expression": "semaine",
+          "locale": "fr"
+        },
+        {
+          "expression": "weeks",
+          "locale": "en"
+        },
+        {
+          "expression": "semaines",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "month",
+      "expressions":
+      [
+        {
+          "expression": "month",
+          "locale": "en"
+        },
+        {
+          "expression": "months",
+          "locale": "en"
+        },
+        {
+          "expression": "mois",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "year",
+      "expressions":
+      [
+        {
+          "expression": "year",
+          "locale": "en"
+        },
+        {
+          "expression": "annee",
+          "locale": "fr"
+        },
+        {
+          "expression": "an",
+          "locale": "fr"
+        },
+        {
+          "expression": "years",
+          "locale": "en"
+        },
+        {
+          "expression": "annees",
+          "locale": "fr"
+        },
+        {
+          "expression": "ans",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "duration_basic",
+      "expressions":
+      [
+        {
+          "expression": "@{number} @{day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "day",
+              "id": "day"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`moment.duration(number.number,'days')`",
+            "unit": "day"
+          }
+        },
+        {
+          "expression": "@{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`moment.duration(number.number,'weeks')`",
+            "unit": "week"
+          }
+        },
+        {
+          "expression": "@{number} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`moment.duration(number.number,'months')`",
+            "unit": "month"
+          }
+        },
+        {
+          "expression": "@{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`moment.duration(number.number,'years')`",
+            "unit": "year"
+          }
+        }
+      ]
+    },
+    {
+      "id": "durations",
+      "expressions":
+      [
+        {
+          "expression": "@{durations} @{duration_basic}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "durations",
+              "id": "durations"
+            },
+            {
+              "alias": "duration_basic",
+              "id": "duration_basic"
+            }
+          ]
+        },
+        {
+          "expression": "@{durations} @{and} @{duration_basic}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "durations",
+              "id": "durations"
+            },
+            {
+              "alias": "and",
+              "id": "and"
+            },
+            {
+              "alias": "duration_basic",
+              "id": "duration_basic"
+            }
+          ]
+        },
+        {
+          "expression": "@{durations} @{coma} @{duration_basic}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "durations",
+              "id": "durations"
+            },
+            {
+              "alias": "coma",
+              "id": "coma",
+              "package": "package_date"
+            },
+            {
+              "alias": "duration_basic",
+              "id": "duration_basic"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration_basic}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "duration_basic",
+              "id": "duration_basic"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`duration_basic.duration`",
+            "unit": "`duration_basic.unit`"
+          }
+        }
+      ],
+      "solution":
+      {
+        "duration": "`moment.duration(durations.duration).add(moment.duration(duration_basic.duration))`",
+        "unit": "`var a=durations.unit; var b=duration_basic.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
+      }
+    },
+    {
+      "id": "period",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_for} @{durations}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "durations",
+              "id": "durations"
+            }
+          ],
+          "solution":
+          {
+            "duration": "`durations.duration`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "latency",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_in} @{latency}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "latency",
+              "id": "durations"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range(moment().add(moment.duration(latency.duration)).startOf(latency.unit),moment().add(moment.duration(latency.duration)).endOf(latency.unit))`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "special_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_for} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date": "`special_date.date`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "week_of_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment(special_date.date).startOf('week'), moment(special_date.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month_year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_day_month_year",
+              "id": "date_day_month_year",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment(date_day_month_year.date).startOf('week'), moment(date_day_month_year.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_day_month",
+              "id": "date_day_month",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment(date_day_month.date).startOf('week'), moment(date_day_month.date).endOf('week') )`"
+          }
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{preposition_of} @{date_month_the_day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "date_month_the_day",
+              "id": "date_month_the_day",
+              "package": "package_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment(date_month_the_day.date).startOf('week'), moment(date_month_the_day.date).endOf('week') )`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "duration_with_latency",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_for} @{durations} @{preposition_in} @{latency}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "durations",
+              "id": "durations"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "latency",
+              "id": "durations"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment().add(moment.duration(latency.duration)) , moment().add(moment.duration(latency.duration)).add(moment.duration(durations.duration)) )`"
+          }
+        }
+      ]
+    },
+    {
+      "id": "in_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_in} @{month_value}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "month_value",
+              "id": "date_month_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_inthe} @{month_word} @{preposition_of} @{month_value}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_inthe",
+              "id": "preposition_inthe"
+            },
+            {
+              "alias": "month_word",
+              "id": "month"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "month_value",
+              "id": "date_month_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range( moment().month(month_value.month_number-1).startOf('month'),moment().month(month_value.month_number-1).endOf('month'))`"
+      }
+    },
+    {
+      "id": "next_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_next} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        },
+        {
+          "expression": "@{week} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().add(7,'days').startOf('week'), moment().add(7,'days').endOf('week'))`"
+      }
+    },
+    {
+      "id": "last_week",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_last} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        },
+        {
+          "expression": "@{week} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{week} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().subtract(7,'days').startOf('week'), moment().subtract(7,'days').endOf('week'))`"
+      }
+    },
+    {
+      "id": "next_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_next} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{month} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{month} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().add(1,'months').startOf('month'), moment().add(1,'months').endOf('month'))`"
+      }
+    },
+    {
+      "id": "last_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_last} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{month} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{month} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().subtract(1,'months').startOf('month'), moment().subtract(1,'months').endOf('month'))`"
+      }
+    },
+    {
+      "id": "next_year",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_next} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{year} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "year",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{year} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().add(1,'years').startOf('year'), moment().add(1,'years').endOf('year'))`"
+      }
+    },
+    {
+      "id": "last_year",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_last} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{year} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "year",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{year} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().subtract(1,'years').startOf('year'), moment().subtract(1,'years').endOf('year'))`"
+      }
+    },
+    {
+      "id": "daynumber_of_next_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{number} @{preposition_of} @{preposition_next} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{number} @{preposition_of} @{month} @{postposition_next} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().add(1,'months').date(number.number)`"
+      }
+    },
+    {
+      "id": "daynumber_of_last_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{number} @{preposition_of} @{preposition_last} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{number} @{preposition_of} @{month} @{postposition_last} ",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().subtract(1,'months').date(number.number)`"
+      }
+    },
+    {
+      "id": "daynumber_in_number_month",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{day_number} @{preposition_in} @{number_of_months} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number_of_months",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().add(number_of_months.number,'months').date(day_number.number)`"
+      }
+    },
+    {
+      "id": "daynumber_number_month_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{day_number} @{preposition_ago} @{number_of_months} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "number_of_months",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{day_number} @{number_of_months} @{month} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "number_of_months",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "month"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().subtract(number_of_months.number,'months').date(day_number.number)`"
+      }
+    },
+    {
+      "id": "next_special_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_next} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date} @{postposition_next}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`if(moment().isBefore(special_date.date)){special_date.date}else{moment(special_date.date).add(1,'years')}`"
+      }
+    },
+    {
+      "id": "last_special_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date} @{postposition_last}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{special_date} @{postposition_last}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`if(moment().isBefore(special_date.date)){moment(special_date.date).subtract(1,'years')}else{special_date.date}`"
+      }
+    },
+    {
+      "id":"special_date_in_number_year",
+      "expressions":
+      [
+        {
+          "expression": "@{special_date} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(special_date.date).add(number.number,'years')`"
+      }
+    },
+    {
+      "id":"special_date_number_year_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{special_date} @{preposition_ago} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date} @{number} @{year} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(special_date.date).subtract(number.number,'years')`"
+      }
+    },
+    {
+      "id": "month_the_number_in_number_years",
+      "expressions":
+      [
+        {
+          "expression": "@{date_month_number} @{preposition_the} @{day_number} @{preposition_in} @{year_number} @{year_word}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "date_month_number",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number_ordinal",
+              "package": "package_number"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "year_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year_word",
+              "id": "year"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{day_number} @{date_month_number} @{preposition_in} @{year_number} @{year_word}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "date_month_number",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "year_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year_word",
+              "id": "year"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(moment().year()+'-'+date_month_number.month_number+'-'+day_number.number, 'YYYY-MM-DD').add(year_number.number,'years')`"
+      }
+    },
+    {
+      "id": "month_the_number_number_years_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{date_month_number} @{preposition_the} @{day_number} @{year_number} @{year_word} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "date_month_number",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number_ordinal",
+              "package": "package_number"
+            },
+            {
+              "alias": "year_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year_word",
+              "id": "year"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{day_number} @{date_month_number} @{preposition_ago} @{year_number} @{year_word}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "day_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "date_month_number",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "year_number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year_word",
+              "id": "year"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment(moment().year()+'-'+date_month_number.month_number+'-'+day_number.number, 'YYYY-MM-DD').subtract(year_number.number,'years')`"
+      }
+    }
+  ]
+}

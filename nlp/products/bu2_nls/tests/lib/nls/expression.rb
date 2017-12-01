@@ -29,22 +29,35 @@ module Nls
       @aliases = []
       if opts.has_key?(:aliases)
         aliases = opts[:aliases]
+
         if aliases.kind_of? Array
+
           aliases.each do |_alias|
             add_alias(_alias)
           end
+
         elsif aliases.kind_of? Hash
-          # hash of alias_name => interpretation
-          aliases.each do |alias_name, interpretation|
-            if interpretation.kind_of? String
-              _alias = Alias.new(nil, {name: alias_name, type: interpretation}) #alias_name, "true")
+
+          # hash of alias_name => Alias | Interpretation
+          aliases.each do |alias_name, _alias|
+
+            if _alias.kind_of? Alias
+              add_alias(_alias)
+            elsif _alias.kind_of? AliasSpecificType
+              new_alias = Alias.new(nil, { name: alias_name, type: _alias.type })
+              add_alias(new_alias)
+            elsif _alias.kind_of? Interpretation
+              interpretation = _alias
+              new_alias = Alias.new(interpretation, { name: alias_name })
+              add_alias(new_alias)
             else
-              _alias = Alias.new(interpretation, {name: alias_name})
+              raise "Unsupported alias : #{alias_name} => #{_alias}"
             end
-            add_alias(_alias)
+
           end
+
         else
-          raise
+          raise "Unsupported alias : #{aliases}"
         end
       end
 
@@ -53,14 +66,16 @@ module Nls
 
     def add_alias(new_alias)
       if !new_alias.kind_of? Alias
-        raise "Alias (#{new_alias}, #{new_alias.class}) added must a #{Alias.name} in expression (#{@interpretation.package.slug}/#{@interpretation.slug}/#{@expression})"
+        intepretation_name = ""
+        intepretation_name = "#{@interpretation.package.slug}/#{@interpretation.slug}/" if !@interpretation.nil?
+        raise "Alias (#{new_alias}, #{new_alias.class}) added must a #{Alias.name} in expression (#{intepretation_name}#{@expression})"
       end
 
       @aliases << new_alias
       new_alias.expression = self
     end
     alias_method '<<', 'add_alias'
-      
+
 
     def to_h
       hash = {}
@@ -71,7 +86,7 @@ module Nls
       hash['locale'] = @locale if !@locale.nil?
       if !@solution.nil?
         if @solution.respond_to?(:to_h)
-          hash['solution'] = @solution.to_h
+          hash['solution'] = @solution.to_h.deep_stringify_keys
         else
           hash['solution'] = @solution
         end

@@ -22,18 +22,18 @@ module Nls
         i_town.new_expression("@{barcelona}", {aliases: { barcelona: i_barca }})
         aller_de_a << i_town
 
-        i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
+        i_prep_from = Interpretation.new("prep_from").new_textual(["from"])
         aller_de_a << i_prep_from
 
-        i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
+        i_prep_to = Interpretation.new("prep_to").new_textual(["to"])
         aller_de_a << i_prep_to
 
-        prep_from_town_hash = { 'prep-from' => i_prep_from, town: i_town }
-        i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", {aliases: prep_from_town_hash})
+        prep_from_town_hash = { 'prep_from' => i_prep_from, town: i_town }
+        i_prep_from_town = Interpretation.new("prep_from_town").new_expression("@{prep_from} @{town}", {aliases: prep_from_town_hash})
         aller_de_a << i_prep_from_town
 
-        prep_to_town_hash = { 'prep-to'  => i_prep_to, town: i_town }
-        i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", {aliases: prep_to_town_hash})
+        prep_to_town_hash = { 'prep_to'  => i_prep_to, town: i_town }
+        i_prep_to_town = Interpretation.new("prep_to_town").new_expression("@{prep_to} @{town}", {aliases: prep_to_town_hash})
         aller_de_a << i_prep_to_town
 
         i_go = Interpretation.new("go").new_textual(["go"])
@@ -56,18 +56,18 @@ module Nls
       def create_aller_de_a_any
         aller_de_a = Package.new("aller-de-a")
 
-        i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
+        i_prep_from = Interpretation.new("prep_from").new_textual(["from"])
         aller_de_a << i_prep_from
 
-        i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
+        i_prep_to = Interpretation.new("prep_to").new_textual(["to"])
         aller_de_a << i_prep_to
 
-        prep_from_town_hash = { 'prep-from'  => i_prep_from, town: Alias.any }
-        i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", {aliases: prep_from_town_hash})
+        prep_from_town_hash = { 'prep_from'  => i_prep_from, town: Alias.any }
+        i_prep_from_town = Interpretation.new("prep_from_town").new_expression("@{prep_from} @{town}", {aliases: prep_from_town_hash})
         aller_de_a << i_prep_from_town
 
-        prep_to_town_hash = { 'prep-to'  => i_prep_to, town: Alias.any }
-        i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", {aliases: prep_to_town_hash})
+        prep_to_town_hash = { 'prep_to'  => i_prep_to, town: Alias.any }
+        i_prep_to_town = Interpretation.new("prep_to_town").new_expression("@{prep_to} @{town}", {aliases: prep_to_town_hash})
         aller_de_a << i_prep_to_town
 
         i_go = Interpretation.new("go").new_textual(["go"])
@@ -101,38 +101,38 @@ module Nls
         i_town.new_expression("@{barcelona}", {aliases: {barcelona: i_barca}})
         aller_de_a << i_town
 
-        i_prep_from = Interpretation.new("prep-from").new_textual(["from"])
+        i_prep_from = Interpretation.new("prep_from").new_textual(["from"])
         aller_de_a << i_prep_from
 
-        i_prep_to = Interpretation.new("prep-to").new_textual(["to"])
+        i_prep_to = Interpretation.new("prep_to").new_textual(["to"])
         aller_de_a << i_prep_to
 
         prep_to_town_params = {
-          aliases: {'prep-to' => i_prep_to, town: i_town},
+          aliases: {'prep_to' => i_prep_to, town: i_town},
           keep_order: Expression.keep_order,
-          solution: { "to" => "`town.name`" }
+          solution: { to: "`town.name`" }
         }
-        i_prep_to_town = Interpretation.new("prep-to-town").new_expression("@{prep-to} @{town}", prep_to_town_params)
+        i_prep_to_town = Interpretation.new("prep_to_town").new_expression("@{prep_to} @{town}", prep_to_town_params)
         prep_to_town_params = {
-          aliases: {'prep-to' => i_prep_to, town: Alias.any},
+          aliases: {'prep_to' => i_prep_to, town: Alias.any},
           keep_order: Expression.keep_order,
-          solution: { "to" => "`town.any`" }
+          solution: { to: "`town`" }
         }
-        i_prep_to_town.new_expression("@{prep-to} @{town}", prep_to_town_params)
+        i_prep_to_town.new_expression("@{prep_to} @{town}", prep_to_town_params)
         aller_de_a << i_prep_to_town
 
         prep_from_town_params = {
-          aliases: { 'prep-from' => i_prep_from, town: i_town },
+          aliases: { 'prep_from' => i_prep_from, town: i_town },
           keep_order: Expression.keep_order,
-          solution: { "from" => "`town.name`" }
+          solution: { from: "`town.name`" }
         }
-        i_prep_from_town = Interpretation.new("prep-from-town").new_expression("@{prep-from} @{town}", prep_from_town_params)
+        i_prep_from_town = Interpretation.new("prep_from_town").new_expression("@{prep_from} @{town}", prep_from_town_params)
         prep_from_town_params = {
-          aliases: { 'prep-from' => i_prep_from, town: Alias.any },
+          aliases: { 'prep_from' => i_prep_from, town: Alias.any },
           keep_order: Expression.keep_order,
-          solution: { "from" => "`town.any`" }
+          solution: { from: "`town`" }
         }
-        i_prep_from_town.new_expression("@{prep-from} @{town}", prep_from_town_params)
+        i_prep_from_town.new_expression("@{prep_from} @{town}", prep_from_town_params)
         aller_de_a << i_prep_from_town
 
         i_go = Interpretation.new("go").new_textual(["go"])
@@ -230,7 +230,7 @@ module Nls
         # creation et exécutio de la requete
         request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -243,27 +243,27 @@ module Nls
         Nls.package_update(aller_de_a)
 
         #resultat attendu
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"any" => ["Tokyo", "Paris"]})
+        expected = Answers.new(aller_de_a["want-go-from-to"], { town: ["Tokyo", "Paris"]})
 
         # creation et exécution de la requete 1
         request1 = json_interpret_body(aller_de_a, "I want to go from Tokyo to Paris", Interpretation.default_locale)
         actual1 = Nls.interpret(request1)
-        expected.first.score = 0.88
-        assert_equal expected.to_h, actual1
+        expected.first.score = 0.89
+        assert_json expected.to_h, actual1
 
         # creation et exécution de la requete 2
-        expected.first.solution = { "any" => ["New York", "Barcelona"] }
+        expected.first.solution = { town: ["New York", "Barcelona"] }
         request2 = json_interpret_body(aller_de_a, "I want to go from New York to Barcelona", Interpretation.default_locale)
         actual2 = Nls.interpret(request2)
-        expected.first.score = 0.86
-        assert_equal expected.to_h, actual2
+        expected.first.score = 0.88
+        assert_json expected.to_h, actual2
 
         # creation et exécution de la requete 3
-        expected.first.solution = { "any" => ["New York", "Paris"] }
-        request3 = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
+        expected.first.solution = { town: ["no where", "Paris"] }
+        request3 = json_interpret_body(aller_de_a, "I want to go from no where to Paris", Interpretation.default_locale)
         actual3 = Nls.interpret(request3)
-        expected.first.score = 0.86
-        assert_equal expected.to_h, actual3
+        expected.first.score = 0.88
+        assert_json expected.to_h, actual3
       end
 
       def test_interpret_recursive
@@ -280,7 +280,7 @@ module Nls
          # creation et exécution de la requete
         request = json_interpret_body(go_town, "go to Paris New York Barcelona", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -318,7 +318,7 @@ module Nls
         # creation et exécution de la requete
         request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -337,7 +337,7 @@ module Nls
         # creation et exécution de la requete
         request = json_interpret_body(pg_building_feature, "with swimming pool with sea view", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
       end
 
       def test_building_features_any
@@ -350,12 +350,12 @@ module Nls
         Nls.package_update(pg_building_feature_any)
 
         # resultat attendu
-        expected = Answers.new(pg_building_feature_any["pg-building-features"],{"any" => ["golf", "spa"]}, 0.89)
+        expected = Answers.new(pg_building_feature_any["pg-building-features"], { features: ["swimming pool", "golf", "Sea view", "spa"] }, 0.9)
 
         # creation et exécution de la requete
         request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
       end
 
       def test_with_solutions_with_js
@@ -365,43 +365,43 @@ module Nls
 
         # feed building feature_any
         aller_de_a = create_aller_de_a_any_solutions_js
-#        ap aller_de_a.to_h
+
         Nls.package_update(aller_de_a)
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "New York", "to" => "Paris"}, 0.94)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "New York", to: "Paris"}, 0.94)
         request = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Paris", "to" => "New York"}, 0.94)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Paris", to: "New York"}, 0.94)
         request = json_interpret_body(aller_de_a, "I want to go from Paris to New York", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Barcelona", "to" => "New York"}, 1.0)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Barcelona", to: "New York"}, 1.0)
         request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Perpette Les Oies", "to" => "Barcelona"}, 0.9)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Perpette Les Oies", to: "Barcelona"}, 0.91)
         request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Barcelona", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Barcelona", "to" => "Perpette Les Oies"}, 0.9)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Barcelona", to: "Perpette Les Oies"}, 0.91)
         request = json_interpret_body(aller_de_a, "I want to go from Barcelona to Perpette Les Oies", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Paris", "to" => "Perpette Les Oies"}, 0.85)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Paris", to: "Perpette Les Oies"}, 0.87)
         request = json_interpret_body(aller_de_a, "I want to go from Paris to Perpette Les Oies", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "Perpette Les Oies", "to" => "Paris"}, 0.85)
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Perpette Les Oies", to: "Paris"}, 0.87)
         request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Paris", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        assert_equal expected.to_h, actual
+        assert_json expected.to_h, actual
 
       end
 
@@ -419,8 +419,23 @@ module Nls
 
         request = json_interpret_body([aller_de_a, pg_building_feature], "I want to go from New York to Barcelona with swimming pool", Interpretation.default_locale)
         actual = Nls.interpret(request)
-        expected = Answers.new(aller_de_a["want-go-from-to"], {"from" => "New York", "to" => "Barcelona"}, 0.95)
-        assert_equal expected.to_h, actual
+        expected = Answers.new(aller_de_a["want-go-from-to"], { from: "New York", to: "Barcelona"}, 0.95)
+        assert_json expected.to_h, actual
+      end
+
+
+      def test_string_plus_any
+
+        #skip('bug to fix')
+
+        package = Package.new("test_string_plus_any")
+        interpretation = package.new_interpretation("test_string_plus_any")
+        interpretation.new_expression("string @{any}",  aliases: { any: Alias.any }, solution: "`any`" )
+
+        Nls.package_update(package)
+
+        check_interpret("string hello", interpretation: "test_string_plus_any", solution: "hello")
+
       end
 
     end

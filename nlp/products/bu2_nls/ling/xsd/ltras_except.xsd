@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.1">
+
+  <xs:element name="ltras">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="exceptions" type="TypeExceptions"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="TypeExceptions">
+    <xs:sequence>
+      <xs:element name="exception" type="TypeException" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TypeException">
+    <xs:sequence>
+      <xs:element name="form" type="TypeWord" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element name="target" type="TypeWord" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="TypeWord">
+    <xs:restriction base="xs:normalizedString">
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

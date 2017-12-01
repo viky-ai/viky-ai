@@ -5,9 +5,11 @@
   <project_name>ogm_nlp</project_name>
   <sources>
     <file>inlp.c</file>
+    <file>nlpac.c</file>
     <file>nlpany.c</file>
     <file>nlpanyopt.c</file>
     <file>nlpcheck.c</file>
+    <file>nlpcontext.c</file>
     <file>nlpthreaded.c</file>
     <file>nlpsynchro.c</file>
     <file>nlpcompile.c</file>
@@ -32,6 +34,7 @@
     <file>nlppackagelist.c</file>
     <file>nlpparse.c</file>
     <file>nlprip.c</file>
+    <file>nlprecal.c</file>
     <file>nlprexpression.c</file>
     <file>nlpreopt.c</file>
     <file>nlpreclean.c</file>
@@ -40,6 +43,10 @@
     <file>nlprposition.c</file>
     <file>nlptree.c</file>
     <file>nlptreejson.c</file>
+    <file>nlpwarn.c</file>
+    <file>nlpwhy.c</file>
+    <file>nlpwhycal.c</file>
+    <file>nlpwhyjson.c</file>
   </sources>
   <platforms>
     <platform name="linux">

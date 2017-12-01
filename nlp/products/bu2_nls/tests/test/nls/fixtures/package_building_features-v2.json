@@ -29,6 +29,10 @@
         {
           "expression": "vue sur la mer",
           "locale": "fr"
+        },
+        {
+          "expression": "au bord de la mer",
+          "locale": "fr"
         }
       ],
       "solution":
@@ -161,7 +165,7 @@
           ],
           "solution":
           {
-            "building_feature": "`building_feature_entity.any`"
+            "building_feature": "`building_feature_entity`"
           }
         }
       ]

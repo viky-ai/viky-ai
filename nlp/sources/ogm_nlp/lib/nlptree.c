@@ -36,12 +36,11 @@ static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th,
       IFN(sub_request_expression) DPcErr;
       IFE(NlpInterpretTreeAttachAnyRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression, offset + 2));
     }
+  }
 
-    if (request_expression->expression->alias_any_input_part_position == i + 1)
-    {
-      IFE(NlpRequestAnyAddClosest(ctrl_nlp_th, root_request_expression, request_expression));
-    }
-
+  if (request_expression->expression->alias_any_input_part_position >= 0)
+  {
+    IFE(NlpRequestAnyAddClosest(ctrl_nlp_th, root_request_expression, request_expression));
   }
 
   DONE;
@@ -82,32 +81,24 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
       IFN(sub_request_expression) DPcErr;
       IFE(NlpInterpretTreeLogRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression, offset + 2));
     }
+  }
 
-    if (request_expression->expression->alias_any_input_part_position == i + 1)
-    {
-      if (request_expression->Irequest_any >= 0)
-      {
-        struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-        IFN(request_any) DPcErr;
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
 
-        char string_any[DPcPathSize];
-        NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
+    char string_any[DPcPathSize];
+    NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
 
-        char string_any_position[DPcPathSize];
-        NlpRequestAnyPositionString(ctrl_nlp_th, request_any, DPcPathSize, string_any_position);
+    char string_any_position[DPcPathSize];
+    NlpRequestAnyPositionString(ctrl_nlp_th, request_any, DPcPathSize, string_any_position);
 
-        char highlight[DPcPathSize];
-        NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
+    char highlight[DPcPathSize];
+    NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
 
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
-            request_input_part->level, string_any, string_any_position, highlight);
-      }
-      else
-      {
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: [] any: not found", string_offset,
-            request_input_part->level);
-      }
-    }
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
+        request_expression->level, string_any, string_any_position, highlight);
   }
 
   DONE;

@@ -11,6 +11,11 @@ static og_status NlpCheckMissingInterpretation(og_nlp_th ctrl_nlp_th, package_t 
     og_string interpretation_id);
 static og_bool NlpCheckMissingInterpretationPackage(og_nlp_th ctrl_nlp_th, og_string interpretation_id,
     package_t package);
+static og_status NlpCheckMissingPackages(og_nlp_th ctrl_nlp_th, package_t package);
+static og_status NlpCheckMissingPackage(og_nlp_th ctrl_nlp_th, struct expression *expression, struct alias *alias);
+static og_status NlpCheckInactiveAnyExpressions(og_nlp_th ctrl_nlp_th, package_t package);
+static og_status NlpCheckInactiveAnyExpression(og_nlp_th ctrl_nlp_th, struct expression *expression,
+    struct alias *alias);
 
 og_status NlpCheckPackages(og_nlp_th ctrl_nlp_th)
 {
@@ -29,9 +34,6 @@ static og_status NlpCheckPackage(og_nlp_th ctrl_nlp_th, package_t package)
   unsigned char out[DPcAutMaxBufferSize + 9];
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
-
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpCheckPackage checking interpretation ids for package '%s' '%s':",
-      package->slug, package->id);
 
   if ((retour = OgAufScanf(package->ha_interpretation_id, 0, "", &iout, out, &nstate0, &nstate1, states)))
   {
@@ -65,6 +67,10 @@ static og_status NlpCheckPackage(og_nlp_th ctrl_nlp_th, package_t package)
       IFE(NlpCheckMissingInterpretation(ctrl_nlp_th, package, input_part, interpretation_id));
     }
     while ((retour = OgAufScann(package->ha_interpretation_id, &iout, out, nstate0, &nstate1, states)));
+
+    IFE(NlpCheckMissingPackages(ctrl_nlp_th, package));
+    IFE(NlpCheckInactiveAnyExpressions(ctrl_nlp_th, package));
+
   }
 
   DONE;
@@ -83,10 +89,11 @@ static og_status NlpCheckMissingInterpretation(og_nlp_th ctrl_nlp_th, package_t 
     IFE(found_interpretation);
     if (found_interpretation) DONE;
   }
-  NlpThrowErrorTh(ctrl_nlp_th,
-      "NlpCheckMissingInterpretation: missing interpretation '%s' declared in alias '%s' in expression '%s' in package '%s' '%s'",
-      interpretation_id, input_part->alias->alias, input_part->expression->text, package->slug, package->id);
-  DPcErr;
+  NlpWarningAdd(ctrl_nlp_th,
+      "Missing interpretation '%s' declared in alias '%s' in expression '%s' in interpretation '%s' in package '%s' '%s'",
+      interpretation_id, input_part->alias->alias, input_part->expression->text,
+      input_part->expression->interpretation->id, package->slug, package->id);
+  DONE;
 }
 
 static og_bool NlpCheckMissingInterpretationPackage(og_nlp_th ctrl_nlp_th, og_string interpretation_id,
@@ -101,5 +108,78 @@ static og_bool NlpCheckMissingInterpretationPackage(og_nlp_th ctrl_nlp_th, og_st
     if (!strcmp(interpretation->id, interpretation_id)) return TRUE;
   }
   return (FALSE);
+}
+
+static og_status NlpCheckMissingPackages(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
+  struct interpretation *interpretations = OgHeapGetCell(package->hinterpretation, 0);
+  IFN(interpretations) DPcErr;
+  for (int i = 0; i < interpretation_used; i++)
+  {
+    struct interpretation *interpretation = interpretations + i;
+    for (int e = 0; e < interpretation->expressions_nb; e++)
+    {
+      struct expression *expression = interpretation->expressions + e;
+      for (int a = 0; a < expression->aliases_nb; a++)
+      {
+        struct alias *alias = expression->aliases + a;
+        if (alias->type == nlp_alias_type_type_Interpretation)
+        {
+          IFE(NlpCheckMissingPackage(ctrl_nlp_th, expression, alias));
+        }
+      }
+    }
+  }
+  DONE;
+}
+
+static og_status NlpCheckMissingPackage(og_nlp_th ctrl_nlp_th, struct expression *expression, struct alias *alias)
+{
+  og_string package_id = alias->package_id;
+  int package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
+  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
+  IFN(interpret_packages) DPcErr;
+  for (int i = 0; i < package_used; i++)
+  {
+    struct interpret_package *interpret_package = interpret_packages + i;
+    package_t package = interpret_package->package;
+    if (!strcmp(package->id, package_id)) DONE;
+  }
+  NlpWarningAdd(ctrl_nlp_th,
+      "Missing package '%s' declared in alias '%s' in expression '%s' in interpretation '%s' in package '%s' '%s'",
+      package_id, alias->alias, expression->text, expression->interpretation->id,
+      expression->interpretation->package->slug, expression->interpretation->package->id);
+  DONE;
+}
+
+static og_status NlpCheckInactiveAnyExpressions(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
+  struct interpretation *interpretations = OgHeapGetCell(package->hinterpretation, 0);
+  IFN(interpretations) DPcErr;
+  for (int i = 0; i < interpretation_used; i++)
+  {
+    struct interpretation *interpretation = interpretations + i;
+    for (int e = 0; e < interpretation->expressions_nb; e++)
+    {
+      struct expression *expression = interpretation->expressions + e;
+      if (expression->aliases_nb != 1) continue;
+      struct alias *alias = expression->aliases + 0;
+      IFE(NlpCheckInactiveAnyExpression(ctrl_nlp_th, expression, alias));
+    }
+  }
+  DONE;
+}
+
+static og_status NlpCheckInactiveAnyExpression(og_nlp_th ctrl_nlp_th, struct expression *expression,
+    struct alias *alias)
+{
+  if (alias->type != nlp_alias_type_Any) DONE;
+  NlpWarningAdd(ctrl_nlp_th,
+      "Inactive alias of type any '%s' in expression '%s' in interpretation '%s' in package '%s' '%s'", alias->alias,
+      expression->text, expression->interpretation->id, expression->interpretation->package->slug,
+      expression->interpretation->package->id);
+  DONE;
 }
 

@@ -1,7 +1,105 @@
 {
-  "id": "package-date",
+  "id": "package_date",
   "interpretations":
   [
+    {
+      "id": "preposition_date",
+      "expressions":
+      [
+        {
+          "expression": "on",
+          "locale": "en"
+        },
+        {
+          "expression": "the",
+          "locale": "en"
+        },
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "le",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour le",
+          "locale": "fr"
+        },
+        {
+          "expression": "à la date du",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date_begin",
+      "expressions":
+      [
+        {
+          "expression": "from",
+          "locale": "en"
+        },
+        {
+          "expression": "starting from",
+          "locale": "en"
+        },
+        {
+          "expression": "starting on",
+          "locale": "en"
+        },
+        {
+          "expression": "du",
+          "locale": "fr"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        },
+        {
+          "expression": "depuis le",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date_end",
+      "expressions":
+      [
+        {
+          "expression": "to",
+          "locale": "en"
+        },
+        {
+          "expression": "till",
+          "locale": "en"
+        },
+        {
+          "expression": "till to",
+          "locale": "en"
+        },
+        {
+          "expression": "down to",
+          "locale": "en"
+        },
+        {
+          "expression": "au",
+          "locale": "fr"
+        },
+        {
+          "expression": "jusqu'à",
+          "locale": "fr"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
     {
       "id": "date_january",
       "expressions":
@@ -263,6 +361,26 @@
       }
     },
     {
+      "id": "the",
+      "expressions":
+      [
+        {
+          "expression": "the",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "coma",
+      "expressions":
+      [
+        {
+          "expression": ",",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
       "id": "date_month_number",
       "expressions":
       [
@@ -272,8 +390,7 @@
           [
             {
               "alias": "date_january",
-              "id": "date_january",
-              "package": "package-date"
+              "id": "date_january"
             }
           ]
         },
@@ -283,8 +400,7 @@
           [
             {
               "alias": "date_february",
-              "id": "date_february",
-              "package": "package-date"
+              "id": "date_february"
             }
           ]
         },
@@ -294,8 +410,7 @@
           [
             {
               "alias": "date_march",
-              "id": "date_march",
-              "package": "package-date"
+              "id": "date_march"
             }
           ]
         },
@@ -305,8 +420,7 @@
           [
             {
               "alias": "date_april",
-              "id": "date_april",
-              "package": "package-date"
+              "id": "date_april"
             }
           ]
         },
@@ -316,8 +430,7 @@
           [
             {
               "alias": "date_may",
-              "id": "date_may",
-              "package": "package-date"
+              "id": "date_may"
             }
           ]
         },
@@ -327,8 +440,7 @@
           [
             {
               "alias": "date_june",
-              "id": "date_june",
-              "package": "package-date"
+              "id": "date_june"
             }
           ]
         },
@@ -338,8 +450,7 @@
           [
             {
               "alias": "date_july",
-              "id": "date_july",
-              "package": "package-date"
+              "id": "date_july"
             }
           ]
         },
@@ -349,8 +460,7 @@
           [
             {
               "alias": "date_august",
-              "id": "date_august",
-              "package": "package-date"
+              "id": "date_august"
             }
           ]
         },
@@ -360,8 +470,7 @@
           [
             {
               "alias": "date_september",
-              "id": "date_september",
-              "package": "package-date"
+              "id": "date_september"
             }
           ]
         },
@@ -371,8 +480,7 @@
           [
             {
               "alias": "date_october",
-              "id": "date_october",
-              "package": "package-date"
+              "id": "date_october"
             }
           ]
         },
@@ -382,8 +490,7 @@
           [
             {
               "alias": "date_november",
-              "id": "date_november",
-              "package": "package-date"
+              "id": "date_november"
             }
           ]
         },
@@ -393,12 +500,78 @@
           [
             {
               "alias": "date_december",
-              "id": "date_december",
-              "package": "package-date"
+              "id": "date_december"
             }
           ]
         }
       ]
+    },
+    {
+      "id": "slash",
+      "expressions":
+      [
+        {
+          "expression": "/"
+        }
+      ]
+    },
+    {
+      "id": "date_day_month",
+      "expressions":
+      [
+        {
+          "expression": "@{day} @{month}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "day",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number, 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+      }
+    },
+    {
+      "id": "date_month_the_day",
+      "expressions":
+      [
+        {
+          "expression": "@{month} @{the} @{day}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            },
+            {
+              "alias": "the",
+              "id": "the"
+            },
+            {
+              "alias": "day",
+              "id": "number_ordinal",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number, 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+      }
     },
     {
       "id": "date_day_month_year",
@@ -406,31 +579,150 @@
       [
         {
           "expression": "@{day} @{month} @{year}",
+          "keep-order": true,
+          "glued": true,
           "aliases":
           [
             {
               "alias": "day",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             },
             {
               "alias": "month",
-              "id": "date_month_number",
-              "package": "package-date"
+              "id": "date_month_number"
             },
             {
               "alias": "year",
               "id": "number",
-              "package": "package-number"
+              "package": "package_number"
             }
           ]
+        },
+        {
+          "expression": "@{month} @{the} @{day} @{coma} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month",
+              "id": "date_month_number"
+            },
+            {
+              "alias": "the",
+              "id": "the"
+            },
+            {
+              "alias": "day",
+              "id": "number_ordinal",
+              "package": "package_number"
+            },
+            {
+              "alias": "coma",
+              "id": "coma"
+            },
+            {
+              "alias": "year",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{day} @{slash1} @{month} @{slash2} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "day",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "slash1",
+              "id": "slash"
+            },
+            {
+              "alias": "month",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "slash2",
+              "id": "slash"
+            },
+            {
+              "alias": "year",
+              "id": "number",
+              "package": "package_number"
+            }
+          ],
+          "solution":
+          {
+            "date": "`moment(year.number + '-' + month.number + '-' + day.number, 'YYYY-MM-DD')`"
+          }
         }
       ],
       "solution":
       {
-
-        "date": "`new Date(year.number+'-'+month.month_number+'-'+day.number)`"
+        "date": "`moment(year.number + '-' + month.month_number + '-' + day.number, 'YYYY-MM-DD')`"
       }
+    },
+    {
+      "id": "single_date",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_date} @{date_day_month_year}",
+          "aliases":
+          [
+            {
+              "alias": "preposition_date",
+              "id": "preposition_date"
+            },
+            {
+              "alias": "date_day_month_year",
+              "id": "date_day_month_year"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "date_interval",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_date_begin} @{date_begin} @{preposition_date_end} @{date_end}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_date_begin",
+              "id": "preposition_date_begin"
+            },
+            {
+              "alias": "date_begin",
+              "id": "date_day_month_year"
+            },
+            {
+              "alias": "preposition_date_end",
+              "id": "preposition_date_end"
+            },
+            {
+              "alias": "date_end",
+              "id": "date_day_month_year"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range(date_begin.date,date_end.date)`"
+          }
+        }
+      ]
     }
   ]
 }

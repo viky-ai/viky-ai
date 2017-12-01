@@ -34,6 +34,14 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string
   snprintf(heap_name, DPcPathSize, "package_interpretation_%s", package->id);
   IFn(package->hinterpretation = OgHeapInit(hmsg, heap_name, sizeof(struct interpretation), 1)) return NULL;
 
+  // context
+  snprintf(heap_name, DPcPathSize, "package_context_ba_%s", package->id);
+  IFn(package->hcontext_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_context_compile_%s", package->id);
+  IFn(package->hcontext_compile = OgHeapInit(hmsg, heap_name, sizeof(struct context_compile), DOgNlpPackageContextNumber)) return NULL;
+  snprintf(heap_name, DPcPathSize, "package_context_%s", package->id);
+  IFn(package->hcontext = OgHeapInit(hmsg, heap_name, sizeof(struct context), 1)) return NULL;
+
   // expression
   snprintf(heap_name, DPcPathSize, "package_expression_ba_%s", package->id);
   IFn(package->hexpression_ba = OgHeapInit(hmsg, heap_name, sizeof(unsigned char), DOgNlpPackageBaNumber)) return NULL;
@@ -165,7 +173,8 @@ og_status NlpPackageMarkAsUnused(og_nlp_th ctrl_nlp_th, package_t package)
 og_status NlpPackageMarkAllInUsedAsUnused(og_nlp_th ctrl_nlp_th)
 {
 
-  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages", ctrl_nlp_th->package_in_used->length)
+  NlpLog(DOgNlpTracePackage, "NlpPackageMarkAllInUsedAsUnused : marking %d packages",
+      ctrl_nlp_th->package_in_used->length)
 
   // flush package mark as deleted
   package_t package = NULL;
@@ -273,6 +282,66 @@ PUBLIC(og_status) OgNlpPackageDelete(og_nlp_th ctrl_nlp_th, og_string package_id
   return status;
 }
 
+static og_status NlpPackageInterpretationsFlush(package_t package)
+{
+  OgHeapFlush(package->hinterpretation_ba);
+  package->hinterpretation_ba = NULL;
+
+  OgHeapFlush(package->hinterpretation_compile);
+  package->hinterpretation_compile = NULL;
+
+  int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
+  for (int i = 0; i < interpretation_used; i++)
+  {
+    struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, i);
+    IFN(interpretation) DPcErr;
+
+    json_decrefp(&interpretation->json_solution);
+  }
+
+  OgHeapFlush(package->hinterpretation);
+  package->hinterpretation = NULL;
+
+  DONE;
+}
+
+static og_status NlpPackageContextsFlush(package_t package)
+{
+  OgHeapFlush(package->hcontext_ba);
+  package->hcontext_ba = NULL;
+
+  OgHeapFlush(package->hcontext_compile);
+  package->hcontext_compile = NULL;
+
+  OgHeapFlush(package->hcontext);
+  package->hcontext = NULL;
+
+  DONE;
+}
+
+static og_status NlpPackageExpressionsFlush(package_t package)
+{
+  OgHeapFlush(package->hexpression_ba);
+  package->hexpression_ba = NULL;
+
+  OgHeapFlush(package->hexpression_compile);
+  package->hexpression_compile = NULL;
+
+  int expression_used = OgHeapGetCellsUsed(package->hexpression);
+  for (int i = 0; i < expression_used; i++)
+  {
+    struct expression *expression = OgHeapGetCell(package->hexpression, i);
+    IFN(expression) DPcErr;
+
+    json_decrefp(&expression->json_solution);
+  }
+
+  OgHeapFlush(package->hexpression);
+  package->hexpression = NULL;
+
+  DONE;
+}
+
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
@@ -281,19 +350,9 @@ static og_status NlpPackageFlush(package_t package)
   NlpInputPartAliasFlush(package);
   NlpLtracPackageFlush(package);
 
-  OgHeapFlush(package->hinterpretation_ba);
-  package->hinterpretation_ba = NULL;
-  OgHeapFlush(package->hinterpretation_compile);
-  package->hinterpretation_compile = NULL;
-  OgHeapFlush(package->hinterpretation);
-  package->hinterpretation = NULL;
-
-  OgHeapFlush(package->hexpression_ba);
-  package->hexpression_ba = NULL;
-  OgHeapFlush(package->hexpression_compile);
-  package->hexpression_compile = NULL;
-  OgHeapFlush(package->hexpression);
-  package->hexpression = NULL;
+  NlpPackageInterpretationsFlush(package);
+  NlpPackageContextsFlush(package);
+  NlpPackageExpressionsFlush(package);
 
   OgHeapFlush(package->halias_ba);
   package->halias_ba = NULL;

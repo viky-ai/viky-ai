@@ -32,6 +32,7 @@ RUN factory.pl -c external_dependencies redebug
 
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
 ADD products/bu2_nls/ling           /builds/nls/products/bu2_nls/ling
+ADD products/bu2_nls/node_modules   /builds/nls/products/bu2_nls/node_modules
 ADD products/bu2_nls/manifest.xml   /builds/nls/products/bu2_nls/manifest.xml
 ADD products/bu2_nls/LICENSE.TXT    /builds/nls/products/bu2_nls/LICENSE.TXT
 ADD sources                         /builds/nls/sources

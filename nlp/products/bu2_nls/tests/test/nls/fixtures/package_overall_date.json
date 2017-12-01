@@ -1,0 +1,376 @@
+{
+  "id": "package_overall_date",
+  "interpretations":
+  [
+    {
+      "id": "date",
+      "expressions":
+      [
+        {
+          "expression": "@{special_date}",
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{dayofweek_number_week_ago}",
+          "aliases":
+          [
+            {
+              "alias": "dayofweek_number_week_ago",
+              "id": "dayofweek_number_week_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{dayofweek_in_number_week}",
+          "aliases":
+          [
+            {
+              "alias": "dayofweek_in_number_week",
+              "id": "dayofweek_in_number_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_day_of_week}",
+          "aliases":
+          [
+            {
+              "alias": "last_day_of_week",
+              "id": "last_day_of_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_day_of_week}",
+          "aliases":
+          [
+            {
+              "alias": "next_day_of_week",
+              "id": "next_day_of_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{single_date}",
+          "aliases":
+          [
+            {
+              "alias": "single_date",
+              "id": "single_date",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_day_month_year}",
+          "aliases":
+          [
+            {
+              "alias": "date_day_month_year",
+              "id": "date_day_month_year",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_month_the_day}",
+          "aliases":
+          [
+            {
+              "alias": "date_month_the_day",
+              "id": "date_month_the_day",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_day_month}",
+          "aliases":
+          [
+            {
+              "alias": "date_day_month",
+              "id": "date_day_month",
+              "package": "package_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{daynumber_of_next_month}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_of_next_month",
+              "id": "daynumber_of_next_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{daynumber_of_last_month}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_of_last_month",
+              "id": "daynumber_of_last_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{daynumber_in_number_month}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_in_number_month",
+              "id": "daynumber_in_number_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{daynumber_number_month_ago}",
+          "aliases":
+          [
+            {
+              "alias": "daynumber_number_month_ago",
+              "id": "daynumber_number_month_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_special_date}",
+          "aliases":
+          [
+            {
+              "alias": "next_special_date",
+              "id": "next_special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_special_date}",
+          "aliases":
+          [
+            {
+              "alias": "last_special_date",
+              "id": "last_special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date_in_number_year}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_in_number_year",
+              "id": "special_date_in_number_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date_number_year_ago}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_number_year_ago",
+              "id": "special_date_number_year_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{month_the_number_in_number_years}",
+          "aliases":
+          [
+            {
+              "alias": "month_the_number_in_number_years",
+              "id": "month_the_number_in_number_years",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{month_the_number_number_years_ago}",
+          "aliases":
+          [
+            {
+              "alias": "month_the_number_number_years_ago",
+              "id": "month_the_number_number_years_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "date_range",
+      "expressions":
+      [
+        {
+          "expression": "@{next_week}",
+          "aliases":
+          [
+            {
+              "alias": "next_week",
+              "id": "next_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_week}",
+          "aliases":
+          [
+            {
+              "alias": "last_week",
+              "id": "last_week",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_month}",
+          "aliases":
+          [
+            {
+              "alias": "next_month",
+              "id": "next_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_month}",
+          "aliases":
+          [
+            {
+              "alias": "last_month",
+              "id": "last_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_year}",
+          "aliases":
+          [
+            {
+              "alias": "next_year",
+              "id": "next_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_year}",
+          "aliases":
+          [
+            {
+              "alias": "last_year",
+              "id": "last_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{in_month}",
+          "aliases":
+          [
+            {
+              "alias": "in_month",
+              "id": "in_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration_with_latency}",
+          "aliases":
+          [
+            {
+              "alias": "duration_with_latency",
+              "id": "duration_with_latency",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{week_of_date}",
+          "aliases":
+          [
+            {
+              "alias": "week_of_date",
+              "id": "week_of_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{latency}",
+          "aliases":
+          [
+            {
+              "alias": "latency",
+              "id": "latency",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_interval}",
+          "aliases":
+          [
+            {
+              "alias": "date_interval",
+              "id": "date_interval",
+              "package": "package_date"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "expressions":
+      [
+        {
+          "expression": "@{period}",
+          "aliases":
+          [
+            {
+              "alias": "period",
+              "id": "period",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration}",
+          "aliases":
+          [
+            {
+              "alias": "duration",
+              "id": "durations",
+              "package": "package_complex_date"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

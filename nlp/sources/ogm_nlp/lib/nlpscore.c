@@ -8,6 +8,7 @@
 
 static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
+static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
@@ -42,22 +43,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       IFN(sub_request_expression) DPcErr;
       IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
       score->locale += sub_request_expression->score->locale;
-      score->spelling += 1;
-      if (request_expression->expression->alias_any_input_part_position == i + 1)
-      {
-        if (request_expression->Irequest_any >= 0)
-        {
-          score->any *= 0.8;
-        }
-        else
-        {
-          score->any *= 0.2;
-        }
-      }
-      else
-      {
-        score->any *= sub_request_expression->score->any;
-      }
+      score->spelling += sub_request_expression->score->spelling;
+      score->any *= sub_request_expression->score->any;
     }
     else
     {
@@ -65,6 +52,18 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       score->spelling += 1;
     }
 
+  }
+
+  if (request_expression->expression->alias_any_input_part_position >= 0)
+  {
+    if (request_expression->Irequest_any >= 0)
+    {
+      score->any *= 0.8;
+    }
+    else
+    {
+      score->any *= 0.2;
+    }
   }
 
   // coverage is calculated in terms of number of matched words
@@ -89,6 +88,18 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   request_expression->score->any = score->any;
 
+  IFE(NlpContextGetScore(ctrl_nlp_th, request_expression));
+
+  IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
+
   DONE;
 }
 
+static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  double score_number = 6.0;
+  struct request_score *score = request_expression->score;
+  request_expression->total_score = (score->coverage + score->locale + score->spelling * score->spelling
+      + score->overlap + score->any + score->context) / score_number;
+  DONE;
+}

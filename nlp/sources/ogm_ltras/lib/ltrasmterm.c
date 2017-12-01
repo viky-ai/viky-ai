@@ -85,17 +85,6 @@ IF(OgMsgTuneInherit(ctrl_term->hmsg,param->hmsg)) return(0);
 IFn(ctrl_term->hfrom=OgHeapInit(ctrl_term->hmsg,"term_from",sizeof(unsigned char),0x800)) return(0);
 IFn(ctrl_term->hto=OgHeapInit(ctrl_term->hmsg,"term_to",sizeof(unsigned char),0x800)) return(0);
 
-IFn(ctrl_term->ha_base=OgLtrasHaBase(ctrl_term->hltras)) {
-  IFn(param->hmodule_to_inherit) {
-    OgMsgErr(ctrl_term->hmsg,"term_module",0,0,0,DOgMsgSeverityNotice
-      ,DOgErrLogFlagNoSystemError+DOgErrLogFlagNotInErr+DOgErrLogFlagNoDate);
-    OgMsg(ctrl_term->hmsg,"",DOgMsgDestInLog
-      , "OgLtrasModuleTermInit: going on because ltra_base.auf not mandatory");
-    }
-  else {
-    OgErrLast(ctrl_term->herr,erreur,0);
-    }
-  }
 OgLtrasGetFrequencyFromNormalizedFrequency(ctrl_term->hltras, 0.9, &dfrequency);
 ctrl_term->no_dictionary_frequency = (int)dfrequency;
 
@@ -144,8 +133,7 @@ int OgLtrasModuleTerm(struct og_ltra_module_input *module_input
 
   ogint64_t micro_clock_start = OgMicroClock();
 
-  ctrl_term->ha_base=OgLtrasHaBase(ctrl_term->hltras);
-
+  IFN(ctrl_term->ha_base=OgLtrasHaBase(ctrl_term->hltras)) DONE;
   ctrl_term->score_factor = OgLtrasScoreFactor(ctrl_term->hltras);
 
   /** Max number of solutions validated by the term module **/

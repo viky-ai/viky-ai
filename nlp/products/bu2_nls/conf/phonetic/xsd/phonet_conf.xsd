@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+
+  <xs:element name="phonet_configuration">
+    <xs:annotation>
+      <xs:documentation>Phonetic rules
+        Attention: contrairement aux spécifications générales de XML, l'ordre entre les règles est important dans ce fichier est important.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="option" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:normalizedString">
+                <xs:attribute type="xs:normalizedString" name="name" use="required" />
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="classes" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="class" maxOccurs="unbounded" minOccurs="1">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="TypeComplexChar" name="c" maxOccurs="unbounded" minOccurs="1" />
+                  </xs:sequence>
+                  <xs:attribute type="TypeSimpleChar" name="character" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="rules" maxOccurs="unbounded" minOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="rule" maxOccurs="unbounded" minOccurs="1">
+                <xs:complexType>
+                  <xs:attribute type="xs:normalizedString" name="left" />
+                  <xs:attribute type="xs:normalizedString" name="key" use="required" />
+                  <xs:attribute type="xs:normalizedString" name="right" />
+                  <xs:attribute type="TypePhoneticString" name="phonetic" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:positiveInteger" name="step" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="TypePhoneticString">
+    <xs:annotation>
+      <xs:documentation>
+        On autorise tous les caratères alpha en minuscules, les majuscules sont des caratères phonétiques.
+        Signification des caractères phonétiques :
+
+        E e accent aigu
+        A e accent grave
+        I son 'in'
+        Y son 'ye'
+        N son 'en'
+        C son 'ch'
+        H son 'eu'
+        U son 'ou'
+        O son 'on'
+        T son 'th' anglais
+        J son 'j' (rotta) espagnol
+        * pour les voyelles en anglais ?
+
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:normalizedString">
+      <xs:pattern value="[a-zEAIYNCHUOTJ\*]*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TypeComplexChar">
+    <xs:simpleContent>
+      <xs:extension base="TypeSimpleChar" />
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="TypeSimpleChar">
+    <xs:restriction base="xs:normalizedString">
+      <xs:length value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
+
