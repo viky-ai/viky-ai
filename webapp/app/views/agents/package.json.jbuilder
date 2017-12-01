@@ -5,6 +5,7 @@ json.slug @agent.slug
 
 interpretations = []
 @agent.intents.each do |intent|
+
   intent.interpretations.each do |interpretation|
     interpretation.interpretation_aliases.where(is_list: true).order(:position_start).each do |ialias|
       interpretation_hash = {}
@@ -113,7 +114,31 @@ interpretations = []
     end
 
     expressions << expression
+
+
+    # Any Case
+    if interpretation.interpretation_aliases.where(any_enabled: true).count > 0
+      interpretation.interpretation_aliases.where(any_enabled: true).each do |ialias|
+        any_aliasname = ialias.aliasname
+        any_expression = expression.deep_dup
+        old_aliases = expression[:aliases]
+        any_expression[:aliases] = []
+        old_aliases.each do |jsonalias|
+          if jsonalias[:alias] == any_aliasname
+            any_expression[:aliases] << {
+              alias: any_aliasname,
+              type: 'any'
+            }
+          else
+            any_expression[:aliases] << jsonalias
+          end
+        end
+        expressions << any_expression
+      end
+    end
+
   end
+
   interpretation_hash[:expressions] = expressions
   interpretations << interpretation_hash
 end

@@ -193,12 +193,12 @@ class AliasesForm
       else
         return alias.slug.split('/')[2]
 
-  isChecked: (alias) ->
+  isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
-      return $($("#" + alias.id + " input[name*=is_list]")).is(':checked')
+      return $($("#" + alias.id + " input[name*=#{attribute}]")).is(':checked')
     else
-      if alias.is_list != undefined
-        return alias.is_list
+      if alias[attribute] != undefined
+        return alias[attribute]
       else
         return false
 
@@ -246,14 +246,14 @@ class AliasesForm
     reference = alias.intent_slug if alias.nature == 'type_intent'
     reference = "Digit"           if alias.nature == 'type_digit'
 
-    is_list_checked = if @isChecked(alias) then 'checked' else ''
+    is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
+    any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
 
     line = []
     line.push "
     <tr id='#{alias.id}'>
       <td>
-        <div class='field'>
-    "
+        <div class='field'>"
 
     if alias.aliasname_errors
       line.push "
@@ -273,20 +273,28 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
         </div>
       </td>
-      <td><span class='#{alias.color}'>#{reference}</span></td>
-      <td>#{alias.selection}</td>"
+      <td><span class='#{alias.color}'>#{reference}</span></td>"
 
     if alias.nature == 'type_intent'
-      line.push "<td>
-        <label>
-         <input type='checkbox' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
-        </label>
-      </td>"
+      line.push "
+        <td>
+          <label>
+            <input type='checkbox' name='#{name_prefix}[is_list]'     value='true' #{is_list_checked} /> List
+          </label>
+          &nbsp;
+          <label>
+            <input type='checkbox' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
+          </label>
+        </td>"
     else
-      line.push "<td><input type='hidden' name='#{name_prefix}[is_list]' value='false' /></td>"
+      line.push "
+        <td>
+          <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
+          <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
+        </td>"
 
+    line.push "<td>#{alias.selection}</td>"
     line.push "</tr>"
-
     line.join("")
 
 
@@ -298,8 +306,8 @@ class AliasesForm
         <tr>
           <th>Parameter name</th>
           <th>Interpretation</th>
+          <th>Options</th>
           <th>Selection</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>"

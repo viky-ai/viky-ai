@@ -30,7 +30,8 @@ module InterpretationHelper
         intent_slug: interpretation_alias.intent.slug,
         intent_id: interpretation_alias.intent.id,
         nature: 'type_intent',
-        is_list: interpretation_alias.is_list
+        is_list: interpretation_alias.is_list,
+        any_enabled: interpretation_alias.any_enabled
       }
     end
     if interpretation_alias.type_digit?
@@ -38,7 +39,8 @@ module InterpretationHelper
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
         nature: 'type_digit',
-        is_list: interpretation_alias.is_list
+        is_list: interpretation_alias.is_list,
+        any_enabled: interpretation_alias.any_enabled
       }
     end
     data[:id] = interpretation_alias.id unless interpretation_alias.id.nil?

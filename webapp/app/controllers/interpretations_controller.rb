@@ -94,12 +94,16 @@ class InterpretationsController < ApplicationController
       p = params.require(:interpretation).permit(
         :expression, :locale, :keep_order, :glued, :solution, :auto_solution_enabled,
         :interpretation_aliases_attributes => [
-          :id, :nature, :position_start, :position_end, :aliasname, :intent_id, :is_list, :_destroy
+          :id, :nature, :position_start, :position_end,
+          :aliasname, :intent_id,
+          :is_list, :any_enabled,
+          :_destroy
         ]
       )
       unless p[:interpretation_aliases_attributes].nil?
         for item in p[:interpretation_aliases_attributes]
-          item[:is_list] = false if item[:is_list].blank?
+          item[:is_list] = false     if item[:is_list].blank?
+          item[:any_enabled] = false if item[:any_enabled].blank?
         end
       end
       p
