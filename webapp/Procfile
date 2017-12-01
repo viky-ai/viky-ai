@@ -1,4 +1,4 @@
-sidekiq_redis:  docker run --rm -p "6379:6379" --name voqal-redis --volume "/tmp/viky_redis_dev:/data" redis:4.0-alpine
+sidekiq_redis:  redis-server --port 7372
 workers:        bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:        ./bin/webpack-dev-server
 web:            bundle exec rails s -p 3000
