@@ -21,7 +21,7 @@
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().year()+'-12-25');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
       }
     },
     {
@@ -59,7 +59,7 @@
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().year()+'-02-14');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`moment(moment().year()+'-02-14', 'YYYY-MM-DD')`"
       }
     },
     {

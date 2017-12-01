@@ -80,13 +80,12 @@ module Nls
         expected = {"date_range"=>
           {"start"=>"2016-03-01T00:00:00+03:00", "end"=>"2016-03-31T23:59:59+03:00"}
         }
-        #        check_interpret("dans 1 mois", interpretation: "latency", solution: expected, now: now)
+        check_interpret("dans 1 mois", interpretation: "date_range", solution: expected, now: now)
 
         expected = {"date_range"=>
-          {"start"=>"2016-06-05T00:00:00+03:00", "end"=>"2016-06-5T23:59:59+03:00"}
+          {"start"=>"2016-06-05T00:00:00+03:00", "end"=>"2016-06-05T23:59:59+03:00"}
         }
-        #        check_interpret("dans 3 mois 1 semaine et 1 jour", interpretation: "latency", solution: expected, now:
-# now)
+        check_interpret("dans 3 mois 1 semaine et 1 jour", interpretation: "date_range", solution: expected, now: now)
       end
 
       def test_complex_date_in_period_for_period
@@ -120,11 +119,10 @@ module Nls
       end
 
       def test_special_dates
-        skip("TODO Bug timezone")
         now = "2016-02-28T00:00:00+03:00"
         check_interpret("pour noel", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
-        check_interpret("pour la saint valentin", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
-        check_interpret("for valentine", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+        check_interpret("pour la saint valentin", interpretation: "date", solution: {"date" => "2016-02-14T00:00:00+03:00"}, now: now)
+        check_interpret("for valentine", interpretation: "date", solution: {"date" => "2016-02-14T00:00:00+03:00"}, now: now)
       end
 
       def test_week_of_day
@@ -165,6 +163,39 @@ module Nls
         check_interpret("jeudi il y a 3 semaines", interpretation: "date", solution: {"date" => "2017-11-09T00:00:00+03:00"}, now: now)
         check_interpret("thursday 3 weeks ago", interpretation: "date", solution: {"date" => "2017-11-09T00:00:00+03:00"}, now: now)
       end
+
+      def test_date_of_next_month
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("le 5 dans 2 mois", interpretation: "date", solution: {"date" => "2018-01-05T00:00:00+03:00"}, now: now)
+        check_interpret("the 12 in 5 months", interpretation: "date", solution: {"date" => "2018-04-12T00:00:00+03:00"}, now: now)
+      end
+
+      def test_date_of_last_month
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("le 21 il y a 3 mois", interpretation: "date", solution: {"date" => "2017-08-21T00:00:00+03:00"}, now: now)
+        check_interpret("the 12 4 months ago", interpretation: "date", solution: {"date" => "2017-07-12T00:00:00+03:00"}, now: now)
+      end
+
+      def test_date_in_n_years
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("le 16 juin dans 3 ans", interpretation: "date", solution: {"date" => "2020-06-16T00:00:00+03:00"}, now: now)
+        check_interpret("april the 25 th in 4 years", interpretation: "date", solution: {"date" => "2021-04-25T00:00:00+03:00"}, now: now)
+      end
+
+      def test_date_n_years_ago
+        now = "2017-11-29T00:00:00+03:00"
+        check_interpret("le 21 mars il y a 3 ans", interpretation: "date", solution: {"date" => "2014-03-21T00:00:00+03:00"}, now: now)
+        check_interpret("april the 12 th 4 years ago", interpretation: "date", solution: {"date" => "2013-04-12T00:00:00+03:00"}, now: now)
+      end
+
+      def tset_next_special_date
+        now = "2016-02-28T00:00:00+03:00"
+        check_interpret("noel prochain", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
+        check_interpret("next Xmas", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
+        check_interpret("la saint valentin prochaine", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+        check_interpret("next valentine's day", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+      end
+
 
       #      def test_extra
       #      end

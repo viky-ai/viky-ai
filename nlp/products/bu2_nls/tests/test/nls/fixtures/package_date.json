@@ -539,7 +539,7 @@
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number);if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number, 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
       }
     },
     {
@@ -570,7 +570,7 @@
       ],
       "solution":
       {
-        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number);if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
+        "date": "`var date=moment(moment().format('YYYY')+'-'+month.month_number+'-'+day.number, 'YYYY-MM-DD');if(date.isBefore(moment())){date.add(1,'years')}else{date}`"
       }
     },
     {
