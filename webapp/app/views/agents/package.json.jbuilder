@@ -82,13 +82,6 @@ interpretations = []
           }
         end
 
-        if ialias.type_any?
-          expression[:aliases] << {
-            alias: ialias.aliasname,
-            type: 'any'
-          }
-        end
-
       end
     end
     expression[:locale] = interpretation.locale unless interpretation.locale == '*'

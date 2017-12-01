@@ -18,14 +18,6 @@ module InterpretationHelper
     })
   end
 
-  def any_to_json()
-    JSON.generate({
-      color:  "intent-black",
-      aliasname: t("views.interpretations.any"),
-      nature: "type_any"
-    })
-  end
-
   def alias_to_json_href(interpretation_alias)
     ERB::Util.url_encode(alias_to_json(interpretation_alias))
   end
@@ -46,14 +38,6 @@ module InterpretationHelper
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
         nature: 'type_digit',
-        is_list: interpretation_alias.is_list
-      }
-    end
-    if interpretation_alias.type_any?
-      data = {
-        color: "intent-black",
-        aliasname: interpretation_alias.aliasname,
-        nature: 'type_any',
         is_list: interpretation_alias.is_list
       }
     end
@@ -112,7 +96,6 @@ module InterpretationHelper
           else
             color = "black"
             title = "Digit" if interpretation_alias.type_digit?
-            title = "Any" if interpretation_alias.type_any?
           end
           css_class = "interpretation-resume__alias-#{color}"
           text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]

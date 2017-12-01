@@ -245,7 +245,6 @@ class AliasesForm
 
     reference = alias.intent_slug if alias.nature == 'type_intent'
     reference = "Digit"           if alias.nature == 'type_digit'
-    reference = "Any"             if alias.nature == 'type_any'
 
     is_list_checked = if @isChecked(alias) then 'checked' else ''
 

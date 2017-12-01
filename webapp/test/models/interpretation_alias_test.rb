@@ -174,7 +174,6 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal "type_intent", interpretation_alias.nature
     assert interpretation_alias.type_intent?
     assert !interpretation_alias.type_digit?
-    assert !interpretation_alias.type_any?
     assert_equal 8, interpretation_alias.position_start
     assert_equal 21, interpretation_alias.position_end
     assert_equal 'who', interpretation_alias.aliasname
