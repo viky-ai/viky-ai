@@ -449,10 +449,6 @@ struct og_nlp_punctuation_word
 #define DOgNlpParsePunctWordMaxNb 32
 struct og_nlp_parse_conf
 {
-  /** Single unicode char skipped */
-  gunichar punct_char[DOgNlpParsePunctCharMaxNb];
-  int punct_char_used;
-
   /** Single unicode char treated as word */
   gunichar punct_char_word[DOgNlpParsePunctCharMaxNb];
   int punct_char_word_used;
@@ -476,6 +472,7 @@ struct og_ctrl_nlp_js
 {
   duk_context *duk_context;
   duk_idx_t init_stack_idx;
+  duk_idx_t request_stack_idx;
 
   /** For better error message list current defined variable */
   GStringChunk *varibale_values;
@@ -790,7 +787,9 @@ char *NlpDukTypeString(duk_int_t type);
 /* nlpjavascript.c */
 og_status NlpJsInit(og_nlp_th ctrl_nlp_th);
 og_status NlpJsReset(og_nlp_th ctrl_nlp_th);
-og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th);
+og_status NlpJsRequestSetup(og_nlp_th ctrl_nlp_th);
+og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th);
+og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);

@@ -531,7 +531,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 {
 
   // reset local variable
-  IFE(NlpJsStackWipe(ctrl_nlp_th));
+  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
@@ -552,8 +552,6 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
       NlpLog(DOgNlpTraceSolution, "  alias '%s' solution: %s", alias_solution->alias->alias, json_solution_string);
     }
   }
-
-  IFE(NlpJsSetNow(ctrl_nlp_th));
 
   // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
@@ -599,7 +597,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   }
 
   // reset local variable
-  IFE(NlpJsStackWipe(ctrl_nlp_th));
+  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   return solution_built;
 }

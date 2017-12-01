@@ -253,6 +253,11 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
 
+  // ====================================
+  // look for matching interpretation
+  // ====================================
+  IFE(NlpMatch(ctrl_nlp_th));
+
   json_t *json_interpretations = json_array();
   IF(json_object_set_new(json_answer, "interpretations", json_interpretations))
   {
@@ -260,7 +265,7 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     DPcErr;
   }
 
-  IFE(NlpMatch(ctrl_nlp_th));
+  // build response
   IFE(NlpRequestInterpretationsBuild(ctrl_nlp_th, json_interpretations));
 
   int nm_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hnm_expression);
@@ -488,6 +493,9 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
 
   // The Accept-Language string can be non extant
 
+  // setup
+  IFE(NlpJsRequestSetup(ctrl_nlp_th));
+
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpInterpretRequestParse));
 
   IFE(NlpInterpretRequestBuildContexts(ctrl_nlp_th, json_contexts));
@@ -660,5 +668,4 @@ static og_status NlpInterpretRequestBuildContext(og_nlp_th ctrl_nlp_th, const ch
 
   DONE;
 }
-
 

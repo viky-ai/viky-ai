@@ -70,6 +70,27 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
+og_status NlpJsRequestSetup(og_nlp_th ctrl_nlp_th)
+{
+  duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    CONT;
+  }
+
+  // set now for the whole request
+  IFE(NlpJsSetNow(ctrl_nlp_th));
+
+  // stack after request setup
+  ctrl_nlp_th->js->request_stack_idx = duk_get_top(ctx);
+  if (ctrl_nlp_th->js->request_stack_idx != DUK_INVALID_INDEX)
+  {
+    ctrl_nlp_th->js->request_stack_idx = ctrl_nlp_th->js->init_stack_idx;
+  }
+
+  DONE;
+}
+
 static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
@@ -184,11 +205,13 @@ og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
-  IFE(NlpJsStackWipe(ctrl_nlp_th));
-
-  // We need to call it twice to make sure everything
-  duk_gc(ctx, 0);
-  duk_gc(ctx, 0);
+  og_bool wipped = NlpJsStackRequestWipe(ctrl_nlp_th);
+  if (wipped)
+  {
+    // We need to call it twice to make sure everything
+    duk_gc(ctx, 0);
+    duk_gc(ctx, 0);
+  }
 
   DONE;
 }
@@ -210,7 +233,27 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-og_bool NlpJsStackWipe(og_nlp_th ctrl_nlp_th)
+og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
+{
+  duk_context *ctx = ctrl_nlp_th->js->duk_context;
+  if (ctx == NULL)
+  {
+    CONT;
+  }
+
+  og_bool local_wipped = NlpJsStackLocalWipe(ctrl_nlp_th);
+
+  duk_idx_t top = duk_get_top(ctx);
+  if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
+  {
+    duk_pop_n(ctx, top - ctrl_nlp_th->js->request_stack_idx);
+    return TRUE;
+  }
+
+  return local_wipped;
+}
+
+og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
   if (ctx == NULL)
@@ -275,7 +318,17 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     snprintf(enhanced_script, enhanced_script_size, "%s", trimed_script);
   }
 
-  NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n%s\n", enhanced_script);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceJs)
+  {
+    // show now
+    og_char_buffer now[DPcPathSize];
+    now[0] = '\0';
+    if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
+    {
+      snprintf(now, DPcPathSize, "// now is %s\n", duk_safe_to_string(ctx, -1));
+    }
+    NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n//=========\n%s%s\n//=========\n", now, enhanced_script);
+  }
 
   // eval securely
   if (duk_peval_string(ctx, enhanced_script) != 0)
@@ -452,18 +505,26 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
 #define DOgNlpJsSetNowNowScriptSize DPcPathSize * 2
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
 {
-  // TODO improve NlpJsSetNow call to one time per request
 
   og_string date_now = ctrl_nlp_th->date_now;
+  if (date_now == NULL)
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsSetNow: current UTC time");
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsSetNow: %s", date_now);
+  }
 
-  og_string offset_reset = "// Reset now state \n"   //
-          "moment.now_form_request = null; \n"
-          "moment.updateOffset = function() { }; \n"//
-          "moment.now = function() { \n"//
-          "  return new Date(); \n"//
-          "}; \n"//
-          " \n"//
-          "// Reset now state \n";
+  og_string offset_reset = "// ====================================================\n"
+      "// Reset now state \n"   //
+      "moment.now_form_request = null; \n"
+      "moment.updateOffset = function() { }; \n"//
+      "moment.now = function() { \n"//
+      "  return new Date(); \n"//
+      "}; \n"//
+      " \n"//
+      "// Set now\n";
 
   og_string offset_setup = ""   //
           "// format moment in ISO with timezone  \n"//
@@ -471,7 +532,7 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
           "   return this.format(); \n"//
           "}; \n"//
           " \n"//
-          "// Set no from request \n"//
+          "// Use now from request \n"//
           "moment.now = function() { \n"//
           "  return moment.now_form_request.toDate(); \n"//
           "}; \n"//
@@ -495,21 +556,21 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
           "    m.updateOffsetInProgress = false; \n"//
           "  } \n"//
           "}; \n"//
-          "";
+          "// ====================================================\n";
 
   og_char_buffer now_setup_command[DOgNlpJsSetNowNowScriptSize];
   if (date_now == NULL || date_now[0] == '\0')
   {
-    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s\nmoment.now_form_request ="
-        " moment.utc();\n%s", offset_reset, offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%smoment.now_form_request ="
+        " moment.utc();\n\n%s", offset_reset, offset_setup);
   }
   else
   {
-    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s\nmoment.now_form_request ="
-        " moment.parseZone('%s');\n%s", offset_reset, date_now, offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%smoment.now_form_request ="
+        " moment.parseZone('%s');\n\n%s", offset_reset, date_now, offset_setup);
   }
 
-  NlpLog(DOgNlpTraceJs, "Sending command to duktape: %s", now_setup_command);
+  NlpLog(DOgNlpTraceJs, "Sending command to duktape:\n%s", now_setup_command);
 
   duk_context *ctx = ctrl_nlp_th->js->duk_context;
   if (ctx == NULL)

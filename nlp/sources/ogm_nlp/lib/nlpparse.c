@@ -137,20 +137,6 @@ static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word)
   DONE;
 }
 
-static og_status NlpParseAddPunctChar(og_nlp ctrl_nlp, og_string utf8_punct_char)
-{
-  struct og_nlp_parse_conf *parse_conf = ctrl_nlp->parse_conf;
-  if (parse_conf->punct_char_used >= DOgNlpParsePunctCharMaxNb)
-  {
-    NlpThrowError(ctrl_nlp, "NlpParseAddPunct : too many punctuation char %d", DOgNlpParsePunctCharMaxNb);
-    DPcErr;
-  }
-
-  parse_conf->punct_char[parse_conf->punct_char_used++] = g_utf8_get_char(utf8_punct_char);
-
-  DONE;
-}
-
 static int NlpParseConfPuncWordSort(const void *void_word1, const void *void_word2)
 {
   const struct og_nlp_punctuation_word *word1 = void_word1;
@@ -192,12 +178,6 @@ og_status NlpParseConfFlush(og_nlp ctrl_nlp)
 
 static inline og_bool NlpParseUnicharIsSkipPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c)
 {
-  // skipped punctation
-  for (int i = 0; i < parse_conf->punct_char_used; i++)
-  {
-    if (c == parse_conf->punct_char[i]) return TRUE;
-  }
-
   // space char
   if (g_unichar_isspace(c))
   {
