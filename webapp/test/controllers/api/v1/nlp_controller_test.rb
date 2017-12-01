@@ -57,7 +57,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       'interpretations' => [
         {
           "id"    => intent.id,
-          "slug"  => "admin/weather/weather_greeting",
+          "slug"  => "weather_greeting",
           "name"  => "weather_greeting",
           "score" => 1.0
         }
