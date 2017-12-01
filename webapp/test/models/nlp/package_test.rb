@@ -86,6 +86,96 @@ class PackageTest < ActiveSupport::TestCase
   end
 
 
+  test 'Package generation with alias list' do
+    weather = agents(:weather)
+    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    ialias.is_list = true
+    assert ialias.save
+
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      "id"   => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id" => "#{intents(:weather_who).id}_#{ialias.id}_list",
+          "slug" => "admin/weather/weather_who_#{ialias.id}_list",
+          "expressions" => [
+            {
+              "expression" => "@{who}",
+              "aliases"    => [
+                {
+                  "alias" => "who",
+                  "slug" => "admin/weather/weather_who",
+                  "id"      => intents(:weather_who).id,
+                  "package" => weather.id
+                }
+              ]
+            },
+            {
+              "expression" => "@{who_list} @{who}",
+              "aliases"    => [
+                {
+                  "alias" => "who_list",
+                  "slug" => "admin/weather/weather_who_#{ialias.id}_list",
+                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_list",
+                  "package" => weather.id
+                },
+                {
+                  "alias" => "who",
+                  "slug" => "admin/weather/weather_who",
+                  "id"      => intents(:weather_who).id,
+                  "package" => weather.id
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id"   => intents(:weather_greeting).id,
+          "slug" => "admin/weather/weather_greeting",
+          "expressions" => [
+            {
+              "expression" => "Hello @{who}",
+              "aliases"    => [
+                {
+                  "alias"   => "who",
+                  "slug"    => "admin/weather/weather_who_#{ialias.id}_list",
+                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_list",
+                  "package" => weather.id
+                }
+              ],
+              "locale"     => "en-US",
+              "keep-order" => true,
+              "glued"      => true,
+              "solution"   => "`greeting.who`"
+            },
+            {
+              "expression" => "Bonjour tout le monde",
+              "locale"     => "fr-FR",
+              "solution"   => "`\"Bonjour tout le monde\"`"
+            }
+          ]
+        },
+        {
+          "id"   => intents(:weather_who).id,
+          "slug" => "admin/weather/weather_who",
+          "expressions" => [
+            {
+              "expression" => "world",
+              "locale"     => "en-US",
+              "solution"   => "`\"world\"`"
+            }
+          ]
+        }
+      ]
+    }
+
+    assert_equal expected, JSON.parse(p.generate_json)
+  end
+
+
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
