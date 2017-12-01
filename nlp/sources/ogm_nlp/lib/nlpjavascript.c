@@ -206,13 +206,11 @@ og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
-  og_bool wipped = NlpJsStackRequestWipe(ctrl_nlp_th);
-  if (wipped)
-  {
-    // We need to call it twice to make sure everything
-    duk_gc(ctx, 0);
-    duk_gc(ctx, 0);
-  }
+  NlpJsStackRequestWipe(ctrl_nlp_th);
+
+  // We need to call it twice to make sure everything
+  duk_gc(ctx, 0);
+  duk_gc(ctx, 0);
 
   DONE;
 }
