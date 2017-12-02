@@ -7,7 +7,7 @@
 #include "ogm_nlp.h"
 
 static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int Irequest_position_before);
+    int Irequest_position_before, int Irequest_position_after);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct request_any *request_any);
 og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
@@ -41,30 +41,48 @@ og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *re
   request_expression->request_any_start = -1;
   request_expression->request_anys_nb = 0;
 
-  for (int i = 0; i < request_expression->request_positions_nb; i++)
+  IFE(NlpRequestAnyAdd(ctrl_nlp_th, request_expression, -1, request_expression->request_position_start));
+  for (int i = 0; i + 1 < request_expression->request_positions_nb; i++)
   {
-    IFE(NlpRequestAnyAdd(ctrl_nlp_th, request_expression, request_expression->request_position_start + i));
+    int Irequest_position_before = request_expression->request_position_start + i;
+    int Irequest_position_after = Irequest_position_before + 1;
+    IFE(NlpRequestAnyAdd(ctrl_nlp_th, request_expression, Irequest_position_before, Irequest_position_after));
+
+//    IFE(NlpRequestAnyAdd(ctrl_nlp_th, request_expression, request_expression->request_position_start + i));
   }
+  IFE(
+      NlpRequestAnyAdd(ctrl_nlp_th, request_expression,
+          request_expression->request_position_start + request_expression->request_positions_nb - 1, -1));
   DONE;
 }
 
 static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int Irequest_position_before)
+    int Irequest_position_before, int Irequest_position_after)
 {
-  struct request_position *request_position_before = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-      Irequest_position_before);
-  IFN(request_position_before) DPcErr;
+  struct request_position *request_position_before = NULL;
+  struct request_position request_position_before_container[1];
+  if (Irequest_position_before < 0)
+  {
+    request_position_before = request_position_before_container;
+    request_position_before->start = 0;
+  }
+  else
+  {
+    request_position_before = OgHeapGetCell(ctrl_nlp_th->hrequest_position, Irequest_position_before);
+    IFN(request_position_before) DPcErr;
+  }
+
   struct request_position *request_position_after;
   struct request_position request_position_after_container[1];
-  if (Irequest_position_before
-      == request_expression->request_position_start + request_expression->request_positions_nb - 1)
+  if (Irequest_position_after < 0)
   {
     request_position_after = request_position_after_container;
     request_position_after->start = 0xfffffff;
   }
   else
   {
-    request_position_after = request_position_before + 1;
+    request_position_after = OgHeapGetCell(ctrl_nlp_th->hrequest_position, Irequest_position_after);
+    IFN(request_position_after) DPcErr;
   }
 
   struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
