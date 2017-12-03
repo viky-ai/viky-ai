@@ -411,7 +411,7 @@ struct request_expression
   int deleted;
 
   og_bool keep_as_result;
-  og_bool contains_any;
+  int nb_anys;
 
   struct request_score score[1];
   double total_score;
@@ -756,6 +756,7 @@ og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expres
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression);
+og_status NlpGetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
