@@ -14,11 +14,6 @@
 
   <div class="field">
     <div class="control trix-control">
-      <textarea name="interpretation[expression]" style="display:none;"
-        id="<%= "expression-#{interpretation.id}" %>"><%= display_expression_for_trix(interpretation) %></textarea>
-      <trix-editor
-        input="<%= "expression-#{interpretation.id}" %>"
-        placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
       <div class="trix-control__option">
         <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
         <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
@@ -29,6 +24,11 @@
         <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
         <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>
       </div>
+      <textarea name="interpretation[expression]" style="display:none;"
+        id="<%= "expression-#{interpretation.id}" %>"><%= display_expression_for_trix(interpretation) %></textarea>
+      <trix-editor
+        input="<%= "expression-#{interpretation.id}" %>"
+        placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
     </div>
     <%= display_errors(interpretation, :expression) %>
     <%= display_errors(interpretation, :locale) %>
@@ -49,32 +49,33 @@
     <%= display_errors(interpretation, :solution) %>
   </div>
 
-  <div class="field">
-    <%= f.button t('views.interpretations.index.update_btn').html_safe, class: 'btn btn--primary',
-          data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
-
-    <%= link_to t('views.interpretations.index.cancel_btn'),
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.interpretations.index.update_btn').html_safe, class: 'btn btn--primary',
+            data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}" } %>
+      <%= link_to t('views.interpretations.index.cancel_btn'),
+            user_agent_intent_interpretation_path(
+              interpretation.intent.agent.owner,
+              interpretation.intent.agent,
+              interpretation.intent,
+              interpretation
+            ),
+            remote: true,
+            class: 'btn btn--plain',
+            data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+    <div class="control">
+      <%= link_to t('views.interpretations.index.delete_btn'),
           user_agent_intent_interpretation_path(
             interpretation.intent.agent.owner,
             interpretation.intent.agent,
             interpretation.intent,
             interpretation
           ),
+          method: :delete,
           remote: true,
-          class: 'btn btn--plain',
+          class: 'btn btn--small btn--outline btn--destructive',
           data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
-
-    <%= link_to "Remove".html_safe,
-        user_agent_intent_interpretation_path(
-          interpretation.intent.agent.owner,
-          interpretation.intent.agent,
-          interpretation.intent,
-          interpretation
-        ),
-        method: :delete,
-        remote: true,
-        class: 'btn btn--plain',
-        title: t('views.interpretations.index.delete_btn'),
-        data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
   </div>
 <% end %>

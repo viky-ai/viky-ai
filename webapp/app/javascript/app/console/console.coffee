@@ -2,7 +2,22 @@ $ = require('jquery');
 
 class Console
   constructor: ->
+    @timeout = null
     $("body").on 'click', (event) => @dispatch(event)
+
+    $("body").on 'ajax:before', (event) =>
+      if $(event.target).attr('id') == "js-console-form"
+        if $(".console__output").hasClass('console__output__loading')
+          $(".console__output").removeClass('console__output__loading')
+          clearTimeout(@timeout) if @timeout
+
+    $("body").on 'ajax:success', (event) =>
+      if $(event.target).attr('id') == "js-console-form"
+        $(".console__output").addClass('console__output__loading')
+        @timeout = setTimeout ->
+          $(".console__output").removeClass('console__output__loading')
+        , 500
+
 
   dispatch: (event) ->
     link = @get_link_target(event)

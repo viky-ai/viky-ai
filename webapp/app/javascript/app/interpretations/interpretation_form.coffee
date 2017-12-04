@@ -241,8 +241,14 @@ class AliasesForm
       else
         alias_id_value = alias.id
 
-    reference = alias.intent_slug if alias.nature == 'type_intent'
-    reference = "Digit"           if alias.nature == 'type_digit'
+    if alias.nature == 'type_intent'
+      tmp = alias.intent_slug.split("/")
+      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
+      reference_title = alias.intent_slug
+
+    if alias.nature == 'type_digit'
+      reference_html  = "Digit"
+      reference_title = "Digit"
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
@@ -271,11 +277,11 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
         </div>
       </td>
-      <td><span class='#{alias.color}'>#{reference}</span></td>"
+      <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>"
 
     if alias.nature == 'type_intent'
       line.push "
-        <td>
+        <td class='options'>
           <label>
             <input type='radio' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
           </label>

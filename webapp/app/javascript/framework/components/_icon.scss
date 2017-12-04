@@ -70,3 +70,10 @@
     fill: $destructive_color;
   }
 }
+
+.btn--primary.btn--outline:hover .icon,
+.btn--destructive.btn--outline:hover .icon{
+  svg{
+    fill: #fff;
+  }
+}

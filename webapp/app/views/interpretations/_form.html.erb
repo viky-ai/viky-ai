@@ -4,11 +4,6 @@
 
   <div class="field">
     <div class="control trix-control">
-      <textarea name="interpretation[expression]" style="display:none;"
-        id="expression-new"><%= display_expression_for_trix(interpretation) %></textarea>
-      <trix-editor
-        input="expression-new"
-        placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
       <div class="trix-control__option">
         <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
         <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
@@ -19,6 +14,11 @@
         <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__new_interpretation" %>
         <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__new_interpretation" %>
       </div>
+      <textarea name="interpretation[expression]" style="display:none;"
+        id="expression-new"><%= display_expression_for_trix(interpretation) %></textarea>
+      <trix-editor autofocus
+        input="expression-new"
+        placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
     </div>
     <%= display_errors(interpretation, :expression) %>
     <%= display_errors(interpretation, :locale) %>
@@ -38,6 +38,6 @@
 
   <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
         data: {
-           disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+           disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
         } %>
 <% end %>

@@ -26,8 +26,10 @@
   @include display_flex();
   flex-direction: column;
   height: 100%;
-
+  justify-content: flex-start;
   background-color: #fff;
+  overflow: hidden;
+
   .console__header{
     position: relative;
     padding: 1em 1em 1em 1em;
@@ -53,16 +55,33 @@
 
   .tabs{
     margin: 0;
-    height: 6em;
+    min-height: calc(2.3em + 3px);
+    max-height: calc(2.3em + 3px);
+    height: calc(2.3em + 3px);
   }
+
+
   .console__output{
     height: 100%;
     overflow-y: auto;
 
+    &.console__output__loading{
+      @keyframes highlighter {
+        0% {
+          background-color: #ffffdd;
+        }
+        100% {
+          background-color: #fff;
+        }
+      }
+      overflow: hidden;
+      animation: .5s ease-in-out highlighter;
+    }
+
     pre{
       font-size: .75em;
       margin: 0;
-      background-color: #fff;
+      background-color: transparent;
     }
 
     #console-explain{
