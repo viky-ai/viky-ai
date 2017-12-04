@@ -10,7 +10,6 @@ static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_
     int request_expression_used, struct request_expression **psame_request_expression);
 static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
     struct request_expression *request_expression2);
-static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th,
@@ -32,6 +31,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->self_index = Irequest_expression;
   request_expression->expression = expression;
   request_expression->level = ctrl_nlp_th->level;
+  request_expression->Isuper_request_expression = (-1);
   request_expression->Irequest_any = (-1);
   request_expression->auto_complete_request_word = NULL;
   request_expression->keep_as_result = FALSE;
@@ -39,6 +39,8 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->overlap_mark = 0;
   memset(request_expression->score, 0, sizeof(struct request_score));
   request_expression->total_score = 0.0;
+  request_expression->safe_request_position_start = (-1);
+  request_expression->safe_request_positions_nb = 0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -90,7 +92,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IFE(status);
   }
 
-  IFE(NlpGetNbAnys(ctrl_nlp_th, request_expression));
+  IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
 
@@ -229,7 +231,7 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
   return (same_positions);
 }
 
-static og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {

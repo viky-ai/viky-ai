@@ -336,6 +336,9 @@ struct request_input_part
   int request_positions_nb;
   int request_position_distance;
 
+  int safe_request_position_start;
+  int safe_request_positions_nb;
+
   int Ioriginal_request_input_part;
 
   og_bool interpret_word_as_digit;
@@ -391,6 +394,9 @@ struct request_expression
   int request_position_start;
   int request_positions_nb;
 
+  int safe_request_position_start;
+  int safe_request_positions_nb;
+
   // overlapping rate of the tree of the request_expression
   int overlap_mark;
 
@@ -400,6 +406,8 @@ struct request_expression
   /** all possible any for request expression */
   int request_any_start;
   int request_anys_nb;
+
+  int Isuper_request_expression;
 
   int Irequest_any;
   struct request_word *auto_complete_request_word;
@@ -412,6 +420,9 @@ struct request_expression
 
   og_bool keep_as_result;
   int nb_anys;
+  int nb_anys_attached;
+  /** 0: invalidated, 1: unknown, 2: validated **/
+  int any_validate_status;
 
   struct request_score score[1];
   double total_score;
@@ -719,6 +730,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 /* nlprexpression.c */
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
     struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
+og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
@@ -756,8 +768,9 @@ og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expres
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression);
-og_status NlpGetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+int NlpRequestExpressionAnyLog(og_nlp_th ctrl_nlp_th, struct request_any *request_any);
 og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
