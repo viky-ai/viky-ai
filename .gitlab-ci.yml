@@ -239,14 +239,14 @@ invite_admin_preprod:
   # Auto DevOps variables and functions
   [[ "$TRACE" ]] && set -x
 
-  function docker_build()
+  function docker_build ()
   {
 
     docker_login
 
-    local CI_DOCKER_IMAGE=$1
-    local CI_DOCKER_DIR=$2
-    local CI_DOCKER_IMAGE_BUILD_OPT=$3
+    local CI_DOCKER_IMAGE="$1"
+    local CI_DOCKER_DIR="$2"
+    local CI_DOCKER_IMAGE_BUILD_OPT="$3"
 
     echo "Build docker image from dir ${CI_DOCKER_DIR} ...   ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}}"
     docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}} doc
@@ -257,12 +257,12 @@ invite_admin_preprod:
     echo ""
   }
 
-  function docker_tag_latest()
+  function docker_tag_latest ()
   {
 
     docker_login
 
-    local CI_DOCKER_IMAGE=$1
+    local CI_DOCKER_IMAGE="$1"
 
     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
     docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
@@ -272,7 +272,7 @@ invite_admin_preprod:
     echo ""
   }
 
-  function docker_login()
+  function docker_login ()
   {
     if [[ -n "$CI_REGISTRY_USER" ]]; then
       echo "Logging to GitLab Container Registry with CI credentials..."
