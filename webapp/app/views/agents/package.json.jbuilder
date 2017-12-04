@@ -19,49 +19,46 @@ interpretations = []
       expression[:aliases] = []
       expression[:aliases] << {
         alias: ialias.aliasname,
-        slug: "#{ialias.intent.slug}_list",
-        id: "#{ialias.intent.id}_list",
+        slug: ialias.intent.slug,
+        id: ialias.intent.id,
         package: @agent.id
       }
+      expression[:solution] = "`({ #{ialias.aliasname}: #{ialias.aliasname} })`"
       expressions << expression
 
       expression = {}
-      expression[:expression] = "@{#{ialias.aliasname}_recursive} @{#{ialias.aliasname}}"
+      expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
       expression[:aliases] = []
+      expression[:aliases] << {
+        alias: ialias.aliasname,
+        slug: ialias.intent.slug,
+        id: ialias.intent.id,
+        package: @agent.id
+      }
       expression[:aliases] << {
         alias: "#{ialias.aliasname}_recursive",
         slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
         id: "#{ialias.intent.id}_#{ialias.id}_recursive",
         package: @agent.id
       }
-      expression[:aliases] << {
-        alias: ialias.aliasname,
-        slug: "#{ialias.intent.slug}_list",
-        id: "#{ialias.intent.id}_list",
-        package: @agent.id
-      }
       expressions << expression
 
-      interpretation_hash[:expressions] = expressions
-      interpretations << interpretation_hash
-
-
-      interpretation_hash = {}
-      interpretation_hash[:id]   = "#{ialias.intent.id}_list"
-      interpretation_hash[:slug] = "#{ialias.intent.slug}_list"
-
-      expressions = []
-      expression = {}
-      expression[:expression] = "@{#{ialias.aliasname}_list}"
-      expression[:aliases] = []
-      expression[:aliases] << {
-        alias: "#{ialias.aliasname}_list",
-        slug: ialias.intent.slug,
-        id: ialias.intent.id,
-        package: @agent.id
-      }
-      expression[:solution] = "`({ #{ialias.aliasname}: #{ialias.aliasname}_list })`"
-      expressions << expression
+      if ialias.any_enabled
+        expression = {}
+        expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+        expression[:aliases] = []
+        expression[:aliases] << {
+          alias: ialias.aliasname,
+          type: 'any'
+        }
+        expression[:aliases] << {
+          alias: "#{ialias.aliasname}_recursive",
+          slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
+          id: "#{ialias.intent.id}_#{ialias.id}_recursive",
+          package: @agent.id
+        }
+        expressions << expression
+      end
 
       interpretation_hash[:expressions] = expressions
       interpretations << interpretation_hash
@@ -117,7 +114,7 @@ interpretations = []
 
 
     # Any Case
-    if interpretation.interpretation_aliases.where(any_enabled: true).count > 0
+    if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
       interpretation.interpretation_aliases.where(any_enabled: true).each do |ialias|
         any_aliasname = ialias.aliasname
         any_expression = expression.deep_dup

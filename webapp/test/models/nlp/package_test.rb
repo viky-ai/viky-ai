@@ -107,46 +107,29 @@ class PackageTest < ActiveSupport::TestCase
               "aliases"    => [
                 {
                   "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who_list",
-                  "id"      => "#{intents(:weather_who).id}_list",
+                  "slug"    => "admin/weather/weather_who",
+                  "id"      => intents(:weather_who).id,
                   "package" => weather.id
                 }
-              ]
+              ],
+              "solution" => "`({ who: who })`"
             },
             {
-              "expression" => "@{who_recursive} @{who}",
+              "expression" => "@{who} @{who_recursive}",
               "aliases"    => [
+                {
+                  "alias"   => "who",
+                  "slug"    => "admin/weather/weather_who",
+                  "id"      => intents(:weather_who).id,
+                  "package" => weather.id
+                },
                 {
                   "alias"   => "who_recursive",
                   "slug"    => "admin/weather/weather_who_#{ialias.id}_recursive",
                   "id"      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
                   "package" => weather.id
-                },
-                {
-                  "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who_list",
-                  "id"      => "#{intents(:weather_who).id}_list",
-                  "package" => weather.id
                 }
               ]
-            }
-          ]
-        },
-        {
-          "id"    => "#{intents(:weather_who).id}_list",
-          "slug"  => "admin/weather/weather_who_list",
-          "expressions" => [
-            {
-              "expression" => "@{who_list}",
-              "aliases"    => [
-                {
-                  "alias" => "who_list",
-                  "slug" => "admin/weather/weather_who",
-                  "id"      => intents(:weather_who).id,
-                  "package" => weather.id
-                }
-              ],
-              "solution" => "`({ who: who_list })`"
             }
           ]
         },
@@ -184,6 +167,182 @@ class PackageTest < ActiveSupport::TestCase
               "expression" => "world",
               "locale"     => "en-US",
               "solution"   => "`\"world\"`"
+            }
+          ]
+        }
+      ]
+    }
+
+    assert_equal expected, JSON.parse(p.generate_json)
+  end
+
+
+  test 'Package generation with alias list any' do
+    weather = agents(:weather)
+    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    ialias.is_list = true
+    ialias.any_enabled = true
+    assert ialias.save
+
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      'id'   => weather.id,
+      'slug' => 'admin/weather',
+      'interpretations' => [
+        {
+          'id' => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+          'slug' => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'expressions' => [
+            {
+              'expression' => '@{who}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'slug'    => 'admin/weather/weather_who',
+                  'id'      => intents(:weather_who).id,
+                  'package' => weather.id
+                }
+              ],
+              'solution' => "`({ who: who })`"
+            },
+            {
+              'expression' => '@{who} @{who_recursive}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'slug'    => 'admin/weather/weather_who',
+                  'id'      => intents(:weather_who).id,
+                  'package' => weather.id
+                },
+                {
+                  'alias'   => 'who_recursive',
+                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'package' => weather.id
+                }
+              ]
+            },
+            {
+              'expression' => '@{who} @{who_recursive}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'type'    => 'any'
+                },
+                {
+                  'alias'   => 'who_recursive',
+                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'package' => weather.id
+                }
+              ]
+            }
+          ]
+        },
+        {
+          'id'   => intents(:weather_greeting).id,
+          'slug' => 'admin/weather/weather_greeting',
+          'expressions' => [
+            {
+              'expression' => 'Hello @{who}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'package' => weather.id
+                }
+              ],
+              'locale'     => 'en-US',
+              'keep-order' => true,
+              'glued'      => true,
+              'solution'   => '`greeting.who`'
+            },
+            {
+              'expression' => 'Bonjour tout le monde',
+              'locale'     => 'fr-FR',
+              'solution'   => "`\"Bonjour tout le monde\"`"
+            }
+          ]
+        },
+        {
+          'id'   => intents(:weather_who).id,
+          'slug' => 'admin/weather/weather_who',
+          'expressions' => [
+            {
+              'expression' => 'world',
+              'locale'     => 'en-US',
+              'solution'   => "`\"world\"`"
+            }
+          ]
+        }
+      ]
+    }
+
+    assert_equal expected, JSON.parse(p.generate_json)
+  end
+
+
+  test 'Package generation with alias any' do
+    weather = agents(:weather)
+    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    ialias.any_enabled = true
+    assert ialias.save
+
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      'id'   => weather.id,
+      'slug' => 'admin/weather',
+      'interpretations' => [
+        {
+          'id'   => intents(:weather_greeting).id,
+          'slug' => 'admin/weather/weather_greeting',
+          'expressions' => [
+            {
+              'expression' => 'Hello @{who}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'slug'    => 'admin/weather/weather_who',
+                  'id'      => intents(:weather_who).id,
+                  'package' => weather.id
+                }
+              ],
+              'locale'     => 'en-US',
+              'keep-order' => true,
+              'glued'      => true,
+              'solution'   => '`greeting.who`'
+            },
+            {
+              'expression' => 'Hello @{who}',
+              'aliases'    => [
+                {
+                  'alias'   => 'who',
+                  'type'    => 'any'
+                }
+              ],
+              'locale'     => 'en-US',
+              'keep-order' => true,
+              'glued'      => true,
+              'solution'   => '`greeting.who`'
+            },
+            {
+              'expression' => 'Bonjour tout le monde',
+              'locale'     => 'fr-FR',
+              'solution'   => "`\"Bonjour tout le monde\"`"
+            }
+          ]
+        },
+        {
+          'id'   => intents(:weather_who).id,
+          'slug' => 'admin/weather/weather_who',
+          'expressions' => [
+            {
+              'expression' => 'world',
+              'locale'     => 'en-US',
+              'solution'   => "`\"world\"`"
             }
           ]
         }
