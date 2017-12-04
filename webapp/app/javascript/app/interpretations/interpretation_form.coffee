@@ -276,11 +276,11 @@ class AliasesForm
       line.push "
         <td>
           <label>
-            <input type='checkbox' name='#{name_prefix}[is_list]'     value='true' #{is_list_checked} /> List
+            <input type='radio' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
           </label>
           &nbsp;
           <label>
-            <input type='checkbox' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
+            <input type='radio' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
           </label>
         </td>"
     else

@@ -102,7 +102,7 @@ class InterpretationsController < ApplicationController
       )
       unless p[:interpretation_aliases_attributes].nil?
         for item in p[:interpretation_aliases_attributes]
-          item[:is_list] = false     if item[:is_list].blank?
+          item[:is_list]     = false if item[:is_list].blank?
           item[:any_enabled] = false if item[:any_enabled].blank?
         end
       end
