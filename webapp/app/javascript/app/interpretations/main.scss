@@ -171,31 +171,36 @@
 }
 
 
-
-@each $name, $color in $picker_colors{
-  a[href*='#{$name}']{
-    color: $color;
-    text-decoration: none;
-    border-bottom: 2px solid $color;
-    &::selection {
-      background-color: rgba($color, .1);
-    }
-  }
-  .intent-#{$name}{
-    color: $color;
-    &:before{
-      content: " ";
-      display:inline-block;
-      width: .75em;
-      height: .75em;
-      background-color: $color;
-      border-radius: .75em;
-      vertical-align: baseline;
-      margin-right: .5em;
+trix-editor{
+  @each $name, $color in $picker_colors{
+    a[href*='intent-#{$name}']{
+      color: $color;
+      text-decoration: none;
+      border-bottom: 2px solid $color;
+      &::selection {
+        background-color: rgba($color, .1);
+      }
     }
   }
 }
 
+.aliases{
+  @each $name, $color in $picker_colors{
+    .intent-#{$name}{
+      color: $color;
+      &:before{
+        content: " ";
+        display:inline-block;
+        width: .75em;
+        height: .75em;
+        background-color: $color;
+        border-radius: .75em;
+        vertical-align: baseline;
+        margin-right: .5em;
+      }
+    }
+  }
+}
 
 .interpretation-resume{
   @each $name, $color in $picker_colors{
