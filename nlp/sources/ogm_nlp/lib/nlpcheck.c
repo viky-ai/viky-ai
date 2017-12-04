@@ -165,6 +165,7 @@ static og_status NlpCheckInactiveAnyExpressions(og_nlp_th ctrl_nlp_th, package_t
     {
       struct expression *expression = interpretation->expressions + e;
       if (expression->aliases_nb != 1) continue;
+      if (expression->input_parts_nb != 0) continue;
       struct alias *alias = expression->aliases + 0;
       IFE(NlpCheckInactiveAnyExpression(ctrl_nlp_th, expression, alias));
     }
