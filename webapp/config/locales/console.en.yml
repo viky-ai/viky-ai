@@ -12,6 +12,9 @@ en:
       intent_found:
         one: "1 interpretation found."
         other: "%{count} interpretations found."
+      warnings:
+        one: "1 Warning"
+        other: "%{count} Warnings"
       verbose_on: Verbose ON
       verbose_off: Verbose OFF
       go_to_api_endpoint: Go to API endpoint

@@ -10,6 +10,11 @@
     <% else %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
+        <% unless json['warnings'].nil? %>
+          <span class="badge badge--warning">
+            <%= t('views.console.warnings', count: json['warnings'].count) %>
+          </span>
+        <% end %>
         <%= t('views.console.intent_found', count: json['interpretations'].count) %>
       </p>
       <ul class="intents">
