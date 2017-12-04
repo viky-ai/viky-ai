@@ -188,10 +188,7 @@ class AliasesForm
     if $("##{alias.id}").length == 1
       return $($("##{alias.id} input[name*=aliasname]")).val()
     else
-      if alias.aliasname != undefined
-        return alias.aliasname
-      else
-        return alias.slug.split('/')[2]
+      return alias.aliasname.replace(new RegExp('-', 'g'), '_')
 
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
