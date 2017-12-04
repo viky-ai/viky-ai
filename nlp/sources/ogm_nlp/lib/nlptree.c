@@ -27,11 +27,14 @@ og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expres
   IFE(NlpSetSuperExpression(ctrl_nlp_th, request_expression));
   IFE(NlpInterpretTreeAttachAnyRecursive(ctrl_nlp_th, request_expression, request_expression, 0));
 
-  struct request_any *request_anys = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
-  for (int i = 0; i < request_expression->request_anys_nb; i++)
+  if (request_expression->request_any_start >= 0)
   {
-    struct request_any *request_any = request_anys + i;
-    if (request_any->queue_request_expression->length > 0) request_expression->nb_anys_attached++;
+    struct request_any *request_anys = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
+    for (int i = 0; i < request_expression->request_anys_nb; i++)
+    {
+      struct request_any *request_any = request_anys + i;
+      if (request_any->queue_request_expression->length > 0) request_expression->nb_anys_attached++;
+    }
   }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)

@@ -481,11 +481,13 @@ int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression
   }
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of possible any for expression:");
 
-  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
-
-  for (int i = 0; i < request_expression->request_anys_nb; i++)
+  if (request_expression->request_any_start >= 0)
   {
-    IFE(NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any + i));
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
+    for (int i = 0; i < request_expression->request_anys_nb; i++)
+    {
+      IFE(NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any + i));
+    }
   }
 
   DONE;
