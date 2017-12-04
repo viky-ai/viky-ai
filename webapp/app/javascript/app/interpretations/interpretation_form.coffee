@@ -183,6 +183,7 @@ class AliasesForm
   update: ->
     @update_deletable_ids()
     @update_aliases()
+    $('body').trigger 'aliases-form:update', [@form_container]
 
   aliasname: (alias) ->
     if $("##{alias.id}").length == 1
@@ -303,7 +304,7 @@ class AliasesForm
         <tr>
           <th>Parameter name</th>
           <th>Interpretation</th>
-          <th>Options</th>
+          <th>Options <a href='#' data-action='remove-all-interpretation-options'>(<em>Reset</em>)</a></th>
           <th>Selection</th>
         </tr>
       </thead>
@@ -338,6 +339,7 @@ class InterpretationTagger
         link = $(event.target)
       else
         link = $(event.target).closest('a')
+
 
       if link.data('editor-id') == @editor_id
         if link.data('action') == 'remove-tags'
@@ -450,6 +452,44 @@ class InterpretationSolutions
 
 
 
+class InterpretationOptions
+  constructor: ->
+    $('body').on 'aliases-form:update', (event, container) =>
+      @update(container)
+
+    $(document).on 'trix-initialize', (event) => @setupListeners(event)
+
+    $(document).on 'click', (event) =>
+      if $(event.target).is('a')
+        link = $(event.target)
+      else
+        link = $(event.target).closest('a')
+        if link.data('action') == 'remove-all-interpretation-options'
+          event.preventDefault()
+          link.closest('table').find('input[type="radio"]').prop('checked', false)
+          link.hide()
+
+  setupListeners: (event) ->
+    form = $(event.target).closest('form')
+    form.on 'change', (event) => @update(form)
+
+  update: (container) ->
+    action = 'hide'
+    for input in container.closest('form').find('input[type="radio"]')
+      action = 'show' if $(input).prop('checked')
+    if action == 'hide'
+      @hide_none_link(container)
+    else
+      @show_none_link(container)
+
+  hide_none_link: (container) ->
+    container.find('[data-action="remove-all-interpretation-options"]').hide()
+
+  show_none_link: (container) ->
+    container.find('[data-action="remove-all-interpretation-options"]').show()
+
+
+
 SetupForm = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     for trix in $("trix-editor")
@@ -463,5 +503,6 @@ SetupPopUps = ->
     new PopupAddTag()
     new TagRemovePopup()
     new InterpretationSolutions()
+    new InterpretationOptions()
 
 $(document).on('turbolinks:load', SetupPopUps)
