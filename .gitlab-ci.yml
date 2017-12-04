@@ -248,12 +248,12 @@ invite_admin_preprod:
     local CI_DOCKER_DIR="$2"
     local CI_DOCKER_IMAGE_BUILD_OPT="$3"
 
-    echo "Build docker image from dir ${CI_DOCKER_DIR} ...   ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}}"
-    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}} doc
+    echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
+    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} doc
     echo ""
 
-    echo "Pushing to GitLab Container Registry...   ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}}"
-    docker push ${CI_DOCKER_IMAGE}:${${CI_COMMIT_REF_SLUG}}
+    echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
     echo ""
   }
 
@@ -267,7 +267,7 @@ invite_admin_preprod:
     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
     docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
 
-    echo "Pushing to GitLab Container Registry...   ${CI_DOCKER_IMAGE}:latest"
+    echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
     docker push ${CI_DOCKER_IMAGE}:latest
     echo ""
   }
@@ -275,8 +275,8 @@ invite_admin_preprod:
   function docker_login ()
   {
     if [[ -n "$CI_REGISTRY_USER" ]]; then
-      echo "Logging to GitLab Container Registry with CI credentials..."
-      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+      echo "Logging to GitLab Container Registry with CI credentials ..."
+      echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
       echo ""
     fi
   }
