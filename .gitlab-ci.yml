@@ -241,7 +241,7 @@ invite_admin_preprod:
 
   function docker_build ()
   {
-
+    # login to private registry
     docker_login
 
     local CI_DOCKER_IMAGE="$1"
@@ -259,7 +259,7 @@ invite_admin_preprod:
 
   function docker_tag_latest ()
   {
-
+    # login to private registry
     docker_login
 
     local CI_DOCKER_IMAGE="$1"
