@@ -487,6 +487,7 @@ struct og_ctrl_nlp_js
 
   /** For better error message list current defined variable */
   og_heap variables;
+  size_t reset_counter;
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */

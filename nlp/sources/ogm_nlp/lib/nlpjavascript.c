@@ -9,6 +9,9 @@
 #include "duk_module_node.h"
 #include "duk_console.h"
 
+
+#define DOgNlpDukGcPeriod 100
+
 static og_string NlpJsDukTypeString(duk_int_t type);
 static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
 static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
@@ -68,6 +71,7 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
     ctrl_nlp_th->js->init_stack_idx = 0;
   }
 
+  ctrl_nlp_th->js->reset_counter = 0;
   DONE;
 }
 
@@ -208,9 +212,13 @@ og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
 
   NlpJsStackRequestWipe(ctrl_nlp_th);
 
-  // We need to call it twice to make sure everything
-  duk_gc(ctx, 0);
-  duk_gc(ctx, 0);
+  ctrl_nlp_th->js->reset_counter++;
+  if ((ctrl_nlp_th->js->reset_counter % DOgNlpDukGcPeriod)==0)
+  {
+    // We need to call it twice to make sure everything
+    duk_gc(ctx, 0);
+    duk_gc(ctx, 0);
+  }
 
   DONE;
 }
