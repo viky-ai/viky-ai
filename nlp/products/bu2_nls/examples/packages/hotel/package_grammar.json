@@ -17,20 +17,6 @@
       ]
     },
     {
-      "id": "preposition_go_to",
-      "expressions":
-      [
-        {
-          "expression": "to",
-          "locale": "en"
-        },
-        {
-          "expression": "à",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
       "id": "preposition_location_in",
       "expressions":
       [

@@ -1,0 +1,229 @@
+{
+  "id": "89dc1461-d3f4-40f8-96c4-c07613ebf459",
+  "slug": "jmvallet/shopping",
+  "interpretations": [
+    {
+      "id": "25c311aa-2b8f-4ac6-a6d1-bcaa327af7f5",
+      "slug": "jmvallet/shopping/want",
+      "expressions": [
+        {
+          "expression": "je veux",
+          "locale": "fr-FR",
+          "solution": "`\"je veux\"`"
+        },
+        {
+          "expression": "j'aimerai",
+          "locale": "fr-FR",
+          "solution": "`\"j'aimerai\"`"
+        },
+        {
+          "expression": "I want",
+          "locale": "en-US",
+          "solution": "`\"I want\"`"
+        },
+        {
+          "expression": "I'd like",
+          "locale": "en-US",
+          "solution": "`\"I'd like\"`"
+        },
+        {
+          "expression": "I would like",
+          "locale": "en-US",
+          "solution": "`\"I would like\"`"
+        }
+      ]
+    },
+    {
+      "id": "6ee3f020-7e1d-49cb-99f5-7c3fef1f3217",
+      "slug": "jmvallet/shopping/prep-from",
+      "expressions": [
+        {
+          "expression": "de",
+          "locale": "fr-FR",
+          "solution": "`\"de\"`"
+        },
+        {
+          "expression": "depuis",
+          "locale": "fr-FR",
+          "solution": "`\"depuis\"`"
+        }
+      ]
+    },
+    {
+      "id": "094709f6-ce2a-4f7c-81bd-450c90874e19",
+      "slug": "jmvallet/shopping/prep-to",
+      "expressions": [
+        {
+          "expression": "à",
+          "locale": "fr-FR",
+          "solution": "`\"à\"`"
+        },
+        {
+          "expression": "vers",
+          "locale": "fr-FR",
+          "solution": "`\"vers\"`"
+        }
+      ]
+    },
+    {
+      "id": "7584a833-534e-4ce4-8af7-f41a2a483205",
+      "slug": "jmvallet/shopping/town",
+      "expressions": [
+        {
+          "expression": "Pont de l'isère",
+          "locale": "fr-FR",
+          "solution": "`\"Pont de l'isère\"`"
+        },
+        {
+          "expression": "Toulouse",
+          "locale": "fr-FR",
+          "solution": "`\"Toulouse\"`"
+        },
+        {
+          "expression": "Paris",
+          "locale": "fr-FR",
+          "solution": "`\"Paris\"`"
+        },
+        {
+          "expression": "Le Mans",
+          "locale": "fr-FR",
+          "solution": "`\"Le Mans\"`"
+        },
+        {
+          "expression": "Crest",
+          "locale": "fr-FR",
+          "solution": "`\"Crest\"`"
+        },
+        {
+          "expression": "Lille",
+          "locale": "fr-FR",
+          "solution": "`\"Lille\"`"
+        },
+        {
+          "expression": "Valence",
+          "locale": "fr-FR",
+          "solution": "`\"Valence\"`"
+        },
+        {
+          "expression": "Nice",
+          "locale": "fr-FR",
+          "solution": "`\"Nice\"`"
+        },
+        {
+          "expression": "Marseille",
+          "locale": "fr-FR",
+          "solution": "`\"Marseille\"`"
+        }
+      ]
+    },
+    {
+      "id": "57cac51e-e219-44a1-bfe9-3b73aae308a8",
+      "slug": "jmvallet/shopping/hello",
+      "expressions": [
+        {
+          "expression": "hello",
+          "locale": "fr-FR",
+          "solution": "`\"hello\"`"
+        },
+        {
+          "expression": "Hi",
+          "locale": "fr-FR",
+          "solution": "`\"Hi\"`"
+        }
+      ]
+    },
+    {
+      "id": "7584a833-534e-4ce4-8af7-f41a2a483205_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+      "slug": "jmvallet/shopping/town_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+      "expressions": [
+        {
+          "expression": "@{to}",
+          "aliases": [
+            {
+              "alias": "to",
+              "slug": "jmvallet/shopping/town",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            }
+          ],
+          "solution": "`({ to: to })`"
+        },
+        {
+          "expression": "@{to} @{to_recursive}",
+          "aliases": [
+            {
+              "alias": "to",
+              "slug": "jmvallet/shopping/town",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            },
+            {
+              "alias": "to_recursive",
+              "slug": "jmvallet/shopping/town_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            }
+          ]
+        },
+        {
+          "expression": "@{to} @{to_recursive}",
+          "aliases": [
+            {
+              "alias": "to",
+              "type": "any"
+            },
+            {
+              "alias": "to_recursive",
+              "slug": "jmvallet/shopping/town_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2d0f8f72-0e70-4e56-bc9a-6d07f91f82c2",
+      "slug": "jmvallet/shopping/want-to-go-to",
+      "expressions": [
+        {
+          "expression": "@{want} @{prep_from} @{from} @{prep_to} @{to}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "want",
+              "slug": "jmvallet/shopping/want",
+              "id": "25c311aa-2b8f-4ac6-a6d1-bcaa327af7f5",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            },
+            {
+              "alias": "prep_from",
+              "slug": "jmvallet/shopping/prep-from",
+              "id": "6ee3f020-7e1d-49cb-99f5-7c3fef1f3217",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            },
+            {
+              "alias": "from",
+              "slug": "jmvallet/shopping/town",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            },
+            {
+              "alias": "prep_to",
+              "slug": "jmvallet/shopping/prep-to",
+              "id": "094709f6-ce2a-4f7c-81bd-450c90874e19",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            },
+            {
+              "alias": "to",
+              "slug": "jmvallet/shopping/town_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "id": "7584a833-534e-4ce4-8af7-f41a2a483205_831bd915-40df-4f8a-9323-e9a5a6c702b6_recursive",
+              "package": "89dc1461-d3f4-40f8-96c4-c07613ebf459"
+            }
+          ],
+          "locale": "fr-FR"
+        }
+      ]
+    }
+  ]
+}

@@ -257,8 +257,12 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
       NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered: checking order of expression:")
       IFE(NlpInterpretTreeLog(ctrl_nlp_th, re));
     }
-    is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, re);
-    IFE(is_ordered);
+    if (re->expression->keep_order)
+    {
+      is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, re);
+      IFE(is_ordered);
+    }
+    else is_ordered = TRUE;
     if (!is_ordered)
     {
       global_is_ordered = FALSE;
@@ -274,8 +278,12 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
     re = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, re->Isuper_request_expression);
     IFN(re) DPcErr;
 
-    is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, re);
-    IFE(is_ordered);
+    if (re->expression->keep_order)
+    {
+      is_ordered = NlpRequestExpressionIsOrdered(ctrl_nlp_th, re);
+      IFE(is_ordered);
+    }
+    else is_ordered = TRUE;
     IFE(NlpRequestAnyDelPositionsInputPart(ctrl_nlp_th, request_expression, re));
     IFE(NlpRequestAnyDelPositions(ctrl_nlp_th, re));
     if (!is_ordered) break;
@@ -283,7 +291,8 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered: expression is %s.",(global_is_ordered?"ordered":"not ordered"))
+    NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered: expression is %s.",
+        (global_is_ordered ? "ordered" : "not ordered"))
   }
   return global_is_ordered;
 }
