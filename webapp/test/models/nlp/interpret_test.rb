@@ -52,6 +52,28 @@ class InterpretTest < ActiveSupport::TestCase
     assert interpret.valid?
   end
 
+
+  test "validation on now" do
+    weather = agents(:weather)
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_token: weather.api_token,
+      sentence: 'hello',
+      format: 'json'
+    )
+    assert interpret.valid?
+
+    interpret.now = "2017-12-05T15:23:17+98:00"
+    assert interpret.invalid?
+    expected = ["Now is incorrect, please use ISO 8601 format, i.e. 2017-12-05T15:23:17+01:00"]
+    assert_equal expected, interpret.errors.full_messages
+
+    interpret.now = "2017-12-05T15:23:17+01:00"
+    assert interpret.valid?
+  end
+
+
   test 'Validate endpoint' do
     weather = agents(:weather)
     interpret = Nlp::Interpret.new(

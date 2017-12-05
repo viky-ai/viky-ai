@@ -14,6 +14,8 @@ class Nlp::Interpret
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
+  validate :now_format
+
   before_validation :set_default
 
   def proceed
@@ -90,6 +92,16 @@ class Nlp::Interpret
       if errors.full_messages_for(:ownername).empty? && errors.full_messages_for(:agentname).empty?
         if agent.api_token != agent_token
           errors.add :agent_token, I18n.t('nlp.interpret.invalid_agent_token')
+        end
+      end
+    end
+
+    def now_format
+      unless self.now.blank?
+        begin
+          Time.iso8601(self.now)
+        rescue ArgumentError => e
+          errors.add :now, I18n.t('nlp.interpret.invalid_now_format')
         end
       end
     end
