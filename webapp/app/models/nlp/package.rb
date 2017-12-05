@@ -167,7 +167,7 @@ class Nlp::Package
         expression[:solution] = build_solution(interpretation)
         expressions << expression
         if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
-          interpretation.interpretation_aliases.where(any_enabled: true).each do |ialias|
+          interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).each do |ialias|
             expressions << build_any_node(ialias, expression)
           end
         end
