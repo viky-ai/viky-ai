@@ -299,6 +299,39 @@
           ]
         },
         {
+          "expression": "@{in_next_month}",
+          "aliases":
+          [
+            {
+              "alias": "in_next_month",
+              "id": "in_next_month",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{month_date_range}",
+          "aliases":
+          [
+            {
+              "alias": "month_date_range",
+              "id": "month_date_range",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_month_date_range}",
+          "aliases":
+          [
+            {
+              "alias": "next_month_date_range",
+              "id": "next_month_date_range",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
           "expression": "@{duration_with_latency}",
           "aliases":
           [
