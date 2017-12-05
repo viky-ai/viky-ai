@@ -9,6 +9,7 @@ module Valgrind
       # launch the server
       command = []
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
+      command << "NLP_JS_DUK_GC_PERIOD=1"
       command << "valgrind --tool=massif"
       command << "--time-unit=ms"
       command << "--threshold=0.01"

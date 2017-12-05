@@ -10,6 +10,7 @@ module Valgrind
 
       command = []
       command << "G_DEBUG=resident-modules G_SLICE=always-malloc"
+      command << "NLP_JS_DUK_GC_PERIOD=1"
       command << "valgrind --tool=memcheck"
       command << "--leak-check=full"
       command << "--error-limit=no"

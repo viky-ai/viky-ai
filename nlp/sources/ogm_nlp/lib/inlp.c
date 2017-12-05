@@ -8,9 +8,8 @@
 #include <stddef.h>
 
 static guint package_hash_func(gconstpointer key);
-static gboolean package_key_equal_func(gconstpointer  key_a, gconstpointer  key_b);
-
-
+static gboolean package_key_equal_func(gconstpointer key_a, gconstpointer key_b);
+static og_status NlpLoadEnv(struct og_ctrl_nlp *ctrl_nlp);
 
 PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 {
@@ -50,7 +49,14 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
 
   ctrl_nlp->rw_lock_packages_hash = OgSysiInit(sysi_param);
 
-  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, NULL, NlpPackageDestroyIfNotUsed);
+  ctrl_nlp->packages_hash = g_hash_table_new_full(package_hash_func, package_key_equal_func, NULL,
+      NlpPackageDestroyIfNotUsed);
+
+  IF(NlpLoadEnv(ctrl_nlp))
+  {
+    NlpThrowError(ctrl_nlp, "OgNlpInit: NlpLoadEnv failed");
+    return NULL;
+  }
 
   IF(NlpParseConfInit(ctrl_nlp))
   {
@@ -67,7 +73,7 @@ static guint package_hash_func(gconstpointer key)
   return g_str_hash(package_id);
 }
 
-static gboolean package_key_equal_func(gconstpointer  key_a, gconstpointer  key_b)
+static gboolean package_key_equal_func(gconstpointer key_a, gconstpointer key_b)
 {
   og_string package_id_a = key_a;
   og_string package_id_b = key_b;
@@ -94,3 +100,23 @@ PUBLIC(int) OgNlpFlush(og_nlp ctrl_nlp)
   DONE;
 }
 
+static og_status NlpLoadEnv(struct og_ctrl_nlp *ctrl_nlp)
+{
+  // Default values
+  struct og_nlp_env *env = ctrl_nlp->env;
+  memset(env, 0, sizeof(struct og_nlp_env));
+
+  env->NlpJSDukGcPeriod = DOgNlpJSDukGcPeriod;
+
+  og_string NlpJSDukGcPeriod_str = g_getenv("NLP_JS_DUK_GC_PERIOD");
+  if (NlpJSDukGcPeriod_str != NULL)
+  {
+    int NlpJSDukGcPeriod = atoi(NlpJSDukGcPeriod_str);
+    if (NlpJSDukGcPeriod > 0)
+    {
+      env->NlpJSDukGcPeriod = NlpJSDukGcPeriod;
+    }
+  }
+
+  DONE;
+}

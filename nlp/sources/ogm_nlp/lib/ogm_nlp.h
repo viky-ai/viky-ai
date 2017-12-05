@@ -40,6 +40,16 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+/** Nlp configuration set by env variables*/
+struct og_nlp_env
+{
+  int NlpJSDukGcPeriod;
+};
+
+/** Nlp env defautl value */
+#define DOgNlpJSDukGcPeriod 100
+
+
 struct ltra_dictionaries
 {
   void *ha_base;
@@ -607,6 +617,9 @@ struct og_ctrl_nlp
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
+
+  /** Environment conf */
+  struct og_nlp_env env[1];
 
   /** Parsing configuration */
   struct og_nlp_parse_conf parse_conf[1];
