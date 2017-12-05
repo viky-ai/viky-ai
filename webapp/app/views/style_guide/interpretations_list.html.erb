@@ -46,7 +46,7 @@
 <ul id="sortable-list_example-2" class="interpretations-list">
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form action="#" class="interpretations-list__edit">
+    <form id="interpretation_form_1" action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
           <input value="Hello citizen" type="text"/>
@@ -61,11 +61,31 @@
           </button>
         </div>
       </div>
+      <div class="field">
+        <div class="field field--inline">
+          <div class="control">
+            <input type="checkbox" id="keep_order">
+            <label class="checkbox" for="keep_order">Keep order</label>
+          </div>
+          <div class="control">
+            <input type="checkbox" id="glued">
+            <label class="checkbox" for="glued">Glued</label>
+          </div>
+        </div>
+        <div class="control">
+          <label class="textarea" for="solution">Solution</label>
+          <textarea id="solution" form="interpretation_form_1"  rows="3" maxlength="2000" spellcheck="false">
+{
+  "who": "`greeting.who`"
+}
+          </textarea>
+        </div>
+      </div>
     </form>
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form action="#" class="interpretations-list__edit">
+    <form id="interpretation_form_2" action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
           <input value="Good morning" type="text"/>
@@ -80,11 +100,27 @@
           </button>
         </div>
       </div>
+      <div class="field">
+        <div class="field field--inline">
+          <div class="control">
+            <input type="checkbox" id="keep_order" checked>
+            <label class="checkbox" for="keep_order">Keep order</label>
+          </div>
+          <div class="control">
+            <input type="checkbox" id="glued">
+            <label class="checkbox" for="glued">Glued</label>
+          </div>
+        </div>
+        <div class="control">
+          <label class="textarea" for="solution">Solution</label>
+          <textarea id="solution" form="interpretation_form_2"  rows="3" maxlength="2000" spellcheck="false"></textarea>
+        </div>
+      </div>
     </form>
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form action="#" class="interpretations-list__edit">
+    <form id="interpretation_form_3" action="#" class="interpretations-list__edit">
       <div class="field">
         <div class="control control--merged">
           <input value="How can I help you ?" type="text"/>
@@ -97,6 +133,22 @@
           <button class="btn btn--destructive">
             <span class='icon icon--small'><%= icon_delete %></span>
           </button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field field--inline">
+          <div class="control">
+            <input type="checkbox" id="keep_order" checked>
+            <label class="checkbox" for="keep_order">Keep order</label>
+          </div>
+          <div class="control">
+            <input type="checkbox" id="glued" checked>
+            <label class="checkbox" for="glued">Glued</label>
+          </div>
+        </div>
+        <div class="control">
+          <label class="textarea" for="solution">Solution</label>
+          <textarea id="solution" form="interpretation_form_3" rows="3" maxlength="2000" spellcheck="false"></textarea>
         </div>
       </div>
     </form>

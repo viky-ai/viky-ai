@@ -3,7 +3,7 @@
 ## Interpret
 
 ```shell
-curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentence=hello" \
+curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentence=I want to go from NY to LA&now=2017-12-05T08:30:20+01:00" \
   -H "Agent-Token: the-agent-token" \
   -H "Accept-Language: en-gb"
 ```
@@ -12,24 +12,22 @@ curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentenc
 
 ```json
 {
-  "intents": [
+  "interpretations": [
     {
       "id": "db3dd17d-fd3f-42a7-9d65-fd5a09894015",
-      "slug": "superman/superbot/hello",
-      "name": "hello",
-      "score": 0.7
-    },
-    {
-      "id": "affdd17d-fd3f-90a7-9d65-fd5a09893033",
-      "slug": "superman/superbot/hello-world",
-      "name": "hello-world",
-      "score": 0.5
+      "slug": "superman/superbot/trip",
+      "name": "trip",
+      "score": 0.97,
+      "solution": {
+        "from": "NY",
+        "to": "LA"
+      }
     }
   ]
 }
 ```
 
-This endpoint retrieves all the intents extracted from the `sentence` string passed as parameter.
+This endpoint retrieves all the interpretations extracted from the `sentence` string passed as parameter.
 
 ### HTTP Request
 
@@ -71,6 +69,12 @@ This endpoint retrieves all the intents extracted from the `sentence` string pas
       <td>no</td>
       <td>en-US, en;q=0.9</td>
       <td>The language code in which the sentence is written.</td>
+    </tr>
+    <tr>
+      <td>now</td>
+      <td>no</td>
+      <td>2017-12-20T08:30:20+01:00</td>
+      <td>The user current time with the UTC offset</td>
     </tr>
   </tbody>
 </table>
