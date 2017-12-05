@@ -55,6 +55,7 @@ class Nlp::Package
       http = Net::HTTP.new(uri.host, uri.port)
       res = http.post(uri.path, json, JSON_HEADERS)
       Rails.logger.info "  | Completed #{res.code}"
+      Rails.logger.info "  | Error: #{JSON.parse(res.body)}" if res.code != "200"
       {
         status: res.code,
         body: JSON.parse(res.body)
