@@ -83,8 +83,20 @@ class ConsoleTest < ApplicationSystemTestCase
       all('.dropdown__trigger > .btn')[1].click
       click_link 'Verbose ON'
 
+      assert page.has_content?('Verbose ON')
       assert page.has_content?('1 interpretation found.')
       assert page.has_content?('Hello world viki.ai')
+
+      # Play with Auto/Manual Datetime
+      assert_equal 0, all("input[name='interpret[now]']").count
+      all('.dropdown__trigger > .btn')[2].click
+      click_link 'Manual now'
+      fill_in 'interpret[now]', with: "2017-12-05T15:14:01+01:00"
+      assert_equal 1, all("input[name='interpret[now]']").count
+
+      all('.dropdown__trigger > .btn')[2].click
+      click_link 'Auto now'
+      assert_equal 0, all("input[name='interpret[now]']").count
     end
 
   end

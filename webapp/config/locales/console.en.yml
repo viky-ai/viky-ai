@@ -17,6 +17,9 @@ en:
         other: "%{count} Warnings"
       verbose_on: Verbose ON
       verbose_off: Verbose OFF
+      datetime_auto: Auto now
+      datetime_manual: Manual now
+      datetime_addon: Now (ISO 8601)
       go_to_api_endpoint: Go to API endpoint
       all_locales: "Language: Auto"
       fullscreen_enter: Enter in fullscreen mode

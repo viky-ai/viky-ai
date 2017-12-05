@@ -17,6 +17,9 @@ require('mousetrap/plugins/global-bind/mousetrap-global-bind.js')
 window.Trix = require('trix');
 import 'trix/dist/trix.css'
 
+// MomentJS (https://momentjs.com/)
+import 'moment'
+
 import './nav/nav';
 import './profile/main';
 import './authentication/main';

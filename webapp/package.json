@@ -5,6 +5,7 @@
     "@rails/webpacker": "^3.0.1",
     "codemirror": "^5.32.0",
     "jquery": "^3.2.1",
+    "moment": "^2.19.3",
     "mousetrap": "^1.6.1",
     "normalize.css": "^7.0.0",
     "prismjs": "^1.7.0",

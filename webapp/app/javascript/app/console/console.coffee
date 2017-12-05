@@ -1,9 +1,20 @@
 $ = require('jquery');
+moment = require('moment');
+
 
 class Console
   constructor: ->
     @timeout = null
+    $('#js-console-now-input-container input').val(moment().format())
+
     $("body").on 'click', (event) => @dispatch(event)
+
+    $("body").on 'console-select-now-type-auto', (event) =>
+      $('#js-console-now-input-container').hide()
+      $('#js-console-now-input-container input').val(moment().format())
+
+    $("body").on 'console-select-now-type-manual', (event) =>
+      $('#js-console-now-input-container').show()
 
     $("body").on 'ajax:before', (event) =>
       if $(event.target).attr('id') == "js-console-form"

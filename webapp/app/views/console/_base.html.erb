@@ -106,6 +106,49 @@
               </ul>
             </div>
           </div>
+
+
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <span class="btn btn--outline btn--small">
+                <span class="btn__label"><%= t('views.console.datetime_auto') %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </span>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <li>
+                  <a href="#" class="current"
+                    data-behavior="replace-trigger-label, submit-form, trigger-event"
+                    data-form-selector="#js-console-form"
+                    data-replace-with="<%= t('views.console.datetime_auto') %>"
+                    data-replace-selector=".btn__label"
+                    data-trigger-event="console-select-now-type-auto">
+                    <%= t('views.console.datetime_auto') %>
+                  </a>
+                </li>
+                <li>
+                  <a href="#"
+                    data-behavior="replace-trigger-label, trigger-event"
+                    data-replace-with="<%= t('views.console.datetime_manual') %>"
+                    data-replace-selector=".btn__label"
+                    data-trigger-event="console-select-now-type-manual">
+                    <%= t('views.console.datetime_manual') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class='field field--console-now' id="js-console-now-input-container" style="display:none;">
+        <div class='control control--merged'>
+          <span class="addon"><%= t('views.console.datetime_addon') %></span>
+          <input type='text' name='interpret[now]' value="" />
         </div>
       </div>
 
