@@ -35,7 +35,8 @@ class InterpretTest < ActiveSupport::TestCase
       agentname: 'weather',
       agent_token: 'bad token',
       sentence: 'hello',
-      format: 'json'
+      format: 'json',
+      now: '2017-12-05T10:17:25+01:00'
     )
     assert interpret.invalid?
     assert_equal ["Agent token is not valid"], interpret.errors.full_messages
@@ -45,7 +46,8 @@ class InterpretTest < ActiveSupport::TestCase
       agentname: 'weather',
       agent_token: '52f6cb86b23d8d2a0df9c6808d73ce05',
       sentence: 'hello',
-      format: 'json'
+      format: 'json',
+      now: '2017-12-05T10:17:25+01:00'
     )
     assert interpret.valid?
   end

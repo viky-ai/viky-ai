@@ -7,7 +7,7 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose
+  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates_inclusion_of :format, in: %w( json )
@@ -31,12 +31,14 @@ class Nlp::Interpret
   end
 
   def nlp_params
-    {
+    p = {
       "Accept-Language" => language,
       "packages" => [agent.id],
       "sentence" => sentence,
       "show-explanation" => verbose
     }
+    p["now"] = now unless now.blank?
+    p
   end
 
   def endpoint

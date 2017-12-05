@@ -3,7 +3,7 @@
 ## Interpret
 
 ```shell
-curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentence=I want to go from NY to LA" \
+curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentence=I want to go from NY to LA&now=2017-12-05T08:30:20+01:00" \
   -H "Agent-Token: the-agent-token" \
   -H "Accept-Language: en-gb"
 ```
@@ -69,6 +69,12 @@ This endpoint retrieves all the interpretations extracted from the `sentence` st
       <td>no</td>
       <td>en-US, en;q=0.9</td>
       <td>The language code in which the sentence is written.</td>
+    </tr>
+    <tr>
+      <td>now</td>
+      <td>no</td>
+      <td>2017-12-20T08:30:20+01:00</td>
+      <td>The user current time with the UTC offset</td>
     </tr>
   </tbody>
 </table>
