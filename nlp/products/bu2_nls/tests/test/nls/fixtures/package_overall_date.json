@@ -159,6 +159,61 @@
               "package": "package_complex_date"
             }
           ]
+        },
+        {
+          "expression": "@{day_before_yesterday}",
+          "aliases":
+          [
+            {
+              "alias": "day_before_yesterday",
+              "id": "day_before_yesterday",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{yesterday}",
+          "aliases":
+          [
+            {
+              "alias": "yesterday",
+              "id": "yesterday",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{today}",
+          "aliases":
+          [
+            {
+              "alias": "today",
+              "id": "today",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{tomorrow}",
+          "aliases":
+          [
+            {
+              "alias": "tomorrow",
+              "id": "tomorrow",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{day_after_tomorrow}",
+          "aliases":
+          [
+            {
+              "alias": "day_after_tomorrow",
+              "id": "day_after_tomorrow",
+              "package": "package_complex_date"
+            }
+          ]
         }
       ]
     },
@@ -393,6 +448,50 @@
             {
               "alias": "month_year",
               "id": "month_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{this_week_end}",
+          "aliases":
+          [
+            {
+              "alias": "this_week_end",
+              "id": "this_week_end",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_week_end}",
+          "aliases":
+          [
+            {
+              "alias": "last_week_end",
+              "id": "last_week_end",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{the_week_end_in_number_weeks}",
+          "aliases":
+          [
+            {
+              "alias": "the_week_end_in_number_weeks",
+              "id": "the_week_end_in_number_weeks",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{the_week_end_number_weeks_ago}",
+          "aliases":
+          [
+            {
+              "alias": "the_week_end_number_weeks_ago",
+              "id": "the_week_end_number_weeks_ago",
               "package": "package_complex_date"
             }
           ]

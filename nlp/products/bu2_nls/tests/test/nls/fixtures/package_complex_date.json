@@ -43,6 +43,32 @@
       ]
     },
     {
+      "id": "preposition_this",
+      "expressions":
+      [
+        {
+          "expression": "this",
+          "locale": "en"
+        },
+        {
+          "expression": "these",
+          "locale": "en"
+        },
+        {
+          "expression": "ce",
+          "locale": "fr"
+        },
+        {
+          "expression": "cette",
+          "locale": "fr"
+        },
+        {
+          "expression": "ces",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
       "id": "preposition_of",
       "expressions":
       [
@@ -165,6 +191,164 @@
           "locale": "fr"
         }
       ]
+    },
+    {
+      "id": "weekend",
+      "expressions":
+      [
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "weekend",
+          "locale": "en"
+        },
+        {
+          "expression": "WE",
+          "locale": "en"
+        },
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "weekend",
+          "locale": "fr"
+        },
+        {
+          "expression": "WE",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "day_before_yesterday",
+      "expressions":
+      [
+        {
+          "expression": "the day before yesterday",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "before yesterday",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "avant hier",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().subtract(2,'days').startOf('day')`"
+      }
+    },
+    {
+      "id": "yesterday",
+      "expressions":
+      [
+        {
+          "expression": "yesterday",
+          "locale": "en"
+        },
+        {
+          "expression": "hier",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().subtract(1,'days').startOf('day')`"
+      }
+    },
+    {
+      "id": "today",
+      "expressions":
+      [
+        {
+          "expression": "today",
+          "locale": "en"
+        },
+        {
+          "expression": "aujourd'hui",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().startOf('day')`"
+      }
+    },
+    {
+      "id": "tomorrow",
+      "expressions":
+      [
+        {
+          "expression": "tomorrow",
+          "locale": "en"
+        },
+        {
+          "expression": "demain",
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().add(1,'days').startOf('day')`"
+      }
+    },
+    {
+      "id": "day_after_tomorrow",
+      "expressions":
+      [
+        {
+          "expression": "the day after tomorrow",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "after tomorrow",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "après demain",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ],
+      "solution":
+      {
+        "date": "`moment().add(2,'days').startOf('day')`"
+      }
     },
     {
       "id": "monday",
@@ -2668,6 +2852,261 @@
       "solution":
       {
         "date": "`moment(moment().year()+'-'+date_month_number.month_number+'-'+day_number.number, 'YYYY-MM-DD').subtract(year_number.number,'years')`"
+      }
+    },
+    {
+      "id": "this_week_end",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_this} @{weekend}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_this",
+              "id": "preposition_this"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_next} @{weekend}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_next} @{weekend}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_next",
+              "id": "preposition_next"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{weekend} @{postposition_next}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            },
+            {
+              "alias": "postposition_next",
+              "id": "postposition_next"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().day(6).startOf('day'), moment().day(7).endOf('day'))`"
+      }
+    },
+    {
+      "id": "last_week_end",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_last} @{weekend}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{preposition_last} @{weekend}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "preposition_last",
+              "id": "preposition_last"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{weekend} @{postposition_last}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            },
+            {
+              "alias": "postposition_last",
+              "id": "postposition_last"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().day(-1).startOf('day'), moment().day(0).endOf('day'))`"
+      }
+    },
+    {
+      "id": "the_week_end_in_number_weeks",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{weekend} @{preposition_in} @{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().day(6).startOf('day').add(7*number.number, 'days'), moment().day(7).endOf('day').add(7*number.number, 'days'))`"
+      }
+    },
+    {
+      "id": "the_week_end_number_weeks_ago",
+      "expressions":
+      [
+        {
+          "expression": "@{preposition_the} @{weekend} @{number} @{week} @{postposition_ago}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            },
+            {
+              "alias": "postposition_ago",
+              "id": "postposition_ago"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{weekend} @{preposition_ago} @{number} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the"
+            },
+            {
+              "alias": "weekend",
+              "id": "weekend"
+            },
+            {
+              "alias": "preposition_ago",
+              "id": "preposition_ago"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "week",
+              "id": "week"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment().day(-1).startOf('day').subtract(7*number.number, 'days'), moment().day(0).endOf('day').subtract(7*number.number, 'days'))`"
       }
     }
   ]
