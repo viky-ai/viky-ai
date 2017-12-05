@@ -7,17 +7,6 @@
       "expressions":
       [
         {
-          "expression": "@{special_date}",
-          "aliases":
-          [
-            {
-              "alias": "special_date",
-              "id": "special_date",
-              "package": "package_complex_date"
-            }
-          ]
-        },
-        {
           "expression": "@{dayofweek_number_week_ago}",
           "aliases":
           [
@@ -221,6 +210,17 @@
       "id": "date_range",
       "expressions":
       [
+        {
+          "expression": "@{special_date_range}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_range",
+              "id": "special_date_range",
+              "package": "package_complex_date"
+            }
+          ]
+        },
         {
           "expression": "@{next_week}",
           "aliases":

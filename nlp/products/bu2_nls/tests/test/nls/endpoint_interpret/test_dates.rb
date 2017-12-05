@@ -120,9 +120,21 @@ module Nls
 
       def test_special_dates
         now = "2016-02-28T00:00:00+03:00"
-        check_interpret("pour noel", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
-        check_interpret("pour la saint valentin", interpretation: "date", solution: {"date" => "2016-02-14T00:00:00+03:00"}, now: now)
-        check_interpret("for valentine", interpretation: "date", solution: {"date" => "2016-02-14T00:00:00+03:00"}, now: now)
+        expected = {
+          "date_range" => {
+            "start" => "2016-12-23T00:00:00+03:00",
+            "end" => "2016-12-27T00:00:00+03:00"
+          }
+        }
+        check_interpret("pour noel", interpretation: "date_range", solution: expected, now: now)
+        expected = {
+          "date_range" => {
+            "start" => "2017-02-12T00:00:00+03:00",
+            "end" => "2017-02-16T00:00:00+03:00"
+          }
+        }
+        check_interpret("pour la saint valentin", interpretation: "date_range", solution: expected, now: now)
+        check_interpret("for valentine", interpretation: "date_range", solution: expected, now: now)
       end
 
       def test_week_of_day

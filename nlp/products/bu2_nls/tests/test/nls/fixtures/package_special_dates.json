@@ -21,8 +21,22 @@
       ],
       "solution":
       {
-        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
+        "date": "`var xmas=moment('12-25', 'MM-DD');if(moment().isBefore(xmas)){xmas}else{xmas.add(1,'years')}`"
       }
+    },
+    {
+      "id": "holidays",
+      "expressions":
+      [
+        {
+          "expression": "vacances",
+          "locale": "fr"
+        },
+        {
+          "expression": "holidays",
+          "locale": "en"
+        }
+      ]
     },
     {
       "id": "valentine",
@@ -59,7 +73,80 @@
       ],
       "solution":
       {
-        "date": "`moment(moment().year()+'-02-14', 'YYYY-MM-DD')`"
+        "date": "`var valentine=moment('02-14','MM-DD'); if(moment().isBefore(valentine)){valentine}else{valentine.add(1,'years')}`"
+      }
+    },
+    {
+      "id": "christmas_holidays",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas} @{holidays}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(christmas.date).startOf('week'), moment(christmas.date).endOf('week'))`"
       }
     },
     {
@@ -83,6 +170,22 @@
             {
               "alias": "valentine",
               "id": "valentine"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "special_range",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas_holidays}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays",
+              "id": "christmas_holidays"
             }
           ]
         }
