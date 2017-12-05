@@ -35,20 +35,6 @@ class InterpretationAliasTest < ActiveSupport::TestCase
   end
 
 
-  test 'intent_id loop reference' do
-    interpretation_alias = InterpretationAlias.new(
-      position_start: 8,
-      position_end: 21,
-      aliasname: 'who',
-      interpretation_id: interpretations(:weather_greeting_bonjour).id,
-      intent_id: intents(:weather_greeting).id
-    )
-
-    assert !interpretation_alias.save
-    assert_equal ["Intent can't be interpretation intent"], interpretation_alias.errors.full_messages
-  end
-
-
   test 'aliases no overlap' do
     # Create with 1 range
     interpretation = Interpretation.new({

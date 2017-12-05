@@ -10,7 +10,6 @@ class InterpretationAlias < ApplicationRecord
   validates :aliasname, presence: true
 
   validate :check_position_start_greater_than_end
-  validate :intent_no_loop_reference
   validate :no_overlap
   validate :check_aliasname_uniqueness
   validate :check_aliasname_valid_javascript_variable
@@ -29,14 +28,6 @@ class InterpretationAlias < ApplicationRecord
               end
             end
           end
-        end
-      end
-    end
-
-    def intent_no_loop_reference
-      unless intent_id.blank? || interpretation_id.blank?
-        if interpretation.intent.id == intent_id
-          errors.add(:intent, I18n.t('errors.interpretation_alias.intent_loop_reference'))
         end
       end
     end
