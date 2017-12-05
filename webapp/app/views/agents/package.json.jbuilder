@@ -3,141 +3,23 @@ json.key_format! -> (key) { key.tr(?_, ?-) }
 json.id @agent.id
 json.slug @agent.slug
 
-interpretations = []
-@agent.intents.each do |intent|
-
-  intent.interpretations.each do |interpretation|
-    interpretation.interpretation_aliases.where(is_list: true).order(:position_start).each do |ialias|
-      interpretation_hash = {}
-      interpretation_hash[:id]   = "#{ialias.intent.id}_#{ialias.id}_recursive"
-      interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
-
-      expressions = []
-
-      expression = {}
-      expression[:expression] = "@{#{ialias.aliasname}}"
-      expression[:aliases] = []
-      expression[:aliases] << {
-        alias: ialias.aliasname,
-        slug: ialias.intent.slug,
-        id: ialias.intent.id,
-        package: @agent.id
-      }
-      expression[:solution] = "`({ #{ialias.aliasname}: #{ialias.aliasname} })`"
-      expressions << expression
-
-      expression = {}
-      expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-      expression[:aliases] = []
-      expression[:aliases] << {
-        alias: ialias.aliasname,
-        slug: ialias.intent.slug,
-        id: ialias.intent.id,
-        package: @agent.id
-      }
-      expression[:aliases] << {
-        alias: "#{ialias.aliasname}_recursive",
-        slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
-        id: "#{ialias.intent.id}_#{ialias.id}_recursive",
-        package: @agent.id
-      }
-      expressions << expression
-
-      if ialias.any_enabled
-        expression = {}
-        expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-        expression[:aliases] = []
-        expression[:aliases] << {
-          alias: ialias.aliasname,
-          type: 'any'
-        }
-        expression[:aliases] << {
-          alias: "#{ialias.aliasname}_recursive",
-          slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
-          id: "#{ialias.intent.id}_#{ialias.id}_recursive",
-          package: @agent.id
-        }
-        expressions << expression
+json.interpretations @interpretations do |intent|
+  json.id intent[:id]
+  json.slug intent[:slug]
+  json.expressions intent[:expressions] do |interpretation|
+    json.expression interpretation[:expression]
+    unless interpretation[:aliases].blank?
+      json.aliases interpretation[:aliases] do |ialias|
+        json.alias ialias[:alias]
+        json.slug ialias[:slug] unless ialias[:slug].blank?
+        json.id ialias[:id] if ialias[:type].blank?
+        json.package @agent.id if ialias[:type].blank?
+        json.type ialias[:type] unless ialias[:type].blank?
       end
-
-      interpretation_hash[:expressions] = expressions
-      interpretations << interpretation_hash
     end
+    json.locale interpretation[:locale] unless interpretation[:locale].blank?
+    json.keep_order interpretation[:keep_order] unless interpretation[:keep_order].blank?
+    json.glued interpretation[:glued] unless interpretation[:glued].blank?
+    json.solution interpretation[:solution] unless interpretation[:solution].blank?
   end
-
-
-  interpretation_hash = {}
-  interpretation_hash[:id]   = intent.id
-  interpretation_hash[:slug] = intent.slug
-  expressions = []
-  intent.interpretations.each do |interpretation|
-    expression = {}
-    expression[:expression] = interpretation.expression_with_aliases
-    unless interpretation.interpretation_aliases.empty?
-      expression[:aliases] = []
-      interpretation.interpretation_aliases.order(:position_start).each do |ialias|
-
-        if ialias.type_intent?
-          id = !ialias.is_list ? ialias.intent.id : "#{ialias.intent.id}_#{ialias.id}_recursive"
-          slug = !ialias.is_list ? ialias.intent.slug : "#{ialias.intent.slug}_#{ialias.id}_recursive"
-
-          expression[:aliases] << {
-            alias: ialias.aliasname,
-            slug: slug,
-            id: id,
-            package: @agent.id
-          }
-        end
-
-        if ialias.type_digit?
-          expression[:aliases] << {
-            alias: ialias.aliasname,
-            type: 'digit'
-          }
-        end
-
-      end
-    end
-    expression[:locale] = interpretation.locale unless interpretation.locale == '*'
-    expression['keep-order'] = interpretation.keep_order if interpretation.keep_order
-    expression[:glued] = interpretation.glued if interpretation.glued
-
-    if interpretation.auto_solution_enabled
-      if interpretation.interpretation_aliases.empty?
-        expression[:solution] = "`\"#{interpretation.expression.gsub('"', '\\"')}\"`"
-      end
-    else
-      expression[:solution] = "`#{interpretation.solution}`" unless interpretation.solution.blank?
-    end
-
-    expressions << expression
-
-
-    # Any Case
-    if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
-      interpretation.interpretation_aliases.where(any_enabled: true).each do |ialias|
-        any_aliasname = ialias.aliasname
-        any_expression = expression.deep_dup
-        old_aliases = expression[:aliases]
-        any_expression[:aliases] = []
-        old_aliases.each do |jsonalias|
-          if jsonalias[:alias] == any_aliasname
-            any_expression[:aliases] << {
-              alias: any_aliasname,
-              type: 'any'
-            }
-          else
-            any_expression[:aliases] << jsonalias
-          end
-        end
-        expressions << any_expression
-      end
-    end
-
-  end
-
-  interpretation_hash[:expressions] = expressions
-  interpretations << interpretation_hash
 end
-
-json.interpretations interpretations

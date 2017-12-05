@@ -68,7 +68,7 @@ class Nlp::Package
       JSON.parse(
         ApplicationController.render(
           template: 'agents/package',
-          assigns: { agent: @agent },
+          assigns: { agent: @agent, interpretations: build_tree },
           format: :json
         )
       )
@@ -100,4 +100,158 @@ class Nlp::Package
       File.open(path, 'w') { |file| file.write json }
     end
 
+    def build_tree
+      interpretations = []
+      @agent.intents.each do |intent|
+        interpretations += build_internals_list_nodes(intent)
+        interpretations << build_node(intent)
+      end
+      interpretations
+    end
+
+    def build_internals_list_nodes(intent)
+      interpretations = []
+      intent.interpretations.each do |interpretation|
+        interpretation.interpretation_aliases.where(is_list: true).order(:position_start).each do |ialias|
+          interpretation_hash = {}
+          interpretation_hash[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
+          interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
+
+          expressions = []
+
+          expression = {}
+          expression[:expression] = "@{#{ialias.aliasname}}"
+          expression[:aliases] = []
+          expression[:aliases] << build_internal_alias(ialias)
+          expression[:solution] = "`({ #{ialias.aliasname}: #{ialias.aliasname} })`"
+          expressions << expression
+
+          expression = {}
+          expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+          expression[:aliases] = []
+          expression[:aliases] << build_internal_alias(ialias)
+          expression[:aliases] << build_internal_alias(ialias, true)
+          expressions << expression
+
+          if ialias.any_enabled
+            expression = {}
+            expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+            expression[:aliases] = []
+            expression[:aliases] << {
+              alias: ialias.aliasname,
+              type: 'any'
+            }
+            expression[:aliases] << build_internal_alias(ialias, true)
+            expressions << expression
+          end
+
+          interpretation_hash[:expressions] = expressions
+          interpretations << interpretation_hash
+        end
+      end
+      interpretations
+    end
+
+    def build_node(intent)
+      interpretation_hash = {}
+      interpretation_hash[:id] = intent.id
+      interpretation_hash[:slug] = intent.slug
+      expressions = []
+      intent.interpretations.each do |interpretation|
+        expression = {}
+        expression[:expression] = interpretation.expression_with_aliases
+        expression[:aliases] = build_aliases(interpretation)
+        expression[:locale] = interpretation.locale unless interpretation.locale == '*'
+        expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
+        expression[:glued] = interpretation.glued if interpretation.glued
+        expression[:solution] = build_solution(interpretation)
+        expressions << expression
+        if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
+          interpretation.interpretation_aliases.where(any_enabled: true).each do |ialias|
+            expressions << build_any_node(ialias, expression)
+          end
+        end
+      end
+      interpretation_hash[:expressions] = expressions
+      interpretation_hash
+    end
+
+    def build_any_node(ialias, expression)
+      any_aliasname = ialias.aliasname
+      any_expression = expression.deep_dup
+      old_aliases = expression[:aliases]
+      any_expression[:aliases] = []
+      old_aliases.each do |jsonalias|
+        if jsonalias[:alias] == any_aliasname
+          any_expression[:aliases] << {
+            alias: any_aliasname,
+            type: 'any'
+          }
+        else
+          any_expression[:aliases] << jsonalias
+        end
+      end
+      any_expression
+    end
+
+    def build_internal_alias(ialias, recursive=false)
+      if recursive
+        {
+          alias: "#{ialias.aliasname}_recursive",
+          slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
+          id: "#{ialias.intent.id}_#{ialias.id}_recursive",
+          package: @agent.id
+        }
+      else
+        {
+          alias: ialias.aliasname,
+          slug: ialias.intent.slug,
+          id: ialias.intent.id,
+          package: @agent.id
+        }
+      end
+
+    end
+
+    def build_aliases(interpretation)
+      result = []
+      unless interpretation.interpretation_aliases.empty?
+        result = interpretation.interpretation_aliases.order(:position_start).collect { |ialias| build_alias(ialias) }
+      end
+      result
+    end
+
+    def build_alias(ialias)
+      if ialias.type_intent?
+        result = {}
+        result[:package] = @agent.id
+        result[:alias] = ialias.aliasname
+        if ialias.is_list
+          result[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
+          result[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
+        else
+          result[:slug] = ialias.intent.slug
+          result[:id] = ialias.intent.id
+        end
+      end
+      if ialias.type_digit?
+        result = {
+          alias: ialias.aliasname,
+          type: 'digit'
+        }
+      end
+      result
+    end
+
+    def build_solution(interpretation)
+      result = ''
+      if interpretation.auto_solution_enabled
+        if interpretation.interpretation_aliases.empty?
+          result = "`\"#{interpretation.expression.gsub('"', '\\"')}\"`"
+        end
+      else
+        result = "`#{interpretation.solution}`" unless interpretation.solution.blank?
+      end
+      result
+    end
 end
