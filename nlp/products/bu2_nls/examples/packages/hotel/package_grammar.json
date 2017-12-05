@@ -41,6 +41,10 @@
         {
           "expression": "pour",
           "locale": "fr"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
         }
       ]
     },
