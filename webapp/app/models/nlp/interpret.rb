@@ -7,13 +7,15 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose
+  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
+  validate :now_format
+
   before_validation :set_default
 
   def proceed
@@ -31,12 +33,14 @@ class Nlp::Interpret
   end
 
   def nlp_params
-    {
+    p = {
       "Accept-Language" => language,
       "packages" => [agent.id],
       "sentence" => sentence,
       "show-explanation" => verbose
     }
+    p["now"] = now unless now.blank?
+    p
   end
 
   def endpoint
@@ -88,6 +92,16 @@ class Nlp::Interpret
       if errors.full_messages_for(:ownername).empty? && errors.full_messages_for(:agentname).empty?
         if agent.api_token != agent_token
           errors.add :agent_token, I18n.t('nlp.interpret.invalid_agent_token')
+        end
+      end
+    end
+
+    def now_format
+      unless self.now.blank?
+        begin
+          Time.iso8601(self.now)
+        rescue ArgumentError => e
+          errors.add :now, I18n.t('nlp.interpret.invalid_now_format')
         end
       end
     end

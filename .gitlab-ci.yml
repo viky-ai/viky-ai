@@ -6,6 +6,8 @@ stages:
   - deploy
   - admin
 
+image: docker:dind
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
@@ -14,53 +16,36 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
+  TRACE: 1
 
 # Build docker image
 
 build_ruby_base:
   stage: prerequist
-  image: docker:dind
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/ruby_base
-    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG}
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY} deployment/docker_tools/ruby_base
 
 build_loadbalancer:
   stage: build
-  image: docker:dind
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull -t ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG} deployment/docker_tools/load_balancer
-    - docker push ${DOCKER_IMAGE_TOOLS_LB}:${CI_COMMIT_REF_SLUG}
+    - docker_build ${DOCKER_IMAGE_TOOLS_LB} deployment/docker_tools/load_balancer
 
 build_webapp:
   stage: build
-  image: docker:dind
   script:
-    - "echo \"{ \\\"commit\\\": \\\"${CI_COMMIT_SHA}\\\", \\\"branch\\\": \\\"${CI_COMMIT_REF_SLUG}\\\", \\\"tag\\\": \\\"${CI_COMMIT_TAG}\\\" }\" > ./webapp/version.json"
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run  -t ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} webapp
-    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_test -t ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG} webapp
-    - docker push ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG}
-    - docker push ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
+    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
+    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
 build_doc:
   stage: build
-  image: docker:dind
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG} --target image_doc_run -t ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} doc
-    - docker push ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG}
+    - docker_build ${DOCKER_IMAGE_DOC} doc "--build-arg RUBY_BASE_VERSION=${CI_COMMIT_REF_SLUG}"
 
 build_nlp:
   stage: build
-  image: docker:dind
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker build --pull --target run_image  -t ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG} nlp
-    - docker build --pull --target test_image -t ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG} nlp
-    - docker push ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG}
-    - docker push ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
 # Test
 test_webapp:
@@ -97,61 +82,46 @@ tag_webapp:
   stage: docker_tag
   only:
     - develop
-  image: docker:dind
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_APP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_APP}:latest
-    - docker push ${DOCKER_IMAGE_APP}:latest
+    - docker_tag_latest ${DOCKER_IMAGE_APP}
 
 tag_doc:
   stage: docker_tag
   only:
     - develop
-  image: docker:dind
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_DOC}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_DOC}:latest
-    - docker push ${DOCKER_IMAGE_DOC}:latest
+    - docker_tag_latest ${DOCKER_IMAGE_DOC}
 
 tag_nlp:
   stage: docker_tag
   only:
     - develop
-  image: docker:dind
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_NLP}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_NLP}:latest
-    - docker push ${DOCKER_IMAGE_NLP}:latest
+    - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
 tag_ruby_base:
   stage: docker_tag
   only:
     - develop
-  image: docker:dind
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
-    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
 
 tag_loadbalancer:
   stage: docker_tag
   only:
     - develop
-  image: docker:dind
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin $CI_REGISTRY
-    - docker tag ${DOCKER_IMAGE_TOOLS_RUBY}:${CI_COMMIT_REF_SLUG} ${DOCKER_IMAGE_TOOLS_RUBY}:latest
-    - docker push ${DOCKER_IMAGE_TOOLS_RUBY}:latest
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_LB}
 
 # Deploy any branches on rancher dev
 deploy_dev:
@@ -165,11 +135,11 @@ deploy_dev:
     - build_nlp
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     on_stop: delete_env
   variables:
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
@@ -188,12 +158,11 @@ deploy_preprod:
     - build_webapp
     - build_nlp
   environment:
-    name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
-    on_stop: delete_env
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
   variables:
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VOQALAPP_BASEURL: https://viky-beta.viky.ai
     VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
@@ -210,12 +179,12 @@ delete_env:
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     action: stop
   variables:
-    GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
     - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - rancher --debug --environment dev rm --stop --type stack ${VOQALAPP_DEPLOY_RANCHER_STACK}
@@ -223,19 +192,94 @@ delete_env:
   allow_failure: true
 
 # invite admin user
-invite_admin:
+invite_admin_dev:
   stage: admin
   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
   environment:
     name: ${CI_COMMIT_REF_NAME}
-    url: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: voqal-platform-${CI_ENVIRONMENT_SLUG}
-    VOQALAPP_BASEURL: https://voqal-platform-${CI_ENVIRONMENT_SLUG}.voqal.ai
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
     - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
   when: manual
   allow_failure: true
+
+# invite admin user
+invite_admin_preprod:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VOQALAPP_BASEURL: https://viky-beta.viky.ai
+  script:
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
+    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
+
+
+# ---------------------------------------------------------------------------
+
+.auto_devops: &auto_devops |
+  # Auto DevOps variables and functions
+  [[ "$TRACE" ]] && set -x
+
+  function docker_build ()
+  {
+    # login to private registry
+    docker_login
+
+    local CI_DOCKER_IMAGE="$1"
+    local CI_DOCKER_DIR="$2"
+    local CI_DOCKER_IMAGE_BUILD_OPT="$3"
+
+    echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
+    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
+    echo ""
+
+    echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+    echo ""
+  }
+
+  function docker_tag_latest ()
+  {
+    # login to private registry
+    docker_login
+
+    local CI_DOCKER_IMAGE="$1"
+
+    echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
+    docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
+
+    echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:latest
+    echo ""
+  }
+
+  function docker_login ()
+  {
+    if [[ -n "$CI_REGISTRY_USER" ]]; then
+      echo "Logging to GitLab Container Registry with CI credentials ..."
+      echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+      echo ""
+    fi
+  }
+
+before_script:
+  - *auto_devops

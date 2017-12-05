@@ -225,4 +225,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
 
+  test 'Test user slug generation' do
+    admin = users(:admin)
+    assert_equal 'admin', admin.slug
+  end
 end

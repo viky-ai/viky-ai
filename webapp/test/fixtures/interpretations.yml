@@ -2,13 +2,25 @@ weather_greeting_hello:
   expression: Hello world
   intent: weather_greeting
   locale: 'en-US'
+  keep_order: true
+  glued: true
+  auto_solution_enabled: false
+  solution: 'greeting.who'
 
 weather_greeting_bonjour:
   expression: Bonjour tout le monde
   intent: weather_greeting
   locale: 'fr-FR'
+  auto_solution_enabled: true
+
+weather_who_world:
+  expression: world
+  intent: weather_who
+  locale: 'en-US'
+  auto_solution_enabled: true
 
 terminator_find_sarah:
   expression: Where is Sarah Connor ?
   intent: terminator_find
   locale: 'en-US'
+  auto_solution_enabled: true

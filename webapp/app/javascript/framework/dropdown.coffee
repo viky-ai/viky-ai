@@ -17,6 +17,8 @@ class Dropdown
             @submit_form(event)
           when "replace-trigger-label"
             @replace_trigger_label(event)
+          when "trigger-event"
+            @trigger_event(event)
     else
       dropdown = $(event.target).closest('.dropdown')
       if dropdown.length == 1
@@ -89,6 +91,11 @@ class Dropdown
       action = $(form_selector).attr('action')
       params = $(form_selector).serialize()
       Turbolinks.visit("#{action}?#{params}")
+
+  trigger_event: (event) ->
+    node = @get_link_with_behaviors(event)
+    event_to_fire = node.data('trigger-event')
+    $('body').trigger(event_to_fire)
 
 Setup = ->
   new Dropdown()

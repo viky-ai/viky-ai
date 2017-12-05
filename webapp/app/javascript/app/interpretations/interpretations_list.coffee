@@ -14,6 +14,7 @@ class InterpretationsList
           method: 'POST'
           data: { ids: ids }
     });
+    InterpretationsList.displayCodeEditor($("#solution__new_interpretation")[0])
 
   @updateDraggable: ->
     if $('#interpretations-list li').length > 1
@@ -23,7 +24,7 @@ class InterpretationsList
 
   @updateBlankslates: ->
     if $("#interpretations-list > li").length == 0
-      if $(".tabs > ul > li").length == 2
+      if $(".interpretation-new-form-container .tabs > ul > li").length == 2
         $("#blankslate-start").show()
       else
         $("#blankslate-start-or-remove").show()
@@ -41,6 +42,14 @@ class InterpretationsList
     $("#current-locale-tab-badge").html(count - 1)
     $("#current-locale-tab-badge").data('count',  count - 1)
 
+  @displayCodeEditor: (textarea)->
+    CodeMirror.fromTextArea(textarea, {
+      lineNumbers: true,
+      mode: "javascript",
+      autoRefresh: true,
+      tabSize: 2,
+      insertSoftTab: true
+    });
 
 module.exports = InterpretationsList
 
