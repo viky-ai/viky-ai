@@ -968,6 +968,23 @@
           }
         },
         {
+          "expression": "@{special_date}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range(moment(special_date.date).subtract(2,'days'), moment(special_date.date).add(2,'days'))`"
+          }
+        },
+        {
           "expression": "@{preposition_for} @{special_range}",
           "keep-order": true,
           "glued": true,
@@ -1455,6 +1472,34 @@
       "solution":
       {
         "date_range": "`if(moment().isBefore(moment().month(month_value.month_number-1).startOf('month'))){var ad=0}else{var ad=1};moment.range( moment().month(month_value.month_number-1).startOf('month').add(ad,'years'),moment().month(month_value.month_number-1).endOf('month').add(ad,'years'))`"
+      }
+    },
+    {
+      "id": "month_year",
+      "expressions":
+      [
+        {
+          "expression": "@{month_value} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month_value",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`var mydate = moment(number.number + '-' + month_value.month_number, 'YYYY-MM'); moment.range(mydate.startOf('month'), mydate.clone().endOf('month'))`"
       }
     },
     {
@@ -2375,7 +2420,7 @@
       ],
       "solution":
       {
-        "date": "`moment(special_date.date).add(number.number,'years')`"
+        "date_range": "`moment.range(moment(special_date.date).subtract(2,'days').add(number.number,'years'), moment(special_date.date).add(2,'days').add(number.number,'years'))`"
       }
     },
     {
@@ -2435,7 +2480,34 @@
       ],
       "solution":
       {
-        "date": "`moment(special_date.date).subtract(number.number,'years')`"
+        "date_range": "`moment.range(moment(special_date.date).subtract(2,'days').subtract(number.number,'years'), moment(special_date.date).add(2,'days').subtract(number.number,'years'))`"
+      }
+    },
+    {
+      "id":"special_date_year",
+      "expressions":
+      [
+        {
+          "expression": "@{special_date} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(special_date.date).subtract(2,'days').year(number.number), moment(special_date.date).add(2,'days').year(number.number))`"
       }
     },
     {

@@ -139,50 +139,6 @@
           ]
         },
         {
-          "expression": "@{next_special_date}",
-          "aliases":
-          [
-            {
-              "alias": "next_special_date",
-              "id": "next_special_date",
-              "package": "package_complex_date"
-            }
-          ]
-        },
-        {
-          "expression": "@{last_special_date}",
-          "aliases":
-          [
-            {
-              "alias": "last_special_date",
-              "id": "last_special_date",
-              "package": "package_complex_date"
-            }
-          ]
-        },
-        {
-          "expression": "@{special_date_in_number_year}",
-          "aliases":
-          [
-            {
-              "alias": "special_date_in_number_year",
-              "id": "special_date_in_number_year",
-              "package": "package_complex_date"
-            }
-          ]
-        },
-        {
-          "expression": "@{special_date_number_year_ago}",
-          "aliases":
-          [
-            {
-              "alias": "special_date_number_year_ago",
-              "id": "special_date_number_year_ago",
-              "package": "package_complex_date"
-            }
-          ]
-        },
-        {
           "expression": "@{month_the_number_in_number_years}",
           "aliases":
           [
@@ -372,6 +328,72 @@
               "alias": "date_interval",
               "id": "date_interval",
               "package": "package_date"
+            }
+          ]
+        },
+                {
+          "expression": "@{next_special_date}",
+          "aliases":
+          [
+            {
+              "alias": "next_special_date",
+              "id": "next_special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{last_special_date}",
+          "aliases":
+          [
+            {
+              "alias": "last_special_date",
+              "id": "last_special_date",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date_in_number_year}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_in_number_year",
+              "id": "special_date_in_number_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date_number_year_ago}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_number_year_ago",
+              "id": "special_date_number_year_ago",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date_year}",
+          "aliases":
+          [
+            {
+              "alias": "special_date_year",
+              "id": "special_date_year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{month_year}",
+          "aliases":
+          [
+            {
+              "alias": "month_year",
+              "id": "month_year",
+              "package": "package_complex_date"
             }
           ]
         }

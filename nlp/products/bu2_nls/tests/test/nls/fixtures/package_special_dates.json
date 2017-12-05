@@ -55,6 +55,18 @@
           "locale": "fr"
         },
         {
+          "expression": "la Saint Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "la St Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
           "expression": "Valentine",
           "locale": "en"
         },
