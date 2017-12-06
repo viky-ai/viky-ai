@@ -378,6 +378,7 @@ struct request_any
 
   /** used to optimize the attachement any <-> request_expression */
   GQueue queue_request_expression[1];
+  og_bool is_attached;
   int consumed;
 };
 
@@ -783,6 +784,7 @@ og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *re
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression);
 og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpGetNbAnysAttached(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnyLog(og_nlp_th ctrl_nlp_th, struct request_any *request_any);
 og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,

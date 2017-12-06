@@ -121,6 +121,7 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
 
     request_any->request_word_start = i;
     request_any->request_words_nb = j - i;
+    request_any->is_attached = FALSE;
 
     g_queue_init(request_any->queue_request_expression);
     request_any->consumed = 0;
@@ -140,16 +141,17 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
     struct request_expression *request_expression)
 {
 
-  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
-  IFN(request_any) DPcErr;
+  struct request_any *request_anys = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
+  IFN(request_anys) DPcErr;
 
   int minimum_distance = 0xfffffff;
   for (int i = 0; i < root_request_expression->request_anys_nb; i++)
   {
-    int Irequest_any = root_request_expression->request_any_start + i;
-    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any + Irequest_any);
+    struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
+    if (request_any->is_attached) continue;
+    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any);
     IFE(distance);
-    request_any[Irequest_any].distance = distance;
+    request_any->distance = distance;
     if (minimum_distance > distance)
     {
       minimum_distance = distance;
@@ -165,20 +167,26 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   for (int i = 0; i < root_request_expression->request_anys_nb; i++)
   {
-    int Irequest_any = root_request_expression->request_any_start + i;
-    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any + Irequest_any);
+    struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
+    if (request_any->is_attached) continue;
+    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any);
     IFE(distance);
     if (minimum_distance == distance)
     {
-      og_bool is_ordered = NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any + Irequest_any, request_expression);
+      og_bool is_ordered = NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any, request_expression);
       IFE(is_ordered);
       if (is_ordered)
       {
-        IFE(NlpRequestAnyAddRequestExpression(ctrl_nlp_th, request_any + Irequest_any, request_expression));
-        NlpLog(DOgNlpTraceMatch,
-            "NlpRequestAnyAddClosest: nb_anys=%d nb_anys_attached=%d, attaching Irequest_any=%d to expression:",
-            root_request_expression->nb_anys, root_request_expression->nb_anys_attached, Irequest_any);
-        IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+        IFE(NlpRequestAnyAddRequestExpression(ctrl_nlp_th, request_any, request_expression));
+        root_request_expression->nb_anys_attached++;
+        int Irequest_any = request_any - request_anys;
+        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+        {
+          NlpLog(DOgNlpTraceMatch,
+              "NlpRequestAnyAddClosest: nb_anys=%d nb_anys_attached=%d, attaching Irequest_any=%d to expression:",
+              root_request_expression->nb_anys, root_request_expression->nb_anys_attached, Irequest_any);
+          IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+        }
       }
     }
   }
@@ -468,6 +476,20 @@ og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request
   if (request_expression->expression->alias_any_input_part_position >= 0)
   {
     request_expression->nb_anys++;
+  }
+  DONE;
+}
+
+og_status NlpGetNbAnysAttached(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  request_expression->nb_anys_attached = 0;
+  if (request_expression->request_any_start < 0) DONE;
+
+  struct request_any *request_anys = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
+  for (int i = 0; i < request_expression->request_anys_nb; i++)
+  {
+    struct request_any *request_any = request_anys + i;
+    if (request_any->queue_request_expression->length > 0) request_expression->nb_anys_attached++;
   }
   DONE;
 }
