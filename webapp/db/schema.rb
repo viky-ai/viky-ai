@@ -10,11 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201131020) do
+ActiveRecord::Schema.define(version: 20171206083552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "agent_arcs", force: :cascade do |t|
+    t.uuid "source_id"
+    t.uuid "target_id"
+  end
 
   create_table "agents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"

@@ -8,6 +8,12 @@ class Agent < ApplicationRecord
   has_many :users, through: :memberships
   has_many :intents, dependent: :destroy
 
+  has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy
+  has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy
+
+  has_many :predecessors, through: :in_arcs, source: :source
+  has_many :successors, through: :out_arcs, source: :target
+
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :owner_id, presence: true
