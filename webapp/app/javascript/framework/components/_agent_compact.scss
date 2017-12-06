@@ -1,0 +1,118 @@
+.agent-compact{
+  box-shadow: 0 2px 3px rgba(black, .1);
+  border-radius: 2px;
+  overflow: hidden;
+
+  background-color: #fff;
+
+  display: grid;
+  grid-gap: .5em;
+  grid-template-columns: 1fr 5em;
+
+  &.agent-compact--new{
+    display:block;
+    background-color: transparent;
+    box-shadow: none;
+    a{
+      display:block;
+      padding: .84em;
+      text-align: center;
+      text-decoration: none;
+      color: #bbb;
+      border: 1px dashed #bbb;
+      svg{
+        fill: #bbb;
+      }
+      &:hover{
+        color: $primary-color;
+        border-color: $primary-color;
+        text-decoration: underline;
+        svg{
+          fill: $primary-color;
+        }
+      }
+    }
+  }
+
+  &.agent-compact--without-actions{
+    display:block;
+    width: 100%;
+  }
+
+  .agent-compact__id{
+    display: grid;
+    grid-gap: .5em;
+    grid-template-columns: 5.8em 1fr;
+    text-decoration: none;
+    .agent-compact__id__visual{
+      &.agent-compact__id__visual--image{
+        transition: background .15s;
+        background-size: 100% auto;
+        background-position: center center;
+      }
+    }
+    .agent-compact__id__data{
+      padding: .5em 0 .5em 0;
+      h5{
+        font-weight: 300;
+        font-size: 1em;
+        margin: 0;
+        line-height: 1.3em;
+        color: #000;
+        white-space: nowrap;
+      }
+      h6{
+        margin: 0;
+        font-weight: 300;
+        font-size: .8em;
+        line-height: 1.2em;
+        color: #888;
+      }
+    }
+  }
+
+  a.agent-compact__id:hover,
+  a.agent-compact__id:focus{
+    .agent-compact__id__visual{
+      &.agent-compact__id__visual--image{
+        background-size: 110% auto;
+      }
+    }
+    .agent-compact__id__data{
+      h5{
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .agent-compact__actions{
+    padding: .725em;
+    background-color: #fff;
+  }
+
+}
+
+
+.agents-compact-grid{
+  margin: 1.5em 0 2em 0;
+  display: grid;
+  grid-gap: 1em;
+
+  grid-template-columns: 1fr;
+
+  @media (min-width: 700px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1000px){
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (min-width: 1100px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1400px){
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (min-width: 1800px){
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
