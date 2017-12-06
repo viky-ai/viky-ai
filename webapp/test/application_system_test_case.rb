@@ -23,6 +23,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(login, password)
     visit new_user_session_path
+
+    # If user is already login, logout
+    if page.has_text?("Agents")
+      ap "[WTF] already login"
+      Capybara.reset_sessions!
+      visit new_user_session_path
+    end
+
     fill_in 'Email', with: login
     fill_in 'Password', with: password
     click_button 'Log in'
