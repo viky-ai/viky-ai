@@ -171,11 +171,23 @@
           "locale": "en"
         },
         {
+          "expression": "for the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
           "expression": "pour",
           "locale": "fr"
         },
         {
           "expression": "pour le",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "pour les",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
@@ -1178,6 +1190,19 @@
               "alias": "preposition_for",
               "id": "preposition_for"
             },
+            {
+              "alias": "special_range",
+              "id": "special_range",
+              "package": "package_special_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_range}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
             {
               "alias": "special_range",
               "id": "special_range",
@@ -2680,6 +2705,73 @@
             {
               "alias": "special_date",
               "id": "special_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{special_date} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_for} @{special_date} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_for} @{special_date} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
             },
             {
               "alias": "number",

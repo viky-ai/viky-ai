@@ -162,6 +162,410 @@
       }
     },
     {
+      "id": "christmas_holidays_year",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas} @{holidays} @{number}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas} @{holidays} @{preposition_in} @{number}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{year} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{year} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(christmas.date).year(number.number).startOf('week'), moment(christmas.date).year(number.number).endOf('week'))`"
+      }
+    },
+    {
+      "id": "christmas_holidays_in_number_year",
+      "expressions":
+      [
+
+        {
+          "expression": "@{christmas} @{holidays} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_complex_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_complex_date"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(christmas.date).add(number.number,'years').startOf('week'), moment(christmas.date).add(number.number,'years').endOf('week'))`"
+      }
+    },
+    {
       "id": "special_date",
       "expressions":
       [
@@ -198,6 +602,26 @@
             {
               "alias": "christmas_holidays",
               "id": "christmas_holidays"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas_holidays_year}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays_year",
+              "id": "christmas_holidays_year"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas_holidays_in_number_year}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays_in_number_year",
+              "id": "christmas_holidays_in_number_year"
             }
           ]
         }
