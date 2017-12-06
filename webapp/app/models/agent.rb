@@ -2,6 +2,8 @@ class Agent < ApplicationRecord
   extend FriendlyId
   friendly_id :agentname, use: :history, slug_column: 'agentname'
 
+  require 'rgl/adjacency'
+
   include AgentImageUploader::Attachment.new(:image)
 
   has_many :memberships
@@ -88,6 +90,24 @@ class Agent < ApplicationRecord
   def slug
     "#{owner.slug}/#{agentname}"
   end
+
+  def to_graph
+    graph = RGL::DirectedAdjacencyGraph.new
+    graph.add_vertex(self)
+    list_out_arcs.each do |(src, target)|
+      graph.add_edge(src, target)
+    end
+    graph
+  end
+
+  def list_out_arcs
+    arcs_list = [] + successors.reload.map { |successor| [self, successor] }
+    successors.each do |successor|
+      arcs_list += successor.list_out_arcs
+    end
+    arcs_list
+  end
+
 
   private
 

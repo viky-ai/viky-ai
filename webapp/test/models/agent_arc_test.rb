@@ -21,11 +21,11 @@ class AgentArcTest < ActiveSupport::TestCase
     #   A
     #  /
     # B
-    assert_equal [], agent_a.predecessors.collect(&:name)
-    assert_equal ["Agent B"], agent_a.successors.collect(&:name)
+    assert_equal [], agent_a.predecessors.reload.collect(&:name)
+    assert_equal ["Agent B"], agent_a.successors.reload.collect(&:name)
 
-    assert_equal ["Agent A"], agent_b.predecessors.collect(&:name)
-    assert_equal [], agent_b.successors.collect(&:name)
+    assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
+    assert_equal [], agent_b.successors.reload.collect(&:name)
 
 
     agent_c = create_agent("Agent C")
