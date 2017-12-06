@@ -3,254 +3,6 @@
   "interpretations":
   [
     {
-      "id": "and",
-      "expressions":
-      [
-        {
-          "expression": "and",
-          "locale": "en"
-        },
-        {
-          "expression": "et",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_the",
-      "expressions":
-      [
-        {
-          "expression": "the",
-          "locale": "en"
-        },
-        {
-          "expression": "le",
-          "locale": "fr"
-        },
-        {
-          "expression": "la",
-          "locale": "fr"
-        },
-        {
-          "expression": "les",
-          "locale": "fr"
-        },
-        {
-          "expression": "l'",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_this",
-      "expressions":
-      [
-        {
-          "expression": "this",
-          "locale": "en"
-        },
-        {
-          "expression": "these",
-          "locale": "en"
-        },
-        {
-          "expression": "ce",
-          "locale": "fr"
-        },
-        {
-          "expression": "cette",
-          "locale": "fr"
-        },
-        {
-          "expression": "ces",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_of",
-      "expressions":
-      [
-        {
-          "expression": "of",
-          "locale": "en"
-        },
-        {
-          "expression": "of the",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "de",
-          "locale": "fr"
-        },
-        {
-          "expression": "du",
-          "locale": "fr"
-        },
-        {
-          "expression": "de la",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "des",
-          "locale": "fr"
-        },
-        {
-          "expression": "d'",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_in",
-      "expressions":
-      [
-        {
-          "expression": "in",
-          "locale": "en"
-        },
-        {
-          "expression": "dans",
-          "locale": "fr"
-        },
-        {
-          "expression": "en",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_inthe",
-      "expressions":
-      [
-        {
-          "expression": "in the",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "au",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_ago",
-      "expressions":
-      [
-        {
-          "expression": "il y a",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "postposition_ago",
-      "expressions":
-      [
-        {
-          "expression": "ago",
-          "locale": "en"
-        }
-      ]
-    },
-    {
-      "id": "preposition_for",
-      "expressions":
-      [
-        {
-          "expression": "for",
-          "locale": "en"
-        },
-        {
-          "expression": "for the",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "pour",
-          "locale": "fr"
-        },
-        {
-          "expression": "pour le",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "pour les",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "pour la",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "à",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "weekend",
-      "expressions":
-      [
-        {
-          "expression": "week end",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "week-end",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "weekend",
-          "locale": "en"
-        },
-        {
-          "expression": "WE",
-          "locale": "en"
-        },
-        {
-          "expression": "week end",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "week-end",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "weekend",
-          "locale": "fr"
-        },
-        {
-          "expression": "WE",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
       "id": "day_before_yesterday",
       "expressions":
       [
@@ -565,62 +317,6 @@
       ]
     },
     {
-      "id": "preposition_next",
-      "expressions":
-      [
-        {
-          "expression": "next",
-          "locale": "en"
-        }
-      ]
-    },
-    {
-      "id": "postposition_next",
-      "expressions":
-      [
-        {
-          "expression": "prochain",
-          "locale": "fr"
-        },
-        {
-          "expression": "prochaine",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_last",
-      "expressions":
-      [
-        {
-          "expression": "last",
-          "locale": "en"
-        }
-      ]
-    },
-    {
-      "id": "postposition_last",
-      "expressions":
-      [
-        {
-          "expression": "dernier",
-          "locale": "fr"
-        },
-        {
-          "expression": "derniere",
-          "locale": "fr"
-        },
-        {
-          "expression": "precedent",
-          "locale": "fr"
-        },
-        {
-          "expression": "precedente",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
       "id": "next_day_of_week",
       "expressions":
       [
@@ -632,7 +328,8 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekday",
@@ -656,7 +353,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ],
           "solution":
@@ -702,7 +400,8 @@
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ],
           "solution":
@@ -728,7 +427,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -737,7 +437,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ],
           "solution":
@@ -768,11 +469,13 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_ago",
-              "id": "postposition_ago"
+              "id": "postposition_ago",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -788,7 +491,8 @@
             },
             {
               "alias": "preposition_ago",
-              "id": "preposition_ago"
+              "id": "preposition_ago",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -797,7 +501,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -806,106 +511,6 @@
       {
         "date": "`moment().isoWeekday(weekday.day-number.number*7).startOf('day')`"
       }
-    },
-    {
-      "id": "day",
-      "expressions":
-      [
-        {
-          "expression": "day",
-          "locale": "en"
-        },
-        {
-          "expression": "jour",
-          "locale": "fr"
-        },
-        {
-          "expression": "days",
-          "locale": "en"
-        },
-        {
-          "expression": "jours",
-          "locale": "fr"
-        },
-        {
-          "expression": "journee",
-          "locale": "fr"
-        },
-        {
-          "expression": "journees",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "week",
-      "expressions":
-      [
-        {
-          "expression": "week",
-          "locale": "en"
-        },
-        {
-          "expression": "semaine",
-          "locale": "fr"
-        },
-        {
-          "expression": "weeks",
-          "locale": "en"
-        },
-        {
-          "expression": "semaines",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "month",
-      "expressions":
-      [
-        {
-          "expression": "month",
-          "locale": "en"
-        },
-        {
-          "expression": "months",
-          "locale": "en"
-        },
-        {
-          "expression": "mois",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "year",
-      "expressions":
-      [
-        {
-          "expression": "year",
-          "locale": "en"
-        },
-        {
-          "expression": "annee",
-          "locale": "fr"
-        },
-        {
-          "expression": "an",
-          "locale": "fr"
-        },
-        {
-          "expression": "years",
-          "locale": "en"
-        },
-        {
-          "expression": "annees",
-          "locale": "fr"
-        },
-        {
-          "expression": "ans",
-          "locale": "fr"
-        }
-      ]
     },
     {
       "id": "duration_basic",
@@ -924,7 +529,8 @@
             },
             {
               "alias": "day",
-              "id": "day"
+              "id": "day",
+              "package": "package_date_vocabulary"
             }
           ],
           "solution":
@@ -946,7 +552,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ],
           "solution":
@@ -968,7 +575,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ],
           "solution":
@@ -990,7 +598,8 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ],
           "solution":
@@ -1033,7 +642,8 @@
             },
             {
               "alias": "and",
-              "id": "and"
+              "id": "and",
+              "package": "package_date_grammar"
             },
             {
               "alias": "duration_basic",
@@ -1054,7 +664,7 @@
             {
               "alias": "coma",
               "id": "coma",
-              "package": "package_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "duration_basic",
@@ -1098,7 +708,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "durations",
@@ -1124,7 +735,8 @@
           [
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "latency",
@@ -1150,7 +762,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -1188,7 +801,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_range",
@@ -1224,15 +838,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -1253,15 +870,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_day_month_year",
@@ -1282,15 +902,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_day_month",
@@ -1311,15 +934,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_month_the_day",
@@ -1346,7 +972,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "durations",
@@ -1354,7 +981,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "latency",
@@ -1380,7 +1008,8 @@
           [
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1396,15 +1025,18 @@
           [
             {
               "alias": "preposition_inthe",
-              "id": "preposition_inthe"
+              "id": "preposition_inthe",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1420,7 +1052,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1436,15 +1069,18 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1470,11 +1106,13 @@
           [
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1490,7 +1128,8 @@
           [
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1498,7 +1137,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -1510,19 +1150,23 @@
           [
             {
               "alias": "preposition_inthe",
-              "id": "preposition_inthe"
+              "id": "preposition_inthe",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1538,15 +1182,18 @@
           [
             {
               "alias": "preposition_inthe",
-              "id": "preposition_inthe"
+              "id": "preposition_inthe",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1554,7 +1201,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -1566,11 +1214,13 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1586,7 +1236,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1594,7 +1245,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -1606,19 +1258,23 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1634,15 +1290,18 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_word",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1650,7 +1309,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -1713,7 +1373,8 @@
           [
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1749,7 +1410,8 @@
             },
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "duration",
@@ -1781,7 +1443,8 @@
             },
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "duration",
@@ -1813,7 +1476,8 @@
             },
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "duration",
@@ -1841,7 +1505,8 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month_value",
@@ -1863,7 +1528,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -1885,11 +1551,13 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -1901,15 +1569,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -1921,11 +1592,13 @@
           [
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -1937,15 +1610,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -1971,7 +1647,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -1983,7 +1660,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_last",
@@ -1991,7 +1669,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2003,11 +1682,13 @@
           [
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2019,15 +1700,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2049,11 +1733,13 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2065,15 +1751,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2085,11 +1774,13 @@
           [
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2101,15 +1792,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2135,7 +1829,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2147,7 +1842,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_last",
@@ -2155,7 +1851,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2167,11 +1864,13 @@
           [
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2183,15 +1882,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2213,11 +1915,13 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2229,15 +1933,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2249,11 +1956,13 @@
           [
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2265,15 +1974,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2299,7 +2011,8 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2311,7 +2024,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_last",
@@ -2319,7 +2033,8 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2331,11 +2046,13 @@
           [
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2347,15 +2064,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2377,7 +2097,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2386,15 +2107,18 @@
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2406,7 +2130,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2415,15 +2140,18 @@
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2445,7 +2173,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2454,7 +2183,8 @@
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_last",
@@ -2462,7 +2192,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2474,7 +2205,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2483,15 +2215,18 @@
             },
             {
               "alias": "preposition_of",
-              "id": "preposition_of"
+              "id": "preposition_of",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2513,7 +2248,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -2522,7 +2258,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number_of_months",
@@ -2531,7 +2268,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -2553,7 +2291,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -2562,7 +2301,8 @@
             },
             {
               "alias": "preposition_ago",
-              "id": "preposition_ago"
+              "id": "preposition_ago",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number_of_months",
@@ -2571,7 +2311,8 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2583,7 +2324,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -2597,11 +2339,13 @@
             },
             {
               "alias": "month",
-              "id": "month"
+              "id": "month",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_ago",
-              "id": "postposition_ago"
+              "id": "postposition_ago",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2623,7 +2367,8 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -2643,7 +2388,8 @@
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2685,7 +2431,8 @@
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -2697,7 +2444,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -2705,7 +2453,8 @@
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2731,7 +2480,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2740,7 +2490,8 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -2766,7 +2517,8 @@
             },
             {
               "alias": "preposition_ago",
-              "id": "preposition_ago"
+              "id": "preposition_ago",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2775,7 +2527,8 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2796,11 +2549,13 @@
             },
             {
               "alias": "year",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_ago",
-              "id": "postposition_ago"
+              "id": "postposition_ago",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -2843,7 +2598,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2860,7 +2616,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -2881,7 +2638,8 @@
           [
             {
               "alias": "preposition_for",
-              "id": "preposition_for"
+              "id": "preposition_for",
+              "package": "package_date_grammar"
             },
             {
               "alias": "special_date",
@@ -2889,7 +2647,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -2921,7 +2680,8 @@
             },
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -2930,7 +2690,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year_number",
@@ -2939,7 +2700,8 @@
             },
             {
               "alias": "year_word",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -2951,7 +2713,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -2965,7 +2728,8 @@
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year_number",
@@ -2974,7 +2738,8 @@
             },
             {
               "alias": "year_word",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -3001,7 +2766,8 @@
             },
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -3015,11 +2781,13 @@
             },
             {
               "alias": "year_word",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_ago",
-              "id": "postposition_ago"
+              "id": "postposition_ago",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -3031,7 +2799,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day_number",
@@ -3045,7 +2814,8 @@
             },
             {
               "alias": "preposition_ago",
-              "id": "preposition_ago"
+              "id": "preposition_ago",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year_number",
@@ -3054,7 +2824,8 @@
             },
             {
               "alias": "year_word",
-              "id": "year"
+              "id": "year",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -3076,11 +2847,13 @@
           [
             {
               "alias": "preposition_this",
-              "id": "preposition_this"
+              "id": "preposition_this",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -3092,11 +2865,13 @@
           [
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -3108,15 +2883,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_next",
-              "id": "preposition_next"
+              "id": "preposition_next",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -3128,15 +2906,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_next",
-              "id": "postposition_next"
+              "id": "postposition_next",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -3162,7 +2943,8 @@
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -3174,7 +2956,8 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "preposition_last",
@@ -3182,7 +2965,8 @@
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -3194,15 +2978,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_last",
-              "id": "postposition_last"
+              "id": "postposition_last",
+              "package": "package_date_grammar"
             }
           ]
         }
@@ -3224,15 +3011,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
-              "id": "preposition_in"
+              "id": "preposition_in",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -3241,7 +3031,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         }
@@ -3263,11 +3054,13 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "number",
@@ -3276,11 +3069,13 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "postposition_ago",
-              "id": "postposition_ago"
+              "id": "postposition_ago",
+              "package": "package_date_grammar"
             }
           ]
         },
@@ -3292,15 +3087,18 @@
           [
             {
               "alias": "preposition_the",
-              "id": "preposition_the"
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "weekend",
-              "id": "weekend"
+              "id": "weekend",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_ago",
-              "id": "preposition_ago"
+              "id": "preposition_ago",
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -3309,7 +3107,8 @@
             },
             {
               "alias": "week",
-              "id": "week"
+              "id": "week",
+              "package": "package_date_vocabulary"
             }
           ]
         }

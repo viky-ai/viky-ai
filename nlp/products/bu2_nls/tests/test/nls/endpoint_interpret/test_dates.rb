@@ -26,6 +26,7 @@ module Nls
         Nls.package_update(fixture_parse("package_complex_date.json"))
         Nls.package_update(fixture_parse("package_special_dates.json"))
         Nls.package_update(fixture_parse("package_overall_date.json"))
+        Nls.package_update(fixture_parse("package_date_grammar.json"))
       end
 
       def test_simple_date

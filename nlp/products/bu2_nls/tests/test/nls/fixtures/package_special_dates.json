@@ -25,20 +25,6 @@
       }
     },
     {
-      "id": "holidays",
-      "expressions":
-      [
-        {
-          "expression": "vacances",
-          "locale": "fr"
-        },
-        {
-          "expression": "holidays",
-          "locale": "en"
-        }
-      ]
-    },
-    {
       "id": "valentine",
       "expressions":
       [
@@ -104,7 +90,8 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -117,7 +104,7 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -125,7 +112,8 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -138,16 +126,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -175,7 +164,8 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "number",
@@ -194,12 +184,13 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -217,7 +208,7 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -225,7 +216,8 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "number",
@@ -243,7 +235,7 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -251,12 +243,13 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -274,16 +267,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -305,16 +299,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -336,16 +331,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -354,7 +350,7 @@
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -372,7 +368,7 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -380,17 +376,18 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
               "id": "year",
-              "package": "package_complex_date"
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "number",
@@ -408,16 +405,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -426,12 +424,12 @@
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
               "id": "year",
-              "package": "package_complex_date"
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "number",
@@ -463,12 +461,13 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -478,7 +477,7 @@
             {
               "alias": "year",
               "id": "year",
-              "package": "package_complex_date"
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -491,7 +490,7 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -499,12 +498,13 @@
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -514,7 +514,7 @@
             {
               "alias": "year",
               "id": "year",
-              "package": "package_complex_date"
+              "package": "package_date_vocabulary"
             }
           ]
         },
@@ -527,16 +527,17 @@
             {
               "alias": "preposition_the",
               "id": "preposition_the",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "holidays",
-              "id": "holidays"
+              "id": "holidays",
+              "package": "package_date_vocabulary"
             },
             {
               "alias": "preposition_of",
               "id": "preposition_of",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "christmas",
@@ -545,7 +546,7 @@
             {
               "alias": "preposition_in",
               "id": "preposition_in",
-              "package": "package_complex_date"
+              "package": "package_date_grammar"
             },
             {
               "alias": "number",
@@ -555,7 +556,7 @@
             {
               "alias": "year",
               "id": "year",
-              "package": "package_complex_date"
+              "package": "package_date_vocabulary"
             }
           ]
         }

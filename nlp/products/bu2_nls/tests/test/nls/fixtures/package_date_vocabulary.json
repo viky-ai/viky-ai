@@ -1,0 +1,166 @@
+{
+  "id": "package_date_vocabulary",
+  "interpretations":
+  [
+    {
+      "id": "weekend",
+      "expressions":
+      [
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "weekend",
+          "locale": "en"
+        },
+        {
+          "expression": "WE",
+          "locale": "en"
+        },
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "weekend",
+          "locale": "fr"
+        },
+        {
+          "expression": "WE",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "day",
+      "expressions":
+      [
+        {
+          "expression": "day",
+          "locale": "en"
+        },
+        {
+          "expression": "jour",
+          "locale": "fr"
+        },
+        {
+          "expression": "days",
+          "locale": "en"
+        },
+        {
+          "expression": "jours",
+          "locale": "fr"
+        },
+        {
+          "expression": "journee",
+          "locale": "fr"
+        },
+        {
+          "expression": "journees",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "week",
+      "expressions":
+      [
+        {
+          "expression": "week",
+          "locale": "en"
+        },
+        {
+          "expression": "semaine",
+          "locale": "fr"
+        },
+        {
+          "expression": "weeks",
+          "locale": "en"
+        },
+        {
+          "expression": "semaines",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "month",
+      "expressions":
+      [
+        {
+          "expression": "month",
+          "locale": "en"
+        },
+        {
+          "expression": "months",
+          "locale": "en"
+        },
+        {
+          "expression": "mois",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "year",
+      "expressions":
+      [
+        {
+          "expression": "year",
+          "locale": "en"
+        },
+        {
+          "expression": "annee",
+          "locale": "fr"
+        },
+        {
+          "expression": "an",
+          "locale": "fr"
+        },
+        {
+          "expression": "years",
+          "locale": "en"
+        },
+        {
+          "expression": "annees",
+          "locale": "fr"
+        },
+        {
+          "expression": "ans",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "holidays",
+      "expressions":
+      [
+        {
+          "expression": "vacances",
+          "locale": "fr"
+        },
+        {
+          "expression": "holidays",
+          "locale": "en"
+        }
+      ]
+    }
+  ]
+}
