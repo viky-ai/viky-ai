@@ -23,7 +23,6 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(login, password)
     visit new_user_session_path
-    assert page.has_text?("Log in")
     fill_in 'Email', with: login
     fill_in 'Password', with: password
     click_button 'Log in'
