@@ -2507,7 +2507,7 @@
       ],
       "solution":
       {
-        "date": "`if(moment().isBefore(special_date.date)){special_date.date}else{moment(special_date.date).add(1,'years')}`"
+        "date_range": "`var spdate=moment(special_date.date).subtract(2,'days'); if(moment().isBefore(spdate)){var ad=0}else{var ad=1}; moment.range(spdate.add(ad,'years'), spdate.clone().add(4,'days'))`"
       }
     },
     {
@@ -2569,7 +2569,7 @@
       ],
       "solution":
       {
-        "date": "`if(moment().isBefore(special_date.date)){moment(special_date.date).subtract(1,'years')}else{special_date.date}`"
+        "date_range": "`var spdate=moment(special_date.date).subtract(2,'days');if(moment().isBefore(spdate)){var ad=1}else{var ad=0};moment.range(spdate.subtract(ad,'years'), spdate.clone().add(4,'days'))`"
       }
     },
     {

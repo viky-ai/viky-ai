@@ -200,13 +200,118 @@ module Nls
         check_interpret("april the 12 th 4 years ago", interpretation: "date", solution: {"date" => "2013-04-12T00:00:00+03:00"}, now: now)
       end
 
-      def tset_next_special_date
+      def test_next_special_date
         now = "2016-02-28T00:00:00+03:00"
-        check_interpret("noel prochain", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
-        check_interpret("next Xmas", interpretation: "date", solution: {"date" => "2016-12-25T00:00:00+03:00"}, now: now)
-        check_interpret("la saint valentin prochaine", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
-        check_interpret("next valentine's day", interpretation: "date", solution: {"date" => "2017-02-14T00:00:00+03:00"}, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2016-12-23T00:00:00+03:00", "end"=>"2016-12-27T00:00:00+03:00"}
+        }
+        check_interpret("noel prochain", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next Xmas", interpretation: "date_range", solution: result, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2017-02-12T00:00:00+03:00", "end"=>"2017-02-16T00:00:00+03:00"}
+        }
+        check_interpret("la saint valentin prochaine", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next valentine's day", interpretation: "date_range", solution: result, now: now)
       end
+
+      def test_next_week_month_year
+        now = "2016-02-25T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2016-02-28T00:00:00+03:00", "end" => "2016-03-05T23:59:59+03:00"}
+        }
+
+        check_interpret("la semaine prochaine", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next week", interpretation: "date_range", solution: result, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2016-03-01T00:00:00+03:00", "end" => "2016-03-31T23:59:59+03:00"}
+        }
+        check_interpret("le mois prochain", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next month", interpretation: "date_range", solution: result, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2017-01-01T00:00:00+03:00", "end" => "2017-12-31T23:59:59+03:00"}
+        }
+        check_interpret("l'année prochaine", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next year", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_last_week_month_year
+        now = "2016-02-25T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2016-02-14T00:00:00+03:00", "end" => "2016-02-20T23:59:59+03:00"}
+        }
+
+        check_interpret("la semaine dernière", interpretation: "date_range", solution: result, now: now)
+        check_interpret("last week", interpretation: "date_range", solution: result, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2016-01-01T00:00:00+03:00", "end" => "2016-01-31T23:59:59+03:00"}
+        }
+        check_interpret("le mois dernier", interpretation: "date_range", solution: result, now: now)
+        check_interpret("last month", interpretation: "date_range", solution: result, now: now)
+        result = {
+          "date_range" =>
+          {"start" => "2015-01-01T00:00:00+03:00", "end" => "2015-12-31T23:59:59+03:00"}
+        }
+        check_interpret("l'année dernière", interpretation: "date_range", solution: result, now: now)
+        check_interpret("last year", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_next_monthname
+        now = "2016-02-25T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2016-05-01T00:00:00+03:00", "end" => "2016-05-31T23:59:59+03:00"}
+        }
+        check_interpret("en mai prochain", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next may", interpretation: "date_range", solution: result, now: now)
+        now = "2016-05-15T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2017-05-01T00:00:00+03:00", "end" => "2017-05-31T23:59:59+03:00"}
+        }
+        check_interpret("en mai prochain", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next may", interpretation: "date_range", solution: result, now: now)
+        now = "2016-07-25T00:00:00+03:00"
+        check_interpret("en mai prochain", interpretation: "date_range", solution: result, now: now)
+        check_interpret("next may", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_monthname_year
+        now = "2016-02-25T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2025-05-01T00:00:00+03:00", "end" => "2025-05-31T23:59:59+03:00"}
+        }
+        check_interpret("en mai 2025", interpretation: "date_range", solution: result, now: now)
+        check_interpret("in may 2025", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_specialdate_year
+        now = "2016-02-25T00:00:00+03:00"
+        result = {
+          "date_range" =>
+          {"start" => "2025-12-23T00:00:00+03:00", "end" => "2025-12-27T00:00:00+03:00"}
+        }
+        check_interpret("noel 2025", interpretation: "date_range", solution: result, now: now)
+        check_interpret("christmas 2025", interpretation: "date_range", solution: result, now: now)
+      end
+
+      def test_closedays
+        now = "2016-02-28T00:00:00+03:00"
+        check_interpret("avant hier", interpretation: "date", solution: {"date"=> "2016-02-26T00:00:00+03:00" }, now: now)
+        check_interpret("hier", interpretation: "date", solution: {"date"=> "2016-02-27T00:00:00+03:00" }, now: now)
+        check_interpret("aujourd'hui", interpretation: "date", solution: {"date"=> "2016-02-28T00:00:00+03:00" }, now: now)
+        check_interpret("demain", interpretation: "date", solution: {"date"=> "2016-02-29T00:00:00+03:00" }, now: now)
+        check_interpret("apres demain", interpretation: "date", solution: {"date"=> "2016-03-01T00:00:00+03:00" }, now: now)
+      end
+
+
 
 
       #      def test_extra
