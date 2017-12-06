@@ -1704,11 +1704,129 @@
               "package": "package_number"
             }
           ]
+        },
+        {
+          "expression": "@{preposition_in} @{month_value} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in"
+            },
+            {
+              "alias": "month_value",
+              "id": "date_month_number",
+              "package": "package_date"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
         }
       ],
       "solution":
       {
         "date_range": "`var mydate = moment(number.number + '-' + month_value.month_number, 'YYYY-MM'); moment.range(mydate.startOf('month'), mydate.clone().endOf('month'))`"
+      }
+    },
+    {
+      "id": "month_year_for_duration",
+      "expressions":
+      [
+        {
+          "expression": "@{month_year} @{preposition_for} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "month_year",
+              "id": "month_year"
+            },
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`month_year.date_range`",
+        "duration": "`duration.duration`",
+        "unit": "`duration.unit`"
+      }
+    },
+    {
+      "id": "next_month_for_duration",
+      "expressions":
+      [
+        {
+          "expression": "@{in_next_month} @{preposition_for} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "in_next_month",
+              "id": "in_next_month"
+            },
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`in_next_month.date_range`",
+        "duration": "`duration.duration`",
+        "unit": "`duration.unit`"
+      }
+    },
+    {
+      "id": "in_month_for_duration",
+      "expressions":
+      [
+        {
+          "expression": "@{in_month} @{preposition_for} @{duration}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "in_month",
+              "id": "in_month"
+            },
+            {
+              "alias": "preposition_for",
+              "id": "preposition_for"
+            },
+            {
+              "alias": "duration",
+              "id": "duration"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`in_month.date_range`",
+        "duration": "`duration.duration`",
+        "unit": "`duration.unit`"
       }
     },
     {

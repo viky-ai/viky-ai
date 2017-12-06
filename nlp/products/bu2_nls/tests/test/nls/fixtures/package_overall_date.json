@@ -523,6 +523,39 @@
               "package": "package_complex_date"
             }
           ]
+        },
+        {
+          "expression": "@{month_year_for_duration}",
+          "aliases":
+          [
+            {
+              "alias": "month_year_for_duration",
+              "id": "month_year_for_duration",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{next_month_for_duration}",
+          "aliases":
+          [
+            {
+              "alias": "next_month_for_duration",
+              "id": "next_month_for_duration",
+              "package": "package_complex_date"
+            }
+          ]
+        },
+        {
+          "expression": "@{in_month_for_duration}",
+          "aliases":
+          [
+            {
+              "alias": "in_month_for_duration",
+              "id": "in_month_for_duration",
+              "package": "package_complex_date"
+            }
+          ]
         }
       ]
     }
