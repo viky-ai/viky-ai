@@ -167,7 +167,7 @@ deploy_preprod:
   script:
     - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
-    - rancher --debug --environment preprod up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade
+    - rancher --debug --environment preprod up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
 
 
 # remove environment
