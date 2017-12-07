@@ -209,6 +209,10 @@
         {
           "expression": "à",
           "locale": "fr"
+        },
+        {
+          "expression": "à la",
+          "locale": "fr"
         }
       ]
     },
