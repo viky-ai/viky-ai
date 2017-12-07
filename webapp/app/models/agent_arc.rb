@@ -4,12 +4,14 @@ class AgentArc < ApplicationRecord
 
   require 'rgl/topsort' # acyclic
 
-  validates :target, uniqueness: { scope: [:source] }
+  validates :source, presence: true
+  validates :target, uniqueness: { scope: [:source] }, presence: true
   validate :check_acyclic
 
 
   private
     def check_acyclic
+      return if source.nil? || target.nil?
       src = source.list_out_arcs
       dst = target.list_out_arcs
       graph = RGL::DirectedAdjacencyGraph.new

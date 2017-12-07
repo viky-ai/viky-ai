@@ -139,4 +139,15 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal expected, arc.errors.full_messages
   end
 
+
+  test 'AgentArc src and target must be present' do
+    arc = AgentArc.new
+    assert arc.invalid?
+    expected = ['Source must exist',
+                'Source can\'t be blank',
+                'Target must exist',
+                'Target can\'t be blank']
+    assert_equal expected, arc.errors.full_messages
+  end
+
 end
