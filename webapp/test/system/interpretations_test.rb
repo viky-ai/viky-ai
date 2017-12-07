@@ -2,12 +2,6 @@ require 'application_system_test_case'
 
 class InterpretationsTest < ApplicationSystemTestCase
 
-  def select_text_in_trix(selector, position_start, position_end)
-    script = "$('#{selector}').first().trigger('select-text', [#{position_start},#{position_end}])"
-    page.execute_script(script)
-  end
-
-
   test 'Create an interpretation' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
