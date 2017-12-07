@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206152252) do
+ActiveRecord::Schema.define(version: 20171207090553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20171206152252) do
   create_table "agent_arcs", force: :cascade do |t|
     t.uuid "source_id"
     t.uuid "target_id"
+    t.index ["source_id", "target_id"], name: "index_agent_arcs_on_source_id_and_target_id", unique: true
   end
 
   create_table "agents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

@@ -123,4 +123,20 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal expected, arc.errors.full_messages
   end
 
+
+  test 'AgentArc must be unique' do
+    #   A
+    #  /
+    # B
+    agent_a = create_agent('Agent A')
+    agent_b = create_agent('Agent B')
+
+    AgentArc.create(source: agent_a, target: agent_b)
+    arc = AgentArc.new(source: agent_a, target: agent_b)
+
+    assert arc.invalid?
+    expected = ['Target has already been taken']
+    assert_equal expected, arc.errors.full_messages
+  end
+
 end

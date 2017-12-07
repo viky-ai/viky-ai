@@ -4,6 +4,7 @@ class AgentArc < ApplicationRecord
 
   require 'rgl/topsort' # acyclic
 
+  validates :target, uniqueness: { scope: [:source] }
   validate :check_acyclic
 
 
