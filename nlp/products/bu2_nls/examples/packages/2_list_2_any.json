@@ -1,0 +1,232 @@
+{
+  "id": "jmvallet/shopping",
+  "interpretations": [
+    {
+      "id": "jmvallet/shopping/want",
+      "expressions": [
+        {
+          "expression": "je veux",
+          "locale": "fr-FR",
+          "solution": "`\"je veux\"`"
+        },
+        {
+          "expression": "j'aimerai",
+          "locale": "fr-FR",
+          "solution": "`\"j'aimerai\"`"
+        },
+        {
+          "expression": "I want",
+          "locale": "en-US",
+          "solution": "`\"I want\"`"
+        },
+        {
+          "expression": "I'd like",
+          "locale": "en-US",
+          "solution": "`\"I'd like\"`"
+        },
+        {
+          "expression": "I would like",
+          "locale": "en-US",
+          "solution": "`\"I would like\"`"
+        }
+      ]
+    },
+    {
+      "id": "jmvallet/shopping/prep-from",
+      "expressions": [
+        {
+          "expression": "de",
+          "locale": "fr-FR",
+          "solution": "`\"de\"`"
+        },
+        {
+          "expression": "depuis",
+          "locale": "fr-FR",
+          "solution": "`\"depuis\"`"
+        }
+      ]
+    },
+    {
+      "id": "jmvallet/shopping/prep-to",
+      "expressions": [
+        {
+          "expression": "à",
+          "locale": "fr-FR",
+          "solution": "`\"à\"`"
+        },
+        {
+          "expression": "vers",
+          "locale": "fr-FR",
+          "solution": "`\"vers\"`"
+        }
+      ]
+    },
+    {
+      "id": "jmvallet/shopping/town",
+      "expressions": [
+        {
+          "expression": "Pont de l'isère",
+          "locale": "fr-FR",
+          "solution": "`\"Pont de l'isère\"`"
+        },
+        {
+          "expression": "Toulouse",
+          "locale": "fr-FR",
+          "solution": "`\"Toulouse\"`"
+        },
+        {
+          "expression": "Paris",
+          "locale": "fr-FR",
+          "solution": "`\"Paris\"`"
+        },
+        {
+          "expression": "Le Mans",
+          "locale": "fr-FR",
+          "solution": "`\"Le Mans\"`"
+        },
+        {
+          "expression": "Crest",
+          "locale": "fr-FR",
+          "solution": "`\"Crest\"`"
+        },
+        {
+          "expression": "Lille",
+          "locale": "fr-FR",
+          "solution": "`\"Lille\"`"
+        },
+        {
+          "expression": "Valence",
+          "locale": "fr-FR",
+          "solution": "`\"Valence\"`"
+        },
+        {
+          "expression": "Nice",
+          "locale": "fr-FR",
+          "solution": "`\"Nice\"`"
+        },
+        {
+          "expression": "Marseille",
+          "locale": "fr-FR",
+          "solution": "`\"Marseille\"`"
+        }
+      ]
+    },
+
+    {
+      "id": "from_recursive",
+      "expressions": [
+        {
+          "expression": "@{from}",
+          "aliases": [
+            {
+              "alias": "from",
+              "id": "jmvallet/shopping/town"
+            }
+          ],
+          "solution": "`({ from: from })`"
+        },
+        {
+          "expression": "@{from} @{from_recursive}",
+          "aliases": [
+            {
+              "alias": "from",
+              "id": "jmvallet/shopping/town"
+            },
+            {
+              "alias": "from_recursive",
+              "id": "from_recursive"
+            }
+          ]
+        },
+        {
+          "expression": "@{from} @{from_recursive}",
+          "aliases": [
+            {
+              "alias": "from",
+              "type": "any"
+            },
+            {
+              "alias": "from_recursive",
+              "id": "from_recursive"
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "id": "to_recursive",
+      "expressions": [
+        {
+          "expression": "@{to}",
+          "aliases": [
+            {
+              "alias": "to",
+              "id": "jmvallet/shopping/town"
+            }
+          ],
+          "solution": "`({ to: to })`"
+        },
+        {
+          "expression": "@{to} @{to_recursive}",
+          "aliases": [
+            {
+              "alias": "to",
+              "id": "jmvallet/shopping/town"
+            },
+            {
+              "alias": "to_recursive",
+              "id": "to_recursive"
+            }
+          ]
+        },
+        {
+          "expression": "@{to} @{to_recursive}",
+          "aliases": [
+            {
+              "alias": "to",
+              "type": "any"
+            },
+            {
+              "alias": "to_recursive",
+              "id": "to_recursive"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "want-to-go-to",
+      "expressions": [
+        {
+          "expression": "@{want} @{prep_from} @{from} @{prep_to} @{to}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "want",
+              "id": "jmvallet/shopping/want"
+            },
+            {
+              "alias": "prep_from",
+              "id": "jmvallet/shopping/prep-from"
+            },
+            {
+              "alias": "from",
+              "id": "from_recursive"
+            },
+            {
+              "alias": "prep_to",
+              "id": "jmvallet/shopping/prep-to"
+            },
+            {
+              "alias": "to",
+              "id": "to_recursive"
+            }
+          ],
+          "locale": "fr-FR"
+        }
+      ]
+    }
+  ]
+}

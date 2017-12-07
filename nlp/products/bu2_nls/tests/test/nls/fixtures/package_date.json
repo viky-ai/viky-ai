@@ -3,385 +3,7 @@
   "interpretations":
   [
     {
-      "id": "preposition_date",
-      "expressions":
-      [
-        {
-          "expression": "on",
-          "locale": "en"
-        },
-        {
-          "expression": "the",
-          "locale": "en"
-        },
-        {
-          "expression": "for",
-          "locale": "en"
-        },
-        {
-          "expression": "le",
-          "locale": "fr"
-        },
-        {
-          "expression": "pour",
-          "locale": "fr"
-        },
-        {
-          "expression": "pour le",
-          "locale": "fr"
-        },
-        {
-          "expression": "à la date du",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_date_begin",
-      "expressions":
-      [
-        {
-          "expression": "from",
-          "locale": "en"
-        },
-        {
-          "expression": "starting from",
-          "locale": "en"
-        },
-        {
-          "expression": "starting on",
-          "locale": "en"
-        },
-        {
-          "expression": "du",
-          "locale": "fr"
-        },
-        {
-          "expression": "de",
-          "locale": "fr"
-        },
-        {
-          "expression": "depuis le",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "preposition_date_end",
-      "expressions":
-      [
-        {
-          "expression": "to",
-          "locale": "en"
-        },
-        {
-          "expression": "till",
-          "locale": "en"
-        },
-        {
-          "expression": "till to",
-          "locale": "en"
-        },
-        {
-          "expression": "down to",
-          "locale": "en"
-        },
-        {
-          "expression": "au",
-          "locale": "fr"
-        },
-        {
-          "expression": "jusqu'à",
-          "locale": "fr"
-        },
-        {
-          "expression": "à",
-          "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "date_january",
-      "expressions":
-      [
-        {
-          "expression": "january",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "janvier",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "janv",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jan"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 1
-      }
-    },
-    {
-      "id": "date_february",
-      "expressions":
-      [
-        {
-          "expression": "february",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "février",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "fevr",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "fev"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 2
-      }
-    },
-    {
-      "id": "date_march",
-      "expressions":
-      [
-        {
-          "expression": "march",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "mars",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "mar"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 3
-      }
-    },
-    {
-      "id": "date_april",
-      "expressions":
-      [
-        {
-          "expression": "april",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "avril",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "avr"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 4
-      }
-    },
-    {
-      "id": "date_may",
-      "expressions":
-      [
-        {
-          "expression": "may",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "mai",
-          "locale": "fr-FR"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 5
-      }
-    },
-    {
-      "id": "date_june",
-      "expressions":
-      [
-        {
-          "expression": "june",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "juin",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jun"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 6
-      }
-    },
-    {
-      "id": "date_july",
-      "expressions":
-      [
-        {
-          "expression": "july",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "juillet",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jui"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 7
-      }
-    },
-    {
-      "id": "date_august",
-      "expressions":
-      [
-        {
-          "expression": "august",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "août",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jui"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 8
-      }
-    },
-    {
-      "id": "date_september",
-      "expressions":
-      [
-        {
-          "expression": "september",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "septembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "sept"
-        },
-        {
-          "expression": "sep"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 9
-      }
-    },
-    {
-      "id": "date_october",
-      "expressions":
-      [
-        {
-          "expression": "october",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "octobre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "oct"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 10
-      }
-    },
-    {
-      "id": "date_november",
-      "expressions":
-      [
-        {
-          "expression": "november",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "novembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "nov"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 11
-      }
-    },
-    {
-      "id": "date_december",
-      "expressions":
-      [
-        {
-          "expression": "december",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "décembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "dec"
-        }
-      ],
-      "solution":
-      {
-        "month_number": 12
-      }
-    },
-    {
-      "id": "the",
-      "expressions":
-      [
-        {
-          "expression": "the",
-          "locale": "en-GB"
-        }
-      ]
-    },
-    {
-      "id": "coma",
-      "expressions":
-      [
-        {
-          "expression": ",",
-          "locale": "en-GB"
-        }
-      ]
-    },
-    {
-      "id": "date_month_number",
+      "id": "date_january_value",
       "expressions":
       [
         {
@@ -390,128 +12,371 @@
           [
             {
               "alias": "date_january",
-              "id": "date_january"
+              "id": "date_january",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 1
+      }
+    },
+    {
+      "id": "date_february_value",
+      "expressions":
+      [
         {
           "expression": "@{date_february}",
           "aliases":
           [
             {
               "alias": "date_february",
-              "id": "date_february"
+              "id": "date_february",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 2
+      }
+    },
+    {
+      "id": "date_march_value",
+      "expressions":
+      [
         {
           "expression": "@{date_march}",
           "aliases":
           [
             {
               "alias": "date_march",
-              "id": "date_march"
+              "id": "date_march",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 3
+      }
+    },
+    {
+      "id": "date_april_value",
+      "expressions":
+      [
         {
           "expression": "@{date_april}",
           "aliases":
           [
             {
               "alias": "date_april",
-              "id": "date_april"
+              "id": "date_april",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 4
+      }
+    },
+    {
+      "id": "date_may_value",
+      "expressions":
+      [
         {
           "expression": "@{date_may}",
           "aliases":
           [
             {
               "alias": "date_may",
-              "id": "date_may"
+              "id": "date_may",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 5
+      }
+    },
+    {
+      "id": "date_june_value",
+      "expressions":
+      [
         {
           "expression": "@{date_june}",
           "aliases":
           [
             {
               "alias": "date_june",
-              "id": "date_june"
+              "id": "date_june",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 6
+      }
+    },
+    {
+      "id": "date_july_value",
+      "expressions":
+      [
         {
           "expression": "@{date_july}",
           "aliases":
           [
             {
               "alias": "date_july",
-              "id": "date_july"
+              "id": "date_july",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 7
+      }
+    },
+    {
+      "id": "date_august_value",
+      "expressions":
+      [
         {
           "expression": "@{date_august}",
           "aliases":
           [
             {
               "alias": "date_august",
-              "id": "date_august"
+              "id": "date_august",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 8
+      }
+    },
+    {
+      "id": "date_september_value",
+      "expressions":
+      [
         {
           "expression": "@{date_september}",
           "aliases":
           [
             {
               "alias": "date_september",
-              "id": "date_september"
+              "id": "date_september",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 9
+      }
+    },
+    {
+      "id": "date_october_value",
+      "expressions":
+      [
         {
           "expression": "@{date_october}",
           "aliases":
           [
             {
               "alias": "date_october",
-              "id": "date_october"
+              "id": "date_october",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 10
+      }
+    },
+    {
+      "id": "date_november_value",
+      "expressions":
+      [
         {
           "expression": "@{date_november}",
           "aliases":
           [
             {
               "alias": "date_november",
-              "id": "date_november"
+              "id": "date_november",
+              "package": "package_date_vocabulary"
             }
           ]
-        },
+        }
+      ],
+      "solution":
+      {
+        "month_number": 11
+      }
+    },
+    {
+      "id": "date_december_value",
+      "expressions":
+      [
         {
           "expression": "@{date_december}",
           "aliases":
           [
             {
               "alias": "date_december",
-              "id": "date_december"
+              "id": "date_december",
+              "package": "package_date_vocabulary"
             }
           ]
         }
-      ]
+      ],
+      "solution":
+      {
+        "month_number": 12
+      }
     },
     {
-      "id": "slash",
+      "id": "date_month_number",
       "expressions":
       [
         {
-          "expression": "/"
+          "expression": "@{date_january_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_january_value",
+              "id": "date_january_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_february_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_february_value",
+              "id": "date_february_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_march_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_march_value",
+              "id": "date_march_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_april_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_april_value",
+              "id": "date_april_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_may_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_may_value",
+              "id": "date_may_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_june_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_june_value",
+              "id": "date_june_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_july_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_july_value",
+              "id": "date_july_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_august_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_august_value",
+              "id": "date_august_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_september_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_september_value",
+              "id": "date_september_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_october_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_october_value",
+              "id": "date_october_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_november_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_november_value",
+              "id": "date_november_value"
+            }
+          ]
+        },
+        {
+          "expression": "@{date_december_value}",
+          "aliases":
+          [
+            {
+              "alias": "date_december_value",
+              "id": "date_december_value"
+            }
+          ]
         }
       ]
     },
@@ -547,7 +412,7 @@
       "expressions":
       [
         {
-          "expression": "@{month} @{the} @{day}",
+          "expression": "@{month} @{preposition_the} @{day}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -557,8 +422,9 @@
               "id": "date_month_number"
             },
             {
-              "alias": "the",
-              "id": "the"
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day",
@@ -600,7 +466,7 @@
           ]
         },
         {
-          "expression": "@{month} @{the} @{day} @{coma} @{year}",
+          "expression": "@{month} @{preposition_the} @{day} @{coma} @{year}",
           "keep-order": true,
           "glued": true,
           "aliases":
@@ -610,8 +476,9 @@
               "id": "date_month_number"
             },
             {
-              "alias": "the",
-              "id": "the"
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
             },
             {
               "alias": "day",
@@ -620,7 +487,8 @@
             },
             {
               "alias": "coma",
-              "id": "coma"
+              "id": "coma",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
@@ -642,7 +510,8 @@
             },
             {
               "alias": "slash1",
-              "id": "slash"
+              "id": "slash",
+              "package": "package_date_grammar"
             },
             {
               "alias": "month",
@@ -651,7 +520,8 @@
             },
             {
               "alias": "slash2",
-              "id": "slash"
+              "id": "slash",
+              "package": "package_date_grammar"
             },
             {
               "alias": "year",
@@ -680,7 +550,8 @@
           [
             {
               "alias": "preposition_date",
-              "id": "preposition_date"
+              "id": "preposition_date",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_day_month_year",
@@ -702,7 +573,8 @@
           [
             {
               "alias": "preposition_date_begin",
-              "id": "preposition_date_begin"
+              "id": "preposition_date_begin",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_begin",
@@ -710,7 +582,8 @@
             },
             {
               "alias": "preposition_date_end",
-              "id": "preposition_date_end"
+              "id": "preposition_date_end",
+              "package": "package_date_grammar"
             },
             {
               "alias": "date_end",

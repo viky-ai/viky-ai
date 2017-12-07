@@ -8,6 +8,7 @@
 
 static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression, int offset);
+static og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression, int offset);
@@ -16,7 +17,46 @@ static og_status NlpRequestInputPartWordLog(og_nlp_th ctrl_nlp_th, struct reques
 
 og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  IFE(NlpInterpretTreeAttachAnyRecursive(ctrl_nlp_th, request_expression, request_expression, 0));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "\nNlpInterpretTreeAttachAny: starting1 with expression:");
+    NlpInterpretTreeLog(ctrl_nlp_th, request_expression);
+  }
+
+  IFE(NlpRequestAnysAdd(ctrl_nlp_th, request_expression));
+  if (request_expression->request_any_start < 0) DONE;
+
+  IFE(NlpSetSuperExpression(ctrl_nlp_th, request_expression));
+
+  struct request_any *request_anys = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
+  int loop = 0;
+  do
+  {
+    request_expression->nb_anys_attached = 0;
+    IFE(NlpInterpretTreeAttachAnyRecursive(ctrl_nlp_th, request_expression, request_expression, 0));
+    for (int i = 0; i < request_expression->request_anys_nb; i++)
+    {
+      struct request_any *request_any = request_anys + i;
+      if (request_any->queue_request_expression->length > 0) request_any->is_attached = TRUE;
+    }
+    NlpLog(DOgNlpTraceMatch, "NlpInterpretTreeAttachAny: loop=%d nb_anys_attached=%d", loop,
+        request_expression->nb_anys_attached);
+    loop++;
+    if (request_expression->nb_anys_attached <= 0) break;
+    IFE(NlpGetNbAnysAttached(ctrl_nlp_th, request_expression));
+    if (request_expression->nb_anys_attached >= request_expression->nb_anys) break;
+  }
+  while (request_expression->nb_anys_attached > 0);
+
+  IFE(NlpGetNbAnysAttached(ctrl_nlp_th, request_expression));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpInterpretTreeAttachAny: nb_anys=%d nb_anys_attached=%d:", request_expression->nb_anys,
+        request_expression->nb_anys_attached);
+    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
+  }
+
   DONE;
 }
 
@@ -43,6 +83,25 @@ static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th,
     IFE(NlpRequestAnyAddClosest(ctrl_nlp_th, root_request_expression, request_expression));
   }
 
+  DONE;
+}
+
+static og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+
+    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
+      IFN(sub_request_expression) DPcErr;
+      IFE(NlpSetSuperExpression(ctrl_nlp_th, sub_request_expression));
+      sub_request_expression->Isuper_request_expression = request_expression->self_index;
+    }
+  }
   DONE;
 }
 
@@ -83,22 +142,29 @@ static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct requ
     }
   }
 
-  if (request_expression->Irequest_any >= 0)
+  if (request_expression->expression->alias_any_input_part_position >= 0)
   {
-    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-    IFN(request_any) DPcErr;
+    if (request_expression->Irequest_any >= 0)
+    {
+      struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+      IFN(request_any) DPcErr;
 
-    char string_any[DPcPathSize];
-    NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
+      char string_any[DPcPathSize];
+      NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
 
-    char string_any_position[DPcPathSize];
-    NlpRequestAnyPositionString(ctrl_nlp_th, request_any, DPcPathSize, string_any_position);
+      char string_any_position[DPcPathSize];
+      NlpRequestAnyPositionString(ctrl_nlp_th, request_any, DPcPathSize, string_any_position);
 
-    char highlight[DPcPathSize];
-    NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
+      char highlight[DPcPathSize];
+      NlpRequestAnyStringPretty(ctrl_nlp_th, request_any, DPcPathSize, highlight);
 
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
-        request_expression->level, string_any, string_any_position, highlight);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: '%s' [%s] any: '%s'", string_offset,
+          request_expression->level, string_any, string_any_position, highlight);
+    }
+    else
+    {
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %s%2d: [] any", string_offset, request_expression->level);
+    }
   }
 
   DONE;

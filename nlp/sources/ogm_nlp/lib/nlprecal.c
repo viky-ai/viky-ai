@@ -6,6 +6,8 @@
  */
 #include "ogm_nlp.h"
 
+static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
+static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions);
 static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
     gpointer user_data);
 static og_status NlpIsSubRequestExpression(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions,
@@ -26,29 +28,23 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   GQueue *sorted_request_expressions = ctrl_nlp_th->sorted_request_expressions;
   for (int i = 0; i < request_expression_used; i++)
   {
+    request_expressions[i].any_validate_status = 1;
     g_queue_push_tail(sorted_request_expressions, request_expressions + i);
   }
-  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
 
-  struct request_expression *first_request_expression = sorted_request_expressions->head->data;
-  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    struct request_expression *request_expression = iter->data;
-    if (request_expression->request_positions_nb == first_request_expression->request_positions_nb
-        && request_expression->overlap_mark == first_request_expression->overlap_mark)
-    {
-      og_bool is_sub_re;
-      IFE(is_sub_re = NlpIsSubRequestExpression(ctrl_nlp_th, sorted_request_expressions, request_expression));
-      if (!is_sub_re) request_expression->keep_as_result = TRUE;
-    }
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions before any validation:"));
   }
+
+  IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
     if (!request_expression->keep_as_result) continue;
-    IFE(NlpRequestAnysAdd(ctrl_nlp_th, request_expression));
-    IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
     IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
@@ -70,12 +66,64 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
+static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
+{
+  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
+
+  struct request_expression *first_request_expression = sorted_request_expressions->head->data;
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    if (request_expression->request_positions_nb == first_request_expression->request_positions_nb
+        && request_expression->overlap_mark == first_request_expression->overlap_mark)
+    {
+      og_bool is_sub_re;
+      IFE(is_sub_re = NlpIsSubRequestExpression(ctrl_nlp_th, sorted_request_expressions, request_expression));
+      if (!is_sub_re) request_expression->keep_as_result = TRUE;
+    }
+  }
+  DONE;
+}
+
+static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
+{
+  og_bool some_expressions_kept = FALSE;
+  while (!some_expressions_kept)
+  {
+    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+    {
+      struct request_expression *request_expression = iter->data;
+      if (!request_expression->keep_as_result) continue;
+      IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
+
+      if (request_expression->nb_anys != request_expression->nb_anys_attached)
+      {
+        NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d != nb_anys_attached=%d, this request is not validated:",
+            request_expression->nb_anys, request_expression->nb_anys_attached);
+        request_expression->any_validate_status = 0;
+        request_expression->keep_as_result = FALSE;
+      }
+      else
+      {
+        request_expression->any_validate_status = 2;
+        some_expressions_kept = TRUE;
+      }
+    }
+    IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
+  }
+  DONE;
+}
+
 static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
     gpointer user_data)
 {
   struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
   struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
 
+  if (request_expression1->any_validate_status != request_expression2->any_validate_status)
+  {
+    return (request_expression2->any_validate_status - request_expression1->any_validate_status);
+  }
   if (request_expression1->keep_as_result != request_expression2->keep_as_result)
   {
     return (request_expression2->keep_as_result - request_expression1->keep_as_result);
@@ -87,6 +135,10 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   if (request_expression1->overlap_mark != request_expression2->overlap_mark)
   {
     return (request_expression1->overlap_mark - request_expression2->overlap_mark);
+  }
+  if (request_expression1->nb_anys != request_expression2->nb_anys)
+  {
+    return (request_expression2->nb_anys - request_expression1->nb_anys);
   }
   if (request_expression1->total_score != request_expression2->total_score)
   {

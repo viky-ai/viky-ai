@@ -46,7 +46,7 @@ static og_status NlpRequestExpressionsOptimizeIncluded(og_nlp_th ctrl_nlp_th)
     struct request_expression *request_expression = request_expressions + i;
     // We do not want to remove the any expressions, because they are validated or not
     // only when the complete parsing is finished
-    if (request_expression->contains_any) request_expression->analyzed = 1;
+    if (request_expression->nb_anys > 0) request_expression->analyzed = 1;
     else request_expression->analyzed = 0;
     request_expression->deleted = 0;
   }
@@ -73,6 +73,7 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
   for (int i = Irequest_expression; i < request_expression_used; i++)
   {
     struct request_expression *request_expression = request_expressions + i;
+    if (request_expression->analyzed) continue;
     if (request_expression->expression->interpretation != first_request_expression->expression->interpretation) continue;
     g_queue_push_tail(queue_request_expression, request_expression);
     request_expression->analyzed = 1;
