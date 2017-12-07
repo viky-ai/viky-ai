@@ -26,8 +26,10 @@
   @include display_flex();
   flex-direction: column;
   height: 100%;
-
+  justify-content: flex-start;
   background-color: #fff;
+  overflow: hidden;
+
   .console__header{
     position: relative;
     padding: 1em 1em 1em 1em;
@@ -49,15 +51,43 @@
 
   form{
     margin: 1.25em 1em;
+
+    .field--console-now{
+      font-size: .8em;
+    }
   }
 
   .tabs{
     margin: 0;
-    height: 6em;
+    min-height: calc(2.3em + 3px);
+    max-height: calc(2.3em + 3px);
+    height: calc(2.3em + 3px);
   }
+
+
   .console__output{
     height: 100%;
     overflow-y: auto;
+
+    &.console__output__loading{
+      @keyframes highlighter {
+        0% {
+          background-color: #ffffdd;
+        }
+        100% {
+          background-color: #fff;
+        }
+      }
+      overflow: hidden;
+      animation: .5s ease-in-out highlighter;
+    }
+
+    pre{
+      font-size: .75em;
+      margin: 0;
+      background-color: transparent;
+    }
+
     #console-explain{
       padding: 1em;
       p{
@@ -66,7 +96,7 @@
       .intents{
         list-style: none;
         padding: 0;
-        li a{
+        & > li a{
           display:block;
           padding: .5em 1em;
           text-decoration: none;
@@ -74,14 +104,36 @@
           box-shadow: 0 1px 2px rgba(black, .2);
           border-radius: 2px;
           margin-bottom: .75em;
-          .name{
+          .intent__name{
             text-decoration: underline;
           }
-          .score{
+          .intent__score{
             color: #aaa;
             font-size: .9em;
           }
-          .highlight{
+          ul{
+            list-style-type: none;
+            padding: 0;
+            margin-top: .2em;
+            li{
+              border-bottom: 1px solid #eee;
+              padding: .4em 0 .1em 0;
+              &:last-child{
+                border-bottom: none;
+              }
+            }
+          }
+          &:hover{
+            border-left: 4px solid $primary-color;
+          }
+          .intent__label{
+            color: #888;
+            text-transform: uppercase;
+            font-size: .65em;
+            line-height: 1em;
+            margin-bottom: .15em;
+          }
+          .intent__highlight{
             color: #666;
             font-size: .9em;
             font-family: monospace;
@@ -93,8 +145,11 @@
               border: 1px solid rgba(#000, .05);
             }
           }
-          &:hover{
-            border-left: 4px solid $primary-color;
+          pre{
+            padding: 0;
+            color: #666;
+            font-size: .7em;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
           }
         }
       }
@@ -111,11 +166,6 @@
           }
         }
       }
-    }
-    pre{
-      font-size: .75em;
-      margin: 0;
-      background-color: #fff;
     }
   }
 }

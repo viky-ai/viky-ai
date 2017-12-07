@@ -23,6 +23,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(login, password)
     visit new_user_session_path
+
+    # If user is already login, logout
+    if page.has_text?("Agents")
+      Capybara.reset_sessions!
+      visit new_user_session_path
+    end
+
     fill_in 'Email', with: login
     fill_in 'Password', with: password
     click_button 'Log in'
@@ -44,7 +51,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def go_to_agent_show(user, agent)
     admin_login
     visit user_agent_path(user, agent)
-    assert page.has_text?("Agent intents")
+    assert page.has_text?("Agent interpretations")
   end
 
 end

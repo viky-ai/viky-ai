@@ -71,6 +71,9 @@ class Agent < ApplicationRecord
     end while self.class.exists?(api_token: api_token)
   end
 
+  def slug
+    "#{owner.slug}/#{agentname}"
+  end
 
   private
 

@@ -14,6 +14,12 @@ en:
         description: Description
       interpretation:
         expression: Expression
+        keep_order: Keep order
+        glued: Glued
+        auto_solution_enabled: Auto solution
+        solution: Solution
+      interpretation_alias:
+        aliasname: Parameter name
   errors:
     user:
       delete:
@@ -27,3 +33,11 @@ en:
         collaborators_presence: You must remove all collaborators before delete an agent
     intents:
       unknown_locale: "unknown '%{current_locale}'"
+    interpretation:
+      invalid_json: "invalid json"
+      interpretation_aliases_overlap: position overlap
+    interpretation_alias:
+      end_position_lower_than_start: 'must be greater than position start'
+      overlap: overlap
+      aliasname_uniqueness: 'has already been taken'
+      aliasname_valid_javascript_variable: 'is invalid'

@@ -3,6 +3,8 @@ require 'test_helper'
 class IntentTest < ActiveSupport::TestCase
 
   test 'Basic intent creation & agent association' do
+    assert_equal 2, agents(:weather).intents.count
+
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
@@ -14,7 +16,8 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal 1, intent.position
     assert_equal 'greeting', intent.intentname
     assert_equal agents(:weather).id, intent.agent.id
-    assert_equal 2, agents(:weather).intents.count
+    assert_equal 3, agents(:weather).intents.count
+    assert Intent::AVAILABLE_COLORS.one? { |color| color == intent.color }
   end
 
 
@@ -138,5 +141,23 @@ class IntentTest < ActiveSupport::TestCase
         locales: ['can\'t be blank']
     }
     assert_equal expected, intent.errors.messages
+  end
+
+
+  test 'Do not override color at creation if already set' do
+    intent = Intent.new(
+      intentname: 'greeting',
+      locales: ['en-US'],
+      color: 'blue'
+    )
+    intent.agent = agents(:weather)
+    assert intent.save
+    assert_equal 'blue', intent.color
+  end
+
+
+  test 'Test intent generation' do
+    intent = intents(:weather_greeting)
+    assert_equal 'admin/weather/weather_greeting', intent.slug
   end
 end

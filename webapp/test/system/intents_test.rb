@@ -4,22 +4,22 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Create an intent' do
     go_to_agent_show('admin', 'terminator')
-    click_link 'New intent'
+    click_link 'New interpretation'
     within('.modal') do
-      assert page.has_text? 'Create a new intent'
+      assert page.has_text? 'Create a new interpretation'
       fill_in 'ID', with: 'sunny_day'
       fill_in 'Description', with: 'Questions about the next sunny day'
       click_button 'Create'
     end
-    assert page.has_text?('Intent has been successfully created.')
+    assert page.has_text?('Interpretation has been successfully created.')
   end
 
 
   test 'Errors on intent creation' do
     go_to_agent_show('admin', 'terminator')
-    click_link 'New intent'
+    click_link 'New interpretation'
     within('.modal') do
-      assert page.has_text? 'Create a new intent'
+      assert page.has_text? 'Create a new interpretation'
       fill_in 'ID', with: ''
       fill_in 'Description', with: 'Questions about the next sunny day'
       click_button 'Create'
@@ -37,12 +37,12 @@ class IntentsTest < ApplicationSystemTestCase
     end
 
     within('.modal') do
-      assert page.has_text? 'Edit intent'
+      assert page.has_text? 'Edit interpretation'
       fill_in 'ID', with: 'sunny_day'
       fill_in 'Description', with: 'Questions about the next sunny day'
       click_button 'Update'
     end
-    assert page.has_text?('Your intent has been successfully updated.')
+    assert page.has_text?('Your interpretation has been successfully updated.')
   end
 
 
@@ -61,7 +61,7 @@ class IntentsTest < ApplicationSystemTestCase
       fill_in 'validation', with: 'DELETE'
       click_button('Delete')
     end
-    assert page.has_text?('Intent with the name: weather_greeting has successfully been deleted.')
+    assert page.has_text?('Interpretation with the name: weather_greeting has successfully been deleted.')
 
     agent = agents(:weather)
     assert_equal user_agent_path(agent.owner, agent), current_path
@@ -70,15 +70,14 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Reorganize intents' do
     go_to_agent_show('admin', 'weather')
-    assert page.has_no_text? 'Reorganize intents'
 
     intent = Intent.new(intentname: 'test', locales: ['en-US'])
     intent.agent = agents(:weather)
     assert intent.save
     visit user_agent_path('admin', 'weather')
-    assert_equal ['test', 'weather_greeting'], all('.intents-list__item__name').collect(&:text)
+    assert_equal ['test', 'weather_greeting', 'weather_who'], all('.intents-list__item__name').collect(&:text)
 
-    assert_equal 2, all('.intents-list__item__draggable').size
+    assert_equal 3, all('.intents-list__item__draggable').size
 
     # Does not work...
     # first('.intents-list__draggable').native.drag_by(0, 100)

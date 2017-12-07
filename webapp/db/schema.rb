@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171116130506) do
+ActiveRecord::Schema.define(version: 20171201131020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,8 +50,23 @@ ActiveRecord::Schema.define(version: 20171116130506) do
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
     t.string "locales"
+    t.string "color"
     t.index ["agent_id"], name: "index_intents_on_agent_id"
     t.index ["intentname", "agent_id"], name: "index_intents_on_intentname_and_agent_id", unique: true
+  end
+
+  create_table "interpretation_aliases", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "aliasname", null: false
+    t.integer "position_start"
+    t.integer "position_end"
+    t.uuid "interpretation_id"
+    t.uuid "intent_id"
+    t.integer "nature", default: 0
+    t.boolean "is_list", default: false
+    t.boolean "any_enabled", default: false
+    t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
+    t.index ["interpretation_id", "aliasname"], name: "index_interpretation_aliases_on_interpretation_id_and_aliasname", unique: true
+    t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end
 
   create_table "interpretations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -61,6 +76,10 @@ ActiveRecord::Schema.define(version: 20171116130506) do
     t.datetime "updated_at", null: false
     t.string "locale"
     t.integer "position", default: 0
+    t.boolean "keep_order", default: false
+    t.boolean "glued", default: false
+    t.text "solution"
+    t.boolean "auto_solution_enabled", default: true
     t.index ["intent_id"], name: "index_interpretations_on_intent_id"
   end
 
@@ -119,6 +138,8 @@ ActiveRecord::Schema.define(version: 20171116130506) do
 
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "intents", "agents", on_delete: :cascade
+  add_foreign_key "interpretation_aliases", "intents", on_delete: :cascade
+  add_foreign_key "interpretation_aliases", "interpretations", on_delete: :cascade
   add_foreign_key "interpretations", "intents", on_delete: :cascade
   add_foreign_key "memberships", "agents", on_delete: :cascade
   add_foreign_key "memberships", "users", on_delete: :cascade

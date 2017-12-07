@@ -50,15 +50,26 @@
     padding: .7rem .8rem;
     text-decoration: none;
     width: 100%;
+    color: #222;
+    border-right: 3px solid transparent;
     &:focus,
     &:hover{
-      text-decoration: underline;
+      border-right: 3px solid $primary-color;
     }
   }
 
-  form {
+  form{
     border-radius: 2px;
-    padding: .275em;
+    padding: 1.5em 1em 0.5em 1em;
     width: 100%;
+    border-right: 3px solid $primary-color;
+
+    .field--submit{
+      @include display_flex();
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #eee;
+      padding: 1em 0;
+    }
   }
 }
