@@ -31,6 +31,8 @@ en:
         invalid_username: Please select a valid new owner
       delete:
         collaborators_presence: You must remove all collaborators before delete an agent
+    agent_arc:
+      cycle_detected: detected
     intents:
       unknown_locale: "unknown '%{current_locale}'"
     interpretation:
