@@ -15,6 +15,14 @@ FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_V
 RUN mkdir -p /webapp
 WORKDIR /webapp
 
+## Install Graphviz
+RUN set -ex; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      graphviz \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
 # Yarn install
 COPY package.json /webapp
 COPY yarn.lock /webapp

@@ -1,7 +1,15 @@
 <% user_can_delete_dependency = current_user.can?(:edit, @agent) %>
 
 <h4 class="dependencies-title">
-  <%= t('views.successors.index.list_title') %> <em>(<%= @agent.successors.count %>)</em>
+  <%= t('views.successors.index.list_title') %>
+    <em>
+      <% if @agent.successors.count > 0 %>
+        (<a href="<%= graph_user_agent_successors_path(@agent.owner, @agent) %>"
+           data-action="open-remote-modal"><%= @agent.successors.count %></a>)
+      <% else %>
+        (<%= @agent.successors.count %>)
+      <% end %>
+    </em>
   <small>- <%= t('views.successors.index.dependents') %> <em>(<%= @agent.predecessors.count %>)</em></small>
 </h4>
 
