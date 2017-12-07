@@ -161,56 +161,56 @@
           ]
         },
         {
-          "expression": "@{day_before_yesterday}",
+          "expression": "@{day_before_yesterday_value}",
           "aliases":
           [
             {
-              "alias": "day_before_yesterday",
-              "id": "day_before_yesterday",
+              "alias": "day_before_yesterday_value",
+              "id": "day_before_yesterday_value",
               "package": "package_complex_date"
             }
           ]
         },
         {
-          "expression": "@{yesterday}",
+          "expression": "@{yesterday_value}",
           "aliases":
           [
             {
-              "alias": "yesterday",
-              "id": "yesterday",
+              "alias": "yesterday_value",
+              "id": "yesterday_value",
               "package": "package_complex_date"
             }
           ]
         },
         {
-          "expression": "@{today}",
+          "expression": "@{today_value}",
           "aliases":
           [
             {
-              "alias": "today",
-              "id": "today",
+              "alias": "today_value",
+              "id": "today_value",
               "package": "package_complex_date"
             }
           ]
         },
         {
-          "expression": "@{tomorrow}",
+          "expression": "@{tomorrow_value}",
           "aliases":
           [
             {
-              "alias": "tomorrow",
-              "id": "tomorrow",
+              "alias": "tomorrow_value",
+              "id": "tomorrow_value",
               "package": "package_complex_date"
             }
           ]
         },
         {
-          "expression": "@{day_after_tomorrow}",
+          "expression": "@{day_after_tomorrow_value}",
           "aliases":
           [
             {
-              "alias": "day_after_tomorrow",
-              "id": "day_after_tomorrow",
+              "alias": "day_after_tomorrow_value",
+              "id": "day_after_tomorrow_value",
               "package": "package_complex_date"
             }
           ]

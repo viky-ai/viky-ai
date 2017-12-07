@@ -3,23 +3,19 @@
   "interpretations":
   [
     {
-      "id": "date_january",
+      "id": "date_january_value",
       "expressions":
       [
         {
-          "expression": "january",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "janvier",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "janv",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jan"
+          "expression": "@{date_january}",
+          "aliases":
+          [
+            {
+              "alias": "date_january",
+              "id": "date_january",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -28,23 +24,19 @@
       }
     },
     {
-      "id": "date_february",
+      "id": "date_february_value",
       "expressions":
       [
         {
-          "expression": "february",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "février",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "fevr",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "fev"
+          "expression": "@{date_february}",
+          "aliases":
+          [
+            {
+              "alias": "date_february",
+              "id": "date_february",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -53,19 +45,19 @@
       }
     },
     {
-      "id": "date_march",
+      "id": "date_march_value",
       "expressions":
       [
         {
-          "expression": "march",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "mars",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "mar"
+          "expression": "@{date_march}",
+          "aliases":
+          [
+            {
+              "alias": "date_march",
+              "id": "date_march",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -74,19 +66,19 @@
       }
     },
     {
-      "id": "date_april",
+      "id": "date_april_value",
       "expressions":
       [
         {
-          "expression": "april",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "avril",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "avr"
+          "expression": "@{date_april}",
+          "aliases":
+          [
+            {
+              "alias": "date_april",
+              "id": "date_april",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -95,16 +87,19 @@
       }
     },
     {
-      "id": "date_may",
+      "id": "date_may_value",
       "expressions":
       [
         {
-          "expression": "may",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "mai",
-          "locale": "fr-FR"
+          "expression": "@{date_may}",
+          "aliases":
+          [
+            {
+              "alias": "date_may",
+              "id": "date_may",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -113,19 +108,19 @@
       }
     },
     {
-      "id": "date_june",
+      "id": "date_june_value",
       "expressions":
       [
         {
-          "expression": "june",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "juin",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jun"
+          "expression": "@{date_june}",
+          "aliases":
+          [
+            {
+              "alias": "date_june",
+              "id": "date_june",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -134,19 +129,19 @@
       }
     },
     {
-      "id": "date_july",
+      "id": "date_july_value",
       "expressions":
       [
         {
-          "expression": "july",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "juillet",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jui"
+          "expression": "@{date_july}",
+          "aliases":
+          [
+            {
+              "alias": "date_july",
+              "id": "date_july",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -155,19 +150,19 @@
       }
     },
     {
-      "id": "date_august",
+      "id": "date_august_value",
       "expressions":
       [
         {
-          "expression": "august",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "août",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "jui"
+          "expression": "@{date_august}",
+          "aliases":
+          [
+            {
+              "alias": "date_august",
+              "id": "date_august",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -176,22 +171,19 @@
       }
     },
     {
-      "id": "date_september",
+      "id": "date_september_value",
       "expressions":
       [
         {
-          "expression": "september",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "septembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "sept"
-        },
-        {
-          "expression": "sep"
+          "expression": "@{date_september}",
+          "aliases":
+          [
+            {
+              "alias": "date_september",
+              "id": "date_september",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -200,19 +192,19 @@
       }
     },
     {
-      "id": "date_october",
+      "id": "date_october_value",
       "expressions":
       [
         {
-          "expression": "october",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "octobre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "oct"
+          "expression": "@{date_october}",
+          "aliases":
+          [
+            {
+              "alias": "date_october",
+              "id": "date_october",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -221,19 +213,19 @@
       }
     },
     {
-      "id": "date_november",
+      "id": "date_november_value",
       "expressions":
       [
         {
-          "expression": "november",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "novembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "nov"
+          "expression": "@{date_november}",
+          "aliases":
+          [
+            {
+              "alias": "date_november",
+              "id": "date_november",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -242,19 +234,19 @@
       }
     },
     {
-      "id": "date_december",
+      "id": "date_december_value",
       "expressions":
       [
         {
-          "expression": "december",
-          "locale": "en-GB"
-        },
-        {
-          "expression": "décembre",
-          "locale": "fr-FR"
-        },
-        {
-          "expression": "dec"
+          "expression": "@{date_december}",
+          "aliases":
+          [
+            {
+              "alias": "date_december",
+              "id": "date_december",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -267,122 +259,122 @@
       "expressions":
       [
         {
-          "expression": "@{date_january}",
+          "expression": "@{date_january_value}",
           "aliases":
           [
             {
-              "alias": "date_january",
-              "id": "date_january"
+              "alias": "date_january_value",
+              "id": "date_january_value"
             }
           ]
         },
         {
-          "expression": "@{date_february}",
+          "expression": "@{date_february_value}",
           "aliases":
           [
             {
-              "alias": "date_february",
-              "id": "date_february"
+              "alias": "date_february_value",
+              "id": "date_february_value"
             }
           ]
         },
         {
-          "expression": "@{date_march}",
+          "expression": "@{date_march_value}",
           "aliases":
           [
             {
-              "alias": "date_march",
-              "id": "date_march"
+              "alias": "date_march_value",
+              "id": "date_march_value"
             }
           ]
         },
         {
-          "expression": "@{date_april}",
+          "expression": "@{date_april_value}",
           "aliases":
           [
             {
-              "alias": "date_april",
-              "id": "date_april"
+              "alias": "date_april_value",
+              "id": "date_april_value"
             }
           ]
         },
         {
-          "expression": "@{date_may}",
+          "expression": "@{date_may_value}",
           "aliases":
           [
             {
-              "alias": "date_may",
-              "id": "date_may"
+              "alias": "date_may_value",
+              "id": "date_may_value"
             }
           ]
         },
         {
-          "expression": "@{date_june}",
+          "expression": "@{date_june_value}",
           "aliases":
           [
             {
-              "alias": "date_june",
-              "id": "date_june"
+              "alias": "date_june_value",
+              "id": "date_june_value"
             }
           ]
         },
         {
-          "expression": "@{date_july}",
+          "expression": "@{date_july_value}",
           "aliases":
           [
             {
-              "alias": "date_july",
-              "id": "date_july"
+              "alias": "date_july_value",
+              "id": "date_july_value"
             }
           ]
         },
         {
-          "expression": "@{date_august}",
+          "expression": "@{date_august_value}",
           "aliases":
           [
             {
-              "alias": "date_august",
-              "id": "date_august"
+              "alias": "date_august_value",
+              "id": "date_august_value"
             }
           ]
         },
         {
-          "expression": "@{date_september}",
+          "expression": "@{date_september_value}",
           "aliases":
           [
             {
-              "alias": "date_september",
-              "id": "date_september"
+              "alias": "date_september_value",
+              "id": "date_september_value"
             }
           ]
         },
         {
-          "expression": "@{date_october}",
+          "expression": "@{date_october_value}",
           "aliases":
           [
             {
-              "alias": "date_october",
-              "id": "date_october"
+              "alias": "date_october_value",
+              "id": "date_october_value"
             }
           ]
         },
         {
-          "expression": "@{date_november}",
+          "expression": "@{date_november_value}",
           "aliases":
           [
             {
-              "alias": "date_november",
-              "id": "date_november"
+              "alias": "date_november_value",
+              "id": "date_november_value"
             }
           ]
         },
         {
-          "expression": "@{date_december}",
+          "expression": "@{date_december_value}",
           "aliases":
           [
             {
-              "alias": "date_december",
-              "id": "date_december"
+              "alias": "date_december_value",
+              "id": "date_december_value"
             }
           ]
         }

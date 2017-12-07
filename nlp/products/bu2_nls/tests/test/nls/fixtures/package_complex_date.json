@@ -3,26 +3,19 @@
   "interpretations":
   [
     {
-      "id": "day_before_yesterday",
+      "id": "day_before_yesterday_value",
       "expressions":
       [
         {
-          "expression": "the day before yesterday",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "before yesterday",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "avant hier",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
+          "expression": "@{day_before_yesterday}",
+          "aliases":
+          [
+            {
+              "alias": "day_before_yesterday",
+              "id": "day_before_yesterday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -31,16 +24,19 @@
       }
     },
     {
-      "id": "yesterday",
+      "id": "yesterday_value",
       "expressions":
       [
         {
-          "expression": "yesterday",
-          "locale": "en"
-        },
-        {
-          "expression": "hier",
-          "locale": "fr"
+          "expression": "@{yesterday}",
+          "aliases":
+          [
+            {
+              "alias": "yesterday",
+              "id": "yesterday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -49,18 +45,19 @@
       }
     },
     {
-      "id": "today",
+      "id": "today_value",
       "expressions":
       [
         {
-          "expression": "today",
-          "locale": "en"
-        },
-        {
-          "expression": "aujourd'hui",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
+          "expression": "@{today}",
+          "aliases":
+          [
+            {
+              "alias": "today",
+              "id": "today",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -69,16 +66,19 @@
       }
     },
     {
-      "id": "tomorrow",
+      "id": "tomorrow_value",
       "expressions":
       [
         {
-          "expression": "tomorrow",
-          "locale": "en"
-        },
-        {
-          "expression": "demain",
-          "locale": "fr"
+          "expression": "@{tomorrow}",
+          "aliases":
+          [
+            {
+              "alias": "tomorrow",
+              "id": "tomorrow",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -87,26 +87,19 @@
       }
     },
     {
-      "id": "day_after_tomorrow",
+      "id": "day_after_tomorrow_value",
       "expressions":
       [
         {
-          "expression": "the day after tomorrow",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "after tomorrow",
-          "keep-order": true,
-          "glued": true,
-          "locale": "en"
-        },
-        {
-          "expression": "après demain",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
+          "expression": "@{day_after_tomorrow}",
+          "aliases":
+          [
+            {
+              "alias": "day_after_tomorrow",
+              "id": "day_after_tomorrow",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -115,16 +108,19 @@
       }
     },
     {
-      "id": "monday",
+      "id": "monday_value",
       "expressions":
       [
         {
-          "expression": "monday",
-          "locale": "en"
-        },
-        {
-          "expression": "lundi",
-          "locale": "fr"
+          "expression": "@{monday}",
+          "aliases":
+          [
+            {
+              "alias": "monday",
+              "id": "monday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -133,16 +129,19 @@
       }
     },
     {
-      "id": "tuesday",
+      "id": "tuesday_value",
       "expressions":
       [
         {
-          "expression": "tuesday",
-          "locale": "en"
-        },
-        {
-          "expression": "mardi",
-          "locale": "fr"
+          "expression": "@{tuesday}",
+          "aliases":
+          [
+            {
+              "alias": "tuesday",
+              "id": "tuesday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -151,16 +150,19 @@
       }
     },
     {
-      "id": "wednesday",
+      "id": "wednesday_value",
       "expressions":
       [
         {
-          "expression": "wednesday",
-          "locale": "en"
-        },
-        {
-          "expression": "mercredi",
-          "locale": "fr"
+          "expression": "@{wednesday}",
+          "aliases":
+          [
+            {
+              "alias": "wednesday",
+              "id": "wednesday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -169,16 +171,19 @@
       }
     },
     {
-      "id": "thursday",
+      "id": "thursday_value",
       "expressions":
       [
         {
-          "expression": "thursday",
-          "locale": "en"
-        },
-        {
-          "expression": "jeudi",
-          "locale": "fr"
+          "expression": "@{thursday}",
+          "aliases":
+          [
+            {
+              "alias": "thursday",
+              "id": "thursday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -187,16 +192,19 @@
       }
     },
     {
-      "id": "friday",
+      "id": "friday_value",
       "expressions":
       [
         {
-          "expression": "friday",
-          "locale": "en"
-        },
-        {
-          "expression": "vendredi",
-          "locale": "fr"
+          "expression": "@{friday}",
+          "aliases":
+          [
+            {
+              "alias": "friday",
+              "id": "friday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -205,16 +213,19 @@
       }
     },
     {
-      "id": "saturday",
+      "id": "saturday_value",
       "expressions":
       [
         {
-          "expression": "saturday",
-          "locale": "en"
-        },
-        {
-          "expression": "samedi",
-          "locale": "fr"
+          "expression": "@{saturday}",
+          "aliases":
+          [
+            {
+              "alias": "saturday",
+              "id": "saturday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -223,16 +234,19 @@
       }
     },
     {
-      "id": "sunday",
+      "id": "sunday_value",
       "expressions":
       [
         {
-          "expression": "sunday",
-          "locale": "en"
-        },
-        {
-          "expression": "dimanche",
-          "locale": "fr"
+          "expression": "@{sunday}",
+          "aliases":
+          [
+            {
+              "alias": "sunday",
+              "id": "sunday",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
@@ -245,72 +259,72 @@
       "expressions":
       [
         {
-          "expression": "@{monday}",
+          "expression": "@{monday_value}",
           "aliases":
           [
             {
-              "alias": "monday",
-              "id": "monday"
+              "alias": "monday_value",
+              "id": "monday_value"
             }
           ]
         },
         {
-          "expression": "@{tuesday}",
+          "expression": "@{tuesday_value}",
           "aliases":
           [
             {
-              "alias": "tuesday",
-              "id": "tuesday"
+              "alias": "tuesday_value",
+              "id": "tuesday_value"
             }
           ]
         },
         {
-          "expression": "@{wednesday}",
+          "expression": "@{wednesday_value}",
           "aliases":
           [
             {
-              "alias": "wednesday",
-              "id": "wednesday"
+              "alias": "wednesday_value",
+              "id": "wednesday_value"
             }
           ]
         },
         {
-          "expression": "@{thursday}",
+          "expression": "@{thursday_value}",
           "aliases":
           [
             {
-              "alias": "thursday",
-              "id": "thursday"
+              "alias": "thursday_value",
+              "id": "thursday_value"
             }
           ]
         },
         {
-          "expression": "@{friday}",
+          "expression": "@{friday_value}",
           "aliases":
           [
             {
-              "alias": "friday",
-              "id": "friday"
+              "alias": "friday_value",
+              "id": "friday_value"
             }
           ]
         },
         {
-          "expression": "@{saturday}",
+          "expression": "@{saturday_value}",
           "aliases":
           [
             {
-              "alias": "saturday",
-              "id": "saturday"
+              "alias": "saturday_value",
+              "id": "saturday_value"
             }
           ]
         },
         {
-          "expression": "@{sunday}",
+          "expression": "@{sunday_value}",
           "aliases":
           [
             {
-              "alias": "sunday",
-              "id": "sunday"
+              "alias": "sunday_value",
+              "id": "sunday_value"
             }
           ]
         }
