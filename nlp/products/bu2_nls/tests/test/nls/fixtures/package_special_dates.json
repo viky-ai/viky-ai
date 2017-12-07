@@ -3,63 +3,536 @@
   "interpretations":
   [
     {
-      "id": "christmas",
+      "id": "christmas_value",
       "expressions":
       [
         {
-          "expression": "Noël",
-          "locale": "fr"
-        },
-        {
-          "expression": "Christmas",
-          "locale": "en"
-        },
-        {
-          "expression": "Xmas",
-          "locale": "en"
+          "expression": "@{christmas}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas",
+              "package": "package_date_vocabulary"
+            }
+          ]
         }
       ],
       "solution":
       {
-        "date": "`moment(moment().year()+'-12-25', 'YYYY-MM-DD')`"
+        "date": "`var xmas=moment('12-25', 'MM-DD');if(moment().isBefore(xmas)){xmas}else{xmas.add(1,'years')}`"
       }
     },
     {
-      "id": "valentine",
+      "id": "valentine_value",
       "expressions":
       [
         {
-          "expression": "Saint Valentin",
+          "expression": "@{valentine}",
+          "aliases":
+          [
+            {
+              "alias": "valentine",
+              "id": "valentine",
+              "package": "package_date_vocabulary"
+            }
+          ]
+        }      ],
+      "solution":
+      {
+        "date": "`var valentine=moment('02-14','MM-DD'); if(moment().isBefore(valentine)){valentine}else{valentine.add(1,'years')}`"
+      }
+    },
+    {
+      "id": "christmas_holidays",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas} @{holidays}",
           "keep-order": true,
           "glued": true,
-          "locale": "fr"
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            }
+          ]
         },
         {
-          "expression": "St Valentin",
+          "expression": "@{preposition_the} @{christmas} @{holidays}",
           "keep-order": true,
           "glued": true,
-          "locale": "fr"
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            }
+          ]
         },
         {
-          "expression": "Valentine",
-          "locale": "en"
-        },
-        {
-          "expression": "Valentine's Day",
-          "locale": "en"
-        },
-        {
-          "expression": "Valentine Day",
-          "locale": "en"
-        },
-        {
-          "expression": "St Valentine's Day",
-          "locale": "en"
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            }
+          ]
         }
       ],
       "solution":
       {
-        "date": "`moment(moment().year()+'-02-14', 'YYYY-MM-DD')`"
+        "date_range": "`moment.range(moment(christmas.date).startOf('week'), moment(christmas.date).endOf('week'))`"
+      }
+    },
+    {
+      "id": "christmas_holidays_year",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas} @{holidays} @{number}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas} @{holidays} @{preposition_in} @{number}",
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{year} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{year} @{number}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(christmas.date).year(number.number).startOf('week'), moment(christmas.date).year(number.number).endOf('week'))`"
+      }
+    },
+    {
+      "id": "christmas_holidays_in_number_year",
+      "expressions":
+      [
+
+        {
+          "expression": "@{christmas} @{holidays} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_date_vocabulary"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_date_vocabulary"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number} @{year}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "holidays",
+              "id": "holidays",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "preposition_of",
+              "id": "preposition_of",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "christmas",
+              "id": "christmas_value"
+            },
+            {
+              "alias": "preposition_in",
+              "id": "preposition_in",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "number",
+              "id": "number",
+              "package": "package_number"
+            },
+            {
+              "alias": "year",
+              "id": "year",
+              "package": "package_date_vocabulary"
+            }
+          ]
+        }
+      ],
+      "solution":
+      {
+        "date_range": "`moment.range(moment(christmas.date).add(number.number,'years').startOf('week'), moment(christmas.date).add(number.number,'years').endOf('week'))`"
       }
     },
     {
@@ -72,7 +545,7 @@
           [
             {
               "alias": "christmas",
-              "id": "christmas"
+              "id": "christmas_value"
             }
           ]
         },
@@ -82,7 +555,43 @@
           [
             {
               "alias": "valentine",
-              "id": "valentine"
+              "id": "valentine_value"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "special_range",
+      "expressions":
+      [
+        {
+          "expression": "@{christmas_holidays}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays",
+              "id": "christmas_holidays"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas_holidays_year}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays_year",
+              "id": "christmas_holidays_year"
+            }
+          ]
+        },
+        {
+          "expression": "@{christmas_holidays_in_number_year}",
+          "aliases":
+          [
+            {
+              "alias": "christmas_holidays_in_number_year",
+              "id": "christmas_holidays_in_number_year"
             }
           ]
         }

@@ -1,0 +1,389 @@
+{
+  "id": "package_date_grammar",
+  "interpretations":
+  [
+    {
+      "id": "and",
+      "expressions":
+      [
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_the",
+      "expressions":
+      [
+        {
+          "expression": "the",
+          "locale": "en"
+        },
+        {
+          "expression": "le",
+          "locale": "fr"
+        },
+        {
+          "expression": "la",
+          "locale": "fr"
+        },
+        {
+          "expression": "les",
+          "locale": "fr"
+        },
+        {
+          "expression": "l'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_this",
+      "expressions":
+      [
+        {
+          "expression": "this",
+          "locale": "en"
+        },
+        {
+          "expression": "these",
+          "locale": "en"
+        },
+        {
+          "expression": "ce",
+          "locale": "fr"
+        },
+        {
+          "expression": "cette",
+          "locale": "fr"
+        },
+        {
+          "expression": "ces",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_of",
+      "expressions":
+      [
+        {
+          "expression": "of",
+          "locale": "en"
+        },
+        {
+          "expression": "of the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        },
+        {
+          "expression": "du",
+          "locale": "fr"
+        },
+        {
+          "expression": "de la",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "des",
+          "locale": "fr"
+        },
+        {
+          "expression": "d'",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_in",
+      "expressions":
+      [
+        {
+          "expression": "in",
+          "locale": "en"
+        },
+        {
+          "expression": "dans",
+          "locale": "fr"
+        },
+        {
+          "expression": "en",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_inthe",
+      "expressions":
+      [
+        {
+          "expression": "in the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "au",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "il y a",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "postposition_ago",
+      "expressions":
+      [
+        {
+          "expression": "ago",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "preposition_for",
+      "expressions":
+      [
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "at",
+          "locale": "en"
+        },
+        {
+          "expression": "at the",
+          "locale": "en"
+        },
+        {
+          "expression": "for the",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour le",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "pour les",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "pour la",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date",
+      "expressions":
+      [
+        {
+          "expression": "on",
+          "locale": "en"
+        },
+        {
+          "expression": "the",
+          "locale": "en"
+        },
+        {
+          "expression": "for",
+          "locale": "en"
+        },
+        {
+          "expression": "le",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour le",
+          "locale": "fr"
+        },
+        {
+          "expression": "à la date du",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date_begin",
+      "expressions":
+      [
+        {
+          "expression": "from",
+          "locale": "en"
+        },
+        {
+          "expression": "starting from",
+          "locale": "en"
+        },
+        {
+          "expression": "starting on",
+          "locale": "en"
+        },
+        {
+          "expression": "du",
+          "locale": "fr"
+        },
+        {
+          "expression": "de",
+          "locale": "fr"
+        },
+        {
+          "expression": "depuis le",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_date_end",
+      "expressions":
+      [
+        {
+          "expression": "to",
+          "locale": "en"
+        },
+        {
+          "expression": "till",
+          "locale": "en"
+        },
+        {
+          "expression": "till to",
+          "locale": "en"
+        },
+        {
+          "expression": "down to",
+          "locale": "en"
+        },
+        {
+          "expression": "au",
+          "locale": "fr"
+        },
+        {
+          "expression": "jusqu'à",
+          "locale": "fr"
+        },
+        {
+          "expression": "à",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "coma",
+      "expressions":
+      [
+        {
+          "expression": ",",
+          "locale": "en-GB"
+        }
+      ]
+    },
+    {
+      "id": "slash",
+      "expressions":
+      [
+        {
+          "expression": "/"
+        }
+      ]
+    },
+    {
+      "id": "preposition_next",
+      "expressions":
+      [
+        {
+          "expression": "next",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_next",
+      "expressions":
+      [
+        {
+          "expression": "prochain",
+          "locale": "fr"
+        },
+        {
+          "expression": "prochaine",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "preposition_last",
+      "expressions":
+      [
+        {
+          "expression": "last",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "postposition_last",
+      "expressions":
+      [
+        {
+          "expression": "dernier",
+          "locale": "fr"
+        },
+        {
+          "expression": "derniere",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedent",
+          "locale": "fr"
+        },
+        {
+          "expression": "precedente",
+          "locale": "fr"
+        }
+      ]
+    }
+  ]
+}

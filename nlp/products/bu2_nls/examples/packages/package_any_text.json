@@ -1,0 +1,45 @@
+{
+  "id": "any_text",
+  "interpretations": [
+    {
+      "id": "object",
+      "expressions": [
+        {
+          "expression": "drink",
+          "locale": "fr-FR",
+          "solution": "`\"drink\"`"
+        },
+        {
+          "expression": "table",
+          "locale": "fr-FR",
+          "solution": "`\"table\"`"
+        }
+      ]
+    },
+    {
+      "id": "want-object",
+      "expressions": [
+        {
+          "expression": "want @{object}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "object",
+              "id": "object"
+            }
+          ]
+        },
+        {
+          "expression": "want @{object}",
+          "keep-order": true,
+          "aliases": [
+            {
+              "alias": "object",
+              "type": "any"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

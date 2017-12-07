@@ -70,6 +70,8 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
   request_input_part->Iinput_part = Iinput_part;
   request_input_part->Ioriginal_request_input_part = Irequest_input_part;
   request_input_part->level = ctrl_nlp_th->level;
+  request_input_part->safe_request_position_start = (-1);
+  request_input_part->safe_request_positions_nb = 0;
 
   return request_input_part;
 }

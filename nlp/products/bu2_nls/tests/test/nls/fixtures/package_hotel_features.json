@@ -77,14 +77,9 @@
           ]
         },
         {
-          "expression": "@{preposition_date_for} @{date}",
+          "expression": "@{date}",
           "aliases":
           [
-            {
-              "alias": "preposition_date_for",
-              "id": "preposition_date_for",
-              "package": "grammar"
-            },
             {
               "alias": "date",
               "id": "date",

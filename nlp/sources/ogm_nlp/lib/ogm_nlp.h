@@ -40,6 +40,16 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+/** Nlp configuration set by env variables*/
+struct og_nlp_env
+{
+  int NlpJSDukGcPeriod;
+};
+
+/** Nlp env defautl value */
+#define DOgNlpJSDukGcPeriod 100
+
+
 struct ltra_dictionaries
 {
   void *ha_base;
@@ -336,6 +346,9 @@ struct request_input_part
   int request_positions_nb;
   int request_position_distance;
 
+  int safe_request_position_start;
+  int safe_request_positions_nb;
+
   int Ioriginal_request_input_part;
 
   og_bool interpret_word_as_digit;
@@ -365,6 +378,7 @@ struct request_any
 
   /** used to optimize the attachement any <-> request_expression */
   GQueue queue_request_expression[1];
+  og_bool is_attached;
   int consumed;
 };
 
@@ -391,6 +405,9 @@ struct request_expression
   int request_position_start;
   int request_positions_nb;
 
+  int safe_request_position_start;
+  int safe_request_positions_nb;
+
   // overlapping rate of the tree of the request_expression
   int overlap_mark;
 
@@ -400,6 +417,8 @@ struct request_expression
   /** all possible any for request expression */
   int request_any_start;
   int request_anys_nb;
+
+  int Isuper_request_expression;
 
   int Irequest_any;
   struct request_word *auto_complete_request_word;
@@ -411,7 +430,10 @@ struct request_expression
   int deleted;
 
   og_bool keep_as_result;
-  og_bool contains_any;
+  int nb_anys;
+  int nb_anys_attached;
+  /** 0: invalidated, 1: unknown, 2: validated **/
+  int any_validate_status;
 
   struct request_score score[1];
   double total_score;
@@ -476,6 +498,7 @@ struct og_ctrl_nlp_js
 
   /** For better error message list current defined variable */
   og_heap variables;
+  size_t reset_counter;
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
@@ -595,6 +618,9 @@ struct og_ctrl_nlp
   /** HashTable key: string (package id) , value: package (package_t) */
   GHashTable *packages_hash;
   ogsysi_rwlock rw_lock_packages_hash;
+
+  /** Environment conf */
+  struct og_nlp_env env[1];
 
   /** Parsing configuration */
   struct og_nlp_parse_conf parse_conf[1];
@@ -719,6 +745,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 /* nlprexpression.c */
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
     struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
+og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
@@ -756,7 +783,10 @@ og_status NlpInterpretTreeAttachAny(og_nlp_th ctrl_nlp_th, struct request_expres
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression);
+og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpGetNbAnysAttached(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+int NlpRequestExpressionAnyLog(og_nlp_th ctrl_nlp_th, struct request_any *request_any);
 og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);

@@ -29,32 +29,11 @@
       ]
     },
     {
-      "id": "go_to",
+      "id": "want_go",
       "expressions":
       [
         {
-          "expression": "@{simple_go} @{preposition_go_to}",
-          "aliases":
-          [
-            {
-              "alias": "simple_go",
-              "id": "simple_go"
-            },
-            {
-              "alias": "preposition_go_to",
-              "id": "preposition_go_to",
-              "package": "grammar"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "want_go_to",
-      "expressions":
-      [
-        {
-          "expression": "@{want} @{simple_go} @{preposition_go_to}",
+          "expression": "@{want} @{simple_go}",
           "aliases":
           [
             {
@@ -65,11 +44,6 @@
             {
               "alias": "simple_go",
               "id": "simple_go"
-            },
-            {
-              "alias": "preposition_go_to",
-              "id": "preposition_go_to",
-              "package": "grammar"
             }
           ]
         }
@@ -80,22 +54,22 @@
       "expressions":
       [
         {
-          "expression": "@{go_to}",
+          "expression": "@{simple_go}",
           "aliases":
           [
             {
-              "alias": "go_to",
-              "id": "go_to"
+              "alias": "simple_go",
+              "id": "simple_go"
             }
           ]
         },
         {
-          "expression": "@{want_go_to}",
+          "expression": "@{want_go}",
           "aliases":
           [
             {
-              "alias": "want_go_to",
-              "id": "want_go_to"
+              "alias": "want_go",
+              "id": "want_go"
             }
           ]
         }

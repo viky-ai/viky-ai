@@ -1,0 +1,844 @@
+{
+  "id": "package_date_vocabulary",
+  "interpretations":
+  [
+    {
+      "id": "weekend",
+      "expressions":
+      [
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "weekend",
+          "locale": "en"
+        },
+        {
+          "expression": "WE",
+          "locale": "en"
+        },
+        {
+          "expression": "week end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "week-end",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "weekend",
+          "locale": "fr"
+        },
+        {
+          "expression": "WE",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "day",
+      "expressions":
+      [
+        {
+          "expression": "day",
+          "locale": "en"
+        },
+        {
+          "expression": "jour",
+          "locale": "fr"
+        },
+        {
+          "expression": "days",
+          "locale": "en"
+        },
+        {
+          "expression": "jours",
+          "locale": "fr"
+        },
+        {
+          "expression": "journee",
+          "locale": "fr"
+        },
+        {
+          "expression": "journees",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "week",
+      "expressions":
+      [
+        {
+          "expression": "week",
+          "locale": "en"
+        },
+        {
+          "expression": "semaine",
+          "locale": "fr"
+        },
+        {
+          "expression": "weeks",
+          "locale": "en"
+        },
+        {
+          "expression": "semaines",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "month",
+      "expressions":
+      [
+        {
+          "expression": "month",
+          "locale": "en"
+        },
+        {
+          "expression": "months",
+          "locale": "en"
+        },
+        {
+          "expression": "mois",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "year",
+      "expressions":
+      [
+        {
+          "expression": "year",
+          "locale": "en"
+        },
+        {
+          "expression": "annee",
+          "locale": "fr"
+        },
+        {
+          "expression": "an",
+          "locale": "fr"
+        },
+        {
+          "expression": "years",
+          "locale": "en"
+        },
+        {
+          "expression": "annees",
+          "locale": "fr"
+        },
+        {
+          "expression": "ans",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "holidays",
+      "expressions":
+      [
+        {
+          "expression": "vacances",
+          "locale": "fr"
+        },
+        {
+          "expression": "holidays",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "day_before_yesterday",
+      "expressions":
+      [
+        {
+          "expression": "the day before yesterday",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "before yesterday",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "avant hier",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "yesterday",
+      "expressions":
+      [
+        {
+          "expression": "yesterday",
+          "locale": "en"
+        },
+        {
+          "expression": "hier",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "today",
+      "expressions":
+      [
+        {
+          "expression": "today",
+          "locale": "en"
+        },
+        {
+          "expression": "aujourd'hui",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "tomorrow",
+      "expressions":
+      [
+        {
+          "expression": "tomorrow",
+          "locale": "en"
+        },
+        {
+          "expression": "demain",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "day_after_tomorrow",
+      "expressions":
+      [
+        {
+          "expression": "the day after tomorrow",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "after tomorrow",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "après demain",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "monday",
+      "expressions":
+      [
+        {
+          "expression": "monday",
+          "locale": "en"
+        },
+        {
+          "expression": "lundi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "tuesday",
+      "expressions":
+      [
+        {
+          "expression": "tuesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mardi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "wednesday",
+      "expressions":
+      [
+        {
+          "expression": "wednesday",
+          "locale": "en"
+        },
+        {
+          "expression": "mercredi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "thursday",
+      "expressions":
+      [
+        {
+          "expression": "thursday",
+          "locale": "en"
+        },
+        {
+          "expression": "jeudi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "friday",
+      "expressions":
+      [
+        {
+          "expression": "friday",
+          "locale": "en"
+        },
+        {
+          "expression": "vendredi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "saturday",
+      "expressions":
+      [
+        {
+          "expression": "saturday",
+          "locale": "en"
+        },
+        {
+          "expression": "samedi",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "sunday",
+      "expressions":
+      [
+        {
+          "expression": "sunday",
+          "locale": "en"
+        },
+        {
+          "expression": "dimanche",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "date_january",
+      "expressions":
+      [
+        {
+          "expression": "january",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "janvier",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "janv",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jan"
+        }
+      ]
+    },
+    {
+      "id": "date_february",
+      "expressions":
+      [
+        {
+          "expression": "february",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "février",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fevr",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fev"
+        }
+      ]
+    },
+    {
+      "id": "date_march",
+      "expressions":
+      [
+        {
+          "expression": "march",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mars",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "mar"
+        }
+      ]
+    },
+    {
+      "id": "date_april",
+      "expressions":
+      [
+        {
+          "expression": "april",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "avril",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "avr"
+        }
+      ]
+    },
+    {
+      "id": "date_may",
+      "expressions":
+      [
+        {
+          "expression": "may",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mai",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "date_june",
+      "expressions":
+      [
+        {
+          "expression": "june",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juin",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jun"
+        }
+      ]
+    },
+    {
+      "id": "date_july",
+      "expressions":
+      [
+        {
+          "expression": "july",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juillet",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ]
+    },
+    {
+      "id": "date_august",
+      "expressions":
+      [
+        {
+          "expression": "august",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "août",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ]
+    },
+    {
+      "id": "date_september",
+      "expressions":
+      [
+        {
+          "expression": "september",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "septembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "sept"
+        },
+        {
+          "expression": "sep"
+        }
+      ]
+    },
+    {
+      "id": "date_october",
+      "expressions":
+      [
+        {
+          "expression": "october",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "octobre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "oct"
+        }
+      ]
+    },
+    {
+      "id": "date_november",
+      "expressions":
+      [
+        {
+          "expression": "november",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "novembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "nov"
+        }
+      ]
+    },
+    {
+      "id": "date_december",
+      "expressions":
+      [
+        {
+          "expression": "december",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "décembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "dec"
+        }
+      ]
+    },
+    {
+      "id": "date_january",
+      "expressions":
+      [
+        {
+          "expression": "january",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "janvier",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "janv",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jan"
+        }
+      ]
+    },
+    {
+      "id": "date_february",
+      "expressions":
+      [
+        {
+          "expression": "february",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "février",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fevr",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "fev"
+        }
+      ]
+    },
+    {
+      "id": "date_march",
+      "expressions":
+      [
+        {
+          "expression": "march",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mars",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "mar"
+        }
+      ]
+    },
+    {
+      "id": "date_april",
+      "expressions":
+      [
+        {
+          "expression": "april",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "avril",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "avr"
+        }
+      ]
+    },
+    {
+      "id": "date_may",
+      "expressions":
+      [
+        {
+          "expression": "may",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "mai",
+          "locale": "fr-FR"
+        }
+      ]
+    },
+    {
+      "id": "date_june",
+      "expressions":
+      [
+        {
+          "expression": "june",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juin",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jun"
+        }
+      ]
+    },
+    {
+      "id": "date_july",
+      "expressions":
+      [
+        {
+          "expression": "july",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "juillet",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ]
+    },
+    {
+      "id": "date_august",
+      "expressions":
+      [
+        {
+          "expression": "august",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "août",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "jui"
+        }
+      ]
+    },
+    {
+      "id": "date_september",
+      "expressions":
+      [
+        {
+          "expression": "september",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "septembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "sept"
+        },
+        {
+          "expression": "sep"
+        }
+      ]
+    },
+    {
+      "id": "date_october",
+      "expressions":
+      [
+        {
+          "expression": "october",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "octobre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "oct"
+        }
+      ]
+    },
+    {
+      "id": "date_november",
+      "expressions":
+      [
+        {
+          "expression": "november",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "novembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "nov"
+        }
+      ]
+    },
+    {
+      "id": "date_december",
+      "expressions":
+      [
+        {
+          "expression": "december",
+          "locale": "en-GB"
+        },
+        {
+          "expression": "décembre",
+          "locale": "fr-FR"
+        },
+        {
+          "expression": "dec"
+        }
+      ]
+    },
+    {
+      "id": "christmas",
+      "expressions":
+      [
+        {
+          "expression": "Noël",
+          "locale": "fr"
+        },
+        {
+          "expression": "Christmas",
+          "locale": "en"
+        },
+        {
+          "expression": "Xmas",
+          "locale": "en"
+        }
+      ]
+    },
+    {
+      "id": "valentine",
+      "expressions":
+      [
+        {
+          "expression": "Saint Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "St Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "la Saint Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "la St Valentin",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "Valentine",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine's Day",
+          "locale": "en"
+        },
+        {
+          "expression": "Valentine Day",
+          "locale": "en"
+        },
+        {
+          "expression": "St Valentine's Day",
+          "locale": "en"
+        }
+      ]
+    }
+  ]
+}
