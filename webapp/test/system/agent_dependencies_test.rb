@@ -9,8 +9,8 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
     assert page.has_text?(' Agent dependencies (0) - Dependents (0) ')
 
+    # Add admin/terminator to admin/weather
     click_link "Add new dependency"
-
     within(".modal") do
       assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
@@ -19,6 +19,18 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert page.has_text?('T-800 admin/terminator')
     assert page.has_no_text?('Add new dependency')
     assert page.has_text?(' Agent dependencies (1) - Dependents (0) ')
+
+    # Try to add admin/weather to admin/terminator and detect cycle
+    click_link "T-800 admin/terminator"
+    assert page.has_text?('Agents / T-800 (admin/terminator)')
+    click_link "Add new dependency"
+
+    within(".modal") do
+      assert_equal ["My awesome weather bot admin/weather"], all('a').collect(&:text)
+      click_link "My awesome weather bot admin/weather"
+    end
+
+    assert page.has_text?('agent addition would cause a cycle in dependency graph')
   end
 
 

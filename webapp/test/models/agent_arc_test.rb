@@ -119,7 +119,7 @@ class AgentArcTest < ActiveSupport::TestCase
     arc = AgentArc.new(source: agent_b, target: agent_c)
 
     assert arc.invalid?
-    expected = ['Cycle detected']
+    expected = ['Cycle detected, agent addition would cause a cycle in dependency graph']
     assert_equal expected, arc.errors.full_messages
   end
 

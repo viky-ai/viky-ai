@@ -32,7 +32,7 @@ en:
       delete:
         collaborators_presence: You must remove all collaborators before delete an agent
     agent_arc:
-      cycle_detected: detected
+      cycle_detected: detected, agent addition would cause a cycle in dependency graph
     intents:
       unknown_locale: "unknown '%{current_locale}'"
     interpretation:
