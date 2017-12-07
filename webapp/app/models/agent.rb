@@ -108,6 +108,23 @@ class Agent < ApplicationRecord
     arcs_list
   end
 
+  def to_predecessors_graph
+    graph = RGL::DirectedAdjacencyGraph.new
+    graph.add_vertex(self)
+    list_in_arcs.each do |(src, target)|
+      graph.add_edge(target, src)
+    end
+    graph
+  end
+
+  def list_in_arcs
+    arcs_list = [] + predecessors.reload.map { |predecessor| [predecessor, self] }
+    predecessors.each do |predecessor|
+      arcs_list += predecessor.list_in_arcs
+    end
+    arcs_list
+  end
+
 
   private
 
