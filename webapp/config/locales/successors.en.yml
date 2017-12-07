@@ -5,5 +5,34 @@ en:
         list_title: Agent dependencies
         dependents: Dependents
         new: Add new dependency
+        delete: Delete
       new:
         title: Choose agent to add as dependency
+      confirm_destroy:
+        info_html: <p>You're about to delete agent "%{successor}" from agent "%{agent}" dependencies.</p>
+        warning_html:
+          zero: >
+            <p>
+              No reference to agent "%{successor}" interpretations is present
+              in agent "%{agent}" interpretations expressions.
+            </p>
+          one: >
+            <p>
+              One reference to agent "%{successor}" interpretations is present
+              in agent "%{agent}" interpretations expressions.
+            </p>
+            <p>
+              <span class="badge badge--warning">Warning</span>
+              This reference will be destroyed
+            </p>
+          other: >
+            <p>
+              %{count} references to agent "%{successor}" interpretations is present
+              in agent "%{agent}" interpretations expressions.
+            </p>
+            <p>
+              <span class="badge badge--warning">Warning</span>
+              These references will be destroyed
+            </p>
+      destroy:
+        error_message: "Dependency removal failed"

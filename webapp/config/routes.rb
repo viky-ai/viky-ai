@@ -33,7 +33,9 @@ Rails.application.routes.draw do
           get :confirm_destroy
         end
 
-        resources :successors, only: [:new, :create]
+        resources :successors, only: [:new, :create, :destroy] do
+          get :confirm_destroy
+        end
 
         resources :intents, except: [:index] do
           get :select_new_locale

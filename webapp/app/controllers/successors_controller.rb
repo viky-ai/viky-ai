@@ -18,6 +18,25 @@ class SuccessorsController < ApplicationController
     end
   end
 
+  def confirm_destroy
+    @successor = Agent.friendly.find(params[:successor_id])
+    render partial: 'confirm_destroy', locals: {
+      owner: @owner,
+      agent: @agent,
+      successor: @successor
+    }
+  end
+
+  def destroy
+    @successor = Agent.friendly.find(params[:id])
+    arc = AgentArc.where(source: @agent.id, target: @successor).first
+    if arc.destroy
+      redirect_to user_agent_path(@agent.owner, @agent.agentname)
+    else
+      redirect_to user_agent_path(@agent.owner, @agent.agentname), alert: t('views.successors.destroy.error_message')
+    end
+  end
+
 
   private
 

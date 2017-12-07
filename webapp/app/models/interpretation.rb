@@ -13,7 +13,6 @@ class Interpretation < ApplicationRecord
   before_save :cleanup
   before_create :set_position
 
-
   after_save do
     Nlp::Package.new(intent.agent).push
   end
@@ -21,7 +20,6 @@ class Interpretation < ApplicationRecord
   after_destroy do
     Nlp::Package.new(intent.agent).push
   end
-
 
   def expression_with_aliases
     return expression if interpretation_aliases.count == 0
@@ -39,6 +37,7 @@ class Interpretation < ApplicationRecord
     end
     result.join('')
   end
+
 
   private
 

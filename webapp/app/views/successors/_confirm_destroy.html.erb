@@ -2,16 +2,31 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.intents.confirm_destroy.title') %>
+      <%= t('views.agents.confirm_destroy.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
     </h5>
     <div class="modal__main__content">
-      <p>
-        <%= t('views.intents.confirm_destroy.content_html', name: intent.intentname) %>
-      </p>
-      <%= form_for(intent, url: user_agent_intent_path(intent.agent.owner, intent.agent, intent), method: :delete, html: { data: { validation: :delete }}, remote: true) do |delete_form| %>
+
+      <% count = AgentArc.where(
+            { source_id: agent.id, target_id: successor.id}
+          ).first.target_related_interpretation_aliases.count %>
+
+      <%= t('views.successors.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>
+      <% if count == 0 %>
+        <%= t('views.successors.confirm_destroy.warning_html',
+              successor: successor.name, agent: agent.name, count: count ) %>
+      <% else %>
+        <%= t('views.successors.confirm_destroy.warning_html',
+              successor: successor.name, agent: agent.name, count: count ) %>
+      <% end %>
+
+      <%= form_for(
+            agent,
+            url: user_agent_successor_path(owner, agent, successor),
+            method: :delete,
+            html: { data: { validation: :delete }}) do |delete_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('confirm_destroy.label') %></label>
@@ -24,11 +39,12 @@
             </div>
           </div>
         </div>
-        <%= delete_form.button t('views.intents.confirm_destroy.btn'),
+        <%= delete_form.button t('views.agents.confirm_destroy.btn'),
               class: "btn btn--destructive",
               data: { 'disable-btn-with': "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe } %>
         <a href="#" class="btn btn--flat" data-action='close-modal'><%= t('cancel') %></a>
       <% end %>
+
     </div>
   </div>
 </div>
