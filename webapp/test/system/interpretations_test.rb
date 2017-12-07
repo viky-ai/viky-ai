@@ -15,7 +15,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -34,7 +34,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -63,7 +63,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -108,7 +108,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -127,7 +127,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text

@@ -1,0 +1,9 @@
+en:
+  views:
+    successors:
+      index:
+        list_title: Agent dependencies
+        dependents: Dependents
+        new: Add new dependency
+      new:
+        title: Choose agent to add as dependency

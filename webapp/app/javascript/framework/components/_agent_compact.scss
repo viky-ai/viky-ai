@@ -116,3 +116,11 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
+.agent-compact-list{
+  background-color: #f5f5f5;
+  border: 1px solid #f5f5f5;
+  li{
+    margin: 1em;
+  }
+}

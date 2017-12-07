@@ -50,6 +50,14 @@ class Agent < ApplicationRecord
     ]
   end
 
+  def available_successors(current_user)
+    Agent.joins(:memberships).
+      where("user_id = ?", current_user.id).
+      where.not(id: self.successors.select(:id).collect(&:id)).
+      where.not(id: self.id).
+      order(name: :asc)
+  end
+
   def transfer_ownership_to(new_owner_id)
     transfer = AgentTransfer.new(self, new_owner_id)
     transfer.proceed

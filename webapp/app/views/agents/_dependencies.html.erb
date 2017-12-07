@@ -1,0 +1,41 @@
+<h4 class="dependencies-title">
+  <%= t('views.successors.index.list_title') %> <em>(<%= @agent.successors.count %>)</em>
+  <small>- <%= t('views.successors.index.dependents') %> <em>(<%= @agent.predecessors.count %>)</em></small>
+</h4>
+
+<div class="agents-compact-grid">
+  <% @agent.successors.order(name: :asc).each do |agent| %>
+    <% if agent.image.nil? %>
+      <% css_class = "background-color-gradient__#{agent.color}" %>
+    <% else %>
+      <% css_class = "agent-compact__id__visual--image" %>
+      <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
+    <% end %>
+
+    <div class="agent-compact agent-compact--without-actions">
+      <% if current_user.can?(:show, agent) %>
+        <a href="<%= user_agent_path(agent.owner, agent.agentname) %>" class="agent-compact__id">
+      <% else %>
+        <div class="agent-compact__id">
+      <% end %>
+          <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>"></div>
+          <div class="agent-compact__id__data">
+            <h5><%= agent.name %></h5>
+            <h6><%= agent.slug %></h6>
+          </div>
+      <% if current_user.can?(:show, agent) %>
+        </a>
+      <% else %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @agent.available_successors(current_user).count > 0 %>
+    <div class="agent-compact agent-compact--new">
+      <%= link_to "<span class='icon'>#{icon_add}</span> #{t('views.successors.index.new')}".html_safe,
+            new_user_agent_successor_path(@agent.owner, @agent.agentname),
+            data: { action: 'open-remote-modal' } %>
+    </div>
+  <% end %>
+</div>

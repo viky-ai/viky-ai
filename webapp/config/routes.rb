@@ -27,12 +27,13 @@ Rails.application.routes.draw do
           get :generate_token
           get :interpret, to: 'console#interpret'
         end
-
         get :search_users_to_share_agent, controller: 'memberships'
 
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy
         end
+
+        resources :successors, only: [:new, :create]
 
         resources :intents, except: [:index] do
           get :select_new_locale
