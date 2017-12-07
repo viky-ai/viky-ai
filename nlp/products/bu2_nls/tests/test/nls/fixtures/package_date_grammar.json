@@ -171,6 +171,14 @@
           "locale": "en"
         },
         {
+          "expression": "at",
+          "locale": "en"
+        },
+        {
+          "expression": "at the",
+          "locale": "en"
+        },
+        {
           "expression": "for the",
           "keep-order": true,
           "glued": true,

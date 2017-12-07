@@ -877,6 +877,33 @@
           }
         },
         {
+          "expression": "@{preposition_the} @{special_date} @{week}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_the",
+              "id": "preposition_the",
+              "package": "package_date_grammar"
+            },
+            {
+              "alias": "week",
+              "id": "week",
+              "package": "package_date_vocabulary"
+            },
+            {
+              "alias": "special_date",
+              "id": "special_date",
+              "package": "package_special_date"
+            }
+          ],
+          "solution":
+          {
+            "date_range": "`moment.range( moment(special_date.date).startOf('week'), moment(special_date.date).endOf('week') )`"
+          }
+        },
+        {
           "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month_year}",
           "keep-order": true,
           "glued": true,
