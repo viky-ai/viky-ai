@@ -91,36 +91,50 @@ class Agent < ApplicationRecord
     "#{owner.slug}/#{agentname}"
   end
 
-  def to_graph
+  def to_graph(&block)
     graph = RGL::DirectedAdjacencyGraph.new
-    graph.add_vertex(self)
-    list_out_arcs.each do |(src, target)|
+    node = block_given? ? yield(self) : self
+    graph.add_vertex(node)
+    list = block_given? ? list_out_arcs(&block) : list_out_arcs
+    list.each do |(src, target)|
       graph.add_edge(src, target)
     end
     graph
   end
 
-  def list_out_arcs
-    arcs_list = [] + successors.reload.map { |successor| [self, successor] }
+  def list_out_arcs(&block)
+    arcs_list = []
+    if block_given?
+      arcs_list += successors.reload.map { |successor| [yield(self), yield(successor)] }
+    else
+      arcs_list += successors.reload.map { |successor| [self, successor] }
+    end
     successors.each do |successor|
-      arcs_list += successor.list_out_arcs
+      arcs_list += block_given? ? successor.list_out_arcs(&block) : successor.list_out_arcs
     end
     arcs_list
   end
 
-  def to_predecessors_graph
+  def to_predecessors_graph(&block)
     graph = RGL::DirectedAdjacencyGraph.new
-    graph.add_vertex(self)
-    list_in_arcs.each do |(src, target)|
-      graph.add_edge(target, src)
+    node = block_given? ? yield(self) : self
+    graph.add_vertex(node)
+    list = block_given? ? list_in_arcs(&block) : list_in_arcs
+    list.each do |(src, target)|
+      graph.add_edge(src, target)
     end
     graph
   end
 
-  def list_in_arcs
-    arcs_list = [] + predecessors.reload.map { |predecessor| [predecessor, self] }
+  def list_in_arcs(&block)
+    arcs_list = []
+    if block_given?
+      arcs_list += predecessors.reload.map { |predecessor| [yield(predecessor), yield(self)] }
+    else
+      arcs_list += predecessors.reload.map { |predecessor| [self, predecessor] }
+    end
     predecessors.each do |predecessor|
-      arcs_list += predecessor.list_in_arcs
+      arcs_list += block_given? ? predecessor.list_in_arcs(&block) : predecessor.list_in_arcs
     end
     arcs_list
   end

@@ -146,6 +146,28 @@ class AgentGraphTest < ActiveSupport::TestCase
   end
 
 
+  test 'Build the graph dependencies : custom node name' do
+    #   A*
+    #  / \
+    # B   C
+    agent_a = create_agent('Agent A')
+    agent_b = create_agent('Agent B')
+    agent_c = create_agent('Agent C')
+
+    AgentArc.create(source: agent_a, target: agent_b)
+    AgentArc.create(source: agent_a, target: agent_c)
+
+    graph = agent_a.to_graph(&:slug)
+
+    assert_equal 2, graph.num_edges
+    assert_equal 3, graph.num_vertices
+
+    assert graph.has_vertex?(agent_a.slug)
+    assert graph.has_vertex?(agent_b.slug)
+    assert graph.has_vertex?(agent_c.slug)
+  end
+
+
   test 'Build the graph predecessors : single node' do
     #   A*
     agent_a = create_agent('Agent A')
@@ -289,6 +311,27 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert graph.has_edge?(agent_c, agent_a)
   end
 
+
+  test 'Build the graph predecessors : custom node name' do
+    #  A  B
+    #  \ /
+    #   C*
+    agent_a = create_agent('Agent A')
+    agent_b = create_agent('Agent B')
+    agent_c = create_agent('Agent C')
+
+    AgentArc.create(source: agent_a, target: agent_c)
+    AgentArc.create(source: agent_b, target: agent_c)
+
+    graph = agent_c.to_predecessors_graph(&:slug)
+
+    assert_equal 2, graph.num_edges
+    assert_equal 3, graph.num_vertices
+
+    assert graph.has_vertex?(agent_a.slug)
+    assert graph.has_vertex?(agent_b.slug)
+    assert graph.has_vertex?(agent_c.slug)
+  end
 
   def create_agent(name)
     agent = Agent.new(
