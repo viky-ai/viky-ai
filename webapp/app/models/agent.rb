@@ -139,6 +139,15 @@ class Agent < ApplicationRecord
     arcs_list
   end
 
+  def to_graph_image(direction = :successors)
+    image_name = "#{Rails.root.join('tmp')}/#{id}_#{Time.now.to_i}"
+    graph = direction == :successors ? to_graph(&:slug) : to_predecessors_graph(&:slug)
+    image = graph.write_to_graphic_file('svg', image_name)
+    svg = File.open(image, 'rb').read
+    File.delete(image, "#{image_name}.dot")
+    svg
+  end
+
 
   private
 
