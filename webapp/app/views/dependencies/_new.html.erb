@@ -2,7 +2,7 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.successors.new.title') %>
+      <%= t('views.dependencies.new.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
@@ -20,7 +20,7 @@
             <% end %>
 
             <div class="agent-compact agent-compact--without-actions">
-              <a href="<%= user_agent_successors_path(@agent.owner, @agent.agentname, { id: agent.id }) %>"
+              <a href="<%= user_agent_dependencies_path(@agent.owner, @agent.agentname, { id: agent.id }) %>"
                  class="agent-compact__id"
                  data-remote="true"
                  data-method="post"

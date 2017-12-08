@@ -13,18 +13,18 @@
             { source_id: agent.id, target_id: successor.id}
           ).first.target_related_interpretation_aliases.count %>
 
-      <%= t('views.successors.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>
+      <%= t('views.dependencies.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>
       <% if count == 0 %>
-        <%= t('views.successors.confirm_destroy.warning_html',
+        <%= t('views.dependencies.confirm_destroy.warning_html',
               successor: successor.name, agent: agent.name, count: count ) %>
       <% else %>
-        <%= t('views.successors.confirm_destroy.warning_html',
+        <%= t('views.dependencies.confirm_destroy.warning_html',
               successor: successor.name, agent: agent.name, count: count ) %>
       <% end %>
 
       <%= form_for(
             agent,
-            url: user_agent_successor_path(owner, agent, successor),
+            url: user_agent_dependency_path(owner, agent, successor),
             method: :delete,
             html: { data: { validation: :delete }}) do |delete_form| %>
         <div class="field">

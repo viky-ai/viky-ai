@@ -1,7 +1,7 @@
-class SuccessorsController < ApplicationController
-  before_action :set_owner_and_agent
-
+class DependenciesController < ApplicationController
   require 'rgl/dot' # write_to_graphic_file
+
+  before_action :set_owner_and_agent
 
   def new
     @available_successors = @agent.available_successors(current_user)
@@ -13,7 +13,11 @@ class SuccessorsController < ApplicationController
     if arc.save
       redirect_to user_agent_path(@agent.owner, @agent.agentname)
     else
-      redirect_to user_agent_path(@agent.owner, @agent.agentname), alert: t('views.successors.new.error_message', errors: arc.errors.full_messages.join(', '))
+      redirect_to user_agent_path(@agent.owner, @agent.agentname),
+        alert: t(
+          'views.dependencies.new.error_message',
+          errors: arc.errors.full_messages.join(', ')
+        )
     end
   end
 
@@ -28,7 +32,7 @@ class SuccessorsController < ApplicationController
   end
 
   def confirm_destroy
-    @successor = Agent.friendly.find(params[:successor_id])
+    @successor = Agent.friendly.find(params[:dependency_id])
     render partial: 'confirm_destroy', locals: {
       owner: @owner,
       agent: @agent,
@@ -42,7 +46,8 @@ class SuccessorsController < ApplicationController
     if arc.destroy
       redirect_to user_agent_path(@agent.owner, @agent.agentname)
     else
-      redirect_to user_agent_path(@agent.owner, @agent.agentname), alert: t('views.successors.destroy.error_message')
+      redirect_to user_agent_path(@agent.owner, @agent.agentname),
+        alert: t('views.dependencies.destroy.error_message')
     end
   end
 

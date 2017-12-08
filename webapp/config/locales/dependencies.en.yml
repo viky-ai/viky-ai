@@ -1,6 +1,6 @@
 en:
   views:
-    successors:
+    dependencies:
       index:
         list_title: Agent dependencies
         dependents: Dependents
