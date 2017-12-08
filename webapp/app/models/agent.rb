@@ -95,8 +95,7 @@ class Agent < ApplicationRecord
     graph = RGL::DirectedAdjacencyGraph.new
     node = block_given? ? yield(self) : self
     graph.add_vertex(node)
-    list = block_given? ? list_out_arcs(&block) : list_out_arcs
-    list.each do |(src, target)|
+    list_out_arcs(&block).each do |(src, target)|
       graph.add_edge(src, target)
     end
     graph
@@ -110,7 +109,7 @@ class Agent < ApplicationRecord
       arcs_list += successors.reload.map { |successor| [self, successor] }
     end
     successors.each do |successor|
-      arcs_list += block_given? ? successor.list_out_arcs(&block) : successor.list_out_arcs
+      arcs_list += successor.list_out_arcs(&block)
     end
     arcs_list
   end
