@@ -60,7 +60,7 @@ class Modal
       event.preventDefault()
       @close()
 
-    if action is "set-modal-loading"
+    if action is "set-loading-modal"
       icon = '
       <span class="icon icon--spin">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
