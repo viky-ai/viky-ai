@@ -7,7 +7,7 @@
 
   display: grid;
   grid-gap: .5em;
-  grid-template-columns: 1fr 5em;
+  grid-template-columns: minmax(100px, 1fr) 5em;
 
   &.agent-compact--new{
     display:block;
