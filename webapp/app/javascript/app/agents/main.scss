@@ -1,4 +1,5 @@
 @import '../../framework/abstracts/mixins';
+@import '../../framework/abstracts/variables';
 
 .blankslate--agents{
   margin-top: 6em;
@@ -51,6 +52,16 @@
     font-style: normal;
     color: #aaa;
     font-size: .875em;
+    a{
+      text-decoration:none;
+      color: #aaa;
+      &:hover{
+        strong{
+          text-decoration:underline;
+          color: $primary-color;
+        }
+      }
+    }
   }
   & > small{
     font-size: 1em;
@@ -59,11 +70,24 @@
       font-style: normal;
       color: #bbb;
       font-size: .875em;
+      a{
+        text-decoration:none;
+        color: #aaa;
+        &:hover{
+          strong{
+            text-decoration:underline;
+            color: $primary-color;
+          }
+        }
+      }
     }
   }
 }
 
 .dependencies-graph{
-  width: 40%;
-  margin: auto;
+  max-height: 80vh;
+  text-align: center;
+  svg{
+    max-height: 80vh;
+  }
 }

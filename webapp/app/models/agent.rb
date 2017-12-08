@@ -55,8 +55,8 @@ class Agent < ApplicationRecord
   def available_successors(current_user)
     Agent.joins(:memberships).
       where("user_id = ?", current_user.id).
-      where.not(id: self.successors.select(:id).collect(&:id)).
-      where.not(id: self.id).
+      where.not(id: successors.pluck(:id)).
+      where.not(id: id).
       order(name: :asc)
   end
 

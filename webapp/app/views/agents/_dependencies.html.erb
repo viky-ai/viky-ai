@@ -3,20 +3,20 @@
 <h4 class="dependencies-title">
   <%= t('views.successors.index.list_title') %>
     <em>
-      <% if @agent.successors.count > 0 %>
-        (<a href="<%= successors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
-           data-action="open-remote-modal"><%= @agent.successors.count %></a>)
-      <% else %>
+      <% if @agent.successors.count == 0 %>
         (<%= @agent.successors.count %>)
+      <% else %>
+        <a href="<%= successors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
+           data-action="open-remote-modal">(<strong><%= @agent.successors.count %></strong>)</a>
       <% end %>
     </em>
   <small>- <%= t('views.successors.index.dependents') %>
     <em>
-      <% if @agent.predecessors.count > 0 %>
-        (<a href="<%= predecessors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
-            data-action="open-remote-modal"><%= @agent.predecessors.count %></a>)
-      <% else %>
+      <% if @agent.predecessors.count == 0 %>
         (<%= @agent.predecessors.count %>)
+      <% else %>
+        <a href="<%= predecessors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
+           data-action="open-remote-modal">(<strong><%= @agent.predecessors.count %></strong>)</a>
       <% end %>
     </em></small>
 </h4>

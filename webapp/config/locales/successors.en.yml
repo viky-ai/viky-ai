@@ -36,4 +36,4 @@ en:
             </p>
       destroy:
         error_message: "Dependency removal failed"
-      graph: Dependencies graph
+      graph: Dependency graph
