@@ -2,12 +2,6 @@ require 'application_system_test_case'
 
 class InterpretationsTest < ApplicationSystemTestCase
 
-  def select_text_in_trix(selector, position_start, position_end)
-    script = "$('#{selector}').first().trigger('select-text', [#{position_start},#{position_end}])"
-    page.execute_script(script)
-  end
-
-
   test 'Create an interpretation' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
@@ -15,7 +9,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -34,7 +28,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -63,7 +57,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -108,7 +102,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -127,7 +121,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('Add')
+    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text

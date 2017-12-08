@@ -1,9 +1,76 @@
 <div class="sg-intro">
   <h1>Modal</h1>
+  <p>
+    Modals are used to display confirmation before destroy action, display forms or selection options to user without losing UI state.
+  </p>
 </div>
 
 <section>
-  <h2>Markup</h2>
+  <h2>Behaviors</h2>
+  <p>
+    Modal behaviors are drived by <code>data-action</code> attributes on HTML element.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th><code>data-action</code> value</th>
+        <th>Behavior description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>open-remote-modal</code></td>
+        <td>
+          Open modal from AJAX request.
+          <ul>
+            <li>Build base modal HTML markup.</li>
+            <li>Make AJAX request.</li>
+            <li>
+              AJAX responseText is injected in modal content
+              (on status <code>403</code> App.Message.alert is called)
+            </li>
+            <li>Display modal, setup <code>ESC</code> key listener.</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><code>update-remote-modal</code></td>
+        <td>
+          Replace opened modal from AJAX request.
+          <ul>
+            <li>Make AJAX request.</li>
+            <li>
+              AJAX responseText is injected in modal content
+              (on status <code>403</code> App.Message.alert is called)
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td><code>close-modal</code></td>
+        <td>
+          Close modal, remove <code>ESC</code> key listener.
+        </td>
+      </tr>
+      <tr>
+        <td><code>set-loading-modal</code></td>
+        <td>
+          Replace opened modal with loading content.
+        </td>
+      </tr>
+      <tr>
+        <td><code>open-modal</code></td>
+        <td>
+          Open modal with content from HTML element selected via <code>data-modal-selector</code> attribute.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<section>
+  <h2>HTML Markup</h2>
   <%= highlight_html do %>
 <p>
   <a href="#" class="btn btn--primary"

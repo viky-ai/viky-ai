@@ -27,11 +27,18 @@ Rails.application.routes.draw do
           get :generate_token
           get :interpret, to: 'console#interpret'
         end
-
         get :search_users_to_share_agent, controller: 'memberships'
 
         resources :memberships, only: [:index, :new, :create, :update, :destroy] do
           get :confirm_destroy
+        end
+
+        resources :dependencies, only: [:new, :create, :destroy] do
+          get :confirm_destroy
+          collection do
+            get :successors_graph
+            get :predecessors_graph
+          end
         end
 
         resources :intents, except: [:index] do

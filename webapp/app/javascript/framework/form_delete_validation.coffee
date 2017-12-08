@@ -10,6 +10,8 @@ class FormValidationDelete
           if input.val() == "DELETE"
             input.closest('div').removeClass('field_with_errors')
             input.closest('.control').find('.help--error').hide()
+            data = form.find('button.btn.btn--destructive').data('disable-btn-with')
+            form.find('button.btn.btn--destructive').html(data) if data
           else
             input.closest('div').addClass('field_with_errors')
             input.closest('.control').find('.help--error').show()

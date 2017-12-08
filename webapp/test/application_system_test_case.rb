@@ -54,4 +54,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     assert page.has_text?("Agent interpretations")
   end
 
+  def select_text_in_trix(selector, position_start, position_end)
+    script = "$('#{selector}').first().trigger('select-text', [#{position_start},#{position_end}])"
+    page.execute_script(script)
+  end
+
 end
