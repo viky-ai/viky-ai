@@ -20,6 +20,21 @@ en:
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."
+        warning_html:
+          one: >
+            <p>
+              <span class="badge badge--warning">Warning</span>
+              Agent is used by one another agent. During removal,
+              all related dependencies will be destroyed. So take time to
+              reflect before taking a definite decision.
+            </p>
+          other: >
+            <p>
+              <span class="badge badge--warning">Warning</span>
+              Agent is used by %{count} another agents. During removal,
+              all related dependencies will be destroyed. So take time to
+              reflect before taking a definite decision.
+            </p>
         btn: Delete
       confirm_transfer_ownership:
         title: Transfer ownership

@@ -2,11 +2,19 @@ class Agent < ApplicationRecord
   extend FriendlyId
   friendly_id :agentname, use: :history, slug_column: 'agentname'
 
+  require 'rgl/adjacency'
+
   include AgentImageUploader::Attachment.new(:image)
 
   has_many :memberships
   has_many :users, through: :memberships
   has_many :intents, dependent: :destroy
+
+  has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy
+  has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy
+
+  has_many :predecessors, through: :in_arcs, source: :source
+  has_many :successors, through: :out_arcs, source: :target
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
@@ -44,6 +52,14 @@ class Agent < ApplicationRecord
     ]
   end
 
+  def available_successors(current_user)
+    Agent.joins(:memberships).
+      where("user_id = ?", current_user.id).
+      where.not(id: successors.pluck(:id)).
+      where.not(id: id).
+      order(name: :asc)
+  end
+
   def transfer_ownership_to(new_owner_id)
     transfer = AgentTransfer.new(self, new_owner_id)
     transfer.proceed
@@ -74,6 +90,7 @@ class Agent < ApplicationRecord
   def slug
     "#{owner.slug}/#{agentname}"
   end
+
 
   private
 

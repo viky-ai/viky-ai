@@ -72,6 +72,16 @@
            data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
       </li>
     <% end %>
+
+    <% @agent.successors.includes(:intents).each do |agent| %>
+      <% agent.intents.order(position: :desc, created_at: :desc).each do |intent| %>
+      <li data-search="<%= intent.slug %>" class="enabled">
+        <a href="#" data-action="add-tag"
+           data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
+      </li>
+      <% end %>
+    <% end %>
+
     <li data-search="digit" class="enabled">
       <a href="#" data-action="add-tag"
          data-data='<%= digit_to_json() %>'>Digit</a>

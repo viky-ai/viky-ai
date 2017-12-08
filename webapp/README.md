@@ -10,6 +10,7 @@
 * Redis (4.0.1)
 * ImageMagick
 * Docker 17.09.0-ce
+* Graphviz
 
 ## Environment Variables
 
@@ -72,7 +73,7 @@ The configuration file for queue definition and options is `config/sidekiq.yml`,
 Default concurrency for background job management is set to 5, you can change it via environment variable `VOQALAPP_SIDEKIQ_CONCURRENCY`.
 
 
-## Boostrap development databases
+## Bootstrap development databases
 
 The first time you start the application you need to manually create two databases `voqalapp_development` and `voqalapp_test` :
 

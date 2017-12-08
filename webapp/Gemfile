@@ -45,6 +45,9 @@ gem "shrine"
 gem "image_processing"
 gem "mini_magick", ">= 4.3.5"
 
+# Graph
+gem 'rgl'
+
 # Mailing
 gem 'postmark-rails'
 gem 'inky-rb', require: 'inky'

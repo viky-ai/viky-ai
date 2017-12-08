@@ -100,4 +100,19 @@ class InterpretTest < ActiveSupport::TestCase
     assert_equal "#{interpret.endpoint}/interpret/", interpret.url
   end
 
+
+  test 'Request on agent id and all its dependencies' do
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+    assert AgentArc.create(source: weather, target: terminator)
+
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_token: weather.api_token,
+      sentence: 'hello',
+      format: 'json'
+    )
+    assert_equal [weather.id, terminator.id], interpret.packages
+  end
 end

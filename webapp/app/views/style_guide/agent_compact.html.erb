@@ -1,0 +1,185 @@
+<div class="sg-intro">
+  <h1>Agent compact</h1>
+  <p>
+    Agent compact are displayed in agent show view.
+  </p>
+</div>
+
+<section>
+  <h2>With bg gradient</h2>
+  <%= highlight_html do %>
+<div class="agent-compact">
+  <a href="#" class="agent-compact__id">
+    <div class="agent-compact__id__visual background-color-gradient__brown"></div>
+    <div class="agent-compact__id__data">
+      <h5>My awesome first agent</h5>
+      <h6>username/agentname</h6>
+    </div>
+  </a>
+  <div class="agent-compact__actions">
+    <a href="#" class="btn btn--outline btn--small">Delete</a>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>With bg image</h2>
+  <%= highlight_html do %>
+<div class="agent-compact">
+  <a href="#" class="agent-compact__id">
+    <div class="agent-compact__id__visual agent-compact__id__visual--image"
+         style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);"></div>
+    <div class="agent-compact__id__data">
+      <h5>My awesome first agent</h5>
+      <h6>username/agentname</h6>
+    </div>
+  </a>
+  <div class="agent-compact__actions">
+    <a href="#" class="btn btn--outline btn--small">Delete</a>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Without actions</h2>
+  <%= highlight_html do %>
+<div class="agent-compact agent-compact--without-actions">
+  <a href="#" class="agent-compact__id">
+    <div class="agent-compact__id__visual background-color-gradient__brown"></div>
+    <div class="agent-compact__id__data">
+      <h5>My awesome first agent</h5>
+      <h6>username/agentname</h6>
+    </div>
+  </a>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Grid</h2>
+  <%= highlight_html do %>
+<div class="agents-compact-grid">
+
+  <div class="agent-compact agent-compact--without-actions">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__black"></div>
+      <div class="agent-compact__id__data">
+        <h5>Black</h5>
+        <h6>username/black</h6>
+      </div>
+    </a>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__brown"></div>
+      <div class="agent-compact__id__data">
+        <h5>Brown</h5>
+        <h6>username/brown</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__red"></div>
+      <div class="agent-compact__id__data">
+        <h5>Red</h5>
+        <h6>username/red</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__pink"></div>
+      <div class="agent-compact__id__data">
+        <h5>Pink</h5>
+        <h6>username/pink</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__purple"></div>
+      <div class="agent-compact__id__data">
+        <h5>Purple</h5>
+        <h6>username/purple</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact agent-compact--without-actions">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__indigo"></div>
+      <div class="agent-compact__id__data">
+        <h5>Indigo</h5>
+        <h6>username/indigo</h6>
+      </div>
+    </a>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__blue"></div>
+      <div class="agent-compact__id__data">
+        <h5>Blue</h5>
+        <h6>username/blue</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__cyan"></div>
+      <div class="agent-compact__id__data">
+        <h5>Cyan</h5>
+        <h6>username/cyan</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact">
+    <a href="#" class="agent-compact__id">
+      <div class="agent-compact__id__visual background-color-gradient__green"></div>
+      <div class="agent-compact__id__data">
+        <h5>Green</h5>
+        <h6>username/green</h6>
+      </div>
+    </a>
+    <div class="agent-compact__actions">
+      <a href="#" class="btn btn--outline btn--small">Delete</a>
+    </div>
+  </div>
+
+  <div class="agent-compact agent-compact--new">
+    <a href="#">
+      <span class="icon"><%= icon_add %></span>
+      Add new dependency
+    </a>
+  </div>
+
+</div>
+  <% end %>
+</section>
