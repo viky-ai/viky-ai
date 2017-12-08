@@ -92,7 +92,7 @@
 
 .popup{
   z-index: 5;
-  max-width: 300px;
+  max-width: 400px;
   position: absolute;
   background-color: #fff;
   border-radius: 3px;
@@ -128,7 +128,7 @@
     padding: .5em 1em;
   }
   ul{
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
     list-style: none;
     padding: 0;
