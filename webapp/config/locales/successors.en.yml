@@ -27,12 +27,12 @@ en:
             </p>
           other: >
             <p>
-              %{count} references to agent "%{successor}" interpretations is present
+              %{count} references to agent "%{successor}" interpretations are present
               in agent "%{agent}" interpretations expressions.
             </p>
             <p>
               <span class="badge badge--warning">Warning</span>
-              These references will be destroyed
+              These references will be destroyed.
             </p>
       destroy:
         error_message: "Dependency removal failed"
