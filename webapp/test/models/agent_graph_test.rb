@@ -6,7 +6,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     #   A*
     agent_a = create_agent('Agent A')
 
-    graph = agent_a.to_graph
+    graph = AgentGraph.new(agent_a).to_graph
 
     assert_equal 0, graph.num_edges
     assert_equal 1, graph.num_vertices
@@ -24,7 +24,7 @@ class AgentGraphTest < ActiveSupport::TestCase
 
     AgentArc.create(source: agent_a, target: agent_b)
 
-    graph = agent_a.to_graph
+    graph = AgentGraph.new(agent_a).to_graph
 
     assert_equal 1, graph.num_edges
     assert_equal 2, graph.num_vertices
@@ -47,7 +47,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_b, target: agent_d)
 
-    graph = agent_a.to_graph
+    graph = AgentGraph.new(agent_a).to_graph
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices
@@ -68,7 +68,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_a, target: agent_c)
 
-    graph = agent_a.to_graph
+    graph = AgentGraph.new(agent_a).to_graph
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices
@@ -89,7 +89,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_c)
     AgentArc.create(source: agent_b, target: agent_c)
 
-    graph = agent_b.to_graph
+    graph = AgentGraph.new(agent_b).to_graph
 
     assert_equal 1, graph.num_edges
     assert_equal 2, graph.num_vertices
@@ -109,7 +109,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_a, target: agent_c)
 
-    graph = agent_c.to_graph
+    graph = AgentGraph.new(agent_c).to_graph
 
     assert_equal 0, graph.num_edges
     assert_equal 1, graph.num_vertices
@@ -134,7 +134,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert AgentArc.create(source: agent_b, target: agent_d)
     assert AgentArc.create(source: agent_c, target: agent_d)
 
-    graph = agent_a.to_graph
+    graph = AgentGraph.new(agent_a).to_graph
 
     assert_equal 4, graph.num_edges
     assert_equal 4, graph.num_vertices
@@ -157,7 +157,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_a, target: agent_c)
 
-    graph = agent_a.to_graph(&:slug)
+    graph = AgentGraph.new(agent_a).to_graph(&:slug)
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices
@@ -172,7 +172,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     #   A*
     agent_a = create_agent('Agent A')
 
-    graph = agent_a.to_predecessors_graph
+    graph = AgentGraph.new(agent_a).to_predecessors_graph
 
     assert_equal 0, graph.num_edges
     assert_equal 1, graph.num_vertices
@@ -190,7 +190,7 @@ class AgentGraphTest < ActiveSupport::TestCase
 
     AgentArc.create(source: agent_a, target: agent_b)
 
-    graph = agent_b.to_predecessors_graph
+    graph = AgentGraph.new(agent_b).to_predecessors_graph
 
     assert_equal 1, graph.num_edges
     assert_equal 2, graph.num_vertices
@@ -213,7 +213,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_b, target: agent_d)
 
-    graph = agent_d.to_predecessors_graph
+    graph = AgentGraph.new(agent_d).to_predecessors_graph
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices
@@ -234,7 +234,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_a, target: agent_c)
 
-    graph = agent_b.to_predecessors_graph
+    graph = AgentGraph.new(agent_b).to_predecessors_graph
 
     assert_equal 1, graph.num_edges
     assert_equal 2, graph.num_vertices
@@ -254,7 +254,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_c)
     AgentArc.create(source: agent_b, target: agent_c)
 
-    graph = agent_c.to_predecessors_graph
+    graph = AgentGraph.new(agent_c).to_predecessors_graph
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices
@@ -275,7 +275,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_a, target: agent_c)
 
-    graph = agent_a.to_predecessors_graph
+    graph = AgentGraph.new(agent_a).to_predecessors_graph
 
     assert_equal 0, graph.num_edges
     assert_equal 1, graph.num_vertices
@@ -300,7 +300,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert AgentArc.create(source: agent_b, target: agent_d)
     assert AgentArc.create(source: agent_c, target: agent_d)
 
-    graph = agent_d.to_predecessors_graph
+    graph = AgentGraph.new(agent_d).to_predecessors_graph
 
     assert_equal 4, graph.num_edges
     assert_equal 4, graph.num_vertices
@@ -323,7 +323,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     AgentArc.create(source: agent_a, target: agent_c)
     AgentArc.create(source: agent_b, target: agent_c)
 
-    graph = agent_c.to_predecessors_graph(&:slug)
+    graph = AgentGraph.new(agent_c).to_predecessors_graph(&:slug)
 
     assert_equal 2, graph.num_edges
     assert_equal 3, graph.num_vertices

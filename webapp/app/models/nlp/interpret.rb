@@ -60,7 +60,7 @@ class Nlp::Interpret
   end
 
   def packages
-    agent.to_graph.vertices.collect(&:id)
+    AgentGraph.new(agent).to_graph.vertices.collect(&:id)
   end
 
   private

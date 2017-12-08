@@ -22,12 +22,12 @@ class DependenciesController < ApplicationController
   end
 
   def successors_graph
-    @svg = @agent.to_graph_image
+    @svg = AgentGraph.new(@agent).to_graph_image
     render partial: 'graph', locals: { svg: @svg }
   end
 
   def predecessors_graph
-    @svg = @agent.to_graph_image(:predecessors)
+    @svg = AgentGraph.new(@agent).to_graph_image(:predecessors)
     render partial: 'graph', locals: { svg: @svg }
   end
 
