@@ -35,7 +35,8 @@ Rails.application.routes.draw do
 
         resources :successors, only: [:new, :create, :destroy] do
           get :confirm_destroy
-          get :graph, on: :collection
+          get :successors_graph, on: :collection
+          get :predecessors_graph, on: :collection
         end
 
         resources :intents, except: [:index] do

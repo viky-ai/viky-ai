@@ -20,9 +20,17 @@ class SuccessorsController < ApplicationController
     end
   end
 
-  def graph
+  def successors_graph
     image_name = "#{Rails.root.join('tmp')}/#{@agent.id}_#{Time.now.to_i}"
     image = @agent.to_graph(&:slug).write_to_graphic_file('svg', image_name)
+    @svg = File.open(image, 'rb').read
+    File.delete(image, "#{image_name}.dot")
+    render partial: 'graph', locals: { svg: @svg }
+  end
+
+  def predecessors_graph
+    image_name = "#{Rails.root.join('tmp')}/#{@agent.id}_#{Time.now.to_i}"
+    image = @agent.to_predecessors_graph(&:slug).write_to_graphic_file('svg', image_name)
     @svg = File.open(image, 'rb').read
     File.delete(image, "#{image_name}.dot")
     render partial: 'graph', locals: { svg: @svg }

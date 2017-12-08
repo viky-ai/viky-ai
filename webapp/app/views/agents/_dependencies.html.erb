@@ -4,13 +4,21 @@
   <%= t('views.successors.index.list_title') %>
     <em>
       <% if @agent.successors.count > 0 %>
-        (<a href="<%= graph_user_agent_successors_path(@agent.owner, @agent) %>"
+        (<a href="<%= successors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
            data-action="open-remote-modal"><%= @agent.successors.count %></a>)
       <% else %>
         (<%= @agent.successors.count %>)
       <% end %>
     </em>
-  <small>- <%= t('views.successors.index.dependents') %> <em>(<%= @agent.predecessors.count %>)</em></small>
+  <small>- <%= t('views.successors.index.dependents') %>
+    <em>
+      <% if @agent.predecessors.count > 0 %>
+        (<a href="<%= predecessors_graph_user_agent_successors_path(@agent.owner, @agent) %>"
+            data-action="open-remote-modal"><%= @agent.predecessors.count %></a>)
+      <% else %>
+        (<%= @agent.predecessors.count %>)
+      <% end %>
+    </em></small>
 </h4>
 
 <div class="agents-compact-grid">
