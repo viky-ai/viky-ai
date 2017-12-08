@@ -38,6 +38,12 @@
     position: relative;
     overflow-y: auto;
 
+    &.modal__main--loading{
+      padding: 3em;
+      text-align: center;
+      font-size: 1.15em;
+    }
+
     .modal__main__content{
       padding: .5em 1em 1em 1em;
 
