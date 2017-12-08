@@ -108,22 +108,6 @@
               "package": "package_overall_date"
             }
           ]
-        },
-        {
-          "expression": "@{preposition_during_duration} @{duration}",
-          "aliases":
-          [
-            {
-              "alias": "preposition_during_duration",
-              "id": "preposition_during_duration",
-              "package": "grammar"
-            },
-            {
-              "alias": "duration",
-              "id": "duration",
-              "package": "package_overall_date"
-            }
-          ]
         }
       ]
     }

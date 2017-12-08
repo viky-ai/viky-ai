@@ -732,7 +732,8 @@
           ],
           "solution":
           {
-            "duration": "`durations.duration`"
+            "duration": "`durations.duration`",
+            "unit": "`durations.unit`"
           }
         }
       ]
