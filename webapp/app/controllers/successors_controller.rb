@@ -13,10 +13,7 @@ class SuccessorsController < ApplicationController
     if arc.save
       redirect_to user_agent_path(@agent.owner, @agent.agentname)
     else
-      error_msg  = "Dependency addition failed: "
-      error_msg += arc.errors.full_messages.join(', ')
-      error_msg += "."
-      redirect_to user_agent_path(@agent.owner, @agent.agentname), alert: error_msg
+      redirect_to user_agent_path(@agent.owner, @agent.agentname), alert: t('views.successors.new.error_message', errors: arc.errors.full_messages.join(', '))
     end
   end
 

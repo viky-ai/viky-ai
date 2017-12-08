@@ -8,6 +8,7 @@ en:
         delete: Delete
       new:
         title: Choose agent to add as dependency
+        error_message: "Dependency addition failed: %{errors}."
       confirm_destroy:
         info_html: <p>You're about to delete agent "%{successor}" from agent "%{agent}" dependencies.</p>
         warning_html:
