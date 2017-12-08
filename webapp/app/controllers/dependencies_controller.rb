@@ -1,7 +1,8 @@
-class DependenciesController < ApplicationController
-  require 'rgl/dot' # write_to_graphic_file
+require 'rgl/dot' # write_to_graphic_file
 
+class DependenciesController < ApplicationController
   before_action :set_owner_and_agent
+  before_action :check_user_rights
 
   def new
     @available_successors = @agent.available_successors(current_user)
@@ -53,6 +54,15 @@ class DependenciesController < ApplicationController
 
 
   private
+
+    def check_user_rights
+      case action_name
+      when "successors_graph", "predecessors_graph"
+        access_denied unless current_user.can? :show, @agent
+      else
+        access_denied unless current_user.can? :edit, @agent
+      end
+    end
 
     def set_owner_and_agent
       begin
