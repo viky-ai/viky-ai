@@ -11,6 +11,12 @@
       <p>
         <%= t('views.agents.confirm_destroy.content_html', name: agent.name) %>
       </p>
+
+      <% predecessors_count = agent.predecessors.count %>
+      <% if predecessors_count > 0 %>
+        <%= t('views.agents.confirm_destroy.warning_html', count: predecessors_count) %>
+      <% end %>
+
       <%= form_for(agent, url: user_agent_path, method: :delete, html: { data: { validation: :delete }}) do |delete_form| %>
         <div class="field">
           <div class="control">
