@@ -33,6 +33,22 @@
         {
           "expression": "au bord de la mer",
           "locale": "fr"
+        },
+        {
+          "expression": "proche de la mer",
+          "locale": "fr"
+        },
+        {
+          "expression": "à la plage",
+          "locale": "fr"
+        },
+        {
+          "expression": "sur la plage",
+          "locale": "fr"
+        },
+        {
+          "expression": "plage",
+          "locale": "fr"
         }
       ],
       "solution":
@@ -165,7 +181,7 @@
           ],
           "solution":
           {
-            "building_feature": "`building_feature_entity`"
+            "building_feature to learn": "`building_feature_entity`"
           }
         }
       ]

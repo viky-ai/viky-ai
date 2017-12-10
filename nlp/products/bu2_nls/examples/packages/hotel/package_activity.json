@@ -1,0 +1,202 @@
+{
+  "id": "activity",
+  "interpretations":
+  [
+    {
+      "id": "ski",
+      "expressions":
+      [
+        {
+          "expression": "ski"
+        },
+        {
+          "expression": "skier",
+          "locale": "fr"
+        },
+        {
+          "expression": "snow board",
+          "keep-order": true,
+          "glued": true
+        },
+        {
+          "expression": "snowboard"
+        },
+        {
+          "expression": "skiing",
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "activity": "ski"
+      }
+    },
+    {
+      "id": "jet ski",
+      "expressions":
+      [
+        {
+          "expression": "jet ski",
+          "keep-order": true,
+          "glued": true
+        },
+        {
+          "expression": "jetski"
+        }
+      ],
+      "solution":
+      {
+        "activity": "jet-ski"
+      }
+    },
+    {
+      "id": "windsurf",
+      "expressions":
+      [
+        {
+          "expression": "wind surf",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "windsurf",
+          "locale": "en"
+        },
+        {
+          "expression": "planche à voile",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        }
+      ],
+      "solution":
+      {
+        "activity": "windsurf"
+      }
+    },
+    {
+      "id": "activity_entity",
+      "expressions":
+      [
+        {
+          "expression": "@{ski}",
+          "aliases":
+          [
+            {
+              "alias": "ski",
+              "id": "ski"
+            }
+          ]
+        },
+        {
+          "expression": "@{windsurf}",
+          "aliases":
+          [
+            {
+              "alias": "windsurf",
+              "id": "windsurf"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preposition_activity",
+      "expressions":
+      [
+        {
+          "expression": "with",
+          "locale": "en"
+        },
+        {
+          "expression": "to do some",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "to do",
+          "keep-order": true,
+          "glued": true,
+          "locale": "en"
+        },
+        {
+          "expression": "and",
+          "locale": "en"
+        },
+        {
+          "expression": "avec",
+          "locale": "fr"
+        },
+        {
+          "expression": "pour faire du",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "pour faire de la",
+          "keep-order": true,
+          "glued": true,
+          "locale": "fr"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
+        }
+      ]
+    },
+    {
+      "id": "activity",
+      "expressions":
+      [
+        {
+          "expression": "@{activity_entity}",
+          "aliases":
+          [
+            {
+              "alias": "activity_entity",
+              "id": "activity_entity"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_activity} @{activity_entity}",
+          "keep-order": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_activity",
+              "id": "preposition_activity"
+            },
+            {
+              "alias": "activity_entity",
+              "id": "activity_entity"
+            }
+          ]
+        },
+        {
+          "expression": "@{preposition_activity} @{activity_entity}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "preposition_activity",
+              "id": "preposition_activity"
+            },
+            {
+              "alias": "activity_entity",
+              "type": "any"
+            }
+          ],
+          "solution":
+          {
+            "activity to learn":  "`activity_entity`"
+          }
+        }
+      ]
+    }
+  ]
+}

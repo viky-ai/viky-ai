@@ -40,6 +40,17 @@
       "expressions":
       [
         {
+          "expression": "@{activity}",
+          "aliases":
+          [
+            {
+              "alias": "activity",
+              "id": "activity",
+              "package": "activity"
+            }
+          ]
+        },
+        {
           "expression": "@{building_feature}",
           "aliases":
           [
