@@ -251,14 +251,16 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
     NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any);
   }
 
+  struct request_expression *sub_re = NULL;
   struct request_expression *re = request_expression;
   while (re->Isuper_request_expression >= 0)
   {
+    sub_re = re;
     re = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, re->Isuper_request_expression);
     IFN(re) DPcErr;
 
     IFE(NlpRequestAnyAddPositions(ctrl_nlp_th, request_any, re));
-    IFE(NlpRequestAnyAddPositionsInputPart(ctrl_nlp_th, request_expression, re));
+    IFE(NlpRequestAnyAddPositionsInputPart(ctrl_nlp_th, sub_re, re));
 
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
@@ -283,6 +285,7 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
   IFE(NlpRequestAnyDelPositions(ctrl_nlp_th, re));
   while (re->Isuper_request_expression >= 0)
   {
+    sub_re = re;
     re = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, re->Isuper_request_expression);
     IFN(re) DPcErr;
 
@@ -292,7 +295,7 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
       IFE(is_ordered);
     }
     else is_ordered = TRUE;
-    IFE(NlpRequestAnyDelPositionsInputPart(ctrl_nlp_th, request_expression, re));
+    IFE(NlpRequestAnyDelPositionsInputPart(ctrl_nlp_th, sub_re, re));
     IFE(NlpRequestAnyDelPositions(ctrl_nlp_th, re));
     if (!is_ordered) break;
   }
