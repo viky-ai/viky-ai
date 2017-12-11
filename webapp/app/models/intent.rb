@@ -10,7 +10,7 @@ class Intent < ApplicationRecord
 
   serialize :locales, JSON
 
-  validates :intentname, uniqueness: { scope: [:agent_id] }, length: { in: 3..25 }, presence: true
+  validates :intentname, uniqueness: { scope: [:agent_id] }, length: { in: 3..30 }, presence: true
   validates :locales, presence: true
   validate :check_locales
 
