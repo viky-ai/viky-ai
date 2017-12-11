@@ -50,7 +50,7 @@
   }
 
   .trix-control__option{
-    padding: .5em;
+    padding: .475em;
     line-height: 1em;
     position: absolute;
     border-radius: 2px;
@@ -58,10 +58,14 @@
     width: calc(100% - .5em);
     top: .25em;
     left: .25em;
+
     @media (min-width: 600px){
       width: auto;
       left: auto;
       right: .25em;
+    }
+    input[type="checkbox"]{
+      vertical-align: middle;
     }
     label{
       line-height: 1em;
