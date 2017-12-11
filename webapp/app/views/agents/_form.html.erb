@@ -29,7 +29,13 @@
     <%= f.label :agentname %>
     &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
     <div class="control control--merged">
-      <span class="addon"><%= current_user.username %>/</span>
+      <span class="addon">
+        <% if ["edit", "update"].include? action_name %>
+          <%= agent.owner.username %>/
+        <% else %>
+          <%= current_user.username %>/
+        <% end %>
+      </span>
       <%= f.text_field :agentname, id: :agent_agentname %>
     </div>
     <%= display_errors(agent, :agentname) %>
