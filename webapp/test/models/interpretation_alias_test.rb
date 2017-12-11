@@ -309,4 +309,46 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.aliasname = 'ab2'
     assert interpretation_alias.validate
   end
+
+
+  test 'Invert alias names' do
+    interpretation = Interpretation.new({
+      expression: 'test',
+      intent_id: intents(:weather_greeting).id,
+      locale: 'fr-FR',
+      interpretation_aliases_attributes: [
+        {
+          position_start: 0,
+          position_end: 11,
+          aliasname: 'who1',
+          intent_id: intents(:weather_who).id
+        },
+        {
+          position_start: 15,
+          position_end: 21,
+          aliasname: 'who2',
+          intent_id: intents(:weather_who).id
+        }
+      ]
+    })
+    assert interpretation.save
+    assert interpretation.update({
+       :interpretation_aliases_attributes => [
+         {
+           id: interpretation.interpretation_aliases.first.id,
+           position_start: 0,
+           position_end: 11,
+           aliasname: interpretation.interpretation_aliases.last.aliasname,
+           intent_id: intents(:weather_who).id
+         },
+         {
+           id: interpretation.interpretation_aliases.last.id,
+           position_start: 15,
+           position_end: 21,
+           aliasname: interpretation.interpretation_aliases.first.aliasname,
+           intent_id: intents(:weather_who).id
+         }
+       ]
+    })
+  end
 end
