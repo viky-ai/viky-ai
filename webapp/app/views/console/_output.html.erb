@@ -41,10 +41,12 @@
                     </div>
                   </li>
                 <% end %>
-                <li>
-                  <div class="intent__label"><%= t('views.console.solution') %></div>
-                  <pre><code class='language-javascript'><%= JSON.pretty_generate(intent["solution"]) %></code></pre>
-                </li>
+                <% unless intent["solution"].nil? %>
+                  <li>
+                    <div class="intent__label"><%= t('views.console.solution') %></div>
+                    <pre><code class='language-javascript'><%= JSON.pretty_generate(intent["solution"]) %></code></pre>
+                  </li>
+                <% end %>
               </ul>
             </a>
           </li>

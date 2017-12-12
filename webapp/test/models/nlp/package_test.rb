@@ -32,7 +32,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "Bonjour tout le monde",
               "locale"     => "fr-FR",
-              "solution"   => "`\"Bonjour tout le monde\"`"
+              "solution"   => "Bonjour tout le monde"
             }
           ]
         },
@@ -43,7 +43,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "world",
               "locale"     => "en-US",
-              "solution"   => "`\"world\"`"
+              "solution"   => "world"
             }
           ]
         }
@@ -76,7 +76,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
-              "solution"   => "`\"Bonjour tout le monde\"`"
+              "solution"   => "Bonjour tout le monde"
             }
           ]
         }
@@ -155,7 +155,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "Bonjour tout le monde",
               "locale"     => "fr-FR",
-              "solution"   => "`\"Bonjour tout le monde\"`"
+              "solution"   => "Bonjour tout le monde"
             }
           ]
         },
@@ -166,7 +166,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "world",
               "locale"     => "en-US",
-              "solution"   => "`\"world\"`"
+              "solution"   => "world"
             }
           ]
         }
@@ -262,7 +262,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               'expression' => 'Bonjour tout le monde',
               'locale'     => 'fr-FR',
-              'solution'   => "`\"Bonjour tout le monde\"`"
+              'solution'   => "Bonjour tout le monde"
             }
           ]
         },
@@ -273,7 +273,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               'expression' => 'world',
               'locale'     => 'en-US',
-              'solution'   => "`\"world\"`"
+              'solution'   => "world"
             }
           ]
         }
@@ -331,7 +331,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               'expression' => 'Bonjour tout le monde',
               'locale'     => 'fr-FR',
-              'solution'   => "`\"Bonjour tout le monde\"`"
+              'solution'   => "Bonjour tout le monde"
             }
           ]
         },
@@ -342,7 +342,7 @@ class PackageTest < ActiveSupport::TestCase
             {
               'expression' => 'world',
               'locale'     => 'en-US',
-              'solution'   => "`\"world\"`"
+              'solution'   => "world"
             }
           ]
         }
