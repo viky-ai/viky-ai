@@ -1,12 +1,16 @@
 class ChangeInterpretationLocales < ActiveRecord::Migration[5.1]
   def change
     ActiveRecord::Base.record_timestamps = false
+    Nlp::Package.sync_active = false
     begin
       convert_interpretations
       convert_intents
     ensure
       ActiveRecord::Base.record_timestamps = true
+      Nlp::Package.sync_active = true
     end
+
+    Nlp::Package.push_all
   end
 
   private
