@@ -18,7 +18,7 @@
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">Good morning</a>
+    <a href="#" class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></a>
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
@@ -33,6 +33,35 @@
 </script>
   <% end %>
 </section>
+
+
+<section>
+  <h2>Default list RTL state</h2>
+  <%= highlight_html do %>
+<ul id="sortable-list_example-2" class="interpretations-list">
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show" dir="rtl">سالو</a>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show" dir="rtl">مرسي <span class="badge">Auto solution</span></a>
+  </li>
+  <li>
+    <div class="interpretations-list__draggable"></div>
+    <a href="#" class="interpretations-list__show" dir="rtl">أبلكاسيون ويب</a>
+  </li>
+</ul>
+<script>
+  Sortable.create($('#sortable-list_example-2')[0], {
+      handle: '.interpretations-list__draggable',
+      animation: 100
+  });
+</script>
+  <% end %>
+</section>
+
+
 
 <section>
   <h2>Update list state</h2>

@@ -25,6 +25,7 @@
     }
   }
 
+
   .interpretations-list__draggable {
     width: 20px;
 
@@ -56,6 +57,10 @@
     &:hover{
       border-right: 3px solid $primary-color;
     }
+  }
+
+  a.interpretations-list__show[dir='rtl']{
+    text-align: right;
   }
 
   form{

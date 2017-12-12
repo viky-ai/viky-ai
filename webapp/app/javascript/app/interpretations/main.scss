@@ -49,6 +49,14 @@
     }
   }
 
+  trix-editor[dir="rtl"]{
+    @media (min-width: 600px){
+      padding-left: 290px;
+      padding-right: .5em;
+    }
+    text-align: right;
+  }
+
   .trix-control__option{
     padding: .475em;
     line-height: 1em;
@@ -63,6 +71,10 @@
       width: auto;
       left: auto;
       right: .25em;
+      &.trix-control__option--rtl{
+        right: auto;
+        left: .25em;
+      }
     }
     input[type="checkbox"]{
       vertical-align: bottom;
@@ -268,6 +280,14 @@ trix-editor{
       }
       @media (min-width: 1200px){
         display: table-cell;
+      }
+    }
+  }
+  &.aliases--rtl{
+    table{
+      th:last-child,
+      td:last-child{
+        text-align: right;
       }
     }
   }
