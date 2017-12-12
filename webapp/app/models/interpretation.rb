@@ -48,10 +48,7 @@ class Interpretation < ApplicationRecord
       if auto_solution_enabled
         self.solution = nil
       else
-        if solution.blank?
-          self.auto_solution_enabled = true
-          self.solution = nil
-        end
+        self.solution = "" if solution.blank?
       end
     end
 

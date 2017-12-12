@@ -210,7 +210,6 @@ class Nlp::Package
           package: @agent.id
         }
       end
-
     end
 
     def build_aliases(interpretation)
@@ -247,7 +246,7 @@ class Nlp::Package
       result = ''
       if interpretation.auto_solution_enabled
         if interpretation.interpretation_aliases.empty?
-          result = "`\"#{interpretation.expression.gsub('"', '\\"')}\"`"
+          result = interpretation.expression
         end
       else
         result = "`#{interpretation.solution}`" unless interpretation.solution.blank?

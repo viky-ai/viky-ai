@@ -11,15 +11,15 @@ json.interpretations @interpretations do |intent|
     unless interpretation[:aliases].blank?
       json.aliases interpretation[:aliases] do |ialias|
         json.alias ialias[:alias]
-        json.slug ialias[:slug] unless ialias[:slug].blank?
-        json.id ialias[:id] if ialias[:type].blank?
-        json.package @agent.id if ialias[:type].blank?
-        json.type ialias[:type] unless ialias[:type].blank?
+        json.slug ialias[:slug]  unless ialias[:slug].blank?
+        json.id ialias[:id]      if ialias[:type].blank?
+        json.package @agent.id   if ialias[:type].blank?
+        json.type ialias[:type]  unless ialias[:type].blank?
       end
     end
-    json.locale interpretation[:locale] unless interpretation[:locale].blank?
+    json.locale interpretation[:locale]         unless interpretation[:locale].blank?
     json.keep_order interpretation[:keep_order] unless interpretation[:keep_order].blank?
-    json.glued interpretation[:glued] unless interpretation[:glued].blank?
-    json.solution interpretation[:solution] unless interpretation[:solution].blank?
+    json.glued interpretation[:glued]           unless interpretation[:glued].blank?
+    json.solution interpretation[:solution]     unless interpretation[:solution].blank?
   end
 end
