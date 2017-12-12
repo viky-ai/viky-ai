@@ -1,5 +1,5 @@
 class Interpretation < ApplicationRecord
-  Locales = %w[fr en *].freeze
+  Locales = %w[fr en es pt zh *].freeze
 
   belongs_to :intent
   has_many :interpretation_aliases, dependent: :destroy
