@@ -95,7 +95,7 @@ class IntentsTest < ApplicationSystemTestCase
     click_link '+'
     within('.modal') do
       assert page.has_text?('Choose a language')
-      click_link('fr')
+      click_link('fr (French)')
     end
     assert page.has_text?('fr')
   end

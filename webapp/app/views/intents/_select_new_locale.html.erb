@@ -20,11 +20,11 @@
             <% if possible_locale == '*' %>
               <% name = t('views.interpretations.locales.no_locale') %>
             <% else %>
-              <% name = possible_locale %>
+              <% name = possible_locale + " <small>" + t("views.interpretations.locales.#{possible_locale}") + "</small>" %>
             <% end %>
             <li>
               <%= link_to(
-                name,
+                name.html_safe,
                 user_agent_intent_add_locale_path(locale_to_add: possible_locale),
                 method: :post,
                 remote: true,
