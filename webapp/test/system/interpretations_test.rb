@@ -148,7 +148,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    click_link 'fr-FR'
+    within('.interpretation-new-form-container') do
+      click_link 'fr'
+    end
     assert page.has_link?('Bonjour tout le monde')
 
     assert_equal '1', first('#current-locale-tab-badge').text
@@ -176,7 +178,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    click_link 'en-US'
+    within('.interpretation-new-form-container') do
+      click_link 'en'
+    end
 
     assert page.has_link?('Hello world')
 
@@ -218,7 +222,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    click_link 'en-US'
+    within('.interpretation-new-form-container') do
+      click_link 'en'
+    end
 
     assert page.has_link?('Hello world')
 
@@ -243,7 +249,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    click_link 'en-US'
+    within('.interpretation-new-form-container') do
+      click_link 'en'
+    end
 
     assert page.has_link?('Hello world')
     within('#interpretations-list') do

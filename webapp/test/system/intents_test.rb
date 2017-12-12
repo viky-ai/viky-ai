@@ -71,7 +71,7 @@ class IntentsTest < ApplicationSystemTestCase
   test 'Reorganize intents' do
     go_to_agent_show('admin', 'weather')
 
-    intent = Intent.new(intentname: 'test', locales: ['en-US'])
+    intent = Intent.new(intentname: 'test', locales: ['en'])
     intent.agent = agents(:weather)
     assert intent.save
     visit user_agent_path('admin', 'weather')
@@ -91,13 +91,13 @@ class IntentsTest < ApplicationSystemTestCase
     click_link 'terminator_find'
 
     assert page.has_text?('+')
-    assert page.has_no_text?('fr-FR')
+    assert page.has_no_text?('fr')
     click_link '+'
     within('.modal') do
       assert page.has_text?('Choose a language')
-      click_link('fr-FR')
+      click_link('fr')
     end
-    assert page.has_text?('fr-FR')
+    assert page.has_text?('fr')
   end
 
 
@@ -105,10 +105,12 @@ class IntentsTest < ApplicationSystemTestCase
     go_to_agent_show('admin', 'weather')
     click_link 'weather_greeting'
 
-    assert page.has_link?('en-US')
-    assert page.has_link?('fr-FR')
+    assert page.has_link?('en')
+    assert page.has_link?('fr')
 
-    click_link 'en-US'
+    within('.interpretation-new-form-container') do
+      click_link 'en'
+    end
     within('#interpretations-list') do
       click_link 'Hello world'
       assert page.has_text?('Cancel')
@@ -116,9 +118,11 @@ class IntentsTest < ApplicationSystemTestCase
     end
 
     assert page.has_text?('Do you want to remove it ?')
-    click_link 'Yes, remove "en-US" tab'
-    assert page.has_no_link?('en-US')
-    assert page.has_link?('fr-FR')
+    click_link 'Yes, remove "en" tab'
+    within('.interpretation-new-form-container') do
+      assert page.has_no_link?('en')
+      assert page.has_link?('fr')
+    end
 
     assert page.has_text?('Bonjour tout le monde')
 

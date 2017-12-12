@@ -40,7 +40,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
-      locale: 'fr-FR',
+      locale: 'fr',
       interpretation_aliases_attributes: [
         {
           position_start: 0,
@@ -56,7 +56,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
-      locale: 'fr-FR',
+      locale: 'fr',
       interpretation_aliases_attributes: [
         {
           position_start: 0,
@@ -78,7 +78,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
-      locale: 'fr-FR',
+      locale: 'fr',
       interpretation_aliases_attributes: [
         {
           position_start: 8,
@@ -231,7 +231,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
-      locale: 'fr-FR',
+      locale: 'fr',
       interpretation_aliases_attributes: [
         {
           position_start: 0,
@@ -315,7 +315,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation = Interpretation.new({
       expression: 'test',
       intent_id: intents(:weather_greeting).id,
-      locale: 'fr-FR',
+      locale: 'fr',
       interpretation_aliases_attributes: [
         {
           position_start: 0,

@@ -24,14 +24,14 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en-US",
+              "locale"     => "en",
               "keep-order" => true,
               "glued"      => true,
               "solution"   => "`greeting.who`"
             },
             {
               "expression" => "Bonjour tout le monde",
-              "locale"     => "fr-FR",
+              "locale"     => "fr",
               "solution"   => "Bonjour tout le monde"
             }
           ]
@@ -42,7 +42,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "world",
-              "locale"     => "en-US",
+              "locale"     => "en",
               "solution"   => "world"
             }
           ]
@@ -147,14 +147,14 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en-US",
+              "locale"     => "en",
               "keep-order" => true,
               "glued"      => true,
               "solution"   => "`greeting.who`"
             },
             {
               "expression" => "Bonjour tout le monde",
-              "locale"     => "fr-FR",
+              "locale"     => "fr",
               "solution"   => "Bonjour tout le monde"
             }
           ]
@@ -165,7 +165,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "world",
-              "locale"     => "en-US",
+              "locale"     => "en",
               "solution"   => "world"
             }
           ]
@@ -254,14 +254,14 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              'locale'     => 'en-US',
+              'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
               'solution'   => '`greeting.who`'
             },
             {
               'expression' => 'Bonjour tout le monde',
-              'locale'     => 'fr-FR',
+              'locale'     => 'fr',
               'solution'   => "Bonjour tout le monde"
             }
           ]
@@ -272,7 +272,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'world',
-              'locale'     => 'en-US',
+              'locale'     => 'en',
               'solution'   => "world"
             }
           ]
@@ -310,7 +310,7 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              'locale'     => 'en-US',
+              'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
               'solution'   => '`greeting.who`'
@@ -323,14 +323,14 @@ class PackageTest < ActiveSupport::TestCase
                   'type'    => 'any'
                 }
               ],
-              'locale'     => 'en-US',
+              'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
               'solution'   => '`greeting.who`'
             },
             {
               'expression' => 'Bonjour tout le monde',
-              'locale'     => 'fr-FR',
+              'locale'     => 'fr',
               'solution'   => "Bonjour tout le monde"
             }
           ]
@@ -341,7 +341,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'world',
-              'locale'     => 'en-US',
+              'locale'     => 'en',
               'solution'   => "world"
             }
           ]
@@ -370,7 +370,7 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'No interpretation alias' do
     expected_expression = 'I want to go to Paris from London'
-    interpretation = Interpretation.new(expression: 'I want to go to Paris from London', locale: 'en-US')
+    interpretation = Interpretation.new(expression: 'I want to go to Paris from London', locale: 'en')
     interpretation.save
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
