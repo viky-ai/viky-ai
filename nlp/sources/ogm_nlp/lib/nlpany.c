@@ -83,6 +83,7 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     request_position_before = request_position_before_container;
     request_position_before->start = 0;
+    request_position_before->length = 0;
   }
   else
   {
@@ -96,6 +97,7 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     request_position_after = request_position_after_container;
     request_position_after->start = 0xfffffff;
+    request_position_after->length = 0;
   }
   else
   {
