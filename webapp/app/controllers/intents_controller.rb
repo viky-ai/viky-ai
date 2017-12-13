@@ -18,7 +18,7 @@ class IntentsController < ApplicationController
   def create
     @intent = Intent.new(intent_params)
     @intent.agent = @agent
-    @intent.locales = ["fr-FR"]
+    @intent.locales = ['*']
     respond_to do |format|
       if @intent.save
         format.json do

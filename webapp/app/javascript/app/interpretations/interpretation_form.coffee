@@ -25,16 +25,40 @@ class PopupAddTag
     scroll = $('main').scrollTop()
     $('#popup-add-tag a').data('editor-id', id)
     $('#popup-add-tag').show()
-    $('#popup-add-tag').css(
-      top: position_start.bottom + 3 - nav + scroll,
-      left: position_start.left
-    )
+
+    if position_start.x > position_end.x
+      ps = position_start
+      pe = position_end
+      position_start = pe
+      position_end = ps
+
+    rtl = $("trix-editor[trix-id='#{id}']").attr('dir') == 'rtl'
+
+    if rtl
+      $('#popup-add-tag').css(
+        top: position_start.bottom + 3 - nav + scroll,
+        left: position_end.left - $('#popup-add-tag').width() + 4
+      )
+    else
+      $('#popup-add-tag').css(
+        top: position_start.bottom + 3 - nav + scroll,
+        left: position_start.left
+      )
+
     $('#popup-add-tag-overlay').show()
-    $('#highlight').css(
-      top: position_start.bottom - nav + scroll,
-      left: position_start.left,
-      width: "#{(position_end.x - position_start.x)}px"
-    ).show()
+
+    if rtl
+      $('#highlight').css(
+        top: position_start.bottom - nav + scroll,
+        left: position_start.left + position_start.width,
+        width: "#{(position_end.x - position_start.x + position_end.width - position_start.width)}px"
+      ).show()
+    else
+      $('#highlight').css(
+        top: position_start.bottom - nav + scroll,
+        left: position_start.left,
+        width: "#{(position_end.x - position_start.x)}px"
+      ).show()
 
     $('#popup-add-tag ul').scrollTop(0)
 
@@ -138,11 +162,22 @@ class TagRemovePopup
     $('#popup-remove-tag-overlay').on 'click', => @hide()
 
   show: (id, position) ->
+    rtl = $("trix-editor[trix-id='#{id}']").attr('dir') == 'rtl'
+
     nav = $('nav').height()
     scroll = $('main').scrollTop()
     $('#popup-remove-tag a').data('editor-id', id)
     $('#popup-remove-tag').show()
-    $('#popup-remove-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
+    if rtl
+      $('#popup-remove-tag').css(
+        top: position.bottom + 3 - nav + scroll,
+        left: position.left - $('#popup-remove-tag').width() + 4
+      )
+    else
+      $('#popup-remove-tag').css(
+        top: position.bottom + 3 - nav + scroll,
+        left: position.left
+      )
     $('#popup-remove-tag-overlay').show()
     @addKeyListener()
 

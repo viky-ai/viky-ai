@@ -108,14 +108,14 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Add locale' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr-FR')
-    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'fr-FR')
+    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr')
+    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'fr')
     assert_nil flash[:alert]
   end
 
   test 'Add locale forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr-FR')
+    post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_add: 'fr')
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -125,14 +125,14 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Remove locale' do
     sign_in users(:edit_on_agent_weather)
-    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_remove: 'fr-FR')
-    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'en-US')
+    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_remove: 'fr')
+    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_greeting), locale: 'en')
     assert_nil flash[:alert]
   end
 
   test 'Remove  locale forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_remove: 'fr-FR')
+    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_greeting), locale_to_remove: 'fr')
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end

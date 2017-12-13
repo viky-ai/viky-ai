@@ -1,5 +1,9 @@
 module InterpretationHelper
 
+  def rtl?(locale)
+    locale == 'ar'
+  end
+
   def intent_to_json(intent)
     JSON.generate({
       color:  "intent-#{intent.color}",

@@ -14,7 +14,7 @@
 
   <div class="field">
     <div class="control trix-control">
-      <div class="trix-control__option">
+      <div class="trix-control__option <% if rtl?(interpretation.locale) %>trix-control__option--rtl<% end %>">
         <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
         <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
         &nbsp;
@@ -26,7 +26,7 @@
       </div>
       <textarea name="interpretation[expression]" style="display:none;"
         id="<%= "expression-#{interpretation.id}" %>"><%= display_expression_for_trix(interpretation) %></textarea>
-      <trix-editor
+      <trix-editor <% if rtl?(interpretation.locale) %>dir="rtl"<% end %>
         input="<%= "expression-#{interpretation.id}" %>"
         placeholder="<%= t('views.interpretations.new.placeholder') %>"></trix-editor>
     </div>
@@ -36,7 +36,7 @@
     <%= display_errors(interpretation, :glued) %>
   </div>
 
-  <div class="aliases" style="display: none;"></div>
+  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>" style="display: none;"></div>
 
   <div class="field field--for-solution"
       <% if interpretation.auto_solution_enabled %>style="display:none;"<% end %>>
