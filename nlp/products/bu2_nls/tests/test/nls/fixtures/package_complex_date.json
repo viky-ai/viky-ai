@@ -549,8 +549,11 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'days')`",
-            "unit": "day"
+            "duration":
+            {
+              "value": "`moment.duration(number.number,'days')`",
+              "unit": "day"
+            }
           }
         },
         {
@@ -572,8 +575,11 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'weeks')`",
-            "unit": "week"
+            "duration":
+            {
+              "value": "`moment.duration(number.number,'weeks')`",
+              "unit": "week"
+            }
           }
         },
         {
@@ -595,8 +601,11 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'months')`",
-            "unit": "month"
+            "duration":
+            {
+              "value": "`moment.duration(number.number,'months')`",
+              "unit": "month"
+            }
           }
         },
         {
@@ -618,8 +627,11 @@
           ],
           "solution":
           {
-            "duration": "`moment.duration(number.number,'years')`",
-            "unit": "year"
+            "duration":
+            {
+              "value": "`moment.duration(number.number,'years')`",
+              "unit": "year"
+            }
           }
         }
       ]
@@ -699,15 +711,21 @@
           ],
           "solution":
           {
-            "duration": "`duration_basic.duration`",
-            "unit": "`duration_basic.unit`"
+            "duration":
+            {
+              "value": "`duration_basic.duration.value`",
+              "unit": "`duration_basic.duration.unit`"
+            }
           }
         }
       ],
       "solution":
       {
-        "duration": "`moment.duration(durations.duration).add(moment.duration(duration_basic.duration))`",
-        "unit": "`var a=durations.unit; var b=duration_basic.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
+        "duration":
+        {
+          "value": "`moment.duration(durations.duration.value).add(moment.duration(duration_basic.duration.value))`",
+          "unit": "`var a=durations.duration.unit; var b=duration_basic.duration.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
+        }
       }
     },
     {
@@ -732,7 +750,11 @@
           ],
           "solution":
           {
-            "duration": "`durations.duration`"
+            "duration":
+            {
+              "value": "`durations.duration.value`",
+              "unit": "`durations.duration.unit`"
+            }
           }
         }
       ]
@@ -759,7 +781,7 @@
           ],
           "solution":
           {
-            "date_range": "`moment.range(moment().add(moment.duration(latency.duration)).startOf(latency.unit),moment().add(moment.duration(latency.duration)).endOf(latency.unit))`"
+            "date_range": "`moment.range(moment().add(moment.duration(latency.duration.value)).startOf(latency.duration.unit),moment().add(moment.duration(latency.duration.value)).endOf(latency.duration.unit))`"
           }
         }
       ]
@@ -1032,7 +1054,7 @@
           ],
           "solution":
           {
-            "date_range": "`moment.range( moment().add(moment.duration(latency.duration)) , moment().add(moment.duration(latency.duration)).add(moment.duration(durations.duration)) )`"
+            "date_range": "`moment.range( moment().add(moment.duration(latency.duration.value)) , moment().add(moment.duration(latency.duration.value)).add(moment.duration(durations.duration.value)) )`"
           }
         }
       ]
@@ -1464,8 +1486,11 @@
       "solution":
       {
         "date_range": "`month_year.date_range`",
-        "duration": "`duration.duration`",
-        "unit": "`duration.unit`"
+        "duration":
+        {
+          "value": "`duration.value`",
+          "unit": "`duration.unit`"
+        }
       }
     },
     {
@@ -1497,8 +1522,11 @@
       "solution":
       {
         "date_range": "`in_next_month.date_range`",
-        "duration": "`duration.duration`",
-        "unit": "`duration.unit`"
+        "duration":
+        {
+          "value": "`duration.duration.value`",
+          "unit": "`duration.duration.unit`"
+        }
       }
     },
     {
@@ -1530,8 +1558,11 @@
       "solution":
       {
         "date_range": "`in_month.date_range`",
-        "duration": "`duration.duration`",
-        "unit": "`duration.unit`"
+        "duration":
+        {
+          "value": "`duration.duration.value`",
+          "unit": "`duration.duration.unit`"
+        }
       }
     },
     {
@@ -2506,7 +2537,7 @@
       }
     },
     {
-      "id":"special_date_in_number_year",
+      "id": "special_date_in_number_year",
       "expressions":
       [
         {
@@ -2543,7 +2574,7 @@
       }
     },
     {
-      "id":"special_date_number_year_ago",
+      "id": "special_date_number_year_ago",
       "expressions":
       [
         {
@@ -2607,7 +2638,7 @@
       }
     },
     {
-      "id":"special_date_year",
+      "id": "special_date_year",
       "expressions":
       [
         {

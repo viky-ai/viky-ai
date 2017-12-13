@@ -111,8 +111,7 @@ class PackageTest < ActiveSupport::TestCase
                   "id"      => intents(:weather_who).id,
                   "package" => weather.id
                 }
-              ],
-              "solution" => "`({ who: who })`"
+              ]
             },
             {
               "expression" => "@{who} @{who_recursive}",
@@ -203,8 +202,7 @@ class PackageTest < ActiveSupport::TestCase
                   'id'      => intents(:weather_who).id,
                   'package' => weather.id
                 }
-              ],
-              'solution' => "`({ who: who })`"
+              ]
             },
             {
               'expression' => '@{who} @{who_recursive}',

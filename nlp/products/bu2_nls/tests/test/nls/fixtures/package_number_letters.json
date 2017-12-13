@@ -9,6 +9,10 @@
         {
           "expression": "and",
           "locale": "en"
+        },
+        {
+          "expression": "et",
+          "locale": "fr"
         }
       ]
     },
@@ -45,18 +49,6 @@
         {
           "expression": "une",
           "locale": "fr"
-        },
-        {
-          "expression": "et un",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
-        },
-        {
-          "expression": "et une",
-          "keep-order": true,
-          "glued": true,
-          "locale": "fr"
         }
       ],
       "solution":
@@ -85,7 +77,7 @@
           "locale": "fr"
         },
         {
-          "expression": "et unième",
+          "expression": "unième",
           "keep-order": true,
           "glued": true,
           "locale": "fr"
@@ -441,7 +433,7 @@
           "locale": "fr"
         },
         {
-          "expression": "et onze",
+          "expression": "onze",
           "locale": "fr"
         }
       ],
@@ -463,7 +455,7 @@
           "locale": "fr"
         },
         {
-          "expression": "et onzieme",
+          "expression": "onzieme",
           "locale": "fr"
         }
       ],
@@ -1581,6 +1573,30 @@
       "expressions":
       [
         {
+          "expression": "@{number_20} @{and} @{number_1}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_1.number`"
+          }
+        },
+        {
           "expression": "@{number_20} @{number_1_9}",
           "keep-order": true,
           "glued": true,
@@ -1636,6 +1652,30 @@
       "id": "number_20_29_ordinal",
       "expressions":
       [
+        {
+          "expression": "@{number_20} @{and} @{number_1_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_20",
+              "id": "number_20"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_20.number+number_1_ordinal.number`"
+          }
+        },
         {
           "expression": "@{number_20} @{number_1_9_ordinal}",
           "keep-order": true,
@@ -1693,6 +1733,30 @@
       "expressions":
       [
         {
+          "expression": "@{number_30} @{and} @{number_1}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_1.number`"
+          }
+        },
+        {
           "expression": "@{number_30} @{number_1_9}",
           "keep-order": true,
           "glued": true,
@@ -1748,6 +1812,30 @@
       "id": "number_30_39_ordinal",
       "expressions":
       [
+        {
+          "expression": "@{number_30} @{and} @{number_1_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_30",
+              "id": "number_30"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_30.number+number_1_ordinal.number`"
+          }
+        },
         {
           "expression": "@{number_30} @{number_1_9_ordinal}",
           "keep-order": true,
@@ -1805,6 +1893,30 @@
       "expressions":
       [
         {
+          "expression": "@{number_40} @{and} @{number_1}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_1.number`"
+          }
+        },
+        {
           "expression": "@{number_40} @{number_1_9}",
           "keep-order": true,
           "glued": true,
@@ -1860,6 +1972,30 @@
       "id": "number_40_49_ordinal",
       "expressions":
       [
+        {
+          "expression": "@{number_40} @{and} @{number_1_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_40",
+              "id": "number_40"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_40.number+number_1_ordinal.number`"
+          }
+        },
         {
           "expression": "@{number_40} @{number_1_9_ordinal}",
           "keep-order": true,
@@ -1917,6 +2053,30 @@
       "expressions":
       [
         {
+          "expression": "@{number_50} @{and} @{number_1}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_1.number`"
+          }
+        },
+        {
           "expression": "@{number_50} @{number_1_9}",
           "keep-order": true,
           "glued": true,
@@ -1972,6 +2132,30 @@
       "id": "number_50_59_ordinal",
       "expressions":
       [
+        {
+          "expression": "@{number_50} @{and} @{number_1_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_50",
+              "id": "number_50"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_50.number+number_1_ordinal.number`"
+          }
+        },
         {
           "expression": "@{number_50} @{number_1_9_ordinal}",
           "keep-order": true,
@@ -2029,6 +2213,30 @@
       "expressions":
       [
         {
+          "expression": "@{number_60} @{and} @{number_1}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1",
+              "id": "number_1"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_1.number`"
+          }
+        },
+        {
           "expression": "@{number_60} @{number_1_9}",
           "keep-order": true,
           "glued": true,
@@ -2064,6 +2272,30 @@
       "id": "number_60_69_ordinal",
       "expressions":
       [
+        {
+          "expression": "@{number_60} @{and} @{number_1_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_1_ordinal",
+              "id": "number_1_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_1_ordinal.number`"
+          }
+        },
         {
           "expression": "@{number_60} @{number_1_9_ordinal}",
           "keep-order": true,
@@ -2131,6 +2363,30 @@
           ]
         },
         {
+          "expression": "@{number_60} @{and} @{number_11}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_11",
+              "id": "number_11"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_11.number`"
+          }
+        },
+        {
           "expression": "@{number_60} @{number_10_19}",
           "keep-order": true,
           "glued": true,
@@ -2185,6 +2441,30 @@
               "id": "number_70_ordinal"
             }
           ]
+        },
+        {
+          "expression": "@{number_60} @{and} @{number_11_ordinal}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "number_60",
+              "id": "number_60"
+            },
+            {
+              "alias": "and",
+              "id": "conjonction_and"
+            },
+            {
+              "alias": "number_11_ordinal",
+              "id": "number_11_ordinal"
+            }
+          ],
+          "solution":
+          {
+            "number": "`number_60.number+number_11_ordinal.number`"
+          }
         },
         {
           "expression": "@{number_60} @{number_10_19_ordinal}",

@@ -177,21 +177,21 @@ module Nls
       i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
           aliases: pg_building_feature_hash,
           keep_order: true,
-          solution: { features: "`building_feature`" })
+          solution: { building_feature: "`building_feature`" })
       i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
           aliases: pg_building_feature_any_hash,
           keep_order: true,
-          solution: { features: "`building_feature`" })
+          solution: { building_feature: "`building_feature`" })
       i_pg_building_feature.new_expression("@{building_feature}",
           aliases: {'building_feature'  => i_building_feature},
-          solution: { features: "`building_feature`" })
+          solution: { building_feature: "`building_feature`" })
       pg_building_feature << i_pg_building_feature
 
 
       i_pg_building_features = Interpretation.new("pg-building-features")
-      pg_building_features_hash = {'feature' => i_pg_building_feature, 'features'  => i_pg_building_features}
-      i_pg_building_features.new_expression("@{feature} @{features}", aliases: pg_building_features_hash )
-      i_pg_building_features.new_expression("@{feature}", aliases: { feature: i_pg_building_feature }, keep_order: true )
+      pg_building_features_hash = { features: i_pg_building_feature, features_recursive: i_pg_building_features}
+      i_pg_building_features.new_expression("@{features} @{features_recursive}", aliases: pg_building_features_hash )
+      i_pg_building_features.new_expression("@{features}", aliases: { features: i_pg_building_feature }, keep_order: true )
       pg_building_feature << i_pg_building_features
       @available_packages[pg_building_feature.slug] = pg_building_feature
 

@@ -18,17 +18,17 @@
           ]
         },
         {
-          "expression": "@{hotel_features} @{hotel_feature}",
+          "expression": "@{hotel_feature} @{hotel_features}",
           "aliases":
           [
             {
-              "alias": "hotel_features",
-              "id": "hotel_features",
+              "alias": "hotel_feature",
+              "id": "hotel_feature",
               "package": "hotel_features"
             },
             {
-              "alias": "hotel_feature",
-              "id": "hotel_feature",
+              "alias": "hotel_features",
+              "id": "hotel_features",
               "package": "hotel_features"
             }
           ]
@@ -40,6 +40,17 @@
       "expressions":
       [
         {
+          "expression": "@{activity}",
+          "aliases":
+          [
+            {
+              "alias": "activity",
+              "id": "activity",
+              "package": "activity"
+            }
+          ]
+        },
+        {
           "expression": "@{building_feature}",
           "aliases":
           [
@@ -48,11 +59,7 @@
               "id": "building_feature",
               "package": "building_features"
             }
-          ],
-          "solution":
-          {
-            "hotel_feature": "`building_feature.building_feature`"
-          }
+          ]
         },
         {
           "expression": "@{number_people}",
@@ -102,22 +109,6 @@
           "expression": "@{duration}",
           "aliases":
           [
-            {
-              "alias": "duration",
-              "id": "duration",
-              "package": "package_overall_date"
-            }
-          ]
-        },
-        {
-          "expression": "@{preposition_during_duration} @{duration}",
-          "aliases":
-          [
-            {
-              "alias": "preposition_during_duration",
-              "id": "preposition_during_duration",
-              "package": "grammar"
-            },
             {
               "alias": "duration",
               "id": "duration",
