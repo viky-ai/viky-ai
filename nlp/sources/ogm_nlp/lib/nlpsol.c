@@ -13,8 +13,8 @@ static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *
     json_t *json_package_solution);
 static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    og_string solution_key, json_t *sub_solution, og_bool recurse);
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, og_string solution_key,
+    json_t *sub_solution);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -178,7 +178,7 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   int nb_solutions = g_queue_get_length(solutions);
   if (nb_solutions <= 0) return FALSE;
-  else if (nb_solutions == 1)
+  else if (nb_solutions == 1 && !request_expression->expression->interpretation->is_recursive)
   {
     struct alias_solution *alias_solution = solutions->head->data;
     request_expression->json_solution = json_incref(alias_solution->json_solution);
@@ -323,29 +323,78 @@ og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expressi
     og_string solution_key = alias_solution->alias->alias;
     json_t *sub_solution = alias_solution->json_solution;
 
+    // dans l'interpretation récursive a_list
+    // expr: a
+    // expr: a a_list
+    // alias_is_recursive ne s'applique qu'au a de la seconde expression
     if (sub_solution != NULL && !json_is_null(sub_solution))
     {
-      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, solution_key, sub_solution, TRUE));
+      if (request_expression->expression->interpretation->is_recursive)
+      {
+        if (alias_solution->alias->type == nlp_alias_type_type_Interpretation
+            && !strcmp(alias_solution->alias->id, request_expression->expression->interpretation->id))
+        {
+          solution_key = NULL;
+        }
+      }
+      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, solution_key, sub_solution));
     }
   }
 
   DONE;
 }
 
-static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    og_string solution_key, json_t *sub_solution, og_bool recurse)
+static json_t * NlpSolutionMergeObjectsSubSolution(og_nlp_th ctrl_nlp_th, og_string solution_key, json_t *sub_solution)
+{
+  // merge sub solution with same keys
+  if (solution_key != NULL && json_is_object(sub_solution) && json_object_size(sub_solution) == 1)
+  {
+    json_t *sub_sub_solution = json_object_get(sub_solution, solution_key);
+    if (sub_sub_solution != NULL)
+    {
+      return sub_sub_solution;
+    }
+  }
+
+  return sub_solution;
+}
+
+static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, og_string solution_key,
+    json_t *sub_solution)
 {
   IFN(sub_solution) CONT;
   if (json_is_null(sub_solution)) CONT;
 
-  // object value
-  if (recurse && json_is_object(sub_solution))
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
+  {
+    NlpLog(DOgNlpTraceSolution, "NlpSolutionMergeObjectsRecursive: working on sub_solution:");
+    og_char_buffer json_solution_string[DOgMlogMaxMessageSize / 2];
+    IFE(NlpJsonToBuffer(sub_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
+    NlpLog(DOgNlpTraceSolution, "  sub_solution: %s", json_solution_string);
+  }
+
+  // merge sub solution with same keys
+  sub_solution = NlpSolutionMergeObjectsSubSolution(ctrl_nlp_th, solution_key, sub_solution);
+
+  // recursive part of list
+  if (solution_key == NULL && json_is_object(sub_solution))
   {
     const char *key = NULL;
     json_t *value = NULL;
     json_object_foreach(sub_solution, key, value)
     {
-      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, key, value, FALSE));
+      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, key, value));
+    }
+  }
+
+  // object value
+  else if (json_is_object(sub_solution) && !request_expression->expression->interpretation->is_recursive)
+  {
+    const char *key = NULL;
+    json_t *value = NULL;
+    json_object_foreach(sub_solution, key, value)
+    {
+      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, key, value));
     }
   }
 
@@ -530,7 +579,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     json_t *json_package_solution)
 {
 
-  // reset local variable
+// reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
@@ -553,7 +602,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     }
   }
 
-  // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
+// We want to add the alias as a variable whose name is the alias and whose value is its associated solution
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
@@ -565,8 +614,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
   og_bool solution_built = FALSE;
 
-  // Now we scan the json_package_solution to get some executable code
-  // If there are, we create a copy of the json structure and amend it with the result of the execution of the code
+// Now we scan the json_package_solution to get some executable code
+// If there are, we create a copy of the json structure and amend it with the result of the execution of the code
   json_t *json_new_solution = json_deep_copy(json_package_solution);
 
   json_t *json_solution_computed_value = NULL;
@@ -596,7 +645,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     solution_built = TRUE;
   }
 
-  // reset local variable
+// reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   return solution_built;

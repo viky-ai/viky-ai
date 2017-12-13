@@ -106,17 +106,17 @@ module Nls
       def test_complex_date_for_period
         now = "2016-02-28T00:00:00+03:00"
 
-        duration = "P7D"
-        check_interpret("pour une semaine", interpretation: "duration", solution: {"duration" => duration}, now: now)
-        check_interpret("pour 1 semaine", interpretation: "duration", solution: {"duration" => duration}, now: now)
-        check_interpret("for one week", interpretation: "duration", solution: {"duration" => duration}, now: now)
-        check_interpret("for 1 week", interpretation: "duration", solution: {"duration" => duration}, now: now)
+        solution = { "duration" => { "value" => "P7D", "unit" => "week"} }
+        check_interpret("pour une semaine", interpretation: "duration", solution: solution, now: now)
+        check_interpret("pour 1 semaine", interpretation: "duration", solution: solution, now: now)
+        check_interpret("for one week", interpretation: "duration", solution: solution, now: now)
+        check_interpret("for 1 week", interpretation: "duration", solution: solution, now: now)
 
-        duration = "P3M"
-        check_interpret("for 3 months", interpretation: "duration", solution: {"duration" => duration}, now: now)
+        solution = { "duration" => { "value" => "P3M", "unit" => "month"} }
+        check_interpret("for 3 months", interpretation: "duration", solution: solution, now: now)
 
-        duration = "P3M2D"
-        check_interpret("for 3 months and 2 days", interpretation: "duration", solution: {"duration" => duration}, now: now)
+        solution = { "duration" => { "value" => "P3M2D", "unit" => "day"} }
+        check_interpret("for 3 months and 2 days", interpretation: "duration", solution: solution, now: now)
 
       end
 

@@ -59,4 +59,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     page.execute_script(script)
   end
 
+  def assert_no_text_selected_in_trix(expression_id, text)
+    script = "$('#expression-#{expression_id}')[0].textContent.search('<a .*>#{text}</a>')"
+    result = page.evaluate_script(script)
+    assert_equal -1, result
+  end
+
 end

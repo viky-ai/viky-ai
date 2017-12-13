@@ -242,6 +242,36 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Remove alias from summary board' do
+    go_to_agents_index
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    within('.interpretation-new-form-container') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('Hello world')
+
+    within('#interpretations-list') do
+      click_link 'Hello world'
+      within('.aliases') do
+        assert page.has_text?('who')
+        all('a[href="#"').last.click
+        assert page.has_no_text?('who')
+      end
+      who = interpretation_aliases(:weather_greeting_hello_who)
+      assert_no_text_selected_in_trix who.interpretation.id, who.aliasname
+      click_button 'Update'
+    end
+
+    assert page.has_link?('Hello world')
+    assert_equal 0, all('.interpretation-resume').count
+  end
+
+
   test 'Update an interpretation and cancel' do
     go_to_agents_index
     assert page.has_text?('admin/weather')

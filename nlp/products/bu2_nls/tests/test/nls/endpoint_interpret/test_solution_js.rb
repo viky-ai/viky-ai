@@ -88,7 +88,7 @@ module Nls
         matches.new_expression("@{match} @{matches}", aliases: { match: match, matches: matches }, keep_order: true)
 
         solution_test_combine = package.new_interpretation("solution_test_combine")
-        solution_test_combine.new_expression("sol combine @{matches}", aliases: { matches: matches })
+        solution_test_combine.new_expression("sol combine @{match}", aliases: { match: matches })
 
         package
       end
@@ -162,30 +162,42 @@ module Nls
         check_interpret("sol nested", interpretation: "solution_test_js", solution: expected_solution)
       end
 
-      def test_solution_combine_unit
+      def test_solution_combine_unit_sol
+        check_interpret("sol combine 1", solution: { match: { number: 1 } })
+        check_interpret("sol combine 2", solution: { match: { number: 2 } })
+      end
 
-        check_interpret("sol combine 1", solution: { number: 1 })
-        check_interpret("sol combine 2", solution: { number: 2 })
+      def test_solution_combine_unit_nosol
+        check_interpret("sol combine nosol 1", solution: { match: 1 })
+        check_interpret("sol combine nosol 2", solution: { match: 2 })
+      end
 
-        check_interpret("sol combine nosol 1", solution: 1)
-        check_interpret("sol combine nosol 2", solution: 2)
+      def test_solution_combine_unit_entity
+        check_interpret("sol combine entity", solution: { match: { name: "entity" } } )
+        check_interpret("sol combine dummy entity", solution: { match: { name: "entity" } })
+      end
 
-        check_interpret("sol combine entity", solution: { name: "entity" })
-        check_interpret("sol combine dummy entity", solution: { name: "entity" })
-
-        check_interpret("sol combine text anything", solution: "anything")
-
+      def test_solution_combine_unit_any
+        check_interpret("sol combine text anything", solution: { match: "anything" })
       end
 
 
-      def test_solution_combine_complex
-        check_interpret("sol combine 1 2 3", solution: { number: [1, 2, 3] })
-        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2], matches: 3 })
-        check_interpret("sol combine entity 1 2 3", solution: { number: [1, 2, 3], name: "entity"})
-        check_interpret("sol combine entity 1 2 3 entity 4", solution: { number: [1, 2, 3, 4], name: [ "entity", "entity" ] })
-        check_interpret("sol combine entity dummy no solution", solution: { name: "entity" })
+      def test_solution_combine_complex_sol
+        check_interpret("sol combine 1 2 3", solution: { match: [ { number: 1 }, { number: 2 }, { number: 3 } ] })
+      end
 
-        sol = { number: [1, 2, 3, 4], name: [ "entity", "entity" ], match: "everything" }
+      def test_solution_combine_complex_nosol
+        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2, 3] })
+      end
+
+      def test_solution_combine_complex_entity
+        check_interpret("sol combine entity 1 2 3", solution: { match: [ { name: "entity"}, { number: 1 }, { number: 2 }, { number: 3 } ]})
+        check_interpret("sol combine entity 1 2 3 entity 4", solution: { match: [ { name: "entity"}, { number: 1 }, { number: 2 }, { number: 3 }, { name: "entity"}, { number: 4 } ]})
+        check_interpret("sol combine entity dummy no solution", solution: { match: { name: "entity" } })
+      end
+
+      def test_solution_combine_complex_any
+        sol = { match: [ { name: "entity"}, { number: 1 }, { number: 2 }, "everything", { number: 3 }, { name: "entity"}, { number: 4 } ] }
         check_interpret("sol combine entity 1 2 text everything 3 entity 4", solution: sol)
       end
 

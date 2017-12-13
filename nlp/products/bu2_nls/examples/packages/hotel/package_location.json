@@ -62,7 +62,11 @@
               "alias": "location",
               "type": "any"
             }
-          ]
+          ],
+          "solution":
+          {
+            "location to learn": "`location`"
+          }
         }
       ]
     }

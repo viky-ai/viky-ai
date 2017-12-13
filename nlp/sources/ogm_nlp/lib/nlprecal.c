@@ -74,6 +74,7 @@ static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueu
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
+    if (request_expression->any_validate_status == 0) continue;
     if (request_expression->request_positions_nb == first_request_expression->request_positions_nb
         && request_expression->overlap_mark == first_request_expression->overlap_mark)
     {

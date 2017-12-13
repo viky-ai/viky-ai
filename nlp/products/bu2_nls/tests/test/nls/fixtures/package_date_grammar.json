@@ -171,6 +171,10 @@
           "locale": "en"
         },
         {
+          "expression": "during",
+          "locale": "en"
+        },
+        {
           "expression": "at",
           "locale": "en"
         },
@@ -186,6 +190,14 @@
         },
         {
           "expression": "pour",
+          "locale": "fr"
+        },
+        {
+          "expression": "pendant",
+          "locale": "fr"
+        },
+        {
+          "expression": "durant",
           "locale": "fr"
         },
         {
@@ -208,6 +220,10 @@
         },
         {
           "expression": "à",
+          "locale": "fr"
+        },
+        {
+          "expression": "à la",
           "locale": "fr"
         }
       ]
