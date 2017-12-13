@@ -11,6 +11,12 @@ en:
       delete_failed: "Ooops, delete failed."
       locales:
         no_locale: No language
+        fr: (French)
+        en: (English)
+        es: (Spanish)
+        pt: (Portuguese)
+        zh: (Chinese)
+        ar: (Arabic)
       blankslate:
         message_show_html: <p>No expression entered for the "%{language}" tab.</p>
         message_edit_html: >

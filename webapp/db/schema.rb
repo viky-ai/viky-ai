@@ -10,11 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171201131020) do
+ActiveRecord::Schema.define(version: 20171212081844) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "agent_arcs", force: :cascade do |t|
+    t.uuid "source_id"
+    t.uuid "target_id"
+    t.index ["source_id", "target_id"], name: "index_agent_arcs_on_source_id_and_target_id", unique: true
+  end
 
   create_table "agents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -65,7 +71,6 @@ ActiveRecord::Schema.define(version: 20171201131020) do
     t.boolean "is_list", default: false
     t.boolean "any_enabled", default: false
     t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
-    t.index ["interpretation_id", "aliasname"], name: "index_interpretation_aliases_on_interpretation_id_and_aliasname", unique: true
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end
 
@@ -136,6 +141,8 @@ ActiveRecord::Schema.define(version: 20171201131020) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "agent_arcs", "agents", column: "source_id", on_delete: :cascade
+  add_foreign_key "agent_arcs", "agents", column: "target_id", on_delete: :cascade
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "intents", "agents", on_delete: :cascade
   add_foreign_key "interpretation_aliases", "intents", on_delete: :cascade

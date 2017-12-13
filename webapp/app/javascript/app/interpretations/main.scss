@@ -49,8 +49,16 @@
     }
   }
 
+  trix-editor[dir="rtl"]{
+    @media (min-width: 600px){
+      padding-left: 290px;
+      padding-right: .5em;
+    }
+    text-align: right;
+  }
+
   .trix-control__option{
-    padding: .5em;
+    padding: .475em;
     line-height: 1em;
     position: absolute;
     border-radius: 2px;
@@ -58,10 +66,18 @@
     width: calc(100% - .5em);
     top: .25em;
     left: .25em;
+
     @media (min-width: 600px){
       width: auto;
       left: auto;
       right: .25em;
+      &.trix-control__option--rtl{
+        right: auto;
+        left: .25em;
+      }
+    }
+    input[type="checkbox"]{
+      vertical-align: bottom;
     }
     label{
       line-height: 1em;
@@ -92,7 +108,7 @@
 
 .popup{
   z-index: 5;
-  max-width: 300px;
+  max-width: 400px;
   position: absolute;
   background-color: #fff;
   border-radius: 3px;
@@ -128,7 +144,7 @@
     padding: .5em 1em;
   }
   ul{
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
     list-style: none;
     padding: 0;
@@ -264,6 +280,14 @@ trix-editor{
       }
       @media (min-width: 1200px){
         display: table-cell;
+      }
+    }
+  }
+  &.aliases--rtl{
+    table{
+      th:last-child,
+      td:last-child{
+        text-align: right;
       }
     }
   }

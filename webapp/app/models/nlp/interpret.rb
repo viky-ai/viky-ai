@@ -35,7 +35,7 @@ class Nlp::Interpret
   def nlp_params
     p = {
       "Accept-Language" => language,
-      "packages" => [agent.id],
+      "packages" => packages,
       "sentence" => sentence,
       "show-explanation" => verbose
     }
@@ -57,6 +57,10 @@ class Nlp::Interpret
 
   def agent
     User.friendly.find(ownername).agents.friendly.find(agentname)
+  end
+
+  def packages
+    AgentGraph.new(agent).to_graph.vertices.collect(&:id)
   end
 
   private

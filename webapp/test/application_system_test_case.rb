@@ -23,6 +23,13 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   def login_as(login, password)
     visit new_user_session_path
+
+    # If user is already login, logout
+    if page.has_text?("Agents")
+      Capybara.reset_sessions!
+      visit new_user_session_path
+    end
+
     fill_in 'Email', with: login
     fill_in 'Password', with: password
     click_button 'Log in'
@@ -45,6 +52,17 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     admin_login
     visit user_agent_path(user, agent)
     assert page.has_text?("Agent interpretations")
+  end
+
+  def select_text_in_trix(selector, position_start, position_end)
+    script = "$('#{selector}').first().trigger('select-text', [#{position_start},#{position_end}])"
+    page.execute_script(script)
+  end
+
+  def assert_no_text_selected_in_trix(expression_id, text)
+    script = "$('#expression-#{expression_id}')[0].textContent.search('<a .*>#{text}</a>')"
+    result = page.evaluate_script(script)
+    assert_equal -1, result
   end
 
 end

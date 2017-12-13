@@ -25,16 +25,40 @@ class PopupAddTag
     scroll = $('main').scrollTop()
     $('#popup-add-tag a').data('editor-id', id)
     $('#popup-add-tag').show()
-    $('#popup-add-tag').css(
-      top: position_start.bottom + 3 - nav + scroll,
-      left: position_start.left
-    )
+
+    if position_start.x > position_end.x
+      ps = position_start
+      pe = position_end
+      position_start = pe
+      position_end = ps
+
+    rtl = $("trix-editor[trix-id='#{id}']").attr('dir') == 'rtl'
+
+    if rtl
+      $('#popup-add-tag').css(
+        top: position_start.bottom + 3 - nav + scroll,
+        left: position_end.left - $('#popup-add-tag').width() + 4
+      )
+    else
+      $('#popup-add-tag').css(
+        top: position_start.bottom + 3 - nav + scroll,
+        left: position_start.left
+      )
+
     $('#popup-add-tag-overlay').show()
-    $('#highlight').css(
-      top: position_start.bottom - nav + scroll,
-      left: position_start.left,
-      width: "#{(position_end.x - position_start.x)}px"
-    ).show()
+
+    if rtl
+      $('#highlight').css(
+        top: position_start.bottom - nav + scroll,
+        left: position_start.left + position_start.width,
+        width: "#{(position_end.x - position_start.x + position_end.width - position_start.width)}px"
+      ).show()
+    else
+      $('#highlight').css(
+        top: position_start.bottom - nav + scroll,
+        left: position_start.left,
+        width: "#{(position_end.x - position_start.x)}px"
+      ).show()
 
     $('#popup-add-tag ul').scrollTop(0)
 
@@ -138,11 +162,22 @@ class TagRemovePopup
     $('#popup-remove-tag-overlay').on 'click', => @hide()
 
   show: (id, position) ->
+    rtl = $("trix-editor[trix-id='#{id}']").attr('dir') == 'rtl'
+
     nav = $('nav').height()
     scroll = $('main').scrollTop()
     $('#popup-remove-tag a').data('editor-id', id)
     $('#popup-remove-tag').show()
-    $('#popup-remove-tag').css(top: position.bottom + 3 - nav + scroll, left: position.left)
+    if rtl
+      $('#popup-remove-tag').css(
+        top: position.bottom + 3 - nav + scroll,
+        left: position.left - $('#popup-remove-tag').width() + 4
+      )
+    else
+      $('#popup-remove-tag').css(
+        top: position.bottom + 3 - nav + scroll,
+        left: position.left
+      )
     $('#popup-remove-tag-overlay').show()
     @addKeyListener()
 
@@ -298,6 +333,9 @@ class AliasesForm
         </td>"
 
     line.push "<td>#{alias.selection}</td>"
+    trix_id =  @form_container.closest('form').find('trix-editor').attr('trix-id')
+    remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
+    line.push "<td><a href='#' data-action='remove-alias' data-editor-id='#{trix_id}' data-alias-id='#{alias.id}'><span class=\"icon\">#{remove_icon}</span></a></td>"
     line.push "</tr>"
     line.join("")
 
@@ -312,6 +350,7 @@ class AliasesForm
           <th>Interpretation</th>
           <th>Options <a href='#' data-action='remove-all-interpretation-options'>(<em>Reset</em>)</a></th>
           <th>Selection</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>"
@@ -346,14 +385,16 @@ class InterpretationTagger
       else
         link = $(event.target).closest('a')
 
-
-      if link.data('editor-id') == @editor_id
+      if "#{link.data('editor-id')}" == "#{@editor_id}"
         if link.data('action') == 'remove-tags'
           event.preventDefault()
           @removeTags()
         if link.data('action') == 'add-tag'
           event.preventDefault()
           @addTag(link.data('data'))
+        if link.data('action') == 'remove-alias'
+          event.preventDefault()
+          @removeAlias(link)
 
     # Used for system test
     $(@editor_element).on 'select-text', (event, start, end) =>
@@ -432,6 +473,14 @@ class InterpretationTagger
     @editor.activateAttribute('href', "#{JSON.stringify(data)}")
     @editor.setSelectedRange([range[1], range[1]])
 
+  removeAlias: (aliasLink) ->
+    aliasId = aliasLink.data('alias-id')
+    alias = @aliases.find((item) -> item.id == aliasId)
+    @aliases = @aliases.filter((item) -> item.id != alias.id)
+    @syncAliasesForm()
+    @editor.setSelectedRange([alias.start, alias.end])
+    @editor.deactivateAttribute('href')
+    @editor.setSelectedRange([alias.end, alias.end])
 
 
 class InterpretationSolutions

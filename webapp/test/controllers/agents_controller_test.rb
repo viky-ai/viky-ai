@@ -374,4 +374,101 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?("Unauthorized operation.")
   end
+
+
+  #
+  # Dependencies access
+  #
+
+  test "successors_graph access: Collaborator (show)" do
+    sign_in users(:show_on_agent_weather)
+
+    get successors_graph_user_agent_dependencies_path(users(:admin), agents(:weather))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test "successors_graph access: no access" do
+    sign_in users(:confirmed)
+
+    get successors_graph_user_agent_dependencies_path(users(:admin), agents(:weather))
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "predecessors_graph access: Collaborator (show)" do
+    sign_in users(:show_on_agent_weather)
+
+    get predecessors_graph_user_agent_dependencies_path(users(:admin), agents(:weather))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test "predecessors_graph access: no access" do
+    sign_in users(:confirmed)
+
+    get predecessors_graph_user_agent_dependencies_path(users(:admin), agents(:weather))
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "new dependency access: Collaborator (show) no acccess" do
+    sign_in users(:show_on_agent_weather)
+
+    get new_user_agent_dependency_path(users(:admin), agents(:weather))
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "new dependency access: Collaborator (edit)" do
+    sign_in users(:edit_on_agent_weather)
+
+    get new_user_agent_dependency_path(users(:admin), agents(:weather))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test "create dependency access: Collaborator (show) no acccess" do
+    sign_in users(:show_on_agent_weather)
+
+    post user_agent_dependencies_path(users(:admin), agents(:weather)),
+      params: {
+        id: agents(:terminator).id
+      }
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "create dependency access: Collaborator (edit)" do
+    sign_in users(:edit_on_agent_weather)
+
+    post user_agent_dependencies_path(users(:admin), agents(:weather)),
+      params: {
+        id: agents(:terminator).id
+      }
+    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+  end
+
+  test "Destroy dependency access: Collaborator (show) no acccess" do
+    assert AgentArc.create(source: agents(:weather), target: agents(:terminator))
+
+    sign_in users(:show_on_agent_weather)
+
+    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator))
+
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "Destroy dependency access: Collaborator (edit)" do
+    assert AgentArc.create(source: agents(:weather), target: agents(:terminator))
+
+    sign_in users(:edit_on_agent_weather)
+
+    delete user_agent_dependency_path(users(:admin), agents(:weather), agents(:terminator))
+
+    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+  end
+
+
 end

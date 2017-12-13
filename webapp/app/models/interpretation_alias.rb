@@ -46,12 +46,9 @@ class InterpretationAlias < ApplicationRecord
       dup_found = false
       list_without_destroy = interpretation.interpretation_aliases.select { |item| !item._destroy }
       for ialias in list_without_destroy
-        for item in list_without_destroy
-          himself = ialias.position_start == item.position_start && ialias.position_end == item.position_end
-          unless himself
-            dup_found ||= ialias.aliasname == item.aliasname
-          end
-          break if dup_found
+        himself = ialias.position_start == position_start && ialias.position_end == position_end
+        unless himself
+          dup_found ||= ialias.aliasname == aliasname
         end
         break if dup_found
       end

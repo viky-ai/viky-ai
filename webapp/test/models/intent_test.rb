@@ -8,7 +8,7 @@ class IntentTest < ActiveSupport::TestCase
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
-      locales: ['en-US']
+      locales: ['en']
     )
     intent.agent = agents(:weather)
     assert intent.save
@@ -35,11 +35,11 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Unique intentname per agent' do
-    intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !', locales: ['en-US'])
+    intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !', locales: ['en'])
     intent.agent = agents(:weather)
     assert intent.save
 
-    other_intent = Intent.new(intentname: 'hello', description: 'Another way to greet you...', locales: ['en-US'])
+    other_intent = Intent.new(intentname: 'hello', description: 'Another way to greet you...', locales: ['en'])
     other_intent.agent = agents(:weather)
     assert !other_intent.save
 
@@ -51,7 +51,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname minimal length' do
-    intent = Intent.new(intentname: 'h', description: 'Hello random citizen !', locales: ['en-US'])
+    intent = Intent.new(intentname: 'h', description: 'Hello random citizen !', locales: ['en'])
     intent.agent = agents(:weather)
     assert !intent.save
 
@@ -63,7 +63,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname is cleaned' do
-    intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !', locales: ['en-US'])
+    intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !', locales: ['en'])
     intent.agent = agents(:weather)
     assert intent.save
 
@@ -94,10 +94,10 @@ class IntentTest < ActiveSupport::TestCase
   test 'Add a locale to an intent' do
     intent = intents(:terminator_find)
 
-    assert_equal %w[en-US], intent.locales
-    intent.locales << 'fr-FR'
+    assert_equal %w[en], intent.locales
+    intent.locales << 'fr'
     assert intent.save
-    assert_equal %w[en-US fr-FR], intent.locales
+    assert_equal %w[en fr], intent.locales
   end
 
 
@@ -115,27 +115,27 @@ class IntentTest < ActiveSupport::TestCase
 
   test 'Remove a locale from an intent' do
     intent = intents(:weather_greeting)
-    assert_equal %w[en-US fr-FR], intent.locales
-    intent.locales -= ['fr-FR']
+    assert_equal %w[en fr], intent.locales
+    intent.locales -= ['fr']
     assert intent.save
-    assert_equal %w[en-US], intent.locales
+    assert_equal %w[en], intent.locales
   end
 
 
   test 'Remove an unknown locale from an intent' do
     intent = intents(:weather_greeting)
-    assert_equal %w[en-US fr-FR], intent.locales
+    assert_equal %w[en fr], intent.locales
     intent.locales -= ['xx-XX']
     assert intent.save
-    assert_equal %w[en-US fr-FR], intent.locales
+    assert_equal %w[en fr], intent.locales
   end
 
 
   test 'Remove the last locale from an intent' do
     intent = intents(:weather_greeting)
-    intent.locales -= ['fr-FR']
+    intent.locales -= ['fr']
     assert intent.save
-    intent.locales -= ['en-US']
+    intent.locales -= ['en']
     assert !intent.save
     expected = {
         locales: ['can\'t be blank']
@@ -147,7 +147,7 @@ class IntentTest < ActiveSupport::TestCase
   test 'Do not override color at creation if already set' do
     intent = Intent.new(
       intentname: 'greeting',
-      locales: ['en-US'],
+      locales: ['en'],
       color: 'blue'
     )
     intent.agent = agents(:weather)

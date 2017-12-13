@@ -1,4 +1,5 @@
 @import '../../framework/abstracts/mixins';
+@import '../../framework/abstracts/variables';
 
 .blankslate--agents{
   margin-top: 6em;
@@ -39,10 +40,54 @@
   }
 }
 
-
 .field.field--api-token{
   background-color: #f9f9f9;
   margin: -1.5em -2em 1em -2em;
   padding: .5em 2em;
   border-bottom: 1px solid #eee;
+}
+
+.dependencies-title{
+  & > em{
+    font-style: normal;
+    color: #aaa;
+    font-size: .875em;
+    a{
+      text-decoration:none;
+      color: #aaa;
+      &:hover{
+        strong{
+          text-decoration:underline;
+          color: $primary-color;
+        }
+      }
+    }
+  }
+  & > small{
+    font-size: 1em;
+    color: #aaa;
+    & > em{
+      font-style: normal;
+      color: #bbb;
+      font-size: .875em;
+      a{
+        text-decoration:none;
+        color: #aaa;
+        &:hover{
+          strong{
+            text-decoration:underline;
+            color: $primary-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dependencies-graph{
+  max-height: 80vh;
+  text-align: center;
+  svg{
+    max-height: 80vh;
+  }
 }

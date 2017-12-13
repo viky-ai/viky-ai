@@ -1,0 +1,50 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.agents.confirm_destroy.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+
+      <% count = AgentArc.where(
+            { source_id: agent.id, target_id: successor.id}
+          ).first.target_related_interpretation_aliases.count %>
+
+      <%= t('views.dependencies.confirm_destroy.info_html', successor: successor.name, agent: agent.name ) %>
+      <% if count == 0 %>
+        <%= t('views.dependencies.confirm_destroy.warning_html',
+              successor: successor.name, agent: agent.name, count: count ) %>
+      <% else %>
+        <%= t('views.dependencies.confirm_destroy.warning_html',
+              successor: successor.name, agent: agent.name, count: count ) %>
+      <% end %>
+
+      <%= form_for(
+            agent,
+            url: user_agent_dependency_path(owner, agent, successor),
+            method: :delete,
+            html: { data: { validation: :delete }}) do |delete_form| %>
+        <div class="field">
+          <div class="control">
+            <label><%= t('confirm_destroy.label') %></label>
+            <div>
+              <input type="text" name="validation" />
+            </div>
+            <div class="help help--error" style="display:none;">
+              <span class="icon icon--x-small"><%= icon_alert %></span>
+              <%= t('confirm_destroy.error') %>
+            </div>
+          </div>
+        </div>
+        <%= delete_form.button t('views.agents.confirm_destroy.btn'),
+              class: "btn btn--destructive",
+              data: { 'disable-btn-with': "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe } %>
+        <a href="#" class="btn btn--flat" data-action='close-modal'><%= t('cancel') %></a>
+      <% end %>
+
+    </div>
+  </div>
+</div>

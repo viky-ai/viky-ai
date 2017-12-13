@@ -1,5 +1,5 @@
 class Interpretation < ApplicationRecord
-  Locales = %w[fr-FR en-US *].freeze
+  Locales = %w[fr en es pt zh ar *].freeze
 
   belongs_to :intent
   has_many :interpretation_aliases, dependent: :destroy
@@ -13,7 +13,6 @@ class Interpretation < ApplicationRecord
   before_save :cleanup
   before_create :set_position
 
-
   after_save do
     Nlp::Package.new(intent.agent).push
   end
@@ -21,7 +20,6 @@ class Interpretation < ApplicationRecord
   after_destroy do
     Nlp::Package.new(intent.agent).push
   end
-
 
   def expression_with_aliases
     return expression if interpretation_aliases.count == 0
@@ -40,6 +38,7 @@ class Interpretation < ApplicationRecord
     result.join('')
   end
 
+
   private
 
     def cleanup
@@ -49,10 +48,7 @@ class Interpretation < ApplicationRecord
       if auto_solution_enabled
         self.solution = nil
       else
-        if solution.blank?
-          self.auto_solution_enabled = true
-          self.solution = nil
-        end
+        self.solution = "" if solution.blank?
       end
     end
 
