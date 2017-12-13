@@ -123,7 +123,6 @@ class Nlp::Package
           expression[:expression] = "@{#{ialias.aliasname}}"
           expression[:aliases] = []
           expression[:aliases] << build_internal_alias(ialias)
-          expression[:solution] = "`({ #{ialias.aliasname}: #{ialias.aliasname} })`"
           expressions << expression
 
           expression = {}
