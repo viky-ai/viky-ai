@@ -25,7 +25,7 @@ class AgentArcTest < ActiveSupport::TestCase
     #  / \
     # B   C
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal [], agent_b.successors.reload.collect(&:name)
@@ -42,7 +42,7 @@ class AgentArcTest < ActiveSupport::TestCase
     # |
     # D
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
@@ -61,7 +61,7 @@ class AgentArcTest < ActiveSupport::TestCase
     # | /
     # D
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
@@ -69,7 +69,7 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_c.successors.reload.collect(&:name)
 
-    assert_equal ["Agent B", "Agent C"], agent_d.predecessors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_d.predecessors.reload.collect(&:name).sort
     assert_equal [], agent_d.successors.reload.collect(&:name)
 
 
