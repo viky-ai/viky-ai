@@ -11,7 +11,7 @@ max_request_size 2M
 
 # Timeout for search requests
 backlog_timeout 1000
-request_processing_timeout 2000
+request_processing_timeout 10000
 socket_read_timeout 200
 
 # Requests history log (yes, no, search, index)
