@@ -1,16 +1,7 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentArcTest < ActiveSupport::TestCase
-
-  def create_agent(name)
-    agent = Agent.new(
-      name: name,
-      agentname: name.parameterize
-    )
-    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert agent.save
-    agent
-  end
 
   test "basic agents association" do
     agent_a = create_agent("Agent A")
@@ -34,7 +25,7 @@ class AgentArcTest < ActiveSupport::TestCase
     #  / \
     # B   C
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal [], agent_b.successors.reload.collect(&:name)
@@ -51,7 +42,7 @@ class AgentArcTest < ActiveSupport::TestCase
     # |
     # D
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
@@ -70,7 +61,7 @@ class AgentArcTest < ActiveSupport::TestCase
     # | /
     # D
     assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"], agent_a.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
 
     assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
@@ -78,7 +69,7 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
     assert_equal ["Agent D"], agent_c.successors.reload.collect(&:name)
 
-    assert_equal ["Agent B", "Agent C"], agent_d.predecessors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_d.predecessors.reload.collect(&:name).sort
     assert_equal [], agent_d.successors.reload.collect(&:name)
 
 

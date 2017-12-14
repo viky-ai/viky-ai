@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentGraphTest < ActiveSupport::TestCase
 
@@ -332,15 +333,4 @@ class AgentGraphTest < ActiveSupport::TestCase
     assert graph.has_vertex?(agent_b.slug)
     assert graph.has_vertex?(agent_c.slug)
   end
-
-  def create_agent(name)
-    agent = Agent.new(
-      name: name,
-      agentname: name.parameterize
-    )
-    agent.memberships << Membership.new(user_id: users(:admin).id, rights: 'all')
-    assert agent.save
-    agent
-  end
-
 end
