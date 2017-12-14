@@ -88,7 +88,7 @@ class Agent < ApplicationRecord
   end
 
   def slug
-    "#{owner.slug}/#{agentname}"
+    "#{User.find(owner_id).username}/#{agentname}"
   end
 
 

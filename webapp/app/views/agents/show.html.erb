@@ -44,6 +44,8 @@
   </div>
 </div>
 
+
+<% current_user_can_edit = current_user.can?(:edit, @agent) %>
 <% if @intents.count == 0 %>
   <br />
   <div class="card">
@@ -55,7 +57,7 @@
                        <%= image_path "robot-idle@2x.png" %> 2x' />
         </div>
         <div class="blankslate__content">
-          <% if current_user.can? :edit, @agent %>
+          <% if current_user_can_edit %>
             <%= t('views.intents.blankslate.message_edit_html', agent: @agent.agentname) %>
           <% else %>
             <%= t('views.intents.blankslate.message_show_html', agent: @agent.agentname) %>
@@ -65,16 +67,18 @@
     </div>
   </div>
 <% else %>
+  <% agent_owner = @agent.owner %>
   <ul class="intents-list" id="intents-list"
-      data-update-positions-path="<%= update_positions_user_agent_intents_path(@agent.owner, @agent) %>">
+      data-update-positions-path="<%= update_positions_user_agent_intents_path(agent_owner, @agent) %>">
     <% @intents.each do |intent| %>
       <li data-id="<%= intent.id %>">
 
-        <% if current_user.can?(:edit, @agent) && @intents.count > 1 %>
+
+        <% if current_user_can_edit && @intents.count > 1 %>
           <div class="intents-list__item__draggable"></div>
         <% end %>
 
-        <a href="<%= user_agent_intent_path(@agent.owner, @agent, intent) %>">
+        <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
           <span class="intents-list__item__name"><%= intent.intentname %></span>
           <span class="intents-list__item__desc"><%= intent.description %></span>
         </a>
@@ -83,7 +87,7 @@
           <%= t('views.intents.index.interpretations', count: intent.interpretations.count) %>
         </div>
 
-        <% if current_user.can? :edit, @agent %>
+        <% if current_user_can_edit %>
           <div class="intents-list__item__actions">
             <div class="dropdown">
               <div class="dropdown__trigger">
@@ -96,7 +100,7 @@
               <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
                 <ul>
                   <li>
-                    <a href="<%= edit_user_agent_intent_path(@agent.owner, @agent, intent) %>"
+                    <a href="<%= edit_user_agent_intent_path(agent_owner, @agent, intent) %>"
                        data-action="open-remote-modal">
                       <span class="icon icon--x-small">
                         <%= icon_settings %>
@@ -104,7 +108,7 @@
                     </a>
                   </li>
                   <li class="separator">
-                    <a href="<%= user_agent_intent_confirm_destroy_path(@agent.owner, @agent, intent) %>"
+                    <a href="<%= user_agent_intent_confirm_destroy_path(agent_owner, @agent, intent) %>"
                        data-action="open-remote-modal" class="destructive">
                       <span class="icon icon--x-small">
                         <%= icon_delete %>
