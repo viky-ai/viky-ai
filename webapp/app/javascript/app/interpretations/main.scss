@@ -269,8 +269,8 @@ trix-editor{
     td.options{
       white-space: nowrap;
     }
-    th:last-child,
-    td:last-child{
+    th:nth-child(4),
+    td:nth-child(4){
       display:none;
       @media (min-width: 800px){
         display: table-cell;
@@ -280,6 +280,14 @@ trix-editor{
       }
       @media (min-width: 1200px){
         display: table-cell;
+      }
+    }
+    td:nth-child(5){
+      a svg{
+        fill: #aaa;
+      }
+      a:hover svg{
+        fill: #000;
       }
     }
   }
