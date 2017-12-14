@@ -4,7 +4,7 @@ class Intent < ApplicationRecord
 
   AVAILABLE_COLORS = %w(black red pink purple deep-purple indigo blue light-blue cyan teal green light-green lime yellow amber orange deep-orange brown)
 
-  belongs_to :agent
+  belongs_to :agent, touch: true
   has_many :interpretations, dependent: :destroy
   has_many :interpretation_aliases, dependent: :destroy
 

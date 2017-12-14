@@ -1,7 +1,7 @@
 class Interpretation < ApplicationRecord
   Locales = %w[fr en es pt zh ar *].freeze
 
-  belongs_to :intent
+  belongs_to :intent, touch: true
   has_many :interpretation_aliases, dependent: :destroy
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true

@@ -1,8 +1,8 @@
 class InterpretationAlias < ApplicationRecord
   enum nature: [ :type_intent, :type_digit ]
 
-  belongs_to :interpretation
-  belongs_to :intent, optional: true
+  belongs_to :interpretation, touch: true
+  belongs_to :intent, optional: true, touch: true
 
   validates :intent, presence: true, if: -> { self.type_intent? }
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

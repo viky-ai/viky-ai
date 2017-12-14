@@ -1,16 +1,7 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentArcTest < ActiveSupport::TestCase
-
-  def create_agent(name)
-    agent = Agent.new(
-      name: name,
-      agentname: name.parameterize
-    )
-    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-    assert agent.save
-    agent
-  end
 
   test "basic agents association" do
     agent_a = create_agent("Agent A")
