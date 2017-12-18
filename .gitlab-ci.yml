@@ -16,6 +16,7 @@ variables:
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
   DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
+  DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   TRACE: 1
 
 # Build docker image
@@ -25,8 +26,13 @@ build_ruby_base:
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY} deployment/docker_tools/ruby_base
 
+build_backup:
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY} deployment/docker_tools/backup
+
 build_loadbalancer:
-  stage: build
+  stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_LB} deployment/docker_tools/load_balancer
 
@@ -113,6 +119,15 @@ tag_ruby_base:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
+
+tag_backup:
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
 tag_loadbalancer:
   stage: docker_tag
