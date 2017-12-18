@@ -9,6 +9,7 @@ stages:
 image: docker:dind
 
 variables:
+  SKIP_TEST: "true"
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -24,7 +25,8 @@ variables:
 build_ruby_base:
   stage: prerequist
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY} deployment/docker_tools/ruby_base
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
 build_backup:
   stage: prerequist
@@ -72,7 +74,7 @@ test_webapp:
     - redis:4.0-alpine
   script:
     - cd /webapp
-    - ./bin/docker_run_test.sh
+    - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 
 test_nlp:
   stage: test
@@ -81,7 +83,7 @@ test_nlp:
     GIT_STRATEGY: none
   script:
     - cd /tests
-    - bundle exec rake test
+    - if [ "$SKIP_TEST" != "true" ]; then bundle exec rake test; fi
 
 # Tag docker image to lasted
 tag_webapp:
@@ -119,6 +121,7 @@ tag_ruby_base:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
 tag_backup:
   stage: docker_tag
@@ -176,6 +179,7 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta.viky.ai
   variables:
+    VOQALAPP_AUTO_BACKUP: "true"
     VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
     VOQALAPP_BASEURL: https://viky-beta.viky.ai
     VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
@@ -248,6 +252,69 @@ invite_admin_preprod:
   allow_failure: true
 
 
+# backup
+backup_dev:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Backup platform data from ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="/backup/backup.sh"
+    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
+
+# backup
+backup_preprod:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VOQALAPP_BASEURL: https://viky-beta.viky.ai
+  script:
+    - echo "Backup platform data from ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="/backup/backup.sh"
+    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
+
+# backup restore
+backup_restore_dev:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Restore data from preprod to ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="/backup/restore.sh"
+    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
+
+
 # ---------------------------------------------------------------------------
 
 .auto_devops: &auto_devops |
@@ -298,3 +365,4 @@ invite_admin_preprod:
 
 before_script:
   - *auto_devops
+
