@@ -32,10 +32,8 @@ class Intent < ApplicationRecord
     interpretations.where(locale: locale)
   end
 
-  def locales_by_usage
-    locales.sort_by do |locale|
-      interpretations.where(locale: locale).count * -1
-    end
+  def ordered_locales
+    Interpretation::Locales.select { |l| locales.include?(l) }
   end
 
   def slug

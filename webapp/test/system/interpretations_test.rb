@@ -2,7 +2,7 @@ require 'application_system_test_case'
 
 class InterpretationsTest < ApplicationSystemTestCase
 
-  test 'Create an interpretation' do
+  test 'navigation' do
     go_to_agents_index
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
@@ -10,6 +10,11 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     click_link 'weather_greeting'
     assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+  end
+
+
+  test 'Create an interpretation' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -22,13 +27,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Create an interpretation with alias' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
-    click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -51,13 +50,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Create an interpretation with digits' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
-    click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -96,13 +89,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Errors on interpretation creation' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
-    click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal "1", first('#current-locale-tab-badge').text
 
@@ -115,13 +102,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Errors on interpretation creation with alias' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
-
-    click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "world", first('.interpretation-resume__alias-blue').text
@@ -142,12 +123,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Update an interpretation (simple)' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
     within('.interpretation-new-form-container') do
       click_link 'fr'
     end
@@ -172,12 +149,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Update an interpretation (add alias)' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
     within('.interpretation-new-form-container') do
       click_link 'en'
     end
@@ -216,12 +189,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Update an interpretation (remove alias)' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
     within('.interpretation-new-form-container') do
       click_link 'en'
     end
@@ -243,12 +212,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Remove alias from summary board' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
     within('.interpretation-new-form-container') do
       click_link 'en'
     end
@@ -273,12 +238,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   test 'Update an interpretation and cancel' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
     within('.interpretation-new-form-container') do
       click_link 'en'
     end
@@ -293,13 +254,26 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test 'Delete an interpretation' do
-    go_to_agents_index
-    assert page.has_text?('admin/weather')
-    click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('weather_greeting')
+  test 'change locale via drag & drop' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    click_link 'weather_greeting'
+    expected = ["en 1", "fr 1", "+"]
+    assert_equal expected, all(".tabs ul li").collect(&:text)
+
+    # Does not works...
+
+    # source = first('#interpretations-list .interpretations-list__draggable')
+    # target = first('.tabs li.js-draggable-locale')
+    # source.drag_to(target)
+
+    # expected = ["en 0", "fr 2", "+"]
+    # assert_equal expected, all(".tabs ul li").collect(&:text)
+  end
+
+
+  test 'Delete an interpretation' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
+
     assert page.has_link?('Hello world')
 
     assert_equal "1", first('#current-locale-tab-badge').text
@@ -315,6 +289,12 @@ class InterpretationsTest < ApplicationSystemTestCase
 
 
   private
+
+    def admin_go_to_intent_show(agent, intent)
+      admin_login
+      visit user_agent_intent_path(users(:admin), agent, intent)
+      assert page.has_text?("#{intent.intentname} (#{users(:admin).username}/#{agent.agentname}/#{intent.intentname})")
+    end
 
     def fill_in_editor_field(text)
       within '.CodeMirror' do

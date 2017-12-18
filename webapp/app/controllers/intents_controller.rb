@@ -7,7 +7,7 @@ class IntentsController < ApplicationController
   def show
     @interpretation = Interpretation.new
     @interpretation.auto_solution_enabled = true
-    @current_locale = params[:locale] || @intent.locales_by_usage.first
+    @current_locale = params[:locale] || @intent.ordered_locales.first
   end
 
   def new

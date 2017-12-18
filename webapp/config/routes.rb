@@ -51,6 +51,9 @@ Rails.application.routes.draw do
           end
 
           resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
+            member do
+              post :update_locale
+            end
             collection do
               post :update_positions
             end

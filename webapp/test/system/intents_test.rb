@@ -79,8 +79,10 @@ class IntentsTest < ApplicationSystemTestCase
 
     assert_equal 3, all('.intents-list__item__draggable').size
 
-    # Does not work...
-    # first('.intents-list__draggable').native.drag_by(0, 100)
+    # Does not works...
+    # first_item = all('.intents-list__item__draggable').first
+    # last_item  = all('.intents-list__item__draggable').last
+    # first_item.drag_to(last_item)
 
     # assert_equal ['weather_greeting', 'test'], all('.intents-list__item__name').collect(&:text)
   end
