@@ -5,26 +5,29 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after intent update' do
     agent = agents(:weather)
-    updated_at = agent.reload.updated_at.to_json
 
+    agent = Agent.find_by_agentname('weather')
+    updated_at = agent.updated_at.to_json
+
+    # Intent creation
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
       locales: ['en']
     )
-    intent.agent = agents(:weather)
-    sleep 0.1
+    intent.agent = agent
+
     assert intent.save
     assert_not_equal updated_at, agent.reload.updated_at.to_json
 
-    updated_at = agent.reload.updated_at.to_json
+    # Intent update
+    updated_at = agent.updated_at.to_json
     intent.description = 'New description'
-    sleep 0.1
     assert intent.save
     assert_not_equal updated_at, agent.reload.updated_at.to_json
 
-    updated_at = agent.reload.updated_at.to_json
-    sleep 0.1
+    # Intent destroy
+    updated_at = agent.updated_at.to_json
     assert intent.destroy
     assert_not_equal updated_at, agent.reload.updated_at.to_json
   end
