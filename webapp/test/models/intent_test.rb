@@ -13,7 +13,7 @@ class IntentTest < ActiveSupport::TestCase
     intent.agent = agents(:weather)
     assert intent.save
 
-    assert_equal 1, intent.position
+    assert_equal 2, intent.position
     assert_equal 'greeting', intent.intentname
     assert_equal agents(:weather).id, intent.agent.id
     assert_equal 3, agents(:weather).intents.count
