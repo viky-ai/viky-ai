@@ -7,7 +7,7 @@ class IntentsController < ApplicationController
   def show
     @interpretation = Interpretation.new
     @interpretation.auto_solution_enabled = true
-    @current_locale = params[:locale] || @intent.locales_by_usage.first
+    @current_locale = params[:locale] || @intent.ordered_locales.first
   end
 
   def new
@@ -82,7 +82,7 @@ class IntentsController < ApplicationController
   end
 
   def select_new_locale
-    available_locales = Interpretation::Locales - @intent.locales
+    available_locales = Interpretation::LOCALES - @intent.locales
     render partial: 'select_new_locale', locals: { available_locales: available_locales }
   end
 

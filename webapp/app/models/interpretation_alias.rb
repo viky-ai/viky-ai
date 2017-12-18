@@ -1,5 +1,5 @@
 class InterpretationAlias < ApplicationRecord
-  enum nature: [ :type_intent, :type_digit ]
+  enum nature: [:type_intent, :type_digit]
 
   belongs_to :interpretation, touch: true
   belongs_to :intent, optional: true, touch: true
@@ -18,14 +18,13 @@ class InterpretationAlias < ApplicationRecord
   private
 
     def no_overlap
-      unless interpretation.nil?
-        if interpretation.interpretation_aliases.size > 1
-          range = (position_start..position_end)
-          interpretation.interpretation_aliases.each do |ialias|
-            unless object_id == ialias.object_id
-              if (ialias.position_start..ialias.position_end).overlaps?(range)
-                errors.add(:position, I18n.t('errors.interpretation_alias.overlap'))
-              end
+      return if interpretation.nil?
+      if interpretation.interpretation_aliases.size > 1
+        range = (position_start..position_end)
+        interpretation.interpretation_aliases.each do |ialias|
+          unless object_id == ialias.object_id
+            if (ialias.position_start..ialias.position_end).overlaps?(range)
+              errors.add(:position, I18n.t('errors.interpretation_alias.overlap'))
             end
           end
         end

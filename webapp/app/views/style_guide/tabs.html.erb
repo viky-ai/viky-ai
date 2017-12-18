@@ -85,3 +85,24 @@
 </div>
   <% end %>
 </section>
+
+
+<section>
+  <h2>Tabs & Drag</h2>
+  <%= highlight_html do %>
+<div class="tabs">
+  <ul>
+    <li><a href="#">First item <span class="badge">1</span></a></li>
+    <li><a href="#" class="current">Second item <span class="badge badge--primary">12</span></a></li>
+    <li class="drag-in"><a href="#">Third item <span class="badge">7</span></a></li>
+  </ul>
+</div>
+<div class="tabs">
+  <ul>
+    <li><a href="#">First item <span class="badge">1</span></a></li>
+    <li><a href="#" class="current">Second item <span class="badge badge--primary">12</span></a></li>
+    <li class="drag-done"><a href="#">Third item <span class="badge">7</span></a></li>
+  </ul>
+</div>
+  <% end %>
+</section>

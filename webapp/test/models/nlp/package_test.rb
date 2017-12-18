@@ -15,6 +15,11 @@ class PackageTest < ActiveSupport::TestCase
           "slug" => "admin/weather/weather_greeting",
           "expressions" => [
             {
+              "expression" => "Bonjour tout le monde",
+              "locale"     => "fr",
+              "solution"   => "Bonjour tout le monde"
+            },
+            {
               "expression" => "Hello @{who}",
               "aliases"    => [
                 {
@@ -28,11 +33,6 @@ class PackageTest < ActiveSupport::TestCase
               "keep-order" => true,
               "glued"      => true,
               "solution"   => "`greeting.who`"
-            },
-            {
-              "expression" => "Bonjour tout le monde",
-              "locale"     => "fr",
-              "solution"   => "Bonjour tout le monde"
             }
           ]
         },
@@ -137,6 +137,11 @@ class PackageTest < ActiveSupport::TestCase
           "slug" => "admin/weather/weather_greeting",
           "expressions" => [
             {
+              "expression" => "Bonjour tout le monde",
+              "locale"     => "fr",
+              "solution"   => "Bonjour tout le monde"
+            },
+            {
               "expression" => "Hello @{who}",
               "aliases"    => [
                 {
@@ -150,11 +155,6 @@ class PackageTest < ActiveSupport::TestCase
               "keep-order" => true,
               "glued"      => true,
               "solution"   => "`greeting.who`"
-            },
-            {
-              "expression" => "Bonjour tout le monde",
-              "locale"     => "fr",
-              "solution"   => "Bonjour tout le monde"
             }
           ]
         },
@@ -243,6 +243,11 @@ class PackageTest < ActiveSupport::TestCase
           'slug' => 'admin/weather/weather_greeting',
           'expressions' => [
             {
+              'expression' => 'Bonjour tout le monde',
+              'locale'     => 'fr',
+              'solution'   => "Bonjour tout le monde"
+            },
+            {
               'expression' => 'Hello @{who}',
               'aliases'    => [
                 {
@@ -256,11 +261,6 @@ class PackageTest < ActiveSupport::TestCase
               'keep-order' => true,
               'glued'      => true,
               'solution'   => '`greeting.who`'
-            },
-            {
-              'expression' => 'Bonjour tout le monde',
-              'locale'     => 'fr',
-              'solution'   => "Bonjour tout le monde"
             }
           ]
         },
@@ -299,6 +299,11 @@ class PackageTest < ActiveSupport::TestCase
           'slug' => 'admin/weather/weather_greeting',
           'expressions' => [
             {
+              'expression' => 'Bonjour tout le monde',
+              'locale'     => 'fr',
+              'solution'   => 'Bonjour tout le monde'
+            },
+            {
               'expression' => 'Hello @{who}',
               'aliases'    => [
                 {
@@ -325,11 +330,6 @@ class PackageTest < ActiveSupport::TestCase
               'keep-order' => true,
               'glued'      => true,
               'solution'   => '`greeting.who`'
-            },
-            {
-              'expression' => 'Bonjour tout le monde',
-              'locale'     => 'fr',
-              'solution'   => "Bonjour tout le monde"
             }
           ]
         },

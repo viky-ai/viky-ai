@@ -32,8 +32,36 @@
           border-color: $primary_color;
         }
       }
+
+      &.drag-done,
+      &.drag-in{
+        transform: translateY(-5px);
+        a:after{
+          content: "+1";
+          position: absolute;
+          right: .1em;
+          top: 0.9em;
+          background-color: $primary_color;
+          color: #fff;
+          padding: 1px 3px;
+          border-radius: 3px;
+          font-size: .75em;
+          padding: 1px .5em;
+          line-height: 1.5em;
+          @media (min-width: 600px){
+            top: 0.65em;
+          }
+        }
+      }
+      &.drag-done{
+        transform: translateY(0);
+        a:after{
+          content: 'Adding...';
+        }
+      }
     }
   }
+
   &.tabs--on-center{
     ul{
       justify-content: center;

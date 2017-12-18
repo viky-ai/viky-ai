@@ -1,13 +1,14 @@
 <div class="interpretation-new-form-container">
   <div class="tabs">
     <ul>
-      <% for intent_locale in @intent.locales_by_usage %>
+      <% for intent_locale in @intent.ordered_locales %>
         <% if intent_locale == '*' %>
           <% link_name = t('views.interpretations.locales.no_locale') %>
         <% else %>
           <% link_name = intent_locale %>
         <% end %>
-          <li>
+        <li data-locale="<%= intent_locale %>"
+          <% if @current_locale != intent_locale %>class="js-draggable-locale"<% end %>>
           <a href="<%= user_agent_intent_path(@agent.owner, @agent, @intent, locale: intent_locale) %>"
              <% if @current_locale == intent_locale %>class="current"<% end %>>
             <%= link_name %>
@@ -19,7 +20,7 @@
         </li>
       <% end %>
       <% if current_user.can? :edit, @agent %>
-        <% if @intent.locales.count != Interpretation::Locales.count %>
+        <% if @intent.locales.count != Interpretation::LOCALES.count %>
           <li>
             <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
                 data-action="open-remote-modal">
