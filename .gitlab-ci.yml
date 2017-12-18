@@ -29,7 +29,7 @@ build_ruby_base:
 build_backup:
   stage: prerequist
   script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY} deployment/docker_tools/backup
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
 build_loadbalancer:
   stage: prerequist
