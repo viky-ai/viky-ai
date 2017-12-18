@@ -102,7 +102,7 @@ class Nlp::Package
 
     def build_tree
       interpretations = []
-      @agent.intents.each do |intent|
+      @agent.intents.order(position: :desc).each do |intent|
         interpretations += build_internals_list_nodes(intent)
         interpretations << build_node(intent)
       end
@@ -156,7 +156,7 @@ class Nlp::Package
       interpretation_hash[:id] = intent.id
       interpretation_hash[:slug] = intent.slug
       expressions = []
-      intent.interpretations.each do |interpretation|
+      intent.interpretations.order(position: :desc).each do |interpretation|
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
         expression[:aliases] = build_aliases(interpretation)
@@ -166,7 +166,7 @@ class Nlp::Package
         expression[:solution] = build_solution(interpretation)
         expressions << expression
         if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
-          interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).each do |ialias|
+          interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).order(position_start: :asc).each do |ialias|
             expressions << build_any_node(ialias, expression)
           end
         end
