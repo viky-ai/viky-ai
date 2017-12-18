@@ -13,18 +13,18 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       locales: ['en']
     )
     intent.agent = agents(:weather)
-    sleep 0.01
+    sleep 0.1
     assert intent.save
     assert_not_equal updated_at, agent.reload.updated_at.to_json
 
     updated_at = agent.reload.updated_at.to_json
     intent.description = 'New description'
-    sleep 0.01
+    sleep 0.1
     assert intent.save
     assert_not_equal updated_at, agent.reload.updated_at.to_json
 
     updated_at = agent.reload.updated_at.to_json
-    sleep 0.01
+    sleep 0.1
     assert intent.destroy
     assert_not_equal updated_at, agent.reload.updated_at.to_json
   end
@@ -39,7 +39,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation.intent = intent
     intent_updated_at = intent.reload.updated_at.to_json
 
-    sleep 0.01
+    sleep 0.1
     assert interpretation.save
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
     assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
@@ -47,14 +47,14 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent_updated_at = agent.reload.updated_at.to_json
     intent_updated_at = intent.reload.updated_at.to_json
     interpretation.locale = 'fr'
-    sleep 0.01
+    sleep 0.1
     assert interpretation.save
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
     assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
 
     agent_updated_at = agent.reload.updated_at.to_json
     intent_updated_at = intent.reload.updated_at.to_json
-    sleep 0.01
+    sleep 0.1
     assert interpretation.destroy
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
     assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
@@ -79,7 +79,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation_updated_at = interpretation.reload.updated_at.to_json
     intent_updated_at = intent.reload.updated_at.to_json
     agent_updated_at = agent.reload.updated_at.to_json
-    sleep 0.01
+    sleep 0.1
     assert interpretation_alias.save
     assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
@@ -89,7 +89,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent_updated_at = intent.reload.updated_at.to_json
     agent_updated_at = agent.reload.updated_at.to_json
     interpretation_alias.aliasname = 'what'
-    sleep 0.01
+    sleep 0.1
     assert interpretation_alias.save
     assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
@@ -98,7 +98,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation_updated_at = interpretation.reload.updated_at.to_json
     intent_updated_at = intent.reload.updated_at.to_json
     agent_updated_at = agent.reload.updated_at.to_json
-    sleep 0.01
+    sleep 0.1
     assert interpretation_alias.destroy
     assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
     assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
@@ -117,7 +117,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     assert_equal updated_at_b, agent_b.reload.updated_at.to_json
 
     updated_at_a = agent_a.reload.updated_at.to_json
-    sleep 0.01
+    sleep 0.1
     assert arc.destroy
     assert_not_equal updated_at_a, agent_a.reload.updated_at.to_json
     assert_equal updated_at_b, agent_b.reload.updated_at.to_json
