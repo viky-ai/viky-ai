@@ -54,7 +54,7 @@ CMD ["./bin/docker_run.sh"]
 #################################################
 # image_ruby_test : image_ruby_base_test + test dependencies
 #################################################
-FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_test
+FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base_test:${RUBY_BASE_VERSION} AS image_ruby_test
 
 # App specific
 RUN mkdir -p /webapp
