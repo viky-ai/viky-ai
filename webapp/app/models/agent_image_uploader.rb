@@ -1,4 +1,4 @@
-require "image_processing/mini_magick"
+require 'image_processing/mini_magick'
 
 class AgentImageUploader < Shrine
   include ImageProcessing::MiniMagick
@@ -20,8 +20,7 @@ class AgentImageUploader < Shrine
   process(:store) do |io, _context|
     {
       original: io,
-      background: resize_to_fill!(io.download, 640, 360, gravity: "Center")
+      background: resize_to_fill!(io.download, 640, 360, gravity: 'Center')
     }
   end
-
 end

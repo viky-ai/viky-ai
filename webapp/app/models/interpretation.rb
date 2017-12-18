@@ -1,5 +1,5 @@
 class Interpretation < ApplicationRecord
-  Locales = %w[* en fr es pt zh ar].freeze
+  LOCALES = %w[* en fr es pt zh ar].freeze
 
   belongs_to :intent, touch: true
   has_many :interpretation_aliases, dependent: :destroy
@@ -7,7 +7,7 @@ class Interpretation < ApplicationRecord
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
   validates :expression, presence: true
-  validates :locale, inclusion: { in: self::Locales }, presence: true
+  validates :locale, inclusion: { in: self::LOCALES }, presence: true
   validates :solution, length: { maximum: 2000 }
 
   before_save :cleanup
@@ -42,19 +42,16 @@ class Interpretation < ApplicationRecord
   private
 
     def cleanup
-      unless expression.nil?
-        self.expression = expression.strip
-      end
+      self.expression = expression.strip unless expression.nil?
       if auto_solution_enabled
         self.solution = nil
-      else
-        self.solution = "" if solution.blank?
+      elsif solution.blank?
+        self.solution = ''
       end
     end
 
     def set_position
-      unless intent.nil?
-        self.position = intent.interpretations_with_local(self.locale).count
-      end
+      return if intent.nil?
+      self.position = intent.interpretations_with_local(locale).count
     end
 end

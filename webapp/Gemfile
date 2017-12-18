@@ -5,15 +5,14 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
+
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
-
-
 
 # Environment variables at boostrap time
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
@@ -34,16 +33,18 @@ gem 'redis', '~> 3.0'
 
 # Use Sidekiq to manage background jobs
 gem 'sidekiq'
+
+# Use Foreman to run app and dependencies
 gem 'foreman'
 
 gem 'awesome_print'
-gem 'rainbow'
 gem 'kaminari'
+gem 'rainbow'
 
-# Upload
-gem "shrine"
-gem "image_processing"
-gem "mini_magick", ">= 4.3.5"
+# Upload (shrine & dependencies)
+gem 'shrine'
+gem 'image_processing'
+gem 'mini_magick', '>= 4.3.5'
 
 # Graph
 gem 'rgl'
@@ -70,19 +71,16 @@ group :development, :test do
 end
 
 group :development do
-  # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  # gem 'web-console', '>= 3.3.0'
-
-  gem "better_errors"
-  gem "binding_of_caller"
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'better_errors'
+  gem 'binding_of_caller'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
 end
 
 group :test do
-  gem "shrine-memory"
   gem 'mocha'
+  gem 'shrine-memory'
   gem 'simplecov', require: false
 end
+
+# gem 'rubocop', require: false

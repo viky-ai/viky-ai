@@ -7,7 +7,7 @@ class AgentSearch
   end
 
   def self.keys
-    ["query",]
+    ['query']
   end
 
   keys.each do |meth|
@@ -21,7 +21,7 @@ class AgentSearch
         is_empty = false if value.present?
       end
     end
-    return is_empty
+    is_empty
   end
 
   private

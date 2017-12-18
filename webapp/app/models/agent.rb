@@ -39,8 +39,16 @@ class Agent < ApplicationRecord
   end
 
   def self.search(q = {})
-    conditions = where("1 = 1").joins(:memberships).where("user_id = ?", q[:user_id])
-    conditions = conditions.where("name LIKE ? OR agentname LIKE ?", "%#{q[:query]}%", "%#{q[:query]}%") unless q[:query].nil?
+    conditions = where('1 = 1')
+    conditions = conditions.joins(:memberships)
+    conditions = conditions.where('user_id = ?', q[:user_id])
+    unless q[:query].nil?
+      conditions = conditions.where(
+        'name LIKE ? OR agentname LIKE ?',
+        "%#{q[:query]}%",
+        "%#{q[:query]}%"
+      )
+    end
     conditions
   end
 
@@ -53,11 +61,12 @@ class Agent < ApplicationRecord
   end
 
   def available_successors(current_user)
-    Agent.joins(:memberships).
-      where("user_id = ?", current_user.id).
-      where.not(id: successors.pluck(:id)).
-      where.not(id: id).
-      order(name: :asc)
+    Agent
+      .joins(:memberships)
+      .where('user_id = ?', current_user.id)
+      .where.not(id: successors.pluck(:id))
+      .where.not(id: id)
+      .order(name: :asc)
   end
 
   def transfer_ownership_to(new_owner_id)
@@ -78,7 +87,7 @@ class Agent < ApplicationRecord
   end
 
   def can_be_destroyed?
-    collaborators.count == 0
+    collaborators.count.zero?
   end
 
   def ensure_api_token
@@ -95,16 +104,14 @@ class Agent < ApplicationRecord
   private
 
     def check_collaborators_presence
-      unless can_be_destroyed?
-        errors.add(:base, I18n.t('errors.agent.delete.collaborators_presence'))
-        throw(:abort)
-      end
+      return if can_be_destroyed?
+      errors.add(:base, I18n.t('errors.agent.delete.collaborators_presence'))
+      throw(:abort)
     end
 
     def owner_presence_in_users
-      unless memberships.select {|m| m.rights == 'all'}.size == 1
-        errors.add(:users, I18n.t('errors.agent.owner_presence_in_users'))
-      end
+      return if memberships.select { |m| m.rights == 'all' }.size == 1
+      errors.add(:users, I18n.t('errors.agent.owner_presence_in_users'))
     end
 
     def add_owner_id
@@ -112,9 +119,7 @@ class Agent < ApplicationRecord
     end
 
     def clean_agentname
-      unless agentname.nil?
-        self.agentname = agentname.parameterize(separator: '-')
-      end
+      return if agentname.nil?
+      self.agentname = agentname.parameterize(separator: '-')
     end
-
 end
