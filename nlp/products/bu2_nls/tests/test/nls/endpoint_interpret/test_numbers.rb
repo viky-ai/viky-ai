@@ -44,7 +44,7 @@ module Nls
         check_interpret("quatre vingt douze", interpretation: "number", solution: { number: 92 } )
         check_interpret("sept cent dix huit mille quatre cent quatre vingt quatorze", interpretation: "number", solution: { number: 718494 } )
         check_interpret("quarante douze", interpretation: "number", solution: { number: 52 } )
-#        check_interpret("two thousand and seventeen", interpretation: "number", solution: { number: 2017 } )
+        check_interpret("two thousand and seventeen", interpretation: "number", solution: { number: 2017 } )
       end
 
       def test_ordinal_number
@@ -55,6 +55,7 @@ module Nls
         check_interpret("4 eme", interpretation: "number_ordinal", solution: { number: 4 } )
         check_interpret("236 th", interpretation: "number_ordinal", solution: { number: 236 } )
         check_interpret("236 ieme", interpretation: "number_ordinal", solution: { number: 236 } )
+        check_interpret("centième", interpretation: "number_ordinal", solution: { number: 100 } )
 
 #        check_interpret("3ieme", interpretation: "number_ordinal", solution: { number: 3 } )
 #        check_interpret("3rd", interpretation: "number_ordinal", solution: { number: 3 } )

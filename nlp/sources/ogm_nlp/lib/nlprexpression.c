@@ -92,6 +92,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IFE(status);
   }
 
+  IFE(NlpCalculateScoreSpelling(ctrl_nlp_th,request_expression));
   IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
@@ -225,6 +226,7 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
   if (request_expression1->expression != request_expression2->expression) return FALSE;
   if (request_expression1->overlap_mark != request_expression2->overlap_mark) return FALSE;
   if (request_expression1->nb_anys != request_expression2->nb_anys) return FALSE;
+  if (request_expression1->score->spelling != request_expression2->score->spelling) return FALSE;
   og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, request_expression1->request_position_start,
       request_expression1->request_positions_nb, request_expression2->request_position_start,
       request_expression2->request_positions_nb);
