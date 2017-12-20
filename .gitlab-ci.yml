@@ -312,16 +312,16 @@ backup_restore_dev:
   script:
     - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Backup current data ..."
-    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
     - echo "Stopping platform ${VOQALAPP_DEPLOY_RANCHER_STACK} ..."
-    - rancher --debug --environment dev stop ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
+    - rancher --environment dev stop ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
     - echo "Resrtart database and backup tools ..."
-    - rancher --debug --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
-    - rancher --debug --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/backup  --type service
+    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
+    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/backup  --type service
     - echo "Restoring data ..."
     - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/restore.sh
     - echo "Restarting platform ..."
-    - rancher --debug --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
+    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
   when: manual
   allow_failure: true
 
