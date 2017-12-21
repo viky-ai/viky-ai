@@ -50,6 +50,16 @@ namespace :db do
       end
       `tar xf #{params[:images]} -C #{Rails.root}/..`
       puts Rainbow('Images imported').green
+    else
+      puts Rainbow('  No images archive found : reset values').green
+      conn = PG.connect(host: params[:host],
+                        port: params[:port],
+                        dbname: params[:database],
+                        user: params[:username],
+                        password: params[:password]
+      )
+      conn.exec("UPDATE users SET image_data=NULL")
+      conn.exec("UPDATE agents SET image_data=NULL")
     end
   end
 
