@@ -3,26 +3,26 @@ require 'rainbow'
 
 namespace :db do
 
-  desc 'Restore a database dump'
+  desc 'Restore an environment on the local machine'
   task :restore, [:database_dump, :images] => [:environment] do |t, args|
     check_arguments(args)
     params = extract_params(args)
-    puts Rainbow("Restoring database dump : #{params[:database_dump]}").green
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Restore database (#{params[:database_dump]})").green
     check_duplicate_db(params)
     create_database(params)
     import_dump(params)
     migrate_data
     clean_private_data(params)
-    puts Rainbow("Database restored at : #{params[:database]}").green
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Restore database: done (#{params[:database]})").green
 
-    puts Rainbow('Synchronizing with NLP').green
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Synchronize with NLP").green
     backup_dir = File.join(Rails.root, 'import', 'development')
     unless Dir.exists?(backup_dir)
-      puts Rainbow("  Stash packages from import/ to #{backup_dir}").green
+      puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   Stash packages from import/ to #{backup_dir}").green
       FileUtils.mkdir backup_dir
       FileUtils.cp(Dir.glob(File.join(Rails.root, 'import', '/*.json')), backup_dir)
     else
-      puts Rainbow("  A stash direcory is already present at #{backup_dir} : skipping").green
+      puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   A stash directory is already present at #{backup_dir} : skipping").green
     end
     config = ActiveRecord::Base.connection_config()
     ActiveRecord::Base.establish_connection(
@@ -33,25 +33,25 @@ namespace :db do
       password: params[:password],
       database: params[:database]
     )
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   Start synchronization").green
     Rake::Task['packages:push_all'].invoke
     ActiveRecord::Base.establish_connection(config)
-    puts Rainbow('NLP synchronized').green
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Synchronize with NLP: done").green
 
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Import images").green
     if params[:images].present?
-      puts Rainbow('Importing images').green
       backup_dir = File.join(Rails.root, 'public', 'uploads', 'development')
       unless Dir.exists?(backup_dir)
-        puts Rainbow("  Stash packages from public/uploads to #{backup_dir}").green
+        puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   Stash packages from public/uploads to #{backup_dir}").green
         FileUtils.mkdir backup_dir
         FileUtils.mv(Dir.glob(File.join(Rails.root, 'public', 'uploads', 'cache')), backup_dir)
         FileUtils.mv(Dir.glob(File.join(Rails.root, 'public', 'uploads', 'store')), backup_dir)
       else
-        puts Rainbow("  A stash direcory is already present at #{backup_dir} : skipping").green
+        puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   A stash directory is already present at #{backup_dir}: skipping").green
       end
       `tar xf #{params[:images]} -C #{Rails.root}/..`
-      puts Rainbow('Images imported').green
     else
-      puts Rainbow('  No images archive found : reset values').green
+      puts Rainbow("[#{DateTime.now.strftime("%FT%T")}]   No images archive found: reset values").green
       conn = PG.connect(host: params[:host],
                         port: params[:port],
                         dbname: params[:database],
@@ -61,13 +61,14 @@ namespace :db do
       conn.exec("UPDATE users SET image_data=NULL")
       conn.exec("UPDATE agents SET image_data=NULL")
     end
+    puts Rainbow("[#{DateTime.now.strftime("%FT%T")}] Import images: done").green
   end
 
 
   private
 
     def check_arguments(args)
-      abort Rainbow('Need dump file path').yellow unless args.database_dump.present?
+      abort Rainbow("[#{DateTime.now.strftime("%FT%T")}] Need database dump file path").yellow unless args.database_dump.present?
     end
 
     def check_duplicate_db(params)
@@ -82,7 +83,7 @@ namespace :db do
         is_db_already_present = result.field_values('is_present')[0] == '1'
       end
       if is_db_already_present
-        abort Rainbow("Already a database with this name. To drop it use : dropdb -h #{params[:host]} -U #{params[:username]} #{params[:database]}").yellow
+        abort Rainbow("[#{DateTime.now.strftime("%FT%T")}] Already a database with this name. To drop it use: dropdb -h #{params[:host]} -U #{params[:username]} #{params[:database]}").yellow
       end
     end
 
