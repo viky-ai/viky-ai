@@ -81,5 +81,6 @@ namespace :db do
                       password: params[:password]
     )
     conn.exec("UPDATE users SET encrypted_password='$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S'")
+    conn.exec("UPDATE users SET email=CONCAT('login_as_', email)")
   end
 end
