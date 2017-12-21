@@ -14,6 +14,20 @@ namespace :db do
     migrate_data
     clean_private_data(params)
     puts Rainbow("Database restored at : #{params[:database]}").green
+
+    puts Rainbow('Synchronizing with NLP').green
+    config = ActiveRecord::Base.connection_config()
+    ActiveRecord::Base.establish_connection(
+      adapter: 'postgresql',
+      host: params[:host],
+      port: params[:port],
+      username: params[:username],
+      password: params[:password],
+      database: params[:database]
+    )
+    Rake::Task['packages:push_all'].invoke
+    ActiveRecord::Base.establish_connection(config)
+    puts Rainbow('NLP synchronized').green
   end
 
 
