@@ -4,10 +4,10 @@ require 'rainbow'
 namespace :db do
 
   desc 'Restore a database dump'
-  task :restore, [:file] => [:environment] do |t, args|
+  task :restore, [:database_dump, :images] => [:environment] do |t, args|
     check_arguments(args)
     params = extract_params(args)
-    puts Rainbow("Restoring database dump : #{params[:file]}").green
+    puts Rainbow("Restoring database dump : #{params[:database_dump]}").green
     check_duplicate_db(params)
     create_database(params)
     import_dump(params)
@@ -36,13 +36,28 @@ namespace :db do
     Rake::Task['packages:push_all'].invoke
     ActiveRecord::Base.establish_connection(config)
     puts Rainbow('NLP synchronized').green
+
+    if params[:images].present?
+      puts Rainbow('Importing images').green
+      backup_dir = File.join(Rails.root, 'public', 'uploads', 'development')
+      unless Dir.exists?(backup_dir)
+        puts Rainbow("  Stash packages from public/uploads to #{backup_dir}").green
+        FileUtils.mkdir backup_dir
+        FileUtils.mv(Dir.glob(File.join(Rails.root, 'public', 'uploads', 'cache')), backup_dir)
+        FileUtils.mv(Dir.glob(File.join(Rails.root, 'public', 'uploads', 'store')), backup_dir)
+      else
+        puts Rainbow("  A stash direcory is already present at #{backup_dir} : skipping").green
+      end
+      `tar xf #{params[:images]} -C #{Rails.root}/..`
+      puts Rainbow('Images imported').green
+    end
   end
 
 
   private
 
     def check_arguments(args)
-      abort Rainbow('Need dump file path').yellow unless args.file.present?
+      abort Rainbow('Need dump file path').yellow unless args.database_dump.present?
     end
 
     def check_duplicate_db(params)
@@ -64,12 +79,13 @@ namespace :db do
     def extract_params(args)
       config = Rails.configuration.database_configuration
       {
-        file: args.file,
+        database_dump: args.database_dump,
         host: config[Rails.env]['host'],
         username: config[Rails.env]['username'],
         password: config[Rails.env]['password'],
         port: config[Rails.env]['port'],
-        database: 'voqalapp_' + args.file.split('_')[1].tr('-', '_').downcase
+        database: 'voqalapp_' + args.database_dump.split('_')[1].tr('-', '_').downcase,
+        images: args.images
       }
     end
 
@@ -84,10 +100,10 @@ namespace :db do
     end
 
     def import_dump(params)
-      if params[:file].end_with?('.gz')
-        `gunzip -c #{params[:file]} | sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' | psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]}`
+      if params[:database_dump].end_with?('.gz')
+        `gunzip -c #{params[:database_dump]} | sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' | psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]}`
       else
-        `psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]} < sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' #{params[:file]}`
+        `psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]} < sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' #{params[:database_dump]}`
       end
     end
 
