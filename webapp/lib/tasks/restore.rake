@@ -16,6 +16,14 @@ namespace :db do
     puts Rainbow("Database restored at : #{params[:database]}").green
 
     puts Rainbow('Synchronizing with NLP').green
+    backup_dir = File.join(Rails.root, 'import', 'development')
+    unless Dir.exists?(backup_dir)
+      puts Rainbow("  Stash packages from import/ to #{backup_dir}").green
+      FileUtils.mkdir backup_dir
+      FileUtils.cp(Dir.glob(File.join(Rails.root, 'import', '/*.json')), backup_dir)
+    else
+      puts Rainbow("  A stash direcory is already present at #{backup_dir} : skipping").green
+    end
     config = ActiveRecord::Base.connection_config()
     ActiveRecord::Base.establish_connection(
       adapter: 'postgresql',
