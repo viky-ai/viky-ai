@@ -12,6 +12,7 @@ namespace :db do
     create_database(params)
     import_dump(params)
     migrate_data
+    clean_private_data(params)
     puts Rainbow("Database restored at : #{params[:database]}").green
   end
 
@@ -70,5 +71,15 @@ namespace :db do
 
   def migrate_data
     Rake::Task["db:migrate"].invoke
+  end
+
+  def clean_private_data(params)
+    conn = PG.connect(host: params[:host],
+                      port: params[:port],
+                      dbname: params[:database],
+                      user: params[:username],
+                      password: params[:password]
+    )
+    conn.exec("UPDATE users SET encrypted_password='$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S'")
   end
 end
