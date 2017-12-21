@@ -123,6 +123,13 @@ static int NlpRequestExpressionOptimizeIncludedCmp(gconstpointer ptr_request_exp
   {
     return (request_expression1->overlap_mark - request_expression2->overlap_mark);
   }
+  if (request_expression1->score->spelling != request_expression2->score->spelling)
+  {
+     double cmp = request_expression2->score->spelling - request_expression1->score->spelling;
+     if (cmp > 0) return 1;
+     else return -1;
+  }
+
   if (request_expression1->level != request_expression2->level)
   {
     return (request_expression2->level - request_expression1->level);

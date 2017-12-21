@@ -73,7 +73,7 @@ COPY Gemfile /webapp
 COPY Gemfile.lock /webapp
 
 # Install test dependencies
-RUN bundle install --with test --deployment --jobs=$(nproc)
+RUN bundle install --jobs=$(nproc)
 
 # Copy application code
 COPY . /webapp

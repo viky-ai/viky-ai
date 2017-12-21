@@ -95,6 +95,47 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   DONE;
 }
 
+/*
+ * It is necessary to do the calculation during the parsing phase
+ * to be able to choose some expressions that contain no spelling mistakes
+ * over expressions that contain spelling mistakes.
+ */
+
+og_status NlpCalculateScoreSpelling(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  struct request_score score[1];
+  score->spelling = 0;
+
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+
+    if (request_input_part->type == nlp_input_part_type_Word)
+    {
+      struct request_word *request_word = request_input_part->request_word;
+      score->spelling += request_word->spelling_score;
+    }
+
+    else if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
+      IFN(sub_request_expression) DPcErr;
+      score->spelling += sub_request_expression->score->spelling;
+    }
+    else
+    {
+      score->spelling += 1;
+    }
+
+  }
+  // we use a mean score for the spelling score
+  request_expression->score->spelling = score->spelling / request_expression->orips_nb;
+
+  DONE;
+}
+
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   double score_number = 6.0;
