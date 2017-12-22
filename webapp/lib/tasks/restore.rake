@@ -23,10 +23,10 @@ namespace :restore do
     if args.environment.present?
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       puts Rainbow("#{time_log} List availables backups for environment #{env}").green
-      puts `rsync --list-only rsync://docker-backup@#{backup_server}:/docker/backup/#{env}/`
+      puts `rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/`
     else
       puts Rainbow("#{time_log} List availables environment #{env}").green
-      puts `rsync --list-only rsync://docker-backup@#{backup_server}:/docker/backup/viky-*`
+      puts `rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/viky-*`
     end
   end
 
@@ -38,7 +38,7 @@ namespace :restore do
     dir = Dir.mktmpdir do |dir|
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       puts Rainbow("#{time_log} Download archives").green
-      `rsync -za rsync://docker-backup@#{backup_server}:/docker/backup/#{env}/#{args.date}/#{env}* #{dir}`
+      `rsync -za rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/#{args.date}/#{env}* #{dir}`
       puts Rainbow("#{time_log} Download archives: done").green
       files = Dir.entries(dir)
       db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
