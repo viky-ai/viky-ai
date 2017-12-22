@@ -843,7 +843,7 @@ og_status NlpAdjustLocaleScore(og_nlp_th ctrl_nlp_th, struct request_expression 
 
 /* nlpscore.c */
 og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-og_status NlpCalculateScoreSpelling(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);

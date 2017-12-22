@@ -101,10 +101,10 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
  * over expressions that contain spelling mistakes.
  */
 
-og_status NlpCalculateScoreSpelling(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   struct request_score score[1];
-  score->spelling = 0;
+  memset(score, 0, sizeof(struct request_score));
 
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
@@ -114,6 +114,7 @@ og_status NlpCalculateScoreSpelling(og_nlp_th ctrl_nlp_th, struct request_expres
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
+      score->locale += 1;
       score->spelling += request_word->spelling_score;
     }
 
@@ -122,16 +123,24 @@ og_status NlpCalculateScoreSpelling(og_nlp_th ctrl_nlp_th, struct request_expres
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
+      score->locale += sub_request_expression->score->locale;
       score->spelling += sub_request_expression->score->spelling;
     }
     else
     {
+      score->locale += 1;
       score->spelling += 1;
     }
 
   }
+  // we use a mean score for the locale score
+  request_expression->score->locale = score->locale / request_expression->orips_nb;
   // we use a mean score for the spelling score
   request_expression->score->spelling = score->spelling / request_expression->orips_nb;
+
+  IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
+
+  IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
   DONE;
 }
