@@ -5,7 +5,7 @@ namespace :restore do
 
   desc 'Restore an environment on the local machine'
   task :all, [:database_dump, :images] => [:environment] do |t, args|
-    check_arguments(args)
+    abort Rainbow("#{time_log} Need database dump file path").yellow unless args.database_dump.present?
     params = extract_params(args)
     restore_database(params)
     with_active_record_connected_to_new_db params do
@@ -17,15 +17,41 @@ namespace :restore do
     puts Rainbow("#{time_log} Restore done: do not forget to set#{params[:database]} in #{Rails.root}/config/database.yml").green
   end
 
+  desc 'List available environments and associated backups archives'
+  task :list, [:environment] => [:environment] do |t, args|
+    backup_server = '172.16.16.6'
+    if args.environment.present?
+      env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
+      puts Rainbow("#{time_log} List availables backups for environment #{env}").green
+      puts `rsync --list-only rsync://docker-backup@#{backup_server}:/docker/backup/#{env}/`
+    else
+      puts Rainbow("#{time_log} List availables environment #{env}").green
+      puts `rsync --list-only rsync://docker-backup@#{backup_server}:/docker/backup/viky-*`
+    end
+  end
+
+  desc 'Download and restore an environment on the local machine'
+  task :auto, [:environment, :date] => [:environment] do |t, args|
+    abort Rainbow("#{time_log} Need environment name").yellow unless args.environment.present?
+    abort Rainbow("#{time_log} Need backup date").yellow unless args.date.present?
+    backup_server = '172.16.16.6'
+    dir = Dir.mktmpdir do |dir|
+      env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
+      puts Rainbow("#{time_log} Download archives").green
+      `rsync -za rsync://docker-backup@#{backup_server}:/docker/backup/#{env}/#{args.date}/#{env}* #{dir}`
+      puts Rainbow("#{time_log} Download archives: done").green
+      files = Dir.entries(dir)
+      db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
+      images = "#{dir}/#{files.select {|file| file.end_with?('_app-uploads-data.tgz')}[0]}"
+      Rake::Task["restore:all"].invoke(db, images)
+    end
+  end
+
 
   private
 
     def time_log
       "[#{DateTime.now.strftime("%FT%T")}]"
-    end
-
-    def check_arguments(args)
-      abort Rainbow("#{time_log} Need database dump file path").yellow unless args.database_dump.present?
     end
 
     def restore_database(params)
