@@ -34,6 +34,10 @@ class Agent < ApplicationRecord
     end
   end
 
+  after_touch do |user|
+    Nlp::Package.new(self).push
+  end
+
   after_destroy do
     Nlp::Package.new(self).destroy
   end

@@ -22,16 +22,6 @@ class Intent < ApplicationRecord
   before_create :set_position
   before_create :set_color
 
-  after_save do
-    if saved_change_to_attribute?(:intentname)
-      Nlp::Package.new(agent).push
-    end
-  end
-
-  after_destroy do
-    Nlp::Package.new(agent).push
-  end
-
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
   end
