@@ -8,8 +8,13 @@ namespace :db do
     check_arguments(args)
     params = extract_params(args)
     restore_database(params)
-    synchronize_NLP(params)
-    restore_images(params)
+    with_active_record_connected_to_new_db params do
+      migrate_data
+      clean_private_data
+      synchronize_NLP
+      restore_images(params)
+    end
+    puts Rainbow("#{time_log} Restore done: do not forget to set#{params[:database]} in #{Rails.root}/config/database.yml").green
   end
 
 
@@ -28,8 +33,6 @@ namespace :db do
       check_duplicate_db(params)
       create_database(params)
       import_dump(params)
-      migrate_data
-      clean_private_data(params)
       puts Rainbow("#{time_log} Restore database: done (#{params[:database]})").green
     end
 
@@ -70,16 +73,21 @@ namespace :db do
     end
 
     def migrate_data
+      puts Rainbow("#{time_log}   Migrate database").green
       Rake::Task["db:migrate"].invoke
+      puts Rainbow("#{time_log}   Migrate database: done").green
     end
 
-    def clean_private_data(params)
-      conn = connect_to_db(params, params[:database])
-      conn.exec("UPDATE users SET encrypted_password='$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S'")
-      conn.exec("UPDATE users SET email=CONCAT('login_as_', email)")
+    def clean_private_data
+      puts Rainbow("#{time_log}   Database clean up of private data").green
+      User.in_batches.update_all(encrypted_password: '$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S')
+      User.in_batches.each_record do |user|
+        user.update(email: "login_as_#{user}")
+      end
+      puts Rainbow("#{time_log}   Database clean up of private data: done").green
     end
 
-    def synchronize_NLP(params)
+    def synchronize_NLP
       puts Rainbow("#{time_log} Synchronize with NLP").green
       backup_dir = File.join(Rails.root, 'import', 'development')
       unless Dir.exist?(backup_dir)
@@ -89,18 +97,8 @@ namespace :db do
       else
         puts Rainbow("#{time_log}   A stash directory is already present at #{backup_dir} : skipping").green
       end
-      config = ActiveRecord::Base.connection_config()
-      ActiveRecord::Base.establish_connection(
-        adapter: 'postgresql',
-        host: params[:host],
-        port: params[:port],
-        username: params[:username],
-        password: params[:password],
-        database: params[:database]
-      )
       puts Rainbow("#{time_log}   Start synchronization").green
       Rake::Task['packages:push_all'].invoke
-      ActiveRecord::Base.establish_connection(config)
       puts Rainbow("#{time_log} Synchronize with NLP: done").green
     end
 
@@ -119,9 +117,8 @@ namespace :db do
         `tar xf #{params[:images]} -C #{Rails.root}/..`
       else
         puts Rainbow("#{time_log}   No images archive found: reset values").green
-        conn = connect_to_db(params, params[:database])
-        conn.exec("UPDATE users SET image_data=NULL")
-        conn.exec("UPDATE agents SET image_data=NULL")
+        User.in_batches.update_all(image_data: nil)
+        Agent.in_batches.update_all(image_data: nil)
       end
       puts Rainbow("#{time_log} Import images: done").green
     end
@@ -133,5 +130,19 @@ namespace :db do
                         user: params[:username],
                         password: params[:password]
       )
+    end
+
+    def with_active_record_connected_to_new_db(params)
+      config = ActiveRecord::Base.connection_config()
+      ActiveRecord::Base.establish_connection(
+        adapter: 'postgresql',
+        host: params[:host],
+        port: params[:port],
+        username: params[:username],
+        password: params[:password],
+        database: params[:database]
+      )
+      yield
+      ActiveRecord::Base.establish_connection(config)
     end
 end
