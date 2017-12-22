@@ -1,10 +1,10 @@
 require 'pg'
 require 'rainbow'
 
-namespace :db do
+namespace :restore do
 
   desc 'Restore an environment on the local machine'
-  task :restore, [:database_dump, :images] => [:environment] do |t, args|
+  task :all, [:database_dump, :images] => [:environment] do |t, args|
     check_arguments(args)
     params = extract_params(args)
     restore_database(params)
