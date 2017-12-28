@@ -103,51 +103,57 @@ class Nlp::Package
     def build_tree
       interpretations = []
       @agent.intents.order(position: :desc).each do |intent|
-        interpretations += build_internals_list_nodes(intent)
-        interpretations << build_node(intent)
+        cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(intent)
+        end
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
       end
       interpretations
     end
 
     def build_internals_list_nodes(intent)
       interpretations = []
-      intent.interpretations.each do |interpretation|
-        interpretation.interpretation_aliases.where(is_list: true).order(:position_start).each do |ialias|
-          interpretation_hash = {}
-          interpretation_hash[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
-          interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
 
-          expressions = []
+      InterpretationAlias
+        .includes(:interpretation)
+        .where(is_list: true, interpretations: { intent_id: intent.id }).order(:position_start).each do |ialias|
 
-          expression = {}
-          expression[:expression] = "@{#{ialias.aliasname}}"
-          expression[:aliases] = []
-          expression[:aliases] << build_internal_alias(ialias)
-          expressions << expression
+        interpretation_hash = {}
+        interpretation_hash[:id]   = "#{ialias.intent.id}_#{ialias.id}_recursive"
+        interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
 
+        expressions = []
+
+        expression = {}
+        expression[:expression] = "@{#{ialias.aliasname}}"
+        expression[:aliases] = []
+        expression[:aliases] << build_internal_alias(ialias)
+        expressions << expression
+
+        expression = {}
+        expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+        expression[:aliases] = []
+        expression[:aliases] << build_internal_alias(ialias)
+        expression[:aliases] << build_internal_alias(ialias, true)
+        expressions << expression
+
+        if ialias.any_enabled
           expression = {}
           expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
           expression[:aliases] = []
-          expression[:aliases] << build_internal_alias(ialias)
+          expression[:aliases] << {
+            alias: ialias.aliasname,
+            type: 'any'
+          }
           expression[:aliases] << build_internal_alias(ialias, true)
           expressions << expression
-
-          if ialias.any_enabled
-            expression = {}
-            expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-            expression[:aliases] = []
-            expression[:aliases] << {
-              alias: ialias.aliasname,
-              type: 'any'
-            }
-            expression[:aliases] << build_internal_alias(ialias, true)
-            expressions << expression
-          end
-
-          interpretation_hash[:expressions] = expressions
-          interpretations << interpretation_hash
         end
+
+        interpretation_hash[:expressions] = expressions
+        interpretations << interpretation_hash
       end
+
       interpretations
     end
 
@@ -156,19 +162,20 @@ class Nlp::Package
       interpretation_hash[:id] = intent.id
       interpretation_hash[:slug] = intent.slug
       expressions = []
+
       intent.interpretations.order(position: :desc).each do |interpretation|
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
-        expression[:aliases] = build_aliases(interpretation)
-        expression[:locale] = interpretation.locale unless interpretation.locale == '*'
+        expression[:aliases]    = build_aliases(interpretation)
+        expression[:locale]     = interpretation.locale     unless interpretation.locale == '*'
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
-        expression[:glued] = interpretation.glued if interpretation.glued
-        expression[:solution] = build_solution(interpretation)
+        expression[:glued]      = interpretation.glued      if interpretation.glued
+        expression[:solution]   = build_solution(interpretation)
         expressions << expression
-        if interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).count > 0
-          interpretation.interpretation_aliases.where(any_enabled: true, is_list: false).order(position_start: :asc).each do |ialias|
-            expressions << build_any_node(ialias, expression)
-          end
+        interpretation.interpretation_aliases
+          .where(any_enabled: true, is_list: false)
+          .order(position_start: :asc).each do |ialias|
+          expressions << build_any_node(ialias, expression)
         end
       end
       interpretation_hash[:expressions] = expressions
@@ -212,18 +219,16 @@ class Nlp::Package
     end
 
     def build_aliases(interpretation)
-      result = []
-      unless interpretation.interpretation_aliases.empty?
-        result = interpretation.interpretation_aliases.order(:position_start).collect { |ialias| build_alias(ialias) }
-      end
-      result
+      interpretation.interpretation_aliases
+        .order(:position_start)
+        .collect { |ialias| build_alias(ialias) }
     end
 
     def build_alias(ialias)
       if ialias.type_intent?
         result = {}
         result[:package] = @agent.id
-        result[:alias] = ialias.aliasname
+        result[:alias]   = ialias.aliasname
         if ialias.is_list
           result[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
           result[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
