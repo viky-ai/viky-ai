@@ -49,7 +49,6 @@ struct og_nlp_env
 /** Nlp env defautl value */
 #define DOgNlpJSDukGcPeriod 100
 
-
 struct ltra_dictionaries
 {
   void *ha_base;
@@ -523,8 +522,8 @@ struct m_expression
 
 struct request_context
 {
-    int flag_start;
-    int flag_length;
+  int flag_start;
+  int flag_length;
 };
 
 struct og_ctrl_nlp_threaded
@@ -794,7 +793,8 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 
 /* nlpanyopt.c */
-int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression);
+int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+    og_bool must_attach);
 
 /* nlpreopt.c */
 og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th);
@@ -888,5 +888,4 @@ og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct reques
 /* nlpcontext.c */
 og_status NlpContextIsValid(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpContextGetScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-
 
