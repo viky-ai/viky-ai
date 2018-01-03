@@ -311,8 +311,15 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[nature]'         value='#{alias.nature}' />
           <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
         </div>
-      </td>
-      <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>"
+      </td>"
+    if alias.nature == 'type_intent'
+      line.push "
+        <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
+      "
+    if alias.nature == 'type_digit'
+      line.push "
+        <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
+      "
 
     if alias.nature == 'type_intent'
       line.push "
