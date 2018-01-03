@@ -14,7 +14,7 @@ namespace :restore do
       synchronize_NLP
       restore_images(params)
     end
-    puts Rainbow("#{time_log} Restore done: do not forget to set#{params[:database]} in #{Rails.root}/config/database.yml").green
+    puts Rainbow("#{time_log} Restore done: do not forget to set #{params[:database]} in #{Rails.root}/config/database.yml").green
   end
 
   desc 'List available environments and associated backups archives'
@@ -99,18 +99,18 @@ namespace :restore do
     end
 
     def migrate_data
-      puts Rainbow("#{time_log}   Migrate database").green
+      puts Rainbow("#{time_log} Migrate database").green
       Rake::Task["db:migrate"].invoke
-      puts Rainbow("#{time_log}   Migrate database: done").green
+      puts Rainbow("#{time_log} Migrate database: done").green
     end
 
     def clean_private_data
-      puts Rainbow("#{time_log}   Database clean up of private data").green
+      puts Rainbow("#{time_log} Database clean up of private data").green
       User.in_batches.update_all(encrypted_password: '$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S')
       User.in_batches.each_record do |user|
         user.update(email: "login_as_#{user}")
       end
-      puts Rainbow("#{time_log}   Database clean up of private data: done").green
+      puts Rainbow("#{time_log} Database clean up of private data: done").green
     end
 
     def synchronize_NLP
