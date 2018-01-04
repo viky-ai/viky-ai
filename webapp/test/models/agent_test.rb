@@ -337,6 +337,16 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agents with membership or public' do
+    user_id = users(:admin).id
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+    s = AgentSearch.new(user_id)
+    assert_equal 3, Agent.search(s.options).count
+  end
+
+
   test "A new agent always has a token" do
     agent = Agent.new(
       name: "Agent A",

@@ -47,7 +47,7 @@ class Agent < ApplicationRecord
   def self.search(q = {})
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
-    conditions = conditions.where('user_id = ?', q[:user_id])
+    conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
     unless q[:query].nil?
       conditions = conditions.where(
         'name LIKE ? OR agentname LIKE ?',
