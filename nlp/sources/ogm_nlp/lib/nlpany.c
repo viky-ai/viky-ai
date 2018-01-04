@@ -8,6 +8,8 @@
 
 static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Irequest_position_before, int Irequest_position_after);
+static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_request_any2, gpointer user_data);
+static og_status NlpRequestAnySort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct request_any *request_any);
 static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
@@ -43,7 +45,7 @@ og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th)
 
 og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  NlpLog(DOgNlpTraceMatch, "NlpInterpretTreeAttachAny: nb_anys=%d nb_anys_attached=%d, adding anys:",
+  NlpLog(DOgNlpTraceMatch, "NlpRequestAnysAdd: nb_anys=%d nb_anys_attached=%d, adding anys:",
       request_expression->nb_anys, request_expression->nb_anys_attached);
 
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
@@ -64,9 +66,13 @@ og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *re
       NlpRequestAnyAdd(ctrl_nlp_th, request_expression,
           request_expression->request_position_start + request_expression->request_positions_nb - 1, -1));
 
+  // Sorting by decreasing positions, because we want to choose the any that are preferably after
+  // the expression where the any is positioned, when randomly choosing.
+  IFE(NlpRequestAnySort(ctrl_nlp_th, request_expression));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    NlpLog(DOgNlpTraceMatch, "NlpInterpretTreeAttachAny: nb_anys=%d nb_anys_attached=%d, added anys:",
+    NlpLog(DOgNlpTraceMatch, "NlpRequestAnysAdd: nb_anys=%d nb_anys_attached=%d, added anys:",
         request_expression->nb_anys, request_expression->nb_anys_attached);
     IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
   }
@@ -136,6 +142,35 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     i = j;
   }
 
+  DONE;
+}
+
+static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_request_any2, gpointer user_data)
+{
+  struct request_any *request_any1 = (struct request_any *) ptr_request_any1;
+  struct request_any *request_any2 = (struct request_any *) ptr_request_any2;
+  og_nlp_th ctrl_nlp_th = user_data;
+
+  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_words) DPcErr;
+  struct request_word *request_word1 = request_words + request_any1->request_word_start;
+  struct request_word *request_word2 = request_words + request_any2->request_word_start;
+
+  if (request_word1->start_position != request_word2->start_position)
+  {
+    return (request_word2->start_position - request_word1->start_position);
+  }
+  return request_any1 - request_any2;
+}
+
+static og_status NlpRequestAnySort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  if (request_expression->request_anys_nb == 0) DONE;
+
+  struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->request_any_start);
+  IFN(request_any) DPcErr;
+  g_qsort_with_data(request_any, request_expression->request_anys_nb, sizeof(struct request_any), NlpRequestAnyCmp,
+      ctrl_nlp_th);
   DONE;
 }
 

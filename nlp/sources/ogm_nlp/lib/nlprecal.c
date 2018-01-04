@@ -45,7 +45,6 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   {
     struct request_expression *request_expression = iter->data;
     if (!request_expression->keep_as_result) continue;
-    IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression));
     IFE(NlpSolutionCalculate(ctrl_nlp_th, request_expression));
     IFE(NlpCalculateScore(ctrl_nlp_th, request_expression));
   }
@@ -97,15 +96,19 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
       if (!request_expression->keep_as_result) continue;
       IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
 
-      if (request_expression->nb_anys != request_expression->nb_anys_attached)
+      int nb_anys_attached;
+      IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
+
+      if (request_expression->nb_anys != nb_anys_attached)
       {
         NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d != nb_anys_attached=%d, this request is not validated:",
-            request_expression->nb_anys, request_expression->nb_anys_attached);
+            request_expression->nb_anys, nb_anys_attached);
         request_expression->any_validate_status = 0;
         request_expression->keep_as_result = FALSE;
       }
       else
       {
+        IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
         request_expression->any_validate_status = 2;
         some_expressions_kept = TRUE;
       }
