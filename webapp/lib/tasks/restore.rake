@@ -109,7 +109,7 @@ namespace :restore do
       ActiveRecord::Base.record_timestamps = false
       User.in_batches.update_all(encrypted_password: '$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S')
       User.in_batches.each_record do |user|
-        user.update(email: "login_as_#{user}")
+        user.update(email: "login_as_#{user.email}")
       end
       ActiveRecord::Base.record_timestamps = true
       puts Rainbow("#{time_log} Database clean up of private data: done").green
