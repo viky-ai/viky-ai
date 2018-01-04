@@ -6,7 +6,8 @@ class AgentTest < ActiveSupport::TestCase
     agent = Agent.new(
       name: "Agent A",
       agentname: "agenta",
-      description: "Agent A decription"
+      description: "Agent A decription",
+      visibility: 'is_public'
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
@@ -14,6 +15,9 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal users(:admin).id, agent.owner_id
     assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
+    assert_equal 'is_public', agent.visibility
+    assert agent.is_public?
+    assert !agent.is_private?
   end
 
 

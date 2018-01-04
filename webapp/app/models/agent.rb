@@ -2,6 +2,8 @@ class Agent < ApplicationRecord
   extend FriendlyId
   friendly_id :agentname, use: :history, slug_column: 'agentname'
 
+  enum visibility: [:is_private, :is_public]
+
   require 'rgl/adjacency'
 
   include AgentImageUploader::Attachment.new(:image)
