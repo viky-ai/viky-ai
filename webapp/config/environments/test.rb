@@ -1,4 +1,7 @@
 Rails.application.configure do
+  # Disable Rails.cache in test env
+  config.cache_store = :null_store
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's
