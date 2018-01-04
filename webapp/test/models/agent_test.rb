@@ -418,6 +418,35 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test 'List reachable intents for agent' do
+    agent_weather = agents(:weather)
+    assert_equal 2, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_public = agents(:terminator)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_successor = agents(:weather_confirmed)
+    assert Intent.create(
+      intentname: 'greeting',
+      locales: ['en'],
+      agent: agent_successor
+    )
+    assert AgentArc.create(source: agent_weather, target: agent_successor)
+    assert_equal 4, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_successor.visibility = 'is_public'
+    assert agent_successor.save
+    assert_equal 4, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+  end
+
+
   test 'Test agent slug generation' do
     agent = agents(:weather)
     assert_equal 'admin/weather', agent.slug

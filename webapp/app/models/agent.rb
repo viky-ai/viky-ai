@@ -106,6 +106,25 @@ class Agent < ApplicationRecord
     "#{User.find(owner_id).username}/#{agentname}"
   end
 
+  def reachable_intents
+    result = []
+    intents.order(position: :desc, created_at: :desc).each do |intent|
+      result << intent
+    end
+    successors.includes(:intents).each do |successor|
+      successor.intents.order(position: :desc, created_at: :desc).each do |intent|
+        result << intent
+      end
+    end
+    already_seen_agents = [id] + successors.reload.pluck(:id)
+    Agent.is_public.where.not(id: already_seen_agents).includes(:intents).each do |agent|
+      agent.intents.order(position: :desc, created_at: :desc).each do |intent|
+        result << intent
+      end
+    end
+    result
+  end
+
 
   private
 
