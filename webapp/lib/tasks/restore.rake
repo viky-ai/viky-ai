@@ -10,7 +10,7 @@ namespace :restore do
     restore_database(params)
     with_active_record_connected_to_new_db params do
       migrate_data
-      clean_private_data
+      clean_private_data(params)
       synchronize_NLP
       restore_images(params)
     end
@@ -107,14 +107,11 @@ namespace :restore do
       puts Rainbow("#{time_log} Migrate database: done").green
     end
 
-    def clean_private_data
+    def clean_private_data(params)
       puts Rainbow("#{time_log} Database clean up of private data").green
-      ActiveRecord::Base.record_timestamps = false
-      User.in_batches.update_all(encrypted_password: '$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S')
-      User.in_batches.each_record do |user|
-        user.update(email: "login_as_#{user.email}")
-      end
-      ActiveRecord::Base.record_timestamps = true
+      conn = connect_to_db(params, params[:database])
+      conn.exec("UPDATE users SET encrypted_password='$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S'")
+      conn.exec("UPDATE users SET email=CONCAT('login_as_', email)")
       puts Rainbow("#{time_log} Database clean up of private data: done").green
     end
 
@@ -181,48 +178,18 @@ namespace :restore do
     def self.exec(cmd, opts = {})
 
       opts[:env] = {}                        if opts[:env].nil?
-      opts[:take_care_of_return] = true      if opts[:take_care_of_return].nil?
-      opts[:indent] = true                   if opts[:indent].nil?
-      opts[:dont_show_executed_cmd] = false  if opts[:dont_show_executed_cmd].nil?
 
-      begin
+      puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue
 
-        if File.directory? pwd
+      Open3.popen2e(opts[:env], cmd, :chdir => Rails.root) do |stdin, stdout_and_stderr, wait_thr|
 
-          if not opts[:dont_show_executed_cmd]
-            puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue
-          end
+        stdout_and_stderr.each { |line| puts "    ⤷ #{line}" }
 
-          Open3.popen2e(opts[:env], cmd, :chdir => Rails.root) do |stdin, stdout_and_stderr, wait_thr|
+        # Process::Status object returned.
+        exit_status = wait_thr.value
 
-            if opts[:indent]
-              stdout_and_stderr.each { |line| puts "    ⤷ #{line}" }
-            else
-              stdout_and_stderr.each { |line| puts line }
-            end
-
-            # Process::Status object returned.
-            exit_status = wait_thr.value
-
-            if opts[:take_care_of_return] && !exit_status.success?
-              raise "Command \"#{cmd}\" failed !!!"
-            end
-
-          end
-
-        else
-          raise "Command \"#{cmd}\" failed, No such PWD dir : #{pwd}"
-        end
-
-      rescue => e
-
-        # if we take care raise else print message
-        if opts[:take_care_of_return]
-          raise
-        else
-          if not opts[:dont_show_executed_cmd]
-            puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue + " " + Rainbow("FAILED").red + " " + e.message
-          end
+        if !exit_status.success?
+          raise "Command \"#{cmd}\" failed !!!"
         end
 
       end
