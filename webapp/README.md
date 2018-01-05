@@ -2,15 +2,15 @@
 
 ## Dependencies
 
-* Ruby (2.4.2)
-* bundler (1.15.4)
-* NodeJS (8.4.0)
-* Yarn (1.0.1)
-* PostgreSQL (9.6.5)
-* Redis (4.0.1)
-* ImageMagick
-* Docker 17.09.0-ce
-* Graphviz
+* Ruby (2.4.2)       ( https://github.com/rbenv/rbenv#installation )
+* bundler (1.15.4)   ( `gem install bundler` )
+* NodeJS (8.4.0)     ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+* Yarn (1.0.1)       ( https://yarnpkg.com/lang/en/docs/install/ )
+* PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib` )
+* Redis (4.0.1)      ( use docker )
+* ImageMagick        ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+* Docker 17.09.0-ce  ( [see below](#docker) )
+* Graphviz           ( `sudo apt-get install -y graphviz` )
 
 ## Environment Variables
 
@@ -28,10 +28,13 @@ VOQALAPP_DB_PASSWORD='sup$_3rman'
 VOQALAPP_DB_HOST=localhost
 VOQALAPP_DB_PORT=5432
 
-VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost/1'
-VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost/2'
+VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
+VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 
 VOQALAPP_NLP_URL='http://localhost:9345'
+
+# restore env password
+RSYNC_PASSWORD='#***REMOVED***26'
 ```
 
 ## Run in production environment
@@ -59,7 +62,7 @@ Mail delivery is performed through a high priority queue named `webapp_mailers` 
 
 Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks:
 
-* `./bin/rails users:create_admin[email,password]`
+* `./bin/rails users:invite_admin[email]`
 * `./bin/rails users:set_admin[email]`
 * `./bin/rails users:unset_admin[email]`
 
@@ -77,13 +80,14 @@ Default concurrency for background job management is set to 5, you can change it
 
 The first time you start the application you need to manually create two databases `voqalapp_development` and `voqalapp_test` :
 
+### Create postgres user
 ```
-$ sudo -i -u postgres
-## Become postgres user
-$ createuser --interactive
+$ sudo -u postgres createuser --interactive -W
 ...
-ALTER USER "<user>" WITH PASSWORD '<password>';
+```
 
+### Create database
+```
 $ ./bin/rails db:setup
 > Created database 'voqalapp_development'
 > Created database 'voqalapp_test'
@@ -112,7 +116,7 @@ In Ubuntu you should:
 
 To ensure having all the webapp related processes up and running during development, you can simply run:
 
-    foreman start
+    `foreman start`
 
 If you obtain an authorization error from `docker`, you probably have to do:
 

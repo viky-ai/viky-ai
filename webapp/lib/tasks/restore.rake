@@ -14,7 +14,7 @@ namespace :restore do
       synchronize_NLP
       restore_images(params)
     end
-    puts Rainbow("#{time_log} Restore done: do not forget to set #{params[:database]} in #{Rails.root}/config/database.yml").green
+    puts Rainbow("#{time_log} Restore done: do not forget to change your environement variable VOQALAPP_DB_NAME_DEV=#{params[:database]} and restart your apps").green
   end
 
   desc 'List available environments and associated backups archives'
@@ -23,10 +23,10 @@ namespace :restore do
     if args.environment.present?
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       puts Rainbow("#{time_log} List availables backups for environment #{env}").green
-      puts `rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/`
+      exec("rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/")
     else
       puts Rainbow("#{time_log} List availables environment #{env}").green
-      puts `rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/viky-*`
+      exec("rsync --list-only rsync://docker-backup-ro@#{backup_server}:/docker/backup/viky-*")
     end
   end
 
@@ -38,7 +38,7 @@ namespace :restore do
     dir = Dir.mktmpdir do |dir|
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       puts Rainbow("#{time_log} Download archives").green
-      `rsync -za rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/#{args.date}/#{env}* #{dir}`
+      exec("rsync -za rsync://docker-backup-ro@#{backup_server}:/docker/backup/#{env}/#{args.date}/#{env}* #{dir}")
       puts Rainbow("#{time_log} Download archives: done").green
       files = Dir.entries(dir)
       db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
@@ -91,11 +91,14 @@ namespace :restore do
     end
 
     def import_dump(params)
-      if params[:database_dump].end_with?('.gz')
-        `gunzip -c #{params[:database_dump]} | sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' | psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]}`
-      else
-        `psql -h #{params[:host]} -p #{params[:port]} -U #{params[:username]} #{params[:database]} < sed 's/OWNER TO superman/OWNER TO #{params[:username]}/ig' #{params[:database_dump]}`
-      end
+      cat_cmd = 'cat'
+      cat_cmd = 'zcat' if params[:database_dump].end_with?('.gz')
+
+      opts = { env: { 'PGPASSWORD' => params[:password] } }
+      sed_cmd  = "sed -e 's/OWNER TO superman/OWNER TO #{params[:username]}/ig'"
+      psql_cmd = "psql --no-password -h '#{params[:host]}' -p '#{params[:port]}' -U '#{params[:username]}' -d '#{params[:database]}'"
+
+      exec("#{cat_cmd} #{params[:database_dump]} | #{sed_cmd} | #{psql_cmd}", opts)
     end
 
     def migrate_data
@@ -142,7 +145,7 @@ namespace :restore do
         else
           puts Rainbow("#{time_log}   A stash directory is already present at #{backup_dir}: skipping").green
         end
-        `tar xf #{params[:images]} -C #{Rails.root}/..`
+        exec("tar xf #{params[:images]} -C #{Rails.root}/..")
       else
         puts Rainbow("#{time_log}   No images archive found: reset values").green
         User.in_batches.update_all(image_data: nil)
@@ -173,4 +176,58 @@ namespace :restore do
       yield
       ActiveRecord::Base.establish_connection(config)
     end
+
+    # Ensure to have correct error handling
+    def self.exec(cmd, opts = {})
+
+      opts[:env] = {}                        if opts[:env].nil?
+      opts[:take_care_of_return] = true      if opts[:take_care_of_return].nil?
+      opts[:indent] = true                   if opts[:indent].nil?
+      opts[:dont_show_executed_cmd] = false  if opts[:dont_show_executed_cmd].nil?
+
+      begin
+
+        if File.directory? pwd
+
+          if not opts[:dont_show_executed_cmd]
+            puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue
+          end
+
+          Open3.popen2e(opts[:env], cmd, :chdir => Rails.root) do |stdin, stdout_and_stderr, wait_thr|
+
+            if opts[:indent]
+              stdout_and_stderr.each { |line| puts "    ⤷ #{line}" }
+            else
+              stdout_and_stderr.each { |line| puts line }
+            end
+
+            # Process::Status object returned.
+            exit_status = wait_thr.value
+
+            if opts[:take_care_of_return] && !exit_status.success?
+              raise "Command \"#{cmd}\" failed !!!"
+            end
+
+          end
+
+        else
+          raise "Command \"#{cmd}\" failed, No such PWD dir : #{pwd}"
+        end
+
+      rescue => e
+
+        # if we take care raise else print message
+        if opts[:take_care_of_return]
+          raise
+        else
+          if not opts[:dont_show_executed_cmd]
+            puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue + " " + Rainbow("FAILED").red + " " + e.message
+          end
+        end
+
+      end
+
+    end
+
+
 end
