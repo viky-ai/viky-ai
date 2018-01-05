@@ -37,7 +37,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     find_link('admin/weather/weather_who').click
 
     within('.aliases') do
-      assert page.has_text?('admin/weather/weather_who')
+      assert page.has_link?('admin/weather/weather_who')
       assert page.has_text?('Marcel')
     end
 
@@ -164,7 +164,9 @@ class InterpretationsTest < ApplicationSystemTestCase
       select_text_in_trix("#interpretations-list trix-editor", 0, 5)
     end
 
-    find_link('admin/weather/weather_who').click
+    within('#popup-add-tag') do
+      find_link('admin/weather/weather_who').click
+    end
 
     within('#interpretations-list') do
       within('.aliases') do

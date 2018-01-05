@@ -3,11 +3,10 @@ require 'model_test_helper'
 
 class AgentUpdatedAtTest < ActiveSupport::TestCase
 
-  test 'Change updated_at agent date after intent update' do
+  test 'Change updated_at agent date after intent addition' do
     agent = Agent.find_by_agentname('weather')
-    updated_at = agent.updated_at.to_json
+    updated_at_before = agent.updated_at.to_json
 
-    # Intent creation
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
@@ -16,25 +15,34 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent.agent = agent
 
     assert intent.save
-    assert_not_equal updated_at, agent.reload.updated_at.to_json
-
-    # Intent update
-    updated_at = agent.updated_at.to_json
-    intent.description = 'New description'
-    assert intent.save
-    assert_not_equal updated_at, agent.reload.updated_at.to_json
-
-    # Intent destroy
-    updated_at = agent.updated_at.to_json
-    assert intent.destroy
-    assert_not_equal updated_at, agent.reload.updated_at.to_json
+    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
   end
 
 
-  test 'Change updated_at agent date after interpretation update' do
+  test 'Change updated_at agent date after intent modification' do
     agent = Agent.find_by_agentname('weather')
+    updated_at_before = agent.updated_at.to_json
 
-    agent_updated_at = agent.updated_at.to_json
+    intent = agent.intents.first
+    intent.description = 'New description'
+    assert intent.save
+    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after intent deletion' do
+    agent = Agent.find_by_agentname('weather')
+    updated_at_before = agent.updated_at.to_json
+
+    intent = agent.intents.first
+    assert intent.destroy
+    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after interpretation addition' do
+    agent = Agent.find_by_agentname('weather')
+    agent_updated_at_before = agent.updated_at.to_json
 
     # Interpretation creation
     interpretation = Interpretation.new(
@@ -42,36 +50,52 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       locale: 'en'
     )
     intent = Intent.find_by_intentname('weather_greeting')
-    intent_updated_at = intent.updated_at.to_json
+    intent_updated_at_before = intent.updated_at.to_json
+
     interpretation.intent = intent
     assert interpretation.save
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
 
-    # Interpretation update
-    agent_updated_at  = agent.updated_at.to_json
-    intent_updated_at = intent.updated_at.to_json
-    interpretation.locale = 'fr'
-    assert interpretation.save
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
-
-    # Interpretation destroy
-    agent_updated_at  = agent.updated_at.to_json
-    intent_updated_at = intent.updated_at.to_json
-    assert interpretation.destroy
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
   end
 
 
-  test 'Change updated_at agent date after aliases update' do
+  test 'Change updated_at agent date after interpretation modification' do
+    agent = Agent.find_by_agentname('weather')
+    agent_updated_at_before = agent.updated_at.to_json
 
+    intent = Intent.find_by_intentname('weather_greeting')
+    intent_updated_at_before = intent.updated_at.to_json
+
+    interpretation = intent.interpretations.first
+    interpretation.locale = 'fr'
+    assert interpretation.save
+
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after interpretation deletion' do
+    agent = Agent.find_by_agentname('weather')
+    agent_updated_at_before = agent.updated_at.to_json
+
+    intent = Intent.find_by_intentname('weather_greeting')
+    intent_updated_at_before = intent.updated_at.to_json
+
+    interpretation = intent.interpretations.first
+    assert interpretation.destroy
+
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after aliases addition' do
     agent = Agent.find_by_agentname('weather')
     intent = Intent.find_by_intentname('weather_who')
     interpretation = Interpretation.find_by_expression('Bonjour tout le monde')
 
-    # Interpretation creation
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
@@ -80,35 +104,51 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation_alias.interpretation = interpretation
     interpretation_alias.intent = intent
 
-    interpretation_updated_at = interpretation.updated_at.to_json
-    intent_updated_at = intent.updated_at.to_json
-    agent_updated_at = agent.updated_at.to_json
+    interpretation_updated_at_before = interpretation.updated_at.to_json
+    intent_updated_at_before         = intent.updated_at.to_json
+    agent_updated_at_before          = agent.updated_at.to_json
     assert interpretation_alias.save
 
-    assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+  end
 
-    # Interpretation update
-    interpretation_updated_at = interpretation.updated_at.to_json
-    intent_updated_at = intent.updated_at.to_json
-    agent_updated_at = agent.updated_at.to_json
-    interpretation_alias.aliasname = 'what'
+
+  test 'Change updated_at agent date after aliases modification' do
+    agent = Agent.find_by_agentname('weather')
+    intent = Intent.find_by_intentname('weather_greeting')
+    interpretation = intent.interpretations.first
+
+    interpretation_updated_at_before = interpretation.updated_at.to_json
+    intent_updated_at_before         = intent.updated_at.to_json
+    agent_updated_at_before          = agent.updated_at.to_json
+
+    interpretation_alias = interpretation.interpretation_aliases.first
+    interpretation_alias.aliasname = 'changed'
     assert interpretation_alias.save
 
-    assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+  end
 
-    # Interpretation destroy
-    interpretation_updated_at = interpretation.updated_at.to_json
-    intent_updated_at = intent.updated_at.to_json
-    agent_updated_at = agent.updated_at.to_json
+
+  test 'Change updated_at agent date after aliases deletion' do
+    agent = Agent.find_by_agentname('weather')
+    intent = Intent.find_by_intentname('weather_greeting')
+    interpretation = intent.interpretations.first
+
+    interpretation_updated_at_before = interpretation.updated_at.to_json
+    intent_updated_at_before         = intent.updated_at.to_json
+    agent_updated_at_before          = agent.updated_at.to_json
+
+    interpretation_alias = interpretation.interpretation_aliases.first
     assert interpretation_alias.destroy
 
-    assert_not_equal interpretation_updated_at, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at, agent.reload.updated_at.to_json
+    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
   end
 
 
