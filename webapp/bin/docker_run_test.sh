@@ -3,6 +3,9 @@ set -x -e
 
 sleep 1
 
+# Setup DB
+./bin/rails db:reset
+
 # Run tests
 ./bin/rails test
 

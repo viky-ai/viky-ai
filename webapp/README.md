@@ -23,15 +23,15 @@ Beware of never committing or pushing the `.env` file, it is just useful for you
 For example you could define your local PostgreSQL username, password and other variables like your favourite Redis endpoint for ActionCable and ActiveJob, maybe it's a remote machine, maybe your localhost, e.g.:
 
 ```
-VOQALAPP_DB_USERNAME=superman
-VOQALAPP_DB_PASSWORD='sup$_3rman'
-VOQALAPP_DB_HOST=localhost
-VOQALAPP_DB_PORT=5432
+VIKYAPP_DB_USERNAME=superman
+VIKYAPP_DB_PASSWORD='sup$_3rman'
+VIKYAPP_DB_HOST=localhost
+VIKYAPP_DB_PORT=5432
 
-VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
-VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
+VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
+VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 
-VOQALAPP_NLP_URL='http://localhost:9345'
+VIKYAPP_NLP_URL='http://localhost:9345'
 
 # restore env password
 RSYNC_PASSWORD='#***REMOVED***26'
@@ -46,7 +46,7 @@ RSYNC_PASSWORD='#***REMOVED***26'
 
 ## Base url
 
-<code>VOQALAPP_BASEURL</code> environment variable must be set.
+<code>VIKYAPP_BASEURL</code> environment variable must be set.
 
 ## Mail
 
@@ -73,12 +73,12 @@ Asynchronous tasks, like mail delivery and other, are lazily performed making us
 
 The configuration file for queue definition and options is `config/sidekiq.yml`, you can therein define as many queues as you need and route them in your Sidekiq workers and ActiveJob jobs.
 
-Default concurrency for background job management is set to 5, you can change it via environment variable `VOQALAPP_SIDEKIQ_CONCURRENCY`.
+Default concurrency for background job management is set to 5, you can change it via environment variable `VIKYAPP_SIDEKIQ_CONCURRENCY`.
 
 
 ## Bootstrap development databases
 
-The first time you start the application you need to manually create two databases `voqalapp_development` and `voqalapp_test` :
+The first time you start the application you need to manually create two databases `vikylapp_development` and `vikylapp_test` :
 
 ### Create postgres user
 ```
@@ -89,8 +89,8 @@ $ sudo -u postgres createuser --interactive -W
 ### Create database
 ```
 $ ./bin/rails db:setup
-> Created database 'voqalapp_development'
-> Created database 'voqalapp_test'
+> Created database 'vikylapp_development'
+> Created database 'vikylapp_test'
 > ...
 ```
 
