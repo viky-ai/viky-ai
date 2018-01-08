@@ -57,7 +57,7 @@
     </div>
   <% end %>
 
-  <% if @agent.available_successors(current_user).count > 0 %>
+  <% if @agent.available_successors(current_user).count > 0 && current_user.can?(:edit, @agent) %>
     <div class="agent-compact agent-compact--new">
       <%= link_to "<span class='icon'>#{icon_add}</span> #{t('views.dependencies.index.new')}".html_safe,
             new_user_agent_dependency_path(@agent.owner, @agent.agentname),
