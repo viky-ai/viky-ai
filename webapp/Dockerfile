@@ -1,15 +1,15 @@
 # Using docker multi stage (docker >= 17.05)
 # https://codefresh.io/blog/node_docker_multistage/
 
-# docker build --target image_ruby_run  -t docker-registry.pertimm.net/voqal.ai/platform/app .
-# docker build --target image_ruby_test -t docker-registry.pertimm.net/voqal.ai/platform/app_test .
+# docker build --target image_ruby_run  -t docker-registry.pertimm.net/viky.ai/platform/app .
+# docker build --target image_ruby_test -t docker-registry.pertimm.net/viky.ai/platform/app_test .
 
 ARG RUBY_BASE_VERSION=latest
 
 #################################################
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
-FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_run
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_run
 
 # App specific
 RUN mkdir -p /webapp
@@ -53,7 +53,7 @@ CMD ["./bin/docker_run.sh"]
 #################################################
 # image_ruby_test : image_ruby_base_test + test dependencies
 #################################################
-FROM docker-registry.pertimm.net/voqal.ai/platform/tools_ruby_base_test:${RUBY_BASE_VERSION} AS image_ruby_test
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base_test:${RUBY_BASE_VERSION} AS image_ruby_test
 
 # App specific
 RUN mkdir -p /webapp

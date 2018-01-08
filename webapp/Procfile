@@ -2,5 +2,5 @@ redis:    docker run -p "7372:6379" --rm --name viky-redis-dev --init redis:4.0-
 workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000
-nls:      docker pull docker-registry.pertimm.net/voqal.ai/platform/nlp && docker run -p "9345:9345" --rm --name foreman_nls --init --volume "$(pwd)/import:/nls/import" docker-registry.pertimm.net/voqal.ai/platform/nlp
+nls:      docker pull docker-registry.pertimm.net/viky.ai/platform/nlp && docker run -p "9345:9345" --rm --name foreman_nls --init --volume "$(pwd)/import:/nls/import" docker-registry.pertimm.net/viky.ai/platform/nlp
 doc:      bundle exec rails doc:server
