@@ -14,7 +14,7 @@
         <span class="badge badge--small badge--white badge--outline">
           <%= t('views.agents.show.owner') %>
         </span>
-      <% else %>
+      <% elsif agent.collaborators.any? { |collaborator| collaborator.id == current_user.id } %>
         <span class="badge badge--small badge--white badge--outline">
           <%= t('views.agents.show.collaborator') %>
           <% if current_user.can? :edit, agent %>
