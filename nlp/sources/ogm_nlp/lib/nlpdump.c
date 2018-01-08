@@ -19,7 +19,6 @@ static og_status NlpDumpPackageListCallback(og_nlp_th ctrl_nlp_th, og_string pac
   package_t package = NlpPackageGet(ctrl_nlp_th, package_id);
   IFN(package) DONE;
 
-
   og_status status = NlpPackageDump(ctrl_nlp_th, package);
 
   NlpPackageMarkAsUnused(ctrl_nlp_th, package);
@@ -133,6 +132,32 @@ static og_status NlpPackageInterpretationDump(og_nlp_th ctrl_nlp_th, package_t p
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation slug %s",
         interpretation->slug);
+    DPcErr;
+  }
+
+  json_t *json_scope = NULL;
+  switch (interpretation->scope)
+  {
+    case nlp_interpretation_scope_type_public:
+      json_scope = json_string("public");
+      break;
+    case nlp_interpretation_scope_type_private:
+      json_scope = json_string("private");
+      break;
+    case nlp_interpretation_scope_type_hidden:
+      json_scope = json_string("hidden");
+      break;
+    default:
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation "
+          "unsupported scope %d", interpretation->scope);
+      DPcErr;
+      break;
+  }
+
+  IF(json_object_set_new(json_interpretation, "scope", json_scope))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageInterpretationDump : Error while dumping interpretation scope %d",
+        interpretation->scope);
     DPcErr;
   }
 

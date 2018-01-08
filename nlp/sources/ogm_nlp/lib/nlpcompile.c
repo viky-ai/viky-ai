@@ -225,6 +225,7 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   json_t *json_contexts = NULL;
   json_t *json_expressions = NULL;
   json_t *json_solution = NULL;
+  json_t *json_scope = NULL;
 
   for (void *iter = json_object_iter(json_interpretation); iter;
       iter = json_object_iter_next(json_interpretation, iter))
@@ -251,6 +252,10 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     else if (Ogstricmp(key, "solution") == 0)
     {
       json_solution = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "scope") == 0)
+    {
+      json_scope = json_object_iter_value(iter);
     }
     else
     {
@@ -308,6 +313,38 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
     }
   }
 
+  enum nlp_interpretation_scope_type scope = nlp_interpretation_scope_type_public;
+  IFX(json_scope)
+  {
+    if (!json_is_string(json_scope))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'scope' is not a string");
+      DPcErr;
+    }
+    else
+    {
+      og_string scope_string = json_string_value(json_scope);
+      if (Ogstricmp(scope_string, "public") == 0)
+      {
+        scope = nlp_interpretation_scope_type_public;
+      }
+      else if (Ogstricmp(scope_string, "private") == 0)
+      {
+        scope = nlp_interpretation_scope_type_private;
+      }
+      else if (Ogstricmp(scope_string, "hidden") == 0)
+      {
+        scope = nlp_interpretation_scope_type_hidden;
+      }
+      else
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageInterpretation: interpretation 'scope' "
+            "with value '%s' is not supported", scope_string);
+        DPcErr;
+      }
+    }
+  }
+
   // solution can be of any json type and can be non existant
 
   // At that point, we can create the interpretation structure
@@ -328,6 +365,8 @@ og_status NlpCompilePackageInterpretation(og_nlp_th ctrl_nlp_th, package_t packa
   IFE(OgHeapAppend(package->hinterpretation_ba, interpretation->slug_length + 1, string_slug));
 
   interpretation->json_solution = json_solution;
+
+  interpretation->scope = scope;
 
   IFE(NlpCompilePackageContexts(ctrl_nlp_th, package, interpretation, json_contexts));
   IFE(NlpCompilePackageExpressions(ctrl_nlp_th, package, interpretation, json_expressions));
@@ -392,8 +431,6 @@ static int NlpCompilePackageContext(og_nlp_th ctrl_nlp_th, package_t package,
   }
   DONE;
 }
-
-
 
 static int NlpCompilePackageExpressions(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation_compile *interpretation, json_t *json_expressions)

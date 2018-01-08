@@ -6,6 +6,7 @@ json.slug @agent.slug
 json.interpretations @interpretations do |intent|
   json.id intent[:id]
   json.slug intent[:slug]
+  json.scope intent[:scope] unless intent[:scope].blank?
   json.expressions intent[:expressions] do |interpretation|
     json.expression interpretation[:expression]
     unless interpretation[:aliases].blank?

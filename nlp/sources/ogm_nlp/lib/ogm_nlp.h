@@ -203,6 +203,11 @@ struct expression
   json_t *json_solution;
 };
 
+enum nlp_interpretation_scope_type
+{
+  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private, nlp_interpretation_scope_type_hidden
+};
+
 struct interpretation_compile
 {
   package_t package;
@@ -211,6 +216,7 @@ struct interpretation_compile
   int context_start, contexts_nb;
   int expression_start, expressions_nb;
   json_t *json_solution;
+  enum nlp_interpretation_scope_type scope;
 };
 
 struct interpretation
@@ -221,6 +227,8 @@ struct interpretation
   og_string id;
   og_string slug;
   json_t *json_solution;
+
+  enum nlp_interpretation_scope_type scope;
 
   int contexts_nb;
   struct context *contexts;
