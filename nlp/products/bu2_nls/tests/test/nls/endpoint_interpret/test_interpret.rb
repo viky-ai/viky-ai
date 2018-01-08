@@ -159,7 +159,7 @@ module Nls
           interpretations:
           [
             {
-              package: "voqal.ai:datetime",
+              package: "viky.ai:datetime",
               id: "0d981484-9313-11e7-abc4-cec278b6b50b",
               slug: "special_char",
               score: 1.0

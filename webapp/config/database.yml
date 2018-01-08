@@ -20,20 +20,20 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV.fetch("VOQALAPP_DB_HOST") { 'localhost' } %>
-  port: <%= ENV.fetch("VOQALAPP_DB_PORT") { 5432 } %>
-  username: <%= ENV.fetch("VOQALAPP_DB_USERNAME") { 'voqal' } %>
-  password: <%= ENV.fetch("VOQALAPP_DB_PASSWORD") { 'voqal' } %>
+  host: <%= ENV.fetch("VIKYAPP_DB_HOST") { 'localhost' } %>
+  port: <%= ENV.fetch("VIKYAPP_DB_PORT") { 5432 } %>
+  username: <%= ENV.fetch("VIKYAPP_DB_USERNAME") { 'viky' } %>
+  password: <%= ENV.fetch("VIKYAPP_DB_PASSWORD") { 'viky' } %>
 
 development:
   <<: *default
-  database: <%= ENV.fetch("VOQALAPP_DB_NAME_DEV") { 'voqalapp_development' } %>
+  database: <%= ENV.fetch("VIKYAPP_DB_NAME_DEV") { 'vikyapp_development' } %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
   # When left blank, postgres will use the default role. This is
   # the same name as the operating system user that initialized the database.
-  #username: voqalapp
+  #username: viky
 
   # The password associated with the postgres role (username).
   #password:
@@ -61,7 +61,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: voqalapp_test
+  database: vikyapp_test
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -84,4 +84,4 @@ test:
 #
 production:
   <<: *default
-  database: voqalapp_production
+  database: vikyapp_production

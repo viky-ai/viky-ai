@@ -204,6 +204,14 @@ trix-editor{
   @each $name, $color in $picker_colors{
     .intent-#{$name}{
       color: $color;
+      a{
+        color: $color;
+        text-decoration: none;
+        &:hover,
+        &:focus{
+          text-decoration: underline;
+        }
+      }
       small{
         color: $color;
         font-size: 1em;

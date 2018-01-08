@@ -356,7 +356,7 @@ class PackageTest < ActiveSupport::TestCase
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
-    endpoint = ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    endpoint = ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
     assert_equal endpoint, p.endpoint
   end
 
