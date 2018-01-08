@@ -3,7 +3,10 @@ require 'test_helper'
 class InterpretationTest < ActiveSupport::TestCase
 
   test 'Basic interpretation creation & intent association' do
-    interpretation = Interpretation.new(expression: 'Good morning John', locale: 'en')
+    interpretation = Interpretation.new(
+      expression: 'Good morning John',
+      locale: 'en'
+    )
     interpretation.intent = intents(:weather_greeting)
     assert interpretation.save
     interpretation_alias = InterpretationAlias.new(

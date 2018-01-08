@@ -19,6 +19,9 @@ en:
         title: Edit interpretation
         btn: Update
         success_message: Your interpretation has been successfully updated.
+      visibility:
+        is_public: Public
+        is_private: Private
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete interpretation: <strong>%{name}</strong>."

@@ -119,7 +119,7 @@ class IntentsController < ApplicationController
   private
 
     def intent_params
-      params.require(:intent).permit(:intentname, :description)
+      params.require(:intent).permit(:intentname, :description, :visibility)
     end
 
     def set_agent

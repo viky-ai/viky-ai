@@ -9,6 +9,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text? 'Create a new interpretation'
       fill_in 'ID', with: 'sunny_day'
       fill_in 'Description', with: 'Questions about the next sunny day'
+      click_button 'Private'
       click_button 'Create'
     end
     assert page.has_text?('Interpretation has been successfully created.')

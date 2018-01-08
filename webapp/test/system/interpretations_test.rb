@@ -9,7 +9,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    assert page.has_text?('weather_greeting PUBLIC (admin/weather/weather_greeting)')
   end
 
 
@@ -295,7 +295,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     def admin_go_to_intent_show(agent, intent)
       admin_login
       visit user_agent_intent_path(users(:admin), agent, intent)
-      assert page.has_text?("#{intent.intentname} (#{users(:admin).username}/#{agent.agentname}/#{intent.intentname})")
+      assert page.has_text?("#{intent.intentname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/#{intent.intentname})")
     end
 
     def fill_in_editor_field(text)
