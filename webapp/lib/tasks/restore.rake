@@ -14,7 +14,7 @@ namespace :restore do
       synchronize_NLP
       restore_images(params)
     end
-    puts Rainbow("#{time_log} Restore done: do not forget to change your environement variable VOQALAPP_DB_NAME_DEV=#{params[:database]} and restart your apps").green
+    puts Rainbow("#{time_log} Restore done: do not forget to change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]} and restart your apps").green
   end
 
   desc 'List available environments and associated backups archives'
@@ -80,7 +80,7 @@ namespace :restore do
         username: config[Rails.env]['username'],
         password: config[Rails.env]['password'],
         port: config[Rails.env]['port'],
-        database: 'voqalapp_' + args.database_dump.split('_')[1].tr('-', '_').downcase,
+        database: 'vikyapp_' + args.database_dump.split('_')[1].tr('-', '_').downcase,
         images: args.images
       }
     end
