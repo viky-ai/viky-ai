@@ -55,7 +55,7 @@ class Agent < ApplicationRecord
         "%#{q[:query]}%"
       )
     end
-    conditions
+    conditions.distinct
   end
 
   def available_colors
