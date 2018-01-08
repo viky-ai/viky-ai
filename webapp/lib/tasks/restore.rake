@@ -14,7 +14,7 @@ namespace :restore do
       synchronize_NLP
       restore_images(params)
     end
-    puts Rainbow("#{time_log} Restore done: do not forget to change your environement variable VOQALAPP_DB_NAME_DEV=#{params[:database]} and restart your apps").green
+    puts Rainbow("#{time_log} Restore done: do not forget to change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]} and restart your apps").green
   end
 
   desc 'List available environments and associated backups archives'
@@ -80,7 +80,7 @@ namespace :restore do
         username: config[Rails.env]['username'],
         password: config[Rails.env]['password'],
         port: config[Rails.env]['port'],
-        database: 'voqalapp_' + args.database_dump.split('_')[1].tr('-', '_').downcase,
+        database: 'vikyapp_' + args.database_dump.split("/").last.split('_')[1].tr('-', '_').downcase,
         images: args.images
       }
     end
@@ -92,10 +92,10 @@ namespace :restore do
 
     def import_dump(params)
       cat_cmd = 'cat'
-      cat_cmd = 'zcat' if params[:database_dump].end_with?('.gz')
+      cat_cmd = 'gunzip -c' if params[:database_dump].end_with?('.gz')
 
       opts = { env: { 'PGPASSWORD' => params[:password] } }
-      sed_cmd  = "sed -e 's/OWNER TO superman/OWNER TO #{params[:username]}/ig'"
+      sed_cmd  = "sed -e 's/OWNER TO superman/OWNER TO #{params[:username]}/g'"
       psql_cmd = "psql --no-password -h '#{params[:host]}' -p '#{params[:port]}' -U '#{params[:username]}' -d '#{params[:database]}'"
 
       exec("#{cat_cmd} #{params[:database_dump]} | #{sed_cmd} | #{psql_cmd}", opts)
@@ -176,13 +176,10 @@ namespace :restore do
 
     # Ensure to have correct error handling
     def self.exec(cmd, opts = {})
-
-      opts[:env] = {}                        if opts[:env].nil?
-
+      opts[:env] = {} if opts[:env].nil?
       puts Rainbow("#{pwd} : ").cyan + Rainbow("#{cmd}").blue
 
       Open3.popen2e(opts[:env], cmd, :chdir => Rails.root) do |stdin, stdout_and_stderr, wait_thr|
-
         stdout_and_stderr.each { |line| puts "    ⤷ #{line}" }
 
         # Process::Status object returned.
@@ -191,9 +188,7 @@ namespace :restore do
         if !exit_status.success?
           raise "Command \"#{cmd}\" failed !!!"
         end
-
       end
-
     end
 
 

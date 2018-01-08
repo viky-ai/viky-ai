@@ -46,6 +46,8 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
     interpretation->slug = OgHeapGetCell(package->hinterpretation_ba, interpretation_compile->slug_start);
     IFN(interpretation->slug) DPcErr;
 
+    interpretation->scope = interpretation_compile->scope;
+
     interpretation->json_solution = json_deep_copy(interpretation_compile->json_solution);
     interpretation_compile->json_solution = NULL;
 

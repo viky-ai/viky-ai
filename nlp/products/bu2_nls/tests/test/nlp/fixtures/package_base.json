@@ -1,11 +1,12 @@
 [
   {
     "id": "0d981484-9313-11e7-abc4-cec278b6b51c",
-    "slug"  : "voqal.ai:datetime",
+    "slug"  : "viky.ai:datetime",
     "interpretations"  : [
         {
           "id" : "0d981484-9313-11e7-abc4-cec278b6b50b",
           "slug": "hello_brice",
+          "scope": "public",
           "expressions"  :  [
             {
               "expression" : "Hello Brice",

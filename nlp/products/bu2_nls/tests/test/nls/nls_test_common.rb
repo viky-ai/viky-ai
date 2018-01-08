@@ -234,6 +234,12 @@ module Nls
       assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
       assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
 
+      if expected.has_key?(:interpretations) && expected[:interpretations].kind_of?(Array) && expected[:interpretations].empty?
+         assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation"
+         # skip other assert
+         return actual
+      end
+
       assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
 
       match_intepretation = actual['interpretations'].first
@@ -260,6 +266,18 @@ module Nls
         end
       end
 
+
+      if expected.has_key?(:interpretations)
+        expected_interpretations = expected[:interpretations]
+
+        match_intepretations_slug = []
+        actual['interpretations'].each do |match_intepretation_local|
+          match_intepretations_slug << match_intepretation_local['slug']
+        end
+
+        assert_equal expected_interpretations, match_intepretations_slug, "match on wrong interpretation"
+      end
+
       if expected.has_key?(:interpretation)
         expected_interpretation = expected[:interpretation]
         slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
@@ -283,6 +301,8 @@ module Nls
         expected_score = expected[:score]
         assert_equal expected_score, match_intepretation['score'], "Matched on wrong score"
       end
+
+      return actual
 
     end
 

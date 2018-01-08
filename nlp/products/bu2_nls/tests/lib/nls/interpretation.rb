@@ -10,10 +10,14 @@ module Nls
     attr_reader :expressions
     attr_accessor :solution
     attr_accessor :package
+    attr_accessor :scope
 
     def initialize(slug, opts = {})
 
       @slug = slug
+
+      @scope = 'public'
+      @scope = opts[:scope] if !opts[:scope].nil?
 
       # default values
       opts[:id] = UUIDTools::UUID.timestamp_create if !opts.has_key?(:id)
@@ -42,6 +46,7 @@ module Nls
       hash = {}
       hash["id"] = @id.to_s
       hash["slug"] = @slug
+      hash["scope"] = @scope
       hash["expressions"] = @expressions.map{|v| v.to_h}
       if !@solution.nil?
         if @solution.respond_to?(:to_h)

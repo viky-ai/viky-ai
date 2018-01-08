@@ -101,6 +101,7 @@ class PackageTest < ActiveSupport::TestCase
         {
           "id" => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
           "slug" => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'scope' => 'hidden',
           "expressions" => [
             {
               "expression" => "@{who}",
@@ -192,6 +193,7 @@ class PackageTest < ActiveSupport::TestCase
         {
           'id' => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
           'slug' => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'scope' => 'hidden',
           'expressions' => [
             {
               'expression' => '@{who}',
@@ -354,7 +356,7 @@ class PackageTest < ActiveSupport::TestCase
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
-    endpoint = ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    endpoint = ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
     assert_equal endpoint, p.endpoint
   end
 
