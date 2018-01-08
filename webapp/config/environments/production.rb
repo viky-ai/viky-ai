@@ -33,7 +33,7 @@ Rails.application.configure do
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.action_controller.asset_host = ENV['VOQALAPP_BASEURL'] if !ENV['VOQALAPP_BASEURL'].blank?
+  config.action_controller.asset_host = ENV['VIKYAPP_BASEURL'] if !ENV['VIKYAPP_BASEURL'].blank?
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
@@ -66,8 +66,8 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
-  config.action_mailer.default_url_options = { host: ENV.fetch("VOQALAPP_BASEURL") { "www.viky.ai" } }
-  config.action_mailer.asset_host = ENV.fetch("VOQALAPP_BASEURL") { "www.viky.ai" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("VIKYAPP_BASEURL") { "www.viky.ai" } }
+  config.action_mailer.asset_host = ENV.fetch("VIKYAPP_BASEURL") { "www.viky.ai" }
 
   config.action_mailer.show_previews = true
 

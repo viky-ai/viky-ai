@@ -83,7 +83,7 @@ class InterpretTest < ActiveSupport::TestCase
       sentence: 'hello',
       format: 'json'
     )
-    endpoint = ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    endpoint = ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
     assert_equal endpoint, interpret.endpoint
   end
 

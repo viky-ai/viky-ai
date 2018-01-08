@@ -1,5 +1,5 @@
 ---
-:concurrency: <%= ENV.fetch("VOQALAPP_SIDEKIQ_CONCURRENCY") { 5 } %>
-:pidfile: ./tmp/pids/sidekiq.pid
+:concurrency: <%= ENV.fetch("VIKYAPP_SIDEKIQ_CONCURRENCY") { 5 } %>
+:pidfile: ./tmp/sidekiq.pid
 :queues:
   - [webapp_mailers, 2]

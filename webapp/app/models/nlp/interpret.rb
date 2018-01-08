@@ -44,7 +44,7 @@ class Nlp::Interpret
   end
 
   def endpoint
-    ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
   end
 
   def url

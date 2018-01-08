@@ -19,7 +19,7 @@ class Nlp::Package
       Rails.logger.info '  Skipping push_all packages to NLP because sync is deactivated'
       return
     end
-    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*'))
+    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*.json'))
     Agent.all.each do |agent|
       Nlp::Package.new(agent).push
     end
@@ -76,7 +76,7 @@ class Nlp::Package
   end
 
   def endpoint
-    ENV.fetch('VOQALAPP_NLP_URL') { 'http://localhost:9345' }
+    ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
   end
 
   def url

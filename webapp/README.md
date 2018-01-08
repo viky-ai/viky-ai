@@ -2,15 +2,15 @@
 
 ## Dependencies
 
-* Ruby (2.4.2)
-* bundler (1.15.4)
-* NodeJS (8.4.0)
-* Yarn (1.0.1)
-* PostgreSQL (9.6.5)
-* Redis (4.0.1)
-* ImageMagick
-* Docker 17.09.0-ce
-* Graphviz
+* Ruby (2.4.2)       ( https://github.com/rbenv/rbenv#installation )
+* bundler (1.15.4)   ( `gem install bundler` )
+* NodeJS (8.4.0)     ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+* Yarn (1.0.1)       ( https://yarnpkg.com/lang/en/docs/install/ )
+* PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib` )
+* Redis (4.0.1)      ( use docker )
+* ImageMagick        ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+* Docker 17.09.0-ce  ( [see below](#docker) )
+* Graphviz           ( `sudo apt-get install -y graphviz` )
 
 ## Environment Variables
 
@@ -23,15 +23,18 @@ Beware of never committing or pushing the `.env` file, it is just useful for you
 For example you could define your local PostgreSQL username, password and other variables like your favourite Redis endpoint for ActionCable and ActiveJob, maybe it's a remote machine, maybe your localhost, e.g.:
 
 ```
-VOQALAPP_DB_USERNAME=superman
-VOQALAPP_DB_PASSWORD='sup$_3rman'
-VOQALAPP_DB_HOST=localhost
-VOQALAPP_DB_PORT=5432
+VIKYAPP_DB_USERNAME=superman
+VIKYAPP_DB_PASSWORD='sup$_3rman'
+VIKYAPP_DB_HOST=localhost
+VIKYAPP_DB_PORT=5432
 
-VOQALAPP_ACTIONCABLE_REDIS_URL='redis://localhost/1'
-VOQALAPP_ACTIVEJOB_REDIS_URL='redis://localhost/2'
+VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
+VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
 
-VOQALAPP_NLP_URL='http://localhost:9345'
+VIKYAPP_NLP_URL='http://localhost:9345'
+
+# restore env password
+RSYNC_PASSWORD='#***REMOVED***26'
 ```
 
 ## Run in production environment
@@ -43,7 +46,7 @@ VOQALAPP_NLP_URL='http://localhost:9345'
 
 ## Base url
 
-<code>VOQALAPP_BASEURL</code> environment variable must be set.
+<code>VIKYAPP_BASEURL</code> environment variable must be set.
 
 ## Mail
 
@@ -59,7 +62,7 @@ Mail delivery is performed through a high priority queue named `webapp_mailers` 
 
 Admin users can access to `/backend/users` UI. In order to create admin user, you can use the Rails tasks:
 
-* `./bin/rails users:create_admin[email,password]`
+* `./bin/rails users:invite_admin[email]`
 * `./bin/rails users:set_admin[email]`
 * `./bin/rails users:unset_admin[email]`
 
@@ -70,23 +73,24 @@ Asynchronous tasks, like mail delivery and other, are lazily performed making us
 
 The configuration file for queue definition and options is `config/sidekiq.yml`, you can therein define as many queues as you need and route them in your Sidekiq workers and ActiveJob jobs.
 
-Default concurrency for background job management is set to 5, you can change it via environment variable `VOQALAPP_SIDEKIQ_CONCURRENCY`.
+Default concurrency for background job management is set to 5, you can change it via environment variable `VIKYAPP_SIDEKIQ_CONCURRENCY`.
 
 
 ## Bootstrap development databases
 
-The first time you start the application you need to manually create two databases `voqalapp_development` and `voqalapp_test` :
+The first time you start the application you need to manually create two databases `vikylapp_development` and `vikylapp_test` :
 
+### Create postgres user
 ```
-$ sudo -i -u postgres
-## Become postgres user
-$ createuser --interactive
+$ sudo -u postgres createuser --interactive -W
 ...
-ALTER USER "<user>" WITH PASSWORD '<password>';
+```
 
+### Create database
+```
 $ ./bin/rails db:setup
-> Created database 'voqalapp_development'
-> Created database 'voqalapp_test'
+> Created database 'vikylapp_development'
+> Created database 'vikylapp_test'
 > ...
 ```
 
@@ -112,7 +116,7 @@ In Ubuntu you should:
 
 To ensure having all the webapp related processes up and running during development, you can simply run:
 
-    foreman start
+    `foreman start`
 
 If you obtain an authorization error from `docker`, you probably have to do:
 
