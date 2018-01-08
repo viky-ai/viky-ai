@@ -36,7 +36,11 @@
       <% else %>
         <div class="agent-compact__id">
       <% end %>
-          <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>"></div>
+          <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>">
+            <% if agent.is_public? %>
+              <span class="agent-compact__id__visual__ribbon">public</span>
+            <% end %>
+          </div>
           <div class="agent-compact__id__data">
             <h5><%= agent.name %></h5>
             <h6><%= agent.slug %></h6>

@@ -18,9 +18,14 @@
   background-color: #fff;
   .agent__visual{
     padding: 10em 0 0 0;
-    position: relative;
     border-top-left-radius: 2px;
     border-bottom-left-radius: 2px;
+    @include ribbon-container();
+
+    .agent__visual__ribbon{
+      @include ribbon();
+    }
+
     h2{
       position: absolute;
       bottom: 0;
