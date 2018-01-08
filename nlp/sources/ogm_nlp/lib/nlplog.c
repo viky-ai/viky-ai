@@ -380,8 +380,15 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d", Irequest_word, string_request_word,
-      request_word->start_position, request_word->length_position);
+  unsigned char is_punctuation[DPcPathSize];
+  is_punctuation[0]=0;
+  if (request_word->is_punctuation)
+  {
+    snprintf(is_punctuation,DPcPathSize, " (punctuation)");
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", Irequest_word, string_request_word,
+      request_word->start_position, request_word->length_position, is_punctuation);
   DONE;
 }
 

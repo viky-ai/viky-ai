@@ -313,6 +313,7 @@ struct request_word
   int digit_value;
   double spelling_score;
   og_bool is_auto_complete_word;
+  og_bool is_punctuation;
 };
 
 struct accept_language

@@ -375,6 +375,16 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
   request_word->spelling_score = 1.0;
 
+  request_word->is_punctuation = FALSE;
+  og_bool punct_length = 0;
+  og_bool is_skipped = FALSE;
+  og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, word_length, s + word_start, &is_skipped, &punct_length);
+  IFE(is_punct);
+  if (is_punct)
+  {
+    request_word->is_punctuation = TRUE;
+  }
+
   DONE;
 }
 

@@ -8,6 +8,7 @@
 
 static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Irequest_position_before, int Irequest_position_after);
+static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *prequest_word_start, int *prequest_words_nb);
 static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_request_any2, gpointer user_data);
 static og_status NlpRequestAnySort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -123,13 +124,20 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
       if (request_word[j].start_position + request_word[j].length_position > request_position_after->start) break;
     }
     if (j == i) continue;
+
+    int request_word_start = i;
+    int request_words_nb = j - i;
+    IFE(NlpRequestAnyTunePunctuation(ctrl_nlp_th, &request_word_start, &request_words_nb));
+    if (request_words_nb <= 0) continue;
+
     size_t Irequest_any;
     struct request_any *request_any = OgHeapNewCell(ctrl_nlp_th->hrequest_any, &Irequest_any);
     IFn(request_any) DPcErr;
 
-    request_any->request_word_start = i;
-    request_any->request_words_nb = j - i;
+    request_any->request_word_start = request_word_start;
+    request_any->request_words_nb = request_words_nb;
     request_any->is_attached = FALSE;
+
 
     g_queue_init(request_any->queue_request_expression);
     request_any->consumed = 0;
@@ -144,6 +152,40 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   DONE;
 }
+
+static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *prequest_word_start, int *prequest_words_nb)
+{
+  int request_word_start = *prequest_word_start;
+  int request_words_nb = *prequest_words_nb;
+
+  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_words) DPcErr;
+
+  for (int i=request_words_nb-1; i>=0; i--)
+  {
+    struct request_word *request_word = request_words + request_word_start + i;
+    if (!request_word->is_punctuation)
+    {
+      *prequest_words_nb -= (request_words_nb-1 - i);
+      break;
+    }
+  }
+  request_words_nb = *prequest_words_nb;
+
+  for (int i=0; i<request_words_nb; i++)
+  {
+    struct request_word *request_word = request_words + request_word_start + i;
+    if (!request_word->is_punctuation)
+    {
+      *prequest_word_start = request_word_start + i;
+      *prequest_words_nb -= i;
+      break;
+    }
+  }
+
+  DONE;
+}
+
 
 static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_request_any2, gpointer user_data)
 {
