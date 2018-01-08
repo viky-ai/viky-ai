@@ -36,7 +36,11 @@ module InterpretationHelper
         nature: 'type_intent',
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        url: user_agent_intent_path(interpretation_alias.intent.agent.owner, interpretation_alias.intent.agent, interpretation_alias.intent)
+        url: user_agent_intent_path(
+          interpretation_alias.intent.agent.owner,
+          interpretation_alias.intent.agent,
+          interpretation_alias.intent
+        )
       }
     end
     if interpretation_alias.type_digit?

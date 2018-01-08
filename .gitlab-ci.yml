@@ -18,7 +18,7 @@ variables:
   DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
-  TRACE: 1
+  TRACE: 0
 
 # Build docker image
 
@@ -61,14 +61,14 @@ test_webapp:
   image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DB_USERNAME: superman
-    VOQALAPP_DB_PASSWORD: sup_3rman
-    VOQALAPP_DB_HOST: postgres
+    VIKYAPP_DB_USERNAME: superman
+    VIKYAPP_DB_PASSWORD: sup_3rman
+    VIKYAPP_DB_HOST: postgres
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
-    POSTGRES_DB: voqalapp_test
-    VOQALAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
-    VOQALAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
+    POSTGRES_DB: vikylapp_test
+    VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
+    VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
   services:
     - postgres:9.6-alpine
     - redis:4.0-alpine
@@ -156,14 +156,14 @@ deploy_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     on_stop: delete_env
   variables:
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
-    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - echo "Deploy ..."
-    - rancher --environment dev up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
 
 # Deploy master on rancher preprod
 deploy_preprod:
@@ -180,17 +180,17 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta.viky.ai
   variables:
-    VOQALAPP_AUTO_BACKUP: "true"
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VOQALAPP_BASEURL: https://viky-beta.viky.ai
-    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+    VIKYAPP_AUTO_BACKUP: "true"
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
-    - echo "Deploy ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - echo "Backing up data ..."
-    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
     - echo "Deploy ..."
-    - rancher --environment preprod up --stack ${VOQALAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
 
 
 # remove environment
@@ -205,12 +205,12 @@ delete_env:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
     action: stop
   variables:
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-    VOQAL_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
-    - echo "Remove ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-    - rancher --debug --environment dev rm --stop --type stack ${VOQALAPP_DEPLOY_RANCHER_STACK}
+    - echo "Remove ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher --debug --environment dev rm --stop --type stack ${VIKYAPP_DEPLOY_RANCHER_STACK}
   when: manual
   allow_failure: true
 
@@ -226,12 +226,12 @@ invite_admin_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
-    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
   when: manual
   allow_failure: true
 
@@ -246,12 +246,12 @@ invite_admin_preprod:
     url: https://viky-beta.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VOQALAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
   script:
-    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
   when: manual
   allow_failure: true
 
@@ -268,11 +268,11 @@ backup_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
-    - echo "Backup platform data from ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+    - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
   when: manual
   allow_failure: true
 
@@ -287,11 +287,11 @@ backup_preprod:
     url: https://viky-beta.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-beta
-    VOQALAPP_BASEURL: https://viky-beta.viky.ai
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
   script:
-    - echo "Backup platform data from ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-    - rancher --environment preprod exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+    - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
   when: manual
   allow_failure: true
 
@@ -307,21 +307,28 @@ backup_restore_dev:
     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   variables:
     GIT_STRATEGY: none
-    VOQALAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-    VOQALAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
-    - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VOQALAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Backup current data ..."
-    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
-    - echo "Stopping platform ${VOQALAPP_DEPLOY_RANCHER_STACK} ..."
-    - rancher --environment dev stop ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
-    - echo "Resrtart database and backup tools ..."
-    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
-    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK}/backup  --type service
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/backup.sh
+    - sleep 5
+    - echo "Stopping platform ${VIKYAPP_DEPLOY_RANCHER_STACK} ..."
+    - rancher --wait --environment dev stop ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
+    - sleep 5
+    - echo "Restart databases and backup tools ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
+    - sleep 5
+    - echo "Restart backup tools ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/backup                --type service
+    - sleep 5
     - echo "Restoring data ..."
-    - rancher --environment dev exec ${VOQALAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/restore.sh
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
+    - sleep 2
     - echo "Restarting platform ..."
-    - rancher --environment dev start ${VOQALAPP_DEPLOY_RANCHER_STACK} --type stack
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
   when: manual
   allow_failure: true
 
@@ -330,7 +337,7 @@ backup_restore_dev:
 
 .auto_devops: &auto_devops |
   # Auto DevOps variables and functions
-  [[ "$TRACE" ]] && set -x
+  [[ "$TRACE" == "1" ]] && set -x
 
   function docker_build ()
   {
@@ -372,6 +379,17 @@ backup_restore_dev:
       echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
       echo ""
     fi
+  }
+
+  function rancher_exec ()
+  {
+    local RANCHER_ENV=$1
+
+    # simulate a tty with script command https://github.com/rancher/rancher/issues/7971#issuecomment-286856228
+    local CURRENT_COMMAND="rancher --wait --environment ${RANCHER_ENV} exec -t ${@:2}"
+    echo "Exec : ${CURRENT_COMMAND}"
+    script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
+    return $?
   }
 
 before_script:

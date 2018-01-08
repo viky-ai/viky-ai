@@ -15,8 +15,12 @@ class TestCommon < Minitest::Test
     assert !actual_response.nil?, "#{header}actual_response  must not be nil"
 
     if actual_response.kind_of?(RestClient::ExceptionWithResponse)
-      response_from_exception = JSON.parse(actual_response.response.body)
-      errors = response_from_exception["errors"]
+      begin
+        response_from_exception = JSON.parse(actual_response.response.body)
+        errors = response_from_exception["errors"]
+      rescue
+        errors = [ actual_response.response.body ]
+      end
     else
       errors = actual_response["errors"]
     end
