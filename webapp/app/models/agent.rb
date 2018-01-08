@@ -116,12 +116,6 @@ class Agent < ApplicationRecord
         result << intent
       end
     end
-    already_seen_agents = [id] + successors.reload.pluck(:id)
-    Agent.is_public.where.not(id: already_seen_agents).includes(:intents).each do |agent|
-      agent.intents.order(position: :desc, created_at: :desc).each do |intent|
-        result << intent
-      end
-    end
     result
   end
 

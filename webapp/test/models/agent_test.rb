@@ -427,8 +427,8 @@ class AgentTest < ActiveSupport::TestCase
     agent_public.visibility = 'is_public'
     assert agent_public.save
 
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 2, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
@@ -437,13 +437,13 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 4, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'greeting', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
 
     agent_successor.visibility = 'is_public'
     assert agent_successor.save
-    assert_equal 4, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'greeting', 'terminator_find'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
   end
 
 
