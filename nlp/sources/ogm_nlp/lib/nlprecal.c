@@ -28,7 +28,14 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   GQueue *sorted_request_expressions = ctrl_nlp_th->sorted_request_expressions;
   for (int i = 0; i < request_expression_used; i++)
   {
-    request_expressions[i].any_validate_status = 1;
+    struct request_expression *request_expression = request_expressions + i;
+
+    if (request_expression->expression->interpretation->scope == nlp_interpretation_scope_type_hidden)
+    {
+      continue;
+    }
+
+    request_expression->any_validate_status = 1;
     g_queue_push_tail(sorted_request_expressions, request_expressions + i);
   }
 
