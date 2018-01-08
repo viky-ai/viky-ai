@@ -15,14 +15,63 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <div class="control">
-      <%= f.label :name %>
-      &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
-      <br />
-      <%= f.text_field :name, id: :agent_name %>
-      <%= display_errors(agent, :name) %>
+
+  <div class="agent-name-and-visibility">
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :name %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <br />
+        <%= f.text_field :name, id: :agent_name %>
+        <%= display_errors(agent, :name) %>
+      </div>
     </div>
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :visibility %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <%= f.hidden_field :visibility %>
+        <br />
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn">
+              <span class="btn__label"><% if agent.is_private? %> <%= t('views.agents.form.visibility.is_private') %> <% else %> <%= t('views.agents.form.visibility.is_public') %> <% end %></span>
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li>
+                <a href="#" <% if agent.is_private? %> class="current" <% end %>
+                   data-behavior="populate-input, replace-trigger-label"
+                   data-replace-with="<%= t('views.agents.form.visibility.is_private') %>"
+                   data-replace-selector=".btn__label"
+                   data-input-selector="input[name='agent[visibility]']"
+                   data-input-value="is_private">
+                  <%= t('views.agents.form.visibility.is_private') %>
+                </a>
+              </li>
+              <li>
+                <a href="#" <% if agent.is_public? %> class="current" <% end %>
+                   data-behavior="populate-input, replace-trigger-label"
+                   data-replace-with="<%= t('views.agents.form.visibility.is_public') %>"
+                   data-replace-selector=".btn__label"
+                   data-input-selector="input[name='agent[visibility]']"
+                   data-input-value="is_public">
+                  <%= t('views.agents.form.visibility.is_public') %>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <%= display_errors(agent, :visibility) %>
+      </div>
+    </div>
+
   </div>
 
   <div class="field">
@@ -39,48 +88,6 @@
       <%= f.text_field :agentname, id: :agent_agentname %>
     </div>
     <%= display_errors(agent, :agentname) %>
-  </div>
-
-  <div class="field">
-    <div class="control">
-      <%= f.label :visibility %>
-      <%= f.hidden_field :visibility, value: 'is_private' %>
-      <div class="dropdown">
-        <div class="dropdown__trigger">
-          <button class="btn">
-            <span class="btn__label"><% if agent.is_private? %> <%= t('views.agents.form.visibility.is_private') %> <% else %> <%= t('views.agents.form.visibility.is_public') %> <% end %></span>
-            <span class="icon icon--x-small">
-              <%= icon_arrow_down %>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown__content dropdown__content--on-right dropdown__content--hidden">
-          <ul>
-            <li>
-              <a href="#" <% if agent.is_private? %> class="current" <% end %>
-                 data-behavior="populate-input, replace-trigger-label"
-                 data-replace-with="<%= t('views.agents.form.visibility.is_private') %>"
-                 data-replace-selector=".btn__label"
-                 data-input-selector="input[name='agent[visibility]']"
-                 data-input-value="is_private">
-                <%= t('views.agents.form.visibility.is_private') %>
-              </a>
-            </li>
-            <li>
-              <a href="#" <% if agent.is_public? %> class="current" <% end %>
-                 data-behavior="populate-input, replace-trigger-label"
-                 data-replace-with="<%= t('views.agents.form.visibility.is_public') %>"
-                 data-replace-selector=".btn__label"
-                 data-input-selector="input[name='agent[visibility]']"
-                 data-input-value="is_public">
-                <%= t('views.agents.form.visibility.is_public') %>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <%= display_errors(agent, :visibility) %>
-    </div>
   </div>
 
   <div class="field">
