@@ -9,13 +9,13 @@ git submodule update --init --recursive
 Add new external dependencies
 =================================
 
-Clone it our gitlab : http://gitlab.pertimm.corp/voqal.ai/dependencies
+Clone it our gitlab : http://gitlab.pertimm.corp/viky.ai/dependencies
 
 Sample adding `glib` use http url:
 
 ```
 cd ${OG_REPO_PATH}/sources/external_dependencies
-git submodule add "http://gitlab.pertimm.corp/voqal.ai/dependencies/glib.git" glib
+git submodule add "http://gitlab.pertimm.corp/viky.ai/dependencies/glib.git" glib
 
 # choose tag to use
 cd glib
