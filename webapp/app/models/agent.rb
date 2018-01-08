@@ -72,6 +72,7 @@ class Agent < ApplicationRecord
       .where('user_id = ? OR visibility = ?', current_user.id, Agent.visibilities[:is_public])
       .where.not(id: successors.pluck(:id))
       .where.not(id: id)
+      .distinct
       .order(name: :asc)
   end
 
