@@ -32,7 +32,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
 
-      first("a.background-color__red").click
+      first("button.background-color__red").click
       click_button 'Create'
     end
 
@@ -82,7 +82,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       fill_in 'ID', with: 'wall-e'
       click_button 'Public'
 
-      first("a.background-color__red").click
+      first("button.background-color__red").click
       click_button 'Create'
     end
 
