@@ -1,4 +1,5 @@
 require "application_system_test_case"
+require 'model_test_helper'
 
 class AgentsDependenciesTest < ApplicationSystemTestCase
 
@@ -89,4 +90,13 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
   end
 
 
+  test 'Cannot add dependency if no edit right' do
+    create_agent('dependency_test', :show_on_agent_weather)
+
+    login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
+    assert page.has_text?('Agents')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
+    assert page.has_no_link?('Add new dependency')
+  end
 end

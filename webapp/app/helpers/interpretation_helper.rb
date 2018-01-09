@@ -22,25 +22,27 @@ module InterpretationHelper
     })
   end
 
-  def alias_to_json_href(interpretation_alias)
-    ERB::Util.url_encode(alias_to_json(interpretation_alias))
+  def alias_to_json_href(interpretation_alias, current_agent)
+    ERB::Util.url_encode(alias_to_json(interpretation_alias, current_agent))
   end
 
-  def alias_to_json(interpretation_alias)
+  def alias_to_json(interpretation_alias, current_agent)
     if interpretation_alias.type_intent?
+      possibles_intents = current_agent.reachable_intents.collect(&:id)
+      current_intent = interpretation_alias.intent
+      url = nil
+      if possibles_intents.include?(current_intent.id) && current_user.can?(:show, current_intent.agent)
+        url = user_agent_intent_path(current_intent.agent.owner, current_intent.agent, current_intent)
+      end
       data = {
-        color: "intent-#{interpretation_alias.intent.color}",
+        color: "intent-#{current_intent.color}",
         aliasname: interpretation_alias.aliasname,
-        intent_slug: interpretation_alias.intent.slug,
-        intent_id: interpretation_alias.intent.id,
+        intent_slug: current_intent.slug,
+        intent_id: current_intent.id,
         nature: 'type_intent',
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        url: user_agent_intent_path(
-          interpretation_alias.intent.agent.owner,
-          interpretation_alias.intent.agent,
-          interpretation_alias.intent
-        )
+        url: url
       }
     end
     if interpretation_alias.type_digit?
@@ -76,7 +78,7 @@ module InterpretationHelper
       end
       if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
         text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
-        result << "<a href=\"#{alias_to_json_href(interpretation_alias)}\">#{text}</a>"
+        result << "<a href=\"#{alias_to_json_href(interpretation_alias, interpretation.intent.agent)}\">#{text}</a>"
         ordered_aliases = ordered_aliases.drop(1)
       end
     end

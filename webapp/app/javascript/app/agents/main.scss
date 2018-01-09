@@ -47,6 +47,16 @@
   border-bottom: 1px solid #eee;
 }
 
+.agent-name-and-visibility{
+  display: -ms-grid;
+  display: grid;
+
+  -ms-grid-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+
+  grid-gap: 2em;
+}
+
 .dependencies-title{
   & > em{
     font-style: normal;

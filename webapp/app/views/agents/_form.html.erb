@@ -15,14 +15,37 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <div class="control">
-      <%= f.label :name %>
-      &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
-      <br />
-      <%= f.text_field :name, id: :agent_name %>
-      <%= display_errors(agent, :name) %>
+
+  <div class="agent-name-and-visibility">
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :name %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <br />
+        <%= f.text_field :name, id: :agent_name %>
+        <%= display_errors(agent, :name) %>
+      </div>
     </div>
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :visibility %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <%= f.hidden_field :visibility %>
+        <br />
+        <div class="btn-group">
+          <button class="btn <% if agent.is_private? %>btn--primary<% end %>"
+                  data-input-selector="input[name='agent[visibility]']"
+                  data-input-value="is_private"><%= t('views.agents.form.visibility.is_private') %></button>
+          <button class="btn <% if agent.is_public? %>btn--primary<% end %>"
+                  data-input-selector="input[name='agent[visibility]']"
+                  data-input-value="is_public"><%= t('views.agents.form.visibility.is_public') %></button>
+        </div>
+        <%= display_errors(agent, :visibility) %>
+      </div>
+    </div>
+
   </div>
 
   <div class="field">

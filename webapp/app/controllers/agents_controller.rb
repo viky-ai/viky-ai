@@ -154,7 +154,7 @@ class AgentsController < ApplicationController
 
     def agent_params
       params.require(:agent).permit(
-        :name, :agentname, :description, :color, :image, :remove_image, :api_token
+        :name, :agentname, :description, :color, :image, :remove_image, :api_token, :visibility
       )
     end
 

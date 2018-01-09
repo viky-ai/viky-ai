@@ -122,6 +122,7 @@ class Nlp::Package
         interpretation_hash = {}
         interpretation_hash[:id]   = "#{ialias.intent.id}_#{ialias.id}_recursive"
         interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
+        interpretation_hash[:scope] = 'hidden'
 
         expressions = []
 

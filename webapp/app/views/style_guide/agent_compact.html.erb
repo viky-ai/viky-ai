@@ -10,7 +10,9 @@
   <%= highlight_html do %>
 <div class="agent-compact">
   <a href="#" class="agent-compact__id">
-    <div class="agent-compact__id__visual background-color-gradient__brown"></div>
+    <div class="agent-compact__id__visual background-color-gradient__brown">
+      <span class="agent-compact__id__visual__ribbon">public</span>
+    </div>
     <div class="agent-compact__id__data">
       <h5>My awesome first agent</h5>
       <h6>username/agentname</h6>
@@ -29,7 +31,9 @@
 <div class="agent-compact">
   <a href="#" class="agent-compact__id">
     <div class="agent-compact__id__visual agent-compact__id__visual--image"
-         style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);"></div>
+         style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);">
+      <span class="agent-compact__id__visual__ribbon">public</span>
+    </div>
     <div class="agent-compact__id__data">
       <h5>My awesome first agent</h5>
       <h6>username/agentname</h6>

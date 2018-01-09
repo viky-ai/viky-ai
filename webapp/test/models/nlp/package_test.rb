@@ -101,6 +101,7 @@ class PackageTest < ActiveSupport::TestCase
         {
           "id" => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
           "slug" => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'scope' => 'hidden',
           "expressions" => [
             {
               "expression" => "@{who}",
@@ -192,6 +193,7 @@ class PackageTest < ActiveSupport::TestCase
         {
           'id' => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
           'slug' => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'scope' => 'hidden',
           'expressions' => [
             {
               'expression' => '@{who}',

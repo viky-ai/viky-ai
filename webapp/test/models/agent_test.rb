@@ -6,7 +6,8 @@ class AgentTest < ActiveSupport::TestCase
     agent = Agent.new(
       name: "Agent A",
       agentname: "agenta",
-      description: "Agent A decription"
+      description: "Agent A decription",
+      visibility: 'is_public'
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
@@ -14,6 +15,9 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal users(:admin).id, agent.owner_id
     assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
+    assert_equal 'is_public', agent.visibility
+    assert agent.is_public?
+    assert !agent.is_private?
   end
 
 
@@ -333,6 +337,16 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agents with membership or public' do
+    user_id = users(:admin).id
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+    s = AgentSearch.new(user_id)
+    assert_equal 3, Agent.search(s.options).count
+  end
+
+
   test "A new agent always has a token" do
     agent = Agent.new(
       name: "Agent A",
@@ -401,6 +415,35 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.destroy
     assert_equal 0, Intent.where(agent_id: agent_id).count
     assert_equal 0, agent.intents.count
+  end
+
+
+  test 'List reachable intents for agent' do
+    agent_weather = agents(:weather)
+    assert_equal 2, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_public = agents(:terminator)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    assert_equal 2, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_successor = agents(:weather_confirmed)
+    assert Intent.create(
+      intentname: 'greeting',
+      locales: ['en'],
+      agent: agent_successor
+    )
+    assert AgentArc.create(source: agent_weather, target: agent_successor)
+    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
+
+    agent_successor.visibility = 'is_public'
+    assert agent_successor.save
+    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
   end
 
 

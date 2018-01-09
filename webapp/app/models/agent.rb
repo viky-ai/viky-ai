@@ -2,6 +2,8 @@ class Agent < ApplicationRecord
   extend FriendlyId
   friendly_id :agentname, use: :history, slug_column: 'agentname'
 
+  enum visibility: [:is_private, :is_public]
+
   require 'rgl/adjacency'
 
   include AgentImageUploader::Attachment.new(:image)
@@ -45,7 +47,7 @@ class Agent < ApplicationRecord
   def self.search(q = {})
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
-    conditions = conditions.where('user_id = ?', q[:user_id])
+    conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
     unless q[:query].nil?
       conditions = conditions.where(
         'name LIKE ? OR agentname LIKE ?',
@@ -53,7 +55,7 @@ class Agent < ApplicationRecord
         "%#{q[:query]}%"
       )
     end
-    conditions
+    conditions.distinct
   end
 
   def available_colors
@@ -67,9 +69,10 @@ class Agent < ApplicationRecord
   def available_successors(current_user)
     Agent
       .joins(:memberships)
-      .where('user_id = ?', current_user.id)
+      .where('user_id = ? OR visibility = ?', current_user.id, Agent.visibilities[:is_public])
       .where.not(id: successors.pluck(:id))
       .where.not(id: id)
+      .distinct
       .order(name: :asc)
   end
 
@@ -102,6 +105,19 @@ class Agent < ApplicationRecord
 
   def slug
     "#{User.find(owner_id).username}/#{agentname}"
+  end
+
+  def reachable_intents
+    result = []
+    intents.order(position: :desc, created_at: :desc).each do |intent|
+      result << intent
+    end
+    successors.includes(:intents).each do |successor|
+      successor.intents.order(position: :desc, created_at: :desc).each do |intent|
+        result << intent
+      end
+    end
+    result
   end
 
 
