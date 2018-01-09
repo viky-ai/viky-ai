@@ -54,9 +54,6 @@ en:
         upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
         api_token:
           generate_btn: Re-generate
-        visibility:
-          is_private: Private
-          is_public: Public
       new:
         title: Create a new agent
         btn: Create
@@ -78,4 +75,6 @@ en:
           other: '%{count} collaborators'
         description: Description
         sharing_overview: Sharing overview
-
+      visibility:
+        is_private: Private
+        is_public: Public

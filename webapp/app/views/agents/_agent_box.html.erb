@@ -11,7 +11,7 @@
      style="<%= css_style %>">
 
     <% if agent.is_public? %>
-      <span class="agent-box__header__ribbon">public</span>
+      <span class="agent-box__header__ribbon"><%= t('views.agents.visibility.is_public') %></span>
     <% end %>
     <span class="agent-box__header__role">
       <% if current_user.owner? agent %>

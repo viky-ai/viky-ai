@@ -7,7 +7,7 @@
 <div class="agent" id="agent-<%= agent.id %>">
   <div class="agent__visual <%= css_class %>" style="<%= css_style %>">
     <% if agent.is_public? %>
-      <span class="agent__visual__ribbon">public</span>
+      <span class="agent__visual__ribbon"><%= t('views.agents.visibility.is_public') %></span>
     <% end %>
     <h2>
       <%= agent.name %>
