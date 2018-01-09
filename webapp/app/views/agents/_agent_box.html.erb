@@ -9,23 +9,28 @@
   <a href="<%= user_agent_path(agent.owner, agent.agentname) %>"
      class="agent-box__header <%= css_class %>"
      style="<%= css_style %>">
-
     <% if agent.is_public? %>
-      <span class="agent-box__header__ribbon">public</span>
+      <span class="agent-box__header__ribbon">
+        <%= t('activerecord.attributes.agent.visibility_is_public') %>
+      </span>
     <% end %>
     <span class="agent-box__header__role">
       <% if current_user.owner? agent %>
-        <span class="badge badge--small badge--white badge--outline">
+        <span class="badge badge--small badge--primary">
           <%= t('views.agents.show.owner') %>
         </span>
       <% elsif agent.collaborators.any? { |collaborator| collaborator.id == current_user.id } %>
-        <span class="badge badge--small badge--white badge--outline">
-          <%= t('views.agents.show.collaborator') %>
-          <% if current_user.can? :edit, agent %>
-            <%= t('views.agents.show.edit') %>
-          <% else %>
-            <%= t('views.agents.show.show') %>
-          <% end %>
+        <span class="merged-badges">
+          <span class="badge badge--small">
+            <%= t('views.agents.show.collaborator') %>
+          </span>
+          <span class="badge badge--small badge--primary">
+            <% if current_user.can? :edit, agent %>
+              <%= t('views.agents.show.edit') %>
+            <% else %>
+              <%= t('views.agents.show.show') %>
+            <% end %>
+          </span>
         </span>
       <% end %>
     </span>

@@ -10,6 +10,8 @@ en:
         agentname: ID
         color: Color
         visibility: Visibility
+        visibility_is_private: Private
+        visibility_is_public: Public
       intent:
         intentname: ID
         description: Description

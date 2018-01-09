@@ -90,7 +90,6 @@
               disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
             }
           %>
-
           <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>"
              class="btn btn--plain" data-action='update-remote-modal'><%= t('cancel') %></a>
         </div>
