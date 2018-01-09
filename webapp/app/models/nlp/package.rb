@@ -162,6 +162,7 @@ class Nlp::Package
       interpretation_hash = {}
       interpretation_hash[:id] = intent.id
       interpretation_hash[:slug] = intent.slug
+      interpretation_hash[:scope] = 'private' if intent.is_private?
       expressions = []
 
       intent.interpretations.order(position: :desc).each do |interpretation|

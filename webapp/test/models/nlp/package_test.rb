@@ -86,6 +86,37 @@ class PackageTest < ActiveSupport::TestCase
   end
 
 
+  test 'Package generation with private intent' do
+    weather = agents(:weather)
+    intent = intents(:weather_who)
+    intent.visibility = Intent.visibilities[:is_private]
+    intent.save
+    assert intents(:weather_greeting).destroy
+
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      "id"   => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id"    => intents(:weather_who).id,
+          "slug"  => "admin/weather/weather_who",
+          'scope' => 'private',
+          "expressions" => [
+            {
+              "expression" => "world",
+              "locale"     => "en",
+              "solution"   => "world"
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(p.generate_json)
+  end
+
+
   test 'Package generation with alias list' do
     weather = agents(:weather)
     ialias = interpretation_aliases(:weather_greeting_hello_who)
