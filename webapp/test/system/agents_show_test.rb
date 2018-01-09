@@ -23,7 +23,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
     click_link 'Configure'
     assert page.has_text?('Configure agent')
-    click_link 'Cancel'
+    click_button 'Cancel'
     assert_equal '/agents/admin/weather', current_path
 
     click_link 'Configure'

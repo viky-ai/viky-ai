@@ -3,7 +3,7 @@
   font-size: .75em;
   line-height: 1.5em;
   padding: 1px .5em;
-  border-radius: 3px;
+  border-radius: 2px;
   color: rgba(black, .75);
   background-color: #f0f0f0;
 
@@ -80,14 +80,15 @@
   &.badge--white{
     color: #fff;
     &.badge--outline{
-      background-color: rgba(#000, .2);
+      background-color: rgba(#000, .20);
       box-shadow: 0 0 0 1px rgba(#fff, .5);
+      text-shadow: 0 1px 0 rgba(#000, .5);
     }
   }
 
   &.badge--small{
     font-size: .675em;
-    padding: 0px .25em;
+    padding: 0 .35em;
   }
   &.badge--medium{
     font-size: .875em;
@@ -102,7 +103,7 @@
     border-bottom-right-radius: 0;
   }
   .badge:last-child{
-    margin-left: -0.35em;
+    margin-left: -0.36em;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }

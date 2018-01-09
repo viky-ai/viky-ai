@@ -7,7 +7,7 @@
 
 .agent-background-header{
   @include clearfix();
-  margin-bottom: .5em;
+  margin-bottom: .25em;
   label{
     float:left;
   }
@@ -48,13 +48,12 @@
 }
 
 .agent-name-and-visibility{
-  display: -ms-grid;
-  display: grid;
-
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-
-  grid-gap: 2em;
+  @include display_flex();
+  justify-content: space-between;
+  .field:first-child{
+    width: 100%;
+    margin-right: 2em;
+  }
 }
 
 .dependencies-title{

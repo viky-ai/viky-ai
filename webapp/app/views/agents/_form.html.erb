@@ -36,11 +36,11 @@
         <br />
         <div class="btn-group">
           <button class="btn <% if agent.is_private? %>btn--primary<% end %>"
-                  data-input-selector="input[name='agent[visibility]']"
-                  data-input-value="is_private"><%= t('views.agents.form.visibility.is_private') %></button>
+            data-input-selector="input[name='agent[visibility]']"
+            data-input-value="is_private"><%= t('activerecord.attributes.agent.visibility_is_private') %></button>
           <button class="btn <% if agent.is_public? %>btn--primary<% end %>"
-                  data-input-selector="input[name='agent[visibility]']"
-                  data-input-value="is_public"><%= t('views.agents.form.visibility.is_public') %></button>
+            data-input-selector="input[name='agent[visibility]']"
+            data-input-value="is_public"><%= t('activerecord.attributes.agent.visibility_is_public') %></button>
         </div>
         <%= display_errors(agent, :visibility) %>
       </div>
@@ -79,14 +79,14 @@
       <div class="agent-background-header">
         <label><%= t('views.agents.form.background_label') %></label>
         <div class="btn-group" <% unless agent.image.nil? %>style="display:none;"<% end %>>
-          <a href="#" class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
+          <button class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
              data-action="agent-select-color">
             <%= t('views.agents.form.background_color_chooser') %>
-          </a>
-          <a href="#" class="btn btn--small <% unless agent.image.nil? %>btn--primary <% end %>"
+          </button>
+          <button class="btn btn--small <% unless agent.image.nil? %>btn--primary <% end %>"
              data-action="agent-select-image">
             <%= t('views.agents.form.background_image_chooser') %>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -147,6 +147,6 @@
         disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
       }
     %>
-    <a href="#" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></a>
+    <button class="btn btn--plain" data-action='close-modal' role="button"><%= t('cancel') %></button>
   </div>
 <% end %>

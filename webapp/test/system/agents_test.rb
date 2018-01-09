@@ -105,7 +105,7 @@ class AgentsTest < ApplicationSystemTestCase
     first('.dropdown__trigger > button').click
     click_link 'Configure'
     assert page.has_text?('Configure agent')
-    click_link 'Cancel'
+    click_button 'Cancel'
     assert page.has_no_text?('Configure agent')
     assert_equal '/', current_path
   end
