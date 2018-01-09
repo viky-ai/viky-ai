@@ -109,6 +109,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Unauthorized operation.", flash[:alert]
   end
 
+  test 'Show access: Public agent' do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    get user_agent_url(users(:confirmed), agent_public)
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
   test "Show access: Collaborator (show)" do
     sign_in users(:show_on_agent_weather)
 
@@ -142,6 +153,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
 
     get edit_user_agent_url(users(:confirmed), agents(:weather_confirmed))
     assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "Edit access: Public agent" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    get edit_user_agent_url(users(:confirmed), agent_public)
+    assert_redirected_to agents_url()
     assert_equal "Unauthorized operation.", flash[:alert]
   end
 
@@ -185,6 +207,21 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
         agent: { name: 'toto' },
         format: :json
       }
+    assert_response :forbidden
+    assert response.body.include?("Unauthorized operation.")
+  end
+
+  test "Update access: Public agent" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    patch user_agent_url(users(:confirmed), agent_public),
+          params: {
+            agent: { name: 'toto' },
+            format: :json
+          }
     assert_response :forbidden
     assert response.body.include?("Unauthorized operation.")
   end
@@ -233,6 +270,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Unauthorized operation.", flash[:alert]
   end
 
+  test "Confirm_destroy access: Public agent" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    get confirm_destroy_user_agent_url(users(:confirmed), agent_public)
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
   test "Confirm_destroy access: Collaborator (show)" do
     sign_in users(:show_on_agent_weather)
 
@@ -270,6 +318,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Unauthorized operation.", flash[:alert]
   end
 
+  test "Destroy access: Public user" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    delete user_agent_url(users(:confirmed), agent_public)
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
   test "Destroy access: Collaborator (show)" do
     sign_in users(:show_on_agent_weather)
 
@@ -302,6 +361,17 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:admin)
 
     get confirm_transfer_ownership_user_agent_path(users(:confirmed), agents(:weather_confirmed))
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+  test "Confirm_transfer access: Public agent" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    get confirm_transfer_ownership_user_agent_path(users(:confirmed), agent_public)
     assert_redirected_to agents_url
     assert_equal "Unauthorized operation.", flash[:alert]
   end
@@ -347,6 +417,21 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
         users: { new_owner_id: users('locked').id },
         format: :json
       }
+    assert_response :forbidden
+    assert response.body.include?("Unauthorized operation.")
+  end
+
+  test "Transfer_ownership access: Public agent" do
+    sign_in users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    post transfer_ownership_user_agent_path(users(:confirmed), agent_public.agentname),
+         params: {
+           users: { new_owner_id: users('locked').id },
+           format: :json
+         }
     assert_response :forbidden
     assert response.body.include?("Unauthorized operation.")
   end

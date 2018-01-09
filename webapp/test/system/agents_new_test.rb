@@ -74,6 +74,30 @@ class AgentsNewTest < ApplicationSystemTestCase
   end
 
 
+  test "Agent creation public" do
+    go_to_agents_creation
+
+    within(".modal") do
+      fill_in 'Name', with: 'Wall-e'
+      fill_in 'ID', with: 'wall-e'
+      click_button 'Public'
+
+      first("a.background-color__red").click
+      click_button 'Create'
+    end
+
+    assert page.has_text?('Your agent has been successfully created.')
+    expected = [
+      "My awesome weather bot",
+      "T-800",
+      "Wall-e",
+    ]
+    assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
+    assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+    assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
+  end
+
+
   test "Agent creation form cancel" do
     go_to_agents_creation
     click_link 'Cancel'

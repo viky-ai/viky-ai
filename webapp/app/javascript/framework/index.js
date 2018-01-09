@@ -23,6 +23,7 @@ window.App.Message = require('./message')
 import './user_search'
 import './console'
 window.App.FocusInput = require('./focus')
+import './button_group'
 
 // Expose jQuery
 window.$ = require('jquery');
