@@ -97,9 +97,9 @@
           <ul class="color-picker" data-input-selector="#agent-color-input">
             <% agent.available_colors.each do |color| %>
               <li>
-                <a href="#"
+                <button
                    class="background-color__<%= color %> <% if agent.color == color %>current<% end %>"
-                   data-input-value="<%= color %>"></a>
+                   data-input-value="<%= color %>"></button>
               </li>
             <% end %>
           </ul>
