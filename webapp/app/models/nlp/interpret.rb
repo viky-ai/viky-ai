@@ -35,6 +35,7 @@ class Nlp::Interpret
   def nlp_params
     p = {
       "Accept-Language" => language,
+      "primary-package" => agent.id,
       "packages" => packages,
       "sentence" => sentence,
       "show-explanation" => verbose
