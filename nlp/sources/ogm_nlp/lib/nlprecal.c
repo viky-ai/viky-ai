@@ -120,8 +120,24 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
         some_expressions_kept = TRUE;
       }
     }
+
     IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
+
+    // check if there is no more result kept
+    og_bool at_least_one_kept_as_result = FALSE;
+    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+    {
+      struct request_expression *request_expression = iter->data;
+      if (request_expression->keep_as_result)
+      {
+        at_least_one_kept_as_result = TRUE;
+        break;
+      }
+    }
+    if (!at_least_one_kept_as_result) break;
+
   }
+
   DONE;
 }
 
