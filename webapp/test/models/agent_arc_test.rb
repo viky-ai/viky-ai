@@ -141,4 +141,39 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal expected, arc.errors.full_messages
   end
 
+
+  test 'Agent available successors' do
+    agent_a = create_agent('Agent A')
+    create_agent('Agent B')
+
+    current_user = users(:admin)
+    successors = agent_a.available_successors(current_user)
+    expected = [
+      'Agent B',
+      'My awesome weather bot',
+      'T-800'
+    ]
+    assert_equal expected, successors.collect(&:name)
+  end
+
+
+  test 'Agent available successors with public agent' do
+    agent_a = create_agent('Agent A')
+    create_agent('Agent B')
+
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+
+    current_user = users(:admin)
+    successors = agent_a.available_successors(current_user)
+    expected = [
+      'Agent B',
+      'My awesome weather bot',
+      'T-800',
+      'Weather bot'
+    ]
+    assert_equal expected, successors.collect(&:name)
+  end
+
 end

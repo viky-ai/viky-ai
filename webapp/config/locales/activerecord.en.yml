@@ -9,6 +9,7 @@ en:
         name: Name
         agentname: ID
         color: Color
+        visibility: Visibility
       intent:
         intentname: ID
         description: Description

@@ -234,7 +234,8 @@ module Nls
       assert_kind_of Hash, actual, "Actual answer is not an Hash : #{actual.inspect}"
       assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
 
-      if expected.has_key?(:interpretations) && expected[:interpretations].kind_of?(Array) && expected[:interpretations].empty?
+      if (expected.has_key?(:interpretations) && expected[:interpretations].kind_of?(Array) && expected[:interpretations].empty?) ||
+         (expected.has_key?(:interpretation)  && expected[:interpretation].nil?)
          assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation"
          # skip other assert
          return actual

@@ -63,6 +63,12 @@
     </false_transformation>
     <false_transformation>
       <from>
+        <w>please</w>
+      </from>
+      <to_any/>
+    </false_transformation>
+    <false_transformation>
+      <from>
         <w>nappe</w>
       </from>
       <to>

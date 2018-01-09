@@ -312,11 +312,11 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature == 'type_intent'
+    if alias.nature == 'type_intent' && alias.url != null
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
       "
-    if alias.nature == 'type_digit'
+    else
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
