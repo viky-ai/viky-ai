@@ -80,8 +80,7 @@ class AgentsNewTest < ApplicationSystemTestCase
     within(".modal") do
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
-      first('.dropdown__trigger > button').click
-      click_link 'Public'
+      click_button 'Public'
 
       first("a.background-color__red").click
       click_button 'Create'
@@ -95,6 +94,7 @@ class AgentsNewTest < ApplicationSystemTestCase
     ]
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+    assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
   end
 
 
