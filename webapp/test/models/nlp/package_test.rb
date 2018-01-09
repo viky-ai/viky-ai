@@ -11,8 +11,9 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"   => intents(:weather_greeting).id,
-          "slug" => "admin/weather/weather_greeting",
+          "id"    => intents(:weather_greeting).id,
+          "slug"  => "admin/weather/weather_greeting",
+          'scope' => 'public',
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
@@ -37,8 +38,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"   => intents(:weather_who).id,
-          "slug" => "admin/weather/weather_who",
+          "id"    => intents(:weather_who).id,
+          "slug"  => "admin/weather/weather_who",
+          'scope' => 'public',
           "expressions" => [
             {
               "expression" => "world",
@@ -49,7 +51,6 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
@@ -71,8 +72,9 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"   => intent.id,
-          "slug" => "admin/weather/weather_greeting",
+          "id"    => intent.id,
+          "slug"  => "admin/weather/weather_greeting",
+          'scope' => 'public',
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
@@ -165,8 +167,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"   => intents(:weather_greeting).id,
-          "slug" => "admin/weather/weather_greeting",
+          "id"    => intents(:weather_greeting).id,
+          "slug"  => "admin/weather/weather_greeting",
+          'scope' => 'public',
           "expressions" => [
             {
               "expression" => "Bonjour tout le monde",
@@ -191,8 +194,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"   => intents(:weather_who).id,
-          "slug" => "admin/weather/weather_who",
+          "id"    => intents(:weather_who).id,
+          "slug"  => "admin/weather/weather_who",
+          'scope' => 'public',
           "expressions" => [
             {
               "expression" => "world",
@@ -203,7 +207,6 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
@@ -272,8 +275,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          'id'   => intents(:weather_greeting).id,
-          'slug' => 'admin/weather/weather_greeting',
+          'id'    => intents(:weather_greeting).id,
+          'slug'  => 'admin/weather/weather_greeting',
+          'scope' => 'public',
           'expressions' => [
             {
               'expression' => 'Bonjour tout le monde',
@@ -298,8 +302,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          'id'   => intents(:weather_who).id,
-          'slug' => 'admin/weather/weather_who',
+          'id'    => intents(:weather_who).id,
+          'slug'  => 'admin/weather/weather_who',
+          'scope' => 'public',
           'expressions' => [
             {
               'expression' => 'world',
@@ -310,7 +315,6 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
@@ -328,8 +332,9 @@ class PackageTest < ActiveSupport::TestCase
       'slug' => 'admin/weather',
       'interpretations' => [
         {
-          'id'   => intents(:weather_greeting).id,
-          'slug' => 'admin/weather/weather_greeting',
+          'id'    => intents(:weather_greeting).id,
+          'slug'  => 'admin/weather/weather_greeting',
+          'scope' => 'public',
           'expressions' => [
             {
               'expression' => 'Bonjour tout le monde',
@@ -367,8 +372,9 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          'id'   => intents(:weather_who).id,
-          'slug' => 'admin/weather/weather_who',
+          'id'    => intents(:weather_who).id,
+          'slug'  => 'admin/weather/weather_who',
+          'scope' => 'public',
           'expressions' => [
             {
               'expression' => 'world',
@@ -379,7 +385,6 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
