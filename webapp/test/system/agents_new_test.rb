@@ -20,7 +20,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       assert page.has_field? 'Name'
       assert page.has_field? 'ID'
       assert page.has_button? 'Create'
-      assert page.has_link? 'Cancel'
+      assert page.has_button? 'Cancel'
     end
   end
 
@@ -32,7 +32,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
 
-      first("a.background-color__red").click
+      first("button.background-color__red").click
       click_button 'Create'
     end
 
@@ -54,7 +54,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
 
-      click_link("Or upload an image")
+      click_button("Or upload an image")
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'wall-e.jpg')
 
       # https://github.com/teampoltergeist/poltergeist/issues/866
@@ -82,7 +82,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       fill_in 'ID', with: 'wall-e'
       click_button 'Public'
 
-      first("a.background-color__red").click
+      first("button.background-color__red").click
       click_button 'Create'
     end
 
@@ -100,7 +100,7 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   test "Agent creation form cancel" do
     go_to_agents_creation
-    click_link 'Cancel'
+    click_button 'Cancel'
     assert page.has_no_text?('Create new agent')
   end
 

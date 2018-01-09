@@ -9,22 +9,23 @@
     border-top-right-radius: 2px;
     @include ribbon-container();
 
-    h2,h3{
+    h2, h3{
       font-size:1em;
       margin: 0;
-      color: rgba(white, .9);
+      color: #fff;
       padding: 0 1rem;
       background-color: rgba(black, .075);
       text-shadow: 0 1px 0 rgba(black, .3);
     }
     h2{
       font-weight: 400;
-      font-size: 1em;
+      font-size: 1.1em;
       padding-top: .5rem;
-      padding-bottom: .2rem;
+      padding-bottom: .1rem;
     }
     h3{
       font-size: .9em;
+      color: rgba(#fff, .9);
       padding-bottom: .5em;
     }
     .agent-box__header__role{
@@ -53,8 +54,7 @@
     &:hover,
     &:focus{
       h2, h3{
-        color: #fff;
-        background-color: rgba(black, .2);
+        background-color: rgba(black, .3);
       }
     }
   }
