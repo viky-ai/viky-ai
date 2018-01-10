@@ -38,7 +38,8 @@ class Nlp::Interpret
       "primary-package" => agent.id,
       "packages" => packages,
       "sentence" => sentence,
-      "show-explanation" => verbose
+      "show-explanation" => verbose == 'true',
+      "show-private" => verbose == 'true'
     }
     p["now"] = now unless now.blank?
     p
