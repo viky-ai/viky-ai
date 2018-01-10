@@ -32,7 +32,7 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Update an intent' do
     go_to_agent_show('admin', 'weather')
-    within '.intents-list' do
+    within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
     end
@@ -49,7 +49,7 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Delete an intent' do
     go_to_agent_show('admin', 'weather')
-    within '.intents-list' do
+    within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
     end

@@ -11,6 +11,9 @@ en:
           zero: "0 interpretation"
           one: "1 interpretation"
           other: "%{count} interpretations"
+        empty_list:
+          private: No private intent. You can drag a public intent here or create one.
+          public: No public intent. You can drag a private intent here or create one.
       new:
         title: Create a new interpretation
         btn: Create

@@ -6,6 +6,21 @@
     box-shadow: 0 1px 7px rgba(#000, .25);
   }
 
+  &.intents-list--empty {
+    border: 1px dotted #ccc;
+    height: 3em;
+    text-align: center;
+    padding: 1em;
+    line-height: 1em;
+    margin-bottom: 1em;
+    &:after {
+      content: attr(data-empty-content);
+      color: #bbb;
+      transform: translateY(calc(0.6em - 50%));
+      display: block;
+    }
+  }
+
   & > li{
     transition: box-shadow .2s;
     @include display_flex();
