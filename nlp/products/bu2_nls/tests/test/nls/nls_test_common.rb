@@ -43,7 +43,7 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now=nil)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now = nil, primary_package = nil, show_private = true)
       request = {}
 
       if package == "*"
@@ -63,10 +63,19 @@ module Nls
         request['packages'] = [package_id]
       end
 
+      primary_package_id = nil
+      if !primary_package.nil?
+        primary_package_id = primary_package
+        primary_package_id = primary_package.id.to_s if primary_package.kind_of? Package
+      end
+
+      request['primary-package'] = primary_package_id if !primary_package_id.nil?
       request['sentence'] = sentence
       request['Accept-Language'] = locale if !locale.nil?
       request['now'] = now if !now.nil?
       request['show-explanation'] = true  if explain
+      request['show-private'] = show_private
+
       request
     end
 
@@ -224,9 +233,16 @@ module Nls
 
       now = expected[:now]
 
+      packages = "*"
+      packages = expected[:packages] if expected.has_key?(:packages)
+      primary_package = expected[:primary_package]
+
+      show_private = false
+      show_private = expected[:show_private] if expected.has_key?(:show_private)
+
       ap expected if debug
       # creation et exécution de la requete
-      request = json_interpret_body("*", sentence, Interpretation.default_locale, false, now)
+      request = json_interpret_body(packages, sentence, Interpretation.default_locale, false, now, primary_package, show_private)
       ap request if debug
       actual = Nls.interpret(request)
       ap actual if debug

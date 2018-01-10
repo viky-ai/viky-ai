@@ -92,7 +92,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     IFE(status);
   }
 
-  IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th,request_expression));
+  IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th, request_expression));
   IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
@@ -404,6 +404,33 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_solution");
       DPcErr;
+    }
+  }
+
+  if (ctrl_nlp_th->show_private)
+  {
+    json_t *scope = NULL;
+    switch (interpretation->scope)
+    {
+      case nlp_interpretation_scope_type_public:
+        scope = json_string("public");
+        break;
+      case nlp_interpretation_scope_type_private:
+        scope = json_string("private");
+        break;
+      default:
+        scope = NULL;
+        break;
+    }
+
+    if (scope == NULL)
+    {
+      IF(json_object_set_new(json_interpretation, "scope", scope))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpRequestInterpretationBuild : Error while setting interpretation scope %d",
+            interpretation->scope);
+        DPcErr;
+      }
     }
   }
 

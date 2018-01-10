@@ -29,10 +29,26 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   for (int i = 0; i < request_expression_used; i++)
   {
     struct request_expression *request_expression = request_expressions + i;
+    struct interpretation *interpretation = request_expression->expression->interpretation;
 
-    if (request_expression->expression->interpretation->scope == nlp_interpretation_scope_type_hidden)
+    if (interpretation->scope == nlp_interpretation_scope_type_hidden)
     {
       continue;
+    }
+    else if (interpretation->scope == nlp_interpretation_scope_type_private)
+    {
+      if (ctrl_nlp_th->primary_package == NULL)
+      {
+        continue;
+      }
+      else if (ctrl_nlp_th->show_private && interpretation->package == ctrl_nlp_th->primary_package)
+      {
+        // keep that interpretation
+      }
+      else
+      {
+        continue;
+      }
     }
 
     request_expression->any_validate_status = 1;
@@ -147,6 +163,10 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
   struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
 
+  if (request_expression1->expression->interpretation->scope != request_expression2->expression->interpretation->scope)
+  {
+    return (request_expression1->expression->interpretation->scope - request_expression2->expression->interpretation->scope);
+  }
   if (request_expression1->any_validate_status != request_expression2->any_validate_status)
   {
     return (request_expression2->any_validate_status - request_expression1->any_validate_status);
@@ -177,7 +197,8 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (request_expression2->level - request_expression1->level);
   }
-// Just to make sure it is different
+
+  // Just to make sure it is different
   return request_expression1 - request_expression2;
 }
 
