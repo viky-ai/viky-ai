@@ -6,7 +6,7 @@
   <% intents.each do |intent| %>
     <li data-id="<%= intent.id %>">
 
-      <% if current_user_can_edit && intents.count > 1 %>
+      <% if current_user_can_edit %>
         <div class="intents-list__item__draggable"></div>
       <% end %>
 

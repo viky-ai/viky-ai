@@ -13,7 +13,7 @@
     padding: 1em;
     line-height: 1em;
     margin-bottom: 1em;
-    &:after {
+    &:before {
       content: attr(data-empty-content);
       color: #bbb;
       transform: translateY(calc(0.6em - 50%));
