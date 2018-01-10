@@ -66,19 +66,25 @@ module Nls
           primary_package: @package_2
         )
 
-        check_interpret("hello scope",
+        interpretations = check_interpret("hello scope",
           interpretations: ["scope_public_1", "scope_public_2", "scope_private_1"],
           packages: [ @package_1, @package_2 ],
           show_private: true,
           primary_package: @package_1
         )
+        assert 'public',  interpretations['interpretations'][0]['scope']
+        assert 'public',  interpretations['interpretations'][1]['scope']
+        assert 'private', interpretations['interpretations'][2]['scope']
 
-        check_interpret("hello scope",
+        interpretations = check_interpret("hello scope",
           interpretations: ["scope_public_1", "scope_public_2", "scope_private_2"],
           packages: [ @package_1, @package_2 ],
           show_private: true,
           primary_package: @package_2
         )
+        assert 'public',  interpretations['interpretations'][0]['scope']
+        assert 'public',  interpretations['interpretations'][1]['scope']
+        assert 'private', interpretations['interpretations'][2]['scope']
       end
 
     end

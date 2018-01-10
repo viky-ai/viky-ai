@@ -423,7 +423,7 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
         break;
     }
 
-    if (scope == NULL)
+    if (scope != NULL)
     {
       IF(json_object_set_new(json_interpretation, "scope", scope))
       {
