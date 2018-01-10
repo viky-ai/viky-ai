@@ -36,9 +36,11 @@
         <br />
         <div class="btn-group">
           <button class="btn <% if agent.is_private? %>btn--primary<% end %>"
+            type="button"
             data-input-selector="input[name='agent[visibility]']"
             data-input-value="is_private"><%= t('activerecord.attributes.agent.visibility_is_private') %></button>
           <button class="btn <% if agent.is_public? %>btn--primary<% end %>"
+            type="button"
             data-input-selector="input[name='agent[visibility]']"
             data-input-value="is_public"><%= t('activerecord.attributes.agent.visibility_is_public') %></button>
         </div>
@@ -80,11 +82,13 @@
         <label><%= t('views.agents.form.background_label') %></label>
         <div class="btn-group" <% unless agent.image.nil? %>style="display:none;"<% end %>>
           <button class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
-             data-action="agent-select-color">
+            type="button"
+            data-action="agent-select-color">
             <%= t('views.agents.form.background_color_chooser') %>
           </button>
           <button class="btn btn--small <% unless agent.image.nil? %>btn--primary <% end %>"
-             data-action="agent-select-image">
+            type="button"
+            data-action="agent-select-image">
             <%= t('views.agents.form.background_image_chooser') %>
           </button>
         </div>
@@ -98,8 +102,9 @@
             <% agent.available_colors.each do |color| %>
               <li>
                 <button
-                   class="background-color__<%= color %> <% if agent.color == color %>current<% end %>"
-                   data-input-value="<%= color %>"></button>
+                  type="button"
+                  class="background-color__<%= color %> <% if agent.color == color %>current<% end %>"
+                  data-input-value="<%= color %>"></button>
               </li>
             <% end %>
           </ul>
@@ -147,6 +152,6 @@
         disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
       }
     %>
-    <button class="btn btn--plain" data-action='close-modal' role="button"><%= t('cancel') %></button>
+    <button class="btn btn--plain" data-action='close-modal' type="button"><%= t('cancel') %></button>
   </div>
 <% end %>
