@@ -187,4 +187,31 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal '/backend/users', current_path
   end
 
+
+  test 'User switch' do
+    admin_login
+    within("nav") do
+      assert page.has_text?("admin")
+    end
+
+    click_link('Users management')
+
+    within("table tr:nth-child(2)") do
+      click_link('Switch')
+    end
+    assert page.has_text?("Agents")
+    within("nav") do
+      assert page.has_text?("edit_on_agent_weather Switched")
+    end
+
+    visit "backend/users"
+    assert page.has_text?("You do not have permission to access this interface.")
+
+    click_link('Comeback')
+    assert page.has_text?("Agents")
+    within("nav") do
+      assert page.has_text?("admin")
+    end
+  end
+
 end

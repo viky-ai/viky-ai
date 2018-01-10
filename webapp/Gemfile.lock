@@ -159,6 +159,8 @@ GEM
     premailer-rails (1.10.1)
       actionmailer (>= 3, < 6)
       premailer (~> 1.7, >= 1.7.9)
+    pretender (0.3.1)
+      actionpack
     public_suffix (3.0.1)
     puma (3.11.0)
     rack (2.0.3)
@@ -293,6 +295,7 @@ DEPENDENCIES
   pg (~> 0.18)
   postmark-rails
   premailer-rails
+  pretender
   puma (~> 3.7)
   rails (~> 5.1.4)
   rainbow

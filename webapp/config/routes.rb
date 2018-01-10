@@ -9,11 +9,14 @@ Rails.application.routes.draw do
         get :confirm_destroy
         get :reinvite
       end
+      post :impersonate, on: :member
     end
   end
 
+
   resource :profile, only: [:show, :edit, :update, :destroy] do
     get :confirm_destroy
+    post :stop_impersonating, on: :collection
   end
 
   scope '/agents' do
