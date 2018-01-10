@@ -43,7 +43,7 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now = nil, primary_package = nil, show_private = true)
+    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now = nil, primary_package = nil, show_private = false)
       request = {}
 
       if package == "*"
