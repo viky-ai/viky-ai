@@ -89,4 +89,7 @@ group :test do
   gem 'simplecov', require: false
 end
 
+gem 'terminal-table', require: false
+
 # gem 'rubocop', require: false
+
