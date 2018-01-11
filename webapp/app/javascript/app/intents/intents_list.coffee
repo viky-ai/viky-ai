@@ -25,7 +25,9 @@ class IntentList
           ids.push($(item).data('id')) for item in $(list_selector_id+ ' > li')
           IntentList::updatePositions(list_selector_id, ids, visibility)
         onMove: (evt) ->
-          $(".intents-list").removeClass('intents-list--empty--dragging')
+          for list in $(".intents-list")
+            if $(evt.related).id != list.id
+              $(".intents-list").removeClass('intents-list--empty--dragging')
           if $(evt.related).is('ul')
             $(evt.related).addClass('intents-list--empty--dragging')
       });
