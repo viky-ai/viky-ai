@@ -8,7 +8,8 @@ class IntentTest < ActiveSupport::TestCase
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
-      locales: ['en']
+      locales: ['en'],
+      visibility: 'is_private'
     )
     intent.agent = agents(:weather)
     assert intent.save
@@ -18,6 +19,9 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal agents(:weather).id, intent.agent.id
     assert_equal 3, agents(:weather).intents.count
     assert Intent::AVAILABLE_COLORS.one? { |color| color == intent.color }
+    assert_equal 'is_private', intent.visibility
+    assert !intent.is_public?
+    assert intent.is_private?
   end
 
 

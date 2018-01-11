@@ -113,7 +113,7 @@ class Agent < ApplicationRecord
       result << intent
     end
     successors.includes(:intents).each do |successor|
-      successor.intents.order(position: :desc, created_at: :desc).each do |intent|
+      successor.intents.is_public.order(position: :desc, created_at: :desc).each do |intent|
         result << intent
       end
     end

@@ -24,6 +24,9 @@
             <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
               <span class="intent__name"><%= intent["name"] %></span>
               <span class="intent__score">(<%= intent["score"] %>)</span>
+              <% if intent['scope'] == 'public' %>
+                <span class="badge badge--primary"><%= t('views.intents.visibility.is_public').upcase %></span>
+              <% end %>
               <ul>
               <% unless intent["explanation"].nil? %>
                   <li>

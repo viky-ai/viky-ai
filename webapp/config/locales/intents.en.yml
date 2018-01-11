@@ -11,6 +11,9 @@ en:
           zero: "0 interpretation"
           one: "1 interpretation"
           other: "%{count} interpretations"
+        empty_list:
+          private: No private intent. You can drag a public intent here or create one.
+          public: No public intent. You can drag a private intent here or create one.
       new:
         title: Create a new interpretation
         btn: Create
@@ -19,6 +22,9 @@ en:
         title: Edit interpretation
         btn: Update
         success_message: Your interpretation has been successfully updated.
+      visibility:
+        is_public: Public
+        is_private: Private
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete interpretation: <strong>%{name}</strong>."

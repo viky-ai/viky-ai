@@ -14,7 +14,7 @@ require 'fileutils'
 require 'uuidtools'
 
 reporters = [
-  Minitest::Reporters::SpecReporter.new(color: true)
+  Minitest::Reporters::SpecReporter.new
 ]
 
 backtrace_filter = Minitest::ExtensibleBacktraceFilter.default_filter

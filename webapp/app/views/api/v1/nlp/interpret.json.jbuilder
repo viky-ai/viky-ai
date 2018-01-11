@@ -6,6 +6,7 @@ json.interpretations @response[:body]["interpretations"].each do |interpretation
   # TODO: NLP remove phantom interpretation
   json.slug interpretation["slug"]
   json.name interpretation["slug"].split('/').last
+  json.scope interpretation["scope"] unless interpretation["scope"].nil?
 
   json.score interpretation["score"]
   json.solution interpretation["solution"] unless interpretation["solution"].nil?

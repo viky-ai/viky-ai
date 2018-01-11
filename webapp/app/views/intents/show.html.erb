@@ -5,6 +5,9 @@
     <strong>
       <%= @intent.intentname %>
     </strong>
+    <% if @intent.is_public? %>
+      <span class="badge badge--primary"><%= t('views.intents.visibility.is_public').upcase %></span>
+    <% end %>
     (<%= @intent.slug %>)
   </div>
 </header>
