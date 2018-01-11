@@ -257,7 +257,6 @@ ul.color-picker{
       border-radius: 2px;
       border: 2px solid #fff;
       transition: transform .15s ease-out;
-      outline:none;
       width: 100%;
 
       &.current,
@@ -270,6 +269,9 @@ ul.color-picker{
       &:focus,
       &:hover{
         transform: scale(1.4);
+      }
+      &:focus{
+        outline: none;
       }
     }
   }

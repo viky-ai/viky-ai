@@ -33,7 +33,6 @@
         <div class="field">
           <%= f.label :user_id, "Share with" %>
           <div class="control control--merged">
-
             <div class="merged-control-container">
                 <input type="text" name="memberships[user_ids]" id="input-user-search"
                 data-remote-url="<%= user_agent_search_users_to_share_agent_path(@agent.owner, @agent) %>"
@@ -43,7 +42,7 @@
             <%= f.hidden_field :rights, value: 'show' %>
             <div class="dropdown">
               <div class="dropdown__trigger">
-                <button class="btn">
+                <button class="btn" type="button">
                   <span class="btn__label">Can show</span>
                   <span class="icon icon--x-small">
                     <%= icon_arrow_down %>

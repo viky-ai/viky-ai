@@ -31,6 +31,7 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
   int start = 0;
   while (!end)
   {
+    gunichar c = ' ';
     og_string s_pos = g_utf8_find_next_char(s + i, s_end);
     if (s_pos == NULL)
     {
@@ -40,6 +41,13 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
     else
     {
       i = s_pos - s;
+      c = g_utf8_get_char_validated(s_pos, is - i);
+      if ((c == (gunichar) -1) || (c == (gunichar) -2))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpParseRequestSentence : invalid UTF-8 character '%s'",
+            ctrl_nlp_th->request_sentence);
+        DPcErr;
+      }
     }
 
     switch (state)
@@ -60,6 +68,11 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
           state = 1;
           i += length - 1;
         }
+        else if (g_unichar_isdigit(c))
+        {
+          start = i;
+          state = 3;
+        }
         else
         {
           start = i;
@@ -67,7 +80,7 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
         }
         break;
       }
-      case 2:   // in word
+      case 2:   // in word not digit
       {
         og_bool is_skipped = FALSE;
         int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped);
@@ -85,11 +98,28 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
           state = 1;
           i += length - 1;
         }
-        else
+        else if (g_unichar_isdigit(c))
         {
-          state = 2;
-        }
+          // add previously word
+          IFE(NlpParseAddWord(ctrl_nlp_th, start, i - start));
 
+          i -= 1;
+          start = i;
+          state = 1;
+        }
+        break;
+      }
+      case 3:   // in digit word
+      {
+        if (!g_unichar_isdigit(c))
+        {
+          // add previously digit word
+          IFE(NlpParseAddWord(ctrl_nlp_th, start, i - start));
+
+          i -= 1;
+          start = i;
+          state = 1;
+        }
         break;
       }
     }
@@ -98,6 +128,7 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
 
   // This is necessary to keep this information as we add word to the list through ltras
   ctrl_nlp_th->basic_request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
+
   DONE;
 }
 
