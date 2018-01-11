@@ -82,10 +82,10 @@ module Nls
 
           actual = Nls.interpret_package(package, sentence)
 
+          assert       !actual['interpretations'].empty?, "Must match an interpretation '#{interpretation.slug}'"
           assert_equal "#{package.id}", actual['interpretations'].first['package']
           assert_equal "#{interpretation.id}", actual['interpretations'].first['id']
           assert_equal "#{interpretation.slug}", actual['interpretations'].first['slug']
-          assert_equal 1.0, actual['interpretations'].first['score'], "Invalid score : #{JSON.pretty_generate(actual)}"
 
         end
       end

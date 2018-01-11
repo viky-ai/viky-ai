@@ -25,17 +25,16 @@ module Valgrind
       # wait
       sleep(0.5)
 
-#      # launch queries
-#      interpret_queries(1, true)
+      # launch queries
+      interpret_queries(1, true)
 
       `callgrind_control -i on`
       `callgrind_control --zero`
 
       sleep(0.5)
 
-#      # launch queries
-#      interpret_queries(1, true)
-      custom_query()
+      # launch queries
+      interpret_queries(1, true)
 
       sleep(0.5)
 

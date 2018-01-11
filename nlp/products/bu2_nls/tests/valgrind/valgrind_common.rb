@@ -6,7 +6,7 @@ module Valgrind
 
     def setup
 
-      #resetDir
+      resetDir
 
       Nls::Interpretation.default_locale = "en-GB"
 
@@ -131,56 +131,6 @@ module Valgrind
       end
 
     end
-
-    def custom_query()
-
-      params = {
-        timeout: 200000,
-      }
-
-      interpret_query=
-      {
-        "packages" => "*",
-        "sentence" => "I want an hotel with swimming pool for Valentine's day with sea view for 2 adults for 3 days in Bali"
-      }
-      expected =
-      {
-        "interpretations" => [
-          {
-            "package" => "book_hotel",
-            "id" => "book_hotel",
-            "slug" => "book_hotel",
-            "score" => 0.98999999999999999,
-            "solution" => {
-              "book" => "hotel",
-              "hotel_features" => {
-                "hotel_feature" => [
-                  "sea_view",
-                  "swimming_pool"
-                ],
-                "number-people" => 2,
-                "date_range" => {
-                  "start" => "2018-02-12T00:00:00Z",
-                  "end" => "2018-02-16T00:00:00Z"
-                },
-                "duration" => {
-                  "value" => "P3D",
-                  "unit" => "day"
-                },
-                "island" => "Bali"
-              }
-            }
-          }
-        ]
-      }
-
-
-      response = Nls::Nls.interpret(interpret_query, params)
-
-      assert_equal expected, response
-
-    end
-
 
   end
 end

@@ -38,7 +38,9 @@
       <% end %>
           <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>">
             <% if agent.is_public? %>
-              <span class="agent-compact__id__visual__ribbon"><%= t('views.agents.visibility.is_public') %></span>
+              <span class="agent-compact__id__visual__ribbon">
+                <%= t('activerecord.attributes.agent.visibility_is_public') %>
+              </span>
             <% end %>
           </div>
           <div class="agent-compact__id__data">

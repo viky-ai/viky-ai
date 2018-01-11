@@ -27,7 +27,7 @@
         <%= delete_form.button t('views.intents.confirm_destroy.btn'),
               class: "btn btn--destructive",
               data: { 'disable-btn-with': "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe } %>
-        <a href="#" class="btn btn--flat" data-action='close-modal'><%= t('cancel') %></a>
+        <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
       <% end %>
     </div>
   </div>

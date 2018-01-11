@@ -311,6 +311,8 @@ backup_restore_dev:
     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
   script:
     - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK} is starting ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
     - echo "Backup current data ..."
     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/backup.sh
     - sleep 5

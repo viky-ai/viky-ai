@@ -42,7 +42,7 @@ class AgentForm
       $('#agent-remove-image-input').val('0')
 
   dispatch: (event) ->
-    link = @get_link_target(event)
+    link = @get_btn_target(event)
     action = link.data('action')
     if action == 'agent-remove-image'
       event.preventDefault()
@@ -55,14 +55,14 @@ class AgentForm
       event.preventDefault()
       $('.color-picker-preview').show()
       $('.agent-image-options__image').hide()
-      link.closest('.btn-group').find('a').removeClass('btn--primary')
+      link.closest('.btn-group').find('.btn').removeClass('btn--primary')
       link.addClass('btn--primary')
 
     if action == 'agent-select-image'
       event.preventDefault()
       $('.color-picker-preview').hide()
       $('.agent-image-options__image').show()
-      link.closest('.btn-group').find('a').removeClass('btn--primary')
+      link.closest('.btn-group').find('.btn').removeClass('btn--primary')
       link.addClass('btn--primary')
 
     if action == 'generate-token'
@@ -72,11 +72,11 @@ class AgentForm
         success: (data, textStatus) ->
           $('#agent_api_token').val(data.api_token)
 
-  get_link_target: (event) ->
-    if $(event.target).is('a')
+  get_btn_target: (event) ->
+    if $(event.target).is('.btn')
       return $(event.target)
     else
-      return $(event.target).closest('a')
+      return $(event.target).closest('.btn')
 
 Setup = ->
   if $('body').data('controller-name') == "agents"

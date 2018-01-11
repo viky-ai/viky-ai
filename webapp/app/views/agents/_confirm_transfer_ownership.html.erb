@@ -11,7 +11,8 @@
       <p>
         <%= t('views.agents.confirm_transfer_ownership.content_html', name: agent.name) %>
       </p>
-      <%= form_with model: agent, url: transfer_ownership_user_agent_path, method: :post, class: 'js-user-search' do |transfer_form| %>
+      <%= form_with model: agent, url: transfer_ownership_user_agent_path,
+            method: :post, class: 'js-user-search' do |form| %>
         <div class="field">
           <div class="control">
             <label><%= t('views.agents.confirm_transfer_ownership.label') %></label>
@@ -32,8 +33,8 @@
           </div>
         </div>
 
-        <%= transfer_form.button t('views.agents.confirm_transfer_ownership.btn'), class: "btn btn--destructive" %>
-        <a href="#" class="btn btn--flat" data-action='close-modal'><%= t('cancel') %></a>
+        <%= form.button t('views.agents.confirm_transfer_ownership.btn'), class: "btn btn--destructive" %>
+        <button class="btn btn--plain" data-action='close-modal' type="button"><%= t('cancel') %></button>
       <% end %>
     </div>
   </div>
