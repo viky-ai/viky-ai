@@ -10,7 +10,6 @@ namespace :restore do
     restore_database(params)
     with_active_record_connected_to_new_db params do
       migrate_data
-      clean_private_data(params)
       synchronize_NLP
       restore_images(params)
     end
@@ -105,14 +104,6 @@ namespace :restore do
       puts Rainbow("#{time_log} Migrate database").green
       Rake::Task["db:migrate"].invoke
       puts Rainbow("#{time_log} Migrate database: done").green
-    end
-
-    def clean_private_data(params)
-      puts Rainbow("#{time_log} Database clean up of private data").green
-      conn = connect_to_db(params, params[:database])
-      conn.exec("UPDATE users SET encrypted_password='$2a$11$WAjRIEDeSHJOzWsLQz.l/OcEUdtlfvvkpz/bW8WYF3r/79sL.yM2S'")
-      conn.exec("UPDATE users SET email=CONCAT('login_as_', email)")
-      puts Rainbow("#{time_log} Database clean up of private data: done").green
     end
 
     def synchronize_NLP
