@@ -349,7 +349,6 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
     if (s_pos == NULL)
     {
       end = TRUE;
-      c = ' ';
       i = is;
     }
     else
@@ -388,6 +387,11 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
             }
             i += punct_length - 1;
             state = 1;
+          }
+          else if (g_unichar_isdigit(c))
+          {
+            start = i;
+            state = 5;
           }
           else
           {
@@ -438,6 +442,28 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
             state = 1;
           }
           i += punct_length - 1;
+          state = 1;
+        }
+        else if (g_unichar_isdigit(c))
+        {
+          // add previously parsed word
+          IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + start, i - start));
+
+          i -= 1;
+          start = i;
+          state = 1;
+        }
+        break;
+      }
+      case 5:   // in digit
+      {
+        if (!g_unichar_isdigit(c))
+        {
+          // add previously parsed digit word
+          IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + start, i - start));
+
+          i -= 1;
+          start = i;
           state = 1;
         }
         break;

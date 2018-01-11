@@ -16,11 +16,17 @@ module Nls
         Interpretation.default_locale = nil
 
 
-        package = Package.new("ltras")
-        ltras = package.new_interpretation("ltras")
+        ltras_package = Package.new("ltras")
+        ltras = ltras_package.new_interpretation("ltras")
         ltras << Expression.new("swimming pool with spa for 3 people and sea view")
 
-        Nls.package_update(package)
+        Nls.package_update(ltras_package)
+
+        parse_package = Package.new("parse")
+        ltras = parse_package.new_interpretation("parse")
+        ltras << Expression.new("abc123def,i:jklm456opq;")
+
+        Nls.package_update(parse_package)
 
       end
 
@@ -29,8 +35,14 @@ module Nls
       def test_ltras_single_words
 
         sentence = "with a nice swimmming pol with spa for 3 peple and sea viiaw"
-
         check_interpret(sentence, interpretation: "ltras", score: 0.93)
+
+      end
+
+      def test_complexe_parsing
+
+        sentence = "abc 123 def , i : jklm 456 opq ;"
+        check_interpret(sentence, interpretation: "parse", score: 1.0)
 
       end
     end
