@@ -34,6 +34,15 @@ class InterpretationsController < ApplicationController
     end
   end
 
+  def show_detailed
+    respond_to do |format|
+      format.js {
+        @show = render_to_string(partial: 'show_detailed.html', locals: { interpretation: @interpretation })
+        render partial: 'show_detailed'
+      }
+    end
+  end
+
   def edit
     respond_to do |format|
       format.js {
@@ -121,7 +130,7 @@ class InterpretationsController < ApplicationController
 
     def check_user_rights
       case action_name
-      when 'show'
+      when 'show', 'show_detailed'
         access_denied unless current_user.can? :show, @agent
       when 'create', 'edit', 'update', 'destroy', 'update_positions', 'update_locale'
         access_denied unless current_user.can? :edit, @agent

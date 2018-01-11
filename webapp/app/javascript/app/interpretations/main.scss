@@ -307,5 +307,11 @@ trix-editor{
       }
     }
   }
+
+  .aliasname__readonly {
+    width: 100%;
+    line-height: 1.5em;
+    padding: calc(0.375em - 1px) 0.5em;
+  }
 }
 

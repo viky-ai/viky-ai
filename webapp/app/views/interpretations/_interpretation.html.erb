@@ -10,8 +10,6 @@
     <div class="interpretations-list__draggable"></div>
     <%= link_to display_expression(interpretation), edit_user_agent_intent_interpretation_path(owner, agent, intent, interpretation), remote: true, class: 'interpretations-list__show', dir: dir %>
   <% else %>
-    <span class="interpretations-list__show" dir="<%= dir %>">
-      <%= display_expression(interpretation) %>
-    </span>
+    <%= link_to display_expression(interpretation), show_detailed_user_agent_intent_interpretation_path(owner, agent, intent, interpretation), remote: true, class: 'interpretations-list__show', dir: dir %>
   <% end %>
 </li>

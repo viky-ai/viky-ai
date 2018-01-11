@@ -1,0 +1,2 @@
+$("#interpretation-<%= @interpretation.id %>").html("<%= escape_javascript(@show) %>");
+App.InterpretationsList.displayCodeEditor($("#solution__<%= @interpretation.id %>")[0], true);

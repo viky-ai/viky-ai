@@ -1,0 +1,75 @@
+<div class='interpretations-list__show_detailed'>
+  <div class="field">
+    <%= display_expression(interpretation) %>
+  </div>
+
+  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>">
+    <% if interpretation.interpretation_aliases.any? %>
+      <table>
+        <thead>
+        <tr>
+          <th>Parameter name</th>
+          <th>Interpretation</th>
+          <th>Options</th>
+          <th>Selection</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for interpretation_alias in interpretation.interpretation_aliases %>
+          <% json_alias = JSON.parse(alias_to_json(interpretation_alias, interpretation.intent.agent)) %>
+          <tr id='<%= interpretation_alias.id %>'>
+            <td>
+              <div class='field aliasname__readonly'><span><%= json_alias['aliasname'] %></span></div>
+            </td>
+            <td>
+              <% if json_alias['url'].blank? %>
+                <span class='<%= json_alias['color'] %>' title='<%= json_alias['intent_slug'] %>' >
+                    <%= json_alias['intent_slug'] %>
+                </span>
+              <% else %>
+                <span class='<%= json_alias['color'] %>' title='<%= json_alias['intent_slug'] %>'>
+                  <a href='<%= json_alias['url'] %>'><%= json_alias['intent_slug'] %></a>
+                </span>
+              <% end %>
+            </td>
+            <td class='options'>
+              <label>
+                <% if json_alias['is_list'] %>List<% end %>
+                <% if json_alias['any_enabled'] %>Any<% end %>
+              </label>
+            </td>
+            <td><%= interpretation_alias.interpretation.expression[interpretation_alias.position_start..interpretation_alias.position_end-1] %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+  <div class="field field--for-solution"
+       <% if interpretation.auto_solution_enabled %>style="display:none;"<% end %>>
+    <div class="control">
+      <span class="solution-label">
+        <%= t('views.interpretations.solution_label') %>
+      </span>
+      <textarea id=<%= "solution__#{interpretation.id}" %> maxlength='2000' spellcheck='false' disabled >
+        <%= interpretation.solution %>
+      </textarea>
+    </div>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= link_to t('views.interpretations.index.cancel_btn'),
+                  user_agent_intent_interpretation_path(
+                      interpretation.intent.agent.owner,
+                      interpretation.intent.agent,
+                      interpretation.intent,
+                      interpretation
+                  ),
+                  remote: true,
+                  class: 'btn btn--plain',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+</div>

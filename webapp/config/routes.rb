@@ -52,6 +52,7 @@ Rails.application.routes.draw do
 
           resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
             member do
+              get :show_detailed
               post :update_locale
             end
             collection do
