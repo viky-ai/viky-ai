@@ -20,8 +20,13 @@ gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 # Use Devise as authentication solution
 gem 'devise', '~> 4.3.0'
 gem 'devise_invitable', '~> 1.7.2'
-gem 'pretender'
 gem 'friendly_id', '~> 5.1.0'
+
+# Allow admin to switch user
+gem 'pretender'
+
+# Keep emails from escaping into the wild during development
+gem "mail_safe", group: [:development]
 
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem 'turbolinks', '~> 5'
