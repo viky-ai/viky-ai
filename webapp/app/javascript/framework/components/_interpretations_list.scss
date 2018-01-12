@@ -67,7 +67,6 @@
   }
 
 
-
   .interpretations-list__edit,
   .interpretations-list__show_detailed {
     border-radius: 2px;
@@ -81,6 +80,23 @@
       align-items: center;
       border-top: 1px solid #eee;
       padding: 1em 0;
+    }
+  }
+
+  .interpretations-list__show_detailed {
+    .close {
+      svg {
+        position: absolute;
+        right: 3.5em;
+        width: 1.5em;
+        height: 1.5em;
+        fill: #666;
+      }
+      &:hover{
+        svg{
+          fill: #000;
+        }
+      }
     }
   }
 }

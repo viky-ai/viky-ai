@@ -1,6 +1,16 @@
 <div class='interpretations-list__show_detailed'>
   <div class="field">
     <%= display_expression(interpretation) %>
+
+    <%= link_to icon_close.html_safe,
+                user_agent_intent_interpretation_path(
+                    interpretation.intent.agent.owner,
+                    interpretation.intent.agent,
+                    interpretation.intent,
+                    interpretation
+                ),
+                remote: true,
+                class: 'close' %>
   </div>
 
   <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>">
@@ -52,24 +62,7 @@
       <span class="solution-label">
         <%= t('views.interpretations.solution_label') %>
       </span>
-      <textarea id=<%= "solution__#{interpretation.id}" %> maxlength='2000' spellcheck='false' disabled >
-        <%= interpretation.solution %>
-      </textarea>
-    </div>
-  </div>
-
-  <div class="field field--submit">
-    <div class="control">
-      <%= link_to t('views.interpretations.index.cancel_btn'),
-                  user_agent_intent_interpretation_path(
-                      interpretation.intent.agent.owner,
-                      interpretation.intent.agent,
-                      interpretation.intent,
-                      interpretation
-                  ),
-                  remote: true,
-                  class: 'btn btn--plain',
-                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+      <textarea id=<%= "solution__#{interpretation.id}" %> maxlength='2000' spellcheck='false' disabled ><%= interpretation.solution %></textarea>
     </div>
   </div>
 </div>
