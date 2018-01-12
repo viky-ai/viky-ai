@@ -9,3 +9,5 @@ en:
         style_guide: Style guide
         sidekiq_ui: Async jobs
         mailer_test: Mailer test
+      switched: Switched
+      comeback: Comeback
