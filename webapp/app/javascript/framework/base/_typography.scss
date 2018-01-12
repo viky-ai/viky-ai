@@ -73,6 +73,17 @@ h4{
   }
 }
 
+h5{
+  font-weight: 300;
+  font-size: 1em;       // 20px
+  margin-bottom: 1em; // 16px
+  margin-top: 0;
+  line-height: 1.2em;
+  &:not(:first-child){
+    margin-top: 1.5em;
+  }
+}
+
 ul:first-child{
   margin-top: 0;
 }

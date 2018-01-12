@@ -29,10 +29,26 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   for (int i = 0; i < request_expression_used; i++)
   {
     struct request_expression *request_expression = request_expressions + i;
+    struct interpretation *interpretation = request_expression->expression->interpretation;
 
-    if (request_expression->expression->interpretation->scope == nlp_interpretation_scope_type_hidden)
+    if (interpretation->scope == nlp_interpretation_scope_type_hidden)
     {
       continue;
+    }
+    else if (interpretation->scope == nlp_interpretation_scope_type_private)
+    {
+      if (ctrl_nlp_th->primary_package == NULL)
+      {
+        continue;
+      }
+      else if (ctrl_nlp_th->show_private && interpretation->package == ctrl_nlp_th->primary_package)
+      {
+        // keep that interpretation
+      }
+      else
+      {
+        continue;
+      }
     }
 
     request_expression->any_validate_status = 1;
@@ -61,12 +77,14 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    NlpLog(DOgNlpTraceMatch, "First request expression found:")
-    struct request_expression *last_request_expression = sorted_request_expressions->head->data;
-    IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
-    IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
-
-    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions:"));
+    if (sorted_request_expressions->length > 0)
+    {
+      NlpLog(DOgNlpTraceMatch, "First request expression found:")
+      struct request_expression *last_request_expression = sorted_request_expressions->head->data;
+      IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
+      IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
+      IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions:"));
+    }
   }
 
   DONE;
@@ -74,6 +92,8 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
 static og_status NlpCalculateKeptRequestExpressions(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions)
 {
+  if (sorted_request_expressions->length == 0) CONT;
+
   g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
 
   struct request_expression *first_request_expression = sorted_request_expressions->head->data;
@@ -147,6 +167,13 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
   struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
 
+  struct interpretation *interpretation1 = request_expression1->expression->interpretation;
+  struct interpretation *interpretation2 = request_expression2->expression->interpretation;
+
+  if (interpretation1->scope != interpretation2->scope)
+  {
+    return (interpretation1->scope - interpretation2->scope);
+  }
   if (request_expression1->any_validate_status != request_expression2->any_validate_status)
   {
     return (request_expression2->any_validate_status - request_expression1->any_validate_status);
@@ -177,7 +204,8 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (request_expression2->level - request_expression1->level);
   }
-// Just to make sure it is different
+
+  // Just to make sure it is different
   return request_expression1 - request_expression2;
 }
 

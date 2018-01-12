@@ -91,5 +91,7 @@ end
 
 gem 'terminal-table', require: false
 
-# gem 'rubocop', require: false
+# Skylight: profiler for Ruby on Rails applications.
+gem "skylight"
 
+# gem 'rubocop', require: false

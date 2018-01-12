@@ -1,0 +1,57 @@
+<% agent_owner = @agent.owner %>
+<% empty_content = visibility == 'is_public' ? t('views.intents.index.empty_list.public') : t('views.intents.index.empty_list.private') %>
+<ul class="intents-list <% if intents.count == 0 %>intents-list--empty<% end %>" id=<%= "intents-list-#{visibility}" %>
+    data-update-positions-path="<%= update_positions_user_agent_intents_path(agent_owner, @agent) %>"
+    data-empty-content="<%= empty_content %>">
+  <% intents.each do |intent| %>
+    <li data-id="<%= intent.id %>">
+
+      <% if current_user_can_edit %>
+        <div class="intents-list__item__draggable"></div>
+      <% end %>
+
+      <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
+        <span class="intents-list__item__name"><%= intent.intentname %></span>
+        <span class="intents-list__item__desc"><%= intent.description %></span>
+      </a>
+
+      <div class="intents-list__item__stats">
+        <%= t('views.intents.index.interpretations', count: intent.interpretations.count) %>
+      </div>
+
+      <% if current_user_can_edit %>
+        <div class="intents-list__item__actions">
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--small">
+              <span class="icon icon--x-small">
+                <%= icon_dots %>
+              </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+              <ul>
+                <li>
+                  <a href="<%= edit_user_agent_intent_path(agent_owner, @agent, intent) %>"
+                     data-action="open-remote-modal">
+                  <span class="icon icon--x-small">
+                    <%= icon_settings %>
+                  </span><%= t('views.intents.index.configure') %>
+                  </a>
+                </li>
+                <li class="separator">
+                  <a href="<%= user_agent_intent_confirm_destroy_path(agent_owner, @agent, intent) %>"
+                     data-action="open-remote-modal" class="destructive">
+                  <span class="icon icon--x-small">
+                    <%= icon_delete %>
+                  </span><%= t('views.intents.index.delete') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

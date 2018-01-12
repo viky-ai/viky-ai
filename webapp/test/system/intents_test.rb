@@ -9,6 +9,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text? 'Create a new interpretation'
       fill_in 'ID', with: 'sunny_day'
       fill_in 'Description', with: 'Questions about the next sunny day'
+      click_button 'Private'
       click_button 'Create'
     end
     assert page.has_text?('Interpretation has been successfully created.')
@@ -31,7 +32,7 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Update an intent' do
     go_to_agent_show('admin', 'weather')
-    within '.intents-list' do
+    within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
     end
@@ -48,7 +49,7 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Delete an intent' do
     go_to_agent_show('admin', 'weather')
-    within '.intents-list' do
+    within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
     end

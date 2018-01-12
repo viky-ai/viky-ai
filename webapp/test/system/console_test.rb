@@ -131,9 +131,9 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_content?('No interpretation found.')
 
     #
-    # Edit intent
+    # Edit intentk
     #
-    within '.intents-list' do
+    within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
     end
@@ -153,6 +153,4 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_text?('admin/weather/my-new-intent-updated')
     assert page.has_content?('No interpretation found.')
   end
-
-
 end

@@ -58,7 +58,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
     # Edit an interpretation
     click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    assert page.has_text?('weather_greeting PUBLIC (admin/weather/weather_greeting)')
 
     # Add Expression & create an alias from dependency
     first('trix-editor').click.set('Salut Marcel')

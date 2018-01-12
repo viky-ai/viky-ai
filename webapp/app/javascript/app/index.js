@@ -28,6 +28,7 @@ import './intents/intents_list';
 import './agents/agent_form';
 import './agents/main';
 import './console/console';
+import './intents/main';
 import './interpretations/main';
 import './interpretations/interpretation_form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');

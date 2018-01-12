@@ -1,9 +1,32 @@
 .intents-list{
   list-style: none;
   padding: 0;
-  padding-bottom: 1em;
+  padding-bottom: .25em;
   .sortable-chosen{
     box-shadow: 0 1px 7px rgba(#000, .25);
+  }
+
+  &.intents-list--empty {
+    border: 1px dotted #ccc;
+    height: 3em;
+    text-align: center;
+    padding: 1em;
+    line-height: 1em;
+    margin-bottom: 2em;
+    &:before {
+      content: attr(data-empty-content);
+      color: #bbb;
+      transform: translateY(calc(0.4em - 50%));
+      display: block;
+    }
+
+    &.intents-list--empty--dragging {
+      padding: 0;
+      border: 1px dotted $primary-color;
+      &:before {
+        display:none;
+      }
+    }
   }
 
   & > li{
