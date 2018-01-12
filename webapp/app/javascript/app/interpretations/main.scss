@@ -299,6 +299,7 @@ trix-editor{
       }
     }
   }
+
   &.aliases--rtl{
     table{
       th:last-child,
@@ -307,11 +308,14 @@ trix-editor{
       }
     }
   }
+}
 
-  .aliasname__readonly {
-    width: 100%;
-    line-height: 1.5em;
-    padding: calc(0.375em - 1px) 0.5em;
+.interpretations-list__show-detailed{
+  .aliases{
+    margin-top: 1.5em;
+    table td{
+      line-height: 2em;
+    }
   }
 }
 

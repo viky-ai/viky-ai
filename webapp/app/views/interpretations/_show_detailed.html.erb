@@ -1,46 +1,47 @@
-<div class='interpretations-list__show_detailed'>
-  <div class="field">
-    <%= display_expression(interpretation) %>
+<div class='interpretations-list__show-detailed'>
 
+  <div class="interpretations-list__show-detailed__resume">
+    <%= display_expression(interpretation) %>
     <%= link_to icon_close.html_safe,
-                user_agent_intent_interpretation_path(
-                    interpretation.intent.agent.owner,
-                    interpretation.intent.agent,
-                    interpretation.intent,
-                    interpretation
-                ),
-                remote: true,
-                class: 'close' %>
+          user_agent_intent_interpretation_path(
+              interpretation.intent.agent.owner,
+              interpretation.intent.agent,
+              interpretation.intent,
+              interpretation
+          ),
+          remote: true,
+          class: 'close' %>
   </div>
 
   <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>">
     <% if interpretation.interpretation_aliases.any? %>
       <table>
         <thead>
-        <tr>
-          <th>Parameter name</th>
-          <th>Interpretation</th>
-          <th>Options</th>
-          <th>Selection</th>
-        </tr>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+          </tr>
         </thead>
         <tbody>
         <% for interpretation_alias in interpretation.interpretation_aliases %>
           <% json_alias = JSON.parse(alias_to_json(interpretation_alias, interpretation.intent.agent)) %>
-          <tr id='<%= interpretation_alias.id %>'>
+          <tr>
             <td>
-              <div class='field aliasname__readonly'><span><%= json_alias['aliasname'] %></span></div>
+              <%= json_alias['aliasname'] %>
             </td>
             <td>
-              <% if json_alias['url'].blank? %>
-                <span class='<%= json_alias['color'] %>' title='<%= json_alias['intent_slug'] %>' >
-                    <%= json_alias['intent_slug'] %>
-                </span>
-              <% else %>
-                <span class='<%= json_alias['color'] %>' title='<%= json_alias['intent_slug'] %>'>
-                  <a href='<%= json_alias['url'] %>'><%= json_alias['intent_slug'] %></a>
-                </span>
-              <% end %>
+              <% agent_slug = "#{json_alias['intent_slug'].split('/').first}/#{json_alias['intent_slug'].split('/').second}" %>
+              <span class='<%= json_alias['color'] %>'>
+                <% if json_alias['url'].blank? %>
+                  <small><%= agent_slug %>/</small><%= json_alias['aliasname'] %>
+                <% else %>
+                  <a href='<%= json_alias['url'] %>'>
+                    <small><%= agent_slug %>/</small><%= json_alias['aliasname'] %>
+                  </a>
+                <% end %>
+              </span>
             </td>
             <td class='options'>
               <label>
@@ -56,13 +57,13 @@
     <% end %>
   </div>
 
-  <div class="field field--for-solution"
-       <% if interpretation.auto_solution_enabled %>style="display:none;"<% end %>>
-    <div class="control">
+  <% unless interpretation.auto_solution_enabled %>
+    <div class="interpretations-list__show-detailed__solution">
       <span class="solution-label">
-        <%= t('views.interpretations.solution_label') %>
+        <%= t('views.interpretations.solution_label_readonly') %>
       </span>
-      <textarea id=<%= "solution__#{interpretation.id}" %> maxlength='2000' spellcheck='false' disabled ><%= interpretation.solution %></textarea>
+      <textarea id=<%= "solution__#{interpretation.id}" %> disabled ><%= interpretation.solution %></textarea>
     </div>
-  </div>
+  <% end %>
+
 </div>
