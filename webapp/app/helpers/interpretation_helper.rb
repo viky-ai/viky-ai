@@ -31,7 +31,7 @@ module InterpretationHelper
       possibles_intents = current_agent.reachable_intents.collect(&:id)
       current_intent = interpretation_alias.intent
       url = nil
-      if possibles_intents.include?(current_intent.id) && current_user.can?(:show, current_intent.agent)
+      if current_user.can?(:show, current_intent.agent)
         url = user_agent_intent_path(current_intent.agent.owner, current_intent.agent, current_intent)
       end
       data = {
