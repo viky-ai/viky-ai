@@ -50,7 +50,9 @@ FROM ubuntu:xenial AS run_image
 RUN set -ex; \
     apt-get update ; \
     apt-get install -y --no-install-recommends \
+      ca-certificates \
       libxml2 \
+      wget \
     ; \
     rm -rf /var/lib/apt/lists/*
 
