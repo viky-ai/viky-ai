@@ -20,10 +20,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting')
 
     click_link 'weather_greeting'
-    assert page.has_text?('weather_greeting (admin/weather/weather_greeting)')
+    assert page.has_text?('weather_greeting PUBLIC (admin/weather/weather_greeting)')
     within('#interpretations-list') do
       click_link 'Hello world'
-      assert page.has_text?('Cancel')
       assert page.has_no_button?('Update')
       assert page.has_no_link?('Delete')
       assert page.has_no_field?('trix-editor')
