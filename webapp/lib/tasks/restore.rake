@@ -7,7 +7,7 @@ namespace :restore do
   desc 'Restore an environment on the local machine'
   task :all, [:database_dump, :images] => [:environment] do |t, args|
     unless args.database_dump.present?
-      Restore::Print::error("#{time_log} Need database dump file path")
+      Restore::Print::error('Need database dump file path')
       exit 0
     end
     params = extract_params(args)
@@ -20,15 +20,14 @@ namespace :restore do
 
     Restore::Print::success("Restore completed")
     Restore::Print::notice("Do not forget to:")
-    Restore::Print::notice(" - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}.")
-    Restore::Print::notice(" - Restart your apps.")
+    Restore::Print::notice("  - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}.")
+    Restore::Print::notice("  - Restart your apps.")
     Restore::Print::notice("Happy coding!")
   end
 
 
   desc 'List available environments and associated backups archives'
   task :list, [:environment] => [:environment] do |t, args|
-    backup_server = '172.16.16.6'
     if args.environment.present?
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       backups = Restore::Backup::list_all(env)
@@ -54,7 +53,7 @@ namespace :restore do
       exit 0
     end
 
-    dir = Dir.mktmpdir do |dir|
+    Dir.mktmpdir do |dir|
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       Restore::Print::step("Download archives")
       Restore::Backup::download(env, args.date, dir)
@@ -99,7 +98,7 @@ namespace :restore do
 
     def create_database(params)
       conn = connect_to_db(params, 'postgres')
-      result = conn.exec("CREATE DATABASE #{params[:database]}")
+      conn.exec("CREATE DATABASE #{params[:database]}")
     end
 
     def import_dump(params)
@@ -164,7 +163,7 @@ namespace :restore do
     end
 
     def connect_to_db(params, database)
-      conn = PG.connect(
+      PG.connect(
         host: params[:host],
         port: params[:port],
         dbname: database,
