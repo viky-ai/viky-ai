@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180103152608) do
+ActiveRecord::Schema.define(version: 20180108083533) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 20180103152608) do
     t.integer "position", default: 0
     t.string "locales"
     t.string "color"
+    t.integer "visibility", default: 0
     t.index ["agent_id"], name: "index_intents_on_agent_id"
     t.index ["intentname", "agent_id"], name: "index_intents_on_intentname_and_agent_id", unique: true
   end

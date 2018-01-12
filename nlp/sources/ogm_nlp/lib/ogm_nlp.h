@@ -205,7 +205,7 @@ struct expression
 
 enum nlp_interpretation_scope_type
 {
-  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private, nlp_interpretation_scope_type_hidden
+  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private = 1, nlp_interpretation_scope_type_hidden = 2
 };
 
 struct interpretation_compile
@@ -564,6 +564,12 @@ struct og_ctrl_nlp_threaded
   int level;
 
   /** interpret request */
+
+  /** Primary package can be null for backward compatibilities */
+  og_string primary_package_id;
+  package_t primary_package;
+  og_bool show_private;
+
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;

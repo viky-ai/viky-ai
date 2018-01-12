@@ -83,4 +83,10 @@ group :test do
   gem 'simplecov', require: false
 end
 
+
+# Skylight: profiler for Ruby on Rails applications.
+gem "skylight"
+
+
+
 # gem 'rubocop', require: false

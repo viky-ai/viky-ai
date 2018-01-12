@@ -1,10 +1,20 @@
 <header class="header">
   <div class="header__breadcrumb">
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %>/
     <strong>
       <%= @intent.intentname %>
     </strong>
+    <% if @intent.is_public? %>
+      <span class="badge badge--success badge--small">
+        <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
+      </span>
+    <% end %>
+    <% if @intent.is_private? %>
+      <span class="badge badge--warning badge--small">
+        <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
+      </span>
+    <% end %>
     (<%= @intent.slug %>)
   </div>
 </header>

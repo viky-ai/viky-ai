@@ -12,6 +12,8 @@ class Intent < ApplicationRecord
 
   serialize :locales, JSON
 
+  enum visibility: [:is_public, :is_private]
+
   validates :intentname, uniqueness: { scope: [:agent_id] },
                          length: { in: 3..30 },
                          presence: true
