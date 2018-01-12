@@ -12,9 +12,8 @@
 }
 .h-nav__header{
   padding: 1em;
-  display: none;
-  @media (min-width: 400px){
-    display: inline;
+  &.h-nav__header--hidden{
+    display: none;
   }
 }
 .h-nav__content{
@@ -83,10 +82,9 @@
 
   }
 
-  .user span{
-    display: none;
-    @media (min-width: 600px){
-      display: inline;
+  &.h-nav__content--hide-user-data{
+    .user span{
+      display: none;
     }
   }
 }

@@ -2,22 +2,40 @@ $ = require('jquery');
 
 class Nav
   constructor: ->
+    @logo = $('.h-nav__header')
+    @user = $($('.h-nav__content')[1])
+    @secondary_menu = $('nav .secondary')
+    @more_menu = $('nav .more')
+
+    @update()
     if $('.h-nav').length == 1
-      @update()
       $(window).bind 'load resize orientationchange', =>
         @update()
       $("body").on "console:leave-fullscreen", =>
         @update()
 
   update: ->
-    $('nav .secondary').show()
-    $('nav .more').hide()
-    if $('nav > div').last().offset().top > $('nav > div').first().offset().top
-      $('nav .secondary').hide()
-      $('nav .more').show()
+    @update_menu()
+    @update_user()
+    @update_logo()
 
-SetupNav = ->
-  new Nav()
+  update_user: ->
+    @user.removeClass('h-nav__content--hide-user-data')
+    if @user.offset().top > 0
+      @user.addClass('h-nav__content--hide-user-data')
 
-$(document).on('turbolinks:load', SetupNav)
+  update_menu: ->
+    @secondary_menu.show()
+    @more_menu.hide()
+    if @user.offset().top > 0
+      @secondary_menu.hide()
+      @more_menu.show()
 
+  update_logo: ->
+    @logo.removeClass('h-nav__header--hidden')
+    if @user.offset().top > 0
+      @logo.addClass('h-nav__header--hidden')
+
+Setup = -> new Nav()
+
+$(document).on('turbolinks:load', Setup)

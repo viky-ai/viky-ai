@@ -25,3 +25,5 @@ en:
         btn: Delete my account
         success_message: Your account has been successfully deleted. Bye bye.
         errors_message: "Deletion failed: %{errors}."
+      stop_switch:
+        success_message: Welcome home!

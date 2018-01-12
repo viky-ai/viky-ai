@@ -101,10 +101,25 @@
               <% else %>
                 <%= current_user.name %>
               <% end %>
+              <% if current_user != true_user %>
+                <span class="badge badge--danger"><%= t('views.nav.switched') %></span>
+              <% end %>
             </span>
           </div>
         </a>
       </li>
+      <% if current_user != true_user %>
+        <li>
+          <a href="<%= stop_impersonating_profile_path %>" rel="nofollow" data-method="post">
+            <div class="user">
+              <div class="avatar">
+                <img src="<%= true_user.image_url(:square) %>">
+              </div>
+              <span><%= t('views.nav.comeback') %></span>
+            </div>
+          </a>
+        </li>
+      <% end %>
       <li>
         <%= link_to "<span class='icon' title='Logout'>#{icon_logout}</span>".html_safe,
               destroy_user_session_path, method: :delete %>
