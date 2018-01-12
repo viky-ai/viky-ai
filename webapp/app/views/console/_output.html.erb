@@ -22,18 +22,27 @@
           <li>
             <% username, agentname, intentname = intent["slug"].split('/') %>
             <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
-              <span class="intent__name"><%= intent["name"] %></span>
-              <% if intent['scope'] == 'public' %>
-                <span class="badge badge--success badge--small">
-                  <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
+
+              <div class="intent__header">
+                <span class="intent__header__name"><%= intent["name"] %></span>
+                <% if intent['scope'] == 'public' %>
+                  <span class="badge badge--success badge--small">
+                    <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
+                  </span>
+                <% end %>
+                <% if intent['scope'] == 'private' %>
+                  <span class="badge badge--warning badge--small">
+                    <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
+                  </span>
+                <% end %>
+                <span class="intent__header__slug">
+                  (<%= "#{intent["slug"].split('/').first}/#{intent["slug"].split('/').second}" %>)
                 </span>
-              <% end %>
-              <% if intent['scope'] == 'private' %>
-                <span class="badge badge--warning badge--small">
-                  <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
+                <span class="intent__header__score">
+                  <span class="badge badge--grey badge--small badge--outline"><%= intent["score"] %></span>
                 </span>
-              <% end %>
-              <span class="intent__score">(<%= intent["score"] %>)</span>
+              </div>
+
               <ul>
               <% unless intent["explanation"].nil? %>
                   <li>
