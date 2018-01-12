@@ -42,6 +42,7 @@ RUN ./bin/rails assets:precompile
 
 # create temporary dir for sidekiq
 RUN mkdir -p /webapp/tmp/
+RUN mkdir -p /webapp/tmp/pids/
 RUN mkdir -p /webapp/log/
 
 ENV RAILS_SERVE_STATIC_FILES=true
