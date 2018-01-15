@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x -e
+set -e
 
 # remove previously started server pid
 rm -f ./tmp/pids/server.pid
@@ -11,8 +11,8 @@ if [[ "$1" == "master" ]] ; then
   # wait for services
   /usr/local/bin/dockerize -wait tcp://db-postgresql:5432 -wait tcp://db-redis:6379 -timeout 60s
 
-
   # Setup DB
+  echo "Try to run db:migrate ..."
   ./bin/rails db:create db:migrate
 
   # Push all Package
@@ -31,10 +31,9 @@ if [[ "$1" == "worker" ]] ; then
   # Start one worker
   bundle exec sidekiq -C config/sidekiq.yml
 
-
 else
 
-  echo "viky will be available on ${VIKYAPP_BASEURL}"
+  echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
 
   # Start web server
   ./bin/rails server -b 0.0.0.0 -p 3000
