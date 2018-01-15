@@ -195,7 +195,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     end
 
     click_link('Users management')
-    assert page.has_text?('Backend / User management')
+    assert page.has_text?('edit_on_agent_weather@viky.ai')
     within("table tr:nth-child(2) td.actions") do
       click_link('Switch')
     end
