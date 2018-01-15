@@ -53,6 +53,38 @@
     width: 100%;
     color: #222;
     border-right: 3px solid transparent;
+
+    &.interpretations-list__show-detailed{
+      padding: 1em;
+      .interpretations-list__show-detailed__resume{
+        margin-right: 2em;
+        position: relative;
+        margin-bottom: 1.5em;
+        .close{
+          position: absolute;
+          top: 0;
+          right: -2em;
+          line-height: 0em;
+          svg{
+            width: 1.5em;
+            height: 1.5em;
+            fill: #666;
+          }
+          &:hover{
+            svg{
+              fill: #000;
+            }
+          }
+        }
+      }
+      .interpretations-list__show-detailed__solution{
+        margin-bottom: .25em;
+      }
+    }
+  }
+
+  .interpretations-list__show[dir='rtl']{
+    text-align: right;
   }
 
   a.interpretations-list__show {
@@ -62,11 +94,9 @@
     }
   }
 
-  .interpretations-list__show[dir='rtl']{
-    text-align: right;
-  }
-
   .interpretations-list__edit{
+    border-radius: 2px;
+    width: 100%;
     padding: 1.5em 1em 0.5em 1em;
     .field--submit{
       @include display_flex();
@@ -76,38 +106,4 @@
       padding: 1em 0;
     }
   }
-
-  .interpretations-list__edit,
-  .interpretations-list__show-detailed{
-    border-radius: 2px;
-    width: 100%;
-    border-right: 3px solid $primary-color;
-  }
-
-  .interpretations-list__show-detailed {
-    padding: 1em 1em 1em 1em;
-    .interpretations-list__show-detailed__resume{
-      margin-right: 2em;
-      position: relative;
-      .close{
-        position: absolute;
-        right: -2em;
-        line-height: 0em;
-        svg{
-          width: 1.5em;
-          height: 1.5em;
-          fill: #666;
-        }
-        &:hover{
-          svg{
-            fill: #000;
-          }
-        }
-      }
-    }
-    .interpretations-list__show-detailed__solution{
-      margin-bottom: .25em;
-    }
-  }
-
 }
