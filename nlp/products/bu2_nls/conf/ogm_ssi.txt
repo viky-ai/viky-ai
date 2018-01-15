@@ -1,7 +1,7 @@
 #### NLS ####
 
 # Search server request processing threads number
-max_listening_threads 4
+max_listening_threads 16
 
 # Use permanent processing threads number
 permanent_threads yes
