@@ -6,7 +6,7 @@
 </div>
 
 <section>
-  <h2>Default list state</h2>
+  <h2>Edit list</h2>
   <p>
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
@@ -36,7 +36,7 @@
 
 
 <section>
-  <h2>Default list RTL state</h2>
+  <h2>Edit list RTL</h2>
   <%= highlight_html do %>
 <ul id="sortable-list_example-2" class="interpretations-list">
   <li>
@@ -61,6 +61,61 @@
   <% end %>
 </section>
 
+<section>
+  <h2>Show list</h2>
+  <p>
+    Used when user can only show agent. Link to detailed interpretation is present only if interpretation has alias or has a custom solution.
+  </p>
+  <%= highlight_html do %>
+<ul class="interpretations-list">
+  <li>
+    <a href="#" class="interpretations-list__show">Hello citizen</a>
+  </li>
+  <li>
+    <span class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></span>
+  </li>
+  <li>
+    <a href="#" class="interpretations-list__show">How can I help you ?</a>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Show detailed list</h2>
+  <%= highlight_html do %>
+<ul class="interpretations-list">
+  <li>
+    <div class="interpretations-list__show interpretations-list__show-detailed">
+      <div class="interpretations-list__show-detailed__resume">
+        Hello citizen
+        <a href="#" class="close">
+          <span class="icon">
+            <%= icon_close %>
+          </span>
+        </a>
+      </div>
+      <div class="interpretations-list__show-detailed__solution">
+        <span class="solution-label">Solution</span>
+        <textarea id="solution-show-detailed">{
+"who": "greeting.who"
+}</textarea>
+      </div>
+    </div>
+  </li>
+  <li>
+    <span class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></span>
+  </li>
+  <li>
+    <a href="#" class="interpretations-list__show">How can I help you ?</a>
+  </li>
+</ul>
+<script>
+  App.InterpretationsList.displayCodeEditor($("#solution-show-detailed")[0], true);
+</script>
+  <% end %>
+</section>
 
 
 <section>
@@ -72,119 +127,39 @@
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
   <%= highlight_html do %>
-<ul id="sortable-list_example-2" class="interpretations-list">
+<ul id="sortable-list_example-3" class="interpretations-list">
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form id="interpretation_form_1" action="#" class="interpretations-list__edit">
+    <form action="#" class="interpretations-list__edit">
       <div class="field">
-        <div class="control control--merged">
-          <input value="Hello citizen" type="text"/>
-          <button class="btn">
-            Update
-          </button>
-          <a href="#" class="btn">
-            Cancel
-          </a>
-          <button class="btn btn--destructive">
-            <span class='icon icon--small'><%= icon_delete %></span>
-          </button>
-        </div>
+        <input value="Hello citizen" type="text"/>
       </div>
       <div class="field">
-        <div class="field field--inline">
-          <div class="control">
-            <input type="checkbox" id="keep_order">
-            <label class="checkbox" for="keep_order">Keep order</label>
-          </div>
-          <div class="control">
-            <input type="checkbox" id="glued">
-            <label class="checkbox" for="glued">Glued</label>
-          </div>
-        </div>
         <div class="control">
-          <label class="textarea" for="solution">Solution</label>
-          <textarea id="solution" form="interpretation_form_1"  rows="3" maxlength="2000" spellcheck="false">
-{
-  "who": "`greeting.who`"
-}
-          </textarea>
+          <span class="solution-label">Solution</span>
+          <textarea rows="3">{
+"who": "greeting.who"
+}</textarea>
+        </div>
+      </div>
+      <div class="field field--submit">
+        <div class="control">
+          <button class="btn btn--primary">Update</button>
         </div>
       </div>
     </form>
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form id="interpretation_form_2" action="#" class="interpretations-list__edit">
-      <div class="field">
-        <div class="control control--merged">
-          <input value="Good morning" type="text"/>
-          <button class="btn">
-            Update
-          </button>
-          <a href="#" class="btn">
-            Cancel
-          </a>
-          <button class="btn btn--destructive">
-            <span class='icon icon--small'><%= icon_delete %></span>
-          </button>
-        </div>
-      </div>
-      <div class="field">
-        <div class="field field--inline">
-          <div class="control">
-            <input type="checkbox" id="keep_order" checked>
-            <label class="checkbox" for="keep_order">Keep order</label>
-          </div>
-          <div class="control">
-            <input type="checkbox" id="glued">
-            <label class="checkbox" for="glued">Glued</label>
-          </div>
-        </div>
-        <div class="control">
-          <label class="textarea" for="solution">Solution</label>
-          <textarea id="solution" form="interpretation_form_2"  rows="3" maxlength="2000" spellcheck="false"></textarea>
-        </div>
-      </div>
-    </form>
+    <a href="#" class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></a>
   </li>
   <li>
     <div class="interpretations-list__draggable"></div>
-    <form id="interpretation_form_3" action="#" class="interpretations-list__edit">
-      <div class="field">
-        <div class="control control--merged">
-          <input value="How can I help you ?" type="text"/>
-          <button class="btn">
-            Update
-          </button>
-          <a href="#" class="btn">
-            Cancel
-          </a>
-          <button class="btn btn--destructive">
-            <span class='icon icon--small'><%= icon_delete %></span>
-          </button>
-        </div>
-      </div>
-      <div class="field">
-        <div class="field field--inline">
-          <div class="control">
-            <input type="checkbox" id="keep_order" checked>
-            <label class="checkbox" for="keep_order">Keep order</label>
-          </div>
-          <div class="control">
-            <input type="checkbox" id="glued" checked>
-            <label class="checkbox" for="glued">Glued</label>
-          </div>
-        </div>
-        <div class="control">
-          <label class="textarea" for="solution">Solution</label>
-          <textarea id="solution" form="interpretation_form_3" rows="3" maxlength="2000" spellcheck="false"></textarea>
-        </div>
-      </div>
-    </form>
+    <a href="#" class="interpretations-list__show">How can I help you ?</a>
   </li>
 </ul>
 <script>
-  Sortable.create($('#sortable-list_example-2')[0], {
+  Sortable.create($('#sortable-list_example-3')[0], {
     handle: '.interpretations-list__draggable',
     animation: 100
   });

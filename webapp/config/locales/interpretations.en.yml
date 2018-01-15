@@ -34,4 +34,5 @@ en:
           msg: Remove annotation(s)
       digit: Digit
       solution_label: Define the solution using JavaScript code
+      solution_label_readonly: Solution using JavaScript code
 
