@@ -195,7 +195,7 @@ class BackendUsersTest < ApplicationSystemTestCase
     end
 
     click_link('Users management')
-
+    assert page.has_text?('Backend')
     within("table tr:nth-child(2)") do
       click_link('Switch')
     end
