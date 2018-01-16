@@ -1,12 +1,22 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-function sigterm_handler() {
+sigterm_handler() {
   echo "STOP signal received, try to gracefully shutdown all services..."
-  pkill --signal SIGTERM --pidfile ./tmp/pids/server.pid
+
+  if [[ -e ./tmp/pids/server.pid ]] ; then
+    pkill --signal SIGTERM --pidfile ./tmp/pids/server.pid
+  fi
+
+  if [[ -e ./tmp/pids/sidekiq.pid ]] ; then
+    pkill --signal SIGTERM --pidfile ./tmp/pids/sidekiq.pid
+  fi
+
+  # wait for stop
+  wait
 }
 
-trap "sigterm_handler; exit" INT QUIT TERM
+trap "sigterm_handler; exit" SIGTERM
 
 # remove previously started server pid
 rm -f ./tmp/pids/server.pid
@@ -36,13 +46,16 @@ fi
 if [[ "$1" == "worker" ]] ; then
 
   # Start one worker
-  bundle exec sidekiq -C config/sidekiq.yml
+  bundle exec sidekiq -C config/sidekiq.yml &
 
 else
 
   echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
 
   # Start web server
-  ./bin/rails server -b 0.0.0.0 -p 3000
+  ./bin/rails server -b 0.0.0.0 -p 3000 &
 
 fi
+
+# wait for signal
+wait
