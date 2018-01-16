@@ -67,6 +67,10 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   authenticate :user, lambda { |u| u.admin? } do
+
+    # disable ip_spoofing, because it does not support multiple reverse proxy with different configuration (HTTP_X_REAL_IP != HTTP_X_FORWARDED_FOR)
+    Sidekiq::Web.use( Rack::Protection, except: :ip_spoofing)
+
     mount Sidekiq::Web => '/backend/jobs'
   end
 
