@@ -348,7 +348,7 @@ static void NlsSignalOnStop(void *context, int signal_type)
 
   nls_prog->stop_counter++;
 
-  OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog, "Program ogm_nls received STOP signal (%d),"
+  OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog + DOgMsgDestMBox, "Program ogm_nls received STOP signal (%d),"
       " stopping in progress ...", signal_type);
 
   if (nls_prog->hnls != NULL)

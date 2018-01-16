@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+function sigterm_handler() {
+  echo "STOP signal received, try to gracefully shutdown all services..."
+  pkill --signal SIGTERM --pidfile ./tmp/pids/server.pid
+}
+
+trap "sigterm_handler; exit" INT QUIT TERM
+
 # remove previously started server pid
 rm -f ./tmp/pids/server.pid
 rm -f ./tmp/pids/sidekiq.pid
