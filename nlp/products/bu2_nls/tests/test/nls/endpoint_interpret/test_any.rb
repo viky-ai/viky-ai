@@ -48,7 +48,9 @@ module Nls
       end
 
       def test_any_punctuation_trim_keep_inside
-        check_interpret("hello ,brice, patrick,", interpretation: "hello", solution: "brice , patrick")
+        check_interpret("hello jean-marc", interpretation: "hello", solution: "jean-marc")
+        check_interpret("hello ,jean-marc*", interpretation: "hello", solution: "jean-marc")
+        check_interpret("hello ,brice, patrick,", interpretation: "hello", solution: "brice, patrick")
       end
 
       def test_any_punctuation_only
