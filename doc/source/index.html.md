@@ -19,11 +19,11 @@ We have language bindings in Shell and more to come in Ruby, Javascript and othe
 
 ```shell
 # With shell, you can just pass the correct resource token header with each request
-curl "https://www.viky.ai/api/v1/superman/superbot/:action" \
+curl "https://www.viky.ai/api/v1/agents/superman/superbot/:action" \
   -H "Agent-Token: the-superbot-api-token"
 
 # or pass the token as a parameter in the URL
-curl "https://www.viky.ai/api/v1/superman/superbot/:action?agent_token=the-superbot-api-token"
+curl "https://www.viky.ai/api/v1/agents/superman/superbot/:action?agent_token=the-superbot-api-token"
 ```
 
 > Make sure to replace `the-superbot-api-token` with the actual resource API token.
