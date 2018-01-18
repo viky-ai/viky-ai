@@ -120,6 +120,20 @@ class Agent < ApplicationRecord
     result
   end
 
+  def update_intents_positions(intent_ids, visibility)
+    current_intents = Intent.select(:id).where(agent_id: id, id: intent_ids).order(position: :desc)
+    intents_count = current_intents.size
+    diff = []
+    intent_ids.each_with_index do |intent_id, position|
+      if current_intents[position].present? && intent_id != current_intents[position].id
+        diff << { id: intent_id, position: position }
+      end
+    end
+    diff.each do |d|
+      Intent.where(agent_id: id, id: d[:id]).first.update(position: intents_count - d[:position] - 1, visibility: visibility)
+    end
+  end
+
 
   private
 
