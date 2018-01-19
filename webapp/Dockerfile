@@ -4,12 +4,16 @@
 # docker build --target image_ruby_run  -t docker-registry.pertimm.net/viky.ai/platform/app .
 # docker build --target image_ruby_test -t docker-registry.pertimm.net/viky.ai/platform/app_test .
 
-ARG RUBY_BASE_VERSION=latest
+ARG VIKY_IMAGE_TAG=latest
 
 #################################################
 # image_ruby_deps : tools_ruby_base + app dependencies
 #################################################
-FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${RUBY_BASE_VERSION} AS image_ruby_run
+
+# copy static file from doc
+FROM docker-registry.pertimm.net/viky.ai/platform/doc:${VIKY_IMAGE_TAG} AS viki_doc
+
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base:${VIKY_IMAGE_TAG} AS image_ruby_run
 
 # App specific
 RUN mkdir -p /webapp
@@ -42,7 +46,11 @@ RUN ./bin/rails assets:precompile
 
 # create temporary dir for sidekiq
 RUN mkdir -p /webapp/tmp/
+RUN mkdir -p /webapp/tmp/pids/
 RUN mkdir -p /webapp/log/
+
+# copy doc
+COPY --from=viki_doc /doc /webapp/public/doc
 
 ENV RAILS_SERVE_STATIC_FILES=true
 ENV RAILS_LOG_TO_STDOUT=1
@@ -50,10 +58,15 @@ ENV RAILS_LOG_TO_STDOUT=1
 EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
 
+# HealthCheck with Dockerfile
+#ENV VIKYAPP_WORKER=false
+#HEALTHCHECK --interval=30s --timeout=3s --start-period=600s \
+#  CMD /webapp/bin/docker_healthcheck.sh
+
 #################################################
 # image_ruby_test : image_ruby_base_test + test dependencies
 #################################################
-FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base_test:${RUBY_BASE_VERSION} AS image_ruby_test
+FROM docker-registry.pertimm.net/viky.ai/platform/tools_ruby_base_test:${VIKY_IMAGE_TAG} AS image_ruby_test
 
 # App specific
 RUN mkdir -p /webapp
