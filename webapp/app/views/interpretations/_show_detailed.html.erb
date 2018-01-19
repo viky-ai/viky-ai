@@ -1,0 +1,72 @@
+<div class='interpretations-list__show interpretations-list__show-detailed'>
+
+  <div class="interpretations-list__show-detailed__resume">
+    <%= display_expression(interpretation) %>
+    <%= link_to icon_close.html_safe,
+          user_agent_intent_interpretation_path(
+              interpretation.intent.agent.owner,
+              interpretation.intent.agent,
+              interpretation.intent,
+              interpretation
+          ),
+          remote: true,
+          class: 'close' %>
+  </div>
+
+  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>">
+    <% if interpretation.interpretation_aliases.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for interpretation_alias in interpretation.interpretation_aliases %>
+          <% json_alias = JSON.parse(alias_to_json(interpretation_alias, interpretation.intent.agent)) %>
+          <tr>
+            <td>
+              <%= json_alias['aliasname'] %>
+            </td>
+            <td>
+              <% slug = "" %>
+              <% if json_alias['nature'] == 'type_intent' %>
+                <% slug = "#{json_alias['intent_slug'].split('/').first}/#{json_alias['intent_slug'].split('/').second}/" %>
+              <% end %>
+              <span class='<%= json_alias['color'] %>'>
+                <% if json_alias['url'].blank? %>
+                  <small><%= slug %></small><%= json_alias['aliasname'] %>
+                <% else %>
+                  <a href='<%= json_alias['url'] %>'>
+                    <small><%= slug %></small><%= json_alias['aliasname'] %>
+                  </a>
+                <% end %>
+              </span>
+            </td>
+            <td class='options'>
+              <label>
+                <% if json_alias['is_list'] %>List<% end %>
+                <% if json_alias['any_enabled'] %>Any<% end %>
+              </label>
+            </td>
+            <td><%= interpretation_alias.interpretation.expression[interpretation_alias.position_start..interpretation_alias.position_end-1] %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+  <% unless interpretation.auto_solution_enabled %>
+    <div class="interpretations-list__show-detailed__solution">
+      <span class="solution-label">
+        <%= t('views.interpretations.solution_label_readonly') %>
+      </span>
+      <textarea id=<%= "solution__#{interpretation.id}" %> disabled ><%= interpretation.solution %></textarea>
+    </div>
+  <% end %>
+
+</div>

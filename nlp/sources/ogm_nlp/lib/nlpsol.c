@@ -289,10 +289,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
     struct alias *alias = request_expression->expression->aliases
         + request_expression->expression->alias_any_input_part_position;
 
-    char solution[DPcPathSize];
-    IFE(NlpSolutionString(ctrl_nlp_th, json_solution_any, DPcPathSize, solution));
     NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias->alias,
-        solution);
+        string_any);
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
     {

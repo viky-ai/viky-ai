@@ -43,6 +43,11 @@ class ProfilesController < ApplicationController
     end
   end
 
+  def stop_impersonating
+    stop_impersonating_user
+    redirect_to "/", notice: t('views.profile.stop_switch.success_message')
+  end
+
 
   private
 

@@ -104,12 +104,20 @@
           box-shadow: 0 1px 2px rgba(black, .2);
           border-radius: 2px;
           margin-bottom: .75em;
-          .intent__name{
-            text-decoration: underline;
-          }
-          .intent__score{
-            color: #aaa;
-            font-size: .9em;
+          .intent__header{
+            position: relative;
+            margin-right: 2em;
+            .intent__header__name{
+              text-decoration: underline;
+            }
+            .intent__header__slug{
+              color: #aaa;
+              font-size: .8em;
+            }
+            .intent__header__score{
+              position: absolute;
+              right: -2em;
+            }
           }
           ul{
             list-style-type: none;

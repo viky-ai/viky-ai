@@ -67,9 +67,9 @@
     </div>
   </div>
 <% else %>
-  <h5><%= t('views.intents.visibility.is_public') %></h5>
+  <h5><%= t('views.intents.index.list_public_title_html') %></h5>
   <%= render 'intents_list', intents: @intents.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
-  <h5><%= t('views.intents.visibility.is_private') %></h5>
+  <h5><%= t('views.intents.index.list_private_title_html') %></h5>
   <%= render 'intents_list', intents: @intents.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
 <% end %>
 

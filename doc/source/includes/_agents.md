@@ -3,7 +3,7 @@
 ## Interpret
 
 ```shell
-curl "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?sentence=I want to go from NY to LA&now=2017-12-05T08:30:20+01:00" \
+curl -G "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?now=2017-12-05T08:30:20+01:00" --data-urlencode "sentence=I want to go from NY to LA" \
   -H "Agent-Token: the-agent-token" \
   -H "Accept-Language: en-gb"
 ```

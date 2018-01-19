@@ -15,6 +15,19 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   #
+  # Show details
+  #
+  test 'Show details forbidden' do
+    sign_in users(:confirmed)
+    get show_detailed_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+        params: {
+          format: :js
+        }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+  #
   # Create
   #
   test 'Create access' do
