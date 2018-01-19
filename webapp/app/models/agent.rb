@@ -130,8 +130,11 @@ class Agent < ApplicationRecord
       end
     end
     diff.each do |d|
-      Intent.where(agent_id: id, id: d[:id]).first.update(position: intents_count - d[:position] - 1, visibility: visibility)
+      Agent.no_touching do
+        Intent.where(agent_id: id, id: d[:id]).first.update(position: intents_count - d[:position] - 1, visibility: visibility)
+      end
     end
+    touch
   end
 
 
