@@ -47,12 +47,14 @@ RUN factory.pl -s bu2_nls   debug
 FROM ubuntu:xenial AS run_image
 
 # Add libxml2 needed for XSD validation
+# Add curl needed for healthcheck
 RUN set -ex; \
     apt-get update ; \
     apt-get install -y --no-install-recommends \
       ca-certificates \
       libxml2 \
       wget \
+      curl \
     ; \
     rm -rf /var/lib/apt/lists/*
 
@@ -72,6 +74,10 @@ WORKDIR /nls
 VOLUME [ "/nls/import" ]
 EXPOSE 9345
 CMD ["./ogm_nls"]
+
+# Healthcheck with Docker File
+#HEALTHCHECK --interval=30s --timeout=3s --start-period=600s \
+#  CMD curl -f http://localhost:9345/list/ || exit 1
 
 # ============================================================================
 # Test Nls
@@ -97,4 +103,3 @@ ENV TERM=xterm-256color
 
 # Run test
 CMD ["bundle", "exec", "rake", "test"]
-
