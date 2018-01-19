@@ -58,9 +58,10 @@ ENV RAILS_LOG_TO_STDOUT=1
 EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
 
-ENV VIKYAPP_WORKER=false
-HEALTHCHECK --interval=30s --timeout=3s --start-period=600s \
-  CMD /webapp/bin/docker_healthcheck.sh
+# HealthCheck with Dockerfile
+#ENV VIKYAPP_WORKER=false
+#HEALTHCHECK --interval=30s --timeout=3s --start-period=600s \
+#  CMD /webapp/bin/docker_healthcheck.sh
 
 #################################################
 # image_ruby_test : image_ruby_base_test + test dependencies
