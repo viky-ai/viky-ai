@@ -188,8 +188,9 @@ class IntentTest < ActiveSupport::TestCase
     )
 
     new_positions = [intent_1.id, intent_2.id, intent_0.id, '132465789']
-    agent.update_intents_positions(new_positions, 'is_private')
+    agent.update_intents_positions([], new_positions)
     assert_equal [2, 1, 0], [intent_1.reload.position, intent_2.reload.position, intent_0.reload.position]
+    assert_equal %w(is_private is_private is_private), [intent_1.reload.visibility, intent_2.reload.visibility, intent_0.reload.visibility]
   end
 
 

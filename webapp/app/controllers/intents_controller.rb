@@ -55,8 +55,7 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    visibility = params[:visibility] || 'is_public'
-    @agent.update_intents_positions(params[:ids], visibility)
+    @agent.update_intents_positions(params[:is_public], params[:is_private])
   end
 
   def confirm_destroy
