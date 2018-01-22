@@ -88,9 +88,6 @@
   }
 }
 
-
-
-
 .popup-overlay{
   position: fixed;
   top:0;
@@ -255,6 +252,9 @@ trix-editor{
       padding: .15em 0.5em .15em 0;
       vertical-align: middle;
     }
+    td{
+      line-height: 2em;
+    }
     th a{
       text-decoration: none;
       color: #999;
@@ -299,6 +299,7 @@ trix-editor{
       }
     }
   }
+
   &.aliases--rtl{
     table{
       th:last-child,
@@ -308,4 +309,3 @@ trix-editor{
     }
   }
 }
-

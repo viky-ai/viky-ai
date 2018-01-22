@@ -13,6 +13,24 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Show an interpretation with details' do
+    login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('weather_greeting')
+
+    click_link 'weather_greeting'
+    assert page.has_text?('weather_greeting PUBLIC (admin/weather/weather_greeting)')
+    within('#interpretations-list') do
+      click_link 'Hello world'
+      assert page.has_no_button?('Update')
+      assert page.has_no_link?('Delete')
+      assert page.has_no_field?('trix-editor')
+      assert page.has_no_field?("input[name*='aliasname']")
+    end
+  end
+
+
   test 'Create an interpretation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 

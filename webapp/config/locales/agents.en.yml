@@ -75,6 +75,3 @@ en:
           other: '%{count} collaborators'
         description: Description
         sharing_overview: Sharing overview
-      visibility:
-        is_private: Private
-        is_public: Public

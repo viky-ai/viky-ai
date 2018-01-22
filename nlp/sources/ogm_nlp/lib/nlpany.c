@@ -640,20 +640,32 @@ static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct re
 
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_word) DPcErr;
+  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_words) DPcErr;
 
-  int length = 0;
-  string[length] = 0;
+  og_string request_sentence = ctrl_nlp_th->request_sentence;
+
+  int start_position = -1;
+  int end_position = -1;
   for (int i = 0; i < request_any->request_words_nb; i++)
   {
-    int Irequest_word = request_any->request_word_start + i;
-    og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word[Irequest_word].raw_start);
-    IFN(string_request_word) DPcErr;
-
-    length = strlen(string);
-    snprintf(string + length, size - length, "%s%s", (i ? " " : ""), string_request_word);
+    struct request_word *request_word = request_words + (request_any->request_word_start + i);
+    if (start_position < 0)
+    {
+      start_position = request_word->start_position;
+    }
+    end_position = request_word->start_position + request_word->length_position;
   }
+
+  int length = end_position - start_position;
+
+  if (start_position < 0 || length < 0)
+  {
+    start_position = 0;
+    length = 0;
+  }
+
+  snprintf(string, size, "%.*s", length, request_sentence + start_position);
 
   DONE;
 }

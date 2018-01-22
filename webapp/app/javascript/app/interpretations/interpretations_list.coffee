@@ -69,14 +69,17 @@ class InterpretationsList
     $("#current-locale-tab-badge").html(count - 1)
     $("#current-locale-tab-badge").data('count',  count - 1)
 
-  @displayCodeEditor: (textarea)->
-    CodeMirror.fromTextArea(textarea, {
+  @displayCodeEditor: (textarea, readonly=false)->
+    options = {
       lineNumbers: true,
       mode: "javascript",
       autoRefresh: true,
       tabSize: 2,
       insertSoftTab: true
-    });
+    }
+    if readonly
+      options.readOnly = 'nocursor'
+    CodeMirror.fromTextArea(textarea, options);
 
 module.exports = InterpretationsList
 

@@ -120,8 +120,30 @@ class Agent < ApplicationRecord
     result
   end
 
+  def update_intents_positions(is_public, is_private)
+    intents = intents_to_update(is_public, 'is_public') + intents_to_update(is_private, 'is_private')
+    intents.each do |i|
+      Agent.no_touching do
+        Intent.where(agent_id: id, id: i[:id]).first.update(position: i[:position], visibility: i[:visibility])
+      end
+    end
+    touch
+  end
+
 
   private
+    def intents_to_update(intent_ids, visibility)
+      intent_ids = [] if intent_ids.nil?
+      current_intents = Intent.where(agent_id: id, id: intent_ids).order(position: :desc)
+      intents_count = current_intents.size
+      diff = []
+      intent_ids.each_with_index do |intent_id, position|
+        if current_intents[position].present? && (intent_id != current_intents[position].id || current_intents[position].visibility != visibility)
+          diff << { id: intent_id, position: intents_count - position - 1, visibility: visibility }
+        end
+      end
+      diff
+    end
 
     def check_collaborators_presence
       return if can_be_destroyed?

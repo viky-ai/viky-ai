@@ -131,6 +131,9 @@
                     <%= t('views.backend.users.index.delete.btn') %>
                   </a>
                 <% end %>
+                <% if current_user.email != user.email && user.confirmed? %>
+                  <%= link_to t('views.backend.users.index.switch.btn'), impersonate_backend_user_path(user.id), method: :post, class: "btn btn--primary btn--small btn--outline" %>
+                <% end %>
               </td>
             </tr>
           <% end %>

@@ -13,6 +13,10 @@ class Interpretation < ApplicationRecord
   before_save :cleanup
   before_create :set_position
 
+  def is_minimal
+    interpretation_aliases.count == 0 && auto_solution_enabled
+  end
+
   def expression_with_aliases
     return expression if interpretation_aliases.count == 0
     ordered_aliases = interpretation_aliases.order(position_start: :asc)

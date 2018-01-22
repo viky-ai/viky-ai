@@ -60,37 +60,38 @@
     current_locale: @current_locale
 } %>
 
-<div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
-<div class="popup-highlight" id="highlight" style="display:none;"></div>
-<div class="popup" id="popup-add-tag" style="display:none;">
-  <div class="popup__search">
-    <input type="text" value="" placeholder="<%= t('views.interpretations.popup.add-tag.search_placeholder') %>" />
-  </div>
-  <ul>
-    <% @agent.reachable_intents.each do |intent| %>
-      <li data-search="<%= intent.slug %>" class="enabled">
+<% if current_user.can? :edit, @agent %>
+  <div class="popup-overlay" id="popup-add-tag-overlay" style="display:none;"></div>
+  <div class="popup-highlight" id="highlight" style="display:none;"></div>
+  <div class="popup" id="popup-add-tag" style="display:none;">
+    <div class="popup__search">
+      <input type="text" value="" placeholder="<%= t('views.interpretations.popup.add-tag.search_placeholder') %>" />
+    </div>
+    <ul>
+      <% @agent.reachable_intents.each do |intent| %>
+        <li data-search="<%= intent.slug %>" class="enabled">
+          <a href="#" data-action="add-tag"
+             data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
+        </li>
+      <% end %>
+      <li data-search="digit" class="enabled">
         <a href="#" data-action="add-tag"
-           data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
+           data-data='<%= digit_to_json() %>'>Digit</a>
       </li>
-    <% end %>
+    </ul>
+  </div>
 
-    <li data-search="digit" class="enabled">
-      <a href="#" data-action="add-tag"
-         data-data='<%= digit_to_json() %>'>Digit</a>
-    </li>
-  </ul>
-</div>
-
-<div class="popup-overlay" id="popup-remove-tag-overlay" style="display:none;"></div>
-<div class="popup" id="popup-remove-tag" style="display:none;">
-  <ul>
-    <li class="enabled">
-      <a href="#" data-action="remove-tags">
-        <span class="icon icon--small">
-          <%= icon_close %>
-        </span>
-        <%= t('views.interpretations.popup.remove-tags.msg') %>
-      </a>
-    </li>
-  </ul>
-</div>
+  <div class="popup-overlay" id="popup-remove-tag-overlay" style="display:none;"></div>
+  <div class="popup" id="popup-remove-tag" style="display:none;">
+    <ul>
+      <li class="enabled">
+        <a href="#" data-action="remove-tags">
+          <span class="icon icon--small">
+            <%= icon_close %>
+          </span>
+          <%= t('views.interpretations.popup.remove-tags.msg') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+<% end %>

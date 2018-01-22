@@ -55,13 +55,7 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    visibility = params[:visibility] || 'is_public'
-    intents_count = params[:ids].size
-    params[:ids].each_with_index do |id, position|
-      if Intent.where(agent_id: @agent.id, id: id).count == 1
-        Intent.where(agent_id: @agent.id, id: id).first.update(position: intents_count - position - 1, visibility: visibility)
-      end
-    end
+    @agent.update_intents_positions(params[:is_public], params[:is_private])
   end
 
   def confirm_destroy

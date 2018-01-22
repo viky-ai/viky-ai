@@ -39,6 +39,9 @@ en:
             btn: Delete
           reinvite:
             btn: Re-invite
+          switch:
+            btn: Switch
+            success_message: You are now %{email}
           last_confirmation: Last confirmation sent on
           locked_since: Locked at
           invited_by: by %{email}
