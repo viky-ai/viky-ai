@@ -120,29 +120,28 @@ class Agent < ApplicationRecord
     result
   end
 
-  def update_intents_positions(is_public, is_private)
-    intents = intents_to_update(is_public, 'is_public') + intents_to_update(is_private, 'is_private')
-    intents.each do |i|
-      Agent.no_touching do
-        Intent.where(agent_id: id, id: i[:id]).first.update(position: i[:position], visibility: i[:visibility])
-      end
+  def update_intents_positions(public_intents, private_intents)
+    Agent.no_touching do
+      update_intents_order(public_intents, Intent.visibilities[:is_public])
+      update_intents_order(private_intents, Intent.visibilities[:is_private])
     end
     touch
   end
 
 
   private
-    def intents_to_update(intent_ids, visibility)
-      intent_ids = [] if intent_ids.nil?
-      current_intents = Intent.where(agent_id: id, id: intent_ids).order(position: :desc)
-      intents_count = current_intents.size
-      diff = []
-      intent_ids.each_with_index do |intent_id, position|
-        if current_intents[position].present? && (intent_id != current_intents[position].id || current_intents[position].visibility != visibility)
-          diff << { id: intent_id, position: intents_count - position - 1, visibility: visibility }
+    def update_intents_order(new_intent_ids, visibility)
+      current_intents = Intent.where(agent_id: id, id: new_intent_ids).order(position: :asc)
+      count = current_intents.count
+      current_intents.each do |intent|
+        new_position = new_intent_ids.find_index(intent.id)
+        unless new_position.nil?
+          intent.record_timestamps = false
+          intent.update_attribute(:position, count - new_position - 1)
+          intent.record_timestamps = true
+          intent.update_attribute(:visibility, visibility)
         end
       end
-      diff
     end
 
     def check_collaborators_presence
