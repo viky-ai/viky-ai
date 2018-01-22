@@ -30,6 +30,7 @@ RUN buildinit.pl
 RUN factory.pl -c external_dependencies fullclean
 RUN factory.pl -c external_dependencies redebug
 
+ADD products/bu2_nls/bin            /builds/nls/products/bu2_nls/bin
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
 ADD products/bu2_nls/ling           /builds/nls/products/bu2_nls/ling
 ADD products/bu2_nls/node_modules   /builds/nls/products/bu2_nls/node_modules
@@ -73,7 +74,7 @@ WORKDIR /nls
 
 VOLUME [ "/nls/import" ]
 EXPOSE 9345
-CMD ["./ogm_nls"]
+CMD ["./docker_run.sh"]
 
 # Healthcheck with Docker File
 #HEALTHCHECK --interval=30s --timeout=3s --start-period=600s \

@@ -136,7 +136,7 @@ deploy_dev:
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - echo "Deploy ..."
-    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml  --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade
 
 # Deploy master on rancher preprod
 deploy_preprod:
@@ -163,7 +163,7 @@ deploy_preprod:
     - echo "Backing up data ..."
     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
     - echo "Deploy ..."
-    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade
 
 
 # remove environment
