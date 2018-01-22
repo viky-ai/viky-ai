@@ -9,7 +9,7 @@ class AgentsController < ApplicationController
   end
 
   def show
-    @intents = @agent.intents.order('position desc, created_at desc')
+    @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
   end
 
   def new

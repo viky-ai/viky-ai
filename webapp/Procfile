@@ -1,4 +1,4 @@
-redis:    docker run -p "7372:6379" --rm --name viky-redis-dev --init redis:3.2-alpine
+redis:    docker run -p "6379:6379" --rm --name viky-redis-dev --init redis:3.2-alpine
 workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000
