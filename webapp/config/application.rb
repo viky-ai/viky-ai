@@ -26,6 +26,9 @@ module Webapp
     # Feature switch
     require "#{config.root}/lib/feature.rb"
 
+    require "#{config.root}/app/middlewares/health_check.rb"
+    config.middleware.insert_after Rails::Rack::Logger, HealthCheck
+
     config.active_job.queue_adapter     = :sidekiq
     config.active_job.queue_name_prefix = "webapp"
     config.active_job.queue_name_delimiter = "_"

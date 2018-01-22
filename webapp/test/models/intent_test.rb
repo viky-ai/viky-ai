@@ -164,4 +164,34 @@ class IntentTest < ActiveSupport::TestCase
     intent = intents(:weather_greeting)
     assert_equal 'admin/weather/weather_greeting', intent.slug
   end
+
+
+  test 'Test update positions' do
+    agent = agents(:weather_confirmed)
+    intent_0 = Intent.create(
+      intentname: 'intent_0',
+      locales: ['en'],
+      position: 0,
+      agent: agent
+    )
+    intent_1 = Intent.create(
+      intentname: 'intent_1',
+      locales: ['en'],
+      position: 1,
+      agent: agent
+    )
+    intent_2 = Intent.create(
+      intentname: 'intent_2',
+      locales: ['en'],
+      position: 2,
+      agent: agent
+    )
+
+    new_positions = [intent_1.id, intent_2.id, intent_0.id, '132465789']
+    agent.update_intents_positions([], new_positions)
+    assert_equal [2, 1, 0], [intent_1.reload.position, intent_2.reload.position, intent_0.reload.position]
+    assert_equal %w(is_private is_private is_private), [intent_1.reload.visibility, intent_2.reload.visibility, intent_0.reload.visibility]
+  end
+
+
 end
