@@ -270,7 +270,7 @@ module Restore
         exit_status = wait_thr.value
 
         unless exit_status.success?
-          puts Rainbow("#{time_log} #{pwd}: ").blue + Rainbow("#{cmd}").cyan
+          puts Rainbow("#{time_log} : ").blue + Rainbow("#{cmd}").cyan
           data.each { |line| puts "    ⤷ ---- #{line}" } if opts[:capture_output]
           raise "Command \"#{cmd}\" failed"
         end
