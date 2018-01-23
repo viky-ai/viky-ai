@@ -98,6 +98,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # API internal without versioning
+  namespace :api_internal do
+      get '/packages',     to: 'packages#index'
+      get '/packages/:id', to: 'packages#show'
+  end
+
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_error", via: :all
 end

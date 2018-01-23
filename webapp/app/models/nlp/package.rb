@@ -93,23 +93,22 @@ class Nlp::Package
     Rails.logger
   end
 
+  def build_tree
+    interpretations = []
+    @agent.intents.order(position: :desc).each do |intent|
+      cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+      interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+        build_internals_list_nodes(intent)
+      end
+      interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
+    end
+    interpretations
+  end
 
   private
 
     def push_in_import_directory(json)
       File.open(path, 'w') { |file| file.write json }
-    end
-
-    def build_tree
-      interpretations = []
-      @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent)
-        end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
-      end
-      interpretations
     end
 
     def build_internals_list_nodes(intent)
