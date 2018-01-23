@@ -11,6 +11,7 @@ class Agent < ApplicationRecord
   has_many :memberships
   has_many :users, through: :memberships
   has_many :intents, dependent: :destroy
+  has_many :entities_lists, dependent: :destroy
 
   has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy
   has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy

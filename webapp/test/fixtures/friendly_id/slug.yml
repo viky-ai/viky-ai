@@ -10,3 +10,7 @@ two:
 three:
   slug: weather_greeting
   sluggable: weather_greeting (Intent)
+
+four:
+  slug: weather_conditions
+  sluggable: weather_conditions (EntitiesList)

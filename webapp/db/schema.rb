@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180108083533) do
+ActiveRecord::Schema.define(version: 20180123151817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,18 @@ ActiveRecord::Schema.define(version: 20180108083533) do
     t.integer "visibility", default: 0
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
+  end
+
+  create_table "entities_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "listname"
+    t.integer "position", default: 0
+    t.string "color"
+    t.text "description"
+    t.integer "visibility", default: 0
+    t.uuid "agent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_entities_lists_on_agent_id"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -146,6 +158,7 @@ ActiveRecord::Schema.define(version: 20180108083533) do
   add_foreign_key "agent_arcs", "agents", column: "source_id", on_delete: :cascade
   add_foreign_key "agent_arcs", "agents", column: "target_id", on_delete: :cascade
   add_foreign_key "agents", "users", column: "owner_id"
+  add_foreign_key "entities_lists", "agents", on_delete: :cascade
   add_foreign_key "intents", "agents", on_delete: :cascade
   add_foreign_key "interpretation_aliases", "intents", on_delete: :cascade
   add_foreign_key "interpretation_aliases", "interpretations", on_delete: :cascade

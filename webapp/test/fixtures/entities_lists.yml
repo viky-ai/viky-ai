@@ -1,0 +1,7 @@
+weather_conditions:
+  listname: weather_conditions
+  agent: weather
+  description: Weather conditions like sunny, windy, cloudy...
+  position: 0
+  color: purple
+  visibility: 0
