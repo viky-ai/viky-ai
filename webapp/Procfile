@@ -1,6 +1,6 @@
-redis:    docker run -p "6379:6379" --rm --name viky-redis-dev --init redis:3.2-alpine
+redis:    docker kill viky-redis-dev; docker run -p "6379:6379" --rm --name viky-redis-dev --init redis:3.2-alpine
 workers:  bundle exec sidekiq -C config/sidekiq.yml -L ./log/sidekiq.log
 webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000
-nls:      docker pull docker-registry.pertimm.net/viky.ai/platform/nlp && docker run -p "9345:9345" --rm --name foreman_nls --init --volume "$(pwd)/import:/nls/import" docker-registry.pertimm.net/viky.ai/platform/nlp
+nls:      docker kill foreman_nls; docker pull docker-registry.pertimm.net/viky.ai/platform/nlp && docker run -p "9345:9345" --rm --name foreman_nls --init --volume "$(pwd)/import:/nls/import" docker-registry.pertimm.net/viky.ai/platform/nlp
 doc:      bundle exec rails doc:server
