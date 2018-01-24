@@ -6,11 +6,14 @@
 </div>
 
 <section>
-  <h2>Default list state</h2>
+  <h2>Edit list</h2>
+  <p>
+    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+  </p>
   <%= highlight_html do %>
 <ul id="sortable-list_example" class="intents-list">
   <li>
-    <div class="intents-list__draggable"></div>
+    <div class="intents-list__item__draggable"></div>
     <a href="#">
       <span class="intents-list__item__name">travel-from-to</span>
       <span class="intents-list__item__desc">
@@ -52,7 +55,7 @@
     </div>
   </li>
   <li>
-    <div class="intents-list__draggable"></div>
+    <div class="intents-list__item__draggable"></div>
     <a href="#">
       <span class="intents-list__item__name">buy-something</span>
     </a>
@@ -91,7 +94,7 @@
     </div>
   </li>
   <li>
-    <div class="intents-list__draggable"></div>
+    <div class="intents-list__item__draggable"></div>
     <a href="#">
       <span class="intents-list__item__name">date</span>
       <span class="intents-list__item__desc">
@@ -135,9 +138,47 @@
 </ul>
 <script>
   Sortable.create($('#sortable-list_example')[0], {
-    handle: '.intents-list__draggable',
+    handle: '.intents-list__item__draggable',
     animation: 100
   });
 </script>
+  <% end %>
+</section>
+
+<section>
+  <h2>Show list</h2>
+  <%= highlight_html do %>
+    <ul id="sortable-list_example" class="intents-list">
+      <li>
+        <a href="#">
+          <span class="intents-list__item__name">travel-from-to</span>
+          <span class="intents-list__item__desc">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
+      </span>
+        </a>
+        <div class="intents-list__item__stats">
+          378 interpretations
+        </div>
+      </li>
+      <li>
+        <a href="#">
+          <span class="intents-list__item__name">buy-something</span>
+        </a>
+        <div class="intents-list__item__stats">
+          23 interpretations
+        </div>
+      </li>
+      <li>
+        <a href="#">
+          <span class="intents-list__item__name">date</span>
+          <span class="intents-list__item__desc">
+        Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
+      </span>
+        </a>
+        <div class="intents-list__item__stats">
+          56 interpretations
+        </div>
+      </li>
+    </ul>
   <% end %>
 </section>
