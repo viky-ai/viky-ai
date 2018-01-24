@@ -120,21 +120,22 @@ class Agent < ApplicationRecord
     result
   end
 
-  def update_intents_positions(public_intents, private_intents)
+  def update_intents_positions(public_intent_ids, private_intent_ids)
     Agent.no_touching do
-      update_intents_order(public_intents, Intent.visibilities[:is_public])
-      update_intents_order(private_intents, Intent.visibilities[:is_private])
+      update_intents_order(public_intent_ids, Intent.visibilities[:is_public])
+      update_intents_order(private_intent_ids, Intent.visibilities[:is_private])
     end
     touch
   end
 
 
   private
-    def update_intents_order(new_intent_ids, visibility)
-      current_intents = Intent.where(agent_id: id, id: new_intent_ids).order(position: :asc)
+
+    def update_intents_order(intent_ids, visibility)
+      current_intents = Intent.where(agent_id: id, id: intent_ids).order(position: :asc)
       count = current_intents.count
       current_intents.each do |intent|
-        new_position = new_intent_ids.find_index(intent.id)
+        new_position = intent_ids.find_index(intent.id)
         unless new_position.nil?
           intent.record_timestamps = false
           intent.update_attribute(:position, count - new_position - 1)
