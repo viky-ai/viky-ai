@@ -40,6 +40,11 @@
          data-action="open-remote-modal">
         <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
       </a>
+      <a href="<%= new_user_agent_entities_list_path(current_user, @agent) %>"
+         class="btn btn--primary"
+         data-action="open-remote-modal">
+        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.entities_lists.index.new') %>
+      </a>
     <% end %>
   </div>
 </div>

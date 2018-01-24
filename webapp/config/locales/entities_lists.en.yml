@@ -1,0 +1,10 @@
+en:
+  views:
+    entities_lists:
+      index:
+        new: New entities list
+      new:
+        title: Create a new entities list
+        btn: Create
+        success_message: Entities list has been successfully created.
+

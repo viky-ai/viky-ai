@@ -64,6 +64,8 @@ Rails.application.routes.draw do
             end
           end
         end
+
+        resources :entities_lists, shallow: true, only: [:new, :create]
       end
     end
   end

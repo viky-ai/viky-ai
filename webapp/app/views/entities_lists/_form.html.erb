@@ -1,0 +1,50 @@
+<%= form_with model: [current_user, @agent, @entities_list], data: { type: 'json' }, class: 'js-entities_list-form' do |f| %>
+  <div class="entities_list-name-and-visibility">
+    <div class="field">
+      <%= f.label :listname %>
+      <span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <div class="control">
+        <%= f.text_field :listname, id: :entities_list_listname %>
+      </div>
+      <%= display_errors(@entities_list, :listname) %>
+    </div>
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :visibility %>
+        &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+        <%= f.hidden_field :visibility %>
+        <br />
+        <div class="btn-group">
+          <button class="btn <% if @entities_list.is_private? %>btn--primary<% end %>" type="button"
+                  data-input-selector="input[name='entities_list[visibility]']"
+                  data-input-value="is_private"><%= t('activerecord.attributes.entities_list.visibility_is_private') %></button>
+          <button class="btn <% if @entities_list.is_public? %>btn--primary<% end %>" type="button"
+                  data-input-selector="input[name='entities_list[visibility]']"
+                  data-input-value="is_public"><%= t('activerecord.attributes.entities_list.visibility_is_public') %></button>
+        </div>
+        <%= display_errors(@entities_list, :visibility) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :description %>
+    <div class="control">
+      <%= f.text_area :description, id: :entities_list_description %>
+    </div>
+    <%= display_errors(@entities_list, :description) %>
+  </div>
+
+  <div class="actions">
+    <% btn_label = t('views.entities_lists.new.btn') %>
+
+    <%= f.button btn_label, class: "btn btn--primary",
+                 data: {
+                     disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                 }
+    %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+  </div>
+<% end %>
+
