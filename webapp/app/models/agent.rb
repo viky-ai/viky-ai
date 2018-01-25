@@ -121,27 +121,37 @@ class Agent < ApplicationRecord
     result
   end
 
-  def update_intents_positions(public_intent_ids, private_intent_ids)
+  def update_intents_positions(public_intents, private_intents)
+    current_public_intents = Intent.where(agent_id: id, id: public_intents).order(position: :asc)
+    current_private_intents = Intent.where(agent_id: id, id: private_intents).order(position: :asc)
     Agent.no_touching do
-      update_intents_order(public_intent_ids, Intent.visibilities[:is_public])
-      update_intents_order(private_intent_ids, Intent.visibilities[:is_private])
+      update_order(public_intents, Intent.visibilities[:is_public], current_public_intents)
+      update_order(private_intents, Intent.visibilities[:is_private], current_private_intents)
+    end
+    touch
+  end
+
+  def update_entities_lists_positions(public_entities_lists, private_entities_lists)
+    current_public_entities_lists = EntitiesList.where(agent_id: id, id: public_entities_lists).order(position: :asc)
+    current_private_entities_lists = EntitiesList.where(agent_id: id, id: private_entities_lists).order(position: :asc)
+    Agent.no_touching do
+      update_order(public_entities_lists, EntitiesList.visibilities[:is_public], current_public_entities_lists)
+      update_order(private_entities_lists, EntitiesList.visibilities[:is_private], current_private_entities_lists)
     end
     touch
   end
 
 
   private
-
-    def update_intents_order(intent_ids, visibility)
-      current_intents = Intent.where(agent_id: id, id: intent_ids).order(position: :asc)
-      count = current_intents.count
-      current_intents.each do |intent|
-        new_position = intent_ids.find_index(intent.id)
+    def update_order(new_ids, visibility, current)
+      count = current.count
+      current.each do |item|
+        new_position = new_ids.find_index(item.id)
         unless new_position.nil?
-          intent.record_timestamps = false
-          intent.update_attribute(:position, count - new_position - 1)
-          intent.record_timestamps = true
-          intent.update_attribute(:visibility, visibility)
+          item.record_timestamps = false
+          item.update_attribute(:position, count - new_position - 1)
+          item.record_timestamps = true
+          item.update_attribute(:visibility, visibility)
         end
       end
     end

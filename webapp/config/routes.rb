@@ -67,6 +67,9 @@ Rails.application.routes.draw do
 
         resources :entities_lists, only: [:new, :create, :edit, :update, :show, :destroy] do
           get :confirm_destroy
+          collection do
+            post :update_positions
+          end
         end
       end
     end

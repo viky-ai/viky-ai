@@ -4,7 +4,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Create an entities list' do
     go_to_agent_show('admin', 'terminator')
-    click_link 'Entities list'
+    click_link 'Entities lists'
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -19,7 +19,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Errors on entities list creation' do
     go_to_agent_show('admin', 'terminator')
-    click_link 'Entities list'
+    click_link 'Entities lists'
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -34,7 +34,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Update an entities list' do
     go_to_agent_show('admin', 'weather')
-    click_link 'Entities list'
+    click_link 'Entities lists'
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
@@ -52,7 +52,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Delete an entities list' do
     go_to_agent_show('admin', 'weather')
-    click_link 'Entities list'
+    click_link 'Entities lists'
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
@@ -70,5 +70,24 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
     agent = agents(:weather)
     assert_equal user_agent_path(agent.owner, agent), current_path
+  end
+
+
+  test 'Reorganize entities lists' do
+    entities_list = EntitiesList.new(listname: 'test', agent: agents(:weather))
+    assert entities_list.save
+    go_to_agent_show('admin', 'weather')
+    click_link 'Entities lists'
+    assert page.has_link? 'New entities list'
+    assert_equal ['test', 'weather_conditions'], all('.card-list__item__name').collect(&:text)
+
+    assert_equal 2, all('.card-list__item__draggable').size
+
+    # Does not works...
+    # first_item = all('.card-list__item__draggable).first
+    # last_item  = all('.card-list__item__draggable).last
+    # first_item.drag_to(last_item)
+
+    # assert_equal ['weather_conditions', 'test'], all('.card-list__item__name').collect(&:text)
   end
 end

@@ -106,4 +106,29 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 0, EntitiesList.where(id: elist_id).count
   end
 
+
+  test 'Test update positions' do
+    agent = agents(:weather_confirmed)
+    entities_list_0 = EntitiesList.create(
+      listname: 'intent_0',
+      position: 0,
+      agent: agent
+    )
+    entities_list_1 = EntitiesList.create(
+      listname: 'entities_list_1',
+      position: 1,
+      agent: agent
+    )
+    entities_list_2 = EntitiesList.create(
+      listname: 'entities_list_2',
+      position: 2,
+      agent: agent
+    )
+
+    new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
+    agent.update_entities_lists_positions([], new_positions)
+    assert_equal [2, 1, 0], [entities_list_1.reload.position, entities_list_2.reload.position, entities_list_0.reload.position]
+    assert_equal %w(is_private is_private is_private), [entities_list_1.reload.visibility, entities_list_2.reload.visibility, entities_list_0.reload.visibility]
+  end
+
 end

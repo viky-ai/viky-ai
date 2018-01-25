@@ -1,7 +1,8 @@
 class EntitiesListsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_entities_list, except: [:new, :create]
+  before_action :set_entities_list, except: [:new, :create, :update_positions]
 
   def new
     @entities_list = EntitiesList.new
@@ -46,6 +47,10 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+  def update_positions
+    @agent.update_entities_lists_positions(params[:is_public], params[:is_private])
+  end
+
   def confirm_destroy
     render partial: 'confirm_destroy'
   end
@@ -86,7 +91,7 @@ class EntitiesListsController < ApplicationController
 
     def check_user_rights
       case action_name
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

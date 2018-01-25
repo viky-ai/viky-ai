@@ -23,13 +23,15 @@ import 'moment'
 import './nav/nav';
 import './profile/main';
 import './authentication/main';
-import './intents/intent_form';
-import './intents/intents_list';
 import './agents/agent_form';
 import './agents/main';
 import './console/console';
 import './intents/main';
+import './intents/intent_form';
+import './intents/intents_list';
 import './entities_lists/main';
+import './entities_lists/entities_list_form';
+import './entities_lists/entities_lists_list';
 import './interpretations/main';
 import './interpretations/interpretation_form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
