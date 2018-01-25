@@ -4,6 +4,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Create an entities list' do
     go_to_agent_show('admin', 'terminator')
+    click_link 'Entities list'
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -18,6 +19,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Errors on entities list creation' do
     go_to_agent_show('admin', 'terminator')
+    click_link 'Entities list'
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'

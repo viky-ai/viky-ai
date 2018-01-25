@@ -34,18 +34,24 @@
 <div class="tabs">
   <ul>
     <li>
-      <% css_class = @section != 'intents' ?  'current' : '' %>
+      <% css_class = @section == 'overview' ?  'current' : '' %>
       <%= link_to t('views.agents.show.sections.overview'), user_agent_path(@agent.owner, @agent, section: 'overview'), class: css_class %>
     </li>
     <li>
       <% css_class = @section == 'intents' ?  'current' : '' %>
       <%= link_to t('views.agents.show.sections.intents'), user_agent_path(@agent.owner, @agent, section: 'intents'), class: css_class %>
     </li>
+    <li>
+      <% css_class = @section == 'entities_lists' ?  'current' : '' %>
+      <%= link_to t('views.agents.show.sections.entities_lists'), user_agent_path(@agent.owner, @agent, section: 'entities_lists'), class: css_class %>
+    </li>
   </ul>
 </div>
 
 <% if @section == 'intents' %>
   <%= render 'intents_section' %>
+<% elsif @section == 'entities_lists' %>
+  <%= render 'entities_lists_section' %>
 <% else %>
   <%= render 'overview_section' %>
 <% end %>

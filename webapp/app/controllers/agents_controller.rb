@@ -10,6 +10,7 @@ class AgentsController < ApplicationController
 
   def show
     @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
+    @entities_lists = @agent.entities_lists.order('position desc, created_at desc')
     @section = params[:section] || 'intents'
   end
 

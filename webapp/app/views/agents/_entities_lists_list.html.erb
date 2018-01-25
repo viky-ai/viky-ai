@@ -1,0 +1,15 @@
+<% agent_owner = @agent.owner %>
+<% empty_content = visibility == 'is_public' ? t('views.entities_lists.index.empty_list.public') : t('views.entities_lists.index.empty_list.private') %>
+<ul class="card-list <% if entities_lists.count == 0 %>card-list--empty<% end %>" id=<%= "card-list-#{visibility}" %>
+    data-empty-content="<%= empty_content %>">
+  <% entities_lists.each do |entities_list| %>
+    <li data-id="<%= entities_list.id %>">
+
+      <a href="#">
+        <span class="card-list__item__name"><%= entities_list.listname %></span>
+        <span class="card-list__item__desc"><%= entities_list.description %></span>
+      </a>
+
+    </li>
+  <% end %>
+</ul>
