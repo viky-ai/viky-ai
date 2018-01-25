@@ -5,7 +5,6 @@ class EntitiesListsController < ApplicationController
 
   def new
     @entities_list = EntitiesList.new
-    @form_model = [current_user, @agent, @entities_list]
     render partial: 'new'
   end
 
@@ -28,7 +27,6 @@ class EntitiesListsController < ApplicationController
   end
 
   def edit
-    @form_model = @entities_list
     render partial: 'edit'
   end
 

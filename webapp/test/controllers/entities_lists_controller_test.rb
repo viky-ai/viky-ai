@@ -32,7 +32,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Update access' do
     sign_in users(:edit_on_agent_weather)
-    patch entities_list_url(entities_lists(:weather_conditions)),
+    patch user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
           params: {
             entities_list: { listname: 'my_new_name', description: 'The new entities list name' },
             format: :json
@@ -43,7 +43,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Update forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch entities_list_url(entities_lists(:weather_conditions)),
+    patch user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
           params: {
             entities_list: { listname: 'my_new_name', description: 'The new entities list name' },
             format: :json
@@ -58,14 +58,14 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Confirm delete access' do
     sign_in users(:admin)
-    get entities_list_confirm_destroy_url(entities_lists(:weather_conditions))
+    get user_agent_entities_list_confirm_destroy_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_response :success
     assert_nil flash[:alert]
   end
 
   test 'Confirm delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    get entities_list_confirm_destroy_url(entities_lists(:weather_conditions))
+    get user_agent_entities_list_confirm_destroy_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -75,14 +75,14 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Delete access' do
     sign_in users(:admin)
-    delete entities_list_url(entities_lists(:weather_conditions))
+    delete user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_redirected_to user_agent_url(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 
   test 'Delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete entities_list_url(entities_lists(:weather_conditions))
+    delete user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end

@@ -1,4 +1,4 @@
-<%= form_with model: @form_model, data: { type: 'json' }, class: 'js-entities_list-form' do |f| %>
+<%= form_with model: [current_user, @agent, @entities_list], data: { type: 'json' }, class: 'js-entities_list-form' do |f| %>
   <div class="entities_list-name-and-visibility">
     <div class="field">
       <%= f.label :listname %>
