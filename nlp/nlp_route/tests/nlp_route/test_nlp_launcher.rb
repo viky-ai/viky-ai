@@ -7,7 +7,7 @@ require 'mocha/mini_test'
 require 'redis'
 require 'nlp_route'
 
-class NlpRoute::TestNlpLauncher < MiniTest::Unit::TestCase
+class NlpRoute::TestNlpLauncher < Minitest::Test
 
   def test_init
     package_list = ["1", "2"]
@@ -46,17 +46,16 @@ class NlpRoute::TestNlpLauncher < MiniTest::Unit::TestCase
     }
 
     sleep 0.2
-
-    notify("1", :update)
+    notify( { event: :update, id: "1" } )
     sleep 0.1
-    notify("2", :update)
+    notify( { event: :update, id: "2" } )
     sleep 0.1
-    notify("2", :delete)
+    notify( { event: :delete, id: "2" } )
     sleep 0.1
-    notify(nil, :unsubscribe)
+    notify( { event: :unsubscribe } )
   end
 
-  def notify id, event
+  def notify message
     redis_opts = {
       url: ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
     }
