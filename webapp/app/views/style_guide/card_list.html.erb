@@ -1,5 +1,5 @@
 <div class="sg-intro">
-  <h1>Intents list</h1>
+  <h1>Card list</h1>
   <p>
     Displayed in agent main page.
   </p>
@@ -11,19 +11,19 @@
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
   <%= highlight_html do %>
-<ul id="sortable-list_example" class="intents-list">
+<ul id="sortable-list_example" class="card-list">
   <li>
-    <div class="intents-list__item__draggable"></div>
+    <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="intents-list__item__name">travel-from-to</span>
-      <span class="intents-list__item__desc">
+      <span class="card-list__item__name">travel-from-to</span>
+      <span class="card-list__item__desc">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
       </span>
     </a>
-    <div class="intents-list__item__stats">
+    <div class="card-list__item__stats">
       378 interpretations
     </div>
-    <div class="intents-list__item__actions">
+    <div class="card-list__item__actions">
       <div class="dropdown">
         <div class="dropdown__trigger">
           <button class="btn btn--small">
@@ -55,14 +55,14 @@
     </div>
   </li>
   <li>
-    <div class="intents-list__item__draggable"></div>
+    <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="intents-list__item__name">buy-something</span>
+      <span class="card-list__item__name">buy-something</span>
     </a>
-    <div class="intents-list__item__stats">
+    <div class="card-list__item__stats">
       23 interpretations
     </div>
-    <div class="intents-list__item__actions">
+    <div class="card-list__item__actions">
       <div class="dropdown">
         <div class="dropdown__trigger">
           <button class="btn btn--small">
@@ -94,17 +94,17 @@
     </div>
   </li>
   <li>
-    <div class="intents-list__item__draggable"></div>
+    <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="intents-list__item__name">date</span>
-      <span class="intents-list__item__desc">
+      <span class="card-list__item__name">date</span>
+      <span class="card-list__item__desc">
         Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
       </span>
     </a>
-    <div class="intents-list__item__stats">
+    <div class="card-list__item__stats">
       56 interpretations
     </div>
-    <div class="intents-list__item__actions">
+    <div class="card-list__item__actions">
       <div class="dropdown">
         <div class="dropdown__trigger">
           <button class="btn btn--small">
@@ -138,7 +138,7 @@
 </ul>
 <script>
   Sortable.create($('#sortable-list_example')[0], {
-    handle: '.intents-list__item__draggable',
+    handle: '.card-list__item__draggable',
     animation: 100
   });
 </script>
@@ -148,34 +148,34 @@
 <section>
   <h2>Show list</h2>
   <%= highlight_html do %>
-    <ul id="sortable-list_example" class="intents-list">
+    <ul id="sortable-list_example" class="card-list">
       <li>
         <a href="#">
-          <span class="intents-list__item__name">travel-from-to</span>
-          <span class="intents-list__item__desc">
+          <span class="card-list__item__name">travel-from-to</span>
+          <span class="card-list__item__desc">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
       </span>
         </a>
-        <div class="intents-list__item__stats">
+        <div class="card-list__item__stats">
           378 interpretations
         </div>
       </li>
       <li>
         <a href="#">
-          <span class="intents-list__item__name">buy-something</span>
+          <span class="card-list__item__name">buy-something</span>
         </a>
-        <div class="intents-list__item__stats">
+        <div class="card-list__item__stats">
           23 interpretations
         </div>
       </li>
       <li>
         <a href="#">
-          <span class="intents-list__item__name">date</span>
-          <span class="intents-list__item__desc">
+          <span class="card-list__item__name">date</span>
+          <span class="card-list__item__desc">
         Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
       </span>
         </a>
-        <div class="intents-list__item__stats">
+        <div class="card-list__item__stats">
           56 interpretations
         </div>
       </li>

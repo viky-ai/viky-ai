@@ -6,17 +6,17 @@ class IntentList
     if $(list_selector_id).length == 1
       @sortable = Sortable.create($(list_selector_id)[0], {
         group: 'intent-list'
-        handle: '.intents-list__item__draggable'
+        handle: '.card-list__item__draggable'
         animation: 100,
         onAdd: ->
           if $(list_selector_id+ ' > li').children().length > 0
-            $(list_selector_id).removeClass('intents-list--empty')
+            $(list_selector_id).removeClass('card-list--empty')
           ids = []
           ids.push($(item).data('id')) for item in $(list_selector_id+ ' > li')
           IntentList::updatePositions(list_selector_id)
         onRemove: ->
           if $(list_selector_id+ ' > li').children().length == 0
-            $(list_selector_id).addClass('intents-list--empty')
+            $(list_selector_id).addClass('card-list--empty')
           ids = []
           ids.push($(item).data('id')) for item in $(list_selector_id+ ' > li')
         onUpdate: ->
@@ -24,11 +24,11 @@ class IntentList
           ids.push($(item).data('id')) for item in $(list_selector_id+ ' > li')
           IntentList::updatePositions(list_selector_id, ids, visibility)
         onMove: (evt) ->
-          for list in $(".intents-list")
+          for list in $(".card-list")
             if $(evt.related).id != list.id
-              $(".intents-list").removeClass('intents-list--empty--dragging')
+              $(".card-list").removeClass('card-list--empty--dragging')
           if $(evt.related).is('ul')
-            $(evt.related).addClass('intents-list--empty--dragging')
+            $(evt.related).addClass('card-list--empty--dragging')
       });
 
   updatePositions:(list_selector_id) ->

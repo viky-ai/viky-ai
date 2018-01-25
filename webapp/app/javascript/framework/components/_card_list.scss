@@ -1,4 +1,4 @@
-.intents-list{
+.card-list{
   list-style: none;
   padding: 0;
   padding-bottom: .25em;
@@ -6,7 +6,7 @@
     box-shadow: 0 1px 7px rgba(#000, .25);
   }
 
-  &.intents-list--empty {
+  &.card-list--empty {
     border: 1px dotted #ccc;
     height: 3em;
     text-align: center;
@@ -20,7 +20,7 @@
       display: block;
     }
 
-    &.intents-list--empty--dragging {
+    &.card-list--empty--dragging {
       padding: 0;
       border: 1px dotted $primary-color;
       &:before {
@@ -46,10 +46,10 @@
       padding: .5rem 1rem;
       text-decoration: none;
       border-radius: 2px;
-      .intents-list__item__name{
+      .card-list__item__name{
         display: block;
       }
-      .intents-list__item__desc{
+      .card-list__item__desc{
         display: block;
         color: #aaa;
         font-size: .8em;
@@ -57,12 +57,12 @@
       }
       &:focus,
       &:hover{
-        .intents-list__item__name{
+        .card-list__item__name{
           text-decoration: underline;
         }
       }
     }
-    .intents-list__item__stats{
+    .card-list__item__stats{
       font-size: .8em;
       line-height: 1.8rem;
       padding: .5rem;
@@ -70,12 +70,12 @@
       text-align:right;
       width: 130px;
     }
-    .intents-list__item__actions{
+    .card-list__item__actions{
       padding: .5rem;
     }
   }
 
-  .intents-list__item__draggable {
+  .card-list__item__draggable {
     width: 20px;
 
     border-top-left-radius: 2px;
@@ -93,7 +93,7 @@
   }
 }
 
-.intents-list-header{
+.card-list-header{
   @include display_flex();
   justify-content: space-between;
   margin-top: 2em;
