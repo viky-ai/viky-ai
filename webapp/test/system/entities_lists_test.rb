@@ -30,4 +30,22 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_text?('ID can\'t be blank')
     end
   end
+
+
+  test 'Update an entities list' do
+    go_to_agent_show('admin', 'weather')
+    click_link 'Entities list'
+    within '#entities_lists-list-is_public' do
+      first('.dropdown__trigger > button').click
+      click_link 'Configure'
+    end
+
+    within('.modal') do
+      assert page.has_text? 'Edit entities list'
+      fill_in 'ID', with: 'countries'
+      fill_in 'Description', with: 'Every countries'
+      click_button 'Update'
+    end
+    assert page.has_text?('Your entities list has been successfully updated.')
+  end
 end

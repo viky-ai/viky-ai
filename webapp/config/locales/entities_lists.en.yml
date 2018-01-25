@@ -6,6 +6,7 @@ en:
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> entities lists
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> entities lists
         new: New entities list
+        configure: Configure
         entities:
           zero: "0 entity"
           one: "1 entity"
@@ -17,6 +18,10 @@ en:
         title: Create a new entities list
         btn: Create
         success_message: Entities list has been successfully created.
+      edit:
+        title: Edit entities list
+        btn: Update
+        success_message: Your entities list has been successfully updated.
       blankslate:
         message_show_html: >
           No entity list entered for the "%{agent}" agent.
