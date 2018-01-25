@@ -8,7 +8,7 @@ Put this variables in your `~/.bashrc` :
 
 ```
 export OG_APPS_PATH=`pwd`
-export OG_REPO_PATH=${OG_APPS_PATH}/pse
+export OG_REPO_PATH=${OG_APPS_PATH}/nlp
 export OG_TOOL_PATH=${OG_REPO_PATH}/tools
 export PATH=${OG_TOOL_PATH}/bin:${PATH}
 ```

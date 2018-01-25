@@ -1,6 +1,8 @@
 require 'redis'
 require 'open3'
 require 'term/ansicolor'
+require 'fileutils'
+require 'rest-client'
 
 module NlpRoute
 
@@ -36,9 +38,10 @@ module NlpRoute
         end
       end
 
-      # subscrive
-      subscribe()
+      init()
 
+      # subscribe
+      subscribe()
     end
 
     def stop
@@ -55,7 +58,17 @@ module NlpRoute
 
     end
 
-    private
+    def init
+
+      #Load all packages ids
+      wrapper = PackageApiWrapper.new
+      packages_ids = wrapper.list_id
+      packages_ids.each do |package_id|
+        package = wrapper.get_package(package_id)
+        wrapper.update_or_create(package_id, package)
+      end
+
+    end
 
     def subscribe
 
@@ -74,7 +87,21 @@ module NlpRoute
         end
 
         on.message do |channel, message|
-          puts "##{channel}: #{message}"
+          parsed_message = JSON.parse(message)
+          wrapper = PackageApiWrapper.new
+          puts "#{channel}: #{parsed_message}"
+
+          id = parsed_message["id"]
+
+          if parsed_message["event"] == "update"
+            package = wrapper.get_package(id)
+            wrapper.update_or_create(id, package)
+          elsif parsed_message["event"] == "delete"
+            wrapper.delete(id)
+          elsif parsed_message["event"] == "unsubscribe"
+            redis.unsubscribe
+          end
+
         end
 
       end

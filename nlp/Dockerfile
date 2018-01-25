@@ -45,7 +45,7 @@ RUN factory.pl -s bu2_nls   debug
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
 # ============================================================================
-FROM ubuntu:xenial AS run_image
+FROM ruby:2.4-stretch AS run_image
 
 # Add libxml2 needed for XSD validation
 # Add curl needed for healthcheck
@@ -53,9 +53,9 @@ RUN set -ex; \
     apt-get update ; \
     apt-get install -y --no-install-recommends \
       ca-certificates \
+      curl \
       libxml2 \
       wget \
-      curl \
     ; \
     rm -rf /var/lib/apt/lists/*
 
@@ -67,10 +67,23 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 WORKDIR /
 
+# Firstly bundle install (faster build)
+COPY ./nlp_route/Gemfile      /nlp_route/
+COPY ./nlp_route/Gemfile.lock /nlp_route/
+
+WORKDIR /nlp_route/
+
+# Production dependencies
+RUN bundle install --without development test --deployment --jobs=$(nproc)
+
+# Copy application code
+COPY ./nlp_route/ /nlp_route/
+
 COPY --from=build_image /builds/nls/ship /
 RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
 
 WORKDIR /nls
+ENV NLS_INSTALL_PATH=/nls
 
 VOLUME [ "/nls/import" ]
 EXPOSE 9345
@@ -83,18 +96,34 @@ CMD ["./docker_run.sh"]
 # ============================================================================
 # Test Nls
 # ============================================================================
-FROM ruby:2.4.2 AS test_image
+FROM ruby:2.4-stretch AS test_image
 
-WORKDIR /tests
+ADD ./docker_run_test.sh /
+
+# NLP
+WORKDIR /nlp_tests
 
 # Firstly bundle install (faster build)
-ADD products/bu2_nls/tests/Gemfile      /tests
-ADD products/bu2_nls/tests/Gemfile.lock /tests
+ADD products/bu2_nls/tests/Gemfile      /nlp_tests
+ADD products/bu2_nls/tests/Gemfile.lock /nlp_tests
 
 RUN bundle install --jobs $(nproc)
 
+# NLP_ROUTE
+WORKDIR /nlp_route_tests
+
+# Firstly bundle install (faster build)
+ADD ./nlp_route/Gemfile      /nlp_route_tests/
+ADD ./nlp_route/Gemfile.lock /nlp_route_tests/
+
+# Production dependencies
+RUN bundle install --jobs=$(nproc)
+
+# Copy nlp_route tests code
+ADD ./nlp_route/ /nlp_route_tests/
+
 # Copy test code
-ADD products/bu2_nls/tests  /tests
+ADD products/bu2_nls/tests  /nlp_tests
 
 COPY --from=build_image /builds/nls/ship /
 RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
@@ -103,4 +132,4 @@ ENV NLS_INSTALL_PATH=/nls
 ENV TERM=xterm-256color
 
 # Run test
-CMD ["bundle", "exec", "rake", "test"]
+CMD ["/docker_run_test.sh"]

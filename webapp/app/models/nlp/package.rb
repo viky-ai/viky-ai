@@ -25,19 +25,32 @@ class Nlp::Package
     end
   end
 
+  def notify event
+    redis_opts = {
+      url: ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
+    }
+    redis = Redis.new(redis_opts)
+
+    redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
+    Rails.logger.info "  | Redis notify agent's #{event} #{@agent.id}"
+  end
+
   def destroy
     return if Rails.env.test?
     unless Nlp::Package.sync_active
       Rails.logger.info "  Skipping destroy of package #{@agent.id} to NLP because sync is deactivated"
       return
     end
-    FileUtils.rm(path)
-    Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    req = Net::HTTP::Delete.new(uri.path)
-    res = http.request(req)
-    Rails.logger.info "  | Completed from NLP, status: #{res.code}"
+
+    notify(:delete)
+
+    # FileUtils.rm(path)
+    # Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
+    # uri = URI.parse(url)
+    # http = Net::HTTP.new(uri.host, uri.port)
+    # req = Net::HTTP::Delete.new(uri.path)
+    # res = http.request(req)
+    # Rails.logger.info "  | Completed from NLP, status: #{res.code}"
   end
 
   def push
@@ -46,21 +59,24 @@ class Nlp::Package
       Rails.logger.info "  Skipping push of package #{@agent.id} to NLP because sync is deactivated"
       return
     end
-    benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
-      json = generate_json
-      push_in_import_directory(json)
 
-      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      res = http.post(uri.path, json, JSON_HEADERS)
-      Rails.logger.info "  | Completed #{res.code}"
-      Rails.logger.info "  | Error: #{JSON.parse(res.body)}" if res.code != "200"
-      {
-        status: res.code,
-        body: JSON.parse(res.body)
-      }
-    end
+    notify(:update)
+
+    # benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
+    #   json = generate_json
+    #   push_in_import_directory(json)
+    #
+    #   Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
+    #   uri = URI.parse(url)
+    #   http = Net::HTTP.new(uri.host, uri.port)
+    #   res = http.post(uri.path, json, JSON_HEADERS)
+    #   Rails.logger.info "  | Completed #{res.code}"
+    #   Rails.logger.info "  | Error: #{JSON.parse(res.body)}" if res.code != "200"
+    #   {
+    #     status: res.code,
+    #     body: JSON.parse(res.body)
+    #   }
+    # end
   end
 
   def generate_json

@@ -70,11 +70,13 @@ test_webapp:
 test_nlp:
   stage: test
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
+  services:
+    - redis:3.2-alpine
   variables:
     GIT_STRATEGY: none
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://redis/3'
   script:
-    - cd /tests
-    - if [ "$SKIP_TEST" != "true" ]; then bundle exec rake test; fi
+    - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh fi
 
 # Tag docker image to lasted
 tag_webapp:
@@ -369,4 +371,3 @@ backup_restore_dev:
 
 before_script:
   - *auto_devops
-

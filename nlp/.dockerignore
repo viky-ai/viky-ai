@@ -1,6 +1,11 @@
 build/
 ship/
 
+nlp_route/.bundle
+nlp_route/.env
+nlp_route/log
+nlp_route/coverage
+
 # Glib temp file
 sources/external_dependencies/glib/**/Makefile.in
 sources/external_dependencies/glib/**/Makefile
