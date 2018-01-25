@@ -48,6 +48,23 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+  def confirm_destroy
+    render partial: 'confirm_destroy'
+  end
+
+  def destroy
+    if @entities_list.destroy
+      redirect_to user_agent_path(current_user, @agent), notice: t(
+        'views.entities_lists.destroy.success_message', name: @entities_list.listname
+      )
+    else
+      redirect_to user_agent_path(current_user, @agent), alert: t(
+        'views.entities_lists.destroy.errors_message',
+        errors: @entities_list.errors.full_messages.join(', ')
+      )
+    end
+  end
+
   private
     def set_entities_list
       entities_list_id = params[:entities_list_id] || params[:id]
@@ -71,7 +88,7 @@ class EntitiesListsController < ApplicationController
 
     def check_user_rights
       case action_name
-        when 'new', 'create', 'edit', 'update'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

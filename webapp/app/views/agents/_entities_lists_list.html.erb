@@ -33,6 +33,14 @@
                   </span><%= t('views.entities_lists.index.configure') %>
                   </a>
                 </li>
+                <li class="separator">
+                  <a href="<%= entities_list_confirm_destroy_path(entities_list) %>"
+                     data-action="open-remote-modal" class="destructive">
+                  <span class="icon icon--x-small">
+                    <%= icon_delete %>
+                  </span><%= t('views.entities_lists.index.delete') %>
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

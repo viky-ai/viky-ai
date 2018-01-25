@@ -96,4 +96,14 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 'admin/weather/weather_conditions', entities_list.slug
   end
 
+
+  test 'Entities list destroy' do
+    entities_list = entities_lists(:weather_conditions)
+    elist_id = entities_list.id
+
+    assert_equal 1, EntitiesList.where(id: elist_id).count
+    assert entities_list.destroy
+    assert_equal 0, EntitiesList.where(id: elist_id).count
+  end
+
 end

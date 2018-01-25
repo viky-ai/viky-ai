@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   scope '/agents' do
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
+        resources :entities_lists, shallow: true, only: [:new, :create, :edit, :update, :show, :destroy] do
+          get :confirm_destroy
+        end
+
         member do
           get :confirm_destroy
           get :confirm_transfer_ownership
@@ -65,7 +69,6 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :entities_lists, shallow: true, only: [:new, :create, :edit, :update, :show]
       end
     end
   end

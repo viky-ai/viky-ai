@@ -51,4 +51,39 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?('Unauthorized operation.')
   end
+
+
+  #
+  # Confirm_destroy access
+  #
+  test 'Confirm delete access' do
+    sign_in users(:admin)
+    get entities_list_confirm_destroy_url(entities_lists(:weather_conditions))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Confirm delete forbidden' do
+    sign_in users(:show_on_agent_weather)
+    get entities_list_confirm_destroy_url(entities_lists(:weather_conditions))
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+  #
+  # Delete
+  #
+  test 'Delete access' do
+    sign_in users(:admin)
+    delete entities_list_url(entities_lists(:weather_conditions))
+    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+    assert_nil flash[:alert]
+  end
+
+  test 'Delete forbidden' do
+    sign_in users(:show_on_agent_weather)
+    delete entities_list_url(entities_lists(:weather_conditions))
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

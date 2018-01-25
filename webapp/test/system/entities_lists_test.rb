@@ -48,4 +48,27 @@ class EntitiesListsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Your entities list has been successfully updated.')
   end
+
+
+  test 'Delete an entities list' do
+    go_to_agent_show('admin', 'weather')
+    click_link 'Entities list'
+    within '#entities_lists-list-is_public' do
+      first('.dropdown__trigger > button').click
+      click_link 'Delete'
+    end
+
+    within('.modal') do
+      assert page.has_text?('Are you sure?')
+      click_button('Delete')
+      assert page.has_text?('Please enter the text exactly as it is displayed to confirm.')
+
+      fill_in 'validation', with: 'DELETE'
+      click_button('Delete')
+    end
+    assert page.has_text?('Entities list with the name: weather_conditions has successfully been deleted.')
+
+    agent = agents(:weather)
+    assert_equal user_agent_path(agent.owner, agent), current_path
+  end
 end
