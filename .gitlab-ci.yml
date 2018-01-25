@@ -57,7 +57,7 @@ test_webapp:
     VIKYAPP_DB_HOST: postgres
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
-    POSTGRES_DB: vikylapp_test
+    POSTGRES_DB: vikyapp_test
     VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
     VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
   services:
@@ -76,7 +76,7 @@ test_nlp:
     GIT_STRATEGY: none
     VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://redis/3'
   script:
-    - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh fi
+    - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
 
 # Tag docker image to lasted
 tag_webapp:
