@@ -30,7 +30,7 @@ sources/external_dependencies/glib/**/*.trs
 
 
 # Duktape temp file
-external_dependencies/duktape/dist
-external_dependencies/duktape/tests
-external_dependencies/duktape/website
-external_dependencies/duktape/references
+sources/external_dependencies/duktape/dist
+sources/external_dependencies/duktape/tests
+sources/external_dependencies/duktape/website
+sources/external_dependencies/duktape/references

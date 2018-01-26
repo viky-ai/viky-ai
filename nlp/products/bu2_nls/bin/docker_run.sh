@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 sigterm_handler() {
   echo "STOP signal received, try to gracefully shutdown NLP ..."
@@ -17,12 +17,12 @@ trap "sigterm_handler; exit" SIGTERM
 # remove previously started server pid
 rm -f ./ogm_nls.pid
 
-if [ "${VIKYAPP_REDIS_PACKAGE_NOTIFIER}" == "" ] ; then
+if [ "${DOCKER_COMPOSE_DEPLOY}" == "true" ] ; then
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://localhost:6379 -wait http://localhost:3000 -timeout 60s
+  /usr/local/bin/dockerize -wait tcp://db-redis:6379 -wait http://lb-internal-app:3000 -timeout 600s
 else
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://db-redis:6379 -wait http://app-master:3000 -timeout 600s
+  /usr/local/bin/dockerize -wait tcp://localhost:6379 -wait http://localhost:3000 -timeout 60s
 fi
 
 # Start nlp in background, not in daemon
