@@ -38,10 +38,28 @@ module NlpRoute
         end
       end
 
+      # Send all package to NLP
       init()
 
       # subscribe
-      subscribe()
+      begin
+        tries ||= 10
+
+        subscribe()
+
+      rescue => e
+
+        if @subcribe_was_success
+          puts "Subscribe ends : #{e.inpect}"
+          sleep 3
+          retry unless (tries -= 1).zero?
+        else
+          puts "Subscribe failed : #{e.inpect}"
+          raise
+        end
+
+      end
+
     end
 
     def stop
@@ -83,6 +101,7 @@ module NlpRoute
       redis.subscribe(redis_channels) do |on|
 
         on.subscribe do |channel, subscriptions|
+          @subcribe_was_success = true
           puts "Subscribed to ##{channel} (#{subscriptions} subscriptions) ..."
         end
 
