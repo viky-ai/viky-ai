@@ -50,11 +50,11 @@ module NlpRoute
       rescue => e
 
         if @subcribe_was_success
-          puts "Subscribe ends : #{e.inpect}"
+          puts "Subscribe ends : #{e.inspect}"
           sleep 3
           retry unless (tries -= 1).zero?
         else
-          puts "Subscribe failed : #{e.inpect}"
+          puts "Subscribe failed : #{e.inspect}"
           raise
         end
 
