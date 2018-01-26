@@ -10,12 +10,51 @@
   <p>
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
+  <table>
+    <thead>
+    <tr>
+      <th><code>data-action</code> value</th>
+      <th>Behavior description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><code>ul data-group</code></td>
+      <td>
+        The key to allow drag and drop between two different lists. (Optional)
+      </td>
+    </tr>
+    <tr>
+      <td><code>ul data-update-positions-path</code></td>
+      <td>
+        The URL to send the update <code>POST</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>ul data-key</code></td>
+      <td>
+        The JSON key to use is the payload when posting to <code>data-update-positions-path</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>li data-id</code></td>
+      <td>
+        The value to send in an array indexed by <code>data-key</code> in the <code>POST</code> payload .
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+
+
   <%= highlight_html do %>
-<ul id="sortable-list_example" class="card-list">
-  <li>
+<ul id="sortable-list_example" class="card-list"
+    data-group="group_id"
+    data-part="json_key">
+  <li data-id="1234">
     <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="card-list__item__name">travel-from-to</span>
+      <span class="card-list__item__name">travel-from-to : Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi delectus eius eos magni nemo odit officia quae rem! Animi, illum obcaecati. Alias aspernatur blanditiis ea hic illum molestias natus tenetur?</span>
       <span class="card-list__item__desc">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
       </span>
@@ -54,7 +93,7 @@
       </div>
     </div>
   </li>
-  <li>
+  <li data-id="56789">
     <div class="card-list__item__draggable"></div>
     <a href="#">
       <span class="card-list__item__name">buy-something</span>
@@ -93,7 +132,7 @@
       </div>
     </div>
   </li>
-  <li>
+  <li data-id="91011">
     <div class="card-list__item__draggable"></div>
     <a href="#">
       <span class="card-list__item__name">date</span>
@@ -136,17 +175,14 @@
     </div>
   </li>
 </ul>
-<script>
-  Sortable.create($('#sortable-list_example')[0], {
-    handle: '.card-list__item__draggable',
-    animation: 100
-  });
-</script>
   <% end %>
 </section>
 
 <section>
   <h2>Show list</h2>
+  <p>
+    Used when the user have only show right. There is no drag and drop handle but an item can be extended to show more details. Text direction can be changed with the RTL property.
+  </p>
   <%= highlight_html do %>
     <ul id="sortable-list_example" class="card-list">
       <li>
@@ -162,7 +198,7 @@
       </li>
       <li>
         <a href="#">
-          <span class="card-list__item__name">buy-something</span>
+          <span class="card-list__item__name" dir="rtl">أبلكاسيون ويب<span class="badge">Auto solution</span></span>
         </a>
         <div class="card-list__item__stats">
           23 interpretations

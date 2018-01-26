@@ -33,6 +33,10 @@
     transition: box-shadow .2s;
     @include display_flex();
 
+    [dir='rtl']{
+      text-align: right;
+    }
+
     background-color: #fff;
     margin-bottom: .5em;
 
