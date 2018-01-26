@@ -4,6 +4,8 @@ class EntitiesListsController < ApplicationController
   before_action :check_user_rights
   before_action :set_entities_list, except: [:new, :create, :update_positions]
 
+  def show; end
+
   def new
     @entities_list = EntitiesList.new
     render partial: 'new'
@@ -91,6 +93,8 @@ class EntitiesListsController < ApplicationController
 
     def check_user_rights
       case action_name
+        when 'show'
+          access_denied unless current_user.can? :show, @agent
         when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
         else

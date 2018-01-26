@@ -2,6 +2,24 @@ require 'test_helper'
 
 class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
   #
+  # Show
+  #
+  test 'Show access' do
+    sign_in users(:show_on_agent_weather)
+    get user_agent_entities_list_url(users(:show_on_agent_weather), agents(:weather), entities_lists(:weather_conditions))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Show forbidden' do
+    sign_in users(:confirmed)
+    get user_agent_entities_list_url(users(:confirmed), agents(:terminator), entities_lists(:weather_conditions))
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
+  #
   # Create
   #
   test 'Create access' do

@@ -1,0 +1,24 @@
+<header class="header">
+  <div class="header__breadcrumb">
+    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %>/
+    <strong>
+      <%= @entities_list.listname %>
+    </strong>
+    <% if @entities_list.is_public? %>
+      <span class="badge badge--success badge--small">
+        <%= t('activerecord.attributes.entities_list.visibility_is_public').upcase %>
+      </span>
+    <% end %>
+    <% if @entities_list.is_private? %>
+      <span class="badge badge--warning badge--small">
+        <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
+      </span>
+    <% end %>
+    (<%= @entities_list.slug %>)
+  </div>
+</header>
+
+<% content_for :right_aside do %>
+  <%= render '/console/base' %>
+<% end %>

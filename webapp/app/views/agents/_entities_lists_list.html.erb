@@ -12,12 +12,13 @@
         <div class="card-list__item__draggable"></div>
       <% end %>
 
-      <a href="#">
+      <a href="<%= user_agent_entities_list_path(agent_owner, @agent, entities_list) %>">
         <span class="card-list__item__name"><%= entities_list.listname %></span>
         <span class="card-list__item__desc"><%= entities_list.description %></span>
       </a>
 
       <div class="card-list__item__stats">
+        <%= t('views.entities_lists.index.entities', count: entities_list.entities.count) %>
       </div>
 
       <% if current_user_can_edit %>
