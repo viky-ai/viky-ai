@@ -1,0 +1,11 @@
+weather_sunny:
+  solution: 'weather: sunny'
+  auto_solution_enabled: true
+  terms: <%= [{term: "soleil"}, {term: "sun"}].to_json.inspect %>
+  entities_list: weather_conditions
+
+weather_raining:
+  solution: 'weather: raining'
+  auto_solution_enabled: true
+  terms: <%= [{term: "pluie"}, {term: "rain"}].to_json.inspect %>
+  entities_list: weather_conditions

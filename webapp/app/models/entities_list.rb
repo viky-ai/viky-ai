@@ -7,6 +7,7 @@ class EntitiesList < ApplicationRecord
                         yellow amber orange deep-orange brown].freeze
 
   belongs_to :agent, touch: true
+  has_many :entities
 
   enum visibility: [:is_public, :is_private]
 
