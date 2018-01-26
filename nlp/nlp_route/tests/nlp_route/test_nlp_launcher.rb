@@ -61,7 +61,7 @@ class NlpRoute::TestNlpLauncher < Minitest::Test
     }
     redis = Redis.new(redis_opts)
 
-    redis.publish(:viky_packages_change_notifications, { event: event, id: id }.to_json  )
+    redis.publish(:viky_packages_change_notifications, message.to_json  )
   end
 
 end
