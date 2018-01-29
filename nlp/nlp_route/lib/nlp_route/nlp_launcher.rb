@@ -64,9 +64,8 @@ module NlpRoute
 
     def stop
       pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
-
       if File.exist?(pidfile)
-        `pkill --pidfile #{pidfile}`
+        `pkill --signal SIGINT --pidfile #{pidfile}`
       end
 
       if !@@nls_background.nil? && @@nls_background.alive?
@@ -119,6 +118,10 @@ module NlpRoute
             wrapper.delete(id)
           elsif parsed_message["event"] == "unsubscribe"
             redis.unsubscribe
+          elsif parsed_message["event"] == "reinit"
+            redis.unsubscribe
+            self.stop
+            self.start(true)
           end
 
         end

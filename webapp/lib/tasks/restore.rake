@@ -135,8 +135,8 @@ namespace :restore do
       else
         Restore::Print::notice("    [skipping] Stash directory is already present")
       end
-      Restore::Print::substep("Push all packages")
-      Rake::Task['packages:push_all'].invoke
+      Restore::Print::substep("Reinit NLP")
+      Rake::Task['packages:reinit'].invoke
     end
 
     def restore_images(params)

@@ -13,7 +13,6 @@ module NlpRoute
     def list_id
       puts "#{VIKY_URL}/api_internal/packages.json"
       response = RestClient.get "#{VIKY_URL}/api_internal/packages.json" , { content_type: :json, 'Access-Token' => VIKYAPP_INTERNAL_API_TOKEN }
-      puts response;
       JSON.parse(response.body)
     end
 
