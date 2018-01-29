@@ -7,17 +7,19 @@ module NlpRoute
 
     VIKY_URL = ENV.fetch("VIKYAPP_BASEURL") { 'http://localhost:3000' }
     NLP_URL =  ENV.fetch("VIKYAPP_NLP_URL") { 'http://localhost:9345' }
+    VIKYAPP_TOKEN = ENV.fetch("VIKYAPP_TOKEN") { 'Uq6ez5IUdd' }
 
     # list all package from webapp
     def list_id
       puts "#{VIKY_URL}/api_internal/packages.json"
-      response = RestClient.get "#{VIKY_URL}/api_internal/packages.json" , {accept: :json}
+      response = RestClient.get "#{VIKY_URL}/api_internal/packages.json" , { content_type: :json, 'Access-Token' => VIKYAPP_TOKEN }
+      puts response;
       JSON.parse(response.body)
     end
 
     # Get package data json from webapp
     def get_package(id)
-      response = RestClient.get "#{VIKY_URL}/api_internal/packages/#{id}.json"
+      response = RestClient.get "#{VIKY_URL}/api_internal/packages/#{id}.json" , { content_type: :json, 'Access-Token' => 'VIKYAPP_TOKEN' }
       JSON.parse(response.body)
     end
 
