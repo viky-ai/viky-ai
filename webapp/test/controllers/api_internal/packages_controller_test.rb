@@ -3,7 +3,7 @@ require 'test_helper'
 class ApiInternalTest < ActionDispatch::IntegrationTest
 
   test "Api internal get all packages" do
-    get "/api_internal/packages.json"
+    get "/api_internal/packages.json", headers: { "Access-Token" => ENV["VIKYAPP_INTERNAL_API_TOKEN"] }
 
     assert_equal '200', response.code
 
@@ -12,7 +12,7 @@ class ApiInternalTest < ActionDispatch::IntegrationTest
   end
 
   test "Api internal get one package" do
-    get "/api_internal/packages/fba88ff8-8238-5007-b3d8-b88fd504f94c.json"
+    get "/api_internal/packages/fba88ff8-8238-5007-b3d8-b88fd504f94c.json", headers: { "Access-Token" => ENV["VIKYAPP_INTERNAL_API_TOKEN"] }
 
     assert_equal '200', response.code
 
