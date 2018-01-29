@@ -303,7 +303,7 @@ module Nls
 
       if expected.has_key?(:solution)
         expected_solution = expected[:solution]
-        if expected_solution.kind_of?(Hash) || expected_solution.kind_of?(Array)
+        if expected_solution.kind_of?(Hash)
           expected_solution.deep_stringify_keys!
         end
 

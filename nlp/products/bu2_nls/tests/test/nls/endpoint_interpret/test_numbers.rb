@@ -13,53 +13,79 @@ module Nls
 
         Nls.remove_all_packages
 
-        Interpretation.default_locale = "fr-FR"
+        Interpretation.default_locale = nil
 
-        Nls.package_update(fixture_parse("package_number_digits.json"))
-        Nls.package_update(fixture_parse("package_number_letters.json"))
-        Nls.package_update(fixture_parse("package_number.json"))
+        Nls.package_update(create_package())
       end
 
-      def test_simple_numbers
-        check_interpret("3", interpretation: "number", solution: { number: 3 } )
-        check_interpret("4", interpretation: "number", solution: { number: 4 } )
+      def create_package
+        package = Package.new("numbers")
+
+        letters = package.new_interpretation("letters")
+        letters << Expression.new("a", solution: "a")
+        letters << Expression.new("b", solution: "b")
+
+        numbers = package.new_interpretation("numbers")
+        numbers << Expression.new("@{number}", aliases: { number: Alias.digit })
+
+#        numbers_list = package.new_interpretation("numbers_list")
+#        numbers_list << Expression.new("@{numbers_list} @{numbers}", aliases: {numbers_list: numbers_list, numbers: numbers})
+#        numbers_list << Expression.new("@{numbers}", aliases: {numbers: numbers})
+
+        complex_number = package.new_interpretation("complex_number")
+        complex_number << Expression.new("@{letter1} @{number} @{letter2}", aliases: { letter1: letters, number: Alias.digit, letter2: letters})
+
+        package
       end
 
-      def test_simple_number_letters
-        check_interpret("three", interpretation: "number", solution: { number: 3 } )
-        check_interpret("quatre", interpretation: "number", solution: { number: 4 } )
+      # Tests
 
+      def test_simple_decimal_number_french
+        check_interpret("1",      { interpretation: "numbers", solution: 1 })
+        check_interpret("1,2",    { interpretation: "numbers", solution: 1.2 })
+        check_interpret("12 345 678",    { interpretation: "numbers", solution: 12345678 })
+#        check_interpret("1",      { interpretation: "numbers", solution: 1 })
+#        check_interpret("1,2",    { interpretation: "numbers", solution: 1.2 })
+#        check_interpret("12 345 678",    { interpretation: "numbers", solution: 12345678 })
       end
+
+      def test_wrong_decimal_french
+        check_interpret("1 , 2",    { interpretation: "numbers", solution: 1 })
+        check_interpret("1, 2",    { interpretation: "numbers", solution: 1 })
+        check_interpret("1 ,2",    { interpretation: "numbers", solution: 1 })
+      end
+
+      def test_extra_zero
+        check_interpret("01,2",    { interpretation: "numbers", solution: 1.2 })
+        check_interpret("1,20",    { interpretation: "numbers", solution: 1.2 })
+        check_interpret("1,200",    { interpretation: "numbers", solution: 1.2 })
+      end
+
+
+      def test_thousand_number
+        check_interpret("1 200",    { interpretation: "numbers", solution: 1200 })
+        check_interpret("100 200",    { interpretation: "numbers", solution: 100200 })
+        check_interpret("9 100 200",    { interpretation: "numbers", solution: 9100200 })
+
+        check_interpret("1 234",    { interpretation: "numbers", solution: 1234 })
+        check_interpret("1 234 567",    { interpretation: "numbers", solution: 1234567 })
+      end
+
+      def test_thousand_decimal_number
+        check_interpret("1 200,3",    { interpretation: "numbers", solution: 1200.3 })
+        check_interpret("9 100 200.0",    { interpretation: "numbers", solution: 9100200 })
+      end
+
+
 
       def test_complex_number
-        check_interpret("51", interpretation: "number", solution: { number: 51 } )
-        check_interpret("32847", interpretation: "number", solution: { number: 32847 } )
+        check_interpret("a 1 b",      { interpretation: "complex_number", solution: {"letter1"=>"a", "number"=>1, "letter2"=>"b"} })
+        check_interpret("a 1,2 b",    { interpretation: "complex_number", solution: {"letter1"=>"a", "number"=>1.2, "letter2"=>"b"} })
+        check_interpret("12 123,123 123",    { interpretation: "numbers", solution: 12123.123 })
+        check_interpret("12 123,123 123",    { interpretation: "numbers", solution: 12123.123 })
       end
 
-      def test_complex_number_letters
-        check_interpret("fifty two", interpretation: "number", solution: { number: 52 } )
-        check_interpret("two hundred and fifty two", interpretation: "number", solution: { number: 252 } )
-        check_interpret("quarante et un", interpretation: "number", solution: { number: 41 } )
-        check_interpret("quarante et une", interpretation: "number", solution: { number: 41 } )
-        check_interpret("quatre vingt douze", interpretation: "number", solution: { number: 92 } )
-        check_interpret("sept cent dix huit mille quatre cent quatre vingt quatorze", interpretation: "number", solution: { number: 718494 } )
-        check_interpret("quarante douze", interpretation: "number", solution: { number: 52 } )
-        check_interpret("two thousand and seventeen", interpretation: "number", solution: { number: 2017 } )
-      end
-
-      def test_ordinal_number
-        check_interpret("troisieme", interpretation: "number_ordinal", solution: { number: 3 } )
-        check_interpret("third", interpretation: "number_ordinal", solution: { number: 3 } )
-        check_interpret("3 rd", interpretation: "number_ordinal", solution: { number: 3 } )
-        check_interpret("1 st", interpretation: "number_ordinal", solution: { number: 1 } )
-        check_interpret("4 eme", interpretation: "number_ordinal", solution: { number: 4 } )
-        check_interpret("236 th", interpretation: "number_ordinal", solution: { number: 236 } )
-        check_interpret("236 ieme", interpretation: "number_ordinal", solution: { number: 236 } )
-        check_interpret("centième", interpretation: "number_ordinal", solution: { number: 100 } )
-
-#        check_interpret("3ieme", interpretation: "number_ordinal", solution: { number: 3 } )
-#        check_interpret("3rd", interpretation: "number_ordinal", solution: { number: 3 } )
-      end
     end
   end
+
 end

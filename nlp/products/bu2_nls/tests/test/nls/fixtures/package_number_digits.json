@@ -3,16 +3,7 @@
   "interpretations":
   [
     {
-      "id": "dot",
-      "expressions":
-      [
-        {
-          "expression": "."
-        }
-      ]
-    },
-    {
-      "id": "st",
+      "id": "ordinal_suffix",
       "expressions":
       [
         {
@@ -22,230 +13,30 @@
         {
           "expression": "er",
           "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "nd",
-      "expressions":
-      [
+        },
         {
           "expression": "nd",
           "locale": "en"
         },
         {
-          "expression": "ieme",
-          "locale": "fr"
-        },
-        {
-          "expression": "eme",
-          "locale": "fr"
-        },
-        {
           "expression": "nd",
           "locale": "fr"
-        }
-      ]
-    },
-    {
-      "id": "rd",
-      "expressions":
-      [
+        },
         {
           "expression": "rd",
           "locale": "en"
         },
-        {
-          "expression": "ieme",
-          "locale": "en"
-        },
-        {
-          "expression": "eme",
-          "locale": "en"
-        }
-      ]
-    },
-    {
-      "id": "th",
-      "expressions":
-      [
         {
           "expression": "th",
           "locale": "en"
         },
         {
           "expression": "ieme",
-          "locale": "en"
+          "locale": "fr"
         },
         {
           "expression": "eme",
-          "locale": "en"
-        }
-      ]
-    },
-    {
-      "id": "ordinal_suffix",
-      "expressions":
-      [
-        {
-          "expression": "@{st}",
-          "aliases":
-          [
-            {
-              "alias": "st",
-              "id": "st"
-            }
-          ]
-        },
-        {
-          "expression": "@{nd}",
-          "aliases":
-          [
-            {
-              "alias": "nd",
-              "id": "nd"
-            }
-          ]
-        },
-        {
-          "expression": "@{rd}",
-          "aliases":
-          [
-            {
-              "alias": "rd",
-              "id": "rd"
-            }
-          ]
-        },
-        {
-          "expression": "@{th}",
-          "aliases":
-          [
-            {
-              "alias": "th",
-              "id": "th"
-            }
-          ]
-        }
-      ]
-    },
-
-    {
-      "id": "coma",
-      "expressions":
-      [
-        {
-          "expression": ","
-        }
-      ]
-    },
-    {
-      "id": "digits_number",
-      "expressions":
-      [
-        {
-          "expression": "@{digits}",
-          "aliases":
-          [
-            {
-              "alias": "digits",
-              "type": "digit"
-            }
-          ],
-          "solution":
-          {
-            "number": "`digits`"
-          }
-        }
-      ]
-    },
-    {
-      "id": "digits_sep_digits",
-      "expressions":
-      [
-        {
-          "expression": "@{digits_before} @{dot} @{digits_after}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "digits_before",
-              "type": "digit"
-            },
-            {
-              "alias": "dot",
-              "id": "dot"
-            },
-            {
-              "alias": "digits_after",
-              "type": "digit"
-            }
-          ]
-        },
-        {
-          "expression": "@{digits_before} @{coma} @{digits_after}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "digits_before",
-              "type": "digit"
-            },
-            {
-              "alias": "coma",
-              "id": "coma"
-            },
-            {
-              "alias": "digits_after",
-              "type": "digit"
-            }
-          ]
-        }
-      ],
-      "solution":
-      {
-        "number": "`Number(digits_before.digit+'.'+digits_after.digit)`"
-      }
-    },
-    {
-      "id": "several_digits",
-      "expressions":
-      [
-        {
-          "expression": "@{digits} @{several_digits}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "digits",
-              "type": "digit"
-            },
-            {
-              "alias": "several_digits",
-              "id": "several_digits"
-            }
-          ],
-          "solution":
-          {
-            "number": "`digits.digit+''+several_digits.number`"
-          }
-        },
-        {
-          "expression": "@{digits}",
-          "aliases":
-          [
-            {
-              "alias": "digits",
-              "type": "digit"
-            }
-          ],
-          "solution":
-          {
-            "number": "`digits`"
-          }
+          "locale": "fr"
         }
       ]
     },
@@ -254,34 +45,18 @@
       "expressions":
       [
         {
-          "expression": "@{digits_number}",
+          "expression": "@{digits}",
           "aliases":
           [
             {
-              "alias": "digits_number",
-              "id": "digits_number"
+              "alias": "digits",
+              "type": "digit"
             }
-          ]
-        },
-        {
-          "expression": "@{digits_sep_digits}",
-          "aliases":
-          [
-            {
-              "alias": "digits_sep_digits",
-              "id": "digits_sep_digits"
-            }
-          ]
-        },
-        {
-          "expression": "@{several_digits}",
-          "aliases":
-          [
-            {
-              "alias": "several_digits",
-              "id": "several_digits"
-            }
-          ]
+          ],
+          "solution":
+          {
+            "number": "`digits`"
+          }
         }
       ]
     },

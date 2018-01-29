@@ -240,7 +240,16 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       IFN(string_request_word) DPcErr;
       if (request_word->is_digit && request_input_part->interpret_word_as_digit)
       {
-        json_t *json_solution_digit = json_integer(request_word->digit_value);
+        double value = request_word->digit_value;
+        json_t *json_solution_digit = NULL;
+        if ((json_int_t) ((value * 100) / 100) == value)
+        {
+          json_solution_digit = json_integer(value);
+        }
+        else
+        {
+          json_solution_digit = json_real(value);
+        }
 
         struct alias *alias = request_input_part->input_part->alias;
         char solution[DPcPathSize];

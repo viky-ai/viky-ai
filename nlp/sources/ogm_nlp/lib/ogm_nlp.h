@@ -318,10 +318,15 @@ struct request_word
   int start_position;
   int length_position;
   og_bool is_digit;
-  int digit_value;
+  double digit_value;
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
+
+  /**
+   * if word is merged, it must be ignored
+   */
+  og_bool is_merged;
 };
 
 struct accept_language
@@ -728,6 +733,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+og_status NlpGroupDigits(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_expression.c */
 og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);

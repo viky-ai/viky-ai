@@ -191,7 +191,7 @@ static og_status NlpRequestInputPartWordLog(og_nlp_th ctrl_nlp_th, struct reques
   digit[0] = 0;
   if (request_word->is_digit)
   {
-    snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
+    snprintf(digit, DPcPathSize, " -> %f", request_word->digit_value);
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d [%s] '%.*s'%s", string_offset,

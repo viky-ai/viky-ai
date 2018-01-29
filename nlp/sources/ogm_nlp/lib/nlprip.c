@@ -144,7 +144,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       digit[0] = 0;
       if (request_word->is_digit)
       {
-        snprintf(digit, DPcPathSize, " -> %d", request_word->digit_value);
+        snprintf(digit, DPcPathSize, " -> %f", request_word->digit_value);
       }
       snprintf(string_input_part, DPcPathSize, "[%s] word:%s%s %d:%d", string_positions, string_request_word, digit,
           request_word->start_position, request_word->length_position);
