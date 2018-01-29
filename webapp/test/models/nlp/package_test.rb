@@ -392,15 +392,8 @@ class PackageTest < ActiveSupport::TestCase
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
-    endpoint = ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
+    endpoint = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
     assert_equal endpoint, p.endpoint
-  end
-
-
-  test 'Validate package URL' do
-    weather = agents(:weather)
-    p = Nlp::Package.new(weather)
-    assert_equal "#{p.endpoint}/packages/#{weather.id}", p.url
   end
 
 
