@@ -12,7 +12,7 @@ class ApiInternal::ApplicationController < ApplicationController
     end
 
     def check_token
-      unless request.headers["Access-Token"] == ENV["VIKYAPP_TOKEN"]
+      unless request.headers["Access-Token"] == ENV["VIKYAPP_INTERNAL_API_TOKEN"]
         render json: {message: t('controllers.api.access_denied')}, status: 401 and return
       end
     end

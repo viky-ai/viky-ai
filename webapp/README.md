@@ -32,6 +32,8 @@ VIKYAPP_CACHE_REDIS_URL='redis://localhost:6379/0'
 VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:6379/1'
 VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/2'
 
+VIKYAPP_INTERNAL_API_TOKEN=Uq6ez5IUdd
+
 VIKYAPP_NLP_URL='http://localhost:9345'
 
 # restore env password
@@ -130,4 +132,3 @@ and give your `username` and `password` of the Pertimm services.
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
 
     bundle install
-
