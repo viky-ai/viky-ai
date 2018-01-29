@@ -13,44 +13,19 @@ class Nlp::Package
     @agent = agent
   end
 
-  def self.push_all
-    return if Rails.env.test?
-    unless Nlp::Package.sync_active
-      Rails.logger.info '  Skipping push_all packages to NLP because sync is deactivated'
-      return
-    end
-    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*.json'))
-    Agent.all.each do |agent|
-      Nlp::Package.new(agent).push
-    end
-  end
-
   def self.reinit
     return if Rails.env.test?
     unless Nlp::Package.sync_active
       Rails.logger.info '  Skipping push_all packages to NLP because sync is deactivated'
       return
     end
-
-    event = "reinit"
+    event = :reinit
     redis_opts = {
-      url: ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
+      url: endpoint
     }
     redis = Redis.new(redis_opts)
-
-    redis.publish(:viky_packages_change_notifications, { event: event }.to_json  )
+    redis.publish(:viky_packages_change_notifications, { event: event }.to_json)
     Rails.logger.info "  | Redis notify agent's #{event}"
-
-  end
-
-  def notify event
-    redis_opts = {
-      url: ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
-    }
-    redis = Redis.new(redis_opts)
-
-    redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
-    Rails.logger.info "  | Redis notify agent's #{event} #{@agent.id}"
   end
 
   def destroy
