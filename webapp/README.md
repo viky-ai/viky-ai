@@ -25,7 +25,6 @@ For example you could define your local PostgreSQL username, password and other 
 ```
 MY_CURRENT_GIT_BRANCH=:`git describe --all --abbrev=0 --always --contains | sed 's|[~^].*||' | sed 's|remotes/origin/||' | sed 's|heads/||' | sed 's|tags/||' | sed 's|/|-|g' | sed 's|_|-|g'`
 
-
 VIKYAPP_DB_USERNAME=superman
 VIKYAPP_DB_PASSWORD='sup$_3rman'
 VIKYAPP_DB_HOST=localhost
