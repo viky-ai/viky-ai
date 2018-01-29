@@ -6,7 +6,6 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
 
   def show
     @agent = Agent.find(params[:id])
-    @interpretations = Nlp::Package.new(@agent).build_tree
+    render json: Nlp::Package.new(@agent).generate_json
   end
-
 end

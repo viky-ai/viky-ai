@@ -91,17 +91,6 @@ class Nlp::Package
     Rails.logger
   end
 
-  def build_tree
-    interpretations = []
-    @agent.intents.order(position: :desc).each do |intent|
-      cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-      interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-        build_internals_list_nodes(intent)
-      end
-      interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
-    end
-    interpretations
-  end
 
   private
 
@@ -112,6 +101,18 @@ class Nlp::Package
       redis = Redis.new(redis_opts)
       redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
       Rails.logger.info "  | Redis notify agent's #{event} #{@agent.id}"
+    end
+
+    def build_tree
+      interpretations = []
+      @agent.intents.order(position: :desc).each do |intent|
+        cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(intent)
+        end
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
+      end
+      interpretations
     end
 
     def build_internals_list_nodes(intent)
