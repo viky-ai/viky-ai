@@ -9,6 +9,8 @@ class Nlp::Package
 
   JSON_HEADERS = {"Content-Type" => "application/json", "Accept" => "application/json"}
 
+  REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
+
   def initialize(agent)
     @agent = agent
   end
@@ -21,7 +23,7 @@ class Nlp::Package
     end
     event = :reinit
     redis_opts = {
-      url: endpoint
+      url: REDIS_URL
     }
     redis = Redis.new(redis_opts)
     redis.publish(:viky_packages_change_notifications, { event: event }.to_json)
@@ -63,10 +65,6 @@ class Nlp::Package
     end
   end
 
-  def endpoint
-    ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
-  end
-
   def logger
     Rails.logger
   end
@@ -76,7 +74,7 @@ class Nlp::Package
 
     def notify event
       redis_opts = {
-        url: endpoint
+        url: REDIS_URL
       }
       redis = Redis.new(redis_opts)
       redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
