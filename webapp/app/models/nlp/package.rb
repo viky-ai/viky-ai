@@ -47,15 +47,20 @@ class Nlp::Package
   end
 
   def generate_json
-    JSON.pretty_generate(
-      JSON.parse(
-        ApplicationController.render(
-          template: 'agents/package',
-          assigns: { agent: @agent, interpretations: build_tree },
-          format: :json
-        )
+    JSON.parse(
+      ApplicationController.render(
+        template: 'agents/package',
+        assigns: { agent: @agent, interpretations: build_tree },
+        format: :json
       )
     )
+  end
+
+  def full_json_export
+    packages_list = full_packages_map(@agent).values
+    packages_list.collect do |package|
+      Nlp::Package.new(package).generate_json
+    end
   end
 
   def endpoint
@@ -76,6 +81,15 @@ class Nlp::Package
       redis = Redis.new(redis_opts)
       redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
       Rails.logger.info "  | Redis notify agent's #{event} #{@agent.id}"
+    end
+
+    def full_packages_map(agent)
+      return { agent.id => agent } if agent.successors.nil?
+      result = { agent.id => agent }
+      agent.successors.each do |successor|
+        result.merge! full_packages_map(successor)
+      end
+      result
     end
 
     def build_tree
