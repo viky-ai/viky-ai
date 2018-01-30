@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-set -ex
+set -e
+
+NLP_ROUTE_PID=''
 
 sigterm_handler() {
   echo "STOP signal received, try to gracefully shutdown NLP ..."
 
-  if [[ -e ./ogm_nls.pid ]] ; then
-    pkill --signal SIGTERM --pidfile ./ogm_nls.pid
+  if [[ "$NLP_ROUTE_PID" != '' ]] ; then
+    kill -SIGINT $NLP_ROUTE_PID
   fi
 
   # wait for stop
@@ -26,7 +28,9 @@ else
 fi
 
 # Start nlp in background, not in daemon
-cd /nlp_route && bundle exec ./bin/nlp-route &
+cd /nlp_route
+bundle exec ./bin/nlp-route &
+NLP_ROUTE_PID=$!
 
 # wait for signal
 wait
