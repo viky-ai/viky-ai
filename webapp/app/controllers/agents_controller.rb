@@ -132,7 +132,9 @@ class AgentsController < ApplicationController
   def full_export
     respond_to do |format|
       format.json {
-        render json: Nlp::Package.new(@agent).full_json_export
+        filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
+        response.headers["Content-Disposition"] = "inline; filename=\"#{filename}\""
+        render json: JSON.pretty_generate(Nlp::Package.new(@agent).full_json_export)
       }
     end
   end
