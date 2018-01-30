@@ -87,7 +87,6 @@ RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
 WORKDIR /nls
 ENV NLS_INSTALL_PATH=/nls
 
-VOLUME [ "/nls/import" ]
 EXPOSE 9345
 CMD ["./docker_run.sh"]
 
