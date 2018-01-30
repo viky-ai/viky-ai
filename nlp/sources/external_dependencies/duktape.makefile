@@ -27,6 +27,7 @@ all:
 
 fullclean: clean
 	-cd duktape && $(MAKE) cleanall
+	-rm -rf duktape/dist
 
 clean:
 	rm -f  $(SRCPATH)/include/duktape.h

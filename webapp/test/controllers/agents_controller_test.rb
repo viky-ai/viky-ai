@@ -556,4 +556,21 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+  #
+  # Download package
+  #
+  test 'Allow package download if admin' do
+    sign_in users(:admin)
+    get full_export_user_agent_url(users(:admin), agents(:weather), format: 'json')
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+
+  test 'Forbid package download if not admin' do
+    sign_in users(:show_on_agent_weather)
+    get full_export_user_agent_url(users(:admin), agents(:weather), format: 'json')
+    assert_response :forbidden
+    assert response.body.include?("Unauthorized operation.")
+  end
 end

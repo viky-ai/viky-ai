@@ -57,6 +57,7 @@
 
         <bin name="ogm_nls" source="%OG_REPO_PATH%/build/%TARGET%/bin/ogm_nls" />
         <bin name="ognlp" source="%OG_REPO_PATH%/build/%TARGET%/bin/ognlp" />
+        <copy source="%OG_REPO_PATH%/products/bu2_nls/bin/docker_run.sh" target="./docker_run.sh"  />
 
         <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./"  />
         <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" />

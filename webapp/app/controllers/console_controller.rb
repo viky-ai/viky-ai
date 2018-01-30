@@ -54,19 +54,12 @@ class ConsoleController < ApplicationController
       response = Rails.application.call(req.env)
       status, headers, body = response
 
-      if status == 200
-        {
-          path: path,
-          status: status,
-          body: body.first
-        }
-      else
-        {
-          path: path,
-          status: status,
-          body: body.body
-        }
-      end
+      result = {
+        path: path,
+        status: status,
+      }
+      result[:body] = status == 200 ? body.first : body.body
+      result[:package_path] = full_export_user_agent_url(agent.owner, agent, format: 'json') if current_user.admin?
+      result
     end
-
 end

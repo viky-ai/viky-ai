@@ -13,16 +13,19 @@ class Nlp::Package
     @agent = agent
   end
 
-  def self.push_all
+  def self.reinit
     return if Rails.env.test?
     unless Nlp::Package.sync_active
       Rails.logger.info '  Skipping push_all packages to NLP because sync is deactivated'
       return
     end
-    FileUtils.rm Dir.glob(File.join(Rails.root, 'import', '/*.json'))
-    Agent.all.each do |agent|
-      Nlp::Package.new(agent).push
-    end
+    event = :reinit
+    redis_opts = {
+      url: endpoint
+    }
+    redis = Redis.new(redis_opts)
+    redis.publish(:viky_packages_change_notifications, { event: event }.to_json)
+    Rails.logger.info "  | Redis notify agent's #{event}"
   end
 
   def destroy
@@ -31,13 +34,7 @@ class Nlp::Package
       Rails.logger.info "  Skipping destroy of package #{@agent.id} to NLP because sync is deactivated"
       return
     end
-    FileUtils.rm(path)
-    Rails.logger.info "  | Started DELETE: #{url} at #{Time.now}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    req = Net::HTTP::Delete.new(uri.path)
-    res = http.request(req)
-    Rails.logger.info "  | Completed from NLP, status: #{res.code}"
+    notify(:delete)
   end
 
   def push
@@ -46,47 +43,28 @@ class Nlp::Package
       Rails.logger.info "  Skipping push of package #{@agent.id} to NLP because sync is deactivated"
       return
     end
-    benchmark "  NLP generate and push package: #{@agent.id}", level: :info do
-      json = generate_json
-      push_in_import_directory(json)
-
-      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      res = http.post(uri.path, json, JSON_HEADERS)
-      Rails.logger.info "  | Completed #{res.code}"
-      Rails.logger.info "  | Error: #{JSON.parse(res.body)}" if res.code != "200"
-      {
-        status: res.code,
-        body: JSON.parse(res.body)
-      }
-    end
+    notify(:update)
   end
 
   def generate_json
-    JSON.pretty_generate(
-      JSON.parse(
-        ApplicationController.render(
-          template: 'agents/package',
-          assigns: { agent: @agent, interpretations: build_tree },
-          format: :json
-        )
+    JSON.parse(
+      ApplicationController.render(
+        template: 'agents/package',
+        assigns: { agent: @agent, interpretations: build_tree },
+        format: :json
       )
     )
   end
 
+  def full_json_export
+    packages_list = full_packages_map(@agent).values
+    packages_list.collect do |package|
+      Nlp::Package.new(package).generate_json
+    end
+  end
+
   def endpoint
-    ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
-  end
-
-  def url
-    "#{endpoint}/packages/#{@agent.id}"
-  end
-
-  def path
-    outdirname = File.join(Rails.root, 'import')
-    FileUtils.mkdir outdirname unless File.exist?(outdirname)
-    File.join(outdirname, "#{@agent.id}.json")
+    ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
   end
 
   def logger
@@ -96,8 +74,22 @@ class Nlp::Package
 
   private
 
-    def push_in_import_directory(json)
-      File.open(path, 'w') { |file| file.write json }
+    def notify event
+      redis_opts = {
+        url: endpoint
+      }
+      redis = Redis.new(redis_opts)
+      redis.publish(:viky_packages_change_notifications, { event: event, id: @agent.id }.to_json  )
+      Rails.logger.info "  | Redis notify agent's #{event} #{@agent.id}"
+    end
+
+    def full_packages_map(agent)
+      return { agent.id => agent } if agent.successors.nil?
+      result = { agent.id => agent }
+      agent.successors.each do |successor|
+        result.merge! full_packages_map(successor)
+      end
+      result
     end
 
     def build_tree

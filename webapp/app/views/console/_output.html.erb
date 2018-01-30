@@ -80,11 +80,20 @@
     </p>
   <% end %>
 
-  <p class="endpoint">
-    <a href="<%= data[:path] %>" target="_blank">
-      <%= t('views.console.go_to_api_endpoint') %>
-    </a>
-  </p>
+  <div class="api_links">
+    <p class="endpoint">
+      <a href="<%= data[:path] %>" target="_blank">
+        <%= t('views.console.go_to_api_endpoint') %>
+      </a>
+    </p>
+    <% if current_user.admin? %>
+      <p class="download_package">
+        <a href="<%= data[:package_path]%>" target="_blank">
+          <%= t('views.console.download_package') %>
+        </a>
+      </p>
+    <% end %>
+  </div>
 
 </div>
 <div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>

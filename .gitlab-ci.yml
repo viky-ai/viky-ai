@@ -57,7 +57,7 @@ test_webapp:
     VIKYAPP_DB_HOST: postgres
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
-    POSTGRES_DB: vikylapp_test
+    POSTGRES_DB: vikyapp_test
     VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
     VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
   services:
@@ -70,11 +70,13 @@ test_webapp:
 test_nlp:
   stage: test
   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
+  services:
+    - redis:3.2-alpine
   variables:
     GIT_STRATEGY: none
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://redis/3'
   script:
-    - cd /tests
-    - if [ "$SKIP_TEST" != "true" ]; then bundle exec rake test; fi
+    - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
 
 # Tag docker image to lasted
 tag_webapp:
@@ -136,7 +138,7 @@ deploy_dev:
     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
     - echo "Deploy ..."
-    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml  --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
 
 # Deploy master on rancher preprod
 deploy_preprod:
@@ -163,7 +165,7 @@ deploy_preprod:
     - echo "Backing up data ..."
     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
     - echo "Deploy ..."
-    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-rancher.yml -d --pull --force-upgrade --confirm-upgrade
+    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
 
 
 # remove environment
@@ -369,4 +371,3 @@ backup_restore_dev:
 
 before_script:
   - *auto_devops
-

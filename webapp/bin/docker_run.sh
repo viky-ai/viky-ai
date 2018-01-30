@@ -32,9 +32,6 @@ if [[ "$1" == "master" ]] ; then
   echo "Try to run db:migrate ..."
   ./bin/rails db:create db:migrate
 
-  # Push all Package
-  ./bin/rails packages:push_all && echo "All packages have been pushed" &
-
 else
 
   # wait for services

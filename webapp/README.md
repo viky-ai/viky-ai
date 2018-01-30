@@ -23,13 +23,19 @@ Beware of never committing or pushing the `.env` file, it is just useful for you
 For example you could define your local PostgreSQL username, password and other variables like your favourite Redis endpoint for ActionCable and ActiveJob, maybe it's a remote machine, maybe your localhost, e.g.:
 
 ```
+MY_CURRENT_GIT_BRANCH=:`git describe --all --abbrev=0 --always --contains | sed 's|[~^].*||' | sed 's|remotes/origin/||' | sed 's|heads/||' | sed 's|tags/||' | sed 's|/|-|g' | sed 's|_|-|g'`
+
 VIKYAPP_DB_USERNAME=superman
 VIKYAPP_DB_PASSWORD='sup$_3rman'
 VIKYAPP_DB_HOST=localhost
 VIKYAPP_DB_PORT=5432
 
-VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/1'
-VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:7372/1'
+VIKYAPP_CACHE_REDIS_URL='redis://localhost:6379/0'
+VIKYAPP_ACTIVEJOB_REDIS_URL='redis://localhost:6379/1'
+VIKYAPP_ACTIONCABLE_REDIS_URL='redis://localhost:6379/2'
+VIKYAPP_REDIS_PACKAGE_NOTIFIER='redis://localhost:6379/3'
+
+VIKYAPP_INTERNAL_API_TOKEN=Uq6ez5IUdd
 
 VIKYAPP_NLP_URL='http://localhost:9345'
 
@@ -129,4 +135,3 @@ and give your `username` and `password` of the Pertimm services.
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
 
     bundle install
-

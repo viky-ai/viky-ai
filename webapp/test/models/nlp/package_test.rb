@@ -51,7 +51,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
 
@@ -84,7 +84,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
 
@@ -115,7 +115,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
 
@@ -207,7 +207,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
 
@@ -315,7 +315,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
 
@@ -385,22 +385,86 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    assert_equal expected, p.generate_json
   end
 
+
+  test 'Packages with all its dependencies' do
+    weather = agents(:weather)
+    terminator = agents(:terminator)
+    assert AgentArc.create(source: weather, target: terminator)
+    weather.reload
+    p = Nlp::Package.new(weather)
+
+    expected = [{
+      "id" => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id" => intents(:weather_greeting).id,
+          "slug" => "admin/weather/weather_greeting",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression" => "Bonjour tout le monde",
+              "locale" => "fr",
+              "solution" => "Bonjour tout le monde"
+            },
+            {
+              "expression" => "Hello @{who}",
+              "aliases" => [
+                {
+                  "alias" => "who",
+                  "slug" => "admin/weather/weather_who",
+                  "id" => intents(:weather_who).id,
+                  "package" => weather.id
+                }
+              ],
+              "locale" => "en",
+              "keep-order" => true,
+              "glued" => true,
+              "solution" => "`greeting.who`"
+            }
+          ]
+        },
+        {
+          "id" => intents(:weather_who).id,
+          "slug" => "admin/weather/weather_who",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression" => "world",
+              "locale" => "en",
+              "solution" => "world"
+            }
+          ]
+        }
+      ]
+    }, {
+      "id" => "794f5279-8ed5-5563-9229-3d2573f23051",
+      "slug" => "admin/terminator",
+      "interpretations" => [
+        {
+          "id" => "6a04a399-6606-5c51-93fc-14766af0c30c",
+          "slug" => "admin/terminator/terminator_find",
+          "scope" => "public",
+          "expressions" => [
+            {
+              "expression" => "Where is Sarah Connor ?",
+              "locale" => "en",
+              "solution" => "Where is Sarah Connor ?"
+            }
+          ]
+        }]
+    }]
+    assert_equal expected, p.full_json_export
+  end
 
   test 'Validate endpoint' do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
-    endpoint = ENV.fetch('VIKYAPP_NLP_URL') { 'http://localhost:9345' }
+    endpoint = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
     assert_equal endpoint, p.endpoint
-  end
-
-
-  test 'Validate package URL' do
-    weather = agents(:weather)
-    p = Nlp::Package.new(weather)
-    assert_equal "#{p.endpoint}/packages/#{weather.id}", p.url
   end
 
 
