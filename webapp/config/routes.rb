@@ -70,6 +70,8 @@ Rails.application.routes.draw do
           collection do
             post :update_positions
           end
+
+          resources :entities, only: [:create]
         end
       end
     end

@@ -1,0 +1,32 @@
+<%= form_with model: [agent.owner, agent, entities_list, entity], id: 'entities-form', class: 'entity-form' do |f| %>
+
+  <div class="field entity-form__terms">
+    <div class="control">
+      <%= f.label :terms, for: 'terms__new_entity' %>
+      <%= f.text_area :terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false' %>
+    </div>
+    <%= display_errors(entity, :terms) %>
+  </div>
+
+  <div class="field field--for-solution entity-form__solution">
+    <div class="control">
+      <%= f.label :solution, for: 'solution__new_entity' %>
+      <span class="label--with-option">
+        <%= f.check_box :auto_solution_enabled, id: 'auto_solution_enabled__new_entity' %>
+        <%= f.label :auto_solution_enabled, for: 'auto_solution_enabled__new_entity' %>
+      </span>
+      <%= f.text_area :solution, id: "solution__new_entity", maxlength: '2000', spellcheck: 'false' %>
+    </div>
+    <%= display_errors(entity, :solution) %>
+    <%= display_errors(entity, :auto_solution_enabled) %>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.entities.new.btn'), class: 'btn btn--primary',
+                   data: {
+                       disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                   } %>
+    </div>
+  </div>
+<% end %>

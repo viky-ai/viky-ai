@@ -1,3 +1,13 @@
+<% if current_user.can? :edit, @agent %>
+  <div class="card">
+    <%= render partial: 'entities/form', locals: {
+        agent: @agent,
+        entities_list: @entities_list,
+        entity: @entity
+    } %>
+  </div>
+<% end %>
+
 <%= render partial: 'entities/blankslate_start', locals: {
     agent: @agent,
     entities_list: @entities_list

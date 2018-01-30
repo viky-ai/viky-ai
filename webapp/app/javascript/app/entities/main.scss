@@ -1,0 +1,39 @@
+@import '../../framework/abstracts/variables';
+
+.entity-form {
+  padding: 1.5em;
+  display: grid;
+  grid-template:
+          "terms" auto
+          "solution" auto
+          "submit" 1fr /
+          1fr;
+  @media (min-width: 424px){
+    grid-template:
+            "terms solution" auto
+            "submit ." 1fr /
+    1fr 1fr;
+  }
+  grid-column-gap: 1em;
+
+  label {
+    color: #999;
+    font-size: .875em;
+  }
+}
+
+.entity-form__terms {
+  grid-area: terms;
+}
+
+.entity-form__solution {
+  grid-area: solution;
+}
+
+.field--submit {
+  grid-area: submit;
+}
+
+.label--with-option {
+  float: right;
+}

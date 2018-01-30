@@ -32,6 +32,10 @@ en:
         solution: Solution
       interpretation_alias:
         aliasname: Parameter name
+      entity:
+        auto_solution_enabled: Auto solution
+        solution: Solution
+        terms: Terms
   errors:
     user:
       delete:

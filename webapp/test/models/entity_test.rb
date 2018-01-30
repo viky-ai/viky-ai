@@ -47,9 +47,31 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Add a term to an entity' do
     entity = entities(:weather_sunny)
-    assert_equal [ {'term' => 'soleil'}, {'term' => 'sun'} ], entity.terms
+    assert_equal [{'term' => 'soleil'}, {'term' => 'sun'}], entity.terms
     entity.terms << { 'term' => 'Sole' }
     assert entity.save
     assert_equal [{ 'term' => 'soleil' }, { 'term' => 'sun' }, { 'term' => 'Sole' }], entity.terms
+  end
+
+
+  test 'Can pass a list of terms as string to an entity' do
+    entity = Entity.new(
+      entities_list: entities_lists(:weather_conditions),
+      terms: "Jacques\nJames"
+    )
+    assert entity.save
+    expected = [{ 'term' => 'Jacques' }, { 'term' => 'James' }]
+    assert_equal expected, entity.terms
+  end
+
+
+  test 'Trim each terms of the list' do
+    entity = Entity.new(
+      entities_list: entities_lists(:weather_conditions),
+      terms: "   \nJacques\n  \nJames\n   "
+    )
+    assert entity.save
+    expected = [{ 'term' => 'Jacques' }, { 'term' => 'James' }]
+    assert_equal expected, entity.terms
   end
 end

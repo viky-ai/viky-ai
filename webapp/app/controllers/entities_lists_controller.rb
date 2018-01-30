@@ -4,7 +4,9 @@ class EntitiesListsController < ApplicationController
   before_action :check_user_rights
   before_action :set_entities_list, except: [:new, :create, :update_positions]
 
-  def show; end
+  def show
+    @entity = Entity.new
+  end
 
   def new
     @entities_list = EntitiesList.new

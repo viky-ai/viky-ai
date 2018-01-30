@@ -30,7 +30,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Create
   #
-  test 'Create access' do
+  test 'Create interpretation access' do
     sign_in users(:edit_on_agent_weather)
     post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_greeting)),
          params: {
@@ -41,7 +41,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Create forbidden' do
+  test 'Create interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
     post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_greeting)),
          params: {
