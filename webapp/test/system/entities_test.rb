@@ -59,6 +59,18 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Delete an entity' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_link?('pluie')
+    within('#entities-list') do
+      click_link 'pluie'
+      assert page.has_text?('Cancel')
+      all('a').last.click
+    end
+    assert page.has_no_link?('Cancel')
+  end
+
+
   private
 
     def admin_go_to_entities_list_show(agent, entities_list)

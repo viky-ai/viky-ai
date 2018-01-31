@@ -5,8 +5,10 @@ en:
         btn: "Add"
         placeholder: Add an entity
       index:
+        delete_btn: "Delete"
         update_btn: "Update"
         cancel_btn: "Cancel"
+      delete_failed: "Ooops, delete failed."
       blankslate:
         start_html: <p>Start adding entity using the form below.</p>
         no_entity_html: <p>No entity entered.</p>

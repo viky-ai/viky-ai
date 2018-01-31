@@ -5,14 +5,14 @@
   display: grid;
   width: 100%;
   grid-template:
-          "terms" auto
-          "solution" auto
-          "submit" 1fr /
-          1fr;
+          "terms terms" auto
+          "solution solution" auto
+          "submit delete" 1fr/
+          1fr 1fr;
   @media (min-width: 424px){
     grid-template:
             "terms solution" auto
-            "submit ." 1fr /
+            "submit delete" 1fr /
     1fr 1fr;
   }
   grid-column-gap: 1em;
@@ -50,6 +50,11 @@
 
 .field--submit {
   grid-area: submit;
+}
+
+.entity-form__delete {
+  grid-area: delete;
+  justify-self: end;
 }
 
 .label--with-option {

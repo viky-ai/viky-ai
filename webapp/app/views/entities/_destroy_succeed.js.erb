@@ -1,0 +1,5 @@
+$("#entity-<%= @entity.id %>").addClass('deleted');
+
+setTimeout(function(){
+  $("#entity-<%= @entity.id %>").remove();
+}, 200);

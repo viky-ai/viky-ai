@@ -67,6 +67,16 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def destroy
+    respond_to do |format|
+      if @entity.destroy
+        format.js { render partial: 'destroy_succeed' }
+      else
+        format.js { render partial: 'destroy_failed' }
+      end
+    end
+  end
+
   private
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
@@ -88,7 +98,7 @@ class EntitiesController < ApplicationController
       case action_name
         when 'show', 'show_detailed'
           access_denied unless current_user.can? :show, @agent
-        when 'create', 'edit', 'update'
+        when 'create', 'edit', 'update', 'destroy'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

@@ -91,4 +91,27 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
+  #
+  # Delete
+  #
+  test 'Delete access entity' do
+    sign_in users(:admin)
+    delete user_agent_entities_list_entity_url(users(:admin), agents(:weather), entities_lists(:weather_conditions), entities(:weather_sunny)),
+           params: {
+             format: :js
+           }
+    assert :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Delete forbidden entity' do
+    sign_in users(:show_on_agent_weather)
+    delete user_agent_entities_list_entity_url(users(:admin), agents(:weather), entities_lists(:weather_conditions), entities(:weather_sunny)),
+           params: {
+             format: :js
+           }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

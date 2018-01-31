@@ -71,7 +71,7 @@ Rails.application.routes.draw do
             post :update_positions
           end
 
-          resources :entities, only: [:show, :create, :edit, :update] do
+          resources :entities, only: [:show, :create, :edit, :update, :destroy] do
             member do
               get :show_detailed
             end

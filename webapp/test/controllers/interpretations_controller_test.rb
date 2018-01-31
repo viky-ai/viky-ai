@@ -93,7 +93,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Delete
   #
-  test 'Delete access' do
+  test 'Delete interpretation access' do
     sign_in users(:admin)
     delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
            params: {
@@ -103,7 +103,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Delete forbidden' do
+  test 'Delete interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
     delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
            params: {

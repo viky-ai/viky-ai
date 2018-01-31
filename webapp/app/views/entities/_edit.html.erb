@@ -38,4 +38,19 @@
                   data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
     </div>
   </div>
+  <div class="field entity-form__delete">
+    <div class="control">
+      <%= link_to t('views.entities.index.delete_btn'),
+                  user_agent_entities_list_entity_path(
+                      entity.entities_list.agent.owner,
+                      entity.entities_list.agent,
+                      entity.entities_list,
+                      entity
+                  ),
+                  method: :delete,
+                  remote: true,
+                  class: 'btn btn--small btn--outline btn--destructive',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
 <% end %>
