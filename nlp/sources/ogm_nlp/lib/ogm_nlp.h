@@ -328,6 +328,7 @@ struct request_word
    * chain the list in order to ignore merged words
    */
   struct request_word *next;
+  int Irequest_word;
 };
 
 struct accept_language

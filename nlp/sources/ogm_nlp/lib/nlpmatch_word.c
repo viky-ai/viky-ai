@@ -15,14 +15,11 @@ og_status NlpMatchWords(og_nlp_th ctrl_nlp_th)
 {
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
-  struct request_word *request_word = first_request_word;
 
-  while (request_word->next)
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next)
   {
-    IFE(NlpMatchWord(ctrl_nlp_th, request_word));
-    request_word = request_word->next;
+    IFE(NlpMatchWord(ctrl_nlp_th, rw));
   }
-  IFE(NlpMatchWord(ctrl_nlp_th, request_word));
 
   DONE;
 }
@@ -330,14 +327,16 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)
 {
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  struct request_word *current_word = NULL;
+  struct request_word *all_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(all_words) DPcErr;
+
   struct request_word *previous_word = NULL;
 
   for (int i = 0; i < request_word_used; i++)
   {
-    current_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i);
-    IFN(current_word) DPcErr;
+    struct request_word *current_word = all_words + i;
     current_word->next = NULL;
+    current_word->Irequest_word = i;
 
     if (previous_word)
     {

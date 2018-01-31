@@ -386,8 +386,8 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
     snprintf(is_punctuation, DPcPathSize, " (punctuation)");
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "'%s' at %d:%d%s", string_request_word, request_word->start_position,
-      request_word->length_position, is_punctuation);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", request_word->Irequest_word, string_request_word,
+      request_word->start_position, request_word->length_position, is_punctuation);
   DONE;
 }
 
