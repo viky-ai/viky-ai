@@ -460,14 +460,6 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, p.full_json_export
   end
 
-  test 'Validate endpoint' do
-    weather = agents(:weather)
-    p = Nlp::Package.new(weather)
-    endpoint = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
-    assert_equal endpoint, p.endpoint
-  end
-
-
   test 'No interpretation alias' do
     expected_expression = 'I want to go to Paris from London'
     interpretation = Interpretation.new(expression: 'I want to go to Paris from London', locale: 'en')
