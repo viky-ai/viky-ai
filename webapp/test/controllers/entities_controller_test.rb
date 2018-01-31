@@ -26,6 +26,46 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
 
+
+  #
+  # Edit
+  #
+  test 'Edit entity forbidden' do
+    sign_in users(:show_on_agent_weather)
+    get edit_user_agent_entities_list_entity_url(users(:admin), agents(:weather), entities_lists(:weather_conditions), entities(:weather_sunny)),
+        params: {
+          format: :js
+        }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+  #
+  # Update
+  #
+  test 'Update entity access' do
+    sign_in users(:edit_on_agent_weather)
+    patch user_agent_entities_list_entity_url(users(:admin), agents(:weather), entities_lists(:weather_conditions), entities(:weather_sunny)),
+          params: {
+            entity: { terms: 'Sunshine' },
+            format: :js
+          }
+    assert :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Update entity forbidden' do
+    sign_in users(:show_on_agent_weather)
+    patch user_agent_entities_list_entity_url(users(:admin), agents(:weather), entities_lists(:weather_conditions), entities(:weather_sunny)),
+          params: {
+            entity: { terms: 'Sunshine' },
+            format: :js
+          }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
   #
   # Show
   #

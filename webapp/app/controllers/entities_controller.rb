@@ -23,6 +23,32 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def edit
+    respond_to do |format|
+      format.js {
+        @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+        render partial: 'edit'
+      }
+    end
+  end
+
+  def update
+    respond_to do |format|
+      if @entity.update(entity_params)
+        format.js {
+          @show = render_to_string(partial: 'entity', locals: { entity: @entity })
+          render partial: 'show'
+        }
+      else
+        format.js do
+          @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+          render partial: 'edit'
+        end
+      end
+    end
+  end
+
+
   def show
     respond_to do |format|
       format.js {
@@ -62,7 +88,7 @@ class EntitiesController < ApplicationController
       case action_name
         when 'show', 'show_detailed'
           access_denied unless current_user.can? :show, @agent
-        when 'create'
+        when 'create', 'edit', 'update'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

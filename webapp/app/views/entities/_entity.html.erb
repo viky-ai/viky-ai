@@ -4,7 +4,7 @@
 
 <li id="entity-<%= entity.id %>">
   <% link = current_user.can?(:edit, agent) ?
-                "#" :
+                edit_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) :
                 show_detailed_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) %>
   <a href="<%= link %>" data-remote="true" >
     <span class="card-list__item__name"><%= entity.terms.first['term'] %></span>

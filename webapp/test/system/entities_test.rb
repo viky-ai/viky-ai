@@ -28,6 +28,20 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Update an entity (simple)' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_link?('soleil')
+    within('#entities-list') do
+      click_link 'soleil'
+      assert page.has_text?('Cancel')
+      fill_in 'terms__edit_entity', with: "Canicule"
+      check('Auto solution')
+      click_button 'Update'
+    end
+    assert page.has_link?('Canicule')
+  end
+
+
   test 'Show an entity with details' do
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
     assert page.has_text?('admin/weather')

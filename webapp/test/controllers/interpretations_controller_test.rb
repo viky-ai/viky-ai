@@ -55,7 +55,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Edit
   #
-  test 'Edit forbidden' do
+  test 'Edit interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
     get edit_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
         params: {
@@ -68,7 +68,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Update
   #
-  test 'Update access' do
+  test 'Update interpretation access' do
     sign_in users(:edit_on_agent_weather)
     patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
           params: {
@@ -79,7 +79,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Update forbidden' do
+  test 'Update interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
     patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
           params: {

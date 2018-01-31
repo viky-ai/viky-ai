@@ -1,0 +1,41 @@
+<%= form_with(model: [entity.entities_list.agent.owner, entity.entities_list.agent, entity.entities_list, entity], class: 'entity-form') do |f| %>
+
+  <div class="field entity-form__terms">
+    <div class="control">
+      <%= f.label :terms, for: "terms__#{entity.id}" %>
+      <% terms = entity.terms.map { |term| term['term'] } %>
+      <%= text_area_tag('entity[terms]', terms.join("\n"), id: "terms__#{entity.id}", maxlength: '5000', spellcheck: 'false') %>
+    </div>
+    <%= display_errors(entity, :terms) %>
+  </div>
+
+  <div class="field field--for-solution entity-form__solution">
+    <div class="control">
+      <%= f.label :solution, for: "solution__#{entity.id}" %>
+      <span class="label--with-option">
+        <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{entity.id}" %>
+        <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{entity.id}" %>
+      </span>
+      <%= f.text_area :solution, id: "solution__#{entity.id}", maxlength: '2000', spellcheck: 'false' %>
+    </div>
+    <%= display_errors(entity, :solution) %>
+    <%= display_errors(entity, :auto_solution_enabled) %>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.entities.index.update_btn').html_safe, class: 'btn btn--primary',
+                   data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}" } %>
+      <%= link_to t('views.entities.index.cancel_btn'),
+                  user_agent_entities_list_entity_path(
+                      entity.entities_list.agent.owner,
+                      entity.entities_list.agent,
+                      entity.entities_list,
+                      entity
+                  ),
+                  remote: true,
+                  class: 'btn btn--plain',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+<% end %>
