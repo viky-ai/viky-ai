@@ -15,12 +15,17 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 {
   // The request sentence is in : ctrl_nlp_th->request_sentence
   IFE(NlpParseRequestSentence(ctrl_nlp_th));
+
   IFE(NlpAutoComplete(ctrl_nlp_th));
 
-  // TODO function to regroup numbers
-  IFE(NlpGroupDigits(ctrl_nlp_th));
-
   IFE(NlpLtras(ctrl_nlp_th));
+
+  // TODO function to chain words in order to re-order them if needed
+  IFE(NlpMatchWordChainRequestWords(ctrl_nlp_th));
+
+  // TODO function to regroup numbers
+  IFE(NlpMatchWordGroupDigits(ctrl_nlp_th));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpLogRequestWords(ctrl_nlp_th));

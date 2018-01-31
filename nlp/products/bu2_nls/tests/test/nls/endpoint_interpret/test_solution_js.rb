@@ -187,7 +187,7 @@ module Nls
       end
 
       def test_solution_combine_complex_nosol
-        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2, 3] })
+        check_interpret("sol combine nosol 1 nosol 2 nosol 3", solution: { match: [1, 2, 3] })
       end
 
       def test_solution_combine_complex_entity

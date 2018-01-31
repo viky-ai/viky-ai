@@ -7,24 +7,28 @@
 #include "ogm_nlp.h"
 #include <stdlib.h>
 
-static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
+static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word);
 static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int input_length,
     unsigned char *input, struct interpret_package *interpret_package);
 
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th)
 {
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  for (int i = 0; i < request_word_used; i++)
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
+  struct request_word *request_word = first_request_word;
+
+  while (request_word->next)
   {
-    IFE(NlpMatchWord(ctrl_nlp_th, i));
+    IFE(NlpMatchWord(ctrl_nlp_th, request_word));
+    request_word = request_word->next;
   }
+  IFE(NlpMatchWord(ctrl_nlp_th, request_word));
+
   DONE;
 }
 
-static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
+static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
-  IFN(request_word) DPcErr;
 
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
@@ -115,7 +119,7 @@ static og_status getNumberSeparators(og_string locale, og_char_buffer* thousand_
     snprintf(thousand_sep, 5, " ");
     snprintf(decimal_sep, 5, ",");
   }
-  else if (strcmp(locale, "fr-fr") == 0)
+  else if (strcmp(locale, "fr-FR") == 0)
   {
     snprintf(thousand_sep, 5, " ");
     snprintf(decimal_sep, 5, ",");
@@ -125,12 +129,12 @@ static og_status getNumberSeparators(og_string locale, og_char_buffer* thousand_
     snprintf(thousand_sep, 5, ",");
     snprintf(decimal_sep, 5, ".");
   }
-  else if (strcmp(locale, "en-gb") == 0)
+  else if (strcmp(locale, "en-GB") == 0)
   {
     snprintf(thousand_sep, 5, ",");
     snprintf(decimal_sep, 5, ".");
   }
-  else if (strcmp(locale, "en-us") == 0)
+  else if (strcmp(locale, "en-US") == 0)
   {
     snprintf(thousand_sep, 5, ",");
     snprintf(decimal_sep, 5, ".");
@@ -140,17 +144,17 @@ static og_status getNumberSeparators(og_string locale, og_char_buffer* thousand_
     snprintf(thousand_sep, 5, " ");
     snprintf(decimal_sep, 5, ",");
   }
-  else if (strcmp(locale, "de-ch") == 0)
+  else if (strcmp(locale, "de-CH") == 0)
   {
     snprintf(thousand_sep, 5, "\'");
     snprintf(decimal_sep, 5, ".");
   }
-  else if (strcmp(locale, "fr-ch") == 0)
+  else if (strcmp(locale, "fr-CH") == 0)
   {
     snprintf(thousand_sep, 5, "\'");
     snprintf(decimal_sep, 5, ".");
   }
-  else   // by default it's french! french is great!
+  else   // by default it's French! French is great!
   {
     snprintf(thousand_sep, 5, " ");
     snprintf(decimal_sep, 5, ",");
@@ -198,7 +202,7 @@ static og_bool NlpNumberParsing(og_nlp_th ctrl_nlp_th, og_string sentence, GRege
 //  DONE;
 //}
 
-og_bool NlpGroupDigits(og_nlp_th ctrl_nlp_th)
+og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
 {
   // getting the locale
   // ctrl_nlp_th->
@@ -218,7 +222,6 @@ og_bool NlpGroupDigits(og_nlp_th ctrl_nlp_th)
 
   struct request_word *request_word_start;
   struct request_word *request_word_end;
-  struct request_word *last_request_match_word = NULL;
 
   char pattern[DPcPathSize];
   snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", thousand_sep, decimal_sep);
@@ -229,16 +232,18 @@ og_bool NlpGroupDigits(og_nlp_th ctrl_nlp_th)
   if (request_word_used > 0)
   {
     request_word_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-    request_word_start->is_merged = FALSE;
     IFN(request_word_start) DPcErr;
+  }
+  else
+  {
+    DPcErr;
   }
 
   og_bool previous_match = FALSE;
-  for (int i = 0; i < request_word_used; i++)
-  {
-    request_word_end = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i);
-    IFN(request_word_end) DPcErr;
+  request_word_end = request_word_start;
 
+  while (request_word_end)
+  {
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word_end->start);
     IFN(string_request_word) DPcErr;
 
@@ -254,6 +259,7 @@ og_bool NlpGroupDigits(og_nlp_th ctrl_nlp_th)
     // on ne prend pas en compte les séparateurs en fin de nombre
     if (!strcmp(string_request_word, thousand_sep) || !strcmp(string_request_word, decimal_sep))
     {
+      request_word_end = request_word_end->next;
       continue;
     }
 
@@ -269,44 +275,77 @@ og_bool NlpGroupDigits(og_nlp_th ctrl_nlp_th)
 
     if (number_match)
     {
-      if(previous_match)
-      {
-        request_word_end->is_merged = TRUE;
-      }
+      request_word_start->next = request_word_end->next;
+      request_word_start->length_position = request_word_end->start_position - request_word_start->start_position
+          + request_word_end->length_position;
+      request_word_start->is_digit = TRUE;
+      request_word_start->digit_value = value;
       previous_match = TRUE;
-      last_request_match_word = request_word_end;
     }
     else
     {
-      if(previous_match)
+      if (previous_match)   // si on a 123.456 789 XXXX, on a un match à false, mais il faut reconsidérer 789 comme un nombre
       {
-        // grouper les mots
-        request_word_start->length_position = last_request_match_word->start_position - request_word_start->start_position + last_request_match_word->length_position;
+        // recuperer la string entre DigitGroupStart et DigitGroupEnd
+        start_position = request_word_end->start_position;
+        end_position = request_word_end->start_position + request_word_end->length_position;
+        length = end_position - start_position;
+        snprintf(expression_string, DPcPathSize, "%.*s", length, request_sentence + start_position);
+
+        number_match = NlpNumberParsing(ctrl_nlp_th, expression_string, regular_expression, thousand_sep, &value);
+        IFE(number_match);
+
+        if (number_match)   // on est dans le cas 123.456 789 XXXX, il faut considérer le 789 comme un nombre
+        {
+          request_word_start = request_word_end;
+          request_word_start->is_digit = TRUE;
+          request_word_start->digit_value = value;
+        }
+        else   // on est dans le cas 123.456 aa XXXX, il faut recommencer le parsing au mot suivant
+        {
+          if (request_word_end->next)
+          {
+            request_word_start = request_word_end->next;
+          }
+          previous_match = FALSE;
+        }
+
       }
-
-      previous_match = FALSE;
-
-      if (i + 1 < request_word_used)
+      else
       {
-        // decaler le point de depart de la combinaison analysée
-        request_word_start = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i + 1);
-        request_word_start->is_digit = TRUE;
-        request_word_start->digit_value = value;
+        if (request_word_end->next)
+        {
+          request_word_start = request_word_end->next;
+        }
       }
-
     }
 
-    if(previous_match)
-    {
-      // grouper les mots et stocker la valeur
-      request_word_start->length_position = last_request_match_word->start_position - request_word_start->start_position + last_request_match_word->length_position;
-      request_word_start->is_digit = TRUE;
-      request_word_start->digit_value = value;
-    }
-
-
+    request_word_end = request_word_end->next;
   }
+
   g_regex_unref(regular_expression);
+  DONE;
+}
+
+og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)
+{
+  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
+  struct request_word *current_word = NULL;
+  struct request_word *previous_word = NULL;
+
+  for (int i = 0; i < request_word_used; i++)
+  {
+    current_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i);
+    IFN(current_word) DPcErr;
+    current_word->next = NULL;
+
+    if (previous_word)
+    {
+      previous_word->next = current_word;
+    }
+
+    previous_word = current_word;
+  }
   DONE;
 }
 

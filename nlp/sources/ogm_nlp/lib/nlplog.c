@@ -364,31 +364,30 @@ og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t packa
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request words:");
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  for (int i = 0; i < request_word_used; i++)
-  {
-    IFE(NlpLogRequestWord(ctrl_nlp_th, i));
+
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
+
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next) {
+    IFE(NlpLogRequestWord(ctrl_nlp_th, rw));
   }
   DONE;
 }
 
-og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
-  IFN(request_word) DPcErr;
-
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
 
   unsigned char is_punctuation[DPcPathSize];
-  is_punctuation[0]=0;
+  is_punctuation[0] = 0;
   if (request_word->is_punctuation)
   {
-    snprintf(is_punctuation,DPcPathSize, " (punctuation)");
+    snprintf(is_punctuation, DPcPathSize, " (punctuation)");
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", Irequest_word, string_request_word,
-      request_word->start_position, request_word->length_position, is_punctuation);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "'%s' at %d:%d%s", string_request_word, request_word->start_position,
+      request_word->length_position, is_punctuation);
   DONE;
 }
 

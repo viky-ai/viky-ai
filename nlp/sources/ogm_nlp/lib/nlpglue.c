@@ -35,18 +35,19 @@ og_status NlpGlueBuild(og_nlp_th ctrl_nlp_th)
   struct request_word *request_word_all = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(request_word_all) DPcErr;
 
-  for (int i = 0; i + 1 < ctrl_nlp_th->basic_request_word_used; i++)
+  for (struct request_word *rw1 = request_word_all; rw1 && rw1->next; rw1 = rw1->next)
   {
-    struct request_word *request_word1 = request_word_all + i;
-    struct request_word *request_word2 = request_word_all + i + 1;
-
-    int position1 = request_word1->start_position + request_word1->length_position;
-    int position2 = request_word2->start_position;
+    struct request_word *rw2 = rw1->next;
+    int position1 = rw1->start_position + rw1->length_position;
+    int position2 = rw2->start_position;
 
     if (position1 == position2) continue;
+
     g_hash_table_insert(ctrl_nlp_th->glue_hash, GINT_TO_POINTER(position1), GINT_TO_POINTER(position2));
     g_hash_table_insert(ctrl_nlp_th->glue_hash, GINT_TO_POINTER(position2), GINT_TO_POINTER(position1));
+
   }
+
   //IFE(NlpGlueLog(ctrl_nlp_th));
   DONE;
 }
@@ -61,18 +62,17 @@ enum nlp_glue_status NlpGluedGetStatusForPositions(og_nlp_th ctrl_nlp_th, int po
   return nlp_glue_status_Loose;
 }
 
-
 og_status NlpGlueLog(og_nlp_th ctrl_nlp_th)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "List of glued relations:");
   GList *key_list = g_hash_table_get_keys(ctrl_nlp_th->glue_hash);
   for (GList *iter = key_list; iter; iter = iter->next)
   {
-    int position1 =  GPOINTER_TO_INT(iter->data);
-    int position2 =  GPOINTER_TO_INT(g_hash_table_lookup(ctrl_nlp_th->glue_hash, GINT_TO_POINTER(position1)));
+    int position1 = GPOINTER_TO_INT(iter->data);
+    int position2 = GPOINTER_TO_INT(g_hash_table_lookup(ctrl_nlp_th->glue_hash, GINT_TO_POINTER(position1)));
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%d -> %d", position1, position2);
   }
-  g_list_free (key_list);
+  g_list_free(key_list);
   DONE;
 }
 

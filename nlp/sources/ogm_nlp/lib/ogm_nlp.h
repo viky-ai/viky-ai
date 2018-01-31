@@ -309,6 +309,7 @@ struct nlp_synchro_current_lock
   struct nlp_synchro_lock lock[DOgNlpMaximumOwnedLock];
 };
 
+
 struct request_word
 {
   int start;
@@ -324,9 +325,9 @@ struct request_word
   og_bool is_punctuation;
 
   /**
-   * if word is merged, it must be ignored
+   * chain the list in order to ignore merged words
    */
-  og_bool is_merged;
+  struct request_word *next;
 };
 
 struct accept_language
@@ -677,7 +678,7 @@ og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_
 og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias_compile *alias);
 
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
-og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word);
 const char *NlpAliasTypeString(enum nlp_alias_type type);
 
 /* nlpsynchro.c */
@@ -733,7 +734,8 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
-og_status NlpGroupDigits(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_expression.c */
 og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
