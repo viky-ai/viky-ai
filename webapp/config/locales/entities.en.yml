@@ -7,4 +7,8 @@ en:
       blankslate:
         start_html: <p>Start adding entity using the form below.</p>
         no_entity_html: <p>No entity entered.</p>
-
+      show:
+        terms:
+          zero: "0 term"
+          one: "1 term"
+          other: "%{count} terms"

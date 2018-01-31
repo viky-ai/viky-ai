@@ -1,28 +1,47 @@
 class EntitiesController < ApplicationController
   before_action :set_agent
   before_action :check_user_rights
+  before_action :set_entities_list
+  before_action :set_entity, except: [:create]
 
   def create
-    entities_list = @agent.entities_lists.friendly.find(params[:entities_list_id])
     entity = Entity.new(entity_params)
-    entity.entities_list = entities_list
+    entity.entities_list = @entities_list
     respond_to do |format|
       if entity.save
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: entities_list, entity: Entity.new})
+          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: Entity.new})
+          @html = render_to_string(partial: 'entity', locals: { entity: entity })
           render partial: 'create_succeed'
         end
       else
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: entities_list, entity: entity})
+          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: entity})
           render partial: 'create_failed'
         end
       end
     end
   end
 
-  private
+  def show
+    respond_to do |format|
+      format.js {
+        @show = render_to_string(partial: 'entity', locals: { entity: @entity })
+        render partial: 'show'
+      }
+    end
+  end
 
+  def show_detailed
+    respond_to do |format|
+      format.js {
+        @show = render_to_string(partial: 'show_detailed.html', locals: { entity: @entity })
+        render partial: 'show_detailed'
+      }
+    end
+  end
+
+  private
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
     end
@@ -31,8 +50,18 @@ class EntitiesController < ApplicationController
       @agent = Agent.friendly.find(params[:agent_id])
     end
 
+    def set_entities_list
+      @entities_list = @agent.entities_lists.friendly.find(params[:entities_list_id])
+    end
+
+    def set_entity
+      @entity = @entities_list.entities.find(params[:id])
+    end
+
     def check_user_rights
       case action_name
+        when 'show', 'show_detailed'
+          access_denied unless current_user.can? :show, @agent
         when 'create'
           access_denied unless current_user.can? :edit, @agent
         else

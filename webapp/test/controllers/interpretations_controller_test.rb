@@ -17,7 +17,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Show details
   #
-  test 'Show details forbidden' do
+  test 'Show interpretation details forbidden' do
     sign_in users(:confirmed)
     get show_detailed_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
         params: {

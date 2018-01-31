@@ -1,6 +1,6 @@
 @import '../../framework/abstracts/variables';
 
-.entity-form {
+.entity-form, .entity-form__show-detailed {
   padding: 1.5em;
   display: grid;
   grid-template:
@@ -22,6 +22,19 @@
   }
 }
 
+.entity-form__show-detailed {
+  grid-template:
+          ". close" 1fr
+          "terms terms" auto
+          "solution solution" auto /
+          1fr 1fr;
+  @media (min-width: 424px) {
+    grid-template:
+          "terms solution close" auto /
+          1fr 1fr auto;
+  }
+}
+
 .entity-form__terms {
   grid-area: terms;
 }
@@ -36,4 +49,9 @@
 
 .label--with-option {
   float: right;
+}
+
+.entity-form__close {
+  grid-area: close;
+  justify-self: right;
 }

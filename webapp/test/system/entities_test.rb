@@ -28,6 +28,23 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Show an entity with details' do
+    login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
+    assert page.has_text?('admin/weather')
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('Entities lists')
+    click_link 'Entities lists'
+
+    assert page.has_text?('weather_conditions')
+    click_link 'weather_conditions'
+    assert page.has_text?('weather_conditions PUBLIC (admin/weather/weather_conditions)')
+    within('#entities-list') do
+      click_link 'soleil'
+      assert page.has_no_button?('Update')
+    end
+  end
+
+
   private
 
     def admin_go_to_entities_list_show(agent, entities_list)

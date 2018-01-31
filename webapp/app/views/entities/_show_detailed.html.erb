@@ -1,0 +1,35 @@
+<div class='entity-form__show-detailed'>
+
+  <div class="field entity-form__close">
+    <div class="control">
+      <%= link_to icon_close.html_safe,
+                  user_agent_entities_list_entity_path(
+                      entity.entities_list.agent.owner,
+                      entity.entities_list.agent,
+                      entity.entities_list,
+                      entity
+                  ),
+                  remote: true,
+                  class: 'close' %>
+    </div>
+  </div>
+
+  <div class="field entity-form__terms">
+    <div class="control">
+      <%= label_tag "terms__#{entity.id}", t('activerecord.attributes.entity.terms') %>
+      <% terms = entity.terms.map { |term| term['term'] } %>
+      <%= text_area_tag("terms__#{entity.id}", terms.join("\n"), readonly: true) %>
+    </div>
+  </div>
+
+  <div class="field field--for-solution entity-form__solution">
+    <div class="control">
+      <%= label_tag "solution__#{entity.id}", t('activerecord.attributes.entity.solution') %>
+      <span class="label--with-option">
+        <%= check_box_tag("auto_solution_enabled__#{entity.id}", entity.auto_solution_enabled, entity.auto_solution_enabled, disabled: true) %>
+        <%= label_tag "auto_solution_enabled__#{entity.id}", t('activerecord.attributes.entity.auto_solution_enabled') %>
+      </span>
+      <%= text_area_tag("solution__#{entity.id}", entity.solution, readonly: true) %>
+    </div>
+  </div>
+</div>
