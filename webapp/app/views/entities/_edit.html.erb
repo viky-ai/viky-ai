@@ -16,7 +16,7 @@
         <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{entity.id}" %>
         <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{entity.id}" %>
       </span>
-      <%= f.text_area :solution, id: "solution__#{entity.id}", maxlength: '2000', spellcheck: 'false' %>
+      <%= f.text_area :solution, id: "solution__#{entity.id}", maxlength: '2000', spellcheck: 'false', disabled: entity.auto_solution_enabled %>
     </div>
     <%= display_errors(entity, :solution) %>
     <%= display_errors(entity, :auto_solution_enabled) %>
