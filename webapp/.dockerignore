@@ -5,6 +5,7 @@ node_modules
 .env
 log
 tmp
+coverage
 
 public/packs
 public/assets

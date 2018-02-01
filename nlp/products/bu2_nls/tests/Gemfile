@@ -16,3 +16,7 @@ gem 'uuidtools'
 
 # single test runner
 gem 'm'
+
+gem 'mocha'
+gem 'simplecov', :require => false
+gem 'redis', '~>3.3.0'

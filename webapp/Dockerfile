@@ -55,6 +55,7 @@ COPY --from=viki_doc /doc /webapp/public/doc
 ENV RAILS_SERVE_STATIC_FILES=true
 ENV RAILS_LOG_TO_STDOUT=1
 
+VOLUME [ "/webapp/public/uploads" ]
 EXPOSE 3000
 CMD ["./bin/docker_run.sh"]
 

@@ -16,7 +16,7 @@
       </a>
 
       <div class="intents-list__item__stats">
-        <%= t('views.intents.index.interpretations', count: intent.interpretations.count) %>
+        <%= t('views.intents.index.interpretations', count: intent.interpretations.size) %>
       </div>
 
       <% if current_user_can_edit %>

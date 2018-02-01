@@ -1,0 +1,14 @@
+require 'rake/testtask'
+
+display_warning = true
+display_warning = false if !ENV['CI_JOB_ID'].nil?
+
+Rake::TestTask.new do |task|
+  task.libs << %w(lib)
+  task.libs << %w(test)
+  task.pattern = 'tests/**/test_*.rb'
+  task.warning = display_warning
+end
+
+
+task :default => :test
