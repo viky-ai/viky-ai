@@ -5,3 +5,5 @@ $("#entities-list").prepend(html);
 setTimeout(function(){
   $("#entities-list li").first().removeClass('hidden');
 }, 0);
+
+App.CodeEditor.buildJavaScriptEditor($("#solution__new_entity")[0], true);

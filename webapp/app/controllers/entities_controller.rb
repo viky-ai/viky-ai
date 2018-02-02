@@ -17,7 +17,7 @@ class EntitiesController < ApplicationController
       else
         format.js do
           @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: entity})
-          render partial: 'create_failed'
+          render partial: 'create_failed', locals: { entity: entity }
         end
       end
     end

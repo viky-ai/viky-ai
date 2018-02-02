@@ -19,9 +19,9 @@ class InterpretationsTest < ApplicationSystemTestCase
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     assert page.has_no_text?('foggy')
     within('.entity-form') do
-      fill_in 'terms__new_entity', with: "foggy\nbrumeux"
+      fill_in 'Terms', with: "foggy\nbrumeux"
       uncheck('Auto solution')
-      fill_in 'solution__new_entity', with: 'condition: foggy'
+      fill_in_editor_field 'condition: foggy'
       click_button 'Add'
     end
     assert page.has_text?('foggy')
@@ -34,7 +34,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#entities-list') do
       click_link 'soleil'
       assert page.has_text?('Cancel')
-      fill_in 'terms__edit_entity', with: "Canicule"
+      fill_in 'Terms', with: "Canicule"
       check('Auto solution')
       click_button 'Update'
     end
@@ -77,5 +77,16 @@ class InterpretationsTest < ApplicationSystemTestCase
       admin_login
       visit user_agent_entities_list_path(users(:admin), agent, entities_list)
       assert page.has_text?("#{entities_list.listname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/#{entities_list.listname})")
+    end
+
+    def fill_in_editor_field(text)
+      within '.CodeMirror' do
+        # Click makes CodeMirror element active:
+        current_scope.click
+        # Find the hidden textarea:
+        field = current_scope.find('textarea', visible: false)
+        # Mimic user typing the text:
+        field.send_keys text
+      end
     end
 end

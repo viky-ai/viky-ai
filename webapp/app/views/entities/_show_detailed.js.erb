@@ -1,1 +1,2 @@
 $("#entity-<%= @entity.id %>").html("<%= escape_javascript(@show) %>");
+App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @entity.id %>")[0], true);

@@ -3,11 +3,8 @@ $ = require('jquery');
 class EntitySolutions
   constructor: ->
     checkbox = $("input[name='entity[auto_solution_enabled]']")
-    solution = checkbox.closest('form').find("textarea[name='entity[solution]']")
-    if checkbox.is(':checked')
-      solution.prop('disabled', true);
-    else
-      solution.prop('disabled', false);
+    textarea = checkbox.closest('form').find("textarea[name='entity[solution]']")
+    App.CodeEditor.buildJavaScriptEditor($(textarea)[0], checkbox.is(':checked'))
     $(document).on 'click', (event) => @setupListeners(event)
 
   setupListeners: (event) ->
@@ -16,11 +13,11 @@ class EntitySolutions
 
   update: (event) ->
     checkbox = $(event.target)
-    solution_container = checkbox.closest('form').find("textarea[name='entity[solution]']")
+    solution_container = $(checkbox.closest('form').find('.CodeMirror'))[0]
     if checkbox.is(':checked')
-      solution_container.prop('disabled', true);
+      solution_container.CodeMirror.setOption('readOnly', true);
     else
-      solution_container.prop('disabled', false);
+      solution_container.CodeMirror.setOption('readOnly', false);
 
 
 Setup = ->
