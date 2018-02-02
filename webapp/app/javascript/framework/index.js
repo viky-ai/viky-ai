@@ -22,7 +22,6 @@ import './main'
 // Coffee
 import './password';
 import './dropdown';
-import './card_list';
 window.App.Modal = require('./modal')
 import './form_delete_validation'
 import './color_picker'
@@ -36,3 +35,4 @@ import './button_group'
 window.$ = require('jquery');
 
 window.App.CodeEditor = require('./code_editor');
+window.App.CardListHelper = require('./card_list');

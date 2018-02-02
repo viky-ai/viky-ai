@@ -1,9 +1,5 @@
 $("#entities-form").replaceWith("<%= escape_javascript(@html_form) %>");
 
-var html = $("<%= escape_javascript(@html) %>").addClass('hidden');
-$("#entities-list").prepend(html);
-setTimeout(function(){
-  $("#entities-list li").first().removeClass('hidden');
-}, 0);
-
+App.CardListHelper.addToList("<%= escape_javascript(@html) %>");
 App.CodeEditor.buildJavaScriptEditor($("#solution__new_entity")[0], true);
+App.CardListHelper.updateBlankslates();

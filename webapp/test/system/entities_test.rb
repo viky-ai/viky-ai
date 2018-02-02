@@ -64,10 +64,25 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_link?('pluie')
     within('#entities-list') do
       click_link 'pluie'
-      assert page.has_text?('Cancel')
+      assert page.has_text?('Delete')
       all('a').last.click
     end
-    assert page.has_no_link?('Cancel')
+    assert page.has_no_link?('Delete')
+  end
+
+
+  test 'Delete all entities' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_link?('pluie')
+    within('#entities-list') do
+      click_link 'pluie'
+      assert page.has_text?('Delete')
+      all('a').last.click
+      click_link 'soleil'
+      assert page.has_text?('Delete')
+      all('a').last.click
+    end
+    assert page.has_text?('Start adding entity')
   end
 
 

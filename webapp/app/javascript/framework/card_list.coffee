@@ -49,9 +49,37 @@ class CardList
       data: data
 
 
+class CardListHelper
+  @addToList: (raw_html) ->
+    html = $(raw_html).addClass('hidden')
+    $('ul.card-list').prepend(html)
+    setTimeout((() -> $(".card-list li").first().removeClass('hidden')), 0)
+
+  @removeFromList: (id_selector) ->
+    $(id_selector).addClass('deleted');
+    setTimeout((() -> $(id_selector).remove()), 200)
+
+  @updateItem: (id_selector, form) ->
+    $(id_selector).html(form);
+
+  @showItemDetails: (id_selector, show) ->
+    $(id_selector).html(show);
+
+  @updateBlankslates: ->
+    if $(".card-list > li").length == 0
+      if $(".card .tabs > ul > li").length <= 2
+        $("#blankslate-start").show()
+      else
+        $("#blankslate-start-or-remove").show()
+    else
+      $("#blankslate-start").hide()
+      $("#blankslate-start-or-remove").hide()
+
 Setup = ->
   $('ul.card-list').each((index, element) ->
     new CardList($(element).attr('id'), $(element).data('group'))
   )
 
 $(document).on('turbolinks:load', Setup)
+
+module.exports = CardListHelper

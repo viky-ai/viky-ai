@@ -30,7 +30,6 @@
   }
 
   & > li{
-    transition: box-shadow .2s;
     @include display_flex();
 
     [dir='rtl']{
@@ -43,6 +42,16 @@
     box-shadow: 0 2px 3px rgba(0, 0, 0, .1);
     border-radius: 2px;
 
+    opacity: 1;
+    transition: opacity .2s ease-in, transform .2s ease-out, box-shadow .2s;
+    &.hidden{
+      transform: translateX(-100px);
+      opacity: 0.5;
+    }
+    &.deleted{
+      transform: translateY(50px);
+      opacity: 0;
+    }
     & > a{
       display: block;
       width: calc(100% - 190px);

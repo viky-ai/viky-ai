@@ -1,5 +1,5 @@
-$("#entity-<%= @entity.id %>").addClass('deleted');
+App.CardListHelper.removeFromList("#entity-<%= @entity.id %>")
 
 setTimeout(function(){
-  $("#entity-<%= @entity.id %>").remove();
+  App.CardListHelper.updateBlankslates();
 }, 200);
