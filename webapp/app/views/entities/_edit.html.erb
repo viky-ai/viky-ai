@@ -1,4 +1,8 @@
-<%= form_with(model: [entity.entities_list.agent.owner, entity.entities_list.agent, entity.entities_list, entity], class: 'entity-form') do |f| %>
+<%= form_with(model: [entity.entities_list.agent.owner, entity.entities_list.agent, entity.entities_list, entity],
+              class: 'entity-form',
+              data: {
+                  elistname: entity.entities_list.listname
+              }) do |f| %>
 
   <div class="field entity-form__terms">
     <div class="control">

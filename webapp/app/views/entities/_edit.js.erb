@@ -1,2 +1,3 @@
 $("#entity-<%= @entity.id %>").html("<%= escape_javascript(@form) %>");
 App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @entity.id %>")[0], <%= @entity.auto_solution_enabled %>);
+App.EntityTermsSolutionSynchronizer.registerListeners($('#entity-<%= @entity.id %> > form'))

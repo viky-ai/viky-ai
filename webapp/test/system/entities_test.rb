@@ -1,6 +1,6 @@
 require 'application_system_test_case'
 
-class InterpretationsTest < ApplicationSystemTestCase
+class EntitiesTest < ApplicationSystemTestCase
 
   test 'Navigate to an entity' do
     go_to_agents_index
@@ -68,6 +68,24 @@ class InterpretationsTest < ApplicationSystemTestCase
       all('a').last.click
     end
     assert page.has_no_link?('Cancel')
+  end
+
+
+  test 'Entity autosolution synchronization' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within('.entity-form') do
+      assert page.has_no_text?('brumeux')
+      check('Auto solution')
+      page.execute_script %Q{ $('#terms__new_entity').trigger("click") }
+      fill_in 'Terms', with: "  \nbrumeux"
+      assert page.has_text?("\n  'weather_conditions': 'brumeux'\n")
+
+      uncheck('Auto solution')
+      fill_in 'Terms', with: "foggy\nbrumeux"
+      assert page.has_text?("\n  'weather_conditions': 'brumeux'\n")
+      check('Auto solution')
+      assert page.has_text?("\n  'weather_conditions': 'foggy'\n")
+    end
   end
 
 

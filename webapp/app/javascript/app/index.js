@@ -26,6 +26,6 @@ import './entities_lists/main';
 import './entities_lists/entities_list_form';
 import './interpretations/main';
 import './interpretations/interpretation_form';
-import './entities/entity_form';
 import './entities/main';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
+window.App.EntityTermsSolutionSynchronizer = require('./entities/entity_form');
