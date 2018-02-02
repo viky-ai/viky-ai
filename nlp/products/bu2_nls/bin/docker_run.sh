@@ -19,7 +19,7 @@ rm -f ./ogm_nls.pid
 
 if [ "${DOCKER_COMPOSE_DEPLOY}" == "true" ] ; then
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://db-redis:6379 -wait http://lb-internal-app:3000 -timeout 600s
+  /usr/local/bin/dockerize -wait tcp://db-redis:6379 -wait http://webapp:3000 -timeout 600s
 else
   # wait for services
   /usr/local/bin/dockerize -wait tcp://localhost:6379 -wait http://localhost:3000 -timeout 60s
