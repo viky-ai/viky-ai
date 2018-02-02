@@ -3,12 +3,6 @@
 // Sortable (https://github.com/RubaXa/Sortable)
 window.Sortable = require('sortablejs');
 
-// CodeMirror (https://github.com/codemirror/CodeMirror)
-window.CodeMirror = require('codemirror');
-import 'codemirror/addon/display/autorefresh'
-import 'codemirror/mode/javascript/javascript'
-import 'codemirror/lib/codemirror.css'
-
 // Mousetrap (https://github.com/ccampbell/mousetrap)
 window.Mousetrap = require('mousetrap/mousetrap.js');
 require('mousetrap/plugins/global-bind/mousetrap-global-bind.js')

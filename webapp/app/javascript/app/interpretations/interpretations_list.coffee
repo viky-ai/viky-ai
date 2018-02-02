@@ -37,8 +37,7 @@ class InterpretationsList
             method: 'POST'
             data: { locale: $(event.target).data('locale') }
       });
-
-    InterpretationsList.displayCodeEditor($("#solution__new_interpretation")[0])
+    App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0])
 
   @updateDraggable: ->
     if $('.tabs > ul > li.js-draggable-locale').length > 0
