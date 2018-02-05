@@ -41,22 +41,12 @@ class InterpretationsList
 
   @updateDraggable: ->
     if $('.tabs > ul > li.js-draggable-locale').length > 0
-      $('#interpretations-list li .interpretations-list__draggable').show()
+      $('#interpretations-list li .card-list__item__draggable').show()
     else
       if $('#interpretations-list li').length > 1
-        $('#interpretations-list li .interpretations-list__draggable').show()
+        $('#interpretations-list li .card-list__item__draggable').show()
       else
-        $('#interpretations-list li .interpretations-list__draggable').hide()
-
-  @updateBlankslates: ->
-    if $("#interpretations-list > li").length == 0
-      if $(".interpretation-new-form-container .tabs > ul > li").length == 2
-        $("#blankslate-start").show()
-      else
-        $("#blankslate-start-or-remove").show()
-    else
-      $("#blankslate-start").hide()
-      $("#blankslate-start-or-remove").hide()
+        $('#interpretations-list li .card-list__item__draggable').hide()
 
   @incrementTabBadge: ->
     count = $("#current-locale-tab-badge").data('count')

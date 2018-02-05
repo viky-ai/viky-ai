@@ -1,12 +1,7 @@
 $("#interpretations-form").replaceWith("<%= escape_javascript(@html_form) %>");
 
-var html = $("<%= escape_javascript(@html) %>").addClass('hidden');
-$("#interpretations-list").prepend(html);
-setTimeout(function(){
-  $("#interpretations-list li").first().removeClass('hidden');
-}, 0);
-
-App.InterpretationsList.updateBlankslates();
+App.CardListHelper.addToList("<%= escape_javascript(@html) %>");
+App.CardListHelper.updateBlankslates();
 App.InterpretationsList.incrementTabBadge();
 App.InterpretationsList.updateDraggable();
 App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0]);

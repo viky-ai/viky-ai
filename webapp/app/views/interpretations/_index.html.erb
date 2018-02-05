@@ -1,5 +1,5 @@
-<div class="interpretation-new-form-container">
-  <div class="tabs">
+<div class="card">
+  <div class="tabs <% unless current_user.can? :edit, @agent %>tabs--empty<% end %>">
     <ul>
       <% for intent_locale in @intent.ordered_locales %>
         <% if intent_locale == '*' %>

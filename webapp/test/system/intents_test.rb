@@ -111,7 +111,7 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_link?('en')
     assert page.has_link?('fr')
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'en'
     end
     within('#interpretations-list') do
@@ -122,7 +122,7 @@ class IntentsTest < ApplicationSystemTestCase
 
     assert page.has_text?('Do you want to remove it ?')
     click_link 'Yes, remove "en" tab'
-    within('.interpretation-new-form-container') do
+    within('.card') do
       assert page.has_no_link?('en')
       assert page.has_link?('fr')
     end

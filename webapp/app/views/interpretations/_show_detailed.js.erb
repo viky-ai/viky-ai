@@ -1,2 +1,2 @@
-$("#interpretation-<%= @interpretation.id %>").html("<%= escape_javascript(@show) %>");
+App.CardListHelper.showItemDetails("#interpretation-<%= @interpretation.id %>", "<%= escape_javascript(@show) %>");
 App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @interpretation.id %>")[0], true);

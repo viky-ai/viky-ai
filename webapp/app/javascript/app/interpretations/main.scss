@@ -1,14 +1,69 @@
 @import '../../framework/abstracts/variables';
 
-.interpretation-new-form-container{
-  background-color: #fff;
-  padding: 1em;
-  box-shadow: 0 2px 3px rgba(black, .1);
-  border-radius: 2px;
-  margin-bottom: 1em;
-  .tabs{
-    margin-bottom: 1em;
+.interpretations-form, .interpretations-form__show-detailed {
+  padding: 1.5em 1.5em 1.5em;
+  width: 100%;
+  display: grid;
+  grid-template:
+          "interpretation interpretation" auto
+          "summary summary" auto
+          "solution solution" auto
+          "submit delete" 1fr /
+          1fr 1fr;
+  @media (min-width: 424px){
+    grid-template:
+            "interpretation interpretation" auto
+            "summary summary" auto
+            "solution solution" auto
+            "submit delete" 1fr /
+    1fr 1fr;
   }
+  grid-column-gap: 1em;
+
+  .field--submit {
+    margin-bottom: 0;
+  }
+}
+
+.interpretations-form__show-detailed {
+  grid-template:
+          "interpretation close" auto
+          "summary summary" auto
+          "solution solution" auto /
+          1fr 1fr;
+  @media (min-width: 424px) {
+    grid-template:
+            "interpretation close" 1fr
+            "summary summary" auto
+            "solution solution" auto /
+          1fr 1fr;
+  }
+}
+
+.interpretations-form__interpretation {
+  grid-area: interpretation;
+}
+
+.interpretations-form__summary {
+  grid-area: summary;
+}
+
+.interpretations-form__solution {
+  grid-area: solution;
+}
+
+.field--submit {
+  grid-area: submit;
+}
+
+.interpretations-form__delete {
+  grid-area: delete;
+  justify-self: end;
+}
+
+.interpretations-form__close {
+  grid-area: close;
+  justify-self: right;
 }
 
 .solution-label{

@@ -143,7 +143,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (simple)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'fr'
     end
     assert page.has_link?('Bonjour tout le monde')
@@ -169,7 +169,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (add alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'en'
     end
 
@@ -211,7 +211,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (remove alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'en'
     end
 
@@ -234,7 +234,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Remove alias from summary board' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'en'
     end
 
@@ -260,7 +260,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation and cancel' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
-    within('.interpretation-new-form-container') do
+    within('.card') do
       click_link 'en'
     end
 
@@ -282,7 +282,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     # Does not works...
 
-    # source = first('#interpretations-list .interpretations-list__draggable')
+    # source = first('#interpretations-list .card-list__item__draggable)
     # target = first('.tabs li.js-draggable-locale')
     # source.drag_to(target)
 
