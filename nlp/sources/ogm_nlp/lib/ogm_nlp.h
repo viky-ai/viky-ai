@@ -312,6 +312,7 @@ struct nlp_synchro_current_lock
 
 struct request_word
 {
+  int self_index;
   int start;
   int length;
   int raw_start;
@@ -328,7 +329,6 @@ struct request_word
    * chain the list in order to ignore merged words
    */
   struct request_word *next;
-  int Irequest_word;
 };
 
 struct accept_language

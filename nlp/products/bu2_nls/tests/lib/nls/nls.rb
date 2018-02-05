@@ -210,9 +210,10 @@ module Nls
         end
 
         package_url = "#{base_url}/packages/#{package_id}"
-        RestClient.post(package_url, package_body, content_type: :json, params: params)
+        response = RestClient.post(package_url, package_body, content_type: :json, params: params)
 
-        true
+        JSON.parse(response.body)
+
     end
 
     def self.dump

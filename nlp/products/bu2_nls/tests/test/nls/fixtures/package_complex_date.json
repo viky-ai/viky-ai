@@ -2828,7 +2828,7 @@
         {
           "expression": "@{date_month_number} @{preposition_the} @{day_number} @{year_number} @{year_word} @{postposition_ago}",
           "keep-order": true,
-          "glued": true,
+          "glued": false,
           "aliases":
           [
             {

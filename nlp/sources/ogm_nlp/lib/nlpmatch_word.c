@@ -239,24 +239,14 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
   og_bool previous_match = FALSE;
   request_word_end = request_word_start;
 
-  while (request_word_end)
+  for(request_word_end = request_word_start; request_word_end && request_word_end->self_index < ctrl_nlp_th->basic_request_word_used; request_word_end = request_word_end->next)
   {
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word_end->start);
     IFN(string_request_word) DPcErr;
 
-//    int j = 0;
-//    do
-//    {
-//      if ((string_request_word[j] != thousand_sep) && (string_request_word[j] != decimal_sep)
-//          && (!OgUniIsdigit(string_request_word[j]))) return FALSE;
-//      j++;
-//    }
-//    while (string_request_word[j] != '\0');
-
     // on ne prend pas en compte les séparateurs en fin de nombre
     if (!strcmp(string_request_word, thousand_sep) || !strcmp(string_request_word, decimal_sep))
     {
-      request_word_end = request_word_end->next;
       continue;
     }
 
@@ -316,8 +306,6 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
         }
       }
     }
-
-    request_word_end = request_word_end->next;
   }
 
   g_regex_unref(regular_expression);
@@ -336,7 +324,6 @@ og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)
   {
     struct request_word *current_word = all_words + i;
     current_word->next = NULL;
-    current_word->Irequest_word = i;
 
     if (previous_word)
     {

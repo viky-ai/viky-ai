@@ -97,6 +97,7 @@ static og_status NlpAutoCompleteAddWord(og_nlp_th ctrl_nlp_th, int Ilast_request
   IFn(request_word) DPcErr;
   IF(Irequest_word) DPcErr;
 
+  request_word->self_index = Irequest_word;
   request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
   request_word->length = complete_word_length;
   IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, complete_word));

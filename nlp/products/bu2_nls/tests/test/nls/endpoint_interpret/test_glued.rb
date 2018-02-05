@@ -6,7 +6,7 @@ module Nls
 
   module EndpointInterpret
 
-    class TestAny < NlsTestCommon
+    class TestGlue < NlsTestCommon
 
       def setup
         super

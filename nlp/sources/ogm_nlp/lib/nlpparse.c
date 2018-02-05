@@ -376,6 +376,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   IFn(request_word) DPcErr;
   IF(Irequest_word) DPcErr;
 
+  request_word->self_index = Irequest_word;
   request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
   request_word->length = length_normalized_string_word;
   IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, normalized_string_word));

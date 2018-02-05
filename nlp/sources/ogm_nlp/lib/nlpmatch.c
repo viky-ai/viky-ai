@@ -31,6 +31,10 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     IFE(NlpLogRequestWords(ctrl_nlp_th));
   }
   IFE(NlpGlueBuild(ctrl_nlp_th));
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpGlueLog(ctrl_nlp_th));
+  }
 
   // Scanning all the words and create the list of input parts that match the words
   IFE(NlpMatchWords(ctrl_nlp_th));
