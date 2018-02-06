@@ -125,13 +125,18 @@ static int validateLangCountry(unsigned char *slang_country)
   return 1;
 }
 
+PUBLIC(int) OgIso639_3166ToIso639_3166(int lang, int country)
+{
+return (lang + DOgLangMax * country);
+}
+
 PUBLIC(int) OgIso639_3166ToLang(int lang_country)
 {
-return(lang_country%DOgLangMax);
+return (lang_country%DOgLangMax);
 }
 
 PUBLIC(int) OgIso639_3166ToCountry(int lang_country)
 {
-return(lang_country/DOgLangMax);
+return (lang_country/DOgLangMax);
 }
 

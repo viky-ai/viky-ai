@@ -109,69 +109,79 @@ static og_bool str_remove(og_char_buffer *source, og_string to_replace)
   return FALSE;
 }
 
-static og_status getNumberSeparators(og_string locale, og_char_buffer* thousand_sep, og_char_buffer* decimal_sep)
+struct lang_sep
 {
-  if (strcmp(locale, "fr") == 0)
+  int lang;
+  int country;
+  og_string thousand_sep;
+  og_string decimal_sep;
+  og_bool used;
+};
+
+#define locale_lang_country(lang, country) (lang + DOgLangMax * country)
+
+static struct lang_sep lang_sep_conf[] = {   //
+    { DOgLangNil, DOgCountryCH, "'", "\\." , FALSE},   // *-CH  // le caractere '.' signifie n'importe quel caractère pour une regexp mais n'est pas un caractère échappé par la glib
+        { DOgLangFR, DOgCountryNil, " ", ",", FALSE },   // fr-*
+        { DOgLangEN, DOgCountryNil, ",", "\\.", FALSE },   // en-*
+
+        { DOgLangNil, DOgCountryNil, "", "", FALSE }   // End
+    };
+
+static og_status getNumberSeparators(struct lang_sep* lang_conf, int locale, og_char_buffer* thousand_sep, og_char_buffer* decimal_sep)
+{
+  int req_lang = OgIso639_3166ToLang(locale);
+  int req_country = OgIso639_3166ToCountry(locale);
+
+  og_bool match = FALSE;
+  for (struct lang_sep *conf = lang_conf; !match && (conf->lang != DOgLangNil || conf->country != DOgCountryNil);
+      conf++)
   {
+    if (conf->lang == DOgLangNil && conf->country == req_country)
+    {
+      match = TRUE;
+    }
+    else if (conf->lang == req_lang && conf->country == DOgCountryNil)
+    {
+      match = TRUE;
+    }
+    else if (conf->lang == req_lang && conf->country == req_country)
+    {
+      match = TRUE;
+    }
+
+    if (match)
+    {
+      snprintf(thousand_sep, 5, "%s", conf->thousand_sep);
+      snprintf(decimal_sep, 5, "%s", conf->decimal_sep);
+    }
+
+  }
+
+  // TODO default
+  if (!match)
+  {
+    // fr by default
     snprintf(thousand_sep, 5, " ");
     snprintf(decimal_sep, 5, ",");
   }
-  else if (strcmp(locale, "fr-FR") == 0)
-  {
-    snprintf(thousand_sep, 5, " ");
-    snprintf(decimal_sep, 5, ",");
-  }
-  else if (strcmp(locale, "en") == 0)
-  {
-    snprintf(thousand_sep, 5, ",");
-    snprintf(decimal_sep, 5, ".");
-  }
-  else if (strcmp(locale, "en-GB") == 0)
-  {
-    snprintf(thousand_sep, 5, ",");
-    snprintf(decimal_sep, 5, ".");
-  }
-  else if (strcmp(locale, "en-US") == 0)
-  {
-    snprintf(thousand_sep, 5, ",");
-    snprintf(decimal_sep, 5, ".");
-  }
-  else if (strcmp(locale, "de") == 0)
-  {
-    snprintf(thousand_sep, 5, " ");
-    snprintf(decimal_sep, 5, ",");
-  }
-  else if (strcmp(locale, "de-CH") == 0)
-  {
-    snprintf(thousand_sep, 5, "\'");
-    snprintf(decimal_sep, 5, ".");
-  }
-  else if (strcmp(locale, "fr-CH") == 0)
-  {
-    snprintf(thousand_sep, 5, "\'");
-    snprintf(decimal_sep, 5, ".");
-  }
-  else   // by default it's French! French is great!
-  {
-    snprintf(thousand_sep, 5, " ");
-    snprintf(decimal_sep, 5, ",");
-  }
-  DONE;
+
+  return match;
 }
 
 static og_bool NlpNumberParsing(og_nlp_th ctrl_nlp_th, og_string sentence, GRegex *regular_expression,
-    og_char_buffer *thousand_sep, double *p_value)
+    og_string thousand_sep, double *p_value)
 {
   if (p_value) *p_value = 0;
-  // run the regular expression
+// run the regular expression
   GMatchInfo *match_info = NULL;
   og_bool match = g_regex_match(regular_expression, sentence, 0, &match_info);
   if (!match) return FALSE;
 
-  // getting the integer part
+// getting the integer part
   gchar *integerpart = g_match_info_fetch(match_info, 1);
 
-  // removing thousand separators
+// removing thousand separators
   og_char_buffer value_buffer[DPcPathSize];
   snprintf(value_buffer, DPcPathSize, "%s", integerpart);
 
@@ -184,7 +194,7 @@ static og_bool NlpNumberParsing(og_nlp_th ctrl_nlp_th, og_string sentence, GRege
   }
   double tmp_value = atof(value_buffer);
 
-  // some cleaning
+// some cleaning
   g_free(integerpart);
   g_free(decimalpart);
   g_match_info_free(match_info);
@@ -194,26 +204,19 @@ static og_bool NlpNumberParsing(og_nlp_th ctrl_nlp_th, og_string sentence, GRege
   return TRUE;
 }
 
-//static og_status NlpMergeWords(og_nlp_th ctrl_nlp_th, struct request_word *request_word_start, struct request_word *request_word_end)
-//{
-//  DONE;
-//}
 
-og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
+
+static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct lang_sep* lang_conf)
 {
-  // getting the locale
-  // ctrl_nlp_th->
-  // not yet, let's consider it's french
-  og_string locale = "fr";
+  og_bool digits_grouped = FALSE;
 
   // getting thousand and decimal separator
-  og_char_buffer thousand_sep[5];
-  og_char_buffer decimal_sep[5];
-  getNumberSeparators(locale, thousand_sep, decimal_sep);
+  og_string thousand_sep = lang_conf->thousand_sep;
+  og_string decimal_sep = lang_conf->decimal_sep;
 
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
-  // parsing the numbers
+// parsing the numbers
   double value = 0;
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
 
@@ -221,7 +224,7 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
   struct request_word *request_word_end;
 
   char pattern[DPcPathSize];
-  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", thousand_sep, decimal_sep);
+  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", g_strescape(thousand_sep, NULL), g_strescape(decimal_sep, NULL));
 
   GError *regexp_error = NULL;
   GRegex *regular_expression = g_regex_new(pattern, 0, 0, &regexp_error);
@@ -239,7 +242,9 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
   og_bool previous_match = FALSE;
   request_word_end = request_word_start;
 
-  for(request_word_end = request_word_start; request_word_end && request_word_end->self_index < ctrl_nlp_th->basic_request_word_used; request_word_end = request_word_end->next)
+  for (request_word_end = request_word_start;
+      request_word_end && request_word_end->self_index < ctrl_nlp_th->basic_request_word_used; request_word_end =
+          request_word_end->next)
   {
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word_end->start);
     IFN(string_request_word) DPcErr;
@@ -262,6 +267,10 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
 
     if (number_match)
     {
+      if(request_word_start != request_word_end)
+      {
+        digits_grouped = TRUE;
+      }
       request_word_start->next = request_word_end->next;
       request_word_start->length_position = request_word_end->start_position - request_word_start->start_position
           + request_word_end->length_position;
@@ -309,7 +318,45 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
   }
 
   g_regex_unref(regular_expression);
-  DONE;
+  return digits_grouped;
+}
+
+og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
+{
+  og_bool digits_grouped = FALSE;
+  og_bool language_found = FALSE;
+
+  struct lang_sep* lang_conf = lang_sep_conf;
+  struct accept_language* acceptedlanguage;
+  struct lang_sep found_language;
+  og_char_buffer thousand_sep[5];
+  og_char_buffer decimal_sep[5];
+
+  size_t numberLang = OgHeapGetCellsUsed(ctrl_nlp_th->haccept_language);
+
+  if(numberLang > 0) // languages are given in the request
+  {
+    // check the given languages
+    for (size_t i = 0; i < numberLang && !digits_grouped; i++)
+    {
+      acceptedlanguage = OgHeapGetCell(ctrl_nlp_th->haccept_language, i);
+      language_found = getNumberSeparators(lang_conf, acceptedlanguage->locale, thousand_sep, decimal_sep);
+      found_language.decimal_sep = decimal_sep;
+      found_language.thousand_sep = thousand_sep;
+      digits_grouped = NlpMatchWordGroupDigitsByLanguage(ctrl_nlp_th, &found_language);
+      IFE(digits_grouped);
+    }
+  }
+  if(numberLang <= 0 || language_found == FALSE) // no languages are given or given languages not found, let's check them all
+  {
+    for (struct lang_sep *conf = lang_conf; !digits_grouped && conf->lang != DOgLangNil && conf->country != DOgCountryNil; conf++)
+    {
+      digits_grouped = NlpMatchWordGroupDigitsByLanguage(ctrl_nlp_th, conf);
+      IFE(digits_grouped);
+    }
+  }
+
+  return digits_grouped;
 }
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)

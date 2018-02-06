@@ -101,6 +101,14 @@ module Nls
         check_interpret("1 2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
       end
 
+      def test_wrong_decimal_number_english
+        Interpretation.default_locale = "en-US"
+        check_interpret("1 , 2",    { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1, 2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1 ,2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1 2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+      end
+
       def test_wrong_thousand_number_french
         check_interpret("9 100 200 0",    { interpretation: "numbers_list", solution: {numbers: [9100200, 0]} })
         check_interpret("33 12 34 56 78", { interpretation: "numbers_list", solution: {numbers: [33, 12, 34, 56, 78]} })

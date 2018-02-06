@@ -10,6 +10,8 @@
 #include <logheap.h>
 #include <logsysi.h>
 #include <logis639_3166.h>
+#include <logis639.h>
+#include <logis3166.h>
 #include <glib-2.0/glib.h>
 #include <duktape.h>
 #include <math.h>
