@@ -75,6 +75,9 @@ Rails.application.routes.draw do
             member do
               get :show_detailed
             end
+            collection do
+              post :update_positions
+            end
           end
         end
       end

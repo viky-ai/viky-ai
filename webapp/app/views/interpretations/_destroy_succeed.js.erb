@@ -2,7 +2,7 @@ App.CardListHelper.removeFromList("#interpretation-<%= @interpretation.id %>")
 
 setTimeout(function(){
   App.CardListHelper.updateBlankslates();
-  App.InterpretationsList.updateDraggable();
+  App.CardListHelper.updateDraggable();
 }, 200);
 
 App.InterpretationsList.decrementTabBadge();

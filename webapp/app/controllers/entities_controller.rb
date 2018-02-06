@@ -1,8 +1,9 @@
 class EntitiesController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_entities_list
-  before_action :set_entity, except: [:create]
+  before_action :set_entity, except: [:create, :update_positions]
 
   def create
     entity = Entity.new(entity_params)
@@ -77,6 +78,13 @@ class EntitiesController < ApplicationController
     end
   end
 
+  def update_positions
+    params[:ids].reverse.each_with_index do |id, position|
+      entity = Entity.find(id)
+      entity.update(position: position)
+    end
+  end
+
   private
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
@@ -98,7 +106,7 @@ class EntitiesController < ApplicationController
       case action_name
         when 'show', 'show_detailed'
           access_denied unless current_user.can? :show, @agent
-        when 'create', 'edit', 'update', 'destroy'
+        when 'create', 'edit', 'update', 'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

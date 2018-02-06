@@ -2,6 +2,7 @@ $ = require('jquery');
 
 class CardList
   constructor: (id, group_name) ->
+    CardListHelper.updateDraggable()
     @list_selector_id = '#' + id
     @update_url = $(@list_selector_id).data('update-positions-path')
     @group_name = group_name
@@ -74,6 +75,15 @@ class CardListHelper
     else
       $("#blankslate-start").hide()
       $("#blankslate-start-or-remove").hide()
+
+  @updateDraggable: ->
+    if $('.tabs > ul > li.js-draggable-locale').length > 0
+      $('.card-list li .card-list__item__draggable').show()
+    else
+      if $('.card-list li').length > 1
+        $('.card-list li .card-list__item__draggable').show()
+      else
+        $('.card-list li .card-list__item__draggable').hide()
 
 Setup = ->
   $('ul.card-list').each((index, element) ->

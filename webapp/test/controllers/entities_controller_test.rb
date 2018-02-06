@@ -114,4 +114,27 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
+  #
+  # Update position
+  #
+  test 'Update entity position allowed' do
+    sign_in users(:admin)
+    post update_positions_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+         params: {
+           ids: [entities(:weather_raining).id, entities(:weather_sunny).id],
+         }
+    assert :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Update entity position forbidden' do
+    sign_in users(:show_on_agent_weather)
+    post update_positions_user_agent_entities_list_entities_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+         params: {
+           ids: [entities(:weather_raining).id, entities(:weather_sunny).id],
+         }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

@@ -1,3 +1,5 @@
-<ul id="entities-list" class="card-list" %>
-  <%= render partial: 'entities/entity', collection: @entities_list.entities %>
+<ul id="entities-list" class="card-list"
+    data-update-positions-path="<%= update_positions_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
+    data-key='ids'>
+  <%= render partial: 'entities/entity', collection: @entities_list.entities.order(position: :desc, created_at: :desc) %>
 </ul>

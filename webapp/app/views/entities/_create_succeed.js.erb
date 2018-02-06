@@ -3,3 +3,4 @@ $("#entities-form").replaceWith("<%= escape_javascript(@html_form) %>");
 App.CardListHelper.addToList("<%= escape_javascript(@html) %>");
 App.CodeEditor.buildJavaScriptEditor($("#solution__new_entity")[0], true);
 App.CardListHelper.updateBlankslates();
+App.CardListHelper.updateDraggable();

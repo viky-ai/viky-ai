@@ -8,6 +8,7 @@ class EntityTest < ActiveSupport::TestCase
       solution: "{gender: 'male'}",
       auto_solution_enabled: false,
       terms: [{ term: 'Jacques' }, { term: 'James' }],
+      position: 2,
       entities_list: entities_lists(:weather_conditions)
     )
     assert entity.save
@@ -17,6 +18,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal 'Jacques', entity.terms.first['term']
     assert_equal 'James', entity.terms.last['term']
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
+    assert_equal 2, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count
   end
 

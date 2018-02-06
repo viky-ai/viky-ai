@@ -2,7 +2,7 @@ $ = require('jquery');
 
 class InterpretationsList
   constructor: ->
-    InterpretationsList.updateDraggable()
+    App.CardListHelper.updateDraggable()
 
     @sortable = Sortable.create($('#interpretations-list')[0], {
       group: "interpretations",
@@ -38,15 +38,6 @@ class InterpretationsList
             data: { locale: $(event.target).data('locale') }
       });
     App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0])
-
-  @updateDraggable: ->
-    if $('.tabs > ul > li.js-draggable-locale').length > 0
-      $('#interpretations-list li .card-list__item__draggable').show()
-    else
-      if $('#interpretations-list li').length > 1
-        $('#interpretations-list li .card-list__item__draggable').show()
-      else
-        $('#interpretations-list li .card-list__item__draggable').hide()
 
   @incrementTabBadge: ->
     count = $("#current-locale-tab-badge").data('count')
