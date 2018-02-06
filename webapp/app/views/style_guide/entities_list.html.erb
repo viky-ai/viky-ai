@@ -1,0 +1,132 @@
+<div class="sg-intro">
+  <h1>Entities list</h1>
+  <p>
+    Displayed in entity main page.
+  </p>
+</div>
+
+
+<section>
+  <h2>Show detailed</h2>
+  <p>
+    Click on an item will show details.
+  </p>
+  <%= highlight_html do %>
+    <ul id="entities-list" class="card-list" %="">
+      <li id="entity-456789"><div class="entity-form__show-detailed">
+        <div class="field entity-form__close">
+          <div class="control">
+            <a class="close" href="#">
+              <%= icon_close %>
+            </a>
+          </div>
+        </div>
+        <div class="field entity-form__terms">
+          <div class="control">
+            <label for="terms__456789">Terms</label>
+            <textarea name="terms__456789" id="terms__456789" readonly="readonly">Charles Baudelaire</textarea>
+          </div>
+        </div>
+        <div class="field field--for-solution entity-form__solution">
+          <div class="control">
+            <label for="solution__456789">Solution</label>
+            <span class="label--with-option">
+        <input name="auto_solution_enabled__456789" id="auto_solution_enabled__456789" value="true" disabled="disabled" checked="checked" type="checkbox">
+        <label for="auto_solution_enabled__456789">Auto solution</label>
+      </span>
+            <textarea name="solution__456789" id="solution__456789" readonly="readonly">{
+  'author': 'Charles Baudelaire'
+}</textarea>
+          </div>
+        </div>
+      </div>
+      </li>
+      <li id="entity-123789">
+        <a href="#">
+          <span class="card-list__item__name">Victor Hugo</span>
+        </a>
+        <div class="card-list__item__stats">
+          1 term
+        </div>
+      </li>
+    </ul>
+  <script>
+    App.CodeEditor.buildJavaScriptEditor($("#solution__456789")[0], true);
+  </script>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Update item state</h2>
+  <p>
+    Click on an item will switch to update state.
+  </p>
+  <table>
+    <thead>
+    <tr>
+      <th><code>data-action</code> value</th>
+      <th>Behavior description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><code>data-elistname</code></td>
+      <td>
+        The entities list name, mandatory to create the auto solution JSON (take the first term not empty).
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <%= highlight_html do %>
+    <ul id="entities-list" class="card-list">
+      <li id="entity-123456">
+        <form class="entity-form"
+              data-elistname="city"
+              action="#">
+        <div class="field entity-form__terms">
+          <div class="control">
+            <label for="terms__123456">Terms</label>
+            <textarea name="entity[terms]" id="terms__123456" maxlength="5000" spellcheck="false">London
+Londres</textarea>
+          </div>
+        </div>
+        <div class="field field--for-solution entity-form__solution">
+          <div class="control">
+            <label for="solution__123456">Solution</label>
+            <span class="label--with-option">
+              <input id="auto_solution_enabled__123456" value="1" checked="checked" name="entity[auto_solution_enabled]" type="checkbox">
+              <label for="auto_solution_enabled__123456">Auto solution</label>
+            </span>
+            <textarea id="solution__123456" maxlength="2000" spellcheck="false" disabled="disabled" name="entity[solution]">{
+  'city': 'London'
+}</textarea>
+          </div>
+        </div>
+        <div class="field field--submit">
+          <div class="control">
+            <button name="button" type="button" class="btn btn--primary">Update</button>
+            <a class="btn btn--plain">Cancel</a>
+          </div>
+        </div>
+        <div class="field entity-form__delete">
+          <div class="control">
+            <a class="btn btn--small btn--outline btn--destructive">Delete</a>
+          </div>
+        </div>
+      </form>
+      </li>
+      <li id="entity-789456">
+        <a href="#">
+          <span class="card-list__item__name">Rome</span>
+        </a>
+        <div class="card-list__item__stats">
+          2 terms
+        </div>
+      </li>
+    </ul>
+<script>
+  App.CodeEditor.buildJavaScriptEditor($("#solution__123456")[0], true);
+</script>
+  <% end %>
+</section>
