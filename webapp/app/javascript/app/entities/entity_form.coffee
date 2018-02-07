@@ -49,6 +49,10 @@ class EntityTermsSolutionSynchronizer
   @buildAutoSolution: (key, rawValue) ->
     term = rawValue
       .split('\n')
+      .map((term) ->
+        parts = term.split(':')
+        if parts.length > 2 then parts[0..-2].join(':') else parts[0]
+      )
       .map((term) -> term.trim())
       .filter((term) -> term != '')
       .shift()

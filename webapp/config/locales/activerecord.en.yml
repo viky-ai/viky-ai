@@ -54,6 +54,9 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
+    entity:
+      unknown_locale: "unknown locale '%{current_locale}'"
+      term_abscent: "can't be blank"
     interpretation_alias:
       end_position_lower_than_start: 'must be greater than position start'
       overlap: overlap

@@ -9,7 +9,13 @@
   <div class="field entity-form__terms">
     <div class="control">
       <%= f.label :terms, for: "terms__#{entity.id}" %>
-      <% terms = entity.terms.map { |term| term['term'] } %>
+      <% terms = entity.terms.map do |term|
+        if term['locale'] == Locales::ANY
+          "#{term['term']}"
+        else
+          "#{term['term']}:#{term['locale']}"
+        end
+      end %>
       <%= text_area_tag('entity[terms]', terms.join("\n"), id: "terms__#{entity.id}", maxlength: '5000', spellcheck: 'false') %>
     </div>
     <%= display_errors(entity, :terms) %>

@@ -21,7 +21,19 @@ class EntitiesTest < ApplicationSystemTestCase
     within('.entity-form') do
       fill_in 'Terms', with: "foggy\nbrumeux"
       uncheck('Auto solution')
-      fill_in_editor_field 'condition: foggy'
+      fill_in_editor_field 'condition: brumeux'
+      click_button 'Add'
+    end
+    assert page.has_text?('foggy')
+  end
+
+
+  test 'Create an entity with locale' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_no_text?('foggy')
+    within('.entity-form') do
+      fill_in 'Terms', with: "foggy:en\nbrumeux"
+      check('Auto solution')
       click_button 'Add'
     end
     assert page.has_text?('foggy')
@@ -39,6 +51,19 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button 'Update'
     end
     assert page.has_link?('Canicule')
+  end
+
+
+  test 'Update an entity with wrong locale' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_link?('soleil')
+    within('#entities-list') do
+      click_link 'soleil'
+      assert page.has_text?('Cancel')
+      fill_in 'Terms', with: "Canicule:xx"
+      click_button 'Update'
+    end
+    assert page.has_text?("Terms unknown locale 'xx'")
   end
 
 

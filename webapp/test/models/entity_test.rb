@@ -7,7 +7,7 @@ class EntityTest < ActiveSupport::TestCase
     entity = Entity.new(
       solution: "{gender: 'male'}",
       auto_solution_enabled: false,
-      terms: [{ term: 'Jacques' }, { term: 'James' }],
+      terms: [{ term: 'Jacques', locale: 'fr' }, { term: 'James', locale: 'en' }],
       position: 2,
       entities_list: entities_lists(:weather_conditions)
     )
@@ -16,7 +16,9 @@ class EntityTest < ActiveSupport::TestCase
     assert !entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
     assert_equal 'Jacques', entity.terms.first['term']
+    assert_equal 'fr', entity.terms.first['locale']
     assert_equal 'James', entity.terms.last['term']
+    assert_equal 'en', entity.terms.last['locale']
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
     assert_equal 2, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count
@@ -49,10 +51,12 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Add a term to an entity' do
     entity = entities(:weather_sunny)
-    assert_equal [{'term' => 'soleil'}, {'term' => 'sun'}], entity.terms
-    entity.terms << { 'term' => 'Sole' }
+    expected = [{'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }]
+    assert_equal expected, entity.terms
+    entity.terms << { 'term' => 'Sol', 'locale' => 'es' }
     assert entity.save
-    assert_equal [{ 'term' => 'soleil' }, { 'term' => 'sun' }, { 'term' => 'Sole' }], entity.terms
+    expected = [{ 'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }, { 'term' => 'Sol','locale' => 'es' }]
+    assert_equal expected, entity.terms
   end
 
 
@@ -62,7 +66,7 @@ class EntityTest < ActiveSupport::TestCase
       terms: "Jacques\nJames"
     )
     assert entity.save
-    expected = [{ 'term' => 'Jacques' }, { 'term' => 'James' }]
+    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'James', 'locale' => '*' }]
     assert_equal expected, entity.terms
   end
 
@@ -73,7 +77,42 @@ class EntityTest < ActiveSupport::TestCase
       terms: "   \nJacques\n  \nJames\n   "
     )
     assert entity.save
-    expected = [{ 'term' => 'Jacques' }, { 'term' => 'James' }]
+    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'James', 'locale' => '*' }]
+    assert_equal expected, entity.terms
+  end
+
+
+  test 'Terms locales' do
+    entity = Entity.new(
+      entities_list: entities_lists(:weather_conditions)
+    )
+    entity.terms = "soleil:fr\nsun:en"
+    assert entity.save
+    expected = [{ 'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }]
+    assert_equal expected, entity.terms
+
+    entity.terms = "soleil:\nsun"
+    assert entity.save
+    expected = [{ 'term' => 'soleil', 'locale' => '*' }, { 'term' => 'sun', 'locale' => '*' }]
+    assert_equal expected, entity.terms
+
+    entity.terms = "soleil:xy"
+    assert !entity.save
+    expected = {
+      terms: ["unknown locale 'xy'"]
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = ":fr"
+    assert !entity.save
+    expected = {
+      terms: ["can't be blank"]
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = "soleil:en:fr"
+    assert entity.save
+    expected = [{ 'term' => 'soleil:en', 'locale' => 'fr' }]
     assert_equal expected, entity.terms
   end
 end
