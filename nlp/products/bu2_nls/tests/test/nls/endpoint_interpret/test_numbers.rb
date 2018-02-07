@@ -168,6 +168,18 @@ module Nls
       end
 
       def test_multilang
+        Interpretation.default_locale = "fr-FR,en-US"
+        check_interpret("1.2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("1,2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+
+        Interpretation.default_locale = "fr-FR"
+        check_interpret("1.2",  { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1,2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+
+        Interpretation.default_locale = "en-US"
+        check_interpret("1.2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("1,2",  { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+
       end
 
     end
