@@ -121,7 +121,7 @@ struct lang_sep
 #define locale_lang_country(lang, country) (lang + DOgLangMax * country)
 
 static struct lang_sep lang_sep_conf[] = {   //
-    { DOgLangNil, DOgCountryCH, "'", "\\." , FALSE},   // *-CH  // le caractere '.' signifie n'importe quel caractère pour une regexp mais n'est pas un caractère échappé par la glib
+    { DOgLangNil, DOgCountryCH, "'", "\\." , FALSE},   // *-CH   // the '.' char is not an escaped char in c, but it means "all characters" in a regexp, so it has to be escaped
         { DOgLangFR, DOgCountryNil, " ", ",", FALSE },   // fr-*
         { DOgLangEN, DOgCountryNil, ",", "\\.", FALSE },   // en-*
 
@@ -158,7 +158,6 @@ static og_status getNumberSeparators(struct lang_sep* lang_conf, int locale, og_
 
   }
 
-  // TODO default
   if (!match)
   {
     // fr by default
@@ -210,10 +209,6 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
 {
   og_bool digits_grouped = FALSE;
 
-  // getting thousand and decimal separator
-  og_string thousand_sep = lang_conf->thousand_sep;
-  og_string decimal_sep = lang_conf->decimal_sep;
-
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
 // parsing the numbers
@@ -224,7 +219,12 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
   struct request_word *request_word_end;
 
   char pattern[DPcPathSize];
-  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", g_strescape(thousand_sep, NULL), g_strescape(decimal_sep, NULL));
+
+  // getting thousand and decimal separator
+  og_string thousand_sep = g_strescape(lang_conf->thousand_sep, "\\");
+  og_string decimal_sep = g_strescape(lang_conf->decimal_sep, "\\");
+
+  snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", thousand_sep, decimal_sep);
 
   GError *regexp_error = NULL;
   GRegex *regular_expression = g_regex_new(pattern, 0, 0, &regexp_error);
@@ -253,6 +253,15 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
     if (!strcmp(string_request_word, thousand_sep) || !strcmp(string_request_word, decimal_sep))
     {
       continue;
+    }
+
+    // cas particulier du '.' qui doit être échappé manuellement en "\."
+    if(strcmp(thousand_sep,"\\.")==0 || strcmp(decimal_sep,"\\.")==0)
+    {
+      if(strcmp(string_request_word, ".")==0)
+      {
+        continue;
+      }
     }
 
     // recuperer la string entre DigitGroupStart et DigitGroupEnd

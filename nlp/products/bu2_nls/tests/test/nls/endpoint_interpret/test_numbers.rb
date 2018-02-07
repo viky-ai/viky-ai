@@ -67,13 +67,26 @@ module Nls
         check_interpret("12 345 678",     { interpretation: "numbers_list", solution: {numbers: [12345678]} })
       end
 
-      def test_extra_zero
+      def test_simple_decimal_number_english
+        Interpretation.default_locale = "en-US"
+        check_interpret("1.2",            { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("12,345,678",     { interpretation: "numbers_list", solution: {numbers: [12345678]} })
+      end
+
+      def test_extra_zero_french
         check_interpret("01,2",    { interpretation: "numbers_list", solution: {numbers: [1.2]} })
         check_interpret("1,20",    { interpretation: "numbers_list", solution: {numbers: [1.2]} })
         check_interpret("1,200",   { interpretation: "numbers_list", solution: {numbers: [1.2]} })
       end
 
-      def test_thousand_number
+      def test_extra_zero_english
+        Interpretation.default_locale = "en-US"
+        check_interpret("01.2",    { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("1.20",    { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("1.200",   { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+      end
+
+      def test_thousand_number_french
         check_interpret("1 200",      { interpretation: "numbers_list", solution: {numbers: [1200]} })
         check_interpret("100 200",    { interpretation: "numbers_list", solution: {numbers: [100200]} })
         check_interpret("9 100 200",  { interpretation: "numbers_list", solution: {numbers: [9100200]} })
@@ -81,10 +94,26 @@ module Nls
         check_interpret("1 234 567",  { interpretation: "numbers_list", solution: {numbers: [1234567]} })
       end
 
-      def test_thousand_decimal_number
+      def test_thousand_number_english
+        Interpretation.default_locale = "en-US"
+        check_interpret("1,200",      { interpretation: "numbers_list", solution: {numbers: [1200]} })
+        check_interpret("100,200",    { interpretation: "numbers_list", solution: {numbers: [100200]} })
+        check_interpret("9,100,200",  { interpretation: "numbers_list", solution: {numbers: [9100200]} })
+        check_interpret("1,234",      { interpretation: "numbers_list", solution: {numbers: [1234]} })
+        check_interpret("1,234,567",  { interpretation: "numbers_list", solution: {numbers: [1234567]} })
+      end
+
+      def test_thousand_decimal_number_french
         check_interpret("1 200,3",      { interpretation: "numbers_list", solution: {numbers: [1200.3]} })
         check_interpret("9 100 200,0",  { interpretation: "numbers_list", solution: {numbers: [9100200]} })
         check_interpret("9100200,0",    { interpretation: "numbers_list", solution: {numbers: [9100200]} })
+      end
+
+      def test_thousand_decimal_number_english
+        Interpretation.default_locale = "en-US"
+        check_interpret("1,200.3",      { interpretation: "numbers_list", solution: {numbers: [1200.3]} })
+        check_interpret("9,100,200.0",  { interpretation: "numbers_list", solution: {numbers: [9100200]} })
+        check_interpret("9100200.0",    { interpretation: "numbers_list", solution: {numbers: [9100200]} })
       end
 
       def test_complex_number
@@ -103,10 +132,10 @@ module Nls
 
       def test_wrong_decimal_number_english
         Interpretation.default_locale = "en-US"
-        check_interpret("1 , 2",    { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1, 2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1 ,2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1 2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1 . 2",    { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1. 2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1 .2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1,2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
       end
 
       def test_wrong_thousand_number_french
@@ -117,24 +146,14 @@ module Nls
         check_interpret("1, 2, 3,4",      { interpretation: "numbers_list", solution: {numbers: [1, 2, 3.4]} })
       end
 
-      def test_other_languages
-        skip "other languages are not working yet"
-
+      def test_wrong_thousand_number_english
         Interpretation.default_locale = "en-US"
-        check_interpret("1.2",        { interpretation: "numbers_list", solution: {numbers: [1.2]} })
-        check_interpret("12,345,678", { interpretation: "numbers_list", solution: {numbers: [12345678]} })
-
-        check_interpret("1 . 2",            { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1. 2",             { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1 .2",             { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("1 2",              { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
-        check_interpret("9,100,200,0",      { interpretation: "numbers_list", solution: {numbers: [9100200, 0]} })
-        check_interpret("12,123,123 123",   { interpretation: "numbers_list", solution: {numbers: [12123123, 123]} })
+        check_interpret("9,100,200,0",    { interpretation: "numbers_list", solution: {numbers: [9100200, 0]} })
+        check_interpret("33,12,34,56,78", { interpretation: "numbers_list", solution: {numbers: [33, 12, 34, 56, 78]} })
+        check_interpret("1234,123",       { interpretation: "numbers_list", solution: {numbers: [1234, 123]} })
+        check_interpret("12,123.123,123", { interpretation: "numbers_list", solution: {numbers: [12123.123, 123]} })
         check_interpret("12,123,12 123",    { interpretation: "numbers_list", solution: {numbers: [12123, 12, 123]} })
-        check_interpret("12,123.123 123",   { interpretation: "numbers_list", solution: {numbers: [12123.123, 123]} })
-        check_interpret("12 123.123 123",   { interpretation: "numbers_list", solution: {numbers: [12123.123, 123]} })
-        check_interpret("1, 2, 3.4",        { interpretation: "numbers_list", solution: {numbers: [1, 2, 3.4]} })
-
+        check_interpret("1, 2, 3.4",      { interpretation: "numbers_list", solution: {numbers: [1, 2, 3.4]} })
       end
 
       def test_combinations
@@ -146,6 +165,9 @@ module Nls
 
       def test_toto
         check_interpret("123st 456",    { interpretation: "numbers_list", solution: { numbers: [123, 456] } })
+      end
+
+      def test_multilang
       end
 
     end
