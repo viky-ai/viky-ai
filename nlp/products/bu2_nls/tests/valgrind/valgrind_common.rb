@@ -13,7 +13,9 @@ module Valgrind
     end
 
     def interpret_queries(nb_request_factor, skip_timeout = false)
+      filename = File.basename(__FILE__)
 
+      ruby_log_append(filename, "building packages")
       # several_packages_several_intents
       pg_building_feature_any = create_building_feature_any
       Nls::Nls.package_update(pg_building_feature_any)
@@ -27,6 +29,7 @@ module Valgrind
       @number_package = @available_packages["numbers"]
       @number_uuid = @number_package.id.to_s
 
+      ruby_log_append(filename, "building queries")
       interpret_query=
       {
         "packages" => [ @main_uuid ],
@@ -37,7 +40,7 @@ module Valgrind
       numbers_query=
       {
         "packages" => [ @number_uuid ],
-        "sentence" => "a 12 345.678 b",
+        "sentence" => "a 12,345.678 b",
         "Accept-Language" => Nls::Interpretation.default_locale
       }
 
@@ -47,24 +50,28 @@ module Valgrind
         timeout: 20000,
       }
 
+      ruby_log_append(filename, "test dump packages")
       # dump packages
       (10 * nb_request_factor).times do |i|
         actual_dump_result = Nls::Nls.dump
         assert !actual_dump_result.nil?, "dump #{i}"
       end
 
+      ruby_log_append(filename, "test simple query")
       # launch simple query
       (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(interpret_query, params)
         assert !response.nil?
       end
 
+      ruby_log_append(filename, "test number query")
       # launch number query
       (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(numbers_query, params)
         assert !response.nil?
       end
 
+      ruby_log_append(filename, "test package update")
       # package update
       url_add = Nls::Nls.url_packages + "/#{@main_uuid}"
 
@@ -81,7 +88,9 @@ module Valgrind
       # launch queries with timeouts
 
       if !skip_timeout
+        ruby_log_append(filename, "tests with timeout")
 
+        ruby_log_append(filename, "timeout NlpPackageGet for nlp recursive query")
         # timeout NlpPackageGet for nlp recursive query
         params = {
           timeout: 20,
@@ -95,6 +104,7 @@ module Valgrind
           assert_response_has_error expected_error, exception, "Timeout #{i}"
         end
 
+        ruby_log_append(filename, "timeout NlpInterpretRequestParse")
         # timeout NlpInterpretRequestParse
         params = {
           timeout: 20,
@@ -108,6 +118,7 @@ module Valgrind
           assert_response_has_error expected_error, exception, "Timeout #{i}"
         end
 
+        ruby_log_append(filename, "timeout NlpMatchExpressions")
         # timeout NlpMatchExpressions
         params = {
           timeout: 20,
@@ -121,6 +132,7 @@ module Valgrind
           assert_response_has_error expected_error, exception, "Timeout #{i}"
         end
 
+        ruby_log_append(filename, "timeout NlpRequestInterpretationBuild")
         # timeout NlpRequestInterpretationBuild
         params = {
           timeout: 20,
@@ -134,6 +146,7 @@ module Valgrind
           assert_response_has_error expected_error, exception, "Timeout #{i}"
         end
 
+        ruby_log_append(filename, "timeout NlpPackageAddOrReplace")
         # timeout NlpPackageAddOrReplace
         params = {
           timeout: 20,

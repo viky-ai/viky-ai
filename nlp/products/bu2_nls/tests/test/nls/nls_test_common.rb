@@ -43,6 +43,27 @@ module Nls
       FileUtils.cp(fixture_path(file), importDir)
     end
 
+    def ruby_log_file
+      "ruby_test.log"
+    end
+
+    def ruby_log_file_backup
+      "ruby_test.log2"
+    end
+
+    def manage_log_file_size
+      if( (File.stat(File.join(pwd, ruby_log_file)).size) > 2000000 )
+        File.rename(File.join(pwd, ruby_log_file), File.join(pwd, ruby_log_file_backup))
+      end
+    end
+
+    def ruby_log_append(filename, sentence)
+      manage_log_file_size
+      File.open(File.join(pwd, ruby_log_file),"a") do |f|
+        f.puts("#{Time.now.utc.iso8601}: #{filename}: #{sentence}")
+      end
+    end
+
     def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now = nil, primary_package = nil, show_private = false)
       request = {}
 
@@ -184,16 +205,16 @@ module Nls
       pg_building_feature_any_hash = {'preposition_building_feature'  => i_preposition_building_feature, 'building_feature'=> Alias.any}
       i_pg_building_feature = Interpretation.new("pg-building-feature")
       i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
-          aliases: pg_building_feature_hash,
-          keep_order: true,
-          solution: { building_feature: "`building_feature`" })
+      aliases: pg_building_feature_hash,
+      keep_order: true,
+      solution: { building_feature: "`building_feature`" })
       i_pg_building_feature.new_expression("@{preposition_building_feature} @{building_feature}",
-          aliases: pg_building_feature_any_hash,
-          keep_order: true,
-          solution: { building_feature: "`building_feature`" })
+      aliases: pg_building_feature_any_hash,
+      keep_order: true,
+      solution: { building_feature: "`building_feature`" })
       i_pg_building_feature.new_expression("@{building_feature}",
-          aliases: {'building_feature'  => i_building_feature},
-          solution: { building_feature: "`building_feature`" })
+      aliases: {'building_feature'  => i_building_feature},
+      solution: { building_feature: "`building_feature`" })
       pg_building_feature << i_pg_building_feature
 
 
@@ -250,7 +271,6 @@ module Nls
       package
     end
 
-
     def full_minimal_package(package_slug, interpretation_slug, expression)
       package = Package.new(package_slug)
       interpretation = Interpretation.new(interpretation_slug)
@@ -294,10 +314,10 @@ module Nls
       assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
 
       if (expected.has_key?(:interpretations) && expected[:interpretations].kind_of?(Array) && expected[:interpretations].empty?) ||
-         (expected.has_key?(:interpretation)  && expected[:interpretation].nil?)
-         assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation"
-         # skip other assert
-         return actual
+      (expected.has_key?(:interpretation)  && expected[:interpretation].nil?)
+        assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation"
+        # skip other assert
+        return actual
       end
 
       assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
@@ -365,7 +385,6 @@ module Nls
       return actual
 
     end
-
 
     def assert_exception_has_message expected_error, exception, msg = nil
 
