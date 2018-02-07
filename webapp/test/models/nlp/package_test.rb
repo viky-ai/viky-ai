@@ -59,7 +59,7 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     intent = intents(:weather_greeting)
     interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation.locale = '*'
+    interpretation.locale = Locales::ANY
     interpretation.save
     intent.interpretations = [interpretation]
     intent.save

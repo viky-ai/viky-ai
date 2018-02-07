@@ -159,7 +159,7 @@ class Nlp::Package
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
         expression[:aliases]    = build_aliases(interpretation)
-        expression[:locale]     = interpretation.locale     unless interpretation.locale == '*'
+        expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
         expression[:glued]      = interpretation.glued      if interpretation.glued
         expression[:solution]   = build_solution(interpretation)

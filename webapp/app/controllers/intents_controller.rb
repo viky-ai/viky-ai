@@ -18,7 +18,7 @@ class IntentsController < ApplicationController
   def create
     @intent = Intent.new(intent_params)
     @intent.agent = @agent
-    @intent.locales = ['*']
+    @intent.locales = [Locales::ANY]
     respond_to do |format|
       if @intent.save
         format.json do
@@ -77,7 +77,7 @@ class IntentsController < ApplicationController
   end
 
   def select_new_locale
-    available_locales = Interpretation::LOCALES - @intent.locales
+    available_locales = Locales::ALL - @intent.locales
     render partial: 'select_new_locale', locals: { available_locales: available_locales }
   end
 

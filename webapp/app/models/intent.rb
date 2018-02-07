@@ -29,7 +29,7 @@ class Intent < ApplicationRecord
   end
 
   def ordered_locales
-    Interpretation::LOCALES.select { |l| locales.include?(l) }
+    Locales::ALL.select { |l| locales.include?(l) }
   end
 
   def slug
@@ -47,7 +47,7 @@ class Intent < ApplicationRecord
     def check_locales
       return if locales.blank?
       locales.each do |locale|
-        unless Interpretation::LOCALES.include? locale
+        unless Locales::ALL.include? locale
           errors.add(:locales, I18n.t('errors.intents.unknown_locale', current_locale: locale))
         end
       end

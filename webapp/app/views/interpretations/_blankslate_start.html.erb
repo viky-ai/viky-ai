@@ -12,7 +12,7 @@
           <% if current_user.can? :edit, agent %>
             <%= t('views.interpretations.blankslate.start_html') %>
           <% else %>
-            <% if current_locale == '*' %>
+            <% if current_locale == Locales::ANY %>
               <% language = t('views.interpretations.locales.no_locale') %>
             <% else %>
               <% language = current_locale %>
