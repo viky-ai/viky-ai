@@ -7,7 +7,7 @@
   <div class="field entity-form__terms">
     <div class="control">
       <%= f.label :terms, for: 'terms__new_entity' %>
-      <%= f.text_area :terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false' %>
+      <%= f.text_area :terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true%>
     </div>
     <%= display_errors(entity, :terms) %>
   </div>
