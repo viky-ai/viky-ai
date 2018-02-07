@@ -15,51 +15,8 @@ module Nls
 
         Interpretation.default_locale = "fr-FR"
 
-        Nls.package_update(create_package())
+        Nls.package_update(create_numbers_package)
       end
-
-      def create_package
-        package = Package.new("numbers")
-
-        letters = package.new_interpretation("letters")
-        letters << Expression.new("a", solution: "a")
-        letters << Expression.new("b", solution: "b")
-
-        numbers = package.new_interpretation("numbers")
-        numbers << Expression.new("@{number}", aliases: { number: Alias.digit })
-
-        titi = package.new_interpretation("titi")
-        titi << Expression.new("titi")
-
-        toto = package.new_interpretation("toto")
-        toto << Expression.new("toto")
-
-        combination1 = package.new_interpretation("combination1")
-        combination1 << Expression.new("@{number} @{toto}", aliases: { number: Alias.digit, toto: toto })
-
-        combination2 = package.new_interpretation("combination2")
-        combination2 << Expression.new("@{number} @{titi}", aliases: { number: Alias.digit, titi: titi })
-
-        combination = package.new_interpretation("combination")
-        combination << Expression.new("@{combination2}", aliases: { combination2: combination2 })
-        combination << Expression.new("@{combination1}", aliases: { combination1: combination1 })
-
-        combinations = package.new_interpretation("combinations")
-        combinations << Expression.new(" @{combination} @{combinations}", aliases: {combination: combination, combinations: combinations})
-        combinations << Expression.new("@{combination}", aliases: {combination: combination})
-
-
-        numbers_list = package.new_interpretation("numbers_list")
-        numbers_list << Expression.new("@{numbers_list} @{numbers}", aliases: {numbers_list: numbers_list, numbers: numbers})
-        numbers_list << Expression.new("@{numbers}", aliases: {numbers: numbers})
-
-        complex_number = package.new_interpretation("complex_number")
-        complex_number << Expression.new("@{letter1} @{number} @{letter2}", aliases: { letter1: letters, number: Alias.digit, letter2: letters})
-
-        package
-      end
-
-      # Tests
 
       def test_simple_decimal_number_french
         check_interpret("1",              { interpretation: "numbers_list", solution: {numbers: [1]} })

@@ -177,7 +177,6 @@ module Nls
 
     def self.package_update(package, params = {})
       package_id = nil
-      package_body = nil
       if package.kind_of? Package
         package_update_json(package.id, package.slug, package.to_h, params)
       elsif package.kind_of? Hash

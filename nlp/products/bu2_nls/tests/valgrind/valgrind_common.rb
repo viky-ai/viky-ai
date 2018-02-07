@@ -18,13 +18,26 @@ module Valgrind
       pg_building_feature_any = create_building_feature_any
       Nls::Nls.package_update(pg_building_feature_any)
 
+      numbers_package = create_numbers_package
+      Nls::Nls.package_update(numbers_package)
+
       @main_package = @available_packages["pg-building-feature"]
       @main_uuid = @main_package.id.to_s
+
+      @number_package = @available_packages["numbers"]
+      @number_uuid = @number_package.id.to_s
 
       interpret_query=
       {
         "packages" => [ @main_uuid ],
         "sentence" => "with swimming pool with golf",
+        "Accept-Language" => Nls::Interpretation.default_locale
+      }
+
+      numbers_query=
+      {
+        "packages" => [ @number_uuid ],
+        "sentence" => "a 12 345.678 b",
         "Accept-Language" => Nls::Interpretation.default_locale
       }
 
@@ -43,6 +56,12 @@ module Valgrind
       # launch simple query
       (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(interpret_query, params)
+        assert !response.nil?
+      end
+
+      # launch number query
+      (10 * nb_request_factor).times do
+        response = Nls::Nls.interpret(numbers_query, params)
         assert !response.nil?
       end
 
