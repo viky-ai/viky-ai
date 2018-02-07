@@ -339,7 +339,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
           Iinput_part, alias->slug, alias->id, alias->package_id);
       break;
     }
-    case nlp_input_part_type_Digit:
+    case nlp_input_part_type_Number:
     {
       struct alias *alias = input_part->alias;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part,
@@ -402,8 +402,8 @@ const char *NlpAliasTypeString(enum nlp_alias_type type)
       return "interpretation";
     case nlp_alias_type_Any:
       return "any";
-    case nlp_alias_type_Digit:
-      return "digit";
+    case nlp_alias_type_Number:
+      return "number";
 
   }
   return "alias_unknown";

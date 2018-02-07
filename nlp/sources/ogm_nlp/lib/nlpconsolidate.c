@@ -299,7 +299,7 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
     IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
     IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
     IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
-    IFE(NlpDigitInputPartLog(ctrl_nlp_th, package));
+    IFE(NlpNumberInputPartLog(ctrl_nlp_th, package));
   }
 
   DONE;
@@ -529,15 +529,15 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       //expression->alias_any_input_part_position = expression->input_parts_nb;
       alias_added = TRUE;
     }
-    else if (alias->type == nlp_alias_type_Digit)
+    else if (alias->type == nlp_alias_type_Number)
     {
       size_t Iinput_part;
       struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
       IFN(input_part) DPcErr;
-      input_part->type = nlp_input_part_type_Digit;
+      input_part->type = nlp_input_part_type_Number;
       input_part->alias = alias;
 
-      IFE(NlpInputPartAliasDigitAdd(ctrl_nlp_th, package, Iinput_part));
+      IFE(NlpInputPartAliasNumberAdd(ctrl_nlp_th, package, Iinput_part));
       alias_added = TRUE;
     }
     break;

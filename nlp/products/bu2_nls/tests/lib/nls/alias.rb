@@ -33,8 +33,8 @@ module Nls
         raise "Alias with type any must have a name"
       end
 
-      if name.nil? && @type == :digit
-        raise "Alias with type digit must have a name"
+      if name.nil? && @type == :number
+        raise "Alias with type number must have a name"
       end
 
       if @type == :normal
@@ -69,8 +69,8 @@ module Nls
       AliasSpecificType.new(:any)
     end
 
-    def self.digit
-      AliasSpecificType.new(:digit)
+    def self.number
+      AliasSpecificType.new(:number)
     end
 
   end

@@ -50,7 +50,7 @@
           [
             {
               "alias": "digits",
-              "type": "digit"
+              "type": "number"
             }
           ],
           "solution":

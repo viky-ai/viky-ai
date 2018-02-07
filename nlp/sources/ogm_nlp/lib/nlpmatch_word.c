@@ -36,14 +36,14 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
   input[input_length++] = '\1';
   input[input_length] = 0;
 
-  char digit[DPcPathSize];
-  digit[0] = 0;
-  if (request_word->is_digit)
+  char number[DPcPathSize];
+  number[0] = 0;
+  if (request_word->is_number)
   {
-    snprintf(digit, DPcPathSize, " -> %f", request_word->digit_value);
+    snprintf(number, DPcPathSize, " -> %f", request_word->number_value);
   }
 
-  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, digit);
+  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, number);
 
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
@@ -61,15 +61,15 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 {
   package_t package = interpret_package->package;
 
-  if (request_word->is_digit)
+  if (request_word->is_number)
   {
-    struct digit_input_part *digit_input_part_all = OgHeapGetCell(package->hdigit_input_part, 0);
-    int digit_input_part_used = OgHeapGetCellsUsed(package->hdigit_input_part);
-    for (int i = 0; i < digit_input_part_used; i++)
+    struct number_input_part *number_input_part_all = OgHeapGetCell(package->hnumber_input_part, 0);
+    int number_input_part_used = OgHeapGetCellsUsed(package->hnumber_input_part);
+    for (int i = 0; i < number_input_part_used; i++)
     {
-      struct digit_input_part *digit_input_part = digit_input_part_all + i;
-      // There is not need to have a special input part here for digit words
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, digit_input_part->Iinput_part,TRUE));
+      struct number_input_part *number_input_part = number_input_part_all + i;
+      // There is not need to have a special input part here for number words
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, number_input_part->Iinput_part,TRUE));
     }
   }
 
@@ -205,9 +205,9 @@ static og_bool NlpNumberParsing(og_nlp_th ctrl_nlp_th, og_string sentence, GRege
 
 
 
-static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct lang_sep* lang_conf)
+static og_bool NlpMatchWordGroupNumbersByLanguage(og_nlp_th ctrl_nlp_th, struct lang_sep* lang_conf)
 {
-  og_bool digits_grouped = FALSE;
+  og_bool numbers_grouped = FALSE;
 
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
@@ -264,7 +264,7 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
       }
     }
 
-    // recuperer la string entre DigitGroupStart et DigitGroupEnd
+    // recuperer la string entre NumberGroupStart et NumberGroupEnd
     og_char_buffer expression_string[DPcPathSize];
     int start_position = request_word_start->start_position;
     int end_position = request_word_end->start_position + request_word_end->length_position;
@@ -278,20 +278,20 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
     {
       if(request_word_start != request_word_end)
       {
-        digits_grouped = TRUE;
+        numbers_grouped = TRUE;
       }
       request_word_start->next = request_word_end->next;
       request_word_start->length_position = request_word_end->start_position - request_word_start->start_position
           + request_word_end->length_position;
-      request_word_start->is_digit = TRUE;
-      request_word_start->digit_value = value;
+      request_word_start->is_number = TRUE;
+      request_word_start->number_value = value;
       previous_match = TRUE;
     }
     else
     {
       if (previous_match)   // si on a 123.456 789 XXXX, on a un match à false, mais il faut reconsidérer 789 comme un nombre
       {
-        // recuperer la string entre DigitGroupStart et DigitGroupEnd
+        // recuperer la string entre NumberGroupStart et NumberGroupEnd
         start_position = request_word_end->start_position;
         end_position = request_word_end->start_position + request_word_end->length_position;
         length = end_position - start_position;
@@ -303,8 +303,8 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
         if (number_match)   // on est dans le cas 123.456 789 XXXX, il faut considérer le 789 comme un nombre
         {
           request_word_start = request_word_end;
-          request_word_start->is_digit = TRUE;
-          request_word_start->digit_value = value;
+          request_word_start->is_number = TRUE;
+          request_word_start->number_value = value;
         }
         else   // on est dans le cas 123.456 aa XXXX, il faut recommencer le parsing au mot suivant
         {
@@ -327,12 +327,12 @@ static og_bool NlpMatchWordGroupDigitsByLanguage(og_nlp_th ctrl_nlp_th, struct l
   }
 
   g_regex_unref(regular_expression);
-  return digits_grouped;
+  return numbers_grouped;
 }
 
-og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
+og_bool NlpMatchWordGroupNumbers(og_nlp_th ctrl_nlp_th)
 {
-  og_bool digits_grouped = FALSE;
+  og_bool numbers_grouped = FALSE;
   og_bool language_found = FALSE;
 
   struct lang_sep* lang_conf = lang_sep_conf;
@@ -346,26 +346,26 @@ og_bool NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th)
   if(numberLang > 0) // languages are given in the request
   {
     // check the given languages
-    for (size_t i = 0; i < numberLang && !digits_grouped; i++)
+    for (size_t i = 0; i < numberLang && !numbers_grouped; i++)
     {
       acceptedlanguage = OgHeapGetCell(ctrl_nlp_th->haccept_language, i);
       language_found = getNumberSeparators(lang_conf, acceptedlanguage->locale, thousand_sep, decimal_sep);
       found_language.decimal_sep = decimal_sep;
       found_language.thousand_sep = thousand_sep;
-      digits_grouped = NlpMatchWordGroupDigitsByLanguage(ctrl_nlp_th, &found_language);
-      IFE(digits_grouped);
+      numbers_grouped = NlpMatchWordGroupNumbersByLanguage(ctrl_nlp_th, &found_language);
+      IFE(numbers_grouped);
     }
   }
   if(numberLang <= 0 || language_found == FALSE) // no languages are given or given languages not found, let's check them all
   {
-    for (struct lang_sep *conf = lang_conf; !digits_grouped && conf->lang != DOgLangNil && conf->country != DOgCountryNil; conf++)
+    for (struct lang_sep *conf = lang_conf; !numbers_grouped && conf->lang != DOgLangNil && conf->country != DOgCountryNil; conf++)
     {
-      digits_grouped = NlpMatchWordGroupDigitsByLanguage(ctrl_nlp_th, conf);
-      IFE(digits_grouped);
+      numbers_grouped = NlpMatchWordGroupNumbersByLanguage(ctrl_nlp_th, conf);
+      IFE(numbers_grouped);
     }
   }
 
-  return digits_grouped;
+  return numbers_grouped;
 }
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)

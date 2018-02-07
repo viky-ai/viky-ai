@@ -24,7 +24,7 @@ module Nls
         letters = package.new_interpretation("letters")
         letters << Expression.new("a", solution: "a")
         letters << Expression.new("b", solution: "b")
-        letters << Expression.new("@{number}", aliases: { number: Alias.digit } )
+        letters << Expression.new("@{number}", aliases: { number: Alias.number } )
 
 
         glued = package.new_interpretation("glued")

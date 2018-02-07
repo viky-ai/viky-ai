@@ -114,7 +114,7 @@ static og_status NlpAutoCompleteAddWord(og_nlp_th ctrl_nlp_th, int Ilast_request
   request_word->start_position = last_request_word->start_position;
   request_word->length_position = last_request_word->length_position;
 
-  request_word->is_digit = FALSE;
+  request_word->is_number = FALSE;
   request_word->is_auto_complete_word = TRUE;
 
   request_word->spelling_score = spelling_score;

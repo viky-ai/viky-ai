@@ -236,7 +236,7 @@ module Nls
       letters << Expression.new("b", solution: "b")
 
       numbers = package.new_interpretation("numbers")
-      numbers << Expression.new("@{number}", aliases: { number: Alias.digit })
+      numbers << Expression.new("@{number}", aliases: { number: Alias.number })
 
       titi = package.new_interpretation("titi")
       titi << Expression.new("titi")
@@ -245,10 +245,10 @@ module Nls
       toto << Expression.new("toto")
 
       combination1 = package.new_interpretation("combination1")
-      combination1 << Expression.new("@{number} @{toto}", aliases: { number: Alias.digit, toto: toto })
+      combination1 << Expression.new("@{number} @{toto}", aliases: { number: Alias.number, toto: toto })
 
       combination2 = package.new_interpretation("combination2")
-      combination2 << Expression.new("@{number} @{titi}", aliases: { number: Alias.digit, titi: titi })
+      combination2 << Expression.new("@{number} @{titi}", aliases: { number: Alias.number, titi: titi })
 
       combination = package.new_interpretation("combination")
       combination << Expression.new("@{combination2}", aliases: { combination2: combination2 })
@@ -264,7 +264,7 @@ module Nls
       numbers_list << Expression.new("@{numbers}", aliases: {numbers: numbers})
 
       complex_number = package.new_interpretation("complex_number")
-      complex_number << Expression.new("@{letter1} @{number} @{letter2}", aliases: { letter1: letters, number: Alias.digit, letter2: letters})
+      complex_number << Expression.new("@{letter1} @{number} @{letter2}", aliases: { letter1: letters, number: Alias.number, letter2: letters})
 
       @available_packages[package.slug] = package
 

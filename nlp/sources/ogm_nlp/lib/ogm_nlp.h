@@ -107,7 +107,7 @@ struct package
   og_heap hinput_part_ba;
   og_heap hinput_part;
 
-  og_heap hdigit_input_part;
+  og_heap hnumber_input_part;
 
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
@@ -123,7 +123,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Digit
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number
 };
 
 struct alias_compile
@@ -249,7 +249,7 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Digit
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number
 };
 
 struct input_part_word
@@ -278,7 +278,7 @@ struct input_part
 
 };
 
-struct digit_input_part
+struct number_input_part
 {
   int Iinput_part;
 };
@@ -321,8 +321,8 @@ struct request_word
   int raw_length;
   int start_position;
   int length_position;
-  og_bool is_digit;
-  double digit_value;
+  og_bool is_number;
+  double number_value;
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
@@ -368,7 +368,7 @@ struct request_input_part
 
   int Ioriginal_request_input_part;
 
-  og_bool interpret_word_as_digit;
+  og_bool interpret_word_as_number;
 };
 
 struct request_position
@@ -721,9 +721,9 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
-og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
+og_status NlpInputPartAliasNumberAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpNumberInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
@@ -737,7 +737,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
-og_status NlpMatchWordGroupDigits(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordGroupNumbers(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_expression.c */
@@ -755,7 +755,7 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_digit);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_number);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,

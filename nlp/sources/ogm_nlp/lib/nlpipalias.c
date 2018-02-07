@@ -45,12 +45,12 @@ og_status NlpInputPartAliasAdd(og_nlp_th ctrl_nlp_th, package_t package, og_stri
 }
 
 
-og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part)
+og_status NlpInputPartAliasNumberAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part)
 {
-  size_t Idigit_input_part;
-  struct digit_input_part *digit_input_part = OgHeapNewCell(package->hdigit_input_part, &Idigit_input_part);
-  IFN(digit_input_part) DPcErr;
-  digit_input_part->Iinput_part = Iinput_part;
+  size_t Inumber_input_part;
+  struct number_input_part *number_input_part = OgHeapNewCell(package->hnumber_input_part, &Inumber_input_part);
+  IFN(number_input_part) DPcErr;
+  number_input_part->Iinput_part = Iinput_part;
   DONE;
 }
 

@@ -60,7 +60,7 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
-      if (request_word->is_digit)
+      if (request_word->is_number)
       {
         must_combine_solution = TRUE;
       }
@@ -238,22 +238,22 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       struct request_word *request_word = request_input_part->request_word;
       og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
       IFN(string_request_word) DPcErr;
-      if (request_word->is_digit && request_input_part->interpret_word_as_digit)
+      if (request_word->is_number && request_input_part->interpret_word_as_number)
       {
-        double value = request_word->digit_value;
-        json_t *json_solution_digit = NULL;
+        double value = request_word->number_value;
+        json_t *json_solution_number = NULL;
         if ((json_int_t) ((value * 100) / 100) == value)
         {
-          json_solution_digit = json_integer(value);
+          json_solution_number = json_integer(value);
         }
         else
         {
-          json_solution_digit = json_real(value);
+          json_solution_number = json_real(value);
         }
 
         struct alias *alias = request_input_part->input_part->alias;
         char solution[DPcPathSize];
-        NlpSolutionString(ctrl_nlp_th, json_solution_digit, DPcPathSize, solution);
+        NlpSolutionString(ctrl_nlp_th, json_solution_number, DPcPathSize, solution);
         NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
             alias->alias, solution);
         if (alias_solutions_nb >= DOgAliasSolutionSize)
@@ -265,7 +265,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         }
         struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
         alias_solution->alias = alias;
-        alias_solution->json_solution = json_solution_digit;
+        alias_solution->json_solution = json_solution_number;
         g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
         alias_solutions_nb++;
 
