@@ -5,40 +5,41 @@ module InterpretationHelper
   end
 
   def intent_to_json(intent)
-    JSON.generate({
+    JSON.generate(
       color:  "intent-#{intent.color}",
       aliasname: intent.intentname,
       intent_slug: intent.slug,
-      intent_id: intent.id,
-      nature: "type_intent"
-    })
+      interpretation_aliasable_id: intent.id,
+      interpretation_aliasable_type: 'Intent',
+      nature: 'type_intent'
+    )
   end
 
   def digit_to_json()
-    JSON.generate({
+    JSON.generate(
       color:  "intent-black",
       aliasname: t("views.interpretations.digit"),
       nature: "type_digit"
-    })
+    )
   end
 
-  def alias_to_json_href(interpretation_alias, current_agent)
-    ERB::Util.url_encode(alias_to_json(interpretation_alias, current_agent))
+  def alias_to_json_href(interpretation_alias)
+    ERB::Util.url_encode(alias_to_json(interpretation_alias))
   end
 
-  def alias_to_json(interpretation_alias, current_agent)
+  def alias_to_json(interpretation_alias)
     if interpretation_alias.type_intent?
-      possibles_intents = current_agent.reachable_intents.collect(&:id)
-      current_intent = interpretation_alias.intent
+      current_aliasable = interpretation_alias.interpretation_aliasable
       url = nil
-      if current_user.can?(:show, current_intent.agent)
-        url = user_agent_intent_path(current_intent.agent.owner, current_intent.agent, current_intent)
+      if current_user.can?(:show, current_aliasable.agent)
+        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
       end
       data = {
-        color: "intent-#{current_intent.color}",
+        color: "intent-#{current_aliasable.color}",
         aliasname: interpretation_alias.aliasname,
-        intent_slug: current_intent.slug,
-        intent_id: current_intent.id,
+        intent_slug: current_aliasable.slug,
+        interpretation_aliasable_id: current_aliasable.id,
+        interpretation_aliasable_type: 'Intent',
         nature: 'type_intent',
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
@@ -78,7 +79,7 @@ module InterpretationHelper
       end
       if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
         text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]
-        result << "<a href=\"#{alias_to_json_href(interpretation_alias, interpretation.intent.agent)}\">#{text}</a>"
+        result << "<a href=\"#{alias_to_json_href(interpretation_alias)}\">#{text}</a>"
         ordered_aliases = ordered_aliases.drop(1)
       end
     end
@@ -104,8 +105,8 @@ module InterpretationHelper
         end
         if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
           if interpretation_alias.type_intent?
-            title = interpretation_alias.intent.slug
-            color = interpretation_alias.intent.color
+            title = interpretation_alias.interpretation_aliasable.slug
+            color = interpretation_alias.interpretation_aliasable.color
           else
             color = "black"
             title = "Digit" if interpretation_alias.type_digit?

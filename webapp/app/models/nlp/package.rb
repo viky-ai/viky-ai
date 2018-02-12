@@ -110,8 +110,8 @@ class Nlp::Package
         .where(is_list: true, interpretations: { intent_id: intent.id }).order(:position_start).each do |ialias|
 
         interpretation_hash = {}
-        interpretation_hash[:id]   = "#{ialias.intent.id}_#{ialias.id}_recursive"
-        interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
+        interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+        interpretation_hash[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
         interpretation_hash[:scope] = 'hidden'
 
         expressions = []
@@ -196,15 +196,15 @@ class Nlp::Package
       if recursive
         {
           alias: "#{ialias.aliasname}_recursive",
-          slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
-          id: "#{ialias.intent.id}_#{ialias.id}_recursive",
+          slug: "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
+          id: "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
           package: @agent.id
         }
       else
         {
           alias: ialias.aliasname,
-          slug: ialias.intent.slug,
-          id: ialias.intent.id,
+          slug: ialias.interpretation_aliasable.slug,
+          id: ialias.interpretation_aliasable.id,
           package: @agent.id
         }
       end
@@ -222,11 +222,11 @@ class Nlp::Package
         result[:package] = @agent.id
         result[:alias]   = ialias.aliasname
         if ialias.is_list
-          result[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
-          result[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
+          result[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          result[:id] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
         else
-          result[:slug] = ialias.intent.slug
-          result[:id] = ialias.intent.id
+          result[:slug] = ialias.interpretation_aliasable.slug
+          result[:id] = ialias.interpretation_aliasable.id
         end
       end
       if ialias.type_digit?

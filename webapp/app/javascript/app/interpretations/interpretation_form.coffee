@@ -257,14 +257,15 @@ class AliasesForm
     name_prefix = "interpretation[interpretation_aliases_attributes][]"
     for id in @deletable_ids()
       html.push "
-        <input type='hidden' name='#{name_prefix}[aliasname]'      value='' />
-        <input type='hidden' name='#{name_prefix}[position_start]' value='' />
-        <input type='hidden' name='#{name_prefix}[position_end]'   value='' />
-        <input type='hidden' name='#{name_prefix}[intent_id]'      value='' />
-        <input type='hidden' name='#{name_prefix}[nature]'         value='' />
-        <input type='hidden' name='#{name_prefix}[is_list]'        value='' />
-        <input type='hidden' name='#{name_prefix}[id]'             value='#{id}' />
-        <input type='hidden' name='#{name_prefix}[_destroy]'       value='1' />"
+        <input type='hidden' name='#{name_prefix}[aliasname]'                     value='' />
+        <input type='hidden' name='#{name_prefix}[position_start]'                value='' />
+        <input type='hidden' name='#{name_prefix}[position_end]'                  value='' />
+        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value=' ' />
+        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='' />
+        <input type='hidden' name='#{name_prefix}[nature]'                        value='' />
+        <input type='hidden' name='#{name_prefix}[is_list]'                       value='' />
+        <input type='hidden' name='#{name_prefix}[id]'                            value='#{id}' />
+        <input type='hidden' name='#{name_prefix}[_destroy]'                      value='1' />"
     @form_container.closest('form').prepend(html.join(''))
 
 
@@ -305,11 +306,12 @@ class AliasesForm
           <input type='text' name='#{name_prefix}[aliasname]'        value='#{@aliasname(alias)}' />"
 
     line.push "
-          <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />
-          <input type='hidden' name='#{name_prefix}[position_end]'   value='#{alias.end}' />
-          <input type='hidden' name='#{name_prefix}[intent_id]'      value='#{alias.intent_id}' />
-          <input type='hidden' name='#{name_prefix}[nature]'         value='#{alias.nature}' />
-          <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
+          <input type='hidden' name='#{name_prefix}[position_start]'                value='#{alias.start}' />
+          <input type='hidden' name='#{name_prefix}[position_end]'                  value='#{alias.end}' />
+          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value='#{alias.interpretation_aliasable_id}' />
+          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='#{alias.interpretation_aliasable_type}' />
+          <input type='hidden' name='#{name_prefix}[nature]'                        value='#{alias.nature}' />
+          <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
     if alias.nature == 'type_intent' && alias.url != null

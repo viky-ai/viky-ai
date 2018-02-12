@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180206102733) do
+ActiveRecord::Schema.define(version: 20180208094531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,11 +91,12 @@ ActiveRecord::Schema.define(version: 20180206102733) do
     t.integer "position_start"
     t.integer "position_end"
     t.uuid "interpretation_id"
-    t.uuid "intent_id"
+    t.uuid "interpretation_aliasable_id"
     t.integer "nature", default: 0
     t.boolean "is_list", default: false
     t.boolean "any_enabled", default: false
-    t.index ["intent_id"], name: "index_interpretation_aliases_on_intent_id"
+    t.string "interpretation_aliasable_type"
+    t.index ["interpretation_aliasable_type", "interpretation_aliasable_id"], name: "index_ialiases_on_ialiasable_type_and_ialiasable_id"
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end
 
@@ -172,7 +173,6 @@ ActiveRecord::Schema.define(version: 20180206102733) do
   add_foreign_key "entities", "entities_lists", on_delete: :cascade
   add_foreign_key "entities_lists", "agents", on_delete: :cascade
   add_foreign_key "intents", "agents", on_delete: :cascade
-  add_foreign_key "interpretation_aliases", "intents", on_delete: :cascade
   add_foreign_key "interpretation_aliases", "interpretations", on_delete: :cascade
   add_foreign_key "interpretations", "intents", on_delete: :cascade
   add_foreign_key "memberships", "agents", on_delete: :cascade

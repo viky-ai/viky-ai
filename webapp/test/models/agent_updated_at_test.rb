@@ -102,7 +102,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       aliasname: 'who'
     )
     interpretation_alias.interpretation = interpretation
-    interpretation_alias.intent = intent
+    interpretation_alias.interpretation_aliasable = intent
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json

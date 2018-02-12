@@ -33,7 +33,7 @@
         </thead>
         <tbody>
         <% for interpretation_alias in interpretation.interpretation_aliases %>
-          <% json_alias = JSON.parse(alias_to_json(interpretation_alias, interpretation.intent.agent)) %>
+          <% json_alias = JSON.parse(alias_to_json(interpretation_alias)) %>
           <tr>
             <td>
               <%= json_alias['aliasname'] %>

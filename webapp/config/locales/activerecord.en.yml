@@ -62,3 +62,4 @@ en:
       overlap: overlap
       aliasname_uniqueness: 'has already been taken'
       aliasname_valid_javascript_variable: 'is invalid'
+      nature_blank: "can't be blank"

@@ -15,7 +15,7 @@ class InterpretationTest < ActiveSupport::TestCase
       position_end: 12
     )
     interpretation_alias.interpretation = interpretation
-    interpretation_alias.intent = intents(:weather_who)
+    interpretation_alias.interpretation_aliasable = intents(:weather_who)
     assert interpretation_alias.save
 
     assert_equal 1, interpretation.position

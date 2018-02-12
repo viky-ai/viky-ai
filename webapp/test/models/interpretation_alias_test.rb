@@ -2,7 +2,7 @@ require 'test_helper'
 
 class InterpretationAliasTest < ActiveSupport::TestCase
 
-  test 'belongs to validation on diffrent interpretation alias nature' do
+  test 'belongs to validation on different interpretation alias nature' do
     digit = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
@@ -12,15 +12,25 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     )
     assert digit.save
 
-    digit = InterpretationAlias.new(
+    type_intent = InterpretationAlias.new(
       position_start: 8,
       position_end: 21,
       aliasname: 'who',
       interpretation_id: interpretations(:weather_greeting_bonjour).id,
       nature: 'type_intent'
     )
-    assert !digit.save
-    assert_equal ["Intent can't be blank"], digit.errors.full_messages
+    assert !type_intent.save
+    assert_equal ["Intent can't be blank"], type_intent.errors.full_messages
+
+    type_entities_list = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'who',
+      interpretation_id: interpretations(:weather_greeting_bonjour).id,
+      nature: 'type_entities_list'
+    )
+    assert !type_entities_list.save
+    assert_equal ["Entities list can't be blank"], type_entities_list.errors.full_messages
   end
 
 
@@ -28,7 +38,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     weather_who_intent = intents(:weather_who)
     interpretation = interpretations(:weather_greeting_hello)
 
-    assert_equal weather_who_intent.id, interpretation.interpretation_aliases.first.intent.id
+    assert_equal weather_who_intent.id, interpretation.interpretation_aliases.first.interpretation_aliasable.id
 
     assert weather_who_intent.destroy
     assert_equal 0, interpretation.interpretation_aliases.count
@@ -46,7 +56,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 5,
           aliasname: 'who',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -62,13 +72,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 5,
           aliasname: 'who1',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who2',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -84,13 +94,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -104,13 +114,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 8,
           position_end: 21,
           aliasname: 'who1',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 5,
           position_end: 14,
           aliasname: 'who2',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -124,19 +134,19 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 5,
           aliasname: 'who3',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 6,
           position_end: 10,
           aliasname: 'who4',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 8,
           position_end: 12,
           aliasname: 'who5',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -154,7 +164,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     interpretation_alias.interpretation = weather_greeting_bonjour
 
     weather_who = intents(:weather_who)
-    interpretation_alias.intent = weather_who
+    interpretation_alias.interpretation_aliasable = weather_who
 
     assert interpretation_alias.save
     assert_equal "type_intent", interpretation_alias.nature
@@ -165,7 +175,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_equal 'who', interpretation_alias.aliasname
     assert !interpretation_alias.is_list
     assert_equal weather_greeting_bonjour.id, interpretation_alias.interpretation.id
-    assert_equal weather_who.id, interpretation_alias.intent.id
+    assert_equal weather_who.id, interpretation_alias.interpretation_aliasable.id
   end
 
 
@@ -174,7 +184,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_start: 8,
       position_end: 21,
       interpretation: interpretations(:weather_greeting_bonjour),
-      intent: intents(:weather_who)
+      interpretation_aliasable: intents(:weather_who)
     )
     assert !interpretation_alias.save
     expected = ['Parameter name can\'t be blank', 'Parameter name is invalid']
@@ -189,7 +199,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_end: 1
     )
     interpretation_alias.interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation_alias.intent = intents(:weather_who)
+    interpretation_alias.interpretation_aliasable = intents(:weather_who)
 
     assert !interpretation_alias.validate
     expected = ['Position end must be greater than position start']
@@ -204,7 +214,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_end: -3
     )
     interpretation_alias.interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation_alias.intent = intents(:weather_who)
+    interpretation_alias.interpretation_aliasable = intents(:weather_who)
 
     assert !interpretation_alias.validate
     expected = ['Position start must be greater than or equal to 0', 'Position end must be greater than 0']
@@ -219,7 +229,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       position_end: 4
     )
     interpretation_alias.interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation_alias.intent = intents(:weather_who)
+    interpretation_alias.interpretation_aliasable = intents(:weather_who)
 
     assert !interpretation_alias.validate
     expected = ['Position end must be greater than position start']
@@ -237,13 +247,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 11,
           aliasname: 'who',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -262,14 +272,14 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 6,
           position_end: 11,
           aliasname: 'who',
-          intent_id: intents(:weather_who).id,
+          interpretation_aliasable: intents(:weather_who),
           _destroy: true
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -321,13 +331,13 @@ class InterpretationAliasTest < ActiveSupport::TestCase
           position_start: 0,
           position_end: 11,
           aliasname: 'who1',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         },
         {
           position_start: 15,
           position_end: 21,
           aliasname: 'who2',
-          intent_id: intents(:weather_who).id
+          interpretation_aliasable: intents(:weather_who)
         }
       ]
     })
@@ -339,14 +349,14 @@ class InterpretationAliasTest < ActiveSupport::TestCase
            position_start: 0,
            position_end: 11,
            aliasname: interpretation.interpretation_aliases.last.aliasname,
-           intent_id: intents(:weather_who).id
+           interpretation_aliasable: intents(:weather_who)
          },
          {
            id: interpretation.interpretation_aliases.last.id,
            position_start: 15,
            position_end: 21,
            aliasname: interpretation.interpretation_aliases.first.aliasname,
-           intent_id: intents(:weather_who).id
+           interpretation_aliasable: intents(:weather_who)
          }
        ]
     })

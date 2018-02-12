@@ -8,6 +8,7 @@ class EntitiesList < ApplicationRecord
 
   belongs_to :agent, touch: true
   has_many :entities
+  has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
 
   enum visibility: [:is_public, :is_private]
 

@@ -1,14 +1,14 @@
 class InterpretationAlias < ApplicationRecord
-  enum nature: [:type_intent, :type_digit]
+  enum nature: [:type_intent, :type_digit, :type_entities_list]
 
   belongs_to :interpretation, touch: true
-  belongs_to :intent, optional: true, touch: true
+  belongs_to :interpretation_aliasable, polymorphic: true, optional: true, touch: true
 
-  validates :intent, presence: true, if: -> { self.type_intent? }
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
   validates :aliasname, presence: true
 
+  validate :interpretation_aliasable_present, unless: -> { self.type_digit? }
   validate :check_position_start_greater_than_end
   validate :no_overlap
   validate :check_aliasname_uniqueness
@@ -16,6 +16,15 @@ class InterpretationAlias < ApplicationRecord
 
 
   private
+
+    def interpretation_aliasable_present
+      return unless interpretation_aliasable.nil?
+      if type_intent?
+        errors.add(:intent, I18n.t('errors.interpretation_alias.nature_blank'))
+      else
+        errors.add(:entities_list, I18n.t('errors.interpretation_alias.nature_blank'))
+      end
+    end
 
     def no_overlap
       return if interpretation.nil?

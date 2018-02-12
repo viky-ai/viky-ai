@@ -4,12 +4,13 @@
 
   <% interpretation.interpretation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][id]" value="<%= ialias.id %>" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_start]" value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_end]"   value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][intent_id]"      value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][aliasname]"      value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"         value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"       value="1" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_start]"                value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_end]"                  value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][interpretation_aliasable_id]"   value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][interpretation_aliasable_type]" value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][aliasname]"                     value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"                        value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
   <% end %>
 
   <div class="field interpretations-form__interpretation">
