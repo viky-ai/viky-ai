@@ -283,6 +283,8 @@ static og_bool NlpMatchWordGroupNumbersByLanguage(og_nlp_th ctrl_nlp_th, struct 
       request_word_start->next = request_word_end->next;
       request_word_start->length_position = request_word_end->start_position - request_word_start->start_position
           + request_word_end->length_position;
+      request_word_start->raw_length = request_word_end->raw_start - request_word_start->raw_start + request_word_end->raw_length;
+      request_word_start->length = request_word_end->start - request_word_start->start + request_word_end->length;
       request_word_start->is_number = TRUE;
       request_word_start->number_value = value;
       previous_match = TRUE;
