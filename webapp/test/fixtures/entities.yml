@@ -9,3 +9,15 @@ weather_raining:
   auto_solution_enabled: true
   terms: <%= [{term: "pluie", locale: "fr"}, {term: "rain", locale: "en"}].to_json.inspect %>
   entities_list: weather_conditions
+
+weather_dates_today:
+  solution: 'date: today'
+  auto_solution_enabled: true
+  terms: <%= [{term: "aujourd'hui", locale: "fr"},{term: "tout à l'heure", locale: "fr"}, {term: "today", locale: "en"}].to_json.inspect %>
+  entities_list: weather_dates
+
+weather_dates_tomorrow:
+  solution: 'date: tomorrow'
+  auto_solution_enabled: true
+  terms: <%= [{term: "demain", locale: "fr"}].to_json.inspect %>
+  entities_list: weather_dates

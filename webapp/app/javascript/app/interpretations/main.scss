@@ -241,7 +241,8 @@
 
 trix-editor{
   @each $name, $color in $picker_colors{
-    a[href*='intent-#{$name}']{
+    a[href*='intent-#{$name}'],
+    a[href*='entities_list-#{$name}']{
       color: $color;
       text-decoration: none;
       border-bottom: 2px solid $color;
@@ -254,7 +255,8 @@ trix-editor{
 
 .aliases{
   @each $name, $color in $picker_colors{
-    .intent-#{$name}{
+    .intent-#{$name},
+    .entities_list-#{$name}{
       color: $color;
       a{
         color: $color;

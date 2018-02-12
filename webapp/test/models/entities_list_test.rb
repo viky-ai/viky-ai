@@ -3,7 +3,7 @@ require 'test_helper'
 class EntitiesListTest < ActiveSupport::TestCase
 
   test 'Basic entities_list creation & agent association' do
-    assert_equal 1, agents(:weather).entities_lists.count
+    assert_equal 2, agents(:weather).entities_lists.count
 
     entities_list = EntitiesList.new(
       listname: 'weather_towns',
@@ -18,7 +18,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, entities_list.position
     assert_equal 'weather_towns', entities_list.listname
     assert_equal agents(:weather).id, entities_list.agent.id
-    assert_equal 2, agents(:weather).entities_lists.count
+    assert_equal 3, agents(:weather).entities_lists.count
     assert EntitiesList::AVAILABLE_COLORS.one? { |color| color == entities_list.color }
     assert_equal 'is_private', entities_list.visibility
     assert !entities_list.is_public?

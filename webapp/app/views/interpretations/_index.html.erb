@@ -74,6 +74,12 @@
              data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
         </li>
       <% end %>
+      <% @agent.reachable_entities_lists.each do |elist| %>
+        <li data-search="<%= elist.slug %>" class="enabled">
+          <a href="#" data-action="add-tag"
+             data-data='<%= entities_list_to_json(elist) %>'><%= elist.slug %></a>
+        </li>
+      <% end %>
       <li data-search="digit" class="enabled">
         <a href="#" data-action="add-tag"
            data-data='<%= digit_to_json() %>'>Digit</a>

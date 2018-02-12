@@ -282,6 +282,11 @@ class AliasesForm
       reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
       reference_title = alias.intent_slug
 
+    if alias.nature == 'type_entities_list'
+      tmp = alias.entities_list_slug.split("/")
+      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
+      reference_title = alias.entities_list_slug
+
     if alias.nature == 'type_digit'
       reference_html  = "Digit"
       reference_title = "Digit"
@@ -314,7 +319,7 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature == 'type_intent' && alias.url != null
+    if alias.nature != 'type_digit' && alias.url != null
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
       "
@@ -323,7 +328,7 @@ class AliasesForm
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
 
-    if alias.nature == 'type_intent'
+    if alias.nature != 'type_digit'
       line.push "
         <td class='options'>
           <label>

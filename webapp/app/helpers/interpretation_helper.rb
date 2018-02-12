@@ -15,6 +15,17 @@ module InterpretationHelper
     )
   end
 
+  def entities_list_to_json(entities_list)
+    JSON.generate(
+      color:  "entities_list-#{entities_list.color}",
+      aliasname: entities_list.listname,
+      entities_list_slug: entities_list.slug,
+      interpretation_aliasable_id: entities_list.id,
+      interpretation_aliasable_type: 'EntitiesList',
+      nature: 'type_entities_list'
+    )
+  end
+
   def digit_to_json()
     JSON.generate(
       color:  "intent-black",
@@ -41,6 +52,24 @@ module InterpretationHelper
         interpretation_aliasable_id: current_aliasable.id,
         interpretation_aliasable_type: 'Intent',
         nature: 'type_intent',
+        is_list: interpretation_alias.is_list,
+        any_enabled: interpretation_alias.any_enabled,
+        url: url
+      }
+    end
+    if interpretation_alias.type_entities_list?
+      current_aliasable = interpretation_alias.interpretation_aliasable
+      url = nil
+      if current_user.can?(:show, current_aliasable.agent)
+        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+      end
+      data = {
+        color: "entities_list-#{current_aliasable.color}",
+        aliasname: interpretation_alias.aliasname,
+        entities_list_slug: current_aliasable.slug,
+        interpretation_aliasable_id: current_aliasable.id,
+        interpretation_aliasable_type: 'EntitiesList',
+        nature: 'type_entities_list',
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
         url: url
@@ -104,12 +133,12 @@ module InterpretationHelper
           result << character
         end
         if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
-          if interpretation_alias.type_intent?
-            title = interpretation_alias.interpretation_aliasable.slug
-            color = interpretation_alias.interpretation_aliasable.color
-          else
+          if interpretation_alias.type_digit?
             color = "black"
             title = "Digit" if interpretation_alias.type_digit?
+          else
+            title = interpretation_alias.interpretation_aliasable.slug
+            color = interpretation_alias.interpretation_aliasable.color
           end
           css_class = "interpretation-resume__alias-#{color}"
           text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]

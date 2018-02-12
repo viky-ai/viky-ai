@@ -121,6 +121,19 @@ class Agent < ApplicationRecord
     result
   end
 
+  def reachable_entities_lists
+    result = []
+    entities_lists.order(position: :desc, created_at: :desc).each do |elist|
+      result << elist
+    end
+    successors.includes(:entities_lists).each do |successor|
+      successor.entities_lists.is_public.order(position: :desc, created_at: :desc).each do |elist|
+        result << elist
+      end
+    end
+    result
+  end
+
   def update_intents_positions(public_intents, private_intents)
     current_public_intents = Intent.where(agent_id: id, id: public_intents).order(position: :asc)
     current_private_intents = Intent.where(agent_id: id, id: private_intents).order(position: :asc)

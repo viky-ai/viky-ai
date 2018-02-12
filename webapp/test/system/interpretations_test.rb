@@ -44,7 +44,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test 'Create an interpretation with alias' do
+  test 'Create an interpretation with intent alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal 1, all('.interpretation-resume').count
@@ -64,6 +64,29 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Salut Marcel')
     assert_equal 2, all('.interpretation-resume').count
     assert_equal "Marcel", first('.interpretation-resume__alias-blue').text
+  end
+
+
+  test 'Create an interpretation with entities_list alias' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
+
+    assert_equal 1, all('.interpretation-resume').count
+    assert_equal "world", first('.interpretation-resume__alias-blue').text
+
+    first('trix-editor').click.set('Y a-t-il du soleil ?')
+    select_text_in_trix("trix-editor", 12, 18)
+    find_link('admin/weather/weather_conditions').click
+
+    within('.aliases') do
+      assert page.has_link?('admin/weather/weather_conditions')
+      assert page.has_text?('soleil')
+    end
+
+    click_button 'Add'
+
+    assert page.has_text?('Y a-t-il du soleil ?')
+    assert_equal 2, all('.interpretation-resume').count
+    assert_equal "soleil", first('.interpretation-resume__alias-purple').text
   end
 
 
