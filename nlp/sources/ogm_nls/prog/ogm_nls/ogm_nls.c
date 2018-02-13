@@ -363,6 +363,9 @@ static void NlsSignalOnStop(void *context, int signal_type)
     DoExit(nls_prog);
   }
 
+  OgMsg(nls_prog->hmsg, "received_stop_signal", DOgMsgDestInLog + DOgMsgDestMBox, "Program ogm_nls received STOP signal (%d),"
+        " stopping DONE", signal_type);
+
 }
 
 static void NlsSignalOnEmergency(void *context, int signal_type)

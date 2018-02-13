@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           get :search_users_for_transfer_ownership
           get :generate_token
           get :interpret, to: 'console#interpret'
+          get :full_export
         end
         get :search_users_to_share_agent, controller: 'memberships'
 
@@ -96,6 +97,12 @@ Rails.application.routes.draw do
         get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
     end
+  end
+
+  # API internal without versioning
+  namespace :api_internal do
+      get '/packages',     to: 'packages#index'
+      get '/packages/:id', to: 'packages#show'
   end
 
   match "/404", to: "errors#not_found", via: :all

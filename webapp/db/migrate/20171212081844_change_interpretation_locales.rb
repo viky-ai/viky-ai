@@ -10,7 +10,7 @@ class ChangeInterpretationLocales < ActiveRecord::Migration[5.1]
       Nlp::Package.sync_active = true
     end
 
-    Nlp::Package.push_all
+    Nlp::Package.reinit
   end
 
   private
