@@ -40,8 +40,8 @@
             </td>
             <td>
               <% slug = "" %>
-              <% if json_alias['nature'] == 'type_intent' %>
-                <% slug = "#{json_alias['intent_slug'].split('/').first}/#{json_alias['intent_slug'].split('/').second}/" %>
+              <% if json_alias['nature'] != 'type_digit' %>
+                <% slug = "#{json_alias['slug'].split('/').first}/#{json_alias['slug'].split('/').second}/" %>
               <% end %>
               <span class='<%= json_alias['color'] %>'>
                 <% if json_alias['url'].blank? %>

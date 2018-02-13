@@ -8,10 +8,10 @@ module InterpretationHelper
     JSON.generate(
       color:  "intent-#{intent.color}",
       aliasname: intent.intentname,
-      intent_slug: intent.slug,
+      slug: intent.slug,
       interpretation_aliasable_id: intent.id,
-      interpretation_aliasable_type: 'Intent',
-      nature: 'type_intent'
+      interpretation_aliasable_type: Intent.name,
+      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_intent])
     )
   end
 
@@ -19,10 +19,10 @@ module InterpretationHelper
     JSON.generate(
       color:  "entities_list-#{entities_list.color}",
       aliasname: entities_list.listname,
-      entities_list_slug: entities_list.slug,
+      slug: entities_list.slug,
       interpretation_aliasable_id: entities_list.id,
-      interpretation_aliasable_type: 'EntitiesList',
-      nature: 'type_entities_list'
+      interpretation_aliasable_type: EntitiesList.name,
+      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_entities_list])
     )
   end
 
@@ -30,7 +30,7 @@ module InterpretationHelper
     JSON.generate(
       color:  "intent-black",
       aliasname: t("views.interpretations.digit"),
-      nature: "type_digit"
+      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_digit])
     )
   end
 
@@ -39,50 +39,39 @@ module InterpretationHelper
   end
 
   def alias_to_json(interpretation_alias)
-    if interpretation_alias.type_intent?
-      current_aliasable = interpretation_alias.interpretation_aliasable
-      url = nil
-      if current_user.can?(:show, current_aliasable.agent)
-        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
-      end
-      data = {
-        color: "intent-#{current_aliasable.color}",
-        aliasname: interpretation_alias.aliasname,
-        intent_slug: current_aliasable.slug,
-        interpretation_aliasable_id: current_aliasable.id,
-        interpretation_aliasable_type: 'Intent',
-        nature: 'type_intent',
-        is_list: interpretation_alias.is_list,
-        any_enabled: interpretation_alias.any_enabled,
-        url: url
-      }
-    end
-    if interpretation_alias.type_entities_list?
-      current_aliasable = interpretation_alias.interpretation_aliasable
-      url = nil
-      if current_user.can?(:show, current_aliasable.agent)
-        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
-      end
-      data = {
-        color: "entities_list-#{current_aliasable.color}",
-        aliasname: interpretation_alias.aliasname,
-        entities_list_slug: current_aliasable.slug,
-        interpretation_aliasable_id: current_aliasable.id,
-        interpretation_aliasable_type: 'EntitiesList',
-        nature: 'type_entities_list',
-        is_list: interpretation_alias.is_list,
-        any_enabled: interpretation_alias.any_enabled,
-        url: url
-      }
-    end
+
     if interpretation_alias.type_digit?
       data = {
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
-        nature: 'type_digit',
+        nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_digit]),
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled
       }
+    else
+      current_aliasable = interpretation_alias.interpretation_aliasable
+      url = nil
+      if current_user.can?(:show, current_aliasable.agent)
+        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+      end
+      data = {
+        aliasname: interpretation_alias.aliasname,
+        slug: current_aliasable.slug,
+        interpretation_aliasable_id: current_aliasable.id,
+        is_list: interpretation_alias.is_list,
+        any_enabled: interpretation_alias.any_enabled,
+        url: url
+      }
+      if interpretation_alias.type_intent?
+        data[:color] = "intent-#{current_aliasable.color}"
+        data[:interpretation_aliasable_type] = Intent.name
+        data[:nature] = InterpretationAlias.natures.key(InterpretationAlias.natures[:type_intent])
+      end
+      if interpretation_alias.type_entities_list?
+        data[:color] = "entities_list-#{current_aliasable.color}"
+        data[:interpretation_aliasable_type] = EntitiesList.name
+        data[:nature] = InterpretationAlias.natures.key(InterpretationAlias.natures[:type_entities_list])
+      end
     end
     data[:id] = interpretation_alias.id unless interpretation_alias.id.nil?
     unless interpretation_alias.errors[:aliasname].empty?

@@ -430,7 +430,7 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal 3, agent_weather.reload.reachable_intents.count
     assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
   end
 
@@ -459,7 +459,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
-    assert_equal 3, agent_weather.reachable_intents.count
+    assert_equal 3, agent_weather.reload.reachable_intents.count
     assert_equal ['weather_greeting', 'weather_who', 'greeting_public'], agent_weather.reachable_intents.collect(&:intentname)
   end
 
@@ -474,7 +474,7 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 3, agent_weather.reachable_entities_lists.count
+    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'locations'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
 
@@ -500,7 +500,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
-    assert_equal 3, agent_weather.reachable_entities_lists.count
+    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'greeting_public'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
 

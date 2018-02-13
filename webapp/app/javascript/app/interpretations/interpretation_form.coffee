@@ -277,19 +277,13 @@ class AliasesForm
       else
         alias_id_value = alias.id
 
-    if alias.nature == 'type_intent'
-      tmp = alias.intent_slug.split("/")
-      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
-      reference_title = alias.intent_slug
-
-    if alias.nature == 'type_entities_list'
-      tmp = alias.entities_list_slug.split("/")
-      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
-      reference_title = alias.entities_list_slug
-
     if alias.nature == 'type_digit'
       reference_html  = "Digit"
       reference_title = "Digit"
+    else
+      tmp = alias.slug.split("/")
+      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
+      reference_title = alias.slug
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
@@ -319,16 +313,22 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature != 'type_digit' && alias.url != null
-      line.push "
-        <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
-      "
-    else
+    if alias.nature == 'type_digit' || alias.url == null
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
+    else
+      line.push "
+        <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
+      "
 
-    if alias.nature != 'type_digit'
+    if alias.nature == 'type_digit'
+      line.push "
+        <td>
+          <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
+          <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
+        </td>"
+    else
       line.push "
         <td class='options'>
           <label>
@@ -338,12 +338,6 @@ class AliasesForm
           <label>
             <input type='radio' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
           </label>
-        </td>"
-    else
-      line.push "
-        <td>
-          <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
-          <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
         </td>"
 
     line.push "<td>#{alias.selection}</td>"

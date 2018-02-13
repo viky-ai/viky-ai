@@ -109,29 +109,19 @@ class Agent < ApplicationRecord
   end
 
   def reachable_intents
-    result = []
-    intents.order(position: :desc, created_at: :desc).each do |intent|
-      result << intent
-    end
-    successors.includes(:intents).each do |successor|
-      successor.intents.is_public.order(position: :desc, created_at: :desc).each do |intent|
-        result << intent
-      end
-    end
-    result
+    result = [] + intents.order(position: :desc, created_at: :desc)
+    result + Intent
+             .where(visibility: :is_public)
+             .where(agent_id: successors.ids)
+             .order(position: :desc, created_at: :desc)
   end
 
   def reachable_entities_lists
-    result = []
-    entities_lists.order(position: :desc, created_at: :desc).each do |elist|
-      result << elist
-    end
-    successors.includes(:entities_lists).each do |successor|
-      successor.entities_lists.is_public.order(position: :desc, created_at: :desc).each do |elist|
-        result << elist
-      end
-    end
-    result
+    result = [] + entities_lists.order(position: :desc, created_at: :desc)
+    result + EntitiesList
+             .where(visibility: :is_public)
+             .where(agent_id: successors.ids)
+             .order(position: :desc, created_at: :desc)
   end
 
   def update_intents_positions(public_intents, private_intents)
