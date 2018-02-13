@@ -737,6 +737,11 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       DPcErr;
     }
   }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: type is not a string");
+    DPcErr;
+  }
 
   if (alias->type == nlp_alias_type_type_Interpretation)
   {
