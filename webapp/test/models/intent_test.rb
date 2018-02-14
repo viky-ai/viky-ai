@@ -162,7 +162,7 @@ class IntentTest < ActiveSupport::TestCase
 
   test 'Test intent generation' do
     intent = intents(:weather_forecast)
-    assert_equal 'admin/weather/weather_forecast', intent.slug
+    assert_equal 'admin/weather/interpretations/weather_forecast', intent.slug
   end
 
 

@@ -282,7 +282,7 @@ class AliasesForm
       reference_title = "Digit"
     else
       tmp = alias.slug.split("/")
-      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
+      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/#{tmp[2]}/</small>#{tmp[3]}"
       reference_title = alias.slug
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''

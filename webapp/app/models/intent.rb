@@ -33,7 +33,7 @@ class Intent < ApplicationRecord
   end
 
   def slug
-    "#{agent.slug}/#{intentname}"
+    "#{agent.slug}/interpretations/#{intentname}"
   end
 
 

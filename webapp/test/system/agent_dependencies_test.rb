@@ -58,17 +58,17 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
     # Edit an interpretation
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/weather_forecast)')
+    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
 
     # Add Expression & create an alias from dependency
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/terminator/terminator_find').click
+    find_link('admin/terminator/interpretations/terminator_find').click
     click_button 'Add'
 
     assert page.has_text?("Salut Marcel")
     assert_equal 2, all('.interpretation-resume').count
-    assert_equal 1, all('span[title="admin/terminator/terminator_find"]').size
+    assert_equal 1, all('span[title="admin/terminator/interpretations/terminator_find"]').size
 
     # Return to interpretation list
     click_link 'My awesome weather bot'
@@ -86,7 +86,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     click_link 'weather_forecast'
     assert page.has_text?("Salut Marcel")
     assert_equal 1, all('.interpretation-resume').count
-    assert_equal 0, all('span[title="admin/terminator/terminator_find"]').size
+    assert_equal 0, all('span[title="admin/terminator/interpretations/terminator_find"]').size
   end
 
 

@@ -93,7 +93,7 @@ class EntitiesListTest < ActiveSupport::TestCase
 
   test 'Test entities_list slug generation' do
     entities_list = entities_lists(:weather_conditions)
-    assert_equal 'admin/weather/weather_conditions', entities_list.slug
+    assert_equal 'admin/weather/entities_lists/weather_conditions', entities_list.slug
   end
 
 

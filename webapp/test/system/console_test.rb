@@ -150,7 +150,7 @@ class ConsoleTest < ApplicationSystemTestCase
     # Show intent
     #
     click_link 'my-new-intent-updated'
-    assert page.has_text?('admin/weather/my-new-intent-updated')
+    assert page.has_text?('admin/weather/interpretations/my-new-intent-updated')
     assert page.has_content?('No interpretation found.')
   end
 end

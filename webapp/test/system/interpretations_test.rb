@@ -9,7 +9,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/weather_forecast)')
+    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
   end
 
 
@@ -20,7 +20,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/weather_forecast)')
+    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_no_button?('Update')
@@ -52,10 +52,10 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/weather_question').click
+    find_link('admin/weather/interpretations/weather_question').click
 
     within('.aliases') do
-      assert page.has_link?('admin/weather/weather_question')
+      assert page.has_link?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
     end
 
@@ -75,10 +75,10 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Y a-t-il du soleil ?')
     select_text_in_trix("trix-editor", 12, 18)
-    find_link('admin/weather/weather_conditions').click
+    find_link('admin/weather/entities_lists/weather_conditions').click
 
     within('.aliases') do
-      assert page.has_link?('admin/weather/weather_conditions')
+      assert page.has_link?('admin/weather/entities_lists/weather_conditions')
       assert page.has_text?('soleil')
     end
 
@@ -150,10 +150,10 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/weather_question').click
+    find_link('admin/weather/interpretations/weather_question').click
 
     within('.aliases') do
-      assert page.has_text?('admin/weather/weather_question')
+      assert page.has_text?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
       first('input').set("")
     end
@@ -204,7 +204,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     within('#popup-add-tag') do
-      find_link('admin/weather/weather_question').click
+      find_link('admin/weather/interpretations/weather_question').click
     end
 
     within('#interpretations-list') do
@@ -333,7 +333,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     def admin_go_to_intent_show(agent, intent)
       admin_login
       visit user_agent_intent_path(users(:admin), agent, intent)
-      assert page.has_text?("#{intent.intentname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/#{intent.intentname})")
+      assert page.has_text?("#{intent.intentname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/interpretations/#{intent.intentname})")
     end
 
     def fill_in_editor_field(text)

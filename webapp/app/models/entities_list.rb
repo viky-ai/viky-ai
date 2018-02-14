@@ -20,7 +20,7 @@ class EntitiesList < ApplicationRecord
   before_create :set_color
 
   def slug
-    "#{agent.slug}/#{listname}"
+    "#{agent.slug}/entities_lists/#{listname}"
   end
 
   private
