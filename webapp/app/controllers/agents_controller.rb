@@ -150,7 +150,7 @@ class AgentsController < ApplicationController
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent
-      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy", "search_users_for_transfer_ownership"
         access_denied unless current_user.owner?(@agent)
       else
         access_denied
