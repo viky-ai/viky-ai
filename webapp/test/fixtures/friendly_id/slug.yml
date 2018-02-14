@@ -8,8 +8,8 @@ two:
   sluggable_type: User
 
 three:
-  slug: weather_greeting
-  sluggable: weather_greeting (Intent)
+  slug: weather_forecast
+  sluggable: weather_forecast (Intent)
 
 four:
   slug: weather_conditions

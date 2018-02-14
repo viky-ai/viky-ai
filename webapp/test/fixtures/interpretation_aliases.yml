@@ -1,6 +1,6 @@
-weather_greeting_hello_who:
-  aliasname: who
-  position_start: 6
-  position_end: 11
-  interpretation: weather_greeting_hello
-  interpretation_aliasable: weather_who(Intent)
+weather_forecast_tomorrow_question:
+  aliasname: question
+  position_start: 0
+  position_end: 21
+  interpretation: weather_forecast_tomorrow
+  interpretation_aliasable: weather_question(Intent)

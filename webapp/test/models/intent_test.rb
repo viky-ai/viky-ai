@@ -76,7 +76,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intent slug' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     original_intentname = intent.intentname
     intent.intentname = 'bonjour'
     assert intent.save
@@ -86,7 +86,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Intent destroy' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     intent_id = intent.id
 
     assert_equal 1, Intent.where(id: intent_id).count
@@ -106,7 +106,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Add an unknown locale to an intent' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     intent.locales << 'xx-XX'
 
     assert !intent.save
@@ -118,7 +118,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Remove a locale from an intent' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     assert_equal %w[en fr], intent.locales
     intent.locales -= ['fr']
     assert intent.save
@@ -127,7 +127,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Remove an unknown locale from an intent' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     assert_equal %w[en fr], intent.locales
     intent.locales -= ['xx-XX']
     assert intent.save
@@ -136,7 +136,7 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Remove the last locale from an intent' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     intent.locales -= ['fr']
     assert intent.save
     intent.locales -= ['en']
@@ -161,8 +161,8 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Test intent generation' do
-    intent = intents(:weather_greeting)
-    assert_equal 'admin/weather/weather_greeting', intent.slug
+    intent = intents(:weather_forecast)
+    assert_equal 'admin/weather/weather_forecast', intent.slug
   end
 
 

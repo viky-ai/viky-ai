@@ -62,7 +62,7 @@ class IntentsTest < ApplicationSystemTestCase
       fill_in 'validation', with: 'DELETE'
       click_button('Delete')
     end
-    assert page.has_text?('Interpretation with the name: weather_greeting has successfully been deleted.')
+    assert page.has_text?('Interpretation with the name: weather_forecast has successfully been deleted.')
 
     agent = agents(:weather)
     assert_equal user_agent_path(agent.owner, agent), current_path
@@ -76,7 +76,7 @@ class IntentsTest < ApplicationSystemTestCase
     intent.agent = agents(:weather)
     assert intent.save
     visit user_agent_path('admin', 'weather')
-    assert_equal ['test', 'weather_greeting', 'weather_who'], all('.card-list__item__name').collect(&:text)
+    assert_equal ['test', 'weather_forecast', 'weather_question'], all('.card-list__item__name').collect(&:text)
 
     assert_equal 3, all('.card-list__item__draggable').size
 
@@ -85,7 +85,7 @@ class IntentsTest < ApplicationSystemTestCase
     # last_item  = all('.intents-list__item__draggable').last
     # first_item.drag_to(last_item)
 
-    # assert_equal ['weather_greeting', 'test'], all('.intents-list__item__name').collect(&:text)
+    # assert_equal ['weather_forecast', 'test'], all('.intents-list__item__name').collect(&:text)
   end
 
 
@@ -106,7 +106,7 @@ class IntentsTest < ApplicationSystemTestCase
 
   test 'Remove locale of an intent' do
     go_to_agent_show('admin', 'weather')
-    click_link 'weather_greeting'
+    click_link 'weather_forecast'
 
     assert page.has_link?('en')
     assert page.has_link?('fr')
@@ -115,7 +115,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link 'en'
     end
     within('#interpretations-list') do
-      click_link 'Hello world'
+      click_link 'What the weather like tomorrow ?'
       assert page.has_text?('Cancel')
       all('a').last.click
     end
@@ -127,10 +127,10 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_link?('fr')
     end
 
-    assert page.has_text?('Bonjour tout le monde')
+    assert page.has_text?('Quel temps fera-t-il demain ?')
 
     within('#interpretations-list') do
-      click_link 'Bonjour tout le monde'
+      click_link 'Quel temps fera-t-il demain ?'
       assert page.has_text?('Cancel')
       all('a').last.click
     end

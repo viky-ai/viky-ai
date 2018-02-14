@@ -39,10 +39,10 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             interpretations: [
               {
-                "id": intents(:weather_greeting).id,
-                "slug": "admin/weather/weather_greeting",
-                "name": "weather_greeting",
-                "score": 1.0
+                "id" => intents(:weather_forecast).id,
+                "slug" => "admin/weather/weather_forecast",
+                "name" => "weather_forecast",
+                "score" => 1.0
               }
             ]
           }
@@ -56,21 +56,21 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             interpretations: [
               {
-                "id": intents(:weather_greeting).id,
-                "slug": "admin/weather/weather_greeting",
-                "name": "weather_greeting",
-                "score": 1.0,
-                "explanation": {
-                  "expression": {
-                    "text": "Hello world",
-                    "slug": "weather_greeting",
-                    "highlight": "[Hello world] viki.ai",
-                    "expressions": [
+                "id" => intents(:weather_forecast).id,
+                "slug" => "admin/weather/weather_forecast",
+                "name" => "weather_forecast",
+                "score" => 1.0,
+                "explanation" => {
+                  "expression" => {
+                    "text" => "Hello world",
+                    "slug" => "weather_forecast",
+                    "highlight" => "[Hello world] viki.ai",
+                    "expressions" => [
                       {
-                        "word": "Hello"
+                        "word" => "Hello"
                       },
                       {
-                        "word": "world"
+                        "word" => "world"
                       }
                     ]
                   }

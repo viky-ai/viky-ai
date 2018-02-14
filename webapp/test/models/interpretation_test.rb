@@ -7,7 +7,7 @@ class InterpretationTest < ActiveSupport::TestCase
       expression: 'Good morning John',
       locale: 'en'
     )
-    interpretation.intent = intents(:weather_greeting)
+    interpretation.intent = intents(:weather_forecast)
     assert interpretation.save
     interpretation_alias = InterpretationAlias.new(
       aliasname: 'who',
@@ -15,16 +15,16 @@ class InterpretationTest < ActiveSupport::TestCase
       position_end: 12
     )
     interpretation_alias.interpretation = interpretation
-    interpretation_alias.interpretation_aliasable = intents(:weather_who)
+    interpretation_alias.interpretation_aliasable = intents(:weather_question)
     assert interpretation_alias.save
 
     assert_equal 1, interpretation.position
     assert_equal 'Good morning John', interpretation.expression
-    assert_equal intents(:weather_greeting).id, interpretation.intent.id
+    assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
     assert_equal false, interpretation.glued
     assert interpretation.solution.nil?
-    assert_equal 3, intents(:weather_greeting).interpretations.count
+    assert_equal 3, intents(:weather_forecast).interpretations.count
     assert_equal interpretation_alias.id, interpretation.interpretation_aliases.reload[0].id
   end
 
@@ -44,7 +44,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Locale must be in list' do
     interpretation = Interpretation.new(expression: 'Good morning', locale: 'toto')
-    interpretation.intent = intents(:weather_greeting)
+    interpretation.intent = intents(:weather_forecast)
     assert !interpretation.save
 
     expected = {
@@ -55,7 +55,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
 
   test 'Interpretation destroy' do
-    interpretation = interpretations(:weather_greeting_hello)
+    interpretation = interpretations(:weather_forecast_tomorrow)
     interpretation_id = interpretation.id
 
     assert_equal 1, Interpretation.where(id: interpretation_id).count
@@ -67,7 +67,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
 
   test 'Filter interpretations by locale' do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     en_interpretations = intent.interpretations_with_local('en')
     assert_equal 1, en_interpretations.count
     fr_interpretations = intent.interpretations_with_local('fr')
@@ -76,7 +76,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
 
   test 'Check interpretation solution is valid' do
-    interpretation = interpretations(:weather_greeting_hello)
+    interpretation = interpretations(:weather_forecast_tomorrow)
     interpretation.solution = (['a'] * 2001).join('')
     assert !interpretation.valid?
     expected = {
