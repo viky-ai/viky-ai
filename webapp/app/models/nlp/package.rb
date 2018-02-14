@@ -97,7 +97,14 @@ class Nlp::Package
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent)
         end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
+      end
+      @agent.entities_lists.order(position: :desc).each do |elist|
+        cache_key = ['pkg', 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(elist)
+        end
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
       end
       interpretations
     end
@@ -148,7 +155,7 @@ class Nlp::Package
       interpretations
     end
 
-    def build_node(intent)
+    def build_intent(intent)
       interpretation_hash = {}
       interpretation_hash[:id] = intent.id
       interpretation_hash[:slug] = intent.slug
@@ -168,6 +175,25 @@ class Nlp::Package
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
           expressions << build_any_node(ialias, expression)
+        end
+      end
+      interpretation_hash[:expressions] = expressions
+      interpretation_hash
+    end
+
+    def build_entities_list(elist)
+      interpretation_hash = {}
+      interpretation_hash[:id] = elist.id
+      interpretation_hash[:slug] = elist.slug
+      interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
+      expressions = []
+      elist.entities.order(position: :desc).each do |entity|
+        entity.terms.each do |term|
+          expression = {}
+          expression[:expression] = term['term']
+          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+          expression[:solution] = entity.solution
+          expressions << expression
         end
       end
       interpretation_hash[:expressions] = expressions
@@ -217,10 +243,13 @@ class Nlp::Package
     end
 
     def build_alias(ialias)
-      if ialias.type_intent?
-        result = {}
+      result = {
+        alias: ialias.aliasname
+      }
+      if ialias.type_digit?
+        result[:type] = 'digit'
+      else
         result[:package] = @agent.id
-        result[:alias]   = ialias.aliasname
         if ialias.is_list
           result[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
           result[:id] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
@@ -228,12 +257,6 @@ class Nlp::Package
           result[:slug] = ialias.interpretation_aliasable.slug
           result[:id] = ialias.interpretation_aliasable.id
         end
-      end
-      if ialias.type_digit?
-        result = {
-          alias: ialias.aliasname,
-          type: 'digit'
-        }
       end
       result
     end

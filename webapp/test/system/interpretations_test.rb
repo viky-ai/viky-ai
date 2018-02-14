@@ -195,14 +195,12 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.card') do
       click_link 'en'
     end
-
     assert page.has_link?('What the weather like tomorrow ?')
 
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('Cancel')
-
-      select_text_in_trix("#interpretations-list trix-editor", 22, 30)
+      select_text_in_trix("#interpretations-list trix-editor", 31, 32)
     end
 
     within('#popup-add-tag') do
@@ -214,13 +212,12 @@ class InterpretationsTest < ApplicationSystemTestCase
         assert page.has_text?('tomorrow')
         all("input[name*='is_list']").first.click
       end
-
       click_button 'Update'
     end
 
     assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
-    assert_equal ['What the weather like', 'tomorrow'], all('.interpretation-resume__alias-blue').collect(&:text)
+    assert_equal ['What the weather like', '?'], all('.interpretation-resume__alias-blue').collect(&:text)
 
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
@@ -237,20 +234,18 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.card') do
       click_link 'en'
     end
-
     assert page.has_link?('What the weather like tomorrow ?')
 
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('Cancel')
-
-      select_text_in_trix("#interpretations-list trix-editor", 6, 10)
+      select_text_in_trix("#interpretations-list trix-editor", 0, 21)
     end
     find_link('Remove annotation(s)').click
     click_button 'Update'
 
     assert page.has_link?('What the weather like tomorrow ?')
-    assert_equal 0, all('.interpretation-resume').count
+    assert_equal 1, all('.interpretation-resume').count
   end
 
 
@@ -260,15 +255,17 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.card') do
       click_link 'en'
     end
-
     assert page.has_link?('What the weather like tomorrow ?')
 
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       within('.aliases') do
         assert page.has_text?('question')
+        assert page.has_text?('dates')
+        all('a[href="#"').last.click
         all('a[href="#"').last.click
         assert page.has_no_text?('question')
+        assert page.has_no_text?('dates')
       end
       question = interpretation_aliases(:weather_forecast_tomorrow_question)
       assert_no_text_selected_in_trix question.interpretation.id, question.aliasname

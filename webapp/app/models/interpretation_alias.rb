@@ -30,13 +30,18 @@ class InterpretationAlias < ApplicationRecord
       return if interpretation.nil?
       if interpretation.interpretation_aliases.size > 1
         range = (position_start..position_end)
-        interpretation.interpretation_aliases.each do |ialias|
-          unless object_id == ialias.object_id
-            if (ialias.position_start..ialias.position_end).overlaps?(range)
-              errors.add(:position, I18n.t('errors.interpretation_alias.overlap'))
+         interpretation.interpretation_aliases
+          .reject do |ialias|
+            if !id.nil? || !ialias.id.nil?
+              id == ialias.id
+            else
+              position_start == ialias.position_start &&
+                position_end == ialias.position_end &&
+                aliasname == ialias.aliasname
             end
           end
-        end
+          .select { |ialias| (ialias.position_start..ialias.position_end).overlaps?(range) }
+          .each { errors.add(:position, I18n.t('errors.interpretation_alias.overlap')) }
       end
     end
 

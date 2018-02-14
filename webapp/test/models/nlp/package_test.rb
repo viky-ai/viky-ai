@@ -21,12 +21,18 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "Quel temps fera-t-il demain ?"
             },
             {
-              "expression" => "@{question} tomorrow ?",
+              "expression" => "@{question} @{when} ?",
               "aliases"    => [
                 {
                   "alias"   => "question",
                   "slug"    => "admin/weather/weather_question",
                   "id"      => intents(:weather_question).id,
+                  "package" => weather.id
+                },
+                {
+                  "alias"   => "when",
+                  "slug"    => "admin/weather/weather_dates",
+                  "id"      => entities_lists(:weather_dates).id,
                   "package" => weather.id
                 }
               ],
@@ -48,6 +54,59 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "What the weather like"
             }
           ]
+        },
+        {
+          "id"       => entities_lists(:weather_conditions).id,
+          "slug"     => "admin/weather/weather_conditions",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "soleil",
+              "locale"     => "fr",
+              "solution" => "weather: sunny"
+            },
+            {
+              "expression" => "sun",
+              "locale"     => "en",
+              "solution" => "weather: sunny"
+            },
+            {
+              "expression" => "pluie",
+              "locale"     => "fr",
+              "solution" => "weather: raining"
+            },
+            {
+              "expression" => "rain",
+              "locale"     => "en",
+              "solution" => "weather: raining"
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_dates).id,
+          "slug"     => "admin/weather/weather_dates",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "aujourd'hui",
+              "locale"     => "fr",
+              "solution" => "date: today"
+            },
+            {
+              "expression" => "tout à l'heure",
+              "locale"     => "fr",
+              "solution" => "date: today"
+            },
+            {
+              "expression" => "today",
+              "locale"     => "en",
+              "solution" => "date: today"
+            },
+            {
+              "expression" => "tomorrow",
+              "solution" => "date: tomorrow"
+            }
+          ]
         }
       ]
     }
@@ -61,6 +120,8 @@ class PackageTest < ActiveSupport::TestCase
     interpretation = interpretations(:weather_forecast_demain)
     interpretation.locale = Locales::ANY
     interpretation.save
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     intent.interpretations = [interpretation]
     intent.save
     assert intents(:weather_question).destroy
@@ -93,6 +154,8 @@ class PackageTest < ActiveSupport::TestCase
     intent = intents(:weather_question)
     intent.visibility = Intent.visibilities[:is_private]
     intent.save
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     assert intents(:weather_forecast).destroy
 
     p = Nlp::Package.new(weather)
@@ -123,6 +186,8 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.is_list = true
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     assert ialias.save
 
     p = Nlp::Package.new(weather)
@@ -213,6 +278,8 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias list any' do
     weather = agents(:weather)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.is_list = true
     ialias.any_enabled = true
@@ -321,6 +388,8 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias any' do
     weather = agents(:weather)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.any_enabled = true
     assert ialias.save
@@ -393,6 +462,8 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     terminator = agents(:terminator)
     assert AgentArc.create(source: weather, target: terminator)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     weather.reload
     p = Nlp::Package.new(weather)
 

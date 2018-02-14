@@ -19,5 +19,5 @@ weather_dates_today:
 weather_dates_tomorrow:
   solution: 'date: tomorrow'
   auto_solution_enabled: true
-  terms: <%= [{term: "tomorrow", locale: "en"}].to_json.inspect %>
+  terms: <%= [{term: "tomorrow", locale: "*"}].to_json.inspect %>
   entities_list: weather_dates

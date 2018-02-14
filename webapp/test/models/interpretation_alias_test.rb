@@ -35,13 +35,14 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
 
   test 'remove intent used as alias remove related interpretation alias' do
-    weather_who_intent = intents(:weather_question)
+    weather_question_intent = intents(:weather_question)
     interpretation = interpretations(:weather_forecast_tomorrow)
 
-    assert_equal weather_who_intent.id, interpretation.interpretation_aliases.first.interpretation_aliasable.id
+    assert_equal weather_question_intent.id, interpretation.interpretation_aliases.first.interpretation_aliasable.id
+    assert_equal 2, interpretation.interpretation_aliases.count
 
-    assert weather_who_intent.destroy
-    assert_equal 0, interpretation.interpretation_aliases.count
+    assert weather_question_intent.destroy
+    assert_equal 1, interpretation.interpretation_aliases.count
   end
 
 

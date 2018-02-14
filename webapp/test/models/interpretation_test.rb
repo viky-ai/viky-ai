@@ -59,7 +59,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_id = interpretation.id
 
     assert_equal 1, Interpretation.where(id: interpretation_id).count
-    assert_equal 1, interpretation.interpretation_aliases.count
+    assert_equal 2, interpretation.interpretation_aliases.count
     assert interpretation.destroy
     assert_equal 0, Interpretation.where(id: interpretation_id).count
     assert_equal 0, interpretation.interpretation_aliases.count
