@@ -51,10 +51,10 @@ class CardList
 
 
 class CardListHelper
-  @addToList: (raw_html) ->
-    html = $(raw_html).addClass('hidden')
+  @addToList: (raw_html, orientation = 'horizontal') ->
+    html = $(raw_html).addClass('hidden-' + orientation)
     $('ul.card-list').prepend(html)
-    setTimeout((() -> $(".card-list li").first().removeClass('hidden')), 0)
+    setTimeout((() -> $(".card-list li").first().removeClass('hidden-' + orientation)), 0)
 
   @removeFromList: (id_selector) ->
     $(id_selector).addClass('deleted');

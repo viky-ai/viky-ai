@@ -44,7 +44,11 @@
 
     opacity: 1;
     transition: opacity .2s ease-in, transform .2s ease-out, box-shadow .2s;
-    &.hidden{
+    &.hidden-vertical {
+      transform: translateY(-50px);
+      opacity: 0.5;
+    }
+    &.hidden-horizontal {
       transform: translateX(-100px);
       opacity: 0.5;
     }
