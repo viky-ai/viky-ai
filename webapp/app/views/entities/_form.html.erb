@@ -20,7 +20,7 @@
           terms = entity.terms
         end
       %>
-      <%= text_area_tag('entity[terms]', terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true) %>
+      <%= text_area_tag('entity[terms]', terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true, placeholder: t('views.entities.new.placeholder')) %>
     </div>
     <%= display_errors(entity, :terms) %>
   </div>
