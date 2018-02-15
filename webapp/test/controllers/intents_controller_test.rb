@@ -1,6 +1,24 @@
 require 'test_helper'
 
 class IntentsControllerTest < ActionDispatch::IntegrationTest
+
+  #
+  # Index intents access
+  #
+  test "Index intents access" do
+    sign_in users(:admin)
+    get user_agent_intents_url(users(:admin), agents(:weather))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test "Index intents forbidden" do
+    sign_in users(:confirmed)
+    get user_agent_intents_url(users(:admin), agents(:weather))
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
+
   #
   # Show
   #
@@ -29,7 +47,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
            intent: { intentname: 'my_new_intent', description: 'A new intent' },
            format: :json
          }
-    assert_redirected_to user_agent_url(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_intents_path(users(:edit_on_agent_weather), agents(:weather))
     assert_nil flash[:alert]
   end
 
@@ -54,7 +72,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
             intent: { intentname: 'my_new_name', description: 'The new intent name' },
             format: :json
           }
-    assert_redirected_to user_agent_url(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_intents_path(users(:edit_on_agent_weather), agents(:weather))
     assert_nil flash[:alert]
   end
 
@@ -92,7 +110,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   test 'Delete access' do
     sign_in users(:admin)
     delete user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
-    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+    assert_redirected_to user_agent_intents_path(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 

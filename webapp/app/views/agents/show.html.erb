@@ -1,7 +1,23 @@
-<header class="header">
+<header class="tabs">
+  <ul>
+    <li>
+      <%= link_to t('views.agents.show.sections.overview'), user_agent_path(@agent.owner, @agent), class: 'current' %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.intents'), user_agent_intents_path(@agent.owner, @agent) %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.entities_lists'), user_agent_entities_lists_path(@agent.owner, @agent) %>
+    </li>
+  </ul>
+</header>
+
+<div class="header">
   <div class="header__breadcrumb">
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <strong><%= @agent.name %></strong> (<%= @agent.slug %>)
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
+    <strong><%= t('views.agents.breadcrumb.overview') %></strong>
+    (<%= @agent.slug %>)
   </div>
   <div class="header__tools">
     <% if current_user.can? :edit, @agent %>
@@ -25,36 +41,11 @@
       <% end %>
     <% end %>
   </div>
-</header>
+</div>
 
 <%= render 'agent', agent: @agent %>
 
 <%= render 'dependencies' %>
-
-<div class="tabs">
-  <ul>
-    <li>
-      <% css_class = @section == 'overview' ?  'current' : '' %>
-      <%= link_to t('views.agents.show.sections.overview'), user_agent_path(@agent.owner, @agent, section: 'overview'), class: css_class %>
-    </li>
-    <li>
-      <% css_class = @section == 'intents' ?  'current' : '' %>
-      <%= link_to t('views.agents.show.sections.intents'), user_agent_path(@agent.owner, @agent, section: 'intents'), class: css_class %>
-    </li>
-    <li>
-      <% css_class = @section == 'entities_lists' ?  'current' : '' %>
-      <%= link_to t('views.agents.show.sections.entities_lists'), user_agent_path(@agent.owner, @agent, section: 'entities_lists'), class: css_class %>
-    </li>
-  </ul>
-</div>
-
-<% if @section == 'intents' %>
-  <%= render 'intents_section' %>
-<% elsif @section == 'entities_lists' %>
-  <%= render 'entities_lists_section' %>
-<% else %>
-  <%= render 'overview_section' %>
-<% end %>
 
 <% content_for :right_aside do %>
   <%= render '/console/base' %>

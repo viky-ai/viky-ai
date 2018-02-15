@@ -1,7 +1,22 @@
-<header class="header">
+<header class="tabs">
+  <ul>
+    <li>
+      <%= link_to t('views.agents.show.sections.overview'), user_agent_path(@agent.owner, @agent) %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.intents'), user_agent_intents_path(@agent.owner, @agent), class: 'current' %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.entities_lists'), user_agent_entities_lists_path(@agent.owner, @agent) %>
+    </li>
+  </ul>
+</header>
+
+<div class="header">
   <div class="header__breadcrumb">
     <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %>/
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
+    <%= link_to t('views.agents.breadcrumb.intents'), user_agent_intents_path(@agent.owner, @agent) %> /
     <strong>
       <%= @intent.intentname %>
     </strong>
@@ -17,7 +32,7 @@
     <% end %>
     (<%= @intent.slug %>)
   </div>
-</header>
+</div>
 
 <%= render 'interpretations/index', current_locale: @locale %>
 

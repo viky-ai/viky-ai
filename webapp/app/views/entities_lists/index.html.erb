@@ -1,3 +1,27 @@
+<header class="tabs">
+  <ul>
+    <li>
+      <%= link_to t('views.agents.show.sections.overview'), user_agent_path(@agent.owner, @agent) %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.intents'), user_agent_intents_path(@agent.owner, @agent) %>
+    </li>
+    <li>
+      <%= link_to t('views.agents.show.sections.entities_lists'), user_agent_entities_lists_path(@agent.owner, @agent), class: 'current' %>
+    </li>
+  </ul>
+</header>
+
+<div class="header">
+  <div class="header__breadcrumb">
+    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
+    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %> /
+    <strong><%= t('views.agents.breadcrumb.entities_lists') %></strong>
+    (<%= @agent.slug %>)
+  </div>
+</div>
+
+
 <div class="card-list-header">
   <h4><%= t('views.entities_lists.index.list_title') %></h4>
   <div>
@@ -31,7 +55,11 @@
   </div>
 <% else %>
   <h5><%= t('views.entities_lists.index.list_public_title_html') %></h5>
-  <%= render 'entities_lists_list', entities_lists: @entities_lists.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
+  <%= render '/agents/entities_lists_list', entities_lists: @entities_lists.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
   <h5><%= t('views.entities_lists.index.list_private_title_html') %></h5>
-  <%= render 'entities_lists_list', entities_lists: @entities_lists.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
+  <%= render '/agents/entities_lists_list', entities_lists: @entities_lists.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
+<% end %>
+
+<% content_for :right_aside do %>
+  <%= render '/console/base' %>
 <% end %>

@@ -3,8 +3,7 @@ require 'application_system_test_case'
 class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Create an entities list' do
-    go_to_agent_show('admin', 'terminator')
-    click_link 'Entities lists'
+    go_to_agent_entities_lists('admin', 'terminator')
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -18,8 +17,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Errors on entities list creation' do
-    go_to_agent_show('admin', 'terminator')
-    click_link 'Entities lists'
+    go_to_agent_entities_lists('admin', 'terminator')
     click_link 'New entities list'
     within('.modal') do
       assert page.has_text? 'Create a new entities list'
@@ -33,8 +31,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Update an entities list' do
-    go_to_agent_show('admin', 'weather')
-    click_link 'Entities lists'
+    go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
@@ -51,8 +48,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Delete an entities list' do
-    go_to_agent_show('admin', 'weather')
-    click_link 'Entities lists'
+    go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
@@ -69,15 +65,14 @@ class EntitiesListsTest < ApplicationSystemTestCase
     assert page.has_text?('Entities list with the name: weather_conditions has successfully been deleted.')
 
     agent = agents(:weather)
-    assert_equal user_agent_path(agent.owner, agent), current_path
+    assert_equal user_agent_entities_lists_path(agent.owner, agent), current_path
   end
 
 
   test 'Reorganize entities lists' do
     entities_list = EntitiesList.new(listname: 'test', agent: agents(:weather))
     assert entities_list.save
-    go_to_agent_show('admin', 'weather')
-    click_link 'Entities lists'
+    go_to_agent_entities_lists('admin', 'weather')
     assert page.has_link? 'New entities list'
     # assert_equal ['test', 'weather_conditions'], all('.card-list__item__name').collect(&:text)
     #

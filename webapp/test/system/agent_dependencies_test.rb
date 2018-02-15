@@ -7,7 +7,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
   test "Add agent dependency" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
-    assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
+    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
     assert page.has_text?(' Agent dependencies (0) - Dependents (0) ')
 
     # Add admin/terminator to admin/weather
@@ -23,7 +23,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
     # Try to add admin/weather to admin/terminator and detect cycle
     click_link "T-800 admin/terminator"
-    assert page.has_text?('Agents / T-800 (admin/terminator)')
+    assert page.has_text?('Agents / T-800 / Overview (admin/terminator)')
     click_link "Add new dependency"
 
     within(".modal") do
@@ -38,7 +38,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
   test "Use alias from successor agent and delete dependency" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
-    assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
+    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
     assert page.has_text?(' Agent dependencies (0) - Dependents (0) ')
 
     # Add dependency
@@ -57,6 +57,8 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     end
 
     # Edit an interpretation
+    assert page.has_link?('Interpretations')
+    click_link 'Interpretations'
     click_link 'weather_forecast'
     assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
 
@@ -83,6 +85,8 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert page.has_no_text?('T-800 admin/terminator')
 
     # Edit an interpretation
+    assert page.has_link?('Interpretations')
+    click_link 'Interpretations'
     click_link 'weather_forecast'
     assert page.has_text?("Salut Marcel")
     assert_equal 1, all('.interpretation-resume').count
@@ -96,7 +100,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
     assert page.has_text?('Agents')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Agents / My awesome weather bot (admin/weather)')
+    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
     assert page.has_no_link?('Add new dependency')
   end
 end

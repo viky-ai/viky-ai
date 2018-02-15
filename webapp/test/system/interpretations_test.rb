@@ -6,6 +6,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     go_to_agents_index
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
+    assert page.has_link?('Interpretations')
+    click_link 'Interpretations'
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
@@ -17,6 +19,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
+    assert page.has_link?('Interpretations')
+    click_link 'Interpretations'
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
@@ -298,7 +302,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
     expected = ["en 1", "fr 1", "+"]
-    assert_equal expected, all(".tabs ul li").collect(&:text)
+    assert_equal expected, all(".card > .tabs ul li").collect(&:text)
 
     # Does not works...
 

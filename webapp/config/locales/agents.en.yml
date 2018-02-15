@@ -3,6 +3,9 @@ en:
     agents:
       breadcrumb:
         base: Agents
+        overview: Overview
+        intents: Interpretations
+        entities_lists: Entities lists
         new_btn: New agent
       index:
         delete: Delete

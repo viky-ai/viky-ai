@@ -121,6 +121,7 @@ class ConsoleTest < ApplicationSystemTestCase
     #
     # Add intent
     #
+    click_link 'Interpretations'
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'

@@ -3,7 +3,7 @@ require 'application_system_test_case'
 class IntentsTest < ApplicationSystemTestCase
 
   test 'Create an intent' do
-    go_to_agent_show('admin', 'terminator')
+    go_to_agent_intents('admin', 'terminator')
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'
@@ -17,7 +17,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Errors on intent creation' do
-    go_to_agent_show('admin', 'terminator')
+    go_to_agent_intents('admin', 'terminator')
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'
@@ -31,7 +31,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Update an intent' do
-    go_to_agent_show('admin', 'weather')
+    go_to_agent_intents('admin', 'weather')
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Configure'
@@ -48,7 +48,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Delete an intent' do
-    go_to_agent_show('admin', 'weather')
+    go_to_agent_intents('admin', 'weather')
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
       click_link 'Delete'
@@ -65,17 +65,16 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Interpretation with the name: weather_forecast has successfully been deleted.')
 
     agent = agents(:weather)
-    assert_equal user_agent_path(agent.owner, agent), current_path
+    assert_equal user_agent_intents_path(agent.owner, agent), current_path
   end
 
 
   test 'Reorganize intents' do
-    go_to_agent_show('admin', 'weather')
-
     intent = Intent.new(intentname: 'test', locales: ['en'])
     intent.agent = agents(:weather)
     assert intent.save
-    visit user_agent_path('admin', 'weather')
+
+    go_to_agent_intents('admin', 'weather')
     assert_equal ['test', 'weather_forecast', 'weather_question'], all('.card-list__item__name').collect(&:text)
 
     assert_equal 3, all('.card-list__item__draggable').size
@@ -90,7 +89,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Add locale to an intent' do
-    go_to_agent_show('admin', 'terminator')
+    go_to_agent_intents('admin', 'terminator')
     click_link 'terminator_find'
 
     assert page.has_text?('+')
@@ -105,7 +104,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Remove locale of an intent' do
-    go_to_agent_show('admin', 'weather')
+    go_to_agent_intents('admin', 'weather')
     click_link 'weather_forecast'
 
     assert page.has_link?('en')

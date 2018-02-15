@@ -1,6 +1,23 @@
 require 'test_helper'
 
 class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
+
+  #
+  # Index entities lists access
+  #
+  test "Index entities lists access" do
+    sign_in users(:admin)
+    get user_agent_entities_lists_url(users(:admin), agents(:weather))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test "Index entities lists forbidden" do
+    sign_in users(:confirmed)
+    get user_agent_entities_lists_url(users(:admin), agents(:weather))
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
+
   #
   # Show
   #
@@ -29,7 +46,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
            entities_list: { listname: 'my_new_entities_list', description: 'A new entities list' },
            format: :json
          }
-    assert_redirected_to user_agent_url(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_entities_lists_path(users(:edit_on_agent_weather), agents(:weather))
     assert_nil flash[:alert]
   end
 
@@ -55,7 +72,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
             entities_list: { listname: 'my_new_name', description: 'The new entities list name' },
             format: :json
           }
-    assert_redirected_to user_agent_url(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_entities_lists_path(users(:edit_on_agent_weather), agents(:weather))
     assert_nil flash[:alert]
   end
 
@@ -94,7 +111,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
   test 'Delete access' do
     sign_in users(:admin)
     delete user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+    assert_redirected_to user_agent_entities_lists_path(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 
