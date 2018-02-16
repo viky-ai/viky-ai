@@ -24,9 +24,12 @@
 
   .CodeMirror {
     line-height: 1.7em;
-
     .CodeMirror-scroll {
       min-height: 6em;
+    }
+    &.readonly {
+      background-color: #EEE;
+      color: #666;
     }
   }
 
