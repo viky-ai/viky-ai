@@ -12,7 +12,8 @@ class Entity < ApplicationRecord
     result = value
     if value.instance_of?(String) && value.length <= 5000
       tokens = tokenize(value)
-      normalized_tokens = set_default_locale(tokens)
+      d = deduplicate_terms(tokens)
+      normalized_tokens = set_default_locale(d)
       result = build_json(normalized_tokens)
     end
     super(result)
@@ -40,8 +41,12 @@ class Entity < ApplicationRecord
       end
     end
 
-    def build_json(normalized_tokens)
-      result = normalized_tokens.collect { |array| { 'term' => array[0], 'locale' => array[1] } }
+    def deduplicate_terms(tokens)
+      tokens.uniq
+    end
+
+    def build_json(tokens)
+      result = tokens.collect { |array| { 'term' => array[0], 'locale' => array[1] } }
       result.empty? ? nil : result
     end
 

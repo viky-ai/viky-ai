@@ -115,4 +115,15 @@ class EntityTest < ActiveSupport::TestCase
     expected = [{ 'term' => 'soleil:en', 'locale' => 'fr' }]
     assert_equal expected, entity.terms
   end
+
+
+  test 'Deduplicate same terms in the list' do
+    entity = Entity.new(
+      entities_list: entities_lists(:weather_conditions),
+      terms: "Jacques\nJacques:fr\nJames\nJacques"
+    )
+    assert entity.save
+    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'Jacques', 'locale' => 'fr' }, { 'term' => 'James', 'locale' => '*' }]
+    assert_equal expected, entity.terms
+  end
 end
