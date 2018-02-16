@@ -14,6 +14,9 @@ import 'trix/dist/trix.css'
 // MomentJS (https://momentjs.com/)
 import 'moment'
 
+// Autosize (https://github.com/jackmoore/autosize)
+import 'autosize'
+
 import './nav/nav';
 import './profile/main';
 import './authentication/main';
@@ -28,4 +31,4 @@ import './interpretations/main';
 import './interpretations/interpretation_form';
 import './entities/main';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
-window.App.EntityTermsSolutionSynchronizer = require('./entities/entity_form');
+window.App.EntityForm = require('./entities/entity_form');

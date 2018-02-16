@@ -1,52 +1,34 @@
 $ = require('jquery');
+autosize = require('autosize');
 
-class EntitySolutions
-  constructor: ->
-    checkbox = $("input[name='entity[auto_solution_enabled]']")
-    textarea = checkbox.closest('form').find("textarea[name='entity[solution]']")
-    App.CodeEditor.buildJavaScriptEditor($(textarea)[0], checkbox.is(':checked'))
-    $(document).on 'click', (event) => @setupListeners(event)
+class EntityForm
+  constructor: (form) ->
+    @form = $(form)
+    @setupListeners()
+    autosize($("textarea[name='entity[terms]']"));
+    App.CodeEditor.buildJavaScriptEditor(@findTextareaSolution()[0], @findCheckbox().is(':checked'))
+    @updateSolutionState()
+    @syncSolutionWithTerms()
 
   setupListeners: (event) ->
-    checkbox = $(event.target).closest('form').find("input[name*='auto_solution_enabled']")
-    checkbox.on 'change', (event) => @update(event)
+    @findCheckbox().on 'change', () => @updateSolutionState()
+    @findCheckbox().on 'change', () => @syncSolutionWithTerms()
+    @findTerms().on 'paste', () => @syncSolutionWithTerms()
+    @findTerms().on 'keyup', () => @syncSolutionWithTerms()
 
-  update: (event) ->
-    checkbox = $(event.target)
-    solution_container = $(checkbox.closest('form').find('.CodeMirror'))[0]
-    if checkbox.is(':checked')
-      solution_container.CodeMirror.setOption('readOnly', true);
+  updateSolutionState: () ->
+    if @findCheckbox().is(':checked')
+      @findSolution().CodeMirror.setOption('readOnly', true);
     else
-      solution_container.CodeMirror.setOption('readOnly', false);
+      @findSolution().CodeMirror.setOption('readOnly', false);
 
+  syncSolutionWithTerms: () ->
+    if @findCheckbox().is(':checked')
+      key = @form.data('elistname')
+      value = @buildAutoSolution(key, $(@findTerms()).val())
+      @findSolution().CodeMirror.setValue(value)
 
-class EntityTermsSolutionSynchronizer
-  @registerListeners: (form) ->
-    checkbox = @findCheckbox(form)
-    checkbox.on 'change', () => @syncSolutionWithTerms(form)
-    terms = @findTerms(form)
-    terms.on 'paste', () => @syncSolutionWithTerms(form)
-    terms.on 'keyup', () => @syncSolutionWithTerms(form)
-
-  @findTerms: (form) ->
-    return form.find("textarea[name='entity[terms]']")
-
-  @findCheckbox: (form) ->
-    return form.find("input[name*='auto_solution_enabled']")
-
-  @findSolution: (form) ->
-    return $(form.find('.CodeMirror'))[0]
-
-  @syncSolutionWithTerms: (form) ->
-    terms = EntityTermsSolutionSynchronizer.findTerms(form)
-    checkbox = EntityTermsSolutionSynchronizer.findCheckbox(form)
-    solution = EntityTermsSolutionSynchronizer.findSolution(form)
-    if checkbox.is(':checked')
-      key = form.data('elistname')
-      value = EntityTermsSolutionSynchronizer.buildAutoSolution(key, $(terms).val())
-      solution.CodeMirror.setValue(value)
-
-  @buildAutoSolution: (key, rawValue) ->
+  buildAutoSolution: (key, rawValue) ->
     term = rawValue
       .split('\n')
       .map((term) ->
@@ -61,12 +43,22 @@ class EntityTermsSolutionSynchronizer
     else
       return "{\n  '" + key + "': '" + term + "'\n}"
 
+  findTerms: ->
+    return @form.find("textarea[name='entity[terms]']")
 
-module.exports = EntityTermsSolutionSynchronizer
+  findCheckbox: ->
+    return @form.find("input[name*='auto_solution_enabled']")
+
+  findTextareaSolution: ->
+    @form.find("textarea[name='entity[solution]']")
+
+  findSolution: ->
+    return $(@form.find('.CodeMirror'))[0]
+
+module.exports = EntityForm
 
 Setup = ->
   if $('body').data('controller-name') == "entities_lists" && $('body').data('controller-action') == "show"
-    new EntitySolutions()
-    EntityTermsSolutionSynchronizer.registerListeners($('#entities-form'))
+    new EntityForm('#entities-form')
 
 $(document).on('turbolinks:load', Setup)

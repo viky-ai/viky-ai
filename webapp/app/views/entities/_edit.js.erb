@@ -1,4 +1,3 @@
 App.CardListHelper.updateItem("#entity-<%= @entity.id %>", "<%= escape_javascript(@form) %>");
 App.CardListHelper.updateDraggable();
-App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @entity.id %>")[0], <%= @entity.auto_solution_enabled %>);
-App.EntityTermsSolutionSynchronizer.registerListeners($('#entity-<%= @entity.id %> > form'))
+new App.EntityForm($('#entity-<%= @entity.id %> > form'))

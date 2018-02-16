@@ -23,8 +23,11 @@
   }
 
   .CodeMirror {
-    height: 6em;
     line-height: 1.7em;
+
+    .CodeMirror-scroll {
+      min-height: 6em;
+    }
   }
 
   .field--submit {
@@ -69,4 +72,10 @@
 .entity-form__close {
   grid-area: close;
   justify-self: right;
+}
+
+textarea[name='entity[terms]'] {
+  line-height: 1.7em;
+  min-height: 4.6em;
+  max-height: 16em;
 }

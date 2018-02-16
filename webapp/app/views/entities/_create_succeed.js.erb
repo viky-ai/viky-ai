@@ -1,6 +1,6 @@
 $("#entities-form").replaceWith("<%= escape_javascript(@html_form) %>");
 
 App.CardListHelper.addToList("<%= escape_javascript(@html) %>", 'vertical');
-App.CodeEditor.buildJavaScriptEditor($("#solution__new_entity")[0], true);
+new App.EntityForm('#entities-form');
 App.CardListHelper.updateBlankslates();
 App.CardListHelper.updateDraggable();

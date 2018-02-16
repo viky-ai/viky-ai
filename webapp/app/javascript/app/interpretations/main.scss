@@ -80,6 +80,10 @@
     box-shadow: 0 0 0 2px rgba($focus_color, .25);
     outline:none;
   }
+  .CodeMirror-scroll {
+    min-height: 1em;
+    max-height: 21em;
+  }
 }
 
 .trix-control{
