@@ -1,5 +1,5 @@
 class InterpretationAlias < ApplicationRecord
-  enum nature: [:type_intent, :type_digit]
+  enum nature: [:type_intent, :type_number]
 
   belongs_to :interpretation, touch: true
   belongs_to :intent, optional: true, touch: true
