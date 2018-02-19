@@ -9,7 +9,14 @@ class EntitiesListsController < ApplicationController
   end
 
   def show
-    @entity = Entity.new
+    respond_to do |format|
+      format.html { @entity = Entity.new }
+      format.csv do
+        filename = "#{@agent.owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
+        response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+        render :show
+      end
+    end
   end
 
   def new

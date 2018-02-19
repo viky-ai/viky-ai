@@ -73,6 +73,7 @@ GEM
     crass (1.0.3)
     css_parser (1.6.0)
       addressable
+    csv (1.0.1)
     debug_inspector (0.0.3)
     devise (4.3.0)
       bcrypt (~> 3.0)
@@ -303,6 +304,7 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
+  csv
   devise (~> 4.3.0)
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)

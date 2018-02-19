@@ -129,6 +129,14 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
+  test 'Export entities' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within '.header' do
+      assert page.has_link? 'Export'
+    end
+  end
+
+
   private
 
     def admin_go_to_entities_list_show(agent, entities_list)

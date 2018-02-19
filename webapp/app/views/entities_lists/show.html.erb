@@ -17,6 +17,9 @@
       </span>
     <% end %>
   </div>
+  <div class="header__tools">
+    <a href="<%= user_agent_entities_list_path(@agent.owner, @agent, @entities_list, format: 'csv') %>"><%= t('views.entities_lists.show.export_btn') %></a>
+  </div>
 </div>
 
 <%= render 'entities/index' %>

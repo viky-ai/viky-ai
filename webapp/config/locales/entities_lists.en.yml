@@ -1,6 +1,8 @@
 en:
   views:
     entities_lists:
+      show:
+        export_btn: Export
       index:
         list_title: Entities lists
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> entities lists

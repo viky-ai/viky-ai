@@ -141,4 +141,33 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal %w(is_private is_private is_private), [entities_list_1.reload.visibility, entities_list_2.reload.visibility, entities_list_0.reload.visibility]
   end
 
+
+  test 'Export entities_list' do
+    entities_list = entities_lists(:weather_conditions)
+    csv = entities_list.to_csv
+    expected = ["'Terms','Auto solution','Solution'",
+                "'soleil:fr|sun:en','true','weather: sunny'",
+                "'pluie:fr|rain:en','true','weather: raining'",
+                ''].join("\n")
+    assert_equal expected, csv
+  end
+
+
+  test 'Export uncompleted list' do
+    entities_list = entities_lists(:weather_conditions)
+    sun = entities(:weather_sunny)
+    sun.terms = [{ term: 'sun', locale: Locales::ANY }]
+    sun.solution = ''
+    sun.save
+    rain = entities(:weather_raining)
+    rain.auto_solution_enabled = false
+    rain.save
+
+    csv = entities_list.to_csv
+    expected = ["'Terms','Auto solution','Solution'",
+                "'sun','true',''",
+                "'pluie:fr|rain:en','false','weather: raining'",
+                ''].join("\n")
+    assert_equal expected, csv
+  end
 end
