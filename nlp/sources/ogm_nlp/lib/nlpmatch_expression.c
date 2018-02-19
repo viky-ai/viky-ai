@@ -147,6 +147,12 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
   IFN(request_input_part) DPcErr;
   struct expression *expression = request_input_part->input_part->expression;
   struct request_expression *request_expression = NULL;
+
+  if (!ctrl_nlp_th->accept_any_expressions)
+  {
+    if (request_input_part->input_part->expression->alias_any_input_part_position >= 0) DONE;
+  }
+
   og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
       &request_expression);
   IF(request_expression_added) DPcErr;

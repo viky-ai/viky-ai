@@ -154,6 +154,40 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
+#ifdef DOgNlpLinearize
+  if (must_add_request_expression)
+  {
+    if (request_expression->expression->is_recursive)
+    {
+      og_bool contains_level_minus_one_request_expression = FALSE;
+      for (int i = 0; i < request_expression->orips_nb; i++)
+      {
+        struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+        IFN(request_input_part) DPcErr;
+
+        if (request_input_part->type == nlp_input_part_type_Interpretation)
+        {
+          struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+              request_input_part->Irequest_expression);
+          IFN(sub_request_expression) DPcErr;
+          if (sub_request_expression->level + 1 == request_expression->level) contains_level_minus_one_request_expression =
+          TRUE;
+        }
+      }
+      if (contains_level_minus_one_request_expression)
+      {
+        static int toto=0; toto++;
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "adding recursive expression, toto=%d:",toto);
+        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+      }
+      else
+      {
+        must_add_request_expression = FALSE;
+      }
+    }
+  }
+#endif
+
   if (must_add_request_expression)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
@@ -227,6 +261,15 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
   if (request_expression1->overlap_mark != request_expression2->overlap_mark) return FALSE;
   if (request_expression1->nb_anys != request_expression2->nb_anys) return FALSE;
   if (request_expression1->total_score != request_expression2->total_score) return FALSE;
+
+  #ifdef DOgNlpLinearize
+  if (request_expression1->expression->is_recursive)
+  {
+    if (request_expression1->level == request_expression2->level && request_expression1->nb_anys==0) return TRUE;
+    //if (request_expression1->level == request_expression2->level) return TRUE;
+  }
+  #endif
+
   og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, request_expression1->request_position_start,
       request_expression1->request_positions_nb, request_expression2->request_position_start,
       request_expression2->request_positions_nb);

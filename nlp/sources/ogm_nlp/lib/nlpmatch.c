@@ -30,6 +30,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, "List of request input parts after NlpMatchWords:"));
   }
 
+  ctrl_nlp_th->accept_any_expressions = FALSE;
   // Getting all matching expressions and thus interpretations and getting all new input_parts
   ctrl_nlp_th->level = 0;
   int at_least_one_input_part_added = 0;
@@ -41,6 +42,19 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     ctrl_nlp_th->level++;
   }
   while (at_least_one_input_part_added);
+
+  ctrl_nlp_th->accept_any_expressions = TRUE;
+  // Getting all matching expressions and thus interpretations and getting all new input_parts
+  at_least_one_input_part_added = 0;
+  do
+  {
+    IFE(NlpMatchExpressions(ctrl_nlp_th));
+    IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
+    IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
+    ctrl_nlp_th->level++;
+  }
+  while (at_least_one_input_part_added);
+
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {

@@ -14,6 +14,8 @@
 #include <duktape.h>
 #include <math.h>
 
+#define DOgNlpLinearize
+
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
 #define DOgNlpPackageInterpretationNumber 0x10
@@ -619,6 +621,11 @@ struct og_ctrl_nlp_threaded
   og_heap hm_expression;
 
   og_heap hrequest_context;
+
+  og_heap hre_in_list;
+  og_heap hre_to_sort;
+
+  int accept_any_expressions;
 };
 
 struct og_ctrl_nlp
@@ -777,6 +784,8 @@ og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_positio
     int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
+og_status NlpRequestPositionsDistance(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
+    int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);
 int NlpRequestPositionStringHighlight(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb,
@@ -903,4 +912,11 @@ og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct reques
 /* nlpcontext.c */
 og_status NlpContextIsValid(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpContextGetScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlprelist.c */
+og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+
 
