@@ -398,6 +398,7 @@ struct request_score
   double overlap;
   double any;
   double context;
+  double scope;
 };
 
 struct request_expression

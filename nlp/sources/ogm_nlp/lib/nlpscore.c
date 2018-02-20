@@ -9,6 +9,7 @@
 static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
@@ -90,6 +91,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   IFE(NlpContextGetScore(ctrl_nlp_th, request_expression));
 
+  IFE(NlpCalculateScoreMatchScope(ctrl_nlp_th, root_request_expression));
+
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
   DONE;
@@ -149,7 +152,27 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 {
   double score_number = 6.0;
   struct request_score *score = request_expression->score;
-  request_expression->total_score = (score->coverage + score->locale + score->spelling * score->spelling
+  request_expression->total_score = score->scope * (score->coverage + score->locale + score->spelling * score->spelling
       + score->overlap + score->any + score->context) / score_number;
+  DONE;
+}
+
+static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  if(ctrl_nlp_th->primary_package != NULL)
+  {
+    if(strcmp(ctrl_nlp_th->primary_package_id, request_expression->expression->interpretation->package->id)==0)
+    {
+      request_expression->score->scope = 1;
+    }
+    else
+    {
+      request_expression->score->scope = 0.9;
+    }
+  }
+  else
+  {
+    request_expression->score->scope = 1;
+  }
   DONE;
 }

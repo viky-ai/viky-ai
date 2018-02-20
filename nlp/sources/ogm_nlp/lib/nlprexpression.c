@@ -38,6 +38,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   g_queue_init(request_expression->tmp_solutions);
   request_expression->overlap_mark = 0;
   memset(request_expression->score, 0, sizeof(struct request_score));
+  request_expression->score->scope = 1;
   request_expression->total_score = 0.0;
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;

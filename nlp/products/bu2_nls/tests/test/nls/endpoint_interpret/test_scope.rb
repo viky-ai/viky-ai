@@ -61,7 +61,7 @@ module Nls
         )
 
         check_interpret("hello scope",
-          interpretations: ["scope_public_1", "scope_public_2"],
+          interpretations: ["scope_public_2", "scope_public_1"],
           packages: [ @package_1, @package_2 ],
           primary_package: @package_2
         )
@@ -77,7 +77,7 @@ module Nls
         assert 'private', interpretations['interpretations'][2]['scope']
 
         interpretations = check_interpret("hello scope",
-          interpretations: ["scope_public_1", "scope_public_2", "scope_private_2"],
+          interpretations: ["scope_public_2", "scope_public_1", "scope_private_2"],
           packages: [ @package_1, @package_2 ],
           show_private: true,
           primary_package: @package_2
