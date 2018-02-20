@@ -19,6 +19,15 @@ module Nls
 
         @solution_test_package = create_solution_test_package()
         Nls.package_update(@solution_test_package)
+
+        Nls.package_update(create_hello_emoji_test_package)
+      end
+
+      def create_hello_emoji_test_package
+        package = Package.new("hello_emoji_test_package")
+        interpretation = package.new_interpretation("hello_emoji_test")
+        interpretation << Expression.new("👋", solution: '`const s = "👋"; s;`')
+        package
       end
 
       def create_solution_test_package
@@ -204,6 +213,11 @@ module Nls
       def test_solution_combine_list_must_be_an_array
         check_interpret("sol combine 1", solution: { match: [ { number: 1 } ] })
         check_interpret("sol combine 1 2", solution: { match: [ { number: 1 }, { number: 2 } ] })
+      end
+
+      def test_test_hello_emoji
+        skip 'bad jvascript interpretation for emoji'
+        check_interpret("👋", solution: "👋")
       end
 
     end

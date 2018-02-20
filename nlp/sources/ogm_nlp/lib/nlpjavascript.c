@@ -409,10 +409,19 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
 
     case DUK_TYPE_STRING:
     {
-      og_string computed_string = duk_get_string(ctx, -1);
-      *p_json_anwser = json_string(computed_string);
+      duk_size_t icomputed_string = 0;
+      og_string computed_string = duk_get_lstring(ctx, -1, &icomputed_string);
+      *p_json_anwser = json_stringn(computed_string, icomputed_string);
 
       NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a string : '%s'", computed_string);
+      if (*p_json_anwser == NULL)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+        NlpThrowErrorTh(ctrl_nlp_th,
+            "NlpJsEval : computed json object contains error duk_get_string return dummy string");
+        DPcErr;
+      }
+
       break;
     }
 
