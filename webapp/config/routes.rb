@@ -70,6 +70,10 @@ Rails.application.routes.draw do
           collection do
             post :update_positions
           end
+          member do
+            get :select_import
+            post :import
+          end
 
           resources :entities, only: [:show, :create, :edit, :update, :destroy] do
             member do

@@ -113,6 +113,10 @@
     cursor: pointer;
   }
 
+  input[type='file']{
+    font-weight: 300;
+  }
+
   .selectize-input,
   input[type='text'],
   input[type='email'],

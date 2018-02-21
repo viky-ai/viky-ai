@@ -27,6 +27,7 @@ import './intents/main';
 import './intents/intent_form';
 import './entities_lists/main';
 import './entities_lists/entities_list_form';
+import './entities_lists/entities_import_form';
 import './interpretations/main';
 import './interpretations/interpretation_form';
 import './entities/main';

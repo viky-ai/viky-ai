@@ -2,6 +2,19 @@ en:
   views:
     entities_lists:
       show:
+        import:
+          btn: Import
+          select_import:
+            title: Import a list of entities
+            message: Select a CSV file to import
+            wait_message: Import in progress, please wait...
+            submit: Import
+            success:
+              zero: "No entity imported"
+              one: "1 entity imported successfully"
+              other: "%{count} entities imported successfully"
+            max_file_size: The maximum file size allowed is 2Mo.
+            file_label: Choose a file
         export_btn: Export
       index:
         list_title: Entities lists

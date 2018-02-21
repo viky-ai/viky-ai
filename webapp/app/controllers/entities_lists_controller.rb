@@ -83,6 +83,27 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+  def select_import
+    @entities_import = EntitiesImport.new
+    render partial: 'select_import'
+  end
+
+  def import
+    @entities_import = EntitiesImport.new import_params
+    respond_to do |format|
+      if @entities_import.valid?
+        format.json {
+          redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list), notice: t('views.entities_lists.show.import.select_import.success', count: 2)
+        }
+      else
+        format.json {
+          render json: {
+            replace_modal_content_with: render_to_string(partial: 'select_import', formats: :html),
+          }, status: 422
+        }
+      end
+    end
+  end
 
   private
 
@@ -93,6 +114,10 @@ class EntitiesListsController < ApplicationController
 
     def entities_list_params
       params.require(:entities_list).permit(:listname, :description, :visibility)
+    end
+
+    def import_params
+      params.permit(import: [:file])[:import]
     end
 
     def set_agent
@@ -108,7 +133,7 @@ class EntitiesListsController < ApplicationController
       case action_name
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_import', 'import'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

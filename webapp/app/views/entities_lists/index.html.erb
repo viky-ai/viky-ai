@@ -32,9 +32,9 @@
   </div>
 <% else %>
   <h5><%= t('views.entities_lists.index.list_public_title_html') %></h5>
-  <%= render '/agents/entities_lists_list', entities_lists: @entities_lists.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
+  <%= render 'entities_lists_list', entities_lists: @entities_lists.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
   <h5><%= t('views.entities_lists.index.list_private_title_html') %></h5>
-  <%= render '/agents/entities_lists_list', entities_lists: @entities_lists.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
+  <%= render 'entities_lists_list', entities_lists: @entities_lists.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
 <% end %>
 
 <% content_for :right_aside do %>

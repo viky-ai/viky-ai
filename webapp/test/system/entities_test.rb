@@ -137,6 +137,40 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
+  test 'Import entities hidden when no edit right' do
+    login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
+    visit user_agent_entities_list_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
+    within '.header' do
+      assert page.has_no_link? 'Import'
+    end
+  end
+
+
+  test 'Import entities without file' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    click_link 'Import'
+    within('.modal') do
+      assert page.has_text? 'Import a list of entities'
+      assert page.has_no_text? 'File must be present'
+      click_button 'Import'
+      assert page.has_text? 'File must be present'
+    end
+  end
+
+
+  test 'Import two entities' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    click_link 'Import'
+    within('.modal') do
+      assert page.has_text? 'Import a list of entities'
+      file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
+      attach_file('import_file', file).click
+      click_button 'Import'
+    end
+    assert page.has_text? '2 entities imported successfully'
+  end
+
+
   private
 
     def admin_go_to_entities_list_show(agent, entities_list)

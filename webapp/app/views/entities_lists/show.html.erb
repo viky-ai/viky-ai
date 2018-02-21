@@ -18,6 +18,9 @@
     <% end %>
   </div>
   <div class="header__tools">
+    <% if current_user.can?(:edit, @agent) %>
+      <a href="<%= select_import_user_agent_entities_list_path(@agent.owner, @agent, @entities_list) %>" data-action="open-remote-modal"><%= t('views.entities_lists.show.import.btn') %></a> /
+    <% end %>
     <a href="<%= user_agent_entities_list_path(@agent.owner, @agent, @entities_list, format: 'csv') %>"><%= t('views.entities_lists.show.export_btn') %></a>
   </div>
 </div>
