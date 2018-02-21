@@ -24,7 +24,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   IFE(NlpMatchWordChainRequestWords(ctrl_nlp_th));
 
   // function to regroup numbers
-  IFE(NlpMatchWordGroupNumbers(ctrl_nlp_th));
+  IFE(NlpMatchGroupNumbers(ctrl_nlp_th));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {

@@ -739,8 +739,13 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
-og_status NlpMatchWordGroupNumbers(og_nlp_th ctrl_nlp_th);
+
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_group_numbers.c */
+og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchGroupNumbersFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_expression.c */
 og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
