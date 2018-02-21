@@ -20,16 +20,17 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpLtras(ctrl_nlp_th));
 
-  // TODO function to chain words in order to re-order them if needed
+  // function to chain words in order to re-order them if needed
   IFE(NlpMatchWordChainRequestWords(ctrl_nlp_th));
 
-  // TODO function to regroup numbers
+  // function to regroup numbers
   IFE(NlpMatchWordGroupNumbers(ctrl_nlp_th));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpLogRequestWords(ctrl_nlp_th));
   }
+
   IFE(NlpGlueBuild(ctrl_nlp_th));
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -62,6 +63,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   IFE(NlpRequestExpressionsCalculate(ctrl_nlp_th));
 
   IFE(NlpWhyCalculate(ctrl_nlp_th));
+
   DONE;
 }
 

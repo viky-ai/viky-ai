@@ -85,6 +85,7 @@ module Nls
         check_interpret("1, 2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
         check_interpret("1 ,2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
         check_interpret("1 2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1.2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
       end
 
       def test_wrong_decimal_number_english
@@ -92,6 +93,7 @@ module Nls
         check_interpret("1 . 2",    { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
         check_interpret("1. 2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
         check_interpret("1 .2",     { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
+        check_interpret("1 2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
         check_interpret("1,2",      { interpretation: "numbers_list", solution: {numbers: [1, 2]} })
       end
 
@@ -120,12 +122,16 @@ module Nls
         check_interpret("123 titi 456 toto 789 titi", { interpretation: "combinations", solution: { combination: [{number: 123}, {number: 456}, {number: 789}] } })
       end
 
-      def test_toto
+      def test_number_with_text_pasted
         check_interpret("123st 456",    { interpretation: "numbers_list", solution: { numbers: [123, 456] } })
       end
 
       def test_multilang
         Interpretation.default_locale = "fr-FR,en-US"
+        check_interpret("1.2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+        check_interpret("1,2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
+
+        Interpretation.default_locale = nil
         check_interpret("1.2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
         check_interpret("1,2",  { interpretation: "numbers_list", solution: {numbers: [1.2]} })
 

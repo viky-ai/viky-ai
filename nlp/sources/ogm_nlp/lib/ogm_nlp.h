@@ -329,6 +329,8 @@ struct request_word
 
   /**
    * chain the list in order to ignore merged words
+   *
+   * It can be used only after calling NlpMatchWordChainRequestWords
    */
   struct request_word *next;
 };
