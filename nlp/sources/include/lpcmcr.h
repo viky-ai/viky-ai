@@ -36,6 +36,7 @@
 #define IFx(x)          if ((x) != 0)
 #define IFN(x)          if ((x) == NULL)
 #define IFX(x)          if ((x) != NULL)
+#define IFNE(x)         if ((x) == NULL) DPcErr
 
 /* Conflicts too often with stdlib.h (23/10/98)
 #define max(a,b)        (((a) > (b)) ? (a) : (b))

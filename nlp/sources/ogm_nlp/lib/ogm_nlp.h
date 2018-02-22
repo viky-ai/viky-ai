@@ -546,6 +546,33 @@ struct request_context
   int flag_length;
 };
 
+typedef struct number_sep_conf *nlp_match_group_numbers_conf;
+
+struct nlp_match_group_numbers
+{
+
+  struct og_ctrl_nlp_threaded *nlpth;
+
+  /* conf by default */
+  nlp_match_group_numbers_conf default_conf;
+
+  /* list of (struct number_sep_conf) */
+  GQueue sep_conf[1];
+
+  /* list of (struct number_sep_conf_locale) */
+  GQueue sep_conf_lang[1];
+
+  /* hash of Glist (struct number_sep_conf_locale) indexed by (lang + DOgLangMax * country) */
+  GHashTable *sep_conf_lang_by_lang_country;
+
+  /* hash of Glist of (struct number_sep_conf_locale) indexed by (lang) */
+  GHashTable *sep_conf_lang_by_lang;
+
+  /* hash of Glist of (struct number_sep_conf_locale) indexed by (country) */
+  GHashTable *sep_conf_lang_by_country;
+
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -621,6 +648,9 @@ struct og_ctrl_nlp_threaded
 
   /** HashTable key: int (word position) , value: int (word position) */
   GHashTable *glue_hash;
+
+  /* struct used by match_group_numbers */
+  struct nlp_match_group_numbers group_numbers_settings[1];
 
   void *hltrac;
   void *hltras;
