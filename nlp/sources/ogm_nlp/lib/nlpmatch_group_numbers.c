@@ -101,8 +101,6 @@ og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th)
 
   nmgn->nlpth = ctrl_nlp_th;
   nmgn->sep_conf_lang_by_lang_country = g_hash_table_new(g_direct_hash, g_direct_equal);
-  nmgn->sep_conf_lang_by_country = g_hash_table_new(g_direct_hash, g_direct_equal);
-  nmgn->sep_conf_lang_by_lang = g_hash_table_new(g_direct_hash, g_direct_equal);
 
   IFE(NlpMatchGroupNumbersInitConf(ctrl_nlp_th));
 
@@ -180,13 +178,24 @@ static og_status NlpMatchGroupNumbersInitAssociateLocaleWithConf(og_nlp_th ctrl_
   // add conf in lookup table for fast access
 
   // lookup by lang_country
-  IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, conf_lang->lang_country));
+  if (lang != DOgLangNil && country != DOgCountryNil)
+  {
+    IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(lang, country)));
+  }
 
   // lookup by lang
-  IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang, conf_lang, conf_lang->lang));
+  if (lang != DOgLangNil)
+  {
+    IFE(
+        NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(lang, DOgCountryNil)));
+  }
 
   // lookup by country
-  IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_country, conf_lang, conf_lang->country));
+  if (country != DOgCountryNil)
+  {
+    IFE(
+        NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(DOgLangNil, country)));
+  }
 
   DONE;
 }
@@ -199,12 +208,6 @@ og_status NlpMatchGroupNumbersFlush(og_nlp_th ctrl_nlp_th)
   // free all lookup hash
   g_hash_table_destroy(nmgn->sep_conf_lang_by_lang_country);
   nmgn->sep_conf_lang_by_lang_country = NULL;
-
-  g_hash_table_destroy(nmgn->sep_conf_lang_by_country);
-  nmgn->sep_conf_lang_by_country = NULL;
-
-  g_hash_table_destroy(nmgn->sep_conf_lang_by_lang);
-  nmgn->sep_conf_lang_by_lang = NULL;
 
   // free sep_conf_lang
   for (GList *iter = nmgn->sep_conf_lang->head; iter; iter = iter->next)
@@ -502,9 +505,11 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
   int lang = OgIso639_3166ToLang(lang_country);
   int country = OgIso639_3166ToCountry(lang_country);
 
+  // lookfor lang + country
+  if (lang != DOgLangNil && country != DOgCountryNil)
   {
-    // lookfor lang + country
-    GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, GINT_TO_POINTER(lang_country));
+    gconstpointer key = GINT_TO_POINTER(lang_country);
+    GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
     for (GList *iter = list_lang_country; iter && !locale_found && !grouped_numbers; iter = iter->next)
     {
       struct number_sep_conf_locale *conf = iter->data;
@@ -521,9 +526,11 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
     }
   }
 
+  // lookfor country only
+  if (country != DOgCountryNil)
   {
-    // lookfor country only
-    GList *list_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_country, GINT_TO_POINTER(country));
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(DOgLangNil, country));
+    GList *list_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
     for (GList *iter = list_country; iter && !locale_found && !grouped_numbers; iter = iter->next)
     {
       struct number_sep_conf_locale *conf = iter->data;
@@ -539,9 +546,11 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
     }
   }
 
+  // lookfor lang only
+  if (lang != DOgLangNil)
   {
-    // lookfor lang only
-    GList *list_lang = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang, GINT_TO_POINTER(lang));
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(lang, DOgCountryNil));
+    GList *list_lang = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
     for (GList *iter = list_lang; iter && !locale_found && !grouped_numbers; iter = iter->next)
     {
       struct number_sep_conf_locale *conf = iter->data;

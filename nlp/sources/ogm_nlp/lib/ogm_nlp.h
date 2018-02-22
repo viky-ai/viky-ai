@@ -565,12 +565,6 @@ struct nlp_match_group_numbers
   /* hash of Glist (struct number_sep_conf_locale) indexed by (lang + DOgLangMax * country) */
   GHashTable *sep_conf_lang_by_lang_country;
 
-  /* hash of Glist of (struct number_sep_conf_locale) indexed by (lang) */
-  GHashTable *sep_conf_lang_by_lang;
-
-  /* hash of Glist of (struct number_sep_conf_locale) indexed by (country) */
-  GHashTable *sep_conf_lang_by_country;
-
 };
 
 struct og_ctrl_nlp_threaded

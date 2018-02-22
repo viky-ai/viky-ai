@@ -211,7 +211,7 @@ module Nls
         check_interpret("33.12.34.56.78", { interpretation: "numbers_list", solution: { numbers: [33, 12, 34, 56, 78]} })
         check_interpret("1234.123",       { interpretation: "numbers_list", solution: { numbers: [1234, 123]} })
         check_interpret("12.123,123.123", { interpretation: "numbers_list", solution: { numbers: [12123.123, 123]} })
-        check_interpret("12.123.12 123",    { interpretation: "numbers_list", solution: { numbers: [12123, 12, 123]} })
+        check_interpret("12.123.12 123",  { interpretation: "numbers_list", solution: { numbers: [12123, 12, 123]} })
         check_interpret("1. 2. 3,4",      { interpretation: "numbers_list", solution: { numbers: [1, 2, 3.4]} })
       end
 
@@ -442,7 +442,7 @@ module Nls
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
 
-     end
+      end
 
     end
   end
