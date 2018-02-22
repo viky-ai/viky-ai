@@ -13,6 +13,8 @@ require 'parallel'
 require 'fileutils'
 require 'uuidtools'
 
+require 'time'
+
 reporters = [
   Minitest::Reporters::SpecReporter.new
 ]

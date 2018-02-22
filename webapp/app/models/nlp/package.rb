@@ -229,10 +229,10 @@ class Nlp::Package
           result[:id] = ialias.intent.id
         end
       end
-      if ialias.type_digit?
+      if ialias.type_number?
         result = {
           alias: ialias.aliasname,
-          type: 'digit'
+          type: 'number'
         }
       end
       result

@@ -76,8 +76,8 @@ module Nls
 
         match = package.new_interpretation("match")
         match.new_expression("@{entity}",      aliases: { entity: entity }, solution: { name: "`entity`" } )
-        match.new_expression("nosol @{number}", aliases: { number: Alias.digit })
-        match.new_expression("@{number}",      aliases: { number: Alias.digit }, solution: { number: "`number`" } )
+        match.new_expression("nosol @{number}", aliases: { number: Alias.number })
+        match.new_expression("@{number}",      aliases: { number: Alias.number }, solution: { number: "`number`" } )
         match.new_expression("@{not_matched}", aliases: { not_matched: not_matched })
         # @{text} is needed due to a bug in consolidate phase on any
         match.new_expression("@{text} @{entity_any}",  aliases: { text: text, entity_any: Alias.any }, solution: "`entity_any`" )
@@ -187,7 +187,7 @@ module Nls
       end
 
       def test_solution_combine_complex_nosol
-        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2, 3] })
+        check_interpret("sol combine nosol 1 nosol 2 nosol 3", solution: { match: [1, 2, 3] })
       end
 
       def test_solution_combine_complex_entity

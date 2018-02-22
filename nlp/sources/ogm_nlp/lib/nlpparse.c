@@ -376,6 +376,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   IFn(request_word) DPcErr;
   IF(Irequest_word) DPcErr;
 
+  request_word->self_index = Irequest_word;
   request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
   request_word->length = length_normalized_string_word;
   IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, normalized_string_word));
@@ -389,18 +390,18 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->start_position = word_start;
   request_word->length_position = word_length;
 
-  request_word->is_digit = TRUE;
+  request_word->is_number = TRUE;
   for (int i = 0; i < length_normalized_string_word; i++)
   {
     if (!OgUniIsdigit(normalized_string_word[i]))
     {
-      request_word->is_digit = FALSE;
+      request_word->is_number = FALSE;
       break;
     }
   }
-  if (request_word->is_digit)
+  if (request_word->is_number)
   {
-    request_word->digit_value = atoi(normalized_string_word);
+    request_word->number_value = atoi(normalized_string_word);
   }
   request_word->is_auto_complete_word = FALSE;
 
