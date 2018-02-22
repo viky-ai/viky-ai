@@ -292,17 +292,17 @@ module Nls
 
         Interpretation.default_locale = "fr-FR,en-US,en-UK,en,de-CH,de"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-# do not work for now : FIXME
-#        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-#        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-#        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        # FIXME add guess mecanism
+        #check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        #check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        #check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
 
         Interpretation.default_locale = nil
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-# do not work for now : FIXME
-#        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-#        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-#        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        # FIXME add guess mecanism
+        #check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        #check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        #check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
 
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
@@ -370,17 +370,15 @@ module Nls
 
        Interpretation.default_locale = "fr-FR,en-US,en-UK,en,de-CH,de"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-# do not work for now : FIXME
-#       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-#       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-#       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
 
        Interpretation.default_locale = nil
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-# do not work for now : FIXME
-#       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-#       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-#       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
 
        Interpretation.default_locale = "fr-FR"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })

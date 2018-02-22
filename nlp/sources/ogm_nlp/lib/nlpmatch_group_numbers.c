@@ -18,6 +18,9 @@ struct number_sep_conf
   /** regex for these separator */
   GRegex *regex;
 
+  /** Regex to guess if that conf match */
+  GRegex *regex_guess_best;
+
   /** regex already check */
   og_bool already_processed;
 };
@@ -44,9 +47,11 @@ struct number_sep_conf_locale
 
 static og_bool NlpMatchGroupNumbersParsing(og_nlp_th ctrl_nlp_th, og_string sentence,
     struct number_sep_conf* locale_conf, double *p_value);
+static og_status NlpMatchGroupNumbersWithBestLocale(struct nlp_match_group_numbers *nmgn, int locale,
+    og_bool *p_grouped_numbers);
 static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *nmgn, int locale,
     og_bool *p_locale_found, og_bool *p_grouped_numbers);
-static og_bool NlpMatchGroupNumbersByLocale(og_nlp_th ctrl_nlp_th, struct number_sep_conf* locale_conf);
+static og_bool NlpMatchGroupNumbersOnLocale(og_nlp_th ctrl_nlp_th, struct number_sep_conf* locale_conf);
 
 static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_th ctrl_nlp_th, og_string thousand_sep,
     og_string decimal_sep);
@@ -124,20 +129,29 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   snprintf(pattern, DPcPathSize, "^((?:(?:\\d{1,3}(?:%s\\d{3})+)|\\d+))(?:%s(\\d*))?$", escaped_thousand_sep,
       escaped_decimal_sep);
 
+  og_char_buffer guest_locale_pattern_full[DPcPathSize];
+  snprintf(guest_locale_pattern_full, DPcPathSize, "\\d{1,3}%s(?:\\d{3})+%s\\d", escaped_thousand_sep,
+      escaped_decimal_sep);
+
   g_free(escaped_thousand_sep);
   g_free(escaped_decimal_sep);
 
   GError *regexp_error = NULL;
-  GRegex *regular_expression = g_regex_new(pattern, 0, 0, &regexp_error);
-  if (!regular_expression || regexp_error)
+  conf->regex = g_regex_new(pattern, 0, 0, &regexp_error);
+  if (!conf->regex || regexp_error)
   {
-    NlpThrowErrorTh(nmgn->nlpth, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed : %s",
+    NlpThrowErrorTh(nmgn->nlpth, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on main : %s",
         regexp_error->message);
     return NULL;
   }
 
-  // build regex
-  conf->regex = regular_expression;
+  conf->regex_guess_best = g_regex_new(guest_locale_pattern_full, 0, 0, &regexp_error);
+  if (!conf->regex_guess_best || regexp_error)
+  {
+    NlpThrowErrorTh(nmgn->nlpth,
+        "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on regex_guess_best : %s", regexp_error->message);
+    return NULL;
+  }
 
   // add conf in list
   g_queue_push_tail(nmgn->sep_conf, conf);
@@ -180,21 +194,22 @@ static og_status NlpMatchGroupNumbersInitAssociateLocaleWithConf(og_nlp_th ctrl_
   // lookup by lang_country
   if (lang != DOgLangNil && country != DOgCountryNil)
   {
-    IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(lang, country)));
+    int key = locale_lang_country(lang, country);
+    IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, key));
   }
 
   // lookup by lang
   if (lang != DOgLangNil)
   {
-    IFE(
-        NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(lang, DOgCountryNil)));
+    int key = locale_lang_country(lang, DOgCountryNil);
+    IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, key));
   }
 
   // lookup by country
   if (country != DOgCountryNil)
   {
-    IFE(
-        NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, locale_lang_country(DOgLangNil, country)));
+    int key = locale_lang_country(DOgLangNil, country);
+    IFE(NlpMatchGNInitHashInsert(nmgn->sep_conf_lang_by_lang_country, conf_lang, key));
   }
 
   DONE;
@@ -233,6 +248,9 @@ og_status NlpMatchGroupNumbersFlush(og_nlp_th ctrl_nlp_th)
     g_regex_unref(conf->regex);
     conf->regex = NULL;
 
+    g_regex_unref(conf->regex_guess_best);
+    conf->regex_guess_best = NULL;
+
     g_slice_free(struct number_sep_conf, conf);
     iter->data = NULL;
 
@@ -267,6 +285,29 @@ og_bool NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th)
 
   // check the given accepted languages
   int numberLang = OgHeapGetCellsUsed(ctrl_nlp_th->haccept_language);
+
+  // try to guess best locale in accepted languages
+  if (numberLang > 1)
+  {
+    for (int i = 0; i < numberLang && !numbers_grouped; i++)
+    {
+      struct accept_language* accepted_language = OgHeapGetCell(ctrl_nlp_th->haccept_language, i);
+
+      int locale = accepted_language->locale;
+
+      og_status status = NlpMatchGroupNumbersWithBestLocale(nmgn, locale, &numbers_grouped);
+      IF(status)
+      {
+        og_char_buffer current_lang_country[DPcPathSize];
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbers: failed on NlpMatchGroupNumbersWithBestLocale "
+            "with best locale on accepted-language %s (%g)", OgIso639_3166ToCode(locale, current_lang_country),
+            accepted_language->quality_factor);
+        DPcErr;
+      }
+    }
+  }
+
+  // try locale in right order
   for (int i = 0; i < numberLang && !numbers_grouped; i++)
   {
     struct accept_language* accepted_language = OgHeapGetCell(ctrl_nlp_th->haccept_language, i);
@@ -287,26 +328,48 @@ og_bool NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th)
   // accepted languages is not provided or not found and no groups found
   if (!language_found && !numbers_grouped)
   {
-    // first check default language
+
+    // try to guess best conf
+    for (GList *iter = nmgn->sep_conf->head; iter && !numbers_grouped; iter = iter->next)
+    {
+      struct number_sep_conf* sep_conf = iter->data;
+
+      og_string request_sentence = ctrl_nlp_th->request_sentence;
+
+      og_bool match = g_regex_match(sep_conf->regex_guess_best, request_sentence, 0, NULL);
+      if (match)
+      {
+        numbers_grouped = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, sep_conf);
+        IF(numbers_grouped)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchWordGroupNumbers: failed on NlpMatchGroupNumbersOnLocale"
+              " with best on all : thousand_sep=\"%s\", decimal_sep=\"%s\"", sep_conf->thousand_sep,
+              sep_conf->decimal_sep);
+          DPcErr;
+        }
+      }
+    }
+
+    // then check default language
     struct number_sep_conf* default_sep_conf = (struct number_sep_conf*) nmgn->default_conf;
-    numbers_grouped = NlpMatchGroupNumbersByLocale(ctrl_nlp_th, default_sep_conf);
+    numbers_grouped = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, default_sep_conf);
     IF(numbers_grouped)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchWordGroupNumbers: failed on NlpMatchNumbersGroupByLanguage"
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchWordGroupNumbers: failed on NlpMatchGroupNumbersOnLocale"
           " with default: thousand_sep=\"%s\", decimal_sep=\"%s\"", default_sep_conf->thousand_sep,
           default_sep_conf->decimal_sep);
       DPcErr;
     }
 
-    // then check all others language
+    // then check all others conf
     for (GList *iter = nmgn->sep_conf->head; iter && !numbers_grouped; iter = iter->next)
     {
       struct number_sep_conf* sep_conf = iter->data;
 
-      numbers_grouped = NlpMatchGroupNumbersByLocale(ctrl_nlp_th, sep_conf);
+      numbers_grouped = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, sep_conf);
       IF(numbers_grouped)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchWordGroupNumbers: failed on NlpMatchNumbersGroupByLanguage"
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchWordGroupNumbers: failed on NlpMatchGroupNumbersOnLocale"
             " with all: thousand_sep=\"%s\", decimal_sep=\"%s\"", sep_conf->thousand_sep, sep_conf->decimal_sep);
         DPcErr;
       }
@@ -375,7 +438,7 @@ static og_bool NlpMatchGroupNumbersParsing(og_nlp_th ctrl_nlp_th, og_string sent
   return found;
 }
 
-static og_bool NlpMatchGroupNumbersByLocale(og_nlp_th ctrl_nlp_th, struct number_sep_conf* locale_conf)
+static og_bool NlpMatchGroupNumbersOnLocale(og_nlp_th ctrl_nlp_th, struct number_sep_conf* locale_conf)
 {
 
   // optimize several language with same conf
@@ -489,6 +552,87 @@ static og_bool NlpMatchGroupNumbersByLocale(og_nlp_th ctrl_nlp_th, struct number
   return numbers_grouped;
 }
 
+static og_status NlpMatchGroupNumbersWithBestLocale(struct nlp_match_group_numbers *nmgn, int locale,
+    og_bool *p_grouped_numbers)
+{
+  struct og_ctrl_nlp_threaded *ctrl_nlp_th = nmgn->nlpth;
+
+  if (p_grouped_numbers) *p_grouped_numbers = FALSE;
+
+  og_string request_sentence = ctrl_nlp_th->request_sentence;
+
+  int lang_country = locale;
+  int lang = OgIso639_3166ToLang(lang_country);
+  int country = OgIso639_3166ToCountry(lang_country);
+
+  struct number_sep_conf_locale *conf_match = NULL;
+
+  // lookfor lang + country
+  if (lang != DOgLangNil && country != DOgCountryNil)
+  {
+    gconstpointer key = GINT_TO_POINTER(lang_country);
+    GList *list_lang_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
+    for (GList *iter = list_lang_country; iter && !conf_match; iter = iter->next)
+    {
+      struct number_sep_conf_locale *conf = iter->data;
+
+      og_bool match = g_regex_match(conf->sep_conf->regex_guess_best, request_sentence, 0, NULL);
+      if (match)
+      {
+        conf_match = conf;
+      }
+    }
+  }
+
+  // lookfor country only
+  if (country != DOgCountryNil)
+  {
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(DOgLangNil, country));
+    GList *list_country = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
+    for (GList *iter = list_country; iter && !conf_match; iter = iter->next)
+    {
+      struct number_sep_conf_locale *conf = iter->data;
+      og_bool match = g_regex_match(conf->sep_conf->regex_guess_best, request_sentence, 0, NULL);
+      if (match)
+      {
+        conf_match = conf;
+      }
+    }
+  }
+
+  // lookfor lang only
+  if (lang != DOgLangNil)
+  {
+    gconstpointer key = GINT_TO_POINTER(locale_lang_country(lang, DOgCountryNil));
+    GList *list_lang = g_hash_table_lookup(nmgn->sep_conf_lang_by_lang_country, key);
+    for (GList *iter = list_lang; iter && !conf_match; iter = iter->next)
+    {
+      struct number_sep_conf_locale *conf = iter->data;
+      og_bool match = g_regex_match(conf->sep_conf->regex_guess_best, request_sentence, 0, NULL);
+      if (match)
+      {
+        conf_match = conf;
+      }
+    }
+  }
+
+  if (conf_match)
+  {
+    og_bool grouped_numbers = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, conf_match->sep_conf);
+    IF(grouped_numbers)
+    {
+      og_char_buffer current_lang_country[DPcPathSize];
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersWithBestLocale: failed on NlpMatchGroupNumbersOnLocale "
+          "with locale %s (lang + country)", OgIso639_3166ToCode(conf_match->lang_country, current_lang_country));
+      DPcErr;
+    }
+
+    if (p_grouped_numbers) *p_grouped_numbers = grouped_numbers;
+  }
+
+  DONE;
+}
+
 static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *nmgn, int locale,
     og_bool *p_locale_found, og_bool *p_grouped_numbers)
 {
@@ -515,7 +659,7 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
       struct number_sep_conf_locale *conf = iter->data;
       locale_found = TRUE;
 
-      grouped_numbers = NlpMatchGroupNumbersByLocale(ctrl_nlp_th, conf->sep_conf);
+      grouped_numbers = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, conf->sep_conf);
       IF(grouped_numbers)
       {
         og_char_buffer current_lang_country[DPcPathSize];
@@ -536,7 +680,7 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
       struct number_sep_conf_locale *conf = iter->data;
       locale_found = TRUE;
 
-      grouped_numbers = NlpMatchGroupNumbersByLocale(ctrl_nlp_th, conf->sep_conf);
+      grouped_numbers = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, conf->sep_conf);
       IF(grouped_numbers)
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersWithLocale: failed on NlpMatchGroupNumbersByLocale "
@@ -556,7 +700,7 @@ static og_status NlpMatchGroupNumbersWithLocale(struct nlp_match_group_numbers *
       struct number_sep_conf_locale *conf = iter->data;
       locale_found = TRUE;
 
-      grouped_numbers = NlpMatchGroupNumbersByLocale(ctrl_nlp_th, conf->sep_conf);
+      grouped_numbers = NlpMatchGroupNumbersOnLocale(ctrl_nlp_th, conf->sep_conf);
       IF(grouped_numbers)
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersWithLocale: failed on NlpMatchGroupNumbersByLocale "
