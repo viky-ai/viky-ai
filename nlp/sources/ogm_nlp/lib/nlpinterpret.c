@@ -114,6 +114,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
 
   IFE(NlpGlueInit(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
+  IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
 
   DONE;
 }
@@ -145,6 +146,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
     }
   }
 
+  IFE(NlpMatchGroupNumbersFlush(ctrl_nlp_th));
   IFE(NlpGlueFlush(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
 

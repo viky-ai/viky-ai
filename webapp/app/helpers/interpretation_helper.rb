@@ -14,11 +14,11 @@ module InterpretationHelper
     })
   end
 
-  def digit_to_json()
+  def number_to_json()
     JSON.generate({
       color:  "intent-black",
-      aliasname: t("views.interpretations.digit"),
-      nature: "type_digit"
+      aliasname: t("views.interpretations.number"),
+      nature: "type_number"
     })
   end
 
@@ -45,11 +45,11 @@ module InterpretationHelper
         url: url
       }
     end
-    if interpretation_alias.type_digit?
+    if interpretation_alias.type_number?
       data = {
         color: "intent-black",
         aliasname: interpretation_alias.aliasname,
-        nature: 'type_digit',
+        nature: 'type_number',
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled
       }
@@ -108,7 +108,7 @@ module InterpretationHelper
             color = interpretation_alias.intent.color
           else
             color = "black"
-            title = "Digit" if interpretation_alias.type_digit?
+            title = "Number" if interpretation_alias.type_number?
           end
           css_class = "interpretation-resume__alias-#{color}"
           text = expression[interpretation_alias.position_start..interpretation_alias.position_end-1]

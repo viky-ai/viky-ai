@@ -12,6 +12,7 @@
 
 DEFPUBLIC(unsigned char *) OgIso639_3166ToCode(int lang_country, unsigned char *slang_country);
 DEFPUBLIC(int) OgCodeToIso639_3166(void *herr,unsigned char *slang_country);
+DEFPUBLIC(int) OgIso639_3166ToIso639_3166(int lang, int country);
 DEFPUBLIC(int) OgIso639_3166ToLang(int lang_country);
 DEFPUBLIC(int) OgIso639_3166ToCountry(int lang_country);
 
