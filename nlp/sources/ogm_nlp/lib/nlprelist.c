@@ -102,10 +102,13 @@ static og_status NlpRequestExpressionListsSortRecursive(og_nlp_th ctrl_nlp_th,
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
-      if (!request_expression->expression->is_recursive && sub_request_expression->expression->is_recursive)
+      if (request_expression == root_request_expression && request_expression->expression->is_recursive)
+      {
+        IFE(NlpRequestExpressionListSort(ctrl_nlp_th, request_expression));
+      }
+      else if (!request_expression->expression->is_recursive && sub_request_expression->expression->is_recursive)
       {
         IFE(NlpRequestExpressionListSort(ctrl_nlp_th, sub_request_expression));
-
       }
       IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
     }
@@ -180,12 +183,11 @@ static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct requ
   for (int i = re_in_list_used - 1; i >= 1; i--)
   {
     struct re_in_list *re_in_list = re_in_lists + i;
-    IFE(NlpRequestExpressionAdjustPositions(ctrl_nlp_th,re_in_list->mother_request_expression));
+    IFE(NlpRequestExpressionAdjustPositions(ctrl_nlp_th, re_in_list->mother_request_expression));
   }
 
   DONE;
 }
-
 
 static int NlpRequestExpressionAdjustPositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {

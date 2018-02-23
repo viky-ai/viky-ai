@@ -362,6 +362,8 @@ struct request_input_part
   int Ioriginal_request_input_part;
 
   og_bool interpret_word_as_digit;
+
+  int sparse_mark;
 };
 
 struct request_position
@@ -420,6 +422,7 @@ struct request_expression
 
   // overlapping rate of the tree of the request_expression
   int overlap_mark;
+  int sparse_mark;
 
   int orip_start;
   int orips_nb;
@@ -438,6 +441,8 @@ struct request_expression
 
   /** Mark of an expression as not to be use anymore **/
   int deleted;
+
+  og_bool recursive_without_any_chosen;
 
   og_bool keep_as_result;
   int nb_anys;
@@ -625,7 +630,7 @@ struct og_ctrl_nlp_threaded
   og_heap hre_in_list;
   og_heap hre_to_sort;
 
-  int accept_any_expressions;
+  og_bool accept_any_expressions;
 };
 
 struct og_ctrl_nlp

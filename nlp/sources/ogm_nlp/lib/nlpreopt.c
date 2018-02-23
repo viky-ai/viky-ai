@@ -34,6 +34,30 @@ og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
   }
   IFE(NlpRequestExpressionsClean(ctrl_nlp_th));
+
+  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
+  int nb_new_request_expressions = request_expression_used - ctrl_nlp_th->new_request_expression_start;
+  if (nb_new_request_expressions > 1)
+  {
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        ctrl_nlp_th->new_request_expression_start);
+    g_qsort_with_data(request_expressions, nb_new_request_expressions, sizeof(struct request_expression),
+        NlpRequestExpressionOptimizeIncludedCmp, ctrl_nlp_th);
+    request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    for (int i = ctrl_nlp_th->new_request_expression_start; i < request_expression_used; i++)
+    {
+      struct request_expression *request_expression = request_expressions + i;
+      request_expression->self_index = i;
+    }
+  }
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    char buffer[DPcPathSize];
+    snprintf(buffer, DPcPathSize, "List of all request expression after cleaning at level %d:", ctrl_nlp_th->level);
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
+  }
+
   DONE;
 }
 
@@ -101,16 +125,16 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
       IFE(NlpRequestExpressionOptimizeIncludedRemove(ctrl_nlp_th, request_expression, iter));
     }
 
-    if (titi == 9)
+#if 0
+    if (!ctrl_nlp_th->accept_any_expressions)
     {
-      int tutu = 1;
+      for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
+      {
+        struct request_expression *request_expression = iter->data;
+        IFE(NlpRequestExpressionOptimizeSparseRemove(ctrl_nlp_th, request_expression, iter));
+      }
     }
-
-    for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
-    {
-      struct request_expression *request_expression = iter->data;
-      IFE(NlpRequestExpressionOptimizeSparseRemove(ctrl_nlp_th, request_expression, iter));
-    }
+#endif
 
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
@@ -141,6 +165,10 @@ static int NlpRequestExpressionOptimizeIncludedCmp(gconstpointer ptr_request_exp
   if (request_expression1->overlap_mark != request_expression2->overlap_mark)
   {
     return (request_expression1->overlap_mark - request_expression2->overlap_mark);
+  }
+  if (request_expression1->sparse_mark != request_expression2->sparse_mark)
+  {
+    return (request_expression1->sparse_mark - request_expression2->sparse_mark);
   }
   if (request_expression1->total_score != request_expression2->total_score)
   {
@@ -241,7 +269,8 @@ static og_status NlpRequestExpressionOptimizeSparseRemove(og_nlp_th ctrl_nlp_th,
 static og_bool NlpRequestExpressionHasCommonSubExpression(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression1, struct request_expression *request_expression2)
 {
-  static int tata = 0; tata++;
+  static int tata = 0;
+  tata++;
   og_bool has_common_sub_expression = FALSE;
   for (int i = 0; i < request_expression1->orips_nb; i++)
   {
@@ -281,6 +310,11 @@ static og_bool NlpRequestExpressionHasCommonSubExpression(og_nlp_th ctrl_nlp_th,
  9:2 [0:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}''[with] swimming pool with golf with [sea] [view] with spa'
  10:2 [19:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}' 'with swimming pool [with] golf with [sea] [view] with spa'
  11:2 [29:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}' 'with swimming pool with golf [with] [sea] [view] with spa'
+ but with have this, that should not be handled :
+ 15:2 [0:3 4:7 19:1] 'sol combine @{match}' '[sol] [combine] entity [1] 2 3 entity 4'
+ -16:2 [0:3 4:7 21:1] 'sol combine @{match}' '[sol] [combine] entity 1 [2] 3 entity 4'
+ -17:2 [0:3 4:7 23:1] 'sol combine @{match}' '[sol] [combine] entity 1 2 [3] entity 4'
+ -18:2 [0:3 4:7 32:1] 'sol combine @{match}' '[sol] [combine] entity 1 2 3 entity [4]'
  */
 
 static og_status NlpRequestExpressionOptimizeGetSparseValue(og_nlp_th ctrl_nlp_th,
