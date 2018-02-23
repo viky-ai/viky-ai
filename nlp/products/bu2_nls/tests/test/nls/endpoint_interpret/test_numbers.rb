@@ -144,6 +144,7 @@ module Nls
       end
 
       def test_complex_number
+        Interpretation.default_locale = "fr-FR"
         check_interpret("a 1 b",              { interpretation: "complex_number", solution: {"letter1"=>"a", "number"=>1, "letter2"=>"b"} })
         check_interpret("a 1,2 b",            { interpretation: "complex_number", solution: {"letter1"=>"a", "number"=>1.2, "letter2"=>"b"} })
         check_interpret("12 123,123 123",     { interpretation: "numbers_list", solution: { numbers: [12123.123, 123]} })
@@ -197,30 +198,30 @@ module Nls
 
       def test_wrong_thousand_number_english
         Interpretation.default_locale = "en-US"
-        check_interpret("9,100,200,0",    { interpretation: "numbers_list", solution: { numbers: [9100200, 0]} })
+        check_interpret("9,100,200,0",    { interpretation: "numbers_list", solution: { numbers: [9, 100, 200, 0]} })
         check_interpret("33,12,34,56,78", { interpretation: "numbers_list", solution: { numbers: [33, 12, 34, 56, 78]} })
         check_interpret("1234,123",       { interpretation: "numbers_list", solution: { numbers: [1234, 123]} })
-        check_interpret("12,123.123,123", { interpretation: "numbers_list", solution: { numbers: [12123.123, 123]} })
+        check_interpret("12,123.123,123", { interpretation: "numbers_list", solution: { numbers: [12, 123, 123, 123]} })
         check_interpret("12,123,12 123",  { interpretation: "numbers_list", solution: { numbers: [12123, 12, 123]} })
         check_interpret("1, 2, 3.4",      { interpretation: "numbers_list", solution: { numbers: [1, 2, 3.4]} })
       end
 
       def test_wrong_thousand_number_german
         Interpretation.default_locale = "de-DE"
-        check_interpret("9.100.200.0",    { interpretation: "numbers_list", solution: { numbers: [9100200, 0]} })
+        check_interpret("9.100.200.0",    { interpretation: "numbers_list", solution: { numbers: [9, 100, 200, 0]} })
         check_interpret("33.12.34.56.78", { interpretation: "numbers_list", solution: { numbers: [33, 12, 34, 56, 78]} })
         check_interpret("1234.123",       { interpretation: "numbers_list", solution: { numbers: [1234, 123]} })
-        check_interpret("12.123,123.123", { interpretation: "numbers_list", solution: { numbers: [12123.123, 123]} })
+        check_interpret("12.123,123.123", { interpretation: "numbers_list", solution: { numbers: [12, 123, 123, 123]} })
         check_interpret("12.123.12 123",  { interpretation: "numbers_list", solution: { numbers: [12123, 12, 123]} })
         check_interpret("1. 2. 3,4",      { interpretation: "numbers_list", solution: { numbers: [1, 2, 3.4]} })
       end
 
       def test_wrong_thousand_number_swiss
         Interpretation.default_locale = "fr-CH"
-        check_interpret("9'100'200'0",    { interpretation: "numbers_list", solution: { numbers: [9100200, 0]} })
+        check_interpret("9'100'200'0",    { interpretation: "numbers_list", solution: { numbers: [9, 100, 200, 0]} })
         check_interpret("33'12'34'56'78", { interpretation: "numbers_list", solution: { numbers: [33, 12, 34, 56, 78]} })
         check_interpret("1234'123",       { interpretation: "numbers_list", solution: { numbers: [1234, 123]} })
-        check_interpret("12'123.123'123", { interpretation: "numbers_list", solution: { numbers: [12123.123, 123]} })
+        check_interpret("12'123.123'123", { interpretation: "numbers_list", solution: { numbers: [12, 123, 123, 123]} })
         check_interpret("12'123,12 123",  { interpretation: "numbers_list", solution: { numbers: [12123, 12, 123]} })
         check_interpret("1' 2' 3.4",      { interpretation: "numbers_list", solution: { numbers: [1, 2, 3.4]} })
       end
@@ -233,7 +234,7 @@ module Nls
       end
 
       def test_number_with_text_pasted
-        check_interpret("123st 456",    { interpretation: "numbers_list", solution: { numbers: [123, 456] } })
+        check_interpret("abc123st 456",    { interpretation: "numbers_list", solution: { numbers: [123, 456] } })
       end
 
       def test_multilang_decimal
@@ -292,17 +293,15 @@ module Nls
 
         Interpretation.default_locale = "fr-FR,en-US,en-UK,en,de-CH,de"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        # FIXME add guess mecanism
-        #check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        #check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        #check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
 
         Interpretation.default_locale = nil
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        # FIXME add guess mecanism
-        #check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        #check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
-        #check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
 
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
@@ -382,63 +381,63 @@ module Nls
 
        Interpretation.default_locale = "fr-FR"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "fr-CA"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "fr"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "en-US"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "en-UK"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "en"
        check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "de-DE"
-       check_interpret("1 000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
 
        Interpretation.default_locale = "de"
-       check_interpret("1 000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
 
        Interpretation.default_locale = "fr-CH"
-       check_interpret("1 000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
        Interpretation.default_locale = "de-CH"
-       check_interpret("1 000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
-       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0.2]} })
+       check_interpret("1 000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
+       check_interpret("1,000.2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
        check_interpret("1'000.2", { interpretation: "numbers_list", solution: { numbers: [1000.2]} })
-       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 2]} })
+       check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
       end
 

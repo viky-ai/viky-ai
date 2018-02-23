@@ -553,8 +553,8 @@ struct nlp_match_group_numbers
 
   struct og_ctrl_nlp_threaded *nlpth;
 
-  /* conf by default */
-  nlp_match_group_numbers_conf default_conf;
+  /* string of all seprators except \" \" space */
+  og_string all_separators;
 
   /* list of (struct number_sep_conf) */
   GQueue sep_conf[1];
