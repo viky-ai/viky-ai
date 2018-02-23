@@ -152,16 +152,20 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 {
   double score_number = 6.0;
   struct request_score *score = request_expression->score;
-  request_expression->total_score = score->scope * (score->coverage + score->locale + score->spelling * score->spelling
-      + score->overlap + score->any + score->context) / score_number;
+
+  double score_sum = score->coverage + score->locale + score->spelling * score->spelling + score->overlap + score->any
+      + score->context;
+
+  request_expression->total_score = score->scope * score_sum / score_number;
+
   DONE;
 }
 
 static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-  if(ctrl_nlp_th->primary_package != NULL)
+  if (ctrl_nlp_th->primary_package != NULL)
   {
-    if(strcmp(ctrl_nlp_th->primary_package_id, request_expression->expression->interpretation->package->id)==0)
+    if (ctrl_nlp_th->primary_package == request_expression->expression->interpretation->package)
     {
       request_expression->score->scope = 1;
     }
