@@ -89,9 +89,9 @@ class EntitiesListsController < ApplicationController
   end
 
   def import
-    @entities_import = EntitiesImport.new import_params
+    @entities_import = EntitiesImport.new(import_params)
     respond_to do |format|
-      if @entities_import.valid?
+      if @entities_list.from_csv @entities_import
         format.json {
           redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list), notice: t('views.entities_lists.show.import.select_import.success', count: 2)
         }

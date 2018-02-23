@@ -2,8 +2,6 @@ class EntitiesList < ApplicationRecord
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'
 
-  require 'csv'
-
   AVAILABLE_COLORS = %w[black red pink purple deep-purple indigo blue
                         light-blue cyan teal green light-green lime
                         yellow amber orange deep-orange brown].freeze
@@ -42,6 +40,10 @@ class EntitiesList < ApplicationRecord
         csv << [terms, entity.auto_solution_enabled, entity.solution]
       end
     end
+  end
+
+  def from_csv(entities_import)
+    entities_import.proceed(self)
   end
 
   private

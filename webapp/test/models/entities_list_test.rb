@@ -170,4 +170,82 @@ class EntitiesListTest < ActiveSupport::TestCase
                 ''].join("\n")
     assert_equal expected, csv
   end
+
+  test 'Import entities from CSV' do
+    io = StringIO.new
+    io << "'Terms','Auto solution','Solution'\n"
+    io << "'snow','false','w: snow'\n"
+    io << "'cloudy|nuageux:fr','True','weather: cloudy'\n"
+    io << "\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert elist.from_csv(entities_import)
+    assert_equal 4, elist.entities.count
+
+    snow = elist.entities.find_by_solution('w: snow')
+    snow_terms = [{ 'term' => 'snow', 'locale' => '*' }]
+    assert_equal snow_terms, snow.terms
+    assert_equal false, snow.auto_solution_enabled
+    assert_equal 'w: snow', snow.solution
+
+    cloudy = elist.entities.find_by_solution('weather: cloudy')
+    cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'nuageux', 'locale' => 'fr' }]
+    assert_equal cloudy_terms, cloudy.terms
+    assert_equal true, cloudy.auto_solution_enabled
+    assert_equal 'weather: cloudy', cloudy.solution
+  end
+
+
+  test 'Import entities missing header' do
+    io = StringIO.new
+    io << "'snow','false','w: snow'\n"
+    io << "'cloudy|nuageux:fr','true','weather: cloudy'\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Illegal quoting in line 2.'], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities empty columns' do
+    io = StringIO.new
+    io << "'Terms','Auto solution','Solution'\n"
+    io << "'','true','w: hail'\n"
+    io << "'cloudy|nuageux:fr','True','weather: cloudy'\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ["Validation failed: Terms can't be blank in line 4"], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities wrong separator' do
+    io = StringIO.new
+    io << "'Terms';'Auto solution';'Solution'\n"
+    io << "'snow';'false';'w: snow'\n"
+    io << "'cloudy|nuageux:fr';'True';'weather: cloudy'\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Missing or stray quote in line 2'], entities_import.errors[:file]
+  end
+
+
+  private
+
+    def build_import_params(io)
+      io.rewind
+      { file: Struct.new(:tempfile, :content_type).new(io, 'text/csv') }
+    end
 end
