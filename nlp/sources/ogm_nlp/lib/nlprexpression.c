@@ -38,6 +38,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   g_queue_init(request_expression->tmp_solutions);
   request_expression->overlap_mark = 0;
   memset(request_expression->score, 0, sizeof(struct request_score));
+  request_expression->score->scope = 1;
   request_expression->total_score = 0.0;
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;
@@ -504,8 +505,8 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   if (score->coverage != 0.0 || score->locale != 0.0 || score->spelling != 0.0 || score->overlap != 0.0
       || score->any != 0.0)
   {
-    sprintf(scores, " scores=[%.2f %.2f %.2f %.2f %.2f]", score->coverage, score->locale, score->spelling,
-        score->overlap, score->any);
+    sprintf(scores, " scores=[%.2f %.2f %.2f %.2f %.2f %.2f]", score->coverage, score->locale, score->spelling,
+        score->overlap, score->any, score->scope);
   }
 
   char ac_request_word[DPcPathSize];
