@@ -32,7 +32,7 @@ en:
           search_placeholder: Find interpretation by slug
         remove-tags:
           msg: Remove annotation(s)
-      digit: Digit
+      number: Number
       solution_label: Define the solution using JavaScript code
       solution_label_readonly: Solution using JavaScript code
 

@@ -281,9 +281,9 @@ class AliasesForm
       reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
       reference_title = alias.intent_slug
 
-    if alias.nature == 'type_digit'
-      reference_html  = "Digit"
-      reference_title = "Digit"
+    if alias.nature == 'type_number'
+      reference_html  = "Number"
+      reference_title = "Number"
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
