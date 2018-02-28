@@ -4,27 +4,6 @@ class InterpretationsList
   constructor: ->
     App.CardListHelper.updateDraggable()
 
-    @sortable = Sortable.create($('#interpretations-list')[0], {
-      group: "interpretations",
-      handle: '.interpretations-list__draggable'
-      animation: 100
-      onUpdate: ->
-        ids = []
-        ids.push($(item).data('id')) for item in $('#interpretations-list > li')
-        $.ajax
-          url: $('#interpretations-list').data('update-positions-path')
-          method: 'POST'
-          data: { ids: ids }
-
-      onMove: (event) ->
-        $('.tabs li.js-draggable-locale').removeClass('drag-in')
-        if $(event.to).hasClass('js-draggable-locale')
-          $(event.dragged).hide()
-          $(event.to).addClass('drag-in')
-        else
-          $(event.dragged).show()
-    });
-
     for li in $('.tabs > ul > li.js-draggable-locale')
       Sortable.create(li, {
         group: "interpretations",

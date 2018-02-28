@@ -28,6 +28,12 @@ class CardList
               $(".card-list").removeClass('card-list--empty--dragging')
           if $(evt.related).is('ul')
             $(evt.related).addClass('card-list--empty--dragging')
+          $('.tabs li.js-draggable-locale').removeClass('drag-in')
+          if $(evt.to).hasClass('js-draggable-locale')
+            $(evt.dragged).hide()
+            $(evt.to).addClass('drag-in')
+          else
+            $(evt.dragged).show()
       })
 
   updatePositions: (group_name) ->
