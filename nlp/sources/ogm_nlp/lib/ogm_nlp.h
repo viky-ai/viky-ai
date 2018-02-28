@@ -16,8 +16,6 @@
 #include <duktape.h>
 #include <math.h>
 
-#define DOgNlpLinearize
-
 #define DOgNlpPackageNumber 0x10
 #define DOgNlpPackageBaNumber 0x100
 #define DOgNlpPackageInterpretationNumber 0x10
@@ -839,8 +837,6 @@ og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position
 og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
-    int request_position_start2, int request_positions_nb2);
-og_status NlpRequestPositionsDistance(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2);
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string);

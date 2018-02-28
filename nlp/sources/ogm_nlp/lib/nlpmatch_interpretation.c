@@ -9,7 +9,6 @@
 static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int input_length, unsigned char *input, struct interpret_package *interpret_package);
-//static og_bool NlpInputPartIsAny(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package, int Iinput_part);
 
 og_bool NlpMatchInterpretations(og_nlp_th ctrl_nlp_th)
 {
@@ -85,7 +84,6 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct req
       int Iinput_part;
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
-      //if (NlpInputPartIsAny(ctrl_nlp_th,interpret_package,Iinput_part)) continue;
       NlpLog(DOgNlpTraceMatch, "    found input part %d in interpret package %d", Iinput_part,
           interpret_package->self_index)
       IFE(NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression, interpret_package, Iinput_part));
@@ -98,12 +96,4 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct req
   return (found_input_part);
 }
 
-
-//static og_bool NlpInputPartIsAny(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package, int Iinput_part)
-//{
-//  struct input_part *input_part = OgHeapGetCell(interpret_package->package->hinput_part, Iinput_part);
-//  IFn(input_part) DPcErr;
-//  if (input_part->alias->type == nlp_alias_type_Any) return TRUE;
-//  return FALSE;
-//}
 

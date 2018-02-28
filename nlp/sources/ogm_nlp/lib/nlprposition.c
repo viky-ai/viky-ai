@@ -122,27 +122,6 @@ og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_
   return FALSE;
 }
 
-og_status NlpRequestPositionsDistance(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
-    int request_position_start2, int request_positions_nb2)
-{
-  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position, 0);
-
-  struct request_position *request_position1 = request_positions + request_position_start1 + request_positions_nb1 - 1;
-  struct request_position *request_position2 = request_positions + request_position_start2;
-  int position1 = request_position1->start + request_position1->length;
-  int position2 = request_position2->start;
-
-  if (position1 > position2)
-  {
-    request_position2 = request_positions + request_position_start2 + request_positions_nb2 - 1;
-    request_position1 = request_positions + request_position_start1;
-    position2 = request_position2->start + request_position2->length;
-    position1 = request_position1->start;
-  }
-
-  return (abs(position1 - position2));
-}
-
 int NlpRequestPositionString(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb, int size,
     char *string)
 {

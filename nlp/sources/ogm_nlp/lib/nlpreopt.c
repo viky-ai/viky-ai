@@ -17,12 +17,6 @@ static og_bool NlpRequestExpressionIsIncluded(og_nlp_th ctrl_nlp_th, struct requ
     struct request_expression *request_expression);
 static og_bool NlpRequestPositionIsIncluded(og_nlp_th ctrl_nlp_th, int request_position_big_start,
     int request_positions_big_nb, int request_position_start, int request_positions_nb);
-static og_status NlpRequestExpressionOptimizeSparseRemove(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression_big, GList *iter_big);
-static og_bool NlpRequestExpressionHasCommonSubExpression(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression1, struct request_expression *request_expression2);
-static og_status NlpRequestExpressionOptimizeGetSparseValue(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression);
 
 og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th)
 {
@@ -34,22 +28,6 @@ og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
   }
   IFE(NlpRequestExpressionsClean(ctrl_nlp_th));
-
-  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
-  int nb_new_request_expressions = request_expression_used - ctrl_nlp_th->new_request_expression_start;
-  if (nb_new_request_expressions > 1)
-  {
-    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-        ctrl_nlp_th->new_request_expression_start);
-    g_qsort_with_data(request_expressions, nb_new_request_expressions, sizeof(struct request_expression),
-        NlpRequestExpressionOptimizeIncludedCmp, ctrl_nlp_th);
-    request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
-    for (int i = ctrl_nlp_th->new_request_expression_start; i < request_expression_used; i++)
-    {
-      struct request_expression *request_expression = request_expressions + i;
-      request_expression->self_index = i;
-    }
-  }
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -113,8 +91,6 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
   int length = g_queue_get_length(queue_request_expression);
   if (length > 1)
   {
-    static int titi = 0;
-    titi++;
     // We sort by biggest request expressions, and, for each of them we remove
     // all the expressions that are contained in them
     g_queue_sort(queue_request_expression, (GCompareDataFunc) NlpRequestExpressionOptimizeIncludedCmp, NULL);
@@ -125,21 +101,10 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
       IFE(NlpRequestExpressionOptimizeIncludedRemove(ctrl_nlp_th, request_expression, iter));
     }
 
-#if 0
-    if (!ctrl_nlp_th->accept_any_expressions)
-    {
-      for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
-      {
-        struct request_expression *request_expression = iter->data;
-        IFE(NlpRequestExpressionOptimizeSparseRemove(ctrl_nlp_th, request_expression, iter));
-      }
-    }
-#endif
-
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-          "NlpRequestExpressionOptimizeIncluded: cleaning the following request expressions: titi=%d", titi);
+          "NlpRequestExpressionOptimizeIncluded: cleaning the following request expressions:");
       for (GList *iter = queue_request_expression->head; iter; iter = iter->next)
       {
         struct request_expression *request_expression = iter->data;
@@ -238,89 +203,4 @@ static og_bool NlpRequestPositionIsIncluded(og_nlp_th ctrl_nlp_th, int request_p
   return TRUE;
 }
 
-static og_status NlpRequestExpressionOptimizeSparseRemove(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression_big, GList *iter_big)
-{
-  if (request_expression_big->deleted) DONE;
-  int big_sparse_value = NlpRequestExpressionOptimizeGetSparseValue(ctrl_nlp_th, request_expression_big);
-  IFE(big_sparse_value);
-  for (GList *iter = iter_big->next; iter; iter = iter->next)
-  {
-    struct request_expression *request_expression = iter->data;
-    og_bool has_common_sub_expression = NlpRequestExpressionHasCommonSubExpression(ctrl_nlp_th, request_expression_big,
-        request_expression);
-    IFE(has_common_sub_expression);
-    if (!has_common_sub_expression) continue;
-    int sparse_value = NlpRequestExpressionOptimizeGetSparseValue(ctrl_nlp_th, request_expression);
-    IFE(sparse_value);
-    if (sparse_value > big_sparse_value)
-    {
-      request_expression->deleted = 1;
-    }
-    else if (big_sparse_value > sparse_value)
-    {
-      request_expression_big->deleted = 1;
-      break;
-    }
-  }
-  DONE;
-}
-
-static og_bool NlpRequestExpressionHasCommonSubExpression(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression1, struct request_expression *request_expression2)
-{
-  static int tata = 0;
-  tata++;
-  og_bool has_common_sub_expression = FALSE;
-  for (int i = 0; i < request_expression1->orips_nb; i++)
-  {
-    struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression1, i);
-    IFN(request_input_part1) DPcErr;
-    for (int j = 0; j < request_expression2->orips_nb; j++)
-    {
-      struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression2, j);
-      IFN(request_input_part2) DPcErr;
-      if (request_input_part1->input_part != request_input_part2->input_part) continue;
-      og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, request_input_part1->request_position_start,
-          request_input_part1->request_positions_nb, request_input_part2->request_position_start,
-          request_input_part2->request_positions_nb);
-      if (same_positions)
-      {
-        has_common_sub_expression = TRUE;
-        goto end_NlpRequestExpressionHasCommonSubExpression;
-      }
-    }
-  }
-  end_NlpRequestExpressionHasCommonSubExpression:
-//  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-//  {
-//    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Comparing for common sub expression (%s) tata=%d",
-//        has_common_sub_expression ? "true" : "false", tata);
-//    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression1));
-//    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression2));
-//  }
-  return has_common_sub_expression;
-
-  DONE;
-}
-
-/*
- * We have this kind of result we only want to keep [with] [sea] [view]
- 8:2 [0:4 5:8 14:4] '@{preposition_building_feature} @{building_feature}' '[with] [swimming] [pool] with golf with sea view with spa'
- 9:2 [0:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}''[with] swimming pool with golf with [sea] [view] with spa'
- 10:2 [19:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}' 'with swimming pool [with] golf with [sea] [view] with spa'
- 11:2 [29:4 34:3 38:4] '@{preposition_building_feature} @{building_feature}' 'with swimming pool with golf [with] [sea] [view] with spa'
- but with have this, that should not be handled :
- 15:2 [0:3 4:7 19:1] 'sol combine @{match}' '[sol] [combine] entity [1] 2 3 entity 4'
- -16:2 [0:3 4:7 21:1] 'sol combine @{match}' '[sol] [combine] entity 1 [2] 3 entity 4'
- -17:2 [0:3 4:7 23:1] 'sol combine @{match}' '[sol] [combine] entity 1 2 [3] entity 4'
- -18:2 [0:3 4:7 32:1] 'sol combine @{match}' '[sol] [combine] entity 1 2 3 entity [4]'
- */
-
-static og_status NlpRequestExpressionOptimizeGetSparseValue(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression)
-{
-  return NlpRequestPositionDistance(ctrl_nlp_th, request_expression->request_position_start,
-      request_expression->request_positions_nb);
-}
 

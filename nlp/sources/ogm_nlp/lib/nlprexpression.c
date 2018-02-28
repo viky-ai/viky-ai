@@ -133,13 +133,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   {
     // Must be called before NlpRequestExpressionExists
     IFE(NlpRequestExpressionOverlapMark(ctrl_nlp_th, request_expression));
-    // When there is a recursive expression, any overlapping should be remove
-    // as it adds nothing to the results, because this is a repetition of the same object
-    // On the contrary, recursive lists can overlap as much as it wants
-//    if (request_expression->overlap_mark > 0 && request_expression->expression->interpretation->is_recursive)
-//    {
-//      must_add_request_expression = FALSE;
-//    }
     IFE(NlpRequestExpressionGetSparseMark(ctrl_nlp_th, request_expression));
   }
 
@@ -161,7 +154,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-#ifdef DOgNlpLinearize
   if (must_add_request_expression)
   {
     if (request_expression->expression->is_recursive)
@@ -186,17 +178,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
       }
       if (contains_level_minus_one_request_expression && recursive_without_any_found)
       {
-        static int toto = 0;
-        toto++;
-        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "adding recursive expression, toto=%d:", toto);
-        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
         request_expression->recursive_without_any_chosen = TRUE;
-      }
-      else if (contains_level_minus_one_request_expression && ctrl_nlp_th->level >= 7)
-      {
-        //OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "adding recursive expression bug");
-        //IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
-        must_add_request_expression = FALSE;
       }
       else
       {
@@ -204,7 +186,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
       }
     }
   }
-#endif
 
   if (must_add_request_expression)
   {
@@ -280,13 +261,10 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
   if (request_expression1->nb_anys != request_expression2->nb_anys) return FALSE;
   if (request_expression1->total_score != request_expression2->total_score) return FALSE;
 
-#ifdef DOgNlpLinearize
   if (request_expression1->expression->is_recursive)
   {
     if (request_expression1->level == request_expression2->level && request_expression1->nb_anys == 0) return TRUE;
-    //if (request_expression1->level == request_expression2->level) return TRUE;
   }
-#endif
 
   og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, request_expression1->request_position_start,
       request_expression1->request_positions_nb, request_expression2->request_position_start,
