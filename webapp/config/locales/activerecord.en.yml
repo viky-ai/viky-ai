@@ -56,7 +56,7 @@ en:
       interpretation_aliases_overlap: position overlap
     entity:
       unknown_locale: "unknown locale '%{current_locale}'"
-      term_abscent: "can't be blank"
+      term_abscent: "can't contains only locale information"
     interpretation_alias:
       end_position_lower_than_start: 'must be greater than position start'
       overlap: overlap

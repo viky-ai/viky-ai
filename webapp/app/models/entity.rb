@@ -8,46 +8,26 @@ class Entity < ApplicationRecord
   validate :validate_locales_exists
   validate :validate_terms_present
 
-  def terms=(value)
-    result = value
-    if value.instance_of?(String) && value.length <= 5000
-      tokens = tokenize(value)
-      d = deduplicate_terms(tokens)
-      normalized_tokens = set_default_locale(d)
-      result = build_json(normalized_tokens)
-    end
-    super(result)
+  before_validation :parse_terms
+
+  def terms_to_s
+    return "" if terms.nil?
+    terms.collect { |term|
+      if term['locale'] == Locales::ANY
+        "#{term['term']}"
+      else
+        "#{term['term']}:#{term['locale']}"
+      end
+    }.reject(&:blank?).join("\n")
   end
 
+
   private
-    def tokenize(value)
-      value
-        .split("\n")
-        .reject(&:blank?)
-        .collect do |token|
-          parts = token.split(':')
-          if parts.size > 2
-            [parts[0..-2].join(':'), parts[-1]]
-          else
-            [parts[0], parts[1]]
-          end
-        end
-    end
 
-    def set_default_locale(tokens)
-      tokens.collect do |array|
-        locale = array[1].present? ? array[1] : Locales::ANY
-        [array[0], locale ]
+    def parse_terms
+      if terms.is_a?(String) && terms.length <= 5000
+        self.terms = EntityTermsParser.new(terms).proceed
       end
-    end
-
-    def deduplicate_terms(tokens)
-      tokens.uniq
-    end
-
-    def build_json(tokens)
-      result = tokens.collect { |array| { 'term' => array[0], 'locale' => array[1] } }
-      result.empty? ? nil : result
     end
 
     def validate_locales_exists

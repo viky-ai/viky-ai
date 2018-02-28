@@ -7,7 +7,10 @@ class EntityTest < ActiveSupport::TestCase
     entity = Entity.new(
       solution: "{gender: 'male'}",
       auto_solution_enabled: false,
-      terms: [{ term: 'Jacques', locale: 'fr' }, { term: 'James', locale: 'en' }],
+      terms: [
+        { term: 'Jacques', locale: 'fr' },
+        { term: 'James', locale: 'en' }
+      ],
       position: 2,
       entities_list: entities_lists(:weather_conditions)
     )
@@ -38,9 +41,9 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Check entities_list solution and terms length' do
     entity = entities(:weather_sunny)
-    entity.solution = (['a'] * 2001).join('')
-    entity.terms = (['a'] * 5001).join('')
-    assert !entity.valid?
+    entity.solution = 'a' * 2001
+    entity.terms = 'a' * 5001
+    assert entity.invalid?
     expected = {
       solution: ['is too long (maximum is 2000 characters)'],
       terms: ['is too long (maximum is 5000 characters)']
@@ -51,11 +54,18 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Add a term to an entity' do
     entity = entities(:weather_sunny)
-    expected = [{'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }]
+    expected = [
+      { 'term' => 'soleil', 'locale' => 'fr' },
+      { 'term' => 'sun', 'locale' => 'en' }
+    ]
     assert_equal expected, entity.terms
     entity.terms << { 'term' => 'Sol', 'locale' => 'es' }
     assert entity.save
-    expected = [{ 'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }, { 'term' => 'Sol','locale' => 'es' }]
+    expected = [
+      { 'term' => 'soleil', 'locale' => 'fr' },
+      { 'term' => 'sun', 'locale' => 'en' },
+      { 'term' => 'Sol','locale' => 'es' }
+    ]
     assert_equal expected, entity.terms
   end
 
@@ -66,18 +76,10 @@ class EntityTest < ActiveSupport::TestCase
       terms: "Jacques\nJames"
     )
     assert entity.save
-    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'James', 'locale' => '*' }]
-    assert_equal expected, entity.terms
-  end
-
-
-  test 'Trim each terms of the list' do
-    entity = Entity.new(
-      entities_list: entities_lists(:weather_conditions),
-      terms: "   \nJacques\n  \nJames\n   "
-    )
-    assert entity.save
-    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'James', 'locale' => '*' }]
+    expected = [
+      { 'term' => 'Jacques', 'locale' => '*' },
+      { 'term' => 'James', 'locale' => '*' }
+    ]
     assert_equal expected, entity.terms
   end
 
@@ -88,12 +90,18 @@ class EntityTest < ActiveSupport::TestCase
     )
     entity.terms = "soleil:fr\nsun:en"
     assert entity.save
-    expected = [{ 'term' => 'soleil', 'locale' => 'fr' }, { 'term' => 'sun', 'locale' => 'en' }]
+    expected = [
+      { 'term' => 'soleil', 'locale' => 'fr' },
+      { 'term' => 'sun', 'locale' => 'en' }
+    ]
     assert_equal expected, entity.terms
 
     entity.terms = "soleil:\nsun"
     assert entity.save
-    expected = [{ 'term' => 'soleil', 'locale' => '*' }, { 'term' => 'sun', 'locale' => '*' }]
+    expected = [
+      { 'term' => 'soleil', 'locale' => '*' },
+      { 'term' => 'sun', 'locale' => '*' }
+    ]
     assert_equal expected, entity.terms
 
     entity.terms = "soleil:xy"
@@ -106,7 +114,7 @@ class EntityTest < ActiveSupport::TestCase
     entity.terms = ":fr"
     assert !entity.save
     expected = {
-      terms: ["can't be blank"]
+      terms: ["can't contains only locale information"]
     }
     assert_equal expected, entity.errors.messages
 
@@ -116,14 +124,29 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal expected, entity.terms
   end
 
-
-  test 'Deduplicate same terms in the list' do
+  test 'terms_to_s method' do
     entity = Entity.new(
-      entities_list: entities_lists(:weather_conditions),
-      terms: "Jacques\nJacques:fr\nJames\nJacques"
+      entities_list: entities_lists(:weather_conditions)
     )
+    entity.terms = "soleil"
     assert entity.save
-    expected = [{ 'term' => 'Jacques', 'locale' => '*' }, { 'term' => 'Jacques', 'locale' => 'fr' }, { 'term' => 'James', 'locale' => '*' }]
-    assert_equal expected, entity.terms
+    assert_equal "soleil", entity.terms_to_s
+
+    entity.terms = "soleil:"
+    assert entity.save
+    assert_equal "soleil", entity.terms_to_s
+
+    entity.terms = "soleil:fr"
+    assert entity.save
+    assert_equal "soleil:fr", entity.terms_to_s
+
+    entity.terms = ":\nsoleil\n:"
+    assert entity.save
+    assert_equal "soleil", entity.terms_to_s
+
+    entity.terms = ":\nsoleil\n:fr\n:"
+    assert !entity.save
+    assert_equal "soleil\n:fr", entity.terms_to_s
   end
+
 end

@@ -7,20 +7,7 @@
   <div class="field entity-form__terms">
     <div class="control">
       <%= f.label :terms, for: 'terms__new_entity' %>
-      <% if entity.terms.present?
-          t = entity.terms.map do |term|
-            if term['locale'] == Locales::ANY
-              "#{term['term']}"
-            else
-              "#{term['term']}:#{term['locale']}"
-            end
-          end
-         terms = t.join("\n")
-        else
-          terms = entity.terms
-        end
-      %>
-      <%= text_area_tag('entity[terms]', terms, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true, placeholder: t('views.entities.new.placeholder')) %>
+      <%= text_area_tag('entity[terms]', entity.terms_to_s, id: "terms__new_entity", maxlength: '5000', spellcheck: 'false', autofocus: true, placeholder: t('views.entities.new.placeholder')) %>
     </div>
     <%= display_errors(entity, :terms) %>
   </div>
