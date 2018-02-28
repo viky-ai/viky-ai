@@ -24,6 +24,8 @@ class Intent < ApplicationRecord
   before_create :set_position
   before_create :set_color
 
+  before_destroy :update_dependent_agents, prepend: true
+
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
   end
@@ -66,5 +68,11 @@ class Intent < ApplicationRecord
       return if color.present?
       random_index = Random.new.rand(0..Intent::AVAILABLE_COLORS.size - 1)
       self.color = Intent::AVAILABLE_COLORS[random_index]
+    end
+
+    def update_dependent_agents
+      InterpretationAlias.where(intent_id: id).each do |ialias|
+        ialias.interpretation.intent.touch
+      end
     end
 end

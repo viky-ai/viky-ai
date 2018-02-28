@@ -84,16 +84,16 @@ og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package)
   DONE;
 }
 
-og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpNumberInputPartLog(og_nlp_th ctrl_nlp_th, package_t package)
 {
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Digit input parts for package '%s' '%s':", package->slug, package->id);
-  struct digit_input_part *digit_input_part_all = OgHeapGetCell(package->hdigit_input_part, 0);
-  int digit_input_part_used = OgHeapGetCellsUsed(package->hdigit_input_part);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Number input parts for package '%s' '%s':", package->slug, package->id);
+  struct number_input_part *number_input_part_all = OgHeapGetCell(package->hnumber_input_part, 0);
+  int number_input_part_used = OgHeapGetCellsUsed(package->hnumber_input_part);
 
-  for (int i = 0; i < digit_input_part_used; i++)
+  for (int i = 0; i < number_input_part_used; i++)
   {
-    struct digit_input_part *digit_input_part = digit_input_part_all+i;
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d", digit_input_part->Iinput_part);
+    struct number_input_part *number_input_part = number_input_part_all+i;
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d", number_input_part->Iinput_part);
   }
 
   DONE;

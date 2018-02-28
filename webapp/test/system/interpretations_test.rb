@@ -23,6 +23,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_greeting PUBLIC (admin/weather/weather_greeting)')
     within('#interpretations-list') do
       click_link 'Hello world'
+      assert page.has_text?('admin/weather/weather_who')
       assert page.has_no_button?('Update')
       assert page.has_no_link?('Delete')
       assert page.has_no_field?('trix-editor')
@@ -67,7 +68,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
-  test 'Create an interpretation with digits' do
+  test 'Create an interpretation with numbers' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_greeting))
 
     assert_equal 1, all('.interpretation-resume').count
@@ -75,13 +76,13 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set("Le 01/01/2018 j'achète de l'Aspirine")
     select_text_in_trix("trix-editor", 3, 5)
-    find_link('Digit').click
+    find_link('Number').click
 
     select_text_in_trix("trix-editor", 6, 8)
-    find_link('Digit').click
+    find_link('Number').click
 
     select_text_in_trix("trix-editor", 9, 13)
-    find_link('Digit').click
+    find_link('Number').click
 
     within('.aliases') do
       inputs = all("input[name*='aliasname']")

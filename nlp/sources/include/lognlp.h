@@ -33,6 +33,7 @@
 #define DOgNlpTraceLtrac                  0x1000
 #define DOgNlpTraceLtras                  0x2000
 #define DOgNlpTraceLtrasDetail            0x4000
+#define DOgNlpTraceGroupNumbers           0x8000
 
 /** Default value for configuration file information **/
 #define DOgNlpMaxListeningThreads          4

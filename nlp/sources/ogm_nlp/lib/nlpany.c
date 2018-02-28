@@ -112,21 +112,24 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     IFN(request_position_after) DPcErr;
   }
 
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_word) DPcErr;
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
 
-  for (int i = 0; i < ctrl_nlp_th->basic_request_word_used; i++)
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next)
   {
-    if (request_word[i].start_position < request_position_before->start + request_position_before->length) continue;
-    int j = i;
-    for (; j < ctrl_nlp_th->basic_request_word_used; j++)
-    {
-      if (request_word[j].start_position + request_word[j].length_position > request_position_after->start) break;
-    }
-    if (j == i) continue;
 
-    int request_word_start = i;
-    int request_words_nb = j - i;
+    if (rw->start_position < request_position_before->start + request_position_before->length) continue;
+
+    int request_word_start = rw->self_index;
+    int request_words_nb = 0;
+
+    for (struct request_word *rw_next = rw; rw_next; rw_next = rw_next->next)
+    {
+      if (rw_next->start_position + rw_next->length_position > request_position_after->start) break;
+
+      request_words_nb++;
+    }
+
     IFE(NlpRequestAnyTunePunctuation(ctrl_nlp_th, &request_word_start, &request_words_nb));
     if (request_words_nb <= 0) continue;
 
@@ -146,7 +149,8 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
       request_expression->request_any_start = Irequest_any;
     }
     request_expression->request_anys_nb++;
-    i = j;
+
+    //rw = rw_next;
   }
 
   DONE;
@@ -154,6 +158,9 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
 
 static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *prequest_word_start, int *prequest_words_nb)
 {
+
+  // TODO NlpRequestAnyTunePunctuation : use chained word ???
+
   int request_word_start = *prequest_word_start;
   int request_words_nb = *prequest_words_nb;
 

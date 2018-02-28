@@ -74,9 +74,9 @@
              data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
         </li>
       <% end %>
-      <li data-search="digit" class="enabled">
+      <li data-search="number" class="enabled">
         <a href="#" data-action="add-tag"
-           data-data='<%= digit_to_json() %>'>Digit</a>
+           data-data='<%= number_to_json() %>'> <%= t('views.interpretations.number') %></a>
       </li>
     </ul>
   </div>

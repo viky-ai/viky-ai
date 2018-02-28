@@ -114,6 +114,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
 
   IFE(NlpGlueInit(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
+  IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortInit(ctrl_nlp_th, param->name));
 
   DONE;
@@ -146,6 +147,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
     }
   }
 
+  IFE(NlpMatchGroupNumbersFlush(ctrl_nlp_th));
   IFE(NlpGlueFlush(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
@@ -338,6 +340,9 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->show_private = FALSE;
   ctrl_nlp_th->primary_package = NULL;
   ctrl_nlp_th->primary_package_id = NULL;
+
+  ctrl_nlp_th->basic_request_word_used = -1;
+  ctrl_nlp_th->basic_group_request_word_nb = -1;
 
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
 

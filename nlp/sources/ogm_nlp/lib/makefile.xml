@@ -29,6 +29,7 @@
     <file>nlpmatch_word.c</file>
     <file>nlpmatch_expression.c</file>
     <file>nlpmatch_interpretation.c</file>
+    <file>nlpmatch_group_numbers.c</file>
     <file>nlporip.c</file>
     <file>nlppackage.c</file>
     <file>nlppackagelist.c</file>
