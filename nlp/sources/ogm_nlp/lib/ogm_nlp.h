@@ -315,12 +315,19 @@ struct nlp_synchro_current_lock
 struct request_word
 {
   int self_index;
+
+  /** whole string representing normalized request_word (in ort case it is the corrected one) */
   int start;
   int length;
+
+  /** whole string representing NON normalized request_word */
   int raw_start;
   int raw_length;
+
+  /** Position in orginal request string */
   int start_position;
   int length_position;
+
   og_bool is_number;
   double number_value;
   double spelling_score;
@@ -606,6 +613,7 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;
+  int basic_group_request_word_nb;
   og_heap haccept_language;
   og_bool show_explanation;
   og_bool auto_complete;
@@ -766,6 +774,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_group_numbers.c */
 og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);

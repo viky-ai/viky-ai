@@ -339,6 +339,9 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->primary_package = NULL;
   ctrl_nlp_th->primary_package_id = NULL;
 
+  ctrl_nlp_th->basic_request_word_used = -1;
+  ctrl_nlp_th->basic_group_request_word_nb = -1;
+
   ctrl_nlp_th->loginfo->trace = ctrl_nlp_th->regular_trace;
 
   DONE;

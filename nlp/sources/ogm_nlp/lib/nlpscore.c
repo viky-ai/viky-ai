@@ -69,7 +69,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   // coverage is calculated in terms of number of matched words
   request_expression->score->coverage = request_expression->request_positions_nb;
-  request_expression->score->coverage /= ctrl_nlp_th->basic_request_word_used;
+  request_expression->score->coverage /= ctrl_nlp_th->basic_group_request_word_nb;
 
   // we use a mean score for the locale score
   request_expression->score->locale = score->locale / request_expression->orips_nb;

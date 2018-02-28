@@ -494,9 +494,12 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
 
   og_bool numbers_grouped = FALSE;
   og_bool previous_match = FALSE;
-  struct request_word *rw_end = NULL;
-  for (rw_end = rw_start; rw_end && rw_end->self_index < ctrl_nlp_th->basic_request_word_used; rw_end = rw_end->next)
+  for (struct request_word *rw_end = rw_start; rw_end; rw_end = rw_end->next)
   {
+
+    // ignore non basic word (build from ltras)
+    if (rw_end->self_index >= ctrl_nlp_th->basic_request_word_used) continue;
+
     og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, rw_end->start);
     if (!string_request_word)
     {
@@ -518,6 +521,7 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
     int end_position = rw_end->start_position + rw_end->length_position;
     int length = end_position - start_position;
     snprintf(expression_string, DPcPathSize, "%.*s", length, request_sentence + start_position);
+    int iexpression_string = strlen(expression_string);
 
     og_bool number_match = NlpMatchGroupNumbersParsing(ctrl_nlp_th, expression_string, locale_conf->sep_conf, &value);
     IFE(number_match);
@@ -530,8 +534,24 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
       }
       rw_start->next = rw_end->next;
       rw_start->length_position = rw_end->start_position - rw_start->start_position + rw_end->length_position;
-      rw_start->raw_length = rw_end->raw_start - rw_start->raw_start + rw_end->raw_length;
-      rw_start->length = rw_end->start - rw_start->start + rw_end->length;
+
+      // build new raw word
+      {
+        rw_start->raw_start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+        rw_start->raw_length = iexpression_string;
+        IFE(OgHeapAppend(ctrl_nlp_th->hba, iexpression_string + 1, expression_string));
+      }
+
+      // build new normalized word
+      {
+        og_char_buffer normalized_word[DPcPathSize];
+        snprintf(normalized_word, DPcPathSize, "%g", value);
+        int inormalized_word = strlen(normalized_word);
+        rw_start->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
+        rw_start->length = inormalized_word;
+        IFE(OgHeapAppend(ctrl_nlp_th->hba, inormalized_word + 1, normalized_word));
+      }
+
       rw_start->is_number = TRUE;
       rw_start->number_value = value;
       previous_match = TRUE;
