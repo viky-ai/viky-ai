@@ -38,10 +38,10 @@
               <% end %>
               <span class='<%= json_alias['color'] %>'>
                 <% if json_alias['url'].blank? %>
-                  <small><%= slug %></small><%= json_alias['aliasname'] %>
+                  <small><%= slug %></small><%= json_alias['intent_slug'].split('/').last %>
                 <% else %>
                   <a href='<%= json_alias['url'] %>'>
-                    <small><%= slug %></small><%= json_alias['aliasname'] %>
+                    <small><%= slug %></small><%= json_alias['intent_slug'].split('/').last %>
                   </a>
                 <% end %>
               </span>
