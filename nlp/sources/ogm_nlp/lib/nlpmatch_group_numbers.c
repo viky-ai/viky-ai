@@ -609,16 +609,28 @@ static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQue
 
   struct nlp_match_group_numbers *nmgn = ctrl_nlp_th->group_numbers_settings;
 
+  og_bool look_for_all_language = FALSE;
+
   // check the given accepted languages
   int numberLang = OgHeapGetCellsUsed(ctrl_nlp_th->haccept_language);
 
-  if (numberLang > 0)
+  if (numberLang <= 0)
+  {
+    look_for_all_language = TRUE;
+  }
+  else
   {
 
     // try to guess best locale in accepted languages
     for (int i = 0; i < numberLang; i++)
     {
       struct accept_language* accepted_language = OgHeapGetCell(ctrl_nlp_th->haccept_language, i);
+
+      if (accepted_language->locale == DOgLangNil)
+      {
+        look_for_all_language = TRUE;
+        break;
+      }
 
       int lang_country = accepted_language->locale;
       int lang = OgIso639_3166ToLang(lang_country);
@@ -685,7 +697,8 @@ static og_status NlpMatchGroupNumbersBuildLocaleList(og_nlp_th ctrl_nlp_th, GQue
     }
 
   }
-  else
+
+  if (look_for_all_language)
   {
     // add all others conf
     for (GList *iter = nmgn->sep_conf_lang->head; iter; iter = iter->next)

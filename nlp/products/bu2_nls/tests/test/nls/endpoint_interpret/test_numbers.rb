@@ -303,6 +303,12 @@ module Nls
         check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
         check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
 
+        Interpretation.default_locale = "*"
+        check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
         check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
