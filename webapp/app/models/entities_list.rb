@@ -23,7 +23,9 @@ class EntitiesList < ApplicationRecord
     "#{agent.slug}/entities_lists/#{listname}"
   end
 
+
   private
+
     def clean_listname
       return if listname.nil?
       self.listname = listname.parameterize(separator: '-')

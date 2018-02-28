@@ -76,13 +76,13 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+
   private
+
     def set_entities_list
       entities_list_id = params[:entities_list_id] || params[:id]
       @entities_list = @agent.entities_lists.friendly.find(entities_list_id)
     end
-
-  private
 
     def entities_list_params
       params.require(:entities_list).permit(:listname, :description, :visibility)

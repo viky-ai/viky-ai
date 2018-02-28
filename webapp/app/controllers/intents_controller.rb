@@ -115,6 +115,7 @@ class IntentsController < ApplicationController
     end
   end
 
+
   private
 
     def intent_params

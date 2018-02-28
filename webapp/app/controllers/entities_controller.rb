@@ -85,7 +85,9 @@ class EntitiesController < ApplicationController
     end
   end
 
+
   private
+
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
     end
