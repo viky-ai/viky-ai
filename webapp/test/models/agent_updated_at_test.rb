@@ -168,4 +168,45 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     assert_not_equal updated_at_a, agent_a.reload.updated_at.to_json
     assert_equal     updated_at_b, agent_b.reload.updated_at.to_json
   end
+
+
+  test 'Change updated_at agent date after delete intent in parent' do
+    child = create_agent("Agent A")
+    intent_child = Intent.create(
+      intentname: 'intent_child',
+      locales: ['en'],
+      agent: child
+    )
+    interpretation_child = Interpretation.create(
+      expression: 'interpretation_child',
+      locale: 'en',
+      intent: intent_child
+    )
+
+    parent = create_agent("Agent B")
+    intent_parent = Intent.create(
+      intentname: 'intent_parent',
+      locales: ['en'],
+      agent: parent
+    )
+
+    assert AgentArc.create(source: child, target: parent)
+
+    assert InterpretationAlias.create(
+      position_start: 0,
+      position_end: 16,
+      aliasname: 'inter_parent',
+      interpretation_id: interpretation_child.id,
+      intent_id: intent_parent.id,
+      nature: 'type_intent'
+    )
+
+    updated_at_a = child.updated_at.to_json
+    updated_at_intent_child = intent_child.updated_at.to_json
+
+    assert intent_parent.destroy
+
+    assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
+    assert_not_equal updated_at_a, child.reload.updated_at.to_json
+  end
 end
