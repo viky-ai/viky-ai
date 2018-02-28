@@ -91,6 +91,14 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Y a-t-il du soleil ?')
     assert_equal 2, all('.interpretation-resume').count
     assert_equal "soleil", first('.interpretation-resume__alias-purple').text
+
+    within('#interpretations-list') do
+      click_link 'Y a-t-il du soleil ?'
+    end
+    within('.aliases') do
+      find_link('admin/weather/entities_lists/weather_conditions').click
+    end
+    assert page.has_text?('weather_conditions PUBLIC (admin/weather/entities_lists/weather_conditions)')
   end
 
 

@@ -52,7 +52,11 @@ module InterpretationHelper
       current_aliasable = interpretation_alias.interpretation_aliasable
       url = nil
       if current_user.can?(:show, current_aliasable.agent)
-        url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+        if interpretation_alias.type_intent?
+          url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+        elsif interpretation_alias.type_entities_list?
+          url = user_agent_entities_list_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
+        end
       end
       data = {
         aliasname: interpretation_alias.aliasname,
