@@ -68,6 +68,15 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Salut Marcel')
     assert_equal 2, all('.interpretation-resume').count
     assert_equal "Marcel", first('.interpretation-resume__alias-blue').text
+
+    first('trix-editor').click.set('Il fait beau ?')
+    select_text_in_trix("trix-editor", 9, 12)
+    find_link('admin/weather/interpretations/weather_question').click
+
+    within('#interpretations-form .aliases') do
+      click_link 'admin/weather/interpretations/weather_question'
+    end
+    assert page.has_text?('weather_question PUBLIC (admin/weather/interpretations/weather_question)')
   end
 
 

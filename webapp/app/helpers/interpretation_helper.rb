@@ -50,21 +50,12 @@ module InterpretationHelper
       }
     else
       current_aliasable = interpretation_alias.interpretation_aliasable
-      url = nil
-      if current_user.can?(:show, current_aliasable.agent)
-        if interpretation_alias.type_intent?
-          url = user_agent_intent_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
-        elsif interpretation_alias.type_entities_list?
-          url = user_agent_entities_list_path(current_aliasable.agent.owner, current_aliasable.agent, current_aliasable)
-        end
-      end
       data = {
         aliasname: interpretation_alias.aliasname,
         slug: current_aliasable.slug,
         interpretation_aliasable_id: current_aliasable.id,
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        url: url
       }
       if interpretation_alias.type_intent?
         data[:color] = "intent-#{current_aliasable.color}"

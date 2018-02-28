@@ -313,13 +313,13 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature == 'type_digit' || alias.url == null
+    if alias.nature == 'type_digit'
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
     else
       line.push "
-        <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
+        <td><span class='#{alias.color}' title='#{reference_title}'><a href='/agents/#{alias.slug}'>#{reference_html}</a></span></td>
       "
 
     if alias.nature == 'type_digit'
