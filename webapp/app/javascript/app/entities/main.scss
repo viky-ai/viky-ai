@@ -1,7 +1,8 @@
 @import '../../framework/abstracts/variables';
 
-.entity-form, .entity-form__show-detailed {
-  padding: 1.5em;
+.entity-form,
+.entity-form__show-detailed {
+  padding: 1em;
   display: grid;
   width: 100%;
   grid-template:
@@ -9,7 +10,7 @@
           "solution solution" auto
           "submit delete" 1fr/
           1fr 1fr;
-  @media (min-width: 424px){
+  @media (min-width: 600px){
     grid-template:
             "terms solution" auto
             "submit delete" 1fr /
