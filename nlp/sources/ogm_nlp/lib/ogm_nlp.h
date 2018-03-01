@@ -207,7 +207,9 @@ struct expression
 
 enum nlp_interpretation_scope_type
 {
-  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private = 1, nlp_interpretation_scope_type_hidden = 2
+  nlp_interpretation_scope_type_public = 0,
+  nlp_interpretation_scope_type_private = 1,
+  nlp_interpretation_scope_type_hidden = 2
 };
 
 struct interpretation_compile
@@ -399,8 +401,8 @@ struct orip
 
 struct request_any
 {
-  int request_word_start;
-  int request_words_nb;
+  /** List of struct request_word covered by any */
+  GQueue queue_request_words[1];
   int distance;
 
   /** used to optimize the attachement any <-> request_expression */

@@ -135,6 +135,9 @@ og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
 
   for (struct request_word *rw = first_request_word; rw ; rw = rw->next)
   {
+    // ignore non basic word (build from ltras)
+    if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
+
     ctrl_nlp_th->basic_group_request_word_nb++;
   }
 
