@@ -76,17 +76,16 @@ module Nls
 
       end
 
-# FIXME number and name are mixed in solution
-#      def test_any_with_number_expression
-#
-#        Nls.remove_all_packages
-#        Nls.package_update(create_package(true))
-#
-#        expected = { interpretation: "hello", solution: { number: 123456.7, name: "brice" } }
-#        check_interpret("hello 123,456.7 brice",   expected)
-#        check_interpret("hello brice 123,456.7",   expected)
-#
-#      end
+      def test_any_with_number_expression
+
+        Nls.remove_all_packages
+        Nls.package_update(create_package(true))
+
+        expected = { interpretation: "hello", solution: { number: 123456.7, name: "brice" } }
+        check_interpret("hello 123,456.7 brice",   expected)
+        check_interpret("hello brice 123,456.7",   expected)
+
+      end
 
     end
   end

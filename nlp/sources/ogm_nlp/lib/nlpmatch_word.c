@@ -39,7 +39,7 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
   number[0] = 0;
   if (request_word->is_number)
   {
-    snprintf(number, DPcPathSize, " -> %g", request_word->number_value);
+    snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
   }
 
   NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, number);

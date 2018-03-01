@@ -42,6 +42,9 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+// %.15g means, 15 significant figures not decimal, default is 6.
+#define DOgPrintDouble "%.15g"
+
 /** Nlp configuration set by env variables*/
 struct og_nlp_env
 {
