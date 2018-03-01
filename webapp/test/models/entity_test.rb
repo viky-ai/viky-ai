@@ -52,6 +52,16 @@ class EntityTest < ActiveSupport::TestCase
   end
 
 
+  test 'Set position on new entity' do
+    entity = Entity.new(
+      terms: [{ term: 'Jacques', locale: 'fr' }],
+      entities_list: entities_lists(:weather_conditions)
+    )
+    assert entity.save
+    assert_equal 2, entity.position
+  end
+
+
   test 'Add a term to an entity' do
     entity = entities(:weather_sunny)
     expected = [

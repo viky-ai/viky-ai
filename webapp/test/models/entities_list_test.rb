@@ -38,6 +38,16 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
+  test 'Set position on new entities list' do
+    entities_list = EntitiesList.new(
+      listname: 'weather_towns',
+      agent: agents(:weather)
+    )
+    assert entities_list.save
+    assert_equal 2, entities_list.position
+  end
+
+
   test 'Unique listname per agent' do
     entities_list = EntitiesList.new(listname: 'hello', description: 'Hello random citizen !', agent: agents(:weather))
     assert entities_list.save

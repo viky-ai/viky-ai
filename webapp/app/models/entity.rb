@@ -9,6 +9,7 @@ class Entity < ApplicationRecord
   validate :validate_terms_present
 
   before_validation :parse_terms
+  before_create :set_position
 
   def terms_to_s
     return "" if terms.nil?
@@ -46,5 +47,10 @@ class Entity < ApplicationRecord
           errors.add(:terms, I18n.t('errors.entity.term_abscent'))
         end
       end
+    end
+
+    def set_position
+      return if entities_list.nil?
+      self.position = entities_list.entities.count
     end
 end

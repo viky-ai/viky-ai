@@ -18,6 +18,7 @@ class EntitiesList < ApplicationRecord
 
   before_validation :clean_listname
   before_create :set_color
+  before_create :set_position
 
   def slug
     "#{agent.slug}/entities_lists/#{listname}"
@@ -35,5 +36,10 @@ class EntitiesList < ApplicationRecord
       return if color.present?
       random_index = Random.new.rand(0..Intent::AVAILABLE_COLORS.size - 1)
       self.color = Intent::AVAILABLE_COLORS[random_index]
+    end
+
+    def set_position
+      return if agent.nil?
+      self.position = agent.entities_lists.count
     end
 end
