@@ -195,6 +195,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal cloudy_terms, cloudy.terms
     assert_equal true, cloudy.auto_solution_enabled
     assert_equal 'weather: cloudy', cloudy.solution
+    assert_equal 6, Entity.all.count
   end
 
 
@@ -242,10 +243,31 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
+  test 'Import and replace entities' do
+    io = StringIO.new
+    io << "'Terms','Auto solution','Solution'\n"
+    io << "'snow','false','w: snow'\n"
+    io << "\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert elist.from_csv(entities_import)
+    assert_equal 1, elist.entities.count
+
+    snow = elist.entities.find_by_solution('w: snow')
+    snow_terms = [{ 'term' => 'snow', 'locale' => '*' }]
+    assert_equal snow_terms, snow.terms
+    assert_equal false, snow.auto_solution_enabled
+    assert_equal 'w: snow', snow.solution
+    assert_equal 3, Entity.all.count
+  end
+
+
   private
 
-    def build_import_params(io)
+    def build_import_params(io, mode = :append)
       io.rewind
-      { file: Struct.new(:tempfile, :content_type).new(io, 'text/csv') }
+      { file: Struct.new(:tempfile, :content_type).new(io, 'text/csv'), mode: mode }
     end
 end

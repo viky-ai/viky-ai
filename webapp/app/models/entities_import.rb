@@ -8,13 +8,15 @@ class EntitiesImport
   attr_reader :errors
 
   def initialize(params = {})
-    if params.present?
-      @file      = params[:file].tempfile
-      @mime_type = params[:file].content_type
-    end
     @errors = {
       file: []
     }
+    @mode = :append
+    if params.present? && params[:file].present?
+      @file      = params[:file].tempfile
+      @mime_type = params[:file].content_type
+      @mode      = :replace if params[:mode] == 'replace' || params[:mode] == :replace
+    end
   end
 
   def validate
@@ -44,6 +46,7 @@ class EntitiesImport
     result = true
     ActiveRecord::Base.transaction do
       csv = CSV.new(@file, options)
+      entities_list.entities.delete_all if @mode == :replace
       begin
         csv.each do |row|
           Entity.create!(

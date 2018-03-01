@@ -117,7 +117,7 @@ class EntitiesListsController < ApplicationController
     end
 
     def import_params
-      params.permit(import: [:file])[:import]
+      params.permit(import: [:file, :mode])[:import]
     end
 
     def set_agent

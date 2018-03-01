@@ -160,6 +160,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
   test 'Import two entities' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
     within('.modal') do
       assert page.has_text? 'Import a list of entities'
@@ -168,6 +169,23 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button 'Import'
     end
     assert page.has_text? '2 entities imported successfully'
+    assert_equal 4, all('#entities-list > li').count
+  end
+
+
+  test 'Import replace sentities' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert_equal 2, all('#entities-list > li').count
+    click_link 'Import'
+    within('.modal') do
+      assert page.has_text? 'Import a list of entities'
+      file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
+      attach_file('import_file', file).click
+      choose 'Replace'
+      click_button 'Import'
+    end
+    assert page.has_text? '2 entities imported successfully'
+    assert_equal 2, all('#entities-list > li').count
   end
 
 

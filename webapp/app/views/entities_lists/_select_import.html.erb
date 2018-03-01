@@ -30,6 +30,14 @@
           </div>
         </div>
         <div class="field">
+          <div class="control">
+            <%= import_form.radio_button :mode, :append, id: "import__append", checked: true %>
+            <%= import_form.label "Append", for: "import__append" %>
+            <%= import_form.radio_button :mode, :replace, id: "import__replace" %>
+            <%= import_form.label "Replace", for: "import__replace" %>
+          </div>
+        </div>
+        <div class="field">
           <%= import_form.button t('views.entities_lists.show.import.select_import.submit'),
                                  class: "btn btn--primary"%>
           <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
