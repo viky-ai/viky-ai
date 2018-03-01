@@ -162,7 +162,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapFlush(ctrl_nlp_th->hrequest_position));
   IFE(OgHeapFlush(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapFlush(ctrl_nlp_th->horip));
-  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_any));
+
 
   ctrl_nlp_th->hinterpret_package = NULL;
   ctrl_nlp_th->hrequest_context = NULL;
@@ -330,7 +330,6 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->hrequest_position));
   IFE(OgHeapReset(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapReset(ctrl_nlp_th->horip));
-  IFE(OgHeapReset(ctrl_nlp_th->hrequest_any));
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->date_now = NULL;
