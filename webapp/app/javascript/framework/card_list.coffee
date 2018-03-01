@@ -57,10 +57,10 @@ class CardList
 
 
 class CardListHelper
-  @addToList: (raw_html, orientation = 'horizontal') ->
-    html = $(raw_html).addClass('hidden-' + orientation)
+  @addToList: (raw_html) ->
+    html = $(raw_html).addClass('hidden')
     $('ul.card-list').prepend(html)
-    setTimeout((() -> $(".card-list li").first().removeClass('hidden-' + orientation)), 0)
+    setTimeout((() -> $(".card-list li").first().removeClass('hidden')), 0)
 
   @removeFromList: (id_selector) ->
     $(id_selector).addClass('deleted');
@@ -92,7 +92,7 @@ class CardListHelper
         $('.card-list li .card-list__item__draggable').hide()
 
 Setup = ->
-  $('ul.card-list').each((index, element) ->
+  $('ul.card-list[data-behavior="sortable"]').each((index, element) ->
     new CardList($(element).attr('id'), $(element).data('group'))
   )
 

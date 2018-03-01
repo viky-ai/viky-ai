@@ -2,6 +2,7 @@
   list-style: none;
   padding: 0;
   padding-bottom: .25em;
+
   .sortable-chosen{
     box-shadow: 0 1px 7px rgba(#000, .25);
   }
@@ -19,7 +20,6 @@
       transform: translateY(calc(0.4em - 50%));
       display: block;
     }
-
     &.card-list--empty--dragging {
       padding: 0;
       border: 1px dotted $primary-color;
@@ -44,21 +44,33 @@
 
     opacity: 1;
     transition: opacity .2s ease-in, transform .2s ease-out, box-shadow .2s;
-    &.hidden-vertical {
+
+    &.hidden {
       transform: translateY(-50px);
-      opacity: 0.5;
-    }
-    &.hidden-horizontal {
-      transform: translateX(-100px);
       opacity: 0.5;
     }
     &.deleted{
       transform: translateY(50px);
       opacity: 0;
     }
+
+    .card-list__item__draggable{
+      min-width: 20px;
+      border-top-left-radius: 2px;
+      border-bottom-left-radius: 2px;
+      border: 4px solid #fff;
+      background-image: url(../images/grip@2x.png);
+      background-size: 4px 4px;
+      opacity: .15;
+      &:hover{
+        opacity: .5;
+        cursor: move;
+      }
+    }
+
     & > a{
       display: block;
-      width: calc(100% - 190px);
+      width: 100%;
       line-height: 1.8em;
       padding: .5rem 1rem;
       text-decoration: none;
@@ -82,32 +94,17 @@
     .card-list__item__stats{
       font-size: .8em;
       line-height: 1.8rem;
-      padding: .5rem;
+      padding: .5rem 1rem;
       color: #aaa;
       text-align:right;
-      width: 130px;
+      min-width: 140px;
     }
     .card-list__item__actions{
       padding: .5rem;
     }
+
   }
 
-  .card-list__item__draggable {
-    width: 20px;
-
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-    border: 4px solid #fff;
-
-    background-image: url(../images/grip@2x.png);
-    background-size: 4px 4px;
-    opacity: .15;
-
-    &:hover{
-      opacity: .5;
-      cursor: move;
-    }
-  }
 }
 
 .card-list-header{

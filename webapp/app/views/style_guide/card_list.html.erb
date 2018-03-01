@@ -1,33 +1,199 @@
 <div class="sg-intro">
   <h1>Card list</h1>
   <p>
-    Displayed in agent main page.
+    Used to displayed actionable list items.
   </p>
 </div>
 
+
 <section>
-  <h2>Edit list</h2>
+  <h2>List</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+    </a>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+    </a>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Dolores maiores</span>
+      <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+    </a>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>List & RTL</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <a href="#">
+      <span class="card-list__item__name" dir="rtl">لكل شخص حق إنشاء النقابات مع آخرين والانضمام إليها من أجل حماية مصالحه.</span>
+      <span class="card-list__item__desc" dir="rtl">لكل شخص، بوصفه عضوا في المجتمع، حق في الضمان الاجتماعي، ومن حقه أن توفر له، من خلال المجهود القومي والتعاون الدولي، وبما يتفق مع هيكل كل دولة ومواردها، الحقوق الاقتصادية والاجتماعية والثقافية التي لا غنى عنها لكرامته ولتنامي شخصيته في حرية</span>
+    </a>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>List + Stats</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Dolores maiores</span>
+      <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>List + Actions</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+    </a>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+    </a>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Dolores maiores</span>
+      <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+    </a>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+<section>
+  <h2>List + Drag handler</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+    </a>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+    </a>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Dolores maiores</span>
+      <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+    </a>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+<section>
+  <h2>List + All</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Dolores maiores</span>
+      <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+    </a>
+    <div class="card-list__item__stats">xxx items</div>
+    <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
+  </li>
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Empty State</h2>
+  <%= highlight_html do %>
+<ul class="card-list card-list--empty"
+    data-empty-content="Lorem ipsum dolor sit amet, consectetur adipisicing elit magna aliqua.">
+</ul>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Sortable lists</h2>
   <p>
-    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+    if <code>ul</code> attributes <code>id</code> and <code>data-behavior="sortable"</code> are set, <code>li</code> items become automatically sortable inside the list. To enable Ajax request at the end of Drag&Drop in order to save items positions, use data-attributes described below.
   </p>
   <table>
     <thead>
     <tr>
-      <th><code>data-action</code> value</th>
-      <th>Behavior description</th>
+      <th>Data attributes</th>
+      <th>Description</th>
     </tr>
     </thead>
     <tbody>
     <tr>
-      <td><code>ul data-group</code></td>
-      <td>
-        The key to allow drag and drop between two different lists. (Optional)
-      </td>
-    </tr>
-    <tr>
       <td><code>ul data-update-positions-path</code></td>
       <td>
-        The URL to send the update <code>POST</code>.
+        The URL used by Ajax <code>POST</code> request.
       </td>
     </tr>
     <tr>
@@ -44,177 +210,92 @@
     </tr>
     </tbody>
   </table>
-
-
+  <p>
+    In order to activate Drag&Drop between lists, add the same value on the <code>ul</code> attribute <code>data-group</code>. The empty states of the lists are managed automatically.
+  </p>
+  <p>
+    Note: JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+  </p>
 
   <%= highlight_html do %>
-<ul id="sortable-list_example" class="card-list"
-    data-group="group_id"
-    data-part="json_key">
-  <li data-id="1234">
+<h5>First list</h5>
+<ul id="sortable-list-example-1" class="card-list"
+    data-empty-content="First list is empty" data-behavior="sortable" data-group="demo">
+  <li>
     <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="card-list__item__name">travel-from-to : Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi delectus eius eos magni nemo odit officia quae rem! Animi, illum obcaecati. Alias aspernatur blanditiis ea hic illum molestias natus tenetur?</span>
-      <span class="card-list__item__desc">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
-      </span>
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
     </a>
-    <div class="card-list__item__stats">
-      378 interpretations
-    </div>
-    <div class="card-list__item__actions">
-      <div class="dropdown">
-        <div class="dropdown__trigger">
-          <button class="btn btn--small">
-            <span class="icon icon--x-small">
-              <%= icon_dots %>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
-          <ul>
-            <li>
-              <a href="#">
-                <span class="icon icon--x-small">
-                  <%= icon_settings %>
-                </span>
-                Configure
-              </a>
-            </li>
-            <li class="separator">
-              <a href="#" class="destructive">
-                <span class="icon icon--x-small">
-                  <%= icon_delete %>
-                </span>Delete
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
   </li>
-  <li data-id="56789">
+</ul>
+<h5>Second list</h5>
+<ul id="sortable-list-example-2" class="card-list"
+    data-empty-content="Second list is empty" data-behavior="sortable" data-group="demo">
+  <li>
     <div class="card-list__item__draggable"></div>
     <a href="#">
-      <span class="card-list__item__name">buy-something</span>
+      <span class="card-list__item__name">Id praesentium error</span>
+      <span class="card-list__item__desc">Expedita hic accusamus consectetur</span>
     </a>
-    <div class="card-list__item__stats">
-      23 interpretations
-    </div>
-    <div class="card-list__item__actions">
-      <div class="dropdown">
-        <div class="dropdown__trigger">
-          <button class="btn btn--small">
-            <span class="icon icon--x-small">
-              <%= icon_dots %>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
-          <ul>
-            <li>
-              <a href="#">
-                <span class="icon icon--x-small">
-                  <%= icon_settings %>
-                </span>
-                Configure
-              </a>
-            </li>
-            <li class="separator">
-              <a href="#" class="destructive">
-                <span class="icon icon--x-small">
-                  <%= icon_delete %>
-                </span>Delete
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </li>
-  <li data-id="91011">
-    <div class="card-list__item__draggable"></div>
-    <a href="#">
-      <span class="card-list__item__name">date</span>
-      <span class="card-list__item__desc">
-        Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
-      </span>
-    </a>
-    <div class="card-list__item__stats">
-      56 interpretations
-    </div>
-    <div class="card-list__item__actions">
-      <div class="dropdown">
-        <div class="dropdown__trigger">
-          <button class="btn btn--small">
-            <span class="icon icon--x-small">
-              <%= icon_dots %>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
-          <ul>
-            <li>
-              <a href="#">
-                <span class="icon icon--x-small">
-                  <%= icon_settings %>
-                </span>
-                Configure
-              </a>
-            </li>
-            <li class="separator">
-              <a href="#" class="destructive">
-                <span class="icon icon--x-small">
-                  <%= icon_delete %>
-                </span>Delete
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
   </li>
 </ul>
   <% end %>
 </section>
 
+
 <section>
-  <h2>Show list</h2>
-  <p>
-    Used when the user have only show right. There is no drag and drop handle but an item can be extended to show more details. Text direction can be changed with the RTL property.
-  </p>
+  <h2>Add/Remove item</h2>
   <%= highlight_html do %>
-    <ul id="sortable-list_example" class="card-list">
-      <li>
-        <a href="#">
-          <span class="card-list__item__name">travel-from-to</span>
-          <span class="card-list__item__desc">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium neque, voluptatum explicabo nemo perspiciatis ipsum sequi quibusdam veniam culpa vero labore.
-      </span>
-        </a>
-        <div class="card-list__item__stats">
-          378 interpretations
-        </div>
-      </li>
-      <li>
-        <a href="#">
-          <span class="card-list__item__name" dir="rtl">أبلكاسيون ويب<span class="badge">Auto solution</span></span>
-        </a>
-        <div class="card-list__item__stats">
-          23 interpretations
-        </div>
-      </li>
-      <li>
-        <a href="#">
-          <span class="card-list__item__name">date</span>
-          <span class="card-list__item__desc">
-        Error qui eaque nam. Odio cumque praesentium, alias quia recusandae molestias.
-      </span>
-        </a>
-        <div class="card-list__item__stats">
-          56 interpretations
-        </div>
-      </li>
-    </ul>
+<div style="height: 13em;">
+  <ul id="add-remove-item-demo"
+      class="card-list card-list--empty"
+      data-empty-content="Empty list">
+  </ul>
+</div>
+<script>
+  function addItem(){
+    html  = "<li class='hidden'>";
+    html += "  <a href='#'>";
+    html += "    <span class='card-list__item__name'>" + Math.random().toString(36).substring(7) + "</span>";
+    html += "    <span class='card-list__item__desc'>Dolor sit amet, consectetur adipisicing elit.</span>";
+    html += "  </a>";
+    html += "</li>";
+    $('#add-remove-item-demo').prepend(html);
+    window.setTimeout(function(){
+      $('#add-remove-item-demo li').first().removeClass('hidden');
+    }, 30);
+    updateEmptyState()
+  }
+
+  function removeItem(){
+    $('#add-remove-item-demo li').last().addClass('deleted');
+    window.setTimeout(function(){
+      $('#add-remove-item-demo li').last().remove();
+      updateEmptyState()
+    }, 200);
+  }
+
+  function updateEmptyState(){
+    if ($('#add-remove-item-demo li').length == 0){
+      $('#add-remove-item-demo').addClass("card-list--empty");
+    }
+    else{
+      $('#add-remove-item-demo').removeClass("card-list--empty");
+    }
+  }
+
+  function addRemoveItemDemo(){
+    addItem();
+    window.setTimeout(addItem, 1000);
+    window.setTimeout(addItem, 2000);
+    window.setTimeout(removeItem, 3000);
+    window.setTimeout(removeItem, 4000);
+    window.setTimeout(removeItem, 5000);
+  }
+
+  addRemoveItemDemo();
+  window.setInterval(addRemoveItemDemo, 6000);
+</script>
   <% end %>
 </section>
