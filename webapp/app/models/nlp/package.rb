@@ -192,7 +192,7 @@ class Nlp::Package
           expression = {}
           expression[:expression] = term['term']
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution] = entity.solution
+          expression[:solution] = entity.solution.present? ? "`#{entity.solution}`" : ''
           expressions << expression
         end
       end

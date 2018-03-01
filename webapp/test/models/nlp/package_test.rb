@@ -63,22 +63,22 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "soleil",
               "locale"     => "fr",
-              "solution" => "weather: sunny"
+              "solution" => "`weather: sunny`"
             },
             {
               "expression" => "sun",
               "locale"     => "en",
-              "solution" => "weather: sunny"
+              "solution" => "`weather: sunny`"
             },
             {
               "expression" => "pluie",
               "locale"     => "fr",
-              "solution" => "weather: raining"
+              "solution" => "`weather: raining`"
             },
             {
               "expression" => "rain",
               "locale"     => "en",
-              "solution" => "weather: raining"
+              "solution" => "`weather: raining`"
             }
           ]
         },
@@ -90,21 +90,21 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "aujourd'hui",
               "locale"     => "fr",
-              "solution" => "date: today"
+              "solution" => "`date: today`"
             },
             {
               "expression" => "tout à l'heure",
               "locale"     => "fr",
-              "solution" => "date: today"
+              "solution" => "`date: today`"
             },
             {
               "expression" => "today",
               "locale"     => "en",
-              "solution" => "date: today"
+              "solution" => "`date: today`"
             },
             {
               "expression" => "tomorrow",
-              "solution" => "date: tomorrow"
+              "solution" => "`date: tomorrow`"
             }
           ]
         }
