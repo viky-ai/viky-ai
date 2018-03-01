@@ -157,7 +157,7 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       number[0] = 0;
       if (request_word->is_number)
       {
-        snprintf(number, DPcPathSize, " -> %f", request_word->number_value);
+        snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
       }
       snprintf(string_input_part, DPcPathSize, "[%s] word:%s%s %d:%d", string_positions, string_request_word, number,
           request_word->start_position, request_word->length_position);

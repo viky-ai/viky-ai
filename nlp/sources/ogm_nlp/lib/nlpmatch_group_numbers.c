@@ -480,7 +480,7 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
   // parsing the numbers
-  double value = 0;
+  double value = 0.0;
   int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
   if (request_word_used == 0) return FALSE;
 
@@ -545,7 +545,7 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
       // build new normalized word
       {
         og_char_buffer normalized_word[DPcPathSize];
-        snprintf(normalized_word, DPcPathSize, "%g", value);
+        snprintf(normalized_word, DPcPathSize, DOgPrintDouble, value);
         int inormalized_word = strlen(normalized_word);
         rw_start->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
         rw_start->length = inormalized_word;
@@ -560,7 +560,7 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
       {
         og_char_buffer current_lang_country[DPcPathSize];
         NlpLog(DOgNlpTraceGroupNumbers, "NlpMatchGroupNumbersWithLocale: \"%s\" "
-            "find group number %g (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string, value,
+            "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string, value,
             OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country), locale_conf->sep_conf->thousand_sep,
             locale_conf->sep_conf->decimal_sep);
       }
@@ -593,7 +593,7 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
           {
             og_char_buffer current_lang_country[DPcPathSize];
             NlpLog(DOgNlpTraceGroupNumbers, "NlpMatchGroupNumbersWithLocale: \"%s\" "
-                "find group number %g (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string,
+                "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string,
                 value, OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country),
                 locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
           }
