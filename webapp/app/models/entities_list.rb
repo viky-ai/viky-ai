@@ -40,6 +40,8 @@ class EntitiesList < ApplicationRecord
 
     def set_position
       return if agent.nil?
-      self.position = agent.entities_lists.count if self.position.zero?
+      if self.position.zero?
+        self.position = agent.entities_lists.count.zero? ? 0 : agent.entities_lists.maximum(:position) + 1
+      end
     end
 end
