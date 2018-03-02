@@ -48,7 +48,8 @@ class EntitiesImport
       csv = CSV.new(@file, options)
       entities_list.entities.delete_all if @mode == :replace
       begin
-        csv.each do |row|
+        csv.each_with_index do |row, index|
+          check_row_length(row, index)
           Entity.create!(
             terms:                 parse_terms(row),
             auto_solution_enabled: parse_auto_solution(row),
@@ -69,7 +70,14 @@ class EntitiesImport
     result
   end
 
+
   private
+
+    def check_row_length(row, row_number)
+      if row['Terms'].nil? || row['Auto solution'].nil? || row['Solution'].nil?
+        raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_column', row_number: row_number)
+      end
+    end
 
     def parse_terms(row)
       row['Terms'].present? ? row['Terms'].tr('|', "\n") : row['Terms']

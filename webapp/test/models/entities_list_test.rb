@@ -213,6 +213,21 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
+  test 'Import entities missing column' do
+    io = StringIO.new
+    io << "'Terms','Auto solution','Solution'\n"
+    io << "'cloudy|nuageux:fr','True','weather: cloudy'\n"
+    io << "'true','w: hail'\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Missing column in line 1'], entities_import.errors[:file]
+  end
+
+
   test 'Import entities empty terms' do
     io = StringIO.new
     io << "'Terms','Auto solution','Solution'\n"
