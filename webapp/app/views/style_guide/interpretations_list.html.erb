@@ -60,8 +60,8 @@
       <div class="field interpretations-form__solution">
         <div class="control">
           <span class="solution-label">Solution</span>
-          <textarea id="solution__123456" rows="3">{
-"who": "greeting.who"
+          <textarea id="solution__1" rows="3">{
+  "who": "greeting.who"
 }</textarea>
         </div>
       </div>
@@ -83,7 +83,7 @@
   </li>
 </ul>
 <script>
-  App.CodeEditor.buildJavaScriptEditor($("#solution-show-detailed")[0], true);
+  App.CodeEditor.buildJavaScriptEditor($("#solution__1")[0], true);
 </script>
   <% end %>
 </section>
@@ -98,7 +98,7 @@
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
   <%= highlight_html do %>
-<ul id="sortable-list_example-3" class="card-list">
+<ul id="sortable-list__example" class="card-list">
   <li>
     <div class="card-list__item__draggable"></div>
     <form action="#" class="interpretations-form">
@@ -195,8 +195,8 @@
   </li>
 </ul>
 <script>
-  Sortable.create($('#sortable-list_example-3')[0], {
-    handle: '.interpretations-list__draggable',
+  Sortable.create($('#sortable-list__example')[0], {
+    handle: '.card-list__item__draggable',
     animation: 100
   });
   App.CodeEditor.buildJavaScriptEditor($("#solution__123456")[0]);
