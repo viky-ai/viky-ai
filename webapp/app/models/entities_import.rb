@@ -50,9 +50,10 @@ class EntitiesImport
     ActiveRecord::Base.transaction do
       csv = CSV.new(@file, options)
       entities_list.entities.delete_all if @mode == :replace
+      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position) + 1
       begin
-        check_header(csv.shift)
-        csv.rewind
+        check_header(csv)
+        line_count = count_lines(csv)
         csv.each_with_index do |row, index|
           next if index.zero?
           check_row_length(row, csv.lineno - 1)
@@ -60,6 +61,7 @@ class EntitiesImport
             terms:                 parse_terms(row),
             auto_solution_enabled: parse_auto_solution(row),
             solution:              parse_solution(row),
+            position:              entities_max_position + line_count - @count,
             entities_list:         entities_list
           )
           @count += 1
@@ -79,11 +81,20 @@ class EntitiesImport
 
 
   private
+    def count_lines(csv)
+      line_count = 0
+      csv.each { line_count += 1 }
+      line_count -= 2
+      csv.rewind
+      line_count
+    end
 
-    def check_header(header_row)
+    def check_header(csv)
+      header_row = csv.shift
       if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
         raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_header')
       end
+      csv.rewind
     end
 
     def check_row_length(row, row_number)

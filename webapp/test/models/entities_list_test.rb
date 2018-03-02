@@ -189,12 +189,14 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal snow_terms, snow.terms
     assert_equal false, snow.auto_solution_enabled
     assert_equal 'w: snow', snow.solution
+    assert_equal 3, snow.position
 
     cloudy = elist.entities.find_by_solution('weather: cloudy')
     cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'nuageux', 'locale' => 'fr' }]
     assert_equal cloudy_terms, cloudy.terms
     assert_equal true, cloudy.auto_solution_enabled
     assert_equal 'weather: cloudy', cloudy.solution
+    assert_equal 2, cloudy.position
     assert_equal 6, Entity.all.count
   end
 
