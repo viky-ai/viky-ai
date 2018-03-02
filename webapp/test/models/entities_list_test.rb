@@ -9,13 +9,13 @@ class EntitiesListTest < ActiveSupport::TestCase
       listname: 'weather_towns',
       description: 'Cities all around the world',
       visibility: 'is_private',
-      position: 2,
+      position: 23,
       color: 'red',
       agent: agents(:weather)
     )
     assert entities_list.save
 
-    assert_equal 2, entities_list.position
+    assert_equal 23, entities_list.position
     assert_equal 'weather_towns', entities_list.listname
     assert_equal agents(:weather).id, entities_list.agent.id
     assert_equal 3, agents(:weather).entities_lists.count

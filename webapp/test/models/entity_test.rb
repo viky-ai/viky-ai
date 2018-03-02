@@ -11,7 +11,7 @@ class EntityTest < ActiveSupport::TestCase
         { term: 'Jacques', locale: 'fr' },
         { term: 'James', locale: 'en' }
       ],
-      position: 2,
+      position: 11,
       entities_list: entities_lists(:weather_conditions)
     )
     assert entity.save
@@ -23,7 +23,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal 'James', entity.terms.last['term']
     assert_equal 'en', entity.terms.last['locale']
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
-    assert_equal 2, entity.position
+    assert_equal 11, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count
   end
 

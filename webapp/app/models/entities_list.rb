@@ -40,6 +40,6 @@ class EntitiesList < ApplicationRecord
 
     def set_position
       return if agent.nil?
-      self.position = agent.entities_lists.count
+      self.position = agent.entities_lists.count if self.position.zero?
     end
 end
