@@ -18,6 +18,7 @@ class EntitiesImport
       @file      = params[:file].tempfile
       @mime_type = params[:file].content_type
       @mode      = :replace if params[:mode] == 'replace' || params[:mode] == :replace
+      @file.set_encoding('utf-8')
     end
   end
 
@@ -42,7 +43,8 @@ class EntitiesImport
       quote_char: "'",
       force_quotes: true,
       headers: [I18n.t('activerecord.attributes.entity.terms'), I18n.t('activerecord.attributes.entity.auto_solution_enabled'), I18n.t('activerecord.attributes.entity.solution')],
-      skip_blanks: true
+      skip_blanks: true,
+      encoding: 'UTF-8'
     }
     result = true
     ActiveRecord::Base.transaction do
