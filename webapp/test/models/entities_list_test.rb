@@ -209,13 +209,13 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ['Illegal quoting in line 2.'], entities_import.errors[:file]
+    assert_equal ['Missing header'], entities_import.errors[:file]
   end
 
 
   test 'Import entities missing column' do
     io = StringIO.new
-    io << "'Terms','Auto solution','Solution'\n"
+    io << "'terms','auto solution','solution'\n"
     io << "'cloudy|nuageux:fr','True','weather: cloudy'\n"
     io << "'true','w: hail'\n"
     entities_import = EntitiesImport.new(build_import_params(io))
@@ -224,7 +224,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ['Missing column in line 1'], entities_import.errors[:file]
+    assert_equal ['Missing column in line 2'], entities_import.errors[:file]
   end
 
 
@@ -239,7 +239,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms can't be blank in line 2"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Terms can't be blank in line 1"], entities_import.errors[:file]
   end
 
 
@@ -254,7 +254,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Auto solution must be true or false in line 2"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Auto solution must be true or false in line 1"], entities_import.errors[:file]
   end
 
 
@@ -269,7 +269,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ['Missing or stray quote in line 2'], entities_import.errors[:file]
+    assert_equal ['Missing or stray quote in line 1'], entities_import.errors[:file]
   end
 
 

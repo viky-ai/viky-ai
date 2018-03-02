@@ -63,6 +63,7 @@ en:
         max_file_size: 'exceed max size'
         unexpected_autosolution: 'Validation failed: Auto solution must be true or false'
         missing_column: "Missing column in line %{row_number}"
+        missing_header: "Missing header"
     interpretation_alias:
       end_position_lower_than_start: 'must be greater than position start'
       overlap: overlap
