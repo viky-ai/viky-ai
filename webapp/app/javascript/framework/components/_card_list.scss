@@ -30,6 +30,7 @@
   }
 
   & > li{
+    position: relative;
     @include display_flex();
 
     [dir='rtl']{

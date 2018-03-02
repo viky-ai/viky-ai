@@ -93,17 +93,20 @@
     width: 100%;
   }
 
+  .label,
   label{
     font-weight: 400;
     margin-bottom: .5em;
     line-height: 1.5;
     display: inline-block;
-    cursor: pointer;
     &.checkbox{
       width: auto;
       cursor: pointer;
       font-weight: 300;
     }
+  }
+  label{
+    cursor: pointer;
   }
 
   input[type='checkbox']{

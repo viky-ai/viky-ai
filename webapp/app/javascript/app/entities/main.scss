@@ -1,26 +1,30 @@
 @import '../../framework/abstracts/variables';
 
 .entity-form,
-.entity-form__show-detailed {
+.entity-show{
   padding: 1em;
   display: grid;
   width: 100%;
-  grid-template:
-          "terms terms" auto
-          "solution solution" auto
-          "submit delete" 1fr/
-          1fr 1fr;
-  @media (min-width: 600px){
-    grid-template:
-            "terms solution" auto
-            "submit delete" 1fr /
-    1fr 1fr;
-  }
   grid-column-gap: 1em;
 
-  label {
+  .label, label {
     font-weight: 300;
     font-size: .9em;
+  }
+
+  .label--with-option {
+    float: right;
+  }
+
+  .terms, textarea{
+    padding: 5px 5px;
+    line-height: 1.5em;
+    min-height: calc(4.5em + 10px);
+    max-height: 16em;
+  }
+  .terms{
+    border: 1px solid #eee;
+    border-radius: 3px;
   }
 
   .CodeMirror {
@@ -33,55 +37,63 @@
       filter: grayscale(25%);
     }
   }
-  textarea[name='entity[terms]'] {
-    padding: 5px 5px;
-    line-height: 1.5em;
-    min-height: calc(4.5em + 10px);
-    max-height: 16em;
-  }
 
   .field--submit {
     margin-bottom: 0;
   }
 }
 
-.entity-form__show-detailed {
+
+.entity-form{
   grid-template:
-          ". close" 1fr
-          "terms terms" auto
-          "solution solution" auto /
-          1fr 1fr;
-  @media (min-width: 424px) {
+    "terms terms"
+    "solution solution"
+    "submit delete";
+
+  @media (min-width: 650px){
     grid-template:
-          "terms solution close" auto /
-          1fr 1fr auto;
+      "terms solution" auto
+      "submit delete" auto / 1fr 1fr;
+  }
+
+  .entity-form__terms {
+    grid-area: terms;
+  }
+
+  .entity-form__solution {
+    grid-area: solution;
+  }
+
+  .field--submit {
+    grid-area: submit;
+  }
+
+  .entity-form__delete {
+    grid-area: delete;
+    justify-self: end;
+  }
+
+}
+
+
+
+.entity-show-close{
+  position: absolute;
+  line-height: 0;
+  right: .5em;
+  top: .5em;
+}
+
+.entity-show{
+  padding: 1.5em 3em 1em 1em;
+  grid-template-columns: 1fr;
+  @media (min-width: 600px) {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
-.entity-form__terms {
-  grid-area: terms;
-}
 
-.entity-form__solution {
-  grid-area: solution;
-}
 
-.field--submit {
-  grid-area: submit;
-}
 
-.entity-form__delete {
-  grid-area: delete;
-  justify-self: end;
-}
-
-.label--with-option {
-  float: right;
-}
-
-.entity-form__close {
-  grid-area: close;
-  justify-self: right;
-}
 
 

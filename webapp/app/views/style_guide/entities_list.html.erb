@@ -12,36 +12,35 @@
     Click on an item will show details.
   </p>
   <%= highlight_html do %>
-<ul id="entities-list" class="card-list" %="">
-  <li id="entity-456789"><div class="entity-form__show-detailed">
-    <div class="field entity-form__close">
-      <div class="control">
-        <a class="close" href="#">
-          <%= icon_close %>
-        </a>
-      </div>
+<ul class="card-list">
+  <li>
+    <div class="entity-show-close">
+      <a class="close" href="#">
+        <%= icon_close %>
+      </a>
     </div>
-    <div class="field entity-form__terms">
-      <div class="control">
-        <label for="terms__456789">Terms</label>
-        <textarea name="terms__456789" id="terms__456789" readonly="readonly">Charles Baudelaire</textarea>
+    <div class="entity-show">
+      <div class="field">
+        <div class="control">
+          <span class="label">Terms</span>
+          <div class="terms">Charles Baudelaire</div>
+        </div>
       </div>
-    </div>
-    <div class="field field--for-solution entity-form__solution">
-      <div class="control">
-        <label for="solution__456789">Solution</label>
-        <span class="label--with-option">
-          <input name="auto_solution_enabled__456789" id="auto_solution_enabled__456789" value="true" disabled="disabled" checked="checked" type="checkbox">
-          <label for="auto_solution_enabled__456789">Auto solution</label>
-        </span>
-        <textarea name="solution__456789" id="solution__456789" readonly="readonly">{
-'author': 'Charles Baudelaire'
+      <div class="field">
+        <div class="control">
+          <span class="label">Solution</span>
+          <span class="label--with-option">
+            <span class="icon icon--x-small"><%= icon_check %></span>
+            <span class="label">Auto solution</span>
+          </span>
+          <textarea name="solution__456789" id="solution__example_1" readonly="readonly">{
+  'author': 'Charles Baudelaire'
 }</textarea>
+        </div>
       </div>
     </div>
-  </div>
   </li>
-  <li id="entity-123789">
+  <li>
     <a href="#">
       <span class="card-list__item__name">Victor Hugo</span>
     </a>
@@ -51,7 +50,7 @@
   </li>
 </ul>
 <script>
-App.CodeEditor.buildJavaScriptEditor($("#solution__456789")[0], true);
+App.CodeEditor.buildJavaScriptEditor($("#solution__example_1")[0], true);
 </script>
   <% end %>
 </section>
@@ -90,7 +89,7 @@ App.CodeEditor.buildJavaScriptEditor($("#solution__456789")[0], true);
 Londres</textarea>
         </div>
       </div>
-      <div class="field field--for-solution entity-form__solution">
+      <div class="field entity-form__solution">
         <div class="control">
           <label for="solution">Solution</label>
           <span class="label--with-option">
