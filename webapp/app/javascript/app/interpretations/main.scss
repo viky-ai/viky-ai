@@ -1,5 +1,26 @@
 @import '../../framework/abstracts/variables';
 
+.card-list{
+  .interpretations-list__show {
+    width: 100%;
+    color: #222;
+    border-right: 3px solid transparent;
+
+    &:focus,
+    &:hover {
+      .card-list__item__name{
+        text-decoration: none;
+      }
+    }
+  }
+  a.interpretations-list__show {
+    &:focus,
+    &:hover{
+      border-right: 3px solid $primary-color;
+    }
+  }
+}
+
 .interpretations-form,
 .interpretations-form__show-detailed {
   padding: 1.25em 1em;
