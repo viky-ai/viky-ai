@@ -13,18 +13,15 @@ class EntityForm
   setupListeners: (event) ->
     @findCheckbox().on 'change', () => @updateSolutionState()
     @findCheckbox().on 'change', () => @syncSolutionWithTerms()
-    @findTerms().on 'paste', () => @syncSolutionWithTerms()
-    @findTerms().on 'keyup', () => @syncSolutionWithTerms()
+    @findTerms().on 'paste, keyup', () => @syncSolutionWithTerms()
 
   updateSolutionState: () ->
     if @findCheckbox().is(':checked')
-      @findSolution().CodeMirror.setOption('readOnly', true);
+      @findSolution().CodeMirror.setOption('readOnly', "nocursor");
       $(@findSolution()).addClass('readonly');
-      @findSolution().CodeMirror.setOption('mode', 'text/plain');
     else
       @findSolution().CodeMirror.setOption('readOnly', false);
       $(@findSolution()).removeClass('readonly');
-      @findSolution().CodeMirror.setOption('mode', 'javascript');
 
   syncSolutionWithTerms: () ->
     if @findCheckbox().is(':checked')
