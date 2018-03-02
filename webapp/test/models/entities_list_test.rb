@@ -213,7 +213,7 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Import entities empty columns' do
+  test 'Import entities empty terms' do
     io = StringIO.new
     io << "'Terms','Auto solution','Solution'\n"
     io << "'','true','w: hail'\n"
@@ -224,7 +224,22 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms can't be blank in line 4"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Terms can't be blank in line 2"], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities unexpected auto solution' do
+    io = StringIO.new
+    io << "'Terms','Auto solution','Solution'\n"
+    io << "'snow','blablabla','w: snow'\n"
+    io << "'cloudy|nuageux:fr','True','weather: cloudy'\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ["Validation failed: Auto solution must be true or false in line 2"], entities_import.errors[:file]
   end
 
 

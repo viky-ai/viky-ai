@@ -56,7 +56,7 @@ class EntitiesImport
             entities_list:         entities_list
           )
         end
-      rescue ActiveRecord::RecordInvalid => e
+      rescue ActiveRecord::ActiveRecordError => e
         @errors[:file] << "#{e.message} in line #{csv.lineno}"
         result = false
         raise ActiveRecord::Rollback
@@ -76,7 +76,15 @@ class EntitiesImport
     end
 
     def parse_auto_solution(row)
-      (row['Auto solution'].present? && row['Auto solution'].downcase == 'true') ? true : false
+      raise ActiveRecord::ActiveRecordError, I18n.t('errors.entity.import.unexpected_autosolution') if row['Auto solution'].blank?
+      case row['Auto solution'].downcase
+        when 'true'
+          true
+        when 'false'
+          false
+        else
+          raise ActiveRecord::ActiveRecordError, I18n.t('errors.entity.import.unexpected_autosolution')
+      end
     end
 
     def parse_solution(row)
