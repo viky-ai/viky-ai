@@ -94,20 +94,6 @@
     font-size: .875em;
   }
 
-  .CodeMirror{
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    &.CodeMirror-focused{
-      border-color: $focus_color;
-      box-shadow: 0 0 0 2px rgba($focus_color, .25);
-      outline:none;
-    }
-    .CodeMirror-scroll {
-      min-height: 1em;
-      max-height: 21em;
-    }
-  }
 }
 
 
