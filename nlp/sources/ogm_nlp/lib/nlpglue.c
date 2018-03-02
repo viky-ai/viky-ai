@@ -38,7 +38,9 @@ og_status NlpGlueBuild(og_nlp_th ctrl_nlp_th)
   for (struct request_word *rw1 = request_word_all; rw1 && rw1->next; rw1 = rw1->next)
   {
     struct request_word *rw2 = rw1->next;
-    if (rw2->self_index >= ctrl_nlp_th->basic_request_word_used) break;
+
+    // ignore non basic word (build from ltras)
+    if (rw2->self_index >= ctrl_nlp_th->basic_request_word_used) continue;
 
     int position1 = rw1->start_position + rw1->length_position;
     int position2 = rw2->start_position;

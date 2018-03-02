@@ -42,6 +42,9 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+// %.15g means, 15 significant figures not decimal, default is 6.
+#define DOgPrintDouble "%.15g"
+
 /** Nlp configuration set by env variables*/
 struct og_nlp_env
 {
@@ -207,7 +210,9 @@ struct expression
 
 enum nlp_interpretation_scope_type
 {
-  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private = 1, nlp_interpretation_scope_type_hidden = 2
+  nlp_interpretation_scope_type_public = 0,
+  nlp_interpretation_scope_type_private = 1,
+  nlp_interpretation_scope_type_hidden = 2
 };
 
 struct interpretation_compile
@@ -311,16 +316,22 @@ struct nlp_synchro_current_lock
   struct nlp_synchro_lock lock[DOgNlpMaximumOwnedLock];
 };
 
-
 struct request_word
 {
   int self_index;
+
+  /** whole string representing normalized request_word (in ort case it is the corrected one) */
   int start;
   int length;
+
+  /** whole string representing NON normalized request_word */
   int raw_start;
   int raw_length;
+
+  /** Position in orginal request string */
   int start_position;
   int length_position;
+
   og_bool is_number;
   double number_value;
   double spelling_score;
@@ -391,8 +402,8 @@ struct orip
 
 struct request_any
 {
-  int request_word_start;
-  int request_words_nb;
+  /** List of struct request_word covered by any */
+  GQueue queue_request_words[1];
   int distance;
 
   /** used to optimize the attachement any <-> request_expression */
@@ -606,6 +617,7 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;
+  int basic_group_request_word_nb;
   og_heap haccept_language;
   og_bool show_explanation;
   og_bool auto_complete;
@@ -766,6 +778,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
 
 og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_group_numbers.c */
 og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);

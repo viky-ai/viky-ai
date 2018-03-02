@@ -122,6 +122,13 @@ module Nls
         check_interpret("9100200,0",    { interpretation: "numbers_list", solution: { numbers: [9100200]} })
       end
 
+      def test_thousand_decimal_number_french_with_score
+        Interpretation.default_locale = "fr-FR"
+        check_interpret("1 200,3",      { interpretation: "numbers_list", solution: { numbers: [1200.3]}, score: 1.0 })
+        check_interpret("9 100 200,0",  { interpretation: "numbers_list", solution: { numbers: [9100200]}, score: 1.0 })
+        check_interpret("9100200,0",    { interpretation: "numbers_list", solution: { numbers: [9100200]}, score: 1.0 })
+      end
+
       def test_thousand_decimal_number_english
         Interpretation.default_locale = "en-US"
         check_interpret("1,200.3",      { interpretation: "numbers_list", solution: { numbers: [1200.3]} })
@@ -303,6 +310,12 @@ module Nls
         check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
         check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
 
+        Interpretation.default_locale = "*"
+        check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+        check_interpret("1'000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
+        check_interpret("1.000", { interpretation: "numbers_list", solution: { numbers: [1]} })
+
         Interpretation.default_locale = "fr-FR"
         check_interpret("1 000", { interpretation: "numbers_list", solution: { numbers: [1000]} })
         check_interpret("1,000", { interpretation: "numbers_list", solution: { numbers: [1]} })
@@ -440,6 +453,28 @@ module Nls
        check_interpret("1.000,2", { interpretation: "numbers_list", solution: { numbers: [1, 0, 2]} })
 
       end
+
+
+      def test_number_in_string
+        skip "#16960: TODO : à corriger"
+        package = Package.new("test_number_in_string")
+
+        interpretation_private = package.new_interpretation("element")
+        interpretation_private << Expression.new("for 3 days")
+
+        Nls.remove_all_packages
+
+        Interpretation.default_locale = nil
+
+        Nls.package_update(package)
+
+        check_interpret("for 3 days",
+          interpretation: "element",
+          solution: "for 3 days"
+        )
+
+      end
+
 
     end
   end
