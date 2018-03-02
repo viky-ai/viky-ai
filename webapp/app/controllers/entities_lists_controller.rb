@@ -93,7 +93,7 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       if @entities_list.from_csv @entities_import
         format.json {
-          redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list), notice: t('views.entities_lists.show.import.select_import.success', count: 2)
+          redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list), notice: t('views.entities_lists.show.import.select_import.success', count: @entities_import.count)
         }
       else
         format.json {

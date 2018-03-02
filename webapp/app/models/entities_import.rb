@@ -6,12 +6,14 @@ class EntitiesImport
 
   attr_reader :file
   attr_reader :errors
+  attr_reader :count
 
   def initialize(params = {})
     @errors = {
       file: []
     }
     @mode = :append
+    @count = 0
     if params.present? && params[:file].present?
       @file      = params[:file].tempfile
       @mime_type = params[:file].content_type
@@ -58,6 +60,7 @@ class EntitiesImport
             solution:              parse_solution(row),
             entities_list:         entities_list
           )
+          @count += 1
         end
       rescue ActiveRecord::ActiveRecordError => e
         @errors[:file] << "#{e.message} in line #{csv.lineno - 1}"

@@ -158,7 +158,7 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
-  test 'Import two entities' do
+  test 'Import three entities' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
@@ -168,8 +168,8 @@ class EntitiesTest < ApplicationSystemTestCase
       attach_file('import_file', file).click
       click_button 'Import'
     end
-    assert page.has_text? '2 entities imported successfully'
-    assert_equal 4, all('#entities-list > li').count
+    assert page.has_text? '3 entities imported successfully'
+    assert_equal 5, all('#entities-list > li').count
   end
 
 
@@ -184,8 +184,8 @@ class EntitiesTest < ApplicationSystemTestCase
       choose 'Replace'
       click_button 'Import'
     end
-    assert page.has_text? '2 entities imported successfully'
-    assert_equal 2, all('#entities-list > li').count
+    assert page.has_text? '3 entities imported successfully'
+    assert_equal 3, all('#entities-list > li').count
   end
 
 
