@@ -13,15 +13,13 @@
   <%= highlight_html do %>
 <ul class="card-list">
   <li>
-    <div class='interpretations-form__show-detailed'>
-      <div class="field interpretations-form__close">
-        <div class="control">
-          <a href="#" class="close">
-            <%= icon_close %>
-          </a>
-        </div>
+    <div class='interpretations-show'>
+      <div class="interpretations-show__close">
+        <a href="#" class="close">
+          <%= icon_close %>
+        </a>
       </div>
-      <div class="field interpretations-form__interpretation">
+      <div class="field interpretations-show__interpretation">
         <div class="control">
           <span class="interpretation-resume">
             <span class="interpretation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
@@ -30,7 +28,7 @@
           <span class="badge">Glued</span>
         </div>
       </div>
-      <div class="aliases interpretations-form__summary">
+      <div class="aliases interpretations-show__summary">
         <table>
           <thead>
           <tr>
@@ -57,7 +55,7 @@
           </tbody>
         </table>
       </div>
-      <div class="field interpretations-form__solution">
+      <div class="field interpretations-show__solution">
         <div class="control">
           <span class="solution-label">Solution</span>
           <textarea id="solution__1" rows="3">{

@@ -59,23 +59,17 @@
   .entity-form__terms {
     grid-area: terms;
   }
-
   .entity-form__solution {
     grid-area: solution;
   }
-
   .field--submit {
     grid-area: submit;
   }
-
   .entity-form__delete {
     grid-area: delete;
     justify-self: end;
   }
-
 }
-
-
 
 .entity-show-close{
   position: absolute;
@@ -91,9 +85,3 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-
-
-
-
-
-

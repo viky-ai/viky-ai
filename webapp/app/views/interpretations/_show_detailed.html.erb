@@ -1,26 +1,24 @@
-<div class='interpretations-form__show-detailed'>
+<div class='interpretations-show'>
 
-  <div class="field interpretations-form__close">
-    <div class="control">
-      <%= link_to icon_close.html_safe,
-                  user_agent_intent_interpretation_path(
-                      interpretation.intent.agent.owner,
-                      interpretation.intent.agent,
-                      interpretation.intent,
-                      interpretation
-                  ),
-                  remote: true,
-                  class: 'close' %>
-    </div>
+  <div class="interpretations-show__close">
+    <%= link_to icon_close.html_safe,
+                user_agent_intent_interpretation_path(
+                    interpretation.intent.agent.owner,
+                    interpretation.intent.agent,
+                    interpretation.intent,
+                    interpretation
+                ),
+                remote: true,
+                class: 'close' %>
   </div>
 
-  <div class="field interpretations-form__interpretation">
+  <div class="field interpretations-show__interpretation">
     <div class="control">
       <%= display_expression(interpretation) %>
     </div>
   </div>
 
-  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %> interpretations-form__summary">
+  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %> interpretations-show__summary">
     <% if interpretation.interpretation_aliases.any? %>
       <table>
         <thead>
@@ -68,7 +66,7 @@
   </div>
 
   <% unless interpretation.auto_solution_enabled %>
-    <div class="field field--for-solution interpretations-form__solution">
+    <div class="field field--for-solution interpretations-show__solution">
       <div class="control">
         <span class="solution-label">
           <%= t('views.interpretations.solution_label_readonly') %>
