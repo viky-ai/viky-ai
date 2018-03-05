@@ -11,7 +11,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
+    assert page.has_text?('Interpretations / weather_forecast PUBLIC')
   end
 
 
@@ -24,7 +24,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('weather_forecast')
 
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
+    assert page.has_text?('Interpretations / weather_forecast PUBLIC')
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_no_button?('Update')
@@ -76,7 +76,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#interpretations-form .aliases') do
       click_link 'admin/weather/interpretations/weather_question'
     end
-    assert page.has_text?('weather_question PUBLIC (admin/weather/interpretations/weather_question)')
+    assert page.has_text?('Interpretations / weather_question PUBLIC')
   end
 
 
@@ -107,7 +107,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.aliases') do
       find_link('admin/weather/entities_lists/weather_conditions').click
     end
-    assert page.has_text?('weather_conditions PUBLIC (admin/weather/entities_lists/weather_conditions)')
+    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
   end
 
 
@@ -354,7 +354,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     def admin_go_to_intent_show(agent, intent)
       admin_login
       visit user_agent_intent_path(users(:admin), agent, intent)
-      assert page.has_text?("#{intent.intentname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/interpretations/#{intent.intentname})")
+      assert page.has_text?("Interpretations / #{intent.intentname} PUBLIC")
     end
 
     def fill_in_editor_field(text)

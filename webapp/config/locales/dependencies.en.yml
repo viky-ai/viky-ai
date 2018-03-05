@@ -2,7 +2,7 @@ en:
   views:
     dependencies:
       index:
-        list_title: Agent dependencies
+        list_title: Dependencies
         dependents: Dependents
         new: Add new dependency
         delete: Delete

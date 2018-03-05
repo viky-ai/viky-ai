@@ -8,4 +8,4 @@
 App.Message.notice("<%= escape_javascript(message) %>");
 $("#membership-<%= @membership.id %>").html("<%= escape_javascript(@modal_content) %>");
 $("body").trigger("Agent:injectOrigin");
-$("#agent-<%= @membership.agent.id %>").replaceWith("<%= escape_javascript(@agent_html) %>");
+$("#agent-user-list-<%= @membership.agent.id %>").replaceWith("<%= escape_javascript(@agent_html) %>");

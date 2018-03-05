@@ -24,7 +24,7 @@ class StyleGuideController < ApplicationController
       { name: "Modal",                  slug: "modal"        },
       { name: "Tabs",                   slug: "tabs"         },
       { name: "Nav",                    slug: "nav"          },
-      { name: "Agent",                  slug: "agent"        },
+      { name: "Agent header",           slug: "agent_header" },
       { name: "Agent box",              slug: "agent_box"    },
       { name: "Agent compact",          slug: "agent_compact" },
       { name: "Interpretations list",   slug: "interpretations_list" },

@@ -2,7 +2,7 @@ en:
   views:
     entities_lists:
       index:
-        list_title: Agent entities lists
+        list_title: Entities lists
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> entities lists
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> entities lists
         new: New entities list

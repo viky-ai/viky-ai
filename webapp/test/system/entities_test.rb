@@ -11,7 +11,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
-    assert page.has_text?('weather_conditions PUBLIC (admin/weather/entities_lists/weather_conditions)')
+    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
   end
 
 
@@ -76,7 +76,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
-    assert page.has_text?('weather_conditions PUBLIC (admin/weather/entities_lists/weather_conditions)')
+    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
     within('#entities-list') do
       click_link 'soleil'
       assert page.has_no_button?('Update')
@@ -134,7 +134,7 @@ class EntitiesTest < ApplicationSystemTestCase
     def admin_go_to_entities_list_show(agent, entities_list)
       admin_login
       visit user_agent_entities_list_path(users(:admin), agent, entities_list)
-      assert page.has_text?("#{entities_list.listname} PUBLIC (#{users(:admin).username}/#{agent.agentname}/entities_lists/#{entities_list.listname})")
+      assert page.has_text?("#{entities_list.listname} PUBLIC")
     end
 
     def fill_in_editor_field(text)

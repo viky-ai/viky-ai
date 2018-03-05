@@ -7,8 +7,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
   test "Add agent dependency" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
-    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
-    assert page.has_text?(' Agent dependencies (0) - Dependents (0) ')
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
 
     # Add admin/terminator to admin/weather
     click_link "Add new dependency"
@@ -19,11 +18,10 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
 
     assert page.has_text?('T-800 admin/terminator')
     assert page.has_no_text?('Add new dependency')
-    assert page.has_text?(' Agent dependencies (1) - Dependents (0) ')
+    assert page.has_text?('Dependencies (1) - Dependents (0)')
 
     # Try to add admin/weather to admin/terminator and detect cycle
     click_link "T-800 admin/terminator"
-    assert page.has_text?('Agents / T-800 / Overview (admin/terminator)')
     click_link "Add new dependency"
 
     within(".modal") do
@@ -38,8 +36,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
   test "Use alias from successor agent and delete dependency" do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
-    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
-    assert page.has_text?(' Agent dependencies (0) - Dependents (0) ')
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
 
     # Add dependency
     click_link "Add new dependency"
@@ -47,7 +44,6 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
       assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
     end
-    assert page.has_text?('T-800 admin/terminator')
 
     # Delete ? no
     click_link "Delete"
@@ -60,7 +56,10 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert page.has_link?('Interpretations')
     click_link 'Interpretations'
     click_link 'weather_forecast'
-    assert page.has_text?('weather_forecast PUBLIC (admin/weather/interpretations/weather_forecast)')
+
+    within(".header__breadcrumb") do
+      assert page.has_text?('Interpretations / weather_forecast PUBLIC')
+    end
 
     # Add Expression & create an alias from dependency
     first('trix-editor').click.set('Salut Marcel')
@@ -73,7 +72,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert_equal 1, all('span[title="admin/terminator/interpretations/terminator_find"]').size
 
     # Return to interpretation list
-    click_link 'My awesome weather bot'
+    click_link 'Overview'
 
     # Delete dependency
     click_link "Delete"
@@ -100,7 +99,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
     assert page.has_text?('Agents')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
     assert page.has_no_link?('Add new dependency')
   end
 end

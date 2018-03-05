@@ -5,7 +5,8 @@ class AgentsShowTest < ApplicationSystemTestCase
   test 'Navigation to agent show' do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
-    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
+    assert page.has_text?('admin/weather')
+    assert page.has_text?('Sharing overview')
     assert_equal '/agents/admin/weather', current_path
   end
 
@@ -20,7 +21,7 @@ class AgentsShowTest < ApplicationSystemTestCase
   test 'No redirection when configuring from show' do
     go_to_agents_index
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Agents / My awesome weather bot / Overview (admin/weather)')
+    assert page.has_text?('Sharing overview')
     click_link 'Configure'
     assert page.has_text?('Configure agent')
     click_button 'Cancel'
@@ -31,7 +32,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     fill_in 'Name', with: 'My new updated weather agent'
     fill_in 'ID', with: 'weather-v2'
     click_button 'Update'
-    assert page.has_text?('Agents / My new updated weather agent / Overview (admin/weather-v2)')
+    assert page.has_text?('admin/weather-v2')
     assert_equal '/agents/admin/weather-v2', current_path
   end
 

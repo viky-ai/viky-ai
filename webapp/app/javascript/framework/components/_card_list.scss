@@ -107,13 +107,3 @@
   }
 
 }
-
-.card-list-header{
-  @include display_flex();
-  justify-content: space-between;
-  margin-top: 2em;
-  h4{
-    margin-bottom: 0;
-    line-height: 1.8em;
-  }
-}

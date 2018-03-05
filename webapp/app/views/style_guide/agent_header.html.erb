@@ -1,0 +1,98 @@
+<div class="sg-intro">
+  <h1>Agent header</h1>
+  <p>
+    TODO
+  </p>
+</div>
+
+<section>
+  <h2>With bg image</h2>
+  <%= highlight_html do %>
+<div class="agent-header">
+  <div class="agent-header__visual agent-header__visual--image" style="background-image: url(<%= image_path('style-guide/wall-e.jpg') %>);">
+    <span class="agent__visual__ribbon">public</span>
+  </div>
+  <div class="agent-header__content">
+    <div class="agent-header__content__title">
+      <h2>
+        My awesome first agent
+        <br /><small>username/agentname</small>
+      </h2>
+    </div>
+    <div class="agent-header__content__actions">
+      <a href="#" class="btn btn--small btn--outline">
+        <span class="icon icon--small"><%= icon_settings %></span> Configure
+      </a>
+    </div>
+    <div class="agent-header__content__description">
+      <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h3>
+    </div>
+  </div>
+  <div class="agent-header__content__nav">
+    <ul>
+      <li>
+        <a href="#">
+          Overview
+        </a>
+      </li>
+      <li>
+        <a href="#" class="current">
+          Interpretations <span class="badge badge--small badge--primary">12</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          Entities lists <span class="badge badge--small">5</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <% end %>
+</section>
+
+<section>
+  <h2>With bg gradient</h2>
+  <%= highlight_html do %>
+<div class="agent-header">
+  <div class="agent-header__visual background-color-gradient__brown">
+    <span class="agent__visual__ribbon">public</span>
+  </div>
+  <div class="agent-header__content">
+    <div class="agent-header__content__title">
+      <h2>
+        My awesome first agent
+        <br /><small>username/agentname</small>
+      </h2>
+    </div>
+    <div class="agent-header__content__actions">
+      <a href="#" class="btn btn--small btn--outline">
+        <span class="icon icon--small"><%= icon_settings %></span> Configure
+      </a>
+    </div>
+    <div class="agent-header__content__description">
+      <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h3>
+    </div>
+  </div>
+  <div class="agent-header__content__nav">
+    <ul>
+      <li>
+        <a href="#">
+          Overview
+        </a>
+      </li>
+      <li>
+        <a href="#" class="current">
+          Interpretations <span class="badge badge--small badge--primary">12</span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          Entities lists <span class="badge badge--small">5</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+    <% end %>
+</section>

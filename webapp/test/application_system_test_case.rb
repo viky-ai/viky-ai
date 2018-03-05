@@ -54,7 +54,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     visit user_agent_path(user, agent)
     assert page.has_link?('Interpretations')
     click_link 'Interpretations'
-    assert page.has_text?('Agent interpretations')
+    within(".agent-header__content__nav .current") do
+      assert page.has_text?('Interpretations')
+    end
   end
 
   def go_to_agent_entities_lists(user, agent)
@@ -62,7 +64,9 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     visit user_agent_path(user, agent)
     assert page.has_link?('Entities lists')
     click_link 'Entities lists'
-    assert page.has_text?('Agent entities lists')
+    within(".agent-header__content__nav .current") do
+      assert page.has_text?('Entities lists')
+    end
   end
 
   def go_to_agent_show(user, agent)
