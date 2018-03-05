@@ -26,37 +26,24 @@ namespace :constellation do
 
       agent.intents.includes(:interpretations).each do | intent |
 
+        intent_relations = []
+        intent.interpretations.each do | interpretation |
+          interpretation.interpretation_aliases.each do | interpretation_alias |
+            next if !interpretation_alias.type_intent?
+            intent_relations << 'intent_' + interpretation_alias.intent.id
+          end
+        end
+
         intent_node = {
           parent: 'agent_' + agent.id,
           id: 'intent_' + intent.id,
           type: "intent" ,
           title: intent.intentname,
           slug: intent.slug,
-          relations: []
+          relations: intent_relations
         }
 
         constellation_data << intent_node
-
-        intent.interpretations.each do | interpretation |
-
-          interpretation_relations = []
-          interpretation.interpretation_aliases.each do | interpretation_alias |
-            next if !interpretation_alias.type_intent?
-            interpretation_relations << 'intent_' + interpretation_alias.intent.id
-          end
-
-          interpretation_node = {
-            parent: 'intent_' + intent.id,
-            id: 'interpretation_' + interpretation.id,
-            type: "interpretation",
-            slug: nil,
-            title: ActionController::Base.helpers.sanitize(interpretation.expression, tags: []),
-            relations: interpretation_relations
-          }
-
-          constellation_data << interpretation_node
-
-        end
 
       end
     end
