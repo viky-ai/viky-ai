@@ -10,6 +10,8 @@ class IntentsController < ApplicationController
 
   def show
     @interpretation = Interpretation.new
+    @interpretation.glued = true
+    @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
     @current_locale = params[:locale] || @intent.ordered_locales.first
   end
