@@ -13,7 +13,7 @@ class EntitiesListsController < ApplicationController
   end
 
   def new
-    @entities_list = EntitiesList.new
+    @entities_list = EntitiesList.new(visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private]))
     render partial: 'new'
   end
 

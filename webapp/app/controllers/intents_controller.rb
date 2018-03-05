@@ -17,7 +17,7 @@ class IntentsController < ApplicationController
   end
 
   def new
-    @intent = Intent.new
+    @intent = Intent.new(visibility: Intent.visibilities.key(Intent.visibilities[:is_private]))
     render partial: 'new'
   end
 
