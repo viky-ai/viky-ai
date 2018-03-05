@@ -12,7 +12,13 @@ class EntitiesController < ApplicationController
       if entity.save
         format.js do
           @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: Entity.new})
-          @html = render_to_string(partial: 'entity', locals: { entity: entity })
+          @html = render_to_string(partial: 'entity', locals: {
+            entity: entity,
+            can_edit: current_user.can?(:edit, @agent),
+            entities_list: @entities_list,
+            agent: @agent,
+            owner: @agent.owner
+          })
           render partial: 'create_succeed'
         end
       else
@@ -37,7 +43,13 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if @entity.update(entity_params)
         format.js {
-          @show = render_to_string(partial: 'entity', locals: { entity: @entity })
+          @show = render_to_string(partial: 'entity', locals: {
+            entity: @entity,
+            can_edit: current_user.can?(:edit, @agent),
+            entities_list: @entities_list,
+            agent: @agent,
+            owner: @agent.owner
+          })
           render partial: 'show'
         }
       else
@@ -53,7 +65,13 @@ class EntitiesController < ApplicationController
   def show
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'entity', locals: { entity: @entity })
+        @show = render_to_string(partial: 'entity', locals:  {
+          entity: @entity,
+          can_edit: current_user.can?(:edit, @agent),
+          entities_list: @entities_list,
+          agent: @agent,
+          owner: @agent.owner
+        })
         render partial: 'show'
       }
     end

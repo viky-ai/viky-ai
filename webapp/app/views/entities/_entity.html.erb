@@ -1,13 +1,9 @@
-<% entities_list = entity.entities_list %>
-<% agent = entity.entities_list.agent %>
-<% owner = entity.entities_list.agent.owner %>
-
 <li id="entity-<%= entity.id %>"
     data-id="<%= entity.id %>">
-  <% link = current_user.can?(:edit, agent) ?
+  <% link = can_edit ?
                 edit_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) :
                 show_detailed_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) %>
-  <% if current_user.can? :edit, agent %>
+  <% if can_edit %>
     <div class="card-list__item__draggable"></div>
   <% end %>
   <a href="<%= link %>" data-remote="true" >
