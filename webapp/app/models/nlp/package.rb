@@ -193,6 +193,8 @@ class Nlp::Package
           expression[:expression] = term['term']
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
           expression[:solution] = entity.solution.present? ? "`#{entity.solution}`" : ''
+          expression[:keep_order] = true
+          expression[:glued]      = true
           expressions << expression
         end
       end

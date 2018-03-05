@@ -63,22 +63,30 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "soleil",
               "locale"     => "fr",
-              "solution" => "`weather: sunny`"
+              "solution" => "`weather: sunny`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "sun",
               "locale"     => "en",
-              "solution" => "`weather: sunny`"
+              "solution" => "`weather: sunny`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "pluie",
               "locale"     => "fr",
-              "solution" => "`weather: raining`"
+              "solution" => "`weather: raining`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "rain",
               "locale"     => "en",
-              "solution" => "`weather: raining`"
+              "solution" => "`weather: raining`",
+              "keep-order" => true,
+              "glued"      => true,
             }
           ]
         },
@@ -90,21 +98,29 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "aujourd'hui",
               "locale"     => "fr",
-              "solution" => "`date: today`"
+              "solution" => "`date: today`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "tout à l'heure",
               "locale"     => "fr",
-              "solution" => "`date: today`"
+              "solution" => "`date: today`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "today",
               "locale"     => "en",
-              "solution" => "`date: today`"
+              "solution" => "`date: today`",
+              "keep-order" => true,
+              "glued"      => true,
             },
             {
               "expression" => "tomorrow",
-              "solution" => "`date: tomorrow`"
+              "solution" => "`date: tomorrow`",
+              "keep-order" => true,
+              "glued"      => true,
             }
           ]
         }
