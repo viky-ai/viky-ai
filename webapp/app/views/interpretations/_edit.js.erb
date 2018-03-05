@@ -1,6 +1,3 @@
-$("#interpretation-<%= @interpretation.id %>").html("<%= escape_javascript(@form) %>");
-App.InterpretationsList.updateDraggable()
-App.InterpretationsList.displayCodeEditor($("#solution__<%= @interpretation.id %>")[0]);
-
-
-// App.FocusInput.atEnd("#interpretation-<%= @interpretation.id %> input[type=text]");
+App.CardListHelper.updateItem("#interpretation-<%= @interpretation.id %>", "<%= escape_javascript(@form) %>");
+App.CardListHelper.updateDraggable();
+App.CodeEditor.buildJavaScriptEditor($("#solution__<%= @interpretation.id %>")[0]);

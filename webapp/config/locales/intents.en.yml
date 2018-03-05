@@ -2,7 +2,7 @@ en:
   views:
     intents:
       index:
-        list_title: Agent interpretations
+        list_title: Interpretations
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> interpretations
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> interpretations
         new: New interpretation

@@ -2,27 +2,33 @@ class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_intent, except: [:new, :create, :confirm_destroy, :update_positions]
+  before_action :set_intent, except: [:index, :new, :create, :confirm_destroy, :update_positions]
+
+  def index
+    @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
+  end
 
   def show
     @interpretation = Interpretation.new
+    @interpretation.glued = true
+    @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
     @current_locale = params[:locale] || @intent.ordered_locales.first
   end
 
   def new
-    @intent = Intent.new
+    @intent = Intent.new(visibility: Intent.visibilities.key(Intent.visibilities[:is_private]))
     render partial: 'new'
   end
 
   def create
     @intent = Intent.new(intent_params)
     @intent.agent = @agent
-    @intent.locales = ['*']
+    @intent.locales = [Locales::ANY]
     respond_to do |format|
       if @intent.save
         format.json do
-          redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.new.success_message')
+          redirect_to user_agent_intents_path(current_user, @agent), notice: t('views.intents.new.success_message')
         end
       else
         format.json do
@@ -42,7 +48,7 @@ class IntentsController < ApplicationController
     respond_to do |format|
       if @intent.update(intent_params)
         format.json {
-          redirect_to user_agent_path(current_user, @agent), notice: t('views.intents.edit.success_message')
+          redirect_to user_agent_intents_path(current_user, @agent), notice: t('views.intents.edit.success_message')
         }
       else
         format.json {
@@ -65,11 +71,11 @@ class IntentsController < ApplicationController
 
   def destroy
     if @intent.destroy
-      redirect_to user_agent_path(current_user, @agent), notice: t(
+      redirect_to user_agent_intents_path(current_user, @agent), notice: t(
         'views.intents.destroy.success_message', name: @intent.intentname
       )
     else
-      redirect_to user_agent_path(current_user, @agent), alert: t(
+      redirect_to user_agent_intents_path(current_user, @agent), alert: t(
         'views.intents.destroy.errors_message',
         errors: @intent.errors.full_messages.join(', ')
       )
@@ -77,7 +83,7 @@ class IntentsController < ApplicationController
   end
 
   def select_new_locale
-    available_locales = Interpretation::LOCALES - @intent.locales
+    available_locales = Locales::ALL - @intent.locales
     render partial: 'select_new_locale', locals: { available_locales: available_locales }
   end
 
@@ -111,6 +117,7 @@ class IntentsController < ApplicationController
     end
   end
 
+
   private
 
     def intent_params
@@ -128,7 +135,7 @@ class IntentsController < ApplicationController
 
     def check_user_rights
       case action_name
-      when 'show'
+      when 'show', 'index'
         access_denied unless current_user.can? :show, @agent
       when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale', 'remove_locale'
         access_denied unless current_user.can? :edit, @agent

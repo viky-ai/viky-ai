@@ -1,23 +1,23 @@
-weather_greeting_hello:
-  expression: Hello world
-  intent: weather_greeting
+weather_forecast_tomorrow:
+  expression: What the weather like tomorrow ?
+  intent: weather_forecast
   locale: 'en'
   keep_order: true
   glued: true
   auto_solution_enabled: false
-  solution: 'greeting.who'
+  solution: 'forecast.tomorrow'
   position: 0
 
-weather_greeting_bonjour:
-  expression: Bonjour tout le monde
-  intent: weather_greeting
+weather_forecast_demain:
+  expression: Quel temps fera-t-il demain ?
+  intent: weather_forecast
   locale: 'fr'
   auto_solution_enabled: true
   position: 1
 
-weather_who_world:
-  expression: world
-  intent: weather_who
+weather_question_like:
+  expression: What the weather like
+  intent: weather_question
   locale: 'en'
   auto_solution_enabled: true
   position: 0

@@ -3,6 +3,9 @@ en:
     agents:
       breadcrumb:
         base: Agents
+        overview: Overview
+        intents: Interpretations
+        entities_lists: Entities lists
         new_btn: New agent
       index:
         delete: Delete
@@ -17,6 +20,7 @@ en:
           not_found: No agent found
           placeholder: Search by name or ID
         ownership_transferred: "Agent %{name} transferred to user %{username}"
+        no_description: No description yet.
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete agent: <strong>%{name}</strong>."
@@ -75,3 +79,7 @@ en:
           other: '%{count} collaborators'
         description: Description
         sharing_overview: Sharing overview
+        sections:
+          overview: Overview
+          intents: Interpretations
+          entities_lists: Entities lists

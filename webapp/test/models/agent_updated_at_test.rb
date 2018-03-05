@@ -49,7 +49,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       expression: 'Good morning John',
       locale: 'en'
     )
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
     interpretation.intent = intent
@@ -64,10 +64,10 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
-    interpretation = intent.interpretations.first
+    interpretation = intent.interpretations.last
     interpretation.locale = 'fr'
     assert interpretation.save
 
@@ -80,7 +80,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
     interpretation = intent.interpretations.first
@@ -93,8 +93,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases addition' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_who')
-    interpretation = Interpretation.find_by_expression('Bonjour tout le monde')
+    intent = Intent.find_by_intentname('weather_question')
+    interpretation = Interpretation.find_by_expression('Quel temps fera-t-il demain ?')
 
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
@@ -102,7 +102,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       aliasname: 'who'
     )
     interpretation_alias.interpretation = interpretation
-    interpretation_alias.intent = intent
+    interpretation_alias.interpretation_aliasable = intent
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json
@@ -117,8 +117,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases modification' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_greeting')
-    interpretation = intent.interpretations.first
+    intent = Intent.find_by_intentname('weather_forecast')
+    interpretation = intent.interpretations.last
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json
@@ -136,8 +136,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases deletion' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_greeting')
-    interpretation = intent.interpretations.first
+    intent = Intent.find_by_intentname('weather_forecast')
+    interpretation = intent.interpretations.last
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json

@@ -124,7 +124,7 @@ class MembershipsController < ApplicationController
 
       if params[:origin] == 'show'
         render_to_string(
-          partial: '/agents/agent',
+          partial: '/agents/sharing',
           locals: { agent: agent }
         )
       else

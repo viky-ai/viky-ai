@@ -1,28 +1,26 @@
-<% if agent.image.nil? %>
-  <% css_class = "background-color-gradient__#{agent.color}" %>
-<% else %>
-  <% css_class = "agent__visual--image" %>
-  <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
-<% end %>
-<div class="agent" id="agent-<%= agent.id %>">
-  <div class="agent__visual <%= css_class %>" style="<%= css_style %>">
-    <% if agent.is_public? %>
-      <span class="agent__visual__ribbon">
-        <%= t('activerecord.attributes.agent.visibility_is_public') %>
-      </span>
-    <% end %>
-    <h2>
-      <%= agent.name %>
-      <br /><small><%= agent.slug %></small>
-    </h2>
-  </div>
-  <div class="agent__info">
-    <% unless agent.description.blank? %>
-      <h3><%= t('views.agents.show.description') %></h3>
-      <p><%= agent.description %></p>
-    <% end %>
+<div id="agent-user-list-<%= agent.id %>">
 
-    <h3><%= t('views.agents.show.sharing_overview') %></h3>
+  <div class="h4-actions-container">
+    <h4><%= t('views.agents.show.sharing_overview') %></h4>
+    <div>
+      <% if User.confirmed.count > 1 %>
+        <% if current_user.owner? agent %>
+          <a href="<%= user_agent_memberships_path(agent.owner, agent) %>"
+             class="btn btn--small btn--outline" data-action="open-remote-modal">
+            <span class="icon icon--x-small"><%= icon_share %></span>
+            <%= t('views.agents.index.share') %>
+          </a>
+          <a href="<%= confirm_transfer_ownership_user_agent_path(agent.owner, agent) %>"
+             class="btn btn--small btn--outline" data-action="open-remote-modal">
+            <span class="icon icon--x-small"><%= icon_transfert %></span>
+            <%= t('views.agents.edit.transfer_ownership') %>
+          </a>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
     <ul class="user-list">
       <li>
         <div class="user">
@@ -66,4 +64,5 @@
       <% end %>
     </ul>
   </div>
+
 </div>

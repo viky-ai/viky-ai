@@ -257,14 +257,15 @@ class AliasesForm
     name_prefix = "interpretation[interpretation_aliases_attributes][]"
     for id in @deletable_ids()
       html.push "
-        <input type='hidden' name='#{name_prefix}[aliasname]'      value='' />
-        <input type='hidden' name='#{name_prefix}[position_start]' value='' />
-        <input type='hidden' name='#{name_prefix}[position_end]'   value='' />
-        <input type='hidden' name='#{name_prefix}[intent_id]'      value='' />
-        <input type='hidden' name='#{name_prefix}[nature]'         value='' />
-        <input type='hidden' name='#{name_prefix}[is_list]'        value='' />
-        <input type='hidden' name='#{name_prefix}[id]'             value='#{id}' />
-        <input type='hidden' name='#{name_prefix}[_destroy]'       value='1' />"
+        <input type='hidden' name='#{name_prefix}[aliasname]'                     value='' />
+        <input type='hidden' name='#{name_prefix}[position_start]'                value='' />
+        <input type='hidden' name='#{name_prefix}[position_end]'                  value='' />
+        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value=' ' />
+        <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='' />
+        <input type='hidden' name='#{name_prefix}[nature]'                        value='' />
+        <input type='hidden' name='#{name_prefix}[is_list]'                       value='' />
+        <input type='hidden' name='#{name_prefix}[id]'                            value='#{id}' />
+        <input type='hidden' name='#{name_prefix}[_destroy]'                      value='1' />"
     @form_container.closest('form').prepend(html.join(''))
 
 
@@ -276,14 +277,13 @@ class AliasesForm
       else
         alias_id_value = alias.id
 
-    if alias.nature == 'type_intent'
-      tmp = alias.intent_slug.split("/")
-      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/</small>#{tmp[2]}"
-      reference_title = alias.intent_slug
-
     if alias.nature == 'type_number'
       reference_html  = "Number"
       reference_title = "Number"
+    else
+      tmp = alias.slug.split("/")
+      reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/#{tmp[2]}/</small>#{tmp[3]}"
+      reference_title = alias.slug
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
@@ -305,23 +305,30 @@ class AliasesForm
           <input type='text' name='#{name_prefix}[aliasname]'        value='#{@aliasname(alias)}' />"
 
     line.push "
-          <input type='hidden' name='#{name_prefix}[position_start]' value='#{alias.start}' />
-          <input type='hidden' name='#{name_prefix}[position_end]'   value='#{alias.end}' />
-          <input type='hidden' name='#{name_prefix}[intent_id]'      value='#{alias.intent_id}' />
-          <input type='hidden' name='#{name_prefix}[nature]'         value='#{alias.nature}' />
-          <input type='hidden' name='#{name_prefix}[id]'             value='#{alias_id_value}' />
+          <input type='hidden' name='#{name_prefix}[position_start]'                value='#{alias.start}' />
+          <input type='hidden' name='#{name_prefix}[position_end]'                  value='#{alias.end}' />
+          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_id]'   value='#{alias.interpretation_aliasable_id}' />
+          <input type='hidden' name='#{name_prefix}[interpretation_aliasable_type]' value='#{alias.interpretation_aliasable_type}' />
+          <input type='hidden' name='#{name_prefix}[nature]'                        value='#{alias.nature}' />
+          <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature == 'type_intent' && alias.url != null
-      line.push "
-        <td><span class='#{alias.color}' title='#{reference_title}'><a href='#{alias.url}'>#{reference_html}</a></span></td>
-      "
-    else
+    if alias.nature == 'type_digit'
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
+    else
+      line.push "
+        <td><span class='#{alias.color}' title='#{reference_title}'><a href='/agents/#{alias.slug}'>#{reference_html}</a></span></td>
+      "
 
-    if alias.nature == 'type_intent'
+    if alias.nature == 'type_digit'
+      line.push "
+        <td>
+          <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
+          <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
+        </td>"
+    else
       line.push "
         <td class='options'>
           <label>
@@ -331,12 +338,6 @@ class AliasesForm
           <label>
             <input type='radio' name='#{name_prefix}[any_enabled]' value='true' #{any_enabled_checked} /> Any
           </label>
-        </td>"
-    else
-      line.push "
-        <td>
-          <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
-          <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
         </td>"
 
     line.push "<td>#{alias.selection}</td>"

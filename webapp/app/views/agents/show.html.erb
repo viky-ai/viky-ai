@@ -1,77 +1,8 @@
-<header class="header">
-  <div class="header__breadcrumb">
-    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <strong><%= @agent.name %></strong> (<%= @agent.slug %>)
-  </div>
-  <div class="header__tools">
-    <% if current_user.can? :edit, @agent %>
-      <a href="<%= edit_user_agent_path(@agent.owner, @agent, origin: 'show') %>"
-         class="btn btn--small btn--outline" data-action="open-remote-modal">
-        <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
-      </a>
-    <% end %>
-    <% if User.confirmed.count > 1 %>
-      <% if current_user.owner? @agent %>
-        <a href="<%= user_agent_memberships_path(@agent.owner, @agent) %>"
-           class="btn btn--small btn--outline" data-action="open-remote-modal">
-          <span class="icon icon--x-small"><%= icon_share %></span>
-          <%= t('views.agents.index.share') %>
-        </a>
-        <a href="<%= confirm_transfer_ownership_user_agent_path(@agent.owner, @agent) %>"
-           class="btn btn--small btn--outline" data-action="open-remote-modal">
-          <span class="icon icon--x-small"><%= icon_transfert %></span>
-          <%= t('views.agents.edit.transfer_ownership') %>
-        </a>
-      <% end %>
-    <% end %>
-  </div>
-</header>
+<%= render 'header', agent: @agent %>
 
-<%= render 'agent', agent: @agent %>
+<%= render 'sharing', agent: @agent %>
 
 <%= render 'dependencies' %>
-
-<div class="intents-list-header">
-  <h4><%= t('views.intents.index.list_title') %></h4>
-  <div>
-    <% if current_user.can? :edit, @agent %>
-      <a href="<%= new_user_agent_intent_path(current_user, @agent) %>"
-         class="btn btn--primary"
-         data-action="open-remote-modal">
-        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.intents.index.new') %>
-      </a>
-    <% end %>
-  </div>
-</div>
-
-
-<% current_user_can_edit = current_user.can?(:edit, @agent) %>
-<% if @intents.count == 0 %>
-  <br />
-  <div class="card">
-    <div class="card-content">
-      <div class="blankslate">
-        <div class="blankslate__illustration">
-          <img src='<%= image_path "robot-idle.png" %>'
-               srcset='<%= image_path "robot-idle.png" %> 1x,
-                       <%= image_path "robot-idle@2x.png" %> 2x' />
-        </div>
-        <div class="blankslate__content">
-          <% if current_user_can_edit %>
-            <%= t('views.intents.blankslate.message_edit_html', agent: @agent.agentname) %>
-          <% else %>
-            <%= t('views.intents.blankslate.message_show_html', agent: @agent.agentname) %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-<% else %>
-  <h5><%= t('views.intents.index.list_public_title_html') %></h5>
-  <%= render 'intents_list', intents: @intents.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
-  <h5><%= t('views.intents.index.list_private_title_html') %></h5>
-  <%= render 'intents_list', intents: @intents.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
-<% end %>
 
 <% content_for :right_aside do %>
   <%= render '/console/base' %>

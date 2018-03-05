@@ -56,6 +56,33 @@
   }
 }
 
+
+.user-list{
+  list-style: none;
+  padding: 1.5em;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: .75em 1.25em;
+
+  @media (min-width: 800px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1100px){
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 1300px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1700px){
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (min-width: 2000px){
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+
 .dependencies-title{
   & > em{
     font-style: normal;
