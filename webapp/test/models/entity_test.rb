@@ -65,15 +65,15 @@ class EntityTest < ActiveSupport::TestCase
   test 'Add a term to an entity' do
     entity = entities(:weather_sunny)
     expected = [
+      { 'term' => 'sun', 'locale' => 'en' },
       { 'term' => 'soleil', 'locale' => 'fr' },
-      { 'term' => 'sun', 'locale' => 'en' }
     ]
     assert_equal expected, entity.terms
     entity.terms << { 'term' => 'Sol', 'locale' => 'es' }
     assert entity.save
     expected = [
-      { 'term' => 'soleil', 'locale' => 'fr' },
       { 'term' => 'sun', 'locale' => 'en' },
+      { 'term' => 'soleil', 'locale' => 'fr' },
       { 'term' => 'Sol','locale' => 'es' }
     ]
     assert_equal expected, entity.terms

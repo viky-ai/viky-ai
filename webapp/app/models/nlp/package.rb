@@ -169,7 +169,7 @@ class Nlp::Package
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
         expression[:glued]      = interpretation.glued      if interpretation.glued
-        expression[:solution]   = build_solution(interpretation)
+        expression[:solution]   = build_interpretation_solution(interpretation)
         expressions << expression
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
@@ -192,7 +192,7 @@ class Nlp::Package
           expression = {}
           expression[:expression] = term['term']
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution] = entity.solution.present? ? "`#{entity.solution}`" : ''
+          expression[:solution] = build_entities_list_solution(entity)
           expression[:keep_order] = true
           expression[:glued]      = true
           expressions << expression
@@ -263,7 +263,7 @@ class Nlp::Package
       result
     end
 
-    def build_solution(interpretation)
+    def build_interpretation_solution(interpretation)
       result = ''
       if interpretation.auto_solution_enabled
         if interpretation.interpretation_aliases.empty?
@@ -271,6 +271,16 @@ class Nlp::Package
         end
       else
         result = "`#{interpretation.solution}`" unless interpretation.solution.blank?
+      end
+      result
+    end
+
+    def build_entities_list_solution(entity)
+      result = ''
+      if entity.auto_solution_enabled
+        result = entity.terms.first['term']
+      else
+        result = "`#{entity.solution}`" unless entity.solution.blank?
       end
       result
     end

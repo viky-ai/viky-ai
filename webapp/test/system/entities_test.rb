@@ -118,13 +118,13 @@ class EntitiesTest < ApplicationSystemTestCase
       check('Auto solution')
       page.execute_script %Q{ $('#terms__new_entity').trigger("click") }
       fill_in 'Terms', with: "  \nbrumeux"
-      assert page.has_text?("\n  'weather_conditions': 'brumeux'\n")
+      assert page.has_text?('"brumeux"')
 
       uncheck('Auto solution')
       fill_in 'Terms', with: "foggy\nbrumeux"
-      assert page.has_text?("\n  'weather_conditions': 'brumeux'\n")
+      assert page.has_text?('"brumeux"')
       check('Auto solution')
-      assert page.has_text?("\n  'weather_conditions': 'foggy'\n")
+      assert page.has_text?('"foggy"')
     end
   end
 

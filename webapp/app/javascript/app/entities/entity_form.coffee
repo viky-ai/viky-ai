@@ -42,7 +42,7 @@ class EntityForm
     if term == undefined || term == ''
       return ''
     else
-      return "{\n  '" + key + "': '" + term + "'\n}"
+      return '"' + term.replace(/"/g, '\\"') + '"'
 
   findTerms: ->
     return @form.find("textarea[name='entity[terms]']")
