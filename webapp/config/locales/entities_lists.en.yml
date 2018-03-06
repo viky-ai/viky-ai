@@ -3,7 +3,7 @@ en:
     entities_lists:
       show:
         import:
-          btn: Import
+          btn: CSV Import
           select_import:
             title: Import entities
             wait_message: Import in progress, please wait...
@@ -16,7 +16,7 @@ en:
               other: "%{count} entities imported successfully"
             max_file_size: The maximum file size allowed is 2Mo.
             file_label: Choose a CSV file to import
-        export_btn: Export
+        export_btn: CSV Export
       index:
         list_title: Entities lists
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> entities lists
