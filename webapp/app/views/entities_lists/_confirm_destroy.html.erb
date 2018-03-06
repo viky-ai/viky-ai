@@ -15,15 +15,14 @@
                    url: user_agent_entities_list_path(current_user, @agent, @entities_list),
                    method: :delete,
                    html: {
-                       data: { validation: :delete },
-                       class: 'js-delete-validation'
+                     data: { validation: :delete }
                    },
                    remote: true) do |delete_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('confirm_destroy.label') %></label>
             <div>
-              <input type="text" name="validation" id="input-delete-validation"/>
+              <input type="text" name="validation" />
             </div>
             <div class="help help--error" style="display:none;">
               <span class="icon icon--x-small"><%= icon_alert %></span>
