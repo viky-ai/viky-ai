@@ -5,16 +5,17 @@ en:
         import:
           btn: Import
           select_import:
-            title: Import a list of entities
-            message: Select a CSV file to import
+            title: Import entities
             wait_message: Import in progress, please wait...
+            append_label: Append to current entities
+            replace_label: Replace current entities
             submit: Import
             success:
               zero: "No entity imported"
               one: "1 entity imported successfully"
               other: "%{count} entities imported successfully"
             max_file_size: The maximum file size allowed is 2Mo.
-            file_label: Choose a file
+            file_label: Choose a CSV file to import
         export_btn: Export
       index:
         list_title: Entities lists

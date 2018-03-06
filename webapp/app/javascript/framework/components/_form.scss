@@ -1,3 +1,10 @@
+.field__title{
+  margin: 1.5em 0 .25em 0;
+  text-transform: uppercase;
+  font-size: .8em;
+  color: #888;
+}
+
 .field{
 
   &:not(:last-child){
@@ -99,6 +106,7 @@
     margin-bottom: .5em;
     line-height: 1.5;
     display: inline-block;
+    &.radio,
     &.checkbox{
       width: auto;
       cursor: pointer;

@@ -150,7 +150,7 @@ class EntitiesTest < ApplicationSystemTestCase
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import a list of entities'
+      assert page.has_text? 'Import entities'
       assert page.has_no_text? 'File must be present'
       click_button 'Import'
       assert page.has_text? 'File must be present'
@@ -163,7 +163,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import a list of entities'
+      assert page.has_text? 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
       attach_file('import_file', file).click
       click_button 'Import'
@@ -178,7 +178,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import a list of entities'
+      assert page.has_text? 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
       attach_file('import_file', file).click
       choose 'Replace'
