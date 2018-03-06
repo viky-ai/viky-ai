@@ -37,10 +37,11 @@ class EntitiesImport
   def proceed(entities_list)
     return false unless valid?
     options = {
-      col_sep: ',',
-      quote_char: "'",
-      force_quotes: true,
-      headers: [I18n.t('activerecord.attributes.entity.terms'), I18n.t('activerecord.attributes.entity.auto_solution_enabled'), I18n.t('activerecord.attributes.entity.solution')],
+      headers: [
+        I18n.t('activerecord.attributes.entity.terms'),
+        I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
+        I18n.t('activerecord.attributes.entity.solution')
+      ],
       skip_blanks: true,
       encoding: 'UTF-8'
     }
@@ -69,7 +70,7 @@ class EntitiesImport
         result = false
         raise ActiveRecord::Rollback
       rescue CSV::MalformedCSVError => e
-        @errors[:file] << e.message
+        @errors[:file] << "Bad CSV format: #{e.message}"
         result = false
         raise ActiveRecord::Rollback
       end

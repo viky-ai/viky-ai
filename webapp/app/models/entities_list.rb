@@ -22,9 +22,6 @@ class EntitiesList < ApplicationRecord
 
   def to_csv
     options = {
-      col_sep: ',',
-      quote_char: "'",
-      force_quotes: true,
       headers: [
         I18n.t('activerecord.attributes.entity.terms'),
         I18n.t('activerecord.attributes.entity.auto_solution_enabled'),

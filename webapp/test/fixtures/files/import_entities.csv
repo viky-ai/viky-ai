@@ -1,6 +1,6 @@
-'Terms','Auto solution','Solution'
-'nuageux:fr|cloudy:en','false','{
-  ''weather'': ''cloudy''
-}'
-'snow','false',''
-'sun spell:en|éclaircie','false',''
+Terms,Auto solution,Solution
+nuageux:fr|cloudy:en,false,"{
+  'city': 'Londres'
+}"
+snow,false,''
+sun spell:en|éclaircie,false,''
