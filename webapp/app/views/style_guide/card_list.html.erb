@@ -50,26 +50,26 @@
 <section>
   <h2>List + Stats</h2>
   <%= highlight_html do %>
-<ul class="card-list">
+<ul class="card-list card-list--has-item-stats">
   <li>
     <a href="#">
       <span class="card-list__item__name">Lorem ipsum</span>
       <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+      <span class="card-list__item__stats">xxx items</span>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
   </li>
   <li>
     <a href="#">
       <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+      <span class="card-list__item__stats">xxx items</span>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
   </li>
   <li>
     <a href="#">
       <span class="card-list__item__name">Dolores maiores</span>
       <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+      <span class="card-list__item__stats">xxx items</span>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
   </li>
 </ul>
   <% end %>
@@ -135,31 +135,31 @@
 <section>
   <h2>List + All</h2>
   <%= highlight_html do %>
-<ul class="card-list">
+<ul class="card-list card-list--has-item-stats">
   <li>
     <div class="card-list__item__draggable"></div>
     <a href="#">
       <span class="card-list__item__name">Lorem ipsum</span>
       <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+      <div class="card-list__item__stats">xxx items</div>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
     <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
   </li>
   <li>
     <div class="card-list__item__draggable"></div>
-    <a href="#">
+    <a href="#" >
       <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+      <div class="card-list__item__stats">xxx items</div>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
     <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
   </li>
   <li>
     <div class="card-list__item__draggable"></div>
-    <a href="#">
+    <a href="#" >
       <span class="card-list__item__name">Dolores maiores</span>
       <span class="card-list__item__desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quibusdam, fugit. Velit voluptate, ducimus iste illo explicabo atque nulla illum qui natus quaerat quod, vitae error odit eveniet hic eius?</span>
+      <div class="card-list__item__stats">xxx items</div>
     </a>
-    <div class="card-list__item__stats">xxx items</div>
     <div class="card-list__item__actions"><button class="btn btn--small">Action</button></div>
   </li>
 </ul>

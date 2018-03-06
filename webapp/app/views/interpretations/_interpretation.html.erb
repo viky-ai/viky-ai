@@ -16,9 +16,20 @@
       <% link = show_detailed_user_agent_intent_interpretation_path(owner, agent, intent, interpretation) %>
     <% end %>
   <% end %>
-  <a href="<%= link %>" class="interpretations-list__show" data-remote="true">
-    <span class="card-list__item__name" dir="<%= dir %>">
-      <%= display_expression(interpretation) %>
-   </span>
-  </a>
+
+  <% if link == "#" %>
+    <span class="interpretations-list__show">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(interpretation) %>
+      </span>
+    </span>
+  <% else %>
+    <a href="<%= link %>"
+       class="interpretations-list__show"
+       data-remote="true">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(interpretation) %>
+     </span>
+    </a>
+  <% end %>
 </li>

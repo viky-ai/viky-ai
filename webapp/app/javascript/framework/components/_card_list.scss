@@ -69,41 +69,52 @@
       }
     }
 
+    & > span,
     & > a{
-      display: block;
+      display: bloc;
       width: 100%;
       line-height: 1.8em;
       padding: .5rem 1rem;
       text-decoration: none;
       border-radius: 2px;
+
+      display: grid;
+      grid-template:
+        "name  stats"
+        "desc  stats"
+          / auto auto;
+
       .card-list__item__name{
+        grid-area: name;
         display: block;
       }
       .card-list__item__desc{
+        grid-area: desc;
         display: block;
         color: #aaa;
         font-size: .8em;
         line-height: 1.4em;
       }
-      &:focus,
-      &:hover{
-        .card-list__item__name{
-          text-decoration: underline;
-        }
+      .card-list__item__stats{
+        grid-area: stats;
+        font-size: .8em;
+        line-height: 1.8rem;
+        padding: 0 1rem;
+        color: #aaa;
+        text-align:right;
       }
     }
-    .card-list__item__stats{
-      font-size: .8em;
-      line-height: 1.8rem;
-      padding: .5rem 1rem;
-      color: #aaa;
-      text-align:right;
-      min-width: 140px;
+
+    & > a:focus,
+    & > a:hover{
+      .card-list__item__name{
+        text-decoration: underline;
+      }
     }
+
     .card-list__item__actions{
       padding: .5rem;
     }
 
   }
-
 }
