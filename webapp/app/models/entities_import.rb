@@ -1,8 +1,6 @@
 class EntitiesImport
 
-  require 'csv'
-
-  MAX_FILE_SIZE = 2*1024*1024
+  MAX_FILE_SIZE = 2.megabytes
 
   attr_reader :file
   attr_reader :errors
@@ -81,6 +79,7 @@ class EntitiesImport
 
 
   private
+
     def count_lines(csv)
       line_count = 0
       csv.each { line_count += 1 }
