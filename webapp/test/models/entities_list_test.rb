@@ -143,11 +143,11 @@ class EntitiesListTest < ActiveSupport::TestCase
 
 
   test 'Export entities_list' do
-    entities_list = entities_lists(:weather_conditions)
+    entities_list = entities_lists(:weather_dates)
     csv = entities_list.to_csv
     expected = ["'Terms','Auto solution','Solution'",
-                "'soleil:fr|sun:en','true','weather: sunny'",
-                "'pluie:fr|rain:en','true','weather: raining'",
+                "'aujourd''hui:fr|tout à l''heure:fr|today:en','false','{date: today}'",
+                "'tomorrow','false','{date: tomorrow}'",
                 ''].join("\n")
     assert_equal expected, csv
   end
@@ -159,14 +159,11 @@ class EntitiesListTest < ActiveSupport::TestCase
     sun.terms = [{ term: 'sun', locale: Locales::ANY }]
     sun.solution = ''
     sun.save
-    rain = entities(:weather_raining)
-    rain.auto_solution_enabled = false
-    rain.save
 
     csv = entities_list.to_csv
     expected = ["'Terms','Auto solution','Solution'",
                 "'sun','true',''",
-                "'pluie:fr|rain:en','false','weather: raining'",
+                "'pluie:fr|rain:en','true',''",
                 ''].join("\n")
     assert_equal expected, csv
   end
