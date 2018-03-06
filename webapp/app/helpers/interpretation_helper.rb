@@ -46,7 +46,8 @@ module InterpretationHelper
         aliasname: interpretation_alias.aliasname,
         nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_number]),
         is_list: interpretation_alias.is_list,
-        any_enabled: interpretation_alias.any_enabled
+        any_enabled: interpretation_alias.any_enabled,
+        slug: t("views.interpretations.number")
       }
     else
       current_aliasable = interpretation_alias.interpretation_aliasable
