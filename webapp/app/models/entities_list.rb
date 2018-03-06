@@ -1,10 +1,7 @@
 class EntitiesList < ApplicationRecord
+  include Colorable
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'
-
-  AVAILABLE_COLORS = %w[black red pink purple deep-purple indigo blue
-                        light-blue cyan teal green light-green lime
-                        yellow amber orange deep-orange brown].freeze
 
   belongs_to :agent, touch: true
   has_many :entities, dependent: :destroy
@@ -17,7 +14,6 @@ class EntitiesList < ApplicationRecord
                        presence: true
 
   before_validation :clean_listname
-  before_create :set_color
   before_create :set_position
 
   def slug
@@ -55,12 +51,6 @@ class EntitiesList < ApplicationRecord
     def clean_listname
       return if listname.nil?
       self.listname = listname.parameterize(separator: '-')
-    end
-
-    def set_color
-      return if color.present?
-      random_index = Random.new.rand(0..Intent::AVAILABLE_COLORS.size - 1)
-      self.color = Intent::AVAILABLE_COLORS[random_index]
     end
 
     def set_position

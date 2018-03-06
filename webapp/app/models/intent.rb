@@ -1,10 +1,7 @@
 class Intent < ApplicationRecord
+  include Colorable
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
-
-  AVAILABLE_COLORS = %w[black red pink purple deep-purple indigo blue
-                        light-blue cyan teal green light-green lime
-                        yellow amber orange deep-orange brown].freeze
 
   belongs_to :agent, touch: true
   has_many :interpretations, dependent: :destroy
@@ -22,7 +19,6 @@ class Intent < ApplicationRecord
 
   before_validation :clean_intentname
   before_create :set_position
-  before_create :set_color
 
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
@@ -62,9 +58,4 @@ class Intent < ApplicationRecord
       end
     end
 
-    def set_color
-      return if color.present?
-      random_index = Random.new.rand(0..Intent::AVAILABLE_COLORS.size - 1)
-      self.color = Intent::AVAILABLE_COLORS[random_index]
-    end
 end
