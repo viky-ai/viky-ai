@@ -2,6 +2,7 @@ en:
   views:
     entities_lists:
       show:
+        limit_exceeded: "Too many entities to display, only the first %{limit} are listed"
         import:
           btn: CSV Import
           select_import:
