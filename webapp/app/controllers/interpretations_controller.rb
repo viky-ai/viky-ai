@@ -13,7 +13,13 @@ class InterpretationsController < ApplicationController
       if interpretation.save
         format.js do
           @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: Interpretation.new, current_locale: @current_locale })
-          @html = render_to_string(partial: 'interpretation', locals: { interpretation: interpretation })
+          @html = render_to_string(partial: 'interpretation', locals: {
+            interpretation: interpretation,
+            can_edit: current_user.can?(:edit, @agent),
+            intent: @intent,
+            agent: @agent,
+            owner: @agent.owner
+          })
           render partial: 'create_succeed'
         end
       else
@@ -28,7 +34,13 @@ class InterpretationsController < ApplicationController
   def show
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'interpretation', locals: { interpretation: @interpretation })
+        @show = render_to_string(partial: 'interpretation', locals: {
+          interpretation: @interpretation,
+          can_edit: current_user.can?(:edit, @agent),
+          intent: @intent,
+          agent: @agent,
+          owner: @agent.owner
+        })
         render partial: 'show'
       }
     end
@@ -56,7 +68,13 @@ class InterpretationsController < ApplicationController
     respond_to do |format|
       if @interpretation.update(interpretation_params)
         format.js {
-          @show = render_to_string(partial: 'interpretation', locals: { interpretation: @interpretation })
+          @show = render_to_string(partial: 'interpretation', locals: {
+            interpretation: @interpretation,
+            can_edit: current_user.can?(:edit, @agent),
+            intent: @intent,
+            agent: @agent,
+            owner: @agent.owner
+          })
           render partial: 'show'
         }
       else
