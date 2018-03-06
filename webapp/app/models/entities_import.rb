@@ -49,7 +49,7 @@ class EntitiesImport
     ActiveRecord::Base.transaction do
       csv = CSV.new(@file, options)
       entities_list.entities.delete_all if @mode == :replace
-      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position) + 1
+      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
       begin
         check_header(csv)
         line_count = count_lines(csv)
@@ -84,7 +84,7 @@ class EntitiesImport
     def count_lines(csv)
       line_count = 0
       csv.each { line_count += 1 }
-      line_count -= 2
+      line_count -= 1
       csv.rewind
       line_count
     end
