@@ -43,6 +43,7 @@ class Console
       $("main").hide()
       $("nav.h-nav").hide()
       $(".toggle-console").hide()
+      App.FocusInput.atEnd("input[name='interpret[sentence]']")
 
     if action == 'console-leave-fullscreen'
       event.preventDefault()
