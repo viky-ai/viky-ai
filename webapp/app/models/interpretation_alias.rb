@@ -8,7 +8,7 @@ class InterpretationAlias < ApplicationRecord
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
   validates :aliasname, presence: true
 
-  validate :interpretation_aliasable_present, unless: -> { self.type_digit? }
+  validate :interpretation_aliasable_present, unless: -> { self.type_number? }
   validate :check_position_start_greater_than_end
   validate :no_overlap
   validate :check_aliasname_uniqueness

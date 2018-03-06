@@ -197,14 +197,54 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       position_end: 16,
       aliasname: 'inter_parent',
       interpretation_id: interpretation_child.id,
-      intent_id: intent_parent.id,
+      interpretation_aliasable: intent_parent,
       nature: 'type_intent'
     )
 
-    updated_at_a = child.updated_at.to_json
-    updated_at_intent_child = intent_child.updated_at.to_json
+    updated_at_a = child.reload.updated_at.to_json
+    updated_at_intent_child = intent_child.reload.updated_at.to_json
 
     assert intent_parent.destroy
+
+    assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
+    assert_not_equal updated_at_a, child.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after delete entities list in parent' do
+    child = create_agent("Agent A")
+    intent_child = Intent.create(
+      intentname: 'intent_child',
+      locales: ['en'],
+      agent: child
+    )
+    interpretation_child = Interpretation.create(
+      expression: 'interpretation_child',
+      locale: 'en',
+      intent: intent_child
+    )
+
+    parent = create_agent("Agent B")
+    entities_list_parent = EntitiesList.create(
+      listname: 'entities_list_parent',
+      agent: parent
+    )
+
+    assert AgentArc.create(source: child, target: parent)
+
+    assert InterpretationAlias.create(
+      position_start: 0,
+      position_end: 16,
+      aliasname: 'inter_parent',
+      interpretation_id: interpretation_child.id,
+      interpretation_aliasable: entities_list_parent,
+      nature: 'type_entities_list'
+    )
+
+    updated_at_a = child.reload.updated_at.to_json
+    updated_at_intent_child = intent_child.reload.updated_at.to_json
+
+    assert entities_list_parent.destroy
 
     assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
     assert_not_equal updated_at_a, child.reload.updated_at.to_json
