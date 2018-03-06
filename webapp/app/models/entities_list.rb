@@ -37,7 +37,7 @@ class EntitiesList < ApplicationRecord
       write_headers: true
     }
     CSV.generate(options) do |csv|
-      entities.each do |entity|
+      entities.order(position: :desc).each do |entity|
         terms = entity.terms
                       .collect { |t| t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}" }
                       .join('|')
