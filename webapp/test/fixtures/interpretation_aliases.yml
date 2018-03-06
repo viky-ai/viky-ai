@@ -1,6 +1,15 @@
-weather_greeting_hello_who:
-  aliasname: who
-  position_start: 6
-  position_end: 11
-  interpretation: weather_greeting_hello
-  intent: weather_who
+weather_forecast_tomorrow_question:
+  aliasname: question
+  position_start: 0
+  position_end: 21
+  interpretation: weather_forecast_tomorrow
+  interpretation_aliasable: weather_question(Intent)
+  nature: <%= InterpretationAlias.natures[:type_intent] %>
+
+weather_forecast_tomorrow_when:
+  aliasname: when
+  position_start: 22
+  position_end: 30
+  interpretation: weather_forecast_tomorrow
+  interpretation_aliasable: weather_dates(EntitiesList)
+  nature: <%= InterpretationAlias.natures[:type_entities_list] %>

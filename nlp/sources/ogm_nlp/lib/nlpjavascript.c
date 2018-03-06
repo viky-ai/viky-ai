@@ -401,7 +401,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
       {
         *p_json_anwser = json_real(computed_number);
 
-        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a number (double): %g", computed_number);
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a number (double): " DOgPrintDouble, computed_number);
       }
 
       break;

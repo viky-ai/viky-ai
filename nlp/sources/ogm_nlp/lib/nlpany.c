@@ -8,7 +8,7 @@
 
 static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Irequest_position_before, int Irequest_position_after);
-static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *prequest_word_start, int *prequest_words_nb);
+static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, GQueue *rw_list);
 static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_request_any2, gpointer user_data);
 static og_status NlpRequestAnySort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -29,7 +29,11 @@ static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct re
 
 og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th)
 {
-  return NlpInterpretAnyReset(ctrl_nlp_th);
+  IFE(NlpInterpretAnyReset(ctrl_nlp_th));
+
+  IFE(OgHeapFlush(ctrl_nlp_th->hrequest_any));
+
+  DONE;
 }
 
 og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th)
@@ -37,10 +41,15 @@ og_status NlpInterpretAnyReset(og_nlp_th ctrl_nlp_th)
   int request_any_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_any);
   struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, 0);
   IFN(request_any) DPcErr;
+
   for (int i = 0; i < request_any_used; i++)
   {
     g_queue_clear(request_any->queue_request_expression);
+    g_queue_clear(request_any->queue_request_words);
   }
+
+  IFE(OgHeapReset(ctrl_nlp_th->hrequest_any));
+
   DONE;
 }
 
@@ -112,30 +121,43 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     IFN(request_position_after) DPcErr;
   }
 
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_word) DPcErr;
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
 
-  for (int i = 0; i < ctrl_nlp_th->basic_request_word_used; i++)
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next)
   {
-    if (request_word[i].start_position < request_position_before->start + request_position_before->length) continue;
-    int j = i;
-    for (; j < ctrl_nlp_th->basic_request_word_used; j++)
-    {
-      if (request_word[j].start_position + request_word[j].length_position > request_position_after->start) break;
-    }
-    if (j == i) continue;
+    // ignore non basic word (build from ltras)
+    if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
 
-    int request_word_start = i;
-    int request_words_nb = j - i;
-    IFE(NlpRequestAnyTunePunctuation(ctrl_nlp_th, &request_word_start, &request_words_nb));
-    if (request_words_nb <= 0) continue;
+    if (rw->start_position < request_position_before->start + request_position_before->length) continue;
+
+    GQueue rw_list[1];
+    g_queue_init(rw_list);
+
+    // fill list with all basic request word
+    for (struct request_word *rw_next = rw; rw_next; rw_next = rw_next->next)
+    {
+      // ignore non basic word (build from ltras)
+      if (rw_next->self_index >= ctrl_nlp_th->basic_request_word_used) break;
+
+      if (rw_next->start_position + rw_next->length_position > request_position_after->start) break;
+
+      g_queue_push_tail(rw_list, rw_next);
+    }
+
+    IFE(NlpRequestAnyTunePunctuation(ctrl_nlp_th, rw_list));
+    if (rw_list->length <= 0) continue;
 
     size_t Irequest_any;
     struct request_any *request_any = OgHeapNewCell(ctrl_nlp_th->hrequest_any, &Irequest_any);
-    IFn(request_any) DPcErr;
+    IFn(request_any)
+    {
+      g_queue_clear(rw_list);
+      DPcErr;
+    }
 
-    request_any->request_word_start = request_word_start;
-    request_any->request_words_nb = request_words_nb;
+    // copy rw list state
+    *request_any->queue_request_words = *rw_list;
     request_any->is_attached = FALSE;
 
     g_queue_init(request_any->queue_request_expression);
@@ -146,26 +168,22 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
       request_expression->request_any_start = Irequest_any;
     }
     request_expression->request_anys_nb++;
-    i = j;
+
+    //rw = rw_next;
   }
 
   DONE;
 }
 
-static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *prequest_word_start, int *prequest_words_nb)
+static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, GQueue *rw_list)
 {
-  int request_word_start = *prequest_word_start;
-  int request_words_nb = *prequest_words_nb;
-
-  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_words) DPcErr;
-
-  for (int i = request_words_nb - 1; i >= 0; i--)
+  // remove last  request_word if they are punctuation
+  for (GList *iter = rw_list->tail; iter; iter = rw_list->tail)
   {
-    struct request_word *request_word = request_words + request_word_start + i;
-    if (request_word->is_punctuation)
+    struct request_word *rw = iter->data;
+    if (rw->is_punctuation)
     {
-      (*prequest_words_nb)--;
+      g_queue_pop_tail(rw_list);
     }
     else
     {
@@ -173,15 +191,14 @@ static og_status NlpRequestAnyTunePunctuation(og_nlp_th ctrl_nlp_th, int *preque
     }
   }
 
-  request_words_nb = *prequest_words_nb;
-
-  for (int i = 0; i < request_words_nb; i++)
+  // remove fisrt request_word if they are punctuation
+  for (GList *iter = rw_list->head; iter; iter = rw_list->head)
   {
-    struct request_word *request_word = request_words + request_word_start + i;
-    if (request_word->is_punctuation)
+    struct request_word *rw = iter->data;
+
+    if (rw->is_punctuation)
     {
-      (*prequest_word_start)++;
-      (*prequest_words_nb)--;
+      g_queue_pop_head(rw_list);
     }
     else
     {
@@ -196,16 +213,16 @@ static int NlpRequestAnyCmp(gconstpointer ptr_request_any1, gconstpointer ptr_re
 {
   struct request_any *request_any1 = (struct request_any *) ptr_request_any1;
   struct request_any *request_any2 = (struct request_any *) ptr_request_any2;
-  og_nlp_th ctrl_nlp_th = user_data;
 
-  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_words) DPcErr;
-  struct request_word *request_word1 = request_words + request_any1->request_word_start;
-  struct request_word *request_word2 = request_words + request_any2->request_word_start;
-
-  if (request_word1->start_position != request_word2->start_position)
+  if (request_any1->queue_request_words->head && request_any2->queue_request_words->head)
   {
-    return (request_word2->start_position - request_word1->start_position);
+    struct request_word *request_word1 = request_any1->queue_request_words->head->data;
+    struct request_word *request_word2 = request_any2->queue_request_words->head->data;
+
+    if (request_word1->start_position != request_word2->start_position)
+    {
+      return (request_word2->start_position - request_word1->start_position);
+    }
   }
   return request_any1 - request_any2;
 }
@@ -288,21 +305,24 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct request_any *request_any)
 {
-  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
-  IFN(request_position) DPcErr;
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, request_any->request_word_start);
+  IFN(request_positions) DPcErr;
 
   int minimum_distance = 0xfffffff;
   for (int i = 0; i < request_expression->request_positions_nb; i++)
   {
-    for (int j = 0; j < request_any->request_words_nb; j++)
-    {
-      int pos_rp1 = request_position[i].start;
-      int pos_rp2 = request_position[i].start + request_position[i].length;
+    struct request_position *request_position = request_positions + i;
 
-      int pos_rw1 = request_word[j].start_position;
-      int pos_rw2 = request_word[j].start_position + request_word[j].length_position;
+    for (GList * rw_iter = request_any->queue_request_words->head; rw_iter; rw_iter = rw_iter->next)
+    {
+      struct request_word *rw = rw_iter->data;
+
+      int pos_rp1 = request_position->start;
+      int pos_rp2 = request_position->start + request_position->length;
+
+      int pos_rw1 = rw->start_position;
+      int pos_rw2 = rw->start_position + rw->length_position;
 
       int distance = abs(pos_rp1 - pos_rw1);
       if (distance > abs(pos_rp1 - pos_rw2)) distance = abs(pos_rp1 - pos_rw2);
@@ -410,9 +430,8 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
         struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
             request_input_part->request_position_start + request_input_part->request_positions_nb - 1);
         IFN(request_position) DPcErr;
-        struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, request_any->request_word_start);
-        IFN(request_word) DPcErr;
-        if (request_position->start + request_position->length < request_word->start_position)
+        struct request_word *first_request_word = request_any->queue_request_words->head->data;
+        if (request_position->start + request_position->length < first_request_word->start_position)
         {
           if (i + 1 < request_expression->orips_nb)
           {
@@ -424,9 +443,9 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
               struct request_position *request_position_next = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
                   request_input_part_next->request_position_start);
               IFN(request_position) DPcErr;
-              struct request_word *request_word_last = OgHeapGetCell(ctrl_nlp_th->hrequest_word,
-                  request_any->request_word_start + request_any->request_words_nb - 1);
-              IFN(request_word_last) DPcErr;
+
+              struct request_word *request_word_last = request_any->queue_request_words->tail->data;
+
               if (request_word_last->start_position + request_word_last->length_position < request_position_next->start) return TRUE;
               else return FALSE;
             }
@@ -449,7 +468,7 @@ static og_status NlpRequestAnyAddPositions(og_nlp_th ctrl_nlp_th, struct request
   request_expression->safe_request_position_start = request_expression->request_position_start;
   request_expression->safe_request_positions_nb = request_expression->request_positions_nb;
 
-  int nb_request_positions = request_expression->request_positions_nb + request_any->request_words_nb;
+  int nb_request_positions = request_expression->request_positions_nb + request_any->queue_request_words->length;
 
   // pre-allocation to avoid reallocation
   int request_position_start = OgHeapAddCells(ctrl_nlp_th->hrequest_position, nb_request_positions);
@@ -466,17 +485,23 @@ static og_status NlpRequestAnyAddPositions(og_nlp_th ctrl_nlp_th, struct request
   request_position_from = request_positions + request_expression->request_position_start
       + request_expression->request_positions_nb;
   request_position_to = request_positions + request_position_start + request_expression->request_positions_nb;
-  for (int i = 0; i < request_any->request_words_nb; i++)
+
+  int i = 0;
+  for (GList *iter = request_any->queue_request_words->head; iter; iter = iter->next, i++)
   {
-    struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, request_any->request_word_start + i);
-    IFN(request_word) DPcErr;
-    request_position_to[i].start = request_word->start_position;
-    request_position_to[i].length = request_word->length_position;
+    struct request_word *rw = iter->data;
+
+    request_position_to[i].start = rw->start_position;
+    request_position_to[i].length = rw->length_position;
   }
 
   request_expression->request_position_start = request_position_start;
   request_expression->request_positions_nb = nb_request_positions;
-  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
+  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb))
+  {
+    DPcErr;
+  }
+
   DONE;
 }
 
@@ -640,21 +665,20 @@ static int NlpRequestAnyRequestExpressionString(og_nlp_th ctrl_nlp_th, struct re
 
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
 {
-  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_words) DPcErr;
-
   og_string request_sentence = ctrl_nlp_th->request_sentence;
 
   int start_position = -1;
   int end_position = -1;
-  for (int i = 0; i < request_any->request_words_nb; i++)
+
+  for (GList *iter = request_any->queue_request_words->head; iter; iter = iter->next)
   {
-    struct request_word *request_word = request_words + (request_any->request_word_start + i);
+    struct request_word *rw = iter->data;
+
     if (start_position < 0)
     {
-      start_position = request_word->start_position;
+      start_position = rw->start_position;
     }
-    end_position = request_word->start_position + request_word->length_position;
+    end_position = rw->start_position + rw->length_position;
   }
 
   int length = end_position - start_position;
@@ -672,17 +696,19 @@ int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, 
 
 int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_word) DPcErr;
-
   int length = 0;
   string[length] = 0;
-  for (int i = 0; i < request_any->request_words_nb; i++)
+
+  og_bool is_first = TRUE;
+  for (GList *iter = request_any->queue_request_words->head; iter; iter = iter->next)
   {
+    struct request_word *rw = iter->data;
+
     length = strlen(string);
-    snprintf(string + length, size - length, "%s%d:%d", (i ? " " : ""),
-        request_word[request_any->request_word_start + i].start_position,
-        request_word[request_any->request_word_start + i].length_position);
+    snprintf(string + length, size - length, "%s%d:%d", (is_first ? "" : " "), rw->start_position,
+        rw->length_position);
+
+    is_first = FALSE;
   }
 
   DONE;
@@ -690,9 +716,6 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
 
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-  IFN(request_word) DPcErr;
-
   og_string s = ctrl_nlp_th->request_sentence;
   int is = strlen(s);
 
@@ -700,20 +723,22 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
 
   int length = 0;
   string[length] = 0;
-  for (int i = 0; i < request_any->request_words_nb; i++)
+
+  for (GList *iter = request_any->queue_request_words->head; iter; iter = iter->next)
   {
-    int irw = request_any->request_word_start + i;
-    if (position < request_word[irw].start_position)
+    struct request_word *rw = iter->data;
+
+    if (position < rw->start_position)
     {
       length = strlen(string);
-      snprintf(string + length, size - length, "%.*s", request_word[irw].start_position - position, s + position);
-      position = request_word[irw].start_position;
+      snprintf(string + length, size - length, "%.*s", rw->start_position - position, s + position);
+      position = rw->start_position;
 
     }
+
     length = strlen(string);
-    snprintf(string + length, size - length, "[%.*s]", request_word[irw].length_position,
-        s + request_word[irw].start_position);
-    position = request_word[irw].start_position + request_word[irw].length_position;
+    snprintf(string + length, size - length, "[%.*s]", rw->length_position, s + rw->start_position);
+    position = rw->start_position + rw->length_position;
   }
 
   if (position < is)

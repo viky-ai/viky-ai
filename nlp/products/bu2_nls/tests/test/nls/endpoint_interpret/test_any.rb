@@ -18,11 +18,15 @@ module Nls
         Nls.package_update(create_package())
       end
 
-      def create_package
+      def create_package(expression_with_number = false)
         package = Package.new("any_package")
 
         hello = package.new_interpretation("hello")
         hello << Expression.new("hello @{name}", aliases: { name: Alias.any })
+        if expression_with_number
+          hello << Expression.new("hello @{number} @{name}", aliases: { number: Alias.number, name: Alias.any })
+          hello << Expression.new("hello @{name} @{number}", aliases: { number: Alias.number, name: Alias.any })
+        end
         hello << Expression.new("hello")
 
         no_any = package.new_interpretation("no_any")
@@ -60,6 +64,27 @@ module Nls
       def test_any_missing
         check_interpret("no_any",    interpretation: nil)
         check_interpret("no_any,+*", interpretation: nil)
+      end
+
+      def test_any_with_number
+
+        expected = { interpretation: "hello", solution: "123,456.7 brice" }
+        check_interpret("hello 123,456.7 brice",   expected)
+
+        expected = { interpretation: "hello", solution: "brice 123,456.7" }
+        check_interpret("hello brice 123,456.7",   expected)
+
+      end
+
+      def test_any_with_number_expression
+
+        Nls.remove_all_packages
+        Nls.package_update(create_package(true))
+
+        expected = { interpretation: "hello", solution: { number: 123456.7, name: "brice" } }
+        check_interpret("hello 123,456.7 brice",   expected)
+        check_interpret("hello brice 123,456.7",   expected)
+
       end
 
     end

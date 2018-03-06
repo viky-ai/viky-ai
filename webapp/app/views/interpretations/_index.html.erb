@@ -1,8 +1,8 @@
-<div class="interpretation-new-form-container">
-  <div class="tabs">
+<div class="card">
+  <div class="tabs <% unless current_user.can? :edit, @agent %>tabs--empty<% end %>">
     <ul>
       <% for intent_locale in @intent.ordered_locales %>
-        <% if intent_locale == '*' %>
+        <% if intent_locale == Locales::ANY %>
           <% link_name = t('views.interpretations.locales.no_locale') %>
         <% else %>
           <% link_name = intent_locale %>
@@ -20,7 +20,7 @@
         </li>
       <% end %>
       <% if current_user.can? :edit, @agent %>
-        <% if @intent.locales.count != Interpretation::LOCALES.count %>
+        <% if @intent.locales.count != Locales::ALL.count %>
           <li>
             <a href="<%= user_agent_intent_select_new_locale_path(@agent.owner, @agent, @intent) %>"
                 data-action="open-remote-modal">
@@ -74,9 +74,15 @@
              data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
         </li>
       <% end %>
-      <li data-search="digit" class="enabled">
+      <% @agent.reachable_entities_lists.each do |elist| %>
+        <li data-search="<%= elist.slug %>" class="enabled">
+          <a href="#" data-action="add-tag"
+             data-data='<%= entities_list_to_json(elist) %>'><%= elist.slug %></a>
+        </li>
+      <% end %>
+      <li data-search="number" class="enabled">
         <a href="#" data-action="add-tag"
-           data-data='<%= digit_to_json() %>'>Digit</a>
+           data-data='<%= number_to_json() %>'> <%= t('views.interpretations.number') %></a>
       </li>
     </ul>
   </div>

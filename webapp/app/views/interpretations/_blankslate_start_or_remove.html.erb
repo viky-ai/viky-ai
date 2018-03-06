@@ -10,7 +10,7 @@
                        <%= image_path "robot-idle@2x.png" %> 2x' />
         </div>
         <div class="blankslate__content">
-          <% if @current_locale == '*' %>
+          <% if @current_locale == Locales::ANY %>
             <% language = t('views.interpretations.locales.no_locale') %>
           <% else %>
             <% language = @current_locale %>
