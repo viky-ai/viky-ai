@@ -97,10 +97,7 @@ class InterpretationsController < ApplicationController
   end
 
   def update_positions
-    params[:ids].reverse.each_with_index do |id, position|
-      interpretation = Interpretation.find(id)
-      interpretation.update(position: position)
-    end
+    @intent.update_interpretations_positions(params[:ids])
   end
 
   def update_locale

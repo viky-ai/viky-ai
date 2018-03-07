@@ -84,4 +84,33 @@ class InterpretationTest < ActiveSupport::TestCase
     }
     assert_equal expected, interpretation.errors.messages
   end
+
+
+  test 'Update interpretations positions' do
+    intent = intents(:weather_forecast)
+    assert intent.interpretations.destroy_all
+
+    interpretation_0 = Interpretation.create(
+      expression: 'interpretation_0',
+      locale: Locales::ANY,
+      position: 0,
+      intent: intent
+    )
+    interpretation_1 = Interpretation.create(
+      expression: 'interpretation_1',
+      locale: Locales::ANY,
+      position: 1,
+      intent: intent
+    )
+    interpretation_2 = Interpretation.create(
+      expression: 'interpretation_2',
+      locale: Locales::ANY,
+      position: 2,
+      intent: intent
+    )
+
+    new_positions = [interpretation_1.id, interpretation_2.id, interpretation_0.id, '132465789']
+    intent.update_interpretations_positions(new_positions)
+    assert_equal [2, 1, 0], [interpretation_1.reload.position, interpretation_2.reload.position, interpretation_0.reload.position]
+  end
 end

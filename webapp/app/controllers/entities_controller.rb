@@ -97,10 +97,7 @@ class EntitiesController < ApplicationController
   end
 
   def update_positions
-    params[:ids].reverse.each_with_index do |id, position|
-      entity = Entity.find(id)
-      entity.update(position: position)
-    end
+    @entities_list.update_entities_positions(params[:ids])
   end
 
 

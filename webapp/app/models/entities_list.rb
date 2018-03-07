@@ -43,6 +43,14 @@ class EntitiesList < ApplicationRecord
     entities_import.proceed(self)
   end
 
+  def update_entities_positions(entities)
+    current_objs = Entity.where(entities_list_id: id, id: entities).order(position: :asc)
+    Agent.no_touching do
+      update_order(entities, current_objs)
+    end
+    touch
+  end
+
   private
 
     def clean_listname
@@ -54,6 +62,18 @@ class EntitiesList < ApplicationRecord
       return if agent.nil?
       if self.position.zero?
         self.position = agent.entities_lists.count.zero? ? 0 : agent.entities_lists.maximum(:position) + 1
+      end
+    end
+
+    def update_order(new_ids, current)
+      count = current.count
+      current.each do |item|
+        new_position = new_ids.find_index(item.id)
+        unless new_position.nil?
+          item.record_timestamps = false
+          item.update_attribute(:position, count - new_position - 1)
+          item.record_timestamps = true
+        end
       end
     end
 end

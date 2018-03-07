@@ -134,6 +134,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal expected, entity.terms
   end
 
+
   test 'terms_to_s method' do
     entity = Entity.new(
       entities_list: entities_lists(:weather_conditions)
@@ -157,6 +158,32 @@ class EntityTest < ActiveSupport::TestCase
     entity.terms = ":\nsoleil\n:fr\n:"
     assert !entity.save
     assert_equal "soleil\n:fr", entity.terms_to_s
+  end
+
+
+  test 'Update entities positions' do
+    entities_list = entities_lists(:weather_conditions)
+    assert entities_list.entities.destroy_all
+
+    entity_0 = Entity.create(
+      terms: 'entity_0',
+      position: 0,
+      entities_list: entities_list
+    )
+    entity_1 = Entity.create(
+      terms: 'entity_1',
+      position: 1,
+      entities_list: entities_list
+    )
+    entity_2 = Entity.create(
+      terms: 'entity_2',
+      position: 2,
+      entities_list: entities_list
+    )
+
+    new_positions = [entity_1.id, entity_2.id, entity_0.id, '132465789']
+    entities_list.update_entities_positions(new_positions)
+    assert_equal [2, 1, 0], [entity_1.reload.position, entity_2.reload.position, entity_0.reload.position]
   end
 
 end
