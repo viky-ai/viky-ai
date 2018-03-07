@@ -37,7 +37,7 @@ class Agent < ApplicationRecord
     end
   end
 
-  after_touch do |user|
+  after_touch do
     Nlp::Package.new(self).push
   end
 
