@@ -26,7 +26,9 @@ module Nls
       def create_hello_emoji_test_package
         package = Package.new("hello_emoji_test_package")
         interpretation = package.new_interpretation("hello_emoji_test")
-        interpretation << Expression.new("👋", solution: '`const s = "👋"; s;`')
+        interpretation << Expression.new("emoji 👋", solution: '`"👋"`')
+        interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
+        interpretation << Expression.new("emoji 🔥+👋", solution: '`"🔥+👋"`')
         package
       end
 
@@ -216,8 +218,9 @@ module Nls
       end
 
       def test_test_hello_emoji
-        skip 'bad jvascript interpretation for emoji'
-        check_interpret("👋", solution: "👋")
+        check_interpret("emoji 👋", solution: "👋")
+        check_interpret("emoji 🔥", solution: "🔥")
+        check_interpret("emoji 🔥+👋", solution: "🔥+👋")
       end
 
     end
