@@ -8,12 +8,14 @@
 #include "ogm_nlp.h"
 #include "duk_module_node.h"
 #include "duk_console.h"
+#include <iconv.h>
 
 static og_string NlpJsDukTypeString(duk_int_t type);
 static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
 static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
 static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename);
 static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th);
+static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8);
 
 static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 {
@@ -409,41 +411,115 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
 
     case DUK_TYPE_STRING:
     {
-      og_string computed_string = duk_get_string(ctx, -1);
-      *p_json_anwser = json_string(computed_string);
+      duk_size_t icomputed_string = 0;
+      og_string computed_string = duk_get_lstring(ctx, -1, &icomputed_string);
 
-      NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a string : '%s'", computed_string);
+      if (g_utf8_validate(computed_string, icomputed_string, NULL))
+      {
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is a string : '%s'", computed_string);
+        *p_json_anwser = json_stringn(computed_string, icomputed_string);
+      }
+      else
+      {
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed string contains error duk_get_string"
+            " return dummy string, try to convert it from CESU-8");
+
+        og_string computed_string_converted = NULL;
+        IFE(NlpJsDukCESU8toUTF8(ctrl_nlp_th, computed_string, icomputed_string, &computed_string_converted));
+        if (computed_string_converted != NULL)
+        {
+          *p_json_anwser = json_string(computed_string_converted);
+
+          NlpLog(DOgNlpTraceJs, "NlpJsEval : computed string contains error duk_get_string"
+              " return dummy string, try to convert it from CESU-8 successful : %s", computed_string_converted);
+
+          // free converted string
+          g_free((gchar *) computed_string_converted);
+
+          if (*p_json_anwser == NULL)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed string"
+                " contains error duk_get_string return dummy string");
+            DPcErr;
+          }
+        }
+        else
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed string"
+              " contains error duk_get_string return dummy string");
+          DPcErr;
+        }
+
+      }
+
       break;
     }
 
     case DUK_TYPE_OBJECT:
     {
       // object, array, function
-      og_string computed_json_string = duk_json_encode(ctx, -1);
-      int computed_json_string_size = strlen(computed_json_string);
+      og_string computed_json = duk_json_encode(ctx, -1);
+      int icomputed_json = strlen(computed_json);
 
-      // pure string value are surrounded by backquote "\"toto\""
-      if (computed_json_string_size >= 2 && computed_json_string[0] == '"'
-          && computed_json_string[computed_json_string_size - 1] == '"')
+      og_string computed_json_converted = NULL;
+      if (!g_utf8_validate(computed_json, icomputed_json, NULL))
       {
-        *p_json_anwser = json_stringn(computed_json_string + 1, computed_json_string_size - 2);
-      }
-      else
-      {
+        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
+            " return dummy string, try to convert it from CESU-8");
 
-        json_error_t error[1];
-        *p_json_anwser = json_loadb(computed_json_string, computed_json_string_size, 0, error);
-        if (*p_json_anwser == NULL)
+        IFE(NlpJsDukCESU8toUTF8(ctrl_nlp_th, computed_json, icomputed_json, &computed_json_converted));
+        if (computed_json_converted != NULL)
         {
-          NlpThrowErrorTh(ctrl_nlp_th,
-              "NlpJsEval : computed json object contains error in ligne %d and column %d , %s , %s \n'%s'", error->line,
-              error->column, error->source, error->text, computed_json_string);
+          computed_json = computed_json_converted;
+          icomputed_json = strlen(computed_json);
+
+          NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
+              " return dummy string, try to convert it from CESU-8 successful : %s", computed_json_converted);
+        }
+        else
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed json object"
+              " contains error duk_get_string return dummy string");
+          // free converted string
+          g_free((gchar *) computed_json_converted);
           DPcErr;
         }
 
       }
 
-      NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is an object/array : '%s'", computed_json_string);
+      // pure string value are surrounded by backquote "\"toto\""
+      if (icomputed_json >= 2 && computed_json[0] == '"' && computed_json[icomputed_json - 1] == '"')
+      {
+        *p_json_anwser = json_stringn(computed_json + 1, icomputed_json - 2);
+
+        // free converted string
+        g_free((gchar *) computed_json_converted);
+      }
+      else
+      {
+
+        json_error_t error[1];
+        *p_json_anwser = json_loadb(computed_json, icomputed_json, 0, error);
+        if (*p_json_anwser == NULL)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th,
+              "NlpJsEval : computed json object contains error in ligne %d and column %d , %s , %s \n'%s'", error->line,
+              error->column, error->source, error->text, computed_json);
+
+          // free converted string
+          g_free((gchar *) computed_json_converted);
+          DPcErr;
+        }
+
+        // free converted string
+        g_free((gchar *) computed_json_converted);
+
+      }
+
+      NlpLog(DOgNlpTraceJs, "NlpJsEval : computed value is an object/array : '%s'", computed_json);
 
       break;
     }
@@ -637,3 +713,150 @@ static og_string NlpJsDukTypeString(duk_int_t type)
   return "nil";
 }
 
+struct data_CESU8toUTF8
+{
+  og_nlp_th ctrl_nlp_th;
+
+  og_string original_cesu_str;
+  int original_cesu_str_length;
+
+  og_bool match;
+  og_bool error;
+};
+
+static gboolean NlpJsDukCESU8toUTF8Callback(const GMatchInfo *match_info, GString *result, gpointer user_data)
+{
+
+  struct data_CESU8toUTF8 *data = user_data;
+  og_nlp_th ctrl_nlp_th = data->ctrl_nlp_th;
+
+  int start_pos = 0;
+  int end_pos = 0;
+
+  og_bool match = g_match_info_fetch_pos(match_info, 0, &start_pos, &end_pos);
+  if (match)
+  {
+    int match_length = (end_pos - start_pos);
+    if (match_length <= 0)
+    {
+      data->error = TRUE;
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8Callback: match length is %d", match_length);
+      return TRUE;
+    }
+
+    if (match_length > data->original_cesu_str_length)
+    {
+      data->error = TRUE;
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8Callback: match length is %d > %d (orginal lentgh)",
+          match_length, data->original_cesu_str_length);
+      return TRUE;
+    }
+
+    // matching buffer must contains 6 bytes
+    if (match_length != 6)
+    {
+      data->error = TRUE;
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8Callback: match length not 6 bytes length", match_length);
+      return TRUE;
+    }
+
+    og_char_buffer buffer[8];
+    memcpy(buffer, data->original_cesu_str + start_pos, end_pos - start_pos);
+
+    // create UCS-4 character from CESU-8 encoded surrogate pair
+    // http://www.unicode.org/reports/tr26/#definitions
+
+    // 3 bytes CESU-8 to UNICODE high surrogate:
+    gunichar high = ((buffer[0] & 0x0F) << 12) + ((buffer[1] & 0x3F) << 6) + (buffer[2] & 0x3F);
+    // 3 bytes CESU-8 to UNICODE low surrogate:
+    gunichar low = ((buffer[3] & 0x0F) << 12) + ((buffer[4] & 0x3F) << 6) + (buffer[5] & 0x3F);
+
+    gunichar codepoint = ((high - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+
+    // convert it to UTF-8
+    og_char_buffer utf8_buffer[8];
+    memset(utf8_buffer, 0, sizeof(og_char_buffer) * 8);
+    int utf8_buffer_length = g_unichar_to_utf8(codepoint, utf8_buffer);
+    utf8_buffer[utf8_buffer_length] = 0;
+
+    // append it
+    g_string_append(result, utf8_buffer);
+
+    data->match = TRUE;
+
+  }
+
+  return FALSE;
+}
+
+static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8)
+{
+
+  // https://github.com/svaarala/duktape-wiki/blob/master/HowtoNonBmpCharacters.md
+  // https://github.com/svaarala/duktape/issues/996
+  // https://github.com/svaarala/duktape/blob/master/doc/utf8-internal-representation.rst
+  // http://fileformats.archiveteam.org/wiki/CESU-8
+
+  // CESU-8 is an inefficient Unicode character encoding related to UTF-8. It is not an accepted standard,
+  // but has been documented in the interest of practicality.
+  // It's what you get if you take UTF-16 data, reinterpret it as UCS-2, then convert it to UTF-8
+  // (while ignoring any rules forbidding the use of code points in the range U+D800 to U+DFFF).
+  // A code point thus uses 1, 2, 3, or 6 bytes.
+  // It is sometimes used by accident, but may be used deliberately to accommodate systems
+  // that don't support 4-byte UTF-8 sequences, or when a close correspondence between UTF-16 and a UTF-8-like
+  // encoding is deemed necessary.
+
+  // original string
+  struct data_CESU8toUTF8 data[1];
+  memset(data, 0, sizeof(struct data_CESU8toUTF8));
+  data->ctrl_nlp_th = ctrl_nlp_th;
+  data->original_cesu_str = cesu;
+  data->original_cesu_str_length = cesu_length;
+
+  // implemented from PHP https://stackoverflow.com/questions/34151138/convert-cesu-8-to-utf-8-with-high-performance
+
+  og_string pattern = "(\\xED[\\xA0-\\xAF][\\x80-\\xBF]\\xED[\\xB0-\\xBF][\\x80-\\xBF])";
+
+  GError *regexp_error = NULL;
+  GRegex * regex = g_regex_new(pattern, G_REGEX_RAW, 0, &regexp_error);
+  if (!regex || regexp_error)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: g_regex_new failed: %s\npattern: %s\n", regexp_error->message,
+        pattern);
+    g_error_free(regexp_error);
+    DPcErr;
+  }
+
+  gchar *result = g_regex_replace_eval(regex, cesu, cesu_length, 0, 0, NlpJsDukCESU8toUTF8Callback, data,
+      &regexp_error);
+
+  // free memmory
+  g_regex_unref(regex);
+
+  if (!result || regexp_error)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: g_regex_replace_eval failed: %s", regexp_error->message);
+    g_error_free(regexp_error);
+    DPcErr;
+  }
+  else if (data->error)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: g_regex_replace_eval NlpJsDukCESU8toUTF8Callback failed");
+    DPcErr;
+  }
+  else if (!data->match)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: cannot be converted");
+    DPcErr;
+  }
+  else if (!g_utf8_validate(result, -1, NULL))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsDukCESU8toUTF8: result is not valide UTF-8");
+    DPcErr;
+  }
+
+  *utf8 = result;
+
+  DONE;
+
+}
