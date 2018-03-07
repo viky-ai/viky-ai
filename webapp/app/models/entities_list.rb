@@ -1,5 +1,8 @@
 class EntitiesList < ApplicationRecord
   include Colorable
+  include Positionable
+  positionable_class EntitiesList
+
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'
 
@@ -14,7 +17,6 @@ class EntitiesList < ApplicationRecord
                        presence: true
 
   before_validation :clean_listname
-  before_create :set_position
 
   def slug
     "#{agent.slug}/entities_lists/#{listname}"
@@ -53,16 +55,13 @@ class EntitiesList < ApplicationRecord
 
   private
 
+    def positionable_collection
+      agent.entities_lists
+    end
+
     def clean_listname
       return if listname.nil?
       self.listname = listname.parameterize(separator: '-')
-    end
-
-    def set_position
-      return if agent.nil?
-      if self.position.zero?
-        self.position = agent.entities_lists.count.zero? ? 0 : agent.entities_lists.maximum(:position) + 1
-      end
     end
 
     def update_order(new_ids, current)

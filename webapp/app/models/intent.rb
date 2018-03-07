@@ -1,5 +1,8 @@
 class Intent < ApplicationRecord
   include Colorable
+  include Positionable
+  positionable_class Intent
+
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
 
@@ -18,7 +21,6 @@ class Intent < ApplicationRecord
   validate :check_locales
 
   before_validation :clean_intentname
-  before_create :set_position
 
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
@@ -43,6 +45,10 @@ class Intent < ApplicationRecord
 
   private
 
+    def positionable_collection
+      agent.intents
+    end
+
     def clean_intentname
       return if intentname.nil?
       self.intentname = intentname.parameterize(separator: '-')
@@ -54,15 +60,6 @@ class Intent < ApplicationRecord
         unless Locales::ALL.include? locale
           errors.add(:locales, I18n.t('errors.intents.unknown_locale', current_locale: locale))
         end
-      end
-    end
-
-    def set_position
-      return if agent.nil?
-      if agent.intents.count.zero?
-        self.position = 0
-      else
-        self.position = agent.intents.maximum(:position) + 1
       end
     end
 

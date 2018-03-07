@@ -166,7 +166,7 @@ class IntentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test update positions' do
+  test 'Test update intents positions' do
     agent = agents(:weather_confirmed)
     intent_0 = Intent.create(
       intentname: 'intent_0',

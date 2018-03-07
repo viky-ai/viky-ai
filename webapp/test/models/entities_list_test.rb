@@ -117,7 +117,7 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test update positions' do
+  test 'Test update entities list positions' do
     agent = agents(:weather_confirmed)
     entities_list_0 = EntitiesList.create(
       listname: 'intent_0',
