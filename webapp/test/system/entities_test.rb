@@ -165,7 +165,11 @@ class EntitiesTest < ApplicationSystemTestCase
     within('.modal') do
       assert page.has_text? 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
+
+      # Display import file imput in order to allow capybara attach_file
+      page.execute_script("$('#import_file').css('opacity','1')");
       attach_file('import_file', file).click
+
       click_button 'Import'
     end
     assert page.has_text? '3 entities imported successfully'
@@ -180,7 +184,11 @@ class EntitiesTest < ApplicationSystemTestCase
     within('.modal') do
       assert page.has_text? 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
+
+      # Display import file imput in order to allow capybara attach_file
+      page.execute_script("$('#import_file').css('opacity','1')");
       attach_file('import_file', file).click
+
       choose 'Replace'
       click_button 'Import'
     end
