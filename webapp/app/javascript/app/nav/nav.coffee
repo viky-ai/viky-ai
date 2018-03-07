@@ -2,17 +2,15 @@ $ = require('jquery');
 
 class Nav
   constructor: ->
-    @logo = $('.h-nav__header')
-    @user = $($('.h-nav__content')[1])
-    @secondary_menu = $('nav .secondary')
-    @more_menu = $('nav .more')
-
-    @update()
     if $('.h-nav').length == 1
-      $(window).bind 'load resize orientationchange', =>
-        @update()
-      $("body").on "console:leave-fullscreen", =>
-        @update()
+      @logo = $('.h-nav__header')
+      @user = $($('.h-nav__content')[1])
+      @secondary_menu = $('nav .secondary')
+      @more_menu = $('nav .more')
+
+      @update()
+      $(window).bind 'load resize orientationchange', => @update()
+      $("body").on "console:leave-fullscreen", => @update()
 
   update: ->
     @update_menu()
