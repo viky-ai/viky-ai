@@ -80,8 +80,8 @@
       display: grid;
       grid-template:
         "name  stats"
-        "desc  stats"
-          / auto auto;
+        "desc  stats";
+      grid-template-columns: auto minmax(0, 140px);
 
       .card-list__item__name{
         grid-area: name;
@@ -100,7 +100,7 @@
         line-height: 1.8rem;
         padding: 0 1rem;
         color: #aaa;
-        text-align:right;
+        text-align: right;
       }
     }
 
