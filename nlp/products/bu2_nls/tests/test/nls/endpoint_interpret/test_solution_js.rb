@@ -29,6 +29,8 @@ module Nls
         interpretation << Expression.new("emoji 👋", solution: '`"👋"`')
         interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
         interpretation << Expression.new("emoji 🔥+👋", solution: '`"🔥+👋"`')
+        interpretation << Expression.new("emoji array 🔥+👋", solution: '`[ "🔥", "👋" ]`')
+        interpretation << Expression.new("emoji abject 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
         package
       end
 
@@ -221,6 +223,8 @@ module Nls
         check_interpret("emoji 👋", solution: "👋")
         check_interpret("emoji 🔥", solution: "🔥")
         check_interpret("emoji 🔥+👋", solution: "🔥+👋")
+        check_interpret("emoji array 🔥+👋", solution: [ "🔥", "👋"] )
+        check_interpret("emoji object 🔥+👋", solution: { fire: "🔥", hand: "👋" } )
       end
 
     end
