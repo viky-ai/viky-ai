@@ -30,6 +30,7 @@ import './user_search'
 import './console'
 window.App.FocusInput = require('./focus')
 import './button_group'
+import './upload_input'
 
 // Expose jQuery
 window.$ = require('jquery');

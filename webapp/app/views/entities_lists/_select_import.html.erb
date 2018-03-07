@@ -16,16 +16,22 @@
                     id: 'import-entities-form',
                     class: 'js-import-entities-form' do |import_form| %>
 
-        <div class="field">
-          <p class="field__title">
-            <%= t('views.entities_lists.show.import.select_import.file_label') %>
-          </p>
-          <%= import_form.file_field :file, id: :import_file, accept: 'text/csv', multiple: false, class: 'input_file' %>
-          <div class="help">
-            <span class="icon icon--x-small"><%= icon_information %></span>
-            <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
-          </div>
-          <%= display_errors(@entities_import, :file) %>
+
+        <p class="field__title">
+          <%= t('views.entities_lists.show.import.select_import.file_label') %>
+        </p>
+        <div class="field field--upload">
+          <%= import_form.file_field :file, id: :import_file, accept: 'text/csv', multiple: false %>
+          <label for="import_file">
+            <p>
+              Drag file here or click to choose a file
+            </p>
+            <div class="help">
+              <span class="icon icon--x-small"><%= icon_information %></span>
+              <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
+            </div>
+            <%= display_errors(@entities_import, :file) %>
+          </label>
         </div>
 
         <div class="field">

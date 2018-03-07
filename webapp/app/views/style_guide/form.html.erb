@@ -194,10 +194,29 @@
 </section>
 
 
+
+<section>
+  <h2>File upload</h2>
+  <%= highlight_html do %>
+<div class="field field--upload">
+  <label for="file_input">
+    <p>
+      Drag file here or click to choose a file
+    </p>
+    <div class="help">
+      <span class="icon icon--x-small"><%= icon_information %></span>
+      <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
+    </div>
+  </label>
+  <input type="file" id="file_input">
+</div>
+  <% end %>
+</section>
+
+
 <section>
   <h2>Selectize</h2>
   <%= highlight_html do %>
-
 <div class="field">
   <div class="control">
     <label>Simple</label>
