@@ -29,10 +29,6 @@
   </div>
 </div>
 <div class="field">
-  <label for="file" class="input_file btn">Choose a file</label>
-  <input type="file" id="file"/>
-</div>
-<div class="field">
   <input type="submit" value="Log in" class="btn btn--primary" />
   <button type="button" class="btn btn--plain">Cancel</button>
 </div>
@@ -200,12 +196,14 @@
   <%= highlight_html do %>
 <div class="field field--upload">
   <label for="file_input">
-    <p>
-      Drag file here or click to choose a file
-    </p>
-    <div class="help">
-      <span class="icon icon--x-small"><%= icon_information %></span>
-      The maximum file size allowed is 2Mo.
+    <div>
+      <p>
+        Drag file here or click to choose a file
+      </p>
+      <div class="help">
+        <span class="icon icon--x-small"><%= icon_information %></span>
+        The maximum file size allowed is 2Mo.
+      </div>
     </div>
   </label>
   <input type="file" id="file_input">
