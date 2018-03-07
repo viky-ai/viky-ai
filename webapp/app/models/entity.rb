@@ -1,4 +1,7 @@
 class Entity < ApplicationRecord
+  include Positionable
+  positionable_class Entity
+
   belongs_to :entities_list, touch: true
 
   serialize :terms, JSON
@@ -9,7 +12,6 @@ class Entity < ApplicationRecord
   validate :validate_terms_present
 
   before_validation :parse_terms
-  before_create :set_position
 
   def terms_to_s
     return "" if terms.nil?
@@ -49,10 +51,11 @@ class Entity < ApplicationRecord
       end
     end
 
-    def set_position
-      return if entities_list.nil?
-      if self.position.zero?
-        self.position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position) + 1
-      end
+    def positionable_parent
+      entities_list
+    end
+
+    def positionable_collection
+      entities_list.entities
     end
 end

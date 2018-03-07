@@ -46,14 +46,14 @@ class EntitiesList < ApplicationRecord
   end
 
   def update_entities_positions(entities)
-    current_objs = Entity.where(entities_list_id: id, id: entities).order(position: :asc)
-    Agent.no_touching do
-      update_order(entities, current_objs)
-    end
-    touch
+    Entity.update_positions(self, entities)
   end
 
   private
+
+    def positionable_parent
+      agent
+    end
 
     def positionable_collection
       agent.entities_lists

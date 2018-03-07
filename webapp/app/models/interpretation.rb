@@ -1,6 +1,9 @@
 class Interpretation < ApplicationRecord
   LOCALES = %w[* en fr es pt zh ar].freeze
 
+  include Positionable
+  positionable_class Interpretation
+
   belongs_to :intent, touch: true
   has_many :interpretation_aliases, dependent: :destroy
 
@@ -11,7 +14,6 @@ class Interpretation < ApplicationRecord
   validates :solution, length: { maximum: 2000 }
 
   before_save :cleanup
-  before_create :set_position
 
   def is_minimal
     interpretation_aliases.count == 0 && auto_solution_enabled
@@ -46,8 +48,11 @@ class Interpretation < ApplicationRecord
       end
     end
 
-    def set_position
-      return if intent.nil?
-      self.position = intent.interpretations_with_local(locale).count
+    def positionable_parent
+      intent
+    end
+
+    def positionable_collection
+      intent.interpretations_with_local(locale)
     end
 end

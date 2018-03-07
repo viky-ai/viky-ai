@@ -35,15 +35,15 @@ class Intent < ApplicationRecord
   end
 
   def update_interpretations_positions(interpretations)
-    current_objs = Interpretation.where(intent_id: id, id: interpretations).order(position: :asc)
-    Agent.no_touching do
-      update_order(interpretations, current_objs)
-    end
-    touch
+    Interpretation.update_positions(self, interpretations)
   end
 
 
   private
+
+    def positionable_parent
+      agent
+    end
 
     def positionable_collection
       agent.intents
@@ -62,17 +62,4 @@ class Intent < ApplicationRecord
         end
       end
     end
-
-    def update_order(new_ids, current)
-      count = current.count
-      current.each do |item|
-        new_position = new_ids.find_index(item.id)
-        unless new_position.nil?
-          item.record_timestamps = false
-          item.update_attribute(:position, count - new_position - 1)
-          item.record_timestamps = true
-        end
-      end
-    end
-
 end
