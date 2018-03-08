@@ -31,13 +31,11 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence
 
-  after_save do
-    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?(:owner_id)
-      Nlp::Package.new(self).push
-    end
+  after_create_commit do
+    Nlp::Package.new(self).push
   end
 
-  after_touch do
+  after_update_commit do
     Nlp::Package.new(self).push
   end
 
