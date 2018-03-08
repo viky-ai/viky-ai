@@ -1,0 +1,129 @@
+<div class="sg-intro">
+  <h1>Entities list</h1>
+  <p>
+    Displayed in entity main page.
+  </p>
+</div>
+
+
+<section>
+  <h2>Show detailed</h2>
+  <p>
+    Click on an item will show details.
+  </p>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li>
+    <div class="entity-show-close">
+      <a class="close" href="#">
+        <%= icon_close %>
+      </a>
+    </div>
+    <div class="entity-show">
+      <div class="field">
+        <div class="control">
+          <span class="label">Terms</span>
+          <div class="terms">Charles Baudelaire</div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <span class="label">Solution</span>
+          <span class="label--with-option">
+            <span class="icon icon--x-small"><%= icon_check %></span>
+            <span class="label">Auto solution</span>
+          </span>
+          <textarea name="solution__456789" id="solution__example_1" readonly="readonly">{
+  'author': 'Charles Baudelaire'
+}</textarea>
+        </div>
+      </div>
+    </div>
+  </li>
+  <li>
+    <a href="#">
+      <span class="card-list__item__name">Victor Hugo</span>
+    </a>
+    <div class="card-list__item__stats">
+      1 term
+    </div>
+  </li>
+</ul>
+<script>
+App.CodeEditor.buildJavaScriptEditor($("#solution__example_1")[0], true);
+</script>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Update item state</h2>
+  <p>
+    Click on an item will switch to update state.
+  </p>
+  <table>
+    <thead>
+    <tr>
+      <th><code>data-action</code> value</th>
+      <th>Behavior description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td><code>data-elistname</code></td>
+      <td>
+        The entities list name, mandatory to create the auto solution JSON (take the first term not empty).
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <%= highlight_html do %>
+<ul id="entities-list" class="card-list">
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <form id="entity-form" class="entity-form" data-elistname="city" action="#">
+      <div class="field entity-form__terms">
+        <div class="control">
+          <label for="terms">Terms</label>
+          <textarea name="entity[terms]" id="terms" maxlength="5000" spellcheck="false">London
+Londres</textarea>
+        </div>
+      </div>
+      <div class="field entity-form__solution">
+        <div class="control">
+          <label for="solution">Solution</label>
+          <span class="label--with-option">
+            <input id="auto_solution_enabled" value="1" checked="checked" name="entity[auto_solution_enabled]" type="checkbox">
+            <label for="auto_solution_enabled">Auto solution</label>
+          </span>
+          <textarea id="solution" maxlength="2000" spellcheck="false" disabled="disabled" name="entity[solution]">London</textarea>
+        </div>
+      </div>
+      <div class="field field--submit">
+        <div class="control">
+          <button name="button" type="button" class="btn btn--primary">Update</button>
+          <a class="btn btn--plain">Cancel</a>
+        </div>
+      </div>
+      <div class="field entity-form__delete">
+        <div class="control">
+          <a class="btn btn--small btn--outline btn--destructive">Delete</a>
+        </div>
+      </div>
+    </form>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Rome</span>
+    </a>
+    <div class="card-list__item__stats">
+      2 terms
+    </div>
+  </li>
+</ul>
+<script>
+  new App.EntityForm('#entity-form');
+</script>
+  <% end %>
+</section>

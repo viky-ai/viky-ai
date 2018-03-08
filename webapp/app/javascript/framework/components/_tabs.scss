@@ -2,7 +2,6 @@
   margin: .5em 0;
   max-width: 100%;
   overflow-x: auto;
-  height: 100%;
 
   font-size: .8em;
   @media (min-width: 600px){
@@ -43,7 +42,6 @@
           top: 0.9em;
           background-color: $primary_color;
           color: #fff;
-          padding: 1px 3px;
           border-radius: 3px;
           font-size: .75em;
           padding: 1px .5em;
@@ -78,4 +76,12 @@
   &.tabs--large{
     font-size: 1.2em;
   }
+}
+
+header.tabs {
+  padding-bottom: 0.5em;
+}
+
+.tabs.tabs--empty {
+  padding-bottom: 1.5em;
 }

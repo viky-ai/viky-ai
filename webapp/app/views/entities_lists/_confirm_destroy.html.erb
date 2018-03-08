@@ -1,0 +1,34 @@
+<div class="modal" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.entities_lists.confirm_destroy.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+      <p>
+        <%= t('views.entities_lists.confirm_destroy.content_html', name: @entities_list.listname) %>
+      </p>
+      <%= form_for(@entities_list, url: user_agent_entities_list_path(current_user, @agent, @entities_list), method: :delete, html: { data: { validation: :delete }}, remote: true) do |delete_form| %>
+        <div class="field">
+          <div class="control">
+            <label><%= t('confirm_destroy.label') %></label>
+            <div>
+              <input type="text" name="validation" />
+            </div>
+            <div class="help help--error" style="display:none;">
+              <span class="icon icon--x-small"><%= icon_alert %></span>
+              <%= t('confirm_destroy.error') %>
+            </div>
+          </div>
+        </div>
+        <%= delete_form.button t('views.entities_lists.confirm_destroy.btn'),
+              class: "btn btn--destructive",
+              data: { 'disable-btn-with': "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe } %>
+        <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+      <% end %>
+    </div>
+  </div>
+</div>

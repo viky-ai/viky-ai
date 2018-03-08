@@ -49,7 +49,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       expression: 'Good morning John',
       locale: 'en'
     )
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
     interpretation.intent = intent
@@ -64,10 +64,10 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
-    interpretation = intent.interpretations.first
+    interpretation = intent.interpretations.last
     interpretation.locale = 'fr'
     assert interpretation.save
 
@@ -80,7 +80,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent = Agent.find_by_agentname('weather')
     agent_updated_at_before = agent.updated_at.to_json
 
-    intent = Intent.find_by_intentname('weather_greeting')
+    intent = Intent.find_by_intentname('weather_forecast')
     intent_updated_at_before = intent.updated_at.to_json
 
     interpretation = intent.interpretations.first
@@ -93,8 +93,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases addition' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_who')
-    interpretation = Interpretation.find_by_expression('Bonjour tout le monde')
+    intent = Intent.find_by_intentname('weather_question')
+    interpretation = Interpretation.find_by_expression('Quel temps fera-t-il demain ?')
 
     interpretation_alias = InterpretationAlias.new(
       position_start: 8,
@@ -102,7 +102,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       aliasname: 'who'
     )
     interpretation_alias.interpretation = interpretation
-    interpretation_alias.intent = intent
+    interpretation_alias.interpretation_aliasable = intent
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json
@@ -117,8 +117,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases modification' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_greeting')
-    interpretation = intent.interpretations.first
+    intent = Intent.find_by_intentname('weather_forecast')
+    interpretation = intent.interpretations.last
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json
@@ -136,8 +136,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
   test 'Change updated_at agent date after aliases deletion' do
     agent = Agent.find_by_agentname('weather')
-    intent = Intent.find_by_intentname('weather_greeting')
-    interpretation = intent.interpretations.first
+    intent = Intent.find_by_intentname('weather_forecast')
+    interpretation = intent.interpretations.last
 
     interpretation_updated_at_before = interpretation.updated_at.to_json
     intent_updated_at_before         = intent.updated_at.to_json
@@ -197,14 +197,54 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       position_end: 16,
       aliasname: 'inter_parent',
       interpretation_id: interpretation_child.id,
-      intent_id: intent_parent.id,
+      interpretation_aliasable: intent_parent,
       nature: 'type_intent'
     )
 
-    updated_at_a = child.updated_at.to_json
-    updated_at_intent_child = intent_child.updated_at.to_json
+    updated_at_a = child.reload.updated_at.to_json
+    updated_at_intent_child = intent_child.reload.updated_at.to_json
 
     assert intent_parent.destroy
+
+    assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
+    assert_not_equal updated_at_a, child.reload.updated_at.to_json
+  end
+
+
+  test 'Change updated_at agent date after delete entities list in parent' do
+    child = create_agent("Agent A")
+    intent_child = Intent.create(
+      intentname: 'intent_child',
+      locales: ['en'],
+      agent: child
+    )
+    interpretation_child = Interpretation.create(
+      expression: 'interpretation_child',
+      locale: 'en',
+      intent: intent_child
+    )
+
+    parent = create_agent("Agent B")
+    entities_list_parent = EntitiesList.create(
+      listname: 'entities_list_parent',
+      agent: parent
+    )
+
+    assert AgentArc.create(source: child, target: parent)
+
+    assert InterpretationAlias.create(
+      position_start: 0,
+      position_end: 16,
+      aliasname: 'inter_parent',
+      interpretation_id: interpretation_child.id,
+      interpretation_aliasable: entities_list_parent,
+      nature: 'type_entities_list'
+    )
+
+    updated_at_a = child.reload.updated_at.to_json
+    updated_at_intent_child = intent_child.reload.updated_at.to_json
+
+    assert entities_list_parent.destroy
 
     assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
     assert_not_equal updated_at_a, child.reload.updated_at.to_json

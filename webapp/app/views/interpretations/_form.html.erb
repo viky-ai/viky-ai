@@ -1,8 +1,10 @@
-<%= form_with model: [agent.owner, agent, intent, interpretation], id: 'interpretations-form' do |f| %>
+<%= form_with model: [agent.owner, agent, intent, interpretation],
+              id: 'interpretations-form',
+              class: 'interpretations-form' do |f| %>
 
   <%= f.hidden_field :locale, value: @current_locale %>
 
-  <div class="field">
+  <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
       <div class="trix-control__option  <% if rtl?(@current_locale) %>trix-control__option--rtl<% end %>">
         <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
@@ -26,9 +28,9 @@
     <%= display_errors(interpretation, :glued) %>
   </div>
 
-  <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %>" style="display:none;"></div>
+  <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display:none;"></div>
 
-  <div class="field field--for-solution" style="display:none;">
+  <div class="field field--for-solution interpretations-form__solution" style="display:none;">
     <div class="control">
       <span class="solution-label">Solution</span>
       <%= f.text_area :solution, id: "solution__new_interpretation", maxlength: '2000', spellcheck: 'false' %>
@@ -36,8 +38,12 @@
     <%= display_errors(interpretation, :solution) %>
   </div>
 
-  <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary',
-        data: {
-           disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
-        } %>
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.interpretations.new.btn'), class: 'btn btn--primary interpretations-form__submit',
+                   data: {
+                       disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                   } %>
+    </div>
+  </div>
 <% end %>

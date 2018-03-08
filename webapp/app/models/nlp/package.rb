@@ -97,7 +97,14 @@ class Nlp::Package
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent)
         end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_node(intent) }
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
+      end
+      @agent.entities_lists.order(position: :desc).each do |elist|
+        cache_key = ['pkg', 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(elist)
+        end
+        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
       end
       interpretations
     end
@@ -110,8 +117,8 @@ class Nlp::Package
         .where(is_list: true, interpretations: { intent_id: intent.id }).order(:position_start).each do |ialias|
 
         interpretation_hash = {}
-        interpretation_hash[:id]   = "#{ialias.intent.id}_#{ialias.id}_recursive"
-        interpretation_hash[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
+        interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+        interpretation_hash[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
         interpretation_hash[:scope] = 'hidden'
 
         expressions = []
@@ -148,7 +155,7 @@ class Nlp::Package
       interpretations
     end
 
-    def build_node(intent)
+    def build_intent(intent)
       interpretation_hash = {}
       interpretation_hash[:id] = intent.id
       interpretation_hash[:slug] = intent.slug
@@ -159,15 +166,36 @@ class Nlp::Package
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
         expression[:aliases]    = build_aliases(interpretation)
-        expression[:locale]     = interpretation.locale     unless interpretation.locale == '*'
+        expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
         expression[:glued]      = interpretation.glued      if interpretation.glued
-        expression[:solution]   = build_solution(interpretation)
+        expression[:solution]   = build_interpretation_solution(interpretation)
         expressions << expression
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
           expressions << build_any_node(ialias, expression)
+        end
+      end
+      interpretation_hash[:expressions] = expressions
+      interpretation_hash
+    end
+
+    def build_entities_list(elist)
+      interpretation_hash = {}
+      interpretation_hash[:id] = elist.id
+      interpretation_hash[:slug] = elist.slug
+      interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
+      expressions = []
+      elist.entities.order(position: :desc).each do |entity|
+        entity.terms.each do |term|
+          expression = {}
+          expression[:expression] = term['term']
+          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+          expression[:solution] = build_entities_list_solution(entity)
+          expression[:keep_order] = true
+          expression[:glued]      = true
+          expressions << expression
         end
       end
       interpretation_hash[:expressions] = expressions
@@ -196,15 +224,15 @@ class Nlp::Package
       if recursive
         {
           alias: "#{ialias.aliasname}_recursive",
-          slug: "#{ialias.intent.slug}_#{ialias.id}_recursive",
-          id: "#{ialias.intent.id}_#{ialias.id}_recursive",
+          slug: "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive",
+          id: "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive",
           package: @agent.id
         }
       else
         {
           alias: ialias.aliasname,
-          slug: ialias.intent.slug,
-          id: ialias.intent.id,
+          slug: ialias.interpretation_aliasable.slug,
+          id: ialias.interpretation_aliasable.id,
           package: @agent.id
         }
       end
@@ -217,28 +245,25 @@ class Nlp::Package
     end
 
     def build_alias(ialias)
-      if ialias.type_intent?
-        result = {}
-        result[:package] = @agent.id
-        result[:alias]   = ialias.aliasname
-        if ialias.is_list
-          result[:slug] = "#{ialias.intent.slug}_#{ialias.id}_recursive"
-          result[:id] = "#{ialias.intent.id}_#{ialias.id}_recursive"
-        else
-          result[:slug] = ialias.intent.slug
-          result[:id] = ialias.intent.id
-        end
-      end
+      result = {
+        alias: ialias.aliasname
+      }
       if ialias.type_number?
-        result = {
-          alias: ialias.aliasname,
-          type: 'number'
-        }
+        result[:type] = 'number'
+      else
+        result[:package] = @agent.id
+        if ialias.is_list
+          result[:slug] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          result[:id] = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+        else
+          result[:slug] = ialias.interpretation_aliasable.slug
+          result[:id] = ialias.interpretation_aliasable.id
+        end
       end
       result
     end
 
-    def build_solution(interpretation)
+    def build_interpretation_solution(interpretation)
       result = ''
       if interpretation.auto_solution_enabled
         if interpretation.interpretation_aliases.empty?
@@ -246,6 +271,16 @@ class Nlp::Package
         end
       else
         result = "`#{interpretation.solution}`" unless interpretation.solution.blank?
+      end
+      result
+    end
+
+    def build_entities_list_solution(entity)
+      result = ''
+      if entity.auto_solution_enabled
+        result = entity.terms.first['term']
+      else
+        result = "`#{entity.solution}`" unless entity.solution.blank?
       end
       result
     end

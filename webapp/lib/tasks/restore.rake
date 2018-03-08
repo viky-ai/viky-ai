@@ -20,7 +20,7 @@ namespace :restore do
 
     Restore::Print::success("Restore completed")
     Restore::Print::notice("Do not forget to:")
-    Restore::Print::notice("  - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}.")
+    Restore::Print::notice("  - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}")
     Restore::Print::notice("  - Restart your apps.")
     Restore::Print::notice("Happy coding!")
   end
@@ -136,7 +136,13 @@ namespace :restore do
         Restore::Print::notice("    [skipping] Stash directory is already present")
       end
       Restore::Print::substep("Reinit NLP")
-      Rake::Task['packages:reinit'].invoke
+
+      begin
+        Rake::Task['packages:reinit'].invoke
+      rescue => e
+        Restore::Print::notice("    #{e.message}")
+        Restore::Print::notice("    [skipping] Nlp packages:reinit failed, you uneeds to restart your NLP server")
+      end
     end
 
     def restore_images(params)

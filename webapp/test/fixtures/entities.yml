@@ -1,0 +1,25 @@
+weather_sunny:
+  auto_solution_enabled: true
+  terms: <%= [{term: "sun", locale: "en"}, {term: "soleil", locale: "fr"}].to_json.inspect %>
+  entities_list: weather_conditions
+  position: 1
+
+weather_raining:
+  auto_solution_enabled: true
+  terms: <%= [{term: "pluie", locale: "fr"}, {term: "rain", locale: "en"}].to_json.inspect %>
+  entities_list: weather_conditions
+  position: 0
+
+weather_dates_today:
+  solution: '{date: today}'
+  auto_solution_enabled: false
+  terms: <%= [{term: "aujourd'hui", locale: "fr"},{term: "tout à l'heure", locale: "fr"}, {term: "today", locale: "en"}].to_json.inspect %>
+  entities_list: weather_dates
+  position: 1
+
+weather_dates_tomorrow:
+  solution: '{date: tomorrow}'
+  auto_solution_enabled: false
+  terms: <%= [{term: "tomorrow", locale: "*"}].to_json.inspect %>
+  entities_list: weather_dates
+  position: 0

@@ -1,31 +1,101 @@
 @import '../../framework/abstracts/variables';
 
-.interpretation-new-form-container{
-  background-color: #fff;
-  padding: 1em;
-  box-shadow: 0 2px 3px rgba(black, .1);
-  border-radius: 2px;
-  margin-bottom: 1em;
-  .tabs{
-    margin-bottom: 1em;
+.card-list{
+  .interpretations-list__show {
+    width: 100%;
+    color: #222;
+    border-right: 3px solid transparent;
+
+    &:focus,
+    &:hover {
+      .card-list__item__name{
+        text-decoration: none;
+      }
+    }
+  }
+  a.interpretations-list__show {
+    &:focus,
+    &:hover{
+      border-right: 3px solid $primary-color;
+    }
   }
 }
 
-.solution-label{
-  color: #999;
-  font-size: .875em;
+
+
+.interpretations-form,
+.interpretations-show {
+  padding: 1.25em 1em;
+  width: 100%;
+  display: grid;
+  grid-column-gap: 1em;
+
 }
 
-.CodeMirror{
-  height: auto;
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  &.CodeMirror-focused{
-    border-color: $focus_color;
-    box-shadow: 0 0 0 2px rgba($focus_color, .25);
-    outline:none;
+.interpretations-form{
+  grid-template:
+          "interpretation interpretation" auto
+          "summary summary" auto
+          "solution solution" auto
+          "submit delete" 1fr /
+          1fr 1fr;
+  @media (min-width: 424px){
+    grid-template:
+            "interpretation interpretation" auto
+            "summary summary" auto
+            "solution solution" auto
+            "submit delete" 1fr /
+    1fr 1fr;
+  }
+  .field--submit {
+    margin-bottom: 0;
+    grid-area: submit;
+  }
+  .interpretations-form__delete {
+    grid-area: delete;
+    justify-self: end;
+  }
+
+}
+
+.interpretations-show{
+  grid-template:
+    "interpretation close" auto
+    "summary summary" auto
+    "solution solution" auto /
+    1fr 1fr;
+
+  .interpretations-show__close {
+    grid-area: close;
+    justify-self: right;
   }
 }
+
+.interpretations-form,
+.interpretations-show {
+
+  .interpretations-form__interpretation,
+  .interpretations-show__interpretation{
+    grid-area: interpretation;
+  }
+
+  .interpretations-form__summary,
+  .interpretations-show__summary{
+    grid-area: summary;
+  }
+
+  .interpretations-form__solution,
+  .interpretations-show__solution{
+    grid-area: solution;
+  }
+
+  .solution-label{
+    color: #999;
+    font-size: .875em;
+  }
+
+}
+
 
 .trix-control{
   position: relative;
@@ -186,7 +256,8 @@
 
 trix-editor{
   @each $name, $color in $picker_colors{
-    a[href*='intent-#{$name}']{
+    a[href*='intent-#{$name}'],
+    a[href*='entities_list-#{$name}']{
       color: $color;
       text-decoration: none;
       border-bottom: 2px solid $color;
@@ -199,7 +270,8 @@ trix-editor{
 
 .aliases{
   @each $name, $color in $picker_colors{
-    .intent-#{$name}{
+    .intent-#{$name},
+    .entities_list-#{$name}{
       color: $color;
       a{
         color: $color;

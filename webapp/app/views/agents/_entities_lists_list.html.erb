@@ -1,0 +1,60 @@
+<% agent_owner = @agent.owner %>
+<% empty_content = visibility == 'is_public' ? t('views.entities_lists.index.empty_list.public') : t('views.entities_lists.index.empty_list.private') %>
+<ul class="card-list <% if entities_lists.count == 0 %>card-list--empty<% end %>" id=<%= "entities_lists-list-#{visibility}" %>
+    data-behavior="sortable"
+    data-update-positions-path="<%= update_positions_user_agent_entities_lists_path(agent_owner, @agent) %>"
+    data-empty-content="<%= empty_content %>"
+    data-group="entities_lists"
+    data-key="<%= visibility %>">
+  <% entities_lists.each do |entities_list| %>
+    <li data-id="<%= entities_list.id %>">
+
+      <% if current_user_can_edit %>
+        <div class="card-list__item__draggable"></div>
+      <% end %>
+
+      <a href="<%= user_agent_entities_list_path(agent_owner, @agent, entities_list) %>">
+        <span class="card-list__item__name"><%= entities_list.listname %></span>
+        <span class="card-list__item__desc"><%= entities_list.description %></span>
+      </a>
+
+      <div class="card-list__item__stats">
+        <%= t('views.entities_lists.index.entities', count: entities_list.entities.count) %>
+      </div>
+
+      <% if current_user_can_edit %>
+        <div class="card-list__item__actions">
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--small">
+                <span class="icon icon--x-small">
+                  <%= icon_dots %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+              <ul>
+                <li>
+                  <a href="<%= edit_user_agent_entities_list_path(agent_owner, @agent, entities_list) %>"
+                     data-action="open-remote-modal">
+                  <span class="icon icon--x-small">
+                    <%= icon_settings %>
+                  </span><%= t('views.entities_lists.index.configure') %>
+                  </a>
+                </li>
+                <li class="separator">
+                  <a href="<%= user_agent_entities_list_confirm_destroy_path(agent_owner, @agent, entities_list) %>"
+                     data-action="open-remote-modal" class="destructive">
+                  <span class="icon icon--x-small">
+                    <%= icon_delete %>
+                  </span><%= t('views.entities_lists.index.delete') %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

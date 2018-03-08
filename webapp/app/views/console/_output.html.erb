@@ -18,52 +18,51 @@
         <%= t('views.console.intent_found', count: json['interpretations'].count) %>
       </p>
       <ul class="intents">
-        <% json['interpretations'].each do |intent| %>
+        <% json['interpretations'].each do |aliasable| %>
           <li>
-            <% username, agentname, intentname = intent["slug"].split('/') %>
-            <a href="/agents/<%= "#{username}/#{agentname}/intents/#{intentname}" %>">
+            <a href="/agents/<%= aliasable["slug"] %>">
 
               <div class="intent__header">
-                <span class="intent__header__name"><%= intent["name"] %></span>
-                <% if intent['scope'] == 'public' %>
+                <span class="intent__header__name"><%= aliasable["name"] %></span>
+                <% if aliasable['scope'] == 'public' %>
                   <span class="badge badge--success badge--small">
                     <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
                   </span>
                 <% end %>
-                <% if intent['scope'] == 'private' %>
+                <% if aliasable['scope'] == 'private' %>
                   <span class="badge badge--warning badge--small">
                     <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
                   </span>
                 <% end %>
                 <span class="intent__header__slug">
-                  (<%= "#{intent["slug"].split('/').first}/#{intent["slug"].split('/').second}" %>)
+                  (<%= "#{aliasable["slug"].split('/').first}/#{aliasable["slug"].split('/').second}" %>)
                 </span>
                 <span class="intent__header__score">
-                  <span class="badge badge--grey badge--small badge--outline"><%= intent["score"] %></span>
+                  <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
                 </span>
               </div>
 
               <ul>
-              <% unless intent["explanation"].nil? %>
+              <% unless aliasable["explanation"].nil? %>
                   <li>
                     <div class="intent__label"><%= t('views.console.expression_text') %></div>
-                    <pre><%= highlight(intent["explanation"]["expression"]["text"]) %></pre>
+                    <pre><%= highlight(aliasable["explanation"]["expression"]["text"]) %></pre>
                   </li>
                   <li>
                     <div class="intent__label"><%= t('views.console.scores') %></div>
-                    <pre><%= intent["explanation"]["expression"]["scores"] %></pre>
+                    <pre class="with-wrap"><%= aliasable["explanation"]["expression"]["scores"] %></pre>
                   </li>
                   <li>
                     <div class="intent__label"><%= t('views.console.highlight') %></div>
                     <div class="intent__highlight">
-                      <%= highlight(intent["explanation"]["expression"]["highlight"]) %>
+                      <%= highlight(aliasable["explanation"]["expression"]["highlight"]) %>
                     </div>
                   </li>
                 <% end %>
-                <% unless intent["solution"].nil? %>
+                <% unless aliasable["solution"].nil? %>
                   <li>
                     <div class="intent__label"><%= t('views.console.solution') %></div>
-                    <pre><code class='language-javascript'><%= JSON.pretty_generate(intent["solution"]) %></code></pre>
+                    <pre><code class='language-javascript'><%= JSON.pretty_generate(aliasable["solution"]) %></code></pre>
                   </li>
                 <% end %>
               </ul>

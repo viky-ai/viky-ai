@@ -1,0 +1,19 @@
+en:
+  views:
+    entities:
+      new:
+        btn: "Add"
+        placeholder: "Enter multiples terms, optionally you can add a locale separated by a colon if applicable (like 'London:en')"
+      index:
+        delete_btn: "Delete"
+        update_btn: "Update"
+        cancel_btn: "Cancel"
+      delete_failed: "Ooops, delete failed."
+      blankslate:
+        start_html: <p>Start adding entity using the form below.</p>
+        no_entity_html: <p>No entity entered.</p>
+      show:
+        terms:
+          zero: "0 term"
+          one: "1 term"
+          other: "%{count} terms"

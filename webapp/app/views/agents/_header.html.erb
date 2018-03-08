@@ -1,0 +1,68 @@
+<% if agent.image.nil? %>
+  <% css_class = "background-color-gradient__#{agent.color}" %>
+<% else %>
+  <% css_class = "agent-header__visual--image" %>
+  <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
+<% end %>
+
+<div class="agent-header">
+
+  <div class="agent-header__visual <%= css_class %>" style="<%= css_style %>">
+    <% if agent.is_public? %>
+      <span class="agent__visual__ribbon">
+        <%= t('activerecord.attributes.agent.visibility_is_public') %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="agent-header__content">
+    <div class="agent-header__content__title">
+      <h2>
+        <%= agent.name %>
+        <small><%= agent.slug %></small>
+      </h2>
+    </div>
+
+    <div class="agent-header__content__actions">
+      <% if controller_name == 'agents' %>
+        <% if current_user.can? :edit, agent %>
+          <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'show') %>"
+             class="btn btn--small btn--outline" data-action="open-remote-modal">
+            <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
+          </a>
+        <% end %>
+      <% end %>
+    </div>
+
+   <div class="agent-header__content__description">
+      <% unless agent.description.blank? %>
+        <h3><%= agent.description %></h3>
+      <% end %>
+   </div>
+  </div>
+
+  <div class="agent-header__content__nav">
+    <ul>
+      <li>
+        <% css_class = controller_name == 'agents' ? 'current' : '' %>
+
+        <%= link_to t('views.agents.show.sections.overview'), user_agent_path(agent.owner, agent), class: css_class %>
+      </li>
+      <li>
+        <% css_class   = controller_name == 'intents' ? 'current' : '' %>
+        <% badge_class = controller_name == 'intents' ? 'badge--primary' : '' %>
+        <% text  = t('views.agents.show.sections.intents')%>
+        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.intents.count}</span>" %>
+        <%= link_to text.html_safe, user_agent_intents_path(agent.owner, agent), class: css_class %>
+      </li>
+      <li>
+        <% css_class   = controller_name == 'entities_lists' ? 'current' : '' %>
+        <% badge_class = controller_name == 'entities_lists' ? 'badge--primary' : '' %>
+        <% text  = t('views.agents.show.sections.entities_lists')%>
+        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.entities_lists.count}</span>" %>
+        <%= link_to text.html_safe, user_agent_entities_lists_path(agent.owner, agent), class: css_class %>
+      </li>
+    </ul>
+  </div>
+
+</div>
