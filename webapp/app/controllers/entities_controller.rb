@@ -97,7 +97,7 @@ class EntitiesController < ApplicationController
   end
 
   def update_positions
-    @entities_list.update_entities_positions(params[:ids])
+    Entity.update_positions(@entities_list, params[:ids])
   end
 
 

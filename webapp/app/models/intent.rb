@@ -1,7 +1,7 @@
 class Intent < ApplicationRecord
   include Colorable
   include Positionable
-  positionable_class Intent
+  positionable_ancestor :agent
 
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
@@ -34,20 +34,8 @@ class Intent < ApplicationRecord
     "#{agent.slug}/interpretations/#{intentname}"
   end
 
-  def update_interpretations_positions(interpretations)
-    Interpretation.update_positions(self, interpretations)
-  end
-
 
   private
-
-    def positionable_parent
-      agent
-    end
-
-    def positionable_collection
-      agent.intents
-    end
 
     def clean_intentname
       return if intentname.nil?

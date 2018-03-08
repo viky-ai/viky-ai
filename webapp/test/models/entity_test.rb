@@ -182,7 +182,7 @@ class EntityTest < ActiveSupport::TestCase
     )
 
     new_positions = [entity_1.id, entity_2.id, entity_0.id, '132465789']
-    entities_list.update_entities_positions(new_positions)
+    Entity.update_positions(entities_list, new_positions)
     assert_equal [2, 1, 0], [entity_1.reload.position, entity_2.reload.position, entity_0.reload.position]
   end
 

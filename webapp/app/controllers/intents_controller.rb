@@ -61,7 +61,7 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    @agent.update_intents_positions(params[:is_public], params[:is_private])
+    Intent.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
   def confirm_destroy

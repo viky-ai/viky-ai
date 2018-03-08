@@ -124,14 +124,6 @@ class Agent < ApplicationRecord
              .order(position: :desc, created_at: :desc)
   end
 
-  def update_intents_positions(public_intents, private_intents)
-    Intent.update_positions(self, public_intents, private_intents)
-  end
-
-  def update_entities_lists_positions(public_entities_lists, private_entities_lists)
-    EntitiesList.update_positions(self, public_entities_lists, private_entities_lists)
-  end
-
 
   private
 

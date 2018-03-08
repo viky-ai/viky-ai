@@ -1,7 +1,7 @@
 class EntitiesList < ApplicationRecord
   include Colorable
   include Positionable
-  positionable_class EntitiesList
+  positionable_ancestor :agent
 
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'
@@ -45,34 +45,11 @@ class EntitiesList < ApplicationRecord
     entities_import.proceed(self)
   end
 
-  def update_entities_positions(entities)
-    Entity.update_positions(self, entities)
-  end
 
   private
-
-    def positionable_parent
-      agent
-    end
-
-    def positionable_collection
-      agent.entities_lists
-    end
 
     def clean_listname
       return if listname.nil?
       self.listname = listname.parameterize(separator: '-')
-    end
-
-    def update_order(new_ids, current)
-      count = current.count
-      current.each do |item|
-        new_position = new_ids.find_index(item.id)
-        unless new_position.nil?
-          item.record_timestamps = false
-          item.update_attribute(:position, count - new_position - 1)
-          item.record_timestamps = true
-        end
-      end
     end
 end

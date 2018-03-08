@@ -1,6 +1,6 @@
 class Entity < ApplicationRecord
   include Positionable
-  positionable_class Entity
+  positionable_ancestor :entities_list
 
   belongs_to :entities_list, touch: true
 
@@ -51,11 +51,4 @@ class Entity < ApplicationRecord
       end
     end
 
-    def positionable_parent
-      entities_list
-    end
-
-    def positionable_collection
-      entities_list.entities
-    end
 end

@@ -97,7 +97,7 @@ class InterpretationsController < ApplicationController
   end
 
   def update_positions
-    @intent.update_interpretations_positions(params[:ids])
+    Interpretation.update_positions(@intent, params[:ids])
   end
 
   def update_locale

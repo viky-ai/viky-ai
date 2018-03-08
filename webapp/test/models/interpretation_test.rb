@@ -18,7 +18,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation_alias.interpretation_aliasable = intents(:weather_question)
     assert interpretation_alias.save
 
-    assert_equal 1, interpretation.position
+    assert_equal 2, interpretation.position
     assert_equal 'Good morning John', interpretation.expression
     assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
@@ -110,7 +110,7 @@ class InterpretationTest < ActiveSupport::TestCase
     )
 
     new_positions = [interpretation_1.id, interpretation_2.id, interpretation_0.id, '132465789']
-    intent.update_interpretations_positions(new_positions)
+    Interpretation.update_positions(intent, new_positions)
     assert_equal [2, 1, 0], [interpretation_1.reload.position, interpretation_2.reload.position, interpretation_0.reload.position]
   end
 end

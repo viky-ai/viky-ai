@@ -7,12 +7,14 @@ module Positionable
 
 
   module ClassMethods
-    def positionable_class(p_class)
-      @positionable_class = p_class
+    attr_reader :ancestor_classname
+
+    def positionable_ancestor(parent)
+      @ancestor_classname = parent.to_s
     end
 
     def update_positions(parent, public_list, private_list = nil)
-      if @positionable_class.attribute_method? :visibility
+      if self.attribute_method? :visibility
         update_with_visibility(parent, public_list, private_list)
       else
         update_without_visibility(parent, public_list)
@@ -28,18 +30,18 @@ module Positionable
 
       def update_with_visibility(parent, public_list, private_list)
         parent_column = build_parent_column(parent)
-        current_public_objs  = @positionable_class.where(parent_column => parent.id, id: public_list).order(position: :asc)
-        current_private_objs = @positionable_class.where(parent_column => parent.id, id: private_list).order(position: :asc)
+        current_public_objs  = self.where(parent_column => parent.id, id: public_list).order(position: :asc)
+        current_private_objs = self.where(parent_column => parent.id, id: private_list).order(position: :asc)
         Agent.no_touching do
-          update_order(public_list, current_public_objs, @positionable_class.visibilities[:is_public])
-          update_order(private_list, current_private_objs, @positionable_class.visibilities[:is_private])
+          update_order(public_list, current_public_objs, self.visibilities[:is_public])
+          update_order(private_list, current_private_objs, self.visibilities[:is_private])
         end
         parent.touch
       end
 
       def update_without_visibility(parent, list)
         parent_column = build_parent_column(parent)
-        current_objs  = @positionable_class.where(parent_column => parent.id, id: list).order(position: :asc)
+        current_objs  = self.where(parent_column => parent.id, id: list).order(position: :asc)
         Agent.no_touching do
           update_order(list, current_objs)
         end
@@ -64,9 +66,16 @@ module Positionable
   private
 
     def set_position
-      return if positionable_parent.nil?
+      ancestor = self.send(self.class.ancestor_classname)
+      return if ancestor.nil?
+
+      children_method = ActiveModel::Naming.plural(self)
       if self.position.zero?
-        self.position = positionable_collection.count.zero? ? 0 : positionable_collection.maximum(:position) + 1
+        if ancestor.send(children_method).count.zero?
+          self.position = 0
+        else
+          self.position = ancestor.send(children_method).maximum(:position) + 1
+        end
       end
     end
 end

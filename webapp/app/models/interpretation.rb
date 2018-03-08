@@ -1,8 +1,8 @@
 class Interpretation < ApplicationRecord
-  LOCALES = %w[* en fr es pt zh ar].freeze
-
   include Positionable
-  positionable_class Interpretation
+  positionable_ancestor :intent
+
+  LOCALES = %w[* en fr es pt zh ar].freeze
 
   belongs_to :intent, touch: true
   has_many :interpretation_aliases, dependent: :destroy
@@ -48,11 +48,4 @@ class Interpretation < ApplicationRecord
       end
     end
 
-    def positionable_parent
-      intent
-    end
-
-    def positionable_collection
-      intent.interpretations_with_local(locale)
-    end
 end

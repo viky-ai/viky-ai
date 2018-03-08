@@ -63,7 +63,7 @@ class EntitiesListsController < ApplicationController
   end
 
   def update_positions
-    @agent.update_entities_lists_positions(params[:is_public], params[:is_private])
+    EntitiesList.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
   def confirm_destroy

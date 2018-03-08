@@ -136,7 +136,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     )
 
     new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
-    agent.update_entities_lists_positions([], new_positions)
+    EntitiesList.update_positions(agent, [], new_positions)
     assert_equal [2, 1, 0], [entities_list_1.reload.position, entities_list_2.reload.position, entities_list_0.reload.position]
     assert_equal %w(is_private is_private is_private), [entities_list_1.reload.visibility, entities_list_2.reload.visibility, entities_list_0.reload.visibility]
   end
