@@ -47,12 +47,19 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
     size_t flags)
 {
+  memset(buffer, 0, buffer_size);
   og_string truncated_ends = "...(truncated)";
   int truncated_ends_size = strlen(truncated_ends);
 
+  if (json == NULL)
+  {
+    snprintf(buffer, buffer_size, "null");
+    DONE;
+  }
+
   int max_buffer_size = buffer_size - truncated_ends_size - 1;
   int expected_size = json_dumpb(json, buffer, max_buffer_size, flags | JSON_ENCODE_ANY);
-  IF(expected_size)
+  if (expected_size == 0)
   {
     DPcErr;
   }

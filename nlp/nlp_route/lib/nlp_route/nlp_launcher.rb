@@ -12,7 +12,6 @@ module NlpRoute
 
     # get all package from webapp in json format and store in /nlp/import/ then start nlp
     def start(start_nlp = true)
-
       if start_nlp
         pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
         FileUtils.rm(pidfile, :force => true)
@@ -20,7 +19,6 @@ module NlpRoute
         starting = true
 
         @@nls_background = Thread.new {
-
           command = "./ogm_nls"
           Thread.current.name = "Nls : #{command}"
           begin
@@ -29,7 +27,6 @@ module NlpRoute
             puts "Nls crashed : #{e.inspect}"
             starting = false
           end
-
         }
 
         # wait for starting
@@ -44,11 +41,8 @@ module NlpRoute
       # subscribe
       begin
         tries ||= 10
-
         subscribe()
-
       rescue => e
-
         if @subcribe_was_success
           puts "Subscribe ends : #{e.inspect}"
           sleep 3
@@ -57,7 +51,6 @@ module NlpRoute
           puts "Subscribe failed : #{e.inspect}"
           raise
         end
-
       end
 
     end
@@ -76,19 +69,20 @@ module NlpRoute
     end
 
     def init
-
       #Load all packages ids
       wrapper = PackageApiWrapper.new
       packages_ids = wrapper.list_id
       packages_ids.each do |package_id|
         package = wrapper.get_package(package_id)
-        wrapper.update_or_create(package_id, package)
+        if package.nil?
+          puts "[skipping] Impossible to download package #{package_id} from webapp"
+        else
+          wrapper.update_or_create(package_id, package)
+        end
       end
-
     end
 
     def subscribe
-
       # setup
       redis_opts = {
         url: ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
@@ -108,12 +102,14 @@ module NlpRoute
           parsed_message = JSON.parse(message)
           wrapper = PackageApiWrapper.new
           puts "#{channel}: #{parsed_message}"
-
           id = parsed_message["id"]
-
           if parsed_message["event"] == "update"
             package = wrapper.get_package(id)
-            wrapper.update_or_create(id, package)
+            if package.nil?
+              puts "[skipping] Impossible to download package #{package_id} from webapp"
+            else
+              wrapper.update_or_create(id, package)
+            end
           elsif parsed_message["event"] == "delete"
             wrapper.delete(id)
           elsif parsed_message["event"] == "unsubscribe"
@@ -136,8 +132,7 @@ module NlpRoute
     end
 
     def self.exec(cmd)
-
-      Open3.popen3(cmd, :chdir => pwd, :err=>:out) do |stdin, stdout, stderr, wait_thr|
+      Open3.popen3(cmd, :chdir => pwd, :err => :out) do |stdin, stdout, stderr, wait_thr|
 
         stdout.each do |line|
           print "#{line}"
@@ -147,11 +142,10 @@ module NlpRoute
         exit_status = wait_thr.value
 
         if !exit_status.success?
-          raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd}, pid:#{pid})\n\n#{stdstr}\n"
+          raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\n\n#{stdstr}\n"
         end
 
       end
-
 
     end
 

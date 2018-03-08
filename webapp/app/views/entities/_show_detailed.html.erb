@@ -1,0 +1,32 @@
+<div class="entity-show-close">
+  <%= link_to icon_close.html_safe,
+        user_agent_entities_list_entity_path(
+            entity.entities_list.agent.owner,
+            entity.entities_list.agent,
+            entity.entities_list,
+            entity
+        ),
+        remote: true,
+        class: 'close' %>
+</div>
+
+<div class='entity-show'>
+  <div class="field">
+    <div class="control">
+      <span class="label"><%= t('activerecord.attributes.entity.terms') %></span>
+      <div class="terms"><%= entity.terms_to_s.gsub("\n", "<br>").html_safe %></div>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <span class="label"><%= t('activerecord.attributes.entity.solution') %></span>
+      <% if entity.auto_solution_enabled %>
+        <span class="label--with-option">
+          <span class="icon icon--x-small"><%= icon_check %></span>
+          <span class="label"><%= t('activerecord.attributes.entity.auto_solution_enabled')  %></span>
+        </span>
+      <% end %>
+      <%= text_area_tag("solution__#{entity.id}", entity.solution, readonly: true) %>
+    </div>
+  </div>
+</div>

@@ -421,14 +421,7 @@ class AgentTest < ActiveSupport::TestCase
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
     assert_equal 2, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
-
-    agent_public = agents(:terminator)
-    agent_public.visibility = 'is_public'
-    assert agent_public.save
-
-    assert_equal 2, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents.collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
@@ -437,22 +430,17 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
-
-    agent_successor.visibility = 'is_public'
-    assert agent_successor.save
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents.count
+    assert_equal ['weather_forecast', 'weather_question', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
   end
 
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
-    intent_greetings = intents(:weather_greeting)
+    intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
-    intent_who = intents(:weather_who)
+    intent_who = intents(:weather_question)
     intent_who.visibility = 'is_private'
     assert intent_who.save
 
@@ -471,8 +459,49 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_greeting', 'weather_who', 'greeting_public'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents.count
+    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents.collect(&:intentname)
+  end
+
+  test 'List reachable entities_list for agent' do
+    agent_weather = agents(:weather)
+    assert_equal 2, agent_weather.reachable_entities_lists.count
+    assert_equal ['weather_conditions', 'weather_dates'], agent_weather.reachable_entities_lists.collect(&:listname)
+
+    agent_successor = agents(:weather_confirmed)
+    assert EntitiesList.create(
+      listname: 'locations',
+      agent: agent_successor
+    )
+    assert AgentArc.create(source: agent_weather, target: agent_successor)
+    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
+    assert_equal ['weather_conditions', 'weather_dates', 'locations'], agent_weather.reachable_entities_lists.collect(&:listname)
+  end
+
+  test 'List reachable public/private entities_list for agent' do
+    agent_weather = agents(:weather)
+    elist_conditions = entities_lists(:weather_conditions)
+    elist_conditions.visibility = EntitiesList.visibilities[:is_public]
+    assert elist_conditions.save
+    elist_dates = entities_lists(:weather_dates)
+    elist_dates.visibility = EntitiesList.visibilities[:is_private]
+    assert elist_dates.save
+
+    agent_successor = agents(:weather_confirmed)
+    assert EntitiesList.create(
+      listname: 'greeting_public',
+      agent: agent_successor,
+      visibility: EntitiesList.visibilities[:is_public]
+    )
+    assert EntitiesList.create(
+      listname: 'greeting_private',
+      agent: agent_successor,
+      visibility: EntitiesList.visibilities[:is_private]
+    )
+    assert AgentArc.create(source: agent_weather, target: agent_successor)
+
+    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
+    assert_equal ['weather_conditions', 'weather_dates', 'greeting_public'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
 
 

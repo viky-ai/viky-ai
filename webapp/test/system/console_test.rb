@@ -39,10 +39,10 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             interpretations: [
               {
-                "id": intents(:weather_greeting).id,
-                "slug": "admin/weather/weather_greeting",
-                "name": "weather_greeting",
-                "score": 1.0
+                "id" => intents(:weather_forecast).id,
+                "slug" => "admin/weather/weather_forecast",
+                "name" => "weather_forecast",
+                "score" => 1.0
               }
             ]
           }
@@ -56,21 +56,21 @@ class ConsoleTest < ApplicationSystemTestCase
           body: {
             interpretations: [
               {
-                "id": intents(:weather_greeting).id,
-                "slug": "admin/weather/weather_greeting",
-                "name": "weather_greeting",
-                "score": 1.0,
-                "explanation": {
-                  "expression": {
-                    "text": "Hello world",
-                    "slug": "weather_greeting",
-                    "highlight": "[Hello world] viki.ai",
-                    "expressions": [
+                "id" => intents(:weather_forecast).id,
+                "slug" => "admin/weather/weather_forecast",
+                "name" => "weather_forecast",
+                "score" => 1.0,
+                "explanation" => {
+                  "expression" => {
+                    "text" => "Hello world",
+                    "slug" => "weather_forecast",
+                    "highlight" => "[Hello world] viki.ai",
+                    "expressions" => [
                       {
-                        "word": "Hello"
+                        "word" => "Hello"
                       },
                       {
-                        "word": "world"
+                        "word" => "world"
                       }
                     ]
                   }
@@ -121,6 +121,7 @@ class ConsoleTest < ApplicationSystemTestCase
     #
     # Add intent
     #
+    click_link 'Interpretations'
     click_link 'New interpretation'
     within('.modal') do
       assert page.has_text? 'Create a new interpretation'
@@ -131,7 +132,7 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_content?('No interpretation found.')
 
     #
-    # Edit intentk
+    # Edit intent
     #
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
@@ -150,7 +151,7 @@ class ConsoleTest < ApplicationSystemTestCase
     # Show intent
     #
     click_link 'my-new-intent-updated'
-    assert page.has_text?('admin/weather/my-new-intent-updated')
+    assert page.has_text?('Interpretations / my-new-intent-updated PUBLIC')
     assert page.has_content?('No interpretation found.')
   end
 end

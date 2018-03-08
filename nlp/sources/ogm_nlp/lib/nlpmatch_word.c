@@ -39,7 +39,7 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
   number[0] = 0;
   if (request_word->is_number)
   {
-    snprintf(number, DPcPathSize, " -> %g", request_word->number_value);
+    snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
   }
 
   NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, number);
@@ -119,6 +119,26 @@ og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)
     }
 
     previous_word = current_word;
+  }
+
+  DONE;
+}
+
+
+og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
+{
+  // replace basic_request_word_used
+  ctrl_nlp_th->basic_group_request_word_nb = 0;
+
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
+
+  for (struct request_word *rw = first_request_word; rw ; rw = rw->next)
+  {
+    // ignore non basic word (build from ltras)
+    if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
+
+    ctrl_nlp_th->basic_group_request_word_nb++;
   }
 
   DONE;

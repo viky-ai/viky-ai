@@ -1,0 +1,61 @@
+<div class="card-list__item__draggable"></div>
+
+<%= form_with(model: [entity.entities_list.agent.owner, entity.entities_list.agent, entity.entities_list, entity],
+              class: 'entity-form',
+              data: {
+                  elistname: entity.entities_list.listname
+              }) do |f| %>
+
+  <div class="field entity-form__terms">
+    <div class="control">
+      <%= f.label :terms, for: "terms__#{entity.id}" %>
+      <%= text_area_tag('entity[terms]', entity.terms_to_s, id: "terms__#{entity.id}", maxlength: '5000', spellcheck: 'false') %>
+    </div>
+    <%= display_errors(entity, :terms) %>
+  </div>
+
+  <div class="field entity-form__solution">
+    <div class="control">
+      <%= f.label :solution, for: "solution__#{entity.id}" %>
+      <span class="label--with-option">
+        <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{entity.id}" %>
+        <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{entity.id}" %>
+      </span>
+      <%= f.text_area :solution, id: "solution__#{entity.id}", maxlength: '2000', spellcheck: 'false', disabled: entity.auto_solution_enabled %>
+    </div>
+    <%= display_errors(entity, :solution) %>
+    <%= display_errors(entity, :auto_solution_enabled) %>
+  </div>
+
+  <div class="field field--submit">
+    <div class="control">
+      <%= f.button t('views.entities.index.update_btn').html_safe, class: 'btn btn--primary',
+                   data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span> #{t('loading')}" } %>
+      <%= link_to t('views.entities.index.cancel_btn'),
+                  user_agent_entities_list_entity_path(
+                      entity.entities_list.agent.owner,
+                      entity.entities_list.agent,
+                      entity.entities_list,
+                      entity
+                  ),
+                  remote: true,
+                  class: 'btn btn--plain',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+  <div class="field entity-form__delete">
+    <div class="control">
+      <%= link_to t('views.entities.index.delete_btn'),
+                  user_agent_entities_list_entity_path(
+                      entity.entities_list.agent.owner,
+                      entity.entities_list.agent,
+                      entity.entities_list,
+                      entity
+                  ),
+                  method: :delete,
+                  remote: true,
+                  class: 'btn btn--small btn--outline btn--destructive',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+    </div>
+  </div>
+<% end %>

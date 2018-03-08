@@ -87,6 +87,10 @@
       margin: 0;
       background-color: transparent;
     }
+    pre.with-wrap{
+      white-space: normal;
+      line-height: 1.5em;
+    }
 
     #console-explain{
       padding: 1em;

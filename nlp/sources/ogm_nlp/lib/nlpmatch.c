@@ -26,6 +26,9 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   // function to regroup numbers
   IFE(NlpMatchGroupNumbers(ctrl_nlp_th));
 
+  // if number has been groupes update basic_group_request_word_nb
+  IFE(NlpMatchWordChainUpdateWordCount(ctrl_nlp_th));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpLogRequestWords(ctrl_nlp_th));
