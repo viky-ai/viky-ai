@@ -38,6 +38,7 @@ GEM
     netrc (0.11.0)
     parallel (1.12.1)
     rake (12.3.0)
+    redis (3.3.5)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -72,6 +73,7 @@ DEPENDENCIES
   mocha
   parallel
   rake
+  redis (~> 3.3.0)
   rest-client
   simplecov
   term-ansicolor

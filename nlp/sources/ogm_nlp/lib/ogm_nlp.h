@@ -10,6 +10,8 @@
 #include <logheap.h>
 #include <logsysi.h>
 #include <logis639_3166.h>
+#include <logis639.h>
+#include <logis3166.h>
 #include <glib-2.0/glib.h>
 #include <duktape.h>
 #include <math.h>
@@ -39,6 +41,9 @@
   { \
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
+
+// %.15g means, 15 significant figures not decimal, default is 6.
+#define DOgPrintDouble "%.15g"
 
 /** Nlp configuration set by env variables*/
 struct og_nlp_env
@@ -105,7 +110,7 @@ struct package
   og_heap hinput_part_ba;
   og_heap hinput_part;
 
-  og_heap hdigit_input_part;
+  og_heap hnumber_input_part;
 
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
@@ -121,7 +126,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Digit
+  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number
 };
 
 struct alias_compile
@@ -205,7 +210,9 @@ struct expression
 
 enum nlp_interpretation_scope_type
 {
-  nlp_interpretation_scope_type_public = 0, nlp_interpretation_scope_type_private = 1, nlp_interpretation_scope_type_hidden = 2
+  nlp_interpretation_scope_type_public = 0,
+  nlp_interpretation_scope_type_private = 1,
+  nlp_interpretation_scope_type_hidden = 2
 };
 
 struct interpretation_compile
@@ -247,7 +254,7 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Digit
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number
 };
 
 struct input_part_word
@@ -276,7 +283,7 @@ struct input_part
 
 };
 
-struct digit_input_part
+struct number_input_part
 {
   int Iinput_part;
 };
@@ -311,17 +318,32 @@ struct nlp_synchro_current_lock
 
 struct request_word
 {
+  int self_index;
+
+  /** whole string representing normalized request_word (in ort case it is the corrected one) */
   int start;
   int length;
+
+  /** whole string representing NON normalized request_word */
   int raw_start;
   int raw_length;
+
+  /** Position in orginal request string */
   int start_position;
   int length_position;
-  og_bool is_digit;
-  int digit_value;
+
+  og_bool is_number;
+  double number_value;
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
+
+  /**
+   * chain the list in order to ignore merged words
+   *
+   * It can be used only after calling NlpMatchWordChainRequestWords
+   */
+  struct request_word *next;
 };
 
 struct accept_language
@@ -359,7 +381,7 @@ struct request_input_part
 
   int Ioriginal_request_input_part;
 
-  og_bool interpret_word_as_digit;
+  og_bool interpret_word_as_number;
 };
 
 struct request_position
@@ -380,8 +402,8 @@ struct orip
 
 struct request_any
 {
-  int request_word_start;
-  int request_words_nb;
+  /** List of struct request_word covered by any */
+  GQueue queue_request_words[1];
   int distance;
 
   /** used to optimize the attachement any <-> request_expression */
@@ -398,6 +420,7 @@ struct request_score
   double overlap;
   double any;
   double context;
+  double scope;
 };
 
 struct request_expression
@@ -535,6 +558,27 @@ struct request_context
   int flag_length;
 };
 
+typedef struct number_sep_conf *nlp_match_group_numbers_conf;
+
+struct nlp_match_group_numbers
+{
+
+  struct og_ctrl_nlp_threaded *nlpth;
+
+  /* string of all seprators except \" \" space */
+  og_string all_separators;
+
+  /* list of (struct number_sep_conf) */
+  GQueue sep_conf[1];
+
+  /* list of (struct number_sep_conf_locale) */
+  GQueue sep_conf_lang[1];
+
+  /* hash of Glist (struct number_sep_conf_locale) indexed by (lang + DOgLangMax * country) */
+  GHashTable *sep_conf_lang_by_lang_country;
+
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -573,6 +617,7 @@ struct og_ctrl_nlp_threaded
   og_heap hinterpret_package;
   og_string request_sentence;
   int basic_request_word_used;
+  int basic_group_request_word_nb;
   og_heap haccept_language;
   og_bool show_explanation;
   og_bool auto_complete;
@@ -610,6 +655,9 @@ struct og_ctrl_nlp_threaded
 
   /** HashTable key: int (word position) , value: int (word position) */
   GHashTable *glue_hash;
+
+  /* struct used by match_group_numbers */
+  struct nlp_match_group_numbers group_numbers_settings[1];
 
   void *hltrac;
   void *hltras;
@@ -672,7 +720,7 @@ og_status NlpPackageCompileExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_
 og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias_compile *alias);
 
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
-og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word);
 const char *NlpAliasTypeString(enum nlp_alias_type type);
 
 /* nlpsynchro.c */
@@ -712,9 +760,9 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpInputPartWordFlush(package_t package);
 og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_string string_word, int length_string_word,
     int Iinput_part);
-og_status NlpInputPartAliasDigitAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
+og_status NlpInputPartAliasNumberAdd(og_nlp_th ctrl_nlp_th, package_t package, size_t Iinput_part);
 og_status NlpInputPartWordLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpDigitInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpNumberInputPartLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpipalias.c */
 og_status NlpInputPartAliasInit(og_nlp_th ctrl_nlp_th, package_t package);
@@ -728,6 +776,14 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_word.c */
 og_status NlpMatchWords(og_nlp_th ctrl_nlp_th);
+
+og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th);
+
+/* nlpmatch_group_numbers.c */
+og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchGroupNumbersFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchGroupNumbers(og_nlp_th ctrl_nlp_th);
 
 /* nlpmatch_expression.c */
 og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th);
@@ -744,7 +800,7 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_digit);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_number);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,

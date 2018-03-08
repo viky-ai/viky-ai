@@ -45,15 +45,17 @@ RUN factory.pl -s bu2_nls   debug
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
 # ============================================================================
-FROM ruby:2.4-stretch AS run_image
+FROM ruby:2.4-slim-stretch AS run_image
 
 # Add libxml2 needed for XSD validation
 # Add curl needed for healthcheck
 RUN set -ex; \
     apt-get update ; \
     apt-get install -y --no-install-recommends \
+      build-essential \
       ca-certificates \
       curl \
+      g++ \
       libxml2 \
       wget \
     ; \
@@ -85,7 +87,6 @@ RUN ln -sfn `readlink -f /nls-* | head -n 1` /nls
 WORKDIR /nls
 ENV NLS_INSTALL_PATH=/nls
 
-VOLUME [ "/nls/import" ]
 EXPOSE 9345
 CMD ["./docker_run.sh"]
 

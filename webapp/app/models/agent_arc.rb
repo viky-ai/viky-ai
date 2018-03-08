@@ -11,23 +11,33 @@ class AgentArc < ApplicationRecord
   before_destroy :remove_target_related_interpretation_aliases
 
   def target_related_interpretation_aliases
-    InterpretationAlias
-      .includes(:intent, :interpretation)
-      .where(intents: { agent_id: target_id })
-      .where(
-        interpretations: {
-          id: Interpretation.includes(:intent)
-                .where(intents: { agent_id: source_id })
-                .pluck(:id)
-        }
-      )
+    InterpretationAlias.find_by_sql ["
+        SELECT
+          ia.id,
+          ia.aliasname,
+          ia.position_start,
+          ia.position_end,
+          ia.interpretation_id,
+          ia.interpretation_aliasable_id,
+          ia.interpretation_aliasable_type,
+          ia.nature,
+          ia.is_list,
+          ia.any_enabled
+        FROM interpretation_aliases AS ia
+          INNER JOIN intents ON ia.interpretation_aliasable_id = intents.id
+          INNER JOIN interpretations AS pr ON ia.interpretation_id = pr.id
+        WHERE intents.agent_id = ?
+              AND ia.interpretation_id IN (SELECT interpretations.id
+                                           FROM interpretations
+                                             INNER JOIN intents ON interpretations.intent_id = intents.id
+                                           WHERE intents.agent_id = ?)", target_id, source_id]
   end
 
 
   private
 
     def remove_target_related_interpretation_aliases
-      target_related_interpretation_aliases.destroy_all
+      target_related_interpretation_aliases.each { |ia| ia.destroy }
       Nlp::Package.new(source).push
     end
 

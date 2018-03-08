@@ -1,9 +1,8 @@
-$("#interpretation-<%= @interpretation.id %>").addClass('deleted');
+App.CardListHelper.removeFromList("#interpretation-<%= @interpretation.id %>")
 
 setTimeout(function(){
-  $("#interpretation-<%= @interpretation.id %>").remove();
-  App.InterpretationsList.updateBlankslates();
-  App.InterpretationsList.updateDraggable();
+  App.CardListHelper.updateBlankslates();
+  App.CardListHelper.updateDraggable();
 }, 200);
 
 App.InterpretationsList.decrementTabBadge();

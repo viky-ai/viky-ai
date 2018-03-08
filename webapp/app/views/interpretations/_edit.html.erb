@@ -1,18 +1,19 @@
-<div class="interpretations-list__draggable"></div>
+<div class="card-list__item__draggable"></div>
 
-<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], class: 'interpretations-list__edit') do |f| %>
+<%= form_with(model: [interpretation.intent.agent.owner, interpretation.intent.agent, interpretation.intent, interpretation], class: 'interpretations-form') do |f| %>
 
   <% interpretation.interpretation_aliases.select { |ialias| ialias._destroy }.each do |ialias| %>
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][id]" value="<%= ialias.id %>" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_start]" value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_end]"   value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][intent_id]"      value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][aliasname]"      value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"         value="" />
-    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"       value="1" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_start]"                value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][position_end]"                  value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][interpretation_aliasable_id]"   value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][interpretation_aliasable_type]" value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][aliasname]"                     value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"                        value="" />
+    <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
   <% end %>
 
-  <div class="field">
+  <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
       <div class="trix-control__option <% if rtl?(interpretation.locale) %>trix-control__option--rtl<% end %>">
         <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
@@ -36,9 +37,9 @@
     <%= display_errors(interpretation, :glued) %>
   </div>
 
-  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %>" style="display: none;"></div>
+  <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display: none;"></div>
 
-  <div class="field field--for-solution"
+  <div class="field field--for-solution interpretations-form__solution"
       <% if interpretation.auto_solution_enabled %>style="display:none;"<% end %>>
     <div class="control">
       <span class="solution-label">
@@ -64,18 +65,20 @@
             class: 'btn btn--plain',
             data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
     </div>
+  </div>
+  <div class="field interpretations-form__delete">
     <div class="control">
       <%= link_to t('views.interpretations.index.delete_btn'),
-          user_agent_intent_interpretation_path(
-            interpretation.intent.agent.owner,
-            interpretation.intent.agent,
-            interpretation.intent,
-            interpretation
-          ),
-          method: :delete,
-          remote: true,
-          class: 'btn btn--small btn--outline btn--destructive',
-          data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
+                  user_agent_intent_interpretation_path(
+                      interpretation.intent.agent.owner,
+                      interpretation.intent.agent,
+                      interpretation.intent,
+                      interpretation
+                  ),
+                  method: :delete,
+                  remote: true,
+                  class: 'btn btn--small btn--outline btn--destructive',
+                  data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
     </div>
   </div>
 <% end %>

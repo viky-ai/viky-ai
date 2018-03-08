@@ -49,7 +49,7 @@
             </div>
             <div class="dropdown__content dropdown__content--hidden">
               <ul>
-                <% Interpretation::LOCALES.each do |l| %>
+                <% Locales::ALL.each do |l| %>
                   <li>
                     <a href="#" <% if l == "*" %>class="current"<% end %>
                       data-behavior="populate-input, replace-trigger-label, submit-form"

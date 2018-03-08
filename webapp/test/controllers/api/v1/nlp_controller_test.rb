@@ -34,7 +34,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token can be specified in the request header and in the request parameters" do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: '200',
@@ -43,7 +43,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           {
             "package" => agent.id,
             "id"      => intent.id,
-            "slug"    => "weather_greeting",
+            "slug"    => "weather_forecast",
             "score"   => 1.0
           }
         ]
@@ -57,8 +57,8 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
       'interpretations' => [
         {
           "id"    => intent.id,
-          "slug"  => "weather_greeting",
-          "name"  => "weather_greeting",
+          "slug"  => "weather_forecast",
+          "name"  => "weather_forecast",
           "score" => 1.0
         }
       ]
@@ -74,7 +74,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test "Agent token in the request parameters overloads agent token in the request header" do
-    intent = intents(:weather_greeting)
+    intent = intents(:weather_forecast)
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: '200',
@@ -83,7 +83,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
           {
             "package" => agent.id,
             "id"      => intent.id,
-            "slug"    => "weather_greeting",
+            "slug"    => "weather_forecast",
             "score"   => 1.0
           }
         ]

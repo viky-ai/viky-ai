@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           get :search_users_for_transfer_ownership
           get :generate_token
           get :interpret, to: 'console#interpret'
+          get :full_export
         end
         get :search_users_to_share_agent, controller: 'memberships'
 
@@ -44,7 +45,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :intents, except: [:index] do
+        resources :intents, path: 'interpretations' do
           get :select_new_locale
           post :add_locale
           delete :remove_locale
@@ -57,6 +58,22 @@ Rails.application.routes.draw do
             member do
               get :show_detailed
               post :update_locale
+            end
+            collection do
+              post :update_positions
+            end
+          end
+        end
+
+        resources :entities_lists do
+          get :confirm_destroy
+          collection do
+            post :update_positions
+          end
+
+          resources :entities, only: [:show, :create, :edit, :update, :destroy] do
+            member do
+              get :show_detailed
             end
             collection do
               post :update_positions

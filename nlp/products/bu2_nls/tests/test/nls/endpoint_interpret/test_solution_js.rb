@@ -19,6 +19,19 @@ module Nls
 
         @solution_test_package = create_solution_test_package()
         Nls.package_update(@solution_test_package)
+
+        Nls.package_update(create_hello_emoji_test_package)
+      end
+
+      def create_hello_emoji_test_package
+        package = Package.new("hello_emoji_test_package")
+        interpretation = package.new_interpretation("hello_emoji_test")
+        interpretation << Expression.new("emoji 👋", solution: '`"👋"`')
+        interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
+        interpretation << Expression.new("emoji 🔥+👋", solution: '`"🔥+👋"`')
+        interpretation << Expression.new("emoji array 🔥+👋", solution: '`[ "🔥", "👋" ]`')
+        interpretation << Expression.new("emoji abject 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
+        package
       end
 
       def create_solution_test_package
@@ -76,8 +89,8 @@ module Nls
 
         match = package.new_interpretation("match")
         match.new_expression("@{entity}",      aliases: { entity: entity }, solution: { name: "`entity`" } )
-        match.new_expression("nosol @{number}", aliases: { number: Alias.digit })
-        match.new_expression("@{number}",      aliases: { number: Alias.digit }, solution: { number: "`number`" } )
+        match.new_expression("nosol @{number}", aliases: { number: Alias.number })
+        match.new_expression("@{number}",      aliases: { number: Alias.number }, solution: { number: "`number`" } )
         match.new_expression("@{not_matched}", aliases: { not_matched: not_matched })
         # @{text} is needed due to a bug in consolidate phase on any
         match.new_expression("@{text} @{entity_any}",  aliases: { text: text, entity_any: Alias.any }, solution: "`entity_any`" )
@@ -187,7 +200,7 @@ module Nls
       end
 
       def test_solution_combine_complex_nosol
-        check_interpret("sol combine nosol 1 nosl 2 nosol 3", solution: { match: [1, 2, 3] })
+        check_interpret("sol combine nosol 1 nosol 2 nosol 3", solution: { match: [1, 2, 3] })
       end
 
       def test_solution_combine_complex_entity
@@ -204,6 +217,14 @@ module Nls
       def test_solution_combine_list_must_be_an_array
         check_interpret("sol combine 1", solution: { match: [ { number: 1 } ] })
         check_interpret("sol combine 1 2", solution: { match: [ { number: 1 }, { number: 2 } ] })
+      end
+
+      def test_test_hello_emoji
+        check_interpret("emoji 👋", solution: "👋")
+        check_interpret("emoji 🔥", solution: "🔥")
+        check_interpret("emoji 🔥+👋", solution: "🔥+👋")
+        check_interpret("emoji array 🔥+👋", solution: [ "🔥", "👋"] )
+        check_interpret("emoji object 🔥+👋", solution: { fire: "🔥", hand: "👋" } )
       end
 
     end

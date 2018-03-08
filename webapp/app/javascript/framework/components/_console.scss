@@ -87,6 +87,10 @@
       margin: 0;
       background-color: transparent;
     }
+    pre.with-wrap{
+      white-space: normal;
+      line-height: 1.5em;
+    }
 
     #console-explain{
       padding: 1em;
@@ -161,19 +165,29 @@
           }
         }
       }
-      .endpoint{
+
+      .api_links{
         margin-top: 3em;
         padding-top: 1em;
         font-size: .8em;
         text-align: center;
         border-top: 1px dotted #eee;
-        a{
+        display: flex;
+        justify-content: space-evenly;
+        .endpoint a{
+          color: #bbb;
+          &:hover{
+            color: #222;
+          }
+        }
+        .download_package a{
           color: #bbb;
           &:hover{
             color: #222;
           }
         }
       }
+
     }
   }
 }

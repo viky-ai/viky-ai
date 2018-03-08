@@ -158,6 +158,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   IFn(request_word) DPcErr;
   IF(Irequest_word) DPcErr;
 
+  request_word->self_index = Irequest_word;
   request_word->start = OgHeapGetCellsUsed(ctrl_nlp_th->hba);
   request_word->length = length_corrected_word;
   IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->length, corrected_word));
@@ -174,7 +175,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->start_position = request_word_basic->start_position;
   request_word->length_position = request_word_basic->length_position;
 
-  request_word->is_digit = FALSE;
+  request_word->is_number = FALSE;
   request_word->is_auto_complete_word = FALSE;
 
   request_word->spelling_score = spelling_score;

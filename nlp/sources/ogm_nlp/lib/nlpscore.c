@@ -9,6 +9,7 @@
 static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 og_status NlpCalculateScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
@@ -23,6 +24,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   struct request_score score[1];
   memset(score, 0, sizeof(struct request_score));
   score->any = 1.0;
+  int nb_words = ctrl_nlp_th->basic_group_request_word_nb;
 
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
@@ -32,8 +34,9 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
-      score->locale += 1;
-      score->spelling += request_word->spelling_score;
+      score->locale += 1.0 / nb_words;
+      score->coverage += 1.0 / nb_words;
+      score->spelling += request_word->spelling_score / nb_words;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
@@ -42,17 +45,22 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
       IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
-      score->locale += sub_request_expression->score->locale;
-      score->spelling += sub_request_expression->score->spelling;
+      double localrequest_positions_nb = sub_request_expression->request_positions_nb;
+      double localCoverage = localrequest_positions_nb / nb_words;
+      score->locale += sub_request_expression->score->locale * localCoverage;
+      score->coverage += localCoverage;
+      score->spelling += sub_request_expression->score->spelling * localCoverage;
       score->any *= sub_request_expression->score->any;
     }
     else
     {
-      score->locale += 1;
-      score->spelling += 1;
+      score->locale += 1.0 / nb_words;
+      score->spelling += 1.0 / nb_words;
     }
 
   }
+  score->spelling /= score->coverage;
+  score->locale /= score->coverage;
 
   if (request_expression->expression->alias_any_input_part_position >= 0)
   {
@@ -67,14 +75,13 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   }
 
   // coverage is calculated in terms of number of matched words
-  request_expression->score->coverage = request_expression->request_positions_nb;
-  request_expression->score->coverage /= ctrl_nlp_th->basic_request_word_used;
+  request_expression->score->coverage = score->coverage;
 
   // we use a mean score for the locale score
-  request_expression->score->locale = score->locale / request_expression->orips_nb;
+  request_expression->score->locale = score->locale;
 
   // we use a mean score for the spelling score
-  request_expression->score->spelling = score->spelling / request_expression->orips_nb;
+  request_expression->score->spelling = score->spelling;
   IFE(NlpAdjustLocaleScore(ctrl_nlp_th, request_expression));
 
   // overlap_mark is 1, 2, 3 when this number of input_part is included in another input_parts
@@ -89,6 +96,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   request_expression->score->any = score->any;
 
   IFE(NlpContextGetScore(ctrl_nlp_th, request_expression));
+
+  IFE(NlpCalculateScoreMatchScope(ctrl_nlp_th, root_request_expression));
 
   IFE(NlpCalculateTotalScore(ctrl_nlp_th, request_expression));
 
@@ -149,7 +158,31 @@ static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_ex
 {
   double score_number = 6.0;
   struct request_score *score = request_expression->score;
-  request_expression->total_score = (score->coverage + score->locale + score->spelling * score->spelling
-      + score->overlap + score->any + score->context) / score_number;
+
+  double score_sum = score->coverage + score->locale + score->spelling * score->spelling + score->overlap + score->any
+      + score->context;
+
+  request_expression->total_score = score->scope * score_sum / score_number;
+
+  DONE;
+}
+
+static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  if (ctrl_nlp_th->primary_package != NULL)
+  {
+    if (ctrl_nlp_th->primary_package == request_expression->expression->interpretation->package)
+    {
+      request_expression->score->scope = 1;
+    }
+    else
+    {
+      request_expression->score->scope = 0.9;
+    }
+  }
+  else
+  {
+    request_expression->score->scope = 1;
+  }
   DONE;
 }

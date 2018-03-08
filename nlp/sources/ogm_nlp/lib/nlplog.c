@@ -47,12 +47,19 @@ og_status NlpLogImplementation(og_nlp_th ctrl_nlp_th, og_string format, ...)
 og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer_size, og_bool *p_truncated,
     size_t flags)
 {
+  memset(buffer, 0, buffer_size);
   og_string truncated_ends = "...(truncated)";
   int truncated_ends_size = strlen(truncated_ends);
 
+  if (json == NULL)
+  {
+    snprintf(buffer, buffer_size, "null");
+    DONE;
+  }
+
   int max_buffer_size = buffer_size - truncated_ends_size - 1;
   int expected_size = json_dumpb(json, buffer, max_buffer_size, flags | JSON_ENCODE_ANY);
-  IF(expected_size)
+  if (expected_size == 0)
   {
     DPcErr;
   }
@@ -339,7 +346,7 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
           Iinput_part, alias->slug, alias->id, alias->package_id);
       break;
     }
-    case nlp_input_part_type_Digit:
+    case nlp_input_part_type_Number:
     {
       struct alias *alias = input_part->alias;
       OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part,
@@ -364,30 +371,29 @@ og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t packa
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th)
 {
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "list of request words:");
-  int request_word_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
-  for (int i = 0; i < request_word_used; i++)
-  {
-    IFE(NlpLogRequestWord(ctrl_nlp_th, i));
+
+  struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(first_request_word) DPcErr;
+
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next) {
+    IFE(NlpLogRequestWord(ctrl_nlp_th, rw));
   }
   DONE;
 }
 
-og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
+og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word)
 {
-  struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
-  IFN(request_word) DPcErr;
-
   og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(string_request_word) DPcErr;
 
   unsigned char is_punctuation[DPcPathSize];
-  is_punctuation[0]=0;
+  is_punctuation[0] = 0;
   if (request_word->is_punctuation)
   {
-    snprintf(is_punctuation,DPcPathSize, " (punctuation)");
+    snprintf(is_punctuation, DPcPathSize, " (punctuation)");
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", Irequest_word, string_request_word,
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", request_word->self_index, string_request_word,
       request_word->start_position, request_word->length_position, is_punctuation);
   DONE;
 }
@@ -403,8 +409,8 @@ const char *NlpAliasTypeString(enum nlp_alias_type type)
       return "interpretation";
     case nlp_alias_type_Any:
       return "any";
-    case nlp_alias_type_Digit:
-      return "digit";
+    case nlp_alias_type_Number:
+      return "number";
 
   }
   return "alias_unknown";

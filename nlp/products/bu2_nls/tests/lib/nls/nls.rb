@@ -177,32 +177,42 @@ module Nls
 
     def self.package_update(package, params = {})
       package_id = nil
-      package_body = nil
       if package.kind_of? Package
-        package.to_file(import_dir)
-        package_id = "#{package.id}"
-        package_body = JSON.pretty_generate(package.to_h)
+        package_update_json(package.id, package.slug, package.to_h, params)
       elsif package.kind_of? Hash
         package_id = package['id']
         slug = package['slug']
-        if slug.nil?
-          filename = "package_#{package_id}.json"
-        else
-          filename = "package_#{slug}_#{package_id}.json"
-        end
-
-        package_body = JSON.pretty_generate(package)
-
-        File.open(File.join(File.expand_path(import_dir), filename), "w") do |f|
-          f.write(package_body)
+        package_update_json(package_id, slug, package, params)
+      elsif package.kind_of? Array
+        package.each do |pkg|
+          package_id = pkg['id']
+          slug = pkg['slug']
+          package_update_json(package_id, slug, pkg, params)
         end
       else
         raise "Unsupported package format #{package.inspect}"
       end
+    end
 
-      package_url = "#{base_url}/packages/#{package_id}"
-      response = RestClient.post(package_url, package_body, content_type: :json, params: params)
-      JSON.parse(response.body)
+    def self.package_update_json(package_id, package_slug, package_hash, params = {})
+
+        package_body = JSON.pretty_generate(package_hash)
+
+        if package_slug.nil?
+          filename = "package_#{package_id}.json".gsub("/","_")
+        else
+          filename = "package_#{package_slug}_#{package_id}.json".gsub("/","_")
+        end
+
+        File.open(File.join(File.expand_path(import_dir), filename), "w") do |f|
+          f.write(package_body)
+        end
+
+        package_url = "#{base_url}/packages/#{package_id}"
+        response = RestClient.post(package_url, package_body, content_type: :json, params: params)
+
+        JSON.parse(response.body)
+
     end
 
     def self.dump

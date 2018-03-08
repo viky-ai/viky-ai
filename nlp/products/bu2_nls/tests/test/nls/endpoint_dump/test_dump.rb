@@ -21,7 +21,7 @@ module Nls
         package << i_first_interpretation
 
         i_second_interpretation_params = {
-                aliases: { first: i_first_interpretation, any: Alias.any, digits: Alias.digit},
+                aliases: { first: i_first_interpretation, any: Alias.any, numbers: Alias.number},
                 keep_order: Expression.keep_order,
                 solution: { to: "`town.name`"}
               }
@@ -41,9 +41,9 @@ module Nls
       def test_nls_dump_several_complex_packages
         Nls.remove_all_packages
 
-        package_number_digits = JSON.parse(File.read(fixture_path("package_number_digits.json")))
-        package_url = "#{Nls.base_url}/packages/#{package_number_digits['id']}"
-        Nls.query_post(package_url, package_number_digits)
+        package_number_numbers = JSON.parse(File.read(fixture_path("package_number_digits.json")))
+        package_url = "#{Nls.base_url}/packages/#{package_number_numbers['id']}"
+        Nls.query_post(package_url, package_number_numbers)
 
         package_number_letters = JSON.parse(File.read(fixture_path("package_number_letters.json")))
         package_url = "#{Nls.base_url}/packages/#{package_number_letters['id']}"

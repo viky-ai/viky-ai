@@ -216,6 +216,68 @@ module Nls
         go_town
       end
 
+      def create_deepness_package
+        deepness = Package.new("deepness")
+
+        i_id_like = Interpretation.new("id_like", scope: "private").new_textual("I'd like",{locale: "en", keep_order: true, glued: true})
+        i_id_like.new_textual("Je voudrais",{locale: "fr", keep_order: true, glued: true})
+        deepness << i_id_like
+
+        i_to_go = Interpretation.new("to_go", scope: "private").new_textual("to go",{locale: "en", keep_order: true, glued: true})
+        i_to_go.new_textual("aller",{locale: "fr"})
+        deepness << i_to_go
+
+        i_prep_to = Interpretation.new("prep_to", scope: "private").new_textual("to",{locale: "en"})
+        i_prep_to.new_textual(["à", "en"],{locale: "fr"})
+        deepness << i_prep_to
+
+        i_destination = Interpretation.new("destination", scope: "private").new_textual("Paris",{solution: "Paris"})
+        i_destination.new_textual("Valence",{solution: "Valence"}).new_textual("Marseille",{solution: "Marseille"})
+        deepness << i_destination
+
+        want_go_hash = {'i_id_like' => i_id_like, 'i_to_go' => i_to_go}
+        i_want_go = Interpretation.new("want_go", scope: "private").new_expression("@{i_id_like} @{i_to_go}", {aliases: want_go_hash})
+        deepness << i_want_go
+
+        main_hash = {'i_want_go' => i_want_go, 'i_prep_to' => i_prep_to, 'i_destination' => i_destination}
+        i_main = Interpretation.new("main").new_expression("@{i_want_go} @{i_prep_to} @{i_destination}", {aliases: main_hash})
+        deepness << i_main
+
+        main_hash_2 = {'i_id_like' => i_id_like, 'i_to_go' => i_to_go, 'i_prep_to' => i_prep_to, 'i_destination' => i_destination}
+        i_main_2 = Interpretation.new("main2").new_expression("@{i_id_like} @{i_to_go} @{i_prep_to} @{i_destination}", {aliases: main_hash_2})
+        deepness << i_main_2
+
+        deepness
+      end
+
+      def test_score
+        Nls.remove_all_packages
+        Interpretation.default_locale = "fr"
+
+        deepness = create_deepness_package
+        Nls.package_update(deepness)
+
+        request1 = json_interpret_body(deepness, "Je voudrai aller à Paris", "fr")
+        actual1 = Nls.interpret(request1)
+        assert_equal actual1["interpretations"][0]["score"], actual1["interpretations"][1]["score"]
+
+        request2 = json_interpret_body(deepness, "Je voudrais aller à Paris", "en")
+        actual2 = Nls.interpret(request2)
+        assert_equal actual2["interpretations"][0]["score"], actual2["interpretations"][1]["score"]
+
+        request3 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", "fr")
+        actual3 = Nls.interpret(request3)
+        assert_equal actual3["interpretations"][0]["score"], actual3["interpretations"][1]["score"]
+
+        request4 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", "en")
+        actual4 = Nls.interpret(request4)
+        assert_equal actual4["interpretations"][0]["score"], actual4["interpretations"][1]["score"]
+
+        request5 = json_interpret_body(deepness, "Je voudrai aller à Paris toto", "fr")
+        actual5 = Nls.interpret(request5)
+        assert_equal actual5["interpretations"][0]["score"], actual5["interpretations"][1]["score"]
+      end
+
       def test_interpret_aller_de_a
         Nls.remove_all_packages
 

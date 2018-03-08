@@ -8,9 +8,7 @@ class AgentsController < ApplicationController
                 .page(params[:page]).per(12)
   end
 
-  def show
-    @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
-  end
+  def show; end
 
   def new
     @agent = Agent.new
@@ -129,17 +127,31 @@ class AgentsController < ApplicationController
     render json: { api_token: @agent.api_token }
   end
 
+  def full_export
+    respond_to do |format|
+      format.json {
+        filename = "#{@agent.slug}.#{Time.current.strftime('%Y-%m-%d_%H-%M-%S')}.json"
+        response.headers["Content-Disposition"] = "inline; filename=\"#{filename}\""
+        render json: JSON.pretty_generate(Nlp::Package.new(@agent).full_json_export)
+      }
+    end
+  end
+
 
   private
 
     def check_user_rights
       case action_name
+      when "full_export"
+        access_denied unless current_user.can?(:show, @agent) && current_user.admin?
       when "show"
         access_denied unless current_user.can? :show, @agent
-      when "edit", "update"
+      when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent
-      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy"
+      when "confirm_transfer_ownership", "transfer_ownership", "confirm_destroy", "destroy", "search_users_for_transfer_ownership"
         access_denied unless current_user.owner?(@agent)
+      else
+        access_denied
       end
     end
 

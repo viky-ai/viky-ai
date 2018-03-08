@@ -297,12 +297,12 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
       DPcErr;
     }
   }
-  else if (alias->type == nlp_alias_type_Digit)
+  else if (alias->type == nlp_alias_type_Number)
   {
-    json_t *json_type_digit = json_string("digit");
-    IF(json_object_set_new(json_alias, "type", json_type_digit))
+    json_t *json_type_number = json_string("number");
+    IF(json_object_set_new(json_alias, "type", json_type_number))
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias type 'digit'");
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping alias type 'number'");
       DPcErr;
     }
   }

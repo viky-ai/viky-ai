@@ -174,6 +174,12 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   {
     return (interpretation1->scope - interpretation2->scope);
   }
+  if (request_expression1->score->scope != request_expression2->score->scope)
+  {
+    double cmp = request_expression2->score->scope - request_expression1->score->scope;
+    if (cmp > 0) return 1;
+    else return -1;
+  }
   if (request_expression1->any_validate_status != request_expression2->any_validate_status)
   {
     return (request_expression2->any_validate_status - request_expression1->any_validate_status);

@@ -3,4 +3,4 @@
 %>
 App.Message.notice("<%= escape_javascript(message) %> ");
 App.Modal.update("<%= escape_javascript(@modal_content) %>");
-$("#agent-<%= @agent.id %>").replaceWith("<%= escape_javascript(@agent_html) %>");
+$("#agent-user-list-<%= @agent.id %>").replaceWith("<%= escape_javascript(@agent_html) %>");
