@@ -1,5 +1,6 @@
 class EntitiesController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
+  before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_entities_list
@@ -17,7 +18,7 @@ class EntitiesController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             entities_list: @entities_list,
             agent: @agent,
-            owner: @agent.owner
+            owner: @owner
           })
           render partial: 'create_succeed'
         end
@@ -48,7 +49,7 @@ class EntitiesController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             entities_list: @entities_list,
             agent: @agent,
-            owner: @agent.owner
+            owner: @owner
           })
           render partial: 'show'
         }
@@ -70,7 +71,7 @@ class EntitiesController < ApplicationController
           can_edit: current_user.can?(:edit, @agent),
           entities_list: @entities_list,
           agent: @agent,
-          owner: @agent.owner
+          owner: @owner
         })
         render partial: 'show'
       }
@@ -110,7 +111,7 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if @entities_list.from_csv @entities_import
         format.json {
-          redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list),
+          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
                       notice: t('views.entities_lists.show.import.select_import.success', count: @entities_import.count)
         }
       else
@@ -134,8 +135,12 @@ class EntitiesController < ApplicationController
       params.permit(import: [:file, :mode])[:import]
     end
 
+    def set_owner
+      @owner = User.friendly.find(params[:user_id])
+    end
+
     def set_agent
-      @agent = Agent.friendly.find(params[:agent_id])
+      @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
     def set_entities_list

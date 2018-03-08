@@ -1,5 +1,6 @@
 class InterpretationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions, :update_locale]
+  before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_intent
@@ -18,7 +19,7 @@ class InterpretationsController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             intent: @intent,
             agent: @agent,
-            owner: @agent.owner
+            owner: @owner
           })
           render partial: 'create_succeed'
         end
@@ -39,7 +40,7 @@ class InterpretationsController < ApplicationController
           can_edit: current_user.can?(:edit, @agent),
           intent: @intent,
           agent: @agent,
-          owner: @agent.owner
+          owner: @owner
         })
         render partial: 'show'
       }
@@ -73,7 +74,7 @@ class InterpretationsController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             intent: @intent,
             agent: @agent,
-            owner: @agent.owner
+            owner: @owner
           })
           render partial: 'show'
         }
@@ -106,14 +107,18 @@ class InterpretationsController < ApplicationController
     max_position = @intent.interpretations.where(locale: params[:locale]).maximum(:position)
     @interpretation.position = max_position.nil? ? 0 : max_position + 1
     @interpretation.save
-    redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, { locale: previous_locale })
+    redirect_to user_agent_intent_path(@owner, @agent, @intent, { locale: previous_locale })
   end
 
 
   private
 
+    def set_owner
+      @owner = User.friendly.find(params[:user_id])
+    end
+
     def set_agent
-      @agent = Agent.friendly.find(params[:agent_id])
+      @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
     def set_intent

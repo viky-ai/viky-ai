@@ -185,4 +185,19 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert response.body.include?('Unauthorized operation.')
   end
 
+
+
+  #
+  # Scope agent on owner
+  #
+  test 'Entity agent scoped on current user' do
+    sign_in users(:confirmed)
+    post user_agent_entities_list_entities_url(users(:confirmed), agents(:weather_confirmed), entities_lists(:weather_confirmed_dates)),
+         params: {
+           entity: { terms: 'Hello' },
+           format: :js
+         }
+    assert :success
+    assert_nil flash[:alert]
+  end
 end
