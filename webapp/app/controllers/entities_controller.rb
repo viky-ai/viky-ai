@@ -3,7 +3,7 @@ class EntitiesController < ApplicationController
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_entities_list
-  before_action :set_entity, except: [:create, :update_positions]
+  before_action :set_entity, except: [:create, :update_positions, :new_import, :create_import]
 
   def create
     entity = Entity.new(entity_params)
@@ -100,11 +100,38 @@ class EntitiesController < ApplicationController
     Entity.update_positions(@entities_list, params[:ids])
   end
 
+  def new_import
+    @entities_import = EntitiesImport.new
+    render partial: 'new_import'
+  end
+
+  def create_import
+    @entities_import = EntitiesImport.new(import_params)
+    respond_to do |format|
+      if @entities_list.from_csv @entities_import
+        format.json {
+          redirect_to user_agent_entities_list_path(@agent.owner, @agent, @entities_list),
+                      notice: t('views.entities_lists.show.import.select_import.success', count: @entities_import.count)
+        }
+      else
+        format.json {
+          render json: {
+            replace_modal_content_with: render_to_string(partial: 'new_import', formats: :html),
+          }, status: 422
+        }
+      end
+    end
+  end
+
 
   private
 
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
+    end
+
+    def import_params
+      params.permit(import: [:file, :mode])[:import]
     end
 
     def set_agent
@@ -123,7 +150,7 @@ class EntitiesController < ApplicationController
       case action_name
         when 'show', 'show_detailed'
           access_denied unless current_user.can? :show, @agent
-        when 'create', 'edit', 'update', 'destroy', 'update_positions'
+        when 'create', 'edit', 'update', 'destroy', 'update_positions', 'new_import', 'create_import'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

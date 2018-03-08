@@ -11,7 +11,7 @@
 
       <%= form_with model: @entities_import,
                     scope: :import,
-                    url: import_user_agent_entities_list_path(@agent.owner, @agent, @entities_list),
+                    url: create_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list),
                     data: { type: 'json' },
                     id: 'import-entities-form',
                     class: 'js-import-entities-form' do |import_form| %>

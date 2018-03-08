@@ -122,49 +122,4 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
 
-  #
-  # Select import entities lists access
-  #
-  test "Select import entities lists access" do
-    sign_in users(:admin)
-    get select_import_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_response :success
-    assert_nil flash[:alert]
-  end
-
-  test "Select import entities lists forbidden" do
-    sign_in users(:confirmed)
-    get select_import_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_equal "Unauthorized operation.", flash[:alert]
-  end
-
-
-  #
-  # Import entities lists access
-  #
-  test "Import entities lists access" do
-    sign_in users(:admin)
-    post import_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
-         params: {
-           import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv')
-           },
-           format: :json
-         }
-    assert_redirected_to user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_nil flash[:alert]
-  end
-
-  test "Import entities lists forbidden" do
-    sign_in users(:confirmed)
-    post import_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
-         params: {
-           import: {
-             file: fixture_file_upload('files/import_entities.csv', 'text/csv')
-           },
-           format: :json
-         }
-    assert_response :forbidden
-    assert response.body.include?('Unauthorized operation.')
-  end
 end
