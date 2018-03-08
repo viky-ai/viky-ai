@@ -4,7 +4,7 @@
     <span class="icon">
       <%= icon_alert %>
     </span>
-    <%= t('views.entities_lists.show.limit_exceeded', limit: threshold) %>
+    <%= t('views.entities_lists.show.limit_exceeded', limit: threshold, total: @entities_list.entities.count) %>
   </div>
 </div>
 
@@ -15,9 +15,10 @@
   <%= render partial: 'entities/entity',
              collection: @entities_list.entities.order(position: :desc, created_at: :desc).limit(threshold),
              locals: {
-              can_edit: current_user.can?(:edit, agent),
-              entities_list: @entities_list,
-              agent: @entities_list.agent,
-              owner: @entities_list.agent.owner
-      } %>
+               can_edit: current_user.can?(:edit, agent),
+               entities_list: @entities_list,
+               agent: @entities_list.agent,
+               owner: @entities_list.agent.owner
+            }
+  %>
 </ul>
