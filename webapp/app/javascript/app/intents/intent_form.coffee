@@ -12,7 +12,7 @@ class IntentForm
       App.FocusInput.atEnd('.field_with_errors input')
 
 Setup = ->
-  if $('body').data('controller-name') == "agents"
+  if $('body').data('controller-name') == "intents"
     new IntentForm()
 
 $(document).on('turbolinks:load', Setup)

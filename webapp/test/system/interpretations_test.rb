@@ -28,6 +28,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather/weather_question')
+      assert page.has_link?('admin/weather/weather_question')
       assert page.has_no_button?('Update')
       assert page.has_no_link?('Delete')
       assert page.has_no_field?('trix-editor')

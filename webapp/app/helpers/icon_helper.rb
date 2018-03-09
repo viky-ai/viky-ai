@@ -32,6 +32,10 @@ module IconHelper
     '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">  <path d="M0 0h24v24H0z" fill="none"/>  <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>'.html_safe
   end
 
+  def icon_download
+    '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>  <path d="M0 0h24v24H0z" fill="none"/></svg>'.html_safe
+  end
+
   def icon_drag_handle
     '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">    <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>    <path d="M0 0h24v24H0z" fill="none"/></svg>'.html_safe
   end
@@ -78,6 +82,10 @@ module IconHelper
 
   def icon_transfert
     '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">  <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>  <path d="M0 0h24v24H0z" fill="none"/></svg>'.html_safe
+  end
+
+  def icon_upload
+    '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">  <path d="M0 0h24v24H0z" fill="none"/>  <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>'.html_safe
   end
 
 end

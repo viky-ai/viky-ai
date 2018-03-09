@@ -77,6 +77,8 @@ Rails.application.routes.draw do
             end
             collection do
               post :update_positions
+              get :new_import
+              post :create_import
             end
           end
         end

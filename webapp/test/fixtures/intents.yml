@@ -21,3 +21,12 @@ terminator_find:
   agent: terminator
   color: green
   position: 0
+
+weather_confirmed_question:
+  intentname: weather_question
+  locales: <%= ['en'].to_json.inspect  %>
+  description: Another weather question
+  agent: weather_confirmed
+  color: black
+  position: 0
+  visibility: 1

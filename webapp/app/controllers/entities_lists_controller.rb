@@ -1,5 +1,6 @@
 class EntitiesListsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
+  before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_entities_list, except: [:index, :new, :create, :update_positions]
@@ -9,7 +10,14 @@ class EntitiesListsController < ApplicationController
   end
 
   def show
-    @entity = Entity.new
+    respond_to do |format|
+      format.html { @entity = Entity.new }
+      format.csv do
+        filename = "#{@owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
+        response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+        render :show
+      end
+    end
   end
 
   def new
@@ -56,7 +64,7 @@ class EntitiesListsController < ApplicationController
   end
 
   def update_positions
-    @agent.update_entities_lists_positions(params[:is_public], params[:is_private])
+    EntitiesList.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
   def confirm_destroy
@@ -88,13 +96,12 @@ class EntitiesListsController < ApplicationController
       params.require(:entities_list).permit(:listname, :description, :visibility)
     end
 
+    def set_owner
+      @owner = User.friendly.find(params[:user_id])
+    end
+
     def set_agent
-      if params[:agent_id].present?
-        @agent = Agent.friendly.find(params[:agent_id])
-      else
-        entities_list_id = params[:entities_list_id] || params[:id]
-        @agent = EntitiesList.friendly.find(entities_list_id).agent
-      end
+      @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
     def check_user_rights

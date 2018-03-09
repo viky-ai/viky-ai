@@ -117,7 +117,7 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test update positions' do
+  test 'Test update entities list positions' do
     agent = agents(:weather_confirmed)
     entities_list_0 = EntitiesList.create(
       listname: 'intent_0',
@@ -136,9 +136,168 @@ class EntitiesListTest < ActiveSupport::TestCase
     )
 
     new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
-    agent.update_entities_lists_positions([], new_positions)
+    EntitiesList.update_positions(agent, [], new_positions)
     assert_equal [2, 1, 0], [entities_list_1.reload.position, entities_list_2.reload.position, entities_list_0.reload.position]
     assert_equal %w(is_private is_private is_private), [entities_list_1.reload.visibility, entities_list_2.reload.visibility, entities_list_0.reload.visibility]
   end
 
+
+  test 'Export entities_list' do
+    entities_list = entities_lists(:weather_dates)
+    csv = entities_list.to_csv
+    expected = ["Terms,Auto solution,Solution",
+                "aujourd'hui:fr|tout à l'heure:fr|today:en,false,\"{\"\"date\"\": \"\"today\"\"}\"",
+                "tomorrow,false,\"{\"\"date\"\": \"\"tomorrow\"\"}\"",
+                ""].join("\n")
+    assert_equal expected, csv
+  end
+
+
+  test 'Export uncompleted list' do
+    entities_list = entities_lists(:weather_conditions)
+    sun = entities(:weather_sunny)
+    sun.terms = [{ term: 'sun', locale: Locales::ANY }]
+    sun.solution = ''
+    sun.save
+
+    csv = entities_list.to_csv
+    expected = ["Terms,Auto solution,Solution",
+                "sun,true,\"\"",
+                "pluie:fr|rain:en,true,",
+                ''].join("\n")
+    assert_equal expected, csv
+  end
+
+  test 'Import entities from CSV' do
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "\n"
+
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert elist.from_csv(entities_import)
+    assert_equal 4, elist.entities.count
+
+    snow = elist.entities.find_by_solution("{'w': 'snow'}")
+    snow_terms = [{ 'term' => 'snow', 'locale' => '*' }]
+    assert_equal snow_terms, snow.terms
+    assert_equal false, snow.auto_solution_enabled
+    assert_equal "{'w': 'snow'}", snow.solution
+    assert_equal 3, snow.position
+
+    cloudy = elist.entities.find_by_solution("{'weather': 'cloudy'}")
+    cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'nuageux', 'locale' => 'fr' }]
+    assert_equal cloudy_terms, cloudy.terms
+    assert_equal true, cloudy.auto_solution_enabled
+    assert_equal "{'weather': 'cloudy'}", cloudy.solution
+    assert_equal 2, cloudy.position
+    assert_equal 6, Entity.all.count
+  end
+
+
+  test 'Import entities missing header' do
+    io = StringIO.new
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Bad CSV format: Missing header'], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities missing column' do
+    io = StringIO.new
+    io << "terms,auto solution,solution\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "true,hail\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Bad CSV format: Missing column in line 2'], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities empty terms' do
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "\"\",true,hail\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ["Validation failed: Terms can't be blank in line 1"], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities unexpected auto solution' do
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,blablabla,snow\n"
+    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ["Validation failed: Auto solution must be true or false in line 1"], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities wrong separator' do
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow;false;snow\n"
+    entities_import = EntitiesImport.new(build_import_params(io))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ['Bad CSV format: Missing column in line 1'], entities_import.errors[:file]
+  end
+
+
+  test 'Import and replace entities' do
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert_equal 2, elist.entities.count
+    assert elist.from_csv(entities_import)
+    assert_equal 1, elist.entities.count
+
+    snow = elist.entities.find_by_solution("{'w': 'snow'}")
+    snow_terms = [{ 'term' => 'snow', 'locale' => '*' }]
+    assert_equal snow_terms, snow.terms
+    assert_equal false, snow.auto_solution_enabled
+    assert_equal "{'w': 'snow'}", snow.solution
+    assert_equal 3, Entity.all.count
+  end
+
+
+  private
+
+    def build_import_params(io, mode = :append)
+      io.rewind
+      { file: Struct.new(:tempfile, :content_type).new(io, 'text/csv'), mode: mode }
+    end
 end

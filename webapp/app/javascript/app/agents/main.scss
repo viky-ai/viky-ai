@@ -26,18 +26,8 @@
   height: 12em;
 }
 
-.agent-upload__new{
-  @include display_flex();
-  justify-content: center;
-  align-items: center;
+.agent-upload__new.field--upload{
   height: 12em;
-  border: 1px dashed #ccc;
-  overflow: hidden;
-  & > div{
-    padding: 0 1em;
-    width: 100%;
-    text-align: center;
-  }
 }
 
 .field.field--api-token{

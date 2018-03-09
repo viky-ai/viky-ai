@@ -2,7 +2,7 @@
   background-color: #fff;
   margin: 0 0 1.33333em 0;
   border-radius: 3px;
-  overflow: hidden;
+  box-shadow: 0 0 1px 0 rgba(black, .1), 0 2px 3px rgba(black, .075);
 
   display: grid;
   grid-template:
@@ -41,6 +41,10 @@
     display:none;
     grid-area: illustration;
     min-height: 8em;
+
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    overflow: hidden;
     &.agent-header__visual--image{
       background-size: cover;
       background-position: center center;
@@ -107,8 +111,6 @@
     list-style: none;
     padding: 0;
     padding: 1.75em 0 0 1em;
-    border-bottom: 1px solid rgba(black, .1);
-
 
     font-size: .8em;
     @media (min-width: 500px){
@@ -117,7 +119,6 @@
 
     @include display_flex();
     li{
-      margin-bottom: -1px;
       a{
         display: block;
         white-space: nowrap;
@@ -143,6 +144,8 @@
           border-right-color: rgba(black, .1);
           border-top-color: $primary_color;
           border-bottom-color: transparent;
+
+          box-shadow: 0 5px 0 -1px #f5f5f5;
         }
       }
     }

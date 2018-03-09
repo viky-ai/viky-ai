@@ -30,7 +30,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_entities_list_url(users(:confirmed), agents(:terminator), entities_lists(:weather_conditions))
+    get user_agent_entities_list_url(users(:admin), agents(:terminator), entities_lists(:weather_conditions))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -120,5 +120,20 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     delete user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
+  #
+  # Scope agent on owner
+  #
+  test 'Entities list agent scoped on current user' do
+    sign_in users(:confirmed)
+    post user_agent_entities_lists_url(users(:confirmed), agents(:weather_confirmed)),
+         params: {
+           entities_list: { listname: 'my_new_entities_list', description: 'A new entities list' },
+           format: :json
+         }
+    assert_redirected_to user_agent_entities_lists_path(users(:confirmed), agents(:weather_confirmed))
+    assert_nil flash[:alert]
   end
 end
