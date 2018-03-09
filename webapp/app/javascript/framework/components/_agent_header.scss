@@ -1,0 +1,154 @@
+.agent-header{
+  background-color: #fff;
+  margin: 0 0 1.33333em 0;
+  border-radius: 3px;
+  box-shadow: 0 0 1px 0 rgba(black, .1), 0 2px 3px rgba(black, .075);
+
+  display: grid;
+  grid-template:
+    "info  info"
+    "navigation  navigation"
+    / 15em auto;
+  justify-items: stretch;
+
+
+  @media (min-width: 800px){
+    grid-template:
+      "illustration  info"
+      "illustration  navigation"
+      / 15em auto;
+  }
+  @media (min-width: 1100px){
+    grid-template:
+      "illustration  info"
+      "illustration  navigation"
+      / 12em auto;
+  }
+  @media (min-width: 1200px){
+    grid-template:
+      "illustration  info"
+      "illustration  navigation"
+      / 15em auto;
+  }
+  @media (min-width: 1300px){
+    grid-template:
+      "illustration  info"
+      "illustration  navigation"
+      / 18em auto;
+  }
+
+  .agent-header__visual{
+    display:none;
+    grid-area: illustration;
+    min-height: 8em;
+
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    overflow: hidden;
+    &.agent-header__visual--image{
+      background-size: cover;
+      background-position: center center;
+    }
+    @include ribbon-container();
+    .agent__visual__ribbon{
+      @include ribbon();
+    }
+  }
+
+  @media (min-width: 800px){
+    .agent-header__visual{
+      display:block;
+    }
+  }
+
+  .agent-header__content__nav{
+    grid-area: navigation;
+  }
+
+  .agent-header__content{
+    grid-area: info;
+    padding: 0;
+
+    display: grid;
+
+    grid-template:
+      "title  actions"
+      "description description";
+
+    .agent-header__content__title{
+      padding: 1em 1em 0 1em;
+      h2{
+        margin: 0 0 .5em 0;
+        font-size: 1.5em;
+        small{
+          display:block;
+          font-size: .65em;
+          line-height: 1.4em;
+          color: #999;
+        }
+      }
+    }
+
+    .agent-header__content__actions{
+      padding: 1em;
+      grid-area: actions;
+      text-align: right;
+    }
+
+    .agent-header__content__description{
+      padding: 0 1em;
+      grid-area: description;
+      h3{
+        margin: 0;
+        font-size: 1em;
+      }
+    }
+  }
+}
+
+.agent-header__content__nav{
+  ul{
+    list-style: none;
+    padding: 0;
+    padding: 1.75em 0 0 1em;
+
+    font-size: .8em;
+    @media (min-width: 500px){
+      font-size: 1em;
+    }
+
+    @include display_flex();
+    li{
+      a{
+        display: block;
+        white-space: nowrap;
+        padding: calc(.4em - 2px) 1.2em .4em 1.2em;
+        border-top: 3px solid transparent;
+        border-bottom: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-right: 1px solid transparent;
+        text-decoration: none;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        color: #777;
+        &:hover{
+          color: #000;
+          border-bottom-color: $primary_color;
+          border-bottom-color: #aaa;
+        }
+        &.current{
+          background-color: #f5f5f5;
+
+          color: #000;
+          border-left-color: rgba(black, .1);
+          border-right-color: rgba(black, .1);
+          border-top-color: $primary_color;
+          border-bottom-color: transparent;
+
+          box-shadow: 0 5px 0 -1px #f5f5f5;
+        }
+      }
+    }
+
+  }
+}

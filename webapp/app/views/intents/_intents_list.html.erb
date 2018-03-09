@@ -1,26 +1,29 @@
 <% agent_owner = @agent.owner %>
 <% empty_content = visibility == 'is_public' ? t('views.intents.index.empty_list.public') : t('views.intents.index.empty_list.private') %>
-<ul class="intents-list <% if intents.count == 0 %>intents-list--empty<% end %>" id=<%= "intents-list-#{visibility}" %>
+<ul class="card-list <% if intents.count == 0 %>card-list--empty<% end %>"
+    id=<%= "intents-list-#{visibility}" %>
+    data-behavior="sortable"
     data-update-positions-path="<%= update_positions_user_agent_intents_path(agent_owner, @agent) %>"
-    data-empty-content="<%= empty_content %>">
+    data-empty-content="<%= empty_content %>"
+    data-group="intents-list"
+    data-key="<%= visibility %>">
   <% intents.each do |intent| %>
     <li data-id="<%= intent.id %>">
 
       <% if current_user_can_edit %>
-        <div class="intents-list__item__draggable"></div>
+        <div class="card-list__item__draggable"></div>
       <% end %>
 
       <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
-        <span class="intents-list__item__name"><%= intent.intentname %></span>
-        <span class="intents-list__item__desc"><%= intent.description %></span>
+        <span class="card-list__item__name"><%= intent.intentname %></span>
+        <span class="card-list__item__desc"><%= intent.description %></span>
+        <span class="card-list__item__stats">
+          <%= t('views.intents.index.interpretations', count: intent.interpretations.size) %>
+        </span>
       </a>
 
-      <div class="intents-list__item__stats">
-        <%= t('views.intents.index.interpretations', count: intent.interpretations.size) %>
-      </div>
-
       <% if current_user_can_edit %>
-        <div class="intents-list__item__actions">
+        <div class="card-list__item__actions">
           <div class="dropdown">
             <div class="dropdown__trigger">
               <button class="btn btn--small">

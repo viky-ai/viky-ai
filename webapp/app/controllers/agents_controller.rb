@@ -8,9 +8,7 @@ class AgentsController < ApplicationController
                 .page(params[:page]).per(12)
   end
 
-  def show
-    @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
-  end
+  def show; end
 
   def new
     @agent = Agent.new

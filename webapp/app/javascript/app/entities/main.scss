@@ -1,0 +1,87 @@
+@import '../../framework/abstracts/variables';
+
+.entity-form,
+.entity-show{
+  padding: 1em;
+  display: grid;
+  width: 100%;
+  grid-column-gap: 1em;
+
+  .label, label {
+    font-weight: 300;
+    font-size: .9em;
+  }
+
+  .label--with-option {
+    float: right;
+  }
+
+  .terms, textarea{
+    padding: 5px 5px;
+    line-height: 1.5em;
+    min-height: calc(4.5em + 10px);
+    max-height: 16em;
+  }
+  .terms{
+    border: 1px solid #eee;
+    border-radius: 3px;
+  }
+
+  .CodeMirror {
+    .CodeMirror-scroll {
+      min-height: 6em;
+    }
+    &.readonly {
+      opacity: .6;
+      background-color: #f5f5f5;
+      filter: grayscale(25%);
+    }
+  }
+
+  .field--submit {
+    margin-bottom: 0;
+  }
+}
+
+
+.entity-form{
+  grid-template:
+    "terms terms"
+    "solution solution"
+    "submit delete";
+
+  @media (min-width: 650px){
+    grid-template:
+      "terms solution" auto
+      "submit delete" auto / 1fr 1fr;
+  }
+
+  .entity-form__terms {
+    grid-area: terms;
+  }
+  .entity-form__solution {
+    grid-area: solution;
+  }
+  .field--submit {
+    grid-area: submit;
+  }
+  .entity-form__delete {
+    grid-area: delete;
+    justify-self: end;
+  }
+}
+
+.entity-show-close{
+  position: absolute;
+  line-height: 0;
+  right: .5em;
+  top: .5em;
+}
+
+.entity-show{
+  padding: 1.5em 3em 1em 1em;
+  grid-template-columns: 1fr;
+  @media (min-width: 600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -17,12 +17,31 @@
     }
   }
 
+  .tabs {
+    padding: 1.5em 1.5em 0 1.5em;
+  }
+
   &.card--notice{
     border: none;
     background-color: $success_color;
     color: #fff;
     .card-content{
       padding: 1em 2em;
+      svg {
+        fill: #fff;
+      }
+    }
+  }
+
+  &.card--warning{
+    border: none;
+    background-color: $warning_color;
+    color: #fff;
+    .card-content{
+      padding: 1em 2em;
+      svg {
+        fill: #fff;
+      }
     }
   }
 
@@ -32,6 +51,9 @@
     color: #fff;
     .card-content{
       padding: 1em 2em;
+      svg {
+        fill: #fff;
+      }
     }
   }
 }

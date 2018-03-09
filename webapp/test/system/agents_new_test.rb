@@ -57,6 +57,9 @@ class AgentsNewTest < ApplicationSystemTestCase
       click_button("Or upload an image")
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'wall-e.jpg')
 
+      # Display import file imput in order to allow capybara attach_file
+      page.execute_script("$('#agent_image').css('opacity','1')");
+
       # https://github.com/teampoltergeist/poltergeist/issues/866
       attach_file('agent_image', file).click
 

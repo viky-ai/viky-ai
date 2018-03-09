@@ -1,13 +1,13 @@
-weather_greeting:
-  intentname: weather_greeting
+weather_forecast:
+  intentname: weather_forecast
   locales: <%= ['en', 'fr'].to_json.inspect  %>
-  description: My awesome weather bot description
+  description: Ask futur weather
   agent: weather
   color: red
   position: 1
 
-weather_who:
-  intentname: weather_who
+weather_question:
+  intentname: weather_question
   locales: <%= ['en', 'fr'].to_json.inspect  %>
   description:
   agent: weather
@@ -21,3 +21,12 @@ terminator_find:
   agent: terminator
   color: green
   position: 0
+
+weather_confirmed_question:
+  intentname: weather_question
+  locales: <%= ['en'].to_json.inspect  %>
+  description: Another weather question
+  agent: weather_confirmed
+  color: black
+  position: 0
+  visibility: 1

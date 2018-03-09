@@ -1,0 +1,6 @@
+App.CardListHelper.removeFromList("#entity-<%= @entity.id %>")
+
+setTimeout(function(){
+  App.CardListHelper.updateBlankslates();
+  App.CardListHelper.updateDraggable();
+}, 200);

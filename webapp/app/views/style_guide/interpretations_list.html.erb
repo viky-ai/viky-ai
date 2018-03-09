@@ -6,120 +6,89 @@
 </div>
 
 <section>
-  <h2>Edit list</h2>
+  <h2>Show detailed</h2>
   <p>
-    JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
+    Click on an item will show details.
   </p>
   <%= highlight_html do %>
-<ul id="sortable-list_example-1" class="interpretations-list">
+<ul class="card-list">
   <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">Hello citizen Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi delectus eius eos magni nemo odit officia quae rem! Animi, illum obcaecati. Alias aspernatur blanditiis ea hic illum molestias natus tenetur?</a>
-  </li>
-  <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></a>
-  </li>
-  <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">How can I help you ?</a>
-  </li>
-</ul>
-<script>
-  Sortable.create($('#sortable-list_example-1')[0], {
-      handle: '.interpretations-list__draggable',
-      animation: 100
-  });
-</script>
-  <% end %>
-</section>
-
-
-<section>
-  <h2>Edit list RTL</h2>
-  <%= highlight_html do %>
-<ul id="sortable-list_example-2" class="interpretations-list">
-  <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show" dir="rtl">سالو</a>
-  </li>
-  <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show" dir="rtl">مرسي <span class="badge">Auto solution</span></a>
-  </li>
-  <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show" dir="rtl">أبلكاسيون ويب</a>
-  </li>
-</ul>
-<script>
-  Sortable.create($('#sortable-list_example-2')[0], {
-      handle: '.interpretations-list__draggable',
-      animation: 100
-  });
-</script>
-  <% end %>
-</section>
-
-<section>
-  <h2>Show list</h2>
-  <p>
-    Used when user can only show agent. Link to detailed interpretation is present only if interpretation has alias or has a custom solution.
-  </p>
-  <%= highlight_html do %>
-<ul class="interpretations-list">
-  <li>
-    <a href="#" class="interpretations-list__show">Hello citizen</a>
-  </li>
-  <li>
-    <span class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></span>
-  </li>
-  <li>
-    <a href="#" class="interpretations-list__show">How can I help you ?</a>
-  </li>
-</ul>
-  <% end %>
-</section>
-
-
-<section>
-  <h2>Show detailed list</h2>
-  <%= highlight_html do %>
-<ul class="interpretations-list">
-  <li>
-    <div class="interpretations-list__show interpretations-list__show-detailed">
-      <div class="interpretations-list__show-detailed__resume">
-        Hello citizen
+    <div class='interpretations-show'>
+      <div class="interpretations-show__close">
         <a href="#" class="close">
-          <span class="icon">
-            <%= icon_close %>
-          </span>
+          <%= icon_close %>
         </a>
       </div>
-      <div class="interpretations-list__show-detailed__solution">
-        <span class="solution-label">Solution</span>
-        <textarea id="solution-show-detailed">{
-"who": "greeting.who"
+      <div class="field interpretations-show__interpretation">
+        <div class="control">
+          <span class="interpretation-resume">
+            <span class="interpretation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
+            citizen
+          </span>
+          <span class="badge">Glued</span>
+        </div>
+      </div>
+      <div class="aliases interpretations-show__summary">
+        <table>
+          <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              greetings
+            </td>
+            <td>
+                <span class="intent-brown" title="viky/shopping/greetings">
+                  <a href="#"><small>viky/shopping/</small>greetings</a>
+                </span>
+            </td>
+            <td class='options'>
+            </td>
+            <td>Hello</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field interpretations-show__solution">
+        <div class="control">
+          <span class="solution-label">Solution</span>
+          <textarea id="solution__1" rows="3">{
+  "who": "greeting.who"
 }</textarea>
+        </div>
       </div>
     </div>
   </li>
   <li>
-    <span class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></span>
+    <a class="interpretations-list__show">
+      <span class="card-list__item__name">
+        Good morning <span class="badge">Auto solution</span>
+      </span>
+    </a>
   </li>
   <li>
-    <a href="#" class="interpretations-list__show">How can I help you ?</a>
+    <a href="#" class="interpretations-list__show">
+      <span class="card-list__item__name">
+        How can I help you ?
+      </span>
+    </a>
   </li>
 </ul>
 <script>
-  App.InterpretationsList.displayCodeEditor($("#solution-show-detailed")[0], true);
+  App.CodeEditor.buildJavaScriptEditor($("#solution__1")[0], true);
 </script>
   <% end %>
 </section>
 
 
 <section>
-  <h2>Update list state</h2>
+  <h2>Update item state</h2>
   <p>
     Click on an item will switch to update state.
   </p>
@@ -127,17 +96,74 @@
     JS library <a href="http://rubaxa.github.io/Sortable/">Sortable</a> is used in order to setup Drag&Drop functionality.
   </p>
   <%= highlight_html do %>
-<ul id="sortable-list_example-3" class="interpretations-list">
+<ul id="sortable-list__example" class="card-list">
   <li>
-    <div class="interpretations-list__draggable"></div>
-    <form action="#" class="interpretations-list__edit">
-      <div class="field">
-        <input value="Hello citizen" type="text"/>
+    <div class="card-list__item__draggable"></div>
+    <form action="#" class="interpretations-form">
+      <div class="field interpretations-form__interpretation">
+        <div class="control trix-control">
+          <div class="trix-control__option ">
+            <input id="keep_order__123" value="1" type="checkbox">
+            <label for="keep_order__123">Keep order</label>
+            &nbsp;
+            <input id="glued__456" value="1" type="checkbox" checked>
+            <label for="glued__456">Glued</label>
+            &nbsp;
+            <input id="auto_solution_enabled__789" value="1" type="checkbox">
+            <label for="auto_solution_enabled__789">Auto solution</label>
+          </div>
+          <trix-editor input="expression-600ba012-e4bd-4a7d-a62d-97057655d632" placeholder="Add an expression" trix-id="2" toolbar="trix-toolbar-2" contenteditable=""><div><!--block--><a href="{&quot;color&quot;:&quot;intent-brown&quot;,&quot;aliasname&quot;:&quot;where&quot;,&quot;slug&quot;:&quot;olivier/vikipedia/where&quot;,&quot;intent_id&quot;:&quot;8ae3a9fb-f266-401e-919f-bd44a8b279a5&quot;,&quot;nature&quot;:&quot;type_intent&quot;,&quot;id&quot;:&quot;b464a720-0a8a-11e8-a450-0d99b20efd39&quot;,&quot;state&quot;:&quot;new&quot;}">Hello</a> citizen</div></trix-editor>
+        </div>
       </div>
-      <div class="field">
+      <div class="aliases interpretations-form__summary">
+        <table>
+          <thead>
+          <tr>
+            <th>Parameter name</th>
+            <th>Interpretation</th>
+            <th>Options</th>
+            <th>Selection</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="field">
+                  <input value="greetings" type="text"/>
+                </div>
+              </td>
+              <td>
+                <span class="intent-brown" title="viky/shopping/greetings">
+                  <a href="#"><small>viky/shopping/</small>greetings</a>
+                </span>
+              </td>
+              <td class='options'>
+                <label>
+                  <input value="true" type="radio"/>
+                  List
+                </label>
+                <label>
+                  <input value="true" type="radio"/>
+                  Any
+                </label>
+              </td>
+              <td>Hello</td>
+              <td>
+                <a href="#">
+                  <span class="icon icon--small">
+                    <%= icon_close %>
+                  </span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="field interpretations-form__solution">
         <div class="control">
           <span class="solution-label">Solution</span>
-          <textarea rows="3">{
+          <textarea id="solution__123456" rows="3">{
 "who": "greeting.who"
 }</textarea>
         </div>
@@ -150,19 +176,28 @@
     </form>
   </li>
   <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">Good morning <span class="badge">Auto solution</span></a>
+    <div class="card-list__item__draggable"></div>
+    <a href="#" class="interpretations-list__show">
+      <span class="card-list__item__name">
+        Good morning <span class="badge">Auto solution</span>
+      </span>
+    </a>
   </li>
   <li>
-    <div class="interpretations-list__draggable"></div>
-    <a href="#" class="interpretations-list__show">How can I help you ?</a>
+    <div class="card-list__item__draggable"></div>
+    <a href="#" class="interpretations-list__show">
+      <span class="card-list__item__name">
+        How can I help you ?
+      </span>
+    </a>
   </li>
 </ul>
 <script>
-  Sortable.create($('#sortable-list_example-3')[0], {
-    handle: '.interpretations-list__draggable',
+  Sortable.create($('#sortable-list__example')[0], {
+    handle: '.card-list__item__draggable',
     animation: 100
   });
+  App.CodeEditor.buildJavaScriptEditor($("#solution__123456")[0]);
 </script>
   <% end %>
 </section>

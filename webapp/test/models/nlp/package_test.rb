@@ -11,41 +11,116 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_greeting).id,
-          "slug"  => "admin/weather/weather_greeting",
+          "id"    => intents(:weather_forecast).id,
+          "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Bonjour tout le monde",
+              "expression" => "Quel temps fera-t-il demain ?",
               "locale"     => "fr",
-              "solution"   => "Bonjour tout le monde"
+              "solution"   => "Quel temps fera-t-il demain ?"
             },
             {
-              "expression" => "Hello @{who}",
+              "expression" => "@{question} @{when} ?",
               "aliases"    => [
                 {
-                  "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who",
-                  "id"      => intents(:weather_who).id,
+                  "alias"   => "question",
+                  "slug"    => "admin/weather/interpretations/weather_question",
+                  "id"      => intents(:weather_question).id,
+                  "package" => weather.id
+                },
+                {
+                  "alias"   => "when",
+                  "slug"    => "admin/weather/entities_lists/weather_dates",
+                  "id"      => entities_lists(:weather_dates).id,
                   "package" => weather.id
                 }
               ],
               "locale"     => "en",
               "keep-order" => true,
               "glued"      => true,
-              "solution"   => "`greeting.who`"
+              "solution"   => "`forecast.tomorrow`"
             }
           ]
         },
         {
-          "id"    => intents(:weather_who).id,
-          "slug"  => "admin/weather/weather_who",
+          "id"    => intents(:weather_question).id,
+          "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "world",
+              "expression" => "What the weather like",
               "locale"     => "en",
-              "solution"   => "world"
+              "solution"   => "What the weather like"
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_conditions).id,
+          "slug"     => "admin/weather/entities_lists/weather_conditions",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "sun",
+              "locale"     => "en",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "soleil",
+              "locale"     => "fr",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "pluie",
+              "locale"     => "fr",
+              "solution"   => "pluie",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "rain",
+              "locale"     => "en",
+              "solution"   => "pluie",
+              "keep-order" => true,
+              "glued"      => true,
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_dates).id,
+          "slug"     => "admin/weather/entities_lists/weather_dates",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "aujourd'hui",
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "tout à l'heure",
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "today",
+              "locale"     => "en",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glued"      => true,
+            },
+            {
+              "expression" => "tomorrow",
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
+              "keep-order" => true,
+              "glued"      => true,
             }
           ]
         }
@@ -57,13 +132,15 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with locale any' do
     weather = agents(:weather)
-    intent = intents(:weather_greeting)
-    interpretation = interpretations(:weather_greeting_bonjour)
-    interpretation.locale = '*'
+    intent = intents(:weather_forecast)
+    interpretation = interpretations(:weather_forecast_demain)
+    interpretation.locale = Locales::ANY
     interpretation.save
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     intent.interpretations = [interpretation]
     intent.save
-    assert intents(:weather_who).destroy
+    assert intents(:weather_question).destroy
 
     p = Nlp::Package.new(weather)
 
@@ -73,12 +150,12 @@ class PackageTest < ActiveSupport::TestCase
       "interpretations" => [
         {
           "id"    => intent.id,
-          "slug"  => "admin/weather/weather_greeting",
+          "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Bonjour tout le monde",
-              "solution"   => "Bonjour tout le monde"
+              "expression" => "Quel temps fera-t-il demain ?",
+              "solution"   => "Quel temps fera-t-il demain ?"
             }
           ]
         }
@@ -90,10 +167,12 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with private intent' do
     weather = agents(:weather)
-    intent = intents(:weather_who)
+    intent = intents(:weather_question)
     intent.visibility = Intent.visibilities[:is_private]
     intent.save
-    assert intents(:weather_greeting).destroy
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
+    assert intents(:weather_forecast).destroy
 
     p = Nlp::Package.new(weather)
 
@@ -102,14 +181,14 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id"    => intents(:weather_who).id,
-          "slug"  => "admin/weather/weather_who",
+          "id"    => intents(:weather_question).id,
+          "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'private',
           "expressions" => [
             {
-              "expression" => "world",
+              "expression" => "What the weather like",
               "locale"     => "en",
-              "solution"   => "world"
+              "solution"   => "What the weather like"
             }
           ]
         }
@@ -121,8 +200,10 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias list' do
     weather = agents(:weather)
-    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.is_list = true
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     assert ialias.save
 
     p = Nlp::Package.new(weather)
@@ -132,34 +213,34 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id" => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
-          "slug" => "admin/weather/weather_who_#{ialias.id}_recursive",
+          "id" => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+          "slug" => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
           'scope' => 'hidden',
           "expressions" => [
             {
-              "expression" => "@{who}",
+              "expression" => "@{question}",
               "aliases"    => [
                 {
-                  "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who",
-                  "id"      => intents(:weather_who).id,
+                  "alias"   => "question",
+                  "slug"    => "admin/weather/interpretations/weather_question",
+                  "id"      => intents(:weather_question).id,
                   "package" => weather.id
                 }
               ]
             },
             {
-              "expression" => "@{who} @{who_recursive}",
+              "expression" => "@{question} @{question_recursive}",
               "aliases"    => [
                 {
-                  "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who",
-                  "id"      => intents(:weather_who).id,
+                  "alias"   => "question",
+                  "slug"    => "admin/weather/interpretations/weather_question",
+                  "id"      => intents(:weather_question).id,
                   "package" => weather.id
                 },
                 {
-                  "alias"   => "who_recursive",
-                  "slug"    => "admin/weather/weather_who_#{ialias.id}_recursive",
-                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  "alias"   => "question_recursive",
+                  "slug"    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+                  "id"      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
               ]
@@ -167,41 +248,41 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          "id"    => intents(:weather_greeting).id,
-          "slug"  => "admin/weather/weather_greeting",
+          "id"    => intents(:weather_forecast).id,
+          "slug"  => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Bonjour tout le monde",
+              "expression" => "Quel temps fera-t-il demain ?",
               "locale"     => "fr",
-              "solution"   => "Bonjour tout le monde"
+              "solution"   => "Quel temps fera-t-il demain ?"
             },
             {
-              "expression" => "Hello @{who}",
+              "expression" => "@{question} tomorrow ?",
               "aliases"    => [
                 {
-                  "alias"   => "who",
-                  "slug"    => "admin/weather/weather_who_#{ialias.id}_recursive",
-                  "id"      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  "alias"   => "question",
+                  "slug"    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+                  "id"      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
               ],
               "locale"     => "en",
               "keep-order" => true,
               "glued"      => true,
-              "solution"   => "`greeting.who`"
+              "solution"   => "`forecast.tomorrow`"
             }
           ]
         },
         {
-          "id"    => intents(:weather_who).id,
-          "slug"  => "admin/weather/weather_who",
+          "id"    => intents(:weather_question).id,
+          "slug"  => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "world",
+              "expression" => "What the weather like",
               "locale"     => "en",
-              "solution"   => "world"
+              "solution"   => "What the weather like"
             }
           ]
         }
@@ -213,7 +294,9 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias list any' do
     weather = agents(:weather)
-    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
+    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.is_list = true
     ialias.any_enabled = true
     assert ialias.save
@@ -225,49 +308,49 @@ class PackageTest < ActiveSupport::TestCase
       'slug' => 'admin/weather',
       'interpretations' => [
         {
-          'id' => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
-          'slug' => "admin/weather/weather_who_#{ialias.id}_recursive",
+          'id' => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+          'slug' => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
           'scope' => 'hidden',
           'expressions' => [
             {
-              'expression' => '@{who}',
+              'expression' => '@{question}',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
-                  'slug'    => 'admin/weather/weather_who',
-                  'id'      => intents(:weather_who).id,
+                  'alias'   => 'question',
+                  'slug'    => 'admin/weather/interpretations/weather_question',
+                  'id'      => intents(:weather_question).id,
                   'package' => weather.id
                 }
               ]
             },
             {
-              'expression' => '@{who} @{who_recursive}',
+              'expression' => '@{question} @{question_recursive}',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
-                  'slug'    => 'admin/weather/weather_who',
-                  'id'      => intents(:weather_who).id,
+                  'alias'   => 'question',
+                  'slug'    => 'admin/weather/interpretations/weather_question',
+                  'id'      => intents(:weather_question).id,
                   'package' => weather.id
                 },
                 {
-                  'alias'   => 'who_recursive',
-                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'alias'   => 'question_recursive',
+                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   'package' => weather.id
                 }
               ]
             },
             {
-              'expression' => '@{who} @{who_recursive}',
+              'expression' => '@{question} @{question_recursive}',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
+                  'alias'   => 'question',
                   'type'    => 'any'
                 },
                 {
-                  'alias'   => 'who_recursive',
-                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'alias'   => 'question_recursive',
+                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   'package' => weather.id
                 }
               ]
@@ -275,41 +358,41 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-          'id'    => intents(:weather_greeting).id,
-          'slug'  => 'admin/weather/weather_greeting',
+          'id'    => intents(:weather_forecast).id,
+          'slug'  => 'admin/weather/interpretations/weather_forecast',
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'Bonjour tout le monde',
+              'expression' => 'Quel temps fera-t-il demain ?',
               'locale'     => 'fr',
-              'solution'   => "Bonjour tout le monde"
+              'solution'   => "Quel temps fera-t-il demain ?"
             },
             {
-              'expression' => 'Hello @{who}',
+              'expression' => '@{question} tomorrow ?',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
-                  'slug'    => "admin/weather/weather_who_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_who).id}_#{ialias.id}_recursive",
+                  'alias'   => 'question',
+                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   'package' => weather.id
                 }
               ],
               'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
-              'solution'   => '`greeting.who`'
+              'solution'   => '`forecast.tomorrow`'
             }
           ]
         },
         {
-          'id'    => intents(:weather_who).id,
-          'slug'  => 'admin/weather/weather_who',
+          'id'    => intents(:weather_question).id,
+          'slug'  => 'admin/weather/interpretations/weather_question',
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'world',
+              'expression' => 'What the weather like',
               'locale'     => 'en',
-              'solution'   => "world"
+              'solution'   => "What the weather like"
             }
           ]
         }
@@ -321,7 +404,9 @@ class PackageTest < ActiveSupport::TestCase
 
   test 'Package generation with alias any' do
     weather = agents(:weather)
-    ialias = interpretation_aliases(:weather_greeting_hello_who)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
+    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
     ialias.any_enabled = true
     assert ialias.save
 
@@ -332,54 +417,54 @@ class PackageTest < ActiveSupport::TestCase
       'slug' => 'admin/weather',
       'interpretations' => [
         {
-          'id'    => intents(:weather_greeting).id,
-          'slug'  => 'admin/weather/weather_greeting',
+          'id'    => intents(:weather_forecast).id,
+          'slug'  => 'admin/weather/interpretations/weather_forecast',
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'Bonjour tout le monde',
+              'expression' => 'Quel temps fera-t-il demain ?',
               'locale'     => 'fr',
-              'solution'   => 'Bonjour tout le monde'
+              'solution'   => 'Quel temps fera-t-il demain ?'
             },
             {
-              'expression' => 'Hello @{who}',
+              'expression' => '@{question} tomorrow ?',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
-                  'slug'    => 'admin/weather/weather_who',
-                  'id'      => intents(:weather_who).id,
+                  'alias'   => 'question',
+                  'slug'    => 'admin/weather/interpretations/weather_question',
+                  'id'      => intents(:weather_question).id,
                   'package' => weather.id
                 }
               ],
               'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
-              'solution'   => '`greeting.who`'
+              'solution'   => '`forecast.tomorrow`'
             },
             {
-              'expression' => 'Hello @{who}',
+              'expression' => '@{question} tomorrow ?',
               'aliases'    => [
                 {
-                  'alias'   => 'who',
+                  'alias'   => 'question',
                   'type'    => 'any'
                 }
               ],
               'locale'     => 'en',
               'keep-order' => true,
               'glued'      => true,
-              'solution'   => '`greeting.who`'
+              'solution'   => '`forecast.tomorrow`'
             }
           ]
         },
         {
-          'id'    => intents(:weather_who).id,
-          'slug'  => 'admin/weather/weather_who',
+          'id'    => intents(:weather_question).id,
+          'slug'  => 'admin/weather/interpretations/weather_question',
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'world',
+              'expression' => 'What the weather like',
               'locale'     => 'en',
-              'solution'   => "world"
+              'solution'   => "What the weather like"
             }
           ]
         }
@@ -393,6 +478,8 @@ class PackageTest < ActiveSupport::TestCase
     weather = agents(:weather)
     terminator = agents(:terminator)
     assert AgentArc.create(source: weather, target: terminator)
+    assert entities_lists(:weather_conditions).destroy
+    assert entities_lists(:weather_dates).destroy
     weather.reload
     p = Nlp::Package.new(weather)
 
@@ -401,41 +488,41 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id" => intents(:weather_greeting).id,
-          "slug" => "admin/weather/weather_greeting",
+          "id" => intents(:weather_forecast).id,
+          "slug" => "admin/weather/interpretations/weather_forecast",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Bonjour tout le monde",
+              "expression" => "Quel temps fera-t-il demain ?",
               "locale" => "fr",
-              "solution" => "Bonjour tout le monde"
+              "solution" => "Quel temps fera-t-il demain ?"
             },
             {
-              "expression" => "Hello @{who}",
+              "expression" => "@{question} tomorrow ?",
               "aliases" => [
                 {
-                  "alias" => "who",
-                  "slug" => "admin/weather/weather_who",
-                  "id" => intents(:weather_who).id,
+                  "alias" => "question",
+                  "slug" => "admin/weather/interpretations/weather_question",
+                  "id" => intents(:weather_question).id,
                   "package" => weather.id
                 }
               ],
               "locale" => "en",
               "keep-order" => true,
               "glued" => true,
-              "solution" => "`greeting.who`"
+              "solution" => "`forecast.tomorrow`"
             }
           ]
         },
         {
-          "id" => intents(:weather_who).id,
-          "slug" => "admin/weather/weather_who",
+          "id" => intents(:weather_question).id,
+          "slug" => "admin/weather/interpretations/weather_question",
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "world",
+              "expression" => "What the weather like",
               "locale" => "en",
-              "solution" => "world"
+              "solution" => "What the weather like"
             }
           ]
         }
@@ -446,7 +533,7 @@ class PackageTest < ActiveSupport::TestCase
       "interpretations" => [
         {
           "id" => "6a04a399-6606-5c51-93fc-14766af0c30c",
-          "slug" => "admin/terminator/terminator_find",
+          "slug" => "admin/terminator/interpretations/terminator_find",
           "scope" => "public",
           "expressions" => [
             {

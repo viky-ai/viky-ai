@@ -26,18 +26,8 @@
   height: 12em;
 }
 
-.agent-upload__new{
-  @include display_flex();
-  justify-content: center;
-  align-items: center;
+.agent-upload__new.field--upload{
   height: 12em;
-  border: 1px dashed #ccc;
-  overflow: hidden;
-  & > div{
-    padding: 0 1em;
-    width: 100%;
-    text-align: center;
-  }
 }
 
 .field.field--api-token{
@@ -55,6 +45,33 @@
     margin-right: 2em;
   }
 }
+
+
+.user-list{
+  list-style: none;
+  padding: 1.5em;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: .75em 1.25em;
+
+  @media (min-width: 800px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1100px){
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 1300px){
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: 1700px){
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (min-width: 2000px){
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
 
 .dependencies-title{
   & > em{

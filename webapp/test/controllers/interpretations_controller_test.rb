@@ -6,7 +6,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    get user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -17,9 +17,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Show details
   #
-  test 'Show details forbidden' do
+  test 'Show interpretation details forbidden' do
     sign_in users(:confirmed)
-    get show_detailed_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    get show_detailed_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -30,9 +30,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Create
   #
-  test 'Create access' do
+  test 'Create interpretation access' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_greeting)),
+    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
          params: {
            interpretation: { expression: 'Hello citizen' },
            format: :js
@@ -41,9 +41,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Create forbidden' do
+  test 'Create interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_greeting)),
+    post user_agent_intent_interpretations_url(users(:admin), agents(:weather), intents(:weather_forecast)),
          params: {
            interpretation: { expression: 'Hello citizen' },
            format: :js
@@ -55,9 +55,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Edit
   #
-  test 'Edit forbidden' do
+  test 'Edit interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
-    get edit_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    get edit_user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
         params: {
           format: :js
         }
@@ -68,9 +68,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Update
   #
-  test 'Update access' do
+  test 'Update interpretation access' do
     sign_in users(:edit_on_agent_weather)
-    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
           params: {
             interpretation: { expression: 'Hello citizen' },
             format: :js
@@ -79,9 +79,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Update forbidden' do
+  test 'Update interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    patch user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
           params: {
             interpretation: { expression: 'Hello citizen' },
             format: :js
@@ -93,9 +93,9 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
   #
   # Delete
   #
-  test 'Delete access' do
+  test 'Delete interpretation access' do
     sign_in users(:admin)
-    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
@@ -103,13 +103,28 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_nil flash[:alert]
   end
 
-  test 'Delete forbidden' do
+  test 'Delete interpretation forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_greeting), interpretations(:weather_greeting_hello)),
+    delete user_agent_intent_interpretation_url(users(:admin), agents(:weather), intents(:weather_forecast), interpretations(:weather_forecast_tomorrow)),
            params: {
              format: :js
            }
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
+  #
+  # Scope agent on owner
+  #
+  test 'Interpretation agent scoped on current user' do
+    sign_in users(:confirmed)
+    post user_agent_intent_interpretations_url(users(:confirmed), agents(:weather_confirmed), intents(:weather_confirmed_question)),
+         params: {
+           interpretation: { expression: 'Hello citizen' },
+           format: :js
+         }
+    assert :success
+    assert_nil flash[:alert]
   end
 end

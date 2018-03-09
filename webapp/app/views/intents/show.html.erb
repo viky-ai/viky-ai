@@ -1,7 +1,8 @@
-<header class="header">
+<%= render '/agents/header', agent: @agent %>
+
+<div class="header">
   <div class="header__breadcrumb">
-    <%= link_to t('views.agents.breadcrumb.base'), agents_path %> /
-    <%= link_to @agent.name, user_agent_path(@agent.owner, @agent) %>/
+    <%= link_to t('views.agents.breadcrumb.intents'), user_agent_intents_path(@agent.owner, @agent) %> /
     <strong>
       <%= @intent.intentname %>
     </strong>
@@ -15,9 +16,8 @@
         <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
       </span>
     <% end %>
-    (<%= @intent.slug %>)
   </div>
-</header>
+</div>
 
 <%= render 'interpretations/index', current_locale: @locale %>
 

@@ -1,0 +1,53 @@
+en:
+  views:
+    entities_lists:
+      show:
+        limit_exceeded: "%{total} entities to display, only the first %{limit} are listed."
+        import:
+          btn: CSV Import
+          select_import:
+            title: Import entities
+            wait_message: Import in progress, please wait...
+            append_label: Append to current entities
+            replace_label: Replace current entities
+            submit: Import
+            success:
+              zero: "No entity imported"
+              one: "1 entity imported successfully"
+              other: "%{count} entities imported successfully"
+            max_file_size: The maximum file size allowed is 2Mo.
+            file_label: Choose a CSV file to import
+        export_btn: CSV Export
+      index:
+        list_title: Entities lists
+        list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> entities lists
+        list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> entities lists
+        new: New entities list
+        configure: Configure
+        delete: Delete
+        entities:
+          zero: "0 entity"
+          one: "1 entity"
+          other: "%{count} entities"
+        empty_list:
+          private: No private entities list. You can drag a public entities list here or create one.
+          public: No public entities list. You can drag a private entities list here or create one.
+      new:
+        title: Create a new entities list
+        btn: Create
+        success_message: Entities list has been successfully created.
+      edit:
+        title: Edit entities list
+        btn: Update
+        success_message: Your entities list has been successfully updated.
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete entities list: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "Entities list with the name: %{name} has successfully been deleted."
+        errors_message: "Deletion failed: %{errors}."
+      blankslate:
+        message_show_html: >
+          No entity list entered for the "%{agent}" agent.
+

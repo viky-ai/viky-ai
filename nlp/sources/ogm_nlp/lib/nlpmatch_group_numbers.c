@@ -168,6 +168,7 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   {
     NlpThrowErrorTh(nmgn->nlpth, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on main : %s",
         regexp_error->message);
+    g_error_free(regexp_error);
     return NULL;
   }
 
@@ -176,6 +177,7 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   {
     NlpThrowErrorTh(nmgn->nlpth, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on not_ambiguous : %s",
         regexp_error->message);
+    g_error_free(regexp_error);
     return NULL;
   }
 
@@ -184,6 +186,7 @@ static struct number_sep_conf* NlpMatchGroupNumbersInitAddSeparatorConf(og_nlp_t
   {
     NlpThrowErrorTh(nmgn->nlpth, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on ambiguous : %s",
         regexp_error->message);
+    g_error_free(regexp_error);
     return NULL;
   }
 

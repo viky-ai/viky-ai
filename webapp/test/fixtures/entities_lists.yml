@@ -1,0 +1,24 @@
+weather_conditions:
+  listname: weather_conditions
+  agent: weather
+  description: Weather conditions like sunny, windy, cloudy...
+  position: 1
+  color: purple
+  visibility: 0
+
+weather_dates:
+  listname: weather_dates
+  agent: weather
+  description: Date of the asked forecast
+  position: 0
+  color: brown
+  visibility: 0
+
+
+weather_confirmed_dates:
+  listname: weather_dates
+  agent: weather_confirmed
+  description: Another weather conditions
+  position: 0
+  color: red
+  visibility: 1
