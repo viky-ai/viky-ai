@@ -3,7 +3,7 @@ source 'https://rubygems.org/'
 gem 'redis', '~>3.3.0'
 gem 'rest-client'
 gem 'term-ansicolor'
-
+gem 'parallel'
 
 group :test do
   gem 'mocha'

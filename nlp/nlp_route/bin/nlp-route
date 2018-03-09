@@ -15,11 +15,15 @@ Signal.trap("INT") do
   exit
 end
 Signal.trap("TERM") do
-
   puts "\nGoodbye ..."
   launcher.stop()
   exit
 end
 
 # Start nlp + notification notifier
-launcher.start()
+begin
+  launcher.start()
+rescue => e
+  puts "Stopping due to " + e.inspect
+  launcher.stop()
+end

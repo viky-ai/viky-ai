@@ -1,5 +1,6 @@
 class InterpretationsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions, :update_locale]
+  before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_intent
@@ -13,7 +14,13 @@ class InterpretationsController < ApplicationController
       if interpretation.save
         format.js do
           @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: Interpretation.new, current_locale: @current_locale })
-          @html = render_to_string(partial: 'interpretation', locals: { interpretation: interpretation })
+          @html = render_to_string(partial: 'interpretation', locals: {
+            interpretation: interpretation,
+            can_edit: current_user.can?(:edit, @agent),
+            intent: @intent,
+            agent: @agent,
+            owner: @owner
+          })
           render partial: 'create_succeed'
         end
       else
@@ -28,7 +35,13 @@ class InterpretationsController < ApplicationController
   def show
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'interpretation', locals: { interpretation: @interpretation })
+        @show = render_to_string(partial: 'interpretation', locals: {
+          interpretation: @interpretation,
+          can_edit: current_user.can?(:edit, @agent),
+          intent: @intent,
+          agent: @agent,
+          owner: @owner
+        })
         render partial: 'show'
       }
     end
@@ -56,7 +69,13 @@ class InterpretationsController < ApplicationController
     respond_to do |format|
       if @interpretation.update(interpretation_params)
         format.js {
-          @show = render_to_string(partial: 'interpretation', locals: { interpretation: @interpretation })
+          @show = render_to_string(partial: 'interpretation', locals: {
+            interpretation: @interpretation,
+            can_edit: current_user.can?(:edit, @agent),
+            intent: @intent,
+            agent: @agent,
+            owner: @owner
+          })
           render partial: 'show'
         }
       else
@@ -79,10 +98,7 @@ class InterpretationsController < ApplicationController
   end
 
   def update_positions
-    params[:ids].reverse.each_with_index do |id, position|
-      interpretation = Interpretation.find(id)
-      interpretation.update(position: position)
-    end
+    Interpretation.update_positions(@intent, params[:ids])
   end
 
   def update_locale
@@ -91,14 +107,18 @@ class InterpretationsController < ApplicationController
     max_position = @intent.interpretations.where(locale: params[:locale]).maximum(:position)
     @interpretation.position = max_position.nil? ? 0 : max_position + 1
     @interpretation.save
-    redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, { locale: previous_locale })
+    redirect_to user_agent_intent_path(@owner, @agent, @intent, { locale: previous_locale })
   end
 
 
   private
 
+    def set_owner
+      @owner = User.friendly.find(params[:user_id])
+    end
+
     def set_agent
-      @agent = Agent.friendly.find(params[:agent_id])
+      @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
     def set_intent

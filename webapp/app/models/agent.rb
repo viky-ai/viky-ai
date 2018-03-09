@@ -31,13 +31,11 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence
 
-  after_save do
-    if saved_change_to_attribute?(:agentname) || saved_change_to_attribute?(:owner_id)
-      Nlp::Package.new(self).push
-    end
+  after_create_commit do
+    Nlp::Package.new(self).push
   end
 
-  after_touch do |user|
+  after_update_commit do
     Nlp::Package.new(self).push
   end
 
@@ -124,40 +122,8 @@ class Agent < ApplicationRecord
              .order(position: :desc, created_at: :desc)
   end
 
-  def update_intents_positions(public_intents, private_intents)
-    current_public_intents = Intent.where(agent_id: id, id: public_intents).order(position: :asc)
-    current_private_intents = Intent.where(agent_id: id, id: private_intents).order(position: :asc)
-    Agent.no_touching do
-      update_order(public_intents, Intent.visibilities[:is_public], current_public_intents)
-      update_order(private_intents, Intent.visibilities[:is_private], current_private_intents)
-    end
-    touch
-  end
-
-  def update_entities_lists_positions(public_entities_lists, private_entities_lists)
-    current_public_entities_lists = EntitiesList.where(agent_id: id, id: public_entities_lists).order(position: :asc)
-    current_private_entities_lists = EntitiesList.where(agent_id: id, id: private_entities_lists).order(position: :asc)
-    Agent.no_touching do
-      update_order(public_entities_lists, EntitiesList.visibilities[:is_public], current_public_entities_lists)
-      update_order(private_entities_lists, EntitiesList.visibilities[:is_private], current_private_entities_lists)
-    end
-    touch
-  end
-
 
   private
-    def update_order(new_ids, visibility, current)
-      count = current.count
-      current.each do |item|
-        new_position = new_ids.find_index(item.id)
-        unless new_position.nil?
-          item.record_timestamps = false
-          item.update_attribute(:position, count - new_position - 1)
-          item.record_timestamps = true
-          item.update_attribute(:visibility, visibility)
-        end
-      end
-    end
 
     def check_collaborators_presence
       return if can_be_destroyed?

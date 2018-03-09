@@ -98,27 +98,27 @@ class PackageTest < ActiveSupport::TestCase
             {
               "expression" => "aujourd'hui",
               "locale"     => "fr",
-              "solution"   => "`{date: today}`",
+              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
             },
             {
               "expression" => "tout à l'heure",
               "locale"     => "fr",
-              "solution"   => "`{date: today}`",
+              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
             },
             {
               "expression" => "today",
               "locale"     => "en",
-              "solution"   => "`{date: today}`",
+              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
             },
             {
               "expression" => "tomorrow",
-              "solution"   => "`{date: tomorrow}`",
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glued"      => true,
             }

@@ -11,7 +11,13 @@
       <p>
         <%= t('views.entities_lists.confirm_destroy.content_html', name: @entities_list.listname) %>
       </p>
-      <%= form_for(@entities_list, url: user_agent_entities_list_path(current_user, @agent, @entities_list), method: :delete, html: { data: { validation: :delete }}, remote: true) do |delete_form| %>
+      <%= form_for(@entities_list,
+                   url: user_agent_entities_list_path(current_user, @agent, @entities_list),
+                   method: :delete,
+                   html: {
+                     data: { validation: :delete }
+                   },
+                   remote: true) do |delete_form| %>
         <div class="field">
           <div class="control">
             <label><%= t('confirm_destroy.label') %></label>

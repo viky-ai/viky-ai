@@ -3,6 +3,7 @@ require 'open3'
 require 'term/ansicolor'
 require 'fileutils'
 require 'rest-client'
+require 'parallel'
 
 module NlpRoute
 
@@ -12,6 +13,7 @@ module NlpRoute
 
     # get all package from webapp in json format and store in /nlp/import/ then start nlp
     def start(start_nlp = true)
+
       if start_nlp
         pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
         FileUtils.rm(pidfile, :force => true)
@@ -30,9 +32,12 @@ module NlpRoute
         }
 
         # wait for starting
-        until starting && File.exist?(pidfile)
+        while starting && !File.exist?(pidfile)
           sleep(0.05)
         end
+
+        raise "Stopping" if !File.exist?(pidfile)
+
       end
 
       # Send all package to NLP
@@ -47,9 +52,10 @@ module NlpRoute
           puts "Subscribe ends : #{e.inspect}"
           sleep 3
           retry unless (tries -= 1).zero?
+          raise "Subscribe failed"
         else
           puts "Subscribe failed : #{e.inspect}"
-          raise
+          raise "Subscribe failed"
         end
       end
 
@@ -58,7 +64,7 @@ module NlpRoute
     def stop
       pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
       if File.exist?(pidfile)
-        `pkill --signal SIGINT --pidfile #{pidfile}`
+        `pkill --signal SIGTERM --pidfile #{pidfile}`
       end
 
       if !@@nls_background.nil? && @@nls_background.alive?
@@ -69,17 +75,34 @@ module NlpRoute
     end
 
     def init
-      #Load all packages ids
+
+      puts "Loading all packages ..."
+
+      # Load all packages ids
       wrapper = PackageApiWrapper.new
       packages_ids = wrapper.list_id
-      packages_ids.each do |package_id|
-        package = wrapper.get_package(package_id)
-        if package.nil?
-          puts "[skipping] Impossible to download package #{package_id} from webapp"
-        else
+      Parallel.map(packages_ids, in_threads: Parallel.processor_count) do |package_id|
+
+        begin
+
+          retries ||= 3
+
+          package = wrapper.get_package(package_id)
           wrapper.update_or_create(package_id, package)
+
+        rescue => e
+          unless (retries -= 1).zero?
+            puts "Init package #{package_id} failed (retrying #{retries})"
+            sleep 0.3
+            retry
+          else
+            puts "Init package #{package_id} failed (forever) : #{e.inspect}"
+            raise "Init package #{package_id} failed (forever)"
+          end
         end
+
       end
+
     end
 
     def subscribe
@@ -99,25 +122,46 @@ module NlpRoute
         end
 
         on.message do |channel, message|
+
+          puts "#{channel}: #{message}"
           parsed_message = JSON.parse(message)
-          wrapper = PackageApiWrapper.new
-          puts "#{channel}: #{parsed_message}"
-          id = parsed_message["id"]
-          if parsed_message["event"] == "update"
-            package = wrapper.get_package(id)
-            if package.nil?
-              puts "[skipping] Impossible to download package #{package_id} from webapp"
-            else
-              wrapper.update_or_create(id, package)
-            end
-          elsif parsed_message["event"] == "delete"
-            wrapper.delete(id)
-          elsif parsed_message["event"] == "unsubscribe"
+
+          # restart message
+          if parsed_message["event"] == "unsubscribe"
             redis.unsubscribe
           elsif parsed_message["event"] == "reinit"
             redis.unsubscribe
             self.stop
             self.start(true)
+          else
+
+            # processed async
+            Thread.new {
+
+              id = parsed_message["id"]
+              begin
+
+                retries ||= 3
+
+                wrapper = PackageApiWrapper.new
+                if parsed_message["event"] == "update"
+                  package = wrapper.get_package(id)
+                  wrapper.update_or_create(id, package)
+                elsif parsed_message["event"] == "delete"
+                  wrapper.delete(id)
+                end
+
+              rescue => e
+                unless (retries -= 1).zero?
+                  puts "Message processing on package #{id} failed (retrying #{retries})"
+                  sleep 0.3
+                  retry
+                else
+                  puts "Message processing on package #{id} failed (skipping) : #{e.inspect}"
+                end
+              end
+            }
+
           end
 
         end
@@ -142,7 +186,7 @@ module NlpRoute
         exit_status = wait_thr.value
 
         if !exit_status.success?
-          raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\n\n#{stdstr}\n"
+          raise "Command \"#{cmd}\" failed !!! (cwd: #{pwd})\n"
         end
 
       end

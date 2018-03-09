@@ -1,0 +1,70 @@
+<div class="modal modal--large" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.entities_lists.show.import.select_import.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__content">
+
+      <%= form_with model: @entities_import,
+                    scope: :import,
+                    url: create_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list),
+                    data: { type: 'json' },
+                    id: 'import-entities-form',
+                    class: 'js-import-entities-form' do |import_form| %>
+
+
+        <p class="field__title">
+          <%= t('views.entities_lists.show.import.select_import.file_label') %>
+        </p>
+        <div class="field field--upload">
+          <%= import_form.file_field :file, id: :import_file, accept: 'text/csv', multiple: false %>
+          <label for="import_file">
+            <div>
+              <p>
+                <%= t('file_upload_label') %>
+              </p>
+              <div class="help">
+                <span class="icon icon--x-small"><%= icon_information %></span>
+                <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
+              </div>
+              <%= display_errors(@entities_import, :file) %>
+            </div>
+          </label>
+        </div>
+
+        <div class="field">
+          <p class="field__title">Import behavior</p>
+          <%= import_form.radio_button :mode, :append, id: "import__append", checked: true %>
+          <label class="radio" for="import__append">
+            <%= t('views.entities_lists.show.import.select_import.append_label') %>
+          </label>
+          &nbsp;
+          <%= import_form.radio_button :mode, :replace, id: "import__replace" %>
+          <label class="radio" for="import__replace">
+            <%= t('views.entities_lists.show.import.select_import.replace_label') %>
+          </label>
+        </div>
+
+        <div class="actions">
+          <%= import_form.button t('views.entities_lists.show.import.select_import.submit'),
+                                 class: "btn btn--primary"%>
+          <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+        </div>
+      <% end %>
+
+      <div id="wait-message" style="display:none">
+        <p>
+          <span class="icon icon--spin">
+            <%= icon_loading %>
+          </span>
+          <%= t('views.entities_lists.show.import.select_import.wait_message') %>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
