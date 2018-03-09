@@ -200,6 +200,10 @@ static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstp
   {
     return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
   }
+  if (request_input_part1->request_positions_nb != request_input_part2->request_positions_nb)
+  {
+    return (request_input_part2->request_positions_nb - request_input_part1->request_positions_nb);
+  }
   if (request_input_part1->sparse_mark != request_input_part2->sparse_mark)
   {
     return (request_input_part1->sparse_mark - request_input_part2->sparse_mark);
