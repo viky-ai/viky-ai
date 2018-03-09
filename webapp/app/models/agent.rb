@@ -49,7 +49,8 @@ class Agent < ApplicationRecord
     conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
     unless q[:query].nil?
       conditions = conditions.where(
-        'name LIKE ? OR agentname LIKE ?',
+        'name LIKE ? OR agentname LIKE ? OR description LIKE ?',
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
