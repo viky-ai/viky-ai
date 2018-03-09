@@ -190,10 +190,31 @@
 </section>
 
 
+
+<section>
+  <h2>File upload</h2>
+  <%= highlight_html do %>
+<div class="field field--upload">
+  <label for="file_input">
+    <div>
+      <p>
+        Drag file here or click to choose a file
+      </p>
+      <div class="help">
+        <span class="icon icon--x-small"><%= icon_information %></span>
+        The maximum file size allowed is 2Mo.
+      </div>
+    </div>
+  </label>
+  <input type="file" id="file_input">
+</div>
+  <% end %>
+</section>
+
+
 <section>
   <h2>Selectize</h2>
   <%= highlight_html do %>
-
 <div class="field">
   <div class="control">
     <label>Simple</label>

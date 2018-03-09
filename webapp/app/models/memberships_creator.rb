@@ -1,5 +1,4 @@
 class MembershipsCreator
-
   attr_reader :errors, :new_collaborators
 
   def initialize(agent, users_ids, rights)

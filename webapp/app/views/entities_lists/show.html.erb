@@ -17,6 +17,24 @@
       </span>
     <% end %>
   </div>
+  <div class="header__tools">
+    <% if current_user.can?(:edit, @agent) %>
+      <a href="<%= new_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
+         data-action="open-remote-modal" class="btn btn--small">
+        <span class="icon icon--x-small">
+          <%= icon_upload %>
+        </span>
+        <%= t('views.entities_lists.show.import.btn') %>
+      </a>
+    <% end %>
+    <a href="<%= user_agent_entities_list_path(@agent.owner, @agent, @entities_list, format: 'csv') %>"
+       class="btn btn--small">
+      <span class="icon icon--x-small">
+        <%= icon_download %>
+      </span>
+      <%= t('views.entities_lists.show.export_btn') %>
+    </a>
+  </div>
 </div>
 
 <%= render 'entities/index' %>

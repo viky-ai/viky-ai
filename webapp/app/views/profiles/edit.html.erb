@@ -96,21 +96,25 @@
               <% end %>
             </div>
 
-            <div class="field">
-              <div class="control">
-                <%= f.label :image, "Upload new avatar" %><br />
-                <%= f.hidden_field :image, value: @profile.cached_image_data %>
-                <%= f.file_field :image %>
-                <div class="help">
-                  <span class="icon icon--x-small"><%= icon_information %></span>
-                   The maximum file size allowed is 2Mo.
+            <p class="field__title">
+              Upload new avatar
+            </p>
+            <div class="field field--upload">
+              <%= f.hidden_field :image, value: @profile.cached_image_data %>
+              <label for="upload_image">
+                <div>
+                  <p>
+                    <%= t('file_upload_label') %>
+                  </p>
+                  <div class="help">
+                    <span class="icon icon--x-small"><%= icon_information %></span>
+                     The maximum file size allowed is 2Mo.
+                  </div>
+                  <%= display_errors(@profile, :image) %>
                 </div>
-
-                <%= display_errors(@profile, :image) %>
-
-              </div>
+              </label>
+              <%= f.file_field :image, id: 'upload_image' %>
             </div>
-
           </div>
         </div>
 
@@ -123,7 +127,6 @@
               disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
             } %>
       </div>
-
 
     </div>
   </div>

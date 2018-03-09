@@ -1,12 +1,8 @@
-<% intent = interpretation.intent %>
-<% agent = interpretation.intent.agent %>
-<% owner = interpretation.intent.agent.owner %>
-
 <li id="interpretation-<%= interpretation.id %>"
     data-id="<%= interpretation.id %>"
     data-update-locale-path="<%= update_locale_user_agent_intent_interpretation_path(owner, agent, intent, interpretation) %>">
   <% dir = rtl?(interpretation.locale) ? "rtl" : "ltr" %>
-  <% if current_user.can? :edit, interpretation.intent.agent %>
+  <% if can_edit %>
     <div class="card-list__item__draggable"></div>
     <% link = edit_user_agent_intent_interpretation_path(owner, agent, intent, interpretation) %>
   <% else %>
@@ -16,9 +12,20 @@
       <% link = show_detailed_user_agent_intent_interpretation_path(owner, agent, intent, interpretation) %>
     <% end %>
   <% end %>
-  <a href="<%= link %>" class="interpretations-list__show" data-remote="true">
-    <span class="card-list__item__name" dir="<%= dir %>">
-      <%= display_expression(interpretation) %>
-   </span>
-  </a>
+
+  <% if link == "#" %>
+    <span class="interpretations-list__show">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(interpretation) %>
+      </span>
+    </span>
+  <% else %>
+    <a href="<%= link %>"
+       class="interpretations-list__show"
+       data-remote="true">
+      <span class="card-list__item__name" dir="<%= dir %>">
+        <%= display_expression(interpretation) %>
+     </span>
+    </a>
+  <% end %>
 </li>

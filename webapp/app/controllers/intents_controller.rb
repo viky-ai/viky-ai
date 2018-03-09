@@ -1,5 +1,6 @@
 class IntentsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:update_positions]
+  before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
   before_action :set_intent, except: [:index, :new, :create, :confirm_destroy, :update_positions]
@@ -61,7 +62,7 @@ class IntentsController < ApplicationController
   end
 
   def update_positions
-    @agent.update_intents_positions(params[:is_public], params[:is_private])
+    Intent.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
   def confirm_destroy
@@ -93,9 +94,9 @@ class IntentsController < ApplicationController
     @intent.locales << locale_to_add
 
     if @intent.save
-      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: locale_to_add)
+      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale_to_add)
     else
-      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales.first), alert: t(
+      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales.first), alert: t(
           'views.intents.add_locale.errors_message',
           errors: @intent.errors.full_messages.join(', ')
       )
@@ -108,9 +109,9 @@ class IntentsController < ApplicationController
     previous_locale_index = locale_to_remove_index <= 0 ? 0 : locale_to_remove_index - 1
     @intent.locales -= [locale_to_remove]
     if @intent.save
-      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales[previous_locale_index])
+      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales[previous_locale_index])
     else
-      redirect_to user_agent_intent_path(@agent.owner, @agent, @intent, locale: @intent.locales[locale_to_remove_index]), alert: t(
+      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales[locale_to_remove_index]), alert: t(
           'views.intents.remove_locale.errors_message',
           errors: @intent.errors.full_messages.join(', ')
       )
@@ -124,8 +125,12 @@ class IntentsController < ApplicationController
       params.require(:intent).permit(:intentname, :description, :visibility)
     end
 
+    def set_owner
+      @owner = User.friendly.find(params[:user_id])
+    end
+
     def set_agent
-      @agent = Agent.friendly.find(params[:agent_id])
+      @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
     def set_intent

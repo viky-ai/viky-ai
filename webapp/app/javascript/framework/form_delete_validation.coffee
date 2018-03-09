@@ -2,6 +2,13 @@ $ = require('jquery');
 
 class FormValidationDelete
   constructor: ->
+    $('body').on 'modal:load', (event) =>
+      if $("#modal_container form").length == 1
+        form = $("#modal_container form")
+        if form.data('validation') == 'delete'
+          input = form.find('input[name="validation"]')
+          App.FocusInput.atEnd(input)
+
     $("body").on 'submit ajax:before', (event) =>
       form = $(event.target)
       if form.data('validation') == 'delete'
@@ -15,6 +22,7 @@ class FormValidationDelete
           else
             input.closest('div').addClass('field_with_errors')
             input.closest('.control').find('.help--error').show()
+            App.FocusInput.atEnd(input)
             event.preventDefault()
 
 Setup = ->

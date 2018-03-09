@@ -36,9 +36,9 @@
   </div>
 <% else %>
   <h5><%= t('views.intents.index.list_public_title_html') %></h5>
-  <%= render '/agents/intents_list', intents: @intents.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
+  <%= render 'intents_list', intents: @intents.is_public, current_user_can_edit: current_user_can_edit, visibility: 'is_public' %>
   <h5><%= t('views.intents.index.list_private_title_html') %></h5>
-  <%= render '/agents/intents_list', intents: @intents.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
+  <%= render 'intents_list', intents: @intents.is_private, current_user_can_edit: current_user_can_edit, visibility: 'is_private' %>
 <% end %>
 
 <% content_for :right_aside do %>

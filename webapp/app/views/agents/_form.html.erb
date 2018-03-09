@@ -123,16 +123,21 @@
           </div>
         <% end %>
 
-        <div class="agent-upload__new" <% unless agent.image.nil? %>style="display:none;"<% end %>>
-          <div>
-            <%= f.hidden_field :image, value: agent.cached_image_data %>
-            <%= f.file_field :image, id: 'agent_image' %>
-            <div class="help">
-              <span class="icon icon--x-small"><%= icon_information %></span>
-              <%= t('views.agents.form.upload_info') %>
+        <div class="agent-upload__new field field--upload" <% unless agent.image.nil? %>style="display:none;"<% end %>>
+          <%= f.hidden_field :image, value: agent.cached_image_data %>
+          <label for="agent_image">
+            <div>
+              <p>
+                <%= t('file_upload_label') %>
+              </p>
+              <div class="help">
+                <span class="icon icon--x-small"><%= icon_information %></span>
+                <%= t('views.agents.form.upload_info') %>
+              </div>
+              <%= display_errors(agent, :image) %>
             </div>
-            <%= display_errors(agent, :image) %>
-          </div>
+          </label>
+          <%= f.file_field :image, id: 'agent_image' %>
         </div>
       </div>
 

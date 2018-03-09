@@ -31,7 +31,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_intent_url(users(:confirmed), agents(:terminator), intents(:weather_forecast))
+    get user_agent_intent_url(users(:admin), agents(:terminator), intents(:weather_forecast))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -153,5 +153,20 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_forecast), locale_to_remove: 'fr')
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+
+  #
+  # Scope agent on owner
+  #
+  test 'Intent agent scoped on current user' do
+    sign_in users(:confirmed)
+    post user_agent_intents_url(users(:confirmed), agents(:weather_confirmed)),
+         params: {
+           intent: { intentname: 'my_new_intent', description: 'A new intent' },
+           format: :json
+         }
+    assert_redirected_to user_agent_intents_path(users(:confirmed), agents(:weather_confirmed))
+    assert_nil flash[:alert]
   end
 end

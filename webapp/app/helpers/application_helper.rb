@@ -12,7 +12,7 @@ module ApplicationHelper
         html << " "
         html << t("activerecord.attributes.#{model_instance.class.to_s.underscore}.#{field}")
         html << " "
-        html << "#{error}<br\>"
+        html << "#{error}<br/>"
         html << "</div>"
       end
 

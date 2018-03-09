@@ -112,4 +112,19 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
+
+  #
+  # Scope agent on owner
+  #
+  test 'Interpretation agent scoped on current user' do
+    sign_in users(:confirmed)
+    post user_agent_intent_interpretations_url(users(:confirmed), agents(:weather_confirmed), intents(:weather_confirmed_question)),
+         params: {
+           interpretation: { expression: 'Hello citizen' },
+           format: :js
+         }
+    assert :success
+    assert_nil flash[:alert]
+  end
 end
