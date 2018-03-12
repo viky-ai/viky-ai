@@ -489,8 +489,6 @@ module Nls
 
       def test_string_plus_any
 
-        #skip('bug to fix')
-
         package = Package.new("test_string_plus_any")
         interpretation = package.new_interpretation("test_string_plus_any")
         interpretation.new_expression("string @{any}",  aliases: { any: Alias.any }, solution: "`any`" )
