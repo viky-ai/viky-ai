@@ -324,6 +324,19 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test 'Search agent is case insensitive' do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 2, Agent.search(s.options).count
+    s = AgentSearch.new(user_id, query: 'wEaTheR')
+    assert_equal 1, Agent.search(s.options).count
+    expected = [
+      'weather'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+
   test 'Search agents description' do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)
