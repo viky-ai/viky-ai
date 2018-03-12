@@ -47,13 +47,24 @@ class Agent < ApplicationRecord
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
 
-    case q[:filter_visibility]
-    when 'public'
-      conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
-    when 'private'
-      conditions = conditions.where('user_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
+    if q[:filter_owner] == 'owned'
+      case q[:filter_visibility]
+      when 'public'
+        conditions = conditions.where('owner_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+      when 'private'
+        conditions = conditions.where('owner_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
+      else
+        conditions = conditions.where('owner_id = ?', q[:user_id])
+      end
     else
-      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+      case q[:filter_visibility]
+      when 'public'
+        conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
+      when 'private'
+        conditions = conditions.where('user_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
+      else
+        conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+      end
     end
 
     unless q[:query].nil?

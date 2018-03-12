@@ -293,9 +293,10 @@ class AgentTest < ActiveSupport::TestCase
   test "Search agent empty" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)
-    assert_equal 3, s.options.size
+    assert_equal 4, s.options.size
     assert_equal user_id, s.options[:user_id]
     assert_equal 'agentname', s.options[:sort_by]
+    assert_equal 'all', s.options[:filter_owner]
     assert_equal 'all', s.options[:filter_visibility]
     assert s.empty?
   end
@@ -392,6 +393,37 @@ class AgentTest < ActiveSupport::TestCase
     s = AgentSearch.new(user_id, filter_visibility: 'private')
     assert_equal 1, Agent.search(s.options).count
     expected = [
+      'weather'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+
+  test 'Filter user owned agents' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id, filter_owner: 'owned')
+    assert_equal 2, Agent.search(s.options).count
+    expected = [
+      'terminator',
+      'weather'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
+  end
+
+
+  test 'Filter all agents' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id, filter_owner: 'all')
+    assert_equal 3, Agent.search(s.options).count
+    expected = [
+      'terminator',
+      'weather',
       'weather'
     ]
     assert_equal expected, Agent.search(s.options).all.collect(&:agentname)

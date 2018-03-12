@@ -185,6 +185,23 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('confirmed/weather')
   end
 
+
+  test 'Agents can be filtered by owner' do
+    agent = agents(:weather_confirmed)
+    agent.visibility = Agent.visibilities[:is_public]
+    assert agent.save
+
+    go_to_agents_index
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+
+    click_button 'Your agents'
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('confirmed/weather')
+  end
+
   #
   # Token
   #

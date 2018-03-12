@@ -26,6 +26,9 @@ en:
           all: All
           private: Private
           public: Public
+        filter_owner:
+          all: All
+          owner: Your agents
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.
       confirm_destroy:
