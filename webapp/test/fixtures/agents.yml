@@ -6,6 +6,7 @@ weather:
   api_token: "52f6cb86b23d8d2a0df9c6808d73ce05"
   created_at: "2017-01-02 00:00:00"
   updated_at: "2017-01-02 00:00:00"
+  visibility: 0
 
 terminator:
   name: T-800
@@ -15,6 +16,7 @@ terminator:
   api_token: "4911cb86b23d8d2a0df9c6808d73777a"
   created_at: "2017-01-01 00:00:00"
   updated_at: "2017-01-01 00:00:00"
+  visibility: 1
 
 weather_confirmed:
   name: Weather bot

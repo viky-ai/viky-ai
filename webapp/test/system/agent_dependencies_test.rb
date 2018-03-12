@@ -12,7 +12,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     # Add admin/terminator to admin/weather
     click_link "Add new dependency"
     within(".modal") do
-      assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
+      assert_equal ["PUBLIC T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
     end
 
@@ -41,7 +41,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     # Add dependency
     click_link "Add new dependency"
     within(".modal") do
-      assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
+      assert_equal ["PUBLIC T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
     end
 

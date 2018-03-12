@@ -164,6 +164,27 @@ class AgentsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Agents can be filtered by visibility' do
+    agent = agents(:weather_confirmed)
+    agent.visibility = Agent.visibilities[:is_public]
+    assert agent.save
+
+    go_to_agents_index
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+
+    click_button 'Private'
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('confirmed/weather')
+
+    click_button 'Public'
+    assert page.has_content?('admin/terminator')
+    assert page.has_no_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+  end
+
   #
   # Token
   #

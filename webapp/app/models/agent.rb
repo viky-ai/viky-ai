@@ -46,7 +46,16 @@ class Agent < ApplicationRecord
   def self.search(q = {})
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
-    conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+
+    case q[:filter_visibility]
+    when 'public'
+      conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
+    when 'private'
+      conditions = conditions.where('user_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
+    else
+      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+    end
+
     unless q[:query].nil?
       conditions = conditions.where(
         'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',

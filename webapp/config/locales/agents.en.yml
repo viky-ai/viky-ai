@@ -22,6 +22,10 @@ en:
         sort_by:
           name: Sort by name
           updated_at: Sort by last update
+        filter_visibility:
+          all: All
+          private: Private
+          public: Public
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.
       confirm_destroy:

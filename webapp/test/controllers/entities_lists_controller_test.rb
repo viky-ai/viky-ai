@@ -30,7 +30,7 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Show forbidden' do
     sign_in users(:confirmed)
-    get user_agent_entities_list_url(users(:admin), agents(:terminator), entities_lists(:weather_conditions))
+    get user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end

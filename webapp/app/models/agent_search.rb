@@ -5,6 +5,7 @@ class AgentSearch
     @options = clean_options options
     @options[:user_id] = user_id.strip
     @options[:sort_by] = sort_by
+    @options[:filter_visibility] = filter_visibility
   end
 
   def self.keys
@@ -19,10 +20,14 @@ class AgentSearch
     options[:sort_by] || "name"
   end
 
+  def filter_visibility
+    options[:filter_visibility] || "all"
+  end
+
   def empty?
     is_empty = true
     options.each do |key, value|
-      unless [:user_id, :sort_by].include?(key)
+      unless [:user_id, :sort_by, :filter_visibility].include?(key)
         is_empty = false if value.present?
       end
     end
