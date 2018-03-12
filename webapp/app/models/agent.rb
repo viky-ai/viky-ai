@@ -55,6 +55,14 @@ class Agent < ApplicationRecord
         "%#{q[:query]}%"
       )
     end
+
+    case q[:sort_by]
+    when 'name'
+      conditions = conditions.order(name: :asc)
+    when 'updated_at'
+      conditions = conditions.order(updated_at: :desc)
+    end
+
     conditions.distinct
   end
 

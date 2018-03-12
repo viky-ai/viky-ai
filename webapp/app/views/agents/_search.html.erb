@@ -2,7 +2,8 @@
       @search,
       as: :search,
       url: agents_path,
-      method: :get
+      method: :get,
+      class: "agent_search"
     ) do |f| %>
   <div class="field field--inline">
     <div class="control control--merged">
@@ -11,6 +12,9 @@
             data: {
               disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
             } %>
+    </div>
+    <div class="control">
+      <%= render "form_sort_by", f: f %>
     </div>
   </div>
 <% end %>

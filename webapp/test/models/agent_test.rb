@@ -293,8 +293,9 @@ class AgentTest < ActiveSupport::TestCase
   test "Search agent empty" do
     user_id = users(:admin).id
     s = AgentSearch.new(user_id)
-    assert_equal 1, s.options.size
+    assert_equal 2, s.options.size
     assert_equal user_id, s.options[:user_id]
+    assert s.empty?
   end
 
 
@@ -369,6 +370,20 @@ class AgentTest < ActiveSupport::TestCase
     assert agent_public.save
     s = AgentSearch.new(user_id)
     assert_equal 3, Agent.search(s.options).count
+  end
+
+
+  test 'Search agent and sort result' do
+    user_id = users(:admin).id
+    s = AgentSearch.new(user_id)
+    assert_equal 2, Agent.search(s.options).count
+    s = AgentSearch.new(user_id, query: 'er', sort_by: 'updated_at')
+    assert_equal 2, Agent.search(s.options).count
+    expected = [
+      'weather',
+      'terminator'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
   end
 
 

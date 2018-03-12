@@ -19,6 +19,9 @@ en:
         search:
           not_found: No agent found
           placeholder: Search by name or ID
+        sort_by:
+          name: Sort by name
+          updated_at: Sort by last update
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.
       confirm_destroy:

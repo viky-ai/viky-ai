@@ -171,7 +171,7 @@ class AgentsController < ApplicationController
     end
 
     def search_params
-      params.permit(search: [:query])[:search]
+      params.permit(search: [:query, :sort_by])[:search]
     end
 
 end

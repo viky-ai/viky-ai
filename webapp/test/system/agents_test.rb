@@ -29,7 +29,7 @@ class AgentsTest < ApplicationSystemTestCase
   #
   test 'Button to delete agent is not present' do
     go_to_agents_index
-    first('.dropdown__trigger > button').click
+    all('.dropdown__trigger > button').first.click
     assert !page.has_link?("Delete")
   end
 
@@ -145,6 +145,22 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('T-800')
     assert page.has_content?('My awesome weather bot')
     assert_equal '/agents', current_path
+  end
+
+
+  test 'Agents can be sorted by last updated date' do
+    go_to_agents_index
+    find('.dropdown__trigger', text: 'Sort by name').click
+    find('.dropdown__content', text: 'Sort by last update').click
+
+    click_button '#search'
+    expected = [
+      'admin/weather',
+      'admin/terminator'
+    ]
+    assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
+      div.all('h3').first.text
+    })
   end
 
 
