@@ -506,6 +506,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       {
         expression->is_recursive = TRUE;
         expression->interpretation->is_recursive = TRUE;
+        // Keep order on a recursive list in not necessary
+        // as sorting a a a into a a a does not mean anything
+        expression->keep_order = FALSE;
       }
 
       IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));

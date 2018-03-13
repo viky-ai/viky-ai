@@ -28,6 +28,14 @@ og_status NlpRequestExpressionsOptimize(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
   }
   IFE(NlpRequestExpressionsClean(ctrl_nlp_th));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    char buffer[DPcPathSize];
+    snprintf(buffer, DPcPathSize, "List of all request expression after cleaning at level %d:", ctrl_nlp_th->level);
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
+  }
+
   DONE;
 }
 
@@ -123,11 +131,15 @@ static int NlpRequestExpressionOptimizeIncludedCmp(gconstpointer ptr_request_exp
   {
     return (request_expression1->overlap_mark - request_expression2->overlap_mark);
   }
+  if (request_expression1->sparse_mark != request_expression2->sparse_mark)
+  {
+    return (request_expression1->sparse_mark - request_expression2->sparse_mark);
+  }
   if (request_expression1->total_score != request_expression2->total_score)
   {
-     double cmp = request_expression2->total_score - request_expression1->total_score;
-     if (cmp > 0) return 1;
-     else return -1;
+    double cmp = request_expression2->total_score - request_expression1->total_score;
+    if (cmp > 0) return 1;
+    else return -1;
   }
 
   if (request_expression1->level != request_expression2->level)
@@ -190,4 +202,5 @@ static og_bool NlpRequestPositionIsIncluded(og_nlp_th ctrl_nlp_th, int request_p
   }
   return TRUE;
 }
+
 

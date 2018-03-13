@@ -39,6 +39,7 @@
     <file>nlprexpression.c</file>
     <file>nlpreopt.c</file>
     <file>nlpreclean.c</file>
+    <file>nlprelist.c</file>
     <file>nlpscore.c</file>
     <file>nlpsol.c</file>
     <file>nlprposition.c</file>

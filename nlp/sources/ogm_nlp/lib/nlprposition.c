@@ -75,7 +75,7 @@ og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position
   int distance = 0;
   for (int i = 0; i + 1 < request_positions_nb; i++)
   {
-    int interval_distance = request_position[i + 1].start - request_position[i].start + request_position[i].length;
+    int interval_distance = request_position[i + 1].start - (request_position[i].start + request_position[i].length);
     distance += interval_distance;
   }
   return distance;
@@ -94,7 +94,7 @@ og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_positio
 og_bool NlpRequestPositionsAreGlued(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
     int request_position_start2, int request_positions_nb2)
 {
-  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position,0);
+  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position, 0);
 
   struct request_position *request_position1 = request_positions + request_position_start1 + request_positions_nb1 - 1;
   struct request_position *request_position2 = request_positions + request_position_start2;

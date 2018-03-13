@@ -8,6 +8,8 @@
 
 static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package, int Iinput_part);
+static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part);
+
 
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
     struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number)
@@ -25,6 +27,8 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
   request_input_part->request_positions_nb = 1;
   request_input_part->request_position_distance = 0;
   request_input_part->interpret_word_as_number = interpret_word_as_number;
+
+  IFE(NlpRequestInputPartGetSparseMark(ctrl_nlp_th, request_input_part));
 
   DONE;
 }
@@ -53,6 +57,8 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct req
       sizeof(struct request_position) * request_expression->request_positions_nb);
 
   request_input_part->request_positions_nb = request_expression->request_positions_nb;
+
+  IFE(NlpRequestInputPartGetSparseMark(ctrl_nlp_th, request_input_part));
 
   DONE;
 }
@@ -104,6 +110,13 @@ og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input
   return NlpRequestPositionsAreGlued(ctrl_nlp_th, request_input_part1->request_position_start,
       request_input_part1->request_positions_nb, request_input_part2->request_position_start,
       request_input_part2->request_positions_nb);
+}
+
+static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part)
+{
+  request_input_part->sparse_mark = NlpRequestPositionDistance(ctrl_nlp_th, request_input_part->request_position_start,
+      request_input_part->request_positions_nb);
+  return (request_input_part->sparse_mark);
 }
 
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title)
