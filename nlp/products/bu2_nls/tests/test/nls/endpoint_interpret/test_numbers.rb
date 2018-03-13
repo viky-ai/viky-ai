@@ -456,17 +456,22 @@ module Nls
 
 
       def test_number_in_string
-        skip "#16960: TODO : à corriger"
         package = Package.new("test_number_in_string")
 
         interpretation_private = package.new_interpretation("element")
-        interpretation_private << Expression.new("for 3 days")
+        interpretation_private << Expression.new("for 3 days", solution: "for 3 days")
+        interpretation_private << Expression.new("for 4 days", solution: "`\"for 4 days\"`")
 
         Nls.remove_all_packages
 
         Interpretation.default_locale = nil
 
         Nls.package_update(package)
+
+        check_interpret("for 4 days",
+          interpretation: "element",
+          solution: "for 4 days"
+        )
 
         check_interpret("for 3 days",
           interpretation: "element",

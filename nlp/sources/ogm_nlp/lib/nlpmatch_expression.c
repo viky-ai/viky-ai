@@ -147,6 +147,12 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, int Irequest_input_part,
   IFN(request_input_part) DPcErr;
   struct expression *expression = request_input_part->input_part->expression;
   struct request_expression *request_expression = NULL;
+
+  if (!ctrl_nlp_th->accept_any_expressions)
+  {
+    if (request_input_part->input_part->expression->alias_any_input_part_position >= 0) DONE;
+  }
+
   og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
       &request_expression);
   IF(request_expression_added) DPcErr;
@@ -193,6 +199,14 @@ static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstp
   if (request_input_part1->Iinput_part != request_input_part2->Iinput_part)
   {
     return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
+  }
+  if (request_input_part1->request_positions_nb != request_input_part2->request_positions_nb)
+  {
+    return (request_input_part2->request_positions_nb - request_input_part1->request_positions_nb);
+  }
+  if (request_input_part1->sparse_mark != request_input_part2->sparse_mark)
+  {
+    return (request_input_part1->sparse_mark - request_input_part2->sparse_mark);
   }
 
   struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,

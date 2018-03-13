@@ -121,6 +121,8 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
     {
       struct request_expression *request_expression = iter->data;
       if (!request_expression->keep_as_result) continue;
+
+      IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
       IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
 
       int nb_anys_attached;
