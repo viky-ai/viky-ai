@@ -3,9 +3,10 @@ class AgentsController < ApplicationController
   before_action :check_user_rights, except: [:index, :new, :create]
 
   def index
-    @search = AgentSearch.new(current_user.id, search_params)
+    @search = AgentSearch.new(current_user, search_params)
     @agents = Agent.search(@search.options).order(name: :asc)
                 .page(params[:page]).per(12)
+    @search.save
   end
 
   def show; end

@@ -202,6 +202,33 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_no_content?('confirmed/weather')
   end
 
+
+  test 'Keep agents search criteria' do
+    agent = agents(:weather_confirmed)
+    agent.visibility = Agent.visibilities[:is_public]
+    assert agent.save
+
+    go_to_agents_index
+    find('.dropdown__trigger', text: 'Sort by name').click
+    find('.dropdown__content', text: 'Sort by last update').click
+    click_button 'Private'
+    click_button 'Your agents'
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_no_content?('confirmed/weather')
+
+    click_link "My awesome weather bot admin/weather"
+    assert page.has_content?('Sharing overview')
+    go_to_agents_index
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_no_content?('confirmed/weather')
+
+    assert page.has_content?('Sort by last update')
+    assert first('button[data-input-value="owned"]').matches_css?(".btn--primary")
+    assert first('button[data-input-value="private"]').matches_css?(".btn--primary")
+  end
+
   #
   # Token
   #
