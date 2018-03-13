@@ -23,7 +23,7 @@ class AgentsController < ApplicationController
     respond_to do |format|
       if @agent.save
         format.json{
-          redirect_to agents_path, notice: t('views.agents.new.success_message')
+          redirect_to user_agent_path(current_user, @agent), notice: t('views.agents.new.success_message')
         }
       else
         @origin = 'index'
