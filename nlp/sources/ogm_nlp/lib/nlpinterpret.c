@@ -640,6 +640,8 @@ static og_status NlpInterpretRequestBuildPrimaryPackage(og_nlp_th ctrl_nlp_th, j
 {
   if (json_primary_package == NULL) CONT;
 
+  if (json_typeof(json_primary_package) == JSON_NULL) CONT;
+
   if (!json_is_string(json_primary_package))
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildPrimaryPackage: 'primary-packages' is not a string");
