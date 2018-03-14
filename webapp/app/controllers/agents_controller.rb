@@ -4,6 +4,7 @@ class AgentsController < ApplicationController
 
   def index
     @search = AgentSearch.new(current_user, search_params)
+    @total_count = Agent.search(@search.options).count
     @agents = Agent.search(@search.options).order(name: :asc)
                 .page(params[:page]).per(12)
     @search.save

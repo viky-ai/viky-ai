@@ -229,6 +229,15 @@ class AgentsTest < ApplicationSystemTestCase
     assert first('button[data-input-value="private"]').matches_css?(".btn--primary")
   end
 
+
+  test 'Agents search can be reset' do
+    go_to_agents_index
+    fill_in 'search_query', with: 'weather'
+    click_button '#search'
+    assert page.has_content?('One agent found. Reset search')
+  end
+
+
   #
   # Token
   #

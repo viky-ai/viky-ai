@@ -22,6 +22,11 @@ en:
         sort_by:
           name: Sort by name
           updated_at: Sort by last update
+        search_summary:
+          zero: "No agent found."
+          one: "One agent found."
+          other: "%{count} agents found."
+        search_reset: Reset search
         filter_visibility:
           all: All
           private: Private

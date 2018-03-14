@@ -22,5 +22,22 @@
     <div class="control">
       <%= render "form_sort_by", f: f %>
     </div>
+    <% unless @search.empty? %>
+      <div class="field">
+        <div class="control">
+          <div class="note">
+            <div class="note__icon">
+              <span class="icon"><%= icon_information %></span>
+            </div>
+            <div class="note__content">
+              <p>
+                <%= t('views.agents.index.search_summary', count: @total_count) %>
+                <%= link_to t('views.agents.index.search_reset'), agents_path(search: AgentSearch::DEFAULT_CRITERIA)%>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 <% end %>

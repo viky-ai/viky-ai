@@ -1,6 +1,13 @@
 class AgentSearch
   attr_reader :user_id, :options
 
+  DEFAULT_CRITERIA = {
+    'sort_by' => 'name',
+    'filter_owner' => 'all',
+    'filter_visibility' => 'all',
+    'query' => ''
+  }.with_indifferent_access.freeze
+
   def initialize(user, options = {})
     @user = user
     @options = build_options(user, options)
@@ -37,15 +44,9 @@ class AgentSearch
   private
 
     def build_options(user, http_options)
-      default_options = {
-        'sort_by' => 'name',
-        'filter_owner' => 'all',
-        'filter_visibility' => 'all',
-        'query' => ''
-      }.with_indifferent_access
       default_options_for_user = (user.ui_state['agent_search'] || {}).with_indifferent_access
       cleaned_http_options = clean_options(http_options)
-      final_options = default_options.merge(
+      final_options = DEFAULT_CRITERIA.merge(
         default_options_for_user
       ).merge(
         cleaned_http_options
