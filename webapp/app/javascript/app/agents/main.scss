@@ -117,3 +117,13 @@
     max-height: 80vh;
   }
 }
+
+.successor_search {
+  .field--inline {
+    justify-content: space-between;
+
+    :first-child {
+      flex-grow: 2;
+    }
+  }
+}

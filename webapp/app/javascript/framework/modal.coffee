@@ -17,7 +17,7 @@ $(document).on('turbolinks:load', -> new ModalRouter())
 
 class Modal
   constructor: ->
-    $("body").on 'click', (event) => @dispatch(event)
+    $("body").on 'click submit', (event) => @dispatch(event)
 
   dispatch: (event) ->
     node   = $(event.target)
@@ -45,8 +45,8 @@ class Modal
               App.Message.alert(JSON.parse(data.responseText).message)
             else
               Modal.update(data.responseText)
-      else if node.parents('form').length > 0
-        closest_form = $(node.parents('form')[0])
+      else if node.is('form') || node.parents('form').length > 0
+        closest_form = if node.is('form') then $(node) else $(node.parents('form')[0])
         $.ajax
           url: closest_form.attr('action')
           data: closest_form.serialize()

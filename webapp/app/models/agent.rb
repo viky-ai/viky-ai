@@ -107,6 +107,14 @@ class Agent < ApplicationRecord
                      .joins(:favorite_agents)
                      .where('favorite_agents.user_id = ?', q[:user_id])
     end
+    if q[:query].present?
+      conditions = conditions.where(
+        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
+        "%#{q[:query]}%",
+        "%#{q[:query]}%"
+      )
+    end
     conditions
       .distinct
   end

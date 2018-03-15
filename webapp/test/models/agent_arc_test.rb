@@ -179,6 +179,19 @@ class AgentArcTest < ActiveSupport::TestCase
   end
 
 
+  test 'Agent search with query available successors' do
+    agent_a = create_agent('Agent A')
+    create_agent('Agent 212')
+    current_user = users(:admin)
+    search = SuccessorSearch.new(current_user, query: 'agent')
+    successors = agent_a.available_successors(search.options)
+    expected = [
+      'admin/agent-212'
+    ]
+    assert_equal expected, successors.collect(&:slug)
+  end
+
+
   test 'Agent available successors with public agent' do
     agent_a = create_agent('Agent A')
     create_agent('Agent B')

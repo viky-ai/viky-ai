@@ -2,6 +2,7 @@ class SuccessorSearch
   attr_reader :user_id, :options
 
   DEFAULT_CRITERIA = {
+    'query' => '',
     'filter_owner' => 'all',
   }.with_indifferent_access.freeze
 
@@ -11,7 +12,7 @@ class SuccessorSearch
   end
 
   def self.keys
-    ['user_id', 'filter_owner']
+    ['user_id', 'query', 'filter_owner']
   end
 
   keys.each do |meth|

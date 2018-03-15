@@ -75,6 +75,6 @@ class DependenciesController < ApplicationController
     end
 
     def search_params
-      params.permit(search: [:filter_owner])[:search]
+      params.permit(search: [:query, :filter_owner])[:search]
     end
 end
