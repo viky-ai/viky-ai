@@ -387,7 +387,7 @@ og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_int
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
-    if (!request_expression->keep_as_result) break;
+    if (!request_expression->keep_as_result) continue;
     IFE(NlpRequestInterpretationBuild(ctrl_nlp_th, request_expression, json_interpretations));
   }
   DONE;
