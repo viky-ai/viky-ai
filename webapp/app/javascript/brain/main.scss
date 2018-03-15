@@ -1,0 +1,98 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+body{
+  background: radial-gradient(#333, #000);
+  font-family: "Roboto", sans-serif;
+  min-height: 100vh;
+}
+
+.logo {
+  position: absolute;
+  bottom:0;
+  left:30px;
+  svg{
+    width: 150px;
+  }
+}
+
+@keyframes heart{
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.025);
+  }
+  35% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.025);
+  }
+  45% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes breathing{
+  0% {
+    opacity: .75;
+  }
+  20% {
+    opacity: .75;
+  }
+  25% {
+    opacity: 1;
+  }
+  35% {
+    opacity: .75;
+  }
+  40% {
+    opacity: 1;
+  }
+  45% {
+    opacity: .75;
+  }
+  100% {
+    opacity: .75;
+  }
+}
+
+.loader{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: radial-gradient(#333, #000);
+
+  p{
+    text-align: center;
+    color: rgba(#fff, .5);
+  }
+  &.loader--animate{
+    p{
+      animation: breathing 1s infinite;
+    }
+    svg{
+      animation: heart 1s infinite;
+    }
+  }
+}
+
+.agent-hover-label{
+  padding: .2em .5em .15em .5em;
+  background-color: rgba(0, 0, 0, .7);
+  border-radius: 3px;
+}

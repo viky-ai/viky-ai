@@ -3,17 +3,24 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "^3.0.1",
+    "@tweenjs/tween.js": "^17.2.0",
+    "accessor-fn": "^1.2.2",
+    "autosize": "^4.0.0",
     "codemirror": "^5.32.0",
     "jquery": "^3.2.1",
+    "kapsule": "^1.9.0",
     "moment": "^2.19.3",
     "mousetrap": "^1.6.1",
     "normalize.css": "^7.0.0",
     "prismjs": "^1.7.0",
     "selectize": "^0.12.4",
     "sortablejs": "^1.7.0",
+    "three": "^0.90.0",
+    "three-dragcontrols": "^0.88.1",
+    "three-forcegraph": "^1.9.2",
+    "three-trackballcontrols": "^0.0.7",
     "trix": "^0.11.1",
-    "uuid": "^3.1.0",
-    "autosize": "^4.0.0"
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "webpack-dev-server": "^2.7.1"
