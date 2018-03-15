@@ -139,6 +139,25 @@ class AgentsController < ApplicationController
     end
   end
 
+  def add_favorite
+    favorite = FavoriteAgent.new(user: current_user, agent: @agent)
+    if favorite.save
+      redirect_to user_agent_path(@agent.owner, @agent)
+    else
+      redirect_to agents_path, alert: t('views.agents.favorite.add_errors_message',
+                                        errors: favorite.errors.full_messages.join(', '))
+    end
+  end
+
+  def delete_favorite
+    favorite = @agent.favorite_agents.find_by(user: current_user)
+    if favorite.destroy
+      redirect_to user_agent_path(@agent.owner, @agent)
+    else
+      redirect_to agents_path, alert: t('views.agents.favorite.remove_errors_message',
+                                        errors: favorite.errors.full_messages.join(', '))
+    end
+  end
 
   private
 
@@ -146,7 +165,7 @@ class AgentsController < ApplicationController
       case action_name
       when "full_export"
         access_denied unless current_user.can?(:show, @agent) && current_user.admin?
-      when "show"
+      when "show", 'add_favorite', 'delete_favorite'
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent

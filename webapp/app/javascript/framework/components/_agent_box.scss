@@ -38,6 +38,13 @@
       @include ribbon();
     }
 
+    .agent-box__header__favorite {
+      svg {
+        fill: #ffa000;
+        height: 1em;
+      }
+    }
+
     &.agent-box__header--image{
       background-size: 100% auto;
       background-position: center center;

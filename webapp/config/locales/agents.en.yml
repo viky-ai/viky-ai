@@ -82,7 +82,12 @@ en:
         transfer_ownership: Transfer ownership
         btn: Update
         success_message: Your agent has been successfully updated.
+      favorite:
+        add_errors_message: "Add favorite failed: %{errors}."
+        remove_errors_message: "Remove favorite failed: %{errors}."
       show:
+        add_favorite_btn: Add favorite
+        remove_favorite_btn: Remove favorite
         configure_btn: Configure
         owner: Owner
         collaborator: "Collaborator"

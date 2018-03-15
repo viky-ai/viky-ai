@@ -44,7 +44,14 @@
             <% end %>
           </div>
           <div class="agent-compact__id__data">
-            <h5><%= agent.name %></h5>
+            <h5>
+              <%= agent.name %>
+              <% if agent.favorite_for_users.find_by(id: current_user) %>
+                <span class="agent-box__header__favorite">
+                  <%= icon_favorite %>
+                </span>
+              <% end %>
+            </h5>
             <h6><%= agent.slug %></h6>
           </div>
       <% if current_user.can?(:show, agent) %>

@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   has_many :memberships
   has_many :agents, through: :memberships
+  has_many :favorite_agents, dependent: :destroy
+  has_many :favorites, through: :favorite_agents, source: :agent
 
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :not_confirmed, -> { where(confirmed_at: nil) }

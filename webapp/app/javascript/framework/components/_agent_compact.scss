@@ -76,6 +76,12 @@
         line-height: 1.2em;
         color: #888;
       }
+      .agent-box__header__favorite {
+        svg {
+          fill: #ffa000;
+          height: 1em;
+        }
+      }
     }
   }
 
