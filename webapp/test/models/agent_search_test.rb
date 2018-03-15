@@ -143,6 +143,24 @@ class AgentSearchTest < ActiveSupport::TestCase
   end
 
 
+  test 'Filter favorites agents' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    admin = users(:admin)
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+    assert FavoriteAgent.create(user: admin, agent: agents(:weather))
+
+    s = AgentSearch.new(admin, filter_owner: 'favorites')
+    assert_equal 2, Agent.search(s.options).count
+    expected = [
+      'admin/weather',
+      'confirmed/weather'
+    ]
+    assert_equal expected, Agent.search(s.options).all.collect(&:slug)
+  end
+
+
   test 'Search agent and sort result' do
     user = users(:admin)
     s = AgentSearch.new(user)

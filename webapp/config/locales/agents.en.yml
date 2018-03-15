@@ -34,6 +34,7 @@ en:
         filter_owner:
           all: All
           owner: Your agents
+          favorites: Favorites
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.
       confirm_destroy:

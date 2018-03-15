@@ -14,4 +14,10 @@
                    input_selector: "input[name='search[filter_owner]']",
                    input_value: 'owned',
                } %>
+  <% active_css = @search.filter_owner == 'favorites' ? 'btn--primary' : '' %>
+  <%= f.button t('views.agents.index.filter_owner.favorites'), class: "btn #{active_css}",
+               data: {
+                   input_selector: "input[name='search[filter_owner]']",
+                   input_value: 'favorites',
+               } %>
 </div>

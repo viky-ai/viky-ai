@@ -187,9 +187,12 @@ class AgentsTest < ApplicationSystemTestCase
 
 
   test 'Agents can be filtered by owner' do
-    agent = agents(:weather_confirmed)
-    agent.visibility = Agent.visibilities[:is_public]
-    assert agent.save
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    admin = users(:admin)
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+    assert FavoriteAgent.create(user: admin, agent: agents(:weather))
 
     go_to_agents_index
     assert page.has_content?('admin/terminator')
@@ -200,6 +203,11 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('admin/terminator')
     assert page.has_content?('admin/weather')
     assert page.has_no_content?('confirmed/weather')
+
+    click_button 'Favorites'
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
   end
 
 

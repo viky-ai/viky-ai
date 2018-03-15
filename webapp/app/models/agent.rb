@@ -49,27 +49,25 @@ class Agent < ApplicationRecord
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
 
-    if q[:filter_owner] == 'owned'
-      case q[:filter_visibility]
-      when 'public'
-        conditions = conditions.where('owner_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-      when 'private'
-        conditions = conditions.where('owner_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
-      else
-        conditions = conditions.where('owner_id = ?', q[:user_id])
-      end
+    case q[:filter_owner]
+    when 'owned'
+      conditions = conditions.where('owner_id = ?', q[:user_id])
+    when 'favorites'
+      conditions = conditions.joins(:favorite_agents).where('favorite_agents.user_id = ?', q[:user_id])
     else
-      case q[:filter_visibility]
-      when 'public'
-        conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
-      when 'private'
-        conditions = conditions.where('user_id = ? AND visibility = ?', q[:user_id], Agent.visibilities[:is_private])
-      else
-        conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-      end
+      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
     end
 
-    unless q[:query].nil?
+    case q[:filter_visibility]
+    when 'public'
+      conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
+    when 'private'
+      conditions = conditions.where('visibility = ?',Agent.visibilities[:is_private])
+    else
+      conditions
+    end
+
+    if q[:query].present?
       conditions = conditions.where(
         'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
         "%#{q[:query]}%",
@@ -83,6 +81,8 @@ class Agent < ApplicationRecord
       conditions = conditions.order(name: :asc)
     when 'updated_at'
       conditions = conditions.order(updated_at: :desc)
+    else
+      conditions
     end
 
     conditions.distinct
