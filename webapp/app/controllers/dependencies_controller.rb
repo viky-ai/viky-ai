@@ -5,7 +5,8 @@ class DependenciesController < ApplicationController
   before_action :check_user_rights
 
   def new
-    @available_successors = @agent.available_successors(current_user)
+    @search = SuccessorSearch.new(current_user, search_params)
+    @available_successors = @agent.available_successors(@search.options).order(name: :asc)
     render partial: 'new'
   end
 
@@ -73,4 +74,7 @@ class DependenciesController < ApplicationController
       end
     end
 
+    def search_params
+      params.permit(search: [:filter_owner])[:search]
+    end
 end

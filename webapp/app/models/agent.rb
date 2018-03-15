@@ -96,14 +96,19 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def available_successors(current_user)
-    Agent
-      .joins(:memberships)
-      .where('user_id = ? OR visibility = ?', current_user.id, Agent.visibilities[:is_public])
-      .where.not(id: successors.pluck(:id))
-      .where.not(id: id)
+  def available_successors(q = {})
+    conditions = Agent
+                 .joins(:memberships)
+                 .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+                 .where.not(id: successors.pluck(:id))
+                 .where.not(id: id)
+    if q[:filter_owner] == 'favorites'
+      conditions = conditions
+                     .joins(:favorite_agents)
+                     .where('favorite_agents.user_id = ?', q[:user_id])
+    end
+    conditions
       .distinct
-      .order(name: :asc)
   end
 
   def transfer_ownership_to(new_owner_id)

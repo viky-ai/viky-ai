@@ -9,6 +9,9 @@
     </h5>
     <div class="modal__main__chooser">
       <ul class="agent-compact-list">
+        <li>
+          <%= render "form_filter" %>
+        </li>
         <% @available_successors.each do |agent| %>
           <li>
 

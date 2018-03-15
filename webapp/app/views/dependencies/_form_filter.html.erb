@@ -1,0 +1,30 @@
+<%= form_for(
+        @search,
+        as: :search,
+        url: new_user_agent_dependency_path(@agent.owner, @agent.agentname),
+        method: :get,
+        class: "successor_search",
+        remote: true
+    ) do |f| %>
+  <div class="field field--inline">
+    <div class="control">
+      <div class="btn-group">
+        <%= f.hidden_field :filter_owner %>
+        <% active_css = @search.filter_owner == 'all' ? 'btn--primary' : '' %>
+        <%= f.button t('views.agents.index.filter_owner.all'), class: "btn #{active_css}",
+                     data: {
+                         action: 'update-remote-modal',
+                         input_selector: "input[name='search[filter_owner]']",
+                         input_value: 'all',
+                     } %>
+        <% active_css = @search.filter_owner == 'favorites' ? 'btn--primary' : '' %>
+        <%= f.button t('views.agents.index.filter_owner.favorites'), class: "btn #{active_css}",
+                     data: {
+                         action: 'update-remote-modal',
+                         input_selector: "input[name='search[filter_owner]']",
+                         input_value: 'favorites',
+                     } %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -102,4 +102,24 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     assert page.has_text?('Dependencies (0) - Dependents (0)')
     assert page.has_no_link?('Add new dependency')
   end
+
+
+  test 'Filter favorite agent dependency' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    admin = users(:admin)
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agents_index
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
+
+    click_link 'Add new dependency'
+    within(".modal") do
+      click_button 'Favorites'
+      assert page.has_text?('PUBLIC Weather bot confirmed/weather')
+      assert page.has_no_text?('PUBLIC T-800 admin/terminator')
+    end
+  end
 end
