@@ -1,5 +1,7 @@
 class Brain
   constructor: (graph, data) ->
+    window.addEventListener 'resize', -> location.reload()
+
     @graph = graph
     @graph.backgroundColor('transparent').enableNodeDrag(false)
     @setupNodes()
@@ -129,7 +131,7 @@ class Object3d
       context.fillStyle = "rgba(255, 255, 255, .25)"
       context.fillRect(0, 0, canvas.width, canvas.height)
 
-    context.font = "45px Arial"
+    context.font = "45px Roboto"
     context.fillStyle = "#fff"
 
     metrics = context.measureText(text)
