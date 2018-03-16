@@ -5,9 +5,10 @@ html, body{
   height: 100%;
   margin: 0;
   background-color: #000;
+  overflow: hidden;
 }
 body{
-  background: radial-gradient(#222, #000);
+  background: radial-gradient(#333, #000);
   font-family: "Roboto", sans-serif;
   position: relative;
   padding: 0;
@@ -83,7 +84,7 @@ body{
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: radial-gradient(#222, #000);
+  background: radial-gradient(#333, #000);
 
   svg{
     width: 80%;
