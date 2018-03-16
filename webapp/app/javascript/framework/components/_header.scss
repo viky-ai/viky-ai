@@ -25,13 +25,13 @@
     order: 1;
     margin-bottom: .5em;
   }
+  .header__tools{
+    order: 2;
+    margin-bottom: .5em;
+  }
   .header__search{
     min-width: 100%;
     order: 3;
-    margin-bottom: .5em;
-  }
-  .header__tools{
-    order: 2;
     margin-bottom: .5em;
   }
 
@@ -52,14 +52,14 @@
 
   &.header--agents{
     .header__search{
-      @media (min-width: 600px){
+      @media (min-width: 1500px){
         order: 2;
         min-width: auto;
         margin-top: 0;
       }
     }
     .header__tools{
-      @media (min-width: 600px){
+      @media (min-width: 1500px){
         order: 3;
       }
     }

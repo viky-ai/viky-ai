@@ -1,6 +1,6 @@
 <div class="btn-group"
      data-behavior="submit-form"
-     data-form-selector=".new_search">
+     data-form-selector=".agent_search">
   <%= f.hidden_field :filter_visibility %>
   <% active_css = @search.filter_visibility == 'all' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_visibility.all'), class: "btn #{active_css}",

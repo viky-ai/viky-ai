@@ -127,3 +127,68 @@
     }
   }
 }
+
+.agent_search {
+  display: grid;
+  grid-column-gap: 1em;
+  align-items: center;
+  grid-template:  "reset_search" auto
+                  "query" auto
+                  "sort_by" auto
+                  "filter_owner" auto
+                  "filter_visibility" auto / 1fr;
+
+
+  @media (min-width: 420px) {
+    grid-template:
+            "reset_search reset_search reset_search" auto
+            "query query sort_by" auto
+            "filter_owner filter_owner filter_owner" auto
+            "filter_visibility filter_visibility filter_visibility" auto / 1fr 1fr 1fr;
+
+  }
+
+  @media (min-width: 580px) {
+    grid-template:
+            "reset_search reset_search reset_search reset_search" auto
+            "query query query sort_by" auto
+            "filter_owner filter_owner filter_visibility filter_visibility" auto / 1fr 1fr 1fr 1fr;
+    .agent_search__filter_visibility,
+    .agent_search__sort_by {
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    grid-template:
+            "reset_search query sort_by filter_owner filter_visibility" auto / auto 1fr auto 1fr 1fr;
+    .agent_search__filter_visibility,
+    .agent_search__sort_by{
+      justify-self: start;
+      margin-bottom: 0;
+    }
+
+    .agent_search__query,
+    .agent_search__filter_owner,
+    .agent_search__reset_search {
+      margin-bottom: 0;
+    }
+  }
+
+  .agent_search__query {
+    grid-area: query;
+  }
+  .agent_search__filter_owner {
+    grid-area: filter_owner;
+  }
+  .agent_search__filter_visibility {
+    grid-area: filter_visibility;
+  }
+  .agent_search__sort_by {
+    grid-area: sort_by;
+  }
+
+  .agent_search__reset_search {
+    grid-area: reset_search;
+  }
+}
