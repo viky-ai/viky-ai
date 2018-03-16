@@ -1,7 +1,21 @@
+# Mute THREEjs WARNNINGS
+console.warn = ->
+  return ''
+
 class Brain
   constructor: (graph, data) ->
-    window.addEventListener 'resize', -> location.reload()
+    new Search(graph, data.nodes)
+    new Graph(graph, data)
+    setTimeout(->
+      $('.logo').show()
+      $('.search-container').show()
+      $('.loader').removeClass('loader--animate').hide()
+    , 200)
 
+module.exports = Brain
+
+class Graph
+  constructor: (graph, data) ->
     @graph = graph
     @graph.backgroundColor('transparent').enableNodeDrag(false)
     @setupNodes()
@@ -9,11 +23,6 @@ class Brain
     @setupHover()
     @setupClick()
     @graph.graphData(data)
-
-    setTimeout(->
-      $('.logo').show()
-      $('.loader').removeClass('loader--animate').hide()
-    , 100)
 
   setupNodes: ->
     @graph
@@ -60,7 +69,7 @@ class Brain
   setupClick: ->
     @graph
       .onNodeClick (node) =>
-        @goTo(node)
+        Camera.goTo(@graph, node)
         return true
 
   setupHover: ->
@@ -77,28 +86,29 @@ class Brain
           else
             prevNode.__threeObj.material.color = { r: 238 / 255, g: 238 / 255, b: 238 / 255 }
 
-  goTo: (node) ->
+
+class Camera
+
+  @goTo: (graph, node) ->
     node_position   = { x: node.x, y: node.y, z: node.z }
     target_position = { x: node.x + 50, y: node.y + 50, z: node.z + 50 }
 
-    t1 = new TWEEN.Tween(@graph.getTbControlsTarget())
+    t1 = new TWEEN.Tween(graph.getTbControlsTarget())
       .to(node_position, 1000)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()
 
-    t2 = new TWEEN.Tween(@graph.getCameraPosition())
+    t2 = new TWEEN.Tween(graph.getCameraPosition())
       .to(target_position, 1000)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()
 
-    Brain.animate()
+    Camera.animate()
 
   @animate: ->
-    window.requestAnimationFrame(Brain.animate);
+    window.requestAnimationFrame(Camera.animate);
     TWEEN.update();
 
-
-module.exports = Brain
 
 class Object3d
   @agent: (name) ->
@@ -145,3 +155,46 @@ class Object3d
     sprite.scale.set(30,30,30)
 
     return sprite;
+
+
+class Search
+  constructor: (graph, nodes) ->
+    @graph = graph
+    @nodes = nodes
+    $('.search-container input').selectize({
+      valueField: 'id'
+      labelField: 'name'
+      searchField: ['name', 'slug']
+      sortField: 'slug'
+      maxItems: 1
+      hideSelected: true
+      highlight: false
+      create: false
+      options: nodes
+      render: {
+        option: (item) ->
+          html = []
+          if item.isAgent
+            html.push "<div class='search-item'>"
+          else
+            html.push "<div class='search-item search-item--interpretation'>"
+          html.push "  <span class='search-item__name'>"
+          html.push "    #{item.name}"
+          if item.isAgent
+            html.push "    <span class='search-item__tag--agent'>"
+            html.push "      Agent"
+            html.push "    </span>"
+          else
+            html.push "    <span class='search-item__tag--interpretation'>"
+            html.push "      Interpretation"
+            html.push "    </span>"
+          html.push "  </span>"
+          html.push "  <span class='search-item__slug'>#{item.slug}</span>"
+          html.push "</div>"
+          return html.join('')
+      }
+      onChange:  (id) =>
+        node = @nodes.find (obj) ->
+          return obj.id == id
+        Camera.goTo(@graph, node)
+    })

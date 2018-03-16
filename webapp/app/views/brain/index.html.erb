@@ -1,9 +1,3 @@
-<div id="3d-graph"></div>
-
-<span class="logo" style="display:none;">
-  <%= logo_on_dark %>
-</span>
-
 <div class="loader loader--animate">
   <div>
     <%= logo_on_dark %>
@@ -11,7 +5,13 @@
   </div>
 </div>
 
-<!-- Show FPS -->
-<script>
-  (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
-</script>
+<div id="3d-graph"></div>
+
+<div class="search-container" style="display:none;">
+  <label for="search">Find an agent or an interpretation</label>
+  <input type="text" id="search" />
+</div>
+
+<span class="logo" style="display:none;">
+  <%= logo_on_dark %>
+</span>

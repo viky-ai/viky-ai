@@ -7,6 +7,7 @@ Agent.is_public.each do |agent|
     id: "agent_#{agent.id}",
     name: agent.name,
     name_short: truncate(agent.name, length: 20),
+    slug: agent.slug,
     isAgent: true
   }
 
@@ -31,6 +32,7 @@ Agent.is_public.each do |agent|
         id: "intent_#{intent.id}",
         name: intent.intentname,
         name_short: truncate(intent.intentname, length: 20),
+        slug: intent.slug,
         isAgent: false
       }
 
