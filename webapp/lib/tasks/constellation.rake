@@ -30,7 +30,7 @@ namespace :constellation do
         intent.interpretations.each do | interpretation |
           interpretation.interpretation_aliases.each do | interpretation_alias |
             next if !interpretation_alias.type_intent?
-            intent_relations << 'intent_' + interpretation_alias.intent.id
+            intent_relations << 'intent_' + interpretation_alias.interpretation_aliasable.id
           end
         end
 
