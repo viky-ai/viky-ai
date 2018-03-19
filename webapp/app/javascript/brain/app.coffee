@@ -93,12 +93,12 @@ class Camera
     node_position   = { x: node.x, y: node.y, z: node.z }
     target_position = { x: node.x + 50, y: node.y + 50, z: node.z + 50 }
 
-    t1 = new TWEEN.Tween(graph.getTbControlsTarget())
+    t1 = new TWEEN.Tween(graph.getState().tbControls.target)
       .to(node_position, 1000)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()
 
-    t2 = new TWEEN.Tween(graph.getCameraPosition())
+    t2 = new TWEEN.Tween(graph.getState().camera.position)
       .to(target_position, 1000)
       .easing(TWEEN.Easing.Quadratic.InOut)
       .start()

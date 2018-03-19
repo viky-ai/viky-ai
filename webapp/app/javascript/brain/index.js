@@ -11,11 +11,13 @@ import './3d-force-graph/3d-force-graph.css'
 window.Brain = require('./app');
 
 $(document).ready(function() {
-  $(window).resize(function() {
-    location.reload(true);
-  });
   $.getJSON('/brain.json', function (data) {
     var graph = ForceGraph3D()(document.getElementById("3d-graph"));
     new Brain(graph, data);
+
+    $(window).resize(function() {
+      graph.width($("#3d-graph").width());
+      graph.height($("#3d-graph").height());
+    });
   })
 })

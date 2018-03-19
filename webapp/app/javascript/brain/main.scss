@@ -17,8 +17,8 @@ body{
 
 .logo {
   position: absolute;
-  bottom:0;
-  left:30px;
+  bottom: 0;
+  left: 30px;
   z-index: 1;
   svg{
     width: 120px;
@@ -119,7 +119,7 @@ body{
   position: absolute;
   right: 1em;
   top: 1em;
-  width: 20em;
+  width: 28em;
   max-width: 90%;
   z-index: 2;
   label{
@@ -146,18 +146,19 @@ body{
  }
 
 .search-item{
-  font-size: 1.1em;
+  font-size: 1.2em;
+  font-weight: 400;
   padding: 0 0 2px 0;
   &.search-item--interpretation{
     padding-left: 15px;
-    font-size: .9em;
+    font-size: 1em;
   }
   .search-item__name{
     display:block;
     .search-item__tag--agent,
     .search-item__tag--interpretation{
       display: inline-block;
-      font-size: .74em;
+      font-size: .8em;
       padding: 1px 4px 2px 4px;
       line-height: 1em;
       border-radius: 2px;
@@ -170,9 +171,9 @@ body{
     }
   }
   .search-item__slug{
+    font-weight: 300;
     display:block;
-    font-size: .8em;
-    color: rgba(#000, .5);
+    color: rgba(#000, .75);
     line-height: 1.4em;
   }
 }
