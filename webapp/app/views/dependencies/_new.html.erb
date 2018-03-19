@@ -12,45 +12,54 @@
         <li>
           <%= render "form_filter" %>
         </li>
-        <% @available_successors.each do |agent| %>
+        <% if @available_successors.empty? && !@search.empty? %>
           <li>
-
-            <% if agent.image.nil? %>
-              <% css_class = "background-color-gradient__#{agent.color}" %>
-            <% else %>
-              <% css_class = "agent-compact__id__visual--image" %>
-              <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
-            <% end %>
-
-            <div class="agent-compact agent-compact--without-actions">
-              <a href="<%= user_agent_dependencies_path(@agent.owner, @agent.agentname, { id: agent.id }) %>"
-                 class="agent-compact__id"
-                 data-remote="true"
-                 data-method="post"
-                 data-action="set-loading-modal"
-                 rel="nofollow">
-                <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>">
-                  <% if agent.is_public? %>
+            <div class="card">
+              <div class="card-content">
+                <p>
+                  <%= t('views.agents.index.search.not_found') %>
+                </p>
+              </div>
+            </div>
+          </li>
+        <% else %>
+          <% @available_successors.each do |agent| %>
+            <li>
+              <% if agent.image.nil? %>
+                <% css_class = "background-color-gradient__#{agent.color}" %>
+              <% else %>
+                <% css_class = "agent-compact__id__visual--image" %>
+                <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
+              <% end %>
+              <div class="agent-compact agent-compact--without-actions">
+                <a href="<%= user_agent_dependencies_path(@agent.owner, @agent.agentname, { id: agent.id }) %>"
+                   class="agent-compact__id"
+                   data-remote="true"
+                   data-method="post"
+                   data-action="set-loading-modal"
+                   rel="nofollow">
+                  <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>">
+                    <% if agent.is_public? %>
                     <span class="agent-compact__id__visual__ribbon">
                       <%= t('activerecord.attributes.agent.visibility_is_public') %>
                     </span>
-                  <% end %>
-                </div>
-                <div class="agent-compact__id__data">
-                  <h5>
-                    <%= agent.name %>
-                    <% if agent.favorite_for_users.find_by(id: current_user) %>
+                    <% end %>
+                  </div>
+                  <div class="agent-compact__id__data">
+                    <h5>
+                      <%= agent.name %>
+                      <% if agent.favorite_for_users.find_by(id: current_user) %>
                       <span class="agent-box__header__favorite">
                         <%= icon_favorite %>
                       </span>
-                    <% end %>
-                  </h5>
-                  <h6><%= agent.slug %></h6>
-                </div>
-              </a>
-            </div>
-
-          </li>
+                      <% end %>
+                    </h5>
+                    <h6><%= agent.slug %></h6>
+                  </div>
+                </a>
+              </div>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>

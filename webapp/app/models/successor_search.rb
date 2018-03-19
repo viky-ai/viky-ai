@@ -19,6 +19,10 @@ class SuccessorSearch
     define_method(meth) { options[meth.to_sym] }
   end
 
+  def empty?
+    @options[:query] == DEFAULT_CRITERIA[:query] && @options[:filter_owner] == DEFAULT_CRITERIA[:filter_owner]
+  end
+
   private
 
     def build_options(user, http_options)

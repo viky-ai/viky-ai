@@ -212,4 +212,15 @@ class AgentArcTest < ActiveSupport::TestCase
     assert_equal expected, successors.order(name: :asc).collect(&:name)
   end
 
+
+  test 'Empty successor search' do
+    user = users(:admin)
+    assert SuccessorSearch.new(user).empty?
+
+    criteria = {
+      'filter_owner' => 'owned',
+      'query' => 'weather'
+    }
+    assert !SuccessorSearch.new(user, criteria).empty?
+  end
 end

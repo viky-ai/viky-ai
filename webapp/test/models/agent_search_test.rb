@@ -228,4 +228,30 @@ class AgentSearchTest < ActiveSupport::TestCase
     assert s.save
     assert_equal user.reload.ui_state['agent_search'], criteria.with_indifferent_access
   end
+
+
+  test 'Empty agent search' do
+    user = users(:admin)
+    assert AgentSearch.new(user).empty?
+
+    user.ui_state = {
+      agent_search: {
+        filter_owner: 'owned',
+        filter_visibility: 'private',
+        sort_by: 'updated_at'
+      }
+    }
+    assert user.save
+    assert !AgentSearch.new(user).empty?
+
+    user.ui_state = {}
+    assert user.save
+    criteria = {
+      'filter_owner' => 'owned',
+      'filter_visibility' => 'private',
+      'query' => 'weather',
+      'sort_by' => 'updated_at'
+    }
+    assert !AgentSearch.new(user, criteria).empty?
+  end
 end
