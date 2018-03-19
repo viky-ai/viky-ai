@@ -151,6 +151,42 @@
 
 
 <section>
+  <h2>Fixed height</h2>
+  <%= highlight_html do %>
+    <p>
+      <a href="#" class="btn btn--primary"
+         data-action="open-modal"
+         data-modal-selector="#fixed-height-content-modal">Be careful, there is large content inside this modal</a>
+    </p>
+    <div class="modal model--fixed-height" style="display: none;" id="fixed-height-content-modal">
+      <div class="modal__overlay" data-action='close-modal'></div>
+      <div class="modal__main">
+        <h5 class="modal__main__title">
+          Laborum beatae ratione
+          <button class="modal__main__title__close" data-action='close-modal'><%= icon_close %></button>
+        </h5>
+        <div class="modal__main__content">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.architecto temporibus obcaecati, reprehenderit perspiciatis illum sit qui consequatur! Corrupti labore, ipsum autem molestias, laborum atque.
+          </p>
+          <p>
+            <button class="btn btn--primary" data-action='close-modal'>Yes, i'm ok this</button>
+            <button class="btn" data-action='close-modal'>No, i disagree</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+
+<section>
   <h2>Size variant</h2>
   <%= highlight_html do %>
 <p>

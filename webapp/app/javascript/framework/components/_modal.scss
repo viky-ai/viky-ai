@@ -72,7 +72,6 @@
         top: .75em;
         right: 1em;
         display: block;
-        line-height: 1em;
         padding: 0;
         height: 2em;
         width: 2em;
@@ -107,6 +106,12 @@
     }
   }
 
+  &.model--fixed-height {
+    .modal__main {
+      height: 100vh;
+    }
+  }
+
   .modal__main__chooser{
     ul{
       list-style: none;
@@ -122,6 +127,8 @@
         }
       }
     }
+    .card {
+      margin: 1em;
+    }
   }
-
 }

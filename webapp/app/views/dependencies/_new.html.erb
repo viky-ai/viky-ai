@@ -1,4 +1,4 @@
-<div class="modal" style="display: none;">
+<div class="modal model--fixed-height" style="display: none;">
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
@@ -8,21 +8,17 @@
       </button>
     </h5>
     <div class="modal__main__chooser">
-      <ul class="agent-compact-list">
-        <li>
-          <%= render "form_filter" %>
-        </li>
-        <% if @available_successors.empty? && !@search.empty? %>
-          <li>
-            <div class="card">
-              <div class="card-content">
-                <p>
-                  <%= t('views.agents.index.search.not_found') %>
-                </p>
-              </div>
-            </div>
-          </li>
-        <% else %>
+      <%= render "form_filter" %>
+      <% if @available_successors.empty? && !@search.empty? %>
+        <div class="card">
+          <div class="card-content">
+            <p>
+              <%= t('views.agents.index.search.not_found') %>
+            </p>
+          </div>
+        </div>
+      <% else %>
+        <ul class="agent-compact-list">
           <% @available_successors.each do |agent| %>
             <li>
               <% if agent.image.nil? %>
@@ -60,8 +56,8 @@
               </div>
             </li>
           <% end %>
-        <% end %>
-      </ul>
+        </ul>
+      <% end %>
     </div>
   </div>
 </div>
