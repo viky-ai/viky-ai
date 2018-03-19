@@ -121,13 +121,8 @@ export default Kapsule({
   methods: {
 
     // Added for viky
-    getTbControlsTarget: function(state) {
-      return state.tbControls.target
-    },
-
-    // Added for viky
-    getCameraPosition: function(state) {
-      return state.camera.position
+    getState: function(state) {
+      return state
     },
 
     cameraPosition: function(state, position, lookAt) {
