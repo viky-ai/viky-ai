@@ -8,7 +8,7 @@ class Agent < ApplicationRecord
 
   include AgentImageUploader::Attachment.new(:image)
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
@@ -29,7 +29,7 @@ class Agent < ApplicationRecord
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
-  before_destroy :check_collaborators_presence
+  before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
     Nlp::Package.new(self).push

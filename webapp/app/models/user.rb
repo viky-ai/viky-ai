@@ -4,7 +4,7 @@ class User < ApplicationRecord
 
   include UserImageUploader::Attachment.new(:image)
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :agents, through: :memberships
 
   scope :confirmed, -> { where.not(confirmed_at: nil) }
@@ -20,7 +20,7 @@ class User < ApplicationRecord
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
   before_validation :clean_username
-  before_destroy :check_agents_presence
+  before_destroy :check_agents_presence, prepend: true
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
