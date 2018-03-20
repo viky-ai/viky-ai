@@ -134,6 +134,9 @@ static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct requ
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpRequestExpressionListSort: working on the following expression:");
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "elements of re_in_list:");
     for (int i = 0; i < re_in_list_used; i++)
     {

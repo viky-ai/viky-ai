@@ -512,6 +512,10 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
     IFN(request_expression) DPcErr;
 
     IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+    if (i==40 && request_expression->level ==6)
+    {
+      IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+    }
   }
   DONE;
 }
@@ -570,6 +574,19 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
       expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores,
       ac_request_word);
+  DONE;
+}
+
+
+/*
+ * This function is mainly for debugging
+*/
+og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label)
+{
+  static int counter = 0; counter++;
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Showing expression %d, counter=%d %s", Irequest_expression, counter, label);
+  struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+  IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
   DONE;
 }
 
