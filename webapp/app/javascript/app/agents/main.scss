@@ -138,8 +138,10 @@
   }
 }
 
-.successor_search {
-  margin: 1em;
+.successor_search{
+  margin: 0;
+  padding: 1em 1em 0 1em;
+  border-bottom: 1px solid #ddd;
   .field--inline {
     justify-content: space-between;
     :first-child {
