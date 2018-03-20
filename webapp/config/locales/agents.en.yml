@@ -24,7 +24,7 @@ en:
           updated_at: Sort by last update
         search_summary:
           zero: "No agent found."
-          one: "One agent found."
+          one: "1 agent found."
           other: "%{count} agents found."
         search_reset: Reset search
         filter_visibility:
@@ -33,7 +33,7 @@ en:
           public: Public
         filter_owner:
           all: All
-          owner: Your agents
+          owner: Yours
           favorites: Favorites
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.

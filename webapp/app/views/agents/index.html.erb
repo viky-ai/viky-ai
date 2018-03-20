@@ -1,6 +1,11 @@
 <header class="header header--agents">
   <div class="header__breadcrumb">
-    <%= t('views.agents.breadcrumb.base') %>
+    <% if @search.empty? %>
+      <%= t('views.agents.breadcrumb.base') %>
+    <% else %>
+      <%= t('views.agents.index.search_summary', count: @total_count) %>
+      <%= link_to t('views.agents.index.search_reset'), agents_path(search: AgentSearch::DEFAULT_CRITERIA)%>
+    <% end %>
   </div>
   <% if !@agents.empty? || !@search.empty? %>
     <div class="header__search">

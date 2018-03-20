@@ -51,15 +51,18 @@
   }
 
   &.header--agents{
+    .header__breadcrumb{
+      min-width: 240px;
+    }
     .header__search{
-      @media (min-width: 1500px){
+      @media (min-width: 1400px){
         order: 2;
         min-width: auto;
-        margin-top: 0;
       }
     }
     .header__tools{
-      @media (min-width: 1500px){
+      text-align: right;
+      @media (min-width: 1400px){
         order: 3;
       }
     }

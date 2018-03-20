@@ -199,7 +199,7 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('admin/weather')
     assert page.has_content?('confirmed/weather')
 
-    click_button 'Your agents'
+    click_button 'Yours'
     assert page.has_content?('admin/terminator')
     assert page.has_content?('admin/weather')
     assert page.has_no_content?('confirmed/weather')
@@ -220,7 +220,7 @@ class AgentsTest < ApplicationSystemTestCase
     find('.dropdown__trigger', text: 'Sort by name').click
     find('.dropdown__content', text: 'Sort by last update').click
     click_button 'Private'
-    click_button 'Your agents'
+    click_button 'Yours'
     assert page.has_content?('admin/weather')
     assert page.has_no_content?('admin/terminator')
     assert page.has_no_content?('confirmed/weather')

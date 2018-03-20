@@ -8,25 +8,7 @@
       }
     ) do |f| %>
 
-  <% unless @search.empty? %>
-    <div class="field agent_search__reset_search">
-      <div class="control">
-        <div class="note">
-          <div class="note__icon">
-            <span class="icon"><%= icon_information %></span>
-          </div>
-          <div class="note__content">
-            <p>
-              <%= t('views.agents.index.search_summary', count: @total_count) %>
-              <%= link_to t('views.agents.index.search_reset'), agents_path(search: AgentSearch::DEFAULT_CRITERIA)%>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
-
-  <div class="field agent_search__query">
+  <div class="field">
     <div class="control control--merged">
       <%= f.text_field :query, placeholder: t('views.agents.index.search.placeholder'), accesskey: "s" %>
       <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe, class: "btn btn--primary", id: '#search',
@@ -36,21 +18,21 @@
     </div>
   </div>
 
-  <div class="field agent_search__sort_by">
-    <div class="control">
-      <%= render "form_sort_by", f: f %>
-    </div>
-  </div>
-
-  <div class="field agent_search__filter_owner">
+  <div class="field">
     <div class="control">
       <%= render "form_filter_owner", f: f %>
     </div>
   </div>
 
-  <div class="field agent_search__filter_visibility">
+  <div class="field">
     <div class="control">
       <%= render "form_filter_visibility", f: f %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= render "form_sort_by", f: f %>
     </div>
   </div>
 

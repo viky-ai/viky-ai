@@ -1,6 +1,21 @@
 @import '../../framework/abstracts/mixins';
 @import '../../framework/abstracts/variables';
 
+/**
+ * Agent index
+**/
+.agent_search {
+  display: flex;
+  flex-wrap: wrap;
+  .field{
+    margin: .25em .5em .25em 0;
+  }
+}
+
+
+/**
+ * Agent Show
+**/
 .blankslate--agents{
   margin-top: 6em;
 }
@@ -15,37 +30,6 @@
     float: right;
   }
 }
-
-.agent-upload__destroy{
-  @include display_flex();
-  justify-content: center;
-  align-items: center;
-
-  background-position: center center;
-  background-size: cover;
-  height: 12em;
-}
-
-.agent-upload__new.field--upload{
-  height: 12em;
-}
-
-.field.field--api-token{
-  background-color: #f9f9f9;
-  margin: -1.5em -2em 1em -2em;
-  padding: .5em 2em;
-  border-bottom: 1px solid #eee;
-}
-
-.agent-name-and-visibility{
-  @include display_flex();
-  justify-content: space-between;
-  .field:first-child{
-    width: 100%;
-    margin-right: 2em;
-  }
-}
-
 
 .user-list{
   list-style: none;
@@ -71,7 +55,6 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
-
 
 .dependencies-title{
   & > em{
@@ -110,6 +93,43 @@
   }
 }
 
+/**
+ * Agent New/Edit Form
+**/
+.agent-upload__destroy{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  background-position: center center;
+  background-size: cover;
+  height: 12em;
+}
+
+.agent-upload__new.field--upload{
+  height: 12em;
+}
+
+.field.field--api-token{
+  background-color: #f9f9f9;
+  margin: -1.5em -2em 1em -2em;
+  padding: .5em 2em;
+  border-bottom: 1px solid #eee;
+}
+
+.agent-name-and-visibility{
+  @include display_flex();
+  justify-content: space-between;
+  .field:first-child{
+    width: 100%;
+    margin-right: 2em;
+  }
+}
+
+
+/**
+ * Agent dependencies
+**/
 .dependencies-graph{
   max-height: 80vh;
   text-align: center;
@@ -120,77 +140,10 @@
 
 .successor_search {
   margin: 1em;
-
   .field--inline {
     justify-content: space-between;
-
     :first-child {
       flex-grow: 2;
     }
-  }
-}
-
-.agent_search {
-  display: grid;
-  grid-column-gap: 1em;
-  align-items: center;
-  grid-template:  "reset_search" auto
-                  "query" auto
-                  "sort_by" auto
-                  "filter_owner" auto
-                  "filter_visibility" auto / 1fr;
-
-
-  @media (min-width: 420px) {
-    grid-template:
-            "reset_search reset_search reset_search" auto
-            "query query sort_by" auto
-            "filter_owner filter_owner filter_owner" auto
-            "filter_visibility filter_visibility filter_visibility" auto / 1fr 1fr 1fr;
-
-  }
-
-  @media (min-width: 580px) {
-    grid-template:
-            "reset_search reset_search reset_search reset_search" auto
-            "query query query sort_by" auto
-            "filter_owner filter_owner filter_visibility filter_visibility" auto / 1fr 1fr 1fr 1fr;
-    .agent_search__filter_visibility,
-    .agent_search__sort_by {
-      justify-self: end;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    grid-template:
-            "reset_search query sort_by filter_owner filter_visibility" auto / auto 1fr auto 1fr 1fr;
-    .agent_search__filter_visibility,
-    .agent_search__sort_by{
-      justify-self: start;
-      margin-bottom: 0;
-    }
-
-    .agent_search__query,
-    .agent_search__filter_owner,
-    .agent_search__reset_search {
-      margin-bottom: 0;
-    }
-  }
-
-  .agent_search__query {
-    grid-area: query;
-  }
-  .agent_search__filter_owner {
-    grid-area: filter_owner;
-  }
-  .agent_search__filter_visibility {
-    grid-area: filter_visibility;
-  }
-  .agent_search__sort_by {
-    grid-area: sort_by;
-  }
-
-  .agent_search__reset_search {
-    grid-area: reset_search;
   }
 }
