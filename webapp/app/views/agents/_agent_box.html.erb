@@ -37,7 +37,7 @@
     <h2>
       <%= agent.name %>
       <% if agent.favorite_for_users.find_by(id: current_user) %>
-        <span class="agent-box__header__favorite">
+        <span class="icon icon--small icon--yellow">
           <%= icon_favorite %>
         </span>
       <% end %>

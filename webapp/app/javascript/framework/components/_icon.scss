@@ -13,7 +13,6 @@
 .icon{
   width: 24px;
   height: 24px;
-  vertical-align: center;
   display: inline-block;
   svg{
     width: 24px;
@@ -51,6 +50,13 @@
   &.icon--spin svg{
     animation: iconspin linear 1s infinite;
   }
+
+  @each $name, $color in $picker_colors{
+    &.icon--#{$name} svg{
+      fill: $color;
+    }
+  }
+
 }
 
 .btn--primary .icon,

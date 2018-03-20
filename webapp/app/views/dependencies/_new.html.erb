@@ -43,11 +43,11 @@
                   </div>
                   <div class="agent-compact__id__data">
                     <h5>
-                      <%= agent.name %>
+                      <span><%= agent.name %></span>
                       <% if agent.favorite_for_users.find_by(id: current_user) %>
-                      <span class="agent-box__header__favorite">
-                        <%= icon_favorite %>
-                      </span>
+                        <span class="icon icon--x-small icon--yellow">
+                          <%= icon_favorite %>
+                        </span>
                       <% end %>
                     </h5>
                     <h6><%= agent.slug %></h6>
