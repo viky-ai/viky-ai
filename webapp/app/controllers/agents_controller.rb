@@ -10,7 +10,8 @@ class AgentsController < ApplicationController
     @search.save
   end
 
-  def show; end
+  def show
+  end
 
   def new
     @agent = Agent.new

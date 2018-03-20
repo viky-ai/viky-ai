@@ -16,54 +16,13 @@
   </div>
 
   <div class="agent-header__content">
-    <div class="agent-header__content__title">
-      <h2>
-        <%= agent.name %>
-        <% if agent.favorite_for_users.find_by(id: current_user) %>
-          <span class="icon icon--yellow">
-            <%= icon_favorite %>
-          </span>
-        <% end %>
-        <small><%= agent.slug %></small>
-      </h2>
-    </div>
-
-    <div class="agent-header__content__actions">
-      <% if controller_name == 'agents' %>
-        <% if agent.favorite_for_users.find_by(id: current_user) %>
-          <%= link_to "<span class='icon icon--small'>#{icon_favorite}</span> #{t('views.agents.show.remove_favorite_btn')}".html_safe,
-                      favorite_path(agent.favorite_agents.find_by(user: current_user)),
-                      class: 'btn btn--small',
-                      method: :delete,
-                      data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
-        <% else %>
-          <%= link_to "<span class='icon icon--small'>#{icon_not_favorite}</span> #{t('views.agents.show.add_favorite_btn')}".html_safe,
-                      favorites_path(agent_id: agent.id ),
-                      class: 'btn btn--small',
-                      method: :post,
-                      data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
-        <% end %>
-        <% if current_user.can? :edit, agent %>
-          <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'show') %>"
-             class="btn btn--small" data-action="open-remote-modal">
-            <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
-          </a>
-        <% end %>
-      <% end %>
-    </div>
-
-   <div class="agent-header__content__description">
-      <% unless agent.description.blank? %>
-        <h3><%= agent.description %></h3>
-      <% end %>
-   </div>
+    <%= render 'agents/header_content', agent: agent %>
   </div>
 
   <div class="agent-header__content__nav">
     <ul>
       <li>
         <% css_class = controller_name == 'agents' ? 'current' : '' %>
-
         <%= link_to t('views.agents.show.sections.overview'), user_agent_path(agent.owner, agent), class: css_class %>
       </li>
       <li>

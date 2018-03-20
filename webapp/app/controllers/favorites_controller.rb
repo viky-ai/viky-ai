@@ -4,25 +4,49 @@ class FavoritesController < ApplicationController
 
   def create
     favorite = FavoriteAgent.new(user: current_user, agent: @agent)
-    if favorite.save
-      redirect_to user_agent_path(@agent.owner, @agent)
-    else
-      redirect_to user_agent_path(@agent.owner, @agent), alert: t('views.agents.favorite.add_errors_message',
-                                        errors: favorite.errors.full_messages.join(', '))
+    respond_to do |format|
+      format.js {
+        if favorite.save
+          @html = generate_agents_header_content
+          render partial: 'create_succeed'
+        else
+          @message = t(
+            'views.agents.favorite.add_errors_message',
+            errors: favorite.errors.full_messages.join(', ')
+          )
+          render partial: 'create_failed'
+        end
+      }
     end
   end
 
   def destroy
     favorite = FavoriteAgent.find(params[:id])
-    if favorite.destroy
-      redirect_to user_agent_path(favorite.agent.owner, favorite.agent)
-    else
-      redirect_to user_agent_path(@agent.owner, @agent), alert: t('views.agents.favorite.remove_errors_message',
-                                        errors: favorite.errors.full_messages.join(', '))
+    respond_to do |format|
+      format.js {
+        if favorite.destroy
+          @html = generate_agents_header_content
+          render partial: 'destroy_succeed'
+        else
+          @message = t(
+            'views.agents.favorite.remove_errors_message',
+            errors: favorite.errors.full_messages.join(', ')
+          )
+          render partial: 'destroy_failed'
+        end
+      }
     end
   end
 
+
   private
+
+    def generate_agents_header_content
+      render_to_string(
+        partial: 'agents/header_content',
+        locals: { agent: @agent }
+      )
+    end
 
     def set_agent
       begin

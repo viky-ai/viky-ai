@@ -10,9 +10,9 @@ class FavoritesControllerTest < ActionDispatch::IntegrationTest
     post favorites_url,
          params: {
            agent_id: agents(:weather).id,
-           format: :json
+           format: :js
          }
-    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
+    assert response.body.include?("Remove favorite")
   end
 
 
@@ -38,9 +38,8 @@ class FavoritesControllerTest < ActionDispatch::IntegrationTest
     assert fav.save
 
     sign_in admin
-    delete favorite_url(fav)
-    assert_nil flash[:alert]
-    assert_redirected_to user_agent_url(admin, weather)
+    delete favorite_url(fav), params: { format: :js }
+    assert response.body.include?("Add favorite")
   end
 
 
