@@ -23,9 +23,8 @@ class AgentSearch
 
   def empty?
     @options[:query] == DEFAULT_CRITERIA[:query] &&
-      @options[:sort_by] == DEFAULT_CRITERIA[:sort_by] &&
-      @options[:filter_owner] == DEFAULT_CRITERIA[:filter_owner] &&
-      @options[:filter_visibility] == DEFAULT_CRITERIA[:filter_visibility]
+    @options[:filter_owner] == DEFAULT_CRITERIA[:filter_owner] &&
+    @options[:filter_visibility] == DEFAULT_CRITERIA[:filter_visibility]
   end
 
   def save
