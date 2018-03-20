@@ -80,7 +80,7 @@ class User < ApplicationRecord
   end
 
   def can_be_destroyed?
-    agents.includes(:memberships).where('memberships.rights' => 'all').count == 0
+    agents.joins(:memberships).where('memberships.rights' => 'all').count.zero?
   end
 
   # overload devise method to send async emails

@@ -72,7 +72,6 @@ class Agent < ApplicationRecord
       .where.not(id: successors.pluck(:id))
       .where.not(id: id)
       .distinct
-      .order(name: :asc)
   end
 
   def transfer_ownership_to(new_owner_id)
@@ -90,6 +89,10 @@ class Agent < ApplicationRecord
 
   def collaborators
     users.includes(:memberships).where.not('memberships.rights' => 'all')
+  end
+
+  def collaborator?(user)
+    collaborators.where('users.id = ?', user.id).count > 0
   end
 
   def can_be_destroyed?

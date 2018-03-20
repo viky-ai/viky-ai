@@ -5,7 +5,7 @@ class DependenciesController < ApplicationController
   before_action :check_user_rights
 
   def new
-    @available_successors = @agent.available_successors(current_user)
+    @available_successors = @agent.available_successors(current_user).order(name: :asc)
     render partial: 'new'
   end
 

@@ -147,7 +147,7 @@ class AgentArcTest < ActiveSupport::TestCase
     create_agent('Agent B')
 
     current_user = users(:admin)
-    successors = agent_a.available_successors(current_user)
+    successors = agent_a.available_successors(current_user).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',
@@ -166,7 +166,7 @@ class AgentArcTest < ActiveSupport::TestCase
     assert agent_public.save
 
     current_user = users(:admin)
-    successors = agent_a.available_successors(current_user)
+    successors = agent_a.available_successors(current_user).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',

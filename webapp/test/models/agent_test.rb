@@ -50,6 +50,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal users(:admin).id, agent.owner_id
     assert_equal users(:admin).id, agent.owner.id
     assert_equal ['confirmed'], agent.collaborators.collect(&:username)
+    assert agent.collaborator?(users(:confirmed))
     assert_equal ['confirmed', 'admin'].sort, agent.users.collect(&:username).sort
   end
 
@@ -60,6 +61,8 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal "admin", agent.owner.username
     expected = ['show_on_agent_weather', 'edit_on_agent_weather']
     assert_equal expected, agent.collaborators.collect(&:username)
+    assert agent.collaborator?(users(:show_on_agent_weather))
+    assert agent.collaborator?(users(:edit_on_agent_weather))
 
     agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "edit")
     agent.memberships << Membership.new(user_id: users(:locked).id, rights: "show")
