@@ -44,7 +44,9 @@
 <% else %>
   <div class="agents-box-grid agents-box-grid--full">
     <% @agents.each do |agent| %>
-      <%= render 'agent_box', agent: agent, editable: true %>
+      <% cache [agent, current_user, 'editable_true'] do %>
+        <%= render 'agent_box', agent: agent, editable: true %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

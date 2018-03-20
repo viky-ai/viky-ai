@@ -37,8 +37,9 @@ class AgentSearch
       }
     })
     @user.ui_state = new_state
-    @user.save
+    @user.save(touch: false)
   end
+
 
   private
 
