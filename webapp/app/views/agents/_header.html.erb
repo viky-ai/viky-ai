@@ -38,13 +38,13 @@
         <% end %>
         <% if agent.favorite_for_users.find_by(id: current_user) %>
           <%= link_to "<span class='icon icon--small'>#{icon_favorite}</span> #{t('views.agents.show.remove_favorite_btn')}".html_safe,
-                      favorite_user_agent_path(agent.owner, agent),
+                      favorite_path(agent.favorite_agents.find_by(user: current_user)),
                       class: 'btn btn--small',
                       method: :delete,
                       data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>
         <% else %>
           <%= link_to "<span class='icon icon--small'>#{icon_not_favorite}</span> #{t('views.agents.show.add_favorite_btn')}".html_safe,
-                      favorite_user_agent_path(agent.owner, agent),
+                      favorites_path(agent_id: agent.id ),
                       class: 'btn btn--small',
                       method: :post,
                       data: { disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" } %>

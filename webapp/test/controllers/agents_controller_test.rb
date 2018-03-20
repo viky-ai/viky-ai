@@ -573,43 +573,4 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?("Unauthorized operation.")
   end
-
-
-  #
-  # Favorite
-  #
-  test 'Allow favorite agent' do
-    sign_in users(:admin)
-    post favorite_user_agent_url(users(:admin), agents(:weather))
-    assert_nil flash[:alert]
-    assert_redirected_to user_agent_url(users(:admin), agents(:weather))
-  end
-
-
-  test 'Forbid favorite agent' do
-    sign_in users(:confirmed)
-    post favorite_user_agent_url(users(:admin), agents(:weather))
-    assert_equal 'Unauthorized operation.', flash[:alert]
-    assert_redirected_to agents_url
-  end
-
-
-  test 'Allow remove favorite agent' do
-    admin = users(:admin)
-    weather = agents(:weather)
-    assert FavoriteAgent.create(user: admin, agent: weather)
-
-    sign_in admin
-    delete favorite_user_agent_url(admin, weather)
-    assert_nil flash[:alert]
-    assert_redirected_to user_agent_url(admin, weather)
-  end
-
-
-  test 'Forbid remove favorite agent' do
-    sign_in users(:confirmed)
-    delete favorite_user_agent_url(users(:admin), agents(:weather))
-    assert_equal 'Unauthorized operation.', flash[:alert]
-    assert_redirected_to agents_url
-  end
 end

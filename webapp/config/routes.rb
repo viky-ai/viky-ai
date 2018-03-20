@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   scope '/agents' do
+    resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
         member do
@@ -30,8 +31,6 @@ Rails.application.routes.draw do
           get :generate_token
           get :interpret, to: 'console#interpret'
           get :full_export
-          post :favorite, to: 'agents#add_favorite'
-          delete :favorite, to: 'agents#delete_favorite'
         end
         get :search_users_to_share_agent, controller: 'memberships'
 
