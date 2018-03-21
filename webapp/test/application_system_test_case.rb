@@ -26,7 +26,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     visit new_user_session_path
 
     # If user is already login, logout
-    if page.has_text?("Agents")
+    unless page.has_no_text?("Agents")
       Capybara.reset_sessions!
       visit new_user_session_path
     end
