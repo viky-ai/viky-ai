@@ -7,7 +7,7 @@
   <%= highlight_html do %>
 <div class="blankslate">
   <div class="blankslate__illustration">
-    <%= image_tag "robot-idle.png" %>
+    <%= image_tag "robot-idle@2x.png" %>
   </div>
   <div class="blankslate__content">
     <h2>Lorem ipsum dolor sit amet</h2>
@@ -15,6 +15,21 @@
       Consectetur adipisicing elit. In ab adipisci, inventore mollitia sint quibusdam sapiente impedit nihil, aliquid velit nesciunt voluptatem asperiores itaque, ut, et sed dignissimos delectus temporibus.
     </p>
     <a href="#" class="btn btn--primary">Create new agent</a>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Search no result</h2>
+  <%= highlight_html do %>
+<div class="blankslate">
+  <div class="blankslate__illustration">
+    <%= image_tag "robot-confused@2x.png" %>
+  </div>
+  <div class="blankslate__content">
+    <h2>Oops, no result found.</h2>
+    <a href="#" class="btn btn--primary">Reset your search</a>
   </div>
 </div>
   <% end %>

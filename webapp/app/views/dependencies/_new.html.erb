@@ -11,9 +11,8 @@
     <div class="modal__main__chooser">
       <% if @available_successors.empty? && !@search.empty? %>
         <div class="modal__main__chooser__no-search-result">
-          <p>
-            <%= t('views.dependencies.new.not_found') %>
-          </p>
+          <%= image_tag "robot-confused@2x.png" %><br />
+          <%= t('views.dependencies.new.not_found') %>
         </div>
       <% else %>
         <ul class="agent-compact-list">

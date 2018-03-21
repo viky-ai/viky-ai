@@ -40,6 +40,22 @@
         </a>
       </div>
     </div>
+  <% else %>
+    <br />
+    <div class="blankslate">
+      <div class="blankslate__illustration">
+        <%= image_tag "robot-confused@2x.png" %>
+      </div>
+      <div class="blankslate__content">
+        <h2>
+          <%= t('views.agents.index.search_summary', count: @total_count) %>
+        </h2>
+        <% label = "<span class='icon icon--small'>#{icon_loading}</span> #{t('views.agents.index.search_reset')}" %>
+        <%= link_to label.html_safe, agents_path(
+              search: AgentSearch::DEFAULT_CRITERIA.select{ |criteria| criteria != 'sort_by' }
+            ), class: 'btn btn--primary' %>
+      </div>
+    </div>
   <% end %>
 <% else %>
   <div class="agents-box-grid agents-box-grid--full">

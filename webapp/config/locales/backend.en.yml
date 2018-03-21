@@ -47,6 +47,8 @@ en:
           invited_by: by %{email}
           invitation_expires_in: Invitation expires in
           invitation_send_on: Sent on %{date}
+          not_found: Oops, no user found.
+          reset_search: Reset your search
         confirm_destroy:
           title: Are you sure?
           content_html: "You're about to delete user with the email: <strong>%{email}</strong>."
