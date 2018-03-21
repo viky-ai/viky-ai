@@ -11,7 +11,7 @@ class Agent < ApplicationRecord
   has_many :memberships
   has_many :users, through: :memberships
   has_many :favorite_agents, dependent: :destroy
-  has_many :favorite_for_users, through: :favorite_agents, source: :user
+  has_many :fans, through: :favorite_agents, source: :user
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
 

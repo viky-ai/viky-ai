@@ -9,8 +9,8 @@ class FavoriteAgentTest < ActiveSupport::TestCase
     assert FavoriteAgent.create(user: admin, agent: weather)
     assert_equal admin.favorites.count, 1
     assert_equal admin.favorites.first.id, weather.id
-    assert_equal weather.favorite_for_users.count, 1
-    assert_equal weather.favorite_for_users.first.id, admin.id
+    assert_equal weather.fans.count, 1
+    assert_equal weather.fans.first.id, admin.id
   end
 
 

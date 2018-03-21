@@ -1,7 +1,7 @@
 <div class="agent-header__content__title">
   <h2>
     <%= agent.name %>
-    <% if agent.favorite_for_users.find_by(id: current_user) %>
+    <% if agent.fans.exists?(current_user.id) %>
       <span class="icon icon--yellow">
         <%= icon_favorite %>
       </span>
@@ -12,7 +12,7 @@
 
 <div class="agent-header__content__actions">
   <% if ['agents', 'favorites'].include? controller_name %>
-    <% if agent.favorite_for_users.find_by(id: current_user) %>
+    <% if agent.fans.exists?(current_user.id) %>
       <%= link_to "<span class='icon icon--small'>#{icon_favorite}</span> #{t('views.agents.show.remove_favorite_btn')}".html_safe,
                   favorite_path(agent.favorite_agents.find_by(user: current_user)),
                   class: 'btn btn--small',

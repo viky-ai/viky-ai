@@ -36,7 +36,7 @@
     </span>
     <h2>
       <%= agent.name %>
-      <% if agent.favorite_for_users.find_by(id: current_user) %>
+      <% if agent.fans.exists?(current_user.id) %>
         <span class="icon icon--small icon--yellow">
           <%= icon_favorite %>
         </span>

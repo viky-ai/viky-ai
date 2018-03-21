@@ -22,7 +22,7 @@
       <div class="agent-compact__id__data">
         <h5>
           <span><%= agent.name %></span>
-          <% if agent.favorite_for_users.find_by(id: current_user) %>
+          <% if agent.fans.exists?(current_user.id) %>
             <span class="icon icon--x-small icon--yellow">
               <%= icon_favorite %>
             </span>
