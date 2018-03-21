@@ -27,7 +27,6 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   test "Agent creation form ok with background color" do
     go_to_agents_creation
-
     within(".modal") do
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
@@ -37,11 +36,13 @@ class AgentsNewTest < ApplicationSystemTestCase
     end
 
     assert page.has_text?('Your agent has been successfully created.')
+    assert_equal user_agent_path(users(:admin), 'wall-e'), page.current_path
     expected = [
       "My awesome weather bot",
       "T-800",
       "Wall-e",
     ]
+    go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert_equal "Wall-e", first(".background-color-gradient__red h2").text
   end
@@ -49,7 +50,6 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   test "Agent creation form ok with uploaded background image" do
     go_to_agents_creation
-
     within(".modal") do
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
@@ -58,7 +58,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'wall-e.jpg')
 
       # Display import file imput in order to allow capybara attach_file
-      page.execute_script("$('#agent_image').css('opacity','1')");
+      page.execute_script("$('#agent_image').css('opacity','1')")
 
       # https://github.com/teampoltergeist/poltergeist/issues/866
       attach_file('agent_image', file).click
@@ -72,6 +72,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
+    go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert all('.agent-box__header').last[:style].include? "background-image"
   end
@@ -79,7 +80,6 @@ class AgentsNewTest < ApplicationSystemTestCase
 
   test "Agent creation public" do
     go_to_agents_creation
-
     within(".modal") do
       fill_in 'Name', with: 'Wall-e'
       fill_in 'ID', with: 'wall-e'
@@ -95,6 +95,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       "T-800",
       "Wall-e",
     ]
+    go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
     assert_equal "Wall-e", first(".background-color-gradient__red h2").text
     assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
@@ -143,5 +144,4 @@ class AgentsNewTest < ApplicationSystemTestCase
       assert_nil first("#agent_api_token")
     end
   end
-
 end

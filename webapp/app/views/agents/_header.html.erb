@@ -16,36 +16,13 @@
   </div>
 
   <div class="agent-header__content">
-    <div class="agent-header__content__title">
-      <h2>
-        <%= agent.name %>
-        <small><%= agent.slug %></small>
-      </h2>
-    </div>
-
-    <div class="agent-header__content__actions">
-      <% if controller_name == 'agents' %>
-        <% if current_user.can? :edit, agent %>
-          <a href="<%= edit_user_agent_path(agent.owner, agent, origin: 'show') %>"
-             class="btn btn--small" data-action="open-remote-modal">
-            <span class="icon icon--small"><%= icon_settings %></span> <%= t('views.agents.show.configure_btn') %>
-          </a>
-        <% end %>
-      <% end %>
-    </div>
-
-   <div class="agent-header__content__description">
-      <% unless agent.description.blank? %>
-        <h3><%= agent.description %></h3>
-      <% end %>
-   </div>
+    <%= render 'agents/header_content', agent: agent %>
   </div>
 
   <div class="agent-header__content__nav">
     <ul>
       <li>
         <% css_class = controller_name == 'agents' ? 'current' : '' %>
-
         <%= link_to t('views.agents.show.sections.overview'), user_agent_path(agent.owner, agent), class: css_class %>
       </li>
       <li>

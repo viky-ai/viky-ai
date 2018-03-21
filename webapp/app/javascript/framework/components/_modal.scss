@@ -72,7 +72,6 @@
         top: .75em;
         right: 1em;
         display: block;
-        line-height: 1em;
         padding: 0;
         height: 2em;
         width: 2em;
@@ -107,7 +106,14 @@
     }
   }
 
+  &.modal--fixed-on-top{
+    align-items: flex-start;
+    padding-top: 30px;
+  }
+
   .modal__main__chooser{
+    overflow: auto;
+    max-height: calc(100vh - 60px - 140px);
     ul{
       list-style: none;
       padding: 0 0 6px 0;
@@ -122,6 +128,13 @@
         }
       }
     }
+    .modal__main__chooser__no-search-result{
+      margin: 2em;
+      text-align: center;
+      color: #aaa;
+      img{
+        width: 60px;
+      }
+    }
   }
-
 }

@@ -1,4 +1,4 @@
-@keyframes iconspin {
+@keyframes icon_spin {
   0% {
     transform:rotate(0deg) scale(1);
   }
@@ -10,10 +10,21 @@
   }
 }
 
+@keyframes icon_appear {
+  0% {
+    transform: rotate(0deg) scale(0);
+  }
+  30%{
+    transform: rotate(45deg) scale(1.75);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
 .icon{
   width: 24px;
   height: 24px;
-  vertical-align: center;
   display: inline-block;
   svg{
     width: 24px;
@@ -49,8 +60,19 @@
     }
   }
   &.icon--spin svg{
-    animation: iconspin linear 1s infinite;
+    animation: icon_spin linear 1s infinite;
   }
+
+  &.icon--appear svg{
+    animation: icon_appear .5s;
+  }
+
+  @each $name, $color in $picker_colors{
+    &.icon--#{$name} svg{
+      fill: $color;
+    }
+  }
+
 }
 
 .btn--primary .icon,

@@ -1,6 +1,21 @@
 @import '../../framework/abstracts/mixins';
 @import '../../framework/abstracts/variables';
 
+/**
+ * Agent index
+**/
+.agent_search {
+  display: flex;
+  flex-wrap: wrap;
+  .field{
+    margin: .25em .5em .25em 0;
+  }
+}
+
+
+/**
+ * Agent Show
+**/
 .blankslate--agents{
   margin-top: 6em;
 }
@@ -15,37 +30,6 @@
     float: right;
   }
 }
-
-.agent-upload__destroy{
-  @include display_flex();
-  justify-content: center;
-  align-items: center;
-
-  background-position: center center;
-  background-size: cover;
-  height: 12em;
-}
-
-.agent-upload__new.field--upload{
-  height: 12em;
-}
-
-.field.field--api-token{
-  background-color: #f9f9f9;
-  margin: -1.5em -2em 1em -2em;
-  padding: .5em 2em;
-  border-bottom: 1px solid #eee;
-}
-
-.agent-name-and-visibility{
-  @include display_flex();
-  justify-content: space-between;
-  .field:first-child{
-    width: 100%;
-    margin-right: 2em;
-  }
-}
-
 
 .user-list{
   list-style: none;
@@ -71,7 +55,6 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
-
 
 .dependencies-title{
   & > em{
@@ -110,10 +93,59 @@
   }
 }
 
+/**
+ * Agent New/Edit Form
+**/
+.agent-upload__destroy{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  background-position: center center;
+  background-size: cover;
+  height: 12em;
+}
+
+.agent-upload__new.field--upload{
+  height: 12em;
+}
+
+.field.field--api-token{
+  background-color: #f9f9f9;
+  margin: -1.5em -2em 1em -2em;
+  padding: .5em 2em;
+  border-bottom: 1px solid #eee;
+}
+
+.agent-name-and-visibility{
+  @include display_flex();
+  justify-content: space-between;
+  .field:first-child{
+    width: 100%;
+    margin-right: 2em;
+  }
+}
+
+
+/**
+ * Agent dependencies
+**/
 .dependencies-graph{
   max-height: 80vh;
   text-align: center;
   svg{
     max-height: 80vh;
+  }
+}
+
+.successor_search{
+  margin: 0;
+  padding: 1em 1em 0 1em;
+  border-bottom: 1px solid #ddd;
+  .field--inline {
+    justify-content: space-between;
+    :first-child {
+      flex-grow: 2;
+    }
   }
 }
