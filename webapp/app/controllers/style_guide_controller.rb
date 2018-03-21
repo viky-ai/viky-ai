@@ -10,6 +10,7 @@ class StyleGuideController < ApplicationController
     @pages = [
       { name: "Icons",                  slug: "icon"         },
       { name: "Logo",                   slug: "logo"         },
+      { name: "Robot",                  slug: "robot"        },
       { name: "Typography",             slug: "typography"   },
       { name: "Badge",                  slug: "badge"        },
       { name: "Button",                 slug: "button"       },
