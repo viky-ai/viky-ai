@@ -148,7 +148,7 @@ class AgentArcTest < ActiveSupport::TestCase
 
     current_user = users(:admin)
     search = SuccessorSearch.new(current_user)
-    successors = agent_a.available_successors(search.options)
+    successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',
@@ -202,7 +202,7 @@ class AgentArcTest < ActiveSupport::TestCase
 
     current_user = users(:admin)
     search = SuccessorSearch.new(current_user)
-    successors = agent_a.available_successors(search.options)
+    successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',

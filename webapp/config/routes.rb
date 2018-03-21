@@ -98,17 +98,6 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/backend/jobs'
   end
 
-  get 'style-guide', to: 'style_guide#index'
-  get 'style-guide/:page_id', to: "style_guide#page"
-
-  unauthenticated :user do
-    root to: "marketing#index", as: :unauthenticated_root
-  end
-
-  authenticate :user do
-    root to: 'agents#index', as: :authenticated_root
-  end
-
   # API with versioning
   namespace :api do
     namespace :v1 do
@@ -122,6 +111,21 @@ Rails.application.routes.draw do
   namespace :api_internal do
       get '/packages',     to: 'packages#index'
       get '/packages/:id', to: 'packages#show'
+  end
+
+
+
+  get 'style-guide', to: 'style_guide#index'
+  get 'style-guide/:page_id', to: "style_guide#page"
+
+  get 'brain', to: 'brain#index'
+
+  unauthenticated :user do
+    root to: "marketing#index", as: :unauthenticated_root
+  end
+
+  authenticate :user do
+    root to: 'agents#index', as: :authenticated_root
   end
 
   match "/404", to: "errors#not_found", via: :all

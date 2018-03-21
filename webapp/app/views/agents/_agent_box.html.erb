@@ -19,7 +19,7 @@
         <span class="badge badge--small badge--primary">
           <%= t('views.agents.show.owner') %>
         </span>
-      <% elsif agent.collaborators.any? { |collaborator| collaborator.id == current_user.id } %>
+      <% elsif agent.collaborator? current_user %>
         <span class="merged-badges">
           <span class="badge badge--small">
             <%= t('views.agents.show.collaborator') %>

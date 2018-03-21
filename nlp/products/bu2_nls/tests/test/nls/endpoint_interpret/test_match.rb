@@ -413,7 +413,7 @@ module Nls
 
         # resultat attendu
         solution = { features: [ { building_feature: "swimming pool"} , { building_feature: "golf" } , { building_feature: "Sea view" } , { building_feature: "spa" } ] }
-        expected = Answers.new(pg_building_feature_any["pg-building-features"], solution, 0.9)
+        expected = Answers.new(pg_building_feature_any["pg-building-features"], solution, 0.94)
 
         # creation et exécution de la requete
         request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa", Interpretation.default_locale)
@@ -488,8 +488,6 @@ module Nls
 
 
       def test_string_plus_any
-
-        #skip('bug to fix')
 
         package = Package.new("test_string_plus_any")
         interpretation = package.new_interpretation("test_string_plus_any")

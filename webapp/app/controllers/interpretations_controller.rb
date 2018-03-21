@@ -13,7 +13,12 @@ class InterpretationsController < ApplicationController
     respond_to do |format|
       if interpretation.save
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: Interpretation.new, current_locale: @current_locale })
+          new_interpretation = Interpretation.new(
+            glued: true,
+            keep_order: true,
+            auto_solution_enabled: true
+          )
+          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: new_interpretation, current_locale: @current_locale })
           @html = render_to_string(partial: 'interpretation', locals: {
             interpretation: interpretation,
             can_edit: current_user.can?(:edit, @agent),

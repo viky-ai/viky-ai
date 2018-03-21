@@ -57,10 +57,7 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
 
     if (request_input_part->type == nlp_input_part_type_Word)
     {
-      struct request_word *request_word = request_input_part->request_word;
-      og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-      IFN(string_request_word) DPcErr;
-      if (request_word->is_number)
+      if (request_input_part->input_part && request_input_part->input_part->type == nlp_input_part_type_Number)
       {
         must_combine_solution = TRUE;
       }
@@ -73,7 +70,10 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
       og_bool sub_solution_built = NlpSolutionCalculateRecursive(ctrl_nlp_th, root_request_expression,
           sub_request_expression);
       IFE(sub_solution_built);
-      if (sub_solution_built) must_combine_solution = TRUE;
+      if (sub_solution_built)
+      {
+        must_combine_solution = TRUE;
+      }
     }
   }
 
@@ -629,7 +629,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     json_t *json_package_solution)
 {
 
-// reset local variable
+  // reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
@@ -652,7 +652,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     }
   }
 
-// We want to add the alias as a variable whose name is the alias and whose value is its associated solution
+  // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
@@ -664,8 +664,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
   og_bool solution_built = FALSE;
 
-// Now we scan the json_package_solution to get some executable code
-// If there are, we create a copy of the json structure and amend it with the result of the execution of the code
+  // Now we scan the json_package_solution to get some executable code
+  // If there are, we create a copy of the json structure and amend it with the result of the execution of the code
   json_t *json_new_solution = json_deep_copy(json_package_solution);
 
   json_t *json_solution_computed_value = NULL;
@@ -695,7 +695,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     solution_built = TRUE;
   }
 
-// reset local variable
+  // reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   return solution_built;

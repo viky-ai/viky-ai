@@ -8,7 +8,7 @@ class Agent < ApplicationRecord
 
   include AgentImageUploader::Attachment.new(:image)
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :favorite_agents, dependent: :destroy
   has_many :fans, through: :favorite_agents, source: :user
@@ -31,7 +31,7 @@ class Agent < ApplicationRecord
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
-  before_destroy :check_collaborators_presence
+  before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
     Nlp::Package.new(self).push
@@ -134,6 +134,10 @@ class Agent < ApplicationRecord
 
   def collaborators
     users.includes(:memberships).where.not('memberships.rights' => 'all')
+  end
+
+  def collaborator?(user)
+    collaborators.where('users.id = ?', user.id).count > 0
   end
 
   def can_be_destroyed?

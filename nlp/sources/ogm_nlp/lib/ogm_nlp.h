@@ -382,6 +382,8 @@ struct request_input_part
   int Ioriginal_request_input_part;
 
   og_bool interpret_word_as_number;
+
+  int sparse_mark;
 };
 
 struct request_position
@@ -441,6 +443,7 @@ struct request_expression
 
   // overlapping rate of the tree of the request_expression
   int overlap_mark;
+  int sparse_mark;
 
   int orip_start;
   int orips_nb;
@@ -459,6 +462,8 @@ struct request_expression
 
   /** Mark of an expression as not to be use anymore **/
   int deleted;
+
+  og_bool recursive_without_any_chosen;
 
   og_bool keep_as_result;
   int nb_anys;
@@ -667,6 +672,11 @@ struct og_ctrl_nlp_threaded
   og_heap hm_expression;
 
   og_heap hrequest_context;
+
+  og_heap hre_in_list;
+  og_heap hre_to_sort;
+
+  og_bool accept_any_expressions;
 };
 
 struct og_ctrl_nlp
@@ -959,4 +969,11 @@ og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct reques
 /* nlpcontext.c */
 og_status NlpContextIsValid(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpContextGetScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlprelist.c */
+og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+
 

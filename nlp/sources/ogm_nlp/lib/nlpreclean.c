@@ -62,12 +62,6 @@ og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th)
 
   }
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "List of all request expression after cleaning at level %d:", ctrl_nlp_th->level);
-    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
-  }
   DONE;
 }
 
