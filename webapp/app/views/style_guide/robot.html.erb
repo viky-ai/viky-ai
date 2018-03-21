@@ -5,6 +5,30 @@
   </p>
 </div>
 
+
+<section>
+  <h2>Usage</h2>
+  <%= highlight_html do %>
+<img src='<%= asset_path("robot-idle.png") %>'
+     srcset='<%= asset_path("robot-idle.png") %> 1x,
+             <%= asset_path("robot-idle@2x.png") %> 2x'
+     style='width: 80px'/>
+<img src='<%= asset_path("robot-confused.png") %>'
+     srcset='<%= asset_path("robot-confused.png") %> 1x,
+             <%= asset_path("robot-confused@2x.png") %> 2x'
+     style='width: 80px'/>
+<img src='<%= asset_path("robot-happy.png") %>'
+     srcset='<%= asset_path("robot-happy.png") %> 1x,
+             <%= asset_path("robot-happy@2x.png") %> 2x'
+     style='width: 80px'/>
+<img src='<%= asset_path("robot-no-watching.png") %>'
+     srcset='<%= asset_path("robot-no-watching.png") %> 1x,
+             <%= asset_path("robot-no-watching@2x.png") %> 2x'
+     style='width: 80px'/>
+  <% end %>
+</section>
+
+
 <section>
   <h2>80px width</h2>
   <%= highlight_html do %>

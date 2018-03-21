@@ -44,7 +44,9 @@
     <br />
     <div class="blankslate">
       <div class="blankslate__illustration">
-        <%= image_tag "robot-confused@2x.png" %>
+        <img src='<%= asset_path("robot-confused.png") %>'
+             srcset='<%= asset_path("robot-confused.png") %> 1x,
+                     <%= asset_path("robot-confused@2x.png") %> 2x' />
       </div>
       <div class="blankslate__content">
         <h2>

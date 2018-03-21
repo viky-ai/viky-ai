@@ -7,7 +7,9 @@
   <%= highlight_html do %>
 <div class="blankslate">
   <div class="blankslate__illustration">
-    <%= image_tag "robot-idle@2x.png" %>
+    <img src='<%= asset_path("robot-idle.png") %>'
+         srcset='<%= asset_path("robot-idle.png") %> 1x,
+                 <%= asset_path("robot-idle@2x.png") %> 2x' />
   </div>
   <div class="blankslate__content">
     <h2>Lorem ipsum dolor sit amet</h2>
@@ -25,7 +27,9 @@
   <%= highlight_html do %>
 <div class="blankslate">
   <div class="blankslate__illustration">
-    <%= image_tag "robot-confused@2x.png" %>
+    <img src='<%= asset_path("robot-confused.png") %>'
+         srcset='<%= asset_path("robot-confused.png") %> 1x,
+                 <%= asset_path("robot-confused@2x.png") %> 2x' />
   </div>
   <div class="blankslate__content">
     <h2>Oops, no result found.</h2>
