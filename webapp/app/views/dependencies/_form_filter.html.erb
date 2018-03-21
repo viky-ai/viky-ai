@@ -1,40 +1,38 @@
 <%= form_for(
-        @search,
-        as: :search,
-        url: new_user_agent_dependency_path(@agent.owner, @agent.agentname),
-        method: :get,
-        html: {
-            class: 'successor_search',
-        },
-        data: {
-            action: 'update-remote-modal',
-        }
-    ) do |f| %>
+      @search,
+      as: :search,
+      url: new_user_agent_dependency_path(@agent.owner, @agent.agentname),
+      method: :get,
+      html: { class: 'successor_search' },
+      data: { action: 'update-remote-modal' } ) do |f| %>
   <div class="field field--inline">
     <div class="control control--merged">
       <%= f.text_field :query, placeholder: t('views.agents.index.search.placeholder'), accesskey: "s" %>
-      <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe, class: "btn btn--primary", id: '#search',
-                   data: {
-                       disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
-                   } %>
+      <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe,
+            class: "btn btn--primary", id: '#search',
+            data: {
+              disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+            } %>
     </div>
     <div class="control">
       <div class="btn-group">
         <%= f.hidden_field :filter_owner %>
         <% active_css = @search.filter_owner == 'all' ? 'btn--primary' : '' %>
-        <%= f.button t('views.agents.index.filter_owner.all'), class: "btn #{active_css}",
-                     data: {
-                         action: 'update-remote-modal',
-                         input_selector: "input[name='search[filter_owner]']",
-                         input_value: 'all',
-                     } %>
+        <%= f.button t('views.agents.index.filter_owner.all'),
+              class: "btn #{active_css}",
+              data: {
+                 action: 'update-remote-modal',
+                 input_selector: "input[name='search[filter_owner]']",
+                 input_value: 'all'
+              } %>
         <% active_css = @search.filter_owner == 'favorites' ? 'btn--primary' : '' %>
-        <%= f.button t('views.agents.index.filter_owner.favorites'), class: "btn #{active_css}",
-                     data: {
-                         action: 'update-remote-modal',
-                         input_selector: "input[name='search[filter_owner]']",
-                         input_value: 'favorites',
-                     } %>
+        <%= f.button t('views.agents.index.filter_owner.favorites'),
+              class: "btn #{active_css}",
+              data: {
+                 action: 'update-remote-modal',
+                 input_selector: "input[name='search[filter_owner]']",
+                 input_value: 'favorites'
+              } %>
       </div>
     </div>
   </div>
