@@ -1,6 +1,14 @@
 <header class="header header--agents">
   <div class="header__breadcrumb">
-    <%= t('views.agents.breadcrumb.base') %>
+    <% if @search.empty? %>
+      <%= t('views.agents.breadcrumb.base') %>
+    <% else %>
+      <%= t('views.agents.index.search_summary', count: @total_count) %>
+      <%= link_to t('views.agents.index.search_reset'),
+            agents_path(
+              search: AgentSearch::DEFAULT_CRITERIA.select{ |criteria| criteria != 'sort_by' }
+            ) %>
+    <% end %>
   </div>
   <% if !@agents.empty? || !@search.empty? %>
     <div class="header__search">
@@ -33,12 +41,28 @@
       </div>
     </div>
   <% else %>
-    <%= t('views.agents.index.search.not_found') %>
+    <br />
+    <div class="blankslate">
+      <div class="blankslate__illustration">
+        <%= image_tag "robot-confused@2x.png" %>
+      </div>
+      <div class="blankslate__content">
+        <h2>
+          <%= t('views.agents.index.search_summary', count: @total_count) %>
+        </h2>
+        <% label = "<span class='icon icon--small'>#{icon_loading}</span> #{t('views.agents.index.search_reset')}" %>
+        <%= link_to label.html_safe, agents_path(
+              search: AgentSearch::DEFAULT_CRITERIA.select{ |criteria| criteria != 'sort_by' }
+            ), class: 'btn btn--primary' %>
+      </div>
+    </div>
   <% end %>
 <% else %>
   <div class="agents-box-grid agents-box-grid--full">
     <% @agents.each do |agent| %>
-      <%= render 'agent_box', agent: agent, editable: true %>
+      <% cache [agent, current_user, 'editable_true'] do %>
+        <%= render 'agent_box', agent: agent, editable: true %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

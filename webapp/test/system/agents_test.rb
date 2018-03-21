@@ -29,7 +29,7 @@ class AgentsTest < ApplicationSystemTestCase
   #
   test 'Button to delete agent is not present' do
     go_to_agents_index
-    first('.dropdown__trigger > button').click
+    all('.dropdown__trigger > button').first.click
     assert !page.has_link?("Delete")
   end
 
@@ -145,6 +145,104 @@ class AgentsTest < ApplicationSystemTestCase
     assert page.has_content?('T-800')
     assert page.has_content?('My awesome weather bot')
     assert_equal '/agents', current_path
+  end
+
+
+  test 'Agents can be sorted by last updated date' do
+    go_to_agents_index
+    find('.dropdown__trigger', text: 'Sort by name').click
+    find('.dropdown__content', text: 'Sort by last update').click
+
+    click_button '#search'
+    expected = [
+      'admin/weather',
+      'admin/terminator'
+    ]
+    assert_equal expected, (all(".agents-box-grid .agent-box").map { |div|
+      div.all('h3').first.text
+    })
+  end
+
+
+  test 'Agents can be filtered by visibility' do
+    agent = agents(:weather_confirmed)
+    agent.visibility = Agent.visibilities[:is_public]
+    assert agent.save
+
+    go_to_agents_index
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+
+    click_button 'Private'
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('confirmed/weather')
+
+    click_button 'Public'
+    assert page.has_content?('admin/terminator')
+    assert page.has_no_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+  end
+
+
+  test 'Agents can be filtered by owner' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    admin = users(:admin)
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+    assert FavoriteAgent.create(user: admin, agent: agents(:weather))
+
+    go_to_agents_index
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+
+    click_button 'Yours'
+    assert page.has_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('confirmed/weather')
+
+    click_button 'Favorites'
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_content?('admin/weather')
+    assert page.has_content?('confirmed/weather')
+  end
+
+
+  test 'Keep agents search criteria' do
+    agent = agents(:weather_confirmed)
+    agent.visibility = Agent.visibilities[:is_public]
+    assert agent.save
+
+    go_to_agents_index
+    find('.dropdown__trigger', text: 'Sort by name').click
+    find('.dropdown__content', text: 'Sort by last update').click
+    click_button 'Private'
+    click_button 'Yours'
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_no_content?('confirmed/weather')
+
+    click_link "My awesome weather bot admin/weather"
+    assert page.has_content?('Sharing overview')
+    go_to_agents_index
+    assert page.has_content?('admin/weather')
+    assert page.has_no_content?('admin/terminator')
+    assert page.has_no_content?('confirmed/weather')
+
+    assert page.has_content?('Sort by last update')
+    assert first('button[data-input-value="owned"]').matches_css?(".btn--primary")
+    assert first('button[data-input-value="private"]').matches_css?(".btn--primary")
+  end
+
+
+  test 'Agents search can be reset' do
+    go_to_agents_index
+    fill_in 'search_query', with: 'weather'
+    click_button '#search'
+    assert page.has_content?('1 agent found. Reset search')
   end
 
 

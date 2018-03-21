@@ -108,7 +108,7 @@ class MembershipsTest < ApplicationSystemTestCase
   test 'Share agent with multiple users at the same time' do
     go_to_agents_index
 
-    agent_terminator_dropdown = all('.dropdown__trigger > button')[-1]
+    agent_terminator_dropdown = all('.dropdown__trigger > button').last
     agent_terminator_dropdown.click
     click_link 'Share'
     within(".modal") do

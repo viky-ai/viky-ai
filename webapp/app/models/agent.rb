@@ -10,6 +10,8 @@ class Agent < ApplicationRecord
 
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
+  has_many :favorite_agents, dependent: :destroy
+  has_many :fans, through: :favorite_agents, source: :user
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
 
@@ -46,14 +48,43 @@ class Agent < ApplicationRecord
   def self.search(q = {})
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
-    conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-    unless q[:query].nil?
+
+    case q[:filter_owner]
+    when 'owned'
+      conditions = conditions.where('owner_id = ?', q[:user_id])
+    when 'favorites'
+      conditions = conditions.joins(:favorite_agents).where('favorite_agents.user_id = ?', q[:user_id])
+    else
+      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+    end
+
+    case q[:filter_visibility]
+    when 'public'
+      conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
+    when 'private'
+      conditions = conditions.where('visibility = ?',Agent.visibilities[:is_private])
+    else
+      conditions
+    end
+
+    if q[:query].present?
       conditions = conditions.where(
-        'name LIKE ? OR agentname LIKE ?',
+        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
     end
+
+    case q[:sort_by]
+    when 'name'
+      conditions = conditions.order(name: :asc)
+    when 'updated_at'
+      conditions = conditions.order(updated_at: :desc)
+    else
+      conditions
+    end
+
     conditions.distinct
   end
 
@@ -65,12 +96,26 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def available_successors(current_user)
-    Agent
-      .joins(:memberships)
-      .where('user_id = ? OR visibility = ?', current_user.id, Agent.visibilities[:is_public])
-      .where.not(id: successors.pluck(:id))
-      .where.not(id: id)
+  def available_successors(q = {})
+    conditions = Agent
+                 .joins(:memberships)
+                 .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+                 .where.not(id: successors.pluck(:id))
+                 .where.not(id: id)
+    if q[:filter_owner] == 'favorites'
+      conditions = conditions
+                     .joins(:favorite_agents)
+                     .where('favorite_agents.user_id = ?', q[:user_id])
+    end
+    if q[:query].present?
+      conditions = conditions.where(
+        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
+        "%#{q[:query]}%",
+        "%#{q[:query]}%"
+      )
+    end
+    conditions
       .distinct
   end
 

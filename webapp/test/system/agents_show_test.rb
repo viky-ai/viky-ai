@@ -96,4 +96,32 @@ class AgentsShowTest < ApplicationSystemTestCase
     visit user_agent_path('admin', 'unknown-agent')
     assert_equal '/404', current_path
   end
+
+
+  test 'Add an owned agent to favorites' do
+    go_to_agents_index
+    click_link 'My awesome weather bot admin/weather'
+    click_link 'Add favorite'
+    assert page.has_text?('Remove favorite')
+  end
+
+
+  test 'Add a public agent to favorites' do
+    login_as 'confirmed@viky.ai', 'BimBamBoom'
+    assert page.has_text?("Agents")
+    click_link 'T-800 admin/terminator'
+    click_link 'Add favorite'
+    assert page.has_text?('Remove favorite')
+  end
+
+  test 'Remove an agent to favorites' do
+    admin = users(:admin)
+    weather = agents(:weather)
+    assert FavoriteAgent.create(user: admin, agent: weather)
+
+    go_to_agents_index
+    click_link 'My awesome weather bot admin/weather'
+    click_link 'Remove favorite'
+    assert page.has_text?('Add favorite')
+  end
 end
