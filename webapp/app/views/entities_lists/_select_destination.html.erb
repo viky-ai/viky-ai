@@ -1,0 +1,20 @@
+<div class="modal modal--fixed-on-top" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <%= t('views.intents.move_to.title') %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__chooser">
+      <ul class="agent-compact-list">
+        <% @available_destinations.each do |agent| %>
+          <% cache [agent, current_user] do %>
+            <%= render 'destination', agent: agent %>
+          <% end %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

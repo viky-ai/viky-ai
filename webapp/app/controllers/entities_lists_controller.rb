@@ -84,6 +84,11 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+  def available_destinations
+    @available_destinations = @entities_list.available_destinations(current_user).order(name: :asc)
+    render partial: 'select_destination'
+  end
+
 
   private
 
@@ -108,7 +113,7 @@ class EntitiesListsController < ApplicationController
       case action_name
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'available_destinations'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

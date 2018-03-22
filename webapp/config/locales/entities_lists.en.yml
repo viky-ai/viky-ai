@@ -24,6 +24,7 @@ en:
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> entities lists
         new: New entities list
         configure: Configure
+        move_to: Move to
         delete: Delete
         entities:
           zero: "0 entity"

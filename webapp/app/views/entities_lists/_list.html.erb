@@ -41,6 +41,14 @@
                   </span><%= t('views.entities_lists.index.configure') %>
                   </a>
                 </li>
+                <li>
+                  <a href="<%= available_destinations_user_agent_entities_list_path(agent_owner, @agent, entities_list) %>"
+                     data-action="open-remote-modal">
+                  <span class="icon icon--x-small">
+                    <%= icon_transfert %>
+                  </span><%= t('views.entities_lists.index.move_to') %>
+                  </a>
+                </li>
                 <li class="separator">
                   <a href="<%= user_agent_entities_list_confirm_destroy_path(agent_owner, @agent, entities_list) %>"
                      data-action="open-remote-modal" class="destructive">

@@ -70,6 +70,9 @@ Rails.application.routes.draw do
         end
 
         resources :entities_lists do
+          member do
+            get :available_destinations
+          end
           get :confirm_destroy
           collection do
             post :update_positions
