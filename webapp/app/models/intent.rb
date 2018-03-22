@@ -34,6 +34,13 @@ class Intent < ApplicationRecord
     "#{agent.slug}/interpretations/#{intentname}"
   end
 
+  def available_destinations(current_user)
+    current_agent_id = agent.id
+    current_user.agents
+      .where(memberships: { rights: [:all, :edit] })
+      .where.not(id: current_agent_id)
+  end
+
 
   private
 

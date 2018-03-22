@@ -169,4 +169,24 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to user_agent_intents_path(users(:confirmed), agents(:weather_confirmed))
     assert_nil flash[:alert]
   end
+
+
+  #
+  # List available destinations
+  #
+  test 'Allow intent available destinations' do
+    sign_in users(:admin)
+
+    get available_destinations_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Forbid intent available destinations' do
+    sign_in users(:confirmed)
+
+    get available_destinations_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

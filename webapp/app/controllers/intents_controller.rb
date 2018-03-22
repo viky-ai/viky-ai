@@ -119,6 +119,12 @@ class IntentsController < ApplicationController
   end
 
 
+  def available_destinations
+    @available_destinations = @intent.available_destinations(current_user).order(name: :asc)
+    render partial: 'select_destination'
+  end
+
+
   private
 
     def intent_params
@@ -142,7 +148,7 @@ class IntentsController < ApplicationController
       case action_name
       when 'show', 'index'
         access_denied unless current_user.can? :show, @agent
-      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale', 'remove_locale'
+      when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'select_new_locale', 'add_locale', 'remove_locale', 'available_destinations'
         access_denied unless current_user.can? :edit, @agent
       else
         access_denied

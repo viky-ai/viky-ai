@@ -47,6 +47,9 @@ Rails.application.routes.draw do
         end
 
         resources :intents, path: 'interpretations' do
+          member do
+            get :available_destinations
+          end
           get :select_new_locale
           post :add_locale
           delete :remove_locale

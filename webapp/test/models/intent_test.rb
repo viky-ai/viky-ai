@@ -196,4 +196,42 @@ class IntentTest < ActiveSupport::TestCase
   end
 
 
+  test 'Intent available destinations' do
+    weather_confirmed = agents(:weather_confirmed)
+    weather_confirmed.memberships << Membership.new(user_id: users(:admin).id, rights: 'edit')
+    assert weather_confirmed.save
+
+    other_agent_with_edit = Agent.create(
+      name: 'other_agent_with_edit',
+      agentname: 'other_agent_with_edit'.parameterize,
+      memberships: [
+        Membership.new(user_id: users(:confirmed).id, rights: 'all'),
+        Membership.new(user_id: users(:admin).id, rights: 'edit')
+      ]
+    )
+    assert other_agent_with_edit.save
+
+    other_agent_without_edit = Agent.create(
+      name: 'other_agent_without_edit',
+      agentname: 'other_agent_without_edit'.parameterize,
+      memberships: [
+        Membership.new(user_id: users(:confirmed).id, rights: 'all'),
+      ]
+    )
+    assert other_agent_without_edit.save
+
+    intent_0 = Intent.create(
+      intentname: 'intent_0',
+      locales: ['en'],
+      position: 0,
+      agent: weather_confirmed
+    )
+    destinations = intent_0.available_destinations(users(:admin))
+    expected = [
+      'admin/weather',
+      'confirmed/other_agent_with_edit',
+      'admin/terminator',
+    ]
+    assert_equal expected, destinations.order(name: :asc).collect(&:slug)
+  end
 end
