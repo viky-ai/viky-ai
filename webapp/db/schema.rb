@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180321162900) do
+ActiveRecord::Schema.define(version: 20180322162723) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -133,6 +133,14 @@ ActiveRecord::Schema.define(version: 20180321162900) do
     t.index ["agent_id", "user_id"], name: "index_memberships_on_agent_id_and_user_id", unique: true
   end
 
+  create_table "readmes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "content"
+    t.uuid "agent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_readmes_on_agent_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -190,4 +198,5 @@ ActiveRecord::Schema.define(version: 20180321162900) do
   add_foreign_key "interpretations", "intents", on_delete: :cascade
   add_foreign_key "memberships", "agents", on_delete: :cascade
   add_foreign_key "memberships", "users", on_delete: :cascade
+  add_foreign_key "readmes", "agents", on_delete: :cascade
 end
