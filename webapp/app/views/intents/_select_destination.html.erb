@@ -11,7 +11,7 @@
       <ul class="agent-compact-list">
         <% @available_destinations.each do |agent| %>
           <% cache [agent, current_user] do %>
-            <%= render 'destination', agent: agent %>
+            <%= render 'destination', dst_agent: agent %>
           <% end %>
         <% end %>
       </ul>

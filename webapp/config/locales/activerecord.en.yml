@@ -51,6 +51,8 @@ en:
       cycle_detected: detected, agent addition would cause a cycle in dependency graph
     intents:
       unknown_locale: "unknown '%{current_locale}'"
+      unknown_agent: 'does not exist'
+      not_editable_agent: 'is not editable'
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap

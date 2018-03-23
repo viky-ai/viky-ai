@@ -189,4 +189,34 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
+
+  #
+  # Move intent to an other agent
+  #
+  test 'Allow to move an intent' do
+    sign_in users(:admin)
+
+    post move_to_agent_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:terminator).agentname,
+           format: :json
+         }
+    assert_redirected_to user_agent_intents_path(users(:admin), agents(:weather))
+    assert_nil flash[:alert]
+  end
+
+  test 'Forbid to move an intent' do
+    sign_in users(:confirmed)
+
+    post move_to_agent_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:weather_confirmed).agentname,
+           format: :json
+         }
+    assert_response :forbidden
+    assert response.body.include?('Unauthorized operation.')
+  end
 end

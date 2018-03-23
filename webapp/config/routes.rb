@@ -49,6 +49,7 @@ Rails.application.routes.draw do
         resources :intents, path: 'interpretations' do
           member do
             get :available_destinations
+            post :move_to_agent
           end
           get :select_new_locale
           post :add_locale

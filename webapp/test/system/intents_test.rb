@@ -135,4 +135,27 @@ class IntentsTest < ApplicationSystemTestCase
     end
     assert page.has_text?('Start adding expressions using the form below.')
   end
+
+
+  test 'Move intent to another agent' do
+    intent = intents(:weather_question)
+    intent.visibility = Intent.visibilities[:is_private]
+    assert intent.save
+
+    go_to_agent_intents('admin', 'weather')
+    within '#intents-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Select destination agent ')
+    within('.modal') do
+      click_link 'T-800'
+    end
+
+    go_to_agent_intents('admin', 'terminator')
+    within '#intents-list-is_private' do
+      assert page.has_text?('weather_question')
+    end
+  end
 end

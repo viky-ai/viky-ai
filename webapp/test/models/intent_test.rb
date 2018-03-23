@@ -234,4 +234,35 @@ class IntentTest < ActiveSupport::TestCase
     ]
     assert_equal expected, destinations.order(name: :asc).collect(&:slug)
   end
+
+
+  test 'Move intent to an agent' do
+    weather = intents(:terminator_find)
+    assert weather.change_agent(users(:admin), agents(:weather))
+    assert_equal agents(:weather).id, weather.agent.id
+    assert_equal 'is_public', weather.visibility
+    assert_equal 2, weather.position
+  end
+
+
+  test 'Move intent to an agent without edit' do
+    weather = intents(:weather_forecast)
+    assert !weather.change_agent(users(:admin), agents(:weather_confirmed))
+    expected = {
+      agent: ['is not editable']
+    }
+    assert_equal expected, weather.errors.messages
+    assert_equal weather.agent.id, agents(:weather).id
+  end
+
+
+  test 'Move intent to an unknown agent' do
+    weather = intents(:weather_forecast)
+    assert !weather.change_agent(users(:admin), nil)
+    expected = {
+      agent: ['does not exist']
+    }
+    assert_equal expected, weather.errors.messages
+    assert_equal weather.agent.id, agents(:weather).id
+  end
 end

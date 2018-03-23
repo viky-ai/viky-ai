@@ -41,6 +41,21 @@ class Intent < ApplicationRecord
       .where.not(id: current_agent_id)
   end
 
+  def change_agent(current_user, agent_destination)
+    if agent_destination.nil?
+      errors.add(:agent, I18n.t('errors.intents.unknown_agent'))
+      return false
+    end
+    unless current_user.can?(:edit, agent_destination)
+      errors.add(:agent, I18n.t('errors.intents.not_editable_agent'))
+      return false
+    end
+    ActiveRecord::Base.transaction do
+      self.agent = agent_destination
+      self.position = agent_destination.intents.present? ? agent_destination.intents.maximum(:position) + 1 : 0
+      save
+    end
+  end
 
   private
 
