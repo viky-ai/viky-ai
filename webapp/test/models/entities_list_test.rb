@@ -332,6 +332,37 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal expected, destinations.order(name: :asc).collect(&:slug)
   end
 
+
+  test 'Move entities list to an agent' do
+    weather = entities_lists(:weather_conditions)
+    assert weather.change_agent(users(:admin), agents(:terminator))
+    assert_equal agents(:terminator).id, weather.agent.id
+    assert_equal 'is_public', weather.visibility
+    assert_equal 1, weather.position
+  end
+
+
+  test 'Move entities list to an agent without edit' do
+    weather = entities_lists(:weather_conditions)
+    assert !weather.change_agent(users(:admin), agents(:weather_confirmed))
+    expected = {
+      agent: ['is not editable']
+    }
+    assert_equal expected, weather.errors.messages
+    assert_equal weather.agent.id, agents(:weather).id
+  end
+
+
+  test 'Move entities list to an unknown agent' do
+    weather = entities_lists(:weather_conditions)
+    assert !weather.change_agent(users(:admin), nil)
+    expected = {
+      agent: ['does not exist']
+    }
+    assert_equal expected, weather.errors.messages
+    assert_equal weather.agent.id, agents(:weather).id
+  end
+
   private
 
     def build_import_params(io, mode = :append)

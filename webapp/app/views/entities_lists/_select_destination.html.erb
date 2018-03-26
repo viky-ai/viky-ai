@@ -2,7 +2,7 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.intents.move_to.title') %>
+      <%= t('views.entities_lists.move_to.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
@@ -11,7 +11,7 @@
       <ul class="agent-compact-list">
         <% @available_destinations.each do |agent| %>
           <% cache [agent, current_user] do %>
-            <%= render 'destination', agent: agent %>
+            <%= render 'destination', dst_agent: agent %>
           <% end %>
         <% end %>
       </ul>

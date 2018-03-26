@@ -73,6 +73,7 @@ Rails.application.routes.draw do
         resources :entities_lists do
           member do
             get :available_destinations
+            post :move_to_agent
           end
           get :confirm_destroy
           collection do

@@ -56,6 +56,9 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
+    entities_lists:
+      unknown_agent: 'does not exist'
+      not_editable_agent: 'is not editable'
     entity:
       unknown_locale: "unknown locale '%{current_locale}'"
       term_abscent: "can't contains only locale information"

@@ -52,6 +52,23 @@ class EntitiesList < ApplicationRecord
       .where.not(id: current_agent_id)
   end
 
+
+  def change_agent(current_user, agent_destination)
+    if agent_destination.nil?
+      errors.add(:agent, I18n.t('errors.entities_lists.unknown_agent'))
+      return false
+    end
+    unless current_user.can?(:edit, agent_destination)
+      errors.add(:agent, I18n.t('errors.entities_lists.not_editable_agent'))
+      return false
+    end
+    ActiveRecord::Base.transaction do
+      self.agent = agent_destination
+      self.position = agent_destination.entities_lists.present? ? agent_destination.entities_lists.maximum(:position) + 1 : 0
+      save
+    end
+  end
+
   private
 
     def clean_listname

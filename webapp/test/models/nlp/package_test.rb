@@ -542,6 +542,11 @@ class PackageTest < ActiveSupport::TestCase
               "solution" => "Where is Sarah Connor ?"
             }
           ]
+        }, {
+          "id" => "1f45c98f-b39b-5a8b-a4a7-8379bea19f0a",
+          "slug" => "admin/terminator/entities_lists/terminator_targets",
+          "scope" => "private",
+          "expressions" => []
         }]
     }]
     assert_equal expected, p.full_json_export

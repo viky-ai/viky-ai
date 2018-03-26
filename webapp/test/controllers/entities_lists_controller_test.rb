@@ -156,4 +156,34 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
+
+  #
+  # Move intent to an other agent
+  #
+  test 'Allow to move an entities list' do
+    sign_in users(:admin)
+
+    post move_to_agent_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:terminator).agentname,
+           format: :json
+         }
+    assert_redirected_to user_agent_entities_lists_path(users(:admin), agents(:weather))
+    assert_nil flash[:alert]
+  end
+
+  test 'Forbid to move an entities list' do
+    sign_in users(:confirmed)
+
+    post move_to_agent_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:weather_confirmed).agentname,
+           format: :json
+         }
+    assert_response :forbidden
+    assert response.body.include?('Unauthorized operation.')
+  end
 end

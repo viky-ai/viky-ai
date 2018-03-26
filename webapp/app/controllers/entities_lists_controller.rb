@@ -89,6 +89,19 @@ class EntitiesListsController < ApplicationController
     render partial: 'select_destination'
   end
 
+  def move_to_agent
+    user_destination = User.friendly.find(params[:user])
+    agent_destination = user_destination.agents.friendly.find(params[:agent])
+    if @entities_list.change_agent(current_user, agent_destination)
+      redirect_to user_agent_entities_lists_path(@owner, @agent)
+    else
+      redirect_to user_agent_entities_lists_path(@owner, @agent), alert: t(
+        'views.entities_lists.move_to.errors_message',
+        errors: @entities_list.errors.full_messages.join(', ')
+      )
+    end
+  end
+
 
   private
 
@@ -113,7 +126,7 @@ class EntitiesListsController < ApplicationController
       case action_name
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'available_destinations'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'available_destinations', 'move_to_agent'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

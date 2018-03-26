@@ -14,6 +14,12 @@ weather_dates:
   color: brown
   visibility: 0
 
+terminator_targets:
+  listname: terminator_targets
+  agent: terminator
+  position: 0
+  color: orange
+  visibility: 1
 
 weather_confirmed_dates:
   listname: weather_dates

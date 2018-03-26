@@ -51,4 +51,6 @@ en:
       blankslate:
         message_show_html: >
           No entity list entered for the "%{agent}" agent.
-
+      move_to:
+        title: 'Select destination agent'
+        errors_message: "Move entities list to agent failed: %{errors}."

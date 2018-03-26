@@ -85,4 +85,23 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
     # assert_equal ['weather_conditions', 'test'], all('.card-list__item__name').collect(&:text)
   end
+
+
+  test 'Move entities list to another agent' do
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Select destination agent ')
+    within('.modal') do
+      click_link 'My awesome weather bot'
+    end
+
+    go_to_agent_entities_lists('admin', 'weather')
+    within '#entities_lists-list-is_private' do
+      assert page.has_text?('terminator_targets')
+    end
+  end
 end
