@@ -1,0 +1,25 @@
+<%= form_with model: [owner, agent, readme],
+      url: user_agent_readme_path(owner, agent),
+      data: { type: 'json' }, class: "readme-form" do |f| %>
+
+  <div class="field">
+    <div class="control">
+      <%= f.text_area :content, id: 'readme_content' %>
+      <%= display_errors(readme, :content) %>
+    </div>
+  </div>
+
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.readme.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.readme.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label, class: "btn btn--primary",
+          data: {
+             disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+          } %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+  </div>
+<% end %>

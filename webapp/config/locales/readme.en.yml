@@ -1,0 +1,21 @@
+en:
+  views:
+    readme:
+      show:
+        edit_btn: Edit
+        delete_btn: Delete
+      new:
+        title: Create README
+        btn: Create
+        success_message: README has been successfully created.
+      edit:
+        title: Edit README
+        btn: Update
+        success_message: README has been successfully updated.
+      confirm_destroy:
+        title:  Are you sure?
+        content_html:  "You're about to delete README of agent: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "README has successfully been deleted."
+        errors_message: "README deletion failed: %{errors}."

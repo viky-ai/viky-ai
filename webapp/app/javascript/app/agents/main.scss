@@ -93,6 +93,13 @@
   }
 }
 
+
+.readme-form{
+  textarea{
+    height: calc(60vh - 100px);
+  }
+}
+
 /**
  * Agent New/Edit Form
 **/

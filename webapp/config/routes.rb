@@ -13,7 +13,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   resource :profile, only: [:show, :edit, :update, :destroy] do
     get :confirm_destroy
     post :stop_impersonating, on: :collection
@@ -44,6 +43,10 @@ Rails.application.routes.draw do
             get :successors_graph
             get :predecessors_graph
           end
+        end
+
+        resource :readme do
+          get :confirm_destroy
         end
 
         resources :intents, path: 'interpretations' do
