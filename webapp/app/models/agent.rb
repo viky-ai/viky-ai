@@ -51,18 +51,18 @@ class Agent < ApplicationRecord
 
     case q[:filter_owner]
     when 'owned'
-      conditions = conditions.where('owner_id = ?', q[:user_id])
+      conditions = conditions.where(owner_id: q[:user_id])
     when 'favorites'
-      conditions = conditions.joins(:favorite_agents).where('favorite_agents.user_id = ?', q[:user_id])
+      conditions = conditions.joins(:favorite_agents).where(favorite_agents: { user: q[:user_id] })
     else
       conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
     end
 
     case q[:filter_visibility]
     when 'public'
-      conditions = conditions.where('visibility = ?', Agent.visibilities[:is_public])
+      conditions = conditions.where(visibility: Agent.visibilities[:is_public])
     when 'private'
-      conditions = conditions.where('visibility = ?',Agent.visibilities[:is_private])
+      conditions = conditions.where(visibility: Agent.visibilities[:is_private])
     else
       conditions
     end
@@ -105,7 +105,7 @@ class Agent < ApplicationRecord
     if q[:filter_owner] == 'favorites'
       conditions = conditions
                      .joins(:favorite_agents)
-                     .where('favorite_agents.user_id = ?', q[:user_id])
+                     .where(favorite_agents: { user: q[:user_id]})
     end
     if q[:query].present?
       conditions = conditions.where(
