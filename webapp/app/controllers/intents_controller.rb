@@ -120,7 +120,8 @@ class IntentsController < ApplicationController
 
 
   def available_destinations
-    @available_destinations = @intent.available_destinations(current_user).order(name: :asc)
+    @search = AgentSelectSearch.new(current_user)
+    @available_destinations = @intent.available_destinations(@search.options).order(name: :asc)
     render partial: 'select_destination'
   end
 

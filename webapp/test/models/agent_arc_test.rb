@@ -147,7 +147,7 @@ class AgentArcTest < ActiveSupport::TestCase
     create_agent('Agent B')
 
     current_user = users(:admin)
-    search = SuccessorSearch.new(current_user)
+    search = AgentSelectSearch.new(current_user)
     successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
@@ -169,7 +169,7 @@ class AgentArcTest < ActiveSupport::TestCase
     assert FavoriteAgent.create(user: current_user, agent: agent_b)
     assert FavoriteAgent.create(user: current_user, agent: agent_public)
 
-    search = SuccessorSearch.new(current_user, filter_owner: 'favorites')
+    search = AgentSelectSearch.new(current_user, filter_owner: 'favorites')
     successors = agent_a.available_successors(search.options)
     expected = [
       'admin/agent-b',
@@ -183,7 +183,7 @@ class AgentArcTest < ActiveSupport::TestCase
     agent_a = create_agent('Agent A')
     create_agent('Agent 212')
     current_user = users(:admin)
-    search = SuccessorSearch.new(current_user, query: 'agent')
+    search = AgentSelectSearch.new(current_user, query: 'agent')
     successors = agent_a.available_successors(search.options)
     expected = [
       'admin/agent-212'
@@ -201,7 +201,7 @@ class AgentArcTest < ActiveSupport::TestCase
     assert agent_public.save
 
     current_user = users(:admin)
-    search = SuccessorSearch.new(current_user)
+    search = AgentSelectSearch.new(current_user)
     successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
@@ -215,12 +215,12 @@ class AgentArcTest < ActiveSupport::TestCase
 
   test 'Empty successor search' do
     user = users(:admin)
-    assert SuccessorSearch.new(user).empty?
+    assert AgentSelectSearch.new(user).empty?
 
     criteria = {
       'filter_owner' => 'owned',
       'query' => 'weather'
     }
-    assert !SuccessorSearch.new(user, criteria).empty?
+    assert !AgentSelectSearch.new(user, criteria).empty?
   end
 end

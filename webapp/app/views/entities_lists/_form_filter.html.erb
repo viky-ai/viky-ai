@@ -1,7 +1,7 @@
 <%= form_for(
       @search,
       as: :search,
-      url: new_user_agent_dependency_path(@agent.owner, @agent.agentname),
+      url: available_destinations_user_agent_entities_list_path(@agent.owner, @agent.agentname),
       method: :get,
       html: { class: 'agent_select_search' },
       data: { action: 'update-remote-modal' } ) do |f| %>

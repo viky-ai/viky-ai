@@ -104,4 +104,49 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_text?('terminator_targets')
     end
   end
+
+
+  test 'Filter favorite agent select' do
+    admin = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.memberships << Membership.new(user: admin, rights: 'edit')
+    assert agent_public.save
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Select destination agent ')
+    within('.modal') do
+      click_button 'Favorites'
+      assert page.has_no_text?('My awesome weather bot admin/weather')
+      assert page.has_text?('Weather bot confirmed/weather')
+    end
+  end
+
+
+  test 'Filter query agent dependency' do
+    admin = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.memberships << Membership.new(user: admin, rights: 'edit')
+    assert agent_public.save
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Select destination agent ')
+    within(".modal") do
+      fill_in 'search_query', with: 'awesome'
+      click_button '#search'
+      assert page.has_text?('My awesome weather bot admin/weather')
+      assert page.has_no_text?('Weather bot confirmed/weather')
+    end
+  end
 end

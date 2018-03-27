@@ -5,7 +5,7 @@ class DependenciesController < ApplicationController
   before_action :check_user_rights
 
   def new
-    @search = SuccessorSearch.new(current_user, search_params)
+    @search = AgentSelectSearch.new(current_user, search_params)
     @available_successors = @agent.available_successors(@search.options).order(name: :asc)
     render partial: 'new'
   end

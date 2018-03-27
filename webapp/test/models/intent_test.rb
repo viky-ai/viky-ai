@@ -226,7 +226,8 @@ class IntentTest < ActiveSupport::TestCase
       position: 0,
       agent: weather_confirmed
     )
-    destinations = intent_0.available_destinations(users(:admin))
+    search = AgentSelectSearch.new(users(:admin))
+    destinations = intent_0.available_destinations(search.options)
     expected = [
       'admin/weather',
       'confirmed/other_agent_with_edit',

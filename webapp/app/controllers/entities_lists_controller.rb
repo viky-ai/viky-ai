@@ -85,7 +85,8 @@ class EntitiesListsController < ApplicationController
   end
 
   def available_destinations
-    @available_destinations = @entities_list.available_destinations(current_user).order(name: :asc)
+    @search = AgentSelectSearch.new(current_user, search_params)
+    @available_destinations = @entities_list.available_destinations(@search.options).order(name: :asc)
     render partial: 'select_destination'
   end
 
@@ -131,5 +132,9 @@ class EntitiesListsController < ApplicationController
         else
           access_denied
       end
+    end
+
+    def search_params
+      params.permit(search: [:query, :filter_owner])[:search]
     end
 end

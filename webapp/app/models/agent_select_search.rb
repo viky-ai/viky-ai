@@ -1,4 +1,4 @@
-class SuccessorSearch
+class AgentSelectSearch
   attr_reader :user_id, :options
 
   DEFAULT_CRITERIA = {

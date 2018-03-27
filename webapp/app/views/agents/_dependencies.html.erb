@@ -71,7 +71,7 @@
     </div>
   <% end %>
 
-  <% search = SuccessorSearch.new(current_user) %>
+  <% search = AgentSelectSearch.new(current_user) %>
   <% if @agent.available_successors(search.options).count > 0 && user_can_edit_dependency %>
     <div class="agent-compact agent-compact--new">
       <%= link_to "<span class='icon'>#{icon_add}</span> #{t('views.dependencies.index.new')}".html_safe,
