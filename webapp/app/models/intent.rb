@@ -2,6 +2,7 @@ class Intent < ApplicationRecord
   include Colorable
   include Positionable
   positionable_ancestor :agent
+  include Movable
 
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
@@ -32,29 +33,6 @@ class Intent < ApplicationRecord
 
   def slug
     "#{agent.slug}/interpretations/#{intentname}"
-  end
-
-  def available_destinations(current_user)
-    current_agent_id = agent.id
-    current_user.agents
-      .where(memberships: { rights: [:all, :edit] })
-      .where.not(id: current_agent_id)
-  end
-
-  def change_agent(current_user, agent_destination)
-    if agent_destination.nil?
-      errors.add(:agent, I18n.t('errors.intents.unknown_agent'))
-      return false
-    end
-    unless current_user.can?(:edit, agent_destination)
-      errors.add(:agent, I18n.t('errors.intents.not_editable_agent'))
-      return false
-    end
-    ActiveRecord::Base.transaction do
-      self.agent = agent_destination
-      self.position = agent_destination.intents.present? ? agent_destination.intents.maximum(:position) + 1 : 0
-      save
-    end
   end
 
   private
