@@ -7,14 +7,24 @@
         <%= icon_close %>
       </button>
     </h5>
+    <%= render "form_filter" %>
     <div class="modal__main__chooser">
-      <ul class="agent-compact-list">
-        <% @available_destinations.each do |agent| %>
-          <% cache [agent, current_user] do %>
-            <%= render 'destination', dst_agent: agent %>
+      <% if @available_destinations.empty? && !@search.empty? %>
+        <div class="modal__main__chooser__no-search-result">
+          <img src='<%= asset_path("robot-confused.png") %>'
+               srcset='<%= asset_path("robot-confused.png") %> 1x,
+                       <%= asset_path("robot-confused@2x.png") %> 2x' /><br />
+          <%= t('views.dependencies.new.not_found') %>
+        </div>
+      <% else %>
+        <ul class="agent-compact-list">
+          <% @available_destinations.each do |agent| %>
+            <% cache [agent, current_user] do %>
+              <%= render 'destination', dst_agent: agent %>
+            <% end %>
           <% end %>
-        <% end %>
-      </ul>
+        </ul>
+      <% end %>
     </div>
   </div>
 </div>
