@@ -58,8 +58,8 @@
   </ol>
 
   <h2>Code</h2>
-  <pre>
-require 'html/pipeline'
+  <p>Supported languages: <code>markup</code>, <code>css</code>, <code>clike</code>, <code>javascript</code>, <code>json</code>, <code>ruby</code>.</p>
+  <pre lang="ruby"><code>require 'html/pipeline'
 
 class Readme < ApplicationRecord
   belongs_to :agent, touch: true
@@ -74,7 +74,7 @@ class Readme < ApplicationRecord
     result = pipeline.call(content)
     result[:output].to_s
   end
-end</pre>
+end<code></pre>
 
   <h2>Blockquote</h2>
 
