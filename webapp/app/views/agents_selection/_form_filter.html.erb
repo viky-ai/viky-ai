@@ -1,9 +1,9 @@
 <%= form_for(
       @search,
       as: :search,
-      url: available_destinations_user_agent_intent_path(@agent.owner, @agent.agentname),
+      url: agents_selection_user_agent_path(@agent.owner, @agent.agentname, current_id: current_id, from: from),
       method: :get,
-      html: { class: 'agent_select_search' },
+      html: { class: 'agents_selection_search' },
       data: { action: 'update-remote-modal' } ) do |f| %>
   <div class="field field--inline">
     <div class="control control--merged">

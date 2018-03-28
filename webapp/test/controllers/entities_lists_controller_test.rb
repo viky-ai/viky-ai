@@ -139,26 +139,6 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
 
 
   #
-  # List available destinations
-  #
-  test 'Allow entities list available destinations' do
-    sign_in users(:admin)
-
-    get available_destinations_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_response :success
-    assert_nil flash[:alert]
-  end
-
-  test 'Forbid entities list available destinations' do
-    sign_in users(:confirmed)
-
-    get available_destinations_user_agent_entities_list_url(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_redirected_to agents_url
-    assert_equal 'Unauthorized operation.', flash[:alert]
-  end
-
-
-  #
   # Move intent to an other agent
   #
   test 'Allow to move an entities list' do

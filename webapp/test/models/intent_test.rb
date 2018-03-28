@@ -196,64 +196,6 @@ class IntentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Intent available destinations' do
-    current_user = users(:admin)
-
-    weather_confirmed = agents(:weather_confirmed)
-    weather_confirmed.memberships << Membership.new(user: current_user, rights: 'edit')
-    assert weather_confirmed.save
-
-    other_agent_with_edit = Agent.create(
-      name: 'other_agent_with_edit',
-      agentname: 'other_agent_with_edit'.parameterize,
-      memberships: [
-        Membership.new(user: users(:confirmed), rights: 'all'),
-        Membership.new(user: current_user, rights: 'edit')
-      ]
-    )
-    assert other_agent_with_edit.save
-
-    other_agent_without_edit = Agent.create(
-      name: 'other_agent_without_edit',
-      agentname: 'other_agent_without_edit'.parameterize,
-      memberships: [
-        Membership.new(user: users(:confirmed), rights: 'all'),
-      ]
-    )
-    assert other_agent_without_edit.save
-
-    intent_0 = Intent.create(
-      intentname: 'intent_0',
-      locales: ['en'],
-      position: 0,
-      agent: weather_confirmed
-    )
-    search = AgentSelectSearch.new(current_user)
-    destinations = intent_0.available_destinations(search.options)
-    expected = [
-      'admin/weather',
-      'confirmed/other_agent_with_edit',
-      'admin/terminator',
-    ]
-    assert_equal expected, destinations.order(name: :asc).collect(&:slug)
-
-    filtered_search = AgentSelectSearch.new(current_user, query: 'term')
-    destinations = intent_0.available_destinations(filtered_search.options).order(name: :asc)
-    expected = [
-      'admin/terminator',
-    ]
-    assert_equal expected, destinations.collect(&:slug)
-
-    assert FavoriteAgent.create(user: current_user, agent: other_agent_with_edit)
-    filtered_search = AgentSelectSearch.new(current_user, filter_owner: 'favorites')
-    destinations = intent_0.available_destinations(filtered_search.options).order(name: :asc)
-    expected = [
-      'confirmed/other_agent_with_edit',
-    ]
-    assert_equal expected, destinations.collect(&:slug)
-  end
-
-
   test 'Move intent to an agent' do
     weather = intents(:terminator_find)
     assert weather.change_agent(users(:admin), agents(:weather))

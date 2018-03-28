@@ -119,12 +119,6 @@ class IntentsController < ApplicationController
   end
 
 
-  def available_destinations
-    @search = AgentSelectSearch.new(current_user, search_params)
-    @available_destinations = @intent.available_destinations(@search.options).order(name: :asc)
-    render partial: 'select_destination'
-  end
-
   def move_to_agent
     user_destination = User.friendly.find(params[:user])
     agent_destination = user_destination.agents.friendly.find(params[:agent])
@@ -167,9 +161,5 @@ class IntentsController < ApplicationController
       else
         access_denied
       end
-    end
-
-    def search_params
-      params.permit(search: [:query, :filter_owner])[:search]
     end
 end

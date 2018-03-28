@@ -119,6 +119,27 @@ class Agent < ApplicationRecord
       .distinct
   end
 
+  def available_destinations(q = {})
+    current_user = User.find(q[:user_id])
+    conditions = current_user.agents
+                   .where(memberships: { rights: [:all, :edit] })
+                   .where.not(id: id)
+    if q[:filter_owner] == 'favorites'
+      conditions = conditions
+                     .joins(:favorite_agents)
+                     .where(favorite_agents: { user: q[:user_id]})
+    end
+    if q[:query].present?
+      conditions = conditions.where(
+        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
+        "%#{q[:query]}%",
+        "%#{q[:query]}%"
+      )
+    end
+    conditions
+  end
+
   def transfer_ownership_to(new_owner_id)
     transfer = AgentTransfer.new(self, new_owner_id)
     transfer.proceed

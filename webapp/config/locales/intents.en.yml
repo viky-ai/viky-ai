@@ -37,7 +37,6 @@ en:
         empty_message: The interpretation already contains every available languages.
         errors_message: "Add language failed: %{errors}."
       move_to:
-        title: 'Select destination agent'
         errors_message: "Move intent to agent failed: %{errors}."
       blankslate:
         message_edit_html: >

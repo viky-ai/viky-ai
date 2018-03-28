@@ -42,7 +42,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="<%= available_destinations_user_agent_entities_list_path(agent_owner, @agent, entities_list) %>"
+                  <a href="<%= agents_selection_user_agent_path(agent_owner, @agent, from: controller_name, current_id: entities_list.id) %>"
                      data-action="open-remote-modal">
                   <span class="icon icon--x-small">
                     <%= icon_transfert %>

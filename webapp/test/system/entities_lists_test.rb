@@ -94,7 +94,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within('.modal') do
       click_link 'My awesome weather bot'
     end
@@ -119,7 +119,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within('.modal') do
       click_button 'Favorites'
       assert page.has_no_text?('My awesome weather bot admin/weather')
@@ -141,7 +141,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within(".modal") do
       fill_in 'search_query', with: 'awesome'
       click_button '#search'

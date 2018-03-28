@@ -148,7 +148,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within('.modal') do
       click_link 'T-800'
     end
@@ -173,7 +173,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within('.modal') do
       click_button 'Favorites'
       assert page.has_no_text?('My awesome weather bot admin/weather')
@@ -195,7 +195,7 @@ class IntentsTest < ApplicationSystemTestCase
       click_link 'Move to'
     end
 
-    assert page.has_text?('Select destination agent ')
+    assert page.has_text?('Select an agent ')
     within(".modal") do
       fill_in 'search_query', with: 'awesome'
       click_button '#search'

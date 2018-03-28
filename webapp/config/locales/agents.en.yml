@@ -104,3 +104,6 @@ en:
           overview: Overview
           intents: Interpretations
           entities_lists: Entities lists
+      agents_selection:
+        title: 'Select an agent'
+        not_found: No agent found.

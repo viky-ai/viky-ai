@@ -294,63 +294,6 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Entities list available destinations' do
-    current_user = users(:admin)
-
-    weather_confirmed = agents(:weather_confirmed)
-    weather_confirmed.memberships << Membership.new(user: current_user, rights: 'edit')
-    assert weather_confirmed.save
-
-    other_agent_with_edit = Agent.create(
-      name: 'other_agent_with_edit',
-      agentname: 'other_agent_with_edit'.parameterize,
-      memberships: [
-        Membership.new(user: users(:confirmed), rights: 'all'),
-        Membership.new(user: current_user, rights: 'edit')
-      ]
-    )
-    assert other_agent_with_edit.save
-
-    other_agent_without_edit = Agent.create(
-      name: 'other_agent_without_edit',
-      agentname: 'other_agent_without_edit'.parameterize,
-      memberships: [
-        Membership.new(user: users(:confirmed), rights: 'all'),
-      ]
-    )
-    assert other_agent_without_edit.save
-
-    entities_list_0 = EntitiesList.create(
-      listname: 'intent_0',
-      position: 0,
-      agent: weather_confirmed
-    )
-    search = AgentSelectSearch.new(current_user)
-    destinations = entities_list_0.available_destinations(search.options).order(name: :asc)
-    expected = [
-      'admin/weather',
-      'confirmed/other_agent_with_edit',
-      'admin/terminator',
-    ]
-    assert_equal expected, destinations.collect(&:slug)
-
-    filtered_search = AgentSelectSearch.new(current_user, query: 'term')
-    destinations = entities_list_0.available_destinations(filtered_search.options).order(name: :asc)
-    expected = [
-      'admin/terminator',
-    ]
-    assert_equal expected, destinations.collect(&:slug)
-
-    assert FavoriteAgent.create(user: current_user, agent: other_agent_with_edit)
-    filtered_search = AgentSelectSearch.new(current_user, filter_owner: 'favorites')
-    destinations = entities_list_0.available_destinations(filtered_search.options).order(name: :asc)
-    expected = [
-      'confirmed/other_agent_with_edit',
-    ]
-    assert_equal expected, destinations.collect(&:slug)
-  end
-
-
   test 'Move entities list to an agent' do
     weather = entities_lists(:weather_conditions)
     assert weather.change_agent(users(:admin), agents(:terminator))

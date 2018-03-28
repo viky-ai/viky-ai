@@ -2,25 +2,25 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <%= t('views.intents.move_to.title') %>
+      <%= t('views.agents.agents_selection.title') %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
     </h5>
-    <%= render "form_filter" %>
+    <%= render "form_filter", from: from, current_id: current_id %>
     <div class="modal__main__chooser">
       <% if @available_destinations.empty? && !@search.empty? %>
         <div class="modal__main__chooser__no-search-result">
           <img src='<%= asset_path("robot-confused.png") %>'
                srcset='<%= asset_path("robot-confused.png") %> 1x,
                        <%= asset_path("robot-confused@2x.png") %> 2x' /><br />
-          <%= t('views.dependencies.new.not_found') %>
+          <%= t('views.agents.agents_selection.not_found') %>
         </div>
       <% else %>
         <ul class="agent-compact-list">
           <% @available_destinations.each do |agent| %>
             <% cache [agent, current_user] do %>
-              <%= render 'destination', dst_agent: agent %>
+              <%= render 'destination', agent_to_select: agent, from: from, current_id: current_id %>
             <% end %>
           <% end %>
         </ul>
