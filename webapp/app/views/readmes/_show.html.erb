@@ -41,7 +41,9 @@
   </div>
   <div class="card">
     <div class="card-content">
-      <%= @agent.readme.content %>
+      <div class="markdown">
+        <%= @agent.readme.display %>
+      </div>
     </div>
   </div>
 <% end %>

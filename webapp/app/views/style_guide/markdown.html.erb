@@ -1,0 +1,123 @@
+<div class="sg-intro">
+  <h1>Markdown</h1>
+</div>
+
+<section>
+  <h2>Supported markup</h2>
+  <%= highlight_html do %>
+<div class="markdown">
+  <h1>Markdown</h1>
+  <h2>Paragraph</h2>
+
+  <p>Lorem ipsum <strong>dolor sit amet</strong>, consectetur adipisicing elit. Sed fugiat possimus, <code>voluptas</code> aspernatur maiores ad ipsum recusandae, placeat alias! Est fuga <em>reprehenderit ducimus ea expedita</em> incidunt atque, id dicta optio!</p>
+
+  <h2>List</h2>
+
+  <h3>Simple</h3>
+  <ul>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>Consectetur adipisicing elit.</li>
+    <li>Sed fugiat possimus, voluptas aspernatur</li>
+  </ul>
+
+  <h3>Nested</h3>
+  <ul>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>
+      Consectetur adipisicing elit.
+      <ul>
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipisicing elit.</li>
+        <li>Sed fugiat possimus, voluptas aspernatur</li>
+      </ul>
+    </li>
+    <li>Sed fugiat possimus, voluptas aspernatur</li>
+  </ul>
+
+  <h2>Ordered List</h2>
+
+  <h3>Simple</h3>
+  <ol>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>Consectetur adipisicing elit.</li>
+    <li>Sed fugiat possimus, voluptas aspernatur</li>
+  </ol>
+
+  <h3>Nested</h3>
+  <ol>
+    <li>Lorem ipsum dolor sit amet</li>
+    <li>
+      Consectetur adipisicing elit.
+      <ul>
+        <li>Lorem ipsum dolor sit amet</li>
+        <li>Consectetur adipisicing elit.</li>
+        <li>Sed fugiat possimus, voluptas aspernatur</li>
+      </ul>
+    </li>
+    <li>Sed fugiat possimus, voluptas aspernatur</li>
+  </ol>
+
+  <h2>Code</h2>
+  <pre>
+require 'html/pipeline'
+
+class Readme < ApplicationRecord
+  belongs_to :agent, touch: true
+  validates :content, presence: true
+
+  def display
+    pipeline = HTML::Pipeline.new [
+      HTML::Pipeline::MarkdownFilter,
+      HTML::Pipeline::SanitizationFilter,
+      HTML::Pipeline::AutolinkFilter
+    ]
+    result = pipeline.call(content)
+    result[:output].to_s
+  end
+end</pre>
+
+  <h2>Blockquote</h2>
+
+  <blockquote>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod consequatur dicta vitae provident, numquam enim ipsum. Ducimus tempora illum rerum laudantium quo, ea modi, temporibus error minus quod fugiat, atque.
+      <small>&mdash; Bob sinclar</small>
+    </p>
+  </blockquote>
+
+  <h2>Image</h2>
+  <h3>Displayed as block</h3>
+  <img src="http://via.placeholder.com/300x200" />
+  <h3>Max size support</h3>
+  <img src="http://via.placeholder.com/3000x200" />
+
+  <h2>Tableau</h2>
+  <table>
+    <thead>
+      <tr>
+        <th align="left">Titre 1</th>
+        <th align="center">Titre 2</th>
+        <th align="right">Titre 3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td align="left">Colonne</td>
+        <td align="center">Colonne</td>
+        <td align="right">Colonne</td>
+      </tr>
+      <tr>
+        <td align="left">Alignée à</td>
+        <td align="center">Alignée au</td>
+        <td align="right">Alignée à</td>
+      </tr>
+      <tr>
+        <td align="left">Gauche</td>
+        <td align="center">Centre</td>
+        <td align="right">Droite</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  <% end %>
+</section>

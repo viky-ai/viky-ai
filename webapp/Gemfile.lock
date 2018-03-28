@@ -68,6 +68,8 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commonmarker (0.17.9)
+      ruby-enum (~> 0.5)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crass (1.0.3)
@@ -99,6 +101,9 @@ GEM
       activerecord (>= 4.0.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    html-pipeline (2.7.1)
+      activesupport (>= 2)
+      nokogiri (>= 1.4)
     htmlentities (4.3.4)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
@@ -223,8 +228,13 @@ GEM
     rgl (0.5.3)
       lazy_priority_queue (~> 0.1.0)
       stream (~> 0.5.0)
+    rinku (1.7.3)
+    ruby-enum (0.7.2)
+      i18n
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
+    sanitize (2.1.0)
+      nokogiri (>= 1.4.4)
     sass (3.5.5)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
@@ -303,11 +313,13 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
+  commonmarker (~> 0.14)
   devise (~> 4.3.0)
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)
   foreman
   friendly_id (~> 5.1.0)
+  html-pipeline
   image_processing
   inky-rb
   jbuilder (~> 2.5)
@@ -326,6 +338,8 @@ DEPENDENCIES
   redis (~> 3.0)
   redis-rails (~> 5)
   rgl
+  rinku (~> 1.7)
+  sanitize (~> 2.0)
   sass-rails (~> 5.0)
   selenium-webdriver
   shrine

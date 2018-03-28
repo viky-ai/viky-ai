@@ -1,0 +1,33 @@
+.markdown{
+  code{
+    background-color: #f9f9f9;
+    padding: .1em .25em;
+    color: #444;
+    font-size: .9em;
+    border-radius: 2px;
+  }
+
+  pre{
+    background-color: #f9f9f9;
+    padding: 1em;
+    font-size: .85em;
+    color: #444;
+    line-height: 1.4em;
+  }
+
+  blockquote{
+    border-left: 4px solid #eee;
+    padding-left: 1em;
+    margin-left: 1em;
+    small{
+      font-size: .9em;
+      color: #888;
+    }
+  }
+
+  img{
+    display:block;
+    max-width: 100%;
+  }
+
+}
