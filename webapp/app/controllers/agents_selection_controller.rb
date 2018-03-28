@@ -5,8 +5,12 @@ class AgentsSelectionController < ApplicationController
 
   def index
     @search = AgentSelectSearch.new(current_user, search_params)
-    @available_destinations = @agent.available_destinations(@search.options).order(name: :asc)
-    render partial: 'select_destination', locals: {
+    if params[:from] == 'agents'
+      @available_agents = @agent.available_successors(@search.options).order(name: :asc)
+    else
+      @available_agents = @agent.available_destinations(@search.options).order(name: :asc)
+    end
+    render partial: 'select_available_agent', locals: {
       from: params[:from],
       current_id: params[:current_id]
     }

@@ -4,12 +4,6 @@ class DependenciesController < ApplicationController
   before_action :set_owner_and_agent
   before_action :check_user_rights
 
-  def new
-    @search = AgentSelectSearch.new(current_user, search_params)
-    @available_successors = @agent.available_successors(@search.options).order(name: :asc)
-    render partial: 'new'
-  end
-
   def create
     arc = AgentArc.new(source: @agent, target_id: params[:id])
     if arc.save
@@ -72,9 +66,5 @@ class DependenciesController < ApplicationController
       rescue ActiveRecord::RecordNotFound
         redirect_to '/404'
       end
-    end
-
-    def search_params
-      params.permit(search: [:query, :filter_owner])[:search]
     end
 end

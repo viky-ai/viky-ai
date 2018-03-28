@@ -75,7 +75,7 @@
   <% if @agent.available_successors(search.options).count > 0 && user_can_edit_dependency %>
     <div class="agent-compact agent-compact--new">
       <%= link_to "<span class='icon'>#{icon_add}</span> #{t('views.dependencies.index.new')}".html_safe,
-            new_user_agent_dependency_path(@agent.owner, @agent.agentname),
+                  agents_selection_user_agent_path(@agent.owner, @agent.agentname, from: controller_name, current_id: @agent.id),
             data: { action: 'open-remote-modal' } %>
     </div>
   <% end %>

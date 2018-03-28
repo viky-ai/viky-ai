@@ -97,47 +97,16 @@ class Agent < ApplicationRecord
   end
 
   def available_successors(q = {})
-    conditions = Agent
-                 .joins(:memberships)
-                 .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-                 .where.not(id: successors.pluck(:id))
-                 .where.not(id: id)
-    if q[:filter_owner] == 'favorites'
-      conditions = conditions
-                     .joins(:favorite_agents)
-                     .where(favorite_agents: { user: q[:user_id]})
-    end
-    if q[:query].present?
-      conditions = conditions.where(
-        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
-        "%#{q[:query]}%",
-        "%#{q[:query]}%",
-        "%#{q[:query]}%"
-      )
-    end
-    conditions
+    search_available_agents(q)
+      .unscope(where: :user_id)
+      .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+      .where.not(id: successors.pluck(:id))
       .distinct
   end
 
   def available_destinations(q = {})
-    current_user = User.find(q[:user_id])
-    conditions = current_user.agents
-                   .where(memberships: { rights: [:all, :edit] })
-                   .where.not(id: id)
-    if q[:filter_owner] == 'favorites'
-      conditions = conditions
-                     .joins(:favorite_agents)
-                     .where(favorite_agents: { user: q[:user_id]})
-    end
-    if q[:query].present?
-      conditions = conditions.where(
-        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
-        "%#{q[:query]}%",
-        "%#{q[:query]}%",
-        "%#{q[:query]}%"
-      )
-    end
-    conditions
+    search_available_agents(q)
+      .where(memberships: { rights: [:all, :edit] })
   end
 
   def transfer_ownership_to(new_owner_id)
@@ -193,6 +162,25 @@ class Agent < ApplicationRecord
 
 
   private
+
+    def search_available_agents(q)
+      current_user = User.find(q[:user_id])
+      conditions = current_user.agents
+      if q[:filter_owner] == 'favorites'
+        conditions = conditions
+                       .joins(:favorite_agents)
+                       .where(favorite_agents: { user: q[:user_id] })
+      end
+      if q[:query].present?
+        conditions = conditions.where(
+          'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%"
+        )
+      end
+      conditions.where.not(id: id)
+    end
 
     def check_collaborators_presence
       return if can_be_destroyed?
