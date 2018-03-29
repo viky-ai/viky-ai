@@ -97,16 +97,20 @@ class Agent < ApplicationRecord
   end
 
   def available_successors(q = {})
-    search_available_agents(q)
-      .unscope(where: :user_id)
-      .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-      .where.not(id: successors.pluck(:id))
+    conditions = Agent
+                   .joins(:memberships)
+                   .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+                   .where.not(id: successors.pluck(:id))
+    search_available_agents(conditions, q)
       .distinct
   end
 
   def available_destinations(q = {})
-    search_available_agents(q)
-      .where(memberships: { rights: [:all, :edit] })
+    conditions = User
+                   .find(q[:user_id])
+                   .agents
+                   .where(memberships: { rights: [:all, :edit] })
+    search_available_agents(conditions, q)
   end
 
   def transfer_ownership_to(new_owner_id)
@@ -163,13 +167,11 @@ class Agent < ApplicationRecord
 
   private
 
-    def search_available_agents(q)
-      current_user = User.find(q[:user_id])
-      conditions = current_user.agents
+    def search_available_agents(conditions, q)
       if q[:filter_owner] == 'favorites'
         conditions = conditions
-                       .joins(:favorite_agents)
-                       .where(favorite_agents: { user: q[:user_id] })
+                     .joins(:favorite_agents)
+                     .where(favorite_agents: { user: q[:user_id] })
       end
       if q[:query].present?
         conditions = conditions.where(
