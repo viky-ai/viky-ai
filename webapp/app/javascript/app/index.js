@@ -24,6 +24,7 @@ import './agents/agent_form';
 import './agents/agent_search_form';
 import './agents/main';
 import './agents/transfer_ownership_form';
+import './dependencies/dependencies_filter';
 import './console/console';
 import './intents/main';
 import './intents/intent_form';

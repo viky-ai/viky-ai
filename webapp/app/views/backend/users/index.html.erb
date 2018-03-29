@@ -13,12 +13,12 @@
   </div>
 </header>
 
-<div class="card">
-  <div class="card-content">
-    <p>
-      <%= page_entries_info @users %>
-    </p>
-    <% unless @users.count == 0 %>
+<% unless @users.count == 0 %>
+  <div class="card">
+    <div class="card-content">
+      <p>
+        <%= page_entries_info @users %>
+      </p>
       <table>
         <thead>
           <tr>
@@ -139,10 +139,24 @@
           <% end %>
         </tbody>
       </table>
-    <% end %>
-
-    <%= paginate @users %>
-
+      <%= paginate @users %>
+    </div>
   </div>
-</div>
+<% else %>
+  <br />
+  <div class="blankslate">
+    <div class="blankslate__illustration">
+      <img src='<%= asset_path("robot-confused.png") %>'
+           srcset='<%= asset_path("robot-confused.png") %> 1x,
+                   <%= asset_path("robot-confused@2x.png") %> 2x' />
+    </div>
+    <div class="blankslate__content">
+      <h2><%= t('views.backend.users.index.not_found') %></h2>
+      <a href="<%= backend_users_path %>" class="btn btn--primary">
+        <span class='icon icon--small'><%= icon_loading %></span>
+        <%= t('views.backend.users.index.reset_search') %>
+      </a>
+    </div>
+  </div>
+<% end %>
 

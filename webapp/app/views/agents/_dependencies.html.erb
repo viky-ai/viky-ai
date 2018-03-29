@@ -1,4 +1,4 @@
-<% user_can_delete_dependency = current_user.can?(:edit, @agent) %>
+<% user_can_edit_dependency = current_user.can?(:edit, @agent) %>
 
 <h4 class="dependencies-title">
   <%= t('views.dependencies.index.list_title') %>
@@ -30,8 +30,9 @@
       <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
     <% end %>
 
-    <div class="agent-compact <% if !user_can_delete_dependency %> agent-compact--without-actions<% end %>">
-      <% if current_user.can?(:show, agent) %>
+    <div class="agent-compact <% if !user_can_edit_dependency %> agent-compact--without-actions<% end %>">
+      <% user_can_show_agent = current_user.can?(:show, agent) %>
+      <% if user_can_show_agent  %>
         <a href="<%= user_agent_path(agent.owner, agent.agentname) %>" class="agent-compact__id">
       <% else %>
         <div class="agent-compact__id">
@@ -44,16 +45,23 @@
             <% end %>
           </div>
           <div class="agent-compact__id__data">
-            <h5><%= agent.name %></h5>
+            <h5>
+              <span><%= agent.name %></span>
+              <% if agent.fans.exists?(current_user.id) %>
+                <span class="icon icon--x-small icon--yellow">
+                  <%= icon_favorite %>
+                </span>
+              <% end %>
+            </h5>
             <h6><%= agent.slug %></h6>
           </div>
-      <% if current_user.can?(:show, agent) %>
+      <% if user_can_show_agent  %>
         </a>
       <% else %>
         </div>
       <% end %>
 
-      <% if user_can_delete_dependency %>
+      <% if user_can_edit_dependency %>
         <div class="agent-compact__actions">
           <a href="<%= user_agent_dependency_confirm_destroy_path(@agent.owner, @agent.agentname, agent) %>"
              class="btn btn--outline btn--small"
@@ -63,7 +71,8 @@
     </div>
   <% end %>
 
-  <% if @agent.available_successors(current_user).count > 0 && current_user.can?(:edit, @agent) %>
+  <% search = SuccessorSearch.new(current_user) %>
+  <% if @agent.available_successors(search.options).count > 0 && user_can_edit_dependency %>
     <div class="agent-compact agent-compact--new">
       <%= link_to "<span class='icon'>#{icon_add}</span> #{t('views.dependencies.index.new')}".html_safe,
             new_user_agent_dependency_path(@agent.owner, @agent.agentname),

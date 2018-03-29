@@ -22,16 +22,16 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   # Show
   #
-  test 'Show access' do
+  test 'Show intent access' do
     sign_in users(:show_on_agent_weather)
     get user_agent_intent_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_forecast))
     assert_response :success
     assert_nil flash[:alert]
   end
 
-  test 'Show forbidden' do
+  test 'Show intent forbidden' do
     sign_in users(:confirmed)
-    get user_agent_intent_url(users(:admin), agents(:terminator), intents(:weather_forecast))
+    get user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end

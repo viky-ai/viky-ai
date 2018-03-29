@@ -16,10 +16,16 @@
     <div class="agent-header__content__title">
       <h2>
         My awesome first agent
+        <span class="icon icon--yellow">
+          <%= icon_favorite %>
+        </span>
         <br /><small>username/agentname</small>
       </h2>
     </div>
     <div class="agent-header__content__actions">
+      <a href="#" class="btn btn--small btn--outline">
+        <span class='icon icon--small'><%= icon_favorite %></span> Remove favorite
+      </a>
       <a href="#" class="btn btn--small btn--outline">
         <span class="icon icon--small"><%= icon_settings %></span> Configure
       </a>
@@ -66,6 +72,9 @@
       </h2>
     </div>
     <div class="agent-header__content__actions">
+      <a href="#" class="btn btn--small btn--outline">
+        <span class='icon icon--small'><%= icon_not_favorite %></span> Add favorite
+      </a>
       <a href="#" class="btn btn--small btn--outline">
         <span class="icon icon--small"><%= icon_settings %></span> Configure
       </a>

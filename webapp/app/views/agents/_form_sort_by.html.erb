@@ -1,0 +1,33 @@
+<%= f.hidden_field :sort_by %>
+<div class="dropdown">
+  <div class="dropdown__trigger">
+    <a href="#" class="btn">
+      <%= t("views.agents.index.sort_by.#{@search.sort_by}") %>
+      <span class="icon icon--x-small">
+        <%= icon_arrow_down %>
+      </span>
+    </a>
+  </div>
+  <div class="dropdown__content dropdown__content--hidden">
+    <ul>
+      <li>
+        <a href="#" <% if @search.sort_by == 'name' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="name"
+           data-form-selector=".agent_search">
+          <%= t('views.agents.index.sort_by.name') %>
+        </a>
+      </li>
+      <li>
+        <a href="#" <% if @search.sort_by == 'updated_at' %>class="current"<% end %>
+           data-behavior="populate-input, submit-form"
+           data-input-selector="input[name='search[sort_by]']"
+           data-input-value="updated_at"
+           data-form-selector=".agent_search">
+          <%= t('views.agents.index.sort_by.updated_at') %>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

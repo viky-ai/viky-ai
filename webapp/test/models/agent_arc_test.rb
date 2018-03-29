@@ -147,13 +147,48 @@ class AgentArcTest < ActiveSupport::TestCase
     create_agent('Agent B')
 
     current_user = users(:admin)
-    successors = agent_a.available_successors(current_user)
+    search = SuccessorSearch.new(current_user)
+    successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',
       'T-800'
     ]
-    assert_equal expected, successors.collect(&:name)
+    assert_equal expected, successors.order(name: :asc).collect(&:name)
+  end
+
+
+  test 'Agent search favorite available successors' do
+    agent_a = create_agent('Agent A')
+    agent_b = create_agent('Agent B')
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = 'is_public'
+    assert agent_public.save
+    current_user = users(:admin)
+
+    assert FavoriteAgent.create(user: current_user, agent: agent_b)
+    assert FavoriteAgent.create(user: current_user, agent: agent_public)
+
+    search = SuccessorSearch.new(current_user, filter_owner: 'favorites')
+    successors = agent_a.available_successors(search.options)
+    expected = [
+      'admin/agent-b',
+      'confirmed/weather'
+    ]
+    assert_equal expected, successors.collect(&:slug)
+  end
+
+
+  test 'Agent search with query available successors' do
+    agent_a = create_agent('Agent A')
+    create_agent('Agent 212')
+    current_user = users(:admin)
+    search = SuccessorSearch.new(current_user, query: 'agent')
+    successors = agent_a.available_successors(search.options)
+    expected = [
+      'admin/agent-212'
+    ]
+    assert_equal expected, successors.collect(&:slug)
   end
 
 
@@ -166,14 +201,26 @@ class AgentArcTest < ActiveSupport::TestCase
     assert agent_public.save
 
     current_user = users(:admin)
-    successors = agent_a.available_successors(current_user)
+    search = SuccessorSearch.new(current_user)
+    successors = agent_a.available_successors(search.options).order(name: :asc)
     expected = [
       'Agent B',
       'My awesome weather bot',
       'T-800',
       'Weather bot'
     ]
-    assert_equal expected, successors.collect(&:name)
+    assert_equal expected, successors.order(name: :asc).collect(&:name)
   end
 
+
+  test 'Empty successor search' do
+    user = users(:admin)
+    assert SuccessorSearch.new(user).empty?
+
+    criteria = {
+      'filter_owner' => 'owned',
+      'query' => 'weather'
+    }
+    assert !SuccessorSearch.new(user, criteria).empty?
+  end
 end

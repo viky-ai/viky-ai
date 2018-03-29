@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   end
 
   scope '/agents' do
+    resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
         member do
