@@ -99,6 +99,9 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link 'My awesome weather bot'
     end
 
+    assert page.has_text?('Entities list terminator_targets moved to agent My awesome weather bot')
+    assert page.has_link?('My awesome weather bot')
+
     go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_private' do
       assert page.has_text?('terminator_targets')

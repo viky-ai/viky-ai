@@ -88,11 +88,14 @@ class EntitiesListsController < ApplicationController
     user_destination = User.friendly.find(params[:user])
     agent_destination = user_destination.agents.friendly.find(params[:agent])
     if @entities_list.change_agent(current_user, agent_destination)
-      redirect_to user_agent_entities_lists_path(@owner, @agent), notice: t(
-        'views.entities_lists.move_to.success_message',
-        name: @entities_list.listname,
-        agent: agent_destination.agentname
-      )
+      redirect_to user_agent_entities_lists_path(@owner, @agent), notice: {
+        i18n_key: 'views.entities_lists.move_to.success_message_html',
+        locals: {
+          name: @entities_list.listname,
+          agent_name: agent_destination.name,
+          agent_link: user_agent_entities_lists_url(agent_destination.owner, agent_destination)
+        }
+      }
     else
       redirect_to user_agent_entities_lists_path(@owner, @agent), alert: t(
         'views.entities_lists.move_to.errors_message',

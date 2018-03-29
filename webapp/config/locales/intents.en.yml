@@ -37,7 +37,7 @@ en:
         empty_message: The interpretation already contains every available languages.
         errors_message: "Add language failed: %{errors}."
       move_to:
-        success_message: 'Intent %{name} moved to agent %{agent}.'
+        success_message_html: 'Intent %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
         errors_message: "Move intent to agent failed: %{errors}."
       blankslate:
         message_edit_html: >

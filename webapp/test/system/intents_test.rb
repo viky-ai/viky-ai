@@ -153,6 +153,9 @@ class IntentsTest < ApplicationSystemTestCase
       click_link 'T-800'
     end
 
+    assert page.has_text?('Intent weather_question moved to agent T-800')
+    assert page.has_link?('T-800')
+
     go_to_agent_intents('admin', 'terminator')
     within '#intents-list-is_private' do
       assert page.has_text?('weather_question')
