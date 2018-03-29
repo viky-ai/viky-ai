@@ -458,7 +458,7 @@ class AgentTest < ActiveSupport::TestCase
     assert weather_confirmed.save
 
     other_agent_with_edit = Agent.create(
-      name: 'other_agent_with_edit',
+      name: 'Other_agent_with_edit',
       agentname: 'other_agent_with_edit'.parameterize,
       memberships: [
         Membership.new(user: users(:confirmed), rights: 'all'),
@@ -468,7 +468,7 @@ class AgentTest < ActiveSupport::TestCase
     assert other_agent_with_edit.save
 
     other_agent_without_edit = Agent.create(
-      name: 'other_agent_without_edit',
+      name: 'Other_agent_without_edit',
       agentname: 'other_agent_without_edit'.parameterize,
       memberships: [
         Membership.new(user: users(:confirmed), rights: 'all'),
