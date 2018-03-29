@@ -255,13 +255,13 @@ module Nls
       combination << Expression.new("@{combination1}", aliases: { combination1: combination1 })
 
       combinations = package.new_interpretation("combinations")
-      combinations << Expression.new(" @{combination} @{combinations}", aliases: {combination: combination, combinations: combinations})
+      combinations << Expression.new("@{combinations} @{combination}", aliases: {combinations: combinations, combination: combination})
       combinations << Expression.new("@{combination}", aliases: {combination: combination})
 
 
       numbers_list = package.new_interpretation("numbers_list")
-      numbers_list << Expression.new("@{numbers_list} @{numbers}", aliases: {numbers_list: numbers_list, numbers: numbers})
-      numbers_list << Expression.new("@{numbers}", aliases: {numbers: numbers})
+      numbers_list << Expression.new("@{number}", aliases: {number: numbers})
+numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers, numbers: numbers_list})
 
       complex_number = package.new_interpretation("complex_number")
       complex_number << Expression.new("@{letter1} @{number} @{letter2}", aliases: { letter1: letters, number: Alias.number, letter2: letters})

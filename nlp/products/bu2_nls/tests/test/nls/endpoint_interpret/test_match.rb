@@ -394,7 +394,7 @@ module Nls
         Nls.package_update(pg_building_feature)
 
         # resultat attendu
-        expected = Answers.new(pg_building_feature["pg-building-features"])
+        expected = Answers.new(pg_building_feature["pg-building-features"],[])
 
         # creation et exécution de la requete
         request = json_interpret_body(pg_building_feature, "with swimming pool with sea view", Interpretation.default_locale)

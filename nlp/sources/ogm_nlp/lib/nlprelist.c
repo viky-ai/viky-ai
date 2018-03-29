@@ -26,7 +26,9 @@ static og_status NlpRequestExpressionListsSortReset(og_nlp_th ctrl_nlp_th);
 static og_status NlpRequestExpressionListsSortRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression);
 static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+#if 0
 static int NlpRequestExpressionAdjustPositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+#endif
 static og_status NlpRequestExpressionListSortRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression);
 static og_status NlpRequestExpressionListAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -75,7 +77,7 @@ og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_ex
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     NlpLog(DOgNlpTraceMatch, "NlpRequestExpressionListsSort: before:");
-    NlpInterpretTreeLog(ctrl_nlp_th, request_expression);
+    NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0);
   }
 
   IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, request_expression, request_expression));
@@ -83,7 +85,7 @@ og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_ex
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     NlpLog(DOgNlpTraceMatch, "NlpRequestExpressionListsSort: after:");
-    NlpInterpretTreeLog(ctrl_nlp_th, request_expression);
+    NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0);
   }
 
   DONE;
@@ -92,25 +94,29 @@ og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_ex
 static og_status NlpRequestExpressionListsSortRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression)
 {
-  for (int i = 0; i < request_expression->orips_nb; i++)
-  {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
 
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
+  if (request_expression == root_request_expression && request_expression->expression->interpretation->is_recursive)
+  {
+    IFE(NlpRequestExpressionListSort(ctrl_nlp_th, request_expression));
+  }
+  else
+  {
+    for (int i = 0; i < request_expression->orips_nb; i++)
     {
-      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
-      IFN(sub_request_expression) DPcErr;
-      if (request_expression == root_request_expression && request_expression->expression->is_recursive)
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Interpretation)
       {
-        IFE(NlpRequestExpressionListSort(ctrl_nlp_th, request_expression));
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+        if (!request_expression->expression->is_recursive && sub_request_expression->expression->interpretation->is_recursive)
+        {
+          IFE(NlpRequestExpressionListSort(ctrl_nlp_th, sub_request_expression));
+          IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+        }
       }
-      else if (!request_expression->expression->is_recursive && sub_request_expression->expression->is_recursive)
-      {
-        IFE(NlpRequestExpressionListSort(ctrl_nlp_th, sub_request_expression));
-      }
-      IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
     }
   }
 
@@ -135,7 +141,7 @@ static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct requ
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpRequestExpressionListSort: working on the following expression:");
-    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
 
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "elements of re_in_list:");
     for (int i = 0; i < re_in_list_used; i++)
@@ -155,6 +161,28 @@ static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct requ
     }
   }
 
+  // setting the sorted_flat_list GQueue
+  for (int i = 0; i < re_in_list_used; i++)
+  {
+    struct re_to_sort *re_to_sort = re_to_sorts + i;
+    struct re_in_list *re_in_list = re_in_lists + re_to_sort->Ire_in_list;
+    g_queue_push_tail(request_expression->sorted_flat_list,
+        GINT_TO_POINTER(re_in_list->request_input_part->Irequest_expression));
+  }
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpRequestExpressionListSort: sorted flat list:");
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
+    {
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          Irequest_expression);
+      IFE(NlpRequestExpressionLog(ctrl_nlp_th, sub_request_expression, 2));
+    }
+  }
+
+#if 0
   // setting the sorted original_request_input_parts
   for (int i = 0; i < re_in_list_used; i++)
   {
@@ -188,10 +216,11 @@ static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct requ
     struct re_in_list *re_in_list = re_in_lists + i;
     IFE(NlpRequestExpressionAdjustPositions(ctrl_nlp_th, re_in_list->mother_request_expression));
   }
-
+#endif
   DONE;
 }
 
+#if 0
 static int NlpRequestExpressionAdjustPositions(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   int nb_request_positions = 0;
@@ -223,6 +252,7 @@ static int NlpRequestExpressionAdjustPositions(og_nlp_th ctrl_nlp_th, struct req
   IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
   DONE;
 }
+#endif
 
 static og_status NlpRequestExpressionListSortRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression)
@@ -237,7 +267,7 @@ static og_status NlpRequestExpressionListSortRecursive(og_nlp_th ctrl_nlp_th,
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
-      if (request_expression->expression->is_recursive && !sub_request_expression->expression->is_recursive)
+      if (request_expression->expression->interpretation->is_recursive && !sub_request_expression->expression->is_recursive)
       {
         IFE(NlpRequestExpressionListAdd(ctrl_nlp_th, request_expression, request_input_part, i));
       }

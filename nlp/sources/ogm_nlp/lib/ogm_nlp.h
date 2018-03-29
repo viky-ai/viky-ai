@@ -453,6 +453,8 @@ struct request_expression
   int request_anys_nb;
 
   int Isuper_request_expression;
+  // can be NULL when it is the root expression
+  struct alias *mothers_alias;
 
   int Irequest_any;
   struct request_word *auto_complete_request_word;
@@ -470,6 +472,11 @@ struct request_expression
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
   int any_validate_status;
+
+  /* sorted flat representation of the recursive list
+   * when flat_list->length != 0 use this structure to navigate
+   * the flat list is sorted according to word order */
+  GQueue sorted_flat_list[1];
 
   struct request_score score[1];
   double total_score;
@@ -492,6 +499,7 @@ struct alias_solution
 {
   struct alias *alias;
   json_t *json_solution;
+  og_bool is_sorted_flat_list;
 };
 
 struct og_nlp_punctuation_word
@@ -856,7 +864,7 @@ og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expr
     int Ioriginal_request_input_part);
 
 /* nlptree.c */
-og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 
 /* nlpany.c */
 og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th);
