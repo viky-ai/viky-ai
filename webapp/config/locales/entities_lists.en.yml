@@ -52,4 +52,5 @@ en:
         message_show_html: >
           No entity list entered for the "%{agent}" agent.
       move_to:
+        success_message: 'Entities list %{name} moved to agent %{agent}.'
         errors_message: "Move entities list to agent failed: %{errors}."

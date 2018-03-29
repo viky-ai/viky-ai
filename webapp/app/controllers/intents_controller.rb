@@ -123,7 +123,11 @@ class IntentsController < ApplicationController
     user_destination = User.friendly.find(params[:user])
     agent_destination = user_destination.agents.friendly.find(params[:agent])
     if @intent.change_agent(current_user, agent_destination)
-      redirect_to user_agent_intents_path(@owner, @agent)
+      redirect_to user_agent_intents_path(@owner, @agent), notice: t(
+        'views.intents.move_to.success_message',
+        name: @intent.intentname,
+        agent: agent_destination.agentname
+      )
     else
       redirect_to user_agent_intents_path(@owner, @agent), alert: t(
         'views.intents.move_to.errors_message',
