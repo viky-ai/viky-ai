@@ -17,13 +17,34 @@
 
   blockquote{
     border-left: 4px solid #eee;
-    padding-left: 1em;
-    margin-left: 1em;
-    small{
-      font-size: .9em;
+    background-color: #f9f9f9;
+    margin: 1em 0;
+    padding: 25px 60px;
+    font-size: 1.1em;
+    p{
+      margin: .5em 0;
+    }
+
+    cite{
+      font-size: 0.9em;
+      font-style: normal;
       color: #888;
     }
   }
+
+  blockquote:before {
+    font-family: Georgia, serif;
+    content: open-quote;
+    display: block;
+    height: 0;
+    line-height: 0;
+    left: -40px;
+    position: relative;
+    top: 25px;
+    font-size: 3em;
+    color: $primary_color;
+  }
+
 
   img{
     display:block;

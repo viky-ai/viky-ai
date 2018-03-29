@@ -34,5 +34,6 @@ import './entities_lists/entities_import_form';
 import './interpretations/main';
 import './interpretations/interpretation_form';
 import './entities/main';
+import './readme/form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
 window.App.EntityForm = require('./entities/entity_form');

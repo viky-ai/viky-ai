@@ -15,16 +15,36 @@ class ReadmeTest < ApplicationSystemTestCase
   end
 
 
+  test 'Readme creation default state' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    click_link 'Add a README'
+    within('.modal') do
+      assert page.has_text? 'Create README'
+      assert page.has_text? 'You can use this README to describe current agent. Write content in Mardown format.'
+    end
+  end
+
+
+  test 'Readme creation live preview' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    click_link 'Add a README'
+    within('.modal') do
+      assert page.has_text? 'Create README'
+      fill_in_code_editor('# Hello')
+      assert_equal "Hello", first('.markdown-editor__preview h1').text
+    end
+  end
+
+
   test 'Readme creation failure' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
-      fill_in 'readme_content', with: ''
+      fill_in_code_editor('')
       click_button 'Create'
-      expected = ["Content can't be blank"]
-      assert_equal expected, all('.help--error').collect(&:text)
     end
+    assert page.has_text?("README can't be blank")
   end
 
 
@@ -33,7 +53,7 @@ class ReadmeTest < ApplicationSystemTestCase
     click_link 'Add a README'
     within('.modal') do
       assert page.has_text? 'Create README'
-      fill_in 'readme_content', with: 'README creation test.'
+      fill_in_code_editor('README creation test.')
       click_button 'Create'
     end
     assert page.has_text?('README has been successfully created.')
@@ -46,11 +66,10 @@ class ReadmeTest < ApplicationSystemTestCase
     click_link 'Edit'
     within('.modal') do
       assert page.has_text? 'Edit README'
-      fill_in 'readme_content', with: ''
+      fill_in_code_editor('')
       click_button 'Update'
-      expected = ["Content can't be blank"]
-      assert_equal expected, all('.help--error').collect(&:text)
     end
+    assert page.has_text?("README can't be blank")
   end
 
 
@@ -59,7 +78,7 @@ class ReadmeTest < ApplicationSystemTestCase
     click_link 'Edit'
     within('.modal') do
       assert page.has_text? 'Edit README'
-      fill_in 'readme_content', with: 'README creation update test.'
+      fill_in_code_editor('README creation update test.')
       click_button 'Update'
     end
     assert page.has_text?('README has been successfully updated.')
@@ -82,5 +101,14 @@ class ReadmeTest < ApplicationSystemTestCase
     assert page.has_text?('README has successfully been deleted.')
   end
 
+  private
+
+    def fill_in_code_editor(text)
+      page.execute_script(
+        "var textArea= document.getElementById('readme_content');
+         var editor = textArea.nextSibling.CodeMirror;
+         editor.getDoc().setValue('#{text}');"
+      )
+    end
 
 end

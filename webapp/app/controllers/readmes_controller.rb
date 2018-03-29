@@ -5,6 +5,11 @@ class ReadmesController < ApplicationController
 
   def new
     @readme = Readme.new
+    defaut_content = []
+    defaut_content << I18n.t('views.readme.new.default_prefix')
+    defaut_content << I18n.t("views.readme.new.default_citation_#{Random.rand(1..6)}")
+    defaut_content << I18n.t('views.readme.new.default_suffix')
+    @readme.content = defaut_content.join("\n")
     render partial: 'new'
   end
 

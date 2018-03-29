@@ -5,8 +5,11 @@ class Readme < ApplicationRecord
   validates :content, presence: true
 
   def display
+    whitelist = HTML::Pipeline::SanitizationFilter::WHITELIST
+    whitelist[:elements] << "cite"
     context = {
-      gfm: true
+      gfm: true,
+      whitelist: whitelist
     }
 
     pipeline = HTML::Pipeline.new [

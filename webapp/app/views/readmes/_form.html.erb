@@ -1,11 +1,25 @@
 <%= form_with model: [owner, agent, readme],
       url: user_agent_readme_path(owner, agent),
-      data: { type: 'json' }, class: "readme-form" do |f| %>
+      data: { type: 'json' }, class: "js-readme-form" do |f| %>
 
   <div class="field">
-    <div class="control">
-      <%= f.text_area :content, id: 'readme_content' %>
-      <%= display_errors(readme, :content) %>
+    <% if readme.errors[:content].any? %>
+      <script>
+        App.Message.alert("<%= escape_javascript("README #{readme.errors[:content].join(', ')}") %>")
+      </script>
+    <% end %>
+
+    <div class="markdown-editor">
+      <div>
+        <span class="label"><%= t('views.readme.form.content_label') %></span>
+        <div class="markdown-editor__input">
+          <%= f.text_area :content, id: 'readme_content', spellcheck: false %>
+        </div>
+      </div>
+      <div>
+        <span class="label"><%= t('views.readme.form.preview_label') %></span>
+        <div class="markdown-editor__preview markdown"></div>
+      </div>
     </div>
   </div>
 
