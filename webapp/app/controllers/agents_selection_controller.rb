@@ -4,13 +4,16 @@ class AgentsSelectionController < ApplicationController
   before_action :check_user_rights
 
   def index
+    name = ''
     @search = AgentSelectSearch.new(current_user, search_params)
     if params[:from] == 'agents'
       @available_agents = @agent.available_successors(@search.options).order(name: :asc)
     else
       @available_agents = @agent.available_destinations(@search.options).order(name: :asc)
+      name = params[:from] == 'intents' ? Intent.find(params[:current_id]).intentname : EntitiesList.find(params[:current_id]).listname
     end
     render partial: 'select_available_agent', locals: {
+      name: name,
       from: params[:from],
       current_id: params[:current_id]
     }

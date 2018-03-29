@@ -5,7 +5,7 @@
       <% if from == 'agents' %>
         <%= t('views.dependencies.new.title') %>
       <% else %>
-        <%= t('views.agents.agents_selection.title') %>
+        <%= t('views.agents.agents_selection.title', name: name) %>
       <% end %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
@@ -23,7 +23,7 @@
       <% else %>
         <ul class="agent-compact-list">
           <% @available_agents.each do |agent| %>
-            <% cache [agent, current_user] do %>
+            <% cache [agent, current_user, from, current_id] do %>
               <%= render 'available_agent', agent_to_select: agent, from: from, current_id: current_id %>
             <% end %>
           <% end %>
