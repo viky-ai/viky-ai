@@ -18,7 +18,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
@@ -237,11 +237,11 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         sub_solution = json_null();
       }
 
-      og_string alias_name="root";
+      og_string alias_name = "root";
       struct alias *alias = request_expression->mothers_alias;
       if (alias)
       {
-        alias_name=alias->alias;
+        alias_name = alias->alias;
       }
 
       char solution[DPcPathSize];
@@ -402,74 +402,112 @@ og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expressi
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
-    og_string solution_key = NULL;
-    if (alias_solution->alias== NULL) solution_key= "root";
-    else solution_key = alias_solution->alias->alias;
     json_t *sub_solution = alias_solution->json_solution;
 
-    // dans l'interpretation récursive a_list
-    // expr: a
-    // expr: a a_list
-    // alias_is_recursive ne s'applique qu'au a de la seconde expression
-    if (sub_solution != NULL && !json_is_null(sub_solution))
+    og_string solution_key_str = "root_expression";
+    og_string solution_key = NULL;
+    if (alias_solution->alias)
     {
-      if (alias_solution->is_sorted_flat_list)
-      {
-        // a list must an array
-        json_t *expression_solution = json_object_get(request_expression->json_solution, solution_key);
+      solution_key = alias_solution->alias->alias;
+      solution_key_str = solution_key;
+    }
 
+    // On est dans une interpretation récursive (une liste : alias_solution->is_sorted_flat_list)
+    if (alias_solution->is_sorted_flat_list)
+    {
+      // a list must an array
+      json_t *array = NULL;
+      json_t *expression_solution = NULL;
+      if (json_is_object(request_expression->json_solution))
+      {
+        expression_solution = json_object_get(request_expression->json_solution, solution_key);
         if (json_is_array(expression_solution))
         {
-          IF(json_array_append_new(expression_solution, sub_solution))
+          array = expression_solution;
+        }
+      }
+      else if (json_is_array(request_expression->json_solution))
+      {
+        array = request_expression->json_solution;
+      }
+
+      // build a new array
+      if (array == NULL)
+      {
+        array = json_array();
+        if (solution_key)
+        {
+          IF(json_object_set_new(request_expression->json_solution, solution_key, array))
           {
-            og_char_buffer buffer[DPcPathSize];
-            IFE(NlpJsonToBuffer(sub_solution, buffer, DPcPathSize, NULL, 0));
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list is an array, append on sub_solution"
-                " failed : '%s' => '%s'", solution_key, buffer);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, new array failed :"
+                " '%s' => []", solution_key_str);
             DPcErr;
           }
         }
         else
         {
-          json_t *list = json_array();
-          IF(json_object_set_new(request_expression->json_solution, solution_key, list))
-          {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, new array failed :"
-                " '%s' => []", solution_key);
-            DPcErr;
-          }
+          json_decrefp(&request_expression->json_solution);
+          request_expression->json_solution = array;
+        }
+      }
 
-          if (expression_solution == NULL || json_is_null(expression_solution))
+      if (expression_solution != NULL && !json_is_null(expression_solution) && array != expression_solution)
+      {
+        // append preview value to array
+        IF(json_array_append_new(array, expression_solution))
+        {
+          og_char_buffer buffer[DPcPathSize];
+          IFE(NlpJsonToBuffer(expression_solution, buffer, DPcPathSize, NULL, 0));
+
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, append preview solution"
+              " failed : '%s' => '%s'", solution_key_str, buffer);
+          DPcErr;
+        }
+      }
+
+      if (sub_solution != NULL && !json_is_null(sub_solution) && array != sub_solution)
+      {
+        // merge both array
+        if (json_is_array(sub_solution))
+        {
+          size_t index = 0;
+          json_t *value = NULL;
+
+          json_array_foreach(sub_solution, index, value)
           {
-            // do nothing skip null values
-          }
-          else
-          {
-            // append value to array
-            IF(json_array_append_new(list, expression_solution))
+            if (value != NULL && !json_is_null(value))
             {
-              og_char_buffer buffer[DPcPathSize];
-              IFE(NlpJsonToBuffer(expression_solution, buffer, DPcPathSize, NULL, 0));
-              NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, append "
-                  " failed : '%s' => '%s'", solution_key, buffer);
-              DPcErr;
+              IF(json_array_append(array, value))
+              {
+                og_char_buffer buffer[DPcPathSize];
+                IFE(NlpJsonToBuffer(sub_solution, buffer, DPcPathSize, NULL, 0));
+                NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: append sub_solution merged each simple value"
+                    " in existing array failed : '%s' => '%s'", solution_key_str, buffer);
+                DPcErr;
+              }
             }
           }
-          IF(json_array_append_new(list, sub_solution))
+        }
+
+        // append sub_solution in array
+        else
+        {
+          IF(json_array_append(array, sub_solution))
           {
             og_char_buffer buffer[DPcPathSize];
             IFE(NlpJsonToBuffer(sub_solution, buffer, DPcPathSize, NULL, 0));
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, append on sub_solution"
-                " failed : '%s' => '%s'", solution_key, buffer);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: append sub_solution in array"
+                " failed : '%s' => '%s'", solution_key_str, buffer);
             DPcErr;
           }
-
         }
+
       }
-      else
-      {
-        IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, solution_key, sub_solution));
-      }
+
+    }
+    else
+    {
+      IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, solution_key, sub_solution));
     }
   }
 
@@ -828,13 +866,12 @@ static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expressi
   DONE;
 }
 
-static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression)
 {
   if (request_expression->json_solution)
   {
     json_decrefp(&request_expression->json_solution);
-    request_expression->json_solution = NULL;
   }
 
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
@@ -846,19 +883,35 @@ static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_e
   }
   g_queue_clear(request_expression->tmp_solutions);
 
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  if (request_expression->sorted_flat_list->length > 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
+    // Create List with all sub_request_expression->solution
+    request_expression->json_solution = json_array();
 
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
+          Irequest_expression);
       IFN(sub_request_expression) DPcErr;
-      og_bool sub_solution_built = NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression,
-          sub_request_expression);
-      IFE(sub_solution_built);
+      IFE(NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+    }
+
+  }
+  else
+  {
+    for (int i = 0; i < request_expression->orips_nb; i++)
+    {
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Interpretation)
+      {
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+        IFE(NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+      }
     }
   }
 

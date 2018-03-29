@@ -368,6 +368,12 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         expected_solution = expected[:solution]
         if expected_solution.kind_of?(Hash)
           expected_solution.deep_stringify_keys!
+        elsif expected_solution.kind_of?(Array)
+          expected_solution.each do |h|
+            if h.kind_of?(Hash)
+              h.deep_stringify_keys!
+            end
+          end
         end
 
         if expected_solution.nil?

@@ -71,89 +71,122 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   DONE;
 }
 
+static og_status NlpInterpretTreeJsonRecursiveSub(og_nlp_th ctrl_nlp_th, json_t *json_expressions,
+    struct request_expression *root_request_expression, struct request_expression *request_expression,
+    json_t *json_expression, struct request_expression *sub_request_expression)
+{
+  json_t *json_sub_expression = json_object();
+  json_t *json_sub_expression_text = json_string(sub_request_expression->expression->text);
+  IF(json_object_set_new(json_sub_expression, "text", json_sub_expression_text))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
+    DPcErr;
+  }
+  struct interpretation *interpretation = sub_request_expression->expression->interpretation;
+  json_t *json_interpretation_slug = json_string(interpretation->slug);
+  IF(json_object_set_new(json_sub_expression, "slug", json_interpretation_slug))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_interpretation_slug");
+    DPcErr;
+  }
+
+  char highlight[DPcPathSize];
+  NlpRequestPositionStringHighlight(ctrl_nlp_th, sub_request_expression->request_position_start,
+      sub_request_expression->request_positions_nb, DPcPathSize, highlight);
+  json_t *json_expression_highlight = json_string(highlight);
+  IF(json_object_set_new(json_sub_expression, "highlight", json_expression_highlight))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression_highlight");
+    DPcErr;
+  }
+
+  og_char_buffer scores[DPcPathSize];
+  struct request_score *score = sub_request_expression->score;
+  sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f", score->coverage,
+      score->locale, score->spelling, score->overlap, score->any, score->context, score->scope);
+  IF(json_object_set_new(json_sub_expression, "scores", json_string(scores)))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression_scores");
+    DPcErr;
+  }
+
+  IF(json_array_append_new(json_expressions, json_sub_expression))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
+    DPcErr;
+  }
+  og_status status = NlpInterpretTreeJsonRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression,
+      json_sub_expression);
+  IFE(status);
+
+  DONE;
+}
+
 static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
     struct request_expression *root_request_expression, struct request_expression *request_expression,
     json_t *json_expression)
 {
   json_t *json_expressions = json_array();
 
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  if (request_expression->sorted_flat_list->length > 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
 
-    if (request_input_part->type == nlp_input_part_type_Word)
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
-      struct request_word *request_word = request_input_part->request_word;
-      og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-      IFN(string_request_word) DPcErr;
-
-      json_t *json_sub_expression = json_object();
-      IF(json_array_append_new(json_expressions, json_sub_expression))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
-        DPcErr;
-      }
-
-      json_t *json_sub_expression_text = json_string(string_request_word);
-      IF(json_object_set_new(json_sub_expression, "word", json_sub_expression_text))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
-        DPcErr;
-      }
-
-    }
-    else if (request_input_part->type == nlp_input_part_type_Interpretation)
-    {
-
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
-      IFN(sub_request_expression) DPcErr;
+          Irequest_expression);
 
-      json_t *json_sub_expression = json_object();
-      json_t *json_sub_expression_text = json_string(sub_request_expression->expression->text);
-      IF(json_object_set_new(json_sub_expression, "text", json_sub_expression_text))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
-        DPcErr;
-      }
-      struct interpretation *interpretation = sub_request_expression->expression->interpretation;
-      json_t *json_interpretation_slug = json_string(interpretation->slug);
-      IF(json_object_set_new(json_sub_expression, "slug", json_interpretation_slug))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_interpretation_slug");
-        DPcErr;
-      }
-
-      char highlight[DPcPathSize];
-      NlpRequestPositionStringHighlight(ctrl_nlp_th, sub_request_expression->request_position_start,
-          sub_request_expression->request_positions_nb, DPcPathSize, highlight);
-      json_t *json_expression_highlight = json_string(highlight);
-      IF(json_object_set_new(json_sub_expression, "highlight", json_expression_highlight))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression_highlight");
-        DPcErr;
-      }
-
-      og_char_buffer scores[DPcPathSize];
-      struct request_score *score = sub_request_expression->score;
-      sprintf(scores, "cov:%.2f loc:%.2f spell:%.2f olap:%.2f any:%.2f ctx:%0.2f scope:%.2f", score->coverage,
-          score->locale, score->spelling, score->overlap, score->any, score->context, score->scope);
-      IF(json_object_set_new(json_sub_expression, "scores", json_string(scores)))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_expression_scores");
-        DPcErr;
-      }
-
-      IF(json_array_append_new(json_expressions, json_sub_expression))
-      {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
-        DPcErr;
-      }
-      og_status status = NlpInterpretTreeJsonRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression,
-          json_sub_expression);
+      og_status status = NlpInterpretTreeJsonRecursiveSub(ctrl_nlp_th, json_expressions, root_request_expression,
+          request_expression, json_expression, sub_request_expression);
       IFE(status);
+
     }
+
+  }
+  else
+  {
+
+    for (int i = 0; i < request_expression->orips_nb; i++)
+    {
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Word)
+      {
+        struct request_word *request_word = request_input_part->request_word;
+        og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+        IFN(string_request_word) DPcErr;
+
+        json_t *json_sub_expression = json_object();
+        IF(json_array_append_new(json_expressions, json_sub_expression))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
+          DPcErr;
+        }
+
+        json_t *json_sub_expression_text = json_string(string_request_word);
+        IF(json_object_set_new(json_sub_expression, "word", json_sub_expression_text))
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
+          DPcErr;
+        }
+
+      }
+      else if (request_input_part->type == nlp_input_part_type_Interpretation)
+      {
+
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+
+        og_status status = NlpInterpretTreeJsonRecursiveSub(ctrl_nlp_th, json_expressions, root_request_expression,
+            request_expression, json_expression, sub_request_expression);
+        IFE(status);
+      }
+
+    }
+
   }
 
   if (request_expression->Irequest_any >= 0)

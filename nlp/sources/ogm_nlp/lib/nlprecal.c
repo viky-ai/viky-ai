@@ -62,11 +62,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
     IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions before any validation:"));
   }
 
-  //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "before NlpAnyValidate"));
-
   IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
-
-  //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "after NlpAnyValidate"));
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
@@ -126,20 +122,12 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
       struct request_expression *request_expression = iter->data;
       if (!request_expression->keep_as_result) continue;
 
-      //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "before NlpRequestExpressionListsSort"));
-
       IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
-
-      //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "before NlpInterpretTreeAttachAny"));
 
       IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
 
-      //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "before NlpRequestAnyOptimizeMatch"));
-
       int nb_anys_attached;
       IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
-
-      //IFE(NlpRequestExpressionShowTree(ctrl_nlp_th, 40, "after NlpRequestAnyOptimizeMatch"));
 
       if (request_expression->nb_anys != nb_anys_attached)
       {

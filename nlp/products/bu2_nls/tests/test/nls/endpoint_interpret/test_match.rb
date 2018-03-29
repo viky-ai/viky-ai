@@ -412,8 +412,8 @@ module Nls
         Nls.package_update(pg_building_feature_any)
 
         # resultat attendu
-        solution = { features: [ { building_feature: "swimming pool"} , { building_feature: "golf" } , { building_feature: "Sea view" } , { building_feature: "spa" } ] }
-        expected = Answers.new(pg_building_feature_any["pg-building-features"], solution, 0.94)
+        solution = [ { building_feature: "swimming pool"} , { building_feature: "golf" } , { building_feature: "Sea view" } , { building_feature: "spa" } ]
+        expected = Answers.new(pg_building_feature_any["pg-building-features"], solution, 0.9)
 
         # creation et exécution de la requete
         request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa", Interpretation.default_locale)
