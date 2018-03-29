@@ -24,27 +24,24 @@
     p{
       margin: .5em 0;
     }
-
     cite{
       font-size: 0.9em;
       font-style: normal;
       color: #888;
     }
+    &:before {
+      font-family: Georgia, Garamond, 'Times New Roman', Times, serif;
+      content: "\201C";
+      display: block;
+      height: 0;
+      line-height: 0;
+      left: -40px;
+      position: relative;
+      top: 25px;
+      font-size: 3em;
+      color: $primary_color;
+    }
   }
-
-  blockquote:before {
-    font-family: Georgia, serif;
-    content: open-quote;
-    display: block;
-    height: 0;
-    line-height: 0;
-    left: -40px;
-    position: relative;
-    top: 25px;
-    font-size: 3em;
-    color: $primary_color;
-  }
-
 
   img{
     display:block;
