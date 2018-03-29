@@ -84,6 +84,7 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression = request_expressions + i;
     if (request_expression->analyzed) continue;
     if (request_expression->expression->interpretation != first_request_expression->expression->interpretation) continue;
+    if (request_expression->expression->interpretation->is_recursive) continue;
     g_queue_push_tail(queue_request_expression, request_expression);
     request_expression->analyzed = 1;
   }

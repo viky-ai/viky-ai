@@ -512,10 +512,6 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
     IFN(request_expression) DPcErr;
 
     IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
-    if (i==40 && request_expression->level ==6)
-    {
-      IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
-    }
   }
   DONE;
 }
