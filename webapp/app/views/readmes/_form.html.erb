@@ -11,7 +11,15 @@
 
     <div class="markdown-editor">
       <div>
-        <span class="label"><%= t('views.readme.form.content_label') %></span>
+        <span class="label">
+          <%= t('views.readme.form.content_label') %>
+          <small>
+            &mdash;
+            <a href="https://www.markdownguide.org/basic-syntax" target="_blank">
+              <%= t('views.readme.form.content_help') %>
+            </a>
+          </small>
+        </span>
         <div class="markdown-editor__input">
           <%= f.text_area :content, id: 'readme_content', spellcheck: false %>
         </div>

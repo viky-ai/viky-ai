@@ -41,6 +41,7 @@ en:
         success_message: README has been successfully updated.
       form:
         content_label: Content in Markdown format
+        content_help: Need help?
         preview_label: Preview
       confirm_destroy:
         title:  Are you sure?
