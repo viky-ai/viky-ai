@@ -72,7 +72,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def go_to_agent_show(user, agent)
     admin_login
     visit user_agent_path(user, agent)
-    assert page.has_text?("Agent interpretations")
+    assert page.has_text?("Overview")
   end
 
   def select_text_in_trix(selector, position_start, position_end)

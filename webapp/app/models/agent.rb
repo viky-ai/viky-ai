@@ -8,6 +8,8 @@ class Agent < ApplicationRecord
 
   include AgentImageUploader::Attachment.new(:image)
 
+  has_one :readme, dependent: :destroy
+
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :favorite_agents, dependent: :destroy

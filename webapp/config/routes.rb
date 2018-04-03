@@ -46,6 +46,10 @@ Rails.application.routes.draw do
           end
         end
 
+        resource :readme, except: [:show] do
+          get :confirm_destroy
+        end
+
         resources :intents, path: 'interpretations' do
           member do
             post :move_to_agent

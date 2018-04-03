@@ -121,6 +121,12 @@
     }
   }
 
+  &.modal--x-large{
+    .modal__main{
+      width: calc(100% - 60px);
+    }
+  }
+
   &.modal--fixed-on-top{
     align-items: flex-start;
     padding-top: 30px;

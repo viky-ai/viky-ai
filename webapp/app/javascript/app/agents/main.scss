@@ -93,6 +93,49 @@
   }
 }
 
+
+/**
+ *  Markdown form editor
+**/
+.js-readme-form{
+  height: calc(90vh - 100px);
+  overflow: auto;
+}
+.markdown-editor{
+  margin-bottom: 2em;
+  display: grid;
+
+  & > div:nth-child(2){
+    display:none;
+  }
+
+  @media (min-width: 900px){
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 1em;
+    & > div:nth-child(2){
+      display:block;
+    }
+  }
+  .markdown-editor__input{
+    height: calc(90vh - 200px);
+    overflow: auto;
+    padding: 2px;
+    .CodeMirror{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .markdown-editor__preview.markdown{
+    height: calc(90vh - 200px - 4px);
+    overflow: auto;
+    border: 1px dashed #ddd;
+    border-radius: 3px;
+    padding: 1em 1em 3em 1em;
+    margin: 2px;
+  }
+}
+
+
 /**
  * Agent New/Edit Form
 **/

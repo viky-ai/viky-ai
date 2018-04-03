@@ -1,0 +1,47 @@
+<%= form_with model: [owner, agent, readme],
+      url: user_agent_readme_path(owner, agent),
+      data: { type: 'json' }, class: "js-readme-form" do |f| %>
+
+  <div class="field">
+    <% if readme.errors[:content].any? %>
+      <script>
+        App.Message.alert("<%= escape_javascript("README #{readme.errors[:content].join(', ')}") %>")
+      </script>
+    <% end %>
+
+    <div class="markdown-editor">
+      <div>
+        <span class="label">
+          <%= t('views.readme.form.content_label') %>
+          <small>
+            &mdash;
+            <a href="https://www.markdownguide.org/basic-syntax" target="_blank">
+              <%= t('views.readme.form.content_help') %>
+            </a>
+          </small>
+        </span>
+        <div class="markdown-editor__input">
+          <%= f.text_area :content, id: 'readme_content', spellcheck: false %>
+        </div>
+      </div>
+      <div>
+        <span class="label"><%= t('views.readme.form.preview_label') %></span>
+        <div class="markdown-editor__preview markdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.readme.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.readme.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label, class: "btn btn--primary",
+          data: {
+             disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+          } %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+  </div>
+<% end %>
