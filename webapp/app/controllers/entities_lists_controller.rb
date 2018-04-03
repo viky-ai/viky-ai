@@ -85,15 +85,13 @@ class EntitiesListsController < ApplicationController
   end
 
   def move_to_agent
-    user_destination = User.friendly.find(params[:user])
-    agent_destination = user_destination.agents.friendly.find(params[:agent])
-    if @entities_list.change_agent(current_user, agent_destination)
+    if @entities_list.move_to_agent(@agent_destination)
       redirect_to user_agent_entities_lists_path(@owner, @agent), notice: {
         i18n_key: 'views.entities_lists.move_to.success_message_html',
         locals: {
           name: @entities_list.listname,
-          agent_name: agent_destination.name,
-          agent_link: user_agent_entities_lists_url(agent_destination.owner, agent_destination)
+          agent_name: @agent_destination.name,
+          agent_link: user_agent_entities_lists_path(@agent_destination.owner, @agent_destination)
         }
       }
     else
@@ -128,8 +126,17 @@ class EntitiesListsController < ApplicationController
       case action_name
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions', 'available_destinations', 'move_to_agent'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy',
+             'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
+        when 'move_to_agent'
+          if current_user.can? :edit, @agent
+            user_destination  = User.friendly.find(params[:user])
+            @agent_destination = user_destination.agents.friendly.find(params[:agent])
+            access_denied unless current_user.can? :edit, @agent_destination
+          else
+            access_denied
+          end
         else
           access_denied
       end
