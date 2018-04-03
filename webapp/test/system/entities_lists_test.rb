@@ -88,9 +88,12 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
 
   test 'Move entities list to another agent' do
+    assert EntitiesList.create(listname: 'Other list', agent: agents(:terminator))
+
     go_to_agent_entities_lists('admin', 'terminator')
     within '#entities_lists-list-is_private' do
       first('.dropdown__trigger > button').click
+      assert page.has_no_link?('Move to My awesome weather bot')
       click_link 'Move to'
     end
 
@@ -102,9 +105,16 @@ class EntitiesListsTest < ApplicationSystemTestCase
     assert page.has_text?('Entities list terminator_targets moved to agent My awesome weather bot')
     assert page.has_link?('My awesome weather bot')
 
+    within '#entities_lists-list-is_public' do
+      first('.dropdown__trigger > button').click
+      assert page.has_link?('Move to My awesome weather bot')
+    end
+
     go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_private' do
       assert page.has_text?('terminator_targets')
+      first('.dropdown__trigger > button').click
+      assert page.has_no_link?('Move to My awesome weather bot')
     end
   end
 
