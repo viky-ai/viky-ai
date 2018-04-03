@@ -122,8 +122,8 @@ class IntentsController < ApplicationController
   end
 
   def move_to_agent
-    ui_state = UserUiState.new current_user
     if @intent.move_to_agent(@agent_destination)
+      ui_state = UserUiState.new current_user
       ui_state.last_destination_agent = @agent_destination.id
       ui_state.save
       redirect_to user_agent_intents_path(@owner, @agent), notice: {
