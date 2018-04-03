@@ -2,7 +2,7 @@ require 'html/pipeline'
 
 class Readme < ApplicationRecord
   belongs_to :agent, touch: true
-  validates :content, presence: true
+  validates :content, presence: true, length: { maximum: 20_000 }
 
   def display
     whitelist = HTML::Pipeline::SanitizationFilter::WHITELIST
