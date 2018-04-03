@@ -7,6 +7,8 @@ class IntentsController < ApplicationController
 
   def index
     @intents = @agent.intents.includes(:interpretations).order('position desc, created_at desc')
+    ui_state = UserUiState.new current_user
+    @last_agent = ui_state.last_destination_agent(@agent)
   end
 
   def show
@@ -120,7 +122,10 @@ class IntentsController < ApplicationController
   end
 
   def move_to_agent
+    ui_state = UserUiState.new current_user
     if @intent.move_to_agent(@agent_destination)
+      ui_state.last_destination_agent = @agent_destination.id
+      ui_state.save
       redirect_to user_agent_intents_path(@owner, @agent), notice: {
         i18n_key: 'views.intents.move_to.success_message_html',
         locals: {

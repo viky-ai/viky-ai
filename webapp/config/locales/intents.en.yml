@@ -7,7 +7,8 @@ en:
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> interpretations
         new: New interpretation
         configure: Configure
-        move_to: Move to
+        move_to: Move to...
+        quick_move_to: "Move to %{agent}"
         move: Move
         delete: Delete
         interpretations:

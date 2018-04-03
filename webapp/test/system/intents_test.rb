@@ -145,7 +145,8 @@ class IntentsTest < ApplicationSystemTestCase
     go_to_agent_intents('admin', 'weather')
     within '#intents-list-is_private' do
       first('.dropdown__trigger > button').click
-      click_link 'Move to'
+      assert page.has_no_link?('Move to T-800')
+      click_link 'Move to...'
     end
 
     assert page.has_text?('Move weather_question to ')
@@ -156,9 +157,16 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Intent weather_question moved to agent T-800')
     assert page.has_link?('T-800')
 
+    within '#intents-list-is_public' do
+      first('.dropdown__trigger > button').click
+      assert page.has_link?('Move to T-800')
+    end
+
     go_to_agent_intents('admin', 'terminator')
     within '#intents-list-is_private' do
       assert page.has_text?('weather_question')
+      first('.dropdown__trigger > button').click
+      assert page.has_no_link?('Move to T-800')
     end
   end
 

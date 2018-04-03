@@ -50,6 +50,14 @@
                   </span><%= t('views.intents.index.move_to') %>
                   </a>
                 </li>
+                <% if @last_agent.present? %>
+                  <li>
+                    <% label = "<span class='icon icon--x-small'>#{icon_transfert}</span>".html_safe + "#{t('views.intents.index.quick_move_to', agent: @last_agent.name) }" %>
+                    <%= link_to label,
+                                move_to_agent_user_agent_intent_path(@agent.owner, @agent, id: intent.id, user: @last_agent.owner, agent: @last_agent),
+                                method: :post %>
+                  </li>
+                <% end %>
                 <li class="separator">
                   <a href="<%= user_agent_intent_confirm_destroy_path(agent_owner, @agent, intent) %>"
                      data-action="open-remote-modal" class="destructive">
