@@ -105,5 +105,5 @@ en:
           intents: Interpretations
           entities_lists: Entities lists
       agents_selection:
-        title: 'Move %{name} to'
+        title_html: 'Move <strong>%{name}</strong> to&hellip;'
         not_found: No agent found.
