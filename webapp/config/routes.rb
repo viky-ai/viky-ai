@@ -45,7 +45,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :readme do
+        resource :readme, except: [:show] do
           get :confirm_destroy
         end
 
