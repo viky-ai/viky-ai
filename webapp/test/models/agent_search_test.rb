@@ -226,7 +226,7 @@ class AgentSearchTest < ActiveSupport::TestCase
     s = AgentSearch.new(user, criteria)
     assert_equal 1, Agent.search(s.options).count
     assert s.save
-    assert_equal user.reload.ui_state['agent_search'], criteria.with_indifferent_access
+    assert_equal criteria.with_indifferent_access, user.reload.ui_state['agent_search']
   end
 
 

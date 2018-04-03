@@ -10,6 +10,7 @@ class AgentSearch
 
   def initialize(user, options = {})
     @user = user
+    @ui_state = UserUiState.new @user
     @options = build_options(user, options)
   end
 
@@ -28,23 +29,20 @@ class AgentSearch
   end
 
   def save
-    new_state = @user.ui_state.merge({
-      agent_search: {
-        query: @options[:query],
-        sort_by: @options[:sort_by],
-        filter_owner: @options[:filter_owner],
-        filter_visibility: @options[:filter_visibility]
-      }
-    })
-    @user.ui_state = new_state
-    @user.save(touch: false)
+    @ui_state.agent_search = {
+      query: @options[:query],
+      sort_by: @options[:sort_by],
+      filter_owner: @options[:filter_owner],
+      filter_visibility: @options[:filter_visibility]
+    }
+    @ui_state.save
   end
 
 
   private
 
     def build_options(user, http_options)
-      default_options_for_user = (user.ui_state['agent_search'] || {}).with_indifferent_access
+      default_options_for_user = @ui_state.agent_search
       cleaned_http_options = clean_options(http_options)
       final_options = DEFAULT_CRITERIA.merge(
         default_options_for_user
