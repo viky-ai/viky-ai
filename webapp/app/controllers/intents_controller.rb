@@ -29,7 +29,8 @@ class IntentsController < ApplicationController
     respond_to do |format|
       if @intent.save
         format.json do
-          redirect_to user_agent_intents_path(current_user, @agent), notice: t('views.intents.new.success_message')
+          redirect_to user_agent_intents_path(@agent.owner, @agent),
+            notice: t('views.intents.new.success_message')
         end
       else
         format.json do
@@ -49,7 +50,8 @@ class IntentsController < ApplicationController
     respond_to do |format|
       if @intent.update(intent_params)
         format.json {
-          redirect_to user_agent_intents_path(current_user, @agent), notice: t('views.intents.edit.success_message')
+          redirect_to user_agent_intents_path(@owner, @agent),
+            notice: t('views.intents.edit.success_message')
         }
       else
         format.json {
@@ -72,11 +74,11 @@ class IntentsController < ApplicationController
 
   def destroy
     if @intent.destroy
-      redirect_to user_agent_intents_path(current_user, @agent), notice: t(
+      redirect_to user_agent_intents_path(@owner, @agent), notice: t(
         'views.intents.destroy.success_message', name: @intent.intentname
       )
     else
-      redirect_to user_agent_intents_path(current_user, @agent), alert: t(
+      redirect_to user_agent_intents_path(@owner, @agent), alert: t(
         'views.intents.destroy.errors_message',
         errors: @intent.errors.full_messages.join(', ')
       )

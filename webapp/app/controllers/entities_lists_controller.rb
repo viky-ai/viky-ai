@@ -21,7 +21,9 @@ class EntitiesListsController < ApplicationController
   end
 
   def new
-    @entities_list = EntitiesList.new(visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private]))
+    @entities_list = EntitiesList.new(
+      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private])
+    )
     render partial: 'new'
   end
 
@@ -31,7 +33,8 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       if @entities_list.save
         format.json do
-          redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t('views.entities_lists.new.success_message')
+          redirect_to user_agent_entities_lists_path(@agent.owner, @agent),
+            notice: t('views.entities_lists.new.success_message')
         end
       else
         format.json do
@@ -51,7 +54,8 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       if @entities_list.update(entities_list_params)
         format.json {
-          redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t('views.entities_lists.edit.success_message')
+          redirect_to user_agent_entities_lists_path(@owner, @agent),
+            notice: t('views.entities_lists.edit.success_message')
         }
       else
         format.json {
@@ -73,11 +77,11 @@ class EntitiesListsController < ApplicationController
 
   def destroy
     if @entities_list.destroy
-      redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t(
+      redirect_to user_agent_entities_lists_path(@owner, @agent), notice: t(
         'views.entities_lists.destroy.success_message', name: @entities_list.listname
       )
     else
-      redirect_to user_agent_entities_lists_path(current_user, @agent), alert: t(
+      redirect_to user_agent_entities_lists_path(@owner, @agent), alert: t(
         'views.entities_lists.destroy.errors_message',
         errors: @entities_list.errors.full_messages.join(', ')
       )
