@@ -7,6 +7,8 @@ class EntitiesListsController < ApplicationController
 
   def index
     @entities_lists = @agent.entities_lists.order('position desc, created_at desc')
+    ui_state = UserUiState.new current_user
+    @last_agent = ui_state.last_destination_agent(@agent)
   end
 
   def show
@@ -21,7 +23,9 @@ class EntitiesListsController < ApplicationController
   end
 
   def new
-    @entities_list = EntitiesList.new(visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private]))
+    @entities_list = EntitiesList.new(
+      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private])
+    )
     render partial: 'new'
   end
 
@@ -31,7 +35,8 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       if @entities_list.save
         format.json do
-          redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t('views.entities_lists.new.success_message')
+          redirect_to user_agent_entities_lists_path(@agent.owner, @agent),
+            notice: t('views.entities_lists.new.success_message')
         end
       else
         format.json do
@@ -51,7 +56,8 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       if @entities_list.update(entities_list_params)
         format.json {
-          redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t('views.entities_lists.edit.success_message')
+          redirect_to user_agent_entities_lists_path(@owner, @agent),
+            notice: t('views.entities_lists.edit.success_message')
         }
       else
         format.json {
@@ -73,12 +79,33 @@ class EntitiesListsController < ApplicationController
 
   def destroy
     if @entities_list.destroy
-      redirect_to user_agent_entities_lists_path(current_user, @agent), notice: t(
+      redirect_to user_agent_entities_lists_path(@owner, @agent), notice: t(
         'views.entities_lists.destroy.success_message', name: @entities_list.listname
       )
     else
-      redirect_to user_agent_entities_lists_path(current_user, @agent), alert: t(
+      redirect_to user_agent_entities_lists_path(@owner, @agent), alert: t(
         'views.entities_lists.destroy.errors_message',
+        errors: @entities_list.errors.full_messages.join(', ')
+      )
+    end
+  end
+
+  def move_to_agent
+    if @entities_list.move_to_agent(@agent_destination)
+      ui_state = UserUiState.new current_user
+      ui_state.last_destination_agent = @agent_destination.id
+      ui_state.save
+      redirect_to user_agent_entities_lists_path(@owner, @agent), notice: {
+        i18n_key: 'views.entities_lists.move_to.success_message_html',
+        locals: {
+          name: @entities_list.listname,
+          agent_name: @agent_destination.name,
+          agent_link: user_agent_entities_lists_path(@agent_destination.owner, @agent_destination)
+        }
+      }
+    else
+      redirect_to user_agent_entities_lists_path(@owner, @agent), alert: t(
+        'views.entities_lists.move_to.errors_message',
         errors: @entities_list.errors.full_messages.join(', ')
       )
     end
@@ -108,8 +135,17 @@ class EntitiesListsController < ApplicationController
       case action_name
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'update_positions'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy',
+             'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
+        when 'move_to_agent'
+          if current_user.can? :edit, @agent
+            user_destination  = User.friendly.find(params[:user])
+            @agent_destination = user_destination.agents.friendly.find(params[:agent])
+            access_denied unless current_user.can? :edit, @agent_destination
+          else
+            access_denied
+          end
         else
           access_denied
       end

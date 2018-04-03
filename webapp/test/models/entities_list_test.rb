@@ -294,6 +294,26 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
+  test 'Move entities list to an agent' do
+    weather = entities_lists(:weather_conditions)
+    assert weather.move_to_agent(agents(:terminator))
+    assert_equal agents(:terminator).id, weather.agent.id
+    assert_equal 'is_public', weather.visibility
+    assert_equal 1, weather.position
+  end
+
+
+  test 'Move entities list to an unknown agent' do
+    weather = entities_lists(:weather_conditions)
+    assert_not weather.move_to_agent(nil)
+    expected = {
+      agent: ['does not exist']
+    }
+    assert_equal expected, weather.errors.messages
+    assert_equal weather.agent.id, agents(:weather).id
+  end
+
+
   private
 
     def build_import_params(io, mode = :append)

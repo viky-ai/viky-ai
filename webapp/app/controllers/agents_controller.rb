@@ -48,7 +48,7 @@ class AgentsController < ApplicationController
     @origin = params[:origin]
     respond_to do |format|
       if @agent.update(agent_params)
-        redirect_path = @origin == 'show' ? user_agent_path(current_user, @agent.agentname) : agents_path
+        redirect_path = @origin == 'show' ? user_agent_path(@owner, @agent.agentname) : agents_path
         format.json{
           redirect_to redirect_path, notice: t('views.agents.edit.success_message')
         }
@@ -143,7 +143,7 @@ class AgentsController < ApplicationController
   def add_favorite
     favorite = FavoriteAgent.new(user: current_user, agent: @agent)
     if favorite.save
-      redirect_to user_agent_path(@agent.owner, @agent)
+      redirect_to user_agent_path(@owner, @agent)
     else
       redirect_to agents_path, alert: t('views.agents.favorite.add_errors_message',
                                         errors: favorite.errors.full_messages.join(', '))
@@ -153,12 +153,13 @@ class AgentsController < ApplicationController
   def delete_favorite
     favorite = @agent.favorite_agents.find_by(user: current_user)
     if favorite.destroy
-      redirect_to user_agent_path(@agent.owner, @agent)
+      redirect_to user_agent_path(@owner, @agent)
     else
       redirect_to agents_path, alert: t('views.agents.favorite.remove_errors_message',
                                         errors: favorite.errors.full_messages.join(', '))
     end
   end
+
 
   private
 

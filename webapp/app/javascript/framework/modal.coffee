@@ -32,6 +32,7 @@ class Modal
 
     if action is "open-modal"
       event.preventDefault()
+      @preload()
       @prepare()
       Modal.update($(node.data('modal-selector')).clone())
 
@@ -60,8 +61,11 @@ class Modal
       event.preventDefault()
       $.ajax
         url: node.attr('href')
+        beforeSend: =>
+          @preload()
         complete: (data) =>
           if data.status == 403
+            $("#modal_preloader").hide()
             App.Message.alert(JSON.parse(data.responseText).message)
           else
             @prepare()
@@ -84,8 +88,7 @@ class Modal
       $('.modal__main').addClass('modal__main--loading').html("#{icon} Loading...")
 
   close: ->
-    $('.app-wrapper').removeClass('modal-background-effect')
-    $('nav').removeClass('modal-background-effect')
+    $('.app-wrapper, nav').removeClass('modal-background-effect')
     $('.modal').hide()
     $(document).off 'keyup'
     $('body').trigger('modal:close')
@@ -95,10 +98,17 @@ class Modal
     $('#modal_container .modal').show()
     $('body').trigger('modal:load')
 
-  prepare: ->
+  preload: ->
+    $('.app-wrapper, nav').addClass('modal-background-effect')
+
+    if ($('#modal_preloader').length == 0)
+      $("<div id='modal_preloader'></div>").appendTo('body')
+    $("#modal_preloader").show()
+
     $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
-    $('.app-wrapper').addClass('modal-background-effect')
-    $('nav').addClass('modal-background-effect')
+
+  prepare: ->
+    $("#modal_preloader").hide()
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 
 module.exports = Modal

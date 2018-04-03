@@ -24,7 +24,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Show intent access' do
     sign_in users(:show_on_agent_weather)
-    get user_agent_intent_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_forecast))
+    get user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
     assert_response :success
     assert_nil flash[:alert]
   end
@@ -42,18 +42,18 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Create access' do
     sign_in users(:edit_on_agent_weather)
-    post user_agent_intents_url(users(:edit_on_agent_weather), agents(:weather)),
+    post user_agent_intents_url(users(:admin), agents(:weather)),
          params: {
            intent: { intentname: 'my_new_intent', description: 'A new intent' },
            format: :json
          }
-    assert_redirected_to user_agent_intents_path(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_intents_path(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 
   test 'Create forbidden' do
     sign_in users(:show_on_agent_weather)
-    post user_agent_intents_url(users(:show_on_agent_weather), agents(:weather)),
+    post user_agent_intents_url(users(:admin), agents(:weather)),
          params: {
            intent: { intentname: 'my_new_intent', description: 'A new intent' },
            format: :json
@@ -67,18 +67,18 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Update access' do
     sign_in users(:edit_on_agent_weather)
-    patch user_agent_intent_url(users(:edit_on_agent_weather), agents(:weather), intents(:weather_forecast)),
+    patch user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
           params: {
             intent: { intentname: 'my_new_name', description: 'The new intent name' },
             format: :json
           }
-    assert_redirected_to user_agent_intents_path(users(:edit_on_agent_weather), agents(:weather))
+    assert_redirected_to user_agent_intents_path(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 
   test 'Update forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch user_agent_intent_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_forecast)),
+    patch user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
           params: {
             intent: { intentname: 'my_new_name', description: 'The new intent name' },
             format: :json
@@ -92,14 +92,14 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Confirm delete access' do
     sign_in users(:admin)
-    get user_agent_intent_confirm_destroy_url(users(:edit_on_agent_weather), agents(:weather), intents(:weather_forecast))
+    get user_agent_intent_confirm_destroy_url(users(:admin), agents(:weather), intents(:weather_forecast))
     assert_response :success
     assert_nil flash[:alert]
   end
 
   test 'Confirm delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    get user_agent_intent_confirm_destroy_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_forecast))
+    get user_agent_intent_confirm_destroy_url(users(:admin), agents(:weather), intents(:weather_forecast))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -116,7 +116,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_url(users(:show_on_agent_weather), agents(:weather), intents(:weather_forecast))
+    delete user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -168,5 +168,35 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
          }
     assert_redirected_to user_agent_intents_path(users(:confirmed), agents(:weather_confirmed))
     assert_nil flash[:alert]
+  end
+
+
+  #
+  # Move intent to an other agent
+  #
+  test 'Allow to move an intent' do
+    sign_in users(:admin)
+
+    post move_to_agent_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:terminator).agentname,
+           format: :json
+         }
+    assert_redirected_to user_agent_intents_path(users(:admin), agents(:weather))
+    assert_nil flash[:alert]
+  end
+
+  test 'Forbid to move an intent' do
+    sign_in users(:confirmed)
+
+    post move_to_agent_user_agent_intent_url(users(:admin), agents(:weather), intents(:weather_forecast)),
+         params: {
+           user: users(:admin).username,
+           agent: agents(:weather_confirmed).agentname,
+           format: :json
+         }
+    assert_response :forbidden
+    assert response.body.include?('Unauthorized operation.')
   end
 end

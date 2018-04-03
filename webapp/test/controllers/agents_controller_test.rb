@@ -497,22 +497,6 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Unauthorized operation.", flash[:alert]
   end
 
-  test "new dependency access: Collaborator (show) no acccess" do
-    sign_in users(:show_on_agent_weather)
-
-    get new_user_agent_dependency_path(users(:admin), agents(:weather))
-    assert_redirected_to agents_url
-    assert_equal "Unauthorized operation.", flash[:alert]
-  end
-
-  test "new dependency access: Collaborator (edit)" do
-    sign_in users(:edit_on_agent_weather)
-
-    get new_user_agent_dependency_path(users(:admin), agents(:weather))
-    assert_response :success
-    assert_nil flash[:alert]
-  end
-
   test "create dependency access: Collaborator (show) no acccess" do
     sign_in users(:show_on_agent_weather)
 
