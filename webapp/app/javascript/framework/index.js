@@ -16,6 +16,7 @@ import './highlight';
 window.CodeMirror = require('codemirror');
 import 'codemirror/addon/display/autorefresh'
 import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/gfm/gfm'
 import 'codemirror/lib/codemirror.css'
 
 // CSS framework

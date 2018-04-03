@@ -11,7 +11,7 @@ class ReadmeForm
     options = {
       autofocus: true,
       lineNumbers: false,
-      mode: "markdown",
+      mode: "gfm",
       tabSize: 2,
       insertSoftTab: true,
       lineWrapping: true,
