@@ -85,4 +85,81 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
     # assert_equal ['weather_conditions', 'test'], all('.card-list__item__name').collect(&:text)
   end
+
+
+  test 'Move entities list to another agent' do
+    assert EntitiesList.create(listname: 'Other list', agent: agents(:terminator))
+
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      assert page.has_no_link?('Move to My awesome weather bot')
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Move terminator_targets to ')
+    within('.modal') do
+      click_link 'My awesome weather bot'
+    end
+
+    assert page.has_text?('Entities list terminator_targets moved to agent My awesome weather bot')
+    assert page.has_link?('My awesome weather bot')
+
+    within '#entities_lists-list-is_public' do
+      first('.dropdown__trigger > button').click
+      assert page.has_link?('Move to My awesome weather bot')
+    end
+
+    go_to_agent_entities_lists('admin', 'weather')
+    within '#entities_lists-list-is_private' do
+      assert page.has_text?('terminator_targets')
+      first('.dropdown__trigger > button').click
+      assert page.has_no_link?('Move to My awesome weather bot')
+    end
+  end
+
+
+  test 'Filter favorite agent select' do
+    admin = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.memberships << Membership.new(user: admin, rights: 'edit')
+    assert agent_public.save
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Move terminator_targets to ')
+    within('.modal') do
+      click_button 'Favorites'
+      assert page.has_no_text?('My awesome weather bot admin/weather')
+      assert page.has_text?('Weather bot confirmed/weather')
+    end
+  end
+
+
+  test 'Filter query agent dependency' do
+    admin = users(:admin)
+    agent_public = agents(:weather_confirmed)
+    agent_public.memberships << Membership.new(user: admin, rights: 'edit')
+    assert agent_public.save
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agent_entities_lists('admin', 'terminator')
+    within '#entities_lists-list-is_private' do
+      first('.dropdown__trigger > button').click
+      click_link 'Move to'
+    end
+
+    assert page.has_text?('Move terminator_targets to ')
+    within(".modal") do
+      fill_in 'search_query', with: 'awesome'
+      click_button '#search'
+      assert page.has_text?('My awesome weather bot admin/weather')
+      assert page.has_no_text?('Weather bot confirmed/weather')
+    end
+  end
 end

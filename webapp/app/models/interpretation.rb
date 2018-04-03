@@ -40,7 +40,7 @@ class Interpretation < ApplicationRecord
   private
 
     def cleanup
-      self.expression = expression.strip unless expression.nil?
+      self.expression = ActionController::Base.helpers.strip_tags(expression.strip) unless expression.nil?
       if auto_solution_enabled
         self.solution = nil
       elsif solution.blank?

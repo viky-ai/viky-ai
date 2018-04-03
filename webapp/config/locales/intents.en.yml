@@ -7,6 +7,8 @@ en:
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> interpretations
         new: New interpretation
         configure: Configure
+        move_to: Move to...
+        quick_move_to: "Move to %{agent}"
         move: Move
         delete: Delete
         interpretations:
@@ -35,6 +37,9 @@ en:
         title: Choose a language to add
         empty_message: The interpretation already contains every available languages.
         errors_message: "Add language failed: %{errors}."
+      move_to:
+        success_message_html: 'Intent %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
+        errors_message: "Move intent to agent failed: %{errors}."
       blankslate:
         message_edit_html: >
           No interpretation entered for the "%{agent}" agent.<br />

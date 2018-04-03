@@ -2,6 +2,7 @@ class Intent < ApplicationRecord
   include Colorable
   include Positionable
   positionable_ancestor :agent
+  include Movable
 
   extend FriendlyId
   friendly_id :intentname, use: :history, slug_column: 'intentname'
@@ -33,7 +34,6 @@ class Intent < ApplicationRecord
   def slug
     "#{agent.slug}/interpretations/#{intentname}"
   end
-
 
   private
 

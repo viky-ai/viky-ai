@@ -6,6 +6,20 @@
           filter: blur(4px);
 }
 
+#modal_preloader{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(#000, 0.5);
+  z-index: 499;
+}
+
 .modal{
   @include display_flex();
   justify-content: center;
@@ -17,6 +31,7 @@
   left: 0;
   top: 0;
   z-index: 500;
+
 
   .modal__overlay{
     position: absolute;
@@ -69,7 +84,7 @@
       position: relative;
       button.modal__main__title__close{
         position: absolute;
-        top: .75em;
+        top: .5em;
         right: 1em;
         display: block;
         padding: 0;
@@ -103,6 +118,12 @@
   &.modal--large{
     .modal__main{
       width: 800px;
+    }
+  }
+
+  &.modal--x-large{
+    .modal__main{
+      width: calc(100% - 60px);
     }
   }
 

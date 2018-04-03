@@ -1,0 +1,49 @@
+<% user_can_edit = current_user.can?(:edit, @agent) %>
+
+<% if @agent.readme.nil? %>
+  <% if user_can_edit %>
+    <h4>Readme</h4>
+    <div class="card">
+      <div class="card-content">
+        <div class="blankslate">
+          <div class="blankslate__illustration">
+            <img src='<%= asset_path("robot-confused.png") %>'
+                 srcset='<%= asset_path("robot-confused.png") %> 1x,
+                         <%= asset_path("robot-confused@2x.png") %> 2x' />
+          </div>
+          <div class="blankslate__content">
+            <p>There is no README defined for this agent. Add one to describe an overview of your agent.</p>
+            <a href="<%= new_user_agent_readme_path(@agent.owner, @agent) %>"
+               data-action="open-remote-modal"
+               class="btn btn--primary">Add a README</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <div class="h4-actions-container">
+    <h4>Readme</h4>
+    <% if user_can_edit %>
+      <div>
+        <a href="<%= edit_user_agent_readme_path(@agent.owner, @agent) %>"
+           class="btn btn--small" data-action="open-remote-modal">
+          <span class="icon icon--x-small"><%= icon_edit %></span>
+          <%= t('views.readme.show.edit_btn') %>
+        </a>
+        <a href="<%= confirm_destroy_user_agent_readme_path(@agent.owner, @agent) %>"
+           class="btn btn--small" data-action="open-remote-modal">
+          <span class="icon icon--x-small"><%= icon_delete %></span>
+          <%= t('views.readme.show.delete_btn') %>
+        </a>
+      </div>
+    <% end %>
+  </div>
+  <div class="card">
+    <div class="card-content">
+      <div class="markdown">
+        <%= @agent.readme.display %>
+      </div>
+    </div>
+  </div>
+<% end %>

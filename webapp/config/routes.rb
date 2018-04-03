@@ -13,7 +13,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   resource :profile, only: [:show, :edit, :update, :destroy] do
     get :confirm_destroy
     post :stop_impersonating, on: :collection
@@ -31,6 +30,7 @@ Rails.application.routes.draw do
           get :generate_token
           get :interpret, to: 'console#interpret'
           get :full_export
+          get :agents_selection, to: 'agents_selection#index'
         end
         get :search_users_to_share_agent, controller: 'memberships'
 
@@ -46,7 +46,14 @@ Rails.application.routes.draw do
           end
         end
 
+        resource :readme, except: [:show] do
+          get :confirm_destroy
+        end
+
         resources :intents, path: 'interpretations' do
+          member do
+            post :move_to_agent
+          end
           get :select_new_locale
           post :add_locale
           delete :remove_locale
@@ -67,6 +74,9 @@ Rails.application.routes.draw do
         end
 
         resources :entities_lists do
+          member do
+            post :move_to_agent
+          end
           get :confirm_destroy
           collection do
             post :update_positions

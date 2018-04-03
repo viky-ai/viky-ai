@@ -1,0 +1,52 @@
+en:
+  views:
+    readme:
+      show:
+        edit_btn: Edit
+        delete_btn: Delete
+      new:
+        title: Create README
+        btn: Create
+        success_message: README has been successfully created.
+        default_prefix: |
+         You can use this `README` to describe current agent. Write content in **Mardown format**.
+        default_citation_1: |
+          > Documentation is a love letter that you write to your future self.
+          >
+          > — <cite>Damian Conway</cite>
+        default_citation_2: |
+          > Lack of documentation is becoming a problem for acceptance.
+          >
+          > — <cite>Wietse Venema</cite>
+        default_citation_3: |
+          > Features have a specification cost, a design cost, and a development cost. There is a testing cost and a reliability cost. Features have a documentation cost. Every feature adds pages to the manual increasing training costs.
+          >
+          > — <cite>Douglas Crockford</cite>
+        default_citation_4: |
+          > There is nothing in the programming field more despicable than an undocumented program.
+          >
+          > — <cite>Ed Yourdon</cite>
+        default_citation_5: |
+          > It's not a bug - it's an undocumented feature.
+          >
+          > — <cite>Anonymous</cite>
+        default_citation_6: |
+          > Incorrect documentation is often worse than no documentation.
+          >
+          > — <cite>Bertrand Meyer</cite>
+        default_suffix: _Happy writing!_
+      edit:
+        title: Edit README
+        btn: Update
+        success_message: README has been successfully updated.
+      form:
+        content_label: Content in Markdown format
+        content_help: Need help?
+        preview_label: Preview
+      confirm_destroy:
+        title:  Are you sure?
+        content_html:  "You're about to delete README of agent: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "README has successfully been deleted."
+        errors_message: "README deletion failed: %{errors}."

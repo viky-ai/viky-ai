@@ -1,0 +1,51 @@
+.markdown{
+  code{
+    background-color: #f9f9f9;
+    padding: .1em .25em;
+    color: #444;
+    font-size: .9em;
+    border-radius: 2px;
+  }
+
+  pre{
+    background-color: #f9f9f9;
+    padding: 1em;
+    font-size: .9em;
+    color: #444;
+    line-height: 1.4em;
+  }
+
+  blockquote{
+    border-left: 4px solid #eee;
+    background-color: #f9f9f9;
+    margin: 1em 0;
+    padding: 25px 60px;
+    font-size: 1.1em;
+    p{
+      margin: .5em 0;
+    }
+    cite{
+      font-size: 0.9em;
+      font-style: normal;
+      color: #888;
+    }
+    &:before {
+      font-family: Georgia, Garamond, 'Times New Roman', Times, serif;
+      content: "\201C";
+      display: block;
+      height: 0;
+      line-height: 0;
+      left: -40px;
+      position: relative;
+      top: 25px;
+      font-size: 3em;
+      color: $primary_color;
+    }
+  }
+
+  img{
+    display:block;
+    max-width: 100%;
+  }
+
+}

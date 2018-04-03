@@ -2,6 +2,7 @@ class EntitiesList < ApplicationRecord
   include Colorable
   include Positionable
   positionable_ancestor :agent
+  include Movable
 
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'

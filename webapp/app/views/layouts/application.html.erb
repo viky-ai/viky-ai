@@ -37,7 +37,11 @@
         <% unless notice.nil? %>
           <div class="message message--notice">
             <div class="message__content">
-              <%= notice %>
+              <% if notice.is_a?(Hash) %>
+                <%= t(notice['i18n_key'], notice['locals'].nil? ? {} : notice['locals'].symbolize_keys) %>
+              <% else %>
+                <%= notice %>
+              <% end %>
             </div>
             <div class="message__action">
               <a href="#" data-action="message-close"><span class="icon"><%= icon_close %></span></a>
@@ -48,7 +52,11 @@
         <% unless alert.nil? %>
           <div class="message message--alert">
             <div class="message__content">
-              <%= alert %>
+              <% if alert.is_a?(Hash) %>
+                <%= t(alert['i18n_key'], alert['locals'].nil? ? {} : alert['locals'].symbolize_keys) %>
+              <% else %>
+                <%= alert %>
+              <% end %>
             </div>
             <div class="message__action">
               <a href="#" data-action="message-close"><span class="icon"><%= icon_close %></span></a>

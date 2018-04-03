@@ -41,6 +41,22 @@
                   </span><%= t('views.entities_lists.index.configure') %>
                   </a>
                 </li>
+                <li>
+                  <a href="<%= agents_selection_user_agent_path(agent_owner, @agent, from: controller_name, current_id: entities_list.id) %>"
+                     data-action="open-remote-modal">
+                  <span class="icon icon--x-small">
+                    <%= icon_transfert %>
+                  </span><%= t('views.entities_lists.index.move_to') %>
+                  </a>
+                </li>
+                <% if @last_agent.present? %>
+                  <li>
+                    <% label = "<span class='icon icon--x-small'>#{icon_transfert}</span>".html_safe + "#{t('views.entities_lists.index.quick_move_to', agent: @last_agent.name) }" %>
+                    <%= link_to label,
+                                move_to_agent_user_agent_entities_list_path(@agent.owner, @agent, id: entities_list.id, user: @last_agent.owner, agent: @last_agent),
+                                method: :post %>
+                  </li>
+                <% end %>
                 <li class="separator">
                   <a href="<%= user_agent_entities_list_confirm_destroy_path(agent_owner, @agent, entities_list) %>"
                      data-action="open-remote-modal" class="destructive">

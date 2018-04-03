@@ -18,7 +18,12 @@ class InterpretationsController < ApplicationController
             keep_order: true,
             auto_solution_enabled: true
           )
-          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: new_interpretation, current_locale: @current_locale })
+          @html_form = render_to_string(partial: 'form', locals: {
+            intent: @intent,
+            agent: @agent,
+            interpretation: new_interpretation,
+            current_locale: @current_locale }
+          )
           @html = render_to_string(partial: 'interpretation', locals: {
             interpretation: interpretation,
             can_edit: current_user.can?(:edit, @agent),
@@ -30,7 +35,12 @@ class InterpretationsController < ApplicationController
         end
       else
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { intent: @intent, agent: @agent, interpretation: interpretation, current_locale: @current_locale })
+          @html_form = render_to_string(partial: 'form', locals: {
+            intent: @intent,
+            agent: @agent,
+            interpretation: interpretation,
+            current_locale: @current_locale }
+          )
           render partial: 'create_failed'
         end
       end
