@@ -5,6 +5,8 @@ module Nls
   class Package
     attr_reader :id
     attr_reader :slug
+    attr_accessor :default_glued
+    attr_accessor :default_keep_order
 
     def initialize(slug, opts = {})
 

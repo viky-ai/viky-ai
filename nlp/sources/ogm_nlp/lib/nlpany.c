@@ -369,7 +369,7 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered: checking order of expression:")
-      IFE(NlpInterpretTreeLog(ctrl_nlp_th, re));
+      IFE(NlpInterpretTreeLog(ctrl_nlp_th, re, 0));
     }
     if (re->expression->keep_order)
     {

@@ -641,15 +641,64 @@
       "expressions":
       [
         {
-          "expression": "@{durations} @{duration_basic}",
+          "expression": "@{durations}",
+          "aliases":
+          [
+            {
+              "alias": "durations",
+              "id": "durations_recursive"
+            }
+          ],
+          "keep-order": true,
+          "glued": true,
+          "solution": "`var all_durations = durations.durations || durations;\nif (!Array.isArray(all_durations)) { all_durations = [ all_durations ]; };\nvar sum_durations = null;\nvar min_unit = 'year';\nall_durations.forEach(\n  function (duration_part) {\n    var value = duration_part.duration.value || duration_part.value;\n    var unit = duration_part.duration.unit || duration_part.unit;\n\n    if (sum_durations == null)\n    {\n      sum_durations = moment.duration(value);\n    }\n    else\n    {\n      sum_durations = sum_durations.add(moment.duration(value));\n    } \n\n    if      (min_unit == 'year')                    { min_unit = unit; }\n    else if (min_unit == 'month' && unit == 'week') { min_unit = unit; }\n    else if (min_unit == 'month' && unit == 'day')  { min_unit = unit; }\n    else if (min_unit == 'week' && unit == 'day')   { min_unit = unit; }\n\n\n  }\n);\nsum_durations;\n\nvar result = {\n  duration:\n  {\n    value: sum_durations,\n    unit: min_unit\n  }\n};\nresult;`"
+        }
+      ]
+    },
+    {
+      "id": "durations_recursive",
+      "expressions":
+      [
+        {
+          "expression": "@{duration}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
             {
-              "alias": "durations",
-              "id": "durations"
+              "alias": "duration",
+              "id": "duration"
+            }
+          ]
+        },
+        {
+          "expression": "@{duration} @{durations_recursive}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
+            {
+              "alias": "duration",
+              "id": "duration"
             },
+            {
+              "alias": "durations_recursive",
+              "id": "durations_recursive"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "duration",
+      "expressions":
+      [
+        {
+          "expression": "@{duration_basic}",
+          "keep-order": true,
+          "glued": true,
+          "aliases":
+          [
             {
               "alias": "duration_basic",
               "id": "duration_basic"
@@ -657,15 +706,11 @@
           ]
         },
         {
-          "expression": "@{durations} @{and} @{duration_basic}",
+          "expression": "@{and} @{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
-            {
-              "alias": "durations",
-              "id": "durations"
-            },
             {
               "alias": "and",
               "id": "and",
@@ -678,15 +723,11 @@
           ]
         },
         {
-          "expression": "@{durations} @{coma} @{duration_basic}",
+          "expression": "@{coma} @{duration_basic}",
           "keep-order": true,
           "glued": true,
           "aliases":
           [
-            {
-              "alias": "durations",
-              "id": "durations"
-            },
             {
               "alias": "coma",
               "id": "coma",
@@ -697,36 +738,9 @@
               "id": "duration_basic"
             }
           ]
-        },
-        {
-          "expression": "@{duration_basic}",
-          "keep-order": true,
-          "glued": true,
-          "aliases":
-          [
-            {
-              "alias": "duration_basic",
-              "id": "duration_basic"
-            }
-          ],
-          "solution":
-          {
-            "duration":
-            {
-              "value": "`duration_basic.duration.value`",
-              "unit": "`duration_basic.duration.unit`"
-            }
-          }
         }
       ],
-      "solution":
-      {
-        "duration":
-        {
-          "value": "`moment.duration(durations.duration.value).add(moment.duration(duration_basic.duration.value))`",
-          "unit": "`var a=durations.duration.unit; var b=duration_basic.duration.unit;if(a=='year'){b}else if(a=='day'){a}else if(a=='month'){if(b=='year'){a}else{b}}else{if(b=='day'){b}else{a}}`"
-        }
-      }
+      "solution": "`duration_basic`"
     },
     {
       "id": "period",
@@ -748,14 +762,7 @@
               "id": "durations"
             }
           ],
-          "solution":
-          {
-            "duration":
-            {
-              "value": "`durations.duration.value`",
-              "unit": "`durations.duration.unit`"
-            }
-          }
+          "solution": "`durations`"
         }
       ]
     },

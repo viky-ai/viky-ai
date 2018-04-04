@@ -59,11 +59,6 @@ og_status NlpJsonToBuffer(const json_t *json, og_char_buffer *buffer, int buffer
 
   int max_buffer_size = buffer_size - truncated_ends_size - 1;
   int expected_size = json_dumpb(json, buffer, max_buffer_size, flags | JSON_ENCODE_ANY);
-  if (expected_size == 0)
-  {
-    DPcErr;
-  }
-
   buffer[max_buffer_size] = 0;
 
   // truncated json
@@ -273,8 +268,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s", text, string_locale,
-      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "");
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s alias_any_input_part_position=%d", text, string_locale,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "", expression->alias_any_input_part_position);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));

@@ -95,7 +95,10 @@ module Nls
 
         result = {
           "date_range" =>
-          {"start" => "2016-03-31T00:00:00+03:00", "end"=>"2016-04-07T00:00:00+03:00"}
+            {
+              "start" => "2016-03-31T00:00:00+03:00",
+              "end"   => "2016-04-07T00:00:00+03:00"
+            }
         }
         check_interpret("pour 1 semaine dans 1 mois et 3 jours", interpretation: "date_range", solution: result, now: now)
         check_interpret("pour une semaine dans un mois et trois jours", interpretation: "date_range", solution: result, now: now)
@@ -107,16 +110,16 @@ module Nls
         now = "2016-02-28T00:00:00+03:00"
 
         solution = { "duration" => { "value" => "P7D", "unit" => "week"} }
-        check_interpret("pour une semaine", interpretation: "duration", solution: solution, now: now)
-        check_interpret("pour 1 semaine", interpretation: "duration", solution: solution, now: now)
-        check_interpret("for one week", interpretation: "duration", solution: solution, now: now)
-        check_interpret("for 1 week", interpretation: "duration", solution: solution, now: now)
+        check_interpret("pour une semaine", interpretation: "duration_overall", solution: solution, now: now)
+        check_interpret("pour 1 semaine", interpretation: "duration_overall", solution: solution, now: now)
+        check_interpret("for one week", interpretation: "duration_overall", solution: solution, now: now)
+        check_interpret("for 1 week", interpretation: "duration_overall", solution: solution, now: now)
 
         solution = { "duration" => { "value" => "P3M", "unit" => "month"} }
-        check_interpret("for 3 months", interpretation: "duration", solution: solution, now: now)
+        check_interpret("for 3 months", interpretation: "duration_overall", solution: solution, now: now)
 
         solution = { "duration" => { "value" => "P3M2D", "unit" => "day"} }
-        check_interpret("for 3 months and 2 days", interpretation: "duration", solution: solution, now: now)
+        check_interpret("for 3 months and 2 days", interpretation: "duration_overall", solution: solution, now: now)
 
       end
 

@@ -25,6 +25,9 @@ module Nls
 
       def create_hello_emoji_test_package
         package = Package.new("hello_emoji_test_package")
+        package.default_glued = true
+        package.default_keep_order = true
+
         interpretation = package.new_interpretation("hello_emoji_test")
         interpretation << Expression.new("emoji 👋", solution: '`"👋"`')
         interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
@@ -36,6 +39,8 @@ module Nls
 
       def create_solution_test_package
         package = Package.new("solution_test_package")
+        package.default_glued = true
+        package.default_keep_order = true
 
         interpretation = package.new_interpretation("solution_test_js")
         interpretation << Expression.new("sol null", solution: "`null`")
@@ -80,11 +85,11 @@ module Nls
         interpretation.solution = "`'main'`"
 
         # Define recursive and optional match
-        entity      = package.new_interpretation("entity").new_textual("entity").new_textual("dummy entity", keep_order: true)
+        entity      = package.new_interpretation("entity").new_textual("entity").new_textual("dummy entity")
         entity.solution = "entity"
 
         not_matched = package.new_interpretation("not_matched").new_textual("not_matched")
-        no_solution = package.new_interpretation("entity_no_solution").new_textual("entity_no_solution").new_textual("dummy no solution", keep_order: true)
+        no_solution = package.new_interpretation("entity_no_solution").new_textual("entity_no_solution").new_textual("dummy no solution")
         text        = package.new_interpretation("text").new_textual("text")
 
         match = package.new_interpretation("match")
@@ -95,13 +100,19 @@ module Nls
         # @{text} is needed due to a bug in consolidate phase on any
         match.new_expression("@{text} @{entity_any}",  aliases: { text: text, entity_any: Alias.any }, solution: "`entity_any`" )
         match.new_expression("@{no_solution}", aliases: { no_solution: no_solution })
+        match.new_expression("a", solution: "`'A'`" )
+        match.new_expression("b", solution: "`'B'`" )
+        match.new_expression("c", solution: "`'C'`" )
 
         matches = package.new_interpretation("matches")
         matches.new_expression("@{match}", aliases: { match: match })
-        matches.new_expression("@{match} @{matches}", aliases: { match: match, matches: matches }, keep_order: true)
+        matches.new_expression("@{match} @{matches}", aliases: { match: match, matches: matches }, glued: false)
 
         solution_test_combine = package.new_interpretation("solution_test_combine")
         solution_test_combine.new_expression("sol combine @{match}", aliases: { match: matches })
+
+        solution_test_2combine = package.new_interpretation("solution_test_2combine")
+        solution_test_2combine.new_expression("sol list combine @{combine}", aliases: { combine: solution_test_combine })
 
         package
       end
@@ -217,6 +228,16 @@ module Nls
       def test_solution_combine_list_must_be_an_array
         check_interpret("sol combine 1", solution: { match: [ { number: 1 } ] })
         check_interpret("sol combine 1 2", solution: { match: [ { number: 1 }, { number: 2 } ] })
+      end
+
+      def test_solution_combine_list_must_be_an_array_in_order
+        check_interpret("sol combine a b c", solution: { match: [ 'A', 'B', 'C' ] })
+        check_interpret("sol combine b c a", solution: { match: [ 'B', 'C', 'A' ] })
+      end
+
+      def test_solution_combine_2_list_in_order
+        check_interpret("sol list combine sol combine b b sol combine c a sol combine a b", solution: { match: [ 'B', 'B', 'C', 'A', 'A', 'B' ] })
+        check_interpret("sol list combine sol combine c a sol combine b a sol combine c b", solution: { match: [ 'C', 'A', 'B', 'A', 'C', 'B' ] })
       end
 
       def test_test_hello_emoji

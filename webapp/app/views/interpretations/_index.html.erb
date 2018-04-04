@@ -68,7 +68,7 @@
       <input type="text" value="" placeholder="<%= t('views.interpretations.popup.add-tag.search_placeholder') %>" />
     </div>
     <ul>
-      <% @agent.reachable_intents.each do |intent| %>
+      <% @agent.reachable_intents(@intent).each do |intent| %>
         <li data-search="<%= intent.slug %>" class="enabled">
           <a href="#" data-action="add-tag"
              data-data='<%= intent_to_json(intent) %>'><%= intent.slug %></a>
