@@ -111,11 +111,13 @@ static og_status NlpRequestExpressionListsSortRecursive(og_nlp_th ctrl_nlp_th,
         struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
             request_input_part->Irequest_expression);
         IFN(sub_request_expression) DPcErr;
+
         if (!request_expression->expression->is_recursive && sub_request_expression->expression->interpretation->is_recursive)
         {
           IFE(NlpRequestExpressionListSort(ctrl_nlp_th, sub_request_expression));
-          IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
         }
+
+        IFE(NlpRequestExpressionListsSortRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
       }
     }
   }
@@ -126,6 +128,7 @@ static og_status NlpRequestExpressionListsSortRecursive(og_nlp_th ctrl_nlp_th,
 static og_status NlpRequestExpressionListSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   IFE(NlpRequestExpressionListsSortReset(ctrl_nlp_th));
+  g_queue_clear(request_expression->sorted_flat_list);
   IFE(NlpRequestExpressionListSortRecursive(ctrl_nlp_th, request_expression, request_expression));
 
   int re_to_sort_used = OgHeapGetCellsUsed(ctrl_nlp_th->hre_to_sort);

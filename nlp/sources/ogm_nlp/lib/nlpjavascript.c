@@ -15,6 +15,7 @@ static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
 static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
 static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename);
 static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th);
+static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8);
 
 static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
@@ -60,6 +61,8 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   duk_put_prop_string(ctx, -2, "load");
   duk_module_node_init(ctx);
 
+  IFE(NlpJsInitBetterErrorMessage(ctrl_nlp_th));
+
   // load and init libs
   IFE(NlpJsLoadLibMoment(ctrl_nlp_th));
 
@@ -90,6 +93,32 @@ og_status NlpJsRequestSetup(og_nlp_th ctrl_nlp_th)
   if (ctrl_nlp_th->js->request_stack_idx != DUK_INVALID_INDEX)
   {
     ctrl_nlp_th->js->request_stack_idx = ctrl_nlp_th->js->init_stack_idx;
+  }
+
+  DONE;
+}
+
+static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th)
+{
+  duk_context *ctx = ctrl_nlp_th->js->duk_context;
+
+  // https://github.com/rotaready/moment-range#node--npm
+  og_string extends_error = ""   // keep format
+          "Error.prototype.toString = function () {\n"
+          "  var line = (this || {}).lineNumber;\n"
+          "  return this.name + ': ' + this.message + ' (at line ' + this.lineNumber + ')';\n"
+          "};\n"
+          "";
+
+  if (duk_peval_string(ctx, extends_error) != 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsInitBetterErrorMessage failed : \n%s", extends_error);
+    DPcErr;
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: NlpJsInitBetterErrorMessage done.");
   }
 
   DONE;
@@ -334,7 +363,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     {
       snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
     }
-    NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n//=========\n%s%s\n//=========\n", now, enhanced_script);
+    NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n// =========\n%s%s\n//=========\n", now, enhanced_script);
   }
 
   // eval securely
@@ -351,7 +380,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     }
 
     IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script));
-    IFE(NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n%s// JavaScript error : %s\n", now, error));
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "\n// ====== Eval =======\n%s// JavaScript error : %s\n// ===================\n", now, error));
 
     og_string variables = OgHeapGetCell(ctrl_nlp_th->js->variables, 0);
     IFE(NlpThrowErrorTh(ctrl_nlp_th, "%s", variables));

@@ -73,7 +73,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   }
 
   // sort again to take into account scores
-  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
+  g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {

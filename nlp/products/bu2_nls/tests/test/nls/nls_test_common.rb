@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Nls
 
   class NlsTestCommon < TestCommon
@@ -58,6 +60,7 @@ module Nls
     end
 
     def ruby_log_append(filename, sentence)
+      FileUtils.touch(File.join(pwd, ruby_log_file))
       manage_log_file_size
       File.open(File.join(pwd, ruby_log_file),"a") do |f|
         f.puts("#{Time.now.utc.iso8601}: #{filename}: #{sentence}")

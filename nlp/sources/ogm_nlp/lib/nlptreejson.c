@@ -73,9 +73,16 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
 
 static og_status NlpInterpretTreeJsonRecursiveSub(og_nlp_th ctrl_nlp_th, json_t *json_expressions,
     struct request_expression *root_request_expression, struct request_expression *request_expression,
-    json_t *json_expression, struct request_expression *sub_request_expression)
+    json_t *json_expression, struct request_expression *sub_request_expression, og_bool in_flat_list)
 {
   json_t *json_sub_expression = json_object();
+
+  IF(json_array_append_new(json_expressions, json_sub_expression))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
+    DPcErr;
+  }
+
   json_t *json_sub_expression_text = json_string(sub_request_expression->expression->text);
   IF(json_object_set_new(json_sub_expression, "text", json_sub_expression_text))
   {
@@ -110,11 +117,6 @@ static og_status NlpInterpretTreeJsonRecursiveSub(og_nlp_th ctrl_nlp_th, json_t 
     DPcErr;
   }
 
-  IF(json_array_append_new(json_expressions, json_sub_expression))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive : error appending json_sub_expression");
-    DPcErr;
-  }
   og_status status = NlpInterpretTreeJsonRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression,
       json_sub_expression);
   IFE(status);
@@ -131,6 +133,12 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
   if (request_expression->sorted_flat_list->length > 0)
   {
 
+    IF(json_object_set_new(json_expression, "is_list", json_true()))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting is_list on json_expression");
+      DPcErr;
+    }
+
     for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
       int Irequest_expression = GPOINTER_TO_INT(iter->data);
@@ -138,7 +146,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
           Irequest_expression);
 
       og_status status = NlpInterpretTreeJsonRecursiveSub(ctrl_nlp_th, json_expressions, root_request_expression,
-          request_expression, json_expression, sub_request_expression);
+          request_expression, json_expression, sub_request_expression, TRUE);
       IFE(status);
 
     }
@@ -181,7 +189,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
         IFN(sub_request_expression) DPcErr;
 
         og_status status = NlpInterpretTreeJsonRecursiveSub(ctrl_nlp_th, json_expressions, root_request_expression,
-            request_expression, json_expression, sub_request_expression);
+            request_expression, json_expression, sub_request_expression, FALSE);
         IFE(status);
       }
 

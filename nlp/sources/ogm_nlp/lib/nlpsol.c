@@ -246,7 +246,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
       char solution[DPcPathSize];
       NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
-      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias_name,
+      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' (flat list) building solution : %s", alias_name,
           solution);
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
@@ -514,21 +514,6 @@ og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expressi
   DONE;
 }
 
-static json_t * NlpSolutionMergeObjectsSubSolution(og_nlp_th ctrl_nlp_th, og_string solution_key, json_t *sub_solution)
-{
-  // merge sub solution with same keys
-  if (solution_key != NULL && json_is_object(sub_solution) && json_object_size(sub_solution) == 1)
-  {
-    json_t *sub_sub_solution = json_object_get(sub_solution, solution_key);
-    if (sub_sub_solution != NULL)
-    {
-      return sub_sub_solution;
-    }
-  }
-
-  return sub_solution;
-}
-
 static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     og_string solution_key, json_t *sub_solution)
 {
@@ -542,9 +527,6 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
     IFE(NlpJsonToBuffer(sub_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
     NlpLog(DOgNlpTraceSolution, "  sub_solution: %s", json_solution_string);
   }
-
-  // merge sub solution with same keys
-  sub_solution = NlpSolutionMergeObjectsSubSolution(ctrl_nlp_th, solution_key, sub_solution);
 
   // recursive part of list
   if (solution_key == NULL && json_is_object(sub_solution))
