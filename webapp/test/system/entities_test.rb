@@ -129,6 +129,23 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
+  test 'Keep solution after unchecking checkbox' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within('.entity-form') do
+      uncheck('Auto solution')
+      page.execute_script %Q{ $('#terms__new_entity').trigger("click") }
+      fill_in 'Terms', with: "brumeux"
+      fill_in_editor_field '"condition: brumeux"'
+      click_button 'Add'
+    end
+
+    within('#entities-list') do
+      click_link 'brumeux'
+      assert page.has_text?('"condition: brumeux"')
+    end
+  end
+
+
   test 'Export entities' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     within '.header' do
