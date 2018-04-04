@@ -24,6 +24,7 @@ module Nls
 
       @id = opts[:id]
 
+      @package = nil
       @expressions = []
 
       @solution = nil

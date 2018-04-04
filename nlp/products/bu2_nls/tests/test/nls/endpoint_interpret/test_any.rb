@@ -87,34 +87,32 @@ module Nls
 
       end
 
-
       def test_any_with_order
-
-        skip "bug on order in list with any"
 
         package = Package.new("any_with_order")
 
-        voc_in = package.new_interpretation("voc_in", { scope: "private" })
+        voc_in = package.new_interpretation("voc_in", scope: "private")
         voc_in << Expression.new("in")
 
-        voc_ax = package.new_interpretation("voc_ax", { scope: "private" })
+        voc_ax = package.new_interpretation("voc_ax", scope: "private")
         voc_ax << Expression.new("AA", solution: "AA")
         voc_ax << Expression.new("AB", solution: "AB")
         voc_ax << Expression.new("AC", solution: "AC")
 
-        sub_expression = package.new_interpretation("sub_expression", { scope: "private" })
+        sub_expression = package.new_interpretation("sub_expression", scope: "private")
         sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => voc_ax}, solution: "`{ a_x: AA }`", keep_order: true, glued: true)
         sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => Alias.any}, solution: "`{ a_x: AA }`", keep_order: true, glued: true)
 
-        element = package.new_interpretation("element", { scope: "private" })
+        element = package.new_interpretation("element", scope: "private")
         element << Expression.new("@{sub_expression}", aliases: {'sub_expression' => sub_expression}, solution: "`sub_expression`")
 
-        elements_aliases = {'element1' => element, 'element2' => element, 'element3' => element}
-        solution = "̀`[element1, element2, element3]`"
+        list = package.new_interpretation("list", scope: "private")
+        list.new_expression("@{element}", aliases: { element: element })
+        list.new_expression("@{element} @{list}", aliases: { element: element, list: list }, glued: false)
 
-        super_interpretation = package.new_interpretation("super_interpretation", { scope: "public"})
-        opts = { keep_order: true, glued: true, aliases: elements_aliases, solution: "`{a: [element1, element2, element3]}`"}
-        super_interpretation << Expression.new("@{element1} @{element2} @{element3}", opts)
+        super_interpretation = package.new_interpretation("super_interpretation", { scope: "public" })
+        opts = { keep_order: true, glued: true, aliases: { list: list }, solution: "`{ a: list.list }`"}
+        super_interpretation << Expression.new("@{list}", opts)
 
         Nls.remove_all_packages
         Nls.package_update(package)
