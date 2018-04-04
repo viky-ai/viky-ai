@@ -127,6 +127,8 @@ class Nlp::Package
         expression[:expression] = "@{#{ialias.aliasname}}"
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
+        expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
         expressions << expression
 
         expression = {}
@@ -134,6 +136,8 @@ class Nlp::Package
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:aliases] << build_internal_alias(ialias, true)
+        expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
         expressions << expression
 
         if ialias.any_enabled
@@ -145,6 +149,8 @@ class Nlp::Package
             type: 'any'
           }
           expression[:aliases] << build_internal_alias(ialias, true)
+          expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+          expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
           expressions << expression
         end
 

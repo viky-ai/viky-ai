@@ -226,7 +226,9 @@ class PackageTest < ActiveSupport::TestCase
                   "id"      => intents(:weather_question).id,
                   "package" => weather.id
                 }
-              ]
+              ],
+              "keep-order"  => true,
+              "glued"       => true
             },
             {
               "expression" => "@{question} @{question_recursive}",
@@ -243,7 +245,9 @@ class PackageTest < ActiveSupport::TestCase
                   "id"      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   "package" => weather.id
                 }
-              ]
+              ],
+              "keep-order"  => true,
+              "glued"       => true
             }
           ]
         },
@@ -321,7 +325,9 @@ class PackageTest < ActiveSupport::TestCase
                   'id'      => intents(:weather_question).id,
                   'package' => weather.id
                 }
-              ]
+              ],
+              "keep-order"  => true,
+              "glued"       => true
             },
             {
               'expression' => '@{question} @{question_recursive}',
@@ -338,7 +344,9 @@ class PackageTest < ActiveSupport::TestCase
                   'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   'package' => weather.id
                 }
-              ]
+              ],
+              "keep-order"  => true,
+              "glued"       => true
             },
             {
               'expression' => '@{question} @{question_recursive}',
@@ -353,7 +361,9 @@ class PackageTest < ActiveSupport::TestCase
                   'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
                   'package' => weather.id
                 }
-              ]
+              ],
+              "keep-order"  => true,
+              "glued"       => true
             }
           ]
         },

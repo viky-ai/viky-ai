@@ -24,6 +24,7 @@ module Nls
 
       @id = opts[:id]
 
+      @package = nil
       @expressions = []
 
       @solution = nil
@@ -74,23 +75,48 @@ module Nls
     def new_expression(text, opts = {} )
       aliases = []
       aliases = opts[:aliases] if opts.has_key?(:aliases)
+
       locale = nil
       locale = opts[:locale] if opts.has_key?(:locale)
+
+      glued = false
+      if opts.has_key?(:glued)
+        glued = opts[:glued]
+      elsif !@package.nil? && !@package.default_glued.nil?
+        glued = @package.default_glued
+      end
+
       keep_order = false
-      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      if opts.has_key?(:keep_order)
+        keep_order = opts[:keep_order]
+      elsif !@package.nil? && !@package.default_keep_order.nil?
+        keep_order = @package.default_keep_order
+      end
+
       solution = nil
       solution = opts[:solution] if opts.has_key?(:solution)
-      add_expression(Expression.new(text, {aliases: aliases, locale: locale, keep_order: keep_order, solution: solution}))
+      add_expression(Expression.new(text, {aliases: aliases, locale: locale, glued: glued, keep_order: keep_order, solution: solution}))
       self
     end
 
     def new_textual(texts = [], opts = {})
       locale = @@default_locale
       locale = opts[:locale] if opts.has_key?(:locale)
+
       glued = false
-      glued = opts[:glued] if opts.has_key?(:glued)
+      if opts.has_key?(:glued)
+        glued = opts[:glued]
+      elsif !@package.nil? && !@package.default_glued.nil?
+        glued = @package.default_glued
+      end
+
       keep_order = false
-      keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
+      if opts.has_key?(:keep_order)
+        keep_order = opts[:keep_order]
+      elsif !@package.nil? && !@package.default_keep_order.nil?
+        keep_order = @package.default_keep_order
+      end
+
       solution = nil
       solution = opts[:solution] if opts.has_key?(:solution)
       if texts.kind_of? Array
