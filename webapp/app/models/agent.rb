@@ -154,8 +154,10 @@ class Agent < ApplicationRecord
     "#{User.find(owner_id).username}/#{agentname}"
   end
 
-  def reachable_intents
-    result = [] + intents.order(position: :desc, created_at: :desc)
+  def reachable_intents(current_intent)
+    result = [] + intents
+                    .where.not(id: current_intent)
+                    .order(position: :desc, created_at: :desc)
     result + Intent
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
