@@ -114,7 +114,7 @@ class Nlp::Package
 
       InterpretationAlias
         .includes(:interpretation)
-        .where(is_list: true, interpretations: { intent_id: intent.id }).order(:position_start).each do |ialias|
+        .where(is_list: true, interpretations: { intent_id: intent.id }).order('interpretations.position DESC, interpretations.locale ASC').order(:position_start).each do |ialias|
 
         interpretation_hash = {}
         interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
@@ -168,7 +168,7 @@ class Nlp::Package
       interpretation_hash[:scope] = intent.is_public? ? 'public' : 'private'
       expressions = []
 
-      intent.interpretations.order(position: :desc).each do |interpretation|
+      intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
         expression[:aliases]    = build_aliases(interpretation)
