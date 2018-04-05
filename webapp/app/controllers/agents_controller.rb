@@ -160,6 +160,16 @@ class AgentsController < ApplicationController
     end
   end
 
+  def duplicate
+    new_agent = AgentDuplicator.duplicate(@agent, current_user)
+    if new_agent.save
+      redirect_to user_agent_path(new_agent.owner, new_agent), notice: t('views.agents.duplication.success_message', name: new_agent.name)
+    else
+      redirect_to agents_path, alert: t('views.agents.duplication.failed_message',
+                                        errors: new_agent.errors.full_messages.join(', '))
+    end
+  end
+
 
   private
 
@@ -167,7 +177,7 @@ class AgentsController < ApplicationController
       case action_name
       when "full_export"
         access_denied unless current_user.can?(:show, @agent) && current_user.admin?
-      when "show", 'add_favorite', 'delete_favorite'
+      when "show", 'add_favorite', 'delete_favorite', 'duplicate'
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent

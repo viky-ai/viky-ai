@@ -557,4 +557,21 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?("Unauthorized operation.")
   end
+
+
+  #
+  # Duplicate agent
+  #
+  test 'Duplication allowed' do
+    sign_in users(:admin)
+    post duplicate_user_agent_path(users(:admin), agents(:weather))
+    assert_redirected_to user_agent_url(users(:admin), 'weather_copy')
+  end
+
+  test 'Duplication forbidden' do
+    sign_in users(:confirmed)
+    post duplicate_user_agent_path(users(:admin), agents(:weather))
+    assert_redirected_to agents_url
+    assert_equal "Unauthorized operation.", flash[:alert]
+  end
 end

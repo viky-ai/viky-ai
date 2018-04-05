@@ -124,4 +124,14 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'Remove favorite'
     assert page.has_text?('Add favorite')
   end
+
+
+  test 'Duplicate an agent' do
+    go_to_agent_show(users(:admin), agents(:weather))
+    click_link 'Duplicate'
+    assert page.has_text?('Agent My awesome weather bot [COPY] created.')
+
+    go_to_agents_index
+    assert page.has_text?('admin/weather_copy')
+  end
 end
