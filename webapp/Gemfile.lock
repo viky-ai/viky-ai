@@ -60,6 +60,7 @@ GEM
       xpath (>= 2.0, < 4.0)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
+    clowne (0.2.0)
     coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -312,6 +313,7 @@ DEPENDENCIES
   binding_of_caller
   byebug
   capybara (~> 2.13)
+  clowne
   coffee-rails (~> 4.2)
   commonmarker (~> 0.14)
   devise (~> 4.3.0)
