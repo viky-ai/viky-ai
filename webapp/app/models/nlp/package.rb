@@ -92,15 +92,16 @@ class Nlp::Package
 
     def build_tree
       interpretations = []
+      slug = @agent.slug
       @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent)
         end
         interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
       end
       @agent.entities_lists.order(position: :desc).each do |elist|
-        cache_key = ['pkg', 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
         interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(elist)
         end
