@@ -17,7 +17,7 @@ $(document).on('turbolinks:load', -> new ModalRouter())
 
 class Modal
   constructor: ->
-    $("body").on 'click', (event) => @dispatch(event)
+    $("body").on 'click submit', (event) => @dispatch(event)
 
   dispatch: (event) ->
     node   = $(event.target)
@@ -32,25 +32,40 @@ class Modal
 
     if action is "open-modal"
       event.preventDefault()
+      @preload()
       @prepare()
       Modal.update($(node.data('modal-selector')).clone())
 
     if action is "update-remote-modal"
       event.preventDefault()
-      $.ajax
-        url: node.attr('href')
-        complete: (data) =>
-          if data.status == 403
-            App.Message.alert(JSON.parse(data.responseText).message)
-          else
-            Modal.update(data.responseText)
+      if node.is('a')
+        $.ajax
+          url: node.attr('href')
+          complete: (data) =>
+            if data.status == 403
+              App.Message.alert(JSON.parse(data.responseText).message)
+            else
+              Modal.update(data.responseText)
+      else if node.is('form') || node.parents('form').length > 0
+        closest_form = if node.is('form') then $(node) else $(node.parents('form')[0])
+        $.ajax
+          url: closest_form.attr('action')
+          data: closest_form.serialize()
+          complete: (data) =>
+            if data.status == 403
+              App.Message.alert(JSON.parse(data.responseText).message)
+            else
+              Modal.update(data.responseText)
 
     if action is "open-remote-modal"
       event.preventDefault()
       $.ajax
         url: node.attr('href')
+        beforeSend: =>
+          @preload()
         complete: (data) =>
           if data.status == 403
+            $("#modal_preloader").hide()
             App.Message.alert(JSON.parse(data.responseText).message)
           else
             @prepare()
@@ -73,8 +88,7 @@ class Modal
       $('.modal__main').addClass('modal__main--loading').html("#{icon} Loading...")
 
   close: ->
-    $('.app-wrapper').removeClass('modal-background-effect')
-    $('nav').removeClass('modal-background-effect')
+    $('.app-wrapper, nav').removeClass('modal-background-effect')
     $('.modal').hide()
     $(document).off 'keyup'
     $('body').trigger('modal:close')
@@ -84,10 +98,17 @@ class Modal
     $('#modal_container .modal').show()
     $('body').trigger('modal:load')
 
-  prepare: ->
+  preload: ->
+    $('.app-wrapper, nav').addClass('modal-background-effect')
+
+    if ($('#modal_preloader').length == 0)
+      $("<div id='modal_preloader'></div>").appendTo('body')
+    $("#modal_preloader").show()
+
     $("<div id='modal_container'></div>").appendTo('body') if ($('#modal_container').length == 0)
-    $('.app-wrapper').addClass('modal-background-effect')
-    $('nav').addClass('modal-background-effect')
+
+  prepare: ->
+    $("#modal_preloader").hide()
     $(document).on 'keyup', (e) => @close() if e.keyCode == 27
 
 module.exports = Modal

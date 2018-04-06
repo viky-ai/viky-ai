@@ -6,6 +6,20 @@
           filter: blur(4px);
 }
 
+#modal_preloader{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-color: rgba(#000, 0.5);
+  z-index: 499;
+}
+
 .modal{
   @include display_flex();
   justify-content: center;
@@ -17,6 +31,7 @@
   left: 0;
   top: 0;
   z-index: 500;
+
 
   .modal__overlay{
     position: absolute;
@@ -69,10 +84,9 @@
       position: relative;
       button.modal__main__title__close{
         position: absolute;
-        top: .75em;
+        top: .5em;
         right: 1em;
         display: block;
-        line-height: 1em;
         padding: 0;
         height: 2em;
         width: 2em;
@@ -107,7 +121,20 @@
     }
   }
 
+  &.modal--x-large{
+    .modal__main{
+      width: calc(100% - 60px);
+    }
+  }
+
+  &.modal--fixed-on-top{
+    align-items: flex-start;
+    padding-top: 30px;
+  }
+
   .modal__main__chooser{
+    overflow: auto;
+    max-height: calc(100vh - 60px - 140px);
     ul{
       list-style: none;
       padding: 0 0 6px 0;
@@ -122,6 +149,13 @@
         }
       }
     }
+    .modal__main__chooser__no-search-result{
+      margin: 2em;
+      text-align: center;
+      color: #aaa;
+      img{
+        width: 60px;
+      }
+    }
   }
-
 }

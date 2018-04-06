@@ -10,6 +10,8 @@ class CodeEditor
       autoRefresh: true,
       tabSize: 2,
       insertSoftTab: true,
+      extraKeys:
+        'Tab': (editor) -> editor.execCommand 'insertSoftTab'
     }
     if readonly
       options.readOnly = 'nocursor'

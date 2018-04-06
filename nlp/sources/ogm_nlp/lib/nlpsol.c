@@ -7,7 +7,7 @@
 #include "ogm_nlp.h"
 
 static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression);
+    struct request_expression *request_expression, struct alias *mothers_alias);
 static og_bool NlpSolutionNeedJsComputeRecursive(og_nlp_th ctrl_nlp_th, json_t *json_package_solution);
 static og_bool NlpSolutionAdd(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
@@ -18,7 +18,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
-static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
 
 og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
@@ -30,50 +30,76 @@ og_status NlpSolutionCalculate(og_nlp_th ctrl_nlp_th, struct request_expression 
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
         "NlpSolutionCalculate calculate solutions for following request expression:");
     IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
-    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
   }
 
-  IFE(NlpSolutionCalculateRecursive(ctrl_nlp_th, request_expression, request_expression));
+  IFE(NlpSolutionCalculateRecursive(ctrl_nlp_th, request_expression, request_expression, NULL));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
         "NlpSolutionCalculate solutions calculated following request expression:");
-    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
   }
 
   DONE;
 }
 
 static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
-    struct request_expression *request_expression)
+    struct request_expression *request_expression, struct alias *mothers_alias)
 {
+  og_bool solution_built = FALSE;
   og_bool must_combine_solution = FALSE;
+  request_expression->mothers_alias = mothers_alias;
 
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  if (request_expression->sorted_flat_list->length > 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
+    // Create List with all sub_request_expression->solution
+    request_expression->json_solution = json_array();
 
-    if (request_input_part->type == nlp_input_part_type_Word)
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
-      struct request_word *request_word = request_input_part->request_word;
-      og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-      IFN(string_request_word) DPcErr;
-      if (request_word->is_number)
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          Irequest_expression);
+      og_bool sub_solution_built = NlpSolutionCalculateRecursive(ctrl_nlp_th, root_request_expression,
+          sub_request_expression, mothers_alias);
+      IFE(sub_solution_built);
+      if (sub_solution_built)
       {
         must_combine_solution = TRUE;
       }
     }
-    else if (request_input_part->type == nlp_input_part_type_Interpretation)
+
+  }
+  else
+  {
+
+    for (int i = 0; i < request_expression->orips_nb; i++)
     {
-      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
-      IFN(sub_request_expression) DPcErr;
-      og_bool sub_solution_built = NlpSolutionCalculateRecursive(ctrl_nlp_th, root_request_expression,
-          sub_request_expression);
-      IFE(sub_solution_built);
-      if (sub_solution_built) must_combine_solution = TRUE;
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Word)
+      {
+        if (request_input_part->input_part && request_input_part->input_part->type == nlp_input_part_type_Number)
+        {
+          must_combine_solution = TRUE;
+        }
+      }
+      else if (request_input_part->type == nlp_input_part_type_Interpretation)
+      {
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+        og_bool sub_solution_built = NlpSolutionCalculateRecursive(ctrl_nlp_th, root_request_expression,
+            sub_request_expression, request_input_part->input_part->alias);
+        IFE(sub_solution_built);
+        if (sub_solution_built)
+        {
+          must_combine_solution = TRUE;
+        }
+      }
     }
   }
 
@@ -89,8 +115,6 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
   }
 
   og_bool need_js_compute = NlpSolutionNeedJsComputeRecursive(ctrl_nlp_th, json_package_solution);
-
-  og_bool solution_built = FALSE;
 
   if (must_combine_solution)
   {
@@ -178,10 +202,10 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
 
   int nb_solutions = g_queue_get_length(solutions);
   if (nb_solutions <= 0) return FALSE;
-  else if (nb_solutions == 1 && !request_expression->expression->interpretation->is_recursive)
+  struct alias_solution *first_alias_solution = solutions->head->data;
+  if (nb_solutions == 1 && !first_alias_solution->is_sorted_flat_list)
   {
-    struct alias_solution *alias_solution = solutions->head->data;
-    request_expression->json_solution = json_incref(alias_solution->json_solution);
+    request_expression->json_solution = json_incref(first_alias_solution->json_solution);
   }
   else
   {
@@ -195,15 +219,16 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 {
   int alias_solutions_nb = 0;
 
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  if (request_expression->sorted_flat_list->length > 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
+    // Create List with all sub_request_expression->solution
+    request_expression->json_solution = json_array();
 
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
+          Irequest_expression);
       IFN(sub_request_expression) DPcErr;
 
       json_t * sub_solution = sub_request_expression->json_solution;
@@ -212,11 +237,16 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         sub_solution = json_null();
       }
 
-      struct alias *alias = request_input_part->input_part->alias;
+      og_string alias_name = "root";
+      struct alias *alias = request_expression->mothers_alias;
+      if (alias)
+      {
+        alias_name = alias->alias;
+      }
 
       char solution[DPcPathSize];
       NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
-      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias->alias,
+      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' (flat list) building solution : %s", alias_name,
           solution);
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
@@ -228,34 +258,41 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
       }
       struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
       alias_solution->alias = alias;
-      alias_solution->json_solution = json_incref(sub_request_expression->json_solution);
+      alias_solution->json_solution = json_incref(sub_solution);
+      alias_solution->is_sorted_flat_list = TRUE;
 
       g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
       alias_solutions_nb++;
     }
-    else if (request_input_part->type == nlp_input_part_type_Word)
+
+  }
+  else
+  {
+
+    for (int i = 0; i < request_expression->orips_nb; i++)
     {
-      struct request_word *request_word = request_input_part->request_word;
-      og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-      IFN(string_request_word) DPcErr;
-      if (request_word->is_number && request_input_part->interpret_word_as_number)
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Interpretation)
       {
-        double value = request_word->number_value;
-        json_t *json_solution_number = NULL;
-        if ((json_int_t) ((value * 100) / 100) == value)
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+
+        json_t * sub_solution = sub_request_expression->json_solution;
+        if (sub_solution == NULL)
         {
-          json_solution_number = json_integer(value);
-        }
-        else
-        {
-          json_solution_number = json_real(value);
+          sub_solution = json_null();
         }
 
         struct alias *alias = request_input_part->input_part->alias;
+
         char solution[DPcPathSize];
-        NlpSolutionString(ctrl_nlp_th, json_solution_number, DPcPathSize, solution);
+        NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
         NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
             alias->alias, solution);
+
         if (alias_solutions_nb >= DOgAliasSolutionSize)
         {
           NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
@@ -265,13 +302,51 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
         }
         struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
         alias_solution->alias = alias;
-        alias_solution->json_solution = json_solution_number;
+        alias_solution->json_solution = json_incref(sub_request_expression->json_solution);
+
         g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
         alias_solutions_nb++;
-
       }
-    }
+      else if (request_input_part->type == nlp_input_part_type_Word)
+      {
+        struct request_word *request_word = request_input_part->request_word;
+        og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+        IFN(string_request_word) DPcErr;
+        if (request_word->is_number && request_input_part->interpret_word_as_number)
+        {
+          double value = request_word->number_value;
+          json_t *json_solution_number = NULL;
+          if ((json_int_t) ((value * 100) / 100) == value)
+          {
+            json_solution_number = json_integer(value);
+          }
+          else
+          {
+            json_solution_number = json_real(value);
+          }
 
+          struct alias *alias = request_input_part->input_part->alias;
+          char solution[DPcPathSize];
+          NlpSolutionString(ctrl_nlp_th, json_solution_number, DPcPathSize, solution);
+          NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
+              alias->alias, solution);
+          if (alias_solutions_nb >= DOgAliasSolutionSize)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+                alias_solutions_nb, DOgAliasSolutionSize);
+            DPcErr;
+
+          }
+          struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+          alias_solution->alias = alias;
+          alias_solution->json_solution = json_solution_number;
+          g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+          alias_solutions_nb++;
+
+        }
+      }
+
+    }
   }
 
   // Any might not exist or be attached to this request_expression, in that case Irequest_any = -1
@@ -327,86 +402,116 @@ og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expressi
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
-    og_string solution_key = alias_solution->alias->alias;
     json_t *sub_solution = alias_solution->json_solution;
 
-    // dans l'interpretation récursive a_list
-    // expr: a
-    // expr: a a_list
-    // alias_is_recursive ne s'applique qu'au a de la seconde expression
-    if (sub_solution != NULL && !json_is_null(sub_solution))
+    og_string solution_key_str = "root_expression";
+    og_string solution_key = NULL;
+    if (alias_solution->alias)
     {
-      if (request_expression->expression->interpretation->is_recursive)
-      {
+      solution_key = alias_solution->alias->alias;
+      solution_key_str = solution_key;
+    }
 
-        if (alias_solution->alias->type == nlp_alias_type_type_Interpretation
-            && !strcmp(alias_solution->alias->id, request_expression->expression->interpretation->id))
+    // On est dans une interpretation récursive (une liste : alias_solution->is_sorted_flat_list)
+    if (alias_solution->is_sorted_flat_list)
+    {
+      // a list must an array
+      json_t *array = NULL;
+      json_t *expression_solution = NULL;
+      if (json_is_object(request_expression->json_solution))
+      {
+        expression_solution = json_object_get(request_expression->json_solution, solution_key);
+        if (json_is_array(expression_solution))
         {
-          solution_key = NULL;
+          array = expression_solution;
+        }
+      }
+      else if (json_is_array(request_expression->json_solution))
+      {
+        array = request_expression->json_solution;
+      }
+
+      // build a new array
+      if (array == NULL)
+      {
+        array = json_array();
+        if (solution_key)
+        {
+          IF(json_object_set_new(request_expression->json_solution, solution_key, array))
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, new array failed :"
+                " '%s' => []", solution_key_str);
+            DPcErr;
+          }
         }
         else
         {
+          json_decrefp(&request_expression->json_solution);
+          request_expression->json_solution = array;
+        }
+      }
 
-          // a list must an array
-          json_t *expression_solution = json_object_get(request_expression->json_solution, solution_key);
+      if (expression_solution != NULL && !json_is_null(expression_solution) && array != expression_solution)
+      {
+        // append preview value to array
+        IF(json_array_append_new(array, expression_solution))
+        {
+          og_char_buffer buffer[DPcPathSize];
+          IFE(NlpJsonToBuffer(expression_solution, buffer, DPcPathSize, NULL, 0));
 
-          if (json_is_array(expression_solution))
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, append preview solution"
+              " failed : '%s' => '%s'", solution_key_str, buffer);
+          DPcErr;
+        }
+      }
+
+      if (sub_solution != NULL && !json_is_null(sub_solution) && array != sub_solution)
+      {
+        // merge both array
+        if (json_is_array(sub_solution))
+        {
+          size_t index = 0;
+          json_t *value = NULL;
+
+          json_array_foreach(sub_solution, index, value)
           {
-            // do nothing is already an array
-          }
-          else
-          {
-            json_t *list = json_array();
-            IF(json_object_set_new(request_expression->json_solution, solution_key, list))
+            if (value != NULL && !json_is_null(value))
             {
-              NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, new array failed :"
-                  " '%s' => []", solution_key);
-              DPcErr;
-            }
-
-            if (expression_solution == NULL || json_is_null(expression_solution))
-            {
-              // do nothing skip null values
-            }
-            else
-            {
-              // append value to array
-              IF(json_array_append_new(list, expression_solution))
+              IF(json_array_append(array, value))
               {
                 og_char_buffer buffer[DPcPathSize];
-                IFE(NlpJsonToBuffer(expression_solution, buffer, DPcPathSize, NULL, 0));
-                NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: list must be an array, append "
-                    " failed : '%s' => '%s'", solution_key, buffer);
+                IFE(NlpJsonToBuffer(sub_solution, buffer, DPcPathSize, NULL, 0));
+                NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjects: append sub_solution merged each simple value"
+                    " in existing array failed : '%s' => '%s'", solution_key_str, buffer);
                 DPcErr;
               }
             }
           }
+        }
 
+        // append sub_solution in array
+        else
+        {
+          IF(json_array_append(array, sub_solution))
+          {
+            og_char_buffer buffer[DPcPathSize];
+            IFE(NlpJsonToBuffer(sub_solution, buffer, DPcPathSize, NULL, 0));
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionMergeObjectsRecursive: append sub_solution in array"
+                " failed : '%s' => '%s'", solution_key_str, buffer);
+            DPcErr;
+          }
         }
 
       }
 
+    }
+    else
+    {
       IFE(NlpSolutionMergeObjectsRecursive(ctrl_nlp_th, request_expression, solution_key, sub_solution));
-
     }
   }
 
   DONE;
-}
-
-static json_t * NlpSolutionMergeObjectsSubSolution(og_nlp_th ctrl_nlp_th, og_string solution_key, json_t *sub_solution)
-{
-  // merge sub solution with same keys
-  if (solution_key != NULL && json_is_object(sub_solution) && json_object_size(sub_solution) == 1)
-  {
-    json_t *sub_sub_solution = json_object_get(sub_solution, solution_key);
-    if (sub_sub_solution != NULL)
-    {
-      return sub_sub_solution;
-    }
-  }
-
-  return sub_solution;
 }
 
 static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -423,9 +528,6 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
     NlpLog(DOgNlpTraceSolution, "  sub_solution: %s", json_solution_string);
   }
 
-  // merge sub solution with same keys
-  sub_solution = NlpSolutionMergeObjectsSubSolution(ctrl_nlp_th, solution_key, sub_solution);
-
   // recursive part of list
   if (solution_key == NULL && json_is_object(sub_solution))
   {
@@ -438,7 +540,7 @@ static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct 
   }
 
   // object value
-  else if (json_is_object(sub_solution) && !request_expression->expression->interpretation->is_recursive)
+  else if (json_is_object(sub_solution))
   {
     const char *key = NULL;
     json_t *value = NULL;
@@ -629,7 +731,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     json_t *json_package_solution)
 {
 
-// reset local variable
+  // reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
@@ -648,24 +750,28 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
       json_t *json_solution = alias_solution->json_solution;
       og_char_buffer json_solution_string[DOgMlogMaxMessageSize / 2];
       IFE(NlpJsonToBuffer(json_solution, json_solution_string, DOgMlogMaxMessageSize / 2, NULL, 0));
-      NlpLog(DOgNlpTraceSolution, "  alias '%s' solution: %s", alias_solution->alias->alias, json_solution_string);
+      og_string alias_name = "root";
+      if (alias_solution->alias) alias_name = alias_solution->alias->alias;
+      NlpLog(DOgNlpTraceSolution, "  alias '%s' solution: %s", alias_name, json_solution_string);
     }
   }
 
-// We want to add the alias as a variable whose name is the alias and whose value is its associated solution
+  // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
-
-    IFE(NlpJsAddVariableJson(ctrl_nlp_th, alias_solution->alias->alias, alias_solution->json_solution));
+    if (alias_solution->alias != NULL)
+    {
+      IFE(NlpJsAddVariableJson(ctrl_nlp_th, alias_solution->alias->alias, alias_solution->json_solution));
+    }
   }
 
   NlpLog(DOgNlpTraceSolution, "Transforming solution by executing JS code");
 
   og_bool solution_built = FALSE;
 
-// Now we scan the json_package_solution to get some executable code
-// If there are, we create a copy of the json structure and amend it with the result of the execution of the code
+  // Now we scan the json_package_solution to get some executable code
+  // If there are, we create a copy of the json structure and amend it with the result of the execution of the code
   json_t *json_new_solution = json_deep_copy(json_package_solution);
 
   json_t *json_solution_computed_value = NULL;
@@ -695,7 +801,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     solution_built = TRUE;
   }
 
-// reset local variable
+  // reset local variable
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   return solution_built;
@@ -742,13 +848,12 @@ static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expressi
   DONE;
 }
 
-static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
+static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression)
 {
   if (request_expression->json_solution)
   {
     json_decrefp(&request_expression->json_solution);
-    request_expression->json_solution = NULL;
   }
 
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
@@ -760,19 +865,35 @@ static og_bool NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request_e
   }
   g_queue_clear(request_expression->tmp_solutions);
 
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  if (request_expression->sorted_flat_list->length > 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
+    // Create List with all sub_request_expression->solution
+    request_expression->json_solution = json_array();
 
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
       struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
-          request_input_part->Irequest_expression);
+          Irequest_expression);
       IFN(sub_request_expression) DPcErr;
-      og_bool sub_solution_built = NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression,
-          sub_request_expression);
-      IFE(sub_solution_built);
+      IFE(NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+    }
+
+  }
+  else
+  {
+    for (int i = 0; i < request_expression->orips_nb; i++)
+    {
+      struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+      IFN(request_input_part) DPcErr;
+
+      if (request_input_part->type == nlp_input_part_type_Interpretation)
+      {
+        struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+            request_input_part->Irequest_expression);
+        IFN(sub_request_expression) DPcErr;
+        IFE(NlpSolutionCleanRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
+      }
     }
   }
 

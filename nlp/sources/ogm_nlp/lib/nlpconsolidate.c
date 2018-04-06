@@ -506,6 +506,9 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       {
         expression->is_recursive = TRUE;
         expression->interpretation->is_recursive = TRUE;
+        // Keep order on a recursive list in not necessary
+        // as sorting a a a into a a a does not mean anything
+        expression->keep_order = FALSE;
       }
 
       IFE(NlpInputPartAliasAdd(ctrl_nlp_th, package, alias->id, Iinput_part));
@@ -518,15 +521,15 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       // a value of n means before the nth input_part (or at the end if it is equal to expression->input_parts_nb
       if (expression->alias_any_input_part_position >= 0)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while"
+        NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateAddAlias: alias '%.*s' is a second alias of type any, while"
             " only one alias per expression is allowed in interpretation '%s' '%s'", length_string_alias, string_alias,
             expression->text, expression->interpretation->slug, expression->interpretation->id);
-
       }
-      IFE(
-          NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,
-              &expression->alias_any_input_part_position));
-      //expression->alias_any_input_part_position = expression->input_parts_nb;
+
+      og_status current_alias_status = NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,
+          &expression->alias_any_input_part_position);
+      IFE(current_alias_status);
+
       alias_added = TRUE;
     }
     else if (alias->type == nlp_alias_type_Number)

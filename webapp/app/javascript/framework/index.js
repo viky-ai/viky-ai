@@ -8,12 +8,15 @@ import 'selectize/dist/css/selectize.css'
 // PrismJs & Auto highlight
 import 'prismjs/themes/prism.css';
 require('prismjs');
+require('prismjs/components/prism-json.js');
+require('prismjs/components/prism-ruby.js');
 import './highlight';
 
 // CodeMirror (https://github.com/codemirror/CodeMirror)
 window.CodeMirror = require('codemirror');
 import 'codemirror/addon/display/autorefresh'
 import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/gfm/gfm'
 import 'codemirror/lib/codemirror.css'
 
 // CSS framework

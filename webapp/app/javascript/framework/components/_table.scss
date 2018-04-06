@@ -13,7 +13,6 @@ table{
     }
   }
   th, td{
-    text-align: left;
     vertical-align: baseline;
     &.number,
     &.actions{
@@ -34,4 +33,8 @@ table{
     color: rgba(black, .5);
     font-size: .875em;
   }
+}
+
+div:not(.markdown) > table thead th{
+  text-align: left;
 }

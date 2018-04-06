@@ -13,13 +13,13 @@ Rails.application.routes.draw do
     end
   end
 
-
   resource :profile, only: [:show, :edit, :update, :destroy] do
     get :confirm_destroy
     post :stop_impersonating, on: :collection
   end
 
   scope '/agents' do
+    resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
       resources :agents, path: '', except: [:index] do
         member do
@@ -30,6 +30,7 @@ Rails.application.routes.draw do
           get :generate_token
           get :interpret, to: 'console#interpret'
           get :full_export
+          get :agents_selection, to: 'agents_selection#index'
         end
         get :search_users_to_share_agent, controller: 'memberships'
 
@@ -45,7 +46,14 @@ Rails.application.routes.draw do
           end
         end
 
+        resource :readme, except: [:show] do
+          get :confirm_destroy
+        end
+
         resources :intents, path: 'interpretations' do
+          member do
+            post :move_to_agent
+          end
           get :select_new_locale
           post :add_locale
           delete :remove_locale
@@ -66,6 +74,9 @@ Rails.application.routes.draw do
         end
 
         resources :entities_lists do
+          member do
+            post :move_to_agent
+          end
           get :confirm_destroy
           collection do
             post :update_positions
@@ -97,17 +108,6 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/backend/jobs'
   end
 
-  get 'style-guide', to: 'style_guide#index'
-  get 'style-guide/:page_id', to: "style_guide#page"
-
-  unauthenticated :user do
-    root to: "marketing#index", as: :unauthenticated_root
-  end
-
-  authenticate :user do
-    root to: 'agents#index', as: :authenticated_root
-  end
-
   # API with versioning
   namespace :api do
     namespace :v1 do
@@ -121,6 +121,21 @@ Rails.application.routes.draw do
   namespace :api_internal do
       get '/packages',     to: 'packages#index'
       get '/packages/:id', to: 'packages#show'
+  end
+
+
+
+  get 'style-guide', to: 'style_guide#index'
+  get 'style-guide/:page_id', to: "style_guide#page"
+
+  get 'brain', to: 'brain#index'
+
+  unauthenticated :user do
+    root to: "marketing#index", as: :unauthenticated_root
+  end
+
+  authenticate :user do
+    root to: 'agents#index', as: :authenticated_root
   end
 
   match "/404", to: "errors#not_found", via: :all

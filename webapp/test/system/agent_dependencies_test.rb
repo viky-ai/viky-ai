@@ -12,7 +12,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     # Add admin/terminator to admin/weather
     click_link "Add new dependency"
     within(".modal") do
-      assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
+      assert_equal ["PUBLIC T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
     end
 
@@ -41,7 +41,7 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     # Add dependency
     click_link "Add new dependency"
     within(".modal") do
-      assert_equal ["T-800 admin/terminator"], all('a').collect(&:text)
+      assert_equal ["PUBLIC T-800 admin/terminator"], all('a').collect(&:text)
       click_link "T-800 admin/terminator"
     end
 
@@ -101,5 +101,44 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     click_link 'My awesome weather bot admin/weather'
     assert page.has_text?('Dependencies (0) - Dependents (0)')
     assert page.has_no_link?('Add new dependency')
+  end
+
+
+  test 'Filter favorite agent dependency' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+    admin = users(:admin)
+    assert FavoriteAgent.create(user: admin, agent: agent_public)
+
+    go_to_agents_index
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
+
+    click_link 'Add new dependency'
+    within(".modal") do
+      click_button 'Favorites'
+      assert page.has_text?('PUBLIC Weather bot confirmed/weather')
+      assert page.has_no_text?('PUBLIC T-800 admin/terminator')
+    end
+  end
+
+
+  test 'Filter query agent dependency' do
+    agent_public = agents(:weather_confirmed)
+    agent_public.visibility = Agent.visibilities[:is_public]
+    assert agent_public.save
+
+    go_to_agents_index
+    click_link 'My awesome weather bot admin/weather'
+    assert page.has_text?('Dependencies (0) - Dependents (0)')
+
+    click_link 'Add new dependency'
+    within(".modal") do
+      fill_in 'search_query', with: 'T-800'
+      click_button '#search'
+      assert page.has_no_text?('PUBLIC Weather bot confirmed/weather')
+      assert page.has_text?('PUBLIC T-800 admin/terminator')
+    end
   end
 end

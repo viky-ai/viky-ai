@@ -24,6 +24,8 @@ en:
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> entities lists
         new: New entities list
         configure: Configure
+        move_to: Move to...
+        quick_move_to: "Move to %{agent}"
         delete: Delete
         entities:
           zero: "0 entity"
@@ -50,4 +52,6 @@ en:
       blankslate:
         message_show_html: >
           No entity list entered for the "%{agent}" agent.
-
+      move_to:
+        success_message_html: 'Entities list %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
+        errors_message: "Move entities list to agent failed: %{errors}."

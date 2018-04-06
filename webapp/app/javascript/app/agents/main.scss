@@ -1,6 +1,21 @@
 @import '../../framework/abstracts/mixins';
 @import '../../framework/abstracts/variables';
 
+/**
+ * Agent index
+**/
+.agent_search {
+  display: flex;
+  flex-wrap: wrap;
+  .field{
+    margin: .25em .5em .25em 0;
+  }
+}
+
+
+/**
+ * Agent Show
+**/
 .blankslate--agents{
   margin-top: 6em;
 }
@@ -15,37 +30,6 @@
     float: right;
   }
 }
-
-.agent-upload__destroy{
-  @include display_flex();
-  justify-content: center;
-  align-items: center;
-
-  background-position: center center;
-  background-size: cover;
-  height: 12em;
-}
-
-.agent-upload__new.field--upload{
-  height: 12em;
-}
-
-.field.field--api-token{
-  background-color: #f9f9f9;
-  margin: -1.5em -2em 1em -2em;
-  padding: .5em 2em;
-  border-bottom: 1px solid #eee;
-}
-
-.agent-name-and-visibility{
-  @include display_flex();
-  justify-content: space-between;
-  .field:first-child{
-    width: 100%;
-    margin-right: 2em;
-  }
-}
-
 
 .user-list{
   list-style: none;
@@ -71,7 +55,6 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
-
 
 .dependencies-title{
   & > em{
@@ -110,10 +93,102 @@
   }
 }
 
+
+/**
+ *  Markdown form editor
+**/
+.js-readme-form{
+  height: calc(90vh - 100px);
+  overflow: auto;
+}
+.markdown-editor{
+  margin-bottom: 2em;
+  display: grid;
+
+  & > div:nth-child(2){
+    display:none;
+  }
+
+  @media (min-width: 900px){
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 1em;
+    & > div:nth-child(2){
+      display:block;
+    }
+  }
+  .markdown-editor__input{
+    height: calc(90vh - 200px);
+    overflow: auto;
+    padding: 2px;
+    .CodeMirror{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .markdown-editor__preview.markdown{
+    height: calc(90vh - 200px - 4px);
+    overflow: auto;
+    border: 1px dashed #ddd;
+    border-radius: 3px;
+    padding: 1em 1em 3em 1em;
+    margin: 2px;
+  }
+}
+
+
+/**
+ * Agent New/Edit Form
+**/
+.agent-upload__destroy{
+  @include display_flex();
+  justify-content: center;
+  align-items: center;
+
+  background-position: center center;
+  background-size: cover;
+  height: 12em;
+}
+
+.agent-upload__new.field--upload{
+  height: 12em;
+}
+
+.field.field--api-token{
+  background-color: #f9f9f9;
+  margin: -1.5em -2em 1em -2em;
+  padding: .5em 2em;
+  border-bottom: 1px solid #eee;
+}
+
+.agent-name-and-visibility{
+  @include display_flex();
+  justify-content: space-between;
+  .field:first-child{
+    width: 100%;
+    margin-right: 2em;
+  }
+}
+
+
+/**
+ * Agent dependencies
+**/
 .dependencies-graph{
   max-height: 80vh;
   text-align: center;
   svg{
     max-height: 80vh;
+  }
+}
+
+.agents_selection_search{
+  margin: 0;
+  padding: 1em 1em 0 1em;
+  border-bottom: 1px solid #ddd;
+  .field--inline {
+    justify-content: space-between;
+    :first-child {
+      flex-grow: 2;
+    }
   }
 }

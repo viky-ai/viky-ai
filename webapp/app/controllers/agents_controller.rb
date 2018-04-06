@@ -3,12 +3,15 @@ class AgentsController < ApplicationController
   before_action :check_user_rights, except: [:index, :new, :create]
 
   def index
-    @search = AgentSearch.new(current_user.id, search_params)
+    @search = AgentSearch.new(current_user, search_params)
+    @total_count = Agent.search(@search.options).count
     @agents = Agent.search(@search.options).order(name: :asc)
                 .page(params[:page]).per(12)
+    @search.save
   end
 
-  def show; end
+  def show
+  end
 
   def new
     @agent = Agent.new
@@ -23,7 +26,7 @@ class AgentsController < ApplicationController
     respond_to do |format|
       if @agent.save
         format.json{
-          redirect_to agents_path, notice: t('views.agents.new.success_message')
+          redirect_to user_agent_path(current_user, @agent), notice: t('views.agents.new.success_message')
         }
       else
         @origin = 'index'
@@ -45,7 +48,7 @@ class AgentsController < ApplicationController
     @origin = params[:origin]
     respond_to do |format|
       if @agent.update(agent_params)
-        redirect_path = @origin == 'show' ? user_agent_path(current_user, @agent.agentname) : agents_path
+        redirect_path = @origin == 'show' ? user_agent_path(@owner, @agent.agentname) : agents_path
         format.json{
           redirect_to redirect_path, notice: t('views.agents.edit.success_message')
         }
@@ -137,6 +140,26 @@ class AgentsController < ApplicationController
     end
   end
 
+  def add_favorite
+    favorite = FavoriteAgent.new(user: current_user, agent: @agent)
+    if favorite.save
+      redirect_to user_agent_path(@owner, @agent)
+    else
+      redirect_to agents_path, alert: t('views.agents.favorite.add_errors_message',
+                                        errors: favorite.errors.full_messages.join(', '))
+    end
+  end
+
+  def delete_favorite
+    favorite = @agent.favorite_agents.find_by(user: current_user)
+    if favorite.destroy
+      redirect_to user_agent_path(@owner, @agent)
+    else
+      redirect_to agents_path, alert: t('views.agents.favorite.remove_errors_message',
+                                        errors: favorite.errors.full_messages.join(', '))
+    end
+  end
+
 
   private
 
@@ -144,7 +167,7 @@ class AgentsController < ApplicationController
       case action_name
       when "full_export"
         access_denied unless current_user.can?(:show, @agent) && current_user.admin?
-      when "show"
+      when "show", 'add_favorite', 'delete_favorite'
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent
@@ -171,7 +194,7 @@ class AgentsController < ApplicationController
     end
 
     def search_params
-      params.permit(search: [:query])[:search]
+      params.permit(search: [:query, :sort_by, :filter_owner, :filter_visibility])[:search]
     end
 
 end

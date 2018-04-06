@@ -4,12 +4,16 @@ class User < ApplicationRecord
 
   include UserImageUploader::Attachment.new(:image)
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :agents, through: :memberships
+  has_many :favorite_agents, dependent: :destroy
+  has_many :favorites, through: :favorite_agents, source: :agent
 
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :not_confirmed, -> { where(confirmed_at: nil) }
   scope :locked, -> { where.not(locked_at: nil) }
+
+  serialize :ui_state, JSON
 
   # Include default devise modules except :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
@@ -20,7 +24,7 @@ class User < ApplicationRecord
     allow_blank: false, if: Proc.new {|u| !u.invitation_token.nil? || (u.confirmation_token.nil? && u.invitation_token.nil?) }
 
   before_validation :clean_username
-  before_destroy :check_agents_presence
+  before_destroy :check_agents_presence, prepend: true
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
@@ -80,7 +84,7 @@ class User < ApplicationRecord
   end
 
   def can_be_destroyed?
-    agents.includes(:memberships).where('memberships.rights' => 'all').count == 0
+    agents.joins(:memberships).where('memberships.rights' => 'all').count.zero?
   end
 
   # overload devise method to send async emails

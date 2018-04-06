@@ -4,11 +4,6 @@ class DependenciesController < ApplicationController
   before_action :set_owner_and_agent
   before_action :check_user_rights
 
-  def new
-    @available_successors = @agent.available_successors(current_user)
-    render partial: 'new'
-  end
-
   def create
     arc = AgentArc.new(source: @agent, target_id: params[:id])
     if arc.save
@@ -72,5 +67,4 @@ class DependenciesController < ApplicationController
         redirect_to '/404'
       end
     end
-
 end

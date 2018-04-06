@@ -1,13 +1,21 @@
 class AgentSearch
   attr_reader :user_id, :options
 
-  def initialize(user_id, options = {})
-    @options = clean_options options
-    @options[:user_id] = user_id.strip
+  DEFAULT_CRITERIA = {
+    'sort_by' => 'name',
+    'filter_owner' => 'all',
+    'filter_visibility' => 'all',
+    'query' => ''
+  }.with_indifferent_access.freeze
+
+  def initialize(user, options = {})
+    @user = user
+    @ui_state = UserUiState.new @user
+    @options = build_options(user, options)
   end
 
   def self.keys
-    ['query']
+    ['query', 'filter_owner', 'filter_visibility', 'sort_by']
   end
 
   keys.each do |meth|
@@ -15,16 +23,35 @@ class AgentSearch
   end
 
   def empty?
-    is_empty = true
-    options.each do |key, value|
-      unless [:user_id].include?(key)
-        is_empty = false if value.present?
-      end
-    end
-    is_empty
+    @options[:query] == DEFAULT_CRITERIA[:query] &&
+    @options[:filter_owner] == DEFAULT_CRITERIA[:filter_owner] &&
+    @options[:filter_visibility] == DEFAULT_CRITERIA[:filter_visibility]
   end
 
+  def save
+    @ui_state.agent_search = {
+      query: @options[:query],
+      sort_by: @options[:sort_by],
+      filter_owner: @options[:filter_owner],
+      filter_visibility: @options[:filter_visibility]
+    }
+    @ui_state.save
+  end
+
+
   private
+
+    def build_options(user, http_options)
+      default_options_for_user = @ui_state.agent_search
+      cleaned_http_options = clean_options(http_options)
+      final_options = DEFAULT_CRITERIA.merge(
+        default_options_for_user
+      ).merge(
+        cleaned_http_options
+      )
+      final_options[:user_id] = user.id.strip
+      final_options
+    end
 
     def clean_options(options)
       (options || {}).transform_values do |v|

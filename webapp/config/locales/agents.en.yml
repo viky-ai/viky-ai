@@ -19,6 +19,22 @@ en:
         search:
           not_found: No agent found
           placeholder: Search by name or ID
+        sort_by:
+          name: Sort by name
+          updated_at: Sort by last update
+        search_summary:
+          zero: "No agent found."
+          one: "1 agent found."
+          other: "%{count} agents found."
+        search_reset: Reset search
+        filter_visibility:
+          all: All
+          private: Private
+          public: Public
+        filter_owner:
+          all: All
+          owner: Yours
+          favorites: Favorites
         ownership_transferred: "Agent %{name} transferred to user %{username}"
         no_description: No description yet.
       confirm_destroy:
@@ -67,7 +83,12 @@ en:
         transfer_ownership: Transfer ownership
         btn: Update
         success_message: Your agent has been successfully updated.
+      favorite:
+        add_errors_message: "Add favorite failed: %{errors}."
+        remove_errors_message: "Remove favorite failed: %{errors}."
       show:
+        add_favorite_btn: Add favorite
+        remove_favorite_btn: Remove favorite
         configure_btn: Configure
         owner: Owner
         collaborator: "Collaborator"
@@ -83,3 +104,6 @@ en:
           overview: Overview
           intents: Interpretations
           entities_lists: Entities lists
+      agents_selection:
+        title_html: 'Move <strong>%{name}</strong> to&hellip;'
+        not_found: No agent found.

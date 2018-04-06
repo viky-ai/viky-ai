@@ -8,8 +8,12 @@ class Agent < ApplicationRecord
 
   include AgentImageUploader::Attachment.new(:image)
 
-  has_many :memberships
+  has_one :readme, dependent: :destroy
+
+  has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
+  has_many :favorite_agents, dependent: :destroy
+  has_many :fans, through: :favorite_agents, source: :user
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
 
@@ -29,7 +33,7 @@ class Agent < ApplicationRecord
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
-  before_destroy :check_collaborators_presence
+  before_destroy :check_collaborators_presence, prepend: true
 
   after_create_commit do
     Nlp::Package.new(self).push
@@ -46,14 +50,43 @@ class Agent < ApplicationRecord
   def self.search(q = {})
     conditions = where('1 = 1')
     conditions = conditions.joins(:memberships)
-    conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
-    unless q[:query].nil?
+
+    case q[:filter_owner]
+    when 'owned'
+      conditions = conditions.where(owner_id: q[:user_id])
+    when 'favorites'
+      conditions = conditions.joins(:favorite_agents).where(favorite_agents: { user: q[:user_id] })
+    else
+      conditions = conditions.where('user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+    end
+
+    case q[:filter_visibility]
+    when 'public'
+      conditions = conditions.where(visibility: Agent.visibilities[:is_public])
+    when 'private'
+      conditions = conditions.where(visibility: Agent.visibilities[:is_private])
+    else
+      conditions
+    end
+
+    if q[:query].present?
       conditions = conditions.where(
-        'name LIKE ? OR agentname LIKE ?',
+        'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+        "%#{q[:query]}%",
         "%#{q[:query]}%",
         "%#{q[:query]}%"
       )
     end
+
+    case q[:sort_by]
+    when 'name'
+      conditions = conditions.order(name: :asc)
+    when 'updated_at'
+      conditions = conditions.order(updated_at: :desc)
+    else
+      conditions
+    end
+
     conditions.distinct
   end
 
@@ -65,14 +98,21 @@ class Agent < ApplicationRecord
     ]
   end
 
-  def available_successors(current_user)
-    Agent
-      .joins(:memberships)
-      .where('user_id = ? OR visibility = ?', current_user.id, Agent.visibilities[:is_public])
-      .where.not(id: successors.pluck(:id))
-      .where.not(id: id)
+  def available_successors(q = {})
+    conditions = Agent
+                   .joins(:memberships)
+                   .where('memberships.user_id = ? OR visibility = ?', q[:user_id], Agent.visibilities[:is_public])
+                   .where.not(id: successors.pluck(:id))
+    search_available_agents(conditions, q)
       .distinct
-      .order(name: :asc)
+  end
+
+  def available_destinations(q = {})
+    conditions = User
+                   .find(q[:user_id])
+                   .agents
+                   .where(memberships: { rights: [:all, :edit] })
+    search_available_agents(conditions, q)
   end
 
   def transfer_ownership_to(new_owner_id)
@@ -92,6 +132,10 @@ class Agent < ApplicationRecord
     users.includes(:memberships).where.not('memberships.rights' => 'all')
   end
 
+  def collaborator?(user)
+    collaborators.where('users.id = ?', user.id).count > 0
+  end
+
   def can_be_destroyed?
     collaborators.count.zero?
   end
@@ -106,8 +150,10 @@ class Agent < ApplicationRecord
     "#{User.find(owner_id).username}/#{agentname}"
   end
 
-  def reachable_intents
-    result = [] + intents.order(position: :desc, created_at: :desc)
+  def reachable_intents(current_intent)
+    result = [] + intents
+                    .where.not(id: current_intent)
+                    .order(position: :desc, created_at: :desc)
     result + Intent
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
@@ -124,6 +170,23 @@ class Agent < ApplicationRecord
 
 
   private
+
+    def search_available_agents(conditions, q)
+      if q[:filter_owner] == 'favorites'
+        conditions = conditions
+                     .joins(:favorite_agents)
+                     .where(favorite_agents: { user: q[:user_id] })
+      end
+      if q[:query].present?
+        conditions = conditions.where(
+          'lower(name) LIKE lower(?) OR lower(agentname) LIKE lower(?) OR lower(description) LIKE lower(?)',
+          "%#{q[:query]}%",
+          "%#{q[:query]}%",
+          "%#{q[:query]}%"
+        )
+      end
+      conditions.where.not(id: id)
+    end
 
     def check_collaborators_presence
       return if can_be_destroyed?

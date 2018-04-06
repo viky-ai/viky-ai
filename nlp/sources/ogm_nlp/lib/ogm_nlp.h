@@ -382,12 +382,24 @@ struct request_input_part
   int Ioriginal_request_input_part;
 
   og_bool interpret_word_as_number;
+
+  int sparse_mark;
 };
 
 struct request_position
 {
   int start;
   int length;
+};
+
+/** Cache Ogheap cells access */
+struct request_expression_access_cache
+{
+  struct request_expression * request_expressions;
+  int request_expressions_used;
+
+  struct request_position *request_positions;
+  int request_positions_used;
 };
 
 struct original_request_input_part
@@ -441,6 +453,7 @@ struct request_expression
 
   // overlapping rate of the tree of the request_expression
   int overlap_mark;
+  int sparse_mark;
 
   int orip_start;
   int orips_nb;
@@ -450,6 +463,8 @@ struct request_expression
   int request_anys_nb;
 
   int Isuper_request_expression;
+  // can be NULL when it is the root expression
+  struct alias *mothers_alias;
 
   int Irequest_any;
   struct request_word *auto_complete_request_word;
@@ -460,11 +475,18 @@ struct request_expression
   /** Mark of an expression as not to be use anymore **/
   int deleted;
 
+  og_bool recursive_without_any_chosen;
+
   og_bool keep_as_result;
   int nb_anys;
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
   int any_validate_status;
+
+  /* sorted flat representation of the recursive list
+   * when flat_list->length != 0 use this structure to navigate
+   * the flat list is sorted according to word order */
+  GQueue sorted_flat_list[1];
 
   struct request_score score[1];
   double total_score;
@@ -487,6 +509,7 @@ struct alias_solution
 {
   struct alias *alias;
   json_t *json_solution;
+  og_bool is_sorted_flat_list;
 };
 
 struct og_nlp_punctuation_word
@@ -667,6 +690,11 @@ struct og_ctrl_nlp_threaded
   og_heap hm_expression;
 
   og_heap hrequest_context;
+
+  og_heap hre_in_list;
+  og_heap hre_to_sort;
+
+  og_bool accept_any_expressions;
 };
 
 struct og_ctrl_nlp
@@ -821,12 +849,14 @@ og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_int
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
 og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression_start, char *title);
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
+og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
+
 
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
 og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
-og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
-    int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_bool NlpRequestPositionsAreOrdered(og_nlp_th ctrl_nlp_th, int request_position_start1, int request_positions_nb1,
@@ -844,7 +874,7 @@ og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expr
     int Ioriginal_request_input_part);
 
 /* nlptree.c */
-og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 
 /* nlpany.c */
 og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th);
@@ -959,4 +989,11 @@ og_bool NlpDifferentAutoCompleteRequestWord(og_nlp_th ctrl_nlp_th, struct reques
 /* nlpcontext.c */
 og_status NlpContextIsValid(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpContextGetScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+/* nlprelist.c */
+og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+
+
 

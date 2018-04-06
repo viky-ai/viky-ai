@@ -113,4 +113,16 @@ class InterpretationTest < ActiveSupport::TestCase
     Interpretation.update_positions(intent, new_positions)
     assert_equal [2, 1, 0], [interpretation_1.reload.position, interpretation_2.reload.position, interpretation_0.reload.position]
   end
+
+
+  test 'Sanitize HTML expression' do
+    interpretation = interpretations(:weather_forecast_tomorrow)
+    interpretation.expression = '<div><strong>themselves</strong></div>'
+    assert interpretation.save
+    assert_equal 'themselves', interpretation.expression
+
+    interpretation.expression = '<script>javascript:alert("Hello")</script>'
+    assert interpretation.save
+    assert_equal '', interpretation.expression
+  end
 end

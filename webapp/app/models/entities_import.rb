@@ -26,7 +26,9 @@ class EntitiesImport
       return
     end
     @errors[:file] << I18n.t('errors.entity.import.max_file_size') unless @file.size < MAX_FILE_SIZE
-    @errors[:file] << I18n.t('errors.entity.import.wrong_format') unless @mime_type == 'text/csv'
+    unless ['text/csv', 'application/vnd.ms-excel'].include? @mime_type
+      @errors[:file] << I18n.t('errors.entity.import.wrong_format')
+    end
   end
 
   def valid?

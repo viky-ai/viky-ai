@@ -2,7 +2,7 @@ require 'test_helper'
 
 class AgentTest < ActiveSupport::TestCase
 
-  test "basic agent creation & user association" do
+  test "Basic agent creation & user association" do
     agent = Agent.new(
       name: "Agent A",
       agentname: "agenta",
@@ -11,7 +11,6 @@ class AgentTest < ActiveSupport::TestCase
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
-
     assert_equal users(:admin).id, agent.owner_id
     assert_equal 'admin', agent.owner.username
     assert_equal ['agenta', 'terminator', 'weather'], users(:admin).agents.collect(&:agentname).sort
@@ -40,7 +39,6 @@ class AgentTest < ActiveSupport::TestCase
       description: "Agent A decription"
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
-
     assert agent.save
     assert_equal users(:admin).id, agent.owner_id
     assert_equal users(:admin).id, agent.owner.id
@@ -50,16 +48,18 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal users(:admin).id, agent.owner_id
     assert_equal users(:admin).id, agent.owner.id
     assert_equal ['confirmed'], agent.collaborators.collect(&:username)
+    assert agent.collaborator?(users(:confirmed))
     assert_equal ['confirmed', 'admin'].sort, agent.users.collect(&:username).sort
   end
 
 
   test "Add collaborators and succeed" do
     agent = agents(:weather)
-
     assert_equal "admin", agent.owner.username
     expected = ['show_on_agent_weather', 'edit_on_agent_weather']
     assert_equal expected, agent.collaborators.collect(&:username)
+    assert agent.collaborator?(users(:show_on_agent_weather))
+    assert agent.collaborator?(users(:edit_on_agent_weather))
 
     agent.memberships << Membership.new(user_id: users(:confirmed).id, rights: "edit")
     agent.memberships << Membership.new(user_id: users(:locked).id, rights: "show")
@@ -142,8 +142,8 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal expected, agent.errors.full_messages
 
     agent = Agent.new(
-      name: " ",
-      agentname: " "
+      name: ' ',
+      agentname: ' '
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert !agent.valid?
@@ -184,7 +184,7 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "agent color validation" do
+  test "Agent color validation" do
     agent = Agent.new(
       name: "Agent 1",
       agentname: "aaa"
@@ -290,63 +290,6 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "Search agent empty" do
-    user_id = users(:admin).id
-    s = AgentSearch.new(user_id)
-    assert_equal 1, s.options.size
-    assert_equal user_id, s.options[:user_id]
-  end
-
-
-  test "Search agent by name" do
-    user_id = users(:admin).id
-    s = AgentSearch.new(user_id)
-    assert_equal 2, Agent.search(s.options).count
-    s = AgentSearch.new(user_id, query: '800')
-    assert_equal 1, Agent.search(s.options).count
-    expected = [
-      'terminator'
-    ]
-    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
-  end
-
-
-  test "Search agent by agentname" do
-    user_id = users(:admin).id
-    s = AgentSearch.new(user_id)
-    assert_equal 2, Agent.search(s.options).count
-    s = AgentSearch.new(user_id, query: 'inator')
-    assert_equal 1, Agent.search(s.options).count
-    expected = [
-      'terminator'
-    ]
-    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
-  end
-
-
-  test "Search agent by name is trimmed" do
-    user_id = users(:admin).id
-    s = AgentSearch.new(user_id)
-    assert_equal 2, Agent.search(s.options).count
-    s = AgentSearch.new(user_id, query: ' inator     ')
-    assert_equal 1, Agent.search(s.options).count
-    expected = [
-      'terminator'
-    ]
-    assert_equal expected, Agent.search(s.options).all.collect(&:agentname)
-  end
-
-
-  test 'Search agents with membership or public' do
-    user_id = users(:admin).id
-    agent_public = agents(:weather_confirmed)
-    agent_public.visibility = 'is_public'
-    assert agent_public.save
-    s = AgentSearch.new(user_id)
-    assert_equal 3, Agent.search(s.options).count
-  end
-
-
   test "A new agent always has a token" do
     agent = Agent.new(
       name: "Agent A",
@@ -420,8 +363,9 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
-    assert_equal 2, agent_weather.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents.collect(&:intentname)
+    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    assert_equal 2, agent_weather.reachable_intents(current_intent).count
+    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
@@ -430,13 +374,14 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 3, agent_weather.reload.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents(intents(:weather_question)).count
+    assert_equal ['current_intent', 'weather_forecast', 'greeting'], agent_weather.reachable_intents(intents(:weather_question)).collect(&:intentname)
   end
 
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
+    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
     intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
@@ -459,9 +404,10 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
-    assert_equal 3, agent_weather.reload.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents(current_intent).count
+    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
   end
+
 
   test 'List reachable entities_list for agent' do
     agent_weather = agents(:weather)
@@ -477,6 +423,7 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 3, agent_weather.reload.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'locations'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
+
 
   test 'List reachable public/private entities_list for agent' do
     agent_weather = agents(:weather)
@@ -502,6 +449,58 @@ class AgentTest < ActiveSupport::TestCase
 
     assert_equal 3, agent_weather.reload.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'greeting_public'], agent_weather.reachable_entities_lists.collect(&:listname)
+  end
+
+
+  test 'List available destinations' do
+    current_user = users(:admin)
+
+    weather_confirmed = agents(:weather_confirmed)
+    weather_confirmed.memberships << Membership.new(user: current_user, rights: 'edit')
+    assert weather_confirmed.save
+
+    other_agent_with_edit = Agent.create(
+      name: 'Other_agent_with_edit',
+      agentname: 'other_agent_with_edit'.parameterize,
+      memberships: [
+        Membership.new(user: users(:confirmed), rights: 'all'),
+        Membership.new(user: current_user, rights: 'edit')
+      ]
+    )
+    assert other_agent_with_edit.save
+
+    other_agent_without_edit = Agent.create(
+      name: 'Other_agent_without_edit',
+      agentname: 'other_agent_without_edit'.parameterize,
+      memberships: [
+        Membership.new(user: users(:confirmed), rights: 'all'),
+      ]
+    )
+    assert other_agent_without_edit.save
+
+    search = AgentSelectSearch.new(current_user)
+    destinations = weather_confirmed.available_destinations(search.options).order(name: :asc)
+    expected = [
+      'admin/weather',
+      'confirmed/other_agent_with_edit',
+      'admin/terminator',
+    ]
+    assert_equal expected, destinations.collect(&:slug)
+
+    filtered_search = AgentSelectSearch.new(current_user, query: 'term')
+    destinations = weather_confirmed.available_destinations(filtered_search.options).order(name: :asc)
+    expected = [
+      'admin/terminator',
+    ]
+    assert_equal expected, destinations.collect(&:slug)
+
+    assert FavoriteAgent.create(user: current_user, agent: other_agent_with_edit)
+    filtered_search = AgentSelectSearch.new(current_user, filter_owner: 'favorites')
+    destinations = weather_confirmed.available_destinations(filtered_search.options).order(name: :asc)
+    expected = [
+      'confirmed/other_agent_with_edit',
+    ]
+    assert_equal expected, destinations.collect(&:slug)
   end
 
 
