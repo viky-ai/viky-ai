@@ -8,3 +8,11 @@ def create_agent(name, user=:admin)
   assert agent.save
   agent
 end
+
+def force_reset_model_cache(models)
+  if models.is_a? Array
+    models.each(&:reload)
+  else
+    models.reload
+  end
+end
