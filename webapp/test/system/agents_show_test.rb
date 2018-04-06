@@ -127,11 +127,21 @@ class AgentsShowTest < ApplicationSystemTestCase
 
 
   test 'Duplicate an agent' do
+    assert Readme.create(
+      agent: agents(:weather),
+      content: 'My awesome readme !!!'
+    )
+
     go_to_agent_show(users(:admin), agents(:weather))
     click_link 'Duplicate'
     assert page.has_text?('Agent My awesome weather bot [COPY] created.')
 
     go_to_agents_index
     assert page.has_text?('admin/weather_copy')
+
+    click_link 'admin/weather_copy'
+    assert page.has_text?('My awesome readme !!!')
+    assert page.has_link?('Interpretations 2')
+    assert page.has_link?('Entities lists 2')
   end
 end

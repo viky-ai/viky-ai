@@ -3,6 +3,10 @@ class AgentDuplicator
   def self.duplicate(agent, new_owner)
     Clowne::Cloner.call(agent, new_owner: new_owner) do
       include_association :memberships, Proc.new { where(rights: 'all') }
+      include_association :readme
+      include_association :entities_lists
+      include_association :intents
+      include_association :out_arcs
 
       nullify :api_token
 

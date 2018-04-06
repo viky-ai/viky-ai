@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentDuplicateTest < ActiveSupport::TestCase
 
@@ -45,5 +46,32 @@ class AgentDuplicateTest < ActiveSupport::TestCase
 
     another_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert another_agent.save
+  end
+
+  test 'Duplicate agent with direct relations' do
+    agent = agents(:terminator)
+    parent1_agent = create_agent('Parent1 agent')
+    parent2_agent = create_agent('Parent2 agent')
+    assert AgentArc.create(source: agent, target: parent1_agent)
+    assert AgentArc.create(source: agent, target: parent2_agent)
+    child_agent = create_agent('Child agent')
+    assert AgentArc.create(source: child_agent, target: agent)
+
+    new_agent = AgentDuplicator.duplicate(agent, users(:admin))
+
+    assert new_agent.save
+    assert_equal agent.readme.content, new_agent.readme.content
+    assert_not_equal agent.readme.id, new_agent.readme.id
+
+    assert_equal agent.entities_lists.first.listname, new_agent.entities_lists.first.listname
+    assert_not_equal agent.entities_lists.first.id, new_agent.entities_lists.first.id
+
+    assert_equal agent.intents.first.intentname, new_agent.intents.first.intentname
+    assert_not_equal agent.intents.first.id, new_agent.intents.first.id
+
+    assert_not_equal agent.out_arcs.first.source.id, new_agent.out_arcs.first.source.id
+    assert_equal agent.out_arcs.first.target.id, new_agent.out_arcs.first.target.id
+
+    assert new_agent.in_arcs.empty?
   end
 end
