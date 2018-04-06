@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class InterpretationTest < ActiveSupport::TestCase
 
@@ -111,7 +112,9 @@ class InterpretationTest < ActiveSupport::TestCase
 
     new_positions = [interpretation_1.id, interpretation_2.id, interpretation_0.id, '132465789']
     Interpretation.update_positions(intent, new_positions)
-    assert_equal [2, 1, 0], [interpretation_1.reload.position, interpretation_2.reload.position, interpretation_0.reload.position]
+
+    force_reset_model_cache([interpretation_0, interpretation_1, interpretation_2])
+    assert_equal [2, 1, 0], [interpretation_1.position, interpretation_2.position, interpretation_0.position]
   end
 
 
