@@ -17,6 +17,10 @@ import 'moment'
 // Autosize (https://github.com/jackmoore/autosize)
 import 'autosize'
 
+// LocalTime (updated_at & cache)
+import LocalTime from "local-time"
+LocalTime.start()
+
 import './nav/nav';
 import './profile/main';
 import './authentication/main';
