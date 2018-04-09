@@ -143,5 +143,14 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?('My awesome readme !!!')
     assert page.has_link?('Interpretations 2')
     assert page.has_link?('Entities lists 2')
+
+    go_to_agent_intents('admin', 'weather_copy')
+    click_link 'weather_forecast'
+    assert page.has_text?('Interpretations / weather_forecast PUBLIC')
+    within('#interpretations-list') do
+      click_link 'What the weather like tomorrow ?'
+      assert page.has_text?('admin/weather_copy/interpretations/weather_question')
+      assert page.has_link?('admin/weather_copy/interpretations/weather_question')
+    end
   end
 end
