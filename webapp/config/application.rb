@@ -13,11 +13,28 @@ module Webapp
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
 
-
-    config.action_mailer.delivery_method = :postmark
-    config.action_mailer.postmark_settings = {
-      api_token: ENV.fetch("POSTMARK_TOKEN") { "***REMOVED***" }
-    }
+    # SMTP or POSTMARK
+    smtp_enabled = ENV.fetch("SMTP_ENABLED") { false }
+    if smtp_enabled == "true"
+      config.action_mailer.delivery_method = :smtp
+      config.action_mailer.smtp_settings = {
+        address:              ENV.fetch("SMTP_ADDRESS") { "localhost" },
+        port:                 (ENV.fetch("SMTP_PORT") { 25 }).to_i,
+        user_name:            ENV.fetch("SMTP_USER_NAME") { nil },
+        password:             ENV.fetch("SMTP_PASSWORD") { nil }
+      }
+      unless (ENV.fetch("SMTP_AUTHENTICATION") { nil }).nil?
+        config.action_mailer.smtp_settings[:authentication] = ENV.fetch("SMTP_AUTHENTICATION").to_sym
+      end
+      if ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO") { true } == "false"
+        config.action_mailer.smtp_settings[:enable_starttls_auto] = false
+      end
+    else
+      config.action_mailer.delivery_method = :postmark
+      config.action_mailer.postmark_settings = {
+        api_token: ENV.fetch("POSTMARK_TOKEN") { "***REMOVED***" }
+      }
+    end
 
     config.time_zone = 'Paris'
 
