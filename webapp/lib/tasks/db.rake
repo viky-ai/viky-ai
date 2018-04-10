@@ -21,6 +21,7 @@ namespace :db do
 
     emails.each do |email|
       user = User.find_by_email(email)
+      users_to_keep << user.id
       user.agents.includes(:memberships).where('memberships.rights' => 'all').each do |agent|
         graph = AgentGraph.new(agent).to_graph
         users_to_keep  << graph.vertices.collect(&:owner_id)
