@@ -19,6 +19,8 @@ namespace :db do
     users_to_keep  = []
     users_to_keep << User.find_by_email("viky-demo@pertimm.com").id
 
+    Nlp::Package.sync_active = false
+
     emails.each do |email|
       user = User.find_by_email(email)
       users_to_keep << user.id
