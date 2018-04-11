@@ -19,11 +19,15 @@ module Webapp
       config.action_mailer.delivery_method = :smtp
       config.action_mailer.smtp_settings = {
         address:              ENV.fetch("SMTP_ADDRESS") { "localhost" },
-        port:                 (ENV.fetch("SMTP_PORT") { 25 }).to_i,
-        user_name:            ENV.fetch("SMTP_USER_NAME") { nil },
-        password:             ENV.fetch("SMTP_PASSWORD") { nil }
+        port:                 (ENV.fetch("SMTP_PORT") { 25 }).to_i
       }
-      unless (ENV.fetch("SMTP_AUTHENTICATION") { nil }).nil?
+      unless (ENV.fetch("SMTP_USER_NAME") { nil }).blank?
+        config.action_mailer.smtp_settings[:user_name] = ENV.fetch("SMTP_USER_NAME")
+      end
+      unless (ENV.fetch("SMTP_PASSWORD") { nil }).blank?
+        config.action_mailer.smtp_settings[:password] = ENV.fetch("SMTP_PASSWORD")
+      end
+      unless (ENV.fetch("SMTP_AUTHENTICATION") { nil }).blank?
         config.action_mailer.smtp_settings[:authentication] = ENV.fetch("SMTP_AUTHENTICATION").to_sym
       end
       if ENV.fetch("SMTP_ENABLE_STARTTLS_AUTO") { true } == "false"
