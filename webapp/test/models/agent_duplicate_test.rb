@@ -48,6 +48,22 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert another_agent.save
   end
 
+  test 'Duplicate keeps track of source agent' do
+    agent = agents(:terminator)
+    current_user = users(:show_on_agent_weather)
+    new_agent = AgentDuplicator.new(agent, current_user).duplicate
+    assert new_agent.save
+
+    id   = agent.id
+    slug = agent.slug
+    assert_equal id, new_agent.source_agent['id']
+    assert_equal slug, new_agent.source_agent['slug']
+
+    assert agent.destroy
+    assert_equal id, new_agent.source_agent['id']
+    assert_equal slug, new_agent.source_agent['slug']
+  end
+
   test 'Duplicate agent with direct relations' do
     agent = agents(:terminator)
     parent1_agent = create_agent('Parent1 agent')

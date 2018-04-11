@@ -80,11 +80,14 @@
       h2{
         margin: 0 0 .5em 0;
         font-size: 1.5em;
-        small{
+        & > small{
           display:block;
           font-size: .65em;
           line-height: 1.4em;
           color: #999;
+          .icon svg{
+            fill: #999;
+          }
         }
       }
     }

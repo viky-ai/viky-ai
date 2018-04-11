@@ -94,6 +94,7 @@ en:
         add_favorite_btn: Add favorite
         remove_favorite_btn: Remove favorite
         configure_btn: Configure
+        duplicated_agent: "Duplicated from agent %{slug} %{time} ago"
         owner: Owner
         collaborator: "Collaborator"
         show: Show

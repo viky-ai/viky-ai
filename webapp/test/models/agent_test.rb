@@ -8,7 +8,12 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent A",
       agentname: "agenta",
       description: "Agent A decription",
-      visibility: 'is_public'
+      visibility: 'is_public',
+      source_agent: {
+        id: agents(:terminator).id,
+        slug: agents(:terminator).slug,
+        date: '2017-01-02 12:34:56'
+      }
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
@@ -18,6 +23,9 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 'is_public', agent.visibility
     assert agent.is_public?
     assert !agent.is_private?
+    assert agents(:terminator).id, agent.source_agent[:id]
+    assert agents(:terminator).slug, agent.source_agent[:slug]
+    assert '2017-01-02 12:34:56', agent.source_agent[:date]
   end
 
 

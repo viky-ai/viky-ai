@@ -6,7 +6,14 @@
         <%= icon_favorite %>
       </span>
     <% end %>
-    <small><%= agent.slug %></small>
+    <small title="<% if agent.source_agent.present? %><%= t('views.agents.show.duplicated_agent', slug: agent.source_agent['slug'], time: time_ago_in_words(agent.created_at)) %><% end %>">
+      <%= agent.slug %>
+      <% if agent.source_agent.present? %>
+        <span class="icon icon--x-small">
+          <%= icon_information %>
+        </span>
+      <% end %>
+    </small>
   </h2>
 </div>
 

@@ -19,6 +19,10 @@ class AgentDuplicator
         AgentDuplicator.rename_agent(source, record, params[:new_owner])
         record.visibility = Agent.visibilities[:is_private]
         record.memberships.first.user = params[:new_owner]
+        record.source_agent = {
+          id: source.id,
+          slug: source.slug
+        }
         source.image_attacher.copy(record.image_attacher)
       end
     end

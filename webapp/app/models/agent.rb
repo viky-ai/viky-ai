@@ -23,6 +23,8 @@ class Agent < ApplicationRecord
   has_many :predecessors, through: :in_arcs, source: :source
   has_many :successors, through: :out_arcs, source: :target
 
+  serialize :source_agent, JSON
+
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :owner_id, presence: true
