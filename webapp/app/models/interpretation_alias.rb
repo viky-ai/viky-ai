@@ -2,7 +2,7 @@ class InterpretationAlias < ApplicationRecord
   enum nature: [:type_intent, :type_number, :type_entities_list]
 
   belongs_to :interpretation, touch: true
-  belongs_to :interpretation_aliasable, polymorphic: true, optional: true, touch: true
+  belongs_to :interpretation_aliasable, polymorphic: true, optional: true
 
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }

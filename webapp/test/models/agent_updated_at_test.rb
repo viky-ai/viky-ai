@@ -117,7 +117,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
     force_reset_model_cache([agent, intent, interpretation])
     assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    # assert_not_equal intent_updated_at_before, intent.updated_at.to_json
     assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
