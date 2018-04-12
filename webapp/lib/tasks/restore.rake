@@ -137,7 +137,7 @@ namespace :restore do
 
       opts = { env: { 'PGPASSWORD' => params[:password] }, capture_output: true }
       # TODO : change default user to not superman
-      sed_cmd  = "sed -e 's/OWNER TO superman/OWNER TO #{params[:username]}/g'"
+      sed_cmd  = "sed -e 's/ OWNER TO superman;/ OWNER TO #{params[:username]};/g'"
       psql_cmd = "psql --no-password -h '#{params[:host]}' -p '#{params[:port]}' -U '#{params[:username]}' -d '#{params[:database]}'"
 
       Restore::Cmd::exec("#{cat_cmd} #{params[:database_dump]} | #{sed_cmd} | #{psql_cmd}", opts)
@@ -203,7 +203,7 @@ namespace :restore do
       config = Rails.configuration.database_configuration
       opts = { env: { 'PGPASSWORD' => config[Rails.env]['password'] }, capture_output: true }
       # TODO : change default user to not superman
-      sed_cmd  = "sed -e 's/OWNER TO #{config[Rails.env]['username']}/OWNER TO superman/g'"
+      sed_cmd  = "sed -e 's/ OWNER TO #{config[Rails.env]['username']};/ OWNER TO superman;/g'"
       psql_cmd = "pg_dump --no-password -h '#{config[Rails.env]['host']}' -p '#{config[Rails.env]['port']}' -U '#{config[Rails.env]['username']}' -d '#{config[Rails.env]['database']}'"
       full_cmd = " #{psql_cmd} | #{sed_cmd} | gzip > #{backup_dir}/#{export_basename}.db-postgresql.dump.gz"
       Restore::Cmd::exec(full_cmd, opts)
