@@ -63,6 +63,14 @@ Email address `postmarkapp@viky.ai` is used to connect to postmarkapp.com UIs.
 
 Mail delivery is performed through a high priority queue named `webapp_mailers` (see _Background jobs_ paragraph for details).
 
+If you want to disable Postmark, use `SMTP_ENABLED=true` and the following environment variables.
+
+* `SMTP_ADDRESS`: Allows you to use a remote mail server. Just change it from its default "localhost" setting.
+* `SMTP_PORT`: On the off chance that your mail server doesn't run on port 25, you can change it.
+* `SMTP_USER_NAME`: If your mail server requires authentication, set the username in this setting.
+* `SMTP_PASSWORD`: If your mail server requires authentication, set the password in this setting.
+* `SMTP_AUTHENTICATION`: If your mail server requires authentication, you need to specify the authentication type here. `plain` (will send the password in the clear), `login` (will send password Base64 encoded) or `cram_md5` (combines a Challenge/Response mechanism to exchange information and a cryptographic Message Digest 5 algorithm to hash important information)
+* `SMTP_ENABLE_STARTTLS_AUTO`: Detects if STARTTLS is enabled in your SMTP server and starts to use it. Defaults to `true`.
 
 ## Admin user
 
