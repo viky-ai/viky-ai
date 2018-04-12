@@ -136,7 +136,6 @@ namespace :restore do
       cat_cmd = 'gunzip -c' if params[:database_dump].end_with?('.gz')
 
       opts = { env: { 'PGPASSWORD' => params[:password] }, capture_output: true }
-      # TODO : change default user to not superman
       sed_cmd  = "sed -e 's/ OWNER TO superman;/ OWNER TO #{params[:username]};/g'"
       psql_cmd = "psql --no-password -h '#{params[:host]}' -p '#{params[:port]}' -U '#{params[:username]}' -d '#{params[:database]}'"
 
@@ -202,7 +201,6 @@ namespace :restore do
     def export_dump(backup_dir, export_basename)
       config = Rails.configuration.database_configuration
       opts = { env: { 'PGPASSWORD' => config[Rails.env]['password'] }, capture_output: true }
-      # TODO : change default user to not superman
       sed_cmd  = "sed -e 's/ OWNER TO #{config[Rails.env]['username']};/ OWNER TO superman;/g'"
       psql_cmd = "pg_dump --no-password -h '#{config[Rails.env]['host']}' -p '#{config[Rails.env]['port']}' -U '#{config[Rails.env]['username']}' -d '#{config[Rails.env]['database']}'"
       full_cmd = " #{psql_cmd} | #{sed_cmd} | gzip > #{backup_dir}/#{export_basename}.db-postgresql.dump.gz"
