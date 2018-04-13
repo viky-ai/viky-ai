@@ -565,7 +565,8 @@ class AgentsControllerTest < ActionDispatch::IntegrationTest
   test 'Duplication allowed' do
     sign_in users(:admin)
     post duplicate_user_agent_path(users(:admin), agents(:weather))
-    assert_redirected_to user_agent_url(users(:admin), 'weather_copy')
+    assert_response :success
+    assert_nil flash[:alert]
   end
 
   test 'Duplication forbidden' do

@@ -161,13 +161,7 @@ class AgentsController < ApplicationController
   end
 
   def duplicate
-    new_agent = AgentDuplicator.new(@agent, current_user).duplicate
-    if new_agent.save
-      redirect_to user_agent_path(new_agent.owner, new_agent), notice: t('views.agents.duplication.success_message', name: new_agent.name)
-    else
-      redirect_to agents_path, alert: t('views.agents.duplication.failed_message',
-                                        errors: new_agent.errors.full_messages.join(', '))
-    end
+    DuplicateAgentJob.perform_later(@agent, current_user)
   end
 
 

@@ -133,8 +133,10 @@ class AgentsShowTest < ApplicationSystemTestCase
     )
 
     go_to_agent_show(users(:admin), agents(:weather))
-    click_link 'Duplicate'
-    assert page.has_text?('Agent My awesome weather bot [COPY] created.')
+
+    perform_enqueued_jobs do
+      DuplicateAgentJob.perform_later(agents(:weather), users(:admin)) # click_link 'Duplicate'
+    end
 
     go_to_agents_index
     assert page.has_text?('admin/weather_copy')
