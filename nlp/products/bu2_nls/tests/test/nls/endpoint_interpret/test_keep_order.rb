@@ -74,7 +74,6 @@ module Nls
       end
 
       def test_no_keep_order_glued
-        skip "bug in glued"
         expected = { interpretation: "mixed_no_keep_order_glued", solution: {
           "titi" => "titi",
           "tata" => "tata",

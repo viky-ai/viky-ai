@@ -117,7 +117,11 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     {
       og_bool is_glued = NlpRequestExpressionIsGlued(ctrl_nlp_th, request_expression);
       IFE(is_glued);
-      if (!is_glued) must_add_request_expression = FALSE;
+      if (!is_glued)
+      {
+        must_add_request_expression = FALSE;
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "expression is not glued");
+      }
     }
   }
 
@@ -305,11 +309,15 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part1) DPcErr;
-    struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
-    IFN(request_input_part2) DPcErr;
-
-    og_bool is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
-    IFE(is_glued);
+    og_bool is_glued = FALSE;
+    for (int j = i+1; j < request_expression->orips_nb; j++)
+    {
+      struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, j);
+      IFN(request_input_part2) DPcErr;
+      is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+      IFE(is_glued);
+      if (is_glued) break;
+    }
     if (!is_glued) return FALSE;
   }
 
