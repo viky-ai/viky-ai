@@ -1,4 +1,4 @@
-one:
+weather:
   name: Weather
   endpoint: "https://myweatherbot.com/api/"
   agent: weather

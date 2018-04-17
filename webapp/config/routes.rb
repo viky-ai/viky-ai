@@ -93,6 +93,12 @@ Rails.application.routes.draw do
             end
           end
         end
+
+        resources :bots, except: [:show] do
+          member do
+            get :confirm_destroy
+          end
+        end
       end
     end
   end
@@ -122,8 +128,6 @@ Rails.application.routes.draw do
       get '/packages',     to: 'packages#index'
       get '/packages/:id', to: 'packages#show'
   end
-
-
 
   get 'style-guide', to: 'style_guide#index'
   get 'style-guide/:page_id', to: "style_guide#page"

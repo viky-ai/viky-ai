@@ -1,0 +1,36 @@
+<%= form_with model: [current_user, @agent, @bot], data: { type: 'json' }, class: 'bot-form' do |f| %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control">
+      <%= f.text_field :name, id: 'bot_name' %>
+    </div>
+    <%= display_errors(@bot, :name) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :endpoint %>
+    <span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control">
+      <%= f.text_field :endpoint, id: 'bot_endpoint' %>
+    </div>
+    <%= display_errors(@bot, :endpoint) %>
+  </div>
+
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.bots.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.bots.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label,
+          class: "btn btn--primary",
+          data: {
+            disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+          } %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+  </div>
+<% end %>
+

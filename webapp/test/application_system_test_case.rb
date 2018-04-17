@@ -62,10 +62,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def go_to_agent_entities_lists(user, agent)
     admin_login
     visit user_agent_path(user, agent)
-    assert page.has_link?('Entities lists')
-    click_link 'Entities lists'
+    assert page.has_link?('Entities')
+    click_link 'Entities'
     within(".agent-header__content__nav .current") do
-      assert page.has_text?('Entities lists')
+      assert page.has_text?('Entities')
     end
   end
 
