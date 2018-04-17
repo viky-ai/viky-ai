@@ -169,6 +169,14 @@ class Agent < ApplicationRecord
              .order(position: :desc, created_at: :desc)
   end
 
+  def accessible_bots(user)
+    if user.can? :edit, self
+      bots
+    else
+      bots.where(wip_enabled: false)
+    end
+  end
+
 
   private
 

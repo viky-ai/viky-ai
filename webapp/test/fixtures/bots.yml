@@ -2,3 +2,4 @@ weather:
   name: Weather
   endpoint: "https://myweatherbot.com/api/"
   agent: weather
+  wip_enabled: false

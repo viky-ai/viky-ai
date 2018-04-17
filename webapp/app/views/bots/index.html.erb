@@ -15,7 +15,7 @@
   </div>
 </div>
 
-<% if @agent.bots.count == 0 %>
+<% unless @agent.accessible_bots(current_user).exists? %>
   <br />
   <div class="card">
     <div class="card-content">
@@ -33,10 +33,17 @@
   </div>
 <% else %>
   <ul class="bots-list">
-    <% @agent.bots.each do |bot| %>
+    <% @agent.accessible_bots(current_user).each do |bot| %>
       <li class="bot">
         <div class="bot__content">
-          <h5><%= bot.name %></h5>
+          <h5>
+            <%= bot.name %>
+            <% if bot.wip_enabled? %>
+              <span class="badge badge--small badge--grey">
+                <%= t('views.bots.index.wip_badge') %>
+              </span>
+            <% end %>
+          </h5>
           <p>
             Endpoint: <em><%= bot.endpoint %></em>
           </p>
@@ -64,9 +71,10 @@
                   <li>
                     <a href="<%= edit_user_agent_bot_path(@agent.owner, @agent, bot) %>"
                        data-action="open-remote-modal">
-                    <span class="icon icon--x-small">
-                      <%= icon_settings %>
-                    </span><%= t('views.bots.index.configure') %>
+                      <span class="icon icon--x-small">
+                        <%= icon_settings %>
+                      </span>
+                      <%= t('views.bots.index.configure') %>
                     </a>
                   </li>
                   <li class="separator">
@@ -74,7 +82,8 @@
                        data-action="open-remote-modal" class="destructive">
                       <span class="icon icon--x-small">
                         <%= icon_delete %>
-                      </span><%= t('views.bots.index.delete') %>
+                      </span>
+                      <%= t('views.bots.index.delete') %>
                     </a>
                   </li>
                 </ul>

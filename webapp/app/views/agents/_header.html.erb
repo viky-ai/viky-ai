@@ -43,7 +43,7 @@
         <% css_class   = controller_name == 'bots' ? 'current' : '' %>
         <% badge_class = controller_name == 'bots' ? 'badge--primary' : '' %>
         <% text  = t('views.agents.show.sections.bots')%>
-        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.bots.count}</span>" %>
+        <% text += " <span class='badge badge--small #{badge_class}'>#{agent.accessible_bots(current_user).count}</span>" %>
         <%= link_to text.html_safe, user_agent_bots_path(agent.owner, agent), class: css_class %>
       </li>
     </ul>

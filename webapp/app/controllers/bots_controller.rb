@@ -73,7 +73,7 @@ class BotsController < ApplicationController
   private
 
     def bot_params
-      params.require(:bot).permit(:name, :endpoint)
+      params.require(:bot).permit(:name, :endpoint, :wip_enabled)
     end
 
     def set_bot

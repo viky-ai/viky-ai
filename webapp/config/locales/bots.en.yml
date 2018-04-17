@@ -5,8 +5,11 @@ en:
         list_title: Bots list
         new: New bot
         try: Let's try it
+        delete: Delete
+        configure: Configure
         blankslate:
           message_html:  No bot entered for the "%{agent}" agent.
+        wip_badge: WIP
       new:
         title: Create a new bot
         btn: Create

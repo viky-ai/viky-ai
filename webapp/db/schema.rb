@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180417074632) do
+ActiveRecord::Schema.define(version: 20180417125213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20180417074632) do
     t.text "image_data"
     t.string "api_token"
     t.integer "visibility", default: 0
+    t.string "source_agent"
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
@@ -43,6 +44,7 @@ ActiveRecord::Schema.define(version: 20180417074632) do
     t.uuid "agent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "wip_enabled", default: true
     t.index ["agent_id"], name: "index_bots_on_agent_id"
   end
 

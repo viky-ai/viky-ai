@@ -34,7 +34,7 @@ class BotsTest < ApplicationSystemTestCase
       fill_in 'Endpoint', with: "https://www.my-new-bot.com/"
       click_button 'Create'
     end
-    assert page.has_text?('My new bot')
+    assert page.has_text?('My new bot WIP')
     assert page.has_text?('https://www.my-new-bot.com/')
     assert page.has_text?('Your bot has been successfully created.')
   end
@@ -67,10 +67,12 @@ class BotsTest < ApplicationSystemTestCase
     within('.bot-form') do
       fill_in 'Name', with: "Weather bot (updated)"
       fill_in 'Endpoint', with: "https://myweatherbot.com/api/updated/"
+      click_button 'Disable'
       click_button 'Update'
     end
 
     assert page.has_text?('Weather bot (updated)')
+    assert page.has_no_text?('WIP')
     assert page.has_text?('https://myweatherbot.com/api/updated/')
     assert page.has_text?('Your bot has been successfully updated.')
   end

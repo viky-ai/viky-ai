@@ -36,6 +36,9 @@ en:
         auto_solution_enabled: Auto solution
         solution: Solution
         terms: Terms
+      bot:
+        wip_enabled_true: Enable
+        wip_enabled_false: Disable
   errors:
     user:
       delete:

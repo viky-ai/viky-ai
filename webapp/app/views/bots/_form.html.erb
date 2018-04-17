@@ -1,12 +1,36 @@
 <%= form_with model: [current_user, @agent, @bot], data: { type: 'json' }, class: 'bot-form' do |f| %>
 
-  <div class="field">
-    <%= f.label :name %>
-    <span class="badge badge--small badge--outline"><%= t('required') %></span>
-    <div class="control">
-      <%= f.text_field :name, id: 'bot_name' %>
+  <div class="bot-name-and-wip">
+    <div class="field">
+      <%= f.label :name %>
+      <span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <div class="control">
+        <%= f.text_field :name, id: 'bot_name' %>
+      </div>
+      <%= display_errors(@bot, :name) %>
     </div>
-    <%= display_errors(@bot, :name) %>
+
+    <div class="field">
+      <div class="control">
+        <%= f.label :wip_enabled, "Work In Progress" %>
+        <%= f.hidden_field :wip_enabled %>
+        <br/>
+        <div class="btn-group">
+          <button class="btn
+            <% if @bot.wip_enabled? %>btn--primary
+            <% end %>" type="button"
+                  data-input-selector="input[name='bot[wip_enabled]']"
+                  data-input-value="1"><%= t('activerecord.attributes.bot.wip_enabled_true') %></button>
+          <button class="btn
+            <% unless @bot.wip_enabled? %>btn--primary
+            <% end %>" type="button"
+                  data-input-selector="input[name='bot[wip_enabled]']"
+                  data-input-value="0"><%= t('activerecord.attributes.bot.wip_enabled_false') %></button>
+        </div>
+        <%= display_errors(@bot, :wip_enabled) %>
+      </div>
+    </div>
+
   </div>
 
   <div class="field">
