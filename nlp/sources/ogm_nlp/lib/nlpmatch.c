@@ -98,6 +98,10 @@ static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th)
         ctrl_nlp_th->level);
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
   }
+
+  GQueue chosen_recursive_expression[1];
+  g_queue_init(chosen_recursive_expression);
+
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
 
@@ -106,13 +110,28 @@ static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th)
     struct request_expression *request_expression = request_expressions + i;
     IFN(request_expression) DPcErr;
     request_expression->recursive_without_any_chosen = FALSE;
-    if (request_expression->expression->is_recursive)
+    if (request_expression->expression->interpretation->is_recursive)
     {
-      // TODO : there can be several recursive lists
-      request_expression->recursive_without_any_chosen = TRUE;
-      break;
+      og_bool found_expression = FALSE;
+      for (GList *iter = chosen_recursive_expression->head; iter; iter = iter->next)
+      {
+        struct expression *expression = iter->data;
+        if (expression == request_expression->expression)
+        {
+          found_expression = TRUE;
+          break;
+        }
+      }
+      if (!found_expression)
+      {
+        g_queue_push_tail(chosen_recursive_expression, request_expression->expression);
+        request_expression->recursive_without_any_chosen = TRUE;
+      }
     }
   }
+
+  g_queue_clear(chosen_recursive_expression);
+
   DONE;
 }
 
