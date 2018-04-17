@@ -10,6 +10,7 @@ en:
         blankslate:
           message_html:  No bot entered for the "%{agent}" agent.
         wip_badge: WIP
+        endpoint: "Endpoint:"
       new:
         title: Create a new bot
         btn: Create
