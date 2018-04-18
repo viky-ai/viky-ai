@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     post :stop_impersonating, on: :collection
   end
 
+  resources :chatbots, only: [:index, :show] do
+    resources :room_entries, only: [:create]
+  end
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do

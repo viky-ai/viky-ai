@@ -31,6 +31,10 @@
 
     <div class="app-wrapper">
 
+      <% if content_for?(:left_aside) %>
+        <%= yield :left_aside %>
+      <% end %>
+
       <main>
         <%= yield %>
 

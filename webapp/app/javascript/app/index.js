@@ -27,6 +27,8 @@ import './profile/main';
 
 import './authentication/main';
 
+import './chatbots/main';
+
 import './agents/agent_form';
 import './agents/agent_search_form';
 import './agents/main';

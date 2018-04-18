@@ -1,0 +1,32 @@
+<% content_for :left_aside do %>
+  <%= render 'nav' %>
+<% end %>
+
+<div class="chatbot">
+  <div class="chatbot__discussion">
+
+    <div class="chatbot__entry chatbot__entry--bot">
+      <div class="chatbot__avatar">
+        <img src="<%= image_url('default_avatar.png') %>">
+      </div>
+      <div class="chatbot__bubble">
+        Hello
+      </div>
+    </div>
+
+  </div>
+  <div class="chatbot__input">
+    <%= form_with url: chatbot_room_entries_path(@bot), class: 'bot-form' do |f| %>
+      <div class="field">
+        <div class="control control--merged">
+          <%= text_field_tag 'entry[content]' %>
+          <%= f.button "<span class='icon'>#{icon_check}</span> Send".html_safe,
+                class: "btn btn--primary",
+                data: {
+                  disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

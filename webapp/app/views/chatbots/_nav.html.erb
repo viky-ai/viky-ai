@@ -1,0 +1,12 @@
+<aside class="chatbots-list">
+  <ul>
+    <% @bots.each do |bot| %>
+      <li>
+        <a href="<%= chatbot_path(bot) %>" <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
+          <%= bot.name %><br />
+          <small>From agent: <%= bot.agent.slug %></small>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</aside>
