@@ -6,12 +6,21 @@ class ChatbotsController < ApplicationController
 
   def show
     @bot = Bot.find(params[:id])
-    unless ChatSession.where(user: current_user, bot: @bot).exists?
+
+    if ChatSession.where(user: current_user, bot: @bot).exists?
+      @chat_session = ChatSession.where(user: current_user, bot: @bot).last
+    else
       @chat_session = ChatSession.new(user: current_user, bot: @bot)
       @chat_session.save
-    else
-      @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     end
+
+  end
+
+  def reset
+    @bot = Bot.find(params[:id])
+    ChatSession.new(user: current_user, bot: @bot).save
+
+    redirect_to chatbot_path(@bot)
   end
 
 

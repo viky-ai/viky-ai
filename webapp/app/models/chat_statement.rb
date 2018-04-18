@@ -1,7 +1,7 @@
 class ChatStatement < ApplicationRecord
-  belongs_to :chat_session
-
   default_scope { order(created_at: :asc) }
+
+  belongs_to :chat_session
 
   enum speaker: [:user, :bot]
   enum nature: [:text]

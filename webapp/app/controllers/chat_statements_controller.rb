@@ -3,7 +3,7 @@ class ChatStatementsController < ApplicationController
   def create
     @bot = Bot.find(params[:chatbot_id])
     @chat_session = ChatSession.where(user: current_user, bot: @bot).last
-    @content = entry_params[:content]
+    @content = statement_params[:content]
 
     @chat_statement = ChatStatement.new
     @chat_statement.chat_session = @chat_session
@@ -27,8 +27,8 @@ class ChatStatementsController < ApplicationController
 
   private
 
-    def entry_params
-      params.require(:entry).permit(:content)
+    def statement_params
+      params.require(:statement).permit(:content)
     end
 
 end

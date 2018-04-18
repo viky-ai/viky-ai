@@ -1,6 +1,7 @@
 class Bot < ApplicationRecord
   belongs_to :agent
   validates :name, :endpoint, presence: true
+  has_many :chat_sessions, dependent: :destroy
 
   def self.accessible_bots(user)
     agents = Agent

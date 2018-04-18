@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   end
 
   resources :chatbots, only: [:index, :show] do
+    member do
+      get :reset
+    end
     resources :chat_statements, only: [:create]
   end
 
