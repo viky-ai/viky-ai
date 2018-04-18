@@ -50,7 +50,7 @@ class BotsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Update access' do
     sign_in users(:edit_on_agent_weather)
-    patch user_agent_bot_url(users(:admin), agents(:weather), bots(:weather)),
+    patch user_agent_bot_url(users(:admin), agents(:weather), bots(:weather_bot)),
       params: {
         bot: { name: 'weather(updated)', endpoint: 'https://myweatherbot.com/api/updated' },
         format: :json
@@ -61,7 +61,7 @@ class BotsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Update forbidden' do
     sign_in users(:show_on_agent_weather)
-    patch user_agent_bot_url(users(:admin), agents(:weather), bots(:weather)),
+    patch user_agent_bot_url(users(:admin), agents(:weather), bots(:weather_bot)),
       params: {
         bot: { name: 'weather(updated)', endpoint: 'https://myweatherbot.com/api/updated' },
         format: :json
@@ -76,14 +76,14 @@ class BotsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Confirm delete access' do
     sign_in users(:admin)
-    get confirm_destroy_user_agent_bot_path(users(:admin), agents(:weather), bots(:weather))
+    get confirm_destroy_user_agent_bot_path(users(:admin), agents(:weather), bots(:weather_bot))
     assert_response :success
     assert_nil flash[:alert]
   end
 
   test 'Confirm delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    get confirm_destroy_user_agent_bot_path(users(:admin), agents(:weather), bots(:weather))
+    get confirm_destroy_user_agent_bot_path(users(:admin), agents(:weather), bots(:weather_bot))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
@@ -94,14 +94,14 @@ class BotsControllerTest < ActionDispatch::IntegrationTest
   #
   test 'Delete access' do
     sign_in users(:admin)
-    delete user_agent_bot_url(users(:admin), agents(:weather), bots(:weather))
+    delete user_agent_bot_url(users(:admin), agents(:weather), bots(:weather_bot))
     assert_redirected_to user_agent_bots_path(users(:admin), agents(:weather))
     assert_nil flash[:alert]
   end
 
   test 'Delete forbidden' do
     sign_in users(:show_on_agent_weather)
-    delete user_agent_bot_url(users(:admin), agents(:weather), bots(:weather))
+    delete user_agent_bot_url(users(:admin), agents(:weather), bots(:weather_bot))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
