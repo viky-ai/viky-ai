@@ -28,6 +28,7 @@ import './profile/main';
 import './authentication/main';
 
 import './chatbots/main';
+window.App.Statement = require('./chatbots/statements');
 
 import './agents/agent_form';
 import './agents/agent_search_form';
