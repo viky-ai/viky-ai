@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 20180417125213) do
     t.text "image_data"
     t.string "api_token"
     t.integer "visibility", default: 0
-    t.string "source_agent"
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
