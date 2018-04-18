@@ -3,3 +3,5 @@
 one:
   user_id: "930025d1-cfd0-5f27-8cb1-a0aecd1309fc" # users(:admin)
   bot: weather_bot
+  created_at: "2017-02-02 00:00:00"
+  updated_at: "2017-02-02 00:00:00"

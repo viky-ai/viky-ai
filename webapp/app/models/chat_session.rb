@@ -7,6 +7,10 @@ class ChatSession < ApplicationRecord
 
   after_create :notify_bot
 
+  def expired?
+    last_session = ChatSession.where(user: user, bot: bot).last
+    id != last_session.id
+  end
 
   private
 
