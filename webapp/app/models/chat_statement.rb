@@ -7,7 +7,7 @@ class ChatStatement < ApplicationRecord
   enum nature: [:text]
 
   after_create :notify_bot
-
+  after_create :notify_user
 
   private
 
@@ -16,4 +16,11 @@ class ChatStatement < ApplicationRecord
         BotSendUserStatementJob.perform_later(chat_session.id, content)
       end
     end
+
+  def notify_user
+    if speaker == "bot"
+      message = ApplicationController.renderer.render(partial: '/chat_statements/text', locals: { statement: self })
+      ActionCable.server.broadcast 'chat_session_channel', { session_id: chat_session.id, message: message }
+    end
+  end
 end

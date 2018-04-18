@@ -3,7 +3,7 @@
     <% if statement.speaker == "user" %>
       <img src="<%= current_user.image_url(:square) %>">
     <% else %>
-      <img src="<%= image_url('default_avatar.png') %>">
+      <img src="<%= image_path('default_avatar.png') %>">
     <% end %>
   </div>
   <div class="chatbot__bubble">

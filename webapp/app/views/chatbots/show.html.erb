@@ -2,7 +2,7 @@
   <%= render 'nav' %>
 <% end %>
 
-<div class="chatbot">
+<div class="chatbot"  data-session-id="<%= @chat_session.id %>">
   <div class="chatbot__discussion">
 
     <% @chat_session.chat_statements.each do |statement| %>
