@@ -3,7 +3,13 @@
     <% @bots.each do |bot| %>
       <li>
         <a href="<%= chatbot_path(bot) %>" <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
-          <%= bot.name %><br />
+          <%= bot.name %>
+          <% if bot.wip_enabled? %>
+            <span class="badge badge--small badge--danger">
+              <%= t('views.bots.index.wip_badge') %>
+            </span>
+          <% end %>
+          <br />
           <small>From agent: <%= bot.agent.slug %></small>
         </a>
       </li>

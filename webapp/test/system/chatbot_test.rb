@@ -33,7 +33,7 @@ class ChatbotTest < ApplicationSystemTestCase
     go_to_chatbots
     within('.chatbots-list') do
       assert page.has_text?('Weather')
-      assert page.has_text?('Arnold')
+      assert page.has_text?('Arnold WIP')
       assert page.has_no_text?('Bot test')
     end
 
@@ -42,7 +42,7 @@ class ChatbotTest < ApplicationSystemTestCase
     go_to_chatbots
     within('.chatbots-list') do
       assert page.has_text?('Weather')
-      assert page.has_text?('Arnold')
+      assert page.has_text?('Arnold WIP')
       assert page.has_text?('Bot test')
     end
   end
