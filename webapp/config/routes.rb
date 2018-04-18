@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   end
 
   resources :chatbots, only: [:index, :show] do
-    resources :room_entries, only: [:create]
+    resources :chat_statements, only: [:create]
   end
 
   scope '/agents' do

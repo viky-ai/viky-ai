@@ -5,18 +5,13 @@
 <div class="chatbot">
   <div class="chatbot__discussion">
 
-    <div class="chatbot__entry chatbot__entry--bot">
-      <div class="chatbot__avatar">
-        <img src="<%= image_url('default_avatar.png') %>">
-      </div>
-      <div class="chatbot__bubble">
-        Hello
-      </div>
-    </div>
+    <% @chat_session.chat_statements.each do |statement| %>
+      <%= render partial: '/chat_statements/text', locals: { statement: statement } %>
+    <% end %>
 
   </div>
   <div class="chatbot__input">
-    <%= form_with url: chatbot_room_entries_path(@bot), class: 'bot-form' do |f| %>
+    <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
       <div class="field">
         <div class="control control--merged">
           <%= text_field_tag 'entry[content]' %>

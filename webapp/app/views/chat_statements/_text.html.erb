@@ -1,0 +1,12 @@
+<div class="chatbot__entry chatbot__entry--<%= statement.speaker %>">
+  <div class="chatbot__avatar">
+    <% if statement.speaker == "user" %>
+      <img src="<%= current_user.image_url(:square) %>">
+    <% else %>
+      <img src="<%= image_url('default_avatar.png') %>">
+    <% end %>
+  </div>
+  <div class="chatbot__bubble">
+    <%= statement.content %>
+  </div>
+</div>
