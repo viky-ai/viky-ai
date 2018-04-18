@@ -20,7 +20,7 @@ class ChatStatement < ApplicationRecord
   def notify_user
     if speaker == "bot"
       message = ApplicationController.renderer.render(partial: '/chat_statements/text', locals: { statement: self })
-      ActionCable.server.broadcast 'chat_session_channel', { session_id: chat_session.id, message: message }
+      ActionCable.server.broadcast "chat_session_channel_#{chat_session.user.id}", { session_id: chat_session.id, message: message }
     end
   end
 end
