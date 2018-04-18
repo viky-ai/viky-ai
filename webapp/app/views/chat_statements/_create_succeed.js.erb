@@ -1,2 +1,5 @@
 $('#statement_content').val('');
 $('.chatbot__discussion').append("<%= escape_javascript(@html) %>");
+$(".chatbot__discussion").animate(
+  { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, 500
+);

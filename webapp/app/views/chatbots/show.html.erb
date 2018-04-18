@@ -4,11 +4,9 @@
 
 <div class="chatbot"  data-session-id="<%= @chat_session.id %>">
   <div class="chatbot__discussion">
-
     <% @chat_session.chat_statements.each do |statement| %>
-      <%= render partial: '/chat_statements/text', locals: { statement: statement } %>
+      <%= render partial: "/chat_statements/#{statement.nature}", locals: { statement: statement } %>
     <% end %>
-
   </div>
   <div class="chatbot__input">
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>

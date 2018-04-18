@@ -9,6 +9,13 @@ class ChatStatement < ApplicationRecord
   after_create :notify_bot
   after_create :notify_user
 
+  def to_html
+    ApplicationController.renderer.render(
+      partial: "/chat_statements/#{self.nature}",
+      locals: { statement: self }
+    )
+  end
+
   private
 
     def notify_bot
@@ -17,10 +24,12 @@ class ChatStatement < ApplicationRecord
       end
     end
 
-  def notify_user
-    if speaker == "bot"
-      message = ApplicationController.renderer.render(partial: '/chat_statements/text', locals: { statement: self })
-      ActionCable.server.broadcast "chat_session_channel_#{chat_session.user.id}", { session_id: chat_session.id, message: message }
+    def notify_user
+      if speaker == "bot"
+        ActionCable.server.broadcast "chat_session_channel_#{chat_session.user.id}", {
+          session_id: chat_session.id,
+          message: self.to_html
+        }
+      end
     end
-  end
 end
