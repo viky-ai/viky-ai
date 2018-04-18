@@ -4,6 +4,7 @@ require 'rest-client'
 require 'json'
 
 set :root, File.dirname(__FILE__)
+set :port, 3001
 
 def post_to_viky_ai(session_id, parameters)
   url = "http://localhost:3000/api/v1/chat_sessions/#{session_id}/statements"
@@ -32,6 +33,8 @@ post '/sessions/:session_id/user_statements' do
 
   parameters  = JSON.parse(request.body.read)
   user_statement_says = parameters["user_statement"]["says"]
+
+  sleep(0.5)
 
   post_to_viky_ai(
     session_id,
