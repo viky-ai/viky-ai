@@ -8,7 +8,7 @@ class ChatbotTest < ApplicationSystemTestCase
       first('a').click
     end
     within(".chatbot__input") do
-      fill_in 'entry_content', with: 'My name is Stan'
+      fill_in 'statement_content', with: 'My name is Stan'
       click_button 'Send'
     end
     within(".chatbot__discussion") do
