@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+bot_greeting:
+  speaker: bot
+  nature: text
+  content: Hello, I am a chat bot. What can I do for you ?
+  chat_session: one
+
+user_question:
+  speaker: user
+  nature: text
+  content: What's the weather like tomorrow ?
+  chat_session: one
