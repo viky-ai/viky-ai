@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180417125213) do
+ActiveRecord::Schema.define(version: 20180418070143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,15 @@ ActiveRecord::Schema.define(version: 20180417125213) do
     t.datetime "updated_at", null: false
     t.boolean "wip_enabled", default: true
     t.index ["agent_id"], name: "index_bots_on_agent_id"
+  end
+
+  create_table "chat_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id"
+    t.uuid "bot_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bot_id"], name: "index_chat_sessions_on_bot_id"
+    t.index ["user_id"], name: "index_chat_sessions_on_user_id"
   end
 
   create_table "entities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -200,6 +209,8 @@ ActiveRecord::Schema.define(version: 20180417125213) do
   add_foreign_key "agent_arcs", "agents", column: "target_id", on_delete: :cascade
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "bots", "agents", on_delete: :cascade
+  add_foreign_key "chat_sessions", "bots", on_delete: :cascade
+  add_foreign_key "chat_sessions", "users", on_delete: :cascade
   add_foreign_key "entities", "entities_lists", on_delete: :cascade
   add_foreign_key "entities_lists", "agents", on_delete: :cascade
   add_foreign_key "favorite_agents", "agents", on_delete: :cascade
