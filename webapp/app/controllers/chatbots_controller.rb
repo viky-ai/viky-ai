@@ -18,7 +18,6 @@ class ChatbotsController < ApplicationController
   private
 
     def set_bots
-      @bots = Bot.where(agent_id: current_user.agents.pluck(:id))
+      @bots = Bot.accessible_bots(current_user)
     end
-
 end

@@ -2,6 +2,13 @@ class Bot < ApplicationRecord
   belongs_to :agent
   validates :name, :endpoint, presence: true
 
+  def self.accessible_bots(user)
+    agents = Agent
+               .joins(:memberships)
+               .where('user_id = ? OR visibility = ?', user.id, Agent.visibilities[:is_public])
+               .distinct
+    agents.collect_concat { |agent| agent.accessible_bots(user) }
+  end
 
   def send_start(session_id)
     parameters = {
