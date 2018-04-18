@@ -124,6 +124,9 @@ Rails.application.routes.draw do
       scope '/agents' do
         get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
+      scope '/chat_sessions/:id' do
+        resources 'statements', only: [:create]
+      end
     end
   end
 
