@@ -46,6 +46,11 @@ class Statement
     html.push '</div>'
     html.join("\n")
 
+Setup = ->
+  if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
+    Statement::scroll_to_last()
+
+$(document).on('turbolinks:load', Setup)
 
 
 module.exports = Statement
