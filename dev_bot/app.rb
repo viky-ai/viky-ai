@@ -27,17 +27,18 @@ post '/start' do
   json status: 'ok'
 end
 
-post '/user_statements' do
+post '/sessions/:session_id/user_statements' do
+  session_id = params["session_id"]
+
   parameters  = JSON.parse(request.body.read)
-  session_id     = parameters["session_id"]
-  user_statement = parameters["user_statement"]
+  user_statement_says = parameters["user_statement"]["says"]
 
   post_to_viky_ai(
     session_id,
     {
       statement: {
         nature: 'text',
-        content: "Received that user says: #{user_statement}"
+        content: "Received that user says: #{user_statement_says}"
       }
     }
   )

@@ -1,7 +1,8 @@
 class Bot < ApplicationRecord
   belongs_to :agent
-  validates :name, :endpoint, presence: true
   has_many :chat_sessions, dependent: :destroy
+
+  validates :name, :endpoint, presence: true
 
   def self.accessible_bots(user)
     agents = Agent
@@ -20,10 +21,11 @@ class Bot < ApplicationRecord
 
   def send_user_statement(session_id, text)
     parameters = {
-      session_id: session_id,
-      user_statement: text
+      user_statement: {
+        says: text
+      }
     }
-    post("user_statements", parameters)
+    post("sessions/#{session_id}/user_statements", parameters)
   end
 
 
