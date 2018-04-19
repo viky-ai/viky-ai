@@ -21,10 +21,13 @@ class ChatStatementTest < ActiveSupport::TestCase
       chat_session: chat_sessions(:one)
     )
     assert !statement.valid?
-
     expected = [
       "Content can't be blank"
     ]
     assert_equal expected, statement.errors.full_messages
+
+    statement.content = 'a' * 5001
+    assert !statement.valid?
+    assert_equal ["Content is too long (maximum is 5000 characters)"], statement.errors.full_messages
   end
 end

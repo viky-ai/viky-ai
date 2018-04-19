@@ -6,7 +6,7 @@ class ChatStatement < ApplicationRecord
   enum speaker: [:user, :bot]
   enum nature: [:text]
 
-  validates :content, presence: true
+  validates :content, presence: true, length: { maximum: 5000 }
 
   after_create :notify_bot
   after_create :notify_user
