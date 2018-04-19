@@ -9,8 +9,11 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
       statement = ChatStatement.new(statement_params)
       statement.speaker = :bot
       statement.chat_session = chat_session
-      statement.save
-      head :created
+      if statement.save
+        head :created
+      else
+        render json: { errors: statement.errors.full_messages }, status: 422
+      end
     end
   end
 

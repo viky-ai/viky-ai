@@ -27,4 +27,16 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
     assert_equal '403', response.code
     assert_equal '{"errors":"Expired chat session"}', response.body
   end
+
+
+  test 'Reject invalid statement' do
+    post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+      statement: {
+        nature: 'text',
+        content: ''
+      }
+    }
+    assert_equal '422', response.code
+    assert_equal '{"errors":["Content can\'t be blank"]}', response.body
+  end
 end
