@@ -76,3 +76,9 @@ en:
       aliasname_uniqueness: 'has already been taken'
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
+    chat_statement:
+      unknown_nature: 'Unknown nature'
+      text:
+        missing: 'text key missing'
+        blank: "text can't be blank"
+        too_long: "is too long (maximum is 5000 characters)"

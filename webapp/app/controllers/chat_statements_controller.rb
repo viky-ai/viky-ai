@@ -15,8 +15,7 @@ class ChatStatementsController < ApplicationController
 
     respond_to do |format|
       format.js {
-        unless @content.blank?
-          @chat_statement.save
+        if @chat_statement.save
           @html = render_to_string(
             partial: @chat_statement.nature,
             locals: { statement: @chat_statement }

@@ -9,6 +9,7 @@ class ChatStatement < ApplicationRecord
   serialize :content, JSON
 
   validates :content, presence: true, length: { maximum: 5000 }
+  validate :content_format
 
   after_create :notify_bot
   after_create :notify_user
@@ -34,6 +35,16 @@ class ChatStatement < ApplicationRecord
           session_id: chat_session.id,
           message: self.to_html
         }
+      end
+    end
+
+    def content_format
+      case nature
+        when 'text'
+          validator = ChatStatementTextValidator.new(content)
+          errors.add(:content, validator.errors) if validator.invalid?
+        else
+          raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.unknown_nature')
       end
     end
 end
