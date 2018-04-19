@@ -6,7 +6,9 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
     post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
       statement: {
         nature: 'text',
-        content: 'Hello'
+        content: {
+          text: 'Hello'
+        }
       }
     }
     assert_equal '201', response.code
@@ -21,7 +23,9 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
     post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
       statement: {
         nature: 'text',
-        content: 'Hello'
+        content: {
+          text: 'Hello'
+        }
       }
     }
     assert_equal '403', response.code

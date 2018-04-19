@@ -6,7 +6,7 @@ class ChatStatementTest < ActiveSupport::TestCase
     statement = ChatStatement.new(
       speaker: ChatStatement.speakers[:bot],
       nature: ChatStatement.natures[:text],
-      content: 'Good morning !',
+      content: { text: 'Good morning !' },
       chat_session: chat_sessions(:one)
     )
     assert statement.save

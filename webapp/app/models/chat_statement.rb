@@ -6,6 +6,8 @@ class ChatStatement < ApplicationRecord
   enum speaker: [:user, :bot]
   enum nature: [:text]
 
+  serialize :content, JSON
+
   validates :content, presence: true, length: { maximum: 5000 }
 
   after_create :notify_bot
@@ -22,7 +24,7 @@ class ChatStatement < ApplicationRecord
 
     def notify_bot
       if speaker == "user"
-        BotSendUserStatementJob.perform_later(chat_session.id, content)
+        BotSendUserStatementJob.perform_later(chat_session.id, content['text'])
       end
     end
 

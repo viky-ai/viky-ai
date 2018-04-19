@@ -20,7 +20,9 @@ post '/start' do
     {
       statement: {
         nature: 'text',
-        content: "Hello"
+        content: {
+          text: "Hello"
+        }
       }
     }
   )
@@ -41,7 +43,9 @@ post '/sessions/:session_id/user_statements' do
     {
       statement: {
         nature: 'text',
-        content: "Received that user says: #{user_statement_says}"
+        content: {
+          text: "Received that user says: #{user_statement_says}"
+        }
       }
     }
   )

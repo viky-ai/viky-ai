@@ -9,7 +9,9 @@ class ChatStatementsController < ApplicationController
     @chat_statement.chat_session = @chat_session
     @chat_statement.speaker = :user
     @chat_statement.nature = :text
-    @chat_statement.content = @content
+    @chat_statement.content = {
+      text: @content
+    }
 
     respond_to do |format|
       format.js {

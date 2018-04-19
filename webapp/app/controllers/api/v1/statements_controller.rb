@@ -19,6 +19,6 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
 
   private
     def statement_params
-      params.require(:statement).permit(:content, :nature)
+      params.require(:statement).permit(:nature, content: [:text])
     end
 end
