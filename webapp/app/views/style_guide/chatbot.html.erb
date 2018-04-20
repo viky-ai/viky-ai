@@ -1,0 +1,98 @@
+<div class="sg-intro">
+  <h1>Chatbot statements</h1>
+</div>
+
+<section>
+  <h2>Text bubble</h2>
+  <%= highlight_html do %>
+    <div class="chatbot">
+      <div class="chatbot__discussion">
+        <div class="chatbot__statement chatbot__statement--bot">
+          <div class="chatbot__avatar">
+            <img src="<%= image_path('default_avatar.png') %>">
+          </div>
+          <div class="chatbot__widget chatbot__widget--text">
+            Doctor, I need your help. I'm addicted to checking my Twitter !
+          </div>
+        </div>
+        <div class="chatbot__statement chatbot__statement--user">
+          <div class="chatbot__avatar">
+            <img src="<%= image_path('default_avatar.png') %>">
+          </div>
+          <div class="chatbot__widget chatbot__widget--text">
+            I'm so sorry, I don't follow.
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Text bubble : animation</h2>
+  <%= highlight_html do %>
+    <div id="text_animation_demo" class="chatbot">
+      <div class="chatbot__discussion">
+        <div class="chatbot__statement chatbot__statement--bot">
+          <div class="chatbot__avatar chatbot__avatar--hidden">
+            <img src="<%= image_path('default_avatar.png') %>">
+          </div>
+          <div class="chatbot__widget chatbot__widget--text chatbot__widget--hidden">
+            Can a kangaroo jump higher than a house ? Of course ! Houses can't jump.
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <script>
+    function addItem() {
+      avatar = $('#text_animation_demo .chatbot__discussion .chatbot__avatar').last()
+      widget = $('#text_animation_demo .chatbot__discussion .chatbot__widget').last()
+      avatar.removeClass('chatbot__avatar--hidden')
+      widget.removeClass('chatbot__widget--hidden')
+    }
+
+    function removeItem() {
+      avatar = $('#text_animation_demo .chatbot__discussion .chatbot__avatar').last()
+      widget = $('#text_animation_demo .chatbot__discussion .chatbot__widget').last()
+      avatar.addClass('chatbot__avatar--hidden')
+      widget.addClass('chatbot__widget--hidden')
+    }
+
+    function addRemoveItemDemo() {
+      addItem();
+      window.setTimeout(removeItem, 2500);
+    }
+    window.setInterval(addRemoveItemDemo, 5000);
+  </script>
+</section>
+
+<section>
+  <h2>Typing</h2>
+  <%= highlight_html do %>
+    <div class="chatbot">
+      <div class="chatbot__discussion">
+        <div class="chatbot__statement chatbot__statement--bot">
+          <div class="chatbot__avatar">
+            <img src="<%= image_path('default_avatar.png') %>">
+          </div>
+          <div class="chatbot__widget chatbot__widget--text">
+            I wondered why the frisbee was getting bigger. Then it hit me.
+          </div>
+        </div>
+      </div>
+      <div class="chatbot__statement chatbot__statement--bot">
+        <div class="chatbot__statement__waiting">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 10">
+            <path d="M4.784 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-a"/>
+            <path d="M12.392 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-b"/>
+            <path d="M20 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-c"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+
+
