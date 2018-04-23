@@ -1,5 +1,84 @@
 $ = require('jquery');
 
+class Chat
+  constructor: ->
+    @recognition = new Recognition()
+
+    if @recognition.available
+      $('a.btn--recognition').show()
+
+      $("body").on 'click', (event) => @dispatch(event)
+
+      $('body').on 'recognition:result', (event, transcript) =>
+        $("#statement_content").val(transcript)
+        form = document.querySelector(".bot-form");
+        Rails.fire(form, 'submit')
+
+      $("body").on 'recognition:start', (event) =>
+        $('a.btn--recognition').addClass('btn--recognition-on')
+
+      $("body").on 'recognition:stop', (event) =>
+        $('a.btn--recognition').removeClass('btn--recognition-on')
+    else
+      $('a.btn--recognition').remove()
+
+
+  dispatch: (event) ->
+    node  = $(event.target)
+    action = node.data('action')
+    if not action?
+      node = $(event.target).parents('a')
+      action = node.data('action')
+
+    if action == "recognition-toggle"
+      event.preventDefault()
+      if node.hasClass('btn--recognition-on')
+        @recognition.stop()
+      else
+        @recognition.start()
+
+
+class Recognition
+  constructor: ->
+    @available = false
+    if (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)
+      $("html").addClass("has-speech-recognition")
+      @available = true
+
+    if @available
+      @stopped = true
+      @has_result = false
+      @recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+      @recognition.lang = "fr-FR"
+
+      @recognition.onend = (event) =>
+        if @has_result || @stopped
+          @recognition.stop()
+          $('body').trigger('recognition:stop')
+        else
+          @recognition.start()
+
+      @recognition.onresult = (event) =>
+        last = event.results.length - 1;
+        transcript = event.results[last][0].transcript
+        if transcript == ""
+          @has_result = false
+        else
+          @has_result = true
+          $('body').trigger('recognition:result', [transcript])
+
+  start: ->
+    if @available
+      @stopped = false
+      @recognition.start()
+      $('body').trigger('recognition:start')
+
+  stop: ->
+    if @available
+      @stopped = true
+      @recognition.stop()
+
+
 class Statement
   constructor: (html) ->
     @html = html
@@ -8,7 +87,7 @@ class Statement
     $(@html).hasClass('chatbot__statement--user')
 
   is_from_bot: ->
-    $(@html).hasClass('chatbot__statement--user')
+    $(@html).hasClass('chatbot__statement--bot')
 
   display: ->
     content = $(@html)
@@ -48,9 +127,8 @@ class Statement
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
     Statement::scroll_to_last()
+    new Chat()
 
 $(document).on('turbolinks:load', Setup)
 
-
 module.exports = Statement
-

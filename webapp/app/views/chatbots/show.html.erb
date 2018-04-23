@@ -10,13 +10,23 @@
   </div>
   <div class="chatbot__input">
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
-      <div class="field">
-        <div class="control control--merged">
+      <div class="field field--inline">
+        <div class="control">
           <a href="<%= reset_chatbot_path(@bot) %>" class="btn">
             <span class="icon icon--small">
               <%= icon_loading %>
             </span>
             Reset
+          </a>
+        </div>
+
+        <div class="control control--merged">
+          <a href="#" class="btn btn--recognition"
+             data-action="recognition-toggle"
+             style="display:none;">
+            <span class='icon'>
+              <%= icon_mic %>
+            </span>
           </a>
           <%= text_field_tag 'statement[content]' %>
           <%= f.button "<span class='icon'>#{icon_check}</span> Send".html_safe,

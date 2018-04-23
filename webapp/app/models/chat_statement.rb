@@ -21,6 +21,7 @@ class ChatStatement < ApplicationRecord
     )
   end
 
+
   private
 
     def notify_bot

@@ -51,6 +51,12 @@ body[data-controller-name="chatbots"] main{
     padding: 0 1.5em;
     form{
       width: 100%;
+      .control:first-child{
+        flex-grow: 1;
+      }
+      .control:last-child{
+        flex-grow: 1000;
+      }
     }
   }
 }
@@ -61,3 +67,35 @@ body[data-controller-name="chatbots"] main{
   justify-content: center;
   height: 100%;
 }
+
+
+
+@keyframes mic_listening{
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+a.btn{
+  &.btn--recognition{
+    svg{
+      fill: #666;
+    }
+    &.btn--recognition-on{
+      svg{
+        fill: red;
+        animation: mic_listening 1s linear infinite;
+      }
+    }
+  }
+}
+
