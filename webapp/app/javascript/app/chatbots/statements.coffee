@@ -27,7 +27,6 @@ class Statement
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove();
 
-
   scroll_to_last: ->
     $(".chatbot__discussion").animate(
       { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, 250

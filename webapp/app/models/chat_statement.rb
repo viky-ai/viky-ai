@@ -48,3 +48,4 @@ class ChatStatement < ApplicationRecord
       end
     end
 end
+

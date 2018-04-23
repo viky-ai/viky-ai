@@ -28,9 +28,9 @@ class StyleGuideController < ApplicationController
       { name: "Agent header",           slug: "agent_header"  },
       { name: "Agent box",              slug: "agent_box"     },
       { name: "Agent compact",          slug: "agent_compact" },
-      { name: "Chatbot",                slug: "chatbot"       },
       { name: "Interpretations list",   slug: "interpretations_list" },
       { name: "Entities list",          slug: "entities_list" },
+      { name: "Chatbot",                slug: "chatbot"       },
       { name: "Console",                slug: "console"       },
       { name: "Markdown",               slug: "markdown"      }
     ]
