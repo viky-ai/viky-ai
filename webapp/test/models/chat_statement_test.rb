@@ -45,4 +45,84 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert statement.invalid?
     assert_equal ['Text is too long (maximum is 5000 characters)'], statement.errors.full_messages
   end
+
+
+  test 'Create a simple list statement' do
+    statement_list = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:list],
+      content: {
+        list: [
+          {
+            nature: 'text',
+            text: 'Hello'
+          },
+          {
+            nature: 'text',
+            text: 'How are you ?'
+          }
+        ]
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_list.save
+  end
+
+
+  test 'Validate a list statement' do
+    statement_list = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:list],
+      content: {
+        list: [
+          {
+            nature: 'text',
+            text: 'Hello'
+          },
+          {
+            nature: 'text',
+            text: 'How are you ?'
+          },
+          {
+            nature: 'text',
+            text: 'What are you doing ?'
+          },
+          {
+            nature: 'text',
+            text: 'What is your name ?'
+          },
+          {
+            nature: 'text',
+            text: 'TALK TO ME !!!'
+          }
+        ]
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_list.invalid?
+    assert_equal ['List is too long (maximum is 4 items)'], statement_list.errors.full_messages
+
+    statement_list.content = { list: [] }
+    assert statement_list.invalid?
+    assert_equal ["List can't be blank"], statement_list.errors.full_messages
+
+    statement_list.content = {
+      list: [{
+        list: []
+      }]
+    }
+    assert statement_list.invalid?
+    assert_equal ['invalid nature'], statement_list.errors.full_messages
+
+    statement_list.content = {
+      list: [
+        {
+          nature: 'text',
+          text: ''
+        }
+      ]
+    }
+    assert statement_list.invalid?
+    assert_equal ["Text can't be blank"], statement_list.errors.full_messages
+  end
 end
