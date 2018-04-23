@@ -1,26 +1,26 @@
 class ChatbotsController < ApplicationController
   before_action :set_bots
+  before_action :set_available_recognition_locale
+  before_action :set_current_recognition_locale
 
   def index
   end
 
   def show
     @bot = Bot.find(params[:id])
-
     if ChatSession.where(user: current_user, bot: @bot).exists?
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     else
       @chat_session = ChatSession.new(user: current_user, bot: @bot)
       @chat_session.save
     end
-
   end
 
   def reset
     @bot = Bot.find(params[:id])
     ChatSession.new(user: current_user, bot: @bot).save
 
-    redirect_to chatbot_path(@bot)
+    redirect_to chatbot_path(@bot, recognition_locale: @current_recognition_locale)
   end
 
 
@@ -28,5 +28,40 @@ class ChatbotsController < ApplicationController
 
     def set_bots
       @bots = Bot.accessible_bots(current_user)
+    end
+
+
+    def set_current_recognition_locale
+      @current_recognition_locale = "en-US"
+      unless params[:recognition_locale].nil?
+        if @available_recognition_locale.keys.include? params[:recognition_locale].to_sym
+          @current_recognition_locale = params[:recognition_locale]
+        end
+      end
+    end
+
+    def set_available_recognition_locale
+      @available_recognition_locale = {
+        "en-US": {
+          language: "English",
+          country: "United States"
+        },
+        "en-GB": {
+          language: "English",
+          country: "United Kingdom"
+        },
+        "fr-FR": {
+          language: "Français",
+          country: "France"
+        },
+        "es-ES": {
+          language: "Español",
+          country: "España"
+        },
+        "it-IT": {
+          language: "Italiano",
+          country: "Italia"
+        }
+      }
     end
 end

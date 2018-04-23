@@ -2,7 +2,8 @@
   <ul>
     <% @bots.each do |bot| %>
       <li>
-        <a href="<%= chatbot_path(bot) %>" <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
+        <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale) %>"
+           <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
           <%= bot.name %>
           <% if bot.wip_enabled? %>
             <span class="badge badge--small badge--danger">

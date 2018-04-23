@@ -12,7 +12,8 @@
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
       <div class="field field--inline">
         <div class="control">
-          <a href="<%= reset_chatbot_path(@bot) %>" class="btn">
+          <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
+             class="btn">
             <span class="icon icon--small">
               <%= icon_loading %>
             </span>
@@ -21,14 +22,36 @@
         </div>
 
         <div class="control control--merged">
-          <a href="#" class="btn btn--recognition"
+          <button type="button" class="btn btn--recognition"
              data-action="recognition-toggle"
              style="display:none;">
             <span class='icon'>
               <%= icon_mic %>
             </span>
-          </a>
-          <%= text_field_tag 'statement[content]' %>
+          </button>
+          <div class="dropdown" style="display:none;">
+            <div class="dropdown__trigger">
+              <button class="btn" type="button">
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+              <ul>
+                <% @available_recognition_locale.each do |key, data| %>
+                  <li>
+                    <a href="?recognition_locale=<%= key %>"
+                      <% if key.to_s == @current_recognition_locale %>class="current"<% end %>>
+                      <%= data[:language] %> <small>(<%= data[:country] %>)</small>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+
+          <%= text_field_tag 'statement[content]', "", { autocomplete: "off" } %>
           <%= f.button "<span class='icon'>#{icon_check}</span> Send".html_safe,
                 class: "btn btn--primary",
                 data: {

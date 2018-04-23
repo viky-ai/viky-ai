@@ -5,7 +5,8 @@ class Chat
     @recognition = new Recognition()
 
     if @recognition.available
-      $('a.btn--recognition').show()
+      $('.bot-form .btn--recognition').show()
+      $('.bot-form .dropdown').show()
 
       $("body").on 'click', (event) => @dispatch(event)
 
@@ -15,19 +16,20 @@ class Chat
         Rails.fire(form, 'submit')
 
       $("body").on 'recognition:start', (event) =>
-        $('a.btn--recognition').addClass('btn--recognition-on')
+        $('.btn--recognition').addClass('btn--recognition-on')
 
       $("body").on 'recognition:stop', (event) =>
-        $('a.btn--recognition').removeClass('btn--recognition-on')
+        $('.btn--recognition').removeClass('btn--recognition-on')
     else
-      $('a.btn--recognition').remove()
+      $('.btn--recognition').remove()
+      $('.bot-form .dropdown').remove()
 
 
   dispatch: (event) ->
     node  = $(event.target)
     action = node.data('action')
     if not action?
-      node = $(event.target).parents('a')
+      node = $(event.target).parents('button')
       action = node.data('action')
 
     if action == "recognition-toggle"
@@ -36,6 +38,7 @@ class Chat
         @recognition.stop()
       else
         @recognition.start()
+
 
 
 class Recognition
@@ -106,9 +109,9 @@ class Statement
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove();
 
-  scroll_to_last: ->
+  scroll_to_last: (duration = 250) ->
     $(".chatbot__discussion").animate(
-      { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, 250
+      { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, duration
     )
 
   waiting_content: ->
@@ -126,7 +129,7 @@ class Statement
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    Statement::scroll_to_last()
+    Statement::scroll_to_last(0)
     new Chat()
 
 $(document).on('turbolinks:load', Setup)
