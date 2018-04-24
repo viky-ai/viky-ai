@@ -99,9 +99,13 @@ aside.chatbots-list{
     @media (min-width: 800px){
       height: calc(100% - 70px);
     }
-    overflow: auto;
     background-color: #fff;
     padding-top: 1em;
+
+    /* Enable Smooth scroll on iOS */
+    /* cf. https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements/ */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 
     font-size: .95em;
     @media (min-width: 800px){
