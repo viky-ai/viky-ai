@@ -59,6 +59,34 @@
 
 
 <section>
+  <h2>Image</h2>
+  <%= highlight_html do %>
+    <div class="chatbot">
+      <div class="chatbot__discussion">
+        <div class="chatbot__statement chatbot__statement--bot">
+          <div class="chatbot__avatar">
+            <img src="<%= image_path('default_avatar.png') %>">
+          </div>
+          <div class="chatbot__widget chatbot__widget--image">
+            <img src="<%= image_path('style-guide/kitten.jpg') %>"
+                 alt='Hello kitten !'>
+            <div class="chatbot__widget--image_info">
+              <div class="chatbot__widget--image_title">
+                Miaou !
+              </div>
+              <div class="chatbot__widget--image_subtitle">
+                Portrait of a little kitten. So cute 😻
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+
+<section>
   <h2>Animation</h2>
   <p>
     Remove CSS class <code>chatbot__avatar--hidden</code> and <code>chatbot__widget--hidden</code>

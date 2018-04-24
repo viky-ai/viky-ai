@@ -1,0 +1,20 @@
+<div class="chatbot__statement chatbot__statement--<%= statement.speaker %>">
+  <div class="chatbot__avatar">
+    <% if statement.speaker == "user" %>
+      <img src="<%= current_user.image_url(:square) %>">
+    <% else %>
+      <img src="<%= image_path('default_avatar.png') %>">
+    <% end %>
+  </div>
+  <div class="chatbot__widget chatbot__widget--image">
+    <img src="<%= statement.content['url'] %>">
+    <div class="chatbot__widget--image_info">
+      <div class="chatbot__widget--image_title">
+        <%= statement.content['title'] %>
+      </div>
+      <div class="chatbot__widget--image_subtitle">
+        <%= statement.content['subtitle'] %>
+      </div>
+    </div>
+  </div>
+</div>
