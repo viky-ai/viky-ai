@@ -107,6 +107,6 @@ gem "skylight"
 # gem 'rubocop', require: false
 
 # Used by PingPongBot Sinatra App
-gem 'sinatra'
-gem 'sinatra-contrib'
+gem 'sinatra', require: 'sinatra/base'
+gem 'sinatra-contrib', require: false
 gem 'rest-client'
