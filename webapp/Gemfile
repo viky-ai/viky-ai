@@ -105,3 +105,8 @@ gem 'terminal-table', require: false
 gem "skylight"
 
 # gem 'rubocop', require: false
+
+# Used by PingPongBot Sinatra App
+gem 'sinatra'
+gem 'sinatra-contrib'
+gem 'rest-client'

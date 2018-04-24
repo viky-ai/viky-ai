@@ -18,6 +18,7 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
   end
 
   private
+
     def statement_params
       params.require(:statement).permit(:nature, content: [:text, :url, :title, :subtitle])
     end

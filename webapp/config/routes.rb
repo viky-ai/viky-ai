@@ -133,10 +133,14 @@ Rails.application.routes.draw do
     end
   end
 
+  # Mount ping_pong_bot Sinatra App
+  require './lib/ping_pong_bot/app.rb'
+  mount PingPongBot, at: '/bots/ping-pong'
+
   # API internal without versioning
   namespace :api_internal do
-      get '/packages',     to: 'packages#index'
-      get '/packages/:id', to: 'packages#show'
+    get '/packages',     to: 'packages#index'
+    get '/packages/:id', to: 'packages#show'
   end
 
   get 'style-guide', to: 'style_guide#index'
