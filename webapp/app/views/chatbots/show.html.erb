@@ -3,6 +3,25 @@
 <% end %>
 
 <div class="chatbot"  data-session-id="<%= @chat_session.id %>">
+  <div class="chatbot__header">
+
+    <span>
+      <%= @bot.name %>
+      <% if @bot.wip_enabled? %>
+        <span class="badge badge--small badge--danger">
+          <%= t('views.bots.index.wip_badge') %>
+        </span>
+      <% end %>
+    </span>
+
+    <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
+       class="btn btn--small btn--outline">
+      <span class="icon icon--small">
+        <%= icon_loading %>
+      </span>
+    </a>
+
+  </div>
   <div class="chatbot__discussion">
     <% @chat_session.chat_statements.each do |statement| %>
       <%= render partial: "/chat_statements/#{statement.nature}", locals: { statement: statement } %>
@@ -11,13 +30,12 @@
   <div class="chatbot__input">
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
       <div class="field field--inline">
-        <div class="control">
+        <div class="control chatbot-reset-button-container">
           <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
              class="btn">
             <span class="icon icon--small">
               <%= icon_loading %>
             </span>
-            Reset
           </a>
         </div>
 
@@ -37,7 +55,7 @@
                 </span>
               </button>
             </div>
-            <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+            <div class="dropdown__content dropdown__content--hidden">
               <ul>
                 <% @available_recognition_locale.each do |key, data| %>
                   <li>
@@ -52,10 +70,10 @@
           </div>
 
           <%= text_field_tag 'statement[content]', "", { autocomplete: "off" } %>
-          <%= f.button "<span class='icon'>#{icon_check}</span> Send".html_safe,
+          <%= f.button "<span class='icon'>#{icon_check}</span>".html_safe,
                 class: "btn btn--primary",
                 data: {
-                  disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+                  disable_with: "<span class='icon icon--spin'>#{icon_loading}</span>".html_safe
                 } %>
         </div>
       </div>

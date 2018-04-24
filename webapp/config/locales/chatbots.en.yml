@@ -1,0 +1,10 @@
+en:
+  views:
+    chatbots:
+      index:
+        empty_blankslate_html: >
+          <h3>Oops.</h3>
+          <p>Sorry, you have access to no chatbot at the moment.</p>
+        choose_blankslate_html: >
+          <h3>Hello.</h3>
+          <p>Start by choosing a chatbot on the left.</p>

@@ -11,6 +11,8 @@ en:
           message_html:  No bot entered for the "%{agent}" agent.
         wip_badge: WIP
         endpoint: "Endpoint:"
+      form:
+        wip_help: When bot is a work in progress, only owner and collaborators (with edit rigths) have access to chatbot related UI.
       new:
         title: Create a new bot
         btn: Create

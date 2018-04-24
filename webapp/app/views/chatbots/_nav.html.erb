@@ -1,17 +1,21 @@
-<aside class="chatbots-list">
+<aside class="chatbots-list <% if action_name == "index" %>chatbots-list--for-index <% end %>">
   <ul>
     <% @bots.each do |bot| %>
       <li>
         <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale) %>"
            <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
-          <%= bot.name %>
-          <% if bot.wip_enabled? %>
-            <span class="badge badge--small badge--danger">
-              <%= t('views.bots.index.wip_badge') %>
-            </span>
-          <% end %>
-          <br />
-          <small>From agent: <%= bot.agent.slug %></small>
+          <span class="bot-name">
+            <%= bot.name %>
+            <% if bot.wip_enabled? %>
+              <span class="badge badge--small badge--danger">
+                <%= t('views.bots.index.wip_badge') %>
+              </span>
+            <% end %>
+          </span>
+          <span class="bot-agent">
+            <span class="bot-agent__name"><%= bot.agent.name %></span>
+            <span class="bot-agent__slug"><%= bot.agent.slug %></span>
+          </span>
         </a>
       </li>
     <% end %>

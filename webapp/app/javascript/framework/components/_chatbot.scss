@@ -1,7 +1,11 @@
 .chatbot__statement{
   display: flex;
-  margin: 1em;
+  margin: 1em 0;
   align-items: flex-end;
+
+  @media (min-width: 800px){
+    margin: 1em;
+  }
   &.chatbot__statement--bot{
   }
   &.chatbot__statement--user{
@@ -103,9 +107,9 @@
 
 // Widget Text
 .chatbot__widget--text{
-  padding: .75em 1.1em;
+  padding: .5em .8em;
   background-color: #f5f5f5;
-  border-radius: 15px;
+  border-radius: 12px;
   max-width: calc(500px);
   .chatbot__statement--bot &{
     border-bottom-left-radius: 1px;

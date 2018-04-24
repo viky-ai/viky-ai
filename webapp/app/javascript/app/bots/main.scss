@@ -25,12 +25,8 @@
         }
       }
     }
-    .bot__invite{
-      padding: 1em;
-    }
     .bot__actions{
       padding: 1em;
-      min-width: 170px;
       text-align: right;
       .dropdown{
         text-align: left;
@@ -38,14 +34,3 @@
     }
   }
 }
-
-.bot-name-and-wip {
-  display: -ms-grid;
-  display: grid;
-
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 2fr 1fr;
-
-  grid-gap: 2em;
-}
-

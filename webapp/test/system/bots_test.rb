@@ -67,7 +67,7 @@ class BotsTest < ApplicationSystemTestCase
     within('.bot-form') do
       fill_in 'Name', with: "Weather bot (updated)"
       fill_in 'Endpoint', with: "https://myweatherbot.com/api/updated/"
-      click_button 'Disable'
+      click_button 'No'
       click_button 'Update'
     end
 

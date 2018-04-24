@@ -9,7 +9,7 @@ class ChatbotTest < ApplicationSystemTestCase
     end
     within(".chatbot__input") do
       fill_in 'statement_content', with: 'My name is Stan'
-      click_button 'Send'
+      first('button[type="submit"]').click
     end
     within(".chatbot__discussion") do
       assert page.has_text? 'My name is Stan'

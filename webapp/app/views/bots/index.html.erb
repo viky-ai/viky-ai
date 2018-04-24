@@ -48,16 +48,7 @@
             <%= t('views.bots.index.endpoint') %> <em><%= bot.endpoint %></em>
           </p>
         </div>
-        <div class="bot__invite">
-        </div>
         <div class="bot__actions">
-          <a href="<%= chatbot_path(bot) %>"
-             class="btn btn--outline btn--primary btn--small">
-            <span class="icon icon--x-small">
-              <%= icon_chat %>
-            </span>
-            <%= t('views.bots.index.try') %>
-          </a>
           <% if current_user_can_edit %>
             <div class="dropdown">
               <div class="dropdown__trigger">
@@ -70,6 +61,14 @@
               <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
                 <ul>
                   <li>
+                    <a href="<%= chatbot_path(bot) %>">
+                      <span class="icon icon--x-small">
+                        <%= icon_chat %>
+                      </span>
+                      <%= t('views.bots.index.try') %>
+                    </a>
+                  </li>
+                  <li class="separator">
                     <a href="<%= edit_user_agent_bot_path(@agent.owner, @agent, bot) %>"
                        data-action="open-remote-modal">
                       <span class="icon icon--x-small">

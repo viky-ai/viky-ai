@@ -1,10 +1,35 @@
 @import '../../framework/abstracts/variables';
 
+body[data-controller-name="chatbots"] main{
+  padding: 0;
+}
+
+.chatbots-blankslate-container{
+  margin: 2em 1em;
+}
+
+
 aside.chatbots-list{
   background-color: #fff;
   width: 300px;
   overflow: auto;
   border-right: 1px solid #ddd;
+
+
+  display:none;
+  @media (min-width: 800px){
+    display:block;
+  }
+
+  &.chatbots-list--for-index{
+    width: 100%;
+    display:block;
+    @media (min-width: 800px){
+      width: 300px;
+    }
+  }
+
+
   ul{
     list-style: none;
     padding: 0;
@@ -14,12 +39,29 @@ aside.chatbots-list{
         display:block;
         padding: 1em .75em;
         text-decoration: none;
-        color: #555;
         border-left: 7px solid transparent;
-        line-height: 1.2em;
-        small{
-          color: #999;
+        line-height: 1.4em;
+        .bot-name{
+          display:block;
+          color: #222;
         }
+
+        .bot-agent{
+          display:block;
+          margin-top: .25em;
+          font-size: .75em;
+        }
+        .bot-agent__name{
+          display:block;
+          color: #222;
+          line-height: 1.4em;
+        }
+        .bot-agent__slug{
+          display:block;
+          color: #999;
+          line-height: 1.4em;
+        }
+
         &:hover,
         &.current{
           color: #000;
@@ -31,24 +73,52 @@ aside.chatbots-list{
   }
 }
 
-body[data-controller-name="chatbots"] main{
-  padding: 0;
-}
 
 .chatbot{
   height: 100%;
+
+  .chatbot__header{
+    background-color: #fbfbfb;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 1em;
+    color: #888;
+    border-bottom: 1px solid #eee;
+    border-left: 5px solid $primary-color;
+    font-size: 1em;
+
+    justify-content: space-between;
+
+    @media (min-width: 800px){
+      display: none;
+    }
+  }
   .chatbot__discussion{
-    height: calc(100% - 70px);
+    height: calc(100% - 54px - 40px);
+    @media (min-width: 800px){
+      height: calc(100% - 70px);
+    }
     overflow: auto;
     background-color: #fff;
     padding-top: 1em;
+
+    font-size: .95em;
+    @media (min-width: 800px){
+      font-size: 1em;
+    }
   }
   .chatbot__input{
     border-top: 1px solid #ddd;
-    height: 70px;
+    height: 54px;
     display: flex;
     align-items: center;
-    padding: 0 1.5em;
+    padding: 0 .5em;
+
+    @media (min-width: 800px){
+      height: 70px;
+      padding: 0 1.5em;
+    }
     form{
       width: 100%;
       .control:first-child{
@@ -56,6 +126,12 @@ body[data-controller-name="chatbots"] main{
       }
       .control:last-child{
         flex-grow: 1000;
+      }
+      .chatbot-reset-button-container{
+        display:none;
+        @media (min-width: 800px){
+          display: block;
+        }
       }
     }
   }
