@@ -42,6 +42,7 @@ class Bot < ApplicationRecord
       Rails.logger.info "  | Parameters: #{parameters}"
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == "https")
       out = http.post(uri.path, parameters.to_json, json_headers)
       Rails.logger.info "  | Completed #{out.code}"
       {
