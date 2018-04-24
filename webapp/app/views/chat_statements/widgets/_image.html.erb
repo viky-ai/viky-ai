@@ -1,11 +1,21 @@
-<div class="chatbot__widget chatbot__widget--image">
-  <img src="<%= statement.content['url'] %>">
-  <div class="chatbot__widget--image_info">
-    <div class="chatbot__widget--image_title">
-      <%= statement.content['title'] %>
-    </div>
-    <div class="chatbot__widget--image_subtitle">
-      <%= statement.content['subtitle'] %>
+<% if statement.content['title'].blank? && statement.content['subtitle'].blank? %>
+  <div class="chatbot__widget chatbot__widget--image chatbot__widget--image--alone">
+    <img src="<%= statement.content['url'] %>">
+  </div>
+<% else %>
+  <div class="chatbot__widget chatbot__widget--image">
+    <img src="<%= statement.content['url'] %>">
+    <div class="chatbot__widget--image__info">
+      <% unless statement.content['title'].blank? %>
+        <div class="chatbot__widget--image__info__title">
+          <%= statement.content['title'] %>
+        </div>
+      <% end %>
+      <% unless statement.content['subtitle'].blank? %>
+        <div class="chatbot__widget--image__info__subtitle">
+          <%= statement.content['subtitle'] %>
+        </div>
+      <% end %>
     </div>
   </div>
-</div>
+<% end %>

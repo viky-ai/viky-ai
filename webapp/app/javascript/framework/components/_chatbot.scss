@@ -104,13 +104,10 @@
 }
 
 
-
-// Widget Text
-.chatbot__widget--text{
-  padding: .5em .8em;
-  background-color: #f5f5f5;
+.chatbot__widget{
+  overflow: hidden;
   border-radius: 12px;
-  max-width: calc(500px);
+  max-width: calc(100% - 120px);
   .chatbot__statement--bot &{
     border-bottom-left-radius: 1px;
   }
@@ -121,31 +118,30 @@
   }
 }
 
+// Widget Text
+.chatbot__widget--text{
+  padding: .5em .8em;
+  background-color: #f5f5f5;
+}
+
 
 // Widget image
-.chatbot__widget--image {
+.chatbot__widget--image{
+  line-height: 0;
   background-color: #f5f5f5;
-  border-radius: 15px;
-  max-width: calc(500px);
-  img {
-    width: 29em;
-    border-radius: 15px 15px 0 0;
+
+  img{
+    max-width: 100%;
+    max-height: 300px;
   }
-  .chatbot__widget--image_info {
-    padding: .75em 1.1em;
+  .chatbot__widget--image__info {
+    line-height: 1.4rem;
+    padding: .75em 1em;
   }
-  .chatbot__widget--image_title {
-    font-size: 1.3em;
+  .chatbot__widget--image__info__title {
+    font-size: 1.1em;
   }
-  .chatbot__widget--image_subtitle {
-    font-size: 0.9em;
-  }
-  .chatbot__statement--bot &{
-    border-bottom-left-radius: 1px;
-  }
-  .chatbot__statement--user &{
-    border-bottom-right-radius: 1px;
-    background-color: $primary_color;
-    color: #fff;
+  .chatbot__widget--image__info__subtitle {
+    font-size: 0.8em;
   }
 }
