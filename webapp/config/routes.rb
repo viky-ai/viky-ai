@@ -134,7 +134,6 @@ Rails.application.routes.draw do
   end
 
   # Mount ping_pong_bot Sinatra App
-  require './lib/ping_pong_bot/app.rb'
   mount PingPongBot, at: '/bots/ping-pong'
 
   # API internal without versioning
