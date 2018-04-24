@@ -47,7 +47,7 @@ class Bot < ApplicationRecord
       Rails.logger.info "  | Completed #{out.code}"
       {
         status: out.code,
-        body: JSON.parse(out.body)
+        body: out.body
       }
     end
 
