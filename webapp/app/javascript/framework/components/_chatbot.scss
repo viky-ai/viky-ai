@@ -108,6 +108,9 @@
   overflow: hidden;
   border-radius: 12px;
   max-width: calc(100% - 120px);
+  @media (min-width: 550px){
+    max-width: calc(450px);
+  }
   .chatbot__statement--bot &{
     border-bottom-left-radius: 1px;
   }
