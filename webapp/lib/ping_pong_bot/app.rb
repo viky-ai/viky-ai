@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require "sinatra/json"
 require 'sinatra/reloader'
 require 'rest-client'
 require 'json'
@@ -9,11 +8,18 @@ class PingPongBot < Sinatra::Application
     register Sinatra::Reloader
   end
 
+  get '/ping' do
+    status 200
+    body ''
+  end
+
   post '/start' do
-    parameters  = JSON.parse(request.body.read)
+    parameters = JSON.parse(request.body.read)
 
     BotHelper.send_text(parameters["session_id"], "Hello")
-    json status: 'ok'
+
+    status 200
+    body ''
   end
 
   post '/sessions/:session_id/user_statements' do
@@ -47,7 +53,8 @@ class PingPongBot < Sinatra::Application
       BotHelper.send_text(session_id, "Received that user says: \"#{user_statement_says}\"")
     end
 
-    json status: 'ok'
+    status 200
+    body ''
   end
 end
 
@@ -84,7 +91,7 @@ class BotHelper
   private
 
     def self.post_to_viky_ai(session_id, parameters)
-      url = "http://localhost:3000/api/v1/chat_sessions/#{session_id}/statements"
+      url = "#{ENV['VIKYAPP_BASEURL']}/api/v1/chat_sessions/#{session_id}/statements"
       RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
     end
 
