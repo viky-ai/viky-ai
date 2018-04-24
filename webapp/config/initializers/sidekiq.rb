@@ -10,3 +10,5 @@ Sidekiq.configure_client do |config|
     url: ENV['VIKYAPP_ACTIVEJOB_REDIS_URL'] || 'redis://localhost:6379/1'
   }
 end
+
+Sidekiq.default_worker_options['retry'] = 0
