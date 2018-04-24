@@ -15,6 +15,6 @@ class ChatSession < ApplicationRecord
   private
 
     def notify_bot
-      BotSendStartJob.set(wait: 0.2).perform_later(bot.id, id)
+      BotSendStartJob.set(wait: 0.25).perform_later(bot.id, id)
     end
 end

@@ -18,7 +18,16 @@ class ChatbotsController < ApplicationController
 
   def reset
     @bot = Bot.find(params[:id])
-    ChatSession.new(user: current_user, bot: @bot).save
+
+    previous_chat_session = ChatSession.where(user: current_user, bot: @bot).last
+    chat_session = ChatSession.new(user: current_user, bot: @bot)
+    chat_session.save
+
+    ActionCable.server.broadcast "chat_session_channel_#{current_user.id}", {
+      session_id: previous_chat_session.id,
+      action: "reset",
+      path: chatbot_path(@bot, recognition_locale: @current_recognition_locale)
+    }
 
     redirect_to chatbot_path(@bot, recognition_locale: @current_recognition_locale)
   end

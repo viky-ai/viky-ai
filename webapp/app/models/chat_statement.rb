@@ -12,7 +12,7 @@ class ChatStatement < ApplicationRecord
   validate :content_format
 
   after_create :notify_bot
-  after_create :notify_user
+  after_create :notify_ui
 
   def to_html
     ApplicationController.renderer.render(
@@ -30,13 +30,12 @@ class ChatStatement < ApplicationRecord
       end
     end
 
-    def notify_user
-      if speaker == "bot"
-        ActionCable.server.broadcast "chat_session_channel_#{chat_session.user.id}", {
-          session_id: chat_session.id,
-          message: self.to_html
-        }
-      end
+    def notify_ui
+      ActionCable.server.broadcast "chat_session_channel_#{chat_session.user.id}", {
+        session_id: chat_session.id,
+        action: "display_message",
+        message: self.to_html
+      }
     end
 
     def content_format
