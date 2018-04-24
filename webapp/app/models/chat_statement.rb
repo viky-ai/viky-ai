@@ -16,7 +16,7 @@ class ChatStatement < ApplicationRecord
 
   def to_html
     ApplicationController.renderer.render(
-      partial: "/chat_statements/#{self.nature}",
+      partial: "/chat_statements/widget",
       locals: { statement: self }
     )
   end

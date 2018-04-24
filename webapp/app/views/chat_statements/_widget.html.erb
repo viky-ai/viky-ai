@@ -6,7 +6,5 @@
       <img src="<%= image_path('default_avatar.png') %>">
     <% end %>
   </div>
-  <div class="chatbot__widget chatbot__widget--text">
-    <%= statement.content['text'] %>
-  </div>
+  <%= render "/chat_statements/widgets/#{statement.nature}", statement: statement %>
 </div>

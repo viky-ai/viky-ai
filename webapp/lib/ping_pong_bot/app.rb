@@ -25,7 +25,9 @@ class PingPongBot < Sinatra::Application
 
     case user_statement_says
     when /ping/i
-      BotHelper.send_text(session_id, "pong!!")
+      BotHelper.send_text(session_id, "Pong")
+    when /pong/i
+      BotHelper.send_text(session_id, "Ping")
     when /image/i
       image = [
         'https://www.wanimo.com/veterinaire/images/articles/chat/chaton-sourire.jpg',
