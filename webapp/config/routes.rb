@@ -127,6 +127,7 @@ Rails.application.routes.draw do
       scope '/agents' do
         get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
+      get '/ping', to: 'ping#ping'
       scope '/chat_sessions/:id' do
         resources 'statements', only: [:create]
       end
