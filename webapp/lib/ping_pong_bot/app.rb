@@ -39,7 +39,7 @@ class PingPongBot < Sinatra::Application
 
     when /images/i
       (0..2).each do |i|
-        BotHelper.send_image(session_id, BotHelper.kittens[i], "Kittens ##{i}")
+        BotHelper.send_image(session_id, BotHelper.kittens[i], "Kittens ##{i+1}")
       end
 
     when /image/i
@@ -79,11 +79,11 @@ class BotHelper
 
   def self.kittens
     [
-      'https://www.wanimo.com/veterinaire/images/articles/chat/chaton-sourire.jpg',
-      'https://static.wamiz.fr/images/news/facebook/article/lucy-acc-fb-59831efb7b842.jpg',
-      'http://img.bfmtv.com/c/1256/708/92a/5a15ebccb41456c68539f83aeba6d.jpeg',
-      'https://cf.ltkcdn.net/cats/images/orig/211655-2121x1414-Kitten-peeking.jpg',
-      'http://dirtypawzpetgrooming.com/wp-content/uploads/2012/01/kitten-little.jpg'
+      'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
+      'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
+      'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
+      'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
+      'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
 
