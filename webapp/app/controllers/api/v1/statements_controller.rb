@@ -20,6 +20,15 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
   private
 
     def statement_params
-      params.require(:statement).permit(:nature, content: [:text, :url, :title, :subtitle])
+      nature = params[:statement][:nature]
+      case nature
+      when 'text'
+        params.require(:statement).permit(:nature, content: [:text])
+      when 'image'
+        params.require(:statement).permit(:nature, content: [:url, :title, :subtitle])
+      when 'button'
+        payload_keys = params[:statement][:content][:payload].keys
+        params.require(:statement).permit(:nature, content: [:text, { payload: payload_keys }])
+      end
     end
 end

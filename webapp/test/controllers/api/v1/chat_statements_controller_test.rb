@@ -43,4 +43,25 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
     assert_equal '422', response.code
     assert_equal '{"errors":["Content can\'t be blank"]}', response.body
   end
+
+
+  test 'Allow anything has button payload' do
+    post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+      statement: {
+        nature: 'button',
+        content: {
+          text: 'Button 1',
+          payload: {
+            string: 'foo bar',
+            number: 5,
+            boolean: true,
+            nested_json: {
+              random: 'content'
+            }
+          }
+        }
+      }
+    }
+    assert_equal '201', response.code
+  end
 end
