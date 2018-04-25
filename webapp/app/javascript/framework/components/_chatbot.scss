@@ -149,3 +149,25 @@
     color: #666;
   }
 }
+
+.chatbot__widget--button {
+  @include unselectable();
+  text-decoration: none;
+  padding: .5em .8em;
+
+  border: 1px solid #ddd;
+  border-radius: 15px;
+
+  background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+  color: #000;
+  cursor: pointer;
+
+  &:hover{
+    background: linear-gradient(to bottom, darken(#fff, 2%) 0%, darken(#f9f9f9, 3%) 100%);
+    color: #000;
+  }
+
+  .chatbot__statement--bot &{
+    border-bottom-left-radius: 1px;
+  }
+}

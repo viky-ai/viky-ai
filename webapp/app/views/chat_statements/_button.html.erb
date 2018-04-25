@@ -6,5 +6,9 @@
       <img src="<%= image_path('default_avatar.png') %>">
     <% end %>
   </div>
-  button
+  <%= link_to statement.content['text'],
+              "#",
+              method: :post,
+              remote: true,
+              class:  "chatbot__widget chatbot__widget--button" %>
 </div>

@@ -23,13 +23,21 @@ class BotHelper
 
   def self.kittens
     [
-      'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
-      'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
-      'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
-      'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
-      'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
+    'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
+    'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
+    'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
+    'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
+    'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
+
+  def self.send_button(session_id, text, payload = {})
+    post_to_viky_ai(
+      session_id,
+      build_button_params(text, payload)
+    )
+  end
+
 
   private
 
@@ -63,6 +71,17 @@ class BotHelper
       }
     end
 
+  def self.build_button_params(text, payload)
+    {
+      statement: {
+        nature: 'button',
+        content: {
+          text: text,
+          payload: payload
+        }
+      }
+    }
+  end
 end
 
 
@@ -115,6 +134,16 @@ class PingPongBot < Sinatra::Base
         'Here we love kittens',
         'The kittens are too cute. Do you agree?'
       )
+
+    when /button/i
+      random_id = Random.rand(100)
+      BotHelper.send_button(
+        session_id,
+        "Button #{random_id}",
+        date: DateTime.now,
+        action: "action_#{random_id}"
+      )
+
     else
       BotHelper.send_text(session_id, "Received that user says: \"#{user_statement_says}\"")
     end

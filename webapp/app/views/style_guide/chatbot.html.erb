@@ -125,6 +125,35 @@
 
 
 <section>
+  <h2>Button</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--user">
+      <div class="chatbot__avatar">
+        <img src="<%= image_path('default_avatar.png') %>">
+      </div>
+      <div class="chatbot__widget chatbot__widget--text">
+        Are you ready ?
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <img src="<%= image_path('default_avatar.png') %>">
+      </div>
+      <a href="#"
+         class="chatbot__widget chatbot__widget--button"
+         data-remote="true"
+         data-method="post">Let's go !</a>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
   <h2>Animation</h2>
   <p>
     Remove CSS class <code>chatbot__avatar--hidden</code> and <code>chatbot__widget--hidden</code>
