@@ -31,7 +31,6 @@ class BotHelper
     ]
   end
 
-
   private
 
     def self.post_to_viky_ai(session_id, parameters)
@@ -39,7 +38,6 @@ class BotHelper
       url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
       RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
     end
-
 
     def self.build_text_params(message)
       {
@@ -68,13 +66,17 @@ class BotHelper
 end
 
 
+
 class PingPongBot < Sinatra::Base
+  set :root, File.dirname(__FILE__)
+  set :port, 3001
+
+  # set :environment, :production
+
   configure :development do
     register Sinatra::Reloader
   end
 
-  set :root, File.dirname(__FILE__)
-  set :port, 3001
 
   post '/start' do
     parameters = JSON.parse(request.body.read)
@@ -84,6 +86,7 @@ class PingPongBot < Sinatra::Base
     status 200
     json Hash.new
   end
+
 
   post '/sessions/:session_id/user_statements' do
     sleep(0.5)
@@ -118,6 +121,39 @@ class PingPongBot < Sinatra::Base
 
     status 200
     json Hash.new
+  end
+
+
+  get '/ping' do
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    url = "#{base_url}/api/v1/ping.json"
+
+    ping_failed = true
+    begin
+      response = RestClient::Request.execute(
+        method: :get,
+        url: url,
+        headers: { accept: :json },
+        timeout: 5
+      )
+      if response.code == 200
+        ping_failed = false
+      else
+        message = response.body
+      end
+    rescue RestClient::RequestTimeout, Errno::ECONNREFUSED => e
+      message = e.message
+    rescue RestClient::ExceptionWithResponse => e
+      message = e.response.body
+    end
+
+    if ping_failed
+      status 500
+      json message: message
+    else
+      status 200
+      json Hash.new
+    end
   end
 
   # start the server if ruby file executed directly
