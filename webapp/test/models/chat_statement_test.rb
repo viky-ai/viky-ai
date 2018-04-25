@@ -166,4 +166,41 @@ class ChatStatementTest < ActiveSupport::TestCase
     ].join(', ')
     assert_equal [expected], statement_image.errors.full_messages
   end
+
+
+  test 'Create a simple button statement' do
+    statement_button = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:button],
+      content: {
+        text: 'Self destruction',
+        payload: {
+          destruction: true,
+          timer: '5 seconds'
+        }
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_button.save
+  end
+
+
+  test 'Validate button statement' do
+    statement_button = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:button],
+      content: {
+        text: '',
+        payload: {}
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_button.invalid?
+    assert_equal ["Text can't be blank, Payload can't be blank"], statement_button.errors.full_messages
+
+    statement_button.content['text'] = 'a' * 2001
+    statement_button.content['payload'] = { a: 'a' }
+    assert statement_button.invalid?
+    assert_equal ['Text is too long (maximum is 2000 characters)'], statement_button.errors.full_messages
+  end
 end

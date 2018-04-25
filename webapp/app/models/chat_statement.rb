@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session
 
   enum speaker: [:user, :bot]
-  enum nature: [:text, :image, :list]
+  enum nature: [:text, :image, :button, :list]
 
   serialize :content, JSON
 
@@ -47,6 +47,9 @@ class ChatStatement < ApplicationRecord
         when 'image'
           statement_image = ChatStatementImage.new(content)
           errors.add(:base, statement_image.errors.full_messages.join(', ')) if statement_image.invalid?
+        when 'button'
+          statement_button = ChatStatementButton.new(content)
+          errors.add(:base, statement_button.errors.full_messages.join(', ')) if statement_button.invalid?
         when 'list'
           statement_list = ChatStatementList.new(content)
           errors.add(:base, statement_list.errors.full_messages.join(', ')) if statement_list.invalid?
