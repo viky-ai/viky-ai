@@ -109,6 +109,9 @@ Rails.application.routes.draw do
           member do
             get :confirm_destroy
           end
+          collection do
+            get :ping
+          end
         end
       end
     end

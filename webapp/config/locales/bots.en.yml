@@ -13,6 +13,7 @@ en:
         endpoint: "Endpoint:"
       form:
         wip_help: When bot is a work in progress, only owner and collaborators (with edit rigths) have access to chatbot related UI.
+        ping: Ping
       new:
         title: Create a new bot
         btn: Create

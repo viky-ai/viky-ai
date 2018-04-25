@@ -43,8 +43,21 @@
   <div class="field">
     <%= f.label :endpoint %>
     <span class="badge badge--small badge--outline"><%= t('required') %></span>
-    <div class="control">
+    <div class="control control--merged">
       <%= f.text_field :endpoint, id: 'bot_endpoint' %>
+      <button class="btn" type="button"
+        data-action="bot-ping-endpoint"
+        data-loading="<%= "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" %>"
+        data-idle="<%= t('views.bots.form.ping') %>"
+        data-url="<%= ping_user_agent_bots_path %>">
+        <%= t('views.bots.form.ping') %>
+      </button>
+    </div>
+    <div id="ping-result" class="help" style="display: none;">
+      <span class="icon icon--x-small">
+        <%= icon_information %>
+      </span>
+      <span id="ping-result-content"></span>
     </div>
     <%= display_errors(@bot, :endpoint) %>
   </div>
@@ -64,4 +77,3 @@
     <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
   </div>
 <% end %>
-

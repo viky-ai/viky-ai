@@ -12,6 +12,40 @@ class Bot < ApplicationRecord
     agents.collect_concat { |agent| agent.accessible_bots(user) }
   end
 
+  def self.ping(endpoint)
+    ping_failed = true
+
+    url = "#{endpoint}/ping"
+    begin
+      response = RestClient::Request.execute(
+        method: :get,
+        url: url,
+        headers: { accept: :json },
+        timeout: 5
+      )
+      if response.code == 200
+        ping_failed = false
+        message = "Successful ping"
+      else
+        message = response.body
+      end
+    rescue Exception => e
+      message = e.message
+    rescue RestClient::ExceptionWithResponse => e
+      message = e.message.body
+    end
+
+    if ping_failed
+      [false, "Ping failed: " + message]
+    else
+      [true, "Successful ping"]
+    end
+  end
+
+  def ping
+    Bot.ping(endpoint)
+  end
+
   def send_start(session_id)
     parameters = {
       session_id: session_id
@@ -43,23 +77,13 @@ class Bot < ApplicationRecord
   private
 
     def post(method, parameters)
-      json_headers = {
-        "Content-Type" => "application/json",
-        "Accept" => "application/json"
-      }
       url = "#{endpoint}/#{method}"
-
-      Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
-      Rails.logger.info "  | Parameters: #{parameters}"
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = (uri.scheme == "https")
-      out = http.post(uri.path, parameters.to_json, json_headers)
-      Rails.logger.info "  | Completed #{out.code}"
-      {
-        status: out.code,
-        body: out.body
-      }
+      RestClient::Request.execute(
+        method: :post,
+        url: url,
+        payload: parameters.to_json,
+        headers: { content_type: :json, accept: :json }
+      )
     end
 
 end

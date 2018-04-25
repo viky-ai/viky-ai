@@ -2,7 +2,8 @@ class BotsController < ApplicationController
   before_action :set_owner
   before_action :set_agent
   before_action :check_user_rights
-  before_action :set_bot, except: [:index, :new, :create]
+  before_action :set_bot, except: [:index, :new, :create, :ping]
+  skip_before_action :verify_authenticity_token, only: [:ping]
 
   def index
   end
@@ -69,6 +70,12 @@ class BotsController < ApplicationController
     end
   end
 
+  def ping
+    @endpoint = params[:endpoint]
+    succeed, message = Bot.ping(@endpoint)
+    render json: { succeed: succeed, message: message }
+  end
+
 
   private
 
@@ -92,7 +99,7 @@ class BotsController < ApplicationController
       case action_name
         when 'index'
           access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy'
+        when 'new', 'create', 'edit', 'update', 'confirm_destroy', 'destroy', 'ping'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

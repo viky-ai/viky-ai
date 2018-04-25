@@ -178,7 +178,7 @@ class PingPongBot < Sinatra::Base
       else
         message = response.body
       end
-    rescue RestClient::RequestTimeout, Errno::ECONNREFUSED => e
+    rescue Exception => e
       message = e.message
     rescue RestClient::ExceptionWithResponse => e
       message = e.response.body
