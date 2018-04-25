@@ -107,12 +107,20 @@ class PingPongBot < Sinatra::Base
   end
 
 
-  post '/sessions/:session_id/user_statements' do
+  post '/sessions/:session_id/user_actions' do
     sleep(0.5)
 
     session_id = params["session_id"]
-    parameters  = JSON.parse(request.body.read)
-    user_statement_says = parameters["user_statement"]["says"]
+    parameters = JSON.parse(request.body.read)
+
+    user_statement_type = parameters['user_statement']['type']
+    if user_statement_type == "click"
+      user_statement_payload = parameters['user_statement']['payload']
+      BotHelper.send_text(session_id, "You triggered with payload : #{user_statement_payload}")
+      return
+    end
+
+    user_statement_says = parameters['user_statement']['text']
 
     case user_statement_says
 

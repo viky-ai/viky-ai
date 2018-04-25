@@ -19,13 +19,24 @@ class Bot < ApplicationRecord
     post("start", parameters)
   end
 
-  def send_user_statement(session_id, text)
+  def send_user_text(session_id, text)
     parameters = {
       user_statement: {
-        says: text
+        type: 'says',
+        text: text
       }
     }
-    post("sessions/#{session_id}/user_statements", parameters)
+    post("sessions/#{session_id}/user_actions", parameters)
+  end
+
+  def send_user_payload(session_id, payload)
+    parameters = {
+      user_statement: {
+        type: 'click',
+        payload: payload
+      }
+    }
+    post("sessions/#{session_id}/user_actions", parameters)
   end
 
 

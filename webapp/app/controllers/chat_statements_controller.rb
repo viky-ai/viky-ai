@@ -22,6 +22,13 @@ class ChatStatementsController < ApplicationController
     end
   end
 
+  def user_action
+    @bot = Bot.find(params[:chatbot_id])
+    @chat_session = ChatSession.where(user: current_user, bot: @bot).last
+    BotSendUserStatementJob.perform_later(@chat_session.id, 'button', params[:payload])
+    head :created
+  end
+
   private
 
     def statement_params

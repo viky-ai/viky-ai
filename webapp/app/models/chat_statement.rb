@@ -26,7 +26,7 @@ class ChatStatement < ApplicationRecord
 
     def notify_bot
       if speaker == "user"
-        BotSendUserStatementJob.perform_later(chat_session.id, content['text'])
+        BotSendUserStatementJob.perform_later(chat_session.id, nature, content['text'])
       end
     end
 
