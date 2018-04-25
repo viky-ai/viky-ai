@@ -125,6 +125,9 @@
 .chatbot__widget--text{
   padding: .5em .8em;
   background-color: #f5f5f5;
+  .chatbot__statement--user & a {
+    color: #fff;
+  }
 }
 
 
