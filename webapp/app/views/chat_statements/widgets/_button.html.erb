@@ -1,8 +1,4 @@
 <%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot), remote: true do |f| %>
   <%= f.hidden_field :payload, value: statement.content['payload'] %>
-  <%= f.button statement.content['text'],
-               class: "chatbot__widget chatbot__widget--button",
-               data:  {
-                   disable_with: "<span class='icon icon--spin'>#{icon_loading}</span>".html_safe
-               } %>
+  <%= f.button statement.content['text'], class: "chatbot__widget chatbot__widget--button" %>
 <% end %>

@@ -100,21 +100,25 @@ class Statement
 
     avatar = $('.chatbot__discussion .chatbot__avatar').last()
     widget = $('.chatbot__discussion .chatbot__widget').last()
-    @scroll_to_last()
+    Statement.scroll_to_last()
     avatar.removeClass('chatbot__avatar--hidden')
     widget.removeClass('chatbot__widget--hidden')
 
     if @is_from_user()
-      $('.chatbot__discussion').append(@waiting_content())
+      Statement.display_bot_waiting()
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove();
 
-  scroll_to_last: (duration = 250) ->
+  @display_bot_waiting: ->
+    $('.chatbot__discussion').append(Statement.waiting_content())
+    Statement.scroll_to_last(0)
+
+  @scroll_to_last: (duration = 250) ->
     $(".chatbot__discussion").animate(
       { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, duration
     )
 
-  waiting_content: ->
+  @waiting_content: ->
     html = []
     html.push '<div class="chatbot__statement chatbot__statement--bot">'
     html.push '  <div class="chatbot__statement__waiting">'
@@ -129,7 +133,7 @@ class Statement
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    Statement::scroll_to_last(0)
+    Statement.scroll_to_last(0)
     new Chat()
 
 $(document).on('turbolinks:load', Setup)

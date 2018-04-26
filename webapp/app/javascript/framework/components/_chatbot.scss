@@ -121,6 +121,7 @@
   }
 }
 
+
 // Widget Text
 .chatbot__widget--text{
   padding: .5em .8em;
@@ -153,30 +154,28 @@
   }
 }
 
+
 // Widget button
+.chatbot__statement form{
+  width: 100%;
+}
 .chatbot__widget--button {
-  padding: .5em .8em;
+  padding: .5em 1em;
+  border: 1px solid $primary-color;
+  color: darken($primary-color, 10%);
 
-  border: 1px solid #ddd;
-  border-radius: 15px;
-
-  background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+  background-color: #fff;
   cursor: pointer;
-
-  color: #000;
   font-size: 1em;
   font-weight: 300;
 
+  &:focus,
   &:hover{
-    background: linear-gradient(to bottom, darken(#fff, 2%) 0%, darken(#f9f9f9, 3%) 100%);
+    background-color: $primary-color;
+    color: #fff;
   }
-  &:focus{
-    box-shadow: 0 0 0 2px rgba(#000, .05);
-    border-color: #bbb;
-    outline:0;
-  }
-
+  .chatbot__statement--user,
   .chatbot__statement--bot &{
-    border-bottom-left-radius: 1px;
+    border-radius: 20px;
   }
 }

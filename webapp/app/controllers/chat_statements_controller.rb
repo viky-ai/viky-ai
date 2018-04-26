@@ -26,7 +26,11 @@ class ChatStatementsController < ApplicationController
     @bot = Bot.find(params[:chatbot_id])
     @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     BotSendUserStatementJob.perform_later(@chat_session.id, 'button', params[:payload])
-    head :created
+    respond_to do |format|
+      format.js {
+        render partial: 'user_action'
+      }
+    end
   end
 
   private
