@@ -109,6 +109,12 @@ class Statement
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove();
 
+  @init_ui: ->
+    Statement.scroll_to_last(0)
+    if $('.chatbot__statement').length == 0
+      Statement.display_bot_waiting()
+
+
   @display_bot_waiting: ->
     $('.chatbot__discussion').append(Statement.waiting_content())
     Statement.scroll_to_last(0)
@@ -133,7 +139,7 @@ class Statement
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    Statement.scroll_to_last(0)
+    Statement.init_ui()
     new Chat()
 
 $(document).on('turbolinks:load', Setup)
