@@ -189,7 +189,10 @@
 
 // Widget button
 .chatbot__statement form{
-  width: 100%;
+  max-width: calc(100% - 120px);
+  @media (min-width: 550px){
+    max-width: calc(450px);
+  }
 }
 .chatbot__widget--button {
   padding: .5em 1em;
