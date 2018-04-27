@@ -1,30 +1,26 @@
 class ChatStatementsController < ApplicationController
 
+  before_action :set_bot
+  before_action :set_session
+
   def create
-    @bot = Bot.find(params[:chatbot_id])
-    @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     @content = statement_params[:content]
-
-    @chat_statement = ChatStatement.new
-    @chat_statement.chat_session = @chat_session
-    @chat_statement.speaker = :user
-    @chat_statement.nature = :text
-    @chat_statement.content = {
-      text: @content
-    }
-
+    @chat_statement = ChatStatement.new(
+      chat_session: @chat_session,
+      speaker: :user,
+      nature: :text,
+      content: {
+        text: @content
+      }
+    )
     respond_to do |format|
       format.js {
-        if @chat_statement.save
-          render partial: 'create_succeed'
-        end
+        render partial: 'create_succeed' if @chat_statement.save
       }
     end
   end
 
   def user_action
-    @bot = Bot.find(params[:chatbot_id])
-    @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     BotSendUserStatementJob.perform_later(@chat_session.id, 'button', params[:payload])
     respond_to do |format|
       format.js {
@@ -37,6 +33,14 @@ class ChatStatementsController < ApplicationController
 
     def statement_params
       params.require(:statement).permit(:content)
+    end
+
+    def set_bot
+      @bot = Bot.find(params[:chatbot_id])
+    end
+
+    def set_session
+      @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     end
 
 end
