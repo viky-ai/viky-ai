@@ -1,6 +1,7 @@
 class ChatStatementsController < ApplicationController
 
   before_action :set_bot
+  before_action :check_user_rights
   before_action :set_session
 
   def create
@@ -41,6 +42,15 @@ class ChatStatementsController < ApplicationController
 
     def set_session
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
+    end
+
+    def check_user_rights
+      case action_name
+      when 'create', 'user_action'
+        access_denied unless current_user.can? :edit, @bot.agent
+      else
+        access_denied
+      end
     end
 
 end
