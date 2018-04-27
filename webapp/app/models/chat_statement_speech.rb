@@ -5,5 +5,5 @@ class ChatStatementSpeech
   attr_accessor :locale
 
   validates :text, presence: true, length: { maximum: 500 }
-  validates :locale, inclusion: { in: ["en-US", "en-GB", "fr-FR", "es-ES", "it-IT"] }
+  validates :locale, inclusion: { in: ChatSession.locales.keys.collect(&:to_s) }
 end

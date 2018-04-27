@@ -50,27 +50,6 @@ class ChatbotsController < ApplicationController
     end
 
     def set_available_recognition_locale
-      @available_recognition_locale = {
-        "en-US": {
-          language: "English",
-          country: "United States"
-        },
-        "en-GB": {
-          language: "English",
-          country: "United Kingdom"
-        },
-        "fr-FR": {
-          language: "Français",
-          country: "France"
-        },
-        "es-ES": {
-          language: "Español",
-          country: "España"
-        },
-        "it-IT": {
-          language: "Italiano",
-          country: "Italia"
-        }
-      }
+      @available_recognition_locale = ChatSession.locales
     end
 end

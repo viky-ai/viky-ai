@@ -2,7 +2,9 @@
   <%= render 'nav' %>
 <% end %>
 
-<div class="chatbot"  data-session-id="<%= @chat_session.id %>">
+<div class="chatbot"
+  data-session-id="<%= @chat_session.id %>"
+  data-recognition-locale="<%= @current_recognition_locale %>">
   <div class="chatbot__header">
 
     <span>
@@ -61,6 +63,9 @@
                   <li>
                     <a href="?recognition_locale=<%= key %>"
                       <% if key.to_s == @current_recognition_locale %>class="current"<% end %>>
+                      <span class="badge">
+                        <code><%= key %></code>
+                      </span>
                       <%= data[:language] %> <small>(<%= data[:country] %>)</small>
                     </a>
                   </li>

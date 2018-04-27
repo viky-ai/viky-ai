@@ -69,7 +69,7 @@ class Recognition
       @stopped = true
       @has_result = false
       @recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-      @recognition.lang = "fr-FR"
+      @recognition.lang = $('.chatbot').data('recognition-locale')
 
       @recognition.onend = (event) =>
         if @has_result || @stopped
