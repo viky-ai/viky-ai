@@ -16,6 +16,7 @@ module BotRessources
   end
 end
 
+
 module BotApi
 
   def self.text(session_id, content)
@@ -84,8 +85,9 @@ class PingPongBot < Sinatra::Base
 
     when "click"
       payload = parameters['user_statement']['payload']
+      nice_payload = JSON.pretty_generate(payload);
       BotApi.text(session_id, {
-        text: "You triggered with payload : #{payload}"
+        text: "<p>You triggered with payload<p><pre>#{nice_payload}</pre>"
       })
 
     when "says"
@@ -113,14 +115,14 @@ class PingPongBot < Sinatra::Base
       when /images/i
         (0..2).each do |i|
           BotApi.image(session_id, {
-            url: BotHelper.kittens[i],
+            url: BotRessources.kittens[i],
             title: "Kittens ##{i+1}"
           })
         end
 
       when /image/i
         BotApi.image(session_id, {
-          url: BotHelper.kittens.sample,
+          url: BotRessources.kittens.sample,
           title: 'Here we love kittens',
           subtitle: 'The kittens are too cute. Do you agree?',
           speech: {
