@@ -67,9 +67,10 @@ class Bot < ApplicationRecord
     parameters = {
       user_statement: {
         type: 'click',
-        payload: payload
+        payload: JSON.parse(payload)
       }
     }
+    Rails.logger.info parameters
     post("sessions/#{session_id}/user_actions", parameters)
   end
 
