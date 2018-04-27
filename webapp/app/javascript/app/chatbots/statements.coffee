@@ -40,6 +40,23 @@ class Chat
         @recognition.start()
 
 
+class Speaker
+  say: (text, locale) ->
+    if (window.speechSynthesis)
+      Speaker = window.speechSynthesis
+      speech_request = new SpeechSynthesisUtterance();
+      voices = Speaker.getVoices()
+
+      for voice in voices
+        if voice.lang == locale || voice.lang == locale.replace('-', '_')
+          speech_request.voice = voice
+          break
+
+      speech_request.volume = 1
+      speech_request.text = text
+      speech_request.lang = locale
+      Speaker.speak(speech_request)
+
 
 class Recognition
   constructor: ->
@@ -107,13 +124,17 @@ class Statement
     if @is_from_user()
       Statement.display_bot_waiting()
     else
-      $('.chatbot__statement__waiting').closest('.chatbot__statement').remove();
+      $('.chatbot__statement__waiting').closest('.chatbot__statement').remove()
+
+    speech_text = content.data("speech-text")
+    if speech_text != ''
+      speech_locale = content.data("speech-locale")
+      Statement.speech(speech_text, speech_locale)
 
   @init_ui: ->
     Statement.scroll_to_last(0)
     if $('.chatbot__statement').length == 0
       Statement.display_bot_waiting()
-
 
   @display_bot_waiting: ->
     $('.chatbot__discussion').append(Statement.waiting_content())
@@ -123,6 +144,9 @@ class Statement
     $(".chatbot__discussion").animate(
       { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, duration
     )
+
+  @speech: (text, locale) ->
+    Speaker::say(text, locale)
 
   @waiting_content: ->
     html = []

@@ -4,23 +4,7 @@ require 'sinatra/json'
 require 'rest-client'
 require 'json'
 
-
-class BotHelper
-
-  def self.send_text(session_id, message)
-    post_to_viky_ai(
-      session_id,
-      build_text_params(message)
-    )
-  end
-
-  def self.send_image(session_id, url, title = '', subtitle = '')
-    post_to_viky_ai(
-      session_id,
-      build_image_params(url, title, subtitle)
-    )
-  end
-
+module BotRessources
   def self.kittens
     [
     'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
@@ -30,61 +14,39 @@ class BotHelper
     'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
-
-  def self.send_button(session_id, text, payload = {})
-    post_to_viky_ai(
-      session_id,
-      build_button_params(text, payload)
-    )
-  end
-
-
-  private
-
-    def self.post_to_viky_ai(session_id, parameters)
-      base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-      url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
-      RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
-    end
-
-    def self.build_text_params(message)
-      {
-        statement: {
-          nature: 'text',
-          content: {
-            text: message
-          }
-        }
-      }
-    end
-
-    def self.build_image_params(url, title = '', subtitle = '')
-      {
-        statement: {
-          nature:  'image',
-          content: {
-            url: url,
-            title: title,
-            subtitle: subtitle
-          }
-        }
-      }
-    end
-
-  def self.build_button_params(text, payload)
-    {
-      statement: {
-        nature: 'button',
-        content: {
-          text: text,
-          payload: payload
-        }
-      }
-    }
-  end
 end
 
+module BotApi
 
+  def self.text(session_id, content)
+    post(session_id, Params::build('text', content))
+  end
+
+  def self.image(session_id, content)
+    post(session_id, Params::build('image', content))
+  end
+
+  def self.button(session_id, content)
+    post(session_id, Params::build('button', content))
+  end
+
+  def self.post(session_id, parameters)
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
+    RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
+  end
+
+  class Params
+    def self.build(nature, content)
+      {
+        statement: {
+          nature: nature,
+          content: content
+        }
+      }
+    end
+  end
+end
 
 class PingPongBot < Sinatra::Base
   set :root, File.dirname(__FILE__)
@@ -98,9 +60,14 @@ class PingPongBot < Sinatra::Base
 
 
   post '/start' do
-    parameters = JSON.parse(request.body.read)
-
-    BotHelper.send_text(parameters["session_id"], "Hello")
+    session_id = JSON.parse(request.body.read)["session_id"]
+    BotApi.text(session_id, {
+      text: "Hello",
+      speech: {
+        text: "Welcome to Ping Pong Bot",
+        locale: "en-US"
+      }
+    })
 
     status 200
     json Hash.new
@@ -113,47 +80,75 @@ class PingPongBot < Sinatra::Base
     session_id = params["session_id"]
     parameters = JSON.parse(request.body.read)
 
-    user_statement_type = parameters['user_statement']['type']
-    if user_statement_type == "click"
-      user_statement_payload = parameters['user_statement']['payload']
-      BotHelper.send_text(session_id, "You triggered with payload : #{user_statement_payload}")
-      return
-    end
+    case parameters['user_statement']['type']
 
-    user_statement_says = parameters['user_statement']['text']
+    when "click"
+      payload = parameters['user_statement']['payload']
+      BotApi.text(session_id, {
+        text: "You triggered with payload : #{payload}"
+      })
 
-    case user_statement_says
+    when "says"
+      user_statement_says = parameters['user_statement']['text']
 
-    when /ping/i
-      BotHelper.send_text(session_id, "Pong")
+      case user_statement_says
+      when /ping/i
+        BotApi.text(session_id, {
+          text: "Pong",
+          speech: {
+            text: "Pong succeed",
+            locale: "en-US"
+          }
+        })
 
-    when /pong/i
-      BotHelper.send_text(session_id, "Ping")
+      when /pong/i
+        BotApi.text(session_id, {
+          text: "Ping",
+          speech: {
+            text: "Ping succeed",
+            locale: "en-US"
+          }
+        })
 
-    when /images/i
-      (0..2).each do |i|
-        BotHelper.send_image(session_id, BotHelper.kittens[i], "Kittens ##{i+1}")
+      when /images/i
+        (0..2).each do |i|
+          BotApi.image(session_id, {
+            url: BotHelper.kittens[i],
+            title: "Kittens ##{i+1}"
+          })
+        end
+
+      when /image/i
+        BotApi.image(session_id, {
+          url: BotHelper.kittens.sample,
+          title: 'Here we love kittens',
+          subtitle: 'The kittens are too cute. Do you agree?',
+          speech: {
+            text: "Voici une image de chatton",
+            locale: "fr-FR"
+          }
+        })
+
+      when /button/i
+        random_id = Random.rand(100)
+        BotApi.button(session_id, {
+          text: "Button #{random_id}",
+          payload: {
+            date: DateTime.now,
+            action: "action_#{random_id}"
+          }
+        })
+
+      else
+        BotApi.text(session_id, {
+          text: "I did not understand: \"#{user_statement_says}\"",
+          speech: {
+            text: "Oops",
+            locale: "en-US"
+          }
+        })
+
       end
-
-    when /image/i
-      BotHelper.send_image(
-        session_id,
-        BotHelper.kittens.sample,
-        'Here we love kittens',
-        'The kittens are too cute. Do you agree?'
-      )
-
-    when /button/i
-      random_id = Random.rand(100)
-      BotHelper.send_button(
-        session_id,
-        "Button #{random_id}",
-        date: DateTime.now,
-        action: "action_#{random_id}"
-      )
-
-    else
-      BotHelper.send_text(session_id, "Received that user says: \"#{user_statement_says}\"")
     end
 
     status 200

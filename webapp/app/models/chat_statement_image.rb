@@ -1,5 +1,6 @@
 class ChatStatementImage
   include ActiveModel::Model
+  include Speechable
 
   attr_accessor :url
   attr_accessor :title

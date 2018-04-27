@@ -47,6 +47,42 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
+  test 'Validate text statement with speech' do
+    statement = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:text],
+      content: {
+        text: 'Hello',
+        speech: ''
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement.invalid?
+    expected = ["Speech must be a Hash"]
+    assert_equal expected, statement.errors.full_messages
+
+    statement.content = {
+      text: 'Hello',
+      speech: {
+        text: '',
+        locale: ''
+      }
+    }
+    assert statement.invalid?
+    expected = ["Text can't be blank, Locale is not included in the list"]
+    assert_equal expected, statement.errors.full_messages
+
+    statement.content = {
+      text: 'Hello',
+      speech: {
+        text: 'Hi',
+        locale: 'en-US'
+      }
+    }
+    assert statement.valid?
+  end
+
+
   test 'Create a simple list statement' do
     statement_list = ChatStatement.new(
       speaker: ChatStatement.speakers[:bot],

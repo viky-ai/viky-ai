@@ -1,5 +1,6 @@
 class ChatStatementList
   include ActiveModel::Model
+  include Speechable
 
   attr_accessor :list
 
