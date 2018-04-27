@@ -1,3 +1,4 @@
+
 # Chatbot
 
 ## Overview
@@ -82,13 +83,21 @@ JSON structure :
   statement: {
     nature: 'text',
     content: {
-      text: <text>
+      text: <text>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
     }
   }
 }
 ```
 
-  * `text` Text to display (**required**)
+  * `<text>` Text to display (**required**).
+  * `<speech_text>` Text to speech (via text to speech).
+  * `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 #### <code>image</code> nature
 
@@ -102,15 +111,23 @@ JSON structure :
     content: {
       url: <url>,
       title: <title>,
-      subtitle: <subtitle>
+      subtitle: <subtitle>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
     }
   }
 }
 ```
 
-  * `url` the image URL. (**required**)
-  * `title` a noteworthy title
-  * `subtitle` a short description
+  * `<url>` the image URL (**required**).
+  * `<title>` a noteworthy title.
+  * `<subtitle>` a short description.
+  * `<speech_text>` Text to speech (via text to speech).
+  * `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 
 #### <code>button</code> nature
@@ -124,14 +141,22 @@ JSON structure :
       text: <text>,
       payload: {
           <...>
+      },
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
       }
     }
   }
 }
 ```
 
-  * `text` is the displayed in the button. (**required**)
-  * `payload` must be a JSON which can contain anything. It will be returned as is to the bot when the user click on the button. (**required**)
+  * `text` is the displayed in the button (**required**).
+  * `payload` must be a JSON which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
+  * `<speech_text>` Text to speech (via text to speech).
+  * `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 
 ## Bot API
