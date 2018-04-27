@@ -272,3 +272,29 @@
 </div>
   <% end %>
 </section>
+
+
+<section>
+  <h2>Notification</h2>
+  <p>
+    Used to display a global message in the conversation.
+  </p>
+  <%= highlight_html do %>
+<div class="chatbot__statement chatbot__statement--user">
+  <div class="chatbot__avatar">
+    <img src="<%= image_path('default_avatar.png') %>">
+  </div>
+  <div class="chatbot__widget chatbot__widget--text">
+    Are you there ?
+  </div>
+</div>
+<div class="chatbot__statement chatbot__statement--moderator">
+  <div class="chatbot__widget chatbot__widget--notification">
+    <span class="icon icon--white">
+      <%= icon_alert %>
+    </span>
+    Bot currently not available.
+  </div>
+</div>
+  <% end %>
+</section>

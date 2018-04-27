@@ -239,4 +239,35 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert statement_button.invalid?
     assert_equal ['Text is too long (maximum is 2000 characters)'], statement_button.errors.full_messages
   end
+
+
+  test 'Create a simple notification statement' do
+    statement_notification = ChatStatement.new(
+      speaker: ChatStatement.speakers[:moderator],
+      nature: ChatStatement.natures[:notification],
+      content: {
+        text: 'Bot error',
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_notification.save
+  end
+
+
+  test 'Validate notification statement' do
+    statement_notification = ChatStatement.new(
+      speaker: ChatStatement.speakers[:moderator],
+      nature: ChatStatement.natures[:notification],
+      content: {
+        text: ''
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement_notification.invalid?
+    assert_equal ["Text can't be blank"], statement_notification.errors.full_messages
+
+    statement_notification.content['text'] = 'a' * 2001
+    assert statement_notification.invalid?
+    assert_equal ['Text is too long (maximum is 2000 characters)'], statement_notification.errors.full_messages
+  end
 end

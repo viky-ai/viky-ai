@@ -11,6 +11,16 @@
   &.chatbot__statement--user{
     flex-direction: row-reverse;
   }
+  &.chatbot__statement--moderator{
+    justify-content: center;
+  }
+}
+
+.chatbot__widget--notification{
+  background-color: #bfbfbf;
+  color: #fff;
+  border-radius: 6px;
+  padding: .5em .8em;
 }
 
 

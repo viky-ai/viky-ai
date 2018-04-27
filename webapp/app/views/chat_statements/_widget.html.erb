@@ -1,12 +1,14 @@
 <div class="chatbot__statement chatbot__statement--<%= statement.speaker %>"
   data-speech-text="<%= statement.content.dig("speech", "text") %>"
   data-speech-locale="<%= statement.content.dig("speech", "locale") %>">
-  <div class="chatbot__avatar">
-    <% if statement.speaker == "user" %>
-      <img src="<%= statement.chat_session.user.image_url(:square) %>">
-    <% else %>
-      <img src="<%= image_path('default_bot.png') %>">
-    <% end %>
-  </div>
+  <% unless statement.speaker == 'moderator' %>
+    <div class="chatbot__avatar">
+      <% if statement.speaker == "user" %>
+        <img src="<%= statement.chat_session.user.image_url(:square) %>">
+      <% else %>
+        <img src="<%= image_path('default_bot.png') %>">
+      <% end %>
+    </div>
+  <% end %>
   <%= render "/chat_statements/widgets/#{statement.nature}", statement: statement %>
 </div>

@@ -1,6 +1,15 @@
 class BotSendUserStatementJob < ApplicationJob
   queue_as :bot
 
+  rescue_from(StandardError) do |exception|
+    ChatStatement.create(
+      speaker: ChatStatement.speakers[:moderator],
+      nature: ChatStatement.natures[:notification],
+      content: { text: I18n.t('errors.bots.communication_failure') },
+      chat_session: ChatSession.find(arguments[0])
+    )
+  end
+
   def perform(*args)
     chat_session_id = args[0]
     nature = args[1]
