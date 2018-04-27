@@ -37,13 +37,14 @@
 
 <section>
   <h2>Widget text</h2>
+  <h3>Text only</h3>
   <%= highlight_html do %>
 <div class="chatbot__statement chatbot__statement--bot">
   <div class="chatbot__avatar">
     <img src="<%= image_path('default_bot.png') %>">
   </div>
   <div class="chatbot__widget chatbot__widget--text">
-    Doctor, I need your help. I'm addicted to checking my Twitter !
+    Doctor, I need your help. I'm addicted to checking my Twitter!
   </div>
 </div>
 <div class="chatbot__statement chatbot__statement--user">
@@ -52,6 +53,50 @@
   </div>
   <div class="chatbot__widget chatbot__widget--text">
     I'm so sorry, I don't follow.
+  </div>
+</div>
+  <% end %>
+
+
+  <h3>Text with HTML</h3>
+  <p>
+    Only <code>strong</code>, <code>em</code>, <code>a</code>, <code>p</code>, <code>ul</code>, <code>li</code>, <code>code</code> and <code>pre</code> tag are allowed.
+  </p>
+  <%= highlight_html do %>
+<div class="chatbot__statement chatbot__statement--bot">
+  <div class="chatbot__avatar">
+    <img src="<%= image_path('default_bot.png') %>">
+  </div>
+  <div class="chatbot__widget chatbot__widget--text">
+    <p>
+      Lorem ipsum dolor sit amet, <strong>consectetur adipisicing</strong> elit. <em>Doloremque laboriosam</em>, at omnis vero <a href="http://rubyonrails.org/" target="_blank">necessitatibus error</a> eligendi nobis vel est dicta?
+    </p>
+    <ul>
+      <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li>
+      <li>Eaque dolorum reprehenderit ducimus.</li>
+      <li>Consequuntur fugit <code>placeat distinctio</code> est, quae, explicabo amet.</li>
+      <li>Corporis voluptatibus pariatur nobis maxime dolorum officiis, enim consequuntur ad.</li>
+    </ul>
+    <p>Aperiam quis voluptates incidunt odit inventore, officiis culpa eos!</p>
+  </div>
+</div>
+
+<div class="chatbot__statement chatbot__statement--bot">
+  <div class="chatbot__avatar">
+    <img src="<%= image_path('default_bot.png') %>">
+  </div>
+  <div class="chatbot__widget chatbot__widget--text">
+    <p>
+      Display some code:
+    </p>
+    <pre>WHITELIST = {
+  elements: %w[
+    strong em a p ul li code pre
+  ]
+}</pre>
+    <p>
+      Han, this is so cool.
+    </p>
   </div>
 </div>
   <% end %>

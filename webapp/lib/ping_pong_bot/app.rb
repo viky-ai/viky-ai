@@ -61,9 +61,21 @@ class PingPongBot < Sinatra::Base
 
 
   post '/start' do
+    content = ""
+    content << "<p><strong>Welcome!</strong></p>"
+    content << "<p>I'm the <em>Ping Pong Bot</em>, i allow you to test the viky.ai chatbot system.</p>"
+    content << "<p>You can type these terms in order to view available components:</p>"
+    content << "<ul>"
+    content << "  <li><code>ping</code> or <code>pong</code></li>"
+    content << "  <li><code>image</code> or <code>images</code></li>"
+    content << "  <li><code>button</code></li>"
+    content << "</ul>"
+    content << "<p>Happy coding!</p>"
+
+
     session_id = JSON.parse(request.body.read)["session_id"]
     BotApi.text(session_id, {
-      text: "Hello",
+      text: content,
       speech: {
         text: "Welcome to Ping Pong Bot",
         locale: "en-US"
@@ -87,7 +99,7 @@ class PingPongBot < Sinatra::Base
       payload = parameters['user_statement']['payload']
       nice_payload = JSON.pretty_generate(payload);
       BotApi.text(session_id, {
-        text: "<p>You triggered with payload<p><pre>#{nice_payload}</pre>"
+        text: "<p>You triggered with payload:</p><pre>#{nice_payload}</pre>"
       })
 
     when "says"

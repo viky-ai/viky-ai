@@ -70,7 +70,6 @@ class Bot < ApplicationRecord
         payload: JSON.parse(payload)
       }
     }
-    Rails.logger.info parameters
     post("sessions/#{session_id}/user_actions", parameters)
   end
 

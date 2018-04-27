@@ -2,11 +2,41 @@
 
   require 'html/pipeline'
 
+  # cf. https://github.com/jch/html-pipeline/blob/a84d7fa441d545fc3bdd43d5003af67c53cfd2b8/lib/html/pipeline/sanitization_filter.rb#L40
+  LISTS = Set.new(%w[ul ol].freeze)
+  LIST_ITEM = 'li'.freeze
+  ANCHOR_SCHEMES = ['http', 'https'].freeze
+  WHITELIST = {
+    elements: %w[
+      strong em a p ul li code pre
+    ],
+    remove_contents: ['script'],
+    attributes: {
+      'a' => ['href', 'target'],
+    },
+    protocols: {
+      'a' => { 'href' => ANCHOR_SCHEMES },
+    },
+    transformers: [
+      # Top-level <li> elements are removed because they can break out of
+      # containing markup.
+      lambda { |env|
+        name = env[:node_name]
+        node = env[:node]
+        if name == LIST_ITEM && node.ancestors.none? { |n| LISTS.include?(n.name) }
+          node.replace(node.children)
+        end
+      }
+    ]
+  }.freeze
+
   def autolink(text)
     context = {
-      link_attr: 'target="_blank"'
+      link_attr: 'target="_blank"',
+      whitelist: WHITELIST
     }
     pipeline = HTML::Pipeline.new [
+      HTML::Pipeline::SanitizationFilter,
       HTML::Pipeline::AutolinkFilter
     ], context
     result = pipeline.call(text)

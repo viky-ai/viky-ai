@@ -129,6 +129,38 @@
   .chatbot__statement--user & a {
     color: #fff;
   }
+
+  p, ul, pre{
+    margin: 1em 0;
+    &:first-child{
+      margin-top: 0.5em;
+    }
+    &:last-child{
+      margin-bottom: 0.5em;
+    }
+  }
+  pre{
+    background-color: rgba(#fff, .5);
+    border: 1px solid rgba(#000, .1);
+    box-shadow: 0 1px 0 #fff;
+    padding: 1em;
+    font-size: .85em;
+    line-height: 1.2em;
+    color: #333;
+    border-radius: 3px;
+  }
+}
+
+.sg .chatbot__widget--text p code,
+.sg .chatbot__widget--text li code,
+.chatbot__widget--text code{
+  padding: .2em .25em .1em .25em;
+  background-color: rgba(#fff, .5);
+  border: 1px solid rgba(#000, .1);
+  color: #333;
+  color: darken($primary-color, 10%);
+  font-size: .9em;
+  border-radius: 2px;
 }
 
 
