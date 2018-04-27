@@ -16,13 +16,6 @@
   }
 }
 
-.chatbot__widget--notification{
-  background-color: #bfbfbf;
-  color: #fff;
-  border-radius: 6px;
-  padding: .5em .8em;
-}
-
 
 // Waiting
 .chatbot__statement__waiting{
@@ -95,8 +88,6 @@
   }
 }
 
-
-
 // Widget animation
 .chatbot__widget{
   opacity: 1;
@@ -129,6 +120,22 @@
     background-color: $primary_color;
     color: #fff;
   }
+}
+
+
+// Widget Notification
+.chatbot__widget--notification{
+  max-width: none;
+  width: calc(100% + 2em);
+  margin: 0 -1em;
+
+  background-color: $warning_color;
+  border-top: 1px solid darken($warning_color, 5%);
+  border-bottom: 1px solid darken($warning_color, 5%);
+  color: #fff;
+  border-radius: 0;
+  padding: .75em 2em;
+  text-align: center;
 }
 
 
