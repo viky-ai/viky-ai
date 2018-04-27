@@ -12,7 +12,7 @@
     ],
     remove_contents: ['script'],
     attributes: {
-      'a' => ['href', 'target'],
+      'a' => ['href', 'target', 'rel'],
     },
     protocols: {
       'a' => { 'href' => ANCHOR_SCHEMES },
@@ -26,13 +26,22 @@
         if name == LIST_ITEM && node.ancestors.none? { |n| LISTS.include?(n.name) }
           node.replace(node.children)
         end
+      },
+      # Force target="_blank" & rel="noopener" for links
+      lambda { |env|
+        name = env[:node_name]
+        node = env[:node]
+        if name == 'a'
+          node.set_attribute('target', '_blank')
+          node.set_attribute('rel', 'noopener')
+        end
       }
     ]
   }.freeze
 
   def autolink(text)
     context = {
-      link_attr: 'target="_blank"',
+      link_attr: 'target="_blank" rel="noopener"',
       whitelist: WHITELIST
     }
     pipeline = HTML::Pipeline.new [
