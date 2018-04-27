@@ -93,17 +93,17 @@ class PingPongBot < Sinatra::Base
     session_id = params["session_id"]
     parameters = JSON.parse(request.body.read)
 
-    case parameters['user_statement']['type']
+    case parameters['user_action']['type']
 
     when "click"
-      payload = parameters['user_statement']['payload']
+      payload = parameters['user_action']['payload']
       nice_payload = JSON.pretty_generate(payload);
       BotApi.text(session_id, {
         text: "<p>You triggered with payload:</p><pre>#{nice_payload}</pre>"
       })
 
     when "says"
-      user_statement_says = parameters['user_statement']['text']
+      user_statement_says = parameters['user_action']['text']
 
       case user_statement_says
       when /ping/i

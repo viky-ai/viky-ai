@@ -55,7 +55,7 @@ class Bot < ApplicationRecord
 
   def send_user_text(session_id, text)
     parameters = {
-      user_statement: {
+      user_action: {
         type: 'says',
         text: text
       }
@@ -65,7 +65,7 @@ class Bot < ApplicationRecord
 
   def send_user_payload(session_id, payload)
     parameters = {
-      user_statement: {
+      user_action: {
         type: 'click',
         payload: JSON.parse(payload)
       }

@@ -1,168 +1,219 @@
 # Chatbot
 
 ## Overview
+
 ### Initiating a session
+
 The viky.ai chatbot starts a session and sends an id token to the bot.
+
 ```
-                          (send session id)
-    viky.ai (chatbot) -----------------------> bot
+                      (send session id)
+viky.ai (chatbot) -----------------------> bot
 ```
 
-### Typical chat
+### Typical chat interactions
+
 The user sends a statement to the bot through the chatbot interface.
 The bot receives the request and process it, usually resulting in an answer or at least saying that the request has been fulfilled.
+
 ```
-                         (user statement)
-    viky.ai (chatbot) -----------------------> bot
-       |                                        |    (interpret user statement)
-       |                                        | -------------------------------> viky.ai (interpret)
-       |                                        |                                     |
-       |                                        | <---------------------------------- |
-       |                                        |            (an intent)
-       |                                        |
-       |                                        |   (request to another service)
-       |                                        | -------------------------------> external service
-       |                                        |                                     |
-       |                                        | <---------------------------------- |
-       |                                        |            (answer)
-       |                                        |
-       | <------------------------------------- |
-                      (bot answer)
+                   (user action)
+viky.ai (chatbot) -----------------> bot
+   |                                  |    (interpret user action)
+   |                                  | -----------------------------> viky.ai (interpret)
+   |                                  |                                   |
+   |                                  | <-------------------------------- |
+   |                                  |            (an intent)
+   |                                  |
+   |                                  |   (request another service)
+   |                                  | -----------------------------> external service
+   |                                  |                                   |
+   |                                  | <-------------------------------- |
+   |                                  |            (answer)
+   |                                  |
+   | <------------------------------- |
+                   (bot answer)
 ```
 
-## viky.ai
+## API conventions
+
+The API is based on the HTTP protocol.
+
+The settings must be encoded in UTF-8 and respect the URL encoding.
+
+The return in UTF-8 uses the JSON format.
+
+Using APIs requires the Header HTTP `Accept: application/json` and the Header HTTP `Content-Type: application/json` to be systematically sent when the method used requires the sending of JSONs in the HTTP body.
+
+## viky.ai API
+
 Through its public API, viky.ai exposes an endpoint to listen for bot answers.
 Before any conversation can start, make sure the bot URL is configured in the bot on viky.ai.
 
-### HTTP request
-- verb : `POST`
-- path : `/api/<api_version>/chat_sessions/<session_id>/statements`
-- json :
+### Create statement
+
+#### Endpoint
+
+`POST /api/v1/chat_sessions/<session_id>/statements`
+
+#### JSON
 ```
-      {
-        statement: {
-            nature: <nature>,
-            content: {
-                <...>
-            }
-        }
-      }
+ {
+   statement: {
+     nature: <nature>,
+     content: {
+       <...>
+     }
+   }
+ }
 ```
+
 The nature is the type of widget which will be displayed to the user. The content object changes accordingly.
 
-### Natures
-Statement natures currently available and their respective content :
-- text :
-  * `text` is displayed as is except URL which are converted to HTML links. (**mandatory**)
-  * json :
+Statement natures currently available and their respective content.
+
+#### <code>text</code> nature
+
+Display text, URLs are automatically converted to HTML links.
+
+JSON structure :
 ```
-      {
-        statement: {
-            nature: 'text',
-            content: {
-                text: <text>
-            }
-        }
-      }
+{
+  statement: {
+    nature: 'text',
+    content: {
+      text: <text>
+    }
+  }
+}
 ```
 
-- image :
-  * `url` the image URL. (**mandatory**)
+  * `text` Text to display (**required**)
+
+#### <code>image</code> nature
+
+Display an image with optional title and subtitle.
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'image',
+    content: {
+      url: <url>,
+      title: <title>,
+      subtitle: <subtitle>
+    }
+  }
+}
+```
+
+  * `url` the image URL. (**required**)
   * `title` a noteworthy title
   * `subtitle` a short description
-  * json :
+
+
+#### <code>button</code> nature
+
+JSON structure :
 ```
-      {
-        statement: {
-            nature: 'button',
-            content: {
-                url: <url>,
-                title: <title>,
-                subtitle: <subtitle>
-            }
-        }
+{
+  statement: {
+    nature: 'button',
+    content: {
+      text: <text>,
+      payload: {
+          <...>
       }
+    }
+  }
+}
 ```
 
-- button : 
-  * `text` is the displayed in the button. (**mandatory**)
-  * `payload` must be a JSON which can contain anything. It will be returned as is to the bot when the user click on the button. (**mandatory**)
-  * json :
-```
-      {
-        statement: {
-            nature: 'button',
-            content: {
-                text: <text>,
-                payload: {
-                    <...>
-                }
-            }
-        }
-      }
-```
+  * `text` is the displayed in the button. (**required**)
+  * `payload` must be a JSON which can contain anything. It will be returned as is to the bot when the user click on the button. (**required**)
 
-## Bot
+
+## Bot API
+
 A bot is a remote service implementing the desired business logic.
 It is reachable through a REST API and it **must include those following endpoints** in order to work with the viky.ai chatbot :
 
-### Endpoints
-- Listen for new chat session :
-  * verb : `POST`
-  * path : `/start`
-  * json :
+### Bot is alive
+
+#### Endpoint
+
+`GET /ping`
+
+viky.ai wants to know if the bot is up and running mainly to display a status indicator for the user.
+
+It expects an HTTP code `200 OK` if the bot is available. Any other code (or the lack of answer) will result in considering the bot is unavailable.
+
+### Listen for new chat session
+
+#### Endpoint
+
+`POST /start`
+
+#### JSON
 ```
-      {
-          session_id: <id>
-      }
+{
+  session_id: <id>
+}
 ```
 When a user starts a conversion from viky.ai, the bot will receive a new session id.
+
 The bot must keep this session id if it wants to follow the context of several conversations at the same time.
 For a specific bot, **only the last session is valid** and any request to a closed one will result in a `403 Forbidden` response.
 
-- Listen for a new user statement :
-  * verb : `POST`
-  * path : `/sessions/<session_id>/user_actions`
-  * json :
-```
-      {
-          user_statement: {
-              type: <type>,
-              ...
-          }
-      }
-```
-A user made a new statement in the conversation. It must include the current session id as URL parameter.
+### Listen for a new user action
 
-- Bot is alive :
-  * verb : `GET`
-  * path : `/ping`
-viky.ai wants to know if the bot is up and running mainly to display a status indicator for the user.
-It expects an HTTP code `200 OK` if the bot is available. Any other code (or the lack of answer) will result in considering the bot is unavailable. 
+#### Endpoint
+
+`POST /sessions/<session_id>/user_actions`
+
+#### JSON
+
+```
+{
+  user_actions: {
+    type: <type>,
+    ...
+  }
+}
+```
+
+A user made a new statement in the conversation. It must include the current session id as URL parameter.
 
 
 ### Types
-User actions types triggered by the user :
-- says
-  * `text` the string typed by the user
+
+User actions types triggered by the user.
+
+#### Type <code>says</code>
+
 ```
-    {
-        user_statement: {
-            type: 'says',
-            text: <text>
-        }
-    }
+{
+  user_actions: {
+    type: 'says',
+    text: <text>
+  }
+}
 ```
 
-- click
-  * `payload` the JSON hash previously passed at the button creation
+  * `text` the string typed by the user
+
+#### Type <code>click</code>
+
 ```
-    {
-       user_statement: {
-           type: 'click',
-           payload: {
-             <...>
-           }
-       }
+{
+  user_actions: {
+    type: 'click',
+    payload: {
+      <...>
     }
+  }
+}
 ```
+
+  * `payload` the JSON hash previously passed at the button creation
