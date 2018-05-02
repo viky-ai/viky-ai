@@ -12,8 +12,8 @@ class BotSendUserStatementJob < ApplicationJob
 
   def perform(*args)
     chat_session_id = args[0]
-    nature = args[1]
-    content = args[2]
+    nature          = args[1]
+    content         = args[2]
 
     chat_session = ChatSession.find(chat_session_id)
     case nature

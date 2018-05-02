@@ -1,5 +1,4 @@
 class ChatStatementsController < ApplicationController
-
   before_action :set_bot
   before_action :check_user_rights
   before_action :set_session
