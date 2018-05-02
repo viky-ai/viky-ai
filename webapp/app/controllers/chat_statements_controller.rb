@@ -46,7 +46,7 @@ class ChatStatementsController < ApplicationController
     def check_user_rights
       case action_name
       when 'create', 'user_action'
-        access_denied unless current_user.can? :edit, @bot.agent
+        access_denied unless current_user.can?(:edit, @bot.agent) || (current_user.can?(:show, @bot.agent) && !@bot.wip_enabled)
       else
         access_denied
       end
