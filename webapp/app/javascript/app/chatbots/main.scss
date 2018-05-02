@@ -1,0 +1,180 @@
+@import '../../framework/abstracts/variables';
+
+body[data-controller-name="chatbots"] main{
+  padding: 0;
+}
+
+.chatbots-blankslate-container{
+  margin: 2em 1em;
+}
+
+
+aside.chatbots-list{
+  background-color: #fff;
+  width: 300px;
+  overflow: auto;
+  border-right: 1px solid #ddd;
+
+
+  display:none;
+  @media (min-width: 800px){
+    display:block;
+  }
+
+  &.chatbots-list--for-index{
+    width: 100%;
+    display:block;
+    @media (min-width: 800px){
+      width: 300px;
+    }
+  }
+
+
+  ul{
+    list-style: none;
+    padding: 0;
+    li{
+      border-bottom: 1px solid #eee;
+      a{
+        display:block;
+        padding: 1em .75em;
+        text-decoration: none;
+        border-left: 7px solid transparent;
+        line-height: 1.4em;
+        .bot-name{
+          display:block;
+          color: #222;
+        }
+
+        .bot-agent{
+          display:block;
+          margin-top: .25em;
+          font-size: .75em;
+        }
+        .bot-agent__name{
+          display:block;
+          color: #222;
+          line-height: 1.4em;
+        }
+        .bot-agent__slug{
+          display:block;
+          color: #999;
+          line-height: 1.4em;
+        }
+
+        &:hover,
+        &.current{
+          color: #000;
+          small{ color: #666; }
+          border-left: 7px solid $primary_color;
+        }
+      }
+    }
+  }
+}
+
+
+.chatbot{
+  height: 100%;
+
+  .chatbot__header{
+    background-color: #fbfbfb;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 1em;
+    color: #888;
+    border-bottom: 1px solid #eee;
+    border-left: 5px solid $primary-color;
+    font-size: 1em;
+
+    justify-content: space-between;
+
+    @media (min-width: 800px){
+      display: none;
+    }
+  }
+  .chatbot__discussion{
+    height: calc(100% - 54px - 40px);
+    @media (min-width: 800px){
+      height: calc(100% - 70px);
+    }
+    background-color: #fff;
+    padding-top: 1em;
+
+    /* Enable Smooth scroll on iOS */
+    /* cf. https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements/ */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+
+    font-size: .95em;
+    @media (min-width: 800px){
+      font-size: 1em;
+    }
+  }
+  .chatbot__input{
+    border-top: 1px solid #ddd;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    padding: 0 .5em;
+
+    @media (min-width: 800px){
+      height: 70px;
+      padding: 0 1.5em;
+    }
+    form{
+      width: 100%;
+      .control:first-child{
+        flex-grow: 1;
+      }
+      .control:last-child{
+        flex-grow: 1000;
+      }
+      .chatbot-reset-button-container{
+        display:none;
+        @media (min-width: 800px){
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+.chatbot__blankslate-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+
+
+@keyframes mic_listening{
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.btn{
+  &.btn--recognition{
+    svg{
+      fill: #666;
+    }
+    &.btn--recognition-on{
+      svg{
+        fill: red;
+        animation: mic_listening 1s linear infinite;
+      }
+    }
+  }
+}

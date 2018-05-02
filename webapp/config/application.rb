@@ -49,6 +49,9 @@ module Webapp
     # Feature switch
     require "#{config.root}/lib/feature.rb"
 
+    # Ping Pong Bot (Sinatra App)
+    require "#{config.root}/lib/ping_pong_bot/app.rb"
+
     require "#{config.root}/app/middlewares/health_check.rb"
     config.middleware.insert_after Rails::Rack::Logger, HealthCheck
 

@@ -454,7 +454,9 @@ class InterpretationTagger
   syncAliases: =>
     @aliases = []
     position = 0
-    for piece in @editor.getDocument().getPieces()
+    pieces = @remove_firsts_spaces()
+    for piece in pieces
+      keys = piece.getAttributesHash().getKeys()
       start = position
       end   = position + piece.length
       position = end
@@ -490,6 +492,17 @@ class InterpretationTagger
     @editor.deactivateAttribute('href')
     @editor.setSelectedRange([alias.end, alias.end])
 
+  remove_firsts_spaces: () ->
+    result = []
+    found_content = false
+    for p in @editor.getDocument().getPieces()
+      if found_content
+        result.push(p)
+      else
+        if p.string.trim() != ''
+          result.push(p)
+          found_content = true
+    return result
 
 class InterpretationSolutions
   constructor: ->

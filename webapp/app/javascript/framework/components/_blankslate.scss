@@ -3,20 +3,24 @@
   margin: 1em auto;
   @include display_flex();
   align-items: center;
+
   @media (min-width: 550px){
     padding: 1em;
   }
 
   .blankslate__illustration{
-    display:none;
-    margin-right: 2em;
+    margin-right: 1.5em;
     img{
-      width: 80px;
+      width: 40px;
     }
     @media (min-width: 550px){
-      display:block;
+      margin-right: 2em;
+      img{
+        width: 80px;
+      }
     }
   }
+
   .blankslate__content{
     .separator{
       margin: 2em 0;

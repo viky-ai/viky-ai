@@ -37,6 +37,7 @@
         'icon_upload',
         'icon_favorite',
         'icon_not_favorite',
+        'icon_chat'
        ].each do |helper| %>
     <li>
       <span class="icon icon--large"><%= send(helper) %></span>
@@ -124,6 +125,12 @@
   <%= icon_favorite %>
 </span>
 <span class="icon icon--brown">
+  <%= icon_favorite %>
+</span>
+<span class="icon icon--grey">
+  <%= icon_favorite %>
+</span>
+<span class="icon icon--white" style="background-color: black">
   <%= icon_favorite %>
 </span>
   <% end %>

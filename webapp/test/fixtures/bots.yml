@@ -1,0 +1,11 @@
+weather_bot:
+  name: Weather
+  endpoint: "https://myweatherbot.com/api/"
+  agent: weather
+  wip_enabled: false
+
+terminator_bot:
+  name: Arnold
+  endpoint: "https://terminator.com/api/"
+  agent: terminator
+  wip_enabled: true
