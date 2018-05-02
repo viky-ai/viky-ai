@@ -5,11 +5,16 @@ class Bot < ApplicationRecord
   validates :name, :endpoint, presence: true
 
   def self.accessible_bots(user)
-    agents = Agent
-               .joins(:memberships)
-               .where('user_id = ? OR visibility = ?', user.id, Agent.visibilities[:is_public])
-               .distinct
-    agents.collect_concat { |agent| agent.accessible_bots(user) }
+    memberships_ids = Bot.distinct
+                         .joins(agent: :memberships)
+                         .where(memberships: { user_id: user.id, rights: [:all, :edit] })
+                         .ids
+    public_ids = Bot.distinct
+                    .joins(:agent)
+                    .where(agents: { visibility: Agent.visibilities[:is_public] })
+                    .where(wip_enabled: false)
+                    .ids
+    Bot.where(id: memberships_ids + public_ids)
   end
 
   def self.ping(endpoint)

@@ -3,11 +3,11 @@
 bot_greeting:
   speaker: bot
   nature: text
-  content: <%= [{text: "Hello, I am a chat bot. What can I do for you ?"}].to_json.inspect %>
+  content: <%= { text: "Hello, I am a chat bot. What can I do for you ?" }.to_json.inspect %>
   chat_session: one
 
 user_question:
   speaker: user
   nature: text
-  content: <%= [{text: "What's the weather like tomorrow ?"}].to_json.inspect %>
+  content: <%= { text: "What's the weather like tomorrow ?" }.to_json.inspect %>
   chat_session: one
