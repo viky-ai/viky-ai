@@ -1,4 +1,5 @@
-<%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot), remote: true do |f| %>
+<%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot),
+      remote: true, class: "chatbot__widget chatbot__widget--button" do |f| %>
   <%= f.hidden_field :payload, value: statement.content['payload'].to_json %>
-  <%= f.button statement.content['text'], class: "chatbot__widget chatbot__widget--button" %>
+  <%= f.button statement.content['text'] %>
 <% end %>
