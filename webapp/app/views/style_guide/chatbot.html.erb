@@ -182,14 +182,42 @@
         Are you ready ?
       </div>
     </div>
-
     <div class="chatbot__statement chatbot__statement--bot">
       <div class="chatbot__avatar">
         <img src="<%= image_path('default_bot.png') %>">
       </div>
-      <form data-remote="true" method="post">
-        <button class="chatbot__widget chatbot__widget--button">Let'go</button>
+      <form class="chatbot__widget chatbot__widget--button">
+        <button>Let'go</button>
       </form>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Button group</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <img src="<%= image_path('default_bot.png') %>">
+      </div>
+      <div class="chatbot__widget chatbot__widget--button-group">
+        <form>
+          <button>Button A</button>
+        </form>
+        <form>
+          <button>Button B</button>
+        </form>
+        <form>
+          <button>Button C</button>
+        </form>
+        <form>
+          <button>Button D</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

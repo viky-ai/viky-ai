@@ -31,6 +31,10 @@ module BotApi
     post(session_id, Params::build('button', content))
   end
 
+  def self.button_group(session_id, content)
+    post(session_id, Params::build('button_group', content))
+  end
+
   def self.post(session_id, parameters)
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
@@ -68,7 +72,7 @@ class PingPongBot < Sinatra::Base
     content << "<ul>"
     content << "  <li><code>ping</code> or <code>pong</code></li>"
     content << "  <li><code>image</code> or <code>images</code></li>"
-    content << "  <li><code>button</code></li>"
+    content << "  <li><code>button</code> or <code>buttons</code></li>"
     content << "</ul>"
     content << "<p>Happy coding!</p>"
 
@@ -141,6 +145,28 @@ class PingPongBot < Sinatra::Base
             text: "Voici une image de chatton",
             locale: "fr-FR"
           }
+        })
+
+      when /buttons/i
+        BotApi.button_group(session_id, {
+          buttons: [
+            {
+              text: "Button A",
+              payload: { data: "Button A" }
+            },
+            {
+              text: "Button B",
+              payload: { data: "Button B" }
+            },
+            {
+              text: "Button C",
+              payload: { data: "Button C" }
+            },
+            {
+              text: "Button D",
+              payload: { data: "Button D" }
+            }
+          ]
         })
 
       when /button/i

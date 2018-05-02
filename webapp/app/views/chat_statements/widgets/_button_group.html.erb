@@ -1,0 +1,8 @@
+<div class="chatbot__widget chatbot__widget--button-group">
+  <% statement.content["buttons"].each do |button| %>
+    <%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot), remote: true do |f| %>
+      <%= f.hidden_field :payload, value: button['payload'].to_json %>
+      <%= f.button button['text'] %>
+    <% end %>
+  <% end %>
+</div>

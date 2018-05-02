@@ -205,8 +205,9 @@
 }
 
 
-// Widget button
-form.chatbot__widget--button{
+// Widget button & button_group
+form.chatbot__widget--button,
+.chatbot__widget--button-group{
   button{
     padding: .5em 1em;
     border: 1px solid $primary-color;
@@ -224,5 +225,15 @@ form.chatbot__widget--button{
       background-color: $primary-color;
       color: #fff;
     }
+  }
+}
+
+
+.chatbot__widget--button-group{
+  border-radius: 0;
+  margin: -0.25em;
+  form{
+    display: inline-block;
+    margin: .25em;
   }
 }

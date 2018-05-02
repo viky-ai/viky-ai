@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :button, :list, :notification]
+  enum nature: [:text, :image, :button, :button_group, :list, :notification]
 
   serialize :content, JSON
 
@@ -42,24 +42,23 @@ class ChatStatement < ApplicationRecord
       return if content.blank?
       case nature
         when 'text'
-          statement_text = ChatStatementText.new(content)
-          errors.add(:base, statement_text.errors.full_messages.join(', ')) if statement_text.invalid?
+          component = ChatStatementText.new(content)
         when 'image'
-          statement_image = ChatStatementImage.new(content)
-          errors.add(:base, statement_image.errors.full_messages.join(', ')) if statement_image.invalid?
+          component = ChatStatementImage.new(content)
         when 'button'
-          statement_button = ChatStatementButton.new(content)
-          errors.add(:base, statement_button.errors.full_messages.join(', ')) if statement_button.invalid?
+          component = ChatStatementButton.new(content)
+        when 'button_group'
+          component = ChatStatementButtonGroup.new(content)
         when 'list'
-          statement_list = ChatStatementList.new(content)
-          errors.add(:base, statement_list.errors.full_messages.join(', ')) if statement_list.invalid?
+          component = ChatStatementList.new(content)
         when 'notification'
-          statement_notification = ChatStatementNotification.new(content)
-          errors.add(:base, statement_notification.errors.full_messages.join(', ')) if statement_notification.invalid?
+          component = ChatStatementNotification.new(content)
         else
           # Should be impossible
           raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
       end
+
+      errors.add(:base, component.errors.full_messages.join(', ')) if component.invalid?
     end
 end
 

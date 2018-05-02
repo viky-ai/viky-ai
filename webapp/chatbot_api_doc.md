@@ -139,9 +139,7 @@ JSON structure :
     nature: 'button',
     content: {
       text: <text>,
-      payload: {
-          <...>
-      },
+      payload: <payload>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -151,13 +149,45 @@ JSON structure :
 }
 ```
 
-  * `text` is the displayed in the button (**required**).
-  * `payload` must be a JSON which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
+  * `<text>` is the displayed in the button (**required**).
+  * `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
   * `<speech_text>` Text to speech (via text to speech).
   * `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
+#### <code>button_group</code> nature
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'button_group',
+    content: {
+      buttons: [
+        {
+          text: <text>,
+          payload: <payload>
+        },
+        {
+          text: <text>,
+          payload: <payload>
+        }
+      ],
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+  * `<buttons>` list of buttons, from 1 to 6 buttons (**required**).
+  * `<speech_text>` Text to speech (via text to speech).
+  * `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 ## Bot API
 

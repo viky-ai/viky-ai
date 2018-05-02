@@ -34,10 +34,17 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
           content: [:url, :title, :subtitle, speech: [:text, :locale]]
         )
       when 'button'
-        payload_keys = params[:statement][:content][:payload].keys
         params.require(:statement).permit(
           :nature,
-          content: [:text, { payload: payload_keys }, speech: [:text, :locale]]
+          content: [:text, payload: {}, speech: [:text, :locale]]
+        )
+      when 'button_group'
+        params.require(:statement).permit(
+          :nature,
+          content: [
+            buttons: [ :text, payload: {} ],
+            speech: [:text, :locale]
+          ]
         )
       end
     end

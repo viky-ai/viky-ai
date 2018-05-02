@@ -241,6 +241,50 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
+  test 'Validate a button group statement' do
+    bg = ChatStatement.new(
+      speaker: :bot,
+      nature: :button_group,
+      content: {
+        buttons: [
+          {
+            text: '',
+            payload: {}
+          },
+          {
+            text: 'Button B',
+            payload: {}
+          }
+        ]
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert bg.invalid?
+    expected = ["Button #0: Text can't be blank, Button #0: Payload can't be blank, Button #1: Payload can't be blank"]
+    assert_equal expected, bg.errors.full_messages
+
+    bg.content = { buttons: [] }
+    assert bg.invalid?
+    expected = ["Buttons can't be blank"]
+    assert_equal expected, bg.errors.full_messages
+
+    bg.content = { buttons: nil }
+    assert bg.invalid?
+    expected = ["Buttons can't be blank"]
+    assert_equal expected, bg.errors.full_messages
+
+    bg.content = { buttons: [
+      {
+        text: 'Awesome button',
+        payload: {
+          foo: :bar
+        }
+      }
+    ]}
+    assert bg.valid?
+  end
+
+
   test 'Create a simple notification statement' do
     statement_notification = ChatStatement.new(
       speaker: ChatStatement.speakers[:moderator],
