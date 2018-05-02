@@ -4,7 +4,7 @@ en:
       index:
         empty_blankslate_html: >
           <h3>Oops.</h3>
-          <p>Sorry, you have access to no chatbot at the moment.</p>
+          <p>Sorry, you have not access to a chatbot at the moment.</p>
         choose_blankslate_html: >
           <h3>Hello.</h3>
-          <p>Start by choosing a chatbot on the left.</p>
+          <p>Choose a chatbot on the left.</p>

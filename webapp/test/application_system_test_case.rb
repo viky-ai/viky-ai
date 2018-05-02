@@ -78,7 +78,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   def go_to_chatbots
     admin_login
     visit chatbots_path
-    assert page.has_text?("Start by choosing a chatbot on the left.")
+    assert page.has_text?("Choose a chatbot on the left.")
   end
 
   def select_text_in_trix(selector, position_start, position_end)
