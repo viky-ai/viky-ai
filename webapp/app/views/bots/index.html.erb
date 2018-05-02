@@ -1,0 +1,101 @@
+<%= render '/agents/header', agent: @agent %>
+
+<% current_user_can_edit = current_user.can?(:edit, @agent) %>
+
+<div class="h4-actions-container">
+  <h4><%= t('views.bots.index.list_title') %></h4>
+  <div>
+    <% if current_user_can_edit %>
+      <a href="<%= new_user_agent_bot_path(current_user, @agent) %>"
+         class="btn btn--primary"
+         data-action="open-remote-modal">
+        <span class="icon icon--small"><%= icon_add_circle %></span> <%= t('views.bots.index.new') %>
+      </a>
+    <% end %>
+  </div>
+</div>
+
+<% unless @agent.accessible_bots(current_user).exists? %>
+  <br />
+  <div class="card">
+    <div class="card-content">
+      <div class="blankslate">
+        <div class="blankslate__illustration">
+          <img src='<%= image_path "robot-idle.png" %>'
+               srcset='<%= image_path "robot-idle.png" %> 1x,
+                       <%= image_path "robot-idle@2x.png" %> 2x' />
+        </div>
+        <div class="blankslate__content">
+          <%= t('views.bots.index.blankslate.message_html', agent: @agent.agentname) %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <ul class="bots-list">
+    <% @agent.accessible_bots(current_user).each do |bot| %>
+      <li class="bot">
+        <div class="bot__content">
+          <h5>
+            <%= bot.name %>
+            <% if bot.wip_enabled? %>
+              <span class="badge badge--small badge--danger">
+                <%= t('views.bots.index.wip_badge') %>
+              </span>
+            <% end %>
+          </h5>
+          <p>
+            <%= t('views.bots.index.endpoint') %> <em><%= bot.endpoint %></em>
+          </p>
+        </div>
+        <div class="bot__actions">
+          <% if current_user_can_edit %>
+            <div class="dropdown">
+              <div class="dropdown__trigger">
+                <button class="btn btn--small">
+                  <span class="icon icon--x-small">
+                    <%= icon_dots %>
+                  </span>
+                </button>
+              </div>
+              <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
+                <ul>
+                  <li>
+                    <a href="<%= chatbot_path(bot) %>">
+                      <span class="icon icon--x-small">
+                        <%= icon_chat %>
+                      </span>
+                      <%= t('views.bots.index.try') %>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <a href="<%= edit_user_agent_bot_path(@agent.owner, @agent, bot) %>"
+                       data-action="open-remote-modal">
+                      <span class="icon icon--x-small">
+                        <%= icon_settings %>
+                      </span>
+                      <%= t('views.bots.index.configure') %>
+                    </a>
+                  </li>
+                  <li class="separator">
+                    <a href="<%= confirm_destroy_user_agent_bot_path(@agent.owner, @agent, bot) %>"
+                       data-action="open-remote-modal" class="destructive">
+                      <span class="icon icon--x-small">
+                        <%= icon_delete %>
+                      </span>
+                      <%= t('views.bots.index.delete') %>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% content_for :right_aside do %>
+  <%= render '/console/base' %>
+<% end %>

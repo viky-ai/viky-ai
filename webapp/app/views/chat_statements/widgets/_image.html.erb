@@ -1,0 +1,17 @@
+<div class="chatbot__widget chatbot__widget--image">
+  <img src="<%= statement.content['url'] %>">
+  <% if statement.content['title'].present? || statement.content['subtitle'].present? %>
+    <div class="chatbot__widget--image__info">
+      <% if statement.content['title'].present? %>
+        <div class="chatbot__widget--image__info__title">
+          <%= statement.content['title'] %>
+        </div>
+      <% end %>
+      <% if statement.content['subtitle'].present? %>
+        <div class="chatbot__widget--image__info__subtitle">
+          <%= statement.content['subtitle'] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

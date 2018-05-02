@@ -1,0 +1,79 @@
+<%= form_with model: [current_user, @agent, @bot], data: { type: 'json' }, class: 'bot-form' do |f| %>
+
+  <div class="field">
+    <div class="control">
+      <%= f.label :name %>
+      <span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <div class="control">
+        <%= f.text_field :name, id: 'bot_name' %>
+      </div>
+      <%= display_errors(@bot, :name) %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.label :wip_enabled %>
+      <span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <%= f.hidden_field :wip_enabled %>
+      <br/>
+      <div class="btn-group">
+        <button class="btn
+          <% if @bot.wip_enabled? %>btn--primary
+          <% end %>" type="button"
+                data-input-selector="input[name='bot[wip_enabled]']"
+                data-input-value="1"><%= t('activerecord.attributes.bot.wip_enabled_true') %></button>
+        <button class="btn
+          <% unless @bot.wip_enabled? %>btn--primary
+          <% end %>" type="button"
+                data-input-selector="input[name='bot[wip_enabled]']"
+                data-input-value="0"><%= t('activerecord.attributes.bot.wip_enabled_false') %></button>
+      </div>
+      <div class="help">
+        <span class="icon icon--x-small">
+          <%= icon_information %>
+        </span>
+        <%= t('views.bots.form.wip_help') %>
+      </div>
+
+      <%= display_errors(@bot, :wip_enabled) %>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :endpoint %>
+    <span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control control--merged">
+      <%= f.text_field :endpoint, id: 'bot_endpoint' %>
+      <button class="btn" type="button"
+        data-action="bot-ping-endpoint"
+        data-loading="<%= "<span class='icon icon--small icon--spin'>#{icon_loading}</span>" %>"
+        data-idle="<%= t('views.bots.form.ping') %>"
+        data-url="<%= ping_user_agent_bots_path %>">
+        <%= t('views.bots.form.ping') %>
+      </button>
+    </div>
+    <div id="ping-result" class="help" style="display: none;">
+      <span class="icon icon--x-small">
+        <%= icon_information %>
+      </span>
+      <span id="ping-result-content"></span>
+    </div>
+    <%= display_errors(@bot, :endpoint) %>
+  </div>
+
+  <div class="actions">
+    <% if ["edit", "update"].include? action_name %>
+      <% btn_label = t('views.bots.edit.btn') %>
+    <% else %>
+      <% btn_label = t('views.bots.new.btn') %>
+    <% end %>
+
+    <%= f.button btn_label,
+          class: "btn btn--primary",
+          data: {
+            disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe
+          } %>
+    <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+  </div>
+<% end %>

@@ -1,0 +1,34 @@
+en:
+  views:
+    bots:
+      index:
+        list_title: Bots list
+        new: New bot
+        try: Let's try it
+        delete: Delete
+        configure: Configure
+        blankslate:
+          message_html: No bot entered for the "%{agent}" agent.
+        wip_badge: WIP
+        endpoint: "Endpoint:"
+      form:
+        wip_help: When a bot is work in progress, only owner and collaborators (with edit rigths) have access to chatbot related UI.
+        ping: Ping
+      new:
+        title: Create a new bot
+        btn: Create
+        success_message: Your bot has been successfully created.
+      edit:
+        title: Edit bot configuration
+        btn: Update
+        success_message: Your bot has been successfully updated.
+      confirm_destroy:
+        title: Are you sure?
+        content_html: "You're about to delete bot: <strong>%{name}</strong>."
+        btn: Delete
+      destroy:
+        success_message: "Your bot: %{name} has successfully been deleted."
+        errors_message: "Deletion failed: %{errors}."
+
+
+

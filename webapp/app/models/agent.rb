@@ -16,6 +16,7 @@ class Agent < ApplicationRecord
   has_many :fans, through: :favorite_agents, source: :user
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
+  has_many :bots, dependent: :destroy
 
   has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy
   has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy
@@ -166,6 +167,14 @@ class Agent < ApplicationRecord
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
              .order(position: :desc, created_at: :desc)
+  end
+
+  def accessible_bots(user)
+    if user.can? :edit, self
+      bots
+    else
+      bots.where(wip_enabled: false)
+    end
   end
 
 

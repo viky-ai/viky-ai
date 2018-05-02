@@ -113,6 +113,7 @@
     padding: 1.75em 0 0 1em;
 
     font-size: .8em;
+
     @media (min-width: 500px){
       font-size: 1em;
     }
@@ -122,14 +123,14 @@
       a{
         display: block;
         white-space: nowrap;
-        padding: calc(.4em - 2px) 1.2em .4em 1.2em;
+        padding: calc(.35em - 2px) .8em .35em .8em;
         border-top: 3px solid transparent;
         border-bottom: 1px solid transparent;
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
         text-decoration: none;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
         color: #777;
         &:hover{
           color: #000;

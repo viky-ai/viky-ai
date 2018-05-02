@@ -36,6 +36,10 @@ en:
         auto_solution_enabled: Auto solution
         solution: Solution
         terms: Terms
+      bot:
+        wip_enabled: Work in progress?
+        wip_enabled_true: "Yes"
+        wip_enabled_false: "No"
   errors:
     user:
       delete:
@@ -73,3 +77,9 @@ en:
       aliasname_uniqueness: 'has already been taken'
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
+    chat_statement:
+      invalid_nature: invalid nature
+      list:
+        too_long: 'is too long (maximum is %{count} items)'
+    bots:
+      communication_failure: 'The bot does not reply. The link seems broken.'
