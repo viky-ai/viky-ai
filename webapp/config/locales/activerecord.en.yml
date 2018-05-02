@@ -37,7 +37,7 @@ en:
         solution: Solution
         terms: Terms
       bot:
-        wip_enabled: Work in progress ?
+        wip_enabled: Work in progress?
         wip_enabled_true: "Yes"
         wip_enabled_false: "No"
   errors:
