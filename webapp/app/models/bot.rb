@@ -1,5 +1,5 @@
 class Bot < ApplicationRecord
-  belongs_to :agent
+  belongs_to :agent, touch: true
   has_many :chat_sessions, dependent: :destroy
 
   validates :name, :endpoint, presence: true
