@@ -53,9 +53,12 @@ class ChatStatement < ApplicationRecord
         when 'list'
           statement_list = ChatStatementList.new(content)
           errors.add(:base, statement_list.errors.full_messages.join(', ')) if statement_list.invalid?
-      when 'notification'
-        statement_notification = ChatStatementNotification.new(content)
-        errors.add(:base, statement_notification.errors.full_messages.join(', ')) if statement_notification.invalid?
+        when 'notification'
+          statement_notification = ChatStatementNotification.new(content)
+          errors.add(:base, statement_notification.errors.full_messages.join(', ')) if statement_notification.invalid?
+        else
+          # Should be impossible
+          raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
       end
     end
 end

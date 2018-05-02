@@ -22,7 +22,8 @@ class BotSendUserStatementJob < ApplicationJob
     when 'button'
       chat_session.bot.send_user_payload(chat_session_id, content)
     else
-      raise 'Unknown nature'
+      # Should be impossible
+      raise I18n.t('errors.chat_statement.invalid_nature')
     end
   end
 
