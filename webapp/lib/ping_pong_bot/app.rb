@@ -14,6 +14,24 @@ module BotRessources
     'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
+
+  def self.puppies
+    [
+      'https://images.unsplash.com/photo-1447684808650-354ae64db5b8?w=800&q=80',
+      'https://images.unsplash.com/photo-1508946621775-9d59b75e074e?w=800&q=80',
+      'https://images.unsplash.com/photo-1518914781460-a3ada465edec?w=800&q=80',
+      'https://images.unsplash.com/photo-1456081445129-830eb8d4bfc6?w=800&q=80',
+      'https://images.unsplash.com/photo-1521128591876-b4ace034003a?w=800&q=80'
+    ]
+  end
+
+  def self.ducklings
+    [
+      'https://images.unsplash.com/photo-1442689859438-97407280183f?w=800&q=80',
+      'https://images.unsplash.com/photo-1513039740139-de0804d85a20?w=800&q=80',
+      'https://images.unsplash.com/photo-1516467790960-dfa408ed87be?w=800&q=80'
+    ]
+  end
 end
 
 
@@ -103,10 +121,26 @@ class PingPongBot < Sinatra::Base
 
     when "click"
       payload = parameters['user_action']['payload']
-      nice_payload = JSON.pretty_generate(payload);
-      BotApi.text(session_id, {
-        text: "<p>You triggered with payload:</p><pre>#{nice_payload}</pre>"
-      })
+
+      case payload['action']
+      when 'display_kitten'
+        BotApi.image(session_id, {
+          url: BotRessources.kittens.sample
+        })
+      when 'display_puppy'
+        BotApi.image(session_id, {
+          url: BotRessources.puppies.sample
+        })
+      when 'display_duckling'
+        BotApi.image(session_id, {
+          url: BotRessources.ducklings.sample
+        })
+      else
+        nice_payload = JSON.pretty_generate(payload);
+        BotApi.text(session_id, {
+          text: "<p>You triggered with payload:</p><pre>#{nice_payload}</pre>"
+        })
+      end
 
     when "says"
       user_statement_says = parameters['user_action']['text']
@@ -146,20 +180,16 @@ class PingPongBot < Sinatra::Base
           disable_on_click: true,
           buttons: [
             {
-              text: "Button A",
-              payload: { data: "Button A" }
+              text: "Show me kitten",
+              payload: { action: "display_kitten" }
             },
             {
-              text: "Button B",
-              payload: { data: "Button B" }
+              text: "Show me puppy",
+              payload: { action: "display_puppy" }
             },
             {
-              text: "Button C",
-              payload: { data: "Button C" }
-            },
-            {
-              text: "Button D",
-              payload: { data: "Button D" }
+              text: "Show me duckling",
+              payload: { action: "display_duckling" }
             }
           ]
         })
@@ -168,16 +198,16 @@ class PingPongBot < Sinatra::Base
         BotApi.button_group(session_id, {
           buttons: [
             {
-              text: "Button A",
-              payload: { data: "Button A" }
+              text: "Show me kitten",
+              payload: { action: "display_kitten" }
             },
             {
-              text: "Button B",
-              payload: { data: "Button B" }
+              text: "Show me puppy",
+              payload: { action: "display_puppy" }
             },
             {
-              text: "Button C",
-              payload: { data: "Button C" }
+              text: "Show me duckling",
+              payload: { action: "display_duckling" }
             }
           ]
         })
