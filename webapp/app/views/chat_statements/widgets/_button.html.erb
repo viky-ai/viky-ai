@@ -1,4 +1,3 @@
-<% button = statement.component %>
 <%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot),
       remote: true, class: "chatbot__widget chatbot__widget--button" do |f| %>
   <%= f.hidden_field :payload, value: button.payload.to_json %>

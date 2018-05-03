@@ -10,5 +10,6 @@
       <% end %>
     </div>
   <% end %>
-  <%= render "/chat_statements/widgets/#{statement.nature}", statement: statement %>
+  <%= render "/chat_statements/widgets/#{statement.nature}",
+        statement: statement, statement.nature.to_sym => statement.component %>
 </div>
