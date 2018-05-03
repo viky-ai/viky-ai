@@ -182,16 +182,6 @@
         <button>I'm a button</button>
       </form>
     </div>
-  </div>
-</div>
-  <% end %>
-</section>
-
-<section>
-  <h2>Button disabled</h2>
-  <%= highlight_html do %>
-<div class="chatbot">
-  <div class="chatbot__discussion">
     <div class="chatbot__statement chatbot__statement--bot">
       <div class="chatbot__avatar">
         <img src="<%= image_path('default_bot.png') %>">
@@ -210,6 +200,7 @@
   <%= highlight_html do %>
 <div class="chatbot">
   <div class="chatbot__discussion">
+
     <div class="chatbot__statement chatbot__statement--bot">
       <div class="chatbot__avatar">
         <img src="<%= image_path('default_bot.png') %>">
@@ -229,6 +220,27 @@
         </form>
       </div>
     </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <img src="<%= image_path('default_bot.png') %>">
+      </div>
+      <div class="chatbot__widget chatbot__widget--button-group">
+        <form>
+          <button disabled>Button A</button>
+        </form>
+        <form>
+          <button disabled selected>Button B</button>
+        </form>
+        <form>
+          <button disabled>Button C</button>
+        </form>
+        <form>
+          <button disabled>Button D</button>
+        </form>
+      </div>
+    </div>
+
   </div>
 </div>
   <% end %>

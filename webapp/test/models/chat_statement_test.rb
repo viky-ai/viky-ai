@@ -285,6 +285,32 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
+  test 'button group statement disable' do
+    statement = ChatStatement.new(
+      speaker: :bot,
+      nature: :button_group,
+      content: {
+        disable_on_click: true,
+        buttons: [
+          {
+            text: 'Button A',
+            payload: { foo: :bar }
+          },
+          {
+            text: 'Button B',
+            payload: { foo: :bar }
+          }
+        ]
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement.save
+    assert statement.component.disable(statement, 1)
+    assert_equal [true, true], statement.component.buttons_as_components.collect(&:disabled)
+    assert_equal [false, true], statement.component.buttons_as_components.collect(&:selected)
+  end
+
+
   test 'Create a simple notification statement' do
     statement_notification = ChatStatement.new(
       speaker: ChatStatement.speakers[:moderator],

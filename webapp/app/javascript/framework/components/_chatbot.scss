@@ -156,6 +156,9 @@
       margin-bottom: 0.5em;
     }
   }
+  ul{
+    padding: 0 0 0 1.5em;
+  }
   pre{
     background-color: rgba(#fff, .5);
     border: 1px solid rgba(#000, .1);
@@ -221,19 +224,25 @@ form.chatbot__widget--button,
 
     border-radius: 20px;
 
+    transition: all .1s;
+
     &:focus,
     &:hover{
       background-color: $primary-color;
       color: #fff;
     }
 
-    &[disabled='disabled'],
-    &[disabled='disabled']:focus,
-    &[disabled='disabled']:hover{
-      border-color: #ccc;
-      color: #888;
+    &[disabled],
+    &[disabled]:focus,
+    &[disabled]:hover{
+      border-color: #eee;
+      color: #ccc;
       background-color: #fff;
       cursor: default;
+      &[selected]{
+        border-color: #aaa;
+        color: #888;
+      }
     }
   }
 }

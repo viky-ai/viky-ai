@@ -68,11 +68,13 @@ class PingPongBot < Sinatra::Base
     content = ""
     content << "<p><strong>Welcome!</strong></p>"
     content << "<p>I'm the <em>Ping Pong Bot</em>, i allow you to test the viky.ai chatbot system.</p>"
-    content << "<p>You can type these terms in order to view available components:</p>"
+    content << "<p>You can type these command in order to view available components:</p>"
     content << "<ul>"
-    content << "  <li><code>ping</code> or <code>pong</code></li>"
-    content << "  <li><code>image</code> or <code>images</code></li>"
-    content << "  <li><code>button</code> or <code>buttons</code></li>"
+    content << "  <li><code>ping</code> or <code>pong</code> show simple bot response.</li>"
+    content << "  <li><code>image</code> show the image widget.</li>"
+    content << "  <li><code>button</code> show the button widget.</li>"
+    content << "  <li><code>button_group</code> show the button group widget.</li>"
+    content << "  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>"
     content << "</ul>"
     content << "<p>Happy coding!</p>"
 
@@ -128,14 +130,6 @@ class PingPongBot < Sinatra::Base
           }
         })
 
-      when /images/i
-        (0..2).each do |i|
-          BotApi.image(session_id, {
-            url: BotRessources.kittens[i],
-            title: "Kittens ##{i+1}"
-          })
-        end
-
       when /image/i
         BotApi.image(session_id, {
           url: BotRessources.kittens.sample,
@@ -147,8 +141,9 @@ class PingPongBot < Sinatra::Base
           }
         })
 
-      when /buttons/i
+      when /deactivatable_button_group/i
         BotApi.button_group(session_id, {
+          disable_on_click: true,
           buttons: [
             {
               text: "Button A",
@@ -165,6 +160,24 @@ class PingPongBot < Sinatra::Base
             {
               text: "Button D",
               payload: { data: "Button D" }
+            }
+          ]
+        })
+
+      when /button_group/i
+        BotApi.button_group(session_id, {
+          buttons: [
+            {
+              text: "Button A",
+              payload: { data: "Button A" }
+            },
+            {
+              text: "Button B",
+              payload: { data: "Button B" }
+            },
+            {
+              text: "Button C",
+              payload: { data: "Button C" }
             }
           ]
         })

@@ -1,10 +1,12 @@
 <div class="chatbot__widget chatbot__widget--button-group"
      data-disable-on-click="<%= button_group.disable_on_click? %>">
-  <% button_group.buttons_as_components.each do |button| %>
+  <% button_group.buttons_as_components.each_with_index do |button, i| %>
     <%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot),
           remote: true do |f| %>
+      <%= f.hidden_field :statement_id, value: statement.id %>
+      <%= f.hidden_field :button_index, value: i %>
       <%= f.hidden_field :payload, value: button.payload.to_json %>
-      <%= f.button button.text, disabled: button.is_disabled? %>
+      <%= f.button button.text, disabled: button.is_disabled?, autocomplete: "off", selected: button.is_selected? %>
     <% end %>
   <% end %>
 </div>

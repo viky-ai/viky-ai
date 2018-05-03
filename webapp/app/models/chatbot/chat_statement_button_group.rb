@@ -18,6 +18,17 @@ class Chatbot::ChatStatementButtonGroup
     self.disable_on_click == true
   end
 
+  def disable(statement, button_index)
+    self.buttons = self.buttons.each_with_index.collect do |button, i|
+      properties = {}
+      properties[:disabled] = true
+      properties[:selected] = button_index.to_i == i
+      button.merge(properties)
+    end
+    statement.content = self
+    statement.save
+  end
+
 
   private
 

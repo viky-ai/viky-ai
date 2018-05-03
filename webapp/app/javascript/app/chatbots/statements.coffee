@@ -2,6 +2,8 @@ $ = require('jquery');
 
 class Chat
   constructor: ->
+    new ButtonGroups()
+
     @recognition = new Recognition()
 
     if @recognition.available
@@ -160,6 +162,28 @@ class Statement
     html.push '  </div>'
     html.push '</div>'
     html.join("\n")
+
+
+
+class ButtonGroups
+  constructor: ->
+    $("body").on 'ajax:send', (event) => @dispatch_ajax(event)
+    $("body").on 'click', (event) => @dispatch_click(event)
+
+  dispatch_click: (event) ->
+    node  = $(event.target)
+    button_group = node.closest('.chatbot__widget--button-group')
+    if button_group.length == 1 && node.is(":button")
+      node.attr('selected', 'selected')
+
+  dispatch_ajax: (event) ->
+    node  = $(event.target)
+    button_group = node.closest('.chatbot__widget--button-group')
+    if button_group.length == 1
+      disable_on_click = button_group.data("disable-on-click")
+      if disable_on_click
+        for button in button_group.find("button")
+          $(button).attr('disabled', 'disabled')
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"

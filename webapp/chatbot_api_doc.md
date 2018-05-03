@@ -164,6 +164,7 @@ JSON structure :
   statement: {
     nature: 'button_group',
     content: {
+      disable_on_click: <boolean>,
       buttons: [
         {
           text: <text>,
@@ -183,7 +184,8 @@ JSON structure :
 }
 ```
 
-  * `<buttons>` list of buttons, from 1 to 6 buttons (**required**).
+  * `buttons` Array of buttons, from 1 to 6 buttons (**required**).
+  * `disable_on_click` boolean, default is `false`.
   * `<speech_text>` Text to speech (via text to speech).
   * `<speech_locale>` Locale of the text to speech.
 

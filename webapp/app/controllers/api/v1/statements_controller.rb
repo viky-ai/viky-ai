@@ -42,6 +42,7 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
         params.require(:statement).permit(
           :nature,
           content: [
+            :disable_on_click,
             buttons: [ :text, payload: {} ],
             speech: [:text, :locale]
           ]
