@@ -1,4 +1,4 @@
-class ChatStatementButtonGroup
+class Chatbot::ChatStatementButtonGroup
   include ActiveModel::Model
   include Speechable
 
@@ -10,7 +10,7 @@ class ChatStatementButtonGroup
 
   def buttons_as_components
     buttons.collect do |button|
-      ChatStatementButton.new(button)
+      Chatbot::ChatStatementButton.new(button)
     end
   end
 
@@ -24,7 +24,7 @@ class ChatStatementButtonGroup
     def recursive_validation
       unless buttons.nil?
         buttons.each_with_index do |button, i|
-          button = ChatStatementButton.new(button)
+          button = Chatbot::ChatStatementButton.new(button)
           if button.invalid?
             button.errors.full_messages.each do |error|
               errors.add(:base, "Button ##{i}: #{error}")
