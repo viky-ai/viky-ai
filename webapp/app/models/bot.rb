@@ -34,10 +34,8 @@ class Bot < ApplicationRecord
       else
         message = response.body
       end
-    rescue Exception => e
+    rescue StandardError => e
       message = e.message
-    rescue RestClient::ExceptionWithResponse => e
-      message = e.message.body
     end
 
     if ping_failed
