@@ -25,4 +25,21 @@ class ChatSessionTest < ActiveSupport::TestCase
     )
     assert old_session.expired?
   end
+
+
+  test 'Update session date on new statement' do
+    session = chat_sessions(:one)
+    previous_updated_at = session.updated_at
+    previous_created_at = session.created_at
+    ChatStatement.create(
+      speaker: ChatStatement.speakers[:user],
+      nature: ChatStatement.natures[:text],
+      content: {
+        text: 'A statement'
+      },
+      chat_session: session
+    )
+    assert_not_equal previous_updated_at, session.updated_at
+    assert_equal previous_created_at, session.created_at
+  end
 end
