@@ -208,6 +208,7 @@
 // Widget button & button_group
 form.chatbot__widget--button,
 .chatbot__widget--button-group{
+  border-radius: 0;
   button{
     padding: .5em 1em;
     border: 1px solid $primary-color;
@@ -224,6 +225,15 @@ form.chatbot__widget--button,
     &:hover{
       background-color: $primary-color;
       color: #fff;
+    }
+
+    &[disabled='disabled'],
+    &[disabled='disabled']:focus,
+    &[disabled='disabled']:hover{
+      border-color: #ccc;
+      color: #888;
+      background-color: #fff;
+      cursor: default;
     }
   }
 }

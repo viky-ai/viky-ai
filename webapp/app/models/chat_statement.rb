@@ -21,6 +21,26 @@ class ChatStatement < ApplicationRecord
     )
   end
 
+  def component
+    case nature
+      when 'text'
+        ChatStatementText.new(content)
+      when 'image'
+        ChatStatementImage.new(content)
+      when 'button'
+        ChatStatementButton.new(content)
+      when 'button_group'
+        ChatStatementButtonGroup.new(content)
+      when 'list'
+        ChatStatementList.new(content)
+      when 'notification'
+        ChatStatementNotification.new(content)
+      else
+        # Should be impossible
+        raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
+    end
+  end
+
 
   private
 
@@ -40,25 +60,10 @@ class ChatStatement < ApplicationRecord
 
     def content_format
       return if content.blank?
-      case nature
-        when 'text'
-          component = ChatStatementText.new(content)
-        when 'image'
-          component = ChatStatementImage.new(content)
-        when 'button'
-          component = ChatStatementButton.new(content)
-        when 'button_group'
-          component = ChatStatementButtonGroup.new(content)
-        when 'list'
-          component = ChatStatementList.new(content)
-        when 'notification'
-          component = ChatStatementNotification.new(content)
-        else
-          # Should be impossible
-          raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
+      component = self.component
+      if component.invalid?
+        errors.add(:base, component.errors.full_messages.join(', '))
       end
-
-      errors.add(:base, component.errors.full_messages.join(', ')) if component.invalid?
     end
 end
 
