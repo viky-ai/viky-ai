@@ -1,4 +1,4 @@
-class ChatStatementButton
+class Chatbot::ChatStatementButton
   include ActiveModel::Model
   include Speechable
 

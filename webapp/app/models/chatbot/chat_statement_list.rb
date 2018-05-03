@@ -1,4 +1,4 @@
-class ChatStatementList
+class Chatbot::ChatStatementList
   include ActiveModel::Model
   include Speechable
 
@@ -15,7 +15,7 @@ class ChatStatementList
         case item['nature']
         when "text"
           item.delete('nature')
-          text = ChatStatementText.new(item)
+          text = Chatbot::ChatStatementText.new(item)
           errors.add(:base, text.errors.full_messages.join(', ')) if text.invalid?
         else
           errors.add(:base, I18n.t('errors.chat_statement.invalid_nature'))

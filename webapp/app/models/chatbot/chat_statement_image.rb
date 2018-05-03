@@ -1,4 +1,4 @@
-class ChatStatementImage
+class Chatbot::ChatStatementImage
   include ActiveModel::Model
   include Speechable
 

@@ -24,17 +24,17 @@ class ChatStatement < ApplicationRecord
   def component
     case nature
       when 'text'
-        ChatStatementText.new(content)
+        Chatbot::ChatStatementText.new(content)
       when 'image'
-        ChatStatementImage.new(content)
+        Chatbot::ChatStatementImage.new(content)
       when 'button'
-        ChatStatementButton.new(content)
+        Chatbot::ChatStatementButton.new(content)
       when 'button_group'
-        ChatStatementButtonGroup.new(content)
+        Chatbot::ChatStatementButtonGroup.new(content)
       when 'list'
-        ChatStatementList.new(content)
+        Chatbot::ChatStatementList.new(content)
       when 'notification'
-        ChatStatementNotification.new(content)
+        Chatbot::ChatStatementNotification.new(content)
       else
         # Should be impossible
         raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
