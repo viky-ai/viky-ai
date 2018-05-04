@@ -191,6 +191,42 @@ JSON structure :
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
+#### <code>card</code> nature
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'card',
+    content: {
+      components: [
+        {
+          nature: <nature>,
+          content:
+          {
+            <...>
+          }
+        },
+      ],
+      payload: <payload>,
+      disable_on_click: <boolean>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+  * `components` Array of nested components. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
+  * `payload` boolean, default is `false`. The whole card act like a button. When this option is set, it prevent `components` to contains `button` or `button_group`.
+  * `disable_on_click` boolean, default is `false`. Ignored when the card `payload` is not set.
+  * `<speech_text>` Text to speech for the whole card (via text to speech).
+  * `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
+
 ## Bot API
 
 A bot is a remote service implementing the desired business logic.
