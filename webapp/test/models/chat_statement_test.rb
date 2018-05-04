@@ -445,5 +445,21 @@ class ChatStatementTest < ActiveSupport::TestCase
     }] }
     assert card_statement.invalid?
     assert_equal ["Url can't be blank"], card_statement.errors.full_messages
+
+
+    card_statement.content = {
+      components: [{
+        nature: :button_group,
+        content: {
+          buttons: [{
+            text: 'Button 1',
+            payload: { button: 1 }
+          }]
+        }
+      }],
+      payload: { data: :misc }
+    }
+    assert card_statement.invalid?
+    assert_equal ["Card payload with button or button group."], card_statement.errors.full_messages
   end
 end
