@@ -53,6 +53,10 @@ module BotApi
     post(session_id, Params::build('button_group', content))
   end
 
+  def self.card(session_id, content)
+    post(session_id, Params::build('card', content))
+  end
+
   def self.post(session_id, parameters)
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
@@ -93,6 +97,8 @@ class PingPongBot < Sinatra::Base
     content << "  <li><code>button</code> show the button widget.</li>"
     content << "  <li><code>button_group</code> show the button group widget.</li>"
     content << "  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>"
+    content << "  <li><code>card</code> show the card widget.</li>"
+    content << "  <li><code>card_click</code> show a clickable card widget.</li>"
     content << "</ul>"
     content << "<p>Happy coding!</p>"
 
@@ -220,6 +226,53 @@ class PingPongBot < Sinatra::Base
             date: DateTime.now,
             action: "action_#{random_id}"
           }
+        })
+
+      when /card/i
+        BotApi.card(session_id, {
+          components: [{
+            nature: 'image',
+            content: {
+              url: BotRessources.kittens.sample
+            }
+          }, {
+            nature: 'text',
+            content: {
+              text: 'Do you like kitten ?'
+            }
+          }, {
+            nature: 'button_group',
+            content: {
+              buttons: [
+               {
+                 text: "Yes !",
+                 payload: { action: "kitten_yes" }
+               },
+               {
+                 text: "No...",
+                 payload: { action: "kitten_no" }
+               },
+             ]
+            }
+          }],
+        })
+
+      when /card_click/i
+        random_id = Random.rand(100)
+        BotApi.card(session_id, {
+          components: [{
+             nature: 'image',
+             content: {
+               url: BotRessources.puppies.sample
+             }
+           }, {
+             nature: 'text',
+             content: {
+               text: 'Grab this puppy !🐶🐶🐶🐶🐶🐶🐶'
+             }
+           }],
+          payload: { action: "puppy_#{random_id}" },
+          disable_on_click: true,
         })
 
       else
