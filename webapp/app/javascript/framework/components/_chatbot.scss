@@ -64,9 +64,9 @@ $chatbot_statement_small_radius: 1px;
 
 // Avatar
 .chatbot__avatar{
-  width: 40px;
-  height: 40px;
-  margin: 0 1em;
+  width: 36px;
+  height: 36px;
+  margin: 0 .75em;
   img{
     width: 100%;
     height: 100%;
@@ -111,8 +111,17 @@ $chatbot_statement_small_radius: 1px;
 .chatbot__widget{
   overflow: hidden;
   border-radius: $chatbot_statement_large_radius;
-  max-width: calc(100% - 120px);
-  @media (min-width: 550px){
+  max-width: calc(100% - 36px * 1 - 1.5em * 1 - .75em);
+  @media (min-width: 400px){
+    max-width: calc(100% - 36px * 2 - 1.5em * 2);
+  }
+  @media (min-width: 570px){
+    max-width: 450px;
+  }
+  @media (min-width: 800px){
+    max-width: calc(100% - 36px * 2 - 1.5em * 2);
+  }
+  @media (min-width: 900px){
     max-width: calc(450px);
   }
   .chatbot__statement--bot &{
