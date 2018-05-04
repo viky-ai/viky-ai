@@ -39,7 +39,7 @@ class ChatStatement < ApplicationRecord
         Chatbot::ChatStatementNotification.new(content)
       else
         # Should be impossible
-        raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
+        raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature', nature: nature)
     end
   end
 

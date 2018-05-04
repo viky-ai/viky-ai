@@ -18,7 +18,7 @@ class Chatbot::ChatStatementList
           text = Chatbot::ChatStatementText.new(item)
           errors.add(:base, text.errors.full_messages.join(', ')) if text.invalid?
         else
-          errors.add(:base, I18n.t('errors.chat_statement.invalid_nature'))
+          errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: item['nature']))
         end
       end
     end

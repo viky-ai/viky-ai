@@ -78,7 +78,7 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
     chat_statement:
-      invalid_nature: invalid nature
+      invalid_nature: "invalid nature, found: %{nature}"
       list:
         too_long: 'is too long (maximum is %{count} items)'
       card:

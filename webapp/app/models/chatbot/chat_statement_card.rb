@@ -18,7 +18,7 @@ class Chatbot::ChatStatementCard
         when 'button', 'button_group'
           errors.add(:base, I18n.t('errors.chat_statement.card.payload_conflict')) if payload.present?
         else
-          errors.add(:base, I18n.t('errors.chat_statement.invalid_nature'))
+          errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: component['nature']))
         end
       end
       .map do |component|

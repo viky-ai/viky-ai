@@ -144,11 +144,11 @@ class ChatStatementTest < ActiveSupport::TestCase
 
     statement_list.content = {
       list: [{
-        list: []
+        nature: 'foo bar'
       }]
     }
     assert statement_list.invalid?
-    assert_equal ['invalid nature'], statement_list.errors.full_messages
+    assert_equal ['invalid nature, found: foo bar'], statement_list.errors.full_messages
 
     statement_list.content = {
       list: [
@@ -435,7 +435,7 @@ class ChatStatementTest < ActiveSupport::TestCase
       }
     }] }
     assert card_statement.invalid?
-    assert_equal ['invalid nature'], card_statement.errors.full_messages
+    assert_equal ['invalid nature, found: foobar'], card_statement.errors.full_messages
 
     card_statement.content = { components: [{
       nature: 'image',

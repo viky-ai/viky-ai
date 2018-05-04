@@ -28,7 +28,7 @@ class BotSendUserStatementJob < ApplicationJob
       chat_session.bot.send_user_payload(chat_session_id, data[:payload])
     else
       # Should be impossible
-      raise I18n.t('errors.chat_statement.invalid_nature')
+      raise I18n.t('errors.chat_statement.invalid_nature', nature: user_action)
     end
   end
 
