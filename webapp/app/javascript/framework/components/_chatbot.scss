@@ -1,3 +1,6 @@
+$chatbot_statement_large_radius: 12px;
+$chatbot_statement_small_radius: 1px;
+
 .chatbot__statement{
   display: flex;
   margin: 1em 0;
@@ -107,16 +110,16 @@
 
 .chatbot__widget{
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: $chatbot_statement_large_radius;
   max-width: calc(100% - 120px);
   @media (min-width: 550px){
     max-width: calc(450px);
   }
   .chatbot__statement--bot &{
-    border-bottom-left-radius: 1px;
+    border-bottom-left-radius: $chatbot_statement_small_radius;
   }
   .chatbot__statement--user &{
-    border-bottom-right-radius: 1px;
+    border-bottom-right-radius: $chatbot_statement_small_radius;
     background-color: $primary_color;
     color: #fff;
   }
@@ -247,12 +250,41 @@ form.chatbot__widget--button,
   }
 }
 
-
 .chatbot__widget--button-group{
-  border-radius: 0;
-  margin: -0.25em;
   form{
-    display: inline-block;
-    margin: .25em;
+    display: block;
+    width: 100%;
+    button{
+      display: block;
+      width: 100%;
+      padding: .6em 1.5em;
+      border-radius: 0;
+
+      border-top-width: 0;
+      background-color: #fff;
+
+      &[disabled],
+      &[disabled]:focus,
+      &[disabled]:hover{
+        border-color: #eee;
+        &[selected]{
+          border-color: #eee;
+          color: #666;
+        }
+      }
+    }
+    &:first-child{
+      button{
+        border-top-width: 1px;
+        border-top-left-radius: $chatbot_statement_large_radius;
+        border-top-right-radius: $chatbot_statement_large_radius;
+      }
+    }
+    &:last-child{
+      button{
+        border-bottom-left-radius: $chatbot_statement_small_radius;
+        border-bottom-right-radius: $chatbot_statement_large_radius;
+      }
+    }
   }
 }
