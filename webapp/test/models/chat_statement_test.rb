@@ -340,4 +340,43 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert statement_notification.invalid?
     assert_equal ['Text is too long (maximum is 2000 characters)'], statement_notification.errors.full_messages
   end
+
+
+  test 'Create a simple card statement' do
+    card_statement = ChatStatement.new(
+      speaker: ChatStatement.speakers[:bot],
+      nature: ChatStatement.natures[:card],
+      content: {
+        components: [{
+          nature: 'image',
+          content: {
+            url: 'https://www.pertimm.com/assets/img/logo_pertimm.png'
+          }
+        }, {
+          nature: 'text',
+          content: {
+            text: 'The Pertimm logo.'
+          }
+        }, {
+          nature: 'button',
+          content: {
+            text: 'Fire !',
+            payload: { foo: :bar }
+          }
+        }, {
+          nature: 'image',
+          content: {
+            url: 'https://www.pertimm.com/assets/img/logo_pertimm.png'
+          }
+        }],
+        speech: {
+          text: 'Pertimm FTW !',
+          locale: 'en-US'
+        }
+      },
+      chat_session: chat_sessions(:one)
+    )
+
+    assert card_statement.save
+  end
 end

@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session, touch: true
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :button, :button_group, :list, :notification]
+  enum nature: [:text, :image, :button, :button_group, :card, :list, :notification]
 
   serialize :content, JSON
 
@@ -31,6 +31,8 @@ class ChatStatement < ApplicationRecord
         Chatbot::ChatStatementButton.new(content)
       when 'button_group'
         Chatbot::ChatStatementButtonGroup.new(content)
+      when 'card'
+        Chatbot::ChatStatementCard.new(content)
       when 'list'
         Chatbot::ChatStatementList.new(content)
       when 'notification'
