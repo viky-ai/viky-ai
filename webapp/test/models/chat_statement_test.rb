@@ -429,6 +429,15 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert_equal ["Components can't be blank"], card_statement.errors.full_messages
 
     card_statement.content = { components: [{
+      nature: 'foobar',
+      content: {
+        text: ''
+      }
+    }] }
+    assert card_statement.invalid?
+    assert_equal ['invalid nature'], card_statement.errors.full_messages
+
+    card_statement.content = { components: [{
       nature: 'image',
       content: {
         url: ''
