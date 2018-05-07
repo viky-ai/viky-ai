@@ -5,4 +5,7 @@ class Chatbot::ChatStatementNotification
 
   validates :text, presence: true, length: { maximum: 2000 }
 
+  def nature
+    "notification"
+  end
 end

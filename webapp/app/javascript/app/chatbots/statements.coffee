@@ -113,12 +113,14 @@ class Statement
 
   display: ->
     content = $(@html)
-    content.find('.chatbot__avatar').addClass('chatbot__avatar--hidden')
-    content.find('.chatbot__widget').addClass('chatbot__widget--hidden')
+    content.find('> .chatbot__avatar').addClass('chatbot__avatar--hidden')
+    content.find('> .chatbot__widget').addClass('chatbot__widget--hidden')
+
     $('.chatbot__discussion').append(content)
 
-    avatar = $('.chatbot__discussion .chatbot__avatar').last()
-    widget = $('.chatbot__discussion .chatbot__widget').last()
+    avatar = $('.chatbot__discussion .chatbot__statement > .chatbot__avatar').last()
+    widget = $('.chatbot__discussion .chatbot__statement > .chatbot__widget').last()
+
     Statement.scroll_to_last()
     avatar.removeClass('chatbot__avatar--hidden')
     widget.removeClass('chatbot__widget--hidden')

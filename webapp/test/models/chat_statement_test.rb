@@ -88,14 +88,18 @@ class ChatStatementTest < ActiveSupport::TestCase
       speaker: ChatStatement.speakers[:bot],
       nature: ChatStatement.natures[:list],
       content: {
-        list: [
+        items: [
           {
             nature: 'text',
-            text: 'Hello'
+            content: {
+              text: 'Hello'
+            }
           },
           {
             nature: 'text',
-            text: 'How are you ?'
+            content: {
+              text: 'How are you ?'
+            }
           }
         ]
       },
@@ -106,44 +110,24 @@ class ChatStatementTest < ActiveSupport::TestCase
 
 
   test 'Validate a list statement' do
+    items = (0..10).collect do |i|
+      { nature: 'text', content: { text: 'Hello' } }
+    end
     statement_list = ChatStatement.new(
       speaker: ChatStatement.speakers[:bot],
       nature: ChatStatement.natures[:list],
-      content: {
-        list: [
-          {
-            nature: 'text',
-            text: 'Hello'
-          },
-          {
-            nature: 'text',
-            text: 'How are you ?'
-          },
-          {
-            nature: 'text',
-            text: 'What are you doing ?'
-          },
-          {
-            nature: 'text',
-            text: 'What is your name ?'
-          },
-          {
-            nature: 'text',
-            text: 'TALK TO ME !!!'
-          }
-        ]
-      },
+      content: { items: items },
       chat_session: chat_sessions(:one)
     )
     assert statement_list.invalid?
-    assert_equal ['List is too long (maximum is 4 items)'], statement_list.errors.full_messages
+    assert_equal ['Items is too long (maximum is 10 items)'], statement_list.errors.full_messages
 
-    statement_list.content = { list: [] }
+    statement_list.content = { items: [] }
     assert statement_list.invalid?
-    assert_equal ["List can't be blank"], statement_list.errors.full_messages
+    assert_equal ["Items can't be blank"], statement_list.errors.full_messages
 
     statement_list.content = {
-      list: [{
+      items: [{
         nature: 'foo bar'
       }]
     }
@@ -151,10 +135,12 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert_equal ['invalid nature, found: foo bar'], statement_list.errors.full_messages
 
     statement_list.content = {
-      list: [
+      items: [
         {
           nature: 'text',
-          text: ''
+          content: {
+            text: ''
+          }
         }
       ]
     }

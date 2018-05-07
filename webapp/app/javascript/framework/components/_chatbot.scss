@@ -65,25 +65,27 @@ $chatbot_statement_radius: 8px;
 
 // Avatar
 .chatbot__avatar{
-  margin: 0 .75em;
-
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 1px rgba(black, .15);
-  img{
-    width: 100%;
-    height: 100%;
+  .chatbot__avatar__image{
+    margin: 0 .75em;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 1px rgba(black, .15);
+    background-color: #fff;
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
-}
-.chatbot__time{
-  text-align: center;
-  color: #bbb;
-  margin-top: .2em;
-  font-size: .7em;
-  text-shadow: 0 1px 0 #fff;
+  .chatbot__avatar__time{
+    text-align: center;
+    color: #bbb;
+    margin-top: .2em;
+    font-size: .7em;
+    text-shadow: 0 1px 0 #fff;
+  }
 }
 
 
@@ -319,6 +321,28 @@ form.chatbot__widget--button,
         border-bottom-left-radius: $chatbot_statement_radius;
         border-bottom-right-radius: $chatbot_statement_radius;
       }
+    }
+  }
+}
+
+
+// Widget list
+.chatbot__widget.chatbot__widget--list{
+  .chatbot__statement--bot &{
+    box-shadow: 0 1px 0 0 #fff;
+    background-color: rgba(#000, .035);
+  }
+
+  border-radius: $chatbot_statement_radius + 6px;
+
+  padding: .75em;
+
+  &.chatbot__widget--list--vertical{
+    .chatbot__widget{
+      min-width: 100%;
+    }
+    .chatbot__widget:not(:last-child){
+      margin-bottom: .75em;
     }
   }
 }

@@ -20,30 +20,49 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
 
   private
 
+    def text_content_params
+      [:text, speech: [:text, :locale]]
+    end
+
+    def image_content_params
+      [:url, :title, :subtitle, speech: [:text, :locale]]
+    end
+
+    def button_content_params
+      [:text, payload: {}, speech: [:text, :locale]]
+    end
+
+    def button_group_content_params
+      [:disable_on_click, buttons: [ :text, payload: {} ], speech: [:text, :locale]]
+    end
+
+    def list_items_content_params
+      (
+        text_content_params +
+        image_content_params +
+        button_content_params +
+        button_group_content_params
+      ).uniq
+    end
+
     def statement_params
       nature = params[:statement][:nature]
       case nature
       when 'text'
-        params.require(:statement).permit(
-          :nature,
-          content: [:text, speech: [:text, :locale]]
-        )
+        params.require(:statement).permit(:nature, content: text_content_params)
       when 'image'
-        params.require(:statement).permit(
-          :nature,
-          content: [:url, :title, :subtitle, speech: [:text, :locale]]
-        )
+        params.require(:statement).permit(:nature, content: image_content_params)
       when 'button'
-        params.require(:statement).permit(
-          :nature,
-          content: [:text, payload: {}, speech: [:text, :locale]]
-        )
+        params.require(:statement).permit(:nature, content: button_content_params)
       when 'button_group'
+        params.require(:statement).permit(:nature, content: button_group_content_params)
+      when 'list'
         params.require(:statement).permit(
           :nature,
           content: [
-            :disable_on_click,
-            buttons: [ :text, payload: {} ],
+            items: [
+              :nature, content: list_items_content_params
+            ],
             speech: [:text, :locale]
           ]
         )

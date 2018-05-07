@@ -9,6 +9,10 @@ class Chatbot::ChatStatementButton
   validates :disabled, inclusion: { in: [true, false] }, allow_nil: true
   validates :selected, inclusion: { in: [true, false] }, allow_nil: true
 
+  def nature
+    "button"
+  end
+
   def is_disabled?
     self.disabled == true
   end

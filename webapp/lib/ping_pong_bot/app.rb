@@ -57,6 +57,10 @@ module BotApi
     post(session_id, Params::build('card', content))
   end
 
+  def self.list(session_id, content)
+    post(session_id, Params::build('list', content))
+  end
+
   def self.post(session_id, parameters)
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
@@ -99,6 +103,7 @@ class PingPongBot < Sinatra::Base
     content << "  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>"
     content << "  <li><code>card</code> show the card widget.</li>"
     content << "  <li><code>card_click</code> show a clickable card widget.</li>"
+    content << "  <li><code>vertical_list</code> show list widget with vertical orientation.</li>"
     content << "</ul>"
     content << "<p>Happy coding!</p>"
 
@@ -244,15 +249,15 @@ class PingPongBot < Sinatra::Base
             nature: 'button_group',
             content: {
               buttons: [
-               {
-                 text: "Yes !",
-                 payload: { action: "kitten_yes" }
-               },
-               {
-                 text: "No...",
-                 payload: { action: "kitten_no" }
-               },
-             ]
+                {
+                  text: "Yes !",
+                  payload: { action: "kitten_yes" }
+                },
+                {
+                  text: "No...",
+                  payload: { action: "kitten_no" }
+                },
+              ]
             }
           }],
         })
@@ -261,18 +266,58 @@ class PingPongBot < Sinatra::Base
         random_id = Random.rand(100)
         BotApi.card(session_id, {
           components: [{
-             nature: 'image',
-             content: {
-               url: BotRessources.puppies.sample
-             }
-           }, {
-             nature: 'text',
-             content: {
-               text: 'Grab this puppy !🐶🐶🐶🐶🐶🐶🐶'
-             }
-           }],
+            nature: 'image',
+            content: {
+              url: BotRessources.puppies.sample
+            }
+          }, {
+            nature: 'text',
+            content: {
+              text: 'Grab this puppy !🐶🐶🐶🐶🐶🐶🐶'
+            }
+          }],
           payload: { action: "puppy_#{random_id}" },
           disable_on_click: true,
+        })
+
+      when /vertical_list/i
+        BotApi.list(session_id, {
+          items: [
+            {
+              nature: 'image',
+              content: {
+                url: BotRessources.puppies[0]
+              }
+            },
+            {
+              nature: 'image',
+              content: {
+                url: BotRessources.puppies[1]
+              }
+            },
+            {
+              nature: 'text',
+              content: {
+                text: "<strong>What's your favorite?</strong>"
+              }
+            },
+            {
+              nature: 'button_group',
+              content: {
+                disable_on_click: true,
+                buttons: [
+                  {
+                    text: "The first",
+                    payload: { action: "choose_puppy_0" }
+                  },
+                  {
+                    text: "The second",
+                    payload: { action: "choose_puppy_1" }
+                  }
+                ]
+              }
+            }
+          ]
         })
 
       else
@@ -283,7 +328,6 @@ class PingPongBot < Sinatra::Base
             locale: "en-US"
           }
         })
-
       end
     end
 

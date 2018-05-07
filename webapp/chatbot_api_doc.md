@@ -93,9 +93,9 @@ JSON structure :
 }
 ```
 
-  * `<text>` Text to display (**required**).
-  * `<speech_text>` Text to speech (via text to speech).
-  * `<speech_locale>` Locale of the text to speech.
+* `<text>` Text to display (**required**).
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
@@ -121,11 +121,11 @@ JSON structure :
 }
 ```
 
-  * `<url>` the image URL (**required**).
-  * `<title>` a noteworthy title.
-  * `<subtitle>` a short description.
-  * `<speech_text>` Text to speech (via text to speech).
-  * `<speech_locale>` Locale of the text to speech.
+* `<url>` the image URL (**required**).
+* `<title>` a noteworthy title.
+* `<subtitle>` a short description.
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
@@ -149,10 +149,10 @@ JSON structure :
 }
 ```
 
-  * `<text>` is the displayed in the button (**required**).
-  * `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
-  * `<speech_text>` Text to speech (via text to speech).
-  * `<speech_locale>` Locale of the text to speech.
+* `<text>` is the displayed in the button (**required**).
+* `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
@@ -184,10 +184,10 @@ JSON structure :
 }
 ```
 
-  * `buttons` Array of buttons, from 1 to 6 buttons (**required**).
-  * `disable_on_click` boolean, default is `false`.
-  * `<speech_text>` Text to speech (via text to speech).
-  * `<speech_locale>` Locale of the text to speech.
+* `buttons` Array of buttons, from 1 to 6 buttons (**required**).
+* `disable_on_click` boolean, default is `false`.
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
@@ -219,13 +219,39 @@ JSON structure :
 }
 ```
 
-  * `components` Array of nested components. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
-  * `payload` boolean, default is `false`. The whole card act like a button. When this option is set, it prevent `components` to contains `button` or `button_group`.
-  * `disable_on_click` boolean, default is `false`. Ignored when the card `payload` is not set.
-  * `<speech_text>` Text to speech for the whole card (via text to speech).
-  * `<speech_locale>` Locale of the text to speech.
+* `components` Array of nested components. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
+* `payload` boolean, default is `false`. The whole card act like a button. When this option is set, it prevent `components` to contains `button` or `button_group`.
+* `disable_on_click` boolean, default is `false`. Ignored when the card `payload` is not set.
+* `<speech_text>` Text to speech for the whole card (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
 
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
+
+
+#### <code>list</code> nature
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'list',
+    content: {
+      orientation: <orientation>,
+      items: <components>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+* `orientation`: `vertical` or `horizontal`.
+* `items` Array of items. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
+* `<speech_text>` Text to speech for the whole card (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
+
 
 ## Bot API
 

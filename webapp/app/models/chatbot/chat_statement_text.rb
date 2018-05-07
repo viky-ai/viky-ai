@@ -5,4 +5,8 @@ class Chatbot::ChatStatementText
   attr_accessor :text
 
   validates :text, presence: true, length: { maximum: 5000 }
+
+  def nature
+    "text"
+  end
 end

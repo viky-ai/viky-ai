@@ -9,4 +9,8 @@ class Chatbot::ChatStatementImage
   validates :url, presence: true, length: { maximum: 5000 }
   validates :title, length: { maximum: 5000 }
   validates :subtitle, length: { maximum: 5000 }
+
+  def nature
+    "image"
+  end
 end

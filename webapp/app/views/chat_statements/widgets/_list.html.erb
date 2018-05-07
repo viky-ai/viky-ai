@@ -1,3 +1,6 @@
-<div class="chatbot__widget chatbot__widget--list">
-  List
+<div class="chatbot__widget chatbot__widget--list chatbot__widget--list--vertical">
+  <% list.items_as_components.each do |item| %>
+    <%= render "/chat_statements/widgets/#{item.nature}",
+          statement: statement, item.nature.to_sym => item %>
+  <% end %>
 </div>

@@ -7,6 +7,10 @@ class Chatbot::ChatStatementCard
   validates :components, presence: true, length: { maximum: 5, too_long: I18n.t('errors.chat_statement.card.too_long') }
   validate :recursive_validation
 
+  def nature
+    "card"
+  end
+
   private
 
   def recursive_validation

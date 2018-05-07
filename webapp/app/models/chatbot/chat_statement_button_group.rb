@@ -8,6 +8,10 @@ class Chatbot::ChatStatementButtonGroup
   validates :disable_on_click, inclusion: { in: [true, false] }, allow_nil: true
   validate :recursive_validation
 
+  def nature
+    "button_group"
+  end
+
   def buttons_as_components
     buttons.collect do |button|
       Chatbot::ChatStatementButton.new(button)
