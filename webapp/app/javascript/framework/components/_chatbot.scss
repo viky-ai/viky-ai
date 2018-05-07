@@ -1,10 +1,9 @@
-$chatbot_statement_large_radius: 12px;
-$chatbot_statement_small_radius: 1px;
+$chatbot_statement_radius: 8px;
 
 .chatbot__statement{
   display: flex;
   margin: 1em 0;
-  align-items: flex-end;
+  align-items: flex-start;
 
   @media (min-width: 800px){
     margin: 1em;
@@ -23,11 +22,13 @@ $chatbot_statement_small_radius: 1px;
 // Waiting
 .chatbot__statement__waiting{
   line-height: 0;
-  background-color: #f5f5f5;
-  padding: 5px 10px;
-  border-radius: 10px;
-  width: 40px;
+  background-color: #fff;
+  padding: 7px 14px;
+  border-radius: 12px;
+  width: 48px;
   margin-left: 1em;
+
+  box-shadow: 0 1px 1px rgba(black, .2);
   svg{
     will-change: transform;
     width: 20px;
@@ -64,15 +65,27 @@ $chatbot_statement_small_radius: 1px;
 
 // Avatar
 .chatbot__avatar{
-  width: 36px;
-  height: 36px;
   margin: 0 .75em;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 1px rgba(black, .15);
   img{
     width: 100%;
     height: 100%;
-    border-radius: 20px;
   }
 }
+.chatbot__time{
+  text-align: center;
+  color: #bbb;
+  margin-top: .2em;
+  font-size: .7em;
+  text-shadow: 0 1px 0 #fff;
+}
+
 
 // Avatar Animation
 .chatbot__avatar{
@@ -90,6 +103,7 @@ $chatbot_statement_small_radius: 1px;
     transform: translateX(100%);
   }
 }
+
 
 // Widget animation
 .chatbot__widget{
@@ -110,27 +124,29 @@ $chatbot_statement_small_radius: 1px;
 
 .chatbot__widget{
   overflow: hidden;
-  border-radius: $chatbot_statement_large_radius;
-  max-width: calc(100% - 36px * 1 - 1.5em * 1 - .75em);
+  border-radius: $chatbot_statement_radius;
+  max-width: calc(100% - 40px * 1 - 1.5em * 1 - .75em);
   @media (min-width: 400px){
-    max-width: calc(100% - 36px * 2 - 1.5em * 2);
+    max-width: calc(100% - 40px * 2 - 1.5em * 2);
   }
   @media (min-width: 570px){
     max-width: 450px;
   }
   @media (min-width: 800px){
-    max-width: calc(100% - 36px * 2 - 1.5em * 2);
+    max-width: calc(100% - 40px * 2 - 1.5em * 2);
   }
   @media (min-width: 900px){
     max-width: calc(450px);
   }
   .chatbot__statement--bot &{
-    border-bottom-left-radius: $chatbot_statement_small_radius;
+    background-color: #fff;
+    box-shadow: 0 1px 1px rgba(black, .2);
   }
   .chatbot__statement--user &{
-    border-bottom-right-radius: $chatbot_statement_small_radius;
     background-color: $primary_color;
     color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 1px rgba(black, .2);
   }
 }
 
@@ -154,7 +170,7 @@ $chatbot_statement_small_radius: 1px;
 // Widget Text
 .chatbot__widget--text{
   padding: .5em .8em;
-  background-color: #f5f5f5;
+
   .chatbot__statement--user & a {
     color: #fff;
   }
@@ -172,13 +188,12 @@ $chatbot_statement_small_radius: 1px;
     padding: 0 0 0 1.5em;
   }
   pre{
-    background-color: rgba(#fff, .5);
     border: 1px solid rgba(#000, .1);
     box-shadow: 0 1px 0 #fff;
     padding: 1em;
     font-size: .85em;
     line-height: 1.2em;
-    color: #333;
+    color: #555;
     border-radius: 3px;
     overflow: auto;
   }
@@ -202,6 +217,10 @@ $chatbot_statement_small_radius: 1px;
   line-height: 0;
   background-color: #f5f5f5;
 
+  background-color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 1px rgba(black, .2);
+
   img{
     max-width: 100%;
     max-height: 300px;
@@ -224,6 +243,12 @@ $chatbot_statement_small_radius: 1px;
 form.chatbot__widget--button,
 .chatbot__widget--button-group{
   border-radius: 0;
+
+  .chatbot__statement--bot &{
+    background-color: transparent;
+    box-shadow: none;
+  }
+
   button{
     padding: .5em 1em;
     border: 1px solid $primary-color;
@@ -285,14 +310,14 @@ form.chatbot__widget--button,
     &:first-child{
       button{
         border-top-width: 1px;
-        border-top-left-radius: $chatbot_statement_large_radius;
-        border-top-right-radius: $chatbot_statement_large_radius;
+        border-top-left-radius: $chatbot_statement_radius;
+        border-top-right-radius: $chatbot_statement_radius;
       }
     }
     &:last-child{
       button{
-        border-bottom-left-radius: $chatbot_statement_small_radius;
-        border-bottom-right-radius: $chatbot_statement_large_radius;
+        border-bottom-left-radius: $chatbot_statement_radius;
+        border-bottom-right-radius: $chatbot_statement_radius;
       }
     }
   }
