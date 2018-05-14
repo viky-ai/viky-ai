@@ -60,9 +60,8 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
         params.require(:statement).permit(
           :nature,
           content: [
-            items: [
-              :nature, content: list_items_content_params
-            ],
+            :orientation,
+            items: [:nature, content: list_items_content_params],
             speech: [:text, :locale]
           ]
         )

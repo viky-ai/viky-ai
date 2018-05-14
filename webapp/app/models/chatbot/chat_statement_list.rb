@@ -2,15 +2,24 @@ class Chatbot::ChatStatementList
   include ActiveModel::Model
   include Speechable
 
-  attr_accessor :items
+  attr_accessor :orientation, :items
 
+  validates :orientation, inclusion: { in: %w(vertical horizontal) }, allow_nil: true
   validates :items, presence: true, length: {
-    maximum: 10, too_long: I18n.t('errors.chat_statement.list.too_long')
+    maximum: 8, too_long: I18n.t('errors.chat_statement.list.too_long')
   }
   validate :recursive_validation
 
   def nature
     "list"
+  end
+
+  def is_horizontal?
+    orientation == "horizontal"
+  end
+
+  def is_vertival?
+    !is_horizontal?
   end
 
   def items_as_components

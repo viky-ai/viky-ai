@@ -1,8 +1,13 @@
 $ = require('jquery');
 
+require 'slick-carousel/slick/slick.css';
+require 'slick-carousel/slick/slick-theme.css';
+require 'slick-carousel';
+
 class Chat
   constructor: ->
     new ButtonGroups()
+    List.generateAll()
 
     @recognition = new Recognition()
 
@@ -121,6 +126,8 @@ class Statement
     avatar = $('.chatbot__discussion .chatbot__statement > .chatbot__avatar').last()
     widget = $('.chatbot__discussion .chatbot__statement > .chatbot__widget').last()
 
+    List.generateLast()
+
     Statement.scroll_to_last()
     avatar.removeClass('chatbot__avatar--hidden')
     widget.removeClass('chatbot__widget--hidden')
@@ -165,6 +172,27 @@ class Statement
     html.push '</div>'
     html.join("\n")
 
+
+class List
+  constructor: (element) ->
+    $(element).slick(
+      dots: true,
+      slidesToShow: 1,
+      centerMode: true,
+      infinite: false,
+      centerPadding: '12px',
+      arrows: false
+    )
+
+  @generateLast: ->
+    last_widget = $('.chatbot__statement > .chatbot__widget').last()
+    if $(last_widget).hasClass('chatbot__widget--list--horizontal')
+      slide = $('.chatbot__widget--list--horizontal > div').last()
+      new List(slide)
+
+  @generateAll: ->
+    for slide in $('.chatbot__widget--list--horizontal > div')
+      new List(slide)
 
 
 class ButtonGroups

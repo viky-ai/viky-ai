@@ -345,4 +345,25 @@ form.chatbot__widget--button,
       margin-bottom: .75em;
     }
   }
+
+  &.chatbot__widget--list--horizontal{
+    padding: 1em 0 0 0;
+    & > div{
+      .slick-slide{
+        margin: 0 .25em;
+      }
+      .slick-dots{
+        line-height: 0;
+        bottom: -20px;
+      }
+      .slick-dotted.slick-slider{
+        margin-bottom: 0;
+      }
+    }
+    .chatbot__widget{
+      min-width: 100%;
+      max-width: 100%;
+      width: 100%;
+    }
+  }
 }

@@ -89,28 +89,49 @@ class PingPongBot < Sinatra::Base
     register Sinatra::Reloader
   end
 
-
   post '/start' do
-    content = ""
-    content << "<p><strong>Welcome!</strong></p>"
-    content << "<p>I'm the <em>Ping Pong Bot</em>, i allow you to test the viky.ai chatbot system.</p>"
-    content << "<p>You can type these command in order to view available components:</p>"
-    content << "<ul>"
-    content << "  <li><code>ping</code> or <code>pong</code> show simple bot response.</li>"
-    content << "  <li><code>image</code> show the image widget.</li>"
-    content << "  <li><code>button</code> show the button widget.</li>"
-    content << "  <li><code>button_group</code> show the button group widget.</li>"
-    content << "  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>"
-    content << "  <li><code>card</code> show the card widget.</li>"
-    content << "  <li><code>card_click</code> show a clickable card widget.</li>"
-    content << "  <li><code>vertical_list</code> show list widget with vertical orientation.</li>"
-    content << "</ul>"
-    content << "<p>Happy coding!</p>"
-
+    text_1  = <<-HTML
+<p>1. <strong>Welcome!</strong></p>
+<p>I'm the <em>Ping Pong Bot</em>, i allow you to test the viky.ai chatbot system.</p>
+<p>Start by entering the following command:</p>
+<ul>
+  <li><code>ping</code> or <code>pong</code> show simple bot response.</li>
+  <li><code>image</code> show the image widget.</li>
+</ul>
+HTML
+    text_2  = <<-HTML
+<p>2. <strong>Button & Button group widget</strong></p>
+<ul>
+  <li><code>button</code> show the button widget.</li>
+  <li><code>button_group</code> show the button group widget.</li>
+  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>
+</ul>
+HTML
+    text_3  = <<-HTML
+<p>3. <strong>Card widget</strong></p>
+<ul>
+  <li><code>card</code> show the card widget.</li>
+  <li><code>card_click</code> show a clickable card widget.</li>
+</ul>
+HTML
+    text_4  = <<-HTML
+<p>4. <strong>List widget</strong></p>
+<ul>
+  <li><code>hlist</code> show list with horizontal orientation.</li>
+  <li><code>vlist</code> show list with vertical orientation.</li>
+</ul>
+<p>Happy testing!</p>
+HTML
 
     session_id = JSON.parse(request.body.read)["session_id"]
-    BotApi.text(session_id, {
-      text: content,
+    BotApi.list(session_id, {
+      orientation: :horizontal,
+      items: [
+        { nature: 'text', content: { text: text_1 } },
+        { nature: 'text', content: { text: text_2 } },
+        { nature: 'text', content: { text: text_3 } },
+        { nature: 'text', content: { text: text_4 } }
+      ],
       speech: {
         text: "Welcome to Ping Pong Bot",
         locale: "en-US"
@@ -280,7 +301,7 @@ class PingPongBot < Sinatra::Base
           disable_on_click: true,
         })
 
-      when /vertical_list/i
+      when /vlist/i
         BotApi.list(session_id, {
           items: [
             {
@@ -317,7 +338,26 @@ class PingPongBot < Sinatra::Base
                 ]
               }
             }
-          ]
+          ],
+          speech: {
+            text: "Here is an vertical list of mixed content",
+            locale: "en-US"
+          }
+        })
+
+      when /hlist/i
+        BotApi.list(session_id, {
+          orientation: :horizontal,
+          items: BotRessources.kittens.collect { |img|
+            {
+              nature: 'image',
+              content: { url: img }
+            }
+          },
+          speech: {
+            text: "Here is an horizontal list of kittens",
+            locale: "en-US"
+          }
         })
 
       else

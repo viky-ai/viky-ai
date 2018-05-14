@@ -114,15 +114,21 @@ class ChatStatementTest < ActiveSupport::TestCase
       { nature: 'text', content: { text: 'Hello' } }
     end
     statement_list = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:list],
-      content: { items: items },
+      speaker: :bot,
+      nature: :list,
+      content: {
+        orientation: :missing,
+        items: items
+      },
       chat_session: chat_sessions(:one)
     )
     assert statement_list.invalid?
-    assert_equal ['Items is too long (maximum is 10 items)'], statement_list.errors.full_messages
+    expected = [
+      "Orientation is not included in the list, Items is too long (maximum is 8 items)"
+    ]
+    assert_equal expected, statement_list.errors.full_messages
 
-    statement_list.content = { items: [] }
+    statement_list.content = { orientation: :vertical, items: [] }
     assert statement_list.invalid?
     assert_equal ["Items can't be blank"], statement_list.errors.full_messages
 
