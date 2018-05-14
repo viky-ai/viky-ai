@@ -1,4 +1,15 @@
 en:
+  activemodel:
+    attributes:
+      chatbot/chat_statement_speech:
+        text: content.speech.text
+        locale: content.speech.locale
+      chatbot/chat_statement_list:
+        orientation: content.orientation
+        items: content.items
+      chatbot/chat_statement_text:
+        text: content.text
+
   activerecord:
     models:
       agent: Agent
@@ -40,6 +51,8 @@ en:
         wip_enabled: Work in progress?
         wip_enabled_true: "Yes"
         wip_enabled_false: "No"
+      chat_statement:
+        content: content
   errors:
     user:
       delete:
@@ -81,6 +94,7 @@ en:
       invalid_nature: "invalid nature, found: %{nature}"
       list:
         too_long: 'is too long (maximum is %{count} items)'
+        too_short: 'is too short (minimum is %{count} items)'
       card:
         too_long: 'is too long (maximum is %{count} items)'
         payload_conflict: "Card payload with button or button group."

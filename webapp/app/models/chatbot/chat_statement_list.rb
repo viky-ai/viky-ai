@@ -6,6 +6,7 @@ class Chatbot::ChatStatementList
 
   validates :orientation, inclusion: { in: %w(vertical horizontal) }, allow_nil: true
   validates :items, presence: true, length: {
+    minimum: 2, too_short: I18n.t('errors.chat_statement.list.too_short'),
     maximum: 8, too_long: I18n.t('errors.chat_statement.list.too_long')
   }
   validate :recursive_validation
@@ -15,11 +16,11 @@ class Chatbot::ChatStatementList
   end
 
   def is_horizontal?
-    orientation == "horizontal"
+    !is_vertival?
   end
 
   def is_vertival?
-    !is_horizontal?
+    orientation == "vertical"
   end
 
   def items_as_components
@@ -41,14 +42,16 @@ class Chatbot::ChatStatementList
   private
 
     def recursive_validation
-      items.each do |item|
-        unless ['text', 'image', 'button', 'button_group'].include? item["nature"]
-          errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: item['nature']))
+      if items.respond_to? :each
+        items.each do |item|
+          unless ['text', 'image', 'button', 'button_group'].include? item["nature"]
+            errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: item['nature']))
+          end
         end
-      end
-      items_as_components.each do |component|
-        if !component.nil? && component.invalid?
-          errors.add(:base, component.errors.full_messages.join(', '))
+        items_as_components.each_with_index do |component, i|
+          if !component.nil? && component.invalid?
+            errors.add("Content item ##{i}", component.errors.full_messages.join(', '))
+          end
         end
       end
     end

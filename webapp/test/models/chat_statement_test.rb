@@ -22,7 +22,7 @@ class ChatStatementTest < ActiveSupport::TestCase
     )
     assert statement.invalid?
     expected = [
-      "Content can't be blank",
+      "content can't be blank",
     ]
     assert_equal expected, statement.errors.full_messages
   end
@@ -37,13 +37,13 @@ class ChatStatementTest < ActiveSupport::TestCase
     )
     assert statement.invalid?
     expected = [
-      "Text can't be blank"
+      "content.text can't be blank"
     ]
     assert_equal expected, statement.errors.full_messages
 
     statement.content = { text: 'a' * 5001 }
     assert statement.invalid?
-    assert_equal ['Text is too long (maximum is 5000 characters)'], statement.errors.full_messages
+    assert_equal ['content.text is too long (maximum is 5000 characters)'], statement.errors.full_messages
   end
 
 
@@ -69,7 +69,7 @@ class ChatStatementTest < ActiveSupport::TestCase
       }
     }
     assert statement.invalid?
-    expected = ["Text can't be blank, Locale is not included in the list"]
+    expected = ["content.speech.text can't be blank, content.speech.locale is not included in the list"]
     assert_equal expected, statement.errors.full_messages
 
     statement.content = {
@@ -80,78 +80,6 @@ class ChatStatementTest < ActiveSupport::TestCase
       }
     }
     assert statement.valid?
-  end
-
-
-  test 'Create a simple list statement' do
-    statement_list = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:list],
-      content: {
-        items: [
-          {
-            nature: 'text',
-            content: {
-              text: 'Hello'
-            }
-          },
-          {
-            nature: 'text',
-            content: {
-              text: 'How are you ?'
-            }
-          }
-        ]
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_list.save
-  end
-
-
-  test 'Validate a list statement' do
-    items = (0..10).collect do |i|
-      { nature: 'text', content: { text: 'Hello' } }
-    end
-    statement_list = ChatStatement.new(
-      speaker: :bot,
-      nature: :list,
-      content: {
-        orientation: :missing,
-        items: items
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_list.invalid?
-    expected = [
-      "Orientation is not included in the list, Items is too long (maximum is 8 items)"
-    ]
-    assert_equal expected, statement_list.errors.full_messages
-
-    statement_list.content = { orientation: :vertical, items: [] }
-    assert statement_list.invalid?
-    assert_equal ["Items can't be blank"], statement_list.errors.full_messages
-
-    statement_list.content = {
-      items: [{
-        nature: 'foo bar'
-      }]
-    }
-    assert statement_list.invalid?
-    assert_equal ['invalid nature, found: foo bar'], statement_list.errors.full_messages
-
-    statement_list.content = {
-      items: [
-        {
-          nature: 'text',
-          content: {
-            text: ''
-          }
-        }
-      ]
-    }
-    assert statement_list.invalid?
-    assert_equal ["Text can't be blank"], statement_list.errors.full_messages
   end
 
 

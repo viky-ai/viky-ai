@@ -41,7 +41,7 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
       }
     }
     assert_equal '422', response.code
-    assert_equal '{"errors":["Content can\'t be blank"]}', response.body
+    assert_equal '{"errors":["content can\'t be blank"]}', response.body
   end
 
 
