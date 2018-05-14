@@ -21,41 +21,8 @@ class ChatStatementTest < ActiveSupport::TestCase
       chat_session: chat_sessions(:one)
     )
     assert statement.invalid?
-    expected = [
-      "content can't be blank",
-    ]
+    expected = ["content can't be blank"]
     assert_equal expected, statement.errors.full_messages
-  end
-
-
-  test 'Create a simple notification statement' do
-    statement_notification = ChatStatement.new(
-      speaker: ChatStatement.speakers[:moderator],
-      nature: ChatStatement.natures[:notification],
-      content: {
-        text: 'Bot error',
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_notification.save
-  end
-
-
-  test 'Validate notification statement' do
-    statement_notification = ChatStatement.new(
-      speaker: ChatStatement.speakers[:moderator],
-      nature: ChatStatement.natures[:notification],
-      content: {
-        text: ''
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_notification.invalid?
-    assert_equal ["Text can't be blank"], statement_notification.errors.full_messages
-
-    statement_notification.content['text'] = 'a' * 2001
-    assert statement_notification.invalid?
-    assert_equal ['Text is too long (maximum is 2000 characters)'], statement_notification.errors.full_messages
   end
 
 
@@ -179,4 +146,5 @@ class ChatStatementTest < ActiveSupport::TestCase
     assert card_statement.invalid?
     assert_equal ["Card payload with button or button group."], card_statement.errors.full_messages
   end
+
 end

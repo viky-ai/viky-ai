@@ -18,7 +18,8 @@ en:
         payload: content.payload
       chatbot/chat_statement_button_group:
         buttons: content.buttons
-
+      chatbot/chat_statement_notification:
+        text: content.text
   activerecord:
     models:
       agent: Agent
