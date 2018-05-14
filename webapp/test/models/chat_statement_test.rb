@@ -28,47 +28,6 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
-  test 'Create a simple image statement' do
-    statement_image = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:image],
-      content: {
-        url: 'https://www.pertimm.com/assets/img/logo_pertimm.png',
-        title: 'Pertimm',
-        subtitle: 'The Pertimm logo.'
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_image.save
-  end
-
-
-  test 'Validate image statement' do
-    statement_image = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:image],
-      content: {
-        url: '',
-      },
-      chat_session: chat_sessions(:one)
-    )
-
-    assert statement_image.invalid?
-    assert_equal ["Url can't be blank"], statement_image.errors.full_messages
-
-    statement_image.content['url'] = 'a' * 5001
-    statement_image.content['title'] = 'a' * 5001
-    statement_image.content['subtitle'] = 'a' * 5001
-    assert statement_image.invalid?
-    expected = [
-      'Url is too long (maximum is 5000 characters)',
-      'Title is too long (maximum is 5000 characters)',
-      'Subtitle is too long (maximum is 5000 characters)',
-    ].join(', ')
-    assert_equal [expected], statement_image.errors.full_messages
-  end
-
-
   test 'Create a simple button statement' do
     statement_button = ChatStatement.new(
       speaker: ChatStatement.speakers[:bot],

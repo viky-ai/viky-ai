@@ -7,8 +7,8 @@ class Chatbot::ChatStatementImage
   attr_accessor :subtitle
 
   validates :url, presence: true, length: { maximum: 5000 }
-  validates :title, length: { maximum: 5000 }
-  validates :subtitle, length: { maximum: 5000 }
+  validates :title, length: { maximum: 100 }
+  validates :subtitle, length: { maximum: 500 }
 
   def nature
     "image"

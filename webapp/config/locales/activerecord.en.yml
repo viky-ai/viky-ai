@@ -9,6 +9,10 @@ en:
         items: content.items
       chatbot/chat_statement_text:
         text: content.text
+      chatbot/chat_statement_image:
+        url: content.url
+        title: content.title
+        subtitle: content.subtitle
 
   activerecord:
     models:
