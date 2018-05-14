@@ -187,6 +187,8 @@ $chatbot_statement_radius: 8px;
 // Widget Text
 .chatbot__widget--text{
   padding: .5em .8em;
+  text-align: left;
+  font-weight: lighter;
 
   .chatbot__statement--user & a {
     color: #fff;
@@ -420,4 +422,11 @@ form.chatbot__widget--button,
 // Widget card
 .chatbot__widget.chatbot__widget--card {
   box-shadow: 0 1px 1px rgba(#000, .2);
+
+  .chatbot__widget--card_click button {
+    box-shadow: none;
+    background-color: transparent;
+    border: 0 transparent;
+    padding: 0;
+  }
 }

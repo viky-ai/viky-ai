@@ -75,6 +75,7 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
         params.require(:statement).permit(
           :nature,
           content: [
+            payload: {},
             components: [
               :nature, content: list_items_content_params
             ]
