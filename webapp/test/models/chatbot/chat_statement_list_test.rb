@@ -2,7 +2,6 @@ require 'test_helper'
 
 class ChatStatementListTest < ActiveSupport::TestCase
 
-
   test 'Create a list statement with default orientation' do
     statement = ChatStatement.new(
       speaker: :bot,

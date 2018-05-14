@@ -28,61 +28,6 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
-  test 'Validate text statement' do
-    statement = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:text],
-      content: { text: '' },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement.invalid?
-    expected = [
-      "content.text can't be blank"
-    ]
-    assert_equal expected, statement.errors.full_messages
-
-    statement.content = { text: 'a' * 5001 }
-    assert statement.invalid?
-    assert_equal ['content.text is too long (maximum is 5000 characters)'], statement.errors.full_messages
-  end
-
-
-  test 'Validate text statement with speech' do
-    statement = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:text],
-      content: {
-        text: 'Hello',
-        speech: ''
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement.invalid?
-    expected = ["Speech must be a Hash"]
-    assert_equal expected, statement.errors.full_messages
-
-    statement.content = {
-      text: 'Hello',
-      speech: {
-        text: '',
-        locale: ''
-      }
-    }
-    assert statement.invalid?
-    expected = ["content.speech.text can't be blank, content.speech.locale is not included in the list"]
-    assert_equal expected, statement.errors.full_messages
-
-    statement.content = {
-      text: 'Hello',
-      speech: {
-        text: 'Hi',
-        locale: 'en-US'
-      }
-    }
-    assert statement.valid?
-  end
-
-
   test 'Create a simple image statement' do
     statement_image = ChatStatement.new(
       speaker: ChatStatement.speakers[:bot],
