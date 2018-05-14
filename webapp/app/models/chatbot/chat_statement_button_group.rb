@@ -4,7 +4,9 @@ class Chatbot::ChatStatementButtonGroup
 
   attr_accessor :buttons, :disable_on_click
 
-  validates :buttons, presence: true, length: { maximum: 6 }
+  validates :buttons, presence: true, length: {
+    maximum: 6, too_long: I18n.t('errors.chat_statement.buttons.too_long')
+  }
   validates :disable_on_click, inclusion: { in: [true, false] }, allow_nil: true
   validate :recursive_validation
 
@@ -37,13 +39,10 @@ class Chatbot::ChatStatementButtonGroup
   private
 
     def recursive_validation
-      unless buttons.nil?
-        buttons.each_with_index do |button, i|
-          button = Chatbot::ChatStatementButton.new(button)
+      if buttons.respond_to? :each
+        buttons_as_components.each_with_index do |button, i|
           if button.invalid?
-            button.errors.full_messages.each do |error|
-              errors.add(:base, "Button ##{i}: #{error}")
-            end
+            errors.add("Content button ##{i}", button.errors.full_messages.join(', '))
           end
         end
       end

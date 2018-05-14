@@ -16,6 +16,8 @@ en:
       chatbot/chat_statement_button:
         text: content.text
         payload: content.payload
+      chatbot/chat_statement_button_group:
+        buttons: content.buttons
 
   activerecord:
     models:
@@ -99,6 +101,8 @@ en:
       nature_blank: "can't be blank"
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
+      buttons:
+        too_long: 'is too long (maximum is %{count} buttons)'
       list:
         too_long: 'is too long (maximum is %{count} items)'
         too_short: 'is too short (minimum is %{count} items)'
