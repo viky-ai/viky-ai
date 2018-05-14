@@ -303,6 +303,7 @@ HTML
 
       when /vlist/i
         BotApi.list(session_id, {
+          orientation: :vertical,
           items: [
             {
               nature: 'image',
