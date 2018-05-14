@@ -13,6 +13,9 @@ en:
         url: content.url
         title: content.title
         subtitle: content.subtitle
+      chatbot/chat_statement_button:
+        text: content.text
+        payload: content.payload
 
   activerecord:
     models:

@@ -61,7 +61,7 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_equal '422', response.code
     rsp = JSON.parse(response.body)
-    expected = ["Button #0: Text can't be blank, Button #0: Payload can't be blank"]
+    expected = ["Button #0: content.text can't be blank, Button #0: content.payload can't be blank"]
     assert_equal expected, rsp["errors"]
   end
 

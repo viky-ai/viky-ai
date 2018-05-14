@@ -28,43 +28,6 @@ class ChatStatementTest < ActiveSupport::TestCase
   end
 
 
-  test 'Create a simple button statement' do
-    statement_button = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:button],
-      content: {
-        text: 'Self destruction',
-        payload: {
-          destruction: true,
-          timer: '5 seconds'
-        }
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_button.save
-  end
-
-
-  test 'Validate button statement' do
-    statement_button = ChatStatement.new(
-      speaker: ChatStatement.speakers[:bot],
-      nature: ChatStatement.natures[:button],
-      content: {
-        text: '',
-        payload: {}
-      },
-      chat_session: chat_sessions(:one)
-    )
-    assert statement_button.invalid?
-    assert_equal ["Text can't be blank, Payload can't be blank"], statement_button.errors.full_messages
-
-    statement_button.content['text'] = 'a' * 2001
-    statement_button.content['payload'] = { a: 'a' }
-    assert statement_button.invalid?
-    assert_equal ['Text is too long (maximum is 2000 characters)'], statement_button.errors.full_messages
-  end
-
-
   test 'Validate a button group statement' do
     bg = ChatStatement.new(
       speaker: :bot,
@@ -84,7 +47,7 @@ class ChatStatementTest < ActiveSupport::TestCase
       chat_session: chat_sessions(:one)
     )
     assert bg.invalid?
-    expected = ["Button #0: Text can't be blank, Button #0: Payload can't be blank, Button #1: Payload can't be blank"]
+    expected = ["Button #0: content.text can't be blank, Button #0: content.payload can't be blank, Button #1: content.payload can't be blank"]
     assert_equal expected, bg.errors.full_messages
 
     bg.content = { buttons: [] }
@@ -268,7 +231,7 @@ class ChatStatementTest < ActiveSupport::TestCase
       }
     }] }
     assert card_statement.invalid?
-    assert_equal ["Url can't be blank"], card_statement.errors.full_messages
+    assert_equal ["content.url can't be blank"], card_statement.errors.full_messages
 
 
     card_statement.content = {

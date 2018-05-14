@@ -4,7 +4,7 @@ class Chatbot::ChatStatementButton
 
   attr_accessor :text, :payload, :disabled, :selected
 
-  validates :text, presence: true, length: { maximum: 2000 }
+  validates :text, presence: true, length: { maximum: 100 }
   validates :payload, presence: true
   validates :disabled, inclusion: { in: [true, false] }, allow_nil: true
   validates :selected, inclusion: { in: [true, false] }, allow_nil: true
