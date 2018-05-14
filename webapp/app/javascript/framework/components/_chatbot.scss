@@ -123,10 +123,11 @@ $chatbot_statement_radius: 8px;
   }
 }
 
-
+// Default
 .chatbot__widget{
-  overflow: hidden;
   border-radius: $chatbot_statement_radius;
+  overflow: hidden;
+  box-shadow: 0 1px 1px rgba(#000, .2);
   max-width: calc(100% - 40px * 1 - 1.5em * 1 - .75em);
   @media (min-width: 400px){
     max-width: calc(100% - 40px * 2 - 1.5em * 2);
@@ -142,13 +143,27 @@ $chatbot_statement_radius: 8px;
   }
   .chatbot__statement--bot &{
     background-color: #fff;
-    box-shadow: 0 1px 1px rgba(black, .2);
   }
   .chatbot__statement--user &{
     background-color: $primary_color;
     color: #fff;
     border: 2px solid #fff;
     box-shadow: 0 1px 1px rgba(black, .2);
+  }
+}
+
+// In Card
+.chatbot__widget--card .chatbot__widget{
+  border-radius: 0;
+  box-shadow: none;
+  max-width: 100%;
+  &:first-child{
+    border-top-left-radius: $chatbot_statement_radius;
+    border-top-right-radius: $chatbot_statement_radius;
+  }
+  &:last-child{
+    border-bottom-left-radius: $chatbot_statement_radius;
+    border-bottom-right-radius: $chatbot_statement_radius;
   }
 }
 
@@ -207,7 +222,6 @@ $chatbot_statement_radius: 8px;
   padding: .2em .25em .1em .25em;
   background-color: rgba(#fff, .5);
   border: 1px solid rgba(#000, .1);
-  color: #333;
   color: darken($primary-color, 10%);
   font-size: .9em;
   border-radius: 2px;
@@ -217,12 +231,8 @@ $chatbot_statement_radius: 8px;
 // Widget image
 .chatbot__widget--image{
   line-height: 0;
-  background-color: #f5f5f5;
-
   background-color: #fff;
   border: 2px solid #fff;
-  box-shadow: 0 1px 1px rgba(black, .2);
-
   img{
     max-width: 100%;
     max-height: 300px;
@@ -359,6 +369,11 @@ form.chatbot__widget--button,
   }
 }
 
+// In Card
+.chatbot__widget--card .chatbot__widget--button-group {
+  margin: 20px;
+}
+
 
 // Widget list
 .chatbot__widget.chatbot__widget--list{
@@ -400,4 +415,9 @@ form.chatbot__widget--button,
       width: 100%;
     }
   }
+}
+
+// Widget card
+.chatbot__widget.chatbot__widget--card {
+  box-shadow: 0 1px 1px rgba(#000, .2);
 }

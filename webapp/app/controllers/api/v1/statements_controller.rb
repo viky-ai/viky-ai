@@ -71,6 +71,15 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
             speech: [:text, :locale]
           ]
         )
+      when 'card'
+        params.require(:statement).permit(
+          :nature,
+          content: [
+            components: [
+              :nature, content: list_items_content_params
+            ]
+          ]
+        )
       end
     end
 end
