@@ -20,32 +20,37 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
 
   private
 
-    def text_content_params
-      [:text, speech: [:text, :locale]]
+    def text_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:text] + speech
     end
 
-    def image_content_params
-      [:url, :title, :subtitle, speech: [:text, :locale]]
+    def image_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:url, :title, :subtitle] + speech
     end
 
-    def video_content_params
-      [:params, :title, :subtitle, speech: [:text, :locale]]
+    def video_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:params, :title, :subtitle] + speech
     end
 
-    def button_content_params
-      [:text, payload: {}, speech: [:text, :locale]]
+    def button_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:text, payload: {}, ] + speech
     end
 
-    def button_group_content_params
-      [:disable_on_click, buttons: [ :text, payload: {} ], speech: [:text, :locale]]
+    def button_group_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:disable_on_click, buttons: [ :text, payload: {} ]] + speech
     end
 
-    def list_items_content_params
+    def list_items_content_params(with_speech=true)
       (
-        text_content_params +
-        image_content_params +
-        button_content_params +
-        button_group_content_params
+        text_content_params(with_speech) +
+        image_content_params(with_speech) +
+        button_content_params(with_speech) +
+        button_group_content_params(with_speech)
       ).uniq
     end
 
@@ -77,8 +82,9 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
           content: [
             payload: {},
             components: [
-              :nature, content: list_items_content_params
-            ]
+              :nature, content: list_items_content_params(false)
+            ],
+            speech: [:text, :locale]
           ]
         )
       end
