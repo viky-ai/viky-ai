@@ -275,6 +275,24 @@ HTML
           }
         })
 
+      when /card_click/i
+        random_id = Random.rand(100)
+        BotApi.card(session_id, {
+          components: [{
+             nature: 'image',
+             content: {
+               url: BotRessources.puppies.sample
+             }
+           }, {
+             nature: 'text',
+             content: {
+               text: 'Grab this puppy! 🐶'
+             }
+           }],
+          payload: { action: "puppy_#{random_id}" },
+          disable_on_click: true,
+        })
+
       when /card/i
         BotApi.card(session_id, {
           components: [{
@@ -302,24 +320,6 @@ HTML
               ]
             }
           }],
-        })
-
-      when /card_click/i
-        random_id = Random.rand(100)
-        BotApi.card(session_id, {
-          components: [{
-            nature: 'image',
-            content: {
-              url: BotRessources.puppies.sample
-            }
-          }, {
-            nature: 'text',
-            content: {
-              text: 'Grab this puppy !🐶🐶🐶🐶🐶🐶🐶'
-            }
-          }],
-          payload: { action: "puppy_#{random_id}" },
-          disable_on_click: true,
         })
 
       when /vlist/i
