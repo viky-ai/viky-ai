@@ -221,7 +221,11 @@ HTML
         BotApi.video(session_id, {
           params: "bpOSxM0rNPM",
           title: 'Arctic Monkeys - Do I Wanna Know?',
-          subtitle: subtitle
+          subtitle: subtitle,
+          speech: {
+            text: "Let's play musuc video!",
+            locale: "en-GB"
+          }
         })
 
       when /deactivatable_button_group/i
