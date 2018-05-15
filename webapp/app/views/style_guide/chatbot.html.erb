@@ -211,6 +211,30 @@
 
 
 <section>
+  <h2>Video</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--video">
+        <div class="video-wrapper">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/f79-58hLLXs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
   <h2>Button</h2>
   <%= highlight_html do %>
 <div class="chatbot">

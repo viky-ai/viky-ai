@@ -45,6 +45,10 @@ module BotApi
     post(session_id, Params::build('image', content))
   end
 
+  def self.video(session_id, content)
+    post(session_id, Params::build('video', content))
+  end
+
   def self.button(session_id, content)
     post(session_id, Params::build('button', content))
   end
@@ -97,6 +101,7 @@ class PingPongBot < Sinatra::Base
 <ul>
   <li><code>ping</code> or <code>pong</code> show simple bot response.</li>
   <li><code>image</code> show the image widget.</li>
+  <li><code>video</code> show the video widget.</li>
 </ul>
 HTML
     text_2  = <<-HTML
@@ -205,6 +210,11 @@ HTML
             text: "Voici une image de chatton",
             locale: "fr-FR"
           }
+        })
+
+      when /video/i
+        BotApi.video(session_id, {
+          params: "bpOSxM0rNPM?autoplay=1"
         })
 
       when /deactivatable_button_group/i

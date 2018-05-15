@@ -28,6 +28,10 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
       [:url, :title, :subtitle, speech: [:text, :locale]]
     end
 
+    def video_content_params
+      [:params, speech: [:text, :locale]]
+    end
+
     def button_content_params
       [:text, payload: {}, speech: [:text, :locale]]
     end
@@ -52,6 +56,8 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
         params.require(:statement).permit(:nature, content: text_content_params)
       when 'image'
         params.require(:statement).permit(:nature, content: image_content_params)
+      when 'video'
+        params.require(:statement).permit(:nature, content: video_content_params)
       when 'button'
         params.require(:statement).permit(:nature, content: button_content_params)
       when 'button_group'

@@ -325,6 +325,24 @@ form.chatbot__widget--button,
   }
 }
 
+// Widget video
+.chatbot__widget.chatbot__widget--video{
+  border: 2px solid #fff;
+  width: 100%;
+  .video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+  }
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
 
 // Widget list
 .chatbot__widget.chatbot__widget--list{
