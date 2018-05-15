@@ -455,6 +455,74 @@
 
 
 <section>
+  <h2>Card</h2>
+  <h3>Standard</h3>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--card">
+        <div class="chatbot__widget chatbot__widget--image">
+          <img src="<%= image_path('style-guide/kitten.jpg') %>">
+          <div class="chatbot__widget--image__info">
+            <div class="chatbot__widget--image__info__title">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eget ipsum molestie, euismod ipsum a, accumsan eros. Ut ornare pellentesque nunc et eleifend. Vestibulum gravida nisi non est venenatis molestie.
+            </div>
+            <div class="chatbot__widget--image__info__subtitle">
+              Quisque nec sodales velit. Fusce eu felis porta, viverra orci eget, fermentum nibh. Vivamus vehicula sit amet ex id consequat. Praesent a purus posuere, semper quam fermentum, consectetur erat. Vivamus ac blandit augue.
+            </div>
+          </div>
+        </div>
+        <div class="chatbot__widget chatbot__widget--text">
+          Vivamus sed dolor velit. Aliquam ac elit faucibus ipsum facilisis ullamcorper. Etiam ut dictum sapien.
+        </div>
+        <div class="chatbot__widget chatbot__widget--button-group">
+          <form>
+            <button>Button A</button>
+          </form>
+          <form>
+            <button>Button B</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+  <h3>Clickable</h3>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--card">
+        <form class="chatbot__widget--card_click">
+          <button>
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten.jpg') %>">
+            </div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
   <h2>Animation</h2>
   <p>
     Remove CSS class <code>chatbot__avatar--hidden</code> and <code>chatbot__widget--hidden</code>
