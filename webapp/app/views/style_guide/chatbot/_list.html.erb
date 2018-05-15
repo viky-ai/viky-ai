@@ -50,6 +50,67 @@
 </div>
   <% end %>
 
+
+  <h3>Horizontal list of cards</h3>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--list chatbot__widget--list--horizontal">
+        <div id="horizontal-list-with-card">
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 900$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten_1.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 550$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten_2.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 670$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+
   <h3>Vertical list</h3>
   <%= highlight_html do %>
 <div class="chatbot">
@@ -81,4 +142,66 @@
   </div>
 </div>
   <% end %>
+
+  <h3>Vertical list of cards</h3>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--list chatbot__widget--list--vertical">
+        <div>
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 900$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten_1.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 550$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+          <div class="chatbot__widget chatbot__widget--card">
+            <div class="chatbot__widget chatbot__widget--image">
+              <img src="<%= image_path('style-guide/kitten_2.jpg') %>">
+              <div class="chatbot__widget--image__info">
+                <h2>Meow! &mdash; 670$</h2>
+                <p>Portrait of a little kitten. So cute 😻</p>
+              </div>
+            </div>
+            <form class="chatbot__widget chatbot__widget--button">
+              <button>Add to basket</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+
+
 </section>

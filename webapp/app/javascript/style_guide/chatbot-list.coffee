@@ -5,8 +5,8 @@ require 'slick-carousel';
 
 class ChatbotList
   constructor: ->
-    if $("#horizontal-list").length == 1
-      $("#horizontal-list").slick(
+    for carrousel in $("#horizontal-list, #horizontal-list-with-card")
+      $(carrousel).slick(
         dots: true,
         slidesToShow: 1,
         centerMode: true,
