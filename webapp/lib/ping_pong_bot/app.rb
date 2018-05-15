@@ -103,9 +103,11 @@ class PingPongBot < Sinatra::Base
   <li><code>image</code> show the image widget.</li>
   <li><code>video</code> show the video widget.</li>
 </ul>
+
 HTML
     text_2  = <<-HTML
 <p>2. <strong>Button & Button group widget</strong></p>
+<p>Enter the following commands in order to play with buttons:</p>
 <ul>
   <li><code>button</code> show the button widget.</li>
   <li><code>button_group</code> show the button group widget.</li>
@@ -213,8 +215,13 @@ HTML
         })
 
       when /video/i
+        subtitle  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
+        subtitle << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
+        subtitle << 'Hotel & Casino is out now on Domino Record Co.'
         BotApi.video(session_id, {
-          params: "bpOSxM0rNPM?autoplay=1"
+          params: "bpOSxM0rNPM",
+          title: 'Arctic Monkeys - Do I Wanna Know?',
+          subtitle: subtitle
         })
 
       when /deactivatable_button_group/i

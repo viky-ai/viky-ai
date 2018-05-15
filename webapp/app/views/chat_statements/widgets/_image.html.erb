@@ -3,14 +3,10 @@
   <% if image.title.present? || image.subtitle.present? %>
     <div class="chatbot__widget--image__info">
       <% if image.title.present? %>
-        <div class="chatbot__widget--image__info__title">
-          <%= image.title %>
-        </div>
+        <h2><%= image.title %></h2>
       <% end %>
       <% if image.subtitle.present? %>
-        <div class="chatbot__widget--image__info__subtitle">
-          <%= image.subtitle %>
-        </div>
+        <p><%= image.subtitle %></p>
       <% end %>
     </div>
   <% end %>

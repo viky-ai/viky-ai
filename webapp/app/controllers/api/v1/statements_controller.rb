@@ -29,7 +29,7 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
     end
 
     def video_content_params
-      [:params, speech: [:text, :locale]]
+      [:params, :title, :subtitle, speech: [:text, :locale]]
     end
 
     def button_content_params

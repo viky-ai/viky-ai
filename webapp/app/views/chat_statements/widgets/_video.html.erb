@@ -1,5 +1,15 @@
 <div class="chatbot__widget chatbot__widget--video">
-  <div class="video-wrapper">
+  <div class="chatbot__widget--video__wrapper">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/<%= video.params %>" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
   </div>
+  <% if video.title.present? || video.subtitle.present? %>
+    <div class="chatbot__widget--video__info">
+      <% if video.title.present? %>
+        <h2><%= video.title %></h2>
+      <% end %>
+      <% if video.subtitle.present? %>
+        <p><%= video.subtitle %></p>
+      <% end %>
+    </div>
+  <% end %>
 </div>
