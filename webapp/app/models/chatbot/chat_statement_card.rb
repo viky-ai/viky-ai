@@ -24,7 +24,7 @@ class Chatbot::ChatStatementCard
   def recursive_validation
     components
       .each do |component|
-        unless ['text', 'image', 'button', 'button_group'].include? component['nature']
+        unless ['text', 'image', 'video', 'button', 'button_group'].include? component['nature']
           errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: component['nature']))
         end
       end
@@ -40,6 +40,8 @@ class Chatbot::ChatStatementCard
       Chatbot::ChatStatementText.new(component['content'])
     when 'image'
       Chatbot::ChatStatementImage.new(component['content'])
+    when 'video'
+      Chatbot::ChatStatementVideo.new(component['content'])
     when 'button'
       Chatbot::ChatStatementButton.new(component['content'])
     when 'button_group'

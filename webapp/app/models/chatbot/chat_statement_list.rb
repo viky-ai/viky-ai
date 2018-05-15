@@ -30,10 +30,14 @@ class Chatbot::ChatStatementList
         Chatbot::ChatStatementText.new(item["content"])
       when 'image'
         Chatbot::ChatStatementImage.new(item["content"])
+      when 'video'
+        Chatbot::ChatStatementVideo.new(item["content"])
       when 'button'
         Chatbot::ChatStatementButton.new(item["content"])
       when 'button_group'
         Chatbot::ChatStatementButtonGroup.new(item["content"])
+      when 'card'
+        Chatbot::ChatStatementCard.new(item["content"])
       end
     end
   end
@@ -44,7 +48,7 @@ class Chatbot::ChatStatementList
     def recursive_validation
       if items.respond_to? :each
         items.each do |item|
-          unless ['text', 'image', 'button', 'button_group'].include? item["nature"]
+          unless ['text', 'image', 'video', 'button', 'button_group', 'card'].include? item["nature"]
             errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: item['nature']))
           end
         end

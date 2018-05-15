@@ -118,8 +118,10 @@ HTML
     text_3  = <<-HTML
 <p>4. <strong>Card & List widget</strong></p>
 <ul>
-  <li><code>card</code> show the card widget.</li>
+  <li><code>card</code> show standard card widget.</li>
+  <li><code>card_video</code> show card widget with video.</li>
   <li><code>hlist</code> show list with horizontal orientation.</li>
+  <li><code>hlist_card</code> show list of cards with horizontal orientation.</li>
   <li><code>vlist</code> show list with vertical orientation.</li>
 </ul>
 <p>Happy testing!</p>
@@ -208,20 +210,6 @@ HTML
           }
         })
 
-      when /video/i
-        subtitle  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
-        subtitle << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
-        subtitle << 'Hotel & Casino is out now on Domino Record Co.'
-        BotApi.video(session_id, {
-          params: "bpOSxM0rNPM",
-          title: 'Arctic Monkeys - Do I Wanna Know?',
-          subtitle: subtitle,
-          speech: {
-            text: "Let's play musuc video!",
-            locale: "en-GB"
-          }
-        })
-
       when /deactivatable_button_group/i
         BotApi.button_group(session_id, {
           disable_on_click: true,
@@ -269,34 +257,114 @@ HTML
           }
         })
 
-      when /card/i
+      when /card_video/i
         BotApi.card(session_id, {
-          components: [{
-            nature: 'image',
-            content: {
-              url: BotRessources.kittens.sample
+          components: [
+            {
+              nature: 'video',
+              content: {
+                params: "bpOSxM0rNPM"
+              }
+            },
+            {
+              nature: 'button',
+              content: {
+                text: "Buy the album",
+                payload: { action: "album_added_to_basket" }
+              }
             }
-          }, {
-            nature: 'text',
-            content: {
-              text: 'Do you like kitten ?'
-            }
-          }, {
-            nature: 'button_group',
-            content: {
-              buttons: [
-                {
-                  text: "Yes !",
-                  payload: { action: "kitten_yes" }
-                },
-                {
-                  text: "No...",
-                  payload: { action: "kitten_no" }
-                },
-              ]
-            }
-          }],
+          ],
         })
+
+
+      when /hlist_card/i
+        BotApi.list(session_id, {
+          orientation: :horizontal,
+          items: [
+            {
+              nature: 'card',
+              content: {
+                components: [
+                  {
+                    nature: 'image',
+                    content: {
+                      url: BotRessources.kittens[0],
+                      title: "Lovely kitten - 780$",
+                      subtitle: "Soooooo cute!"
+                    }
+                  },
+                  {
+                    nature: 'button',
+                    content: {
+                      text: "Add to basket",
+                      payload: { action: "kitten_0_added_to_basket" }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              nature: 'card',
+              content: {
+                components: [
+                  {
+                    nature: 'image',
+                    content: {
+                      url: BotRessources.kittens[1],
+                      title: "Lovely kitten - 600$",
+                      subtitle: "Soooooo cute!"
+                    }
+                  },
+                  {
+                    nature: 'button',
+                    content: {
+                      text: "Add to basket",
+                      payload: { action: "kitten_1_added_to_basket" }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              nature: 'card',
+              content: {
+                components: [
+                  {
+                    nature: 'image',
+                    content: {
+                      url: BotRessources.kittens[2],
+                      title: "Lovely kitten - 1200$",
+                      subtitle: "Soooooo cute!"
+                    }
+                  },
+                  {
+                    nature: 'button',
+                    content: {
+                      text: "Add to basket",
+                      payload: { action: "kitten_2_added_to_basket" }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        })
+
+      when /hlist/i
+        BotApi.list(session_id, {
+          orientation: :horizontal,
+          items: BotRessources.kittens.collect { |img|
+            {
+              nature: 'image',
+              content: { url: img }
+            }
+          },
+          speech: {
+            text: "Here is an horizontal list of kittens",
+            locale: "en-US"
+          }
+        })
+
 
       when /vlist/i
         BotApi.list(session_id, {
@@ -343,18 +411,41 @@ HTML
           }
         })
 
-      when /hlist/i
-        BotApi.list(session_id, {
-          orientation: :horizontal,
-          items: BotRessources.kittens.collect { |img|
+
+      when /card/i
+        BotApi.card(session_id, {
+          components: [
             {
               nature: 'image',
-              content: { url: img }
+              content: {
+                url: BotRessources.kittens.sample,
+                title: "Lovely kitten - 780$",
+                subtitle: "Soooooo cute!"
+              }
+            },
+            {
+              nature: 'button',
+              content: {
+                text: "Add to basket",
+                payload: { action: "kitten_added_to_basket" }
+              }
             }
-          },
+          ]
+        })
+
+
+
+      when /video/i
+        subtitle  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
+        subtitle << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
+        subtitle << 'Hotel & Casino is out now on Domino Record Co.'
+        BotApi.video(session_id, {
+          params: "bpOSxM0rNPM",
+          title: 'Arctic Monkeys - Do I Wanna Know?',
+          subtitle: subtitle,
           speech: {
-            text: "Here is an horizontal list of kittens",
-            locale: "en-US"
+            text: "Let's play musuc video!",
+            locale: "en-GB"
           }
         })
 

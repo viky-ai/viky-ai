@@ -45,12 +45,29 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
       [:disable_on_click, buttons: [ :text, payload: {} ]] + speech
     end
 
-    def list_items_content_params(with_speech=true)
+    def card_content_params
+      [
+        components: [
+          :nature,
+          content: (
+            text_content_params(false) +
+            image_content_params(false) +
+            video_content_params(false) +
+            button_content_params(false) +
+            button_group_content_params(false)
+          ).uniq
+        ]
+      ] + [speech: [:text, :locale]]
+    end
+
+    def list_items_content_params
       (
-        text_content_params(with_speech) +
-        image_content_params(with_speech) +
-        button_content_params(with_speech) +
-        button_group_content_params(with_speech)
+        text_content_params(false) +
+        image_content_params(false) +
+        video_content_params(false) +
+        button_content_params(false) +
+        button_group_content_params(false) +
+        card_content_params
       ).uniq
     end
 
@@ -79,12 +96,7 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
       when 'card'
         params.require(:statement).permit(
           :nature,
-          content: [
-            components: [
-              :nature, content: list_items_content_params(false)
-            ],
-            speech: [:text, :locale]
-          ]
+          content: card_content_params
         )
       end
     end
