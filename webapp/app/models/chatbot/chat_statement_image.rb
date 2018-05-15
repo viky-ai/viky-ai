@@ -13,4 +13,8 @@ class Chatbot::ChatStatementImage
   def nature
     "image"
   end
+
+  def has_info?
+    title.present? || subtitle.present?
+  end
 end

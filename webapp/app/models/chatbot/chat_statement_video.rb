@@ -11,4 +11,8 @@ class Chatbot::ChatStatementVideo
   def nature
     "video"
   end
+
+  def has_info?
+    title.present? || subtitle.present?
+  end
 end

@@ -251,6 +251,13 @@ $chatbot_statement_radius: 8px;
       color: #666;
       margin: 0;
     }
+    .chatbot__widget--card &{
+      background-color: #333;
+      color: #fff;
+      p{
+        color: #ddd;
+      }
+    }
   }
 }
 
@@ -282,6 +289,13 @@ $chatbot_statement_radius: 8px;
       font-size: 0.9em;
       color: #666;
       margin: 0;
+    }
+    .chatbot__widget--card &{
+      background-color: #333;
+      color: #fff;
+      p{
+        color: #ddd;
+      }
     }
   }
 }
@@ -331,6 +345,14 @@ form.chatbot__widget--button,
     }
   }
 }
+// In Card
+.chatbot__widget--card .chatbot__widget--button {
+  padding: .75em .8em;
+  button{
+    width: 100%;
+    border-radius: $chatbot_statement_radius;
+  }
+}
 
 .chatbot__widget--button-group{
   form{
@@ -373,7 +395,7 @@ form.chatbot__widget--button,
 
 // In Card
 .chatbot__widget--card .chatbot__widget--button-group {
-  margin: 20px;
+  padding: .75em .8em;
 }
 
 
@@ -421,6 +443,7 @@ form.chatbot__widget--button,
 
 // Widget card
 .chatbot__widget.chatbot__widget--card {
+  width: 100%;
   box-shadow: 0 1px 1px rgba(#000, .2);
 
   .chatbot__widget--card_click button {
@@ -428,5 +451,10 @@ form.chatbot__widget--button,
     background-color: transparent;
     border: 0 transparent;
     padding: 0;
+  }
+
+  .chatbot__widget--text + .chatbot__widget--button,
+  .chatbot__widget--text + .chatbot__widget--button-group{
+    margin-top: -0.75em;
   }
 }

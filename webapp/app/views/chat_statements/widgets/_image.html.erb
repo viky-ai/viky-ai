@@ -1,6 +1,6 @@
 <div class="chatbot__widget chatbot__widget--image">
   <img src="<%= image.url %>">
-  <% if image.title.present? || image.subtitle.present? %>
+  <% if image.has_info? %>
     <div class="chatbot__widget--image__info">
       <% if image.title.present? %>
         <h2><%= image.title %></h2>
