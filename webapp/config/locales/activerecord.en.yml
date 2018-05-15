@@ -113,7 +113,6 @@ en:
         too_short: 'is too short (minimum is %{count} items)'
       card:
         too_long: 'is too long (maximum is %{count} items)'
-        payload_conflict: "Card payload with button or button group."
     bots:
       communication_failure: 'The bot does not reply. The link seems broken.'
       bot_failure: 'The bot replied with an error.'

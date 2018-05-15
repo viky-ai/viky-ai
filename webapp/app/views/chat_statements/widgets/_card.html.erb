@@ -1,20 +1,6 @@
 <div class="chatbot__widget chatbot__widget--card">
-  <% if card.payload.present? %>
-    <%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot),
-                  remote: true, class: 'chatbot__widget--card_click' do |f| %>
-      <%= f.hidden_field :statement_id, value: statement.id %>
-      <%= f.hidden_field :payload, value: card.payload.to_json %>
-      <%= f.button do %>
-        <% card.components_as_statements.each do |component| %>
-          <%= render "/chat_statements/widgets/#{component.nature}",
-                     statement: statement, component.nature.to_sym => component %>
-        <% end %>
-      <% end %>
-    <% end %>
-  <% else %>
-    <% card.components_as_statements.each do |component| %>
-      <%= render "/chat_statements/widgets/#{component.nature}",
-                 statement: statement, component.nature.to_sym => component %>
-    <% end %>
-<% end %>
+  <% card.components_as_statements.each do |component| %>
+    <%= render "/chat_statements/widgets/#{component.nature}",
+               statement: statement, component.nature.to_sym => component %>
+  <% end %>
 </div>

@@ -445,14 +445,6 @@ form.chatbot__widget--button,
 .chatbot__widget.chatbot__widget--card {
   width: 100%;
   box-shadow: 0 1px 1px rgba(#000, .2);
-
-  .chatbot__widget--card_click button {
-    box-shadow: none;
-    background-color: transparent;
-    border: 0 transparent;
-    padding: 0;
-  }
-
   .chatbot__widget--text + .chatbot__widget--button,
   .chatbot__widget--text + .chatbot__widget--button-group{
     margin-top: -0.75em;

@@ -239,8 +239,6 @@ JSON structure :
           }
         },
       ],
-      payload: <payload>,
-      disable_on_click: <boolean>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -251,8 +249,6 @@ JSON structure :
 ```
 
 * `components` Array of nested components. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
-* `payload` boolean, default is `false`. The whole card act like a button. When this option is set, it prevent `components` to contains `button` or `button_group`.
-* `disable_on_click` boolean, default is `false`. Ignored when the card `payload` is not set.
 * `<speech_text>` Text to speech for the whole card (via text to speech).
 * `<speech_locale>` Locale of the text to speech.
 

@@ -2,9 +2,11 @@ class Chatbot::ChatStatementCard
   include ActiveModel::Model
   include Speechable
 
-  attr_accessor :components, :payload
+  attr_accessor :components
 
-  validates :components, presence: true, length: { maximum: 5, too_long: I18n.t('errors.chat_statement.card.too_long') }
+  validates :components, presence: true, length: {
+    maximum: 5, too_long: I18n.t('errors.chat_statement.card.too_long')
+  }
   validate :recursive_validation
 
   def nature
@@ -22,12 +24,7 @@ class Chatbot::ChatStatementCard
   def recursive_validation
     components
       .each do |component|
-        case component['nature']
-        when 'text', 'image'
-          next
-        when 'button', 'button_group'
-          errors.add(:base, I18n.t('errors.chat_statement.card.payload_conflict')) if payload.present?
-        else
+        unless ['text', 'image', 'button', 'button_group'].include? component['nature']
           errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: component['nature']))
         end
       end

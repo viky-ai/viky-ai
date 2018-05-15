@@ -114,16 +114,11 @@ HTML
   <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>
 </ul>
 HTML
+
     text_3  = <<-HTML
-<p>3. <strong>Card widget</strong></p>
+<p>4. <strong>Card & List widget</strong></p>
 <ul>
   <li><code>card</code> show the card widget.</li>
-  <li><code>card_click</code> show a clickable card widget.</li>
-</ul>
-HTML
-    text_4  = <<-HTML
-<p>4. <strong>List widget</strong></p>
-<ul>
   <li><code>hlist</code> show list with horizontal orientation.</li>
   <li><code>vlist</code> show list with vertical orientation.</li>
 </ul>
@@ -136,8 +131,7 @@ HTML
       items: [
         { nature: 'text', content: { text: text_1 } },
         { nature: 'text', content: { text: text_2 } },
-        { nature: 'text', content: { text: text_3 } },
-        { nature: 'text', content: { text: text_4 } }
+        { nature: 'text', content: { text: text_3 } }
       ],
       speech: {
         text: "Welcome to Ping Pong Bot",
@@ -273,24 +267,6 @@ HTML
             date: DateTime.now,
             action: "action_#{random_id}"
           }
-        })
-
-      when /card_click/i
-        random_id = Random.rand(100)
-        BotApi.card(session_id, {
-          components: [{
-             nature: 'image',
-             content: {
-               url: BotRessources.puppies.sample
-             }
-           }, {
-             nature: 'text',
-             content: {
-               text: 'Grab this puppy! 🐶'
-             }
-           }],
-          payload: { action: "puppy_#{random_id}" },
-          disable_on_click: true,
         })
 
       when /card/i
