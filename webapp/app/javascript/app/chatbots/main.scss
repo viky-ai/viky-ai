@@ -95,6 +95,17 @@ aside.chatbots-list{
   }
 }
 
+body[data-controller-name="chatbots"][data-controller-action="show"]{
+  @media (max-width: 800px){
+    nav{
+      display:none;
+    }
+    .app-wrapper{
+      height: 100%;
+    }
+  }
+}
+
 
 .chatbot{
   height: 100%;
@@ -104,9 +115,8 @@ aside.chatbots-list{
     display: flex;
     align-items: center;
     height: 40px;
-    padding: 0 1em;
+    padding: 0 .5em;
     color: #eee;
-    border-left: 4px solid $primary-color;
     font-size: 1em;
 
     justify-content: space-between;

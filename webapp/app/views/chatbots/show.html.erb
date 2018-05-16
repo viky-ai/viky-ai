@@ -7,6 +7,11 @@
   data-recognition-locale="<%= @current_recognition_locale %>">
   <div class="chatbot__header">
 
+    <a href="<%= chatbots_path %>" class="btn btn--small btn--primary">
+      <span class="icon icon--small">
+        <%= icon_arrow_back %>
+      </span>
+    </a>
     <span>
       <%= @bot.name %>
       <% if @bot.wip_enabled? %>
