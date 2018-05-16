@@ -7,11 +7,11 @@ require 'json'
 module BotRessources
   def self.kittens
     [
-      'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
-      'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
-      'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
-      'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
-      'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
+    'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
+    'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
+    'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
+    'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
+    'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
 
@@ -37,53 +37,150 @@ end
 
 module BotApi
 
-  def self.text(session_id, content)
-    post(session_id, Params::build('text', content))
+  def self.text(text)
+    Params.new(Params::build_text(text))
   end
 
-  def self.image(session_id, content)
-    post(session_id, Params::build('image', content))
+  def self.image(url, title = '', description = '')
+    Params.new(Params::build_image(url, title, description))
   end
 
-  def self.video(session_id, content)
-    post(session_id, Params::build('video', content))
+  def self.video(youtube_id, title = '', description = '')
+    Params.new(Params::build_video(youtube_id, title, description))
   end
 
-  def self.map(session_id, content)
-    post(session_id, Params::build('map', content))
+  def self.map(params , title = '', description = '')
+    Params.new(Params::build_map(params, title, description))
   end
 
-  def self.button(session_id, content)
-    post(session_id, Params::build('button', content))
+  def self.button(name, action)
+    Params.new(Params::build_button(name, action))
   end
 
-  def self.button_group(session_id, content)
-    post(session_id, Params::build('button_group', content))
+  def self.button_group(buttons_list, disable_on_click = false)
+    Params.new(Params::build_button_group(buttons_list, disable_on_click))
   end
 
-  def self.card(session_id, content)
-    post(session_id, Params::build('card', content))
+  def self.card(components)
+    Params.new(Params::build_card(components))
   end
 
-  def self.list(session_id, content)
-    post(session_id, Params::build('list', content))
+  def self.list(items, orientation = :horizontal)
+    Params.new(Params::build_list(items, orientation))
   end
 
-  def self.post(session_id, parameters)
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-    url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
-    RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
-  end
 
   class Params
-    def self.build(nature, content)
+    def initialize(statement)
+      @statement = statement
+    end
+
+    def add_speech(text, local)
+      @statement[:speech] = {
+        text: text,
+        local: local
+      }
+      self
+    end
+
+    def send(session_id)
+      post(session_id, statement: @statement)
+    end
+
+    def self.build_text(text)
       {
-        statement: {
-          nature: nature,
-          content: content
+        nature: 'text',
+        content: { text: text }
+      }
+    end
+
+    def self.build_button(name, action)
+      {
+        nature: 'button',
+        content: {
+          text: name,
+          payload: { action: action }
         }
       }
     end
+
+    def self.build_button_group(buttons_list, disable_on_click = false)
+      group = {
+        nature: 'button_group',
+        content: {
+          buttons: buttons_list.collect do |button|
+            {
+              text: button[0],
+              payload: { action: button[1] }
+            }
+          end
+        }
+      }
+      group[:content][:disable_on_click] = true if disable_on_click
+      group
+    end
+
+    def self.build_image(url, title = '', description = '')
+      img = {
+        url: url
+      }
+      img[:title] = title unless title.empty?
+      img[:description] = description unless description.empty?
+      {
+        nature: 'image',
+        content: img
+      }
+    end
+
+    def self.build_video(youtube_id, title = '', description = '')
+      video = {
+        params: youtube_id
+      }
+      video[:title] = title unless title.empty?
+      video[:description] = description unless description.empty?
+      {
+        nature: 'video',
+        content: video
+      }
+    end
+
+    def self.build_map(params, title = '', description = '')
+      map = {
+        params: params
+      }
+      map[:title] = title unless title.empty?
+      map[:description] = description unless description.empty?
+      {
+        nature: 'map',
+        content: map
+      }
+    end
+
+    def self.build_card(components)
+      {
+        nature: 'card',
+        content: {
+          components: components
+        }
+      }
+    end
+
+    def self.build_list(items, orientation = :horizontal)
+      {
+        nature: 'list',
+        content: {
+          orientation: orientation,
+          items: items
+        }
+      }
+    end
+
+    private
+      def post(session_id, parameters)
+        base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+        url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
+        RestClient.post(url, parameters.to_json, content_type: :json, accept: :json)
+      end
   end
 end
 
@@ -119,8 +216,8 @@ HTML
   <li><code>map_view</code> show map via <strong>View mode</strong>.</li>
   <li><code>map_streetview</code> show map via <strong>Street View mode</strong>.</li>
 </ul>
-
 HTML
+
     text_3  = <<-HTML
 <p>3. <strong>Button & Button group widget</strong></p>
 <p>Enter the following commands in order to play with buttons:</p>
@@ -144,19 +241,18 @@ HTML
 HTML
 
     session_id = JSON.parse(request.body.read)["session_id"]
-    BotApi.list(session_id, {
-      orientation: :horizontal,
-      items: [
-        { nature: 'text', content: { text: text_1 } },
-        { nature: 'text', content: { text: text_2 } },
-        { nature: 'text', content: { text: text_3 } },
-        { nature: 'text', content: { text: text_4 } }
-      ],
-      speech: {
-        text: "Welcome to Ping Pong Bot",
-        locale: "en-US"
-      }
-    })
+    BotApi
+      .list(
+        [
+          BotApi::Params::build_text(text_1),
+          BotApi::Params::build_text(text_2),
+          BotApi::Params::build_text(text_3),
+          BotApi::Params::build_text(text_4)
+        ],
+        :horizontal,
+      )
+      .add_speech('Welcome to Ping Pong Bot', 'en-US')
+      .send(session_id)
 
     status 200
     json Hash.new
@@ -171,27 +267,19 @@ HTML
 
     case parameters['user_action']['type']
 
-    when "click"
+    when 'click'
       payload = parameters['user_action']['payload']
 
       case payload['action']
       when 'display_kitten'
-        BotApi.image(session_id, {
-          url: BotRessources.kittens.sample
-        })
+        BotApi.image(BotRessources.kittens.sample).send(session_id)
       when 'display_puppy'
-        BotApi.image(session_id, {
-          url: BotRessources.puppies.sample
-        })
+        BotApi.image(BotRessources.puppies.sample).send(session_id)
       when 'display_duckling'
-        BotApi.image(session_id, {
-          url: BotRessources.ducklings.sample
-        })
+        BotApi.image(BotRessources.ducklings.sample).send(session_id)
       else
-        nice_payload = JSON.pretty_generate(payload);
-        BotApi.text(session_id, {
-          text: "<p>You triggered with payload:</p><pre>#{nice_payload}</pre>"
-        })
+        nice_payload = JSON.pretty_generate(payload)
+        BotApi.text("<p>You triggered with payload:</p><pre>#{nice_payload}</pre>").send(session_id)
       end
 
     when "says"
@@ -199,313 +287,135 @@ HTML
 
       case user_statement_says
       when /ping/i
-        BotApi.text(session_id, {
-          text: "Pong",
-          speech: {
-            text: "Pong succeed",
-            locale: "en-US"
-          }
-        })
-
+        BotApi
+          .text('Pong')
+          .add_speech('Pong succeed', 'en-US')
+          .send(session_id)
       when /pong/i
-        BotApi.text(session_id, {
-          text: "Ping",
-          speech: {
-            text: "Ping succeed",
-            locale: "en-US"
-          }
-        })
-
+        BotApi
+          .text('Ping')
+          .add_speech('Ping succeed', 'en-US')
+          .send(session_id)
       when /image/i
-        BotApi.image(session_id, {
-          url: BotRessources.kittens.sample,
-          title: 'Here we love kittens',
-          description: 'The kittens are too cute. Do you agree?',
-          speech: {
-            text: "Voici une image de chatton",
-            locale: "fr-FR"
-          }
-        })
-
+        BotApi
+          .image(
+            BotRessources.kittens.sample,
+            'Here we love kittens',
+            'The kittens are too cute. Do you agree?'
+          )
+          .add_speech('Voici une image de chatton', 'fr-FR')
+          .send(session_id)
       when /map_place/i
-        BotApi.map(session_id, {
-          params: "place?key=***REMOVED***&q=Valence",
-          title: "Valence (Drôme)",
-          description: "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."
-        })
-
+        BotApi.map("place?key=***REMOVED***&q=Valence",
+          "Valence (Drôme)",
+          "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."
+        ).send(session_id)
       when /map_directions/i
-        BotApi.map(session_id, {
-          params: "directions?key=***REMOVED***&origin=Paris+France&destination=Valence+France",
-          title: "Itinéraire de Paris à Valence"
-        })
-
+        BotApi.map(
+          "directions?key=***REMOVED***&origin=Paris+France&destination=Valence+France",
+          "Itinéraire de Paris à Valence"
+        ).send(session_id)
       when /map_search/i
-        BotApi.map(session_id, {
-          params: "search?key=***REMOVED***&q=Restaurant+Valence",
-          title: "Restaurants (Valence)"
-        })
-
+        BotApi.map(
+          "search?key=***REMOVED***&q=Restaurant+Valence",
+          "Restaurants (Valence)"
+        ).send(session_id)
       when /map_view/i
-        BotApi.map(session_id, {
-          params: "view?key=***REMOVED***&center=48.858281,2.294667&zoom=18&maptype=satellite",
-          title: "Tour Eiffel",
-          description: "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."
-        })
-
+        BotApi.map(
+          "view?key=***REMOVED***&center=48.858281,2.294667&zoom=18&maptype=satellite",
+          "Tour Eiffel",
+          "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."
+        ).send(session_id)
       when /map_streetview/i
-        BotApi.map(session_id, {
-          params: "streetview?key=***REMOVED***&location=44.929228,4.8887884&heading=-60&pitch=10",
-          title: "Kiosque Peynet (Valence)"
-        })
-
+        BotApi.map(
+          "streetview?key=***REMOVED***&location=44.929228,4.8887884&heading=-60&pitch=10",
+          "Kiosque Peynet (Valence)"
+        ).send(session_id)
       when /deactivatable_button_group/i
-        BotApi.button_group(session_id, {
-          disable_on_click: true,
-          buttons: [
-            {
-              text: "Show me kitten",
-              payload: { action: "display_kitten" }
-            },
-            {
-              text: "Show me puppy",
-              payload: { action: "display_puppy" }
-            },
-            {
-              text: "Show me duckling",
-              payload: { action: "display_duckling" }
-            }
-          ]
-        })
-
+        BotApi.button_group([
+            ['Show me kitten', 'display_kitten'],
+            ['Show me puppy', 'display_puppy'],
+            ['Show me duckling', 'display_duckling']
+          ],
+          true
+        ).send(session_id)
       when /button_group/i
-        BotApi.button_group(session_id, {
-          buttons: [
-            {
-              text: "Show me kitten",
-              payload: { action: "display_kitten" }
-            },
-            {
-              text: "Show me puppy",
-              payload: { action: "display_puppy" }
-            },
-            {
-              text: "Show me duckling",
-              payload: { action: "display_duckling" }
-            }
-          ]
-        })
-
+        BotApi.button_group([
+            ['Show me kitten', 'display_kitten'],
+            ['Show me puppy', 'display_puppy'],
+            ['Show me duckling', 'display_duckling']
+          ]).send(session_id)
       when /button/i
         random_id = Random.rand(100)
-        BotApi.button(session_id, {
-          text: "Button #{random_id}",
-          payload: {
-            date: DateTime.now,
-            action: "action_#{random_id}"
-          }
-        })
-
+        BotApi.button("Button #{random_id}", "action_#{random_id}").send(session_id)
       when /card_video/i
-        BotApi.card(session_id, {
-          components: [
-            {
-              nature: 'video',
-              content: {
-                params: "bpOSxM0rNPM"
-              }
-            },
-            {
-              nature: 'button',
-              content: {
-                text: "Buy the album",
-                payload: { action: "album_added_to_basket" }
-              }
-            }
-          ],
-        })
-
-
+        BotApi.card([
+          BotApi::Params::build_video('bpOSxM0rNPM'),
+          BotApi::Params::build_button('Buy the album', 'album_added_to_basket')
+        ]).send(session_id)
       when /hlist_card/i
-        BotApi.list(session_id, {
-          orientation: :horizontal,
-          items: [
-            {
-              nature: 'card',
-              content: {
-                components: [
-                  {
-                    nature: 'image',
-                    content: {
-                      url: BotRessources.kittens[0],
-                      title: "Lovely kitten - 780$",
-                      description: "Soooooo cute!"
-                    }
-                  },
-                  {
-                    nature: 'button',
-                    content: {
-                      text: "Add to basket",
-                      payload: { action: "kitten_0_added_to_basket" }
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              nature: 'card',
-              content: {
-                components: [
-                  {
-                    nature: 'image',
-                    content: {
-                      url: BotRessources.kittens[1],
-                      title: "Lovely kitten - 600$",
-                      description: "Soooooo cute!"
-                    }
-                  },
-                  {
-                    nature: 'button',
-                    content: {
-                      text: "Add to basket",
-                      payload: { action: "kitten_1_added_to_basket" }
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              nature: 'card',
-              content: {
-                components: [
-                  {
-                    nature: 'image',
-                    content: {
-                      url: BotRessources.kittens[2],
-                      title: "Lovely kitten - 1200$",
-                      description: "Soooooo cute!"
-                    }
-                  },
-                  {
-                    nature: 'button',
-                    content: {
-                      text: "Add to basket",
-                      payload: { action: "kitten_2_added_to_basket" }
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        })
-
-      when /hlist/i
-        BotApi.list(session_id, {
-          orientation: :horizontal,
-          items: BotRessources.kittens.collect { |img|
-            {
-              nature: 'image',
-              content: { url: img }
-            }
-          },
-          speech: {
-            text: "Here is an horizontal list of kittens",
-            locale: "en-US"
-          }
-        })
-
-
-      when /vlist/i
-        BotApi.list(session_id, {
-          orientation: :vertical,
-          items: [
-            {
-              nature: 'image',
-              content: {
-                url: BotRessources.puppies[0]
-              }
-            },
-            {
-              nature: 'image',
-              content: {
-                url: BotRessources.puppies[1]
-              }
-            },
-            {
-              nature: 'text',
-              content: {
-                text: "<strong>What's your favorite?</strong>"
-              }
-            },
-            {
-              nature: 'button_group',
-              content: {
-                disable_on_click: true,
-                buttons: [
-                  {
-                    text: "The first",
-                    payload: { action: "choose_puppy_0" }
-                  },
-                  {
-                    text: "The second",
-                    payload: { action: "choose_puppy_1" }
-                  }
-                ]
-              }
-            }
+        BotApi.list(
+          [
+            BotApi::Params::build_card([
+              BotApi::Params::build_image(BotRessources.kittens[0], 'Lovely kitten - 780$', 'Soooooo cute!'),
+              BotApi::Params::build_button('Add to basket', 'kitten_0_added_to_basket')
+            ]),
+            BotApi::Params::build_card([
+               BotApi::Params::build_image(BotRessources.kittens[1], 'Lovely kitten - 600$', 'Soooooo cute!'),
+               BotApi::Params::build_button('Add to basket', 'kitten_1_added_to_basket')
+            ]),
+            BotApi::Params::build_card([
+               BotApi::Params::build_image(BotRessources.kittens[2], 'Lovely kitten - 1200$', 'Soooooo cute!'),
+               BotApi::Params::build_button('Add to basket', 'kitten_2_added_to_basket')
+            ]),
           ],
-          speech: {
-            text: "Here is an vertical list of mixed content",
-            locale: "en-US"
-          }
-        })
-
-
+          :horizontal
+        ).send(session_id)
+      when /hlist/i
+        BotApi
+          .list(
+            BotRessources.kittens.collect { |img| BotApi::Params::build_image(img) },
+            :horizontal,
+          )
+          .add_speech('Here is an horizontal list of kittens', 'en-US')
+          .send(session_id)
+      when /vlist/i
+        BotApi
+          .list([
+            BotApi::Params::build_image(BotRessources.puppies[0]),
+            BotApi::Params::build_image(BotRessources.puppies[1]),
+            BotApi::Params::build_text("<strong>What's your favorite?</strong>"),
+            BotApi::Params::build_button_group([
+              ['The first', 'choose_puppy_0'],
+              ['The second', 'choose_puppy_1']
+            ],
+              true)
+            ],
+            :vertical)
+          .add_speech('Here is an vertical list of mixed content', 'en-US')
+          .send(session_id)
       when /card/i
-        BotApi.card(session_id, {
-          components: [
-            {
-              nature: 'image',
-              content: {
-                url: BotRessources.kittens.sample,
-                title: "Lovely kitten - 780$",
-                description: "Soooooo cute!"
-              }
-            },
-            {
-              nature: 'button',
-              content: {
-                text: "Add to basket",
-                payload: { action: "kitten_added_to_basket" }
-              }
-            }
-          ]
-        })
-
-
-
+        BotApi.card([
+          BotApi::Params::build_image(BotRessources.kittens.sample, 'Lovely kitten - 780$', 'Soooooo cute!'),
+          BotApi::Params::build_button('Add to basket', 'kitten_added_to_basket')
+        ]).send(session_id)
       when /video/i
-        description  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
+        description = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
         description << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
         description << 'Hotel & Casino is out now on Domino Record Co.'
-        BotApi.video(session_id, {
-          params: "bpOSxM0rNPM",
-          title: 'Arctic Monkeys - Do I Wanna Know?',
-          description: description,
-          speech: {
-            text: "Let's play musuc video!",
-            locale: "en-GB"
-          }
-        })
-
+        BotApi
+          .video(
+            'bpOSxM0rNPM',
+            'Arctic Monkeys - Do I Wanna Know?',
+            description
+          )
+          .add_speech("Let's play musuc video!", 'en-GB')
+          .send(session_id)
       else
-        BotApi.text(session_id, {
-          text: "I did not understand: \"#{user_statement_says}\"",
-          speech: {
-            text: "Oops",
-            locale: "en-US"
-          }
-        })
+        BotApi
+          .text("I did not understand: \"#{user_statement_says}\"")
+          .add_speech('Oops', 'en-US')
+          .send(session_id)
       end
     end
 
