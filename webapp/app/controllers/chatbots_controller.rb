@@ -15,9 +15,11 @@ class ChatbotsController < ApplicationController
     end
 
     # Update ChatSession locale if requested
-    if @available_recognition_locale.keys.include? params[:recognition_locale].to_sym
-      @chat_session.locale = params[:recognition_locale]
-      @chat_session.save
+    unless params[:recognition_locale].nil?
+      if @available_recognition_locale.keys.include? params[:recognition_locale].to_sym
+        @chat_session.locale = params[:recognition_locale]
+        @chat_session.save
+      end
     end
   end
 
