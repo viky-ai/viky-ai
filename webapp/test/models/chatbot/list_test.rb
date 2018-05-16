@@ -26,7 +26,7 @@ class Chatbot::ListTest < ActiveSupport::TestCase
     )
     assert statement.save
 
-    assert_instance_of Chatbot::ChatStatementList, statement.component
+    assert_instance_of Chatbot::List, statement.component
     assert statement.component.is_horizontal?
     assert_not statement.component.is_vertival?
   end
