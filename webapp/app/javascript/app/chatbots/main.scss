@@ -131,8 +131,6 @@ body[data-controller-name="chatbots"][data-controller-action="show"]{
     @media (min-width: 800px){
       height: calc(100% - 70px);
     }
-    background-color: #f5f5f5;
-
     background-color: lighten(#0E131A, 89%);
 
     padding-top: 1em;

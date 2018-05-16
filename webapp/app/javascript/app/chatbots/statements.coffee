@@ -8,6 +8,7 @@ class Chat
   constructor: ->
     new ButtonGroups()
     List.generateAll()
+    Statement.init_ui()
 
     @recognition = new Recognition()
 
@@ -128,9 +129,10 @@ class Statement
 
     List.generateLast()
 
-    Statement.scroll_to_last()
     avatar.removeClass('chatbot__avatar--hidden')
     widget.removeClass('chatbot__widget--hidden')
+
+    Statement.scroll_to_last()
 
     if @is_from_user()
       Statement.display_bot_waiting()
@@ -152,8 +154,10 @@ class Statement
     Statement.scroll_to_last(0)
 
   @scroll_to_last: (duration = 250) ->
+    discussion_h = $('.chatbot__discussion').prop("scrollHeight")
+    statement_h = $('.chatbot__statement').last().outerHeight()
     $(".chatbot__discussion").animate(
-      { scrollTop: $('.chatbot__discussion').prop("scrollHeight")}, duration
+      { scrollTop: discussion_h - statement_h - 60}, duration
     )
 
   @speech: (text, locale) ->
@@ -217,7 +221,6 @@ class ButtonGroups
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    Statement.init_ui()
     new Chat()
 
 $(document).on('turbolinks:load', Setup)
