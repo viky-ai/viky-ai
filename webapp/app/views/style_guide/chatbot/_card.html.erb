@@ -284,5 +284,41 @@
     </div>
   </div>
 
+
+  <div class="chatbot">
+    <div class="chatbot__discussion">
+      <div class="chatbot__statement chatbot__statement--bot">
+        <div class="chatbot__avatar">
+          <div class="chatbot__avatar__image">
+            <img src="<%= image_path('default_bot.png') %>">
+          </div>
+          <div class="chatbot__avatar__time">12:00</div>
+        </div>
+        <div class="chatbot__widget chatbot__widget--card">
+          <div class="chatbot__widget chatbot__widget--map">
+            <div class="chatbot__widget--map__wrapper">
+              <iframe
+                width="600"
+                height="450"
+                frameborder="0" style="border:0"
+                src="https://www.google.com/maps/embed/v1/place?key=***REMOVED***
+                  &q=Valence" allowfullscreen>
+              </iframe>
+            </div>
+            <div class="chatbot__widget--map__info">
+              <h2>Valence (Drôme)</h2>
+              <p>
+                Valence est une commune du sud-est de la France.
+              </p>
+            </div>
+          </div>
+          <form class="chatbot__widget chatbot__widget--button">
+            <button>Add to basket</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 <% end %>

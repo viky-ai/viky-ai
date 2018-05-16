@@ -268,7 +268,6 @@ $chatbot_statement_radius: 8px;
   .chatbot__widget--video__wrapper{
     position: relative;
     padding-bottom: 56.25%; /* 16:9 */
-    padding-top: 25px;
     height: 0;
     iframe {
       position: absolute;
@@ -279,6 +278,45 @@ $chatbot_statement_radius: 8px;
     }
   }
   .chatbot__widget--video__info{
+    line-height: 1.4rem;
+    padding: .5rem .8rem;
+    h2{
+      font-size: 1em;
+      margin: .25em 0 .15em 0;
+    }
+    p{
+      font-size: 0.9em;
+      color: #666;
+      margin: 0;
+    }
+    .chatbot__widget--card &{
+      background-color: #333;
+      color: #fff;
+      p{
+        color: #ddd;
+      }
+    }
+  }
+}
+
+
+// Widget video
+.chatbot__widget.chatbot__widget--map{
+  border: 2px solid #fff;
+  width: 100%;
+  .chatbot__widget--map__wrapper{
+    position: relative;
+    padding-bottom: 75%; /* 4:3 */
+    height: 0;
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .chatbot__widget--map__info{
     line-height: 1.4rem;
     padding: .5rem .8rem;
     h2{

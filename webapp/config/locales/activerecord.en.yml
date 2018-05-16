@@ -17,6 +17,10 @@ en:
         params: content.params
         title: content.title
         subtitle: content.subtitle
+      chatbot/chat_statement_map:
+        params: content.params
+        title: content.title
+        subtitle: content.subtitle
       chatbot/chat_statement_button:
         text: content.text
         payload: content.payload
