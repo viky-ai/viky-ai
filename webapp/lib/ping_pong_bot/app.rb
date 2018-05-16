@@ -224,7 +224,7 @@ HTML
 <ul>
   <li><code>button</code> show the button widget.</li>
   <li><code>button_group</code> show the button group widget.</li>
-  <li><code>deactivatable_button_group</code> show the button group widget with disable_on_click option enabled.</li>
+  <li><code>button_group_deactivable</code> show the button group widget with disable_on_click option enabled.</li>
 </ul>
 HTML
 
@@ -305,80 +305,71 @@ HTML
           )
           .add_speech('Voici une image de chatton', 'fr-FR')
           .send(session_id)
-      when /map_place/i
-        BotApi.map("place?key=***REMOVED***&q=Valence",
-          "Valence (Drôme)",
-          "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."
-        ).send(session_id)
-      when /map_directions/i
-        BotApi.map(
-          "directions?key=***REMOVED***&origin=Paris+France&destination=Valence+France",
-          "Itinéraire de Paris à Valence"
-        ).send(session_id)
-      when /map_search/i
-        BotApi.map(
-          "search?key=***REMOVED***&q=Restaurant+Valence",
-          "Restaurants (Valence)"
-        ).send(session_id)
-      when /map_view/i
-        BotApi.map(
-          "view?key=***REMOVED***&center=48.858281,2.294667&zoom=18&maptype=satellite",
-          "Tour Eiffel",
-          "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."
-        ).send(session_id)
-      when /map_streetview/i
-        BotApi.map(
-          "streetview?key=***REMOVED***&location=44.929228,4.8887884&heading=-60&pitch=10",
-          "Kiosque Peynet (Valence)"
-        ).send(session_id)
-      when /deactivatable_button_group/i
-        BotApi.button_group([
+        when /map(_|\s)?(place|directions|search|view|streetview)/i
+          params, title, description = case $2
+            when 'place'
+              ["place?key=***REMOVED***&q=Valence",
+              "Valence (Drôme)",
+              "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."]
+            when 'directions'
+              ["directions?key=***REMOVED***&origin=Paris+France&destination=Valence+France",
+              "Itinéraire de Paris à Valence", '']
+            when 'search'
+              ["search?key=***REMOVED***&q=Restaurant+Valence",
+              "Restaurants (Valence)", '']
+            when 'view'
+              ["view?key=***REMOVED***&center=48.858281,2.294667&zoom=18&maptype=satellite",
+              "Tour Eiffel",
+              "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."]
+            when 'streetview'
+              ["streetview?key=***REMOVED***&location=44.929228,4.8887884&heading=-60&pitch=10",
+              "Kiosque Peynet (Valence)", '']
+            else
+              ['', '', '']
+          end
+          BotApi.map(params, title, description).send(session_id)
+      when /button(_|\s)?(group)?(_|\s)?(deactivable)?/i
+        is_group = !$2.nil? && !$2.empty?
+        is_deactivable = !$4.nil? && !$4.empty?
+        if is_group
+          BotApi.button_group([
             ['Show me kitten', 'display_kitten'],
             ['Show me puppy', 'display_puppy'],
             ['Show me duckling', 'display_duckling']
-          ],
-          true
-        ).send(session_id)
-      when /button_group/i
-        BotApi.button_group([
-            ['Show me kitten', 'display_kitten'],
-            ['Show me puppy', 'display_puppy'],
-            ['Show me duckling', 'display_duckling']
-          ]).send(session_id)
-      when /button/i
-        random_id = Random.rand(100)
-        BotApi.button("Button #{random_id}", "action_#{random_id}").send(session_id)
-      when /card_video/i
-        BotApi.card([
-          BotApi::Params::build_video('bpOSxM0rNPM'),
-          BotApi::Params::build_button('Buy the album', 'album_added_to_basket')
-        ]).send(session_id)
-      when /hlist_card/i
-        BotApi.list(
-          [
-            BotApi::Params::build_card([
-              BotApi::Params::build_image(BotRessources.kittens[0], 'Lovely kitten - 780$', 'Soooooo cute!'),
-              BotApi::Params::build_button('Add to basket', 'kitten_0_added_to_basket')
-            ]),
-            BotApi::Params::build_card([
-               BotApi::Params::build_image(BotRessources.kittens[1], 'Lovely kitten - 600$', 'Soooooo cute!'),
-               BotApi::Params::build_button('Add to basket', 'kitten_1_added_to_basket')
-            ]),
-            BotApi::Params::build_card([
-               BotApi::Params::build_image(BotRessources.kittens[2], 'Lovely kitten - 1200$', 'Soooooo cute!'),
-               BotApi::Params::build_button('Add to basket', 'kitten_2_added_to_basket')
-            ]),
-          ],
-          :horizontal
-        ).send(session_id)
-      when /hlist/i
-        BotApi
-          .list(
-            BotRessources.kittens.collect { |img| BotApi::Params::build_image(img) },
-            :horizontal,
-          )
-          .add_speech('Here is an horizontal list of kittens', 'en-US')
-          .send(session_id)
+          ], is_deactivable).send(session_id)
+        else
+          random_id = Random.rand(100)
+          BotApi.button("Button #{random_id}", "action_#{random_id}").send(session_id)
+        end
+      when /hlist(_|\s)?(card)?/i
+        is_card = !$2.nil? && !$2.empty?
+        if is_card
+          BotApi.list(
+            [
+              BotApi::Params::build_card([
+                BotApi::Params::build_image(BotRessources.kittens[0], 'Lovely kitten - 780$', 'Soooooo cute!'),
+                BotApi::Params::build_button('Add to basket', 'kitten_0_added_to_basket')
+              ]),
+              BotApi::Params::build_card([
+                BotApi::Params::build_image(BotRessources.kittens[1], 'Lovely kitten - 600$', 'Soooooo cute!'),
+                BotApi::Params::build_button('Add to basket', 'kitten_1_added_to_basket')
+              ]),
+              BotApi::Params::build_card([
+                BotApi::Params::build_image(BotRessources.kittens[2], 'Lovely kitten - 1200$', 'Soooooo cute!'),
+                BotApi::Params::build_button('Add to basket', 'kitten_2_added_to_basket')
+              ]),
+            ],
+            :horizontal
+          ).send(session_id)
+        else
+          BotApi
+            .list(
+              BotRessources.kittens.collect { |img| BotApi::Params::build_image(img) },
+              :horizontal
+            )
+            .add_speech('Here is an horizontal list of kittens', 'en-US')
+            .send(session_id)
+        end
       when /vlist/i
         BotApi
           .list([
@@ -394,11 +385,19 @@ HTML
             :vertical)
           .add_speech('Here is an vertical list of mixed content', 'en-US')
           .send(session_id)
-      when /card/i
-        BotApi.card([
-          BotApi::Params::build_image(BotRessources.kittens.sample, 'Lovely kitten - 780$', 'Soooooo cute!'),
-          BotApi::Params::build_button('Add to basket', 'kitten_added_to_basket')
-        ]).send(session_id)
+      when /card(_|\s)?(video)?/i
+        is_video = !$2.nil? && !$2.empty?
+        if is_video
+          BotApi.card([
+            BotApi::Params::build_video('bpOSxM0rNPM'),
+            BotApi::Params::build_button('Buy the album', 'album_added_to_basket')
+          ]).send(session_id)
+        else
+          BotApi.card([
+            BotApi::Params::build_image(BotRessources.kittens.sample, 'Lovely kitten - 780$', 'Soooooo cute!'),
+            BotApi::Params::build_button('Add to basket', 'kitten_added_to_basket')
+          ]).send(session_id)
+        end
       when /video/i
         description = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
         description << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
