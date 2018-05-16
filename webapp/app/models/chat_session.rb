@@ -5,6 +5,8 @@ class ChatSession < ApplicationRecord
   belongs_to :bot
   has_many :chat_statements, dependent: :destroy
 
+  validates :locale, inclusion: { in: lambda { |object| ChatSession.locales.keys.map(&:to_s) } }
+
   after_create :notify_bot
 
   def expired?

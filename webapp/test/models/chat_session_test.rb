@@ -11,6 +11,21 @@ class ChatSessionTest < ActiveSupport::TestCase
   end
 
 
+  test 'locale validation' do
+    chat_session = ChatSession.new(
+      user: users(:admin),
+      bot: bots(:weather_bot)
+    )
+    assert chat_session.save
+    assert_equal 'en-US', chat_session.locale
+
+    chat_session.locale = "missing key"
+    assert_not chat_session.save
+    expected = ["Locale is not included in the list"]
+    assert_equal expected, chat_session.errors.full_messages
+  end
+
+
   test 'Check expired chat session' do
     old_session = chat_sessions(:one)
     assert ChatSession.create(

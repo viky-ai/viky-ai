@@ -4,7 +4,7 @@
 
 <div class="chatbot"
   data-session-id="<%= @chat_session.id %>"
-  data-recognition-locale="<%= @current_recognition_locale %>">
+  data-recognition-locale="<%= @chat_session.locale %>">
   <div class="chatbot__header">
 
     <a href="<%= chatbots_path %>" class="btn btn--small btn--primary">
@@ -21,7 +21,7 @@
       <% end %>
     </span>
 
-    <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
+    <a href="<%= reset_chatbot_path(@bot, recognition_locale: @chat_session.locale) %>"
        class="btn btn--small btn--primary">
       <span class="icon icon--small">
         <%= icon_loading %>
@@ -38,7 +38,7 @@
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
       <div class="field field--inline">
         <div class="control chatbot-reset-button-container">
-          <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
+          <a href="<%= reset_chatbot_path(@bot, recognition_locale: @chat_session.locale) %>"
              class="btn">
             <span class="icon icon--small">
               <%= icon_loading %>
@@ -67,7 +67,7 @@
                 <% @available_recognition_locale.each do |key, data| %>
                   <li>
                     <a href="?recognition_locale=<%= key %>"
-                      <% if key.to_s == @current_recognition_locale %>class="current"<% end %>>
+                      <% if key.to_s == @chat_session.locale %>class="current"<% end %>>
                       <span class="badge">
                         <code><%= key %></code>
                       </span>

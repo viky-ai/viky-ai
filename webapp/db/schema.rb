@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180516073306) do
+ActiveRecord::Schema.define(version: 20180516123032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 20180516073306) do
     t.uuid "bot_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "locale", default: "en-US"
     t.index ["bot_id"], name: "index_chat_sessions_on_bot_id"
     t.index ["user_id"], name: "index_chat_sessions_on_user_id"
   end

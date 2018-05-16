@@ -1,7 +1,6 @@
 class ChatbotsController < ApplicationController
   before_action :set_bots
   before_action :set_available_recognition_locale
-  before_action :set_current_recognition_locale
 
   def index
   end
@@ -12,6 +11,12 @@ class ChatbotsController < ApplicationController
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     else
       @chat_session = ChatSession.new(user: current_user, bot: @bot)
+      @chat_session.save
+    end
+
+    # Update ChatSession locale if requested
+    if @available_recognition_locale.keys.include? params[:recognition_locale].to_sym
+      @chat_session.locale = params[:recognition_locale]
       @chat_session.save
     end
   end
@@ -26,10 +31,10 @@ class ChatbotsController < ApplicationController
     ActionCable.server.broadcast "chat_session_channel_#{current_user.id}", {
       session_id: previous_chat_session.id,
       action: "reset",
-      path: chatbot_path(@bot, recognition_locale: @current_recognition_locale)
+      path: chatbot_path(@bot, recognition_locale: previous_chat_session.locale)
     }
 
-    redirect_to chatbot_path(@bot, recognition_locale: @current_recognition_locale)
+    redirect_to chatbot_path(@bot, recognition_locale: previous_chat_session.locale)
   end
 
 
@@ -37,16 +42,6 @@ class ChatbotsController < ApplicationController
 
     def set_bots
       @bots = Bot.accessible_bots(current_user)
-    end
-
-
-    def set_current_recognition_locale
-      @current_recognition_locale = "en-US"
-      unless params[:recognition_locale].nil?
-        if @available_recognition_locale.keys.include? params[:recognition_locale].to_sym
-          @current_recognition_locale = params[:recognition_locale]
-        end
-      end
     end
 
     def set_available_recognition_locale
