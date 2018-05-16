@@ -208,7 +208,7 @@ HTML
         BotApi.image(session_id, {
           url: BotRessources.kittens.sample,
           title: 'Here we love kittens',
-          subtitle: 'The kittens are too cute. Do you agree?',
+          description: 'The kittens are too cute. Do you agree?',
           speech: {
             text: "Voici une image de chatton",
             locale: "fr-FR"
@@ -217,7 +217,9 @@ HTML
 
       when /map/i
         BotApi.map(session_id, {
-          params: "place?key=***REMOVED***&q=Valence"
+          params: "place?key=***REMOVED***&q=Valence",
+          title: "Valence (Drôme)",
+          description: "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."
         })
 
       when /deactivatable_button_group/i
@@ -300,7 +302,7 @@ HTML
                     content: {
                       url: BotRessources.kittens[0],
                       title: "Lovely kitten - 780$",
-                      subtitle: "Soooooo cute!"
+                      description: "Soooooo cute!"
                     }
                   },
                   {
@@ -322,7 +324,7 @@ HTML
                     content: {
                       url: BotRessources.kittens[1],
                       title: "Lovely kitten - 600$",
-                      subtitle: "Soooooo cute!"
+                      description: "Soooooo cute!"
                     }
                   },
                   {
@@ -344,7 +346,7 @@ HTML
                     content: {
                       url: BotRessources.kittens[2],
                       title: "Lovely kitten - 1200$",
-                      subtitle: "Soooooo cute!"
+                      description: "Soooooo cute!"
                     }
                   },
                   {
@@ -430,7 +432,7 @@ HTML
               content: {
                 url: BotRessources.kittens.sample,
                 title: "Lovely kitten - 780$",
-                subtitle: "Soooooo cute!"
+                description: "Soooooo cute!"
               }
             },
             {
@@ -446,13 +448,13 @@ HTML
 
 
       when /video/i
-        subtitle  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
-        subtitle << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
-        subtitle << 'Hotel & Casino is out now on Domino Record Co.'
+        description  = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
+        description << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
+        description << 'Hotel & Casino is out now on Domino Record Co.'
         BotApi.video(session_id, {
           params: "bpOSxM0rNPM",
           title: 'Arctic Monkeys - Do I Wanna Know?',
-          subtitle: subtitle,
+          description: description,
           speech: {
             text: "Let's play musuc video!",
             locale: "en-GB"

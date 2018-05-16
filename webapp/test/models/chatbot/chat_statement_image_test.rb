@@ -9,7 +9,7 @@ class ChatStatementImageTest < ActiveSupport::TestCase
       content: {
         url: 'https://www.pertimm.com/assets/img/logo_pertimm.png',
         title: 'Pertimm',
-        subtitle: 'The Pertimm logo.'
+        description: 'The Pertimm logo.'
       },
       chat_session: chat_sessions(:one)
     )
@@ -32,14 +32,14 @@ class ChatStatementImageTest < ActiveSupport::TestCase
   end
 
 
-  test 'image url, title and subtitle length validation' do
+  test 'image url, title and description length validation' do
     statement = ChatStatement.new(
       speaker: :bot,
       nature: :image,
       content: {
         url: 'a' * 5001,
         title: 'a' * 101,
-        subtitle: 'a' * 501
+        description: 'a' * 501
       },
       chat_session: chat_sessions(:one)
     )
@@ -48,7 +48,7 @@ class ChatStatementImageTest < ActiveSupport::TestCase
     expected = [
       'content.url is too long (maximum is 5000 characters)',
       'content.title is too long (maximum is 100 characters)',
-      'content.subtitle is too long (maximum is 500 characters)',
+      'content.description is too long (maximum is 500 characters)',
     ].join(', ')
 
     assert_equal [expected], statement.errors.full_messages

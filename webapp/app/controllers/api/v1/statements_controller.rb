@@ -59,17 +59,17 @@ class Api::V1::StatementsController < Api::V1::ApplicationController
 
     def image_content_params(with_speech=true)
       speech = with_speech ? [speech: [:text, :locale]] : []
-      [:url, :title, :subtitle] + speech
+      [:url, :title, :description] + speech
     end
 
     def video_content_params(with_speech=true)
       speech = with_speech ? [speech: [:text, :locale]] : []
-      [:params, :title, :subtitle] + speech
+      [:params, :title, :description] + speech
     end
 
     def map_content_params(with_speech=true)
       speech = with_speech ? [speech: [:text, :locale]] : []
-      [:params, :title, :subtitle] + speech
+      [:params, :title, :description] + speech
     end
 
     def button_content_params(with_speech=true)

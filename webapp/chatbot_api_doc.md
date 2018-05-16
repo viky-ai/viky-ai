@@ -101,7 +101,7 @@ JSON structure :
 
 #### <code>image</code> nature
 
-Display an image with optional title and subtitle.
+Display an image with optional title and description.
 
 JSON structure :
 ```
@@ -111,7 +111,7 @@ JSON structure :
     content: {
       url: <url>,
       title: <title>,
-      subtitle: <subtitle>,
+      description: <description>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -123,7 +123,7 @@ JSON structure :
 
 * `<url>` the image URL (**required**).
 * `<title>` a noteworthy title.
-* `<subtitle>` a short description.
+* `<description>` a short description.
 * `<speech_text>` Text to speech (via text to speech).
 * `<speech_locale>` Locale of the text to speech.
 
@@ -132,7 +132,7 @@ JSON structure :
 
 #### <code>video</code> nature
 
-Display a video with optional title and subtitle.
+Display a video with optional title and description.
 
 JSON structure :
 ```
@@ -142,7 +142,7 @@ JSON structure :
     content: {
       params: <params>,
       title: <title>,
-      subtitle: <subtitle>,
+      description: <description>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -154,7 +154,7 @@ JSON structure :
 
 * `<params>` the Youtube URL params; i.e. `https://www.youtube.com/embed/<params>` (**required**).
 * `<title>` a noteworthy title.
-* `<subtitle>` a short description.
+* `<description>` a short description.
 * `<speech_text>` Text to speech (via text to speech).
 * `<speech_locale>` Locale of the text to speech.
 

@@ -10,10 +10,10 @@
   <% if map.has_info? %>
     <div class="chatbot__widget--map__info">
       <% if map.title.present? %>
-        <h2><%= video.title %></h2>
+        <h2><%= map.title %></h2>
       <% end %>
-      <% if map.subtitle.present? %>
-        <p><%= map.subtitle %></p>
+      <% if map.description.present? %>
+        <p><%= map.description %></p>
       <% end %>
     </div>
   <% end %>

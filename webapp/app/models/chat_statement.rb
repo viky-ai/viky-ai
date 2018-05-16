@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session, touch: true
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :video, :button, :button_group, :card, :list, :notification, :map]
+  enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification]
 
   serialize :content, JSON
 

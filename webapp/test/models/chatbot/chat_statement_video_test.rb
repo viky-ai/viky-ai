@@ -28,14 +28,14 @@ class ChatStatementVideoTest < ActiveSupport::TestCase
   end
 
 
-  test 'Params, title and subtitle length validation' do
+  test 'Params, title and description length validation' do
     statement = ChatStatement.new(
       speaker: :bot,
       nature: :video,
       content: {
         params: 'a' * 5001,
         title: 'a' * 101,
-        subtitle: 'a' * 501
+        description: 'a' * 501
       },
       chat_session: chat_sessions(:one)
     )
@@ -44,7 +44,7 @@ class ChatStatementVideoTest < ActiveSupport::TestCase
     expected = [
       'content.params is too long (maximum is 5000 characters)',
       'content.title is too long (maximum is 100 characters)',
-      'content.subtitle is too long (maximum is 500 characters)',
+      'content.description is too long (maximum is 500 characters)',
     ].join(', ')
 
     assert_equal [expected], statement.errors.full_messages

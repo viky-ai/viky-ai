@@ -57,7 +57,7 @@
 </div>
   <% end %>
 
-  <h3>Maps + Title + Subtitle</h3>
+  <h3>Maps + Title + Description</h3>
   <%= highlight_html do %>
 <div class="chatbot">
   <div class="chatbot__discussion">
@@ -67,6 +67,21 @@
           <img src="<%= image_path('default_bot.png') %>">
         </div>
         <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--map">
+        <div class="chatbot__widget--map__wrapper">
+          <iframe
+            width="600"
+            height="450"
+            frameborder="0" style="border:0"
+            src="https://www.google.com/maps/embed/v1/place?key=***REMOVED***
+              &q=Valence" allowfullscreen>
+          </iframe>
+        </div>
+        <div class="chatbot__widget--map__info">
+          <h2>Valence (Drôme)</h2>
+          <p>Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois.</p>
+        </div>
       </div>
     </div>
   </div>

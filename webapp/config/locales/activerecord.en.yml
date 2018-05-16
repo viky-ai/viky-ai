@@ -12,15 +12,15 @@ en:
       chatbot/chat_statement_image:
         url: content.url
         title: content.title
-        subtitle: content.subtitle
+        description: content.description
       chatbot/chat_statement_video:
         params: content.params
         title: content.title
-        subtitle: content.subtitle
+        description: content.description
       chatbot/chat_statement_map:
         params: content.params
         title: content.title
-        subtitle: content.subtitle
+        description: content.description
       chatbot/chat_statement_button:
         text: content.text
         payload: content.payload
