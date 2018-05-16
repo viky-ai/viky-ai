@@ -1,8 +1,8 @@
-class Api::V1::StatementsController < Api::V1::ApplicationController
+class Api::V1::ChatStatementsController < Api::V1::ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    chat_session = ChatSession.find(params[:id])
+    chat_session = ChatSession.find(params[:chat_session_id])
     if chat_session.expired?
       render json: { errors: t('statements.expired_session') }, status: :forbidden
     else

@@ -128,11 +128,10 @@ class Statement
     widget = $('.chatbot__discussion .chatbot__statement > .chatbot__widget').last()
 
     List.generateLast()
+    Statement.scroll_to_last()
 
     avatar.removeClass('chatbot__avatar--hidden')
     widget.removeClass('chatbot__widget--hidden')
-
-    Statement.scroll_to_last()
 
     if @is_from_user()
       Statement.display_bot_waiting()
