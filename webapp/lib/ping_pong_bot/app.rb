@@ -531,10 +531,11 @@ HTML
       else
         message = response.body
       end
-    rescue Exception => e
-      message = e.message
     rescue RestClient::ExceptionWithResponse => e
-      message = e.response.body
+      message  = "Body: #{e.response.body}"
+      message << "Exception message: #{e.message}"
+    rescue Exception => e
+      message = "Exception message: #{e.message}"
     end
 
     if ping_failed
