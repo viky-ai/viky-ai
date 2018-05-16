@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementMap
+class Chatbot::Map
   include ActiveModel::Model
   include Speechable
 

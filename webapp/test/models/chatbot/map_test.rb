@@ -1,15 +1,13 @@
 require 'test_helper'
 
-class ChatStatementImageTest < ActiveSupport::TestCase
+class Chatbot::MapTest < ActiveSupport::TestCase
 
-  test 'Create a simple image statement' do
+  test 'Create a simple map statement' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :image,
+      nature: :map,
       content: {
-        url: 'https://www.pertimm.com/assets/img/logo_pertimm.png',
-        title: 'Pertimm',
-        description: 'The Pertimm logo.'
+        params: "place?key=***REMOVED***&q=Valence"
       },
       chat_session: chat_sessions(:one)
     )
@@ -17,27 +15,25 @@ class ChatStatementImageTest < ActiveSupport::TestCase
   end
 
 
-  test 'image url presence validation' do
+  test 'Params presence validation' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :image,
-      content: {
-        url: '',
-      },
+      nature: :map,
+      content: { params: '' },
       chat_session: chat_sessions(:one)
     )
-
     assert statement.invalid?
-    assert_equal ["content.url can't be blank"], statement.errors.full_messages
+    expected = ["content.params can't be blank"]
+    assert_equal expected, statement.errors.full_messages
   end
 
 
-  test 'image url, title and description length validation' do
+  test 'Params, title and description length validation' do
     statement = ChatStatement.new(
       speaker: :bot,
-      nature: :image,
+      nature: :map,
       content: {
-        url: 'a' * 5001,
+        params: 'a' * 5001,
         title: 'a' * 101,
         description: 'a' * 501
       },
@@ -46,7 +42,7 @@ class ChatStatementImageTest < ActiveSupport::TestCase
 
     assert statement.invalid?
     expected = [
-      'content.url is too long (maximum is 5000 characters)',
+      'content.params is too long (maximum is 5000 characters)',
       'content.title is too long (maximum is 100 characters)',
       'content.description is too long (maximum is 500 characters)',
     ].join(', ')

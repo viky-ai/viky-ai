@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementButtonGroupTest < ActiveSupport::TestCase
+class Chatbot::ButtonGroupTest < ActiveSupport::TestCase
 
   test 'Button group creation' do
     statement = ChatStatement.new(

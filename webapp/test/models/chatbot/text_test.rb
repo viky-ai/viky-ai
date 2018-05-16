@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementTextTest < ActiveSupport::TestCase
+class Chatbot::TextTest < ActiveSupport::TestCase
 
   test 'Text presence validation' do
     statement = ChatStatement.new(

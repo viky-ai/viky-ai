@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementCard
+class Chatbot::Card
   include ActiveModel::Model
   include Speechable
 
@@ -37,15 +37,15 @@ class Chatbot::ChatStatementCard
   def component_as_statement(component)
     case component['nature']
     when 'text'
-      Chatbot::ChatStatementText.new(component['content'])
+      Chatbot::Text.new(component['content'])
     when 'image'
-      Chatbot::ChatStatementImage.new(component['content'])
+      Chatbot::Image.new(component['content'])
     when 'video'
-      Chatbot::ChatStatementVideo.new(component['content'])
+      Chatbot::Video.new(component['content'])
     when 'button'
-      Chatbot::ChatStatementButton.new(component['content'])
+      Chatbot::Button.new(component['content'])
     when 'button_group'
-      Chatbot::ChatStatementButtonGroup.new(component['content'])
+      Chatbot::ButtonGroup.new(component['content'])
     end
   end
 

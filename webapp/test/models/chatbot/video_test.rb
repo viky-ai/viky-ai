@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementVideoTest < ActiveSupport::TestCase
+class Chatbot::VideoTest < ActiveSupport::TestCase
 
   test 'Create a simple video statement' do
     statement = ChatStatement.new(

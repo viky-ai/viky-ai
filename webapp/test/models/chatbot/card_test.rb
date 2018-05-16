@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementCardTest < ActiveSupport::TestCase
+class Chatbot::CardTest < ActiveSupport::TestCase
 
   test 'Create a simple card statement' do
     card_statement = ChatStatement.new(

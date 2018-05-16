@@ -1,32 +1,32 @@
 en:
   activemodel:
     attributes:
-      chatbot/chat_statement_speech:
+      chatbot/speech:
         text: content.speech.text
         locale: content.speech.locale
-      chatbot/chat_statement_list:
+      chatbot/list:
         orientation: content.orientation
         items: content.items
-      chatbot/chat_statement_text:
+      chatbot/text:
         text: content.text
-      chatbot/chat_statement_image:
+      chatbot/image:
         url: content.url
         title: content.title
         description: content.description
-      chatbot/chat_statement_video:
+      chatbot/video:
         params: content.params
         title: content.title
         description: content.description
-      chatbot/chat_statement_map:
+      chatbot/map:
         params: content.params
         title: content.title
         description: content.description
-      chatbot/chat_statement_button:
+      chatbot/button:
         text: content.text
         payload: content.payload
-      chatbot/chat_statement_button_group:
+      chatbot/button_group:
         buttons: content.buttons
-      chatbot/chat_statement_notification:
+      chatbot/notification:
         text: content.text
   activerecord:
     models:

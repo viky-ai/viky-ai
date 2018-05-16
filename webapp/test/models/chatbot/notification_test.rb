@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementNotificationTest < ActiveSupport::TestCase
+class Chatbot::NotificationTest < ActiveSupport::TestCase
 
   test 'Create a simple notification statement' do
     statement = ChatStatement.new(

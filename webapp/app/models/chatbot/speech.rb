@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementSpeech
+class Chatbot::Speech
   include ActiveModel::Model
 
   attr_accessor :text

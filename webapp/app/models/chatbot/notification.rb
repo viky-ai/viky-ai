@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementNotification
+class Chatbot::Notification
   include ActiveModel::Model
 
   attr_accessor :text

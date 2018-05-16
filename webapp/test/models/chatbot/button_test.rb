@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ChatStatementButtonTest < ActiveSupport::TestCase
+class Chatbot::ButtonTest < ActiveSupport::TestCase
 
   test 'Create a simple button statement' do
     statement = ChatStatement.new(

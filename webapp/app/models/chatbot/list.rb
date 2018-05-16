@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementList
+class Chatbot::List
   include ActiveModel::Model
   include Speechable
 
@@ -27,17 +27,17 @@ class Chatbot::ChatStatementList
     items.collect do |item|
       case item['nature']
       when 'text'
-        Chatbot::ChatStatementText.new(item["content"])
+        Chatbot::Text.new(item["content"])
       when 'image'
-        Chatbot::ChatStatementImage.new(item["content"])
+        Chatbot::Image.new(item["content"])
       when 'video'
-        Chatbot::ChatStatementVideo.new(item["content"])
+        Chatbot::Video.new(item["content"])
       when 'button'
-        Chatbot::ChatStatementButton.new(item["content"])
+        Chatbot::Button.new(item["content"])
       when 'button_group'
-        Chatbot::ChatStatementButtonGroup.new(item["content"])
+        Chatbot::ButtonGroup.new(item["content"])
       when 'card'
-        Chatbot::ChatStatementCard.new(item["content"])
+        Chatbot::Card.new(item["content"])
       end
     end
   end

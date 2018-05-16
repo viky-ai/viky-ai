@@ -1,4 +1,4 @@
-class Chatbot::ChatStatementButtonGroup
+class Chatbot::ButtonGroup
   include ActiveModel::Model
   include Speechable
 
@@ -16,7 +16,7 @@ class Chatbot::ChatStatementButtonGroup
 
   def buttons_as_components
     buttons.collect do |button|
-      Chatbot::ChatStatementButton.new(button)
+      Chatbot::Button.new(button)
     end
   end
 
