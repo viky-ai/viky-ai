@@ -161,6 +161,39 @@ JSON structure :
 **Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 
+#### <code>map</code> nature
+
+Display a map (via Google Maps Embed API) with optional title and description.
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'video',
+    content: {
+      params: <params>,
+      title: <title>,
+      description: <description>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+* `<params>` the Google Maps Embed API URL params; i.e. `https://www.google.com/maps/embed/v1/<params>` (**required**).
+* `<title>` a noteworthy title.
+* `<description>` a short description.
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
+
+
+
+
 #### <code>button</code> nature
 
 JSON structure :

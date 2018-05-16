@@ -7,11 +7,11 @@ require 'json'
 module BotRessources
   def self.kittens
     [
-    'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
-    'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
-    'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
-    'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
-    'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
+      'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
+      'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
+      'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
+      'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
+      'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
 
@@ -106,12 +106,23 @@ class PingPongBot < Sinatra::Base
   <li><code>ping</code> or <code>pong</code> show simple bot response.</li>
   <li><code>image</code> show the image widget.</li>
   <li><code>video</code> show the video widget.</li>
-  <li><code>map</code> show the map widget.</li>
+</ul>
+HTML
+
+    text_2  = <<-HTML
+<p>2. <strong>Map widget</strong></p>
+<p>Enter the following commands in order to play with maps (via Google Maps Embed API):</p>
+<ul>
+  <li><code>map_place</code> show map via <strong>Place mode</strong>.</li>
+  <li><code>map_directions</code> show map via <strong>Directions mode</strong>.</li>
+  <li><code>map_search</code> show map via <strong>Search mode</strong>.</li>
+  <li><code>map_view</code> show map via <strong>View mode</strong>.</li>
+  <li><code>map_streetview</code> show map via <strong>Street View mode</strong>.</li>
 </ul>
 
 HTML
-    text_2  = <<-HTML
-<p>2. <strong>Button & Button group widget</strong></p>
+    text_3  = <<-HTML
+<p>3. <strong>Button & Button group widget</strong></p>
 <p>Enter the following commands in order to play with buttons:</p>
 <ul>
   <li><code>button</code> show the button widget.</li>
@@ -120,7 +131,7 @@ HTML
 </ul>
 HTML
 
-    text_3  = <<-HTML
+    text_4  = <<-HTML
 <p>4. <strong>Card & List widget</strong></p>
 <ul>
   <li><code>card</code> show standard card widget.</li>
@@ -138,7 +149,8 @@ HTML
       items: [
         { nature: 'text', content: { text: text_1 } },
         { nature: 'text', content: { text: text_2 } },
-        { nature: 'text', content: { text: text_3 } }
+        { nature: 'text', content: { text: text_3 } },
+        { nature: 'text', content: { text: text_4 } }
       ],
       speech: {
         text: "Welcome to Ping Pong Bot",
@@ -215,11 +227,36 @@ HTML
           }
         })
 
-      when /map/i
+      when /map_place/i
         BotApi.map(session_id, {
           params: "place?key=***REMOVED***&q=Valence",
           title: "Valence (Drôme)",
           description: "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."
+        })
+
+      when /map_directions/i
+        BotApi.map(session_id, {
+          params: "directions?key=***REMOVED***&origin=Paris+France&destination=Valence+France",
+          title: "Itinéraire de Paris à Valence"
+        })
+
+      when /map_search/i
+        BotApi.map(session_id, {
+          params: "search?key=***REMOVED***&q=Restaurant+Valence",
+          title: "Restaurants (Valence)"
+        })
+
+      when /map_view/i
+        BotApi.map(session_id, {
+          params: "view?key=***REMOVED***&center=48.858281,2.294667&zoom=18&maptype=satellite",
+          title: "Tour Eiffel",
+          description: "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."
+        })
+
+      when /map_streetview/i
+        BotApi.map(session_id, {
+          params: "streetview?key=***REMOVED***&location=44.929228,4.8887884&heading=-60&pitch=10",
+          title: "Kiosque Peynet (Valence)"
         })
 
       when /deactivatable_button_group/i
