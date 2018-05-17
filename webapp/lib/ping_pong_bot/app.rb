@@ -7,11 +7,11 @@ require 'json'
 module BotRessources
   def self.kittens
     [
-    'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
-    'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
-    'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
-    'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
-    'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
+      'https://images.unsplash.com/photo-1445499348736-29b6cdfc03b9?w=800&q=80',
+      'https://images.unsplash.com/photo-1503844281047-cf42eade5ca5?w=800&q=80',
+      'https://images.unsplash.com/photo-1467839024528-ac3042ac0ae7?w=800&q=80',
+      'https://images.unsplash.com/photo-1481134803835-48d6de104072?w=800&q=80',
+      'https://images.unsplash.com/photo-1517172527855-d7a4feea491b?w=800&q=80'
     ]
   end
 
@@ -69,6 +69,17 @@ module BotApi
     Params.new(Params::build_list(items, orientation))
   end
 
+  def self.update_locale(session_id, locale)
+    parameters = {
+      chat_session: {
+        locale: locale
+      }
+    }
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    url = "#{base_url}/api/v1/chat_sessions/#{session_id}"
+    RestClient.put(url, parameters.to_json, content_type: :json, accept: :json)
+    self.text("Done").send(session_id)
+  end
 
   class Params
     def initialize(statement)
@@ -94,12 +105,12 @@ module BotApi
       }
     end
 
-    def self.build_button(name, action)
+    def self.build_button(name, payload)
       {
         nature: 'button',
         content: {
           text: name,
-          payload: { action: action }
+          payload: payload
         }
       }
     end
@@ -111,7 +122,7 @@ module BotApi
           buttons: buttons_list.collect do |button|
             {
               text: button[0],
-              payload: { action: button[1] }
+              payload: button[1]
             }
           end
         }
@@ -175,7 +186,9 @@ module BotApi
       }
     end
 
+
     private
+
       def post(session_id, parameters)
         base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
         url = "#{base_url}/api/v1/chat_sessions/#{session_id}/statements"
@@ -183,6 +196,7 @@ module BotApi
       end
   end
 end
+
 
 class PingPongBot < Sinatra::Base
   set :root, File.dirname(__FILE__)
@@ -237,6 +251,14 @@ HTML
   <li><code>hlist_card</code> show list of cards with horizontal orientation.</li>
   <li><code>vlist</code> show list with vertical orientation.</li>
 </ul>
+HTML
+
+    text_5  = <<-HTML
+<p>5. <strong>Change locale</strong></p>
+<p>
+  User <code>change_locale</code> in order to change speech to text locale.
+  This functionality is only available under Chrome.
+</p>
 <p>Happy testing!</p>
 HTML
 
@@ -247,7 +269,8 @@ HTML
           BotApi::Params::build_text(text_1),
           BotApi::Params::build_text(text_2),
           BotApi::Params::build_text(text_3),
-          BotApi::Params::build_text(text_4)
+          BotApi::Params::build_text(text_4),
+          BotApi::Params::build_text(text_5)
         ],
         :horizontal,
       )
@@ -277,6 +300,8 @@ HTML
         BotApi.image(BotRessources.puppies.sample).send(session_id)
       when 'display_duckling'
         BotApi.image(BotRessources.ducklings.sample).send(session_id)
+      when 'update_locale'
+        BotApi.update_locale(session_id, payload['locale'])
       else
         nice_payload = JSON.pretty_generate(payload)
         BotApi.text("<p>You triggered with payload:</p><pre>#{nice_payload}</pre>").send(session_id)
@@ -286,16 +311,19 @@ HTML
       user_statement_says = parameters['user_action']['text']
 
       case user_statement_says
+
       when /ping/i
         BotApi
           .text('Pong')
           .add_speech('Pong succeed', 'en-US')
           .send(session_id)
+
       when /pong/i
         BotApi
           .text('Ping')
           .add_speech('Ping succeed', 'en-US')
           .send(session_id)
+
       when /image/i
         BotApi
           .image(
@@ -328,19 +356,38 @@ HTML
               ['', '', '']
           end
           BotApi.map(params, title, description).send(session_id)
+
+      when /change_locale/i
+          BotApi.card(
+            [
+              BotApi::Params::build_text('<p>Choose speech to text locale:</p>'),
+              BotApi::Params::build_button_group(
+                [
+                  ['fr-FR', { action: 'update_locale', locale: 'fr-FR' }],
+                  ['en-US', { action: 'update_locale', locale: 'en-US' }],
+                  ['it-IT', { action: 'update_locale', locale: 'it-IT' }],
+                  ['ar',    { action: 'update_locale', locale: 'ar' }],
+                  ['ko-KR', { action: 'update_locale', locale: 'ko-KR' }]
+                ],
+                false
+              )
+            ]
+          ).send(session_id)
+
       when /button(_|\s)?(group)?(_|\s)?(deactivable)?/i
         is_group = !$2.nil? && !$2.empty?
         is_deactivable = !$4.nil? && !$4.empty?
         if is_group
           BotApi.button_group([
-            ['Show me kitten', 'display_kitten'],
-            ['Show me puppy', 'display_puppy'],
-            ['Show me duckling', 'display_duckling']
+            ['Show me kitten',   { action: 'display_kitten' }],
+            ['Show me puppy',    { action: 'display_puppy'  }],
+            ['Show me duckling', { action: 'display_duckling' }]
           ], is_deactivable).send(session_id)
         else
           random_id = Random.rand(100)
-          BotApi.button("Button #{random_id}", "action_#{random_id}").send(session_id)
+          BotApi.button("Button #{random_id}", { action: "action_#{random_id}"}).send(session_id)
         end
+
       when /hlist(_|\s)?(card)?/i
         is_card = !$2.nil? && !$2.empty?
         if is_card
@@ -370,6 +417,7 @@ HTML
             .add_speech('Here is an horizontal list of kittens', 'en-US')
             .send(session_id)
         end
+
       when /vlist/i
         BotApi
           .list([
@@ -385,6 +433,7 @@ HTML
             :vertical)
           .add_speech('Here is an vertical list of mixed content', 'en-US')
           .send(session_id)
+
       when /card(_|\s)?(video)?/i
         is_video = !$2.nil? && !$2.empty?
         if is_video
@@ -398,6 +447,7 @@ HTML
             BotApi::Params::build_button('Add to basket', 'kitten_added_to_basket')
           ]).send(session_id)
         end
+
       when /video/i
         description = 'Arctic Monkeys are an English rock band formed in 2002 in High Green'
         description << ', a suburb of Sheffield. Arctic Monkeys new album Tranquility Base '
