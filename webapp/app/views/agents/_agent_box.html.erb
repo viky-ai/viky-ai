@@ -52,10 +52,11 @@
       </p>
       <p class="secondary">
         <% if agent.updated_at == agent.created_at %>
-          <%= t('views.agents.index.created_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+          <%= t('views.agents.index.created_time_ago') %>
         <% else %>
-          <%= t('views.agents.index.updated_time_ago', time: time_ago_in_words(agent.updated_at)) %>
+          <%= t('views.agents.index.updated_time_ago') %>
         <% end %>
+        <%= local_time_ago(agent.updated_at) %>
       </p>
     </div>
 

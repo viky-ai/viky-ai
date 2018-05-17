@@ -6,8 +6,8 @@ class EntitiesTest < ApplicationSystemTestCase
     go_to_agents_index
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Entities lists')
-    click_link 'Entities lists'
+    assert page.has_text?('Entities')
+    click_link 'Entities'
 
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
@@ -71,8 +71,8 @@ class EntitiesTest < ApplicationSystemTestCase
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
     assert page.has_text?('admin/weather')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Entities lists')
-    click_link 'Entities lists'
+    assert page.has_text?('Entities')
+    click_link 'Entities'
 
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
@@ -125,6 +125,23 @@ class EntitiesTest < ApplicationSystemTestCase
       assert page.has_text?('"brumeux"')
       check('Auto solution')
       assert page.has_text?('"foggy"')
+    end
+  end
+
+
+  test 'Keep solution after unchecking checkbox' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within('.entity-form') do
+      uncheck('Auto solution')
+      page.execute_script %Q{ $('#terms__new_entity').trigger("click") }
+      fill_in 'Terms', with: "brumeux"
+      fill_in_editor_field '"condition: brumeux"'
+      click_button 'Add'
+    end
+
+    within('#entities-list') do
+      click_link 'brumeux'
+      assert page.has_text?('"condition: brumeux"')
     end
   end
 

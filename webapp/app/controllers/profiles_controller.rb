@@ -45,6 +45,7 @@ class ProfilesController < ApplicationController
 
   def stop_impersonating
     stop_impersonating_user
+    cookies.delete :impersonated_user_id # Needed for ActionCable
     redirect_to "/", notice: t('views.profile.stop_switch.success_message')
   end
 

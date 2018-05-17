@@ -18,6 +18,17 @@ Rails.application.routes.draw do
     post :stop_impersonating, on: :collection
   end
 
+  resources :chatbots, only: [:index, :show] do
+    member do
+      get :reset
+    end
+    resources :chat_statements, only: [:create] do
+      collection do
+        post :user_action
+      end
+    end
+  end
+
   scope '/agents' do
     resources :favorites, only: [:create, :destroy]
     resources :users, path: '', only: [] do
@@ -94,6 +105,15 @@ Rails.application.routes.draw do
             end
           end
         end
+
+        resources :bots, except: [:show] do
+          member do
+            get :confirm_destroy
+          end
+          collection do
+            get :ping
+          end
+        end
       end
     end
   end
@@ -115,16 +135,23 @@ Rails.application.routes.draw do
       scope '/agents' do
         get '/:ownername/:agentname/interpret', to: 'nlp#interpret'
       end
+      get '/ping', to: 'ping#ping'
+      resources 'chat_sessions', only: [:update] do
+        resources 'statements', only: [:create], controller: 'chat_statements'
+      end
     end
+  end
+
+  if Rails.env.production?
+    # Mount ping_pong_bot Sinatra App
+    mount PingPongBot, at: '/bots/ping-pong'
   end
 
   # API internal without versioning
   namespace :api_internal do
-      get '/packages',     to: 'packages#index'
-      get '/packages/:id', to: 'packages#show'
+    get '/packages',     to: 'packages#index'
+    get '/packages/:id', to: 'packages#show'
   end
-
-
 
   get 'style-guide', to: 'style_guide#index'
   get 'style-guide/:page_id', to: "style_guide#page"

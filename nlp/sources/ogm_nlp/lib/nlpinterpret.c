@@ -144,6 +144,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
         iter->data = NULL;
       }
       g_queue_clear(request_expression->tmp_solutions);
+      g_queue_clear(request_expression->sorted_flat_list);
     }
   }
 
@@ -309,6 +310,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
         iter->data = NULL;
       }
       g_queue_clear(request_expression->tmp_solutions);
+      g_queue_clear(request_expression->sorted_flat_list);
 
       json_decrefp(&request_expression->json_solution);
 

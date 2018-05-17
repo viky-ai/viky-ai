@@ -1,0 +1,28 @@
+<div class="chatbot__statement chatbot__statement--<%= statement.speaker %>"
+  data-speech-text="<%= statement.content.dig("speech", "text") %>"
+  data-speech-locale="<%= statement.content.dig("speech", "locale") %>">
+
+  <% unless statement.speaker == 'moderator' %>
+    <div class="chatbot__avatar">
+      <% if statement.speaker == "user" %>
+        <div class="chatbot__avatar__image">
+          <img src="<%= statement.chat_session.user.image_url(:square) %>">
+        </div>
+      <% else %>
+        <% agent = statement.chat_session.bot.agent %>
+        <% if agent.image.nil? %>
+          <div class="chatbot__avatar__image background-color-gradient__<%= agent.color %>"></div>
+        <% else %>
+          <div class="chatbot__avatar__image">
+            <img src="<%= statement.chat_session.bot.agent.image_url(:avatar) %>">
+          </div>
+        <% end %>
+      <% end %>
+      <div class="chatbot__avatar__time">
+        <%= l(statement.created_at, format: :mini) %>
+      </div>
+    </div>
+  <% end %>
+  <%= render "/chat_statements/widgets/#{statement.nature}",
+        statement: statement, statement.nature.to_sym => statement.component %>
+</div>

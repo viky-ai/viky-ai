@@ -1,0 +1,13 @@
+<div class="chatbot__widget chatbot__widget--image">
+  <img src="<%= image.url %>">
+  <% if image.has_info? %>
+    <div class="chatbot__widget--image__info">
+      <% if image.title.present? %>
+        <h2><%= image.title %></h2>
+      <% end %>
+      <% if image.description.present? %>
+        <p><%= image.description %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

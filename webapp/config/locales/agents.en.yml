@@ -14,8 +14,8 @@ en:
         blankslate:
           title: Create your first agent
           content: Start building your first conversational agent to create human-like interactions.
-        created_time_ago: Created %{time} ago
-        updated_time_ago: Updated %{time} ago
+        created_time_ago: Created
+        updated_time_ago: Updated
         search:
           not_found: No agent found
           placeholder: Search by name or ID
@@ -108,7 +108,8 @@ en:
         sections:
           overview: Overview
           intents: Interpretations
-          entities_lists: Entities lists
+          entities_lists: Entities
+          bots: Bots
       agents_selection:
         title_html: 'Move <strong>%{name}</strong> to&hellip;'
         not_found: No agent found.

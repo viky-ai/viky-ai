@@ -22,37 +22,50 @@ trap "sigterm_handler; exit" SIGTERM
 rm -f ./tmp/pids/server.pid
 rm -f ./tmp/pids/sidekiq.pid
 
-
-if [[ "$1" == "master" ]] ; then
+# Check data migration
+if [[ "$1" == "config" ]] || [[ "$1" == "master" ]] ; then
 
   # wait for services
   /usr/local/bin/dockerize -wait tcp://db-postgresql:5432 -wait tcp://db-redis:6379 -timeout 60s
 
-  # Setup DB
-  echo "Try to run db:migrate ..."
-  ./bin/rails db:create db:migrate
+  echo "Database setup"
+  echo "Check if database exist ..."
 
-else
+  DB_TMP_VERSION=`./bin/rails db:version | grep "Current version" 2>/dev/null`
+  DB_CREATED=$?
+  DB_VERSION=0
+  if [ $DB_CREATED -eq 0 ]; then
+    DB_VERSION=`echo "${DB_TMP_VERSION}" | cut -d":" -f2`
+  fi
 
-  # wait for services
-  # migration can be long
-  /usr/local/bin/dockerize -wait http://app-master:3000 -wait tcp://db-postgresql:5432 -wait tcp://db-redis:6379 -timeout 600s
+  if [ $DB_CREATED -ne 0 -o $DB_VERSION -eq 0 ] ; then
+    echo "Database schema missing or empty, try to create ...\n"
+    ./bin/rails db:setup
+  else
+    echo "Try to run db:migrate from schema version ${DB_VERSION} ..."
+    ./bin/rails db:migrate
+  fi
 
+  echo "Database setup completed."
 fi
 
-if [[ "$1" == "worker" ]] ; then
+if [[ "$1" != "config" ]] ; then
 
-  # Start one worker
-  bundle exec sidekiq -C config/sidekiq.yml &
+  if [[ "$1" == "worker" ]] ; then
 
-else
+    # Start one worker
+    bundle exec sidekiq -C config/sidekiq.yml &
 
-  echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
+  else
 
-  # Start web server
-  ./bin/rails server -b 0.0.0.0 -p 3000 &
+    echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
+
+    # Start web server
+    ./bin/rails server -b 0.0.0.0 -p 3000 &
+
+  fi
+
+  # wait for signal
+  wait
 
 fi
-
-# wait for signal
-wait

@@ -1,0 +1,8 @@
+<div class="chatbot__widget chatbot__widget--list <% if list.is_horizontal? %>chatbot__widget--list--horizontal<% else %>chatbot__widget--list--vertical<% end %>">
+  <% if list.is_horizontal? %><div><% end %>
+  <% list.items_as_components.each do |item| %>
+    <%= render "/chat_statements/widgets/#{item.nature}",
+          statement: statement, item.nature.to_sym => item %>
+  <% end %>
+  <% if list.is_horizontal? %></div><% end %>
+</div>

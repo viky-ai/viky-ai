@@ -6,16 +6,15 @@
  */
 #include "ogm_nlp.h"
 
-static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int request_expression_used, struct request_expression **psame_request_expression);
-static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
-    struct request_expression *request_expression2);
+static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    struct request_expression *request_expression, struct request_expression **psame_request_expression);
+static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    struct request_expression *request_expression1, struct request_expression *request_expression2);
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th,
     struct request_input_part *request_input_part1, struct request_input_part *request_input_part2, int *poverlap_mark);
-static og_status NlpRequestExpressionGetSparseMark(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression);
+static og_status NlpRequestExpressionGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretations);
 
@@ -38,6 +37,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->auto_complete_request_word = NULL;
   request_expression->keep_as_result = FALSE;
   g_queue_init(request_expression->tmp_solutions);
+  g_queue_init(request_expression->sorted_flat_list);
   request_expression->overlap_mark = 0;
   memset(request_expression->score, 0, sizeof(struct request_score));
   request_expression->score->scope = 1;
@@ -45,7 +45,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;
   request_expression->recursive_without_any_chosen = FALSE;
-
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -118,7 +117,11 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     {
       og_bool is_glued = NlpRequestExpressionIsGlued(ctrl_nlp_th, request_expression);
       IFE(is_glued);
-      if (!is_glued) must_add_request_expression = FALSE;
+      if (!is_glued)
+      {
+        must_add_request_expression = FALSE;
+        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "expression is not glued");
+      }
     }
   }
 
@@ -190,9 +193,20 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   if (must_add_request_expression)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
+
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    IFn(request_expressions) DPcErr;
+
+    struct request_expression_access_cache cache[1];
+    memset(cache, 0, sizeof(struct request_expression_access_cache));
+
+    cache->request_expressions = request_expressions;
+    cache->request_expressions_used = request_expression_used;
+    cache->request_positions = request_positions;
+    cache->request_positions_used = request_position_used;
+
     struct request_expression *same_request_expression;
-    og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, request_expression,
-        request_expression_used, &same_request_expression);
+    og_bool request_expression_exists = NlpRequestExpressionExists(ctrl_nlp_th, cache, request_expression, &same_request_expression);
     IF(request_expression_exists) DPcErr;
     if (request_expression_exists)
     {
@@ -201,8 +215,8 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
       if (must_log_compared_expressions)
       {
 //        OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "comparing new request expression with same request expression:");
-//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
-//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression));
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
+//        IFE(NlpInterpretTreeLog(ctrl_nlp_th, same_request_expression, 0));
       }
       if (NlpDifferentAutoCompleteRequestWord(ctrl_nlp_th, request_expression, same_request_expression))
       {
@@ -231,30 +245,30 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   return (request_expression_added);
 }
 
-static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int request_expression_used, struct request_expression **psame_request_expression)
+static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    struct request_expression *request_expression, struct request_expression **psame_request_expression)
 {
   *psame_request_expression = NULL;
-  struct request_expression *all_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
-  for (int i = 0; i < request_expression_used; i++)
+
+  for (int i = 0; i < cache->request_expressions_used; i++)
   {
-    og_bool is_same_request_expression = NlpRequestExpressionSame(ctrl_nlp_th, request_expression,
-        all_request_expression + i);
+    og_bool is_same_request_expression = NlpRequestExpressionSame(ctrl_nlp_th, cache, request_expression,
+        cache->request_expressions + i);
     if (is_same_request_expression)
     {
 //      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
 //          "NlpRequestExpressionExists compared equal new request expression with same request expression:");
-//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression));
-//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, all_request_expression + i));
-      *psame_request_expression = all_request_expression + i;
+//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
+//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, all_request_expression + i, 0));
+      *psame_request_expression = cache->request_expressions + i;
       return TRUE;
     }
   }
   return FALSE;
 }
 
-static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
-    struct request_expression *request_expression2)
+static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    struct request_expression *request_expression1, struct request_expression *request_expression2)
 {
   if (request_expression1->expression != request_expression2->expression) return FALSE;
   if (request_expression1->overlap_mark != request_expression2->overlap_mark) return FALSE;
@@ -266,7 +280,7 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
     if (request_expression1->level == request_expression2->level && request_expression1->nb_anys == 0) return TRUE;
   }
 
-  og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, request_expression1->request_position_start,
+  og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, cache, request_expression1->request_position_start,
       request_expression1->request_positions_nb, request_expression2->request_position_start,
       request_expression2->request_positions_nb);
   return (same_positions);
@@ -295,11 +309,15 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part1) DPcErr;
-    struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
-    IFN(request_input_part2) DPcErr;
-
-    og_bool is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
-    IFE(is_glued);
+    og_bool is_glued = FALSE;
+    for (int j = i+1; j < request_expression->orips_nb; j++)
+    {
+      struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, j);
+      IFN(request_input_part2) DPcErr;
+      is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+      IFE(is_glued);
+      if (is_glued) break;
+    }
     if (!is_glued) return FALSE;
   }
 
@@ -370,12 +388,11 @@ static og_status NlpRequestExpressionInputPartsOverlapMark(og_nlp_th ctrl_nlp_th
   return FALSE;
 }
 
-static og_status NlpRequestExpressionGetSparseMark(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression)
+static og_status NlpRequestExpressionGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   request_expression->sparse_mark = NlpRequestPositionDistance(ctrl_nlp_th, request_expression->request_position_start,
       request_expression->request_positions_nb);
-  return(request_expression->sparse_mark);
+  return (request_expression->sparse_mark);
 }
 
 /*
@@ -561,15 +578,40 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     og_string acrw = OgHeapGetCell(ctrl_nlp_th->hba, request_expression->auto_complete_request_word->start);
     IFN(acrw) DPcErr;
-    snprintf(ac_request_word, DPcPathSize, "acrw='%s'", acrw);
+    snprintf(ac_request_word, DPcPathSize, " acrw='%s'", acrw);
   }
 
+  char alias_name[DPcPathSize];
+  alias_name[0] = 0;
+//  struct original_request_input_part *original_request_input_part = OgHeapGetCell(
+//      ctrl_nlp_th->horiginal_request_input_part, request_expression->Isuper_original_request_input_part);
+//  IFN(original_request_input_part) DPcErr;
+//  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
+//      original_request_input_part->Irequest_input_part);
+//  IFNE(request_input_part);
+//  struct alias *alias = request_input_part->input_part->alias;
+//  snprintf(alias_name, DPcPathSize, " alias='%s'", alias->alias);
+
   struct expression *expression = request_expression->expression;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s",
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
       expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores,
-      ac_request_word);
+      ac_request_word, alias_name);
+  DONE;
+}
+
+/*
+ * This function is mainly for debugging
+ */
+og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label)
+{
+  static int counter = 0;
+  counter++;
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Showing expression %d, counter=%d %s", Irequest_expression, counter,
+      label);
+  struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+  IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
   DONE;
 }
 

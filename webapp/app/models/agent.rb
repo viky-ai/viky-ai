@@ -16,6 +16,7 @@ class Agent < ApplicationRecord
   has_many :fans, through: :favorite_agents, source: :user
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
+  has_many :bots, dependent: :destroy
 
   has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :target
   has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :source
@@ -152,8 +153,10 @@ class Agent < ApplicationRecord
     "#{User.find(owner_id).username}/#{agentname}"
   end
 
-  def reachable_intents
-    result = [] + intents.order(position: :desc, created_at: :desc)
+  def reachable_intents(current_intent)
+    result = [] + intents
+                    .where.not(id: current_intent)
+                    .order(position: :desc, created_at: :desc)
     result + Intent
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
@@ -166,6 +169,14 @@ class Agent < ApplicationRecord
              .where(visibility: :is_public)
              .where(agent_id: successors.ids)
              .order(position: :desc, created_at: :desc)
+  end
+
+  def accessible_bots(user)
+    if user.can? :edit, self
+      bots
+    else
+      bots.where(wip_enabled: false)
+    end
   end
 
 

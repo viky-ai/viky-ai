@@ -17,23 +17,42 @@ import 'moment'
 // Autosize (https://github.com/jackmoore/autosize)
 import 'autosize'
 
+// LocalTime (updated_at & cache)
+import LocalTime from "local-time"
+LocalTime.start()
+
 import './nav/nav';
+
 import './profile/main';
+
 import './authentication/main';
+
+import './chatbots/main';
+window.App.Statement = require('./chatbots/statements');
+
 import './agents/agent_form';
-import './agents/agent_search_form';
 import './agents/main';
 import './agents/transfer_ownership_form';
+
+import './bots/main';
+import './bots/bot_form';
+
 import './dependencies/dependencies_filter';
+
 import './console/console';
+
 import './intents/main';
 import './intents/intent_form';
+
 import './entities_lists/main';
 import './entities_lists/entities_list_form';
 import './entities_lists/entities_import_form';
+
 import './interpretations/main';
 import './interpretations/interpretation_form';
+
 import './entities/main';
+
 import './readme/form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
 window.App.EntityForm = require('./entities/entity_form');

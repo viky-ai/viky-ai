@@ -1,0 +1,43 @@
+@font-face {
+  font-family: "Roboto";
+  src: font-url("Roboto-Light.woff2") format("woff2"),
+       font-url("Roboto-Light.woff") format("woff"),
+       font-url("Roboto-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: font-url("Roboto-Regular.woff2") format("woff2"),
+       font-url("Roboto-Regular.woff") format("woff"),
+       font-url("Roboto-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Roboto";
+  src: font-url("Roboto-Regular.woff2") format("woff2"),
+       font-url("Roboto-Regular.woff") format("woff"),
+       font-url("Roboto-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: font-url("Roboto-Bold.woff2") format("woff2"),
+       font-url("Roboto-Bold.woff") format("woff"),
+       font-url("Roboto-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: font-url("Roboto-Bold.woff2") format("woff2"),
+       font-url("Roboto-Bold.woff") format("woff"),
+       font-url("Roboto-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}

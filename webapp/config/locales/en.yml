@@ -1,4 +1,7 @@
 en:
+  time:
+    formats:
+      mini: "%H:%M"
   loading: Loading
   cancel: Cancel
   required: REQUIRED
@@ -16,3 +19,4 @@ en:
       title: Error 404
       comment: The requested page does not exist.
       action_message_html: Please go back to your <a href="/">Agents list</a>.
+

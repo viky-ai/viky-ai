@@ -32,6 +32,7 @@ class Backend::UsersController < Backend::ApplicationController
   def impersonate
     user = User.find(params[:id])
     impersonate_user(user)
+    cookies.signed[:impersonated_user_id] = user.id # Needed for ActionCable
     redirect_to "/", notice: t('views.backend.users.index.switch.success_message', email: user.email)
   end
 

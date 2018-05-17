@@ -3,7 +3,12 @@ set -e
 
 sigterm_handler() {
   echo "STOP signal received, try to gracefully shutdown all services..."
-  docker kill foreman_nls
+
+  if [ "$VIKYAPP_USE_DEBUG_NLS" ]; then
+    pkill --signal SIGTERM --pidfile ${OG_REPO_PATH}/ship/debug/ogm_nls.pid
+  else
+    docker kill foreman_nls || true
+  fi
 
   # wait for stop
   wait
@@ -40,14 +45,24 @@ fi
 echo "Kill previews running NLS"
 docker kill foreman_nls > /dev/null 2>&1 || true
 
-echo "Pull NLS docker image : docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}"
-docker pull docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}
+if [ "$VIKYAPP_USE_DEBUG_NLS" ]; then
 
-echo "Run NLS ..."
-docker run \
-  ${PARAM_VIKYAPP_BASEURL} \
-  ${PARAM_VIKYAPP_REDIS_PACKAGE_NOTIFIER} \
-  ${NETWORK} \
-  -t --rm --name foreman_nls --init \
-  docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}
+  sleep 10
+  echo "Don't forget to run NLP manually : cd ${OG_REPO_PATH}/nlp_route && ./bin/nlp-route"
+  sleep infinity
+
+else
+
+  echo "Pull NLS docker image : docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}"
+  docker pull docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}
+
+  echo "Run NLS ..."
+  docker run \
+    ${PARAM_VIKYAPP_BASEURL} \
+    ${PARAM_VIKYAPP_REDIS_PACKAGE_NOTIFIER} \
+    ${NETWORK} \
+    -t --rm --name foreman_nls --init \
+    docker-registry.pertimm.net/viky.ai/platform/nlp${PARAM_MY_CURRENT_GIT_BRANCH}
+
+fi
 

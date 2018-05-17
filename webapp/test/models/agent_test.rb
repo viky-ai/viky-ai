@@ -372,8 +372,9 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
-    assert_equal 2, agent_weather.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents.collect(&:intentname)
+    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    assert_equal 2, agent_weather.reachable_intents(current_intent).count
+    assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
@@ -383,13 +384,14 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
     force_reset_model_cache(agent_weather)
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question', 'greeting'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents(intents(:weather_question)).count
+    assert_equal ['current_intent', 'weather_forecast', 'greeting'], agent_weather.reachable_intents(intents(:weather_question)).collect(&:intentname)
   end
 
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
+    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
     intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
@@ -413,8 +415,8 @@ class AgentTest < ActiveSupport::TestCase
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
     force_reset_model_cache(agent_weather)
-    assert_equal 3, agent_weather.reachable_intents.count
-    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents.collect(&:intentname)
+    assert_equal 3, agent_weather.reload.reachable_intents(current_intent).count
+    assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
   end
 
 

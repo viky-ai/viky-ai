@@ -30,6 +30,7 @@ class StyleGuideController < ApplicationController
       { name: "Agent compact",          slug: "agent_compact" },
       { name: "Interpretations list",   slug: "interpretations_list" },
       { name: "Entities list",          slug: "entities_list" },
+      { name: "Chatbot",                slug: "chatbot"       },
       { name: "Console",                slug: "console"       },
       { name: "Markdown",               slug: "markdown"      }
     ]

@@ -1,11 +1,12 @@
 require 'pg'
 require 'rainbow'
 require 'terminal-table'
+require 'fileutils'
 
 namespace :restore do
 
   desc 'Restore an environment on the local machine'
-  task :all, [:database_dump, :images] => [:environment] do |t, args|
+  task :all, [:database_dump, :images, :update_dot_env] => [:environment] do |t, args|
     unless args.database_dump.present?
       Restore::Print::error('Need database dump file path')
       exit 0
@@ -20,7 +21,13 @@ namespace :restore do
 
     Restore::Print::success("Restore completed")
     Restore::Print::notice("Do not forget to:")
-    Restore::Print::notice("  - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}")
+    if args.update_dot_env
+      Restore::Cmd::exec("echo \"VIKYAPP_DB_NAME_DEV=#{params[:database]}\" >> #{Rails.root}/.env")
+      Restore::Print::notice("  - .env has been updated with : VIKYAPP_DB_NAME_DEV=#{params[:database]}")
+    else
+      Restore::Print::notice("  - Change your environement variable VIKYAPP_DB_NAME_DEV=#{params[:database]}")
+    end
+
     Restore::Print::notice("  - Restart your apps.")
     Restore::Print::notice("Happy coding!")
   end
@@ -60,10 +67,33 @@ namespace :restore do
       files = Dir.entries(dir)
       db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
       images = "#{dir}/#{files.select {|file| file.end_with?('_app-uploads-data.tgz')}[0]}"
-      Rake::Task["restore:all"].invoke(db, images)
+      Rake::Task["restore:all"].invoke(db, images, true)
     end
   end
 
+
+  desc 'Backup current DB and image uploaded on the local machine'
+  task :backup, [:backup_dir,:export_basename]=> [:environment] do |t, args|
+
+    unless args.backup_dir.present?
+      Restore::Print::error("Missing param: backup directory")
+      exit 0
+    end
+
+    unless args.export_basename.present?
+      Restore::Print::error("Missing param: export base name")
+      exit 0
+    end
+
+    FileUtils.rm_rf(args.backup_dir)
+    FileUtils.mkdir_p(args.backup_dir)
+
+    Restore::Print::step("Backup current data database")
+    export_dump(args.backup_dir, args.export_basename)
+    Restore::Print::step("Backup uploaded images")
+    export_images(args.backup_dir, args.export_basename)
+    Restore::Print::step("Backup done in #{args.backup_dir}")
+  end
 
   private
 
@@ -106,7 +136,7 @@ namespace :restore do
       cat_cmd = 'gunzip -c' if params[:database_dump].end_with?('.gz')
 
       opts = { env: { 'PGPASSWORD' => params[:password] }, capture_output: true }
-      sed_cmd  = "sed -e 's/OWNER TO superman/OWNER TO #{params[:username]}/g'"
+      sed_cmd  = "sed -e 's/ OWNER TO superman;/ OWNER TO #{params[:username]};/g'"
       psql_cmd = "psql --no-password -h '#{params[:host]}' -p '#{params[:port]}' -U '#{params[:username]}' -d '#{params[:database]}'"
 
       Restore::Cmd::exec("#{cat_cmd} #{params[:database_dump]} | #{sed_cmd} | #{psql_cmd}", opts)
@@ -166,6 +196,19 @@ namespace :restore do
         User.in_batches.update_all(image_data: nil)
         Agent.in_batches.update_all(image_data: nil)
       end
+    end
+
+    def export_dump(backup_dir, export_basename)
+      config = Rails.configuration.database_configuration
+      opts = { env: { 'PGPASSWORD' => config[Rails.env]['password'] }, capture_output: true }
+      sed_cmd  = "sed -e 's/ OWNER TO #{config[Rails.env]['username']};/ OWNER TO superman;/g'"
+      psql_cmd = "pg_dump --no-password -h '#{config[Rails.env]['host']}' -p '#{config[Rails.env]['port']}' -U '#{config[Rails.env]['username']}' -d '#{config[Rails.env]['database']}'"
+      full_cmd = " #{psql_cmd} | #{sed_cmd} | gzip > #{backup_dir}/#{export_basename}.db-postgresql.dump.gz"
+      Restore::Cmd::exec(full_cmd, opts)
+    end
+
+    def export_images(backup_dir, export_basename)
+      Restore::Cmd::exec("tar czPf #{backup_dir}/#{export_basename}_app-uploads-data.tgz public/uploads/store/", { capture_output: true })
     end
 
     def connect_to_db(params, database)

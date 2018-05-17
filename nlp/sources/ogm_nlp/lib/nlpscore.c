@@ -86,7 +86,10 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   // overlap_mark is 1, 2, 3 when this number of input_part is included in another input_parts
   // overlap_mark is 100, 200, 300 when this number of input_part are criss-crossing (not likely in an natural language)
-  else if (request_expression->overlap_mark <= 0) request_expression->score->overlap = 1.0;
+  if (request_expression->overlap_mark <= 0)
+  {
+    request_expression->score->overlap = 1.0;
+  }
   else
   {
     request_expression->score->overlap = 0.9;

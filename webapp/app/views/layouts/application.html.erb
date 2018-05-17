@@ -17,7 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="turbolinks-cache-control" content="no-cache">
     <%= render 'layouts/favicon' %>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <%= stylesheet_link_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= stylesheet_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
@@ -30,6 +30,10 @@
     <%= render 'layouts/nav' %>
 
     <div class="app-wrapper">
+
+      <% if content_for?(:left_aside) %>
+        <%= yield :left_aside %>
+      <% end %>
 
       <main>
         <%= yield %>

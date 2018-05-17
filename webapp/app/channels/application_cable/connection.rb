@@ -8,7 +8,10 @@ module ApplicationCable
 
     private
       def find_verified_user
-        if verified_user = env['warden'].user
+        current_user = env['warden'].user
+        impersonated_user = User.find_by_id(cookies.signed[:impersonated_user_id])
+        verified_user = (current_user && impersonated_user) ? impersonated_user : current_user
+        if verified_user
           verified_user
         else
           reject_unauthorized_connection

@@ -1,0 +1,193 @@
+<style>
+  .grid-card{
+    column-count: 3;
+    column-gap: 1em;
+  }
+  .grid-card .chatbot .chatbot__discussion{
+    height: 100%;
+    margin: 0 0 1em 0
+  }
+</style>
+
+<div class="sg-intro">
+  <h1>Chatbot statements</h1>
+</div>
+
+
+<section>
+  <h2>Statements</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      Statement from Bot (on left)
+    </div>
+    <div class="chatbot__statement chatbot__statement--user">
+      Statement from User (on right)
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Avatar</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      Statement from Bot (on left)
+    </div>
+    <div class="chatbot__statement chatbot__statement--user">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_avatar.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:01</div>
+      </div>
+      Statement from User (on right)
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+<%= render "/style_guide/chatbot/text" %>
+<%= render "/style_guide/chatbot/image" %>
+<%= render "/style_guide/chatbot/video" %>
+<%= render "/style_guide/chatbot/map" %>
+<%= render "/style_guide/chatbot/buttons" %>
+<%= render "/style_guide/chatbot/card" %>
+<%= render "/style_guide/chatbot/list" %>
+
+<section>
+  <h2>Animation</h2>
+  <p>
+    Remove CSS class <code>chatbot__avatar--hidden</code> and <code>chatbot__widget--hidden</code>
+    in order to make avatar and widget visible via an animation.
+  </p>
+  <%= highlight_html do %>
+<div class="chatbot" id="text_animation_demo">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--text">
+        Can a kangaroo jump higher than a house ? Of course ! Houses can't jump.
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+  <script>
+    function addItem() {
+      avatar = $('#text_animation_demo .chatbot__avatar').last()
+      widget = $('#text_animation_demo .chatbot__widget').last()
+      avatar.removeClass('chatbot__avatar--hidden')
+      widget.removeClass('chatbot__widget--hidden')
+    }
+
+    function removeItem() {
+      avatar = $('#text_animation_demo .chatbot__avatar').last()
+      widget = $('#text_animation_demo .chatbot__widget').last()
+      avatar.addClass('chatbot__avatar--hidden')
+      widget.addClass('chatbot__widget--hidden')
+    }
+
+    function addRemoveItemDemo() {
+      addItem();
+      window.setTimeout(removeItem, 1500);
+    }
+    addRemoveItemDemo();
+    window.setInterval(addRemoveItemDemo, 3000);
+  </script>
+</section>
+
+
+<section>
+  <h2>Waiting</h2>
+  <p>
+    Used when user wait for bot response.
+  </p>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--text">
+        Hello
+      </div>
+    </div>
+    <div class="chatbot__statement chatbot__statement--user">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_avatar.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:01</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--text">
+        I wondered why the frisbee was getting bigger. Then it hit me.
+      </div>
+    </div>
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__statement__waiting">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 10">
+          <path d="M4.784 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-a"/>
+          <path d="M12.392 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-b"/>
+          <path d="M20 7.608a2.392 2.392 0 0 1-4.784 0 2.392 2.392 0 1 1 4.784 0z" class="point-c"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
+<section>
+  <h2>Notification</h2>
+  <p>
+    Used to display a global message in the conversation.
+  </p>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--user">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_avatar.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--text">
+        Are you there ?
+      </div>
+    </div>
+    <div class="chatbot__statement chatbot__statement--moderator">
+      <div class="chatbot__widget chatbot__widget--notification">
+        <span class="icon icon--white">
+          <%= icon_alert %>
+        </span>
+        Bot currently not available.
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>

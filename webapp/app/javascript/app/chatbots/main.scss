@@ -1,0 +1,221 @@
+@import '../../framework/abstracts/variables';
+
+body[data-controller-name="chatbots"] main{
+  padding: 0;
+}
+
+.chatbots-blankslate-container{
+  margin: 2em 1em;
+}
+
+$chatbots_bg_color: desaturate(lighten(#0E131A, 14%), 12%);
+
+aside.chatbots-list{
+  background-color: $chatbots_bg_color;
+  width: 300px;
+  overflow: auto;
+
+  display:none;
+  @media (min-width: 800px){
+    display:block;
+  }
+
+  &.chatbots-list--for-index{
+    width: 100%;
+    display:block;
+    @media (min-width: 800px){
+      width: 300px;
+    }
+  }
+
+
+  ul{
+    list-style: none;
+    padding: 0;
+    border-bottom: 1px solid rgba(#fff, .05);
+    li{
+      border-top: 1px solid rgba(#fff, .05);
+      border-bottom: 1px solid rgba(#000, .15);
+      a{
+        display:grid;
+        grid-template-columns: 62px auto;
+        align-items: start;
+
+        padding: 1em .75em;
+        text-decoration: none;
+        border-left: 4px solid transparent;
+        line-height: 1.4em;
+
+        & > span{
+          display:block;
+        }
+
+        .bot-name{
+          display:block;
+          color: #222;
+          color: #fff;
+        }
+
+        .bot-avatar{
+          display:block;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          box-shadow: 0 1px 0 rgba(#fff, .1);
+          overflow: hidden;
+          img{
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .bot-agent{
+          display:block;
+          margin-top: .25em;
+          font-size: .75em;
+        }
+        .bot-agent__name{
+          display:block;
+          color: rgba(#fff, .5);
+          line-height: 1.3em;
+        }
+        .bot-agent__slug{
+          display:block;
+          color: rgba(#fff, .35);
+          line-height: 1.3em;
+        }
+
+        &:hover,
+        &.current{
+          background-color: darken($chatbots_bg_color, 3%);
+          border-color: $primary_color;
+        }
+      }
+    }
+  }
+}
+
+body[data-controller-name="chatbots"][data-controller-action="show"]{
+  @media (max-width: 800px){
+    nav{
+      display:none;
+    }
+    .app-wrapper{
+      height: 100%;
+    }
+  }
+}
+
+
+.chatbot{
+  height: 100%;
+
+  .chatbot__header{
+    background-color: $chatbots_bg_color;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 .5em;
+    color: #eee;
+    font-size: 1em;
+
+    justify-content: space-between;
+
+    @media (min-width: 800px){
+      display: none;
+    }
+  }
+
+  .chatbot__discussion{
+    height: calc(100% - 54px - 40px);
+    @media (min-width: 800px){
+      height: calc(100% - 70px);
+    }
+    background-color: lighten(#0E131A, 89%);
+
+    padding-top: 1em;
+
+    /* Enable Smooth scroll on iOS */
+    /* cf. https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements/ */
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+
+    font-size: .95em;
+    @media (min-width: 800px){
+      font-size: 1em;
+    }
+  }
+
+  .chatbot__input{
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    padding: 0 .5em;
+
+    @media (min-width: 800px){
+      height: 70px;
+      padding: 0 1.5em;
+    }
+    form{
+      width: 100%;
+      .control:first-child{
+        flex-grow: 1;
+      }
+      .control:last-child{
+        flex-grow: 1000;
+      }
+      .chatbot-reset-button-container{
+        display: none;
+        @media (min-width: 800px){
+          display: block;
+        }
+      }
+      #locales-dropdown .dropdown__trigger .badge{
+        display: none;
+        @media (min-width: 425px){
+          display: inline-block;
+        }
+      }
+    }
+  }
+}
+
+.chatbot__blankslate-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+
+
+@keyframes mic_listening{
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.btn{
+  &.btn--recognition{
+    svg{
+      fill: #666;
+    }
+    &.btn--recognition-on{
+      svg{
+        fill: red;
+        animation: mic_listening 1s linear infinite;
+      }
+    }
+  }
+}

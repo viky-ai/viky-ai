@@ -73,7 +73,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
   }
 
   // sort again to take into account scores
-  g_queue_sort(sorted_request_expressions, (GCompareDataFunc) NlpRequestExpressionCmp, NULL);
+  g_queue_sort(sorted_request_expressions, NlpRequestExpressionCmp, NULL);
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -82,7 +82,7 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
       NlpLog(DOgNlpTraceMatch, "First request expression found:")
       struct request_expression *last_request_expression = sorted_request_expressions->head->data;
       IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, last_request_expression));
-      IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression));
+      IFE(NlpInterpretTreeLog(ctrl_nlp_th, last_request_expression, 0));
       IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions:"));
     }
   }
@@ -123,6 +123,7 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
       if (!request_expression->keep_as_result) continue;
 
       IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
+
       IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
 
       int nb_anys_attached;

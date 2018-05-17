@@ -39,6 +39,7 @@ gem 'redis', '~> 3.0'
 
 # redis-rails provides a full set of stores (*Cache*, Session, HTTP Cache)
 gem 'redis-rails', '~> 5'
+gem 'local_time'
 
 # Use Sidekiq to manage background jobs
 gem 'sidekiq'
@@ -107,3 +108,8 @@ gem 'terminal-table', require: false
 gem "skylight"
 
 # gem 'rubocop', require: false
+
+# Used by PingPongBot Sinatra App
+gem 'sinatra', require: 'sinatra/base'
+gem 'sinatra-contrib', require: false
+gem 'rest-client'
