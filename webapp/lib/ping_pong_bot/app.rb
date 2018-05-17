@@ -82,7 +82,7 @@ class PingPongBot < Sinatra::Base
           )
           .add_speech('Voici une image de chatton', 'fr-FR')
           .send(session_id)
-        when /map(_|\s)?(place|directions|search|view|streetview)/i
+        when /map(-|\s)?(place|directions|search|view|streetview)/i
           params, title, description = case $2
             when 'place'
               ["place?key=***REMOVED***&q=Valence",
@@ -123,7 +123,7 @@ class PingPongBot < Sinatra::Base
             ]
           ).send(session_id)
 
-      when /button(_|\s)?(group)?(_|\s)?(deactivable)?/i
+      when /button(-|\s)?(group)?(-|\s)?(deactivable)?/i
         is_group = !$2.nil? && !$2.empty?
         is_deactivable = !$4.nil? && !$4.empty?
         if is_group
@@ -137,22 +137,22 @@ class PingPongBot < Sinatra::Base
           BotApi.button("Button #{random_id}", { action: "action_#{random_id}"}).send(session_id)
         end
 
-      when /hlist(_|\s)?(card)?/i
+      when /hlist(-|\s)?(card)?/i
         is_card = !$2.nil? && !$2.empty?
         if is_card
           BotApi.list(
             [
               BotApi::Params::build_card([
                 BotApi::Params::build_image(BotRessources.kittens[0], 'Lovely kitten - 780$', 'Soooooo cute!'),
-                BotApi::Params::build_button('Add to basket', 'kitten_0_added_to_basket')
+                BotApi::Params::build_button('Add to basket', { action: 'kitten_0_added_to_basket' })
               ]),
               BotApi::Params::build_card([
                 BotApi::Params::build_image(BotRessources.kittens[1], 'Lovely kitten - 600$', 'Soooooo cute!'),
-                BotApi::Params::build_button('Add to basket', 'kitten_1_added_to_basket')
+                BotApi::Params::build_button('Add to basket', { action: 'kitten_1_added_to_basket' })
               ]),
               BotApi::Params::build_card([
                 BotApi::Params::build_image(BotRessources.kittens[2], 'Lovely kitten - 1200$', 'Soooooo cute!'),
-                BotApi::Params::build_button('Add to basket', 'kitten_2_added_to_basket')
+                BotApi::Params::build_button('Add to basket', { action: 'kitten_2_added_to_basket' })
               ]),
             ],
             :horizontal
@@ -174,8 +174,8 @@ class PingPongBot < Sinatra::Base
             BotApi::Params::build_image(BotRessources.puppies[1]),
             BotApi::Params::build_text("<strong>What's your favorite?</strong>"),
             BotApi::Params::build_button_group([
-              ['The first', 'choose_puppy_0'],
-              ['The second', 'choose_puppy_1']
+              ['The first', { action: 'choose_puppy_0' }],
+              ['The second', { action: 'choose_puppy_1' }]
             ],
               true)
             ],
@@ -183,17 +183,17 @@ class PingPongBot < Sinatra::Base
           .add_speech('Here is an vertical list of mixed content', 'en-US')
           .send(session_id)
 
-      when /card(_|\s)?(video)?/i
+      when /card(-|\s)?(video)?/i
         is_video = !$2.nil? && !$2.empty?
         if is_video
           BotApi.card([
             BotApi::Params::build_video('bpOSxM0rNPM'),
-            BotApi::Params::build_button('Buy the album', 'album_added_to_basket')
+            BotApi::Params::build_button('Buy the album', { action: 'album_added_to_basket'} )
           ]).send(session_id)
         else
           BotApi.card([
             BotApi::Params::build_image(BotRessources.kittens.sample, 'Lovely kitten - 780$', 'Soooooo cute!'),
-            BotApi::Params::build_button('Add to basket', 'kitten_added_to_basket')
+            BotApi::Params::build_button('Add to basket', { action: 'album_added_to_basket'})
           ]).send(session_id)
         end
 

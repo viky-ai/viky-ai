@@ -45,11 +45,11 @@ HTML
 <p>2. <strong>Map widget</strong></p>
 <p>Enter the following commands in order to play with maps (via Google Maps Embed API):</p>
 <ul>
-  <li><code>map_place</code> show map via <strong>Place mode</strong>.</li>
-  <li><code>map_directions</code> show map via <strong>Directions mode</strong>.</li>
-  <li><code>map_search</code> show map via <strong>Search mode</strong>.</li>
-  <li><code>map_view</code> show map via <strong>View mode</strong>.</li>
-  <li><code>map_streetview</code> show map via <strong>Street View mode</strong>.</li>
+  <li><code>map-place</code> show map via <strong>Place mode</strong>.</li>
+  <li><code>map-directions</code> show map via <strong>Directions mode</strong>.</li>
+  <li><code>map-search</code> show map via <strong>Search mode</strong>.</li>
+  <li><code>map-view</code> show map via <strong>View mode</strong>.</li>
+  <li><code>map-streetview</code> show map via <strong>Street View mode</strong>.</li>
 </ul>
 HTML
 
@@ -58,8 +58,8 @@ HTML
 <p>Enter the following commands in order to play with buttons:</p>
 <ul>
   <li><code>button</code> show the button widget.</li>
-  <li><code>button_group</code> show the button group widget.</li>
-  <li><code>button_group_deactivable</code> show the button group widget with disable_on_click option enabled.</li>
+  <li><code>button-group</code> show the button group widget.</li>
+  <li><code>button-group-deactivable</code> show the button group widget with disable_on_click option enabled.</li>
 </ul>
 HTML
 
@@ -67,9 +67,9 @@ HTML
 <p>4. <strong>Card & List widget</strong></p>
 <ul>
   <li><code>card</code> show standard card widget.</li>
-  <li><code>card_video</code> show card widget with video.</li>
+  <li><code>card-video</code> show card widget with video.</li>
   <li><code>hlist</code> show list with horizontal orientation.</li>
-  <li><code>hlist_card</code> show list of cards with horizontal orientation.</li>
+  <li><code>hlist-card</code> show list of cards with horizontal orientation.</li>
   <li><code>vlist</code> show list with vertical orientation.</li>
 </ul>
 HTML
