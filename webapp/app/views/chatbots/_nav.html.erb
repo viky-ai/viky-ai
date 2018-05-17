@@ -4,18 +4,34 @@
       <li>
         <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale) %>"
            <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
-          <span class="bot-name">
-            <%= bot.name %>
-            <% if bot.wip_enabled? %>
-              <span class="badge badge--small badge--danger">
-                <%= t('views.bots.index.wip_badge') %>
-              </span>
+
+          <span>
+            <% css_class = "" %>
+            <% if bot.agent.image.nil? %>
+              <% css_class = "background-color-gradient__#{bot.agent.color}" %>
             <% end %>
+            <span class="bot-avatar <%= css_class %>">
+              <% unless bot.agent.image.nil? %>
+                <img src="<%= bot.agent.image_url(:avatar) %>" />
+              <% end %>
+            </span>
           </span>
-          <span class="bot-agent">
-            <span class="bot-agent__name"><%= bot.agent.name %></span>
-            <span class="bot-agent__slug"><%= bot.agent.slug %></span>
+
+          <span>
+            <span class="bot-name">
+              <%= bot.name %>
+              <% if bot.wip_enabled? %>
+                <span class="badge badge--small badge--primary">
+                  <%= t('views.bots.index.wip_badge') %>
+                </span>
+              <% end %>
+            </span>
+            <span class="bot-agent">
+              <span class="bot-agent__name"><%= bot.agent.name %></span>
+              <span class="bot-agent__slug"><%= bot.agent.slug %></span>
+            </span>
           </span>
+
         </a>
       </li>
     <% end %>

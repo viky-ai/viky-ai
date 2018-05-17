@@ -1,10 +1,10 @@
 class ChatStatement < ApplicationRecord
   default_scope { order(created_at: :asc) }
 
-  belongs_to :chat_session
+  belongs_to :chat_session, touch: true
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :button, :list, :notification]
+  enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification]
 
   serialize :content, JSON
 
@@ -21,12 +21,40 @@ class ChatStatement < ApplicationRecord
     )
   end
 
+  def component
+    case nature
+      when 'text'
+        Chatbot::Text.new(content)
+      when 'image'
+        Chatbot::Image.new(content)
+      when 'video'
+        Chatbot::Video.new(content)
+      when 'map'
+        Chatbot::Map.new(content)
+      when 'button'
+        Chatbot::Button.new(content)
+      when 'button_group'
+        Chatbot::ButtonGroup.new(content)
+      when 'card'
+        Chatbot::Card.new(content)
+      when 'list'
+        Chatbot::List.new(content)
+      when 'notification'
+        Chatbot::Notification.new(content)
+      else
+        # Should be impossible
+        raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature', nature: nature)
+    end
+  end
+
 
   private
 
     def notify_bot
       if speaker == "user"
-        BotSendUserStatementJob.perform_later(chat_session.id, nature, content['text'])
+        BotSendUserStatementJob.perform_later(chat_session.id, "says", {
+          text: content['text']
+        })
       end
     end
 
@@ -40,25 +68,9 @@ class ChatStatement < ApplicationRecord
 
     def content_format
       return if content.blank?
-      case nature
-        when 'text'
-          statement_text = ChatStatementText.new(content)
-          errors.add(:base, statement_text.errors.full_messages.join(', ')) if statement_text.invalid?
-        when 'image'
-          statement_image = ChatStatementImage.new(content)
-          errors.add(:base, statement_image.errors.full_messages.join(', ')) if statement_image.invalid?
-        when 'button'
-          statement_button = ChatStatementButton.new(content)
-          errors.add(:base, statement_button.errors.full_messages.join(', ')) if statement_button.invalid?
-        when 'list'
-          statement_list = ChatStatementList.new(content)
-          errors.add(:base, statement_list.errors.full_messages.join(', ')) if statement_list.invalid?
-        when 'notification'
-          statement_notification = ChatStatementNotification.new(content)
-          errors.add(:base, statement_notification.errors.full_messages.join(', ')) if statement_notification.invalid?
-        else
-          # Should be impossible
-          raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature')
+      component = self.component
+      if component.invalid?
+        errors.add(:base, component.errors.full_messages.join(', '))
       end
     end
 end

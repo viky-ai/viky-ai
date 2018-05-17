@@ -4,9 +4,14 @@
 
 <div class="chatbot"
   data-session-id="<%= @chat_session.id %>"
-  data-recognition-locale="<%= @current_recognition_locale %>">
+  data-recognition-locale="<%= @chat_session.locale %>">
   <div class="chatbot__header">
 
+    <a href="<%= chatbots_path %>" class="btn btn--small btn--primary">
+      <span class="icon icon--small">
+        <%= icon_arrow_back %>
+      </span>
+    </a>
     <span>
       <%= @bot.name %>
       <% if @bot.wip_enabled? %>
@@ -16,8 +21,8 @@
       <% end %>
     </span>
 
-    <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
-       class="btn btn--small btn--outline">
+    <a href="<%= reset_chatbot_path(@bot, recognition_locale: @chat_session.locale) %>"
+       class="btn btn--small btn--primary">
       <span class="icon icon--small">
         <%= icon_loading %>
       </span>
@@ -33,7 +38,7 @@
     <%= form_with url: chatbot_chat_statements_path(@bot), class: 'bot-form' do |f| %>
       <div class="field field--inline">
         <div class="control chatbot-reset-button-container">
-          <a href="<%= reset_chatbot_path(@bot, recognition_locale: @current_recognition_locale) %>"
+          <a href="<%= reset_chatbot_path(@bot, recognition_locale: @chat_session.locale) %>"
              class="btn">
             <span class="icon icon--small">
               <%= icon_loading %>
@@ -49,9 +54,12 @@
               <%= icon_mic %>
             </span>
           </button>
-          <div class="dropdown" style="display:none;">
+          <div class="dropdown" id="locales-dropdown" style="display:none;">
             <div class="dropdown__trigger">
               <button class="btn" type="button">
+                <span class="badge badge--small">
+                  <code><%= @chat_session.locale %></code>
+                </span>
                 <span class="icon icon--x-small">
                   <%= icon_arrow_down %>
                 </span>
@@ -61,8 +69,8 @@
               <ul>
                 <% @available_recognition_locale.each do |key, data| %>
                   <li>
-                    <a href="?recognition_locale=<%= key %>"
-                      <% if key.to_s == @current_recognition_locale %>class="current"<% end %>>
+                    <a href="?recognition_locale=<%= key %>" data-locale="<%= key.to_s %>"
+                      <% if key.to_s == @chat_session.locale %>class="current"<% end %>>
                       <span class="badge">
                         <code><%= key %></code>
                       </span>

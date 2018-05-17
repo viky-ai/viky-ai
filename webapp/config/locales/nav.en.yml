@@ -3,6 +3,7 @@ en:
     nav:
       doc: Doc
       agents: Agents
+      chatbots: Chatbots
       backend:
         title: Backend
         users: Users management
