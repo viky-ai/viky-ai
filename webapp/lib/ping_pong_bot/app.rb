@@ -4,7 +4,9 @@ require 'sinatra/json'
 require 'rest-client'
 require 'json'
 
-Dir.glob('./lib/*.rb').each { |file| require file }
+$: << File.expand_path('../', __FILE__)
+require 'lib/bot_api.rb'
+require 'lib/bot_ressources.rb'
 
 class PingPongBot < Sinatra::Base
   set :root, File.dirname(__FILE__)
@@ -240,7 +242,10 @@ class PingPongBot < Sinatra::Base
         message = response.body
       end
     rescue RestClient::ExceptionWithResponse => e
-      message  = "Body: #{e.response.body}"
+      message = ""
+      unless e.response.nil?
+        message  << "Body: #{e.response.body}"
+      end
       message << "Exception message: #{e.message}"
     rescue Exception => e
       message = "Exception message: #{e.message}"
