@@ -1,4 +1,3 @@
-
 # Chatbot
 
 ## Overview
@@ -48,7 +47,7 @@ Using APIs requires the Header HTTP `Accept: application/json` and the Header HT
 
 ## viky.ai API
 
-Through its public API, viky.ai exposes an endpoint to listen for bot answers.
+Through its public API, viky.ai exposes endpoint to listen for bot answers.
 Before any conversation can start, make sure the bot URL is configured in the bot on viky.ai.
 
 ### Create statement
@@ -63,15 +62,24 @@ Before any conversation can start, make sure the bot URL is configured in the bo
    statement: {
      nature: <nature>,
      content: {
-       <...>
+      ...,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
      }
    }
  }
 ```
 
-The nature is the type of widget which will be displayed to the user. The content object changes accordingly.
+The nature (text, image, map ...) is the type of widget which will be displayed to the user. The content object changes accordingly.
 
-Statement natures currently available and their respective content.
+<code>speech</code> parameter is available in all statement natures.
+
+* `<speech_text>` Text to speech (via text to speech).
+* `<speech_locale>` Locale of the text to speech.
+
+**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 #### <code>text</code> nature
 
@@ -94,10 +102,7 @@ JSON structure :
 ```
 
 * `<text>` Text to display (**required**).
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
 
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 #### <code>image</code> nature
 
@@ -124,10 +129,6 @@ JSON structure :
 * `<url>` the image URL (**required**).
 * `<title>` a noteworthy title.
 * `<description>` a short description.
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 
 #### <code>video</code> nature
@@ -155,10 +156,6 @@ JSON structure :
 * `<params>` the Youtube URL params; i.e. `https://www.youtube.com/embed/<params>` (**required**).
 * `<title>` a noteworthy title.
 * `<description>` a short description.
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 
 #### <code>map</code> nature
@@ -186,12 +183,6 @@ JSON structure :
 * `<params>` the Google Maps Embed API URL params; i.e. `https://www.google.com/maps/embed/v1/<params>` (**required**).
 * `<title>` a noteworthy title.
 * `<description>` a short description.
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
-
-
 
 
 #### <code>button</code> nature
@@ -215,10 +206,6 @@ JSON structure :
 
 * `<text>` is the displayed in the button (**required**).
 * `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 #### <code>button_group</code> nature
 
@@ -250,10 +237,6 @@ JSON structure :
 
 * `buttons` Array of buttons, from 1 to 6 buttons (**required**).
 * `disable_on_click` boolean, default is `false`.
-* `<speech_text>` Text to speech (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
 
 #### <code>card</code> nature
 
@@ -281,11 +264,7 @@ JSON structure :
 }
 ```
 
-* `components` Array of nested components. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
-* `<speech_text>` Text to speech for the whole card (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
-
-**Note:** Available speech locales are `ru-RU`, `ar`, `ja-JP`, `ko-KR`, `zh`, `en-US`, `en-GB`, `fr-FR`, `es-ES`, `it-IT` and `de-DE`.
+* `components` Array of nested components (up to 5 components). Valid natures are `text`, `image`, `video`, `map`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
 
 
 #### <code>list</code> nature
@@ -308,9 +287,28 @@ JSON structure :
 ```
 
 * `orientation`: `vertical` or `horizontal`.
-* `items` Array of items. Valid natures are `text`, `image`, `button`, `button_group`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
-* `<speech_text>` Text to speech for the whole card (via text to speech).
-* `<speech_locale>` Locale of the text to speech.
+* `items` Array of nested components (from 2 to 8 components). Valid natures are `text`, `image`, `video`, `map`, `button`, `button_group`, `card`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
+
+
+### Update chat session locale
+
+Chat session locale is used for the speech to text functionality. User can choose it's locale, but API allow bot to dynamically change that preference.
+
+#### Endpoint
+
+`PUT /api/v1/chat_sessions/<session_id>`
+
+#### JSON
+
+```
+{
+  "chat_session": {
+    "locale": "fr-FR"
+  }
+}
+```
+
+Available locales are the same as speech locales.
 
 
 ## Bot API
