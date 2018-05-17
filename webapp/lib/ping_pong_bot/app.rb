@@ -84,6 +84,7 @@ class PingPongBot < Sinatra::Base
           )
           .add_speech('Voici une image de chatton', 'fr-FR')
           .send(session_id)
+
         when /map(-|\s)?(place|directions|search|view|streetview)/i
           params, title, description = case $2
             when 'place'
@@ -108,31 +109,31 @@ class PingPongBot < Sinatra::Base
           end
           BotApi.map(params, title, description).send(session_id)
 
-      when /change-locale/i
-          BotApi.card(
-            [
-              BotApi::Params::build_text('<p>Choose speech to text locale:</p>'),
-              BotApi::Params::build_button_group(
-                [
-                  ['fr-FR', { action: 'update_locale', locale: 'fr-FR' }],
-                  ['en-US', { action: 'update_locale', locale: 'en-US' }],
-                  ['it-IT', { action: 'update_locale', locale: 'it-IT' }],
-                  ['ar',    { action: 'update_locale', locale: 'ar' }],
-                  ['ko-KR', { action: 'update_locale', locale: 'ko-KR' }]
-                ],
-                false
-              )
-            ]
-          ).send(session_id)
+      when /change(-|\s)?locale/i
+        BotApi.card(
+          [
+            BotApi::Params::build_text('<p>Choose speech to text locale:</p>'),
+            BotApi::Params::build_button_group(
+              [
+                ['fr-FR', { action: 'update_locale', locale: 'fr-FR' }],
+                ['en-US', { action: 'update_locale', locale: 'en-US' }],
+                ['it-IT', { action: 'update_locale', locale: 'it-IT' }],
+                ['ar',    { action: 'update_locale', locale: 'ar' }],
+                ['ko-KR', { action: 'update_locale', locale: 'ko-KR' }]
+              ],
+              false
+            )
+          ]
+        ).send(session_id)
 
       when /button(-|\s)?(group)?(-|\s)?(deactivable)?/i
         is_group = !$2.nil? && !$2.empty?
         is_deactivable = !$4.nil? && !$4.empty?
         if is_group
           BotApi.button_group([
-            ['Show me kitten',   { action: 'display_kitten' }],
-            ['Show me puppy',    { action: 'display_puppy'  }],
-            ['Show me duckling', { action: 'display_duckling' }]
+            ['Show me a kitten',   { action: 'display_kitten' }],
+            ['Show me a puppy',    { action: 'display_puppy'  }],
+            ['Show me a duckling', { action: 'display_duckling' }]
           ], is_deactivable).send(session_id)
         else
           random_id = Random.rand(100)
@@ -174,7 +175,7 @@ class PingPongBot < Sinatra::Base
           .list([
             BotApi::Params::build_image(BotRessources.puppies[0]),
             BotApi::Params::build_image(BotRessources.puppies[1]),
-            BotApi::Params::build_text("<strong>What's your favorite?</strong>"),
+            BotApi::Params::build_text("<strong>Which one is your favorite?</strong>"),
             BotApi::Params::build_button_group([
               ['The first', { action: 'choose_puppy_0' }],
               ['The second', { action: 'choose_puppy_1' }]
@@ -182,7 +183,7 @@ class PingPongBot < Sinatra::Base
               true)
             ],
             :vertical)
-          .add_speech('Here is an vertical list of mixed content', 'en-US')
+          .add_speech('Here is a vertical list of mixed content', 'en-US')
           .send(session_id)
 
       when /card(-|\s)?(video)?/i
@@ -209,8 +210,9 @@ class PingPongBot < Sinatra::Base
             'Arctic Monkeys - Do I Wanna Know?',
             description
           )
-          .add_speech("Let's play musuc video!", 'en-GB')
+          .add_speech("Let's play music video!", 'en-GB')
           .send(session_id)
+
       else
         BotApi
           .text("I did not understand: \"#{user_statement_says}\"")
