@@ -28,7 +28,7 @@ class Chatbot::ListTest < ActiveSupport::TestCase
 
     assert_instance_of Chatbot::List, statement.component
     assert statement.component.is_horizontal?
-    assert_not statement.component.is_vertival?
+    assert_not statement.component.is_vertical?
   end
 
 

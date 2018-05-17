@@ -16,10 +16,10 @@ class Chatbot::List
   end
 
   def is_horizontal?
-    !is_vertival?
+    !is_vertical?
   end
 
-  def is_vertival?
+  def is_vertical?
     orientation == "vertical"
   end
 
