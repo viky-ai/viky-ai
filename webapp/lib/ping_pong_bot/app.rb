@@ -106,7 +106,7 @@ class PingPongBot < Sinatra::Base
           end
           BotApi.map(params, title, description).send(session_id)
 
-      when /change_locale/i
+      when /change-locale/i
           BotApi.card(
             [
               BotApi::Params::build_text('<p>Choose speech to text locale:</p>'),
