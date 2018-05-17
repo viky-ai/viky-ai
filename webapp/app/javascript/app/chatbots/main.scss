@@ -167,9 +167,15 @@ body[data-controller-name="chatbots"][data-controller-action="show"]{
         flex-grow: 1000;
       }
       .chatbot-reset-button-container{
-        display:none;
+        display: none;
         @media (min-width: 800px){
           display: block;
+        }
+      }
+      #locales-dropdown .dropdown__trigger .badge{
+        display: none;
+        @media (min-width: 425px){
+          display: inline-block;
         }
       }
     }

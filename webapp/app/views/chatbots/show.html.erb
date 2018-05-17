@@ -54,9 +54,12 @@
               <%= icon_mic %>
             </span>
           </button>
-          <div class="dropdown" style="display:none;">
+          <div class="dropdown" id="locales-dropdown" style="display:none;">
             <div class="dropdown__trigger">
               <button class="btn" type="button">
+                <span class="badge badge--small">
+                  <code><%= @chat_session.locale %></code>
+                </span>
                 <span class="icon icon--x-small">
                   <%= icon_arrow_down %>
                 </span>
@@ -66,7 +69,7 @@
               <ul>
                 <% @available_recognition_locale.each do |key, data| %>
                   <li>
-                    <a href="?recognition_locale=<%= key %>"
+                    <a href="?recognition_locale=<%= key %>" data-locale="<%= key.to_s %>"
                       <% if key.to_s == @chat_session.locale %>class="current"<% end %>>
                       <span class="badge">
                         <code><%= key %></code>

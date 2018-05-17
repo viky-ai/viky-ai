@@ -8,6 +8,7 @@ class ChatSession < ApplicationRecord
   validates :locale, inclusion: { in: lambda { |object| ChatSession.locales.keys.map(&:to_s) } }
 
   after_create :notify_bot
+  after_update :notify_ui_if_locale_changed
 
   def expired?
     last_session = ChatSession.where(user: user, bot: bot).last
@@ -63,9 +64,20 @@ class ChatSession < ApplicationRecord
     }
   end
 
+
   private
 
     def notify_bot
       BotSendStartJob.set(wait: 0.25).perform_later(bot.id, id)
+    end
+
+    def notify_ui_if_locale_changed
+      if self.saved_change_to_attribute?(:locale)
+        ActionCable.server.broadcast "chat_session_channel_#{self.user.id}", {
+          session_id: self.id,
+          action: "update_locale",
+          locale: self.locale
+        }
+      end
     end
 end

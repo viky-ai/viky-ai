@@ -18,6 +18,13 @@ class Chat
 
       $("body").on 'click', (event) => @dispatch(event)
 
+      $('body').on 'recognition:update_locale', (event) =>
+        locale = $('.chatbot').data('recognition-locale')
+        $('#locales-dropdown a').removeClass('current')
+        $("#locales-dropdown a[data-locale='#{locale}']").addClass('current')
+        $('#locales-dropdown .dropdown__trigger code').html(locale)
+        @recognition = new Recognition()
+
       $('body').on 'recognition:result', (event, transcript) =>
         $("#statement_content").val(transcript)
         form = document.querySelector(".bot-form");
