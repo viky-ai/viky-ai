@@ -256,8 +256,8 @@ HTML
     text_5  = <<-HTML
 <p>5. <strong>Change locale</strong></p>
 <p>
-  User <code>change_locale</code> in order to change speech to text locale.
-  This functionality is only available under Chrome.
+  Use command <code>change_locale</code> in order to change speech to text locale.
+  Speech to text functionality is only available under Chrome.
 </p>
 <p>Happy testing!</p>
 HTML
