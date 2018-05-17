@@ -166,7 +166,7 @@ JSON structure :
 ```
 {
   statement: {
-    nature: 'video',
+    nature: 'map',
     content: {
       params: <params>,
       title: <title>,
