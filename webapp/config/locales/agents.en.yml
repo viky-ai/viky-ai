@@ -86,10 +86,15 @@ en:
       favorite:
         add_errors_message: "Add favorite failed: %{errors}."
         remove_errors_message: "Remove favorite failed: %{errors}."
+      duplication:
+        failed_message: "Duplication failed: %{errors}."
+        success_message: "Agent %{name} created."
       show:
+        duplicate_btn: Duplicate
         add_favorite_btn: Add favorite
         remove_favorite_btn: Remove favorite
         configure_btn: Configure
+        duplicated_agent: "Duplicated from agent %{slug} %{time} ago"
         owner: Owner
         collaborator: "Collaborator"
         show: Show

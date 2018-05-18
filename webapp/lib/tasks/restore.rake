@@ -14,8 +14,8 @@ namespace :restore do
     params = extract_params(args)
     restore_database(params)
     with_active_record_connected_to_new_db params do
-      migrate_database
       restore_images(params)
+      migrate_database
       synchronize_NLP
     end
 

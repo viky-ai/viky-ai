@@ -17,11 +17,11 @@ class AgentGraph
   def list_out_arcs(&block)
     arcs_list = []
     if block_given?
-      arcs_list += @agent.successors.reload.map { |successor| [yield(@agent), yield(successor)] }
+      arcs_list += @agent.successors.map { |successor| [yield(@agent), yield(successor)] }
     else
-      arcs_list += @agent.successors.reload.map { |successor| [@agent, successor] }
+      arcs_list += @agent.successors.map { |successor| [@agent, successor] }
     end
-    @agent.successors.reload.each do |successor|
+    @agent.successors.each do |successor|
       arcs_list += AgentGraph.new(successor).list_out_arcs(&block)
     end
     arcs_list
@@ -41,11 +41,11 @@ class AgentGraph
   def list_in_arcs(&block)
     arcs_list = []
     if block_given?
-      arcs_list += @agent.predecessors.reload.map { |predecessor| [yield(predecessor), yield(@agent)] }
+      arcs_list += @agent.predecessors.map { |predecessor| [yield(predecessor), yield(@agent)] }
     else
-      arcs_list += @agent.predecessors.reload.map { |predecessor| [@agent, predecessor] }
+      arcs_list += @agent.predecessors.map { |predecessor| [@agent, predecessor] }
     end
-    @agent.predecessors.reload.each do |predecessor|
+    @agent.predecessors.each do |predecessor|
       arcs_list += AgentGraph.new(predecessor).list_in_arcs(&block)
     end
     arcs_list

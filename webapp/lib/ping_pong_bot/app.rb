@@ -20,6 +20,7 @@ class PingPongBot < Sinatra::Base
 
   post '/start' do
     session_id = JSON.parse(request.body.read)["session_id"]
+
     BotApi
       .list(
         BotRessources.intro.map { |text| BotApi::Params::build_text(text)},
@@ -62,6 +63,14 @@ class PingPongBot < Sinatra::Base
       user_statement_says = parameters['user_action']['text']
 
       case user_statement_says
+
+      when /help/i
+        BotApi
+          .list(
+            BotRessources.intro(true).map { |text| BotApi::Params::build_text(text)},
+            :horizontal,
+          )
+          .send(session_id)
 
       when /ping/i
         BotApi

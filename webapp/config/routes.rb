@@ -37,6 +37,7 @@ Rails.application.routes.draw do
           get :confirm_destroy
           get :confirm_transfer_ownership
           post :transfer_ownership
+          post :duplicate
           get :search_users_for_transfer_ownership
           get :generate_token
           get :interpret, to: 'console#interpret'

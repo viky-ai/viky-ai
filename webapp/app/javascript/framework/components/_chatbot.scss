@@ -139,7 +139,7 @@ $chatbot_statement_radius: 8px;
     max-width: calc(100% - 40px * 2 - 1.5em * 2);
   }
   @media (min-width: 900px){
-    max-width: calc(450px);
+    max-width: 450px;
   }
   .chatbot__statement--bot &{
     background-color: #fff;
@@ -458,23 +458,35 @@ form.chatbot__widget--button,
   }
 
   &.chatbot__widget--list--horizontal{
-    padding: 1em 0 0 0;
+    padding: .75em 0;
+
+    @media (min-width: 1350px){
+      max-width: calc(1070px - 40px * 2 - 1.5em * 2);
+      padding-left: .5em;
+      padding-right: .5em;
+    }
+    @media (min-width: 1850px){
+      max-width: calc(1520px - 40px * 2 - 1.5em * 2);
+    }
+
     & > div{
       .slick-slide{
-        margin: 0 .25em;
-      }
-      .slick-dots{
-        line-height: 0;
-        bottom: -20px;
-      }
-      .slick-dotted.slick-slider{
-        margin-bottom: 0;
+        margin: 0 5px;
       }
     }
     .chatbot__widget{
-      min-width: 100%;
-      max-width: 100%;
-      width: 100%;
+      max-width: 450px;
+
+      @media (min-width: 1350px){
+        width: 450px;
+        min-width: 450px;
+      }
+
+      .chatbot__widget{
+        max-width: 100%;
+        min-width: 100%;
+        width: 100%;
+      }
     }
   }
 }

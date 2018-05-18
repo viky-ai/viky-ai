@@ -160,6 +160,10 @@ class AgentsController < ApplicationController
     end
   end
 
+  def duplicate
+    DuplicateAgentJob.perform_later(@agent, current_user)
+  end
+
 
   private
 
@@ -167,7 +171,7 @@ class AgentsController < ApplicationController
       case action_name
       when "full_export"
         access_denied unless current_user.can?(:show, @agent) && current_user.admin?
-      when "show", 'add_favorite', 'delete_favorite'
+      when "show", 'add_favorite', 'delete_favorite', 'duplicate'
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent

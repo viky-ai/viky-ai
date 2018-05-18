@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentTest < ActiveSupport::TestCase
 
@@ -7,7 +8,12 @@ class AgentTest < ActiveSupport::TestCase
       name: "Agent A",
       agentname: "agenta",
       description: "Agent A decription",
-      visibility: 'is_public'
+      visibility: 'is_public',
+      source_agent: {
+        id: agents(:terminator).id,
+        slug: agents(:terminator).slug,
+        date: '2017-01-02 12:34:56'
+      }
     )
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
@@ -17,6 +23,9 @@ class AgentTest < ActiveSupport::TestCase
     assert_equal 'is_public', agent.visibility
     assert agent.is_public?
     assert !agent.is_private?
+    assert agents(:terminator).id, agent.source_agent[:id]
+    assert agents(:terminator).slug, agent.source_agent[:slug]
+    assert '2017-01-02 12:34:56', agent.source_agent[:date]
   end
 
 
@@ -374,6 +383,7 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
+    force_reset_model_cache(agent_weather)
     assert_equal 3, agent_weather.reload.reachable_intents(intents(:weather_question)).count
     assert_equal ['current_intent', 'weather_forecast', 'greeting'], agent_weather.reachable_intents(intents(:weather_question)).collect(&:intentname)
   end
@@ -404,6 +414,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
+    force_reset_model_cache(agent_weather)
     assert_equal 3, agent_weather.reload.reachable_intents(current_intent).count
     assert_equal ['weather_forecast', 'weather_question', 'greeting_public'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
   end
@@ -420,7 +431,8 @@ class AgentTest < ActiveSupport::TestCase
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
-    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
+    force_reset_model_cache(agent_weather)
+    assert_equal 3, agent_weather.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'locations'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
 
@@ -447,7 +459,8 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
 
-    assert_equal 3, agent_weather.reload.reachable_entities_lists.count
+    force_reset_model_cache(agent_weather)
+    assert_equal 3, agent_weather.reachable_entities_lists.count
     assert_equal ['weather_conditions', 'weather_dates', 'greeting_public'], agent_weather.reachable_entities_lists.collect(&:listname)
   end
 

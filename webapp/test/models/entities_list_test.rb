@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class EntitiesListTest < ActiveSupport::TestCase
 
@@ -137,8 +138,9 @@ class EntitiesListTest < ActiveSupport::TestCase
 
     new_positions = [entities_list_1.id, entities_list_2.id, entities_list_0.id, '132465789']
     EntitiesList.update_positions(agent, [], new_positions)
-    assert_equal [2, 1, 0], [entities_list_1.reload.position, entities_list_2.reload.position, entities_list_0.reload.position]
-    assert_equal %w(is_private is_private is_private), [entities_list_1.reload.visibility, entities_list_2.reload.visibility, entities_list_0.reload.visibility]
+    force_reset_model_cache([entities_list_0, entities_list_1, entities_list_2])
+    assert_equal [2, 1, 0], [entities_list_1.position, entities_list_2.position, entities_list_0.position]
+    assert_equal %w(is_private is_private is_private), [entities_list_1.visibility, entities_list_2.visibility, entities_list_0.visibility]
   end
 
 

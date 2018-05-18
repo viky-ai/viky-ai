@@ -1,8 +1,8 @@
 require 'rgl/topsort' # acyclic
 
 class AgentArc < ApplicationRecord
-  belongs_to :source, foreign_key: 'source_id', class_name: 'Agent', touch: true
-  belongs_to :target, foreign_key: 'target_id', class_name: 'Agent'
+  belongs_to :target, foreign_key: 'target_id', class_name: 'Agent', inverse_of: :in_arcs
+  belongs_to :source, foreign_key: 'source_id', class_name: 'Agent', touch: true, inverse_of: :out_arcs
 
   validates :source, presence: true
   validates :target, uniqueness: { scope: [:source] }, presence: true

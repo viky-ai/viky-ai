@@ -185,13 +185,35 @@ class Statement
 
 class List
   constructor: (element) ->
+    if $(element).find('> div').length > 2
+      max = 3
+    else
+      max = 2
+
     $(element).slick(
       dots: true,
-      slidesToShow: 1,
-      centerMode: true,
+      slidesToShow: max,
+      slidesToScroll: max,
       infinite: false,
-      centerPadding: '12px',
-      arrows: false
+      arrows: false,
+      responsive: [
+        {
+          breakpoint: 1850,
+          settings: {
+            slidesToShow: 2,
+            slidesToScroll: 2,
+          }
+        }
+        {
+          breakpoint: 1350,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            centerMode: true,
+            centerPadding: '12px',
+          }
+        }
+      ]
     )
 
   @generateLast: ->

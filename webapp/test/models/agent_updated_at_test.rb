@@ -15,7 +15,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent.agent = agent
 
     assert intent.save
-    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache(agent)
+    assert_not_equal updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -26,7 +27,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     intent = agent.intents.first
     intent.description = 'New description'
     assert intent.save
-    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache(agent)
+    assert_not_equal updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -36,7 +38,8 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
     intent = agent.intents.first
     assert intent.destroy
-    assert_not_equal updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache(agent)
+    assert_not_equal updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -55,8 +58,9 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation.intent = intent
     assert interpretation.save
 
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent])
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
   end
 
 
@@ -71,8 +75,9 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation.locale = 'fr'
     assert interpretation.save
 
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent])
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
   end
 
 
@@ -86,8 +91,9 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation = intent.interpretations.first
     assert interpretation.destroy
 
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent])
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
   end
 
 
@@ -109,9 +115,10 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     agent_updated_at_before          = agent.updated_at.to_json
     assert interpretation_alias.save
 
-    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent, interpretation])
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
+    # assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -128,9 +135,10 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation_alias.aliasname = 'changed'
     assert interpretation_alias.save
 
-    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent, interpretation])
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -146,9 +154,10 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     interpretation_alias = interpretation.interpretation_aliases.first
     assert interpretation_alias.destroy
 
-    assert_not_equal interpretation_updated_at_before, interpretation.reload.updated_at.to_json
-    assert_not_equal intent_updated_at_before, intent.reload.updated_at.to_json
-    assert_not_equal agent_updated_at_before, agent.reload.updated_at.to_json
+    force_reset_model_cache([agent, intent, interpretation])
+    assert_not_equal interpretation_updated_at_before, interpretation.updated_at.to_json
+    assert_not_equal intent_updated_at_before, intent.updated_at.to_json
+    assert_not_equal agent_updated_at_before, agent.updated_at.to_json
   end
 
 
@@ -159,14 +168,17 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     updated_at_b = agent_b.updated_at.to_json
 
     arc = AgentArc.create(source: agent_a, target: agent_b)
-    assert_not_equal updated_at_a, agent_a.reload.updated_at.to_json
-    assert_equal     updated_at_b, agent_b.reload.updated_at.to_json
+
+    force_reset_model_cache([agent_a, agent_b])
+    assert_not_equal updated_at_a, agent_a.updated_at.to_json
+    assert_equal     updated_at_b, agent_b.updated_at.to_json
 
     updated_at_a = agent_a.updated_at.to_json
     assert arc.destroy
 
-    assert_not_equal updated_at_a, agent_a.reload.updated_at.to_json
-    assert_equal     updated_at_b, agent_b.reload.updated_at.to_json
+    force_reset_model_cache([agent_a, agent_b])
+    assert_not_equal updated_at_a, agent_a.updated_at.to_json
+    assert_equal     updated_at_b, agent_b.updated_at.to_json
   end
 
 
@@ -201,13 +213,15 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       nature: 'type_intent'
     )
 
-    updated_at_a = child.reload.updated_at.to_json
-    updated_at_intent_child = intent_child.reload.updated_at.to_json
+    force_reset_model_cache([child, intent_child])
+    updated_at_a = child.updated_at.to_json
+    updated_at_intent_child = intent_child.updated_at.to_json
 
     assert intent_parent.destroy
 
-    assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
-    assert_not_equal updated_at_a, child.reload.updated_at.to_json
+    force_reset_model_cache([child, intent_child])
+    assert_not_equal updated_at_intent_child, intent_child.updated_at.to_json
+    assert_not_equal updated_at_a, child.updated_at.to_json
   end
 
 
@@ -241,12 +255,14 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
       nature: 'type_entities_list'
     )
 
-    updated_at_a = child.reload.updated_at.to_json
-    updated_at_intent_child = intent_child.reload.updated_at.to_json
+    force_reset_model_cache([child, intent_child])
+    updated_at_a = child.updated_at.to_json
+    updated_at_intent_child = intent_child.updated_at.to_json
 
     assert entities_list_parent.destroy
 
-    assert_not_equal updated_at_intent_child, intent_child.reload.updated_at.to_json
-    assert_not_equal updated_at_a, child.reload.updated_at.to_json
+    force_reset_model_cache([child, intent_child])
+    assert_not_equal updated_at_intent_child, intent_child.updated_at.to_json
+    assert_not_equal updated_at_a, child.updated_at.to_json
   end
 end
