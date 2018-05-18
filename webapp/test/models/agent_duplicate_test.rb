@@ -21,7 +21,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
     assert_equal agent.color, new_agent.color
-    assert_equal "#{agent.agentname}_copy", new_agent.agentname
+    assert_equal "#{agent.agentname}-copy", new_agent.agentname
     assert_equal 'is_private', new_agent.visibility
     assert_not_equal agent.api_token, new_agent.api_token
     assert new_agent.owner.nil?
@@ -33,9 +33,10 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_not_equal agent.updated_at, new_agent.updated_at
 
     another_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
-    assert_equal "#{agent.name} [COPY_1]", another_agent.name
-    assert_equal "#{agent.agentname}_copy_1", another_agent.agentname
+    assert_equal "#{agent.name} [COPY 1]", another_agent.name
+    assert_equal "#{agent.agentname}-copy-1", another_agent.agentname
   end
+
 
   test 'Duplicate public agent' do
     agent = agents(:terminator)
@@ -47,6 +48,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     another_agent = AgentDuplicator.new(agent, current_user).duplicate
     assert another_agent.save
   end
+
 
   test 'Duplicate keeps track of source agent' do
     agent = agents(:terminator)
@@ -63,6 +65,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal id, new_agent.source_agent['id']
     assert_equal slug, new_agent.source_agent['slug']
   end
+
 
   test 'Duplicate agent with direct relations' do
     agent = agents(:terminator)

@@ -32,10 +32,10 @@ class AgentDuplicator
   private
 
     def self.rename_agent(source, record, new_owner)
-      new_agentname    = "#{source.agentname}_copy"
+      new_agentname    = "#{source.agentname}-copy"
       agent_count  = new_owner.agents.where('agentname ILIKE ?', "#{new_agentname}%").count
-      record.agentname = agent_count.zero? ? new_agentname : "#{new_agentname}_#{agent_count}"
-      record.name = agent_count.zero? ? "#{source.name} [COPY]" : "#{source.name} [COPY_#{agent_count}]"
+      record.agentname = agent_count.zero? ? new_agentname : "#{new_agentname}-#{agent_count}"
+      record.name = agent_count.zero? ? "#{source.name} [COPY]" : "#{source.name} [COPY #{agent_count}]"
     end
 
     def fix_interpretation_aliases(new_agent)
