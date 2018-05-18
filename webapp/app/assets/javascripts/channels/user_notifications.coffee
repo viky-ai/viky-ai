@@ -6,6 +6,7 @@ App.user_notifications = App.cable.subscriptions.create "UserNotificationsChanne
     # Called when the subscription has been terminated by the server
 
   received: (data) ->
+    App.AgentDuplicator.end()
     if data.alert
       App.Message.alert(data.alert)
     else
