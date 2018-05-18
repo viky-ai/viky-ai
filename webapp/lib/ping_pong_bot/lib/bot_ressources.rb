@@ -28,10 +28,16 @@ module BotRessources
     ]
   end
 
-  def self.intro
+  def self.intro(help = false)
     text = []
-    text << <<-HTML
-<p>1. <strong>Welcome!</strong></p>
+
+    if help
+      intro_text = "<p>1. <strong>Help</strong></p>"
+    else
+      intro_text = "<p>1. <strong>Welcome!</strong></p>"
+    end
+
+    intro_text << <<-HTML
 <p>I'm the <em>Ping Pong Bot</em>, i allow you to test the viky.ai chatbot system.</p>
 <p>Start by entering the following command:</p>
 <ul>
@@ -40,6 +46,8 @@ module BotRessources
   <li><code>video</code> show the video widget.</li>
 </ul>
 HTML
+
+    text << intro_text
 
     text << <<-HTML
 <p>2. <strong>Map widget</strong></p>
