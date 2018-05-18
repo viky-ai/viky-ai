@@ -325,6 +325,7 @@ backup_restore_dev:
       (>&2 echo "Backing up data FAILED")
     fi
     echo ""
+    return 0
   }
 
 
