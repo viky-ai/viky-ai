@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class EntityTest < ActiveSupport::TestCase
 
@@ -183,7 +184,8 @@ class EntityTest < ActiveSupport::TestCase
 
     new_positions = [entity_1.id, entity_2.id, entity_0.id, '132465789']
     Entity.update_positions(entities_list, new_positions)
-    assert_equal [2, 1, 0], [entity_1.reload.position, entity_2.reload.position, entity_0.reload.position]
+    force_reset_model_cache([entity_0, entity_1, entity_2])
+    assert_equal [2, 1, 0], [entity_1.position, entity_2.position, entity_0.position]
   end
 
 end

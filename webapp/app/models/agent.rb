@@ -18,11 +18,13 @@ class Agent < ApplicationRecord
   has_many :entities_lists, dependent: :destroy
   has_many :bots, dependent: :destroy
 
-  has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy
-  has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy
+  has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :target
+  has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :source
 
   has_many :predecessors, through: :in_arcs, source: :source
   has_many :successors, through: :out_arcs, source: :target
+
+  serialize :source_agent, JSON
 
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true

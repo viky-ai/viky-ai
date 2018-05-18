@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class IntentTest < ActiveSupport::TestCase
 
@@ -191,8 +192,9 @@ class IntentTest < ActiveSupport::TestCase
 
     Intent.update_positions(agent, [], new_positions)
 
-    assert_equal [2, 1, 0], [intent_1.reload.position, intent_2.reload.position, intent_0.reload.position]
-    assert_equal %w(is_private is_private is_private), [intent_1.reload.visibility, intent_2.reload.visibility, intent_0.reload.visibility]
+    force_reset_model_cache([intent_0, intent_1, intent_2])
+    assert_equal [2, 1, 0], [intent_1.position, intent_2.position, intent_0.position]
+    assert_equal %w(is_private is_private is_private), [intent_1.visibility, intent_2.visibility, intent_0.visibility]
   end
 
 

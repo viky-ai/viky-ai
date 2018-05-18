@@ -22,8 +22,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     # B
     agent_a = create_agent('Agent A')
     agent_b = create_agent('Agent B')
-
-    AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    force_reset_model_cache([agent_a, agent_b])
 
     graph = AgentGraph.new(agent_a).to_graph
 
@@ -45,8 +45,10 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_d = create_agent('Agent D')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_b, target: agent_d)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_b, target: agent_d)
+
+    force_reset_model_cache([agent_a, agent_b, agent_d])
 
     graph = AgentGraph.new(agent_a).to_graph
 
@@ -66,8 +68,10 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c])
 
     graph = AgentGraph.new(agent_a).to_graph
 
@@ -87,8 +91,10 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_c)
-    AgentArc.create(source: agent_b, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_b, target: agent_c)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c])
 
     graph = AgentGraph.new(agent_b).to_graph
 
@@ -107,8 +113,10 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c])
 
     graph = AgentGraph.new(agent_c).to_graph
 
@@ -130,10 +138,12 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_c = create_agent('Agent C')
     agent_d = create_agent('Agent D')
 
-    assert AgentArc.create(source: agent_a, target: agent_b)
-    assert AgentArc.create(source: agent_a, target: agent_c)
-    assert AgentArc.create(source: agent_b, target: agent_d)
-    assert AgentArc.create(source: agent_c, target: agent_d)
+    assert assert AgentArc.create(source: agent_a, target: agent_b)
+    assert assert AgentArc.create(source: agent_a, target: agent_c)
+    assert assert AgentArc.create(source: agent_b, target: agent_d)
+    assert assert AgentArc.create(source: agent_c, target: agent_d)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c, agent_d])
 
     graph = AgentGraph.new(agent_a).to_graph
 
@@ -155,8 +165,10 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c])
 
     graph = AgentGraph.new(agent_a).to_graph(&:slug)
 
@@ -189,7 +201,7 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_a = create_agent('Agent A')
     agent_b = create_agent('Agent B')
 
-    AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_b)
 
     graph = AgentGraph.new(agent_b).to_predecessors_graph
 
@@ -211,8 +223,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_d = create_agent('Agent D')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_b, target: agent_d)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_b, target: agent_d)
 
     graph = AgentGraph.new(agent_d).to_predecessors_graph
 
@@ -232,8 +244,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_c)
 
     graph = AgentGraph.new(agent_b).to_predecessors_graph
 
@@ -252,8 +264,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_c)
-    AgentArc.create(source: agent_b, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_b, target: agent_c)
 
     graph = AgentGraph.new(agent_c).to_predecessors_graph
 
@@ -273,8 +285,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_b)
-    AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_b)
+    assert AgentArc.create(source: agent_a, target: agent_c)
 
     graph = AgentGraph.new(agent_a).to_predecessors_graph
 
@@ -321,8 +333,8 @@ class AgentGraphTest < ActiveSupport::TestCase
     agent_b = create_agent('Agent B')
     agent_c = create_agent('Agent C')
 
-    AgentArc.create(source: agent_a, target: agent_c)
-    AgentArc.create(source: agent_b, target: agent_c)
+    assert AgentArc.create(source: agent_a, target: agent_c)
+    assert AgentArc.create(source: agent_b, target: agent_c)
 
     graph = AgentGraph.new(agent_c).to_predecessors_graph(&:slug)
 

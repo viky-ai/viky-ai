@@ -33,6 +33,7 @@ window.App.Statement = require('./chatbots/statements');
 import './agents/agent_form';
 import './agents/main';
 import './agents/transfer_ownership_form';
+window.App.AgentDuplicator = require('./agents/duplicator');
 
 import './bots/main';
 import './bots/bot_form';

@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentSearchTest < ActiveSupport::TestCase
 
@@ -226,7 +227,8 @@ class AgentSearchTest < ActiveSupport::TestCase
     s = AgentSearch.new(user, criteria)
     assert_equal 1, Agent.search(s.options).count
     assert s.save
-    assert_equal criteria.with_indifferent_access, user.reload.ui_state['agent_search']
+    force_reset_model_cache(user)
+    assert_equal criteria.with_indifferent_access, user.ui_state['agent_search']
   end
 
 

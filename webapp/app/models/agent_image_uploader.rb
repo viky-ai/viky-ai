@@ -11,6 +11,7 @@ class AgentImageUploader < Shrine
   plugin :processing
   plugin :versions
   plugin :pretty_location
+  plugin :copy
 
   Attacher.validate do
     validate_max_size 2.megabytes, message: 'is too large (max is 2 MB)'

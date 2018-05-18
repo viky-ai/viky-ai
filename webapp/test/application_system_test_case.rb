@@ -2,6 +2,7 @@ require "test_helper"
 SimpleCov.command_name "system"
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  include ActiveJob::TestHelper
 
   Capybara.register_driver(:headless_chrome) do |app|
     capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
