@@ -161,8 +161,9 @@ deploy_preprod:
     VIKYAPP_BASEURL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
   script:
-    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/preprod ( ${CI_ENVIRONMENT_URL} )"
     - cd deployment
+    - viky_backup
     - echo "Deploy ..."
     - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
 
