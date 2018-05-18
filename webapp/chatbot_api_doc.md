@@ -353,7 +353,7 @@ For a specific bot, **only the last session is valid** and any request to a clos
 
 ```
 {
-  user_actions: {
+  user_action: {
     type: <type>,
     ...
   }
@@ -371,7 +371,7 @@ User actions types triggered by the user.
 
 ```
 {
-  user_actions: {
+  user_action: {
     type: 'says',
     text: <text>
   }
@@ -384,7 +384,7 @@ User actions types triggered by the user.
 
 ```
 {
-  user_actions: {
+  user_action: {
     type: 'click',
     payload: {
       <...>
