@@ -188,6 +188,10 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
         must_add_request_expression = FALSE;
       }
     }
+    else if (request_expression->expression->interpretation->is_recursive)
+    {
+      request_expression->recursive_without_any_chosen = TRUE;
+    }
   }
 
   if (must_add_request_expression)
