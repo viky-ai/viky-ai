@@ -85,6 +85,8 @@ og_status NlpJsRequestSetup(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
+  NlpJsStackRequestWipe(ctrl_nlp_th);
+
   // set now for the whole request
   IFE(NlpJsSetNow(ctrl_nlp_th));
 
@@ -281,9 +283,9 @@ og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapReset(ctrl_nlp_th->js->variables));
 
   duk_idx_t top = duk_get_top(ctx);
-  if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
+  if (top > 0 && top - ctrl_nlp_th->js->init_stack_idx > 0)
   {
-    duk_pop_n(ctx, top - ctrl_nlp_th->js->request_stack_idx);
+    duk_pop_n(ctx, top - ctrl_nlp_th->js->init_stack_idx);
     return TRUE;
   }
 
@@ -301,9 +303,9 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
   IFE(OgHeapResetWithoutReduce(ctrl_nlp_th->js->variables));
 
   duk_idx_t top = duk_get_top(ctx);
-  if (top > 0 && top - ctrl_nlp_th->js->init_stack_idx > 0)
+  if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
   {
-    duk_pop_n(ctx, top - ctrl_nlp_th->js->init_stack_idx);
+    duk_pop_n(ctx, top - ctrl_nlp_th->js->request_stack_idx);
     return TRUE;
   }
 
@@ -596,6 +598,9 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript ctx initialised");
     CONT;
   }
+
+  int top_before = duk_get_top(ctx);
+  int top_index_before = duk_get_top_index(ctx);
 
   if (duk_peval_string(ctx, var_command) != 0)
   {

@@ -161,11 +161,11 @@ module Nls
           { interpretation: "test", solution: {value1: "value1", value2: "value2"} },
           { interpretation: "test", solution: {value1: "value1", value2: "value2"} }
         ]
-#        exception = assert_raises RestClient::InternalServerError do
-#          check_interpret(["value1 value2", "test"], expected)
-#        end
-#        assert exception.message.include?("500 Internal Server Error")
-        check_interpret(["value1 value2", "value1 value2"], expected)
+        exception = assert_raises RestClient::InternalServerError do
+          check_interpret(["value1 value2", "test"], expected)
+        end
+        assert exception.message.include?("500 Internal Server Error")
+#          check_interpret(["value1 value2", "value1 value2"], expected)
 
       end
 
