@@ -94,13 +94,13 @@ static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th)
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "NlpMatchValidateListWithoutAny: list of all request expressions at level %d:",
+    snprintf(buffer, DPcPathSize, "NlpMatchValidateListWithoutAny: list of all request expressions at level %d before:",
         ctrl_nlp_th->level);
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
   }
 
-  GQueue chosen_recursive_expression[1];
-  g_queue_init(chosen_recursive_expression);
+  GQueue chosen_recursive_interpretation[1];
+  g_queue_init(chosen_recursive_interpretation);
 
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
@@ -112,25 +112,34 @@ static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th)
     request_expression->recursive_without_any_chosen = FALSE;
     if (request_expression->expression->interpretation->is_recursive)
     {
-      og_bool found_expression = FALSE;
-      for (GList *iter = chosen_recursive_expression->head; iter; iter = iter->next)
+      og_bool found_interpretation = FALSE;
+      for (GList *iter = chosen_recursive_interpretation->head; iter; iter = iter->next)
       {
-        struct expression *expression = iter->data;
-        if (expression == request_expression->expression)
+        struct interpretation *interpretation = iter->data;
+        if (interpretation == request_expression->expression->interpretation)
         {
-          found_expression = TRUE;
+          found_interpretation = TRUE;
           break;
         }
       }
-      if (!found_expression)
+      if (!found_interpretation)
       {
-        g_queue_push_tail(chosen_recursive_expression, request_expression->expression);
+        g_queue_push_tail(chosen_recursive_interpretation, request_expression->expression->interpretation);
         request_expression->recursive_without_any_chosen = TRUE;
       }
     }
   }
 
-  g_queue_clear(chosen_recursive_expression);
+  g_queue_clear(chosen_recursive_interpretation);
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    char buffer[DPcPathSize];
+    snprintf(buffer, DPcPathSize, "NlpMatchValidateListWithoutAny: list of all request expressions at level %d after:",
+        ctrl_nlp_th->level);
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
+  }
+
 
   DONE;
 }
