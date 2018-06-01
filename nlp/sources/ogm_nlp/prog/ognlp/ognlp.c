@@ -71,6 +71,8 @@ int main(int argc, char * argv[])
 
   g_free(current_dir);
 
+  OgMlogMaxFileSizeSet(0x10000000);
+
   if (param->loginfo.trace & DOgNlpTraceMinimal)
   {
     time(&ltime);
