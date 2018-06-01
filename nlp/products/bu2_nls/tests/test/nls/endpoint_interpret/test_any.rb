@@ -127,6 +127,47 @@ module Nls
         check_interpret("in AB in ti in AB", expected)
       end
 
+
+      def test_double_any_in_list
+
+        package = Package.new("double_any_in_list")
+
+        aaa = package.new_interpretation("aaa")
+        aaa << Expression.new("aaa", solution: "aaa")
+
+        element = package.new_interpretation("element")
+        element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glued: true)
+        element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glued: true)
+
+        element_recursive = package.new_interpretation("element_recursive")
+        element_recursive << Expression.new("@{element}", aliases: { element: element }, keep_order: true)
+        element_recursive << Expression.new("@{element} @{element_recursive}", aliases: { element: element, element_recursive: element_recursive }, keep_order: true)
+
+        list = package.new_interpretation("list")
+        list << Expression.new("@{element}", aliases: { element: element_recursive },  keep_order: true)
+
+        Nls.remove_all_packages
+        Nls.package_update(package)
+
+
+        # no any
+        expected = { interpretation: "list", solution: { element: ["aaa", "aaa"] } }
+        check_interpret("p aaa p aaa", expected)
+
+        # 1 any
+        expected = { interpretation: "list", solution: { element: ["aaa", "bbb"] } }
+        check_interpret("p aaa p bbb", expected)
+
+        # 1 any
+        expected = { interpretation: "list", solution: { element: ["bbb", "aaa"] } }
+        check_interpret("p bbb p aaa", expected)
+
+        # 2 anys
+        expected = { interpretation: "list", solution: { element: ["bbb", "bbb"] } }
+        check_interpret("p bbb p bbb", expected)
+
+      end
+
     end
   end
 
