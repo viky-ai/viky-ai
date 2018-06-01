@@ -8,3 +8,7 @@ App.chat_session = App.cable.subscriptions.create "ChatSessionChannel",
       if data["action"] == "reset"
         if data["path"].split('?')[0] == window.location.pathname.split('?')[0]
           Turbolinks.visit(data["path"])
+
+      if data["action"] == "update_locale"
+        $('.chatbot').first().data('recognition-locale', data["locale"])
+        $('body').trigger 'recognition:update_locale'

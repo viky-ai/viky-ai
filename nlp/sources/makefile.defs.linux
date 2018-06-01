@@ -47,6 +47,7 @@ GCC_VERSION_GE_v48 := $(shell expr 4.8 \<= `gcc -dumpversion | cut -f1,2 -d.`)
 GCC_VERSION_GE_v49 := $(shell expr 4.9 \<= `gcc -dumpversion | cut -f1,2 -d.`)
 GCC_VERSION_GE_v51 := $(shell expr 5.1 \<= `gcc -dumpversion | cut -f1,2 -d.`)
 GCC_VERSION_GE_v52 := $(shell expr 5.2 \<= `gcc -dumpversion | cut -f1,2 -d.`)
+GCC_VERSION_GE_v70 := $(shell expr 7   \<= `gcc -dumpversion | cut -f1,2 -d.`)
 
 
 # select best GCC avaiable
@@ -121,22 +122,27 @@ ifeq "$(GCC_VERSION_GE_v49)" "1"
   # A new general optimization level, -Og, has been introduced. It addresses the need for fast compilation and a superior debugging experience
   # while providing a reasonable level of runtime performance.
   # Overall experience for development should be better than the default optimization level -O0.
-  #DEBUG_GCC_FLAGS += -Og
+  # DEBUG_GCC_FLAGS += -Og
 
   ifeq "$(OG_ASAN_ENABLE)" "1"
 
-    # Use address-sanitizer :
-    # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
+  # Use address-sanitizer :
+  # https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer , https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Debugging-Options.html#Debugging-Options
     DEBUG_GCC_FLAGS += -fno-omit-frame-pointer -fsanitize=address -DDOG_HEAP_FORCE_RESET
     LIBS += -lasan -llsan -lubsan
 
-    # Run with :
+  # Run with :
     # export ASAN_OPTIONS=abort_on_error=1:detect_leaks=0:detect_stack_use_after_return=1:debug=0
 
   endif
 endif
 
+ifeq "$(GCC_VERSION_GE_v70)" "1"
 
+  # These warning are not very critical but there is a hudge of them
+  DISABLED_WARNING += -Wformat-overflow=0 -Wformat-truncation=0
+
+endif
 
 CFLAGS  = -std=gnu99 -fPIC $(ADDITIONAL_WARNING_ERROR_FLAG) $(DISABLED_WARNING) -D_REENTRANT -DDPcCompiler=DPcCompilerGcc -DDPcSystem=DPcSystemUnix  -DDPcArch=DPcArchlinux -D_LARGEFILE_SOURCE `getconf LFS_CFLAGS` $(INCLUDES)
 CFLAGSR = -O2 -L$(RBINPATH) $(CFLAGS) -DNDEBUG

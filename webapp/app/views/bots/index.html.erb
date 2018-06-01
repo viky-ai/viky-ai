@@ -89,6 +89,13 @@
                 </ul>
               </div>
             </div>
+          <% else %>
+            <a href="<%= chatbot_path(bot) %>" class="btn btn--small">
+              <span class="icon icon--x-small">
+                <%= icon_chat %>
+              </span>
+              <%= t('views.bots.index.try') %>
+            </a>
           <% end %>
         </div>
       </li>

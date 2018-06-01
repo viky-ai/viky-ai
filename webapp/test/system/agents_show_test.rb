@@ -124,4 +124,35 @@ class AgentsShowTest < ApplicationSystemTestCase
     click_link 'Remove favorite'
     assert page.has_text?('Add favorite')
   end
+
+
+  test 'Duplicate an agent' do
+    assert Readme.create(
+      agent: agents(:weather),
+      content: 'My awesome readme !!!'
+    )
+
+    go_to_agent_show(users(:admin), agents(:weather))
+
+    perform_enqueued_jobs do
+      DuplicateAgentJob.perform_later(agents(:weather), users(:admin)) # click_link 'Duplicate'
+    end
+
+    go_to_agents_index
+    assert page.has_text?('admin/weather-copy')
+
+    click_link 'admin/weather-copy'
+    assert page.has_text?('My awesome readme !!!')
+    assert page.has_link?('Interpretations 2')
+    assert page.has_link?('Entities 2')
+
+    go_to_agent_intents('admin', 'weather-copy')
+    click_link 'weather_forecast'
+    assert page.has_text?('Interpretations / weather_forecast PUBLIC')
+    within('#interpretations-list') do
+      click_link 'What the weather like tomorrow ?'
+      assert page.has_text?('admin/weather-copy/interpretations/weather_question')
+      assert page.has_link?('admin/weather-copy/interpretations/weather_question')
+    end
+  end
 end

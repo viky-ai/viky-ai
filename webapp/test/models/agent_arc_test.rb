@@ -12,11 +12,12 @@ class AgentArcTest < ActiveSupport::TestCase
     #   A
     #  /
     # B
-    assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B"], agent_a.successors.reload.collect(&:name)
+    force_reset_model_cache([agent_a, agent_b])
+    assert_equal [], agent_a.predecessors.collect(&:name)
+    assert_equal ["Agent B"], agent_a.successors.collect(&:name)
 
-    assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
-    assert_equal [], agent_b.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_b.predecessors.collect(&:name)
+    assert_equal [], agent_b.successors.collect(&:name)
 
 
     agent_c = create_agent("Agent C")
@@ -24,14 +25,15 @@ class AgentArcTest < ActiveSupport::TestCase
     #   A
     #  / \
     # B   C
-    assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
+    force_reset_model_cache([agent_a, agent_b, agent_c])
+    assert_equal [], agent_a.predecessors.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.collect(&:name).sort
 
-    assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
-    assert_equal [], agent_b.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_b.predecessors.collect(&:name)
+    assert_equal [], agent_b.successors.collect(&:name)
 
-    assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
-    assert_equal [], agent_c.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_c.predecessors.collect(&:name)
+    assert_equal [], agent_c.successors.collect(&:name)
 
 
     agent_d = create_agent("Agent D")
@@ -41,17 +43,18 @@ class AgentArcTest < ActiveSupport::TestCase
     # B   C
     # |
     # D
-    assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
+    force_reset_model_cache([agent_a, agent_b, agent_c, agent_d])
+    assert_equal [], agent_a.predecessors.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.collect(&:name).sort
 
-    assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
-    assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_b.predecessors.collect(&:name)
+    assert_equal ["Agent D"], agent_b.successors.collect(&:name)
 
-    assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
-    assert_equal [], agent_c.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_c.predecessors.collect(&:name)
+    assert_equal [], agent_c.successors.collect(&:name)
 
-    assert_equal ["Agent B"], agent_d.predecessors.reload.collect(&:name)
-    assert_equal [], agent_d.successors.reload.collect(&:name)
+    assert_equal ["Agent B"], agent_d.predecessors.collect(&:name)
+    assert_equal [], agent_d.successors.collect(&:name)
 
 
     assert AgentArc.create(source: agent_c, target: agent_d)
@@ -60,17 +63,18 @@ class AgentArcTest < ActiveSupport::TestCase
     # B   C
     # | /
     # D
-    assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.reload.collect(&:name).sort
+    force_reset_model_cache([agent_a, agent_b, agent_c, agent_d])
+    assert_equal [], agent_a.predecessors.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_a.successors.collect(&:name).sort
 
-    assert_equal ["Agent A"], agent_b.predecessors.reload.collect(&:name)
-    assert_equal ["Agent D"], agent_b.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_b.predecessors.collect(&:name)
+    assert_equal ["Agent D"], agent_b.successors.collect(&:name)
 
-    assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
-    assert_equal ["Agent D"], agent_c.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_c.predecessors.collect(&:name)
+    assert_equal ["Agent D"], agent_c.successors.collect(&:name)
 
-    assert_equal ["Agent B", "Agent C"].sort, agent_d.predecessors.reload.collect(&:name).sort
-    assert_equal [], agent_d.successors.reload.collect(&:name)
+    assert_equal ["Agent B", "Agent C"].sort, agent_d.predecessors.collect(&:name).sort
+    assert_equal [], agent_d.successors.collect(&:name)
 
 
     assert_equal 4, AgentArc.count
@@ -80,17 +84,15 @@ class AgentArcTest < ActiveSupport::TestCase
     #   C
     #   |
     #   D
-    assert_equal [], agent_a.predecessors.reload.collect(&:name)
-    assert_equal ["Agent C"], agent_a.successors.reload.collect(&:name)
+    force_reset_model_cache([agent_a, agent_c, agent_d])
+    assert_equal [], agent_a.predecessors.collect(&:name)
+    assert_equal ["Agent C"], agent_a.successors.collect(&:name)
 
-    assert_equal [], agent_b.predecessors.reload.collect(&:name)
-    assert_equal [], agent_b.successors.reload.collect(&:name)
+    assert_equal ["Agent A"], agent_c.predecessors.collect(&:name)
+    assert_equal ["Agent D"], agent_c.successors.collect(&:name)
 
-    assert_equal ["Agent A"], agent_c.predecessors.reload.collect(&:name)
-    assert_equal ["Agent D"], agent_c.successors.reload.collect(&:name)
-
-    assert_equal ["Agent C"], agent_d.predecessors.reload.collect(&:name)
-    assert_equal [], agent_d.successors.reload.collect(&:name)
+    assert_equal ["Agent C"], agent_d.predecessors.collect(&:name)
+    assert_equal [], agent_d.successors.collect(&:name)
 
     assert_equal 2, AgentArc.count
   end
@@ -106,6 +108,8 @@ class AgentArcTest < ActiveSupport::TestCase
 
     AgentArc.create(source: agent_a, target: agent_b)
     AgentArc.create(source: agent_c, target: agent_a)
+
+    force_reset_model_cache([agent_a, agent_b, agent_c])
 
     arc = AgentArc.new(source: agent_b, target: agent_c)
 
@@ -137,8 +141,8 @@ class AgentArcTest < ActiveSupport::TestCase
     expected = ['Source must exist',
                 'Source can\'t be blank',
                 'Target must exist',
-                'Target can\'t be blank']
-    assert_equal expected, arc.errors.full_messages
+                'Target can\'t be blank'].sort
+    assert_equal expected, arc.errors.full_messages.sort
   end
 
 

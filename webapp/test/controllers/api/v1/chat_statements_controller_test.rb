@@ -41,7 +41,28 @@ class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
       }
     }
     assert_equal '422', response.code
-    assert_equal '{"errors":["Content can\'t be blank"]}', response.body
+    assert_equal '{"errors":["content can\'t be blank"]}', response.body
+  end
+
+
+  test 'Reject invalid button group statement' do
+    post "/api/v1/chat_sessions/#{chat_sessions(:one).id}/statements.json", params: {
+      statement: {
+        nature: 'button_group',
+        content: {
+          buttons: [
+            {
+              text: "",
+              payload: {}
+            }
+          ]
+        }
+      }
+    }
+    assert_equal '422', response.code
+    rsp = JSON.parse(response.body)
+    expected = ["Content button #0 content.text can't be blank, content.payload can't be blank"]
+    assert_equal expected, rsp["errors"]
   end
 
 

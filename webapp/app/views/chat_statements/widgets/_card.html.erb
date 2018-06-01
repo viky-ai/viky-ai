@@ -1,0 +1,6 @@
+<div class="chatbot__widget chatbot__widget--card">
+  <% card.components_as_statements.each do |component| %>
+    <%= render "/chat_statements/widgets/#{component.nature}",
+               statement: statement, component.nature.to_sym => component %>
+  <% end %>
+</div>

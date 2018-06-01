@@ -5,11 +5,19 @@ class Bot < ApplicationRecord
   validates :name, :endpoint, presence: true
 
   def self.accessible_bots(user)
-    agents = Agent
-               .joins(:memberships)
-               .where('user_id = ? OR visibility = ?', user.id, Agent.visibilities[:is_public])
-               .distinct
-    agents.collect_concat { |agent| agent.accessible_bots(user) }
+    ids  = Bot.distinct.joins(agent: :memberships)
+              .where(memberships: { user_id: user.id, rights: [:all, :edit] })
+              .ids
+
+    ids << Bot.distinct.joins(agent: :memberships)
+              .where(memberships: { user_id: user.id, rights: [:show] })
+              .where(wip_enabled: false).ids
+
+    ids << Bot.distinct.joins(:agent)
+              .where(agents: { visibility: Agent.visibilities[:is_public] })
+              .where(wip_enabled: false).ids
+
+    Bot.where(id: ids.flatten.uniq)
   end
 
   def self.ping(endpoint)
@@ -29,10 +37,8 @@ class Bot < ApplicationRecord
       else
         message = response.body
       end
-    rescue Exception => e
+    rescue StandardError => e
       message = e.message
-    rescue RestClient::ExceptionWithResponse => e
-      message = e.message.body
     end
 
     if ping_failed

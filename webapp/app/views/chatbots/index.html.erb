@@ -1,21 +1,4 @@
-<% if @bots.count == 0 %>
-  <div class="chatbots-blankslate-container">
-    <div class="card">
-      <div class="card-content">
-        <div class="blankslate">
-          <div class="blankslate__illustration">
-            <img src='<%= image_path "robot-confused.png" %>'
-                 srcset='<%= image_path "robot-confused.png" %> 1x,
-                           <%= image_path "robot-confused@2x.png" %> 2x'/>
-          </div>
-          <div class="blankslate__content">
-            <%= t("views.chatbots.index.empty_blankslate_html") %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-<% else %>
+<% if @bots.exists? %>
   <% content_for :left_aside do %>
     <%= render 'nav' %>
   <% end %>
@@ -26,10 +9,27 @@
           <div class="blankslate__illustration">
             <img src='<%= image_path "robot-idle.png" %>'
                  srcset='<%= image_path "robot-idle.png" %> 1x,
-                         <%= image_path "robot-idle@2x.png" %> 2x'/>
+                           <%= image_path "robot-idle@2x.png" %> 2x'/>
           </div>
           <div class="blankslate__content">
             <%= t("views.chatbots.index.choose_blankslate_html") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="chatbots-blankslate-container">
+    <div class="card">
+      <div class="card-content">
+        <div class="blankslate">
+          <div class="blankslate__illustration">
+            <img src='<%= image_path "robot-confused.png" %>'
+                 srcset='<%= image_path "robot-confused.png" %> 1x,
+                             <%= image_path "robot-confused@2x.png" %> 2x'/>
+          </div>
+          <div class="blankslate__content">
+            <%= t("views.chatbots.index.empty_blankslate_html") %>
           </div>
         </div>
       </div>

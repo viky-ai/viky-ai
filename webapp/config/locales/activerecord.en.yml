@@ -1,4 +1,33 @@
 en:
+  activemodel:
+    attributes:
+      chatbot/speech:
+        text: content.speech.text
+        locale: content.speech.locale
+      chatbot/list:
+        orientation: content.orientation
+        items: content.items
+      chatbot/text:
+        text: content.text
+      chatbot/image:
+        url: content.url
+        title: content.title
+        description: content.description
+      chatbot/video:
+        params: content.params
+        title: content.title
+        description: content.description
+      chatbot/map:
+        params: content.params
+        title: content.title
+        description: content.description
+      chatbot/button:
+        text: content.text
+        payload: content.payload
+      chatbot/button_group:
+        buttons: content.buttons
+      chatbot/notification:
+        text: content.text
   activerecord:
     models:
       agent: Agent
@@ -40,6 +69,8 @@ en:
         wip_enabled: Work in progress?
         wip_enabled_true: "Yes"
         wip_enabled_false: "No"
+      chat_statement:
+        content: content
   errors:
     user:
       delete:
@@ -78,8 +109,15 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
     chat_statement:
-      invalid_nature: invalid nature
+      invalid_nature: "invalid nature, found: %{nature}"
+      buttons:
+        too_long: 'is too long (maximum is %{count} buttons)'
       list:
+        too_long: 'is too long (maximum is %{count} items)'
+        too_short: 'is too short (minimum is %{count} items)'
+      card:
         too_long: 'is too long (maximum is %{count} items)'
     bots:
       communication_failure: 'The bot does not reply. The link seems broken.'
+      bot_failure: 'The bot replied with an error.'
+      unknown_request_failure: 'Unknown error while requesting the bot.'

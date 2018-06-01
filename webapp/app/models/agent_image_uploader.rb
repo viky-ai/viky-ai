@@ -11,6 +11,7 @@ class AgentImageUploader < Shrine
   plugin :processing
   plugin :versions
   plugin :pretty_location
+  plugin :copy
 
   Attacher.validate do
     validate_max_size 2.megabytes, message: 'is too large (max is 2 MB)'
@@ -20,7 +21,8 @@ class AgentImageUploader < Shrine
   process(:store) do |io, _context|
     {
       original: io,
-      background: resize_to_fill!(io.download, 640, 360, gravity: 'Center')
+      background: resize_to_fill!(io.download, 640, 360, gravity: 'Center'),
+      avatar: resize_to_fill!(io.download, 96, 96, gravity: 'Center')
     }
   end
 end

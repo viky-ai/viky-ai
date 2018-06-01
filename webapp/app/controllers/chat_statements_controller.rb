@@ -21,13 +21,18 @@ class ChatStatementsController < ApplicationController
   end
 
   def user_action
-    BotSendUserStatementJob.perform_later(@chat_session.id, 'button', params[:payload])
+    BotSendUserStatementJob.perform_later(@chat_session.id, 'click_button', {
+      statement_id: params[:statement_id],
+      button_index: params[:button_index],
+      payload:      params[:payload]
+    })
     respond_to do |format|
       format.js {
         render partial: 'user_action'
       }
     end
   end
+
 
   private
 
