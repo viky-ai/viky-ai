@@ -290,7 +290,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
         char solution[DPcPathSize];
         NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
-        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
+        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (interpretation): %s",
             alias->alias, solution);
 
         if (alias_solutions_nb >= DOgAliasSolutionSize)
@@ -328,7 +328,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           struct alias *alias = request_input_part->input_part->alias;
           char solution[DPcPathSize];
           NlpSolutionString(ctrl_nlp_th, json_solution_number, DPcPathSize, solution);
-          NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s",
+          NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (word): %s",
               alias->alias, solution);
           if (alias_solutions_nb >= DOgAliasSolutionSize)
           {
@@ -373,7 +373,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
     struct alias *alias = request_expression->expression->aliases
         + request_expression->expression->alias_any_input_part_position;
 
-    NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution : %s", alias->alias,
+    NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (any): %s", alias->alias,
         string_any);
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
