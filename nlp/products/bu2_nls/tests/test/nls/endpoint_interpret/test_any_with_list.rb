@@ -49,7 +49,6 @@ module Nls
 
         i_book_hotel = package.new_interpretation("book_hotel", { scope: "public" })
         i_book_hotel << Expression.new("@{go} @{hotel_features}", aliases: { go: i_go, hotel_features: i_hotel_feature })
-#        i_book_hotel << Expression.new("@{want} @{go} @{hotel_features}", aliases: { want: i_want, go: i_go, hotel_features: i_hotel_feature })
         i_book_hotel << Expression.new("@{go} @{to_location}", aliases: { go: i_go, to_location: i_to_location })
 
         package
@@ -61,7 +60,7 @@ module Nls
 
         expected = { interpretation: "book_hotel", solution: {"location"=>"tombouctou"} }
         check_interpret("to go to tombouctou",        expected)
-#        check_interpret("I want to go to tombouctou",        expected)
+        check_interpret("I want to go to tombouctou", expected)
 
       end
 
