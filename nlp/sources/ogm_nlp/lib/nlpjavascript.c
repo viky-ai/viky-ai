@@ -32,6 +32,8 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   og_char_buffer heap_name[DPcPathSize];
   snprintf(heap_name, DPcPathSize, "%s_heap_js_variables", ctrl_nlp_th->name);
   ctrl_nlp_th->js->variables = OgHeapInit(ctrl_nlp_th->hmsg, heap_name, sizeof(unsigned char), 0xFF);
+  ctrl_nlp_th->js->variablesNames = g_string_chunk_new(sizeof(unsigned char));
+  g_queue_init(ctrl_nlp_th->js->variables_list);
 
   ctrl_nlp_th->js->duk_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
   if (ctrl_nlp_th->js->duk_context == NULL)
@@ -267,6 +269,11 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
   OgHeapFlush(ctrl_nlp_th->js->variables);
   ctrl_nlp_th->js->variables = NULL;
 
+  g_string_chunk_free(ctrl_nlp_th->js->variablesNames);
+  ctrl_nlp_th->js->variablesNames = NULL;
+
+  g_queue_free(ctrl_nlp_th->js->variables_list);
+
   DONE;
 }
 
@@ -302,14 +309,55 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
 
   IFE(OgHeapResetWithoutReduce(ctrl_nlp_th->js->variables));
 
+  // valeur retournée par la fonction
+  og_bool retValue = FALSE;
+
   duk_idx_t top = duk_get_top(ctx);
   if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
   {
-    duk_pop_n(ctx, top - ctrl_nlp_th->js->request_stack_idx);
-    return TRUE;
+    og_bool bCleaned = FALSE;
+    for (GList *iter = ctrl_nlp_th->js->variables_list->head; iter; iter = iter->next)
+    {
+      top = duk_get_top(ctx);
+      if (top > 0)
+      {
+        retValue = TRUE;
+        gchar* variable_name = iter->data;
+
+        // on désinitialise la variable
+        og_char_buffer var_command[DPcPathSize];
+        snprintf(var_command, DPcPathSize, "delete %s;", variable_name);
+
+        NlpLog(DOgNlpTraceJs, "Sending variable to duktape: %s", var_command);
+
+        if (duk_peval_string(ctx, var_command) != 0)
+        {
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpJsAddVariable: duk_peval_lstring eval failed: %s : '%s'",
+              duk_safe_to_string(ctx, -1), var_command);
+          DPcErr;
+        }
+
+        // on fait revenir le compteur avant la variable
+        // on recule de 2 à cause du duk_peval_string qu'on vient de faire pour désallouer la variable
+        duk_pop_2(ctx);
+
+        bCleaned = TRUE;
+      }
+    }
+
+    if(bCleaned) {
+      // on nettoie la liste des variables enregistrées
+      g_queue_clear (ctrl_nlp_th->js->variables_list);
+      g_string_chunk_clear (ctrl_nlp_th->js->variablesNames);
+    }
+    else if (top > 0 && top - ctrl_nlp_th->js->request_stack_idx > 0)
+    {
+      duk_pop_n(ctx, top - ctrl_nlp_th->js->request_stack_idx);
+      retValue = TRUE;
+    }
   }
 
-  return FALSE;
+  return retValue;
 }
 
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_string original_js_script,
@@ -599,9 +647,6 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     CONT;
   }
 
-  int top_before = duk_get_top(ctx);
-  int top_index_before = duk_get_top_index(ctx);
-
   if (duk_peval_string(ctx, var_command) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsAddVariable: duk_peval_lstring eval failed: %s : '%s'",
@@ -612,6 +657,10 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
   // keep variable value for better error message
   IFE(OgHeapAppend(ctrl_nlp_th->js->variables, strlen(var_command), var_command));
   IFE(OgHeapAppend(ctrl_nlp_th->js->variables, 1, "\n"));
+
+  // keep variables names for later cleanup
+  gchar* varptr = g_string_chunk_insert (ctrl_nlp_th->js->variablesNames, variable_name);
+  g_queue_push_tail (ctrl_nlp_th->js->variables_list, varptr);
 
   DONE;
 }

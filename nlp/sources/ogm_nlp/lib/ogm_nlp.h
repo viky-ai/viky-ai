@@ -552,6 +552,8 @@ struct og_ctrl_nlp_js
 
   /** For better error message list current defined variable */
   og_heap variables;
+  GStringChunk * variablesNames;
+  GQueue variables_list[1];
   size_t reset_counter;
 };
 
