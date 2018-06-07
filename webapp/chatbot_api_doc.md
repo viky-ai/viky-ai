@@ -101,7 +101,7 @@ JSON structure :
 }
 ```
 
-* `<text>` Text to display (**required**).
+* `<text>` Text to display. Allowed HTML tags are : `strong`, `em`, `a`, `p`, `ul`, `li`, `code`, `pre` (**required**).
 
 
 #### <code>image</code> nature
