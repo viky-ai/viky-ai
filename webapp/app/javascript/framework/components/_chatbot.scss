@@ -338,8 +338,16 @@ $chatbot_statement_radius: 8px;
   }
 }
 
+// Widget button-link
+.chatbot__widget--button-link {
+  display:flex;
+  a {
+    text-decoration: none;
+  }
+}
 
 // Widget button & button_group
+.chatbot__widget--button-link,
 form.chatbot__widget--button,
 .chatbot__widget--button-group{
   border-radius: 0;
@@ -349,7 +357,7 @@ form.chatbot__widget--button,
     box-shadow: none;
   }
 
-  button{
+  a, button{
     padding: .5em 1em;
     border: 1px solid $primary-color;
     color: darken($primary-color, 10%);

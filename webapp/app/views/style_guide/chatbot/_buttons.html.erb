@@ -30,6 +30,31 @@
   <% end %>
 </section>
 
+
+<section>
+  <h2>Link as button</h2>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--button-link">
+        <a href="#" target="_blank" rel="nofollow">
+          I look like a button
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+  <% end %>
+</section>
+
+
 <section>
   <h2>Button group</h2>
   <%= highlight_html do %>
