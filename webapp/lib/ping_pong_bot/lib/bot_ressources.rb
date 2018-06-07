@@ -66,6 +66,7 @@ HTML
 <p>Enter the following commands in order to play with buttons:</p>
 <ul>
   <li><code>button</code> show the button widget.</li>
+  <li><code>button-mail</code> show the button that redirect to a custom URL.</li>
   <li><code>button-group</code> show the button group widget.</li>
   <li><code>button-group-deactivable</code> show the button group widget with disable_on_click option enabled.</li>
 </ul>

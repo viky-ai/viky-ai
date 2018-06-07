@@ -20,6 +20,10 @@ module BotApi
     Params.new(Params::build_button(name, action))
   end
 
+  def self.button_mail(name, href)
+    Params.new(Params::build_button_mail(name, href))
+  end
+
   def self.button_group(buttons_list, disable_on_click = false)
     Params.new(Params::build_button_group(buttons_list, disable_on_click))
   end
@@ -74,6 +78,16 @@ module BotApi
         content: {
           text: name,
           payload: payload
+        }
+      }
+    end
+
+    def self.build_button_mail(name, href)
+      {
+        nature: 'button',
+        content: {
+          text: name,
+          href: href
         }
       }
     end

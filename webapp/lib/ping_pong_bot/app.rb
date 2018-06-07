@@ -135,9 +135,10 @@ class PingPongBot < Sinatra::Base
           ]
         ).send(session_id)
 
-      when /button(-|\s)?(group)?(-|\s)?(deactivable)?/i
-        is_group = !$2.nil? && !$2.empty?
-        is_deactivable = !$4.nil? && !$4.empty?
+      when /button(-|\s)?(mail)?(-|\s)?(group)?(-|\s)?(deactivable)?/i
+        is_mail = !$2.nil? && !$2.empty?
+        is_group = !$4.nil? && !$4.empty?
+        is_deactivable = !$6.nil? && !$6.empty?
         if is_group
           BotApi.button_group([
             ['Show me a kitten',   { action: 'display_kitten' }],
@@ -145,8 +146,12 @@ class PingPongBot < Sinatra::Base
             ['Show me a duckling', { action: 'display_duckling' }]
           ], is_deactivable).send(session_id)
         else
-          random_id = Random.rand(100)
-          BotApi.button("Button #{random_id}", { action: "action_#{random_id}"}).send(session_id)
+          if is_mail
+            BotApi.button_mail("Contact us", 'mailto:someone@example.com?Subject=Hello%20again').send(session_id)
+          else
+            random_id = Random.rand(100)
+            BotApi.button("Button #{random_id}", { action: "action_#{random_id}"}).send(session_id)
+          end
         end
 
       when /hlist(-|\s)?(card)?/i
