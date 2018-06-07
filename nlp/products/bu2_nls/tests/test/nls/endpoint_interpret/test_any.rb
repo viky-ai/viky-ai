@@ -135,7 +135,11 @@ module Nls
         aaa = package.new_interpretation("aaa")
         aaa << Expression.new("aaa", solution: "aaa")
 
+        ccc = package.new_interpretation("ccc")
+        ccc << Expression.new("ccc p aaa", solution: "ccc")
+
         element = package.new_interpretation("element")
+        element << Expression.new("p @{ccc}", aliases: { ccc: ccc }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glued: true)
 
@@ -165,6 +169,10 @@ module Nls
         # 2 anys
         expected = { interpretation: "list", solution: { element: ["bbb", "bbb"] } }
         check_interpret("p bbb p bbb", expected)
+
+        # perturbation + 1 anys
+        expected = { interpretation: "list", solution: { element: ["ccc", "bbb"] } }
+        check_interpret("ccc p aaa p bbb", expected)
 
       end
 
