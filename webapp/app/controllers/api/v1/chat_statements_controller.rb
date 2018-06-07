@@ -74,7 +74,7 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
 
     def button_content_params(with_speech=true)
       speech = with_speech ? [speech: [:text, :locale]] : []
-      [:text, payload: {}, ] + speech
+      [:text, :href, payload: {}, ] + speech
     end
 
     def button_group_content_params(with_speech=true)

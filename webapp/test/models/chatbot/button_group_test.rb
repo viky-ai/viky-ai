@@ -73,7 +73,7 @@ class Chatbot::ButtonGroupTest < ActiveSupport::TestCase
       chat_session: chat_sessions(:one)
     )
     assert statement.invalid?
-    expected = ["Content button #0 content.text can't be blank, content.payload can't be blank"]
+    expected = ["Content button #0 content.text can't be blank, content payload and href can't both be blank"]
     assert_equal expected, statement.errors.full_messages
 
     statement.content = {
@@ -117,7 +117,7 @@ class Chatbot::ButtonGroupTest < ActiveSupport::TestCase
     )
     assert statement.invalid?
     expected = [
-      "Content button #0 content.payload can't be blank, Content button #1 content.text can't be blank"
+      "Content button #0 content payload and href can't both be blank, Content button #1 content.text can't be blank"
     ]
     assert_equal expected, statement.errors.full_messages
   end
