@@ -194,7 +194,7 @@ JSON structure :
     nature: 'button',
     content: {
       text: <text>,
-      payload: <payload>,
+      payload: <payload> | href: <url>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -205,7 +205,10 @@ JSON structure :
 ```
 
 * `<text>` is the displayed in the button (**required**).
-* `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
+* `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required if no href**).
+* `<href>` is a custom URL (**required if no payload**).
+
+**Note:** `payload` and `href` are mutually exclusive.
 
 #### <code>button_group</code> nature
 
