@@ -207,7 +207,8 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
     int array_size = json_array_size(input->json_input);
     for (int i = 0; i < array_size; i++)
     {
-      IFE(NlpJsReset(ctrl_nlp_th));
+      IFE(OgNlpThreadedResetKeepJsonAnswer(ctrl_nlp_th));
+
       json_t *json_request = json_array_get(input->json_input, i);
       IFN(json_request)
       {

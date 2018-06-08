@@ -546,14 +546,23 @@ enum nlp_glue_status
 
 struct og_ctrl_nlp_js
 {
-  duk_context *duk_context;
-  duk_idx_t init_stack_idx;
-  duk_idx_t request_stack_idx;
+  // See : http://duktape.org/api.html#duk_get_context.4
 
-  /** For better error message list current defined variable */
-  og_heap variables;
-  GStringChunk * variablesNames;
-  GQueue variables_list[1];
+  /** Permanant ctx : accross the request (lib, momement setup) */
+  duk_context *duk_perm_context;
+
+  /** Request ctx : wipped at the ends of the request */
+  duk_context *duk_request_context;
+
+  /** variables store variables as string */
+  GStringChunk *variables;
+
+  /** variable name: "toto", "tata" */
+  GQueue variables_name_list[1];
+
+  /** variable values : "var toto=1;", "var tata = 2;" */
+  GQueue variables_values[1];
+
   size_t reset_counter;
 };
 
@@ -772,6 +781,9 @@ void NlpPackageDestroyIfNotUsed(gpointer package_void);
 /* nlpackagelist.c */
 typedef og_status (*nlp_package_list_callback)(og_nlp_th ctrl_nlp_th, og_string package_id);
 og_status NlpPackageListInternal(og_nlp_th ctrl_nlp_th, nlp_package_list_callback func);
+
+/* nlpthreaded.c */
+og_status OgNlpThreadedResetKeepJsonAnswer(og_nlp_th ctrl_nlp_th);
 
 /* nlpinterpret.c */
 og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *param);
