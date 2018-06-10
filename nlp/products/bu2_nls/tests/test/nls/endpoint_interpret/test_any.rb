@@ -136,10 +136,13 @@ module Nls
         aaa << Expression.new("aaa", solution: "aaa")
 
         ccc = package.new_interpretation("ccc")
-        ccc << Expression.new("ccc p aaa", solution: "ccc")
+        ccc << Expression.new("ccc ddd hotel", solution: "ccc")
+
+        ddd = package.new_interpretation("ddd")
+        ddd << Expression.new("ddd", solution: "ddd")
 
         element = package.new_interpretation("element")
-        element << Expression.new("p @{ccc}", aliases: { ccc: ccc }, keep_order: true, glued: true)
+        element << Expression.new("@{ddd}", aliases: { ddd: ddd }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glued: true)
 
@@ -149,6 +152,10 @@ module Nls
 
         list = package.new_interpretation("list")
         list << Expression.new("@{element}", aliases: { element: element_recursive },  keep_order: true)
+
+        ccc_list = package.new_interpretation("ccc_list")
+        ccc_list << Expression.new("@{ccc} @{list}", aliases: { ccc: ccc, list: list })
+
 
         Nls.remove_all_packages
         Nls.package_update(package)
@@ -171,8 +178,8 @@ module Nls
         check_interpret("p bbb p bbb", expected)
 
         # perturbation + 1 anys
-        expected = { interpretation: "list", solution: { element: ["ccc", "bbb"] } }
-        check_interpret("ccc p aaa p bbb", expected)
+        expected = { interpretation: "ccc_list", solution: { ccc: "ccc", element: ["bbb"] } }
+        check_interpret("ccc ddd hotel p bbb", expected)
 
       end
 

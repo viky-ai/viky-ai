@@ -187,6 +187,7 @@ static og_bool NlpRequestExpressionIsIncluded(og_nlp_th ctrl_nlp_th, struct requ
     struct request_expression *request_expression_big, struct request_expression *request_expression)
 {
   if (request_expression_big->nb_anys != request_expression->nb_anys) return FALSE;
+  if (request_expression_big->overlap_mark == request_expression->overlap_mark && request_expression->nb_anys) return FALSE;
   return NlpRequestPositionIsIncluded(ctrl_nlp_th, cache, request_expression_big->request_position_start,
       request_expression_big->request_positions_nb, request_expression->request_position_start,
       request_expression->request_positions_nb);
