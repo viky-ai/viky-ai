@@ -161,11 +161,10 @@ module Nls
           { interpretation: "test", solution: {value1: "value1", value2: "value2"} },
           { interpretation: "test", solution: {value1: "value1", value2: "value2"} }
         ]
-        exception = assert_raises RestClient::InternalServerError do
+        exception = assert_raises RestClient::InternalServerError, "'value1' must be undefined" do
           check_interpret(["value1 value2", "test"], expected)
         end
-        assert exception.message.include?("500 Internal Server Error")
-#          check_interpret(["value1 value2", "value1 value2"], expected)
+        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'value1' undefined"), exception.message
 
       end
 
