@@ -554,6 +554,9 @@ struct og_ctrl_nlp_js
   /** Request ctx : wipped at the ends of the request */
   duk_context *duk_request_context;
 
+  /** Local ctx : wipped at the ends of the solution computation */
+  duk_context *duk_local_context;
+
   /** variables store variables as string */
   GStringChunk *variables;
 
@@ -931,8 +934,9 @@ char *NlpDukTypeString(duk_int_t type);
 /* nlpjavascript.c */
 og_status NlpJsInit(og_nlp_th ctrl_nlp_th);
 og_status NlpJsReset(og_nlp_th ctrl_nlp_th);
-og_status NlpJsRequestSetup(og_nlp_th ctrl_nlp_th);
+og_status NlpJsStackRequestSetup(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th);
+og_status NlpJsStackLocalSetup(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);

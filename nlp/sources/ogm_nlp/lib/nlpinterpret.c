@@ -534,7 +534,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   // The Accept-Language string can be non extant
 
   // setup
-  IFE(NlpJsRequestSetup(ctrl_nlp_th));
+  IFE(NlpJsStackRequestSetup(ctrl_nlp_th));
 
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpInterpretRequestParse));
 
