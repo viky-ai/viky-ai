@@ -152,22 +152,6 @@ module Nls
         check_interpret("in AB in ti in AB", expected)
       end
 
-      def test_remanence_solutions
-        Nls.remove_all_packages
-        Nls.package_update(create_package_wrong_1)
-        Nls.package_update(create_package_wrong_2)
-
-        expected = [
-          { interpretation: "test", solution: {value1: "value1", value2: "value2"} },
-          { interpretation: "test", solution: {value1: "value1", value2: "value2"} }
-        ]
-        exception = assert_raises RestClient::InternalServerError, "'value1' must be undefined" do
-          check_interpret(["value1 value2", "test"], expected)
-        end
-        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'value1' undefined"), exception.message
-
-      end
-
       def test_double_any_in_list
 
         package = Package.new("double_any_in_list")

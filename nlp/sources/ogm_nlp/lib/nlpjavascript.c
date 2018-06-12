@@ -15,6 +15,7 @@ static duk_ret_t NlpJsInitLoadModule(duk_context *ctx);
 static duk_ret_t NlpJsInitResolvModule(duk_context *ctx);
 static duk_ret_t push_file_as_string(duk_context *ctx, og_string filename);
 static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th);
+static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8);
 
@@ -63,13 +64,43 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpJsInitBetterErrorMessage(ctrl_nlp_th));
 
+  IFE(NlpJsInitIsolatedEval(ctrl_nlp_th));
+
   // load and init libs
   IFE(NlpJsLoadLibMoment(ctrl_nlp_th));
 
   ctrl_nlp_th->js->duk_request_context = NULL;
-  ctrl_nlp_th->js->duk_local_context = NULL;
 
   ctrl_nlp_th->js->reset_counter = 0;
+  DONE;
+}
+
+static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th)
+{
+  duk_context *ctx = ctrl_nlp_th->js->duk_perm_context;
+
+  // https://github.com/rotaready/moment-range#node--npm
+  og_string duktape_nlp = ""   // keep format
+          "const duktape_nlp = Object.freeze({ \n"
+          "  eval: function(moment, script_to_eval) { \n"// protect moment change
+          "    var duktape_nlp = undefined;\n"// protect duktape_nlp access/change
+          "    var Duktape = undefined;\n"// protect duktape_nlp access/change
+          "    return eval(script_to_eval);\n"
+          "  } \n"
+          "});\n"
+          "";
+
+  if (duk_peval_string(ctx, duktape_nlp) != 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsInitIsolatedEval failed : \n%s", duktape_nlp);
+    DPcErr;
+  }
+  else
+  {
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: NlpJsInitIsolatedEval done.");
+  }
+
   DONE;
 }
 
@@ -213,7 +244,7 @@ og_status NlpJsReset(og_nlp_th ctrl_nlp_th)
     CONT;
   }
 
-  NlpJsStackRequestWipe(ctrl_nlp_th);
+  IFE(NlpJsStackRequestWipe(ctrl_nlp_th));
 
   ctrl_nlp_th->js->reset_counter++;
   if ((ctrl_nlp_th->js->reset_counter % ctrl_nlp_th->ctrl_nlp->env->NlpJSDukGcPeriod) == 0)
@@ -270,11 +301,6 @@ og_status NlpJsStackRequestSetup(og_nlp_th ctrl_nlp_th)
 
 og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
 {
-  // on nettoie la liste des variables enregistrées pour les logs
-  g_queue_clear(ctrl_nlp_th->js->variables_name_list);
-  g_queue_clear(ctrl_nlp_th->js->variables_values);
-  g_string_chunk_clear(ctrl_nlp_th->js->variables);
-
   duk_context *request_ctx = ctrl_nlp_th->js->duk_request_context;
   if (request_ctx == NULL)
   {
@@ -287,6 +313,8 @@ og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
     return FALSE;
   }
 
+  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
+
   /* This duk_pop() makes the "request_ctx" thread unreachable (assuming there
    * is no other reference to it), so "request_ctx" is no longer valid
    * afterwards.
@@ -297,39 +325,10 @@ og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
   return TRUE;
 }
 
-og_status NlpJsStackLocalSetup(og_nlp_th ctrl_nlp_th)
+og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
 {
   duk_context *ctx = ctrl_nlp_th->js->duk_request_context;
   if (ctx == NULL)
-  {
-    CONT;
-  }
-
-  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
-
-  // create a new thread (ctx) for the local solution evaluation, nothing must add in duk_local_context after that
-  duk_push_thread(ctx);
-  ctrl_nlp_th->js->duk_local_context = duk_require_context(ctx, -1);
-
-  if (ctrl_nlp_th->js->duk_local_context == NULL)
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsLocalSetup unable to create local ctx : duk_push_thread.");
-    DPcErr;
-  }
-
-  DONE;
-}
-
-og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
-{
-  duk_context *request_ctx = ctrl_nlp_th->js->duk_request_context;
-  if (request_ctx == NULL)
-  {
-    return FALSE;
-  }
-
-  duk_context *local_ctx = ctrl_nlp_th->js->duk_local_context;
-  if (local_ctx == NULL)
   {
     return FALSE;
   }
@@ -345,22 +344,15 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
 
     NlpLog(DOgNlpTraceJs, "NlpJsStackLocalWipe: Sending eval to duktape: %s", var_command);
 
-    if (duk_peval_string(local_ctx, var_command) != 0)
+    if (duk_peval_string(ctx, var_command) != 0)
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpJsStackLocalWipe: duk_peval_lstring eval failed: %s : '%s'",
-          duk_safe_to_string(local_ctx, -1), var_command);
+          duk_safe_to_string(ctx, -1), var_command);
       DPcErr;
     }
 
     cleaned = TRUE;
   }
-
-  /* This duk_pop() makes the "local_ctx" thread unreachable (assuming there
-   * is no other reference to it), so "local_ctx" is no longer valid
-   * afterwards.
-   */
-  duk_pop(request_ctx);
-  ctrl_nlp_th->js->duk_local_context = duk_get_context(request_ctx, -1);
 
   // on nettoie la liste des variables enregistrées
   g_queue_clear(ctrl_nlp_th->js->variables_name_list);
@@ -383,10 +375,10 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     *p_json_anwser = NULL;
   }
 
-  duk_context *ctx = ctrl_nlp_th->js->duk_local_context;
+  duk_context *ctx = ctrl_nlp_th->js->duk_request_context;
   if (ctx == NULL)
   {
-    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript ctx initialised");
+    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript request ctx initialised");
     CONT;
   }
 
@@ -426,8 +418,22 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     NlpLog(DOgNlpTraceJs, "NlpJsEval js to evaluate : \n// =========\n%s%s\n//=========\n", now, enhanced_script);
   }
 
+  // put object, method + args
+  if (!duk_get_global_string(ctx, "duktape_nlp"))
+  {
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: unable to access to 'duktape_nlp' variable."));
+    DPcErr;
+  }
+  duk_push_string(ctx, "eval");
+  if (!duk_get_global_string(ctx, "moment"))
+  {
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: unable to access to 'moment' variable."));
+    DPcErr;
+  }
+  duk_push_string(ctx, enhanced_script);
+
   // eval securely
-  if (duk_peval_string(ctx, enhanced_script) != 0)
+  if (duk_pcall_prop(ctx, -4, 2) != 0)
   {
     og_string error = duk_safe_to_string(ctx, -1);
 
@@ -655,10 +661,10 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
 
   NlpLog(DOgNlpTraceJs, "Sending variable to duktape: %s", var_command);
 
-  duk_context *ctx = ctrl_nlp_th->js->duk_local_context;
+  duk_context *ctx = ctrl_nlp_th->js->duk_request_context;
   if (ctx == NULL)
   {
-    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript local ctx initialised");
+    NlpLog(DOgNlpTraceJs, "NlpJsEval no javascript request ctx initialised");
     CONT;
   }
 

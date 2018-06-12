@@ -732,7 +732,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 {
 
   // reset local variable
-  IFE(NlpJsStackLocalSetup(ctrl_nlp_th));
+  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
