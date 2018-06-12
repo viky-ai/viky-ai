@@ -141,6 +141,7 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
         IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
         request_expression->any_validate_status = 2;
         some_expressions_kept = TRUE;
+        break;
       }
     }
 
