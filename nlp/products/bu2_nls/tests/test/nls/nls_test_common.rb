@@ -291,6 +291,142 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
     end
 
     def check_interpret(sentence, expected)
+      if !sentence.kind_of? Array
+        check_interpret_sentence(sentence, expected)
+      else
+        check_interpret_array(sentence, expected)
+      end
+    end
+
+    def check_interpret_array(sentence, expected)
+
+      raise "expected must be an Array"   if !expected.kind_of? Array
+      raise "expected must not be empty" if expected.empty?
+      raise "expected must have as many elements as sentence" if expected.length != sentence.length
+
+      # on initialise tous les champs en tableaux pour pouvoir ensuite les remplir
+
+      globaldebug = false
+      debug = []
+      now = []
+      packages = []
+      primary_package = []
+      show_private = []
+      request = []
+
+      0.upto(sentence.length-1) do |i|
+        debug[i] = expected[i][:debug]
+        globaldebug = globaldebug || debug[i]
+
+        now[i] = expected[i][:now]
+
+        packages[i] = "*"
+        packages[i] = expected[i][:packages] if expected[i].has_key?(:packages)
+        primary_package[i] = expected[i][:primary_package]
+
+        show_private[i] = false
+        show_private[i] = expected[i][:show_private] if expected[i].has_key?(:show_private)
+
+        request << json_interpret_body(packages[i], sentence[i], Interpretation.default_locale, false, now[i], primary_package[i], show_private[i])
+      end
+
+      ap expected if globaldebug
+      ap request if globaldebug
+      # execution de la requete
+      actual = Nls.interpret(request)
+      ap actual if globaldebug
+
+      assert_kind_of Array, actual, "Actual answer is not an Array : #{actual.inspect}"
+      actual.each do |actual_element|
+        assert_kind_of Hash, actual_element, "Actual answer element is not an hash : #{actual_element.inspect}"
+        assert_kind_of Array, actual_element['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual_element['interpretations']}"
+      end
+
+      0.upto(expected.length-1) do |i|
+        if (expected[i].has_key?(:interpretations) && expected[i][:interpretations].kind_of?(Array) && expected[i][:interpretations].empty?) ||
+        (expected[i].has_key?(:interpretation)  && expected[i][:interpretation].nil?)
+          assert actual[i]['interpretations'].empty?, "Actual answer should not match on any interpretation"
+          # skip other assert
+          return actual[i]
+        end
+
+        assert !actual[i]['interpretations'].empty?, "Actual answer did not match on any interpretation"
+
+        match_intepretation = actual[i]['interpretations'].first
+
+        if expected[i].has_key?(:warnings)
+
+          assert_kind_of Array, actual[i]['warnings'], "Actual answer['warnings'] is not an Array : #{actual[i].inspect}"
+
+          expected_warnings = expected[i][:warnings]
+
+          expected_warning_found = false
+          actual[i]['warnings'].each do |warning|
+            if warning.include?(expected_warnings)
+              expected_warning_found = true
+              break
+            end
+          end
+
+          assert expected_warning_found, "Actual answer['warnings'] must contains \"#{expected_warnings}\": \n#{JSON.generate(actual[i]['warnings'])}"
+
+        else
+          if !actual[i]['warnings'].nil?
+            assert false, "Actual answer must be without warnings :\n#{actual[i]['warnings'].join("\n")}"
+          end
+        end
+
+
+        if expected[i].has_key?(:interpretations)
+          expected_interpretations = expected[i][:interpretations]
+
+          match_intepretations_slug = []
+          actual[i]['interpretations'].each do |match_intepretation_local|
+            match_intepretations_slug << match_intepretation_local['slug']
+          end
+
+          assert_equal expected_interpretations, match_intepretations_slug, "match on wrong interpretation"
+        end
+
+        if expected[i].has_key?(:interpretation)
+          expected_interpretation = expected[i][:interpretation]
+          slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
+          assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
+        end
+
+        if expected[i].has_key?(:solution)
+          expected_solution = expected[i][:solution]
+          if expected_solution.kind_of?(Hash)
+            expected_solution.deep_stringify_keys!
+          elsif expected_solution.kind_of?(Array)
+            expected_solution.each do |h|
+              if h.kind_of?(Hash)
+                h.deep_stringify_keys!
+              end
+            end
+          end
+
+          if expected_solution.nil?
+            assert_nil match_intepretation['solution'], "Matched on unexpected solution (nil)"
+          else
+            assert_equal expected_solution, match_intepretation['solution'], "Matched on unexpected solution"
+          end
+        end
+
+        if expected[i].has_key?(:score)
+          expected_score = expected[i][:score]
+          assert_equal expected_score, match_intepretation['score'], "Matched on wrong score"
+        end
+
+      end
+
+
+
+      return actual
+
+    end
+
+    def check_interpret_sentence(sentence, expected)
 
       raise "expected must be an Hash"   if !expected.kind_of? Hash
       raise "expected must not be empty" if expected.empty?

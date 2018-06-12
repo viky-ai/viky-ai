@@ -35,6 +35,31 @@ module Nls
         package
       end
 
+      def create_package_wrong_1
+        package = Package.new("wrong_package_1")
+
+        value1 = package.new_interpretation("value1", scope: "private")
+        value1 << Expression.new("value1", solution: "value1", glued: true, keep_order: true)
+
+        value2 = package.new_interpretation("value2", scope: "private")
+        value2 << Expression.new("value2", solution: "value2", glued: true, keep_order: true)
+
+        int1 = package.new_interpretation("test", scope: "public")
+        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, solution: "`{ value1: value1, value2: value2}`", glued: true, keep_order: true)
+#        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, glued: true, keep_order: true)
+
+        package
+      end
+
+      def create_package_wrong_2
+        package2 = Package.new("wrong_package_2")
+
+        int1 = package2.new_interpretation("test", scope: "public")
+        int1 << Expression.new("test", solution: "`{ value1: value1, value2: value2}`", glued: true, keep_order: true)
+
+        package2
+      end
+
       # Tests
 
       def test_any_punctuation_trim
@@ -127,7 +152,6 @@ module Nls
         check_interpret("in AB in ti in AB", expected)
       end
 
-
       def test_double_any_in_list
 
         package = Package.new("double_any_in_list")
@@ -182,7 +206,6 @@ module Nls
         check_interpret("ccc ddd hotel p bbb", expected)
 
       end
-
     end
   end
 

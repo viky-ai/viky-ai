@@ -207,6 +207,8 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
     int array_size = json_array_size(input->json_input);
     for (int i = 0; i < array_size; i++)
     {
+      IFE(OgNlpThreadedResetKeepJsonAnswer(ctrl_nlp_th));
+
       json_t *json_request = json_array_get(input->json_input, i);
       IFN(json_request)
       {
@@ -532,7 +534,7 @@ static og_status NlpInterpretRequestParse(og_nlp_th ctrl_nlp_th, json_t *json_re
   // The Accept-Language string can be non extant
 
   // setup
-  IFE(NlpJsRequestSetup(ctrl_nlp_th));
+  IFE(NlpJsStackRequestSetup(ctrl_nlp_th));
 
   IFE(OgNlpSynchroTestSleepIfTimeoutNeeded(ctrl_nlp_th, nlp_timeout_in_NlpInterpretRequestParse));
 
