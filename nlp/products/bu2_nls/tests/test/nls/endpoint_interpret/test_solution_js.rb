@@ -114,6 +114,20 @@ module Nls
         solution_test_2combine = package.new_interpretation("solution_test_2combine")
         solution_test_2combine.new_expression("sol list combine @{combine}", aliases: { combine: solution_test_combine })
 
+        js_isolation_0 = package.new_interpretation("js_isolation_0")
+        js_isolation_0 << Expression.new("jsisolationzero", solution: "`'js_isolation_0';`", keep_order: true, glued: false)
+
+        js_isolation_1 = package.new_interpretation("js_isolation_1")
+        js_isolation_1 << Expression.new("@{js_isolation_0} jsisolationun", aliases: { js_isolation_0: js_isolation_0 }, solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glued: false)
+        js_isolation_1 << Expression.new("jsisolationun", solution: "`var undef_variable = 'should not be defined'; 'js_isolation_1';`", keep_order: true, glued: false)
+        js_isolation_1 << Expression.new("jsisolationun moment", solution: "`moment = null; 'js_isolation_1';`", keep_order: true, glued: false)
+        js_isolation_1 << Expression.new("jsisolationun duktapenlp", solution: "`duktape_nlp = null; 'js_isolation_1';`", keep_order: true, glued: false)
+
+        js_isolation_2 = package.new_interpretation("js_isolation_2")
+        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux"    , aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_0: js_isolation_0, js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2' }`", keep_order: true, glued: false)
+        js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux bis", aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2', bug: undef_variable }`", keep_order: true, glued: false)
+        js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ bug: undef_variable }`", keep_order: true, glued: false)
+
         package
       end
 
@@ -246,6 +260,50 @@ module Nls
         check_interpret("emoji 🔥+👋", solution: "🔥+👋")
         check_interpret("emoji array 🔥+👋", solution: [ "🔥", "👋"] )
         check_interpret("emoji object 🔥+👋", solution: { fire: "🔥", hand: "👋" } )
+      end
+
+      def test_test_js_isolation_same_request
+
+        exception = assert_raises RestClient::InternalServerError, "'js_isolation_0' must not be undefined" do
+          check_interpret("jsisolationzero jsisolationun jsisolationdeux", solution: nil)
+        end
+        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'js_isolation_0' undefined"), exception.message
+
+        exception = assert_raises RestClient::InternalServerError, "'undef_variable' must not be undefined" do
+          check_interpret("jsisolationzero jsisolationun jsisolationdeux bis", solution: nil)
+        end
+        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'undef_variable' undefined"), exception.message
+
+      end
+
+      def test_test_js_isolation_between_request
+
+        check_interpret("jsisolationun", solution: 'js_isolation_1')
+        exception = assert_raises RestClient::InternalServerError, "'undef_variable' must no be undefined" do
+          check_interpret("jsisolationdeux", solution: nil )
+        end
+        assert exception.message.include?("JavaScript error : ReferenceError: identifier 'undef_variable' undefined"), exception.message
+
+      end
+
+      def test_test_js_isolation_core_variables_moment
+
+        # js erase moment variable
+        check_interpret("jsisolationun moment", solution: 'js_isolation_1')
+
+        now = "2017-01-01T00:00:00+03:00"
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00+03:00", now: now)
+
+      end
+
+      def test_test_js_isolation_core_variables_duktape
+
+        # js erase moment variable
+        check_interpret("jsisolationun duktapenlp", solution: 'js_isolation_1')
+
+        now = "2017-01-01T00:00:00+03:00"
+        check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00+03:00", now: now)
+
       end
 
     end

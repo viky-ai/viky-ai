@@ -122,6 +122,8 @@ static og_status NlpWhyJsonMInputPart(og_nlp_th ctrl_nlp_th, struct nm_expressio
         NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonMInputPart: error setting json_word");
         DPcErr;
       }
+      
+      break;
     }
     case nlp_input_part_type_Interpretation:
     case nlp_input_part_type_Number:
@@ -187,6 +189,12 @@ static og_status NlpWhyJsonMExpression(og_nlp_th ctrl_nlp_th, struct nm_expressi
       IF(json_object_set_new(json_match, "word", json_word))
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonMExpression: error setting json_word");
+        DPcErr;
+      }
+      json_t *json_highlight = json_string(highlight);
+      IF(json_object_set_new(json_match, "highlight", json_highlight))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonMExpression: error setting json_highlight");
         DPcErr;
       }
       break;
@@ -310,6 +318,8 @@ static og_status NlpWhyJsonMInputPartDiagnostic(og_nlp_th ctrl_nlp_th, struct nm
       og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
       IFN(string_word) DPcErr;
       snprintf(diagnostic, DPcPathSize, "Input-part word='%s' does not exist", string_word);
+
+      break;
     }
     case nlp_input_part_type_Interpretation:
     case nlp_input_part_type_Number:

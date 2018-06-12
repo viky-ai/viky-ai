@@ -143,9 +143,18 @@ module Nls
       puts "Interpret request :\n #{body.to_json}\n" if verbose?
 
       body_to_write = body
-      body_to_write["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
-      body_to_write["show-explanation"] = false
-      body_to_write["primary-package"] = nil if(!body_to_write.has_key?("primary-package"))
+
+      if body_to_write.kind_of? Array
+        body_to_write.each do |body_item|
+          body_item["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
+          body_item["show-explanation"] = false
+          body_item["primary-package"] = nil if(!body_item.has_key?("primary-package"))
+        end
+      else
+        body_to_write["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
+        body_to_write["show-explanation"] = false
+        body_to_write["primary-package"] = nil if(!body_to_write.has_key?("primary-package"))
+      end
 
       File.open(File.join(pwd, "last_interpret_request.json"),"w") do |f|
         f.write(JSON.pretty_generate(body_to_write))
