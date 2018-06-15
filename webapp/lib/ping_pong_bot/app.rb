@@ -121,6 +121,7 @@ class PingPongBot < Sinatra::Base
                   zoom: 10
                 },
                 markers: {
+                  center: true,
                   list: [
                     { position: { lat: 44.936115, lng: 4.924396 }, title: "Châteaux d’eau, parc Jean Perdrix", description: "La Sculpture-château d'eau de Philolaos" },
                     { position: { lat: 44.929882, lng: 4.886058 }, title: 'Parc Jouvet', description: "<p>Véritable poumon vert du centre-ville, le parc porte le nom de Théodore Jouvet (1837-1905), le généreux donateur qui a offert à la ville de Valence la somme nécessaire à l'achat du terrain.</p>" },

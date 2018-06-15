@@ -7,6 +7,7 @@
 
       <% if map.params['payload']['markers'] %>
         <% markers =  map.params['payload']['markers'] %>
+        let bounds = new google.maps.LatLngBounds();
         <%= markers['list'].to_json.html_safe %>.forEach(function(mark) {
           let marker = new google.maps.Marker({
             map: map,
@@ -20,7 +21,11 @@
           marker.addListener('click', function() {
             infowindow.open(map, marker);
           });
+          bounds.extend(marker.position);
         });
+        <% if markers['center'] %>
+          map.fitBounds(bounds);
+        <% end %>
       <% end %>
     }
   </script>
