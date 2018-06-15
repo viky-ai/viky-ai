@@ -58,6 +58,7 @@ HTML
   <li><code>map-search</code> show map via <strong>Search mode</strong>.</li>
   <li><code>map-view</code> show map via <strong>View mode</strong>.</li>
   <li><code>map-streetview</code> show map via <strong>Street View mode</strong>.</li>
+  <li><code>map-markers</code> show map with <strong>custom markers</strong>.</li>
 </ul>
 HTML
 

@@ -1,11 +1,25 @@
+<% if map.params['endpoint'] == 'javascript' %>
+  <% map_js_function = "initMap_#{statement.id}".gsub('-', '_') %>
+  <script>
+    function <%= map_js_function %>() {
+      let map = new google.maps.Map(document.getElementById('<%= "map-#{statement.id}"%>'),
+        <%= map.params['payload']['map'].to_json.html_safe %>);
+    }
+  </script>
+  <script async defer src=<%= "https://maps.googleapis.com/maps/api/js?key=#{map.params['api_key']}&callback=#{map_js_function}" %>></script>
+<% end %>
+
 <div class="chatbot__widget chatbot__widget--map">
   <div id=<%="map-#{statement.id}"%> class="chatbot__widget--map__wrapper">
-    <iframe
-      width="600"
-      height="450"
-      frameborder="0" style="border:0"
-      src="<%= "https://www.google.com/maps/embed/v1/#{map.params['endpoint']}?key=#{map.params['api_key']}&#{map.params['query']}" %>" allowfullscreen>
-    </iframe>
+    <% unless map.params['endpoint'] == 'javascript' %>
+      <iframe
+        width="600"
+        height="450"
+        frameborder="0" style="border:0"
+        src="<%= "https://www.google.com/maps/embed/v1/#{map.params['endpoint']}?key=#{map.params['api_key']}&#{map.params['query']}" %>" allowfullscreen>
+      </iframe>
+    <% end %>
+
   </div>
   <% if map.has_info? %>
     <div class="chatbot__widget--map__info">

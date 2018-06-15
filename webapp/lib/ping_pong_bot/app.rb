@@ -94,7 +94,7 @@ class PingPongBot < Sinatra::Base
           .add_speech('Voici une image de chatton', 'fr-FR')
           .send(session_id)
 
-        when /map(-|\s)?(place|directions|search|view|streetview)/i
+        when /map(-|\s)?(place|directions|search|view|streetview|markers)/i
           api_key = "***REMOVED***"
           params, title, description = case $2
             when 'place'
@@ -114,6 +114,14 @@ class PingPongBot < Sinatra::Base
             when 'streetview'
               [{api_key: api_key, endpoint: "streetview", query: "location=44.929228,4.8887884&heading=-60&pitch=10"},
               "Kiosque Peynet (Valence)", '']
+            when 'markers'
+              [{api_key: api_key, endpoint: "javascript", payload: {
+                map: {
+                  center: {lat: 44.933146, lng: 4.892174},
+                  zoom: 10
+                }
+              }},
+               "Lieux touristiques (Valence)", '']
             else
               ['', '', '']
           end

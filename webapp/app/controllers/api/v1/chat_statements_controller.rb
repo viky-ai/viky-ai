@@ -70,7 +70,7 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
     def map_content_params(with_speech=true)
       speech = with_speech ? [speech: [:text, :locale]] : []
       [:title, :description, params: [
-        :api_key, :endpoint, :query
+        :api_key, :endpoint, :query, payload: {}
       ]] + speech
     end
 
