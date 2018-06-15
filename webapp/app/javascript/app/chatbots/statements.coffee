@@ -182,6 +182,38 @@ class Statement
     html.push '</div>'
     html.join("\n")
 
+  @display_js_map: (api_key, statement_id, map_options) ->
+    display = () ->
+      map = new google.maps.Map(document.getElementById("map-" + statement_id), map_options.map);
+      if map_options.markers
+        markers = map_options.markers
+        bounds = new google.maps.LatLngBounds()
+        markers.list.forEach((mark) ->
+          marker = new google.maps.Marker({
+            map: map,
+            position: mark.position,
+            title: mark.title
+          })
+          infowindow = new google.maps.InfoWindow({
+            content: mark.description,
+            maxWidth: 350
+          })
+          marker.addListener('click', () ->
+            infowindow.open(map, marker)
+          )
+          bounds.extend(marker.position)
+        )
+        if markers.center
+          map.fitBounds(bounds)
+
+    if $('script[src^="https://maps.googleapis.com/maps/api/js?"]').length == 0
+      script = document.createElement('script')
+      script.onload = display
+      script.src = "https://maps.googleapis.com/maps/api/js?key=#{api_key}"
+      document.head.appendChild(script)
+    else
+      display()
+
 
 class List
   constructor: (element) ->
