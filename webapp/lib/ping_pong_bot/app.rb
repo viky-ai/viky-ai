@@ -119,6 +119,15 @@ class PingPongBot < Sinatra::Base
                 map: {
                   center: {lat: 44.933146, lng: 4.892174},
                   zoom: 10
+                },
+                markers: {
+                  list: [
+                    { position: { lat: 44.936115, lng: 4.924396 }, title: "Châteaux d’eau, parc Jean Perdrix", description: "La Sculpture-château d'eau de Philolaos" },
+                    { position: { lat: 44.929882, lng: 4.886058 }, title: 'Parc Jouvet', description: "<p>Véritable poumon vert du centre-ville, le parc porte le nom de Théodore Jouvet (1837-1905), le généreux donateur qui a offert à la ville de Valence la somme nécessaire à l'achat du terrain.</p>" },
+                    { position: { lat: 44.929222, lng: 4.888631 }, title: 'Kiosque Peynet', description: "<p>Il inspira à <a href='https://fr.wikipedia.org/wiki/Raymond_Peynet'>Raymond Peynet</a> ses célèbres amoureux en 1942.</p>" },
+                    { position: { lat: 44.931967, lng: 4.890674 }, title: 'Maison des têtes', description: "<p>Cette maison, marquant le passage du style gothique flamboyant au style renaissance, doit son nom aux nombreuses têtes qui ornent sa façade.</p>" },
+                    { position: { lat: 44.931237, lng: 4.889156 }, title: "Musée d'art et d'archéologie", description: "<p>Ses collections, riches de plus de 20 000 œuvres, offrent un large panorama de l’histoire de l'Homme et des arts, de la préhistoire régionale à l’art contemporain.</p>" },
+                  ]
                 }
               }},
                "Lieux touristiques (Valence)", '']

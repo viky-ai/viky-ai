@@ -4,6 +4,24 @@
     function <%= map_js_function %>() {
       let map = new google.maps.Map(document.getElementById('<%= "map-#{statement.id}"%>'),
         <%= map.params['payload']['map'].to_json.html_safe %>);
+
+      <% if map.params['payload']['markers'] %>
+        <% markers =  map.params['payload']['markers'] %>
+        <%= markers['list'].to_json.html_safe %>.forEach(function(mark) {
+          let marker = new google.maps.Marker({
+            map: map,
+            position: mark.position,
+            title: mark.title
+          });
+          let infowindow = new google.maps.InfoWindow({
+            content: mark.description,
+            maxWidth: 350
+          });
+          marker.addListener('click', function() {
+            infowindow.open(map, marker);
+          });
+        });
+      <% end %>
     }
   </script>
   <script async defer src=<%= "https://maps.googleapis.com/maps/api/js?key=#{map.params['api_key']}&callback=#{map_js_function}" %>></script>
