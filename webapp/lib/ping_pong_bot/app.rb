@@ -95,23 +95,24 @@ class PingPongBot < Sinatra::Base
           .send(session_id)
 
         when /map(-|\s)?(place|directions|search|view|streetview)/i
+          api_key = "***REMOVED***"
           params, title, description = case $2
             when 'place'
-              [{api_key: "***REMOVED***", endpoint: "place", query: "q=Valence"},
+              [{api_key: api_key, endpoint: "place", query: "q=Valence"},
               "Valence (Drôme)",
               "Valence est une commune du sud-est de la France. Avec 62 150 habitants, elle est la ville la plus peuplée de la Drôme. Ses habitants sont appelés les Valentinois."]
             when 'directions'
-              [{api_key: "***REMOVED***", endpoint: "directions", query: "origin=Paris+France&destination=Valence+France"},
+              [{api_key: api_key, endpoint: "directions", query: "origin=Paris+France&destination=Valence+France"},
               "Itinéraire de Paris à Valence", '']
             when 'search'
-              [{api_key: "***REMOVED***", endpoint: "search", query: "q=Restaurant+Valence"},
+              [{api_key: api_key, endpoint: "search", query: "q=Restaurant+Valence"},
               "Restaurants (Valence)", '']
             when 'view'
-              [{api_key: "***REMOVED***", endpoint: "view", query: "center=48.858281,2.294667&zoom=18&maptype=satellite"},
+              [{api_key: api_key, endpoint: "view", query: "center=48.858281,2.294667&zoom=18&maptype=satellite"},
               "Tour Eiffel",
               "Célèbre tour en fer de Gustave Eiffel (1889), terrasses panoramiques accessibles par escaliers et ascenseurs."]
             when 'streetview'
-              [{api_key: "***REMOVED***", endpoint: "streetview", query: "location=44.929228,4.8887884&heading=-60&pitch=10"},
+              [{api_key: api_key, endpoint: "streetview", query: "location=44.929228,4.8887884&heading=-60&pitch=10"},
               "Kiosque Peynet (Valence)", '']
             else
               ['', '', '']
