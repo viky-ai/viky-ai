@@ -180,9 +180,37 @@ JSON structure :
 }
 ```
 
-* `<params>` the Google Maps Embed API URL params; i.e. `https://www.google.com/maps/embed/v1/<params>` (**required**).
-* `<title>` a noteworthy title.
-* `<description>` a short description.
+* `<params>` the Google Maps params (**required**).
+* `<title>` a noteworthy title for the whole map.
+* `<description>` a short description for the whole map.
+
+* In `<params>`, basically two kind of maps are available.
+The first one embed a simple Google Maps Embed API URL like `https://www.google.com/maps/embed/v1/<params>` as follow :
+```
+    {
+        api_key: <api_key>,
+        endpoint: <endpoint>,
+        query: <query_strings>
+    }
+```
+The second (ie: `endpoint: "javascript"`) embed a subset of [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/reference/3.exp/) with optional markers :
+```
+    {
+        api_key: <api_key>,
+        endpoint: "javascript",
+        payload: {
+            map: <google.maps.MapOptions>,
+            markers: {
+              center: <true|false>,
+              list: [{
+                position: <google.maps.LatLngLiteral>,
+                title: <marker_title>,
+                description: <html_info_description>
+              }]
+            }
+        }
+    }
+```
 
 
 #### <code>button</code> nature
