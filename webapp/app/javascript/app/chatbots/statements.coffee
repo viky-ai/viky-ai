@@ -206,13 +206,27 @@ class Statement
         if markers.center
           map.fitBounds(bounds)
 
+    wait_count = 0
+    wait_lib_loading = () ->
+      if wait_count > 50
+        console.error("Cannot load Google JavaScript library")
+        return
+      if !$('script[src^="https://maps.googleapis.com/maps/api/js?"]')[0].loaded
+        wait_count += 1
+        setTimeout(wait_lib_loading, 10*wait_count)
+      else
+        display()
+
     if $('script[src^="https://maps.googleapis.com/maps/api/js?"]').length == 0
       script = document.createElement('script')
-      script.onload = display
+      script.loaded = false
+      script.onload = () ->
+        this.loaded = true
+        display()
       script.src = "https://maps.googleapis.com/maps/api/js?key=#{api_key}"
       document.head.appendChild(script)
     else
-      display()
+      wait_lib_loading()
 
 
 class List
