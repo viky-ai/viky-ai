@@ -48,12 +48,12 @@ class Chatbot::ButtonGroupTest < ActiveSupport::TestCase
             text: 'I am a button',
             payload: { action: "Go"}
           }
-        ] * 7
+        ] * 13
       },
       chat_session: chat_sessions(:one)
     )
     assert statement.invalid?
-    expected = ["content.buttons is too long (maximum is 6 buttons)"]
+    expected = ["content.buttons is too long (maximum is 12 buttons)"]
     assert_equal expected, statement.errors.full_messages
   end
 

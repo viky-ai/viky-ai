@@ -5,7 +5,7 @@ class Chatbot::Card
   attr_accessor :components
 
   validates :components, presence: true, length: {
-    maximum: 5, too_long: I18n.t('errors.chat_statement.card.too_long')
+    maximum: 6, too_long: I18n.t('errors.chat_statement.card.too_long')
   }
   validate :recursive_validation
 

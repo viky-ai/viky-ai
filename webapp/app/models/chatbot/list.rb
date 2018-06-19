@@ -7,7 +7,7 @@ class Chatbot::List
   validates :orientation, inclusion: { in: %w(vertical horizontal) }, allow_nil: true
   validates :items, presence: true, length: {
     minimum: 2, too_short: I18n.t('errors.chat_statement.list.too_short'),
-    maximum: 8, too_long: I18n.t('errors.chat_statement.list.too_long')
+    maximum: 10, too_long: I18n.t('errors.chat_statement.list.too_long')
   }
   validate :recursive_validation
 

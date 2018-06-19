@@ -51,38 +51,13 @@ class Chatbot::CardTest < ActiveSupport::TestCase
           content: {
             text: 'The Pertimm logo.'
           }
-        }, {
-          nature:  'text',
-          content: {
-            text: 'The Pertimm logo.'
-          }
-        }, {
-          nature:  'text',
-          content: {
-            text: 'The Pertimm logo.'
-          }
-        }, {
-          nature:  'text',
-          content: {
-            text: 'The Pertimm logo.'
-          }
-        }, {
-          nature:  'text',
-          content: {
-            text: 'The Pertimm logo.'
-          }
-        }, {
-          nature:  'text',
-          content: {
-            text: 'The Pertimm logo.'
-          }
-        }],
+        }] * 7
       },
       chat_session: chat_sessions(:one)
     )
 
     assert card_statement.invalid?
-    assert_equal ['Components is too long (maximum is 5 items)'], card_statement.errors.full_messages
+    assert_equal ['Components is too long (maximum is 6 items)'], card_statement.errors.full_messages
 
     card_statement.content = { components: [] }
     assert card_statement.invalid?

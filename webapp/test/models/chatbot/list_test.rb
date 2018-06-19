@@ -37,13 +37,13 @@ class Chatbot::ListTest < ActiveSupport::TestCase
       speaker: :bot,
       nature: :list,
       content: {
-        items: [{ nature: 'text', content: { text: 'Hello' } }] * 9
+        items: [{ nature: 'text', content: { text: 'Hello' } }] * 11
       },
       chat_session: chat_sessions(:one)
     )
 
     assert statement.invalid?
-    expected = ["content.items is too long (maximum is 8 items)"]
+    expected = ["content.items is too long (maximum is 10 items)"]
     assert_equal expected, statement.errors.full_messages
   end
 
