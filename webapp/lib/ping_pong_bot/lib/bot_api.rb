@@ -53,10 +53,10 @@ module BotApi
       @statement = statement
     end
 
-    def add_speech(text, local)
-      @statement[:speech] = {
+    def add_speech(text, locale)
+      @statement[:content][:speech] = {
         text: text,
-        local: local
+        locale: locale
       }
       self
     end
