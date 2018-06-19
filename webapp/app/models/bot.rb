@@ -52,9 +52,12 @@ class Bot < ApplicationRecord
     Bot.ping(endpoint)
   end
 
-  def send_start(session_id)
+  def send_start(session_id, user)
     parameters = {
-      session_id: session_id
+      session_id: session_id,
+      user: {
+        name: user.name.present? ? user.name : user.username
+      }
     }
     post("start", parameters)
   end

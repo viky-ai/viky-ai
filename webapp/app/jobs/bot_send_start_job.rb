@@ -16,8 +16,10 @@ class BotSendStartJob < ApplicationJob
   def perform(*args)
     bot_id = args[0]
     chat_session_id = args[1]
+    user_id = args[2]
 
-    Bot.find(bot_id).send_start(chat_session_id)
+    user = User.find(user_id)
+    Bot.find(bot_id).send_start(chat_session_id, user)
   end
 
   private

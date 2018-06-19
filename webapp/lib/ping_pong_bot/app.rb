@@ -19,7 +19,8 @@ class PingPongBot < Sinatra::Base
   end
 
   post '/start' do
-    session_id = JSON.parse(request.body.read)["session_id"]
+    parameters = JSON.parse(request.body.read)
+    session_id = parameters["session_id"]
 
     BotApi
       .list(
