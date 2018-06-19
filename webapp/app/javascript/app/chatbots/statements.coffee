@@ -72,6 +72,11 @@ class Speaker
       speech_request.lang = locale
       Speaker.speak(speech_request)
 
+  quiet: () ->
+    if (window.speechSynthesis)
+      Speaker = window.speechSynthesis
+      Speaker.cancel()
+
 
 class Recognition
   constructor: ->
@@ -144,6 +149,7 @@ class Statement
       Statement.display_bot_waiting()
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove()
+      Speaker::quiet()
 
     speech_text = content.data("speech-text")
     if speech_text != ''
