@@ -233,11 +233,13 @@ $chatbot_statement_radius: 8px;
 // Widget image
 .chatbot__widget--image{
   line-height: 0;
-  background-color: #fff;
+  background: content-box radial-gradient(#fff, #f5f7f9);
   border: 2px solid #fff;
   img{
     max-width: 100%;
     max-height: 300px;
+    display: block;
+    margin: 0 auto;
   }
   .chatbot__widget--image__info {
     line-height: 1.4rem;
