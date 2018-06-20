@@ -392,12 +392,16 @@ form.chatbot__widget--button,
   }
 }
 // In Card
+.chatbot__widget--list .chatbot__widget--button,
 .chatbot__widget--card .chatbot__widget--button {
-  padding: .75em .8em;
   button{
     width: 100%;
     border-radius: $chatbot_statement_radius;
   }
+}
+
+.chatbot__widget--card .chatbot__widget--button {
+  padding: .75em .8em;
 }
 
 .chatbot__widget--button-group{
