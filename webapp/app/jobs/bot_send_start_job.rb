@@ -18,6 +18,10 @@ class BotSendStartJob < ApplicationJob
     chat_session_id = args[1]
 
     Bot.find(bot_id).send_start(chat_session_id)
+  rescue => e
+    backtrace = ::Rails.backtrace_cleaner.clean(e.backtrace)
+    Sidekiq::Logging.logger.error "bot_id:#{bot_id} failed : #{e.message}\n\t#{backtrace.join("\n\t")}"
+    raise
   end
 
   private
