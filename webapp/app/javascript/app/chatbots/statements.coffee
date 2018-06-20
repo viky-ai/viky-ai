@@ -39,6 +39,12 @@ class Chat
       $('.btn--recognition').remove()
       $('.bot-form .dropdown').remove()
 
+    @statement_history = new StatementHistory()
+    $('.bot-form #statement_content').on 'keyup', (event) =>
+      if event.originalEvent.code == 'ArrowUp'
+        event.target.value = @statement_history.previous()
+      if event.originalEvent.code == 'ArrowDown'
+        event.target.value = @statement_history.next()
 
   dispatch: (event) ->
     node  = $(event.target)
@@ -53,6 +59,33 @@ class Chat
         @recognition.stop()
       else
         @recognition.start()
+
+
+class StatementHistory
+  constructor: () ->
+    @history = []
+    @history_pointer = -1
+
+  record_statement: (statement) ->
+    @history.unshift(statement)
+
+  previous: () ->
+    if @history_pointer + 1 >= @history.length
+      value = ''
+      @history_pointer = @history.length
+    else
+      @history_pointer++
+      value = @history[@history_pointer]
+    return value
+
+  next: () ->
+    if @history_pointer - 1 < 0
+      value = ''
+      @history_pointer = -1
+    else
+      @history_pointer--
+      value = @history[@history_pointer]
+    return value
 
 
 class Speaker
@@ -301,7 +334,7 @@ class ButtonGroups
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    new Chat()
+    window.App.Chat = new Chat()
 
 $(document).on('turbolinks:load', Setup)
 
