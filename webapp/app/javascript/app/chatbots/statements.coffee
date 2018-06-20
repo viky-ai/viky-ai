@@ -39,7 +39,7 @@ class Chat
       $('.btn--recognition').remove()
       $('.bot-form .dropdown').remove()
 
-    @statement_history = new StatementHistory()
+    @statement_history = new StatementHistory($('.chatbot').data('history-url'))
     $('.bot-form #statement_content').on 'keyup', (event) =>
       if event.originalEvent.code == 'ArrowUp'
         event.target.value = @statement_history.previous()
@@ -62,17 +62,22 @@ class Chat
 
 
 class StatementHistory
-  constructor: () ->
+  constructor: (url) ->
+    @url = url
     @history = []
     @history_pointer = -1
+    @last_fetch_was_empty = false
+    @fetch()
 
   record_statement: (statement) ->
     @history.unshift(statement)
 
   previous: () ->
+    need_to_fetch_ahead = @history_pointer + 3 == @history.length
+    @fetch() if need_to_fetch_ahead
     if @history_pointer + 1 >= @history.length
-      value = ''
       @history_pointer = @history.length
+      value = ''
     else
       @history_pointer++
       value = @history[@history_pointer]
@@ -80,12 +85,23 @@ class StatementHistory
 
   next: () ->
     if @history_pointer - 1 < 0
-      value = ''
       @history_pointer = -1
+      value = ''
     else
       @history_pointer--
       value = @history[@history_pointer]
     return value
+
+  fetch: () ->
+    return if @last_fetch_was_empty
+    $.ajax({
+      url: @url,
+      method: 'GET',
+      data: { start: @history.length }
+    }).then((statements) =>
+      @last_fetch_was_empty = statements.length == 0
+      statements.forEach((statement) => @history.push(statement.content.text))
+    )
 
 
 class Speaker

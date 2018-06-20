@@ -22,7 +22,7 @@ Rails.application.routes.draw do
     member do
       get :reset
     end
-    resources :chat_statements, only: [:create] do
+    resources :chat_statements, only: [:index, :create] do
       collection do
         post :user_action
       end
