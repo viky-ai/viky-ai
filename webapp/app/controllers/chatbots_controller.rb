@@ -43,7 +43,7 @@ class ChatbotsController < ApplicationController
   private
 
     def set_bots
-      @bots = Bot.accessible_bots(current_user)
+      @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
     end
 
     def set_available_recognition_locale
