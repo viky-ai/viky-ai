@@ -5,7 +5,7 @@
   <ul>
     <% @bots.each do |bot| %>
       <li>
-        <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale) %>"
+        <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale, page: params[:page]) %>"
            <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
 
           <span>

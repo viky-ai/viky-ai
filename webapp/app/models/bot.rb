@@ -34,6 +34,23 @@ class Bot < ApplicationRecord
     Bot.where(id: ids.flatten.uniq)
   end
 
+  def self.sort_by_last_statement(bots, user)
+    bot_ids = bots.collect(&:id)
+    Bot
+      .select('bots.*', 'latest_session.session_updated_at')
+      .from(
+        ChatSession
+          .select(:bot_id, 'max(updated_at) AS session_updated_at')
+          .where(user: user)
+          .group(:bot_id)
+          .unscope(:order),
+        :latest_session
+      )
+      .joins('INNER JOIN bots ON "bots".id = "latest_session".bot_id')
+      .where(id: bot_ids)
+      .order('"latest_session".session_updated_at DESC')
+  end
+
   def self.ping(endpoint)
     ping_failed = true
 

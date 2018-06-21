@@ -4,16 +4,16 @@ class ChatbotsController < ApplicationController
   before_action :check_user_rights, except: [:index]
 
   def index
-    @search = ChatbotSearch.new(current_user, search_params)
     @bots_accessible = Bot.accessible_bots(current_user)
-    @bots = Bot.search(@search.options).page(params[:page]).per(8)
+    @search = ChatbotSearch.new(current_user, search_params)
+    @bots = Bot.sort_by_last_statement(Bot.search(@search.options), current_user).page(params[:page]).per(8)
     @search.save
   end
 
   def show
     @bots_accessible = Bot.accessible_bots(current_user)
     @search = ChatbotSearch.new(current_user, search_params)
-    @bots = Bot.search(@search.options).page(params[:page]).per(8)
+    @bots = Bot.sort_by_last_statement(Bot.search(@search.options), current_user).page(params[:page]).per(8)
 
     if ChatSession.where(user: current_user, bot: @bot).exists?
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
