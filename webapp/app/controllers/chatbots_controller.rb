@@ -1,12 +1,15 @@
 class ChatbotsController < ApplicationController
-  before_action :set_bots
+  before_action :set_bot, except: [:index]
   before_action :set_available_recognition_locale
+  before_action :check_user_rights, except: [:index]
 
   def index
+    @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
   end
 
   def show
-    @bot = Bot.find(params[:id])
+    @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
+
     if ChatSession.where(user: current_user, bot: @bot).exists?
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     else
@@ -24,8 +27,6 @@ class ChatbotsController < ApplicationController
   end
 
   def reset
-    @bot = Bot.find(params[:id])
-
     previous_chat_session = ChatSession.where(user: current_user, bot: @bot).last
     chat_session = ChatSession.new(user: current_user, bot: @bot)
     chat_session.save
@@ -42,8 +43,19 @@ class ChatbotsController < ApplicationController
 
   private
 
-    def set_bots
-      @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
+    def check_user_rights
+      case action_name
+        when "show"
+          access_denied unless current_user.can? :show, @bot.agent
+        when "reset"
+          access_denied unless current_user.can? :edit, @bot.agent
+        else
+          access_denied
+      end
+    end
+
+    def set_bot
+      @bot = Bot.find(params[:id])
     end
 
     def set_available_recognition_locale
