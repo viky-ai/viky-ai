@@ -46,4 +46,43 @@ class ChatbotTest < ApplicationSystemTestCase
       assert page.has_text?('Bot test')
     end
   end
+
+
+  #
+  # Search
+  #
+  test 'Bot can be found by name' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'nol'
+      click_button '#search'
+      assert page.has_content?('Arnold')
+      assert page.has_no_content?('Weather')
+    end
+  end
+
+  test 'Bot filtered by release state' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      click_button 'WIP'
+      assert page.has_content?('Arnold')
+      assert page.has_content?('Weather')
+      click_button 'WIP'
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+  end
+
+  test 'Bot search without result display a message' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'azerty'
+      click_button '#search'
+      assert page.has_no_content?('Arnold')
+      assert page.has_no_content?('Weather')
+    end
+    within('.chatbot') do
+
+    end
+  end
 end

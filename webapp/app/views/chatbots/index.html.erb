@@ -1,4 +1,4 @@
-<% if @bots.exists? %>
+<% if @bots_accessible.exists? %>
   <% content_for :left_aside do %>
     <%= render 'nav' %>
   <% end %>
@@ -12,7 +12,11 @@
                            <%= image_path "robot-idle@2x.png" %> 2x'/>
           </div>
           <div class="blankslate__content">
-            <%= t("views.chatbots.index.choose_blankslate_html") %>
+            <% if !@search.empty? && @bots.empty? %>
+              <%= t("views.chatbots.index.search.not_found_html") %>
+            <% else %>
+              <%= t("views.chatbots.index.choose_blankslate_html") %>
+            <% end %>
           </div>
         </div>
       </div>

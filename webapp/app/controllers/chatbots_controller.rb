@@ -4,11 +4,14 @@ class ChatbotsController < ApplicationController
   before_action :check_user_rights, except: [:index]
 
   def index
-    @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
+    @search = ChatbotSearch.new(current_user, search_params)
+    @bots_accessible = Bot.accessible_bots(current_user)
+    @bots = Bot.search(@search.options).page(params[:page]).per(8)
   end
 
   def show
-    @bots = Bot.accessible_bots(current_user).page(params[:page]).per(8)
+    @search = ChatbotSearch.new(current_user, search_params)
+    @bots = Bot.search(@search.options).page(params[:page]).per(8)
 
     if ChatSession.where(user: current_user, bot: @bot).exists?
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
@@ -60,5 +63,9 @@ class ChatbotsController < ApplicationController
 
     def set_available_recognition_locale
       @available_recognition_locale = ChatSession.locales
+    end
+
+    def search_params
+      params.permit(:id, search: [:query, :filter_wip])[:search]
     end
 end

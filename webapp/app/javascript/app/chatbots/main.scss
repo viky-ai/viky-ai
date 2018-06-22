@@ -1,5 +1,12 @@
 @import '../../framework/abstracts/variables';
 
+.chatbots_search {
+  display: flex;
+  .field{
+    margin: .25em .5em .25em .5em;
+  }
+}
+
 body[data-controller-name="chatbots"] main{
   padding: 0;
 }
@@ -46,7 +53,7 @@ aside.chatbots-list{
         grid-template-columns: 62px auto;
         align-items: start;
 
-        padding: 1em .75em;
+        padding: .9em .75em;
         text-decoration: none;
         border-left: 4px solid transparent;
         line-height: 1.4em;

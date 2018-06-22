@@ -1,4 +1,7 @@
 <aside class="chatbots-list <% if action_name == "index" %>chatbots-list--for-index <% end %>">
+  <div class="header__search">
+    <%= render "search" %>
+  </div>
   <ul>
     <% @bots.each do |bot| %>
       <li>

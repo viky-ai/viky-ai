@@ -2,6 +2,10 @@ en:
   views:
     chatbots:
       index:
+        search:
+          not_found_html: <h3>No bot found.</h3>
+          placeholder: Search by name
+        filter_wip: WIP
         empty_blankslate_html: >
           <h3>Oops.</h3>
           <p>Sorry, you have not access to a chatbot at the moment.</p>

@@ -4,6 +4,20 @@ class Bot < ApplicationRecord
 
   validates :name, :endpoint, presence: true
 
+  def self.search(q = {})
+    conditions = self.accessible_bots(User.find(q[:user_id]))
+    if q[:query].present?
+      conditions = conditions.where(
+        'lower(name) LIKE lower(?)',
+        "%#{q[:query]}%"
+      )
+    end
+    if q[:filter_wip]
+      conditions = conditions.where(wip_enabled: false)
+    end
+    conditions
+  end
+
   def self.accessible_bots(user)
     ids  = Bot.distinct.joins(agent: :memberships)
               .where(memberships: { user_id: user.id, rights: [:all, :edit] })
