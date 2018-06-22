@@ -16,19 +16,21 @@
     </div>
   </div>
 
-  <div class="field">
-    <div class="control">
-      <div class="btn-group"
-           data-behavior="submit-form"
-           data-form-selector=".chatbots_search">
-        <%= f.hidden_field :filter_wip %>
-        <% active_css = !@search.filter_wip ? 'btn--primary' : '' %>
-        <%= f.button t('views.chatbots.index.filter_wip'), class: "btn #{active_css}",
-            data: {
-                input_selector: "input[name='search[filter_wip]']",
-                input_value: !@search.filter_wip,
-            } %>
+  <% if @bots_accessible.where(wip_enabled: true).exists? %>
+    <div class="field">
+      <div class="control">
+        <div class="btn-group"
+             data-behavior="submit-form"
+             data-form-selector=".chatbots_search">
+          <%= f.hidden_field :filter_wip %>
+          <% active_css = !@search.filter_wip ? 'btn--primary' : '' %>
+          <%= f.button t('views.chatbots.index.filter_wip'), class: "btn #{active_css}",
+              data: {
+                  input_selector: "input[name='search[filter_wip]']",
+                  input_value: !@search.filter_wip,
+              } %>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 <% end %>

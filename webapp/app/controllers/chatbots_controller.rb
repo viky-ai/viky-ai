@@ -11,6 +11,7 @@ class ChatbotsController < ApplicationController
   end
 
   def show
+    @bots_accessible = Bot.accessible_bots(current_user)
     @search = ChatbotSearch.new(current_user, search_params)
     @bots = Bot.search(@search.options).page(params[:page]).per(8)
 

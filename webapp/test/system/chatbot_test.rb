@@ -102,4 +102,14 @@ class ChatbotTest < ApplicationSystemTestCase
       assert page.has_content?('Weather')
     end
   end
+
+  test 'Hide WIP filter if no bot is in this state' do
+    wip_bot = bots(:terminator_bot)
+    wip_bot.wip_enabled = false
+    assert wip_bot.save
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      assert page.has_no_text?('WIP')
+    end
+  end
 end
