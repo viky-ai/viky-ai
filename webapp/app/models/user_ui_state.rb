@@ -20,6 +20,19 @@ class UserUiState
     (@state['agent_search'] || {}).with_indifferent_access
   end
 
+  def chatbot_search=(new_state)
+    @state.merge!(
+      chatbot_search: {
+        query: new_state[:query],
+        filter_wip: new_state[:filter_wip],
+      }
+    )
+  end
+
+  def chatbot_search
+    (@state['chatbot_search'] || {}).with_indifferent_access
+  end
+
   def last_destination_agent=(new_state)
     @state.merge!(
       last_agent_move: new_state

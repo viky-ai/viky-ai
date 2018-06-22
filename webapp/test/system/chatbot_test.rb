@@ -85,4 +85,21 @@ class ChatbotTest < ApplicationSystemTestCase
 
     end
   end
+
+  test 'Keep chatbot search criteria' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'ath'
+      click_button '#search'
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+    go_to_agents_index
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      assert page.has_text? 'ath'
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+  end
 end

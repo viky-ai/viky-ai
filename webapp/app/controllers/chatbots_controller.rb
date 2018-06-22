@@ -7,6 +7,7 @@ class ChatbotsController < ApplicationController
     @search = ChatbotSearch.new(current_user, search_params)
     @bots_accessible = Bot.accessible_bots(current_user)
     @bots = Bot.search(@search.options).page(params[:page]).per(8)
+    @search.save
   end
 
   def show
@@ -27,6 +28,7 @@ class ChatbotsController < ApplicationController
         @chat_session.save
       end
     end
+    @search.save
   end
 
   def reset

@@ -8,6 +8,7 @@ class ChatbotSearch
 
   def initialize(user, options = {})
     @user = user
+    @ui_state = UserUiState.new @user
     @options = build_options(options)
   end
 
@@ -24,10 +25,21 @@ class ChatbotSearch
       @options[:filter_wip] == DEFAULT_CRITERIA[:filter_wip]
   end
 
+  def save
+    @ui_state.chatbot_search = {
+      query: @options[:query],
+      filter_wip: @options[:filter_wip],
+    }
+    @ui_state.save
+  end
+
   private
     def build_options(http_options)
+      default_options_for_user = @ui_state.chatbot_search
       cleaned_http_options = clean_options(http_options)
       final_options = DEFAULT_CRITERIA.merge(
+        default_options_for_user
+      ).merge(
         cleaned_http_options
       )
       final_options[:user_id] = @user.id.strip

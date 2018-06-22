@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class ChatbotSearchTest < ActiveSupport::TestCase
 
@@ -50,5 +51,20 @@ class ChatbotSearchTest < ActiveSupport::TestCase
       agents(:weather).id
     ]
     assert_equal expected, Bot.search(s.options).all.collect { |bot| bot.agent.id }
+  end
+
+
+  test 'Save search criteria in user state' do
+    user = users(:admin)
+    assert_equal user.ui_state, {}
+    criteria = {
+      'filter_wip' => 'true',
+      'query' => 'weath'
+    }
+    s = ChatbotSearch.new(user, criteria)
+    assert_equal 1, Bot.search(s.options).count
+    assert s.save
+    force_reset_model_cache(user)
+    assert_equal criteria.with_indifferent_access, user.ui_state['chatbot_search']
   end
 end
