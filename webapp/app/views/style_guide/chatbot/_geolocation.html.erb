@@ -1,0 +1,27 @@
+<section>
+  <h2>Geolocation</h2>
+  <p>
+    Used to display a button asking the user to share its location.
+  </p>
+  <%= highlight_html do %>
+    <div class="chatbot">
+      <div class="chatbot__discussion">
+        <div class="chatbot__statement chatbot__statement--bot">
+          <div class="chatbot__avatar">
+            <div class="chatbot__avatar__image">
+              <img src="<%= image_path('default_bot.png') %>">
+            </div>
+            <div class="chatbot__avatar__time">12:00</div>
+          </div>
+          <form class="chatbot__widget chatbot__widget--geolocation">
+            <button>
+              <span class="icon icon--small icon--cyan">
+                <%= icon_location %>
+              </span>
+              Send location</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>

@@ -351,6 +351,7 @@ $chatbot_statement_radius: 8px;
 // Widget button & button_group
 .chatbot__widget--button-link,
 form.chatbot__widget--button,
+.chatbot__widget--geolocation,
 .chatbot__widget--button-group{
   border-radius: 0;
 
@@ -377,6 +378,9 @@ form.chatbot__widget--button,
     &:hover{
       background-color: $primary-color;
       color: #fff;
+      svg {
+        fill: #fff;
+      }
     }
 
     &[disabled],
@@ -394,16 +398,23 @@ form.chatbot__widget--button,
   }
 }
 // In Card
-.chatbot__widget--list .chatbot__widget--button,
-.chatbot__widget--card .chatbot__widget--button {
-  button{
-    width: 100%;
-    border-radius: $chatbot_statement_radius;
+.chatbot__widget--list,
+.chatbot__widget--card {
+  & .chatbot__widget--button,
+  & .chatbot__widget--geolocation {
+    button{
+      width: 100%;
+      border-radius: $chatbot_statement_radius;
+    }
   }
 }
 
-.chatbot__widget--card .chatbot__widget--button {
-  padding: .75em .8em;
+.chatbot__widget--card {
+  & .chatbot__widget--button,
+  & .chatbot__widget--geolocation {
+    padding: .75em .8em;
+  }
+
 }
 
 .chatbot__widget--button-group{
