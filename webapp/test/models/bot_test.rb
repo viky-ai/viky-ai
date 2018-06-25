@@ -79,6 +79,23 @@ class BotTest < ActiveSupport::TestCase
   end
 
 
+  test 'List chatbot even if no session' do
+    weather_bot = bots(:weather_bot)
+    new_bot = Bot.new(
+      name: "Bot B",
+      endpoint: "http://my-awesome-bot-B.com",
+      agent: agents(:weather),
+      wip_enabled: false
+    )
+    assert new_bot.save
+
+    bots = Bot.sort_by_last_statement([new_bot, weather_bot], users(:admin))
+    # assert_equal 2, bots.size
+    assert_equal bots[0].id, weather_bot.id
+    assert_equal bots[1].id, new_bot.id
+  end
+
+
   test 'Available bots' do
     assert Bot.create(
       name: "Bot 1",
