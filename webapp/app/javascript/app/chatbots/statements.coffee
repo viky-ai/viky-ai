@@ -249,13 +249,14 @@ class Statement
             position: mark.position,
             title: mark.title
           })
-          infowindow = new google.maps.InfoWindow({
-            content: mark.description,
-            maxWidth: 350
-          })
-          marker.addListener('click', () ->
-            infowindow.open(map, marker)
-          )
+          if mark.description
+            infowindow = new google.maps.InfoWindow({
+              content: mark.description,
+              maxWidth: 350
+            })
+            marker.addListener('click', () ->
+              infowindow.open(map, marker)
+            )
           bounds.extend(marker.position)
         )
         if markers.center
