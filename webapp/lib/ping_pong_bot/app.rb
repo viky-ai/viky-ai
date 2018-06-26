@@ -60,6 +60,24 @@ class PingPongBot < Sinatra::Base
         BotApi.text("<p>You triggered with payload:</p><pre>#{nice_payload}</pre>").send(session_id)
       end
 
+    when 'locate'
+      location = parameters['user_action']['location']
+      params = {
+        api_key: "***REMOVED***", endpoint: "javascript", payload: {
+          map: {
+            center: {lat: location['coords']['latitude'], lng: location['coords']['longitude']},
+            zoom: 12
+          },
+          markers: {
+            list: [
+              { position: {lat: location['coords']['latitude'], lng: location['coords']['longitude']}, title: "You are here." },
+            ]
+          }
+        }
+      }
+      BotApi.map(params, 'This is your location', '').send(session_id)
+
+
     when "says"
       user_statement_says = parameters['user_action']['text']
 
@@ -247,6 +265,11 @@ class PingPongBot < Sinatra::Base
           .add_speech("Let's play music video!", 'en-GB')
           .send(session_id)
 
+        when /geolocation/i
+          BotApi.card([
+            BotApi::Params::build_text('We need your location to show your position on a map.'),
+            BotApi::Params::build_geolocation('Send my location.')
+          ]).send(session_id)
       else
         BotApi
           .text("I did not understand: \"#{user_statement_says}\"")

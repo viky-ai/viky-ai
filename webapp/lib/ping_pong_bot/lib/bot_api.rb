@@ -36,6 +36,10 @@ module BotApi
     Params.new(Params::build_list(items, orientation))
   end
 
+  def self.geolocation(name)
+    Params.new(Params::build_geolocation(name))
+  end
+
   def self.update_locale(session_id, locale)
     parameters = {
       chat_session: {
@@ -159,6 +163,15 @@ module BotApi
         content: {
           orientation: orientation,
           items: items
+        }
+      }
+    end
+
+    def self.build_geolocation(name)
+      {
+        nature: 'geolocation',
+        content: {
+          text: name
         }
       }
     end
