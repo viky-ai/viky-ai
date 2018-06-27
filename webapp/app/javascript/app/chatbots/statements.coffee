@@ -11,6 +11,7 @@ class Chat
     Statement.init_ui()
 
     @recognition = new Recognition()
+    @geolocator = new Geolocator()
 
     if @recognition.available
       $('.bot-form .btn--recognition').show()
@@ -45,6 +46,37 @@ class Chat
         event.target.value = @statement_history.previous()
       if event.originalEvent.code == 'ArrowDown'
         event.target.value = @statement_history.next()
+
+    if @geolocator.available
+      $("body").on 'ajax:before', (event) =>
+        node  = $(event.target)
+        if node.hasClass('chatbot__widget--geolocation')
+          location = node.find('[name=location]')[0].value
+          if location == ''
+            @geolocator.locate_user().then((position) ->
+              node.trigger('geolocation:locate', position)
+            )
+            return false
+      $("body").on 'geolocation:locate', (event, location) =>
+        node = $(event.target)
+        node.find('[name=location]')[0].value = JSON.stringify({
+          coords: {
+            accuracy: location.coords.accuracy,
+            altitude: location.coords.altitude,
+            altitudeAccuracy: location.coords.altitudeAccuracy,
+            heading: location.coords.heading,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            speed: location.coords.speed,
+          },
+          timestamp: location.timestamp
+        })
+        form = node[0]
+        Rails.fire(form, 'submit')
+      $("body").on 'ajax:complete', (event) =>
+        node  = $(event.target)
+        if node.hasClass('chatbot__widget--geolocation')
+          location = node.find('[name=location]')[0].value = ''
 
   dispatch: (event) ->
     node  = $(event.target)
@@ -125,6 +157,19 @@ class Speaker
     if (window.speechSynthesis)
       Speaker = window.speechSynthesis
       Speaker.cancel()
+
+
+class Geolocator
+  constructor: () ->
+    @available = false
+    if navigator.geolocation
+      @available = true
+      @geolocation = navigator.geolocation
+
+  locate_user: () ->
+    return new Promise((resolve, reject) =>
+      @geolocation.getCurrentPosition(resolve)
+    )
 
 
 class Recognition

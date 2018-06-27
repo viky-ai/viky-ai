@@ -118,6 +118,15 @@ class Bot < ApplicationRecord
     post("sessions/#{session_id}/user_actions", parameters)
   end
 
+  def send_user_location(session_id, location)
+    parameters = {
+      user_action: {
+        type: 'locate',
+        location: JSON.parse(location)
+      }
+    }
+    post("sessions/#{session_id}/user_actions", parameters)
+  end
 
   private
 

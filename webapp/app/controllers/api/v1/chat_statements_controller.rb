@@ -49,6 +49,8 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
           :nature,
           content: card_content_params
         )
+      when 'geolocation'
+        params.require(:statement).permit(:nature, content: geolocation_content_params)
       end
     end
 
@@ -84,6 +86,11 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
       [:disable_on_click, buttons: [ :text, payload: {} ]] + speech
     end
 
+    def geolocation_content_params(with_speech=true)
+      speech = with_speech ? [speech: [:text, :locale]] : []
+      [:text] + speech
+    end
+
     def card_content_params
       [
         components: [
@@ -94,7 +101,8 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
             video_content_params(false) +
             map_content_params(false) +
             button_content_params(false) +
-            button_group_content_params(false)
+            button_group_content_params(false) +
+            geolocation_content_params(false)
           ).uniq
         ]
       ] + [speech: [:text, :locale]]
@@ -108,7 +116,8 @@ class Api::V1::ChatStatementsController < Api::V1::ApplicationController
         map_content_params(false) +
         button_content_params(false) +
         button_group_content_params(false) +
-        card_content_params
+        card_content_params +
+        geolocation_content_params(false)
       ).uniq
     end
 end

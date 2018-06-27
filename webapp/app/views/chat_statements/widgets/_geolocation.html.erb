@@ -1,0 +1,10 @@
+<%= form_with url: user_action_chatbot_chat_statements_path(statement.chat_session.bot),
+    remote: true,
+    class: "chatbot__widget chatbot__widget--geolocation" do |f| %>
+  <%= f.hidden_field :location %>
+  <%= f.hidden_field :type, value: 'locate' %>
+  <%= f.button do %>
+    <span class="icon icon--small icon--cyan"><%= icon_location %></span>
+    <%= geolocation.text %>
+  <% end %>
+<% end %>

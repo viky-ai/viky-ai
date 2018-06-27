@@ -3,6 +3,7 @@
       remote: true, class: "chatbot__widget chatbot__widget--button" do |f| %>
     <%= f.hidden_field :statement_id, value: statement.id %>
     <%= f.hidden_field :payload, value: button.payload.to_json %>
+    <%= f.hidden_field :type, value: 'click_button' %>
     <%= f.button button.text, disabled: button.is_disabled? %>
   <% end %>
 <% else %>
