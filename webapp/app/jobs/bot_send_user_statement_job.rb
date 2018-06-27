@@ -30,6 +30,11 @@ class BotSendUserStatementJob < ApplicationJob
       # Should be impossible
       raise I18n.t('errors.chat_statement.invalid_nature', nature: user_action)
     end
+  rescue => e
+    backtrace = ::Rails.backtrace_cleaner.clean(e.backtrace)
+    bot_id = chat_session.bot.id rescue "Unkow bot chat_session_id: #{chat_session_id}"
+    Sidekiq::Logging.logger.error "bot_id:#{chat_session.bot.id} failed : #{e.message}\n\t#{backtrace.join("\n\t")}"
+    raise
   end
 
   private
