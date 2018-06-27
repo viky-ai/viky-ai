@@ -52,8 +52,8 @@ class Chat
       if node.hasClass('chatbot__widget--geolocation')
         if !@geolocator.is_location_valid(node)
           @geolocator.locate_user()
-            .then((position) ->
-              node.trigger('geolocation:locate', position)
+            .then((location) ->
+              node.trigger('geolocation:locate', location)
             )
             .catch((error) ->
               node.trigger('geolocation:error', error)
@@ -62,11 +62,13 @@ class Chat
     $("body").on 'geolocation:locate', (event, location) =>
       node = $(event.target)
       @geolocator.set_form_location(node, location)
+      @geolocator.set_periodic_prefetch()
       form = node[0]
       Rails.fire(form, 'submit')
     $("body").on 'geolocation:error', (event, error) =>
       node = $(event.target)
       @geolocator.set_form_error(node, error)
+      @geolocator.clear_periodic_prefetch()
       form = node[0]
       Rails.fire(form, 'submit')
     $("body").on 'ajax:complete', (event) =>
@@ -157,6 +159,7 @@ class Speaker
 
 class Geolocator
   constructor: () ->
+    @interval_id = null
     if navigator.geolocation
       @geolocation = navigator.geolocation
 
@@ -164,6 +167,29 @@ class Geolocator
     return new Promise((resolve, reject) =>
       @geolocation.getCurrentPosition(resolve, reject)
     )
+
+  set_periodic_prefetch: () ->
+    if @interval_id == null
+      @interval_id = setInterval(() =>
+        nodes = $('form.chatbot__widget--geolocation')
+        @locate_user()
+          .then((location) =>
+            nodes.each((index, node) =>
+              @set_form_location(node, location)
+            )
+          )
+          .catch((error) =>
+            @clear_periodic_prefetch()
+            nodes.each((index, node) =>
+              @clear_form_location(node)
+            )
+          )
+      , 5*60*1000)
+
+  clear_periodic_prefetch: () ->
+    if @interval_id != null
+      clearInterval(@interval_id)
+      @interval_id = null
 
   set_form_location: (form, location) ->
     @form_status(form).value = 'success'
