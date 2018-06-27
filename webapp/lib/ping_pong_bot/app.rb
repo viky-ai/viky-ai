@@ -60,23 +60,30 @@ class PingPongBot < Sinatra::Base
         BotApi.text("<p>You triggered with payload:</p><pre>#{nice_payload}</pre>").send(session_id)
       end
 
-    when 'locate'
-      location = parameters['user_action']['location']
-      params = {
-        api_key: "***REMOVED***", endpoint: "javascript", payload: {
-          map: {
-            center: {lat: location['coords']['latitude'], lng: location['coords']['longitude']},
-            zoom: 12
-          },
-          markers: {
-            list: [
-              { position: {lat: location['coords']['latitude'], lng: location['coords']['longitude']}, title: "You are here." },
-            ]
+      when 'locate'
+        if parameters['user_action']['status'] == 'success'
+          location = parameters['user_action']['location']
+          params = {
+            api_key: "***REMOVED***", endpoint: "javascript", payload: {
+              map: {
+                center: {lat: location['coords']['latitude'], lng: location['coords']['longitude']},
+                zoom: 12
+              },
+              markers: {
+                list: [
+                  { position: {lat: location['coords']['latitude'], lng: location['coords']['longitude']}, title: "You are here." },
+                ]
+              }
+            }
           }
-        }
-      }
-      BotApi.map(params, 'This is your location', '').send(session_id)
-
+          BotApi.map(params, 'Found you !', '').send(session_id)
+        else
+          if parameters['user_action']['error']['code'] == 1
+            BotApi.text("Ok I need a little help here... Please share your location.").send(session_id)
+          else
+            BotApi.text("Hmm... That's embarrassing, it seems that your are not able to send your location.").send(session_id)
+          end
+        end
 
     when "says"
       user_statement_says = parameters['user_action']['text']
@@ -267,8 +274,8 @@ class PingPongBot < Sinatra::Base
 
         when /geolocation/i
           BotApi.card([
-            BotApi::Params::build_text('We need your location to show your position on a map.'),
-            BotApi::Params::build_geolocation('Send my location.')
+            BotApi::Params::build_text('Do you want to play hide and seek ?'),
+            BotApi::Params::build_geolocation('I want to play')
           ]).send(session_id)
       else
         BotApi

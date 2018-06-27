@@ -39,6 +39,7 @@ class ChatStatementsController < ApplicationController
       })
     when 'locate'
       BotSendUserStatementJob.perform_later(@chat_session.id, 'locate', {
+        status: params[:status],
         location: params[:location]
       })
     end

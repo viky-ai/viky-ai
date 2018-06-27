@@ -3,6 +3,7 @@
     class: "chatbot__widget chatbot__widget--geolocation" do |f| %>
   <%= f.hidden_field :location %>
   <%= f.hidden_field :type, value: 'locate' %>
+  <%= f.hidden_field :status %>
   <%= f.button do %>
     <span class="icon icon--small icon--cyan"><%= icon_location %></span>
     <%= geolocation.text %>

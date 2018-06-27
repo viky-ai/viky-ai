@@ -118,13 +118,19 @@ class Bot < ApplicationRecord
     post("sessions/#{session_id}/user_actions", parameters)
   end
 
-  def send_user_location(session_id, location)
+  def send_user_location(session_id, status, location)
     parameters = {
       user_action: {
         type: 'locate',
-        location: JSON.parse(location)
       }
     }
+    if status == 'success'
+      parameters[:user_action][:status] = 'success'
+      parameters[:user_action][:location] = JSON.parse(location)
+    else
+      parameters[:user_action][:status] = 'error'
+      parameters[:user_action][:error] = JSON.parse(location)
+    end
     post("sessions/#{session_id}/user_actions", parameters)
   end
 

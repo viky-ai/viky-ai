@@ -47,36 +47,32 @@ class Chat
       if event.originalEvent.code == 'ArrowDown'
         event.target.value = @statement_history.next()
 
-    if @geolocator.available
-      $("body").on 'ajax:before', (event) =>
-        node  = $(event.target)
-        if node.hasClass('chatbot__widget--geolocation')
-          location = node.find('[name=location]')[0].value
-          if location == ''
-            @geolocator.locate_user().then((position) ->
+    $("body").on 'ajax:before', (event) =>
+      node  = $(event.target)
+      if node.hasClass('chatbot__widget--geolocation')
+        if !@geolocator.is_location_valid(node)
+          @geolocator.locate_user()
+            .then((position) ->
               node.trigger('geolocation:locate', position)
             )
-            return false
-      $("body").on 'geolocation:locate', (event, location) =>
-        node = $(event.target)
-        node.find('[name=location]')[0].value = JSON.stringify({
-          coords: {
-            accuracy: location.coords.accuracy,
-            altitude: location.coords.altitude,
-            altitudeAccuracy: location.coords.altitudeAccuracy,
-            heading: location.coords.heading,
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            speed: location.coords.speed,
-          },
-          timestamp: location.timestamp
-        })
-        form = node[0]
-        Rails.fire(form, 'submit')
-      $("body").on 'ajax:complete', (event) =>
-        node  = $(event.target)
-        if node.hasClass('chatbot__widget--geolocation')
-          location = node.find('[name=location]')[0].value = ''
+            .catch((error) ->
+              node.trigger('geolocation:error', error)
+            )
+          return false
+    $("body").on 'geolocation:locate', (event, location) =>
+      node = $(event.target)
+      @geolocator.set_form_location(node, location)
+      form = node[0]
+      Rails.fire(form, 'submit')
+    $("body").on 'geolocation:error', (event, error) =>
+      node = $(event.target)
+      @geolocator.set_form_error(node, error)
+      form = node[0]
+      Rails.fire(form, 'submit')
+    $("body").on 'ajax:complete', (event) =>
+      node  = $(event.target)
+      if node.hasClass('chatbot__widget--geolocation')
+        @geolocator.clear_form_location(node)
 
   dispatch: (event) ->
     node  = $(event.target)
@@ -161,15 +157,48 @@ class Speaker
 
 class Geolocator
   constructor: () ->
-    @available = false
     if navigator.geolocation
-      @available = true
       @geolocation = navigator.geolocation
 
   locate_user: () ->
     return new Promise((resolve, reject) =>
-      @geolocation.getCurrentPosition(resolve)
+      @geolocation.getCurrentPosition(resolve, reject)
     )
+
+  set_form_location: (form, location) ->
+    @form_status(form).value = 'success'
+    @form_location(form).value = JSON.stringify({
+      coords: {
+        accuracy: location.coords.accuracy,
+        altitude: location.coords.altitude,
+        altitudeAccuracy: location.coords.altitudeAccuracy,
+        heading: location.coords.heading,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        speed: location.coords.speed,
+      },
+      timestamp: location.timestamp
+    })
+
+  set_form_error: (form, error) ->
+    @form_status(form).value = 'error'
+    @form_location(form).value = JSON.stringify({
+      code: error.code,
+      message: error.message
+    })
+
+  clear_form_location: (form) ->
+    @form_status(form).value = ''
+    @form_location(form).value = ''
+
+  is_location_valid: (form) ->
+    return @form_location(form).value != ''
+
+  form_location: (form) ->
+    return $(form).find('[name=location]')[0]
+
+  form_status: (form) ->
+    return $(form).find('[name=status]')[0]
 
 
 class Recognition
