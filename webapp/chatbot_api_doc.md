@@ -321,6 +321,26 @@ JSON structure :
 * `items` Array of nested components (from 2 to 8 components). Valid natures are `text`, `image`, `video`, `map`, `button`, `button_group`, `card`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
 
 
+#### <code>geolocation</code> nature
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'geolocation',
+    content: {
+      text: <text>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+* `text` : is the text displayed in the widget (**required**).
+
 ### Update chat session locale
 
 Chat session locale is used for the speech to text functionality. User can choose it's locale, but API allow bot to dynamically change that preference.
@@ -425,3 +445,20 @@ User actions types triggered by the user.
 ```
 
   * `payload` the JSON hash previously passed at the button creation
+
+
+#### Type <code>locate</code>
+
+```
+{
+  user_action: {
+    type: 'locate',
+    status: 'success' | 'error',
+    location: {<...>} | error: {<...>}
+  }
+}
+```
+
+  * `status` was the geolocation successful. In case of `success` there is a `location` key, otherwise an `error` value imply an `error` key.
+  * `location` a JSON object representing the user position, see the [Geolocation API - Position](https://developer.mozilla.org/en-US/docs/Web/API/Position) **imply `status : 'success'`**
+  * `error` a JSON object to explain why it was impossible to locate the user, see the [Geolocation API - PositionError](https://developer.mozilla.org/en-US/docs/Web/API/PositionError) **imply `status : 'error'`**
