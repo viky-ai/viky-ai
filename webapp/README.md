@@ -2,15 +2,16 @@
 
 ## Dependencies
 
-* Ruby (2.4.2)       ( https://github.com/rbenv/rbenv#installation )
-* bundler (1.15.4)   ( `gem install bundler` )
-* NodeJS (8.4.0)     ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
-* Yarn (1.0.1)       ( https://yarnpkg.com/lang/en/docs/install/ )
-* PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
-* Redis (3.2)        ( use docker )
-* ImageMagick        ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
-* Docker 17.09.0-ce  ( [see below](#docker) )
-* Graphviz           ( `sudo apt-get install -y graphviz` )
+* Ruby (2.4.2)         ( https://github.com/rbenv/rbenv#installation )
+* bundler (1.15.4)     ( `gem install bundler` )
+* NodeJS (8.4.0)       ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+* Yarn (1.0.1)         ( https://yarnpkg.com/lang/en/docs/install/ )
+* PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
+* Redis (3.2)          ( use docker )
+* ElasticSearch (6.3)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.0`)
+* ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+* Docker 17.09.0-ce    ( [see below](#docker) )
+* Graphviz             ( `sudo apt-get install -y graphviz` )
 
 ## Environment Variables
 
