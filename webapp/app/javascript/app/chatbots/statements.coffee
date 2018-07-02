@@ -10,6 +10,8 @@ class Chat
     List.generateAll()
     Statement.init_ui()
 
+    new StatementHistory($('.chatbot').data('history-url'))
+
     @recognition = new Recognition()
     @geolocator = new Geolocator()
 
@@ -40,12 +42,6 @@ class Chat
       $('.btn--recognition').remove()
       $('.bot-form .dropdown').remove()
 
-    @statement_history = new StatementHistory($('.chatbot').data('history-url'))
-    $('.bot-form #statement_content').on 'keyup', (event) =>
-      if event.originalEvent.code == 'ArrowUp'
-        event.target.value = @statement_history.previous()
-      if event.originalEvent.code == 'ArrowDown'
-        event.target.value = @statement_history.next()
 
     $("body").on 'ajax:before', (event) =>
       node  = $(event.target)
@@ -97,14 +93,31 @@ class StatementHistory
     @history = []
     @history_pointer = -1
     @last_fetch_was_empty = false
-    @fetch()
+    @fetch_all()
+    @set_listeners()
 
-  record_statement: (statement) ->
+  set_listeners: =>
+    $('.bot-form').on 'submit', (event) =>
+      @add($('#statement_content').val())
+      @reset_pointer()
+
+    $('#statement_content').on 'keydown', (event) =>
+      if event.which == 38
+        event.preventDefault()
+        $('#statement_content').val(@previous())
+      if event.which == 40
+        event.preventDefault()
+        $('#statement_content').val(@next())
+
+  reset_pointer: ->
+    @history_pointer = -1
+
+  add: (statement) ->
     @history.unshift(statement)
 
   previous: () ->
     need_to_fetch_ahead = @history_pointer + 3 == @history.length
-    @fetch() if need_to_fetch_ahead
+    @fetch_all() if need_to_fetch_ahead
     if @history_pointer + 1 >= @history.length
       @history_pointer = @history.length
       value = ''
@@ -122,7 +135,7 @@ class StatementHistory
       value = @history[@history_pointer]
     return value
 
-  fetch: () ->
+  fetch_all: () ->
     return if @last_fetch_was_empty
     $.ajax({
       url: @url,
@@ -451,7 +464,7 @@ class ButtonGroups
 
 Setup = ->
   if $('body').data('controller-name') == "chatbots" && $('body').data('controller-action') == "show"
-    window.App.Chat = new Chat()
+    new Chat()
 
 $(document).on('turbolinks:load', Setup)
 
