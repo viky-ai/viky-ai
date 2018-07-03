@@ -1,7 +1,7 @@
 class ChatbotsController < ApplicationController
   before_action :set_bot, except: [:index, :search]
   before_action :set_available_recognition_locale
-  before_action :check_user_rights, except: [:index, :search]
+  before_action :check_user_rights, only: [:show, :reset]
   before_action :set_search_variables , except: [:reset]
 
   def index
@@ -52,14 +52,7 @@ class ChatbotsController < ApplicationController
   private
 
     def check_user_rights
-      case action_name
-      when "show"
-        access_denied unless current_user.can? :show, @bot.agent
-      when "reset"
-        access_denied unless current_user.can? :edit, @bot.agent
-      else
-        access_denied
-      end
+      access_denied unless current_user.can?(:edit, @bot.agent) || (current_user.can?(:show, @bot.agent) && !@bot.wip_enabled)
     end
 
     def set_search_variables
