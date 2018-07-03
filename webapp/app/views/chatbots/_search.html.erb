@@ -1,36 +1,59 @@
 <%= form_for(
         @search,
-        url: chatbots_path,
+        url: search_chatbots_path,
         as: :search,
         method: :get,
-        html: {
-            class: "chatbots_search"
-        }) do |f| %>
+        remote: true,
+        html: { class: "chatbots-search" }) do |f| %>
+
   <div class="field">
     <div class="control control--merged">
-      <%= f.text_field :query, placeholder: t('views.chatbots.index.search.placeholder'), accesskey: "s" %>
+      <% unless @bot.nil? %>
+        <input name="id" value="<%= @bot.id %>" type="hidden" />
+      <% end %>
+
+      <% if @bots_accessible.where(wip_enabled: true).exists? %>
+        <%= f.hidden_field :filter_wip %>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--dark btn--chatbot-options" type="button">
+              <span class="icon icon--small">
+                <%= icon_settings %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li>
+                <a href="#" data-behavior="populate-input, submit-form"
+                   data-input-selector="#search_filter_wip"
+                   data-input-value="false"
+                   data-form-selector=".chatbots-search"
+                   <% unless @search.filter_wip %>class="current"<% end %>>
+                  <%= t('views.chatbots.index.search.include_wip') %>
+                </a>
+              </li>
+              <li>
+                <a href="#" data-behavior="populate-input, submit-form"
+                   data-input-selector="#search_filter_wip"
+                   data-input-value="true"
+                   data-form-selector=".chatbots-search"
+                   <% if @search.filter_wip %>class="current"<% end %>>
+                  <%= t('views.chatbots.index.search.exclude_wip') %>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <%= f.text_field :query, placeholder: t('views.chatbots.index.search.placeholder'), accesskey: "s", class: 'dark' %>
+
       <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe, class: "btn btn--primary", id: '#search',
           data: {
               disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
           } %>
+
     </div>
   </div>
-
-  <% if @bots_accessible.where(wip_enabled: true).exists? %>
-    <div class="field">
-      <div class="control">
-        <div class="btn-group"
-             data-behavior="submit-form"
-             data-form-selector=".chatbots_search">
-          <%= f.hidden_field :filter_wip %>
-          <% active_css = !@search.filter_wip ? 'btn--primary' : '' %>
-          <%= f.button t('views.chatbots.index.filter_wip'), class: "btn #{active_css}",
-              data: {
-                  input_selector: "input[name='search[filter_wip]']",
-                  input_value: !@search.filter_wip,
-              } %>
-        </div>
-      </div>
-    </div>
-  <% end %>
 <% end %>

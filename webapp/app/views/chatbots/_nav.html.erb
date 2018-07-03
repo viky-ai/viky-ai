@@ -1,11 +1,11 @@
-<aside class="chatbots-list <% if action_name == "index" %>chatbots-list--for-index <% end %>">
+<aside class="chatbots-list <% if @bot.nil? %>chatbots-list--for-index<% end %>">
   <div class="header__search">
     <%= render "search" %>
   </div>
   <ul>
     <% @bots.each do |bot| %>
       <li>
-        <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale, page: params[:page]) %>"
+        <a href="<%= chatbot_path(bot, recognition_locale: @current_recognition_locale, page: params[:page], search: @search.to_hash) %>"
            <% if !@bot.nil? && @bot.id == bot.id %>class="current"<% end %>>
 
           <span>
@@ -39,5 +39,16 @@
       </li>
     <% end %>
   </ul>
-  <%= paginate @bots %>
+  <nav class="pagination">
+    <div class="previous">
+      <%= link_to_previous_page @bots, t('paginate.previous'), remote: true, params: {controller: 'chatbots', action: 'search'}, class: 'btn btn--small btn--dark' %>
+    </div>
+    <div class="next">
+      <%= link_to_next_page @bots, t('paginate.next'), remote: true, params: {controller: 'chatbots', action: 'search'}, class: 'btn btn--small btn--dark' %>
+    </div>
+    <div class="context">
+      <%= page_entries_info @bots %>
+    </div>
+  </nav>
+
 </aside>

@@ -34,6 +34,10 @@ en:
       agent: Agent
       intent: Intent
       interpretation: Interpretation
+      bot:
+        zero: Chatbot
+        one: Chatbot
+        other: Chatbots
     attributes:
       agent:
         name: Name

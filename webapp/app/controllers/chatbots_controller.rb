@@ -1,20 +1,22 @@
 class ChatbotsController < ApplicationController
-  before_action :set_bot, except: [:index]
+  before_action :set_bot, except: [:index, :search]
   before_action :set_available_recognition_locale
-  before_action :check_user_rights, except: [:index]
+  before_action :check_user_rights, except: [:index, :search]
+  before_action :set_search_variables , except: [:reset]
 
   def index
-    @bots_accessible = Bot.accessible_bots(current_user)
-    @search = ChatbotSearch.new(current_user, search_params)
-    @bots = Bot.sort_by_last_statement(Bot.search(@search.options), current_user).page(params[:page]).per(8)
+  end
+
+  def search
+    @bot = Bot.find(params[:id]) unless params[:id].nil?
+    @html = render_to_string(partial: 'nav')
     @search.save
+    respond_to do |format|
+      format.js
+    end
   end
 
   def show
-    @bots_accessible = Bot.accessible_bots(current_user)
-    @search = ChatbotSearch.new(current_user, search_params)
-    @bots = Bot.sort_by_last_statement(Bot.search(@search.options), current_user).page(params[:page]).per(8)
-
     if ChatSession.where(user: current_user, bot: @bot).exists?
       @chat_session = ChatSession.where(user: current_user, bot: @bot).last
     else
@@ -51,13 +53,19 @@ class ChatbotsController < ApplicationController
 
     def check_user_rights
       case action_name
-        when "show"
-          access_denied unless current_user.can? :show, @bot.agent
-        when "reset"
-          access_denied unless current_user.can? :edit, @bot.agent
-        else
-          access_denied
+      when "show"
+        access_denied unless current_user.can? :show, @bot.agent
+      when "reset"
+        access_denied unless current_user.can? :edit, @bot.agent
+      else
+        access_denied
       end
+    end
+
+    def set_search_variables
+      @bots_accessible = Bot.accessible_bots(current_user)
+      @search = ChatbotSearch.new(current_user, search_params)
+      @bots = Bot.sort_by_last_statement(Bot.search(@search.options), current_user).page(params[:page]).per(8)
     end
 
     def set_bot

@@ -3,8 +3,9 @@ en:
     chatbots:
       index:
         search:
-          not_found_html: <h3>No bot found.</h3>
           placeholder: Search by name
+          include_wip: Include WIP
+          exclude_wip: Exclude WIP
         filter_wip: WIP
         empty_blankslate_html: >
           <h3>Oops.</h3>

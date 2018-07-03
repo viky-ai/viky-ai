@@ -25,6 +25,13 @@ class ChatbotSearch
       @options[:filter_wip] == DEFAULT_CRITERIA[:filter_wip]
   end
 
+  def to_hash
+    {
+      query: @options[:query],
+      filter_wip: @options[:filter_wip]
+    }
+  end
+
   def save
     @ui_state.chatbot_search = {
       query: @options[:query],

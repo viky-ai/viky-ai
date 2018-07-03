@@ -64,10 +64,16 @@ class ChatbotTest < ApplicationSystemTestCase
   test 'Bot filtered by release state' do
     go_to_chatbots
     within('.chatbots-list--for-index') do
-      click_button 'WIP'
+
+      all('.dropdown__trigger > button').first.click
+      click_link 'Include WIP'
+
       assert page.has_content?('Arnold')
       assert page.has_content?('Weather')
-      click_button 'WIP'
+
+      all('.dropdown__trigger > button').first.click
+      click_link 'Exclude WIP'
+
       assert page.has_no_content?('Arnold')
       assert page.has_content?('Weather')
     end
@@ -80,9 +86,6 @@ class ChatbotTest < ApplicationSystemTestCase
       click_button '#search'
       assert page.has_no_content?('Arnold')
       assert page.has_no_content?('Weather')
-    end
-    within('.chatbot') do
-
     end
   end
 
