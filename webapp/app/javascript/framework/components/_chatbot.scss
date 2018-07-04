@@ -233,14 +233,37 @@ $chatbot_statement_radius: 8px;
 // Widget image
 .chatbot__widget--image{
   line-height: 0;
-  background: content-box radial-gradient(#fff, #f5f7f9);
+  background-color: #fff;
   border: 2px solid #fff;
+  .chatbot__widget--image__illustration{
+    display: grid;
+    grid-template-areas: 'image';
+    overflow: hidden;
+    .back{
+      grid-area: image;
+      -webkit-filter: blur(10px);
+              filter: blur(10px);
+      z-index: 1;
+      transform: scale(1.1);
+      background-size: cover;
+      background-position: center;
+    }
+    .front{
+      grid-area: image;
+      z-index: 2;
+      img{
+        grid-area: image;
+      }
+    }
+  }
+
   img{
     max-width: 100%;
     max-height: 300px;
     display: block;
     margin: 0 auto;
   }
+
   .chatbot__widget--image__info {
     line-height: 1.4rem;
     padding: .5rem .8rem;
