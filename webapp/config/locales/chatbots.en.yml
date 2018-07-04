@@ -2,6 +2,11 @@ en:
   views:
     chatbots:
       index:
+        search:
+          placeholder: Search by name
+          include_wip: Include WIP
+          exclude_wip: Exclude WIP
+        filter_wip: WIP
         empty_blankslate_html: >
           <h3>Oops.</h3>
           <p>Sorry, you have not access to a chatbot at the moment.</p>

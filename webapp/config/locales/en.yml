@@ -7,6 +7,9 @@ en:
   required: REQUIRED
   authorisation_refused: Unauthorized operation.
   file_upload_label: Drag file here or click to choose a file
+  paginate:
+    previous: ‹ Previous
+    next: Next ›
   confirm_destroy:
     label: Type DELETE to confirm
     error: Please enter the text exactly as it is displayed to confirm.

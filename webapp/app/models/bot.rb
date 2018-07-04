@@ -4,6 +4,20 @@ class Bot < ApplicationRecord
 
   validates :name, :endpoint, presence: true
 
+  def self.search(q = {})
+    conditions = self.accessible_bots(User.find(q[:user_id]))
+    if q[:query].present?
+      conditions = conditions.where(
+        'lower(name) LIKE lower(?)',
+        "%#{q[:query]}%"
+      )
+    end
+    if q[:filter_wip]
+      conditions = conditions.where(wip_enabled: false)
+    end
+    conditions
+  end
+
   def self.accessible_bots(user)
     ids  = Bot.distinct.joins(agent: :memberships)
               .where(memberships: { user_id: user.id, rights: [:all, :edit] })
@@ -18,6 +32,28 @@ class Bot < ApplicationRecord
               .where(wip_enabled: false).ids
 
     Bot.where(id: ids.flatten.uniq)
+  end
+
+  def self.sort_by_last_statement(bots, user)
+    bot_ids = bots.collect(&:id)
+    Bot
+      .select('bots.*', 'latest_session.session_updated_at')
+      .from(
+        ChatSession
+          .select(:bot_id, 'max(updated_at) AS session_updated_at')
+          .where(user: user)
+          .group(:bot_id)
+          .unscope(:order),
+        :latest_session
+      )
+      .joins('RIGHT OUTER JOIN bots ON "bots".id = "latest_session".bot_id')
+      .where(id: bot_ids)
+      .order('CASE
+                WHEN latest_session.session_updated_at is null THEN 1
+                ELSE 0
+              END')
+      .order('"latest_session".session_updated_at DESC')
+      .order('"bots".updated_at DESC')
   end
 
   def self.ping(endpoint)
@@ -52,9 +88,12 @@ class Bot < ApplicationRecord
     Bot.ping(endpoint)
   end
 
-  def send_start(session_id)
+  def send_start(session_id, user)
     parameters = {
-      session_id: session_id
+      session_id: session_id,
+      user: {
+        name: user.name.present? ? user.name : user.username
+      }
     }
     post("start", parameters)
   end
@@ -79,6 +118,21 @@ class Bot < ApplicationRecord
     post("sessions/#{session_id}/user_actions", parameters)
   end
 
+  def send_user_location(session_id, status, location)
+    parameters = {
+      user_action: {
+        type: 'locate',
+      }
+    }
+    if status == 'success'
+      parameters[:user_action][:status] = 'success'
+      parameters[:user_action][:location] = JSON.parse(location)
+    else
+      parameters[:user_action][:status] = 'error'
+      parameters[:user_action][:error] = JSON.parse(location)
+    end
+    post("sessions/#{session_id}/user_actions", parameters)
+  end
 
   private
 

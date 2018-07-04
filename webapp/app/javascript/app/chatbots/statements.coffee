@@ -10,7 +10,10 @@ class Chat
     List.generateAll()
     Statement.init_ui()
 
+    new StatementHistory($('.chatbot').data('history-url'))
+
     @recognition = new Recognition()
+    @geolocator = new Geolocator()
 
     if @recognition.available
       $('.bot-form .btn--recognition').show()
@@ -40,6 +43,35 @@ class Chat
       $('.bot-form .dropdown').remove()
 
 
+    $("body").on 'ajax:before', (event) =>
+      node  = $(event.target)
+      if node.hasClass('chatbot__widget--geolocation')
+        if !@geolocator.is_location_valid(node)
+          @geolocator.locate_user()
+            .then((location) ->
+              node.trigger('geolocation:locate', location)
+            )
+            .catch((error) ->
+              node.trigger('geolocation:error', error)
+            )
+          return false
+    $("body").on 'geolocation:locate', (event, location) =>
+      node = $(event.target)
+      @geolocator.set_form_location(node, location)
+      @geolocator.set_periodic_prefetch()
+      form = node[0]
+      Rails.fire(form, 'submit')
+    $("body").on 'geolocation:error', (event, error) =>
+      node = $(event.target)
+      @geolocator.set_form_error(node, error)
+      @geolocator.clear_periodic_prefetch()
+      form = node[0]
+      Rails.fire(form, 'submit')
+    $("body").on 'ajax:complete', (event) =>
+      node  = $(event.target)
+      if node.hasClass('chatbot__widget--geolocation')
+        @geolocator.clear_form_location(node)
+
   dispatch: (event) ->
     node  = $(event.target)
     action = node.data('action')
@@ -53,6 +85,66 @@ class Chat
         @recognition.stop()
       else
         @recognition.start()
+
+
+class StatementHistory
+  constructor: (url) ->
+    @url = url
+    @history = []
+    @history_pointer = -1
+    @last_fetch_was_empty = false
+    @fetch_all()
+    @set_listeners()
+
+  set_listeners: =>
+    $('.bot-form').on 'submit', (event) =>
+      @add($('#statement_content').val())
+      @reset_pointer()
+
+    $('#statement_content').on 'keydown', (event) =>
+      if event.which == 38
+        event.preventDefault()
+        $('#statement_content').val(@previous())
+      if event.which == 40
+        event.preventDefault()
+        $('#statement_content').val(@next())
+
+  reset_pointer: ->
+    @history_pointer = -1
+
+  add: (statement) ->
+    @history.unshift(statement)
+
+  previous: () ->
+    need_to_fetch_ahead = @history_pointer + 3 == @history.length
+    @fetch_all() if need_to_fetch_ahead
+    if @history_pointer + 1 >= @history.length
+      @history_pointer = @history.length
+      value = ''
+    else
+      @history_pointer++
+      value = @history[@history_pointer]
+    return value
+
+  next: () ->
+    if @history_pointer - 1 < 0
+      @history_pointer = -1
+      value = ''
+    else
+      @history_pointer--
+      value = @history[@history_pointer]
+    return value
+
+  fetch_all: () ->
+    return if @last_fetch_was_empty
+    $.ajax({
+      url: @url,
+      method: 'GET',
+      data: { start: @history.length }
+    }).then((statements) =>
+      @last_fetch_was_empty = statements.length == 0
+      statements.forEach((statement) => @history.push(statement.content.text))
+    )
 
 
 class Speaker
@@ -71,6 +163,81 @@ class Speaker
       speech_request.text = text
       speech_request.lang = locale
       Speaker.speak(speech_request)
+
+  quiet: () ->
+    if (window.speechSynthesis)
+      Speaker = window.speechSynthesis
+      Speaker.cancel()
+
+
+class Geolocator
+  constructor: () ->
+    @interval_id = null
+    if navigator.geolocation
+      @geolocation = navigator.geolocation
+
+  locate_user: () ->
+    return new Promise((resolve, reject) =>
+      @geolocation.getCurrentPosition(resolve, reject)
+    )
+
+  set_periodic_prefetch: () ->
+    if @interval_id == null
+      @interval_id = setInterval(() =>
+        nodes = $('form.chatbot__widget--geolocation')
+        @locate_user()
+          .then((location) =>
+            nodes.each((index, node) =>
+              @set_form_location(node, location)
+            )
+          )
+          .catch((error) =>
+            @clear_periodic_prefetch()
+            nodes.each((index, node) =>
+              @clear_form_location(node)
+            )
+          )
+      , 5*60*1000)
+
+  clear_periodic_prefetch: () ->
+    if @interval_id != null
+      clearInterval(@interval_id)
+      @interval_id = null
+
+  set_form_location: (form, location) ->
+    @form_status(form).value = 'success'
+    @form_location(form).value = JSON.stringify({
+      coords: {
+        accuracy: location.coords.accuracy,
+        altitude: location.coords.altitude,
+        altitudeAccuracy: location.coords.altitudeAccuracy,
+        heading: location.coords.heading,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        speed: location.coords.speed,
+      },
+      timestamp: location.timestamp
+    })
+
+  set_form_error: (form, error) ->
+    @form_status(form).value = 'error'
+    @form_location(form).value = JSON.stringify({
+      code: error.code,
+      message: error.message
+    })
+
+  clear_form_location: (form) ->
+    @form_status(form).value = ''
+    @form_location(form).value = ''
+
+  is_location_valid: (form) ->
+    return @form_location(form).value != ''
+
+  form_location: (form) ->
+    return $(form).find('[name=location]')[0]
+
+  form_status: (form) ->
+    return $(form).find('[name=status]')[0]
 
 
 class Recognition
@@ -144,6 +311,7 @@ class Statement
       Statement.display_bot_waiting()
     else
       $('.chatbot__statement__waiting').closest('.chatbot__statement').remove()
+      Speaker::quiet()
 
     speech_text = content.data("speech-text")
     if speech_text != ''
@@ -181,6 +349,53 @@ class Statement
     html.push '  </div>'
     html.push '</div>'
     html.join("\n")
+
+  @display_js_map: (api_key, statement_id, map_options) ->
+    display = () ->
+      map = new google.maps.Map(document.getElementById("map-" + statement_id), map_options.map);
+      if map_options.markers
+        markers = map_options.markers
+        bounds = new google.maps.LatLngBounds()
+        markers.list.forEach((mark) ->
+          marker = new google.maps.Marker({
+            map: map,
+            position: mark.position,
+            title: mark.title
+          })
+          if mark.description
+            infowindow = new google.maps.InfoWindow({
+              content: mark.description,
+              maxWidth: 350
+            })
+            marker.addListener('click', () ->
+              infowindow.open(map, marker)
+            )
+          bounds.extend(marker.position)
+        )
+        if markers.center
+          map.fitBounds(bounds)
+
+    wait_count = 0
+    wait_lib_loading = () ->
+      if wait_count > 50
+        console.error("Cannot load Google JavaScript library")
+        return
+      if !$('script[src^="https://maps.googleapis.com/maps/api/js?"]')[0].loaded
+        wait_count += 1
+        setTimeout(wait_lib_loading, 10*wait_count)
+      else
+        display()
+
+    if $('script[src^="https://maps.googleapis.com/maps/api/js?"]').length == 0
+      script = document.createElement('script')
+      script.loaded = false
+      script.onload = () ->
+        this.loaded = true
+        display()
+      script.src = "https://maps.googleapis.com/maps/api/js?key=#{api_key}"
+      document.head.appendChild(script)
+    else
+      wait_lib_loading()
 
 
 class List

@@ -3,6 +3,23 @@ require 'test_helper'
 class ChatStatementsControllerTest < ActionDispatch::IntegrationTest
 
   #
+  # Index
+  #
+  test 'Index chat statements access' do
+    sign_in users(:show_on_agent_weather)
+    get chatbot_chat_statements_url(bots(:weather_bot), params: { format: :json })
+    assert_response :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Index chat statements forbidden' do
+    sign_in users(:confirmed)
+    get chatbot_chat_statements_url(bots(:weather_bot), params: { format: :json })
+    assert_response :forbidden
+    assert response.body.include?('Unauthorized operation.')
+  end
+
+  #
   # Create
   #
   test 'Create chat statement access' do

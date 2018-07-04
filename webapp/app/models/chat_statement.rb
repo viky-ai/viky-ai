@@ -4,7 +4,7 @@ class ChatStatement < ApplicationRecord
   belongs_to :chat_session, touch: true
 
   enum speaker: [:user, :bot, :moderator]
-  enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification]
+  enum nature: [:text, :image, :video, :map, :button, :button_group, :card, :list, :notification, :geolocation]
 
   serialize :content, JSON
 
@@ -41,6 +41,8 @@ class ChatStatement < ApplicationRecord
         Chatbot::List.new(content)
       when 'notification'
         Chatbot::Notification.new(content)
+      when 'geolocation'
+        Chatbot::Geolocation.new(content)
       else
         # Should be impossible
         raise ActiveRecord::RecordInvalid.new I18n.t('errors.chat_statement.invalid_nature', nature: nature)

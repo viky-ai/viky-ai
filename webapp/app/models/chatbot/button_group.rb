@@ -5,7 +5,7 @@ class Chatbot::ButtonGroup
   attr_accessor :buttons, :disable_on_click
 
   validates :buttons, presence: true, length: {
-    maximum: 6, too_long: I18n.t('errors.chat_statement.buttons.too_long')
+    maximum: 12, too_long: I18n.t('errors.chat_statement.buttons.too_long')
   }
   validates :disable_on_click, inclusion: { in: [true, false] }, allow_nil: true
   validate :recursive_validation

@@ -68,7 +68,7 @@ class ChatSession < ApplicationRecord
   private
 
     def notify_bot
-      BotSendStartJob.set(wait: 0.25).perform_later(bot.id, id)
+      BotSendStartJob.set(wait: 0.25).perform_later(bot.id, id, user.id)
     end
 
     def notify_ui_if_locale_changed

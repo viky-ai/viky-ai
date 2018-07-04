@@ -13,18 +13,18 @@ class BotSendStartJob < ApplicationJob
     send_error_statement(arguments[1], I18n.t('errors.bots.bot_failure'))
   end
 
-  def perform(*args)
-    bot_id = args[0]
-    chat_session_id = args[1]
-
-    Bot.find(bot_id).send_start(chat_session_id)
+  def perform(bot_id, chat_session_id, user_id)
+    user = User.find(user_id)
+    Bot.find(bot_id).send_start(chat_session_id, user)
   rescue => e
     backtrace = ::Rails.backtrace_cleaner.clean(e.backtrace)
     Sidekiq::Logging.logger.error "bot_id:#{bot_id} failed : #{e.message}\n\t#{backtrace.join("\n\t")}"
     raise
   end
 
+
   private
+
     def send_error_statement(session_id, message)
       ChatStatement.create(
         speaker: ChatStatement.speakers[:moderator],
