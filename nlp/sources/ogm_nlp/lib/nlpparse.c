@@ -244,7 +244,7 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
   if (p_skip) *p_skip = FALSE;
 
   // treat end of string as skipped punct
-  if (max_word_size <= 0 || current_word == '\0')
+  if (max_word_size <= 0 || current_word[0] == '\0')
   {
     if (p_skip) *p_skip = TRUE;
     return 1;

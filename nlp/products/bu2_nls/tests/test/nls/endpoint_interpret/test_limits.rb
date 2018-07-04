@@ -89,12 +89,7 @@ module Nls
 
         Nls.package_update(package)
 
-        # Match should be slow_swimming_relaxing but limitation of algorithm gives swimming_for_relaxing
-        # this is because first expression 'slow' of interpretation 'slow' is discarded
-        # because second expression 'swimming slow" is larger. However, this larger expression
-        # is then not compatible with expression "swimming for relaxing".
-        # This may need to be addressed later by handling that kind of case more smoothly.
-        check_interpret("slown swimming for relaxing", interpretation: "swimming_for_relaxing")
+        check_interpret("slow swimming for relaxing", interpretation: "slow_swimming_relaxing")
 
       end
 

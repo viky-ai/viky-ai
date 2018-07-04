@@ -144,6 +144,11 @@ class Bot < ApplicationRecord
         payload: parameters.to_json,
         headers: { content_type: :json, accept: :json }
       )
+    rescue => e
+      body = ''
+      body = e.http_body if e.respond_to?(:http_body) && e.http_body
+      e.message = "Bot \"#{name}\" : POST to \"#{endpoint}/#{method}\" with params #{parameters.to_json} failed #{e.inspect} : #{body.strip}"
+      raise
     end
 
 end
