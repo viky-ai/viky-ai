@@ -39,7 +39,9 @@ class BotSendUserStatementJob < ApplicationJob
     raise
   end
 
+
   private
+
     def send_error_statement(session_id, message)
       ChatStatement.create(
         speaker: ChatStatement.speakers[:moderator],
