@@ -58,6 +58,8 @@ HTML
   <li><code>map-search</code> show map via <strong>Search mode</strong>.</li>
   <li><code>map-view</code> show map via <strong>View mode</strong>.</li>
   <li><code>map-streetview</code> show map via <strong>Street View mode</strong>.</li>
+  <li><code>map-markers</code> show map with <strong>custom markers</strong>.</li>
+  <li><code>geolocation</code> show your <strong>location</strong> on a map.</li>
 </ul>
 HTML
 
@@ -66,6 +68,7 @@ HTML
 <p>Enter the following commands in order to play with buttons:</p>
 <ul>
   <li><code>button</code> show the button widget.</li>
+  <li><code>button-mail</code> show the button that redirect to a custom URL.</li>
   <li><code>button-group</code> show the button group widget.</li>
   <li><code>button-group-deactivable</code> show the button group widget with disable_on_click option enabled.</li>
 </ul>

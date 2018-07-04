@@ -1,0 +1,59 @@
+<%= form_for(
+        @search,
+        url: search_chatbots_path,
+        as: :search,
+        method: :get,
+        remote: true,
+        html: { class: "chatbots-search" }) do |f| %>
+
+  <div class="field">
+    <div class="control control--merged">
+      <% unless @bot.nil? %>
+        <input name="id" value="<%= @bot.id %>" type="hidden" />
+      <% end %>
+
+      <% if @bots_accessible.where(wip_enabled: true).exists? %>
+        <%= f.hidden_field :filter_wip %>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--dark btn--chatbot-options" type="button">
+              <span class="icon icon--small">
+                <%= icon_settings %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li>
+                <a href="#" data-behavior="populate-input, submit-form"
+                   data-input-selector="#search_filter_wip"
+                   data-input-value="false"
+                   data-form-selector=".chatbots-search"
+                   <% unless @search.filter_wip %>class="current"<% end %>>
+                  <%= t('views.chatbots.index.search.include_wip') %>
+                </a>
+              </li>
+              <li>
+                <a href="#" data-behavior="populate-input, submit-form"
+                   data-input-selector="#search_filter_wip"
+                   data-input-value="true"
+                   data-form-selector=".chatbots-search"
+                   <% if @search.filter_wip %>class="current"<% end %>>
+                  <%= t('views.chatbots.index.search.exclude_wip') %>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <%= f.text_field :query, placeholder: t('views.chatbots.index.search.placeholder'), accesskey: "s", class: 'dark' %>
+
+      <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe, class: "btn btn--primary", id: '#search',
+          data: {
+              disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
+          } %>
+
+    </div>
+  </div>
+<% end %>

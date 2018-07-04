@@ -40,20 +40,50 @@ class Chatbot::ButtonTest < ActiveSupport::TestCase
       nature: :button,
       content: {
         text: '',
-        payload: {}
+        payload: { a: 'a' }
       },
       chat_session: chat_sessions(:one)
     )
     assert statement.invalid?
-    expected = ["content.text can't be blank, content.payload can't be blank"]
+    expected = ["content.text can't be blank"]
     assert_equal expected, statement.errors.full_messages
 
     statement.content['text'] = 'a' * 101
-    statement.content['payload'] = { a: 'a' }
     assert statement.invalid?
     expected = ['content.text is too long (maximum is 100 characters)']
+    assert_equal expected, statement.errors.full_messages
+
+    statement.content['text'] = 'a'
+    statement.content['payload'] = { a: 'a' }
+    statement.content['href'] = 'callto:pseudoskype'
+    assert statement.invalid?
+    expected = ['content.href not allowed with payload']
+    assert_equal expected, statement.errors.full_messages
+
+    statement.content.delete('payload')
+    statement.content['href'] = 'a' * 501
+    assert statement.invalid?
+    expected = ['content.href is too long (maximum is 500 characters)']
+    assert_equal expected, statement.errors.full_messages
+
+    statement.content['payload'] = { }
+    statement.content['href'] = ''
+    assert statement.invalid?
+    expected = ["content payload and href can't both be blank"]
     assert_equal expected, statement.errors.full_messages
   end
 
 
+  test 'Allow specific href in button' do
+    statement = ChatStatement.new(
+      speaker: :bot,
+      nature: :button,
+      content: {
+        text: 'Email me',
+        href: 'mailto:someone@example.com?Subject=Hello%20again'
+      },
+      chat_session: chat_sessions(:one)
+    )
+    assert statement.save
+  end
 end

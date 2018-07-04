@@ -20,6 +20,10 @@ module BotApi
     Params.new(Params::build_button(name, action))
   end
 
+  def self.button_mail(name, href)
+    Params.new(Params::build_button_mail(name, href))
+  end
+
   def self.button_group(buttons_list, disable_on_click = false)
     Params.new(Params::build_button_group(buttons_list, disable_on_click))
   end
@@ -30,6 +34,10 @@ module BotApi
 
   def self.list(items, orientation = :horizontal)
     Params.new(Params::build_list(items, orientation))
+  end
+
+  def self.geolocation(name)
+    Params.new(Params::build_geolocation(name))
   end
 
   def self.update_locale(session_id, locale)
@@ -49,10 +57,10 @@ module BotApi
       @statement = statement
     end
 
-    def add_speech(text, local)
-      @statement[:speech] = {
+    def add_speech(text, locale)
+      @statement[:content][:speech] = {
         text: text,
-        local: local
+        locale: locale
       }
       self
     end
@@ -74,6 +82,16 @@ module BotApi
         content: {
           text: name,
           payload: payload
+        }
+      }
+    end
+
+    def self.build_button_mail(name, href)
+      {
+        nature: 'button',
+        content: {
+          text: name,
+          href: href
         }
       }
     end
@@ -145,6 +163,15 @@ module BotApi
         content: {
           orientation: orientation,
           items: items
+        }
+      }
+    end
+
+    def self.build_geolocation(name)
+      {
+        nature: 'geolocation',
+        content: {
+          text: name
         }
       }
     end

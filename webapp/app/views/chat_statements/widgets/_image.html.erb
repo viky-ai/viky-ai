@@ -1,5 +1,8 @@
 <div class="chatbot__widget chatbot__widget--image">
-  <img src="<%= image.url %>">
+  <div class="chatbot__widget--image__illustration">
+    <div class="back" style="background-image: url(<%= image.url %>);"></div>
+    <div class="front"><img src="<%= image.url %>"></div>
+  </div>
   <% if image.has_info? %>
     <div class="chatbot__widget--image__info">
       <% if image.title.present? %>
