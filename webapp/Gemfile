@@ -44,6 +44,9 @@ gem 'local_time'
 # Use Sidekiq to manage background jobs
 gem 'sidekiq'
 
+# Use ElasticSearch for stats
+gem 'elasticsearch-model', '~> 5.0'
+
 # Use Foreman to run app and dependencies
 gem 'foreman'
 

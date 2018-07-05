@@ -1,0 +1,3 @@
+development:
+  client:
+    hosts: <%= ENV.fetch("VIKYAPP_STATISTICS_HOSTS") { ['localhost:9200'] } %>
