@@ -1,0 +1,8 @@
+{
+  "template": "stats-interpret_request_log-*",
+  "aliases":
+  {
+    "index-{index}": {},
+    "search-{index}": {}
+  }
+}
