@@ -1,3 +1,12 @@
-development:
+default: &default
   client:
     hosts: <%= ENV.fetch("VIKYAPP_STATISTICS_HOSTS") { ['localhost:9200'] } %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
