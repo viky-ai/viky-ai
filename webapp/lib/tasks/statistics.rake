@@ -2,13 +2,13 @@ namespace :statistics do
 
   desc 'Creates and configures stats indices'
   task setup: :environment do |t, args|
-    fetch_template_configurations.each do |template_conf|
+    IndexManager.fetch_template_configurations.each do |template_conf|
       index_base_name = template_conf['template'][0..-3]
       template_name = "template-#{index_base_name}"
       client = IndexManager.client
       create_template(client, template_name, template_conf)
       list_environments.each do |env|
-        index_name = [index_base_name, env].join('-')
+        index_name = IndexManager.build_index_name_from(template_conf, env)
         create_index(client, index_name)
       end
     end
@@ -16,13 +16,6 @@ namespace :statistics do
 
 
   private
-    def fetch_template_configurations
-      template_config_dir = "#{Rails.root}/config/statistics"
-      Dir.foreach(template_config_dir)
-         .select { |filename| filename.downcase.end_with? '.json' }
-         .map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
-    end
-
     def list_environments
       config = YAML.load(ERB.new(File.read("#{Rails.root}/config/statistics.yml")).result).symbolize_keys
       config.keys
