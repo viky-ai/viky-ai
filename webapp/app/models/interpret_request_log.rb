@@ -20,8 +20,9 @@ class InterpretRequestLog
   end
 
   def save
+    refresh = Rails.env == 'test'
     client = IndexManager.client
-    result = client.index index: INDEX_ALIAS_NAME, type: 'log', body: to_json, id: @id
+    result = client.index index: INDEX_ALIAS_NAME, type: 'log', body: to_json, id: @id, refresh: refresh
     @id = result['_id']
   end
 

@@ -9,7 +9,6 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
   test 'Save a basic log' do
     log = InterpretRequestLog.new('2018-07-04T14:25:14+02:00', "What 's the weather like ?", 'en')
     assert log.save
-    sleep 1
     assert_equal 1, InterpretRequestLog.count
   end
 
@@ -20,7 +19,6 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert log.save
     log = InterpretRequestLog.new('2018-07-04T17:00:00+02:00', 'What the weather like next Sunday ?', 'en')
     assert log.save
-    sleep 1
     assert_equal 2, InterpretRequestLog.count(
       query: {
         range: {
