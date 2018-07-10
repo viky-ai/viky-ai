@@ -19,15 +19,13 @@ class Nlp::Interpret
   before_validation :set_default
 
   def proceed
-    start_timestamp = Time.now
     parameters = nlp_params
-    Rails.logger.info "  | Started POST: #{url} at #{start_timestamp}"
+    Rails.logger.info "  | Started POST: #{url} at #{Time.now}"
     Rails.logger.info "  | Parameters: #{parameters}"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     out = http.post(uri.path, parameters.to_json, JSON_HEADERS)
     Rails.logger.info "  | Completed #{out.code}"
-    log_request(parameters, start_timestamp)
     {
       status: out.code,
       body: JSON.parse(out.body)
@@ -68,17 +66,6 @@ class Nlp::Interpret
   end
 
   private
-
-    def log_request(parameters, start_timestamp)
-      log = InterpretRequestLog.new(
-        timestamp: start_timestamp.iso8601(3),
-        sentence: parameters['sentence'],
-        language: parameters['Accept-Language'],
-        now: parameters['now'],
-        agent_id:parameters['primary-package']
-      )
-      log.save
-    end
 
     def set_default
       self.language = "*"     if language.blank?
