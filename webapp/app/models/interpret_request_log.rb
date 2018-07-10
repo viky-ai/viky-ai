@@ -4,19 +4,18 @@ class InterpretRequestLog
   INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
   SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
 
-  attr_reader :id, :timestamp, :sentence, :language
-
   def self.count(params = {})
     client = IndexManager.client
     result = client.count index: SEARCH_ALIAS_NAME, body: params
     result['count']
   end
 
-  def initialize(timestamp, sentence, language, id = nil)
-    @id = id
-    @timestamp = timestamp
-    @sentence = sentence
-    @language = language
+  def initialize(params = {})
+    @id = params[:id]
+    @agent = params[:agent]
+    @timestamp = params[:timestamp]
+    @sentence = params.fetch(:sentence, '')
+    @language = params[:language]
   end
 
   def save
@@ -33,7 +32,9 @@ class InterpretRequestLog
       {
         timestamp: @timestamp,
         sentence: @sentence,
-        language: @language
+        language: @language,
+        agent_id: @agent.id,
+        owner_id: @agent.owner.id
       }
     end
 end
