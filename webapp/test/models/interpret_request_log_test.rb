@@ -9,7 +9,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
   test 'Save a basic interpretation log' do
     weather_agent = agents(:weather)
     log = InterpretRequestLog.new(
-      timestamp: '2018-07-04T14:25:14+02:00',
+      timestamp: '2018-07-04T14:25:14.053+02:00',
       sentence: "What 's the weather like ?",
       language: 'en',
       agent: weather_agent
@@ -24,6 +24,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T14:25:14+02:00',
       sentence: "What 's the weather like ?",
       language: 'en',
+      now: '2018-07-10T14:10:36+02:00',
       agent: weather_agent
     )
     assert log.save
@@ -31,26 +32,27 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert_equal log.timestamp, found.timestamp
     assert_equal log.sentence, found.sentence
     assert_equal log.language, found.language
+    assert_equal log.now, found.now
   end
 
   test 'Count how much interpret request in a specific time frame' do
     weather_agent = agents(:weather)
     log = InterpretRequestLog.new(
-      timestamp: '2018-07-04T08:00:00+02:00',
+      timestamp: '2018-07-04T08:00:00.200+02:00',
       sentence: 'What the weather like today ?',
       language: 'en',
       agent: weather_agent
     )
     assert log.save
     log = InterpretRequestLog.new(
-      timestamp: '2018-07-04T12:00:00+02:00',
+      timestamp: '2018-07-04T12:00:00.062+02:00',
       sentence: 'What the weather like tomorrow ?',
       language: 'en',
       agent: weather_agent
     )
     assert log.save
     log = InterpretRequestLog.new(
-      timestamp: '2018-07-04T17:00:00+02:00',
+      timestamp: '2018-07-04T17:00:00.000+02:00',
       sentence: 'What the weather like next Sunday ?',
       language: 'en',
       agent: weather_agent
