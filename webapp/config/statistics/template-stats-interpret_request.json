@@ -1,8 +1,64 @@
 {
   "template": "stats-interpret_request_log-*",
-  "aliases":
-  {
+  "aliases": {
     "index-{index}": {},
     "search-{index}": {}
+  },
+  "mappings": {
+    "log": {
+      "properties": {
+        "timestamp": {
+          "type": "date"
+        },
+        "agent_id": {
+          "type": "keyword"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "now": {
+          "type": "date"
+        },
+        "owner_id": {
+          "type": "keyword"
+        },
+        "sentence": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "status": {
+          "type": "integer"
+        },
+        "body": {
+          "properties": {
+            "interpretations": {
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "package": {
+                  "type": "keyword"
+                },
+                "score": {
+                  "type": "float"
+                },
+                "slug": {
+                  "type": "keyword"
+                },
+                "solution": {
+                  "type": "object",
+                  "enabled": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
