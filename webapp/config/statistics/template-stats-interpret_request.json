@@ -55,6 +55,9 @@
                   "enabled": false
                 }
               }
+            },
+            "errors": {
+              "type": "text"
             }
           }
         }

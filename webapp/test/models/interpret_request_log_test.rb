@@ -95,7 +95,12 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T16:00:00.000+02:00',
       sentence: 'What the weather like next Sunday ?',
       agent: weather_agent,
-    ).with_response('422', {})
+    ).with_response('422', {
+      errors: [
+        "lt 0: OgNlsEndpoints : request error on endpoint : \"POST NlsEndpointInterpret\"",
+        "NlpInterpretRequestBuildPackage: unknown package 'd4f359ed-fbe6-450b-a4c8-f449f232a699'"
+      ]
+    })
     assert log.save
     log = InterpretRequestLog.new(
       timestamp: '2018-07-04T17:00:00.000+02:00',
@@ -121,5 +126,18 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
         }
       }
     )
+  end
+
+
+  test 'Log an NLP response with an error message' do
+    weather_agent = agents(:weather)
+    log = InterpretRequestLog.new(
+      timestamp: '2018-07-04T16:00:00.000+02:00',
+      sentence: 'What the weather like next Sunday ?',
+      agent: weather_agent,
+    ).with_response('401', {
+      errors: ['Access denied: wrong token.']
+    })
+    assert log.save
   end
 end
