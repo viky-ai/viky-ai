@@ -16,7 +16,8 @@ module IndexManager
   def self.build_index_name_from(template_conf)
     index_base_name = template_conf['index_patterns'][0..-3]
     uniq_id = SecureRandom.hex(4)
-    [index_base_name, uniq_id].join('-')
+    template_version = template_conf['version']
+    [index_base_name, template_version, uniq_id].join('-')
   end
 
   def self.reset_statistics
@@ -27,7 +28,9 @@ module IndexManager
   end
 
   def self.renew_index(template_conf, client = IndexManager.client)
-    index_patterns = template_conf['index_patterns']
+    index_base_name = template_conf['index_patterns'][0..-3]
+    template_version = template_conf['version']
+    index_patterns = [index_base_name, template_version, '*'].join('-')
     client.indices.delete index: index_patterns
     new_name = build_index_name_from(template_conf)
     client.indices.create index: new_name
