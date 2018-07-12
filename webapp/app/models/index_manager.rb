@@ -14,20 +14,23 @@ module IndexManager
   end
 
   def self.build_index_name_from(template_conf)
-    template_conf['index_patterns']
+    index_base_name = template_conf['index_patterns'][0..-3]
+    uniq_id = SecureRandom.hex(4)
+    [index_base_name, uniq_id].join('-')
   end
 
   def self.reset_statistics
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
-      index_name = build_index_name_from(conf)
-      reset_index(index_name, client)
+      renew_index(conf, client)
     end
   end
 
-  def self.reset_index(index_name, client = IndexManager.client)
-    client.indices.delete index: index_name
-    client.indices.create index: index_name
-    client.indices.flush index: index_name
+  def self.renew_index(template_conf, client = IndexManager.client)
+    index_patterns = template_conf['index_patterns']
+    client.indices.delete index: index_patterns
+    new_name = build_index_name_from(template_conf)
+    client.indices.create index: new_name
+    client.indices.flush index: new_name
   end
 end

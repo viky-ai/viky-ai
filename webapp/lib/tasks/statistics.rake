@@ -6,9 +6,9 @@ namespace :statistics do
       puts Rainbow("Environment #{environment}.")
       client = IndexManager.client environment
       IndexManager.fetch_template_configurations.each do |template_conf|
+        create_template(client, template_conf)
         index_name = IndexManager.build_index_name_from(template_conf)
-        create_template(client, index_name, template_conf)
-        create_index(client, index_name)
+        create_index(client, index_name, template_conf)
       end
     end
   end
@@ -22,8 +22,12 @@ namespace :statistics do
         .map { |env| env.to_s }
     end
 
-    def create_template(client, index_name, template_conf)
-      template_name = "template-#{index_name}"
+    def create_template(client, template_conf)
+      template_name = "template-#{template_conf['index_patterns'][0..-3]}"
+      if client.indices.exists_template? name: template_name
+        puts Rainbow("Template #{template_name} already exists : skipping.")
+        return
+      end
       begin
         client.indices.put_template name: template_name, body: template_conf
         puts Rainbow("Creation of index template #{template_name} succeed.").green
@@ -32,9 +36,9 @@ namespace :statistics do
       end
     end
 
-    def create_index(client, index_name)
-      if client.indices.exists index: index_name
-        puts Rainbow("Index #{index_name} already exists : skipping.").green
+    def create_index(client, index_name, template_conf)
+      if client.indices.stats(index: template_conf['index_patterns'])['indices'].present?
+        puts Rainbow("Index like #{template_conf['index_patterns']} already exists : skipping.")
         return
       end
       begin
