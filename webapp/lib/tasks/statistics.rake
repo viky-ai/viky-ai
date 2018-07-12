@@ -2,13 +2,12 @@ namespace :statistics do
 
   desc 'Creates and configures stats indices'
   task setup: :environment do |t, args|
-    IndexManager.fetch_template_configurations.each do |template_conf|
-      index_base_name = template_conf['template'][0..-3]
-      template_name = "template-#{index_base_name}"
-      client = IndexManager.client
-      create_template(client, template_name, template_conf)
-      list_environments.each do |env|
-        index_name = IndexManager.build_index_name_from(template_conf, env)
+    list_environments.each do |environment|
+      puts Rainbow("Environment #{environment}.")
+      client = IndexManager.client environment
+      IndexManager.fetch_template_configurations.each do |template_conf|
+        index_name = IndexManager.build_index_name_from(template_conf)
+        create_template(client, index_name, template_conf)
         create_index(client, index_name)
       end
     end
@@ -23,7 +22,8 @@ namespace :statistics do
         .map { |env| env.to_s }
     end
 
-    def create_template(client, template_name, template_conf)
+    def create_template(client, index_name, template_conf)
+      template_name = "template-#{index_name}"
       begin
         client.indices.put_template name: template_name, body: template_conf
         puts Rainbow("Creation of index template #{template_name} succeed.").green

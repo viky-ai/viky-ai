@@ -1,9 +1,9 @@
 module IndexManager
 
-  def self.client
-    config = Rails.application.config_for(:statistics)
-    raise "Missing statistics configuration for environment #{Rails.env}" if config.empty?
-    Elasticsearch::Client.new(config)
+  def self.client(environment = Rails.env)
+    config = Rails.application.config_for(:statistics, env: environment).symbolize_keys
+    raise "Missing statistics configuration for environment #{environment}" if config.empty?
+    Elasticsearch::Client.new(config[:client].symbolize_keys)
   end
 
   def self.fetch_template_configurations
@@ -13,9 +13,8 @@ module IndexManager
       .map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
   end
 
-  def self.build_index_name_from(template_conf, environment = Rails.env)
-    index_base_name = template_conf['template'][0..-3]
-    [index_base_name, environment].join('-')
+  def self.build_index_name_from(template_conf)
+    template_conf['index_patterns']
   end
 
   def self.reset_statistics

@@ -1,6 +1,6 @@
 class InterpretRequestLog
 
-  INDEX_NAME = ['stats-interpret_request_log', Rails.env].join('-').freeze
+  INDEX_NAME = 'stats-interpret_request_log'.freeze
   INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
   SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
 

@@ -7,6 +7,5 @@ development:
 
 test:
   <<: *default
-
-production:
-  <<: *default
+  client:
+    hosts: ['localhost:9222']
