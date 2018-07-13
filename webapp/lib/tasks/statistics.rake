@@ -23,17 +23,19 @@ namespace :statistics do
       puts Rainbow("Source index #{src_index} does not exists.")
       exit 1
     end
-    template_name = ['template', src_index.split('-')[0..1]].join('-')
-    template_conf = IndexManager.fetch_template_configurations(template_name).first
+    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     dest_index = IndexManager.build_index_name_from template_conf
 
     save_template(client, template_conf.except('aliases'))
     create_index(client, dest_index)
-    update_index_aliases(client, [
-      { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-      { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
-    ],
-      InterpretRequestLog::INDEX_ALIAS_NAME)
+    is_used_to_index = check_used_to_index(client, src_index)
+    if is_used_to_index
+      update_index_aliases(client, [
+        { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+        { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+      ],
+        InterpretRequestLog::INDEX_ALIAS_NAME)
+    end
     reindex(client, src_index, dest_index)
     update_index_aliases(client, [
       { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
@@ -79,6 +81,15 @@ namespace :statistics do
     def create_index(client, index_name)
       client.indices.create index: index_name
       puts Rainbow("Creation of index #{index_name} succeed.").green
+    end
+
+    def check_used_to_index(client, src_index)
+      begin
+        is_used_to_index = !client.indices.get_alias(index: src_index)[src_index]['aliases']['index-stats-interpret_request_log'].nil?
+      rescue
+        is_used_to_index = false
+      end
+      is_used_to_index
     end
 
     def update_index_aliases(client, actions, index_alias)
