@@ -6,11 +6,12 @@ module IndexManager
     Elasticsearch::Client.new(config[:client].symbolize_keys)
   end
 
-  def self.fetch_template_configurations
+  def self.fetch_template_configurations(filter_name = '')
     template_config_dir = "#{Rails.root}/config/statistics"
-    Dir.foreach(template_config_dir)
-      .select { |filename| filename.downcase.end_with? '.json' }
-      .map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
+    json_list = Dir.foreach(template_config_dir)
+                   .select { |filename| filename.downcase.end_with? '.json' }
+    json_list.select! { |filename| filename == "#{filter_name}.json" } if filter_name.present?
+    json_list.map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
   end
 
   def self.build_index_name_from(template_conf)
