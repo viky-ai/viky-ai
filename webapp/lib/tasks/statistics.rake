@@ -54,7 +54,7 @@ namespace :statistics do
     end
 
     def template_exists?(client, template_conf)
-      template_name = "template-#{template_conf['index_patterns'][0..-3]}"
+      template_name = IndexManager.build_template_name_from(template_conf)
       if client.indices.exists_template? name: template_name
         puts Rainbow("Template #{template_name} already exists : skipping.")
         return true
@@ -63,7 +63,7 @@ namespace :statistics do
     end
 
     def save_template(client, template_conf)
-      template_name = "template-#{template_conf['index_patterns'][0..-3]}"
+      template_name = IndexManager.build_template_name_from(template_conf)
       client.indices.put_template name: template_name, body: template_conf
       puts Rainbow("Save index template #{template_name} succeed.").green
     end

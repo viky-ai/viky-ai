@@ -14,22 +14,33 @@ module IndexManager
     json_list.map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
   end
 
+  def self.build_index_base_name_from(template_conf)
+    template_conf['index_patterns'][0..-3]
+  end
+
   def self.build_index_name_from(template_conf)
-    index_base_name = template_conf['index_patterns'][0..-3]
+    index_base_name = build_index_base_name_from(template_conf)
     uniq_id = SecureRandom.hex(4)
     template_version = template_conf['version']
     [index_base_name, template_version, uniq_id].join('-')
   end
 
+  def self.build_template_name_from(template_conf)
+    index_base_name = build_index_base_name_from(template_conf)
+    "template-#{index_base_name}"
+  end
+
   def self.reset_statistics
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
+      template_name = IndexManager.build_template_name_from(conf)
+      client.indices.put_template name: template_name, body: conf
       renew_index(conf, client)
     end
   end
 
   def self.renew_index(template_conf, client = IndexManager.client)
-    index_base_name = template_conf['index_patterns'][0..-3]
+    index_base_name = build_index_base_name_from(template_conf)
     template_version = template_conf['version']
     index_patterns = [index_base_name, template_version, '*'].join('-')
     client.indices.delete index: index_patterns
