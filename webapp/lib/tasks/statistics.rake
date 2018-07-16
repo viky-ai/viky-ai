@@ -24,25 +24,25 @@ namespace :statistics do
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    dest_index = IndexManager.build_index_name_from template_conf
-
     save_template(client, template_conf.except('aliases'))
-    create_index(client, dest_index)
-    is_used_to_index = check_used_to_index(client, src_index)
-    if is_used_to_index
-      update_index_aliases(client, [
-        { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-        { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
-      ],
-        InterpretRequestLog::INDEX_ALIAS_NAME)
+    reindex_into_new(client, src_index, template_conf)
+    save_template(client, template_conf)
+  end
+
+
+  desc 'Reindex all indices'
+  task :reindex_all => :environment do |t, args|
+    client = IndexManager.client Rails.env
+    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+    save_template(client, template_conf.except('aliases'))
+    index_indices = client.indices.get_alias(name: 'index-stats-*').keys
+    search_indices = client.indices.get_alias(name: 'search-stats-*').keys - index_indices
+    index_indices.each do |src_index|
+      reindex_into_new(client, src_index, template_conf)
     end
-    reindex(client, src_index, dest_index)
-    update_index_aliases(client, [
-      { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-      { add: { index: dest_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
-    ],
-      InterpretRequestLog::SEARCH_ALIAS_NAME)
-    delete_index(client, src_index)
+    search_indices.each do |src_index|
+      reindex_into_new(client, src_index, template_conf)
+    end
     save_template(client, template_conf)
   end
 
@@ -68,6 +68,26 @@ namespace :statistics do
       template_name = IndexManager.build_template_name_from(template_conf)
       client.indices.put_template name: template_name, body: template_conf
       puts Rainbow("Save index template #{template_name} succeed.").green
+    end
+
+    def reindex_into_new(client, src_index, template_conf)
+      dest_index = IndexManager.build_index_name_from template_conf
+      create_index(client, dest_index)
+      is_used_to_index = check_used_to_index(client, src_index)
+      if is_used_to_index
+        update_index_aliases(client, [
+          { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+          { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+        ],
+          InterpretRequestLog::INDEX_ALIAS_NAME)
+      end
+      reindex(client, src_index, dest_index)
+      update_index_aliases(client, [
+        { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+        { add: { index: dest_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+      ],
+        InterpretRequestLog::SEARCH_ALIAS_NAME)
+      delete_index(client, src_index)
     end
 
     def index_exists?(client, template_conf)
