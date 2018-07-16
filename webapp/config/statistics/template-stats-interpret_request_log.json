@@ -2,7 +2,6 @@
   "version": 1,
   "index_patterns": "stats-interpret_request_log-*",
   "aliases": {
-    "index-stats-interpret_request_log": {},
     "search-stats-interpret_request_log": {}
   },
   "mappings": {

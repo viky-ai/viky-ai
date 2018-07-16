@@ -30,12 +30,17 @@ module IndexManager
     "template-#{index_base_name}"
   end
 
-  def self.reset_statistics
+  def self.reset_indices
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
       template_name = IndexManager.build_template_name_from(conf)
       client.indices.put_template name: template_name, body: conf
-      renew_index(conf, client)
+      new_index = renew_index(conf, client)
+      client.indices.update_aliases body: {
+        actions: [
+          { add: { index: new_index, alias: "index-#{build_index_base_name_from(conf)}" } }
+        ]
+      }
     end
   end
 
@@ -47,5 +52,6 @@ module IndexManager
     new_name = build_index_name_from(template_conf)
     client.indices.create index: new_name
     client.indices.flush index: new_name
+    new_name
   end
 end

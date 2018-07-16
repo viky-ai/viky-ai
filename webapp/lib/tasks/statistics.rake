@@ -10,7 +10,12 @@ namespace :statistics do
       IndexManager.fetch_template_configurations.each do |template_conf|
         save_template(client, template_conf) unless template_exists?(client, template_conf)
         index_name = IndexManager.build_index_name_from(template_conf)
-        create_index(client, index_name) unless index_exists?(client, template_conf)
+        next if index_exists?(client, template_conf)
+        create_index(client, index_name)
+        update_index_aliases(client, [
+          { add: { index: index_name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+        ],
+          InterpretRequestLog::INDEX_ALIAS_NAME)
       end
     end
   end
@@ -26,13 +31,12 @@ namespace :statistics do
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    save_template(client, template_conf.except('aliases'))
+    save_template(client, template_conf)
     if need_reindexing(src_index, template_conf)
       reindex_into_new(client, src_index, template_conf)
     else
       puts Rainbow("No need to reindex #{src_index} : skipping.")
     end
-    save_template(client, template_conf)
   end
 
 
@@ -41,7 +45,7 @@ namespace :statistics do
     task :all => :environment do |t, args|
       client = IndexManager.client Rails.env
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-      save_template(client, template_conf.except('aliases'))
+      save_template(client, template_conf)
       index_indices = client.indices.get_alias(name: 'index-stats-*').keys
                         .select { |index_name| need_reindexing(index_name, template_conf) }
       search_indices = (client.indices.get_alias(name: 'search-stats-*').keys - index_indices)
@@ -52,7 +56,6 @@ namespace :statistics do
       search_indices.each do |src_index|
         reindex_into_new(client, src_index, template_conf)
       end
-      save_template(client, template_conf)
     end
   end
 
@@ -87,7 +90,6 @@ namespace :statistics do
       reindex(client, src_index, dest_index)
       update_index_aliases(client, [
         { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-        { add: { index: dest_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
       ],
         InterpretRequestLog::SEARCH_ALIAS_NAME)
       delete_index(client, src_index)
