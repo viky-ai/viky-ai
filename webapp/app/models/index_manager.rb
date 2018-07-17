@@ -1,9 +1,14 @@
 module IndexManager
 
   def self.client(environment = Rails.env)
+    config = fetch_statistics_configuration(environment)
+    Elasticsearch::Client.new(config[:client].symbolize_keys)
+  end
+
+  def self.fetch_statistics_configuration(environment = Rails.env)
     config = Rails.application.config_for(:statistics, env: environment).symbolize_keys
     raise "Missing statistics configuration for environment #{environment}" if config.empty?
-    Elasticsearch::Client.new(config[:client].symbolize_keys)
+    config
   end
 
   def self.fetch_template_configurations(filter_name = '')

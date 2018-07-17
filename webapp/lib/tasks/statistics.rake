@@ -60,6 +60,56 @@ namespace :statistics do
   end
 
 
+  desc 'Roll over index if older than 7 days or have more than 100 000 documents'
+  task :rollover => :environment do |t, args|
+    client = IndexManager.client Rails.env
+    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+    dest_index = IndexManager.build_index_name_from template_conf
+    res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index, body:{
+      conditions: {
+        max_age: '7d',
+        max_docs: 100_000,
+      }
+    })
+    unless res['rolled_over']
+      puts Rainbow('No need to roll over because no condition reached.')
+      exit 0
+    end
+    old_index = res['old_index']
+    puts Rainbow("Index #{old_index} rolled over to #{dest_index}.")
+    shrink_node_name = pick_random_node(client)
+    client.indices.put_settings index: old_index, body: {
+      'index.routing.allocation.require._name' => shrink_node_name,
+      'index.blocks.write' => true
+    }
+    puts Rainbow("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
+    client.cluster.health wait_for_no_relocating_shards: true
+    puts Rainbow('Shards migration completed.')
+    target_name = IndexManager.build_index_name_from template_conf
+    client.indices.shrink index: old_index, target: target_name, body: {
+      settings: {
+        number_of_shards: 1,
+        number_of_replicas: 0,
+        codec: 'best_compression'
+      }
+    }
+    puts Rainbow("Index #{old_index} shrink into #{target_name}.")
+    client.indices.forcemerge index: target_name, max_num_segments: 1
+    puts Rainbow("Index #{target_name} force merged.")
+    client.indices.put_settings index: target_name, body: {
+      'index.number_of_replicas' => 1
+    }
+    puts Rainbow("Configured a replica for index #{target_name}.")
+    update_index_aliases(client, [
+      { add: { index: target_name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+      { remove: { index: old_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+    ],
+      InterpretRequestLog::SEARCH_ALIAS_NAME)
+    client.indices.delete index: old_index
+    puts Rainbow("Old index #{old_index} deleted.")
+  end
+
+
   private
     def template_exists?(client, template_conf)
       template_name = IndexManager.build_template_name_from(template_conf)
@@ -139,5 +189,11 @@ namespace :statistics do
     def delete_index(client, src_index)
       client.indices.delete index: src_index
       puts Rainbow("Remove previous index #{src_index} succeed.").green
+    end
+
+    def pick_random_node(client)
+      node_stats = client.nodes.info()['nodes']
+      shrink_node = node_stats.keys.sample
+      node_stats[shrink_node]['name']
     end
 end
