@@ -2,6 +2,7 @@ namespace :statistics do
 
   desc 'Creates and configures stats indices'
   task setup: :environment do |t, args|
+    list_environments = args.environment.present? ? [args.environment] : ['development', 'test']
     list_environments.each do |environment|
       puts Rainbow("Environment #{environment}.")
       client = IndexManager.client environment
@@ -48,13 +49,6 @@ namespace :statistics do
 
 
   private
-    def list_environments
-      config = YAML.load(ERB.new(File.read("#{Rails.root}/config/statistics.yml")).result).symbolize_keys
-      config.keys
-        .reject { |env| env == :default }
-        .map { |env| env.to_s }
-    end
-
     def template_exists?(client, template_conf)
       template_name = IndexManager.build_template_name_from(template_conf)
       if client.indices.exists_template? name: template_name
