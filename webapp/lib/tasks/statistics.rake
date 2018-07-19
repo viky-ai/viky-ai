@@ -15,7 +15,7 @@ namespace :statistics do
   end
 
 
-  desc 'Reindex the specified index to a new one'
+  desc 'Reindex the specified statistics index into a new one'
   task :reindex, [:src_index] => :environment do |t, args|
     puts Rainbow('Missing param: src index').red unless args.src_index.present?
     src_index = args.src_index
@@ -26,25 +26,33 @@ namespace :statistics do
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     save_template(client, template_conf.except('aliases'))
-    reindex_into_new(client, src_index, template_conf)
+    if need_reindexing(src_index, template_conf)
+      reindex_into_new(client, src_index, template_conf)
+    else
+      puts Rainbow("No need to reindex #{src_index} : skipping.")
+    end
     save_template(client, template_conf)
   end
 
 
-  desc 'Reindex all indices'
-  task :reindex_all => :environment do |t, args|
-    client = IndexManager.client Rails.env
-    template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    save_template(client, template_conf.except('aliases'))
-    index_indices = client.indices.get_alias(name: 'index-stats-*').keys
-    search_indices = client.indices.get_alias(name: 'search-stats-*').keys - index_indices
-    index_indices.each do |src_index|
-      reindex_into_new(client, src_index, template_conf)
+  namespace :reindex do
+    desc 'Reindex all statistics indices'
+    task :all => :environment do |t, args|
+      client = IndexManager.client Rails.env
+      template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
+      save_template(client, template_conf.except('aliases'))
+      index_indices = client.indices.get_alias(name: 'index-stats-*').keys
+                        .select { |index_name| need_reindexing(index_name, template_conf) }
+      search_indices = (client.indices.get_alias(name: 'search-stats-*').keys - index_indices)
+                         .select { |index_name| need_reindexing(index_name, template_conf) }
+      index_indices.each do |src_index|
+        reindex_into_new(client, src_index, template_conf)
+      end
+      search_indices.each do |src_index|
+        reindex_into_new(client, src_index, template_conf)
+      end
+      save_template(client, template_conf)
     end
-    search_indices.each do |src_index|
-      reindex_into_new(client, src_index, template_conf)
-    end
-    save_template(client, template_conf)
   end
 
 
@@ -109,6 +117,12 @@ namespace :statistics do
     def update_index_aliases(client, actions, index_alias)
       client.indices.update_aliases body: { actions: actions }
       puts Rainbow("Update aliases #{index_alias} succeed.").green
+    end
+
+    def need_reindexing(index_name, template_conf)
+      template_version = template_conf['version']
+      index_version = index_name.split('-')[2].to_i
+      template_version != index_version
     end
 
     def reindex(client, src_index, dest_index)
