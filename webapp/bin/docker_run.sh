@@ -47,6 +47,17 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]] ; then
   fi
 
   echo "Database setup completed."
+
+  # wait for services
+  /usr/local/bin/dockerize -wait tcp://es-master:9200 -timeout 60s
+
+  echo "Statistics setup"
+  ./bin/rails statistics:setup
+
+  echo "Statistics reindexing if needed"
+  ./bin/rails statistics:reindex:all
+
+  echo "Statistics setup completed."
 fi
 
 if [[ "$1" != "config" ]] ; then

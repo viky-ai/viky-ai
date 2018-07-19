@@ -2,8 +2,9 @@ namespace :statistics do
 
   desc 'Creates and configures stats indices'
   task setup: :environment do |t, args|
-    list_environments = args.environment.present? ? [args.environment] : ['development', 'test']
-    list_environments.each do |environment|
+    environments = [Rails.env]
+    environments << 'test' if Rails.env == 'development'
+    environments.each do |environment|
       puts Rainbow("Environment #{environment}.")
       client = IndexManager.client environment
       IndexManager.fetch_template_configurations.each do |template_conf|
