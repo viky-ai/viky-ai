@@ -1,5 +1,10 @@
 client = IndexManager.client
-if client.ping
+begin
+  is_reachable = client.ping
+rescue
+  is_reachable = false
+end
+if is_reachable
   if Rails.env.development? || Rails.env.production?
     IndexManager.fetch_template_configurations.each do |template_conf|
       template_name = IndexManager.build_template_name_from template_conf
