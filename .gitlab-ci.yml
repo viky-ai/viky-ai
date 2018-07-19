@@ -205,7 +205,7 @@ invite_admin_dev:
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
   when: manual
   allow_failure: true
 
@@ -225,7 +225,7 @@ invite_admin_preprod:
   script:
     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-1 ${TASK_CMD}
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
   when: manual
   allow_failure: true
 
