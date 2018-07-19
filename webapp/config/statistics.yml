@@ -1,6 +1,6 @@
 default: &default
   client:
-    hosts: <%= ENV.fetch("VIKYAPP_STATISTICS_HOSTS") { ['localhost:9200'] } %>
+    url: <%= ENV.fetch("VIKYAPP_STATISTICS_URL") { 'localhost:9200' } %>
 
 production:
   <<: *default
@@ -11,4 +11,4 @@ development:
 test:
   <<: *default
   client:
-    hosts: ['localhost:9222']
+    url: 'localhost:9222'
