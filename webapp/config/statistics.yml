@@ -11,4 +11,4 @@ development:
 test:
   <<: *default
   client:
-    url: 'localhost:9222'
+    url: <%= ENV.fetch("VIKYAPP_STATISTICS_URL") { 'localhost:9222' } %>

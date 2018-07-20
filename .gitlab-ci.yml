@@ -60,9 +60,12 @@ test_webapp:
     POSTGRES_DB: vikyapp_test
     VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
     VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
+    VIKYAPP_STATISTICS_URL: 'http://elasticsearch:9200'
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+      alias: elasticsearch
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
