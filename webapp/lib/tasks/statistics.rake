@@ -25,7 +25,7 @@ namespace :statistics do
   task :reindex, [:src_index] => :environment do |t, args|
     puts Rainbow('Missing param: src index').red unless args.src_index.present?
     src_index = args.src_index
-    client = IndexManager.client Rails.env
+    client = IndexManager.client
     unless client.indices.exists? index: src_index
       puts Rainbow("Source index #{src_index} does not exists.")
       exit 1
@@ -43,7 +43,7 @@ namespace :statistics do
   namespace :reindex do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
-      client = IndexManager.client Rails.env
+      client = IndexManager.client
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
       save_template(client, template_conf)
       index_indices = client.indices.get_alias(name: 'index-stats-*').keys
@@ -62,7 +62,7 @@ namespace :statistics do
 
   desc 'Roll over index if older than 7 days or have more than 100 000 documents'
   task :rollover => :environment do |t, args|
-    client = IndexManager.client Rails.env
+    client = IndexManager.client
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     dest_index = IndexManager.build_index_name_from template_conf
     res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index, body:{
