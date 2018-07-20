@@ -9,8 +9,8 @@ namespace :statistics do
       client = IndexManager.client environment
       IndexManager.fetch_template_configurations.each do |template_conf|
         save_template(client, template_conf) unless template_exists?(client, template_conf)
-        index_name = IndexManager.build_index_name_from(template_conf)
         next if index_exists?(client, template_conf)
+        index_name = IndexManager.build_index_name_from(template_conf)
         create_index(client, index_name)
         update_index_aliases(client, [
           { add: { index: index_name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
@@ -137,11 +137,13 @@ namespace :statistics do
         ],
           InterpretRequestLog::INDEX_ALIAS_NAME)
       end
+      puts Rainbow("Reindex #{src_index} to #{dest_index}.").green
       reindex(client, src_index, dest_index)
       update_index_aliases(client, [
         { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
       ],
         InterpretRequestLog::SEARCH_ALIAS_NAME)
+      puts Rainbow("Delete #{src_index}.").green
       delete_index(client, src_index)
     end
 
