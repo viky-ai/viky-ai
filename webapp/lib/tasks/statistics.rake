@@ -153,7 +153,11 @@ namespace :statistics do
     end
 
     def index_exists?(client, template_conf)
-      if client.cluster.state(index: template_conf['index_patterns'], metric: 'metadata')['metadata']['indices'].present?
+      expected_status = Rails.env == 'production' ? 'green' : 'yellow'
+      index_present = client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
+        index =~ Regexp.new(template_conf['index_patterns'], Regexp::IGNORECASE)
+      end
+      if index_present
         puts Rainbow("Index like #{template_conf['index_patterns']} already exists : skipping.")
         return true
       end
