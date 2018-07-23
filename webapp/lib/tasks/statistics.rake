@@ -154,8 +154,6 @@ namespace :statistics do
 
     def index_exists?(client, template_conf)
       expected_status = Rails.env == 'production' ? 'green' : 'yellow'
-      health = client.cluster.health(level: 'indices', wait_for_status: expected_status)
-      puts health
       index_present = client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
         index =~ Regexp.new(template_conf['index_patterns'], Regexp::IGNORECASE)
       end
