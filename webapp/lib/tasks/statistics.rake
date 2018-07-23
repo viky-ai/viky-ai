@@ -148,7 +148,7 @@ namespace :statistics do
     end
 
     def index_exists?(client, template_conf)
-      if client.indices.stats(index: template_conf['index_patterns'])['indices'].present?
+      if client.cluster.state(index: template_conf['index_patterns'], metric: 'metadata')['metadata']['indices'].present?
         puts Rainbow("Index like #{template_conf['index_patterns']} already exists : skipping.")
         return true
       end
