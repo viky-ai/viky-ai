@@ -50,6 +50,11 @@ namespace :statistics do
                         .select { |index_name| need_reindexing(index_name, template_conf) }
       search_indices = (client.indices.get_alias(name: 'search-stats-*').keys - index_indices)
                          .select { |index_name| need_reindexing(index_name, template_conf) }
+      if (index_indices + search_indices).empty?
+        puts Rainbow('Nothing to reindex.')
+        exit 0
+      end
+      puts Rainbow("Reindex indices #{index_indices + search_indices}.")
       index_indices.each do |src_index|
         reindex_into_new(client, src_index, template_conf)
       end
