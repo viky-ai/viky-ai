@@ -23,23 +23,25 @@ module IndexManager
     template_conf['index_patterns'][0..-3]
   end
 
-  def self.build_index_name_from(template_conf)
+  def self.build_index_name_from(template_conf, state = 'active')
     index_base_name = build_index_base_name_from(template_conf)
     uniq_id = SecureRandom.hex(4)
     template_version = template_conf['version']
-    [index_base_name, template_version, uniq_id].join('-')
+    [index_base_name, state, template_version, uniq_id].join('-')
   end
 
-  def self.build_template_name_from(template_conf)
+  def self.build_template_name_from(template_conf, state = 'active')
     index_base_name = build_index_base_name_from(template_conf)
-    "template-#{index_base_name}"
+    ['template', index_base_name, state].join('-')
   end
 
   def self.reset_indices
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
-      template_name = IndexManager.build_template_name_from(conf)
-      client.indices.put_template name: template_name, body: conf
+      ['active', 'inactive'].each do |state|
+        template_name = IndexManager.build_template_name_from(conf, state)
+        client.indices.put_template name: template_name, body: conf
+      end
       new_index = renew_index(conf, client)
       client.indices.update_aliases body: {
         actions: [
@@ -51,8 +53,7 @@ module IndexManager
 
   def self.renew_index(template_conf, client = IndexManager.client)
     index_base_name = build_index_base_name_from(template_conf)
-    template_version = template_conf['version']
-    index_patterns = [index_base_name, template_version, '*'].join('-')
+    index_patterns = [index_base_name, '*'].join('-')
     client.indices.delete index: index_patterns
     new_name = build_index_name_from(template_conf)
     client.indices.create index: new_name

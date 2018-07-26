@@ -117,8 +117,8 @@ namespace :statistics do
 
   private
     def template_exists?(client, template_conf)
-      template_name = IndexManager.build_template_name_from(template_conf)
-      if client.indices.exists_template? name: template_name
+      template_name = IndexManager.build_template_name_from template_conf
+      if client.indices.exists_template? name: "#{template_name}-active"
         puts Rainbow("Template #{template_name} already exists : skipping.")
         return true
       end
@@ -126,9 +126,20 @@ namespace :statistics do
     end
 
     def save_template(client, template_conf)
-      template_name = IndexManager.build_template_name_from(template_conf)
-      client.indices.put_template name: template_name, body: template_conf
-      puts Rainbow("Save index template #{template_name} succeed.").green
+      ['active', 'inactive'].each do |state|
+        template_name = IndexManager.build_template_name_from(template_conf, state)
+        conf = template_conf.clone
+        if state == 'inactive'
+          conf[:settings] = {
+            number_of_shards: 1,
+            number_of_replicas: 0,
+            codec: 'best_compression'
+          }
+        end
+        conf["index_patterns"] = "#{IndexManager.build_index_base_name_from(conf)}-#{state}-*"
+        client.indices.put_template name: template_name, body: conf
+        puts Rainbow("Save index template #{template_name} succeed.").green
+      end
     end
 
     def reindex_into_new(client, src_index, template_conf)
