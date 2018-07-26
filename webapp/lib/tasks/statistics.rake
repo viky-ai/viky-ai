@@ -86,14 +86,8 @@ namespace :statistics do
     puts Rainbow("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
     client.cluster.health wait_for_no_relocating_shards: true
     puts Rainbow('Shards migration completed.')
-    target_name = IndexManager.build_index_name_from template_conf
-    client.indices.shrink index: old_index, target: target_name, body: {
-      settings: {
-        number_of_shards: 1,
-        number_of_replicas: 0,
-        codec: 'best_compression'
-      }
-    }
+    target_name = IndexManager.build_index_name_from(template_conf, 'inactive')
+    client.indices.shrink index: old_index, target: target_name
     puts Rainbow("Index #{old_index} shrink into #{target_name}.")
     client.indices.forcemerge index: target_name, max_num_segments: 1
     puts Rainbow("Index #{target_name} force merged.")
