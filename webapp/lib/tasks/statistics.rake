@@ -32,7 +32,7 @@ namespace :statistics do
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     save_template(client, template_conf)
-    if need_reindexing(src_index, template_conf)
+    if need_reindexing?(src_index, template_conf)
       reindex_into_new(client, src_index, template_conf)
     else
       puts Rainbow("No need to reindex #{src_index} : skipping.")
@@ -46,19 +46,15 @@ namespace :statistics do
       client = IndexManager.client
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
       save_template(client, template_conf)
-      index_indices = client.indices.get_alias(name: 'index-stats-*').keys
-                        .select { |index_name| need_reindexing(index_name, template_conf) }
-      search_indices = (client.indices.get_alias(name: 'search-stats-*').keys - index_indices)
-                         .select { |index_name| need_reindexing(index_name, template_conf) }
-      if (index_indices + search_indices).empty?
+      indices = client.indices.get(index: 'stats-*').keys
+                              .select { |index| need_reindexing?(index, template_conf) }
+                              .sort_by { |index| index.split('-').third }
+      if indices.empty?
         puts Rainbow('Nothing to reindex.')
         exit 0
       end
-      puts Rainbow("Reindex indices #{index_indices + search_indices}.")
-      index_indices.each do |src_index|
-        reindex_into_new(client, src_index, template_conf)
-      end
-      search_indices.each do |src_index|
+      puts Rainbow("Reindex indices #{indices}.")
+      indices.each do |src_index|
         reindex_into_new(client, src_index, template_conf)
       end
     end
@@ -143,15 +139,19 @@ namespace :statistics do
     end
 
     def reindex_into_new(client, src_index, template_conf)
-      dest_index = IndexManager.build_index_name_from template_conf
+      src_state = src_index.split('-')[2]
+      dest_index = IndexManager.build_index_name_from(template_conf, src_state)
       create_index(client, dest_index)
-      is_used_to_index = check_used_to_index(client, src_index)
-      if is_used_to_index
+      if src_state == 'active'
         update_index_aliases(client, [
           { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
           { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
         ],
           InterpretRequestLog::INDEX_ALIAS_NAME)
+      else
+        client.indices.put_settings index: dest_index, body: {
+          'index.number_of_replicas' => 1
+        }
       end
       puts Rainbow("Reindex #{src_index} to #{dest_index}.").green
       reindex(client, src_index, dest_index)
@@ -180,23 +180,14 @@ namespace :statistics do
       puts Rainbow("Creation of index #{index_name} succeed.").green
     end
 
-    def check_used_to_index(client, src_index)
-      begin
-        is_used_to_index = !client.indices.get_alias(index: src_index)[src_index]['aliases']['index-stats-interpret_request_log'].nil?
-      rescue
-        is_used_to_index = false
-      end
-      is_used_to_index
-    end
-
     def update_index_aliases(client, actions, index_alias)
       client.indices.update_aliases body: { actions: actions }
       puts Rainbow("Update aliases #{index_alias} succeed.").green
     end
 
-    def need_reindexing(index_name, template_conf)
+    def need_reindexing?(index_name, template_conf)
       template_version = template_conf['version']
-      index_version = index_name.split('-')[2].to_i
+      index_version = index_name.split('-')[3].to_i
       template_version != index_version
     end
 
