@@ -4,6 +4,6 @@ webpack:  ./bin/webpack-dev-server
 web:      bundle exec rails s -p 3000 -b 0.0.0.0
 nls:       ./bin/foreman_nls.sh $MY_CURRENT_GIT_BRANCH
 doc:      bundle exec rails doc:server
-stats_dev:    docker kill viky-stats01-dev; docker run -p 9200:9200 -e "discovery.type=single-node" -e "node.name=viky-stats01-dev" --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data' --name viky-stats01-dev docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+stats_dev:    docker kill viky-stats01-dev; docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev" --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data' --name viky-stats01-dev docker.elastic.co/elasticsearch/elasticsearch:6.3.0
 stats_test:    docker kill viky-stats01-test; docker run -p 9222:9200 -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.3.0
 cerebro:   docker kill viky-cerebro-dev; sleep 1; docker run -p 9201:9000 --link viky-stats01-dev --rm --name viky-cerebro-dev yannart/cerebro:latest ./bin/cerebro -Dhosts.0.host=http://viky-stats01-dev:9200

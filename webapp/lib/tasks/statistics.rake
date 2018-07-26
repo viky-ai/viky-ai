@@ -135,6 +135,10 @@ namespace :statistics do
     def reindex_into_new(client, src_index, template_conf)
       src_state = src_index.split('-')[2]
       dest_index = IndexManager.build_index_name_from(template_conf, src_state)
+      if src_index.split('-').size == 6
+        snapshot_id = src_index.split('-')[-2]
+        dest_index = (dest_index.split('-')[0..3] << snapshot_id  << dest_index.split('-')[4]).join('-')
+      end
       create_index(client, dest_index)
       if src_state == 'active'
         update_index_aliases(client, [

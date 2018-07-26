@@ -6,13 +6,14 @@ require 'fileutils'
 namespace :restore do
 
   desc 'Restore an environment on the local machine'
-  task :all, [:database_dump, :images, :update_dot_env] => [:environment] do |t, args|
+  task :all, [:database_dump, :images, :update_dot_env, :statistics_directory, :statistics_repository, :statistics_snapshot] => [:environment] do |t, args|
     unless args.database_dump.present?
       Restore::Print::error('Need database dump file path')
       exit 0
     end
     params = extract_params(args)
     restore_database(params)
+    restore_statistics(params)
     with_active_record_connected_to_new_db params do
       restore_images(params)
       migrate_database
@@ -60,14 +61,17 @@ namespace :restore do
       exit 0
     end
 
-    Dir.mktmpdir do |dir|
+    Dir.mktmpdir(nil, "#{Rails.root}/tmp") do |dir|
       env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
       Restore::Print::step("Download archives")
       Restore::Backup::download(env, args.date, dir)
       files = Dir.entries(dir)
       db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
       images = "#{dir}/#{files.select {|file| file.end_with?('_app-uploads-data.tgz')}[0]}"
-      Rake::Task["restore:all"].invoke(db, images, true)
+      statistics_directory = "/backup_data/#{File.basename(dir)}/es-backup"
+      statistics_repository = "viky-es-backup_#{args.environment}"
+      statistics_snapshot = "#{args.environment}_#{args.date}"
+      Rake::Task["restore:all"].invoke(db, images, true, statistics_directory, statistics_repository, statistics_snapshot)
     end
   end
 
@@ -108,6 +112,18 @@ namespace :restore do
       import_dump(params)
     end
 
+    def restore_statistics(params)
+      if params[:statistics_directory].empty? || params[:statistics_snapshot].empty?
+        Restore::Print::step('No statistics to restore')
+        return
+      end
+      Restore::Print::step('Restore statistics')
+      Restore::Print::substep('Import statistics snapshot')
+      import_snapshot(params)
+      Restore::Print::substep('Reindex statistics')
+      reindex_all
+    end
+
     def migrate_database
       Restore::Print::step("Migrate database")
       Rake::Task["db:migrate"].invoke
@@ -142,6 +158,37 @@ namespace :restore do
       Restore::Cmd::exec("#{cat_cmd} #{params[:database_dump]} | #{sed_cmd} | #{psql_cmd}", opts)
     end
 
+    def import_snapshot(params)
+      directory = params[:statistics_directory]
+      repository_name = params[:statistics_repository]
+      selected_snapshot = params[:statistics_snapshot]
+      client = IndexManager.client
+      if client.cat.indices(index: 'stats-interpret_request_log-*').present?
+        client.indices.update_aliases body: { actions: [
+          { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+          { remove: { index: 'stats-interpret_request_log-*', alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
+        ] }
+      end
+      client.snapshot.create_repository repository: repository_name, body: {
+        type: 'fs',
+        settings: { location: directory }
+      }
+      uniq_id = SecureRandom.hex(4)
+      client.snapshot.restore repository: repository_name, snapshot: selected_snapshot, wait_for_completion: true, body: {
+        indices: 'stats-interpret_request_log-*',
+        rename_pattern: 'stats-interpret_request_log-(\w+)-([0-9]+)-(.+)',
+        rename_replacement: "stats-interpret_request_log-$1-$2-#{uniq_id}-$3",
+        index_settings: {
+          'index.number_of_replicas' => 0
+        }
+      }
+      client.snapshot.delete_repository repository: repository_name
+    end
+
+    def reindex_all
+      Rake::Task["statistics:reindex:all"].invoke
+    end
+
     def extract_params(args)
       config = Rails.configuration.database_configuration
       {
@@ -151,7 +198,10 @@ namespace :restore do
         password: config[Rails.env]['password'],
         port: config[Rails.env]['port'],
         database: 'vikyapp_' + args.database_dump.split("/").last.split('_')[1].tr('-', '_').downcase,
-        images: args.images
+        images: args.images,
+        statistics_directory: args.statistics_directory,
+        statistics_repository: args.statistics_repository,
+        statistics_snapshot: args.statistics_snapshot
       }
     end
 
@@ -297,6 +347,10 @@ module Restore
     def self.download(env, date, destination)
       Cmd::exec(
         "rsync -za rsync://docker-backup-ro@#{server_ip}:/docker/backup/#{env}/#{date}/#{env}* #{destination}",
+        { capture_output: true }
+      )
+      Cmd::exec(
+        "rsync -za rsync://docker-backup-ro@#{server_ip}:/docker/backup/#{env}/es-backup #{destination}",
         { capture_output: true }
       )
     end
