@@ -135,7 +135,8 @@ namespace :statistics do
     def reindex_into_new(client, src_index, template_conf)
       src_state = src_index.split('-')[2]
       dest_index = IndexManager.build_index_name_from(template_conf, src_state)
-      if src_index.split('-').size == 6
+      src_is_snapshot = src_index.split('-').size == 6
+      if src_is_snapshot
         snapshot_id = src_index.split('-')[-2]
         dest_index = (dest_index.split('-')[0..3] << snapshot_id  << dest_index.split('-')[4]).join('-')
       end
@@ -149,6 +150,11 @@ namespace :statistics do
       else
         client.indices.put_settings index: dest_index, body: {
           'index.number_of_replicas' => 1
+        }
+      end
+      if src_is_snapshot
+        client.indices.put_settings index: dest_index, body: {
+          'index.number_of_replicas' => 0
         }
       end
       puts Rainbow("Reindex #{src_index} to #{dest_index}.").green
