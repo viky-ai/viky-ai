@@ -7,7 +7,7 @@ end
 if is_reachable
   if Rails.env.development? || Rails.env.production?
     IndexManager.fetch_template_configurations.each do |template_conf|
-      template_name = "#{IndexManager.build_template_name_from template_conf}-active"
+      template_name = IndexManager.build_template_name_from template_conf
       begin
         template_version = client.indices.get_template(name: template_name)[template_name]['version']
       rescue
