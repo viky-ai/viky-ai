@@ -173,6 +173,9 @@ namespace :restore do
         type: 'fs',
         settings: { location: directory }
       }
+      if selected_snapshot.end_with? '_latest'
+        selected_snapshot = client.cat.snapshots(repository: repository_name, s: 'end_epoch', h: 'id').split("\n").last
+      end
       uniq_id = SecureRandom.hex(4)
       client.snapshot.restore repository: repository_name, snapshot: selected_snapshot, wait_for_completion: true, body: {
         indices: 'stats-interpret_request_log-*',
