@@ -78,12 +78,10 @@ namespace :restore do
 
   desc 'Backup current DB and image uploaded on the local machine'
   task :backup, [:backup_dir,:export_basename]=> [:environment] do |t, args|
-
     unless args.backup_dir.present?
       Restore::Print::error("Missing param: backup directory")
       exit 0
     end
-
     unless args.export_basename.present?
       Restore::Print::error("Missing param: export base name")
       exit 0
@@ -96,7 +94,9 @@ namespace :restore do
     export_dump(args.backup_dir, args.export_basename)
     Restore::Print::step("Backup uploaded images")
     export_images(args.backup_dir, args.export_basename)
-    Restore::Print::step("Backup done in #{args.backup_dir}")
+    Restore::Print::step("Backup statistics")
+    export_statistics(args.export_basename)
+    Restore::Print::step("Backup done in #{args.backup_dir} and statistics in #{Rails.root}/tmp/es-backup")
   end
 
   private
@@ -262,6 +262,21 @@ namespace :restore do
 
     def export_images(backup_dir, export_basename)
       Restore::Cmd::exec("tar czPf #{backup_dir}/#{export_basename}_app-uploads-data.tgz public/uploads/store/", { capture_output: true })
+    end
+
+    def export_statistics(export_basename)
+      client = IndexManager.client
+      repository_name = 'viky-es-backup_dev'
+      client.snapshot.create_repository repository: repository_name, body: {
+        type: 'fs',
+        settings: { location: '/backup_data/es-backup' }
+      }
+      snapshot_name = "#{export_basename}-statistics-#{DateTime.now.strftime("%FT%T").gsub!(':', '-').downcase}"
+      client.snapshot.create repository: repository_name, snapshot: snapshot_name, wait_for_completion: true, body: {
+        indices: 'stats-*',
+        include_global_state: false
+      }
+      client.snapshot.delete_repository repository: repository_name
     end
 
     def connect_to_db(params, database)
