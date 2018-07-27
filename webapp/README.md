@@ -9,6 +9,7 @@
 * PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
 * Redis (3.2)          ( use docker )
 * ElasticSearch (6.3)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.0`)
+* Cerebro              ( use docker : `docker pull yannart/cerebro` )
 * ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
 * Docker 17.09.0-ce    ( [see below](#docker) )
 * Graphviz             ( `sudo apt-get install -y graphviz` )
@@ -150,3 +151,7 @@ and give your `username` and `password` of the Pertimm services.
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
 
     bundle install
+
+### Cerebro
+
+[Cerebro](https://github.com/lmenezes/cerebro) is an open source ElasticSearch web admin tool. In a dev environment it is accessible at `http://localhost:9201`.
