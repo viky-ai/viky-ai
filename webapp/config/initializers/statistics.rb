@@ -7,16 +7,15 @@ end
 if is_reachable
   if Rails.env.development? || Rails.env.production?
     IndexManager.fetch_template_configurations.each do |template_conf|
-      template_name = IndexManager.build_template_name_from template_conf
+      template = StatisticsIndexTemplate.new template_conf
       begin
-        template_version = client.indices.get_template(name: template_name)[template_name]['version']
+        current_version = client.indices.get_template(name: template.name)[template.name]['version']
       rescue
-        template_version = 'not_found'
+        current_version = 'not_found'
       end
-      config_version = template_conf['version']
-      if template_version != config_version
-        Rails.logger.warn "New statistics index version : expected #{config_version} but found #{template_version}."
-        Rails.logger.warn "Statistics index using template #{template_name} may need to be reindexed."
+      if current_version != template.version
+        Rails.logger.warn "New statistics index version : expected #{template.version} but found #{current_version}."
+        Rails.logger.warn "Statistics index using template #{template.name} may need to be reindexed."
       end
     end
   end

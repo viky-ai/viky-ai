@@ -8,9 +8,12 @@ namespace :statistics do
       puts Rainbow("Environment #{environment}.")
       client = IndexManager.client environment
       IndexManager.fetch_template_configurations.each do |template_conf|
-        save_template(client, template_conf) unless template_exists?(client, template_conf)
-        next if index_exists?(client, template_conf)
-        index_name = IndexManager.build_index_name_from(template_conf)
+        active_template = StatisticsIndexTemplate.new template_conf
+        save_template(client, active_template) unless template_exists?(client, active_template)
+        inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+        save_template(client, inactive_template) unless template_exists?(client, inactive_template)
+        next if index_exists?(client, active_template)
+        index_name = IndexManager.build_index_name_from active_template
         create_index(client, index_name)
         update_index_aliases(client, [
           { add: { index: index_name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
@@ -31,9 +34,18 @@ namespace :statistics do
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    save_template(client, template_conf)
-    if need_reindexing?(src_index, template_conf)
-      reindex_into_new(client, src_index, template_conf)
+    active_template = StatisticsIndexTemplate.new template_conf
+    save_template(client, active_template)
+    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+    save_template(client, inactive_template)
+    if need_reindexing?(src_index, active_template)
+      src_state = src_index.split('-')[2]
+      if src_state == 'active'
+        dest_index = IndexManager.build_index_name_from active_template
+      else
+        dest_index = IndexManager.build_index_name_from inactive_template
+      end
+      reindex_into_new(client, src_index, dest_index, src_state)
     else
       puts Rainbow("No need to reindex #{src_index} : skipping.")
     end
@@ -45,17 +57,27 @@ namespace :statistics do
     task :all => :environment do |t, args|
       client = IndexManager.client
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-      save_template(client, template_conf)
+      active_template = StatisticsIndexTemplate.new template_conf
+      save_template(client, active_template)
+      inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+      save_template(client, inactive_template)
       indices = client.indices.get(index: 'stats-*').keys
-                              .select { |index| need_reindexing?(index, template_conf) }
-                              .sort_by { |index| index.split('-').third }
-      if indices.empty?
+                              .select { |index| need_reindexing?(index, active_template) }
+                              .partition { |index| index.split('-').third == 'active' }
+      active_indices = indices.first
+      inactive_indices = indices.second
+      if (active_indices + inactive_indices).empty?
         puts Rainbow('Nothing to reindex.')
         exit 0
       end
-      puts Rainbow("Reindex indices #{indices}.")
-      indices.each do |src_index|
-        reindex_into_new(client, src_index, template_conf)
+      puts Rainbow("Reindex indices #{(active_indices + inactive_indices)}.")
+      active_indices.each do |src_index|
+        dest_index = IndexManager.build_index_name_from active_template
+        reindex_into_new(client, src_index, dest_index, 'active')
+      end
+      inactive_indices.each do |src_index|
+        dest_index = IndexManager.build_index_name_from inactive_template
+        reindex_into_new(client, src_index, dest_index, 'inactive')
       end
     end
   end
@@ -65,7 +87,8 @@ namespace :statistics do
   task :rollover => :environment do |t, args|
     client = IndexManager.client
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
-    dest_index = IndexManager.build_index_name_from template_conf
+    active_template = StatisticsIndexTemplate.new template_conf
+    dest_index = IndexManager.build_index_name_from active_template
     res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index, body:{
       conditions: {
         max_age: '7d',
@@ -86,7 +109,8 @@ namespace :statistics do
     puts Rainbow("Index #{old_index} switched to read only and migrating to #{shrink_node_name}.")
     client.cluster.health wait_for_no_relocating_shards: true
     puts Rainbow('Shards migration completed.')
-    target_name = IndexManager.build_index_name_from(template_conf, 'inactive')
+    inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
+    target_name = IndexManager.build_index_name_from inactive_template
     client.indices.shrink index: old_index, target: target_name
     puts Rainbow("Index #{old_index} shrink into #{target_name}.")
     client.indices.forcemerge index: target_name, max_num_segments: 1
@@ -106,35 +130,20 @@ namespace :statistics do
 
 
   private
-    def template_exists?(client, template_conf)
-      template_name = IndexManager.build_template_name_from template_conf
-      if client.indices.exists_template? name: "#{template_name}-active"
-        puts Rainbow("Template #{template_name} already exists : skipping.")
+    def template_exists?(client, template)
+      if client.indices.exists_template? name: template.name
+        puts Rainbow("Template #{template.name} already exists : skipping.")
         return true
       end
       false
     end
 
-    def save_template(client, template_conf)
-      ['active', 'inactive'].each do |state|
-        template_name = IndexManager.build_template_name_from(template_conf, state)
-        conf = template_conf.clone
-        if state == 'inactive'
-          conf[:settings] = {
-            number_of_shards: 1,
-            number_of_replicas: 0,
-            codec: 'best_compression'
-          }
-        end
-        conf["index_patterns"] = "#{IndexManager.build_index_base_name_from(conf)}-#{state}-*"
-        client.indices.put_template name: template_name, body: conf
-        puts Rainbow("Save index template #{template_name} succeed.").green
-      end
+    def save_template(client, template)
+      client.indices.put_template name: template.name, body: template.configuration
+      puts Rainbow("Save index template #{template.name} succeed.").green
     end
 
-    def reindex_into_new(client, src_index, template_conf)
-      src_state = src_index.split('-')[2]
-      dest_index = IndexManager.build_index_name_from(template_conf, src_state)
+    def reindex_into_new(client, src_index, dest_index, src_state)
       src_is_snapshot = src_index.split('-').size == 6
       if src_is_snapshot
         snapshot_id = src_index.split('-')[-2]
@@ -167,13 +176,13 @@ namespace :statistics do
       delete_index(client, src_index)
     end
 
-    def index_exists?(client, template_conf)
+    def index_exists?(client, template)
       expected_status = Rails.env == 'production' ? 'green' : 'yellow'
       index_present = client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
-        index =~ Regexp.new(template_conf['index_patterns'], Regexp::IGNORECASE)
+        index =~ Regexp.new(template.index_patterns, Regexp::IGNORECASE)
       end
       if index_present
-        puts Rainbow("Index like #{template_conf['index_patterns']} already exists : skipping.")
+        puts Rainbow("Index like #{template.index_patterns} already exists : skipping.")
         return true
       end
       false
@@ -189,10 +198,9 @@ namespace :statistics do
       puts Rainbow("Update aliases #{index_alias} succeed.").green
     end
 
-    def need_reindexing?(index_name, template_conf)
-      template_version = template_conf['version']
+    def need_reindexing?(index_name, template)
       index_version = index_name.split('-')[3].to_i
-      template_version != index_version
+      template.version != index_version
     end
 
     def reindex(client, src_index, dest_index)

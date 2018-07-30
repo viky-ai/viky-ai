@@ -19,43 +19,31 @@ module IndexManager
     json_list.map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
   end
 
-  def self.build_index_base_name_from(template_conf)
-    template_conf['index_patterns'][0..-3]
-  end
-
-  def self.build_index_name_from(template_conf, state = 'active')
-    index_base_name = build_index_base_name_from(template_conf)
+  def self.build_index_name_from(template)
     uniq_id = SecureRandom.hex(4)
-    template_version = template_conf['version']
-    [index_base_name, state, template_version, uniq_id].join('-')
-  end
-
-  def self.build_template_name_from(template_conf, state = 'active')
-    index_base_name = build_index_base_name_from(template_conf)
-    ['template', index_base_name, state].join('-')
+    [template.index_base_name, template.version, uniq_id].join('-')
   end
 
   def self.reset_indices
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
       ['active', 'inactive'].each do |state|
-        template_name = IndexManager.build_template_name_from(conf, state)
-        client.indices.put_template name: template_name, body: conf
+        template = StatisticsIndexTemplate.new conf, state
+        client.indices.put_template name: template.name, body: conf
       end
-      new_index = renew_index(conf, client)
+      new_index = renew_index(template, client)
       client.indices.update_aliases body: {
         actions: [
-          { add: { index: new_index, alias: "index-#{build_index_base_name_from(conf)}" } }
+          { add: { index: new_index, alias: "index-#{template.index_base_name}" } }
         ]
       }
     end
   end
 
-  def self.renew_index(template_conf, client = IndexManager.client)
-    index_base_name = build_index_base_name_from(template_conf)
-    index_patterns = [index_base_name, '*'].join('-')
-    client.indices.delete index: index_patterns
-    new_name = build_index_name_from(template_conf)
+  def self.renew_index(template, client = IndexManager.client)
+    full_pattern = template.index_patterns.gsub('active-*', '*')
+    client.indices.delete index: full_pattern
+    new_name = build_index_name_from(template)
     client.indices.create index: new_name
     client.indices.flush index: new_name
     new_name
