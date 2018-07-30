@@ -22,14 +22,14 @@ module IndexManager
   def self.reset_indices
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
-      ['active', 'inactive'].each do |state|
-        template = StatisticsIndexTemplate.new conf, state
-        client.indices.put_template name: template.name, body: conf
-      end
-      new_index = renew_index(template, client)
+      active_template = StatisticsIndexTemplate.new conf, 'active'
+      client.indices.put_template name: active_template.name, body: conf
+      inactive_template = StatisticsIndexTemplate.new conf, 'inactive'
+      client.indices.put_template name: inactive_template.name, body: conf
+      new_active_index = renew_index(active_template, client)
       client.indices.update_aliases body: {
         actions: [
-          { add: { index: new_index.name, alias: template.indexing_alias } }
+          { add: { index: new_active_index.name, alias: active_template.indexing_alias } }
         ]
       }
     end

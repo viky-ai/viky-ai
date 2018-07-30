@@ -32,7 +32,7 @@ class StatisticsIndexTemplate
   end
 
   def indexing_alias
-    "index-#{index_full_name}"
+    "index-#{index_full_name.gsub('-active', '')}"
   end
 
   private
