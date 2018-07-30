@@ -5,7 +5,7 @@ class StatisticsIndexTemplate
   def initialize(configuration, state = 'active')
     @configuration = configuration.clone
     @state = state
-    @configuration['index_patterns'] = "#{index_base_name}-#{@state}-*"
+    @configuration['index_patterns'] = "#{index_full_name}-#{@state}-*"
     if @state == 'inactive'
       @configuration[:settings] = {
         number_of_shards: 1,
@@ -16,7 +16,7 @@ class StatisticsIndexTemplate
   end
 
   def name
-    "template-#{index_base_name}"
+    "template-#{index_full_name}"
   end
 
   def version
@@ -27,7 +27,16 @@ class StatisticsIndexTemplate
     @configuration['index_patterns']
   end
 
-  def index_base_name
-    index_patterns[0..-3]
+  def index_name
+    index_patterns.split('-')[1]
   end
+
+  def indexing_alias
+    "index-#{index_full_name}"
+  end
+
+  private
+    def index_full_name
+      index_patterns[0..-3]
+    end
 end

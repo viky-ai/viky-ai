@@ -19,11 +19,6 @@ module IndexManager
     json_list.map { |filename| JSON.parse(ERB.new(File.read("#{template_config_dir}/#{filename}")).result) }
   end
 
-  def self.build_index_name_from(template)
-    uniq_id = SecureRandom.hex(4)
-    [template.index_base_name, template.version, uniq_id].join('-')
-  end
-
   def self.reset_indices
     client = IndexManager.client
     fetch_template_configurations.each do |conf|
@@ -34,7 +29,7 @@ module IndexManager
       new_index = renew_index(template, client)
       client.indices.update_aliases body: {
         actions: [
-          { add: { index: new_index, alias: "index-#{template.index_base_name}" } }
+          { add: { index: new_index.name, alias: template.indexing_alias } }
         ]
       }
     end
@@ -43,9 +38,9 @@ module IndexManager
   def self.renew_index(template, client = IndexManager.client)
     full_pattern = template.index_patterns.gsub('active-*', '*')
     client.indices.delete index: full_pattern
-    new_name = build_index_name_from(template)
-    client.indices.create index: new_name
-    client.indices.flush index: new_name
-    new_name
+    new_index = StatisticsIndex.from_template template
+    client.indices.create index: new_index.name
+    client.indices.flush index: new_index.name
+    new_index
   end
 end

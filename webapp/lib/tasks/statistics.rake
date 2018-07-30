@@ -13,10 +13,10 @@ namespace :statistics do
         inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
         save_template(client, inactive_template) unless template_exists?(client, inactive_template)
         next if index_exists?(client, active_template)
-        index_name = IndexManager.build_index_name_from active_template
-        create_index(client, index_name)
+        index = StatisticsIndex.from_template active_template
+        create_index(client, index)
         update_index_aliases(client, [
-          { add: { index: index_name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+          { add: { index: index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
         ],
           InterpretRequestLog::INDEX_ALIAS_NAME)
       end
@@ -27,10 +27,10 @@ namespace :statistics do
   desc 'Reindex the specified statistics index into a new one'
   task :reindex, [:src_index] => :environment do |t, args|
     puts Rainbow('Missing param: src index').red unless args.src_index.present?
-    src_index = args.src_index
+    src_name = args.src_index
     client = IndexManager.client
-    unless client.indices.exists? index: src_index
-      puts Rainbow("Source index #{src_index} does not exists.")
+    unless client.indices.exists? index: src_name
+      puts Rainbow("Source index #{src_name} does not exists.")
       exit 1
     end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
@@ -38,16 +38,13 @@ namespace :statistics do
     save_template(client, active_template)
     inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
     save_template(client, inactive_template)
-    if need_reindexing?(src_index, active_template)
-      src_state = src_index.split('-')[2]
-      if src_state == 'active'
-        dest_index = IndexManager.build_index_name_from active_template
-      else
-        dest_index = IndexManager.build_index_name_from inactive_template
-      end
-      reindex_into_new(client, src_index, dest_index, src_state)
+    src_index = StatisticsIndex.from_name src_name
+    template = src_index.active? ? active_template : inactive_template
+    if src_index.need_reindexing? template
+      dest_index = StatisticsIndex.from_template template
+      reindex_into_new(client, src_index, dest_index)
     else
-      puts Rainbow("No need to reindex #{src_index} : skipping.")
+      puts Rainbow("No need to reindex #{src_index.name} : skipping.")
     end
   end
 
@@ -62,22 +59,22 @@ namespace :statistics do
       inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
       save_template(client, inactive_template)
       indices = client.indices.get(index: 'stats-*').keys
-                              .select { |index| need_reindexing?(index, active_template) }
-                              .partition { |index| index.split('-').third == 'active' }
-      active_indices = indices.first
-      inactive_indices = indices.second
+                              .map { |index_name| StatisticsIndex.from_name index_name }
+                              .partition { |index| index.active? }
+      active_indices = indices.first.select { |index| index.need_reindexing? active_template }
+      inactive_indices = indices.second.select { |index| index.need_reindexing? inactive_template }
       if (active_indices + inactive_indices).empty?
         puts Rainbow('Nothing to reindex.')
         exit 0
       end
-      puts Rainbow("Reindex indices #{(active_indices + inactive_indices)}.")
+      puts Rainbow("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
       active_indices.each do |src_index|
-        dest_index = IndexManager.build_index_name_from active_template
-        reindex_into_new(client, src_index, dest_index, 'active')
+        dest_index = StatisticsIndex.from_template active_template
+        reindex_into_new(client, src_index, dest_index)
       end
       inactive_indices.each do |src_index|
-        dest_index = IndexManager.build_index_name_from inactive_template
-        reindex_into_new(client, src_index, dest_index, 'inactive')
+        dest_index = StatisticsIndex.from_template inactive_template
+        reindex_into_new(client, src_index, dest_index)
       end
     end
   end
@@ -88,11 +85,11 @@ namespace :statistics do
     client = IndexManager.client
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     active_template = StatisticsIndexTemplate.new template_conf
-    dest_index = IndexManager.build_index_name_from active_template
-    res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index, body:{
+    dest_index = StatisticsIndex.from_template active_template
+    res = client.indices.rollover(alias: InterpretRequestLog::INDEX_ALIAS_NAME, new_index: dest_index.name, body:{
       conditions: {
         max_age: '7d',
-        max_docs: 100_000,
+        max_docs: 100_00,
       }
     })
     unless res['rolled_over']
@@ -100,7 +97,7 @@ namespace :statistics do
       exit 0
     end
     old_index = res['old_index']
-    puts Rainbow("Index #{old_index} rolled over to #{dest_index}.")
+    puts Rainbow("Index #{old_index} rolled over to #{dest_index.name}.")
     shrink_node_name = pick_random_node(client)
     client.indices.put_settings index: old_index, body: {
       'index.routing.allocation.require._name' => shrink_node_name,
@@ -110,17 +107,17 @@ namespace :statistics do
     client.cluster.health wait_for_no_relocating_shards: true
     puts Rainbow('Shards migration completed.')
     inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
-    target_name = IndexManager.build_index_name_from inactive_template
-    client.indices.shrink index: old_index, target: target_name
-    puts Rainbow("Index #{old_index} shrink into #{target_name}.")
-    client.indices.forcemerge index: target_name, max_num_segments: 1
-    puts Rainbow("Index #{target_name} force merged.")
-    client.indices.put_settings index: target_name, body: {
+    target_name = StatisticsIndex.from_template inactive_template
+    client.indices.shrink index: old_index, target: target_name.name
+    puts Rainbow("Index #{old_index} shrink into #{target_name.name}.")
+    client.indices.forcemerge index: target_name.name, max_num_segments: 1
+    puts Rainbow("Index #{target_name.name} force merged.")
+    client.indices.put_settings index: target_name.name, body: {
       'index.number_of_replicas' => 1
     }
-    puts Rainbow("Configured a replica for index #{target_name}.")
+    puts Rainbow("Configured a replica for index #{target_name.name}.")
     update_index_aliases(client, [
-      { add: { index: target_name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+      { add: { index: target_name.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
       { remove: { index: old_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } }
     ],
       InterpretRequestLog::SEARCH_ALIAS_NAME)
@@ -143,36 +140,32 @@ namespace :statistics do
       puts Rainbow("Save index template #{template.name} succeed.").green
     end
 
-    def reindex_into_new(client, src_index, dest_index, src_state)
-      src_is_snapshot = src_index.split('-').size == 6
-      if src_is_snapshot
-        snapshot_id = src_index.split('-')[-2]
-        dest_index = (dest_index.split('-')[0..3] << snapshot_id  << dest_index.split('-')[4]).join('-')
-      end
+    def reindex_into_new(client, src_index, dest_index)
+      dest_index.snapshot_id = src_index.snapshot_id if src_index.snapshot?
       create_index(client, dest_index)
-      if src_state == 'active'
+      if src_index.active?
         update_index_aliases(client, [
-          { remove: { index: src_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
-          { add: { index: dest_index, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
+          { remove: { index: src_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } },
+          { add: { index: dest_index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
         ],
           InterpretRequestLog::INDEX_ALIAS_NAME)
       else
-        client.indices.put_settings index: dest_index, body: {
+        client.indices.put_settings index: dest_index.name, body: {
           'index.number_of_replicas' => 1
         }
       end
-      if src_is_snapshot
-        client.indices.put_settings index: dest_index, body: {
+      if src_index.snapshot?
+        client.indices.put_settings index: dest_index.name, body: {
           'index.number_of_replicas' => 0
         }
       end
-      puts Rainbow("Reindex #{src_index} to #{dest_index}.").green
+      puts Rainbow("Reindex #{src_index.name} to #{dest_index.name}.").green
       reindex(client, src_index, dest_index)
       update_index_aliases(client, [
-        { remove: { index: src_index, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+        { remove: { index: src_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
       ],
         InterpretRequestLog::SEARCH_ALIAS_NAME)
-      puts Rainbow("Delete #{src_index}.").green
+      puts Rainbow("Delete #{src_index.name}.").green
       delete_index(client, src_index)
     end
 
@@ -188,9 +181,9 @@ namespace :statistics do
       false
     end
 
-    def create_index(client, index_name)
-      client.indices.create index: index_name
-      puts Rainbow("Creation of index #{index_name} succeed.").green
+    def create_index(client, index)
+      client.indices.create index: index.name
+      puts Rainbow("Creation of index #{index.name} succeed.").green
     end
 
     def update_index_aliases(client, actions, index_alias)
@@ -198,22 +191,17 @@ namespace :statistics do
       puts Rainbow("Update aliases #{index_alias} succeed.").green
     end
 
-    def need_reindexing?(index_name, template)
-      index_version = index_name.split('-')[3].to_i
-      template.version != index_version
-    end
-
     def reindex(client, src_index, dest_index)
       client.reindex(wait_for_completion: true, body: {
-        source: { index: src_index },
-        dest: { index: dest_index }
+        source: { index: src_index.name },
+        dest: { index: dest_index.name }
       })
-      puts Rainbow("Reindexing of #{src_index} to #{dest_index} succeed.").green
+      puts Rainbow("Reindexing of #{src_index.name} to #{dest_index.name} succeed.").green
     end
 
     def delete_index(client, src_index)
-      client.indices.delete index: src_index
-      puts Rainbow("Remove previous index #{src_index} succeed.").green
+      client.indices.delete index: src_index.name
+      puts Rainbow("Remove previous index #{src_index.name} succeed.").green
     end
 
     def pick_random_node(client)
