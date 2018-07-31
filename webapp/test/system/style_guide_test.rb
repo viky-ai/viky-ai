@@ -6,6 +6,7 @@ class StyleGuideTest < ApplicationSystemTestCase
     admin_login
 
     within(".h-nav") do
+      find('.dropdown__trigger').click
       click_link "Style guide"
     end
 
