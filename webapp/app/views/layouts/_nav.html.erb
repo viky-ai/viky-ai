@@ -19,6 +19,7 @@
         </a>
       </li>
       <% if current_user.admin %>
+        <% cerebro_url = Rails.env.production? ? '/cerebro/' : 'http://localhost:9201' %>
         <li class="secondary">
           <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
             <%= t('views.nav.backend.users') %>
@@ -56,6 +57,12 @@
                   </a>
                 </li>
                 <li>
+                  <a href="<%= cerebro_url %>" data-turbolinks="false" target="_blank">
+                    <%= t('views.nav.backend.elasticsearch_ui') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+                  </a>
+                </li>
+                <li>
                   <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
                     <%= t('views.nav.doc') %>
                     <span class="icon icon--x-small"><%= icon_open_in_new %></span>
@@ -79,6 +86,12 @@
         <li class="secondary">
           <a href="/rails/mailers/" data-turbolinks="false" target="_blank">
             <%= t('views.nav.backend.mailer_test') %>
+            <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+          </a>
+        </li>
+        <li class="secondary">
+          <a href="<%= cerebro_url %>" data-turbolinks="false" target="_blank">
+            <%= t('views.nav.backend.elasticsearch_ui') %>
             <span class="icon icon--x-small"><%= icon_open_in_new %></span>
           </a>
         </li>
