@@ -65,21 +65,23 @@ fi
 
 if [[ "$1" != "config" ]] ; then
 
-  if [[ "$1" == "worker" ]] ; then
-
-    # Start one worker
+  case "$1" in
+  worker)
+     # Start one worker
     bundle exec sidekiq -C config/sidekiq.yml &
-
-  else
-
+    ;;
+  stats-rollover)
+    echo "Statistics rollover"
+    ./bin/rails statistics:rollover
+    ;;
+  *)
     echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
 
     # Start web server
     ./bin/rails server -b 0.0.0.0 -p 3000 &
-
-  fi
+    ;;
+  esac
 
   # wait for signal
   wait
-
 fi
