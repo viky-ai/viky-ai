@@ -43,7 +43,7 @@ class StatisticsVisualizer
     end
 
     def save(type, id, parameters)
-      path = "/api/saved_objects/#{type}/#{id}?overwrite=true"
+      path = "/kibana/api/saved_objects/#{type}/#{id}?overwrite=true"
       @client.post(path, parameters.to_json, JSON_HEADERS)
     end
 
