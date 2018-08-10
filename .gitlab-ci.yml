@@ -61,6 +61,7 @@ test_webapp:
     VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
     VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
     VIKYAPP_STATISTICS_URL: 'http://elasticsearch:9200'
+    VIKYAPP_STATISTICS_VISUALIZER_URL: 'http://es-kibana:5601'
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
