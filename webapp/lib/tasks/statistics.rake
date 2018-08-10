@@ -22,6 +22,12 @@ namespace :statistics do
           InterpretRequestLog::INDEX_ALIAS_NAME)
       end
     end
+    Statistics::Print.step("Configure Kibana.")
+    begin
+      StatisticsVisualizer.new.configure
+    rescue RuntimeError => e
+      Statistics::Print.error(e)
+    end
   end
 
 
