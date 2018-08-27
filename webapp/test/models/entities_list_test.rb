@@ -164,8 +164,8 @@ class EntitiesListTest < ActiveSupport::TestCase
 
     csv = entities_list.to_csv
     expected = ["Terms,Auto solution,Solution",
-                "sun,true,\"\"",
-                "pluie:fr|rain:en,true,",
+                "sun,true,sun",
+                "pluie:fr|rain:en,true,pluie",
                 ''].join("\n")
     assert_equal expected, csv
   end
@@ -219,7 +219,7 @@ class EntitiesListTest < ActiveSupport::TestCase
   test 'Import entities empty terms' do
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
-    io << "\"\",true,hail\n"
+    io << "\"\",false,hail\n"
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
     entities_import = EntitiesImport.new(build_import_params(io))
     elist = entities_lists(:weather_conditions)
@@ -258,7 +258,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     cloudy = elist.entities.first
     assert_equal [{ 'term' => 'cloudy', 'locale' => '*' }], cloudy.terms
     assert_equal true, cloudy.auto_solution_enabled
-    assert_equal '', cloudy.solution
+    assert_equal 'cloudy', cloudy.solution
   end
 
 
@@ -274,7 +274,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     cloudy = elist.entities.first
     assert_equal [{ 'term' => 'cloudy', 'locale' => '*' }], cloudy.terms
     assert_equal true, cloudy.auto_solution_enabled
-    assert_equal '', cloudy.solution
+    assert_equal 'cloudy', cloudy.solution
   end
 
 

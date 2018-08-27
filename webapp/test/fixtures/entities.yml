@@ -1,10 +1,12 @@
 weather_sunny:
+  solution: 'sun'
   auto_solution_enabled: true
   terms: <%= [{term: "sun", locale: "en"}, {term: "soleil", locale: "fr"}].to_json.inspect %>
   entities_list: weather_conditions
   position: 1
 
 weather_raining:
+  solution: 'pluie'
   auto_solution_enabled: true
   terms: <%= [{term: "pluie", locale: "fr"}, {term: "rain", locale: "en"}].to_json.inspect %>
   entities_list: weather_conditions
