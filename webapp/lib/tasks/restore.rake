@@ -122,6 +122,8 @@ namespace :restore do
       import_snapshot(params)
       Restore::Print::substep('Reindex statistics')
       reindex_all
+    rescue Faraday::ConnectionFailed, ArgumentError => e
+      Restore::Print::warning("No statistics where restored : #{e.inspect}")
     end
 
     def migrate_database
@@ -367,10 +369,14 @@ module Restore
         "rsync -za rsync://docker-backup-ro@#{server_ip}:/docker/backup/#{env}/#{date}/#{env}* #{destination}",
         { capture_output: true }
       )
-      Cmd::exec(
-        "rsync -za rsync://docker-backup-ro@#{server_ip}:/docker/backup/#{env}/es-backup #{destination}",
-        { capture_output: true }
-      )
+      begin
+        Cmd::exec(
+          "rsync -za rsync://docker-backup-ro@#{server_ip}:/docker/backup/#{env}/es-backup #{destination}",
+          { capture_output: true }
+        )
+      rescue
+        Restore::Print::warning("No such statisic backup 'es-backup' on '#{env}'.")
+      end
     end
   end
 
