@@ -44,7 +44,7 @@ GEM
     awesome_print (1.8.0)
     backports (3.11.3)
     bcrypt (3.1.11)
-    better_errors (2.4.0)
+    better_errors (2.5.0)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
@@ -199,7 +199,7 @@ GEM
       actionpack
     public_suffix (3.0.2)
     puma (3.11.3)
-    rack (2.0.4)
+    rack (2.0.5)
     rack-protection (2.0.1)
       rack
     rack-proxy (0.6.4)
@@ -412,4 +412,4 @@ DEPENDENCIES
   whenever (~> 0.10.0)
 
 BUNDLED WITH
-   1.16.2
+   1.16.4
