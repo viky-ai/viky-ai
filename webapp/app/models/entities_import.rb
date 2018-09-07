@@ -53,15 +53,17 @@ class EntitiesImport
       entities_list.entities.delete_all if @mode == :replace
       entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
       begin
-        check_header(csv)
+        header_valid?(csv)
         line_count = count_lines(csv)
         csv.each_with_index do |row, index|
           next if index.zero?
-          check_row_length(row, csv.lineno - 1)
+          row_length_valid?(row, csv.lineno - 1)
+          auto_solution = parse_auto_solution(row)
+          solution = auto_solution ? '' : parse_solution(row)
           Entity.create!(
             terms:                 parse_terms(row),
-            auto_solution_enabled: parse_auto_solution(row),
-            solution:              parse_solution(row),
+            auto_solution_enabled: auto_solution,
+            solution:              solution,
             position:              entities_max_position + line_count - @count,
             entities_list:         entities_list
           )
@@ -91,7 +93,7 @@ class EntitiesImport
       line_count
     end
 
-    def check_header(csv)
+    def header_valid?(csv)
       header_row = csv.shift
       if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
         raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_header')
@@ -99,8 +101,12 @@ class EntitiesImport
       csv.rewind
     end
 
-    def check_row_length(row, row_number)
-      if row['Terms'].nil? || row['Auto solution'].nil? || row['Solution'].nil?
+    def row_length_valid?(row, row_number)
+      return if row['Terms'].present? && row['Auto solution'].present? && row['Solution'].present?
+      if row['Terms'].nil? || row['Auto solution'].nil?
+        raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_column', row_number: row_number)
+      end
+      if !parse_auto_solution(row) && row['Solution'].blank?
         raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_column', row_number: row_number)
       end
     end
@@ -122,6 +128,6 @@ class EntitiesImport
     end
 
     def parse_solution(row)
-      row['Solution']
+      row['Solution'].nil? ? '' : row['Solution']
     end
 end

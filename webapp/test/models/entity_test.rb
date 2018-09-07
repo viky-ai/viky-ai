@@ -34,6 +34,7 @@ class EntityTest < ActiveSupport::TestCase
     assert !entity.save
     expected = {
       terms: ["can't be blank"],
+      solution: ["can't be blank"],
       entities_list: ['must exist'],
     }
     assert_equal expected, entity.errors.messages
@@ -43,6 +44,7 @@ class EntityTest < ActiveSupport::TestCase
   test 'Check entities_list solution and terms length' do
     entity = entities(:weather_sunny)
     entity.solution = 'a' * 2001
+    entity.auto_solution_enabled = false
     entity.terms = 'a' * 5001
     assert entity.invalid?
     expected = {
@@ -97,6 +99,7 @@ class EntityTest < ActiveSupport::TestCase
 
   test 'Terms locales' do
     entity = Entity.new(
+      auto_solution_enabled: false,
       entities_list: entities_lists(:weather_conditions)
     )
     entity.terms = "soleil:fr\nsun:en"

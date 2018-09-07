@@ -24,6 +24,7 @@ en:
       chatbot/button:
         text: content.text
         payload: content.payload
+        href: content.href
       chatbot/button_group:
         buttons: content.buttons
       chatbot/notification:
@@ -33,6 +34,10 @@ en:
       agent: Agent
       intent: Intent
       interpretation: Interpretation
+      bot:
+        zero: Chatbot
+        one: Chatbot
+        other: Chatbots
     attributes:
       agent:
         name: Name
@@ -112,6 +117,8 @@ en:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:
         too_long: 'is too long (maximum is %{count} buttons)'
+        mutually_exclusive_payload_and_href: 'not allowed with payload'
+        blank_payload_and_href: "content payload and href can't both be blank"
       list:
         too_long: 'is too long (maximum is %{count} items)'
         too_short: 'is too short (minimum is %{count} items)'

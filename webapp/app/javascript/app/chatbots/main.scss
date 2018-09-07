@@ -28,10 +28,71 @@ aside.chatbots-list{
     }
   }
 
+  .chatbots-search{
+    margin: .75em 16px;
+    .field{
+      margin: 0;
+      width: 100%;
+    }
 
-  ul{
+    input[type='text'].dark{
+      background-color: rgba(#000, .8);
+      border-color: #000;
+      color: #fff;
+      &:focus,
+      &.focus{
+        box-shadow: 0 0 0 2px rgba($focus_color, .5);
+      }
+    }
+  }
+
+  .btn.btn--dark{
+    border-color: transparent;
+    background: linear-gradient(to bottom, rgba(#000, .3) 0%, rgba(#000, .4) 100%);
+    color: #aaa;
+    &:hover,
+    &:focus{
+      border-color: transparent;
+      background: linear-gradient(rgba(#000, .5) 0%, rgba(#000, .6) 100%);
+    }
+    .icon svg{
+      fill: #888;
+    }
+  }
+  .field .control--merged  .btn.btn--chatbot-options{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  nav.pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: .25em;
+    grid-row-gap: .25em;
+    grid-template-areas: "context context"
+                         "previous next";
+    margin: 1em 16px;
+    .previous{
+      text-align: right;
+      grid-area: previous;
+    }
+    .next{
+      text-align: left;
+      grid-area: next;
+    }
+    .context{
+      grid-area: context;
+      color: rgba(#fff, .4);
+      font-size: .8em;
+      text-align: center;
+    }
+  }
+
+
+  & > ul{
     list-style: none;
     padding: 0;
+    margin: 0;
     border-bottom: 1px solid rgba(#fff, .05);
     li{
       border-top: 1px solid rgba(#fff, .05);
@@ -41,7 +102,7 @@ aside.chatbots-list{
         grid-template-columns: 62px auto;
         align-items: start;
 
-        padding: 1em .75em;
+        padding: .9em .75em;
         text-decoration: none;
         border-left: 4px solid transparent;
         line-height: 1.4em;
@@ -87,7 +148,7 @@ aside.chatbots-list{
 
         &:hover,
         &.current{
-          background-color: darken($chatbots_bg_color, 3%);
+          background-color: darken($chatbots_bg_color, 5%);
           border-color: $primary_color;
         }
       }

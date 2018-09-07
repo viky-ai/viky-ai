@@ -5,7 +5,7 @@ class Chatbot::Card
   attr_accessor :components
 
   validates :components, presence: true, length: {
-    maximum: 5, too_long: I18n.t('errors.chat_statement.card.too_long')
+    maximum: 6, too_long: I18n.t('errors.chat_statement.card.too_long')
   }
   validate :recursive_validation
 
@@ -24,7 +24,7 @@ class Chatbot::Card
   def recursive_validation
     components
       .each do |component|
-        unless ['text', 'image', 'video', 'button', 'button_group', 'map'].include? component['nature']
+        unless ['text', 'image', 'video', 'button', 'button_group', 'map', 'geolocation'].include? component['nature']
           errors.add(:base, I18n.t('errors.chat_statement.invalid_nature', nature: component['nature']))
         end
       end
@@ -48,6 +48,8 @@ class Chatbot::Card
       Chatbot::ButtonGroup.new(component['content'])
     when 'map'
       Chatbot::Map.new(component['content'])
+    when 'geolocation'
+      Chatbot::Geolocation.new(component['content'])
     end
   end
 

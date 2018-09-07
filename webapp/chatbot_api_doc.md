@@ -101,7 +101,7 @@ JSON structure :
 }
 ```
 
-* `<text>` Text to display (**required**).
+* `<text>` Text to display. Allowed HTML tags are : `strong`, `em`, `a`, `p`, `ul`, `li`, `code`, `pre` (**required**).
 
 
 #### <code>image</code> nature
@@ -180,9 +180,37 @@ JSON structure :
 }
 ```
 
-* `<params>` the Google Maps Embed API URL params; i.e. `https://www.google.com/maps/embed/v1/<params>` (**required**).
-* `<title>` a noteworthy title.
-* `<description>` a short description.
+* `<params>` the Google Maps params (**required**).
+* `<title>` a noteworthy title for the whole map.
+* `<description>` a short description for the whole map.
+
+* In `<params>`, basically two kind of maps are available.
+The first one embed a simple Google Maps Embed API URL like `https://www.google.com/maps/embed/v1/<params>` as follow :
+```
+    {
+        api_key: <api_key>,
+        endpoint: <endpoint>,
+        query: <query_strings>
+    }
+```
+The second (ie: `endpoint: "javascript"`) embed a subset of [Google Maps JavaScript API](https://developers.google.com/maps/documentation/javascript/reference/3.exp/) with optional markers :
+```
+    {
+        api_key: <api_key>,
+        endpoint: "javascript",
+        payload: {
+            map: <google.maps.MapOptions>,
+            markers: {
+              center: <true|false>,
+              list: [{
+                position: <google.maps.LatLngLiteral>,
+                title: <marker_title>,
+                description: <html_info_description>
+              }]
+            }
+        }
+    }
+```
 
 
 #### <code>button</code> nature
@@ -194,7 +222,7 @@ JSON structure :
     nature: 'button',
     content: {
       text: <text>,
-      payload: <payload>,
+      payload: <payload> | href: <url>,
       speech: {
         text: <speech_text>,
         locale: <speech_locale>
@@ -205,7 +233,10 @@ JSON structure :
 ```
 
 * `<text>` is the displayed in the button (**required**).
-* `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required**).
+* `<payload>` must be a Hash which can contain anything. It will be returned as is to the bot when the user click on the button (**required if no href**).
+* `<href>` is a custom URL (**required if no payload**).
+
+**Note:** `payload` and `href` are mutually exclusive.
 
 #### <code>button_group</code> nature
 
@@ -289,6 +320,26 @@ JSON structure :
 * `orientation`: `vertical` or `horizontal`.
 * `items` Array of nested components (from 2 to 8 components). Valid natures are `text`, `image`, `video`, `map`, `button`, `button_group`, `card`. Unlike standalone widgets, `speech` parameter on those components is ignored (**required**).
 
+
+#### <code>geolocation</code> nature
+
+JSON structure :
+```
+{
+  statement: {
+    nature: 'geolocation',
+    content: {
+      text: <text>,
+      speech: {
+        text: <speech_text>,
+        locale: <speech_locale>
+      }
+    }
+  }
+}
+```
+
+* `text` : is the text displayed in the widget (**required**).
 
 ### Update chat session locale
 
@@ -394,3 +445,20 @@ User actions types triggered by the user.
 ```
 
   * `payload` the JSON hash previously passed at the button creation
+
+
+#### Type <code>locate</code>
+
+```
+{
+  user_action: {
+    type: 'locate',
+    status: 'success' | 'error',
+    location: {<...>} | error: {<...>}
+  }
+}
+```
+
+  * `status` was the geolocation successful. In case of `success` there is a `location` key, otherwise an `error` value imply an `error` key.
+  * `location` a JSON object representing the user position, see the [Geolocation API - Position](https://developer.mozilla.org/en-US/docs/Web/API/Position) **imply `status : 'success'`**
+  * `error` a JSON object to explain why it was impossible to locate the user, see the [Geolocation API - PositionError](https://developer.mozilla.org/en-US/docs/Web/API/PositionError) **imply `status : 'error'`**

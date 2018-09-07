@@ -46,4 +46,73 @@ class ChatbotTest < ApplicationSystemTestCase
       assert page.has_text?('Bot test')
     end
   end
+
+
+  #
+  # Search
+  #
+  test 'Bot can be found by name' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'nol'
+      click_button '#search'
+      assert page.has_content?('Arnold')
+      assert page.has_no_content?('Weather')
+    end
+  end
+
+  test 'Bot filtered by release state' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+
+      all('.dropdown__trigger > button').first.click
+      click_link 'Include WIP'
+
+      assert page.has_content?('Arnold')
+      assert page.has_content?('Weather')
+
+      all('.dropdown__trigger > button').first.click
+      click_link 'Exclude WIP'
+
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+  end
+
+  test 'Bot search without result display a message' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'azerty'
+      click_button '#search'
+      assert page.has_no_content?('Arnold')
+      assert page.has_no_content?('Weather')
+    end
+  end
+
+  test 'Keep chatbot search criteria' do
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      fill_in 'search_query', with: 'ath'
+      click_button '#search'
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+    go_to_agents_index
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      assert page.has_text? 'ath'
+      assert page.has_no_content?('Arnold')
+      assert page.has_content?('Weather')
+    end
+  end
+
+  test 'Hide WIP filter if no bot is in this state' do
+    wip_bot = bots(:terminator_bot)
+    wip_bot.wip_enabled = false
+    assert wip_bot.save
+    go_to_chatbots
+    within('.chatbots-list--for-index') do
+      assert page.has_no_text?('WIP')
+    end
+  end
 end

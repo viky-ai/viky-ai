@@ -6,6 +6,7 @@
       <%= f.hidden_field :statement_id, value: statement.id %>
       <%= f.hidden_field :button_index, value: i %>
       <%= f.hidden_field :payload, value: button.payload.to_json %>
+      <%= f.hidden_field :type, value: 'click_button' %>
       <%= f.button button.text, disabled: button.is_disabled?, autocomplete: "off", selected: button.is_selected? %>
     <% end %>
   <% end %>

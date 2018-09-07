@@ -4,7 +4,8 @@
 
 <div class="chatbot"
   data-session-id="<%= @chat_session.id %>"
-  data-recognition-locale="<%= @chat_session.locale %>">
+  data-recognition-locale="<%= @chat_session.locale %>"
+  data-history-url="<%= chatbot_chat_statements_url(@chat_session.bot.id) %>">
   <div class="chatbot__header">
 
     <a href="<%= chatbots_path %>" class="btn btn--small btn--primary">

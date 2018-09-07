@@ -13,7 +13,10 @@
         <div class="chatbot__avatar__time">12:00</div>
       </div>
       <div class="chatbot__widget chatbot__widget--image">
-        <img src="<%= image_path('style-guide/kitten.jpg') %>">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/kitten.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/kitten.jpg') %>"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -32,7 +35,10 @@
         <div class="chatbot__avatar__time">12:00</div>
       </div>
       <div class="chatbot__widget chatbot__widget--image">
-        <img src="<%= image_path('style-guide/kitten.jpg') %>">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/kitten.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/kitten.jpg') %>"></div>
+        </div>
         <div class="chatbot__widget--image__info">
           <h2>Meow!</h2>
         </div>
@@ -54,7 +60,10 @@
         <div class="chatbot__avatar__time">12:00</div>
       </div>
       <div class="chatbot__widget chatbot__widget--image">
-        <img src="<%= image_path('style-guide/kitten.jpg') %>">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/kitten.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/kitten.jpg') %>"></div>
+        </div>
         <div class="chatbot__widget--image__info">
           <h2>Meow!</h2>
           <p>Portrait of a little kitten. So cute 😻</p>
@@ -64,4 +73,116 @@
   </div>
 </div>
   <% end %>
+
+  <h3>Small images display</h3>
+  <%= highlight_html do %>
+<div class="chatbot">
+  <div class="chatbot__discussion">
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-vertical.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-vertical.jpg') %>"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-horizontal.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-horizontal.jpg') %>"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-square.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-square.jpg') %>"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-vertical.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-vertical.jpg') %>"></div>
+        </div>
+        <div class="chatbot__widget--image__info">
+          <h2>Small vertical image</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta dolor obcaecati aliquam architecto cum eligendi.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-horizontal.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-horizontal.jpg') %>"></div>
+        </div>
+        <div class="chatbot__widget--image__info">
+          <h2>Small horizontal image</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta dolor obcaecati aliquam architecto cum eligendi.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chatbot__statement chatbot__statement--bot">
+      <div class="chatbot__avatar">
+        <div class="chatbot__avatar__image">
+          <img src="<%= image_path('default_bot.png') %>">
+        </div>
+        <div class="chatbot__avatar__time">12:00</div>
+      </div>
+      <div class="chatbot__widget chatbot__widget--image">
+        <div class="chatbot__widget--image__illustration">
+          <div class="back" style="background-image: url(<%= image_path('style-guide/small-square.jpg') %>);"></div>
+          <div class="front"><img src="<%= image_path('style-guide/small-square.jpg') %>"></div>
+        </div>
+        <div class="chatbot__widget--image__info">
+          <h2>Small square image</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Soluta dolor obcaecati aliquam architecto cum eligendi.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  <% end %>
+
 </section>
