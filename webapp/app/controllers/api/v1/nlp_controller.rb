@@ -1,5 +1,6 @@
 class Api::V1::NlpController < Api::V1::ApplicationController
   before_action :validate_owner_and_agent
+  before_action :build_log_request
   before_action :check_agent_token
 
   def interpret
@@ -12,12 +13,17 @@ class Api::V1::NlpController < Api::V1::ApplicationController
       format.json {
         if @nlp.valid?
           @response = @nlp.proceed
+          @log.with_response(@response[:status], @response[:body])
           unless @response[:status] == '200'
             render json: @response[:body], status: @response[:status]
           end
         else
-          render json: { errors: @nlp.errors.full_messages }, status: 422
+          status = 422
+          body = { errors: @nlp.errors.full_messages }
+          @log.with_response(status, {})
+          render json: body, status: status
         end
+        @log.save
       }
     end
   end
@@ -34,7 +40,10 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     def check_agent_token
       agent_token = params[:agent_token] || request.headers["Agent-Token"]
       if @agent.api_token != agent_token
-        render json: { errors: [t('controllers.api.access_denied')] }, status: 401
+        status = 401
+        body = { errors: [t('controllers.api.access_denied')] }
+        @log.with_response(status, body).save
+        render json: body, status: status
       end
     end
 
@@ -44,4 +53,14 @@ class Api::V1::NlpController < Api::V1::ApplicationController
       )
     end
 
+    def build_log_request
+      parameters = interpret_parameters
+      @log = InterpretRequestLog.new(
+        timestamp: Time.now.iso8601(3),
+        sentence: parameters['sentence'],
+        language: parameters['language'],
+        now: parameters['now'],
+        agent: @agent
+      )
+    end
 end

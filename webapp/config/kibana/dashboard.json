@@ -1,0 +1,18 @@
+{
+  "id": "cceae050-9a56-11e8-97ac-39aa01b9818b",
+  "type": "dashboard",
+  "updated_at": "2018-08-07T16:00:27.990Z",
+  "version": 6,
+  "attributes": {
+    "title": "viky",
+    "hits": 0,
+    "description": "",
+    "panelsJSON": "[{\"panelIndex\":\"1\",\"gridData\":{\"x\":0,\"y\":0,\"w\":37,\"h\":15,\"i\":\"1\"},\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"id\":\"c09b7a80-9a56-11e8-97ac-39aa01b9818b\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"panelIndex\":\"2\",\"gridData\":{\"x\":0,\"y\":15,\"w\":26,\"h\":14,\"i\":\"2\"},\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"id\":\"4d541b30-9a57-11e8-97ac-39aa01b9818b\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":26,\"y\":15,\"w\":22,\"h\":14,\"i\":\"3\"},\"embeddableConfig\":{},\"id\":\"e412d880-9a58-11e8-97ac-39aa01b9818b\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":37,\"y\":0,\"w\":11,\"h\":15,\"i\":\"4\"},\"version\":\"6.3.0\",\"type\":\"visualization\",\"id\":\"9a4be780-9a5a-11e8-97ac-39aa01b9818b\",\"embeddableConfig\":{\"vis\":{\"colors\":{\"200\":\"#629E51\"},\"legendOpen\":false}}}]",
+    "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+    "version": 1,
+    "timeRestore": false,
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true,\"version\":true}"
+    }
+  }
+}

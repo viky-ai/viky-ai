@@ -6,6 +6,9 @@ sleep 1
 # Setup DB
 ./bin/rails db:reset
 
+# Setup statistics
+./bin/rails statistics:setup
+
 # Run tests
 ./bin/rails test
 
