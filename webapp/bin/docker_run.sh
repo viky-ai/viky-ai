@@ -47,25 +47,41 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]] ; then
   fi
 
   echo "Database setup completed."
+
+  # wait for services
+  /usr/local/bin/dockerize -wait tcp://stats-service:9200 -timeout 60s
+
+  echo "Statistics setup"
+  ./bin/rails statistics:setup
+
+  echo "Statistics reindexing if needed"
+  ./bin/rails statistics:reindex:all
+
+  echo "Statistics setup completed."
+
+  echo "Rake tasks scheduler setup."
+  bundle exec whenever --update-crontab
 fi
 
 if [[ "$1" != "config" ]] ; then
 
-  if [[ "$1" == "worker" ]] ; then
-
-    # Start one worker
+  case "$1" in
+  worker)
+     # Start one worker
     bundle exec sidekiq -C config/sidekiq.yml &
-
-  else
-
+    ;;
+  stats-rollover)
+    echo "Statistics rollover"
+    ./bin/rails statistics:rollover
+    ;;
+  *)
     echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
 
     # Start web server
     ./bin/rails server -b 0.0.0.0 -p 3000 &
-
-  fi
+    ;;
+  esac
 
   # wait for signal
   wait
-
 fi

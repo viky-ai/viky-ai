@@ -164,8 +164,8 @@ class EntitiesListTest < ActiveSupport::TestCase
 
     csv = entities_list.to_csv
     expected = ["Terms,Auto solution,Solution",
-                "sun,true,\"\"",
-                "pluie:fr|rain:en,true,",
+                "sun,true,sun",
+                "pluie:fr|rain:en,true,pluie",
                 ''].join("\n")
     assert_equal expected, csv
   end
@@ -174,7 +174,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
+    io << "cloudy|nuageux:fr,False,\"{'weather': 'cloudy'}\"\n"
     io << "\n"
 
     entities_import = EntitiesImport.new(build_import_params(io))
@@ -194,7 +194,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     cloudy = elist.entities.find_by_solution("{'weather': 'cloudy'}")
     cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'nuageux', 'locale' => 'fr' }]
     assert_equal cloudy_terms, cloudy.terms
-    assert_equal true, cloudy.auto_solution_enabled
+    assert_equal false, cloudy.auto_solution_enabled
     assert_equal "{'weather': 'cloudy'}", cloudy.solution
     assert_equal 2, cloudy.position
     assert_equal 6, Entity.all.count
@@ -216,25 +216,10 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
 
-  test 'Import entities missing column' do
-    io = StringIO.new
-    io << "terms,auto solution,solution\n"
-    io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
-    io << "true,hail\n"
-    entities_import = EntitiesImport.new(build_import_params(io))
-    elist = entities_lists(:weather_conditions)
-
-    assert_equal 2, elist.entities.count
-    assert !elist.from_csv(entities_import)
-    assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing column in line 2'], entities_import.errors[:file]
-  end
-
-
   test 'Import entities empty terms' do
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
-    io << "\"\",true,hail\n"
+    io << "\"\",false,hail\n"
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
     entities_import = EntitiesImport.new(build_import_params(io))
     elist = entities_lists(:weather_conditions)
@@ -258,6 +243,66 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert !elist.from_csv(entities_import)
     assert_equal 2, elist.entities.count
     assert_equal ["Validation failed: Auto solution must be true or false in line 1"], entities_import.errors[:file]
+  end
+
+
+  test 'Import entities autosolution true with solution' do
+    io = StringIO.new
+    io << "terms,auto solution,solution\n"
+    io << "cloudy,True,\"{'weather': 'cloudy'}\"\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert elist.from_csv(entities_import)
+    elist.entities.reload
+    cloudy = elist.entities.first
+    assert_equal [{ 'term' => 'cloudy', 'locale' => '*' }], cloudy.terms
+    assert_equal true, cloudy.auto_solution_enabled
+    assert_equal 'cloudy', cloudy.solution
+  end
+
+
+  test 'Import entities autosolution true without solution' do
+    io = StringIO.new
+    io << "terms,auto solution,solution\n"
+    io << "cloudy,True\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert elist.from_csv(entities_import)
+    elist.entities.reload
+    cloudy = elist.entities.first
+    assert_equal [{ 'term' => 'cloudy', 'locale' => '*' }], cloudy.terms
+    assert_equal true, cloudy.auto_solution_enabled
+    assert_equal 'cloudy', cloudy.solution
+  end
+
+
+  test 'Import entities autosolution false with solution' do
+    io = StringIO.new
+    io << "terms,auto solution,solution\n"
+    io << "cloudy,false,\"{'weather': 'cloudy'}\"\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert elist.from_csv(entities_import)
+    elist.entities.reload
+    cloudy = elist.entities.first
+    assert_equal [{ 'term' => 'cloudy', 'locale' => '*' }], cloudy.terms
+    assert_equal false, cloudy.auto_solution_enabled
+    assert_equal "{'weather': 'cloudy'}", cloudy.solution
+  end
+
+
+  test 'Import entities autosolution false without solution' do
+    io = StringIO.new
+    io << "terms,auto solution,solution\n"
+    io << "cloudy,false\n"
+    entities_import = EntitiesImport.new(build_import_params(io, :replace))
+    elist = entities_lists(:weather_conditions)
+
+    assert !elist.from_csv(entities_import)
+    assert_equal ['Bad CSV format: Missing column in line 1'], entities_import.errors[:file]
   end
 
 

@@ -7,11 +7,13 @@ class Entity < ApplicationRecord
   serialize :terms, JSON
 
   validates :solution, length: { maximum: 2000 }
+  validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
   validate :validate_locales_exists
   validate :validate_terms_present
 
   before_validation :parse_terms
+  before_validation :build_solution
 
   def terms_to_s
     return "" if terms.nil?
@@ -30,6 +32,16 @@ class Entity < ApplicationRecord
     def parse_terms
       if terms.is_a?(String) && terms.length <= 5000
         self.terms = EntityTermsParser.new(terms).proceed
+      end
+    end
+
+    def build_solution
+      return unless self.auto_solution_enabled
+      return if self.terms.blank?
+      if terms.is_a? String
+        self.solution = self.terms
+      else
+        self.solution = self.terms.first['term']
       end
     end
 

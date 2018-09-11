@@ -1,0 +1,14 @@
+default: &default
+  client:
+    url: <%= ENV.fetch("VIKYAPP_STATISTICS_URL") { 'localhost:9200' } %>
+
+production:
+  <<: *default
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  client:
+    url: <%= ENV.fetch("VIKYAPP_STATISTICS_URL") { 'localhost:9222' } %>

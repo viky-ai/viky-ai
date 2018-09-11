@@ -2,15 +2,17 @@
 
 ## Dependencies
 
-* Ruby (2.4.2)       ( https://github.com/rbenv/rbenv#installation )
-* bundler (1.15.4)   ( `gem install bundler` )
-* NodeJS (8.4.0)     ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
-* Yarn (1.0.1)       ( https://yarnpkg.com/lang/en/docs/install/ )
-* PostgreSQL (9.6.5) ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
-* Redis (3.2)        ( use docker )
-* ImageMagick        ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
-* Docker 17.09.0-ce  ( [see below](#docker) )
-* Graphviz           ( `sudo apt-get install -y graphviz` )
+* Ruby (2.4.2)         ( https://github.com/rbenv/rbenv#installation )
+* bundler (1.15.4)     ( `gem install bundler` )
+* NodeJS (8.4.0)       ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
+* Yarn (1.0.1)         ( https://yarnpkg.com/lang/en/docs/install/ )
+* PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
+* Redis (3.2)          ( use docker )
+* ElasticSearch (6.3)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.0`)
+* Cerebro              ( use docker : `docker pull yannart/cerebro` )
+* ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
+* Docker 17.09.0-ce    ( [see below](#docker) )
+* Graphviz             ( `sudo apt-get install -y graphviz` )
 
 ## Environment Variables
 
@@ -114,6 +116,51 @@ $ ./bin/rails db:setup
 > ...
 ```
 
+## Bootstrap statistics
+We use ElasticSearch to store statistics data. It is highly configured for a _time-series_ load.
+
+Every indexes (_active_ and _inactives_) are searchable (ie: they all belongs to alias `search-stats-interpret_request_log`).
+Only the _active_ index can receive new documents (ie: it is the only one belonging to alias `index-stats-interpret_request_log`).
+This has two consequences :
+  - the _active_ index is optimized for writing
+  - _inactives_ indexes are optimized for reading
+
+### Create templates, index and Kibana configuration
+- It will create _templates_ only if it does not already exists.
+- It will create _index_ only if it does not already exists.
+- It always configure Kibana.
+```
+$ ./bin/rails statistics:setup
+> Environment test.
+> ...
+> Environment development.
+> ...
+> Configure Kibana.
+> ...
+```
+
+### Reindex a specific index
+```bash
+$ ./bin/rails statistics:reindex[<index_name>]
+> ...
+```
+
+### Reindex every index
+```bash
+$ ./bin/rails statistics:reindex:all
+> ...
+```
+
+### Rollover the active index
+_Do something only if there is more than 100 000 documents in the index or it is older than 7 days._
+
+Basically it will move the active index in the inactive pool, and put a new empty active index.
+
+```bash
+$ ./bin/rails statistics:rollover
+> ...
+```
+
 ## Docker
 
 If you haven't Docker installed in your system yet, you can follow this [guide](https://docs.docker.com/engine/installation/).
@@ -149,3 +196,7 @@ and give your `username` and `password` of the Pertimm services.
 Slate is used to generate a doc static web site. Souces are in ../doc. Before running <code>foreman start</code>, install doc component dependencies, run:
 
     bundle install
+
+### Cerebro
+
+[Cerebro](https://github.com/lmenezes/cerebro) is an open source ElasticSearch web admin tool. In a dev environment it is accessible at `http://localhost:9201`.
