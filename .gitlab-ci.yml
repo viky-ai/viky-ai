@@ -15,9 +15,9 @@ variables:
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
   DOCKER_IMAGE_NLP: $CI_REGISTRY_IMAGE/nlp
-  DOCKER_IMAGE_TOOLS_LB: $CI_REGISTRY_IMAGE/tools_load_balancer
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
+  DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
   TRACE: 0
 
 # Build docker image
@@ -32,6 +32,11 @@ build_backup:
   stage: prerequist
   script:
     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+
+build_elastic:
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
 build_webapp:
   stage: build
@@ -121,6 +126,15 @@ tag_backup:
     GIT_STRATEGY: none
   script:
     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
+
+tag_elastic:
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_ELASTICSEARCH}
 
 # Deploy any branches on rancher dev
 deploy_dev:
