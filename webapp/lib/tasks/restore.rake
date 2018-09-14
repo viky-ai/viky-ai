@@ -77,7 +77,7 @@ namespace :restore do
 
 
   desc 'Backup current DB and image uploaded on the local machine'
-  task :backup, [:backup_dir,:export_basename]=> [:environment] do |t, args|
+  task :backup, [:backup_dir,:export_basename,:skip_stats]=> [:environment] do |t, args|
     unless args.backup_dir.present?
       Restore::Print::error("Missing param: backup directory")
       exit 0
@@ -94,9 +94,14 @@ namespace :restore do
     export_dump(args.backup_dir, args.export_basename)
     Restore::Print::step("Backup uploaded images")
     export_images(args.backup_dir, args.export_basename)
-    Restore::Print::step("Backup statistics")
-    export_statistics(args.export_basename)
-    Restore::Print::step("Backup done in #{args.backup_dir} and statistics in #{Rails.root}/tmp/es-backup")
+
+    if args.skip_stats.present?
+      Restore::Print::step("Backup done in #{args.backup_dir}")
+    else
+      Restore::Print::step("Backup statistics")
+      export_statistics(args.export_basename)
+      Restore::Print::step("Backup done in #{args.backup_dir} and statistics in #{Rails.root}/tmp/es-backup")
+    end
   end
 
   private
