@@ -24,7 +24,7 @@ class StatisticsVisualizer
           id = current_configuration['id']
           result = save(key, id, clean(current_configuration))
           if result.code != '200'
-            raise 'Error while saving Kibana configuration'
+            raise "Error while saving Kibana configuration (#{key}) : #{result.body}"
           end
         end
       end

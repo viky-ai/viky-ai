@@ -7,12 +7,13 @@
 * NodeJS (8.4.0)       ( https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions )
 * Yarn (1.0.1)         ( https://yarnpkg.com/lang/en/docs/install/ )
 * PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
-* Redis (3.2)          ( use docker )
+* Redis (3.2)          ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
 * ElasticSearch (6.3)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.0`)
 * Cerebro              ( use docker : `docker pull yannart/cerebro` )
+* Kibana               ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.3.0` )
 * ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
-* Docker 17.09.0-ce    ( [see below](#docker) )
 * Graphviz             ( `sudo apt-get install -y graphviz` )
+* Docker 17.09.0-ce    ( [see below](#docker) )
 
 ## Environment Variables
 

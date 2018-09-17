@@ -51,26 +51,26 @@ namespace :restore do
 
   desc 'Download and restore an environment on the local machine'
   task :auto, [:environment, :date] => [:environment] do |t, args|
-    unless args.environment.present?
-      Restore::Print::error("Missing param: environment name")
+    environment = 'viky-beta'
+    date        = '_latest'
+    if args.environment.present?
+      environment = args.environment
     end
-    unless args.date.present?
-      Restore::Print::error("Missing param: backup date")
-    end
-    unless args.environment.present? && args.date.present?
-      exit 0
+    if args.date.present?
+      date = date
     end
 
+
     Dir.mktmpdir(nil, "#{Rails.root}/tmp") do |dir|
-      env = args.environment.start_with?('viky-') ? args.environment : "viky-#{args.environment}"
-      Restore::Print::step("Download archives")
-      Restore::Backup::download(env, args.date, dir)
+      env = environment.start_with?('viky-') ? environment : "viky-#{environment}"
+      Restore::Print::step("Download archives from #{env} : #{date}")
+      Restore::Backup::download(env, date, dir)
       files = Dir.entries(dir)
       db = "#{dir}/#{files.select {|file| file.end_with?('_db-postgresql.dump.gz')}[0]}"
       images = "#{dir}/#{files.select {|file| file.end_with?('_app-uploads-data.tgz')}[0]}"
       statistics_directory = "/backup_data/#{File.basename(dir)}/es-backup"
-      statistics_repository = "viky-es-backup_#{args.environment}"
-      statistics_snapshot = "#{args.environment}_#{args.date}"
+      statistics_repository = "viky-es-backup_#{environment}"
+      statistics_snapshot = "#{environment}_#{date}"
       Rake::Task["restore:all"].invoke(db, images, true, statistics_directory, statistics_repository, statistics_snapshot)
     end
   end
