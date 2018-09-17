@@ -170,10 +170,14 @@ namespace :statistics do
         }
       end
       reindex(client, src_index, dest_index)
-      update_index_aliases(client, [
-        { remove: { index: src_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
-      ],
-        InterpretRequestLog::SEARCH_ALIAS_NAME)
+      begin
+        update_index_aliases(client, [
+            { remove: { index: src_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
+          ],
+          InterpretRequestLog::SEARCH_ALIAS_NAME)
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        # alias does not exist
+      end
       delete_index(client, src_index)
     end
 

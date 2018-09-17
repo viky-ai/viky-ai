@@ -13,6 +13,9 @@
         "agent_id": {
           "type": "keyword"
         },
+        "agent_slug": {
+          "type": "keyword"
+        },
         "language": {
           "type": "keyword"
         },

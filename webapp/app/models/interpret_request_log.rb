@@ -56,6 +56,7 @@ class InterpretRequestLog
         language: @language,
         now: @now,
         agent_id: @agent.id,
+        agent_slug: @agent.slug,
         owner_id: @agent.owner.id,
         status: @status,
         body: @body
