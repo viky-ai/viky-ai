@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "index_patterns": "stats-interpret_request_log-*",
   "aliases": {
     "search-stats-interpret_request_log": {}
