@@ -14,30 +14,21 @@ module Nls
         Nls.remove_all_packages
 
         Interpretation.default_locale = "en"
-        package2 = create_package_2
-        package1 = create_package_1(package2)
 
-        Nls.package_update(package2)
-        Nls.package_update(package1)
+        Nls.package_update(create_package)
       end
 
-      def create_package_1(pkg2)
-        package = Package.new("package_1")
+       def create_package
+        package = Package.new("package")
 
-        int1 = package.new_interpretation("main_interpretation", { scope: "public" })
-        int1 << Expression.new("@{number}", aliases: { number: Alias.number }, solution: "`{ number: number +1 }`")
-        int1 << Expression.new("@{toto}", aliases: { toto: pkg2.interpretation("main") } )
-
-        package
-      end
-
-      def create_package_2
-        package2 = Package.new("package_2", { scope: "public" })
-
-        int1 = package2.new_interpretation("main")
+        int1 = package.new_interpretation("sub_interpretation", { scope: "public" })
         int1 << Expression.new("@{number} @{toto}", aliases: { number: Alias.number, toto: Alias.any }, solution: "`{ number: number, toto: toto }`")
 
-        package2
+        int2 = package.new_interpretation("main_interpretation", { scope: "public" })
+        int2 << Expression.new("@{toto}", aliases: { toto: int1 } )
+        int2 << Expression.new("@{number}", aliases: { number: Alias.number }, solution: "`{ number: number +1 }`")
+
+        package
       end
 
       # Tests
