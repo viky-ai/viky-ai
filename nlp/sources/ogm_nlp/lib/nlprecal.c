@@ -64,6 +64,11 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
 
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after any validation:"));
+  }
+
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
@@ -120,7 +125,12 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
     for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
     {
       struct request_expression *request_expression = iter->data;
-      if (!request_expression->keep_as_result) continue;
+      if (!request_expression->keep_as_result)
+      {
+        // Any expression that have not be selected before, are not potential solutions anymore
+        request_expression->any_validate_status = 0;
+        continue;
+      }
 
       IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
 
