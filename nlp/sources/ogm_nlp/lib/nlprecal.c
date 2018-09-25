@@ -128,7 +128,7 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
       if (!request_expression->keep_as_result)
       {
         // Any expression that have not be selected before, are not potential solutions anymore
-        request_expression->any_validate_status = 0;
+        if (request_expression->nb_anys > 0) request_expression->any_validate_status = 0;
         continue;
       }
 
