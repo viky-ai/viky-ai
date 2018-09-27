@@ -36,7 +36,9 @@ module Nls
       def test_any_punctuation_trim
 
         expected = {
-          "number_people" => 1235
+          solution: {
+            "number" => 1235,
+          }
         }
 
         check_interpret("1234",        expected)
