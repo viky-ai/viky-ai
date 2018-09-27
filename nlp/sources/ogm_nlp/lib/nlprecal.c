@@ -64,6 +64,11 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpAnyValidate(ctrl_nlp_th, sorted_request_expressions));
 
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    IFE(NlpSortedRequestExpressionsLog(ctrl_nlp_th, "List of sorted request expressions after any validation:"));
+  }
+
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
     struct request_expression *request_expression = iter->data;
@@ -124,25 +129,45 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
 
       IFE(NlpRequestExpressionListsSort(ctrl_nlp_th, request_expression));
 
-      IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
-
-      int nb_anys_attached;
-      IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
-
-      if (request_expression->nb_anys != nb_anys_attached)
+      if (request_expression->nb_anys > 0)
       {
-        NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d != nb_anys_attached=%d, this request is not validated:",
-            request_expression->nb_anys, nb_anys_attached);
-        request_expression->any_validate_status = 0;
-        request_expression->keep_as_result = FALSE;
+        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+        {
+          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: trying to attach anys to request expression:")
+          IFE(NlpRequestExpressionAnysLog(ctrl_nlp_th, request_expression));
+          IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
+        }
+
+        IFE(NlpInterpretTreeAttachAny(ctrl_nlp_th, request_expression));
+
+        int nb_anys_attached = 0;
+        IFE(nb_anys_attached = NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,FALSE));
+        if (request_expression->nb_anys != nb_anys_attached)
+        {
+          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d != nb_anys_attached=%d, this request is not validated",
+              request_expression->nb_anys, nb_anys_attached);
+          request_expression->any_validate_status = 0;
+          request_expression->keep_as_result = FALSE;
+        }
+        else
+        {
+          NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: nb_anys=%d == nb_anys_attached=%d, this request is validated",
+              request_expression->nb_anys, nb_anys_attached);
+          IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
+          request_expression->any_validate_status = 2;
+          some_expressions_kept = TRUE;
+          break;
+        }
       }
       else
       {
-        IFE(NlpRequestAnyOptimizeMatch(ctrl_nlp_th, request_expression,TRUE));
+        // there are no anys in this expression
+        NlpLog(DOgNlpTraceMatch, "NlpAnyValidate: this request with no any is validated");
         request_expression->any_validate_status = 2;
         some_expressions_kept = TRUE;
         break;
       }
+
     }
 
     IFE(NlpCalculateKeptRequestExpressions(ctrl_nlp_th, sorted_request_expressions));
@@ -160,6 +185,17 @@ static og_status NlpAnyValidate(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_ex
     }
     if (!at_least_one_kept_as_result) break;
 
+  }
+
+  // Some expression containing anys can be selected, but since at least one expression is validated, we unvalidate it.
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    if (!request_expression->keep_as_result) continue;
+    if (request_expression->nb_anys > 0 && request_expression->any_validate_status == 1)
+    {
+      request_expression->keep_as_result = 0;
+    }
   }
 
   DONE;

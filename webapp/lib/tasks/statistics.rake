@@ -13,13 +13,21 @@ namespace :statistics do
         save_template(client, active_template) unless template_exists?(client, active_template)
         inactive_template = StatisticsIndexTemplate.new template_conf, 'inactive'
         save_template(client, inactive_template) unless template_exists?(client, inactive_template)
-        next if index_exists?(client, active_template)
-        index = StatisticsIndex.from_template active_template
-        create_index(client, index)
-        update_index_aliases(client, [
-          { add: { index: index.name, alias: InterpretRequestLog::INDEX_ALIAS_NAME } }
-        ],
-          InterpretRequestLog::INDEX_ALIAS_NAME)
+
+        alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
+        if !client.indices.exists_alias?(name: alias_name) && client.indices.exists?(index: alias_name)
+          Statistics::Print.notice("Index like #{active_template.index_patterns} already exists, with same as alias name (#{alias_name}), delete it beacause it should not exists.")
+          client.indices.delete index: alias_name
+        end
+
+        if index_exists?(client, active_template)
+          Statistics::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
+        else
+          index = StatisticsIndex.from_template active_template
+          create_index(client, index)
+          update_index_aliases(client, [ { add: { index: index.name, alias: alias_name } } ], alias_name)
+        end
+
       end
     end
     Statistics::Print.step("Configure Kibana.")
@@ -186,7 +194,6 @@ namespace :statistics do
       index_present = client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
         index =~ Regexp.new(template.index_patterns, Regexp::IGNORECASE)
       end
-      Statistics::Print.notice("Index like #{template.index_patterns} already exists : skipping.") if index_present
       index_present
     end
 
