@@ -36,6 +36,8 @@
 #define DOgNlpInterpretationRegexMaxLength        0x1000
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
 
+#define DOgNlpMaximumRegex          100
+
 #define DOgNlpMaximumOwnedLock      16
 
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
@@ -106,6 +108,8 @@ struct package
   og_heap halias_ba;
   og_heap halias_compile;
   og_heap halias;
+
+  og_heap hregex;
 
   /** hinput_part_ba : String heap for input_part, read-only after compilation step */
   og_heap hinput_part_ba;
@@ -257,7 +261,11 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number, nlp_input_part_type_Regex
+  nlp_input_part_type_Nil = 0,
+  nlp_input_part_type_Word,
+  nlp_input_part_type_Interpretation,
+  nlp_input_part_type_Number,
+  nlp_input_part_type_Regex
 };
 
 struct input_part_word
@@ -289,6 +297,11 @@ struct input_part
 struct number_input_part
 {
   int Iinput_part;
+};
+
+struct regex
+{
+  struct alias *alias;
 };
 
 enum nlp_synchro_test_timeout_in
@@ -868,7 +881,6 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
 
-
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
 og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
@@ -1012,5 +1024,10 @@ og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string nam
 og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
+/* nlpregex.c */
+og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpRegexFlush(package_t package);
+og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 

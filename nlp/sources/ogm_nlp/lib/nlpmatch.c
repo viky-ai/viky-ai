@@ -18,6 +18,28 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   // The request sentence is in : ctrl_nlp_th->request_sentence
   IFE(NlpParseRequestSentence(ctrl_nlp_th));
 
+  // TODO SMA Fonction NlpRegexAddWords
+  // boucle sur les regex, et pour chaque regex
+  //   - travailler sur la string complete de la phrase -> start et end du match 0
+  //   - construit un word de type regex (comme type number) basé sur NlpParseAddWord
+  /* Dans une fonction, parcourir la liste des package pour aller cherchez les regex
+  NlpRegexAddWords(ctrl_nlp_th)
+  {
+  int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
+  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
+  IFN(interpret_packages) DPcErr;
+  for (int i = 0; i < interpret_package_used; i++)
+  {
+    struct interpret_package *interpret_package = interpret_packages + i;
+    og_status status = NlpRegexAddWordsPackage(ctrl_nlp_th, Irequest_word, interpret_package);
+    IFE(status);
+  }
+  }
+  et dans  NlpRegexAddWordsPackage
+  package_t package = interpret_package->package;
+  */
+
+
   IFE(NlpAutoComplete(ctrl_nlp_th));
 
   IFE(NlpLtras(ctrl_nlp_th));

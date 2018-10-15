@@ -69,6 +69,7 @@ package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string
 
   IF(NlpInputPartWordInit(ctrl_nlp_th, package)) return NULL;
   IF(NlpInputPartAliasInit(ctrl_nlp_th, package)) return NULL;
+  IF(NlpRegexInit(ctrl_nlp_th, package)) return NULL;
 
   return (package);
 }
@@ -349,6 +350,7 @@ static og_status NlpPackageFlush(package_t package)
   NlpInputPartWordFlush(package);
   NlpInputPartAliasFlush(package);
   NlpLtracPackageFlush(package);
+  NlpRegexFlush(package);
 
   NlpPackageInterpretationsFlush(package);
   NlpPackageContextsFlush(package);
