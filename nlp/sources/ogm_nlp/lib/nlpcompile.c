@@ -675,6 +675,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   json_t *json_id = NULL;
   json_t *json_package = NULL;
   json_t *json_alias_type = NULL;
+  json_t *json_regex = NULL;
 
   for (void *iter = json_object_iter(json_alias); iter; iter = json_object_iter_next(json_alias, iter))
   {
@@ -699,6 +700,10 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     else if (Ogstricmp(key, "type") == 0)
     {
       json_alias_type = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "regex") == 0)
+    {
+      json_regex = json_object_iter_value(iter);
     }
     else
     {
@@ -725,7 +730,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     DPcErr;
   }
 
-  alias->type = nlp_alias_type_type_Interpretation;
+  alias->type = nlp_alias_type_Interpretation;
   if (json_alias_type != NULL)
   {
     if (json_is_string(json_alias_type))
@@ -733,6 +738,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       const char *string_alias_type = json_string_value(json_alias_type);
       if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
       else if (!Ogstricmp(string_alias_type, "number")) alias->type = nlp_alias_type_Number;
+      else if (!Ogstricmp(string_alias_type, "regex")) alias->type = nlp_alias_type_Regex;
       else
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: unknown type '%s'", string_alias_type);
@@ -746,7 +752,28 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     }
   }
 
-  if (alias->type == nlp_alias_type_type_Interpretation)
+  if (json_regex != NULL)
+  {
+    if (json_is_string(json_regex))
+    {
+      const char *string_regex = json_string_value(json_regex);
+      alias->regex_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->regex_length = strlen(string_regex);
+      if (alias->regex_length > DOgNlpInterpretationRegexMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: regex is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->regex_length + 1, string_regex));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: regex is not a string");
+      DPcErr;
+    }
+  }
+
+  if (alias->type == nlp_alias_type_Interpretation)
   {
     if (json_slug == NULL)
     {

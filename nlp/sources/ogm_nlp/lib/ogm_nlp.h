@@ -33,6 +33,7 @@
 #define DOgNlpBaNumber 0x100
 
 #define DOgNlpInterpretationExpressionMaxLength   0x800
+#define DOgNlpInterpretationRegexMaxLength        0x1000
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
 
 #define DOgNlpMaximumOwnedLock      16
@@ -126,7 +127,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number
+  nlp_alias_type_Nil = 0, nlp_alias_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number, nlp_alias_type_Regex
 };
 
 struct alias_compile
@@ -136,6 +137,7 @@ struct alias_compile
   int slug_start, slug_length;       // interpretation slug
   int id_start, id_length;           // interpretation id
   int package_id_start, package_id_length;
+  int regex_start, regex_length;
 };
 
 struct alias
@@ -150,6 +152,7 @@ struct alias
   og_string slug;
   og_string id;
   og_string package_id;
+  og_string regex;
 };
 
 struct context_compile
@@ -254,7 +257,7 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number
+  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number, nlp_input_part_type_Regex
 };
 
 struct input_part_word
