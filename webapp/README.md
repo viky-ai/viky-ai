@@ -15,6 +15,67 @@
 * Graphviz             ( `sudo apt-get install -y graphviz` )
 * Docker 17.09.0-ce    ( [see below](#docker) )
 
+## Install a dev environment
+
+This section will guide you to install a dev environment on a new machine.
+This is a recommended way for **Ubuntu 18.04** but feel free to customize it if you know what you are doing.
+If you need more information, see sections below.
+
+1. Install Ruby : `sudo apt install ruby ruby-dev`
+2. Install Docker : `sudo apt install docker.io`
+3. Configure Docker to use the Pertimm registry :
+    ```bash
+    $ echo "{
+        "registry-mirrors": [
+          "http://docker-mirror.pertimm.corp:50000"
+        ]
+    }" > /etc/docker/daemon.json
+    ```
+4. Install PostgresSQL : `sudo apt install postgresql postgresql-contrib libpq-dev`
+5. Add a viky user to PostgresSQL :
+    ```bash
+    $ sudo -i -u postgres
+    $ createuser --interactive
+    Enter name of role to add : viky
+    Shall the new role be a superuser? (y/n) y
+    $ psql
+    postgres=# ALTER USER "viky" WITH PASSWORD 'viky';
+    postgres=# \q
+    $ exit
+    ```
+6. Install Redis : `sudo apt install redis-server`
+7. Install NodeJS : `sudo apt install nodejs`
+8. Install Yarn : follow instructions [here](https://yarnpkg.com/lang/en/docs/install/)
+9. Install Rake & Bundler : `gem install rake bundler`
+10. Create a new directory to put the viky project :
+    ```bash
+    $ mkdir ./viky
+    $ cd viky
+    $ git clone git@gitlab.pertimm.corp:viky.ai/platform.git
+    ```
+11. Install every dependencies :
+    ```bash
+    $ cd platform
+    $ bundler install # Ruby dependencies
+    $ yarn install # JavaScript/CoffeScript dependencies
+    ```
+12. Configure your `.env` file :
+    ```bash
+    $ echo "MY_CURRENT_GIT_BRANCH=:`git describe --all --abbrev=0 --always --contains | sed 's|[~^].*||' | sed 's|remotes/origin/||' | sed 's|heads/||' | sed 's|tags/||' | sed 's|/|-|g' | sed 's|_|-|g'`" >> .env
+    ```
+13. Create databases : `$ ./bin/rails db:setup`
+14. Start statistics containers (dev + tests) :
+    ```bash
+    $ docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    $ docker run -p 9222:9200                                                        -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    ```
+15. Setup statistics : `$ ./bin/rails statistics:setup`
+16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`
+17. Start Foreman : `$ foreman start`
+18. Invite you as admin : `$ ./bin/rails users:invite_admin[<your@email.com>]`
+
+_Troubleshooting_ : sometimes Foreman fails on the Cerebro service. It is because we setup a Docker link between the dev stats container and the Cerebro container. This container may start too fast before the statistics container. Thus the link cannot be established and the Cerebro container fails. You have two solutions : either you can restart Foreman and hope to have some luck with the timing or you can increase the `sleep` delay in your `Procfile`.
+
 ## Environment Variables
 
 The application makes extensive use of environment variables to keep the configuration flexible across every development environment.
@@ -102,11 +163,12 @@ The first time you start the application you need to manually create two databas
 $ sudo -i -u postgres
 ## Become postgres user
 $ createuser --interactive
-+...
-psql
-ALTER USER "<user>" WITH PASSWORD '<password>';
-\q
-exit
+Enter name of role to add : viky
+Shall the new role be a superuser? (y/n) y
+$ psql
+postgres=# ALTER USER "<user>" WITH PASSWORD '<password>';
+postgres=# \q
+$ exit
 ```
 
 ### Create database
