@@ -4,9 +4,11 @@ module Nls
 
   class AliasSpecificType
     attr_reader :type
+    attr_reader :regex
 
-    def initialize(type)
+    def initialize(type, regex = nil)
       @type = type
+      @regex = regex
     end
 
   end
@@ -17,10 +19,13 @@ module Nls
     attr_reader :interpretation
     attr_reader :type
     attr_accessor :expression
+    attr_reader :regex
 
     def initialize(interpretation, opts = {}) # name = nil, is_any = nil)
       @type = :normal
       @type = opts[:type] if opts.has_key?(:type)
+
+      @regex = opts[:regex] if opts.has_key?(:regex)
 
       name = nil
       name = opts[:name] if opts.has_key?(:name)
@@ -57,6 +62,7 @@ module Nls
       else
         hash['alias'] = "#{@name}"
         hash['type'] = "#{@type}"
+        hash['regex'] = "#{@regex}" if @type == :regex
       end
       hash
     end
@@ -71,6 +77,10 @@ module Nls
 
     def self.number
       AliasSpecificType.new(:number)
+    end
+
+    def self.regex(regex)
+      AliasSpecificType.new(:regex, regex)
     end
 
   end
