@@ -55,7 +55,14 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
   if (request_expression->sorted_flat_list->length > 0)
   {
     // Create List with all sub_request_expression->solution
-    request_expression->json_solution = json_array();
+    if (!json_is_array(request_expression->json_solution))
+    {
+      json_decrefp(&request_expression->json_solution);
+    }
+    if (!request_expression->json_solution)
+    {
+      request_expression->json_solution = json_array();
+    }
 
     for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
@@ -221,8 +228,14 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
   if (request_expression->sorted_flat_list->length > 0)
   {
-    // Create List with all sub_request_expression->solution
-    request_expression->json_solution = json_array();
+    if (!json_is_array(request_expression->json_solution))
+    {
+      json_decrefp(&request_expression->json_solution);
+    }
+    if (!request_expression->json_solution)
+    {
+      request_expression->json_solution = json_array();
+    }
 
     for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
@@ -246,8 +259,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
       char solution[DPcPathSize];
       NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
-      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' (flat list) building solution : %s", alias_name,
-          solution);
+      NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' (flat list) building solution : %s",
+          alias_name, solution);
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
       {
@@ -290,8 +303,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
         char solution[DPcPathSize];
         NlpSolutionString(ctrl_nlp_th, sub_solution, DPcPathSize, solution);
-        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (interpretation): %s",
-            alias->alias, solution);
+        NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (interpretation):"
+            " %s", alias->alias, solution);
 
         if (alias_solutions_nb >= DOgAliasSolutionSize)
         {
@@ -373,8 +386,8 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
     struct alias *alias = request_expression->expression->aliases
         + request_expression->expression->alias_any_input_part_position;
 
-    NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (any): %s", alias->alias,
-        string_any);
+    NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (any): %s",
+        alias->alias, string_any);
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
     {
@@ -397,7 +410,14 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 og_status NlpSolutionMergeObjects(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   // Combining the objects into a single object
-  request_expression->json_solution = json_object();
+  if (!json_is_object(request_expression->json_solution))
+  {
+    json_decrefp(&request_expression->json_solution);
+  }
+  if (!request_expression->json_solution)
+  {
+    request_expression->json_solution = json_object();
+  }
 
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
@@ -787,12 +807,12 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     else
     {
       request_expression->json_solution = NULL;
-      json_decref(json_solution_computed_value);
+      json_decrefp(&json_solution_computed_value);
     }
 
     if (json_new_solution != json_solution_computed_value)
     {
-      json_decref(json_new_solution);
+      json_decrefp(&json_new_solution);
     }
   }
   else
@@ -859,7 +879,9 @@ static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request
   for (GList *iter = request_expression->tmp_solutions->head; iter; iter = iter->next)
   {
     struct alias_solution *alias_solution = iter->data;
+
     json_decrefp(&alias_solution->json_solution);
+
     g_slice_free(struct alias_solution, alias_solution);
     iter->data = NULL;
   }
@@ -868,7 +890,7 @@ static og_status NlpSolutionCleanRecursive(og_nlp_th ctrl_nlp_th, struct request
   if (request_expression->sorted_flat_list->length > 0)
   {
     // Create List with all sub_request_expression->solution
-    request_expression->json_solution = json_array();
+    // request_expression->json_solution = json_array();
 
     for (GList *iter = request_expression->sorted_flat_list->head; iter; iter = iter->next)
     {
