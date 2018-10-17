@@ -302,6 +302,7 @@ struct number_input_part
 struct regex
 {
   struct alias *alias;
+  GRegex *regex;
 };
 
 enum nlp_synchro_test_timeout_in

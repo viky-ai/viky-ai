@@ -10,6 +10,7 @@ static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th, package_t pa
     struct interpretation *interpretation);
 static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
+static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex);
 
 og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package)
 {
@@ -22,6 +23,16 @@ og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package)
 
 og_status NlpRegexFlush(package_t package)
 {
+  // flusher les regex avant de flusher la heap sinon fuite mémoire
+  int regexNumber = OgHeapGetCellsUsed(package->hregex);
+  for(int i=0;i<regexNumber; i++)
+  {
+    struct regex *regex = OgHeapGetCell(package->hregex, i);
+    if(regex->regex)
+    {
+      g_regex_unref(regex->regex);
+    }
+  }
   IFE(OgHeapFlush(package->hregex));
   DONE;
 }
@@ -84,11 +95,26 @@ static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, package_t package, st
 
   struct regex regex[1];
   regex->alias = alias;
+  regex->regex = NULL;
 
-  // TODO SMA Compile regex here, remonter en erreur si ça compile pas
+  IFE(NlpRegexCompile(ctrl_nlp_th, regex));
 
   IFE(OgHeapAppend(package->hregex, 1, regex));
 
+  DONE;
+}
+
+static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex)
+{
+  GError *regexp_error = NULL;
+  regex->regex = g_regex_new(regex->alias->regex, 0, 0, &regexp_error);
+  if (!regex->regex || regexp_error)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on main : %s",
+        regexp_error->message);
+    g_error_free(regexp_error);
+    DPcErr;
+  }
   DONE;
 }
 
