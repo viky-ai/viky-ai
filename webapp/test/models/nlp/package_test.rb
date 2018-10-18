@@ -542,17 +542,43 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/terminator",
       "interpretations" => [
         {
+          "id"=>"997928ef-e905-535e-b36a-2f64b7349c3b",
+          "slug"=>"admin/terminator/interpretations/simple_where",
+          "scope"=>"public",
+          "expressions"=>  [
+              {
+                "expression"=>"Find",
+                "locale"=>"en",
+                "solution"=>"Find"
+              }
+            ]
+        },
+        {
           "id" => "6a04a399-6606-5c51-93fc-14766af0c30c",
           "slug" => "admin/terminator/interpretations/terminator_find",
           "scope" => "public",
           "expressions" => [
+            {
+              "expression" => "@{find} Sarah Connor",
+              "aliases"=> [
+                {
+                  "alias" => "find",
+                  "slug" => "admin/terminator/interpretations/simple_where",
+                  "id" => "997928ef-e905-535e-b36a-2f64b7349c3b",
+                  "package" => "794f5279-8ed5-5563-9229-3d2573f23051"
+                }
+              ],
+              "locale"=>"en"
+            },
             {
               "expression" => "Where is Sarah Connor ?",
               "locale" => "en",
               "solution" => "Where is Sarah Connor ?"
             }
           ]
-        }, {
+        },
+        {
+
           "id" => "1f45c98f-b39b-5a8b-a4a7-8379bea19f0a",
           "slug" => "admin/terminator/entities_lists/terminator_targets",
           "scope" => "private",
