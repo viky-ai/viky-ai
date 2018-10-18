@@ -354,6 +354,9 @@ struct request_word
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
+  og_bool is_regex;
+  int Iregex;
+  package_t regex_package;
 
   /**
    * chain the list in order to ignore merged words
@@ -1030,5 +1033,6 @@ og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexFlush(package_t package);
 og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th);
 
 

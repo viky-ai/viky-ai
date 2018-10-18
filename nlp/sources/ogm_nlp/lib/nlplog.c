@@ -409,8 +409,16 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
     snprintf(is_punctuation, DPcPathSize, " (punctuation)");
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", request_word->self_index, string_request_word,
-      request_word->start_position, request_word->length_position, is_punctuation);
+  unsigned char is_regex[DPcPathSize];
+  is_regex[0] = 0;
+  if (request_word->is_regex)
+  {
+    struct regex *regex = OgHeapGetCell(request_word->regex_package->hregex, request_word->Iregex);
+    snprintf(is_regex, DPcPathSize, " (regex='%s')",regex->alias->regex);
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s%s", request_word->self_index, string_request_word,
+      request_word->start_position, request_word->length_position, is_regex, is_punctuation);
   DONE;
 }
 
