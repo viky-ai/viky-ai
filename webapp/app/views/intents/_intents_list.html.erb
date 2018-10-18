@@ -34,6 +34,15 @@
             </div>
             <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
               <ul>
+                <% if intent.is_used_by(@agent).any? %>
+                  <li>
+                    <a href="#">
+                    <span class="icon icon--x-small">
+                      <%= icon_information %>
+                    </span><%= t('views.intents.index.used_by')  %>
+                    </a>
+                  </li>
+                <% end %>
                 <li>
                   <a href="<%= edit_user_agent_intent_path(agent_owner, @agent, intent) %>"
                      data-action="open-remote-modal">

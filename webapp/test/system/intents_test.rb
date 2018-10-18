@@ -15,7 +15,6 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Interpretation has been successfully created.')
   end
 
-
   test 'Errors on intent creation' do
     go_to_agent_intents('admin', 'terminator')
     click_link 'New interpretation'
@@ -212,6 +211,22 @@ class IntentsTest < ApplicationSystemTestCase
       click_button '#search'
       assert page.has_text?('My awesome weather bot admin/weather')
       assert page.has_no_text?('Weather bot confirmed/weather')
+    end
+  end
+
+  test 'Used by menu' do
+    go_to_agent_intents('admin', 'terminator')
+
+    within '#intents-list-is_public' do
+      first('.dropdown__trigger > button').click
+      assert page.has_no_text?('Used by...')
+    end
+
+    page.refresh
+
+    within '#intents-list-is_private' do
+      first('.dropdown__trigger > button').click
+      assert page.has_text?('Used by...')
     end
   end
 end
