@@ -413,7 +413,7 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
   is_regex[0] = 0;
   if (request_word->is_regex)
   {
-    struct regex *regex = OgHeapGetCell(request_word->regex_package->hregex, request_word->Iregex);
+    struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, request_word->Iregex);
     snprintf(is_regex, DPcPathSize, " (regex='%s')",regex->alias->regex);
   }
 

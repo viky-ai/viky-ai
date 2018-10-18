@@ -109,8 +109,6 @@ struct package
   og_heap halias_compile;
   og_heap halias;
 
-  og_heap hregex;
-
   /** hinput_part_ba : String heap for input_part, read-only after compilation step */
   og_heap hinput_part_ba;
   og_heap hinput_part;
@@ -356,7 +354,6 @@ struct request_word
   og_bool is_punctuation;
   og_bool is_regex;
   int Iregex;
-  package_t regex_package;
 
   /**
    * chain the list in order to ignore merged words
@@ -692,6 +689,8 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_position;
 
   og_heap hrequest_any;
+
+  og_heap hregex;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -1029,10 +1028,11 @@ og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpregex.c */
-og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpRegexFlush(package_t package);
+og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpRegexFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th);
+og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 
 

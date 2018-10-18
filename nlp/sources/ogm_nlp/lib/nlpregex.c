@@ -6,36 +6,39 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th, package_t package,
+static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th,
     struct interpretation *interpretation);
-static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
-static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
+static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, struct expression *expression);
+static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias);
 static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex);
-static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
-static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex, package_t package);
+static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex);
 
-og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, og_string name)
 {
-  og_char_buffer heap_name[DPcPathSize];
-  void *hmsg = ctrl_nlp_th->ctrl_nlp->hmsg;
-  snprintf(heap_name, DPcPathSize, "regex_%s", package->id);
-  IFn(package->hregex = OgHeapInit(hmsg, heap_name, sizeof(struct regex), 1)) DPcErr;
-  DONE;
+  og_char_buffer nlpc_name[DPcPathSize];
+  snprintf(nlpc_name, DPcPathSize, "%s_regex", name);
+  ctrl_nlp_th->hregex = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct regex), 1);
+  IFN(ctrl_nlp_th->hregex)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+DONE;
 }
 
-og_status NlpRegexFlush(package_t package)
+og_status NlpRegexFlush(og_nlp_th ctrl_nlp_th)
 {
   // flusher les regex avant de flusher la heap sinon fuite mémoire
-  int regexNumber = OgHeapGetCellsUsed(package->hregex);
+  int regexNumber = OgHeapGetCellsUsed(ctrl_nlp_th->hregex);
   for(int i=0;i<regexNumber; i++)
   {
-    struct regex *regex = OgHeapGetCell(package->hregex, i);
+    struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, i);
     if(regex->regex)
     {
       g_regex_unref(regex->regex);
     }
   }
-  IFE(OgHeapFlush(package->hregex));
+  IFE(OgHeapFlush(ctrl_nlp_th->hregex));
   DONE;
 }
 
@@ -47,45 +50,42 @@ og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package)
     struct interpretation *interpretation = OgHeapGetCell(package->hinterpretation, i);
     IFN(interpretation) DPcErr;
 
-    IFE(NlpRegexBuildInterpretation(ctrl_nlp_th, package, interpretation));
+    IFE(NlpRegexBuildInterpretation(ctrl_nlp_th, interpretation));
   }
-
-  NlpRegexPackageLog(ctrl_nlp_th, package);
-
   DONE;
 }
 
-static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th, package_t package,
+static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th,
     struct interpretation *interpretation)
 {
   IFN(interpretation) DPcErr;
 
   for (int i = 0; i < interpretation->expressions_nb; i++)
   {
-    IFE(NlpRegexBuildExpression(ctrl_nlp_th, package, interpretation->expressions + i));
+    IFE(NlpRegexBuildExpression(ctrl_nlp_th, interpretation->expressions + i));
   }
 
   DONE;
 }
 
-static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, struct expression *expression)
 {
   IFN(expression) DPcErr;
 
   for (int i = 0; i < expression->aliases_nb; i++)
   {
-    IFE(NlpRegexBuildAlias(ctrl_nlp_th, package, expression->aliases + i));
+    IFE(NlpRegexBuildAlias(ctrl_nlp_th, expression->aliases + i));
   }
 
   DONE;
 }
 
-static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias)
+static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias)
 {
   IFN(alias) DPcErr;
   if (alias->type != nlp_alias_type_Regex) DONE;
 
-  int regex_used = OgHeapGetCellsUsed(package->hregex);
+  int regex_used = OgHeapGetCellsUsed(ctrl_nlp_th->hregex);
   if (regex_used >= DOgNlpMaximumRegex)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexBuildAlias: maximum regex number reached: %d", regex_used);
@@ -101,7 +101,7 @@ static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, package_t package, st
 
   IFE(NlpRegexCompile(ctrl_nlp_th, regex));
 
-  IFE(OgHeapAppend(package->hregex, 1, regex));
+  IFE(OgHeapAppend(ctrl_nlp_th->hregex, 1, regex));
 
   DONE;
 }
@@ -121,24 +121,7 @@ static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex)
 }
 
 
-
 og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
-{
-  int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
-  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
-  IFN(interpret_packages) DPcErr;
-  for (int i = 0; i < interpret_package_used; i++)
-  {
-    struct interpret_package *interpret_package = interpret_packages + i;
-    og_bool status = NlpRegexAddWordsPackage(ctrl_nlp_th, interpret_package);
-    IFE(status);
-  }
-
-
-  DONE;
-}
-
-static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package)
 {
   og_string sentence = ctrl_nlp_th->request_sentence;
 
@@ -147,10 +130,10 @@ static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret
   int start_match_position = 0;
   int end_match_position = 0;
 
-  int regexNumber = OgHeapGetCellsUsed(interpret_package->package->hregex);
+  int regexNumber = OgHeapGetCellsUsed(ctrl_nlp_th->hregex);
   for(int i=0; i<regexNumber; i++)
   {
-    struct regex *regex = OgHeapGetCell(interpret_package->package->hregex, i);
+    struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, i);
     if(regex->regex)
     {
       // match the regular expression
@@ -159,7 +142,7 @@ static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret
       og_bool match = g_regex_match_all_full(regex->regex, sentence, -1, 0, 0, &match_info, &regexp_error);
       if (regexp_error)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexAddWordsPackage: g_regex_match_all_full failed on execution : %s",
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_regex_match_all_full failed on execution : %s",
             regexp_error->message);
         g_error_free(regexp_error);
 
@@ -178,9 +161,9 @@ static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret
 
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
-          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpRegexAddWordsPackage: matched sentence with regex '%s' start=%d end=%d",matchedSentence,start_match_position,end_match_position);
+          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchRegexes: matched sentence with regex '%s' start=%d end=%d",matchedSentence,start_match_position,end_match_position);
         }
-        IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i, interpret_package->package));
+        IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i));
 
         g_match_info_free(match_info);
         match_info = NULL;
@@ -206,7 +189,7 @@ static og_status NlpRegexAddWordsPackage(og_nlp_th ctrl_nlp_th, struct interpret
 
 
 
-static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex, package_t package)
+static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex)
 {
   og_string s = ctrl_nlp_th->request_sentence;
 
@@ -241,7 +224,6 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->is_auto_complete_word = FALSE;
   request_word->is_regex = TRUE;
   request_word->Iregex = Iregex;
-  request_word->regex_package = package;
 
   DONE;
 }
@@ -251,10 +233,10 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
 
 
-og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package)
+og_status NlpRegexLog(og_nlp_th ctrl_nlp_th)
 {
-  int regex_used = OgHeapGetCellsUsed(package->hregex);
-  struct regex *regexes = OgHeapGetCell(package->hregex,0);
+  int regex_used = OgHeapGetCellsUsed(ctrl_nlp_th->hregex);
+  struct regex *regexes = OgHeapGetCell(ctrl_nlp_th->hregex,0);
 
   for (int i = 0; i < regex_used; i++)
   {
