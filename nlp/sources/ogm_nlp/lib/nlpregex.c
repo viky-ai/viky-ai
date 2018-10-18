@@ -126,8 +126,6 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
 {
   og_string sentence = ctrl_nlp_th->request_sentence;
 
-  og_bool found = FALSE;
-  og_string *matchedSentence = NULL;
   int start_match_position = 0;
   int end_match_position = 0;
 
@@ -140,7 +138,7 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
       // match the regular expression
       GMatchInfo *match_info = NULL;
       GError *regexp_error = NULL;
-      og_bool match = g_regex_match_all_full(regex->regex, sentence, -1, 0, 0, &match_info, &regexp_error);
+      og_bool match = g_regex_match_full(regex->regex, sentence, -1, 0, 0, &match_info, &regexp_error);
       if (regexp_error)
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_regex_match_all_full failed on execution : %s",
@@ -157,18 +155,35 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
 
       if (match)
       {
-        matchedSentence = (og_string *)g_match_info_get_string(match_info);
-        g_match_info_fetch_pos (match_info, 0, &start_match_position, &end_match_position);
-
-        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+        while (g_match_info_matches (match_info))
         {
-          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchRegexes: matched sentence with regex '%s' start=%d end=%d",matchedSentence,start_match_position,end_match_position);
+          g_match_info_fetch_pos (match_info, 0, &start_match_position, &end_match_position);
+
+          if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+          {
+            OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchRegexes: matched sentence with regex '%s' start=%d end=%d",sentence,start_match_position,end_match_position);
+          }
+          IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i));
+
+          g_match_info_next (match_info, &regexp_error);
+
+          if (regexp_error)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_match_info_next failed on execution : %s",
+                regexp_error->message);
+            g_error_free(regexp_error);
+
+            if (match_info != NULL)
+            {
+              g_match_info_free(match_info);
+            }
+
+            DPcErr;
+          }
         }
-        IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i));
 
         g_match_info_free(match_info);
         match_info = NULL;
-        found = TRUE;
       }
 
       // ensure match_info freeing
@@ -178,11 +193,6 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
       }
 
     }
-  }
-
-  if(found)
-  {
-    // ajouter à la réponse
   }
 
   DONE;
