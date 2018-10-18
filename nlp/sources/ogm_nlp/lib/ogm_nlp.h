@@ -299,7 +299,7 @@ struct number_input_part
 
 struct regex
 {
-  struct alias *alias;
+  struct input_part *input_part;
   GRegex *regex;
 };
 

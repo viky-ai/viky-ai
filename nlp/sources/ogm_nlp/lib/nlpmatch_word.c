@@ -42,7 +42,18 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
     snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
   }
 
-  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, number);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    unsigned char regex_string[DPcPathSize];
+    regex_string[0]=0;
+    if (request_word->is_regex)
+    {
+      struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, request_word->Iregex);
+      snprintf(regex_string, DPcPathSize, " (regex='%s')",regex->input_part->alias->regex);
+
+    }
+    NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s%s:", string_request_word, number, regex_string);
+  }
 
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
@@ -59,6 +70,13 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     unsigned char *input, struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
+
+  if (request_word->is_regex)
+  {
+    struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, request_word->Iregex);
+    IFN(regex) DPcErr;
+    IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, regex->input_part->self_index,FALSE));
+  }
 
   if (request_word->is_number)
   {

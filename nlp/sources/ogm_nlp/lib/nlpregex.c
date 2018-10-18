@@ -9,7 +9,7 @@
 static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th,
     struct interpretation *interpretation);
 static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, struct expression *expression);
-static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias);
+static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part);
 static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex);
 static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex);
 
@@ -72,18 +72,19 @@ static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, struct expressio
 {
   IFN(expression) DPcErr;
 
-  for (int i = 0; i < expression->aliases_nb; i++)
+  for (int i = 0; i < expression->input_parts_nb; i++)
   {
-    IFE(NlpRegexBuildAlias(ctrl_nlp_th, expression->aliases + i));
+    IFE(NlpRegexBuildInputPart(ctrl_nlp_th, expression->input_parts+i));
   }
 
   DONE;
 }
 
-static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias)
+static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part)
 {
+  if (input_part->type != nlp_input_part_type_Regex) DONE;
+  struct alias *alias = input_part->alias;
   IFN(alias) DPcErr;
-  if (alias->type != nlp_alias_type_Regex) DONE;
 
   int regex_used = OgHeapGetCellsUsed(ctrl_nlp_th->hregex);
   if (regex_used >= DOgNlpMaximumRegex)
@@ -96,7 +97,7 @@ static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias)
       NlpAliasTypeString(alias->type), alias->regex);
 
   struct regex regex[1];
-  regex->alias = alias;
+  regex->input_part = input_part;
   regex->regex = NULL;
 
   IFE(NlpRegexCompile(ctrl_nlp_th, regex));
@@ -109,7 +110,7 @@ static og_status NlpRegexBuildAlias(og_nlp_th ctrl_nlp_th, struct alias *alias)
 static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex)
 {
   GError *regexp_error = NULL;
-  regex->regex = g_regex_new(regex->alias->regex, 0, 0, &regexp_error);
+  regex->regex = g_regex_new(regex->input_part->alias->regex, 0, 0, &regexp_error);
   if (!regex->regex || regexp_error)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchGroupNumbersInitAddSeparatorConf: g_regex_new failed on main : %s",
@@ -241,7 +242,7 @@ og_status NlpRegexLog(og_nlp_th ctrl_nlp_th)
   for (int i = 0; i < regex_used; i++)
   {
     struct regex *regex = regexes + i;
-    struct alias *alias = regex->alias;
+    struct alias *alias = regex->input_part->alias;
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "regex '%s' '%s'", alias->alias, alias->regex);
   }
   DONE;
