@@ -38,3 +38,4 @@ simple_where:
   agent: terminator
   color: red
   position: 1
+  visibility: 1
