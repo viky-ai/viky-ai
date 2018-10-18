@@ -35,6 +35,13 @@ class Intent < ApplicationRecord
     "#{agent.slug}/interpretations/#{intentname}"
   end
 
+  def is_used_by(current_agent)
+    Intent.where(agent: current_agent)
+          .joins(interpretations: :interpretation_aliases)
+          .distinct
+          .where(interpretation_aliases: {interpretation_aliasable: self})
+  end
+
   private
 
     def clean_intentname

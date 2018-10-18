@@ -216,4 +216,58 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal expected, weather.errors.messages
     assert_equal weather.agent.id, agents(:weather).id
   end
+
+  test 'Get intents that are using the current intent' do
+    current_intent = intents(:simple_where)
+    current_agent = agents(:terminator)
+    expected = [intents(:terminator_find)]
+    actual = current_intent.is_used_by(current_agent)
+    assert_equal expected, actual
+  end
+
+  test 'No intents that are using the current intent' do
+    current_intent = intents(:weather_forecast)
+    current_agent = agents(:weather)
+    expected = []
+    actual = current_intent.is_used_by(current_agent)
+    assert_equal expected, actual
+  end
+
+  test 'Get intents of another agent that are using the current intent' do
+    current_intent = intents(:simple_where)
+
+    dependent_agent = create_agent("Where weather")
+    target_agent = agents(:terminator)
+    AgentArc.create(source: dependent_agent, target: target_agent)
+
+    weather_loc_intent = Intent.new(
+      intentname: 'weather_location',
+      description: 'Find locations with similar weather',
+      locales: ['en'],
+      visibility: 'is_private'
+    )
+    weather_loc_intent.agent = dependent_agent
+    assert weather_loc_intent.save
+
+    interpretation = interpretation = Interpretation.new(
+      expression: 'Where is it raining?',
+      locale: 'en'
+    )
+    interpretation.intent = weather_loc_intent
+    interpretation_alias = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'Where',
+      nature: 'type_intent'
+    )
+    interpretation_alias.interpretation = interpretation
+    interpretation_alias.interpretation_aliasable = current_intent
+    assert interpretation_alias.save
+
+    expected = [intents(:terminator_find)]
+    actual = current_intent.is_used_by(target_agent)
+    assert_equal expected, actual
+    assert_not_includes actual, weather_loc_intent
+  end
+
 end
