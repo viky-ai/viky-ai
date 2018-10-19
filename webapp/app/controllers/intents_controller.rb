@@ -142,6 +142,12 @@ class IntentsController < ApplicationController
     end
   end
 
+  def get_used_by_intents
+    puts "this was called===================================="
+    used_by_intents_list = @intent.is_used_by(@agent)
+    render partial: 'used_by_intents_list', locals: {intents_list: used_by_intents_list, intent: @intent, is_intent: true, agent_owner: @owner, agent: @agent}
+  end
+
 
   private
 
@@ -168,7 +174,7 @@ class IntentsController < ApplicationController
         access_denied unless current_user.can? :show, @agent
       when 'new', 'create', 'edit', 'update', 'confirm_destroy',
            'destroy', 'update_positions', 'select_new_locale',
-           'add_locale', 'remove_locale'
+           'add_locale', 'remove_locale', 'get_used_by_intents'
         access_denied unless current_user.can? :edit, @agent
       when 'move_to_agent'
         if current_user.can? :edit, @agent

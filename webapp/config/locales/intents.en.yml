@@ -47,4 +47,6 @@ en:
           Create the first interpretation with the button above.
         message_show_html: >
           No interpretation entered for the "%{agent}" agent.
+      used_by_list:
+        title_html: "Interpretations using <strong>%{name}</strong>"
 

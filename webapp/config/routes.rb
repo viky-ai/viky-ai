@@ -73,6 +73,7 @@ Rails.application.routes.draw do
           post :add_locale
           delete :remove_locale
           get :confirm_destroy
+          get :get_used_by_intents
           collection do
             post :update_positions
           end

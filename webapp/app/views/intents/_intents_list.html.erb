@@ -36,7 +36,8 @@
               <ul>
                 <% if intent.is_used_by(@agent).any? %>
                   <li>
-                    <a href="#">
+                    <a href="<%= user_agent_intent_get_used_by_intents_path(agent_owner, @agent, intent) %>"
+                       data-action="open-remote-modal">
                     <span class="icon icon--x-small">
                       <%= icon_information %>
                     </span><%= t('views.intents.index.used_by')  %>

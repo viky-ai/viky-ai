@@ -1,0 +1,30 @@
+<div class="modal modal--fixed-on-top" style="display: none;">
+  <div class="modal__overlay" data-action='close-modal'></div>
+  <div class="modal__main">
+    <h5 class="modal__main__title">
+      <% if is_intent %>
+        <%= t('views.intents.used_by_list.title_html', name: intent.intentname) %>
+      <% else %>
+        <%= t('views.intents.used_by_list.title_html', name: entities_list.listname) %>
+      <% end %>
+      <button class="modal__main__title__close" data-action='close-modal'>
+        <%= icon_close %>
+      </button>
+    </h5>
+    <div class="modal__main__chooser">
+      <%= intents_list.inspect %>
+      <ui class= "card-list">
+        <% intents_list.each do |intent| %>
+          <li>
+            <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
+              <span class="card-list__item__name"><%= intent.intentname %></span>
+              <span class="card-list__item__desc"><%= intent.slug %></span>
+            </a>
+          </li>
+        <% end %>
+      </ui>
+
+
+    </div>
+  </div>
+</div>
