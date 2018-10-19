@@ -46,6 +46,13 @@ class EntitiesList < ApplicationRecord
     entities_import.proceed(self)
   end
 
+  def is_used_by(current_agent)
+    Intent.where(agent: current_agent)
+          .joins(interpretations: :interpretation_aliases)
+          .distinct
+          .where(interpretation_aliases: {interpretation_aliasable: self})
+  end
+
 
   private
 

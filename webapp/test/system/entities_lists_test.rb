@@ -162,4 +162,22 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_no_text?('Weather bot confirmed/weather')
     end
   end
+
+  test 'Used_by menu' do
+    admin = users(:admin)
+    go_to_agent_entities_lists('admin', 'weather')
+    within '#entities_lists-list-is_public' do
+      entity_with_used_by = all('.dropdown__trigger > button')[1]
+      entity_with_used_by.click
+      assert page.has_link?('Used by...')
+    end
+
+    page.refresh
+
+    within '#entities_lists-list-is_public' do
+      entity_without_used_by = all('.dropdown__trigger > button')[0]
+      entity_without_used_by.click
+      assert page.has_no_link?('Used by...')
+    end
+  end
 end

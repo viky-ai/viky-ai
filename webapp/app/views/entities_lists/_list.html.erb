@@ -33,6 +33,15 @@
             </div>
             <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
               <ul>
+                <% if entities_list.is_used_by(@agent).any? %>
+                  <li>
+                    <a href="#">
+                    <span class="icon icon--x-small">
+                      <%= icon_information %>
+                    </span><%= t('views.entities_lists.index.used_by')  %>
+                    </a>
+                  </li>
+                <% end %>
                 <li>
                   <a href="<%= edit_user_agent_entities_list_path(agent_owner, @agent, entities_list) %>"
                      data-action="open-remote-modal">

@@ -544,7 +544,7 @@ class PackageTest < ActiveSupport::TestCase
         {
           "id"=>"997928ef-e905-535e-b36a-2f64b7349c3b",
           "slug"=>"admin/terminator/interpretations/simple_where",
-          "scope"=>"public",
+          "scope"=>"private",
           "expressions"=>  [
               {
                 "expression"=>"Find",

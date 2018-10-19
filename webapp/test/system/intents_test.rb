@@ -219,14 +219,14 @@ class IntentsTest < ApplicationSystemTestCase
 
     within '#intents-list-is_public' do
       first('.dropdown__trigger > button').click
-      assert page.has_no_text?('Used by...')
+      assert page.has_no_link?('Used by...')
     end
 
     page.refresh
 
     within '#intents-list-is_private' do
       first('.dropdown__trigger > button').click
-      assert page.has_text?('Used by...')
+      assert page.has_link?('Used by...')
     end
   end
 end
