@@ -51,6 +51,7 @@ class EntitiesList < ApplicationRecord
           .joins(interpretations: :interpretation_aliases)
           .distinct
           .where(interpretation_aliases: {interpretation_aliasable: self})
+          .includes(:interpretations).order('position desc, created_at desc')
   end
 
 

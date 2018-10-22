@@ -170,6 +170,18 @@ class EntitiesListsTest < ApplicationSystemTestCase
       entity_with_used_by = all('.dropdown__trigger > button')[1]
       entity_with_used_by.click
       assert page.has_link?('Used by...')
+      click_link('Used by...')
+    end
+
+    assert page.has_text?('Interpretations using weather_dates')
+    within '.modal' do
+       within '#intents-list-is_public' do
+        assert page.has_link?('weather_forecast')
+      end
+
+      within '#intents-list-is_private' do
+        assert_no_css('li')
+      end
     end
 
     page.refresh

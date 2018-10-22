@@ -49,4 +49,6 @@ en:
           No interpretation entered for the "%{agent}" agent.
       used_by_list:
         title_html: "Interpretations using <strong>%{name}</strong>"
-
+        empty_list:
+          private: "There are no private interpretations using this."
+          public: "There are no public interpretations using this."

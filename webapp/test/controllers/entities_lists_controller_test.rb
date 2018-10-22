@@ -166,4 +166,20 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?('Unauthorized operation.')
   end
+
+  #
+  # Get used_by intents
+  #
+  test 'Used_by interpretations' do
+    sign_in users(:admin)
+    get user_agent_entities_list_get_used_by_intents_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
+    assert_response :success
+  end
+
+  test 'Used_by interpretations forbidden' do
+    sign_in users(:confirmed)
+    get user_agent_entities_list_get_used_by_intents_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
+    assert_redirected_to agents_path
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

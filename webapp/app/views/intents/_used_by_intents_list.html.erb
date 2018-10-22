@@ -11,10 +11,15 @@
         <%= icon_close %>
       </button>
     </h5>
-    <div class="modal__main__chooser">
-      <%= intents_list.inspect %>
-      <ui class= "card-list">
-        <% intents_list.each do |intent| %>
+    <div class="modal__main__content">
+      <% private_intents = intents_list.is_private %>
+      <% public_intents = intents_list.is_public %>
+
+      <h5><%= t('views.intents.index.list_public_title_html') %></h5>
+      <ul class="card-list <% if public_intents.count == 0 %>card-list--empty<% end %>"
+          data-empty-content="<%= t('views.intents.used_by_list.empty_list.public') %>"
+          id="intents-list-is_public">
+        <% public_intents.each do |intent| %>
           <li>
             <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
               <span class="card-list__item__name"><%= intent.intentname %></span>
@@ -22,9 +27,21 @@
             </a>
           </li>
         <% end %>
-      </ui>
+      </ul>
 
-
+      <h5><%= t('views.intents.index.list_private_title_html') %></h5>
+      <ul class="card-list <% if private_intents.count == 0 %>card-list--empty<% end %>"
+          data-empty-content="<%= t('views.intents.used_by_list.empty_list.private') %>"
+          id="intents-list-is_private">
+        <% private_intents.each do |intent| %>
+          <li>
+            <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
+              <span class="card-list__item__name"><%= intent.intentname %></span>
+              <span class="card-list__item__desc"><%= intent.slug %></span>
+            </a>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
 </div>

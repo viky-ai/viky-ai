@@ -94,6 +94,7 @@ Rails.application.routes.draw do
             post :move_to_agent
           end
           get :confirm_destroy
+          get :get_used_by_intents
           collection do
             post :update_positions
           end

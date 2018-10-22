@@ -35,7 +35,8 @@
               <ul>
                 <% if entities_list.is_used_by(@agent).any? %>
                   <li>
-                    <a href="#">
+                    <a href="<%= user_agent_entities_list_get_used_by_intents_path(agent_owner, @agent, entities_list) %>"
+                       data-action="open-remote-modal">
                     <span class="icon icon--x-small">
                       <%= icon_information %>
                     </span><%= t('views.entities_lists.index.used_by')  %>

@@ -111,6 +111,11 @@ class EntitiesListsController < ApplicationController
     end
   end
 
+  def get_used_by_intents
+    used_by_intents_list = @entities_list.is_used_by(@agent)
+    render partial: 'intents/used_by_intents_list', locals: {intents_list: used_by_intents_list, entities_list: @entities_list, is_intent: false, agent_owner: @owner, agent: @agent}
+  end
+
 
   private
 
@@ -136,7 +141,7 @@ class EntitiesListsController < ApplicationController
         when 'show', 'index'
           access_denied unless current_user.can? :show, @agent
         when 'new', 'create', 'edit', 'update', 'confirm_destroy',
-             'destroy', 'update_positions'
+             'destroy', 'update_positions', 'get_used_by_intents'
           access_denied unless current_user.can? :edit, @agent
         when 'move_to_agent'
           if current_user.can? :edit, @agent

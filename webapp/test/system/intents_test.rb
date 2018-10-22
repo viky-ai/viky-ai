@@ -227,6 +227,19 @@ class IntentsTest < ApplicationSystemTestCase
     within '#intents-list-is_private' do
       first('.dropdown__trigger > button').click
       assert page.has_link?('Used by...')
+      # click link and check
+      click_link 'Used by...'
+    end
+
+    assert page.has_text?('Interpretations using simple_where')
+    within '.modal' do
+      within '#intents-list-is_public' do
+        assert page.has_link?('terminator_find')
+      end
+
+      within '#intents-list-is_private' do
+        assert_no_css('li')
+      end
     end
   end
 end
