@@ -35,7 +35,25 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     {
       struct request_word *request_word = request_input_part->request_word;
       score->locale += 1.0 / nb_words;
-      score->coverage += 1.0 / nb_words;
+      if(request_word->is_regex)
+      {
+        // calcul du nombre de mots que comporte le match de la regex
+        double wordCount = 0.0;
+        int regexStartIndex = request_word->start_position;
+        int regexEndIndex = regexStartIndex + request_word->length;
+        for(int j=0; j<nb_words; j++)
+        {
+          struct request_word *regex_word_part = OgHeapGetCell(ctrl_nlp_th->hrequest_word, j);
+          if(regex_word_part->start_position >= regexStartIndex && regex_word_part->start_position+regex_word_part->length <= regexEndIndex)
+            wordCount++;
+        }
+        score->coverage += wordCount / nb_words;
+
+      }
+      else
+      {
+        score->coverage += 1.0 / nb_words;
+      }
       score->spelling += request_word->spelling_score / nb_words;
     }
 
