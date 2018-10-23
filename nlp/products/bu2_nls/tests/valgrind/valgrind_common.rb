@@ -16,6 +16,7 @@ module Valgrind
       filename = File.basename(__FILE__)
 
       ruby_log_append(filename, "building packages")
+
       # several_packages_several_intents
       pg_building_feature_any = create_building_feature_any
       Nls::Nls.package_update(pg_building_feature_any)
@@ -23,11 +24,17 @@ module Valgrind
       numbers_package = create_numbers_package
       Nls::Nls.package_update(numbers_package)
 
+      regex_package = create_regex_package
+      Nls::Nls.package_update(regex_package)
+
       @main_package = @available_packages["pg-building-feature"]
       @main_uuid = @main_package.id.to_s
 
       @number_package = @available_packages["numbers"]
       @number_uuid = @number_package.id.to_s
+
+      @regex_package = @available_packages["regex_package"]
+      @regex_uuid = @regex_package.id.to_s
 
       ruby_log_append(filename, "building queries")
       interpret_query=
@@ -43,6 +50,14 @@ module Valgrind
         "sentence" => "a 12,345.678 b",
         "Accept-Language" => Nls::Interpretation.default_locale
       }
+
+      regex_query=
+      {
+        "packages" => [ @regex_uuid ],
+        "sentence" => "mail patrick@pertimm.com sebastien@pertimm.com",
+        "Accept-Language" => Nls::Interpretation.default_locale
+      }
+
 
       expected_error = "NlsCancelCleanupOnTimeout : Request timeout after"
 
@@ -68,6 +83,13 @@ module Valgrind
       # launch number query
       (10 * nb_request_factor).times do
         response = Nls::Nls.interpret(numbers_query, params)
+        assert !response.nil?
+      end
+
+      ruby_log_append(filename, "test regex query")
+      # launch number query
+      (10 * nb_request_factor).times do
+        response = Nls::Nls.interpret(regex_query, params)
         assert !response.nil?
       end
 

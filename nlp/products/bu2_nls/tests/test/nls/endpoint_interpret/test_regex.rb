@@ -33,7 +33,7 @@ module Nls
 
       # Tests
 
-      def test_regex_compile
+      def test_regex
 
         expected = {
           interpretation: "emails",
