@@ -22,7 +22,7 @@ module Nls
         package = Package.new("package")
 
         email = package.new_interpretation("email", { scope: "private" })
-        email << Expression.new("@{email}", aliases: { email: Alias.regex("[a-z]+@[a-z]+\.[a-z]+") })
+        email << Expression.new("@{email}", aliases: { email: Alias.regex("[a-z]+@[a-z]+\.[a-z]+") }, solution: "`{ email: email }`")
 
         emails = package.new_interpretation("emails", { scope: "public" })
         emails << Expression.new("@{email}", aliases: { email: email })
@@ -36,10 +36,18 @@ module Nls
       def test_regex_compile
 
         expected = {
-          interpretation: "emails"
+          interpretation: "emails",
+          solution: [{ email: "patrick@pertimm.com" }]
         }
-
         check_interpret("mail patrick@pertimm.com",        expected)
+
+        expected = {
+          interpretation: "emails",
+          solution: [
+            { email: "patrick@pertimm.com" },
+            { email: "sebastien@pertimm.com" },
+          ]
+        }
         check_interpret("mail patrick@pertimm.com sebastien@pertimm.com",        expected)
       end
 
