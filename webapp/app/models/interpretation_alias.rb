@@ -1,5 +1,5 @@
 class InterpretationAlias < ApplicationRecord
-  enum nature: [:type_intent, :type_number, :type_entities_list]
+  enum nature: [:type_intent, :type_number, :type_entities_list, :type_regex]
 
   belongs_to :interpretation, touch: true
   belongs_to :interpretation_aliasable, polymorphic: true, optional: true
@@ -7,8 +7,9 @@ class InterpretationAlias < ApplicationRecord
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
   validates :aliasname, presence: true
+  validates :reg_exp, presence: true, if: -> { self.type_regex? }
 
-  validate :interpretation_aliasable_present, unless: -> { self.type_number? }
+  validate :interpretation_aliasable_present, unless: -> { self.type_number? || self.type_regex? }
   validate :check_position_start_greater_than_end
   validate :no_overlap
   validate :check_aliasname_uniqueness
@@ -73,4 +74,5 @@ class InterpretationAlias < ApplicationRecord
       javascript_reserved_keywords = %w(await break case catch class const continue debugger default delete do else enum export extends finally for function if implements import in instanceof interface let new package private protected public return static super switch this throw try typeof var void while with yield)
       errors.add(:aliasname, I18n.t('errors.interpretation_alias.aliasname_valid_javascript_variable')) if javascript_reserved_keywords.any? { |item| item == aliasname }
     end
+
 end
