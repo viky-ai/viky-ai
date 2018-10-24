@@ -758,16 +758,23 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
   // Adding the "raw_text" variable for use in javascript
   unsigned char *raw_text_name = "raw_text";
-  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_expression->request_position_start);
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_expression->request_position_start);
   IFN(request_position) DPcErr;
   int start = request_position[0].start;
-  int last_request_position = request_expression->request_positions_nb-1;
-  int end =  request_position[last_request_position].start + request_position[last_request_position].length;
-  int length = end-start;
-  if (length > DOgNlpMaxRawTextSize) length=DOgNlpMaxRawTextSize;
+  int last_request_position = request_expression->request_positions_nb - 1;
+  int end = request_position[last_request_position].start + request_position[last_request_position].length;
+  int length = end - start;
   const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start;
-  json_t *json_raw_text = json_stringn(raw_text_string,length);
-  IFE(NlpJsAddVariableJson(ctrl_nlp_th, raw_text_name, json_raw_text));
+  if (length > DOgNlpMaxRawTextSize)
+  {
+    unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
+    p = g_utf8_find_prev_char(raw_text_string,p);
+    length = p - raw_text_string;
+  }
+  char raw_text_string_value[DOgNlpMaxRawTextSize+9];
+  int raw_text_string_value_length=sprintf(raw_text_string_value,"\"%.*s\"",length,raw_text_string);
+  IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
