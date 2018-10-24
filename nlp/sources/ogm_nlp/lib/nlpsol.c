@@ -756,6 +756,19 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
 
+  // Adding the "raw_text" variable for use in javascript
+  unsigned char *raw_text_name = "raw_text";
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_expression->request_position_start);
+  IFN(request_position) DPcErr;
+  int start = request_position[0].start;
+  int last_request_position = request_expression->request_positions_nb-1;
+  int end =  request_position[last_request_position].start + request_position[last_request_position].length;
+  int length = end-start;
+  if (length > DOgNlpMaxRawTextSize) length=DOgNlpMaxRawTextSize;
+  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start;
+  json_t *json_raw_text = json_stringn(raw_text_string,length);
+  IFE(NlpJsAddVariableJson(ctrl_nlp_th, raw_text_name, json_raw_text));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
     og_char_buffer solution[DPcPathSize];
@@ -774,6 +787,7 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
       if (alias_solution->alias) alias_name = alias_solution->alias->alias;
       NlpLog(DOgNlpTraceSolution, "  alias '%s' solution: %s", alias_name, json_solution_string);
     }
+    NlpLog(DOgNlpTraceSolution, "NlpSolutionComputeJS: raw_text is '%s'",raw_text_string);
   }
 
   // We want to add the alias as a variable whose name is the alias and whose value is its associated solution

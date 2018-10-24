@@ -51,8 +51,9 @@ struct og_nlp_env
   int NlpJSDukGcPeriod;
 };
 
-/** Nlp env defautl value */
-#define DOgNlpJSDukGcPeriod 100
+/** Nlp env default value */
+#define DOgNlpJSDukGcPeriod   100
+#define DOgNlpMaxRawTextSize  1024
 
 struct ltra_dictionaries
 {
