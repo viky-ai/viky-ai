@@ -446,7 +446,7 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
 
               struct request_word *request_word_last = request_any->queue_request_words->tail->data;
 
-              if (request_word_last->start_position + request_word_last->length_position < request_position_next->start) return TRUE;
+              if (request_word_last->start_position + request_word_last->length_position <= request_position_next->start) return TRUE;
               else return FALSE;
             }
             else return TRUE;
@@ -705,8 +705,7 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
     struct request_word *rw = iter->data;
 
     length = strlen(string);
-    snprintf(string + length, size - length, "%s%d:%d", (is_first ? "" : " "), rw->start_position,
-        rw->length_position);
+    snprintf(string + length, size - length, "%s%d:%d", (is_first ? "" : " "), rw->start_position, rw->length_position);
 
     is_first = FALSE;
   }

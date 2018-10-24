@@ -42,9 +42,11 @@ class UserUiState
   def last_destination_agent(current_agent)
     result = nil
     if @state['last_agent_move'].present?
-      last_agent = Agent.find(@state['last_agent_move'])
-      is_last_agent_available = current_agent.available_destinations({ user_id: @user.id }).one? { |agent| agent.id == last_agent.id }
-      result = last_agent if is_last_agent_available
+      last_agent = Agent.find_by id: @state['last_agent_move']
+      if last_agent
+        is_last_agent_available = current_agent.available_destinations({ user_id: @user.id }).one? { |agent| agent.id == last_agent.id }
+        result = last_agent if is_last_agent_available
+      end
     end
     result
   end
