@@ -34,7 +34,6 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
-      score->locale += 1.0 / nb_words;
       if(request_word->is_regex)
       {
         // calcul du nombre de mots que comporte le match de la regex
@@ -47,14 +46,19 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
           if(regex_word_part->start_position >= regexStartIndex && regex_word_part->start_position+regex_word_part->length <= regexEndIndex)
             wordCount++;
         }
+
+        request_expression->request_positions_nb = wordCount;
         score->coverage += wordCount / nb_words;
+        score->spelling += wordCount / nb_words;
+        score->locale += wordCount / nb_words;
 
       }
       else
       {
         score->coverage += 1.0 / nb_words;
+        score->spelling += request_word->spelling_score / nb_words;
+        score->locale += 1.0 / nb_words;
       }
-      score->spelling += request_word->spelling_score / nb_words;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
