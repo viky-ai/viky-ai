@@ -18,7 +18,7 @@ module Nls
         Nls.package_update(create_package)
       end
 
-       def create_package
+      def create_package
         package = Package.new("package")
 
         int1 = package.new_interpretation("sub_interpretation", { scope: "public" })
