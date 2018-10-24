@@ -48,6 +48,11 @@ module Nls
         check_interpret("un petit verre blanc",        expected)
       end
 
+      def test_petit_blanc_quote
+        expected = { interpretation: "petit_blanc", solution: { petit: "petit", blanc: "blanc", my_raw: "petit \" verre blanc" } }
+        check_interpret("un petit \" verre blanc",        expected)
+      end
+
     end
   end
 

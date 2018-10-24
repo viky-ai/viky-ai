@@ -747,15 +747,8 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
   return solution_built;
 }
 
-static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    json_t *json_package_solution)
+static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
-
-  // reset local variable
-  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
-
-  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
-
   // Adding the "raw_text" variable for use in javascript
   unsigned char *raw_text_name = "raw_text";
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
@@ -772,9 +765,39 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
     p = g_utf8_find_prev_char(raw_text_string,p);
     length = p - raw_text_string;
   }
-  char raw_text_string_value[DOgNlpMaxRawTextSize+9];
-  int raw_text_string_value_length=sprintf(raw_text_string_value,"\"%.*s\"",length,raw_text_string);
+  char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
+  int j=0;
+  raw_text_string_value[j++]='"';
+  for (int i=0; i<length; i++)
+  {
+    if (raw_text_string[i]== '"')
+    {
+      raw_text_string_value[j++]='\\';
+    }
+    raw_text_string_value[j++]=raw_text_string[i];
+  }
+  raw_text_string_value[j++]='"';
+  raw_text_string_value[j]=0;
+  int raw_text_string_value_length=j;
   IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
+
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string);
+
+  DONE;
+}
+
+
+
+static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_package_solution)
+{
+
+  // reset local variable
+  IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
+
+  IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
+
+  IFE(NlpSolutionBuildRawText(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {
@@ -794,7 +817,6 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
       if (alias_solution->alias) alias_name = alias_solution->alias->alias;
       NlpLog(DOgNlpTraceSolution, "  alias '%s' solution: %s", alias_name, json_solution_string);
     }
-    NlpLog(DOgNlpTraceSolution, "NlpSolutionComputeJS: raw_text is '%s'",raw_text_string);
   }
 
   // We want to add the alias as a variable whose name is the alias and whose value is its associated solution
