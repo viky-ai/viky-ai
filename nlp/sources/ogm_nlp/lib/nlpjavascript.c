@@ -637,7 +637,7 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
   DONE;
 }
 
-og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval)
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval, int variable_eval_length)
 {
   int variable_name_size = strlen(variable_name);
   if (variable_name_size == 0)
@@ -645,8 +645,12 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     CONT;
   }
 
-  int variable_eval_size = strlen(variable_eval);
-  if (variable_eval_size == 0)
+  int variable_eval_size = variable_eval_length;
+  if (variable_eval_size == -1)
+  {
+    variable_eval_size = strlen(variable_eval);
+  }
+  else if (variable_eval_size == 0)
   {
     variable_eval = "null";
     variable_eval_size = 4;
@@ -785,7 +789,7 @@ og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, j
     DPcErr;
   }
 
-  return NlpJsAddVariable(ctrl_nlp_th, variable_name, variable_eval_buffer);
+  return NlpJsAddVariable(ctrl_nlp_th, variable_name, variable_eval_buffer, -1);
 }
 
 static og_string NlpJsDukTypeString(duk_int_t type)
