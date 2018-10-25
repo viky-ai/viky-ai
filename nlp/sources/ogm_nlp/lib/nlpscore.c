@@ -25,6 +25,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   memset(score, 0, sizeof(struct request_score));
   score->any = 1.0;
   int nb_words = ctrl_nlp_th->basic_group_request_word_nb;
+  request_expression->nb_matched_words = 0;
 
   for (int i = 0; i < request_expression->orips_nb; i++)
   {
@@ -34,31 +35,10 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
-      if(request_word->is_regex)
-      {
-        // calcul du nombre de mots que comporte le match de la regex
-        double wordCount = 0.0;
-        int regexStartIndex = request_word->start_position;
-        int regexEndIndex = regexStartIndex + request_word->length;
-        for(int j=0; j<nb_words; j++)
-        {
-          struct request_word *regex_word_part = OgHeapGetCell(ctrl_nlp_th->hrequest_word, j);
-          if(regex_word_part->start_position >= regexStartIndex && regex_word_part->start_position+regex_word_part->length <= regexEndIndex)
-            wordCount++;
-        }
-
-        request_expression->request_positions_nb = wordCount;
-        score->coverage += wordCount / nb_words;
-        score->spelling += wordCount / nb_words;
-        score->locale += wordCount / nb_words;
-
-      }
-      else
-      {
-        score->coverage += 1.0 / nb_words;
-        score->spelling += request_word->spelling_score / nb_words;
-        score->locale += 1.0 / nb_words;
-      }
+      score->coverage += (double)request_word->nb_matched_words / nb_words;
+      score->spelling += (double)request_word->nb_matched_words * request_word->spelling_score / nb_words;
+      score->locale += (double)request_word->nb_matched_words / nb_words;
+      request_expression->nb_matched_words += request_word->nb_matched_words;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)
@@ -67,11 +47,10 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
           request_input_part->Irequest_expression);
       IFN(sub_request_expression) DPcErr;
       IFE(NlpCalculateScoreRecursive(ctrl_nlp_th, root_request_expression, sub_request_expression));
-      double localrequest_positions_nb = sub_request_expression->request_positions_nb;
-      double localCoverage = localrequest_positions_nb / nb_words;
-      score->locale += sub_request_expression->score->locale * localCoverage;
-      score->coverage += localCoverage;
-      score->spelling += sub_request_expression->score->spelling * localCoverage;
+      request_expression->nb_matched_words += sub_request_expression->nb_matched_words;
+      score->locale += sub_request_expression->score->locale * sub_request_expression->score->coverage;
+      score->spelling += sub_request_expression->score->spelling * sub_request_expression->score->coverage;
+      score->coverage = (double)request_expression->nb_matched_words / nb_words;
       score->any *= sub_request_expression->score->any;
     }
     else

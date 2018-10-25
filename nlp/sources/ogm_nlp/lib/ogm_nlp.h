@@ -347,6 +347,8 @@ struct request_word
   int start_position;
   int length_position;
 
+  int nb_matched_words;
+
   og_bool is_number;
   double number_value;
   double spelling_score;
@@ -464,6 +466,8 @@ struct request_expression
 
   int request_position_start;
   int request_positions_nb;
+
+  int nb_matched_words;
 
   int safe_request_position_start;
   int safe_request_positions_nb;

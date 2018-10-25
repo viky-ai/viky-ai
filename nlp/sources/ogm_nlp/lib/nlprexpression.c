@@ -49,6 +49,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;
   request_expression->recursive_without_any_chosen = FALSE;
+  request_expression->nb_matched_words = 0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;

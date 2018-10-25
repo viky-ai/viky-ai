@@ -11,7 +11,7 @@ static og_status NlpRegexBuildInterpretation(og_nlp_th ctrl_nlp_th,
 static og_status NlpRegexBuildExpression(og_nlp_th ctrl_nlp_th, struct expression *expression);
 static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part);
 static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex);
-static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex);
+static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex, size_t sentence_word_count);
 
 og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, og_string name)
 {
@@ -125,6 +125,7 @@ static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct regex *regex)
 og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
 {
   og_string sentence = ctrl_nlp_th->request_sentence;
+  size_t sentence_word_count = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
 
   int start_match_position = 0;
   int end_match_position = 0;
@@ -163,7 +164,7 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
           {
             OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchRegexes: matched sentence with regex '%s' start=%d end=%d",sentence,start_match_position,end_match_position);
           }
-          IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i));
+          IFE(NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position-start_match_position, i, sentence_word_count));
 
           g_match_info_next (match_info, &regexp_error);
 
@@ -200,7 +201,7 @@ og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th)
 
 
 
-static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex)
+static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length, int Iregex, size_t sentence_word_count)
 {
   og_string s = ctrl_nlp_th->request_sentence;
 
@@ -235,14 +236,18 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->is_auto_complete_word = FALSE;
   request_word->is_regex = TRUE;
   request_word->Iregex = Iregex;
+  request_word->spelling_score = 1.0;
+
+  int wordCount = 0;
+  for(size_t i=0; i < sentence_word_count; i++){
+    struct request_word *sentence_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, i);
+    if(sentence_word->start_position >= request_word->start_position && sentence_word->start_position + sentence_word->length <= request_word->start_position + request_word->length)
+      wordCount++;
+  }
+  request_word->nb_matched_words = wordCount;
 
   DONE;
 }
-
-
-
-
-
 
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th)
 {
@@ -257,8 +262,3 @@ og_status NlpRegexLog(og_nlp_th ctrl_nlp_th)
   }
   DONE;
 }
-
-
-
-
-

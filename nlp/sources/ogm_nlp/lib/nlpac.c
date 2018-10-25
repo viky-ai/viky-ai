@@ -119,6 +119,7 @@ static og_status NlpAutoCompleteAddWord(og_nlp_th ctrl_nlp_th, int Ilast_request
   request_word->is_auto_complete_word = TRUE;
   request_word->is_regex = FALSE;
   request_word->Iregex = -1;
+  request_word->nb_matched_words = 1;
 
 
   request_word->spelling_score = spelling_score;

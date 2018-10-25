@@ -420,6 +420,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   {
     request_word->is_punctuation = TRUE;
   }
+  request_word->nb_matched_words = 1;
 
   DONE;
 }
