@@ -226,6 +226,13 @@ class AliasesForm
     else
       return alias.aliasname.replace(new RegExp('-', 'g'), '_')
 
+  getRegexp: (alias) ->
+    id = "#{alias.id}_regex_details"
+    if $("##{id}").length == 1
+      return $($("##{id} input[name*=reg_exp]")).val()
+    else
+      return null
+
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
       return $($("#" + alias.id + " input[name*=#{attribute}]")).is(':checked')
@@ -271,7 +278,6 @@ class AliasesForm
 
   build_line: (alias) ->
     name_prefix = "interpretation[interpretation_aliases_attributes][]"
-
     if alias.state == 'new' || alias.id == undefined
         alias_id_value = ""
       else
@@ -280,6 +286,9 @@ class AliasesForm
     if alias.nature == 'type_number'
       reference_html  = "Number"
       reference_title = "Number"
+    else if alias.nature == 'type_regex'
+      reference_html = "Regex"
+      reference_title = "Regex"
     else
       tmp = alias.slug.split("/")
       reference_html  = "<small>#{tmp[0]}/#{tmp[1]}/#{tmp[2]}/</small>#{tmp[3]}"
@@ -287,6 +296,7 @@ class AliasesForm
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
+    reg_exp = if @getRegexp(alias)? then "value='#{@getRegexp(alias)}'" else ''
 
     line = []
     line.push "
@@ -317,12 +327,16 @@ class AliasesForm
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
       "
+    else if alias.nature == 'type_regex'
+      line.push "
+        <td class='regex_field'><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
+      "
     else
       line.push "
         <td><span class='#{alias.color}' title='#{reference_title}'><a href='/agents/#{alias.slug}'>#{reference_html}</a></span></td>
       "
 
-    if alias.nature == 'type_number'
+    if alias.nature == 'type_number' || alias.nature == 'type_regex'
       line.push "
         <td>
           <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
@@ -345,6 +359,18 @@ class AliasesForm
     remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
     line.push "<td><a href='#' data-action='remove-alias' data-editor-id='#{trix_id}' data-alias-id='#{alias.id}'><span class=\"icon icon--small\">#{remove_icon}</span></a></td>"
     line.push "</tr>"
+    if alias.nature == 'type_regex'
+      line.push "
+        <tr class='regex_field' id='#{alias.id}_regex_details'>
+          <td colspan='2' class='field'><input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'></td>
+          <td class='invalid_text' id='regex_check'>
+            <span class='icon icon icon--small icon--red'>#{remove_icon}</span>
+            Invalid Regex
+          </td>
+          <td colspan='2'><a href='https://regexper.com/'>Railroad Diagram</a></td>
+        </tr>
+        <tr class='spacer'><td colspan='5'></td></tr>
+      "
     line.join("")
 
 

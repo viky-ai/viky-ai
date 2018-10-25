@@ -370,6 +370,13 @@ trix-editor{
         fill: #000;
       }
     }
+    .regex_field{
+      background-color: #f5f5f5;
+      td{
+        padding: 0.5em;
+        border-bottom: none;
+      }
+    }
   }
 
   &.aliases--rtl{
@@ -380,4 +387,11 @@ trix-editor{
       }
     }
   }
+}
+
+.invalid_text{
+  color: #d32f2f;
+}
+.valid_text{
+  color: #388e3c;
 }

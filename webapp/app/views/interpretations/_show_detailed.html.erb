@@ -38,7 +38,9 @@
             </td>
             <td>
               <% slug = "" %>
-              <% if json_alias['nature'] != 'type_number' %>
+              <% if json_alias['nature'] == 'type_regex' %>
+                <% slug = json_alias['reg_exp'] %>
+              <% elsif json_alias['nature'] != 'type_number' %>
                 <% slug = "#{json_alias['slug'].split('/').first}/#{json_alias['slug'].split('/').second}/" %>
               <% end %>
               <span class='<%= json_alias['color'] %>'>
