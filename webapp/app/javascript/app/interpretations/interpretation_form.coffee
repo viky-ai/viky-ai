@@ -231,7 +231,7 @@ class AliasesForm
     if $("##{id}").length == 1
       return $($("##{id} input[name*=reg_exp]")).val()
     else
-      return null
+      return alias.reg_exp
 
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
