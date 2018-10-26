@@ -350,6 +350,34 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert_equal "0", first('#current-locale-tab-badge').text
   end
 
+  test 'Create an interpretation with regex' do
+    admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
+
+    assert page.has_link?('Where is Sarah Connor ?')
+
+    first('trix-editor').click.set('Find Sarah')
+    select_text_in_trix('trix-editor', 5, 10)
+    assert page.has_link?('Regex')
+
+    click_link('Regex')
+
+    within('.aliases') do
+      assert page.has_link?('Railroad Diagram')
+      assert page.has_text?('Sarah')
+      # fill_in("input[name*='reg_exp']", with: '^[a-zA-z-]')
+      find("input[name*='reg_exp']").set('^[a-zA-z-]')
+    end
+
+    click_button 'Add'
+
+    assert page.has_link?('Find Sarah')
+
+    click_link('Find Sarah')
+    assert page.has_text?('Regex')
+    expected_regex = '^[a-zA-z-]'
+    assert_equal expected_regex, find("input[name*='reg_exp']").value
+  end
+
 
   private
 
