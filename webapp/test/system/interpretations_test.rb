@@ -364,8 +364,13 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.aliases') do
       assert page.has_link?('Railroad Diagram')
       assert page.has_text?('Sarah')
-      # fill_in("input[name*='reg_exp']", with: '^[a-zA-z-]')
+      assert page.has_text?('Invalid Regex')
       find("input[name*='reg_exp']").set('^[a-zA-z-]')
+    end
+
+    page.find("body").click
+    within('.aliases') do
+      assert page.has_text?('Valid Regex')
     end
 
     click_button 'Add'
@@ -376,6 +381,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert page.has_text?('Regex')
     expected_regex = '^[a-zA-z-]'
     assert_equal expected_regex, find("input[name*='reg_exp']").value
+    assert page.has_text?('Valid Regex')
   end
 
 

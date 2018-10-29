@@ -101,6 +101,10 @@ module InterpretationHelper
       data[:aliasname_errors] = display_errors(interpretation_alias, :aliasname)
     end
 
+    unless interpretation_alias.errors[:reg_exp].empty?
+      data[:regex_errors] = display_errors(interpretation_alias, :reg_exp)
+    end
+
     JSON.generate(data)
   end
 

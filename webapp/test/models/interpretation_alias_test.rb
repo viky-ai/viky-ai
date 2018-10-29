@@ -372,7 +372,8 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       nature: 'type_regex'
     )
     assert !regexp_invalid.save
-    expected_msg = ['Reg exp can\'t be blank']
+    assert_not_nil regexp_invalid.errors[:reg_exp]
+    expected_msg = ['Regular expression can\'t be blank']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
 
     regexp_valid = InterpretationAlias.new(
@@ -384,5 +385,20 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       reg_exp: '[a-b]'
     )
     assert regexp_valid.save
+  end
+
+  test 'Regular expression should be valid' do
+    regexp_invalid = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'where',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex',
+      reg_exp: '['
+    )
+    assert !regexp_invalid.save
+    assert_not_nil regexp_invalid.errors[:reg_exp]
+    expected_msg = ['Regular expression should be valid']
+    assert_equal expected_msg, regexp_invalid.errors.full_messages
   end
 end

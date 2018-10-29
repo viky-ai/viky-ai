@@ -233,6 +233,29 @@ class AliasesForm
     else
       return alias.reg_exp
 
+  isValidRegex: (value) ->
+    isValid = if value?.length then true else false
+    try
+      new RegExp(value)
+    catch
+      isValid = false
+    return isValid
+
+  showRegexStatus: (element) ->
+    regex_td = $(element).closest('.regex_field').children('#regex_check')
+    if(@isValidRegex(element.value))
+      tick_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>'
+      valid_html = "<span class='icon icon icon--small icon--green'>#{tick_icon}</span> Valid Regex"
+      regex_td.addClass('valid_text')
+      regex_td.removeClass('invalid_text')
+      regex_td.html(valid_html)
+    else
+      remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
+      invalid_html = "<span class='icon icon icon--small icon--red'>#{remove_icon}</span> Invalid Regex"
+      regex_td.addClass('invalid_text')
+      regex_td.removeClass('valid_text')
+      regex_td.html(invalid_html)
+
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
       return $($("#" + alias.id + " input[name*=#{attribute}]")).is(':checked')
@@ -360,19 +383,44 @@ class AliasesForm
     line.push "<td><a href='#' data-action='remove-alias' data-editor-id='#{trix_id}' data-alias-id='#{alias.id}'><span class=\"icon icon--small\">#{remove_icon}</span></a></td>"
     line.push "</tr>"
     if alias.nature == 'type_regex'
-      line.push "
-        <tr class='regex_field' id='#{alias.id}_regex_details'>
-          <td colspan='2' class='field'><input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'></td>
+      field_id = "#{alias.id}_regex_details"
+      if alias.regex_errors
+        line.push "<tr class='regex_field' id='#{field_id}'>
+            <td colspan='2' class='field'>
+              <div class='field_with_errors'>
+                <input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'>
+              </div>
+              #{alias.regex_errors}
+            </td>
+          "
+      else
+        line.push "
+          <tr class='regex_field' id='#{field_id}'>
+            <td colspan='2' class='field'>
+              <input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'>
+            </td>
+        "
+      if @isValidRegex(@getRegexp(alias))
+        tick_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>'
+        line.push "
+          <td class='valid_text' id='regex_check'>
+            <span class='icon icon icon--small icon--green'>#{tick_icon}</span>
+            Valid Regex
+          </td>
+        "
+      else
+        line.push "
           <td class='invalid_text' id='regex_check'>
             <span class='icon icon icon--small icon--red'>#{remove_icon}</span>
             Invalid Regex
           </td>
-          <td colspan='2'><a href='https://regexper.com/'>Railroad Diagram</a></td>
+        "
+      line.push "
+        <td colspan='2'><a href='https://regexper.com/' target='_blank'>Railroad Diagram</a></td>
         </tr>
         <tr class='spacer'><td colspan='5'></td></tr>
       "
     line.join("")
-
 
   update_aliases: ->
     html = []
@@ -397,6 +445,9 @@ class AliasesForm
 
     if @form_container.find('td').length > 0
       @form_container.show()
+      if @form_container.find('.regex_field').length > 0
+        $('.regex_field').on 'blur', 'input', (event) =>
+          @showRegexStatus(event.target)
     else
       @form_container.hide()
 

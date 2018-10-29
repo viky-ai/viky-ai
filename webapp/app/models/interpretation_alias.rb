@@ -14,7 +14,7 @@ class InterpretationAlias < ApplicationRecord
   validate :no_overlap
   validate :check_aliasname_uniqueness
   validate :check_aliasname_valid_javascript_variable
-
+  validate :check_valid_regex
 
   private
 
@@ -73,6 +73,15 @@ class InterpretationAlias < ApplicationRecord
       errors.add(:aliasname, I18n.t('errors.interpretation_alias.aliasname_valid_javascript_variable')) unless aliasname =~ /\A[a-zA-Z$_][a-zA-Z0-9$_]*\z/
       javascript_reserved_keywords = %w(await break case catch class const continue debugger default delete do else enum export extends finally for function if implements import in instanceof interface let new package private protected public return static super switch this throw try typeof var void while with yield)
       errors.add(:aliasname, I18n.t('errors.interpretation_alias.aliasname_valid_javascript_variable')) if javascript_reserved_keywords.any? { |item| item == aliasname }
+    end
+
+    def check_valid_regex
+      return if reg_exp.nil?
+      begin
+        valid_regex = Regexp.new(reg_exp)
+      rescue RegexpError => e
+        errors.add(:reg_exp, I18n.t('errors.interpretation_alias.valid_regex'))
+      end
     end
 
 end
