@@ -51,6 +51,16 @@ module Nls
         check_interpret("mail patrick@pertimm.com sebastien@pertimm.com",        expected)
       end
 
+      def test_regex_multiple
+        expected = {
+          interpretation: "emails",
+          solution: [{ email: "patrick@pertimm.com" }]
+        }
+        500.times do
+          check_interpret("mail patrick@pertimm.com",        expected)
+        end
+      end
+
     end
   end
 
