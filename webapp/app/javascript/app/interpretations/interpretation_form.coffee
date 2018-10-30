@@ -242,19 +242,24 @@ class AliasesForm
     return isValid
 
   showRegexStatus: (element) ->
-    regex_td = $(element).closest('.regex_field').children('#regex_check')
+    regex_status_td = $(element).closest('.regex_field').children('#regex_check')
+
+    # remove error class from the regular expression input field
+    $(element).closest('.field_with_errors').removeClass('field_with_errors')
+    $(element).closest('td').children('.help--error').hide()
+
     if(@isValidRegex(element.value))
       tick_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>'
       valid_html = "<span class='icon icon icon--small icon--green'>#{tick_icon}</span> Valid Regex"
-      regex_td.addClass('valid_text')
-      regex_td.removeClass('invalid_text')
-      regex_td.html(valid_html)
+      regex_status_td.addClass('valid_text')
+      regex_status_td.removeClass('invalid_text')
+      regex_status_td.html(valid_html)
     else
       remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
       invalid_html = "<span class='icon icon icon--small icon--red'>#{remove_icon}</span> Invalid Regex"
-      regex_td.addClass('invalid_text')
-      regex_td.removeClass('valid_text')
-      regex_td.html(invalid_html)
+      regex_status_td.addClass('invalid_text')
+      regex_status_td.removeClass('valid_text')
+      regex_status_td.html(invalid_html)
 
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
