@@ -116,7 +116,6 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   IFE(NlpWhyNotMatchingInit(ctrl_nlp_th, param->name));
   IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortInit(ctrl_nlp_th, param->name));
-  IFE(NlpRegexInit(ctrl_nlp_th, param->name));
 
   DONE;
 }
@@ -153,7 +152,6 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(NlpGlueFlush(ctrl_nlp_th));
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
-  IFE(NlpRegexFlush(ctrl_nlp_th));
 
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
@@ -263,6 +261,9 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
+
+  NlpLog(DOgNlpTraceMinimal, "NlpInterpretRequest: list of regexes found for request:");
+  IFE(NlpRegexLog(ctrl_nlp_th));
 
   // ====================================
   // look for matching interpretation

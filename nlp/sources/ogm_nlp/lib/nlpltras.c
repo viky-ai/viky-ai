@@ -179,7 +179,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->is_punctuation = FALSE;
   request_word->is_auto_complete_word = FALSE;
   request_word->is_regex = FALSE;
-  request_word->Iregex = -1;
+  request_word->regex_input_part = NULL;
   request_word->nb_matched_words = 1;
 
   request_word->spelling_score = spelling_score;

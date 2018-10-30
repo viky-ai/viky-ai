@@ -20,7 +20,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   IFE(NlpParseRequestSentence(ctrl_nlp_th));
 
   // matching the sentence on regular expressions
-  IFE(NlpMatchRegexes(ctrl_nlp_th));
+  IFE(NlpRegexMatch(ctrl_nlp_th));
 
   IFE(NlpAutoComplete(ctrl_nlp_th));
 

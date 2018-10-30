@@ -7,6 +7,7 @@
 #include "ogm_nlp.h"
 
 static og_status NlpPackageFlush(package_t package);
+static og_status NlpPackageInputPartFlush(package_t package, struct input_part *input_part);
 
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string string_slug)
 {
@@ -332,6 +333,10 @@ static og_status NlpPackageExpressionsFlush(package_t package)
   {
     struct expression *expression = OgHeapGetCell(package->hexpression, i);
     IFN(expression) DPcErr;
+    for (int j = 0; j < expression->input_parts_nb; j++)
+    {
+      IFE(NlpPackageInputPartFlush(package, expression->input_parts + j));
+    }
 
     json_decrefp(&expression->json_solution);
   }
@@ -339,6 +344,15 @@ static og_status NlpPackageExpressionsFlush(package_t package)
   OgHeapFlush(package->hexpression);
   package->hexpression = NULL;
 
+  DONE;
+}
+
+static og_status NlpPackageInputPartFlush(package_t package, struct input_part *input_part)
+{
+  IFX(input_part->regex)
+  {
+    g_regex_unref(input_part->regex);
+  }
   DONE;
 }
 

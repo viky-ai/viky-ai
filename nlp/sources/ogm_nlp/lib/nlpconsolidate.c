@@ -617,6 +617,7 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
   IF(Iinput_part) return (NULL);
   input_part->self_index = Iinput_part;
   input_part->expression = expression;
+  input_part->regex = NULL;
 
   if (expression->input_parts_nb == 0)
   {

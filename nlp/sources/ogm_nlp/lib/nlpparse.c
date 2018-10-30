@@ -392,7 +392,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
   request_word->is_auto_complete_word = FALSE;
   request_word->is_regex = FALSE;
-  request_word->Iregex = -1;
+  request_word->regex_input_part = NULL;
 
   request_word->is_number = TRUE;
   for (int i = 0; i < length_normalized_string_word; i++)

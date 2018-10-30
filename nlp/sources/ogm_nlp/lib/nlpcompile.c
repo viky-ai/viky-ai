@@ -70,9 +70,6 @@ PUBLIC(int) OgNlpCompile(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *inp
 
   output->json_output = ctrl_nlp_th->json_answer;
 
-  NlpLog(DOgNlpTraceMinimal, "OgNlpCompile: list regexes found:");
-  IFE(NlpRegexLog(ctrl_nlp_th));
-
   DONE;
 }
 

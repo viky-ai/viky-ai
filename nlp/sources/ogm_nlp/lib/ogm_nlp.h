@@ -287,20 +287,15 @@ struct input_part
 
     /** nlp_input_part_type_Interpretation */
     struct alias *alias;
-
   };
+
+  GRegex *regex;
 
 };
 
 struct number_input_part
 {
   int Iinput_part;
-};
-
-struct regex
-{
-  struct input_part *input_part;
-  GRegex *regex;
 };
 
 enum nlp_synchro_test_timeout_in
@@ -355,7 +350,7 @@ struct request_word
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
   og_bool is_regex;
-  int Iregex;
+  struct input_part *regex_input_part;
 
   /**
    * chain the list in order to ignore merged words
@@ -694,8 +689,6 @@ struct og_ctrl_nlp_threaded
 
   og_heap hrequest_any;
 
-  og_heap hregex;
-
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
    * (reset clean this list at the end of the request), it is better
@@ -1032,11 +1025,9 @@ og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpregex.c */
-og_status NlpRegexInit(og_nlp_th ctrl_nlp_th, og_string name);
-og_status NlpRegexFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
-og_status NlpMatchRegexes(og_nlp_th ctrl_nlp_th);
+og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 
 

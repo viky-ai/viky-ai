@@ -48,8 +48,7 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
     regex_string[0]=0;
     if (request_word->is_regex)
     {
-      struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, request_word->Iregex);
-      snprintf(regex_string, DPcPathSize, " (regex='%s')",regex->input_part->alias->regex);
+      snprintf(regex_string, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex);
 
     }
     NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s%s:", string_request_word, number, regex_string);
@@ -73,9 +72,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
   if (request_word->is_regex)
   {
-    struct regex *regex = OgHeapGetCell(ctrl_nlp_th->hregex, request_word->Iregex);
-    IFN(regex) DPcErr;
-    IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, regex->input_part->self_index,FALSE));
+    IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
   }
 
   if (request_word->is_number)
