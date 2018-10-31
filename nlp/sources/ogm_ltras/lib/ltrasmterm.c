@@ -785,6 +785,7 @@ static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og
 
     double score = 0.0;
     int nb_scores = 0;
+    unsigned char words[DPcPathSize];
     int words_length = 0;
 
     struct og_ltra_add_trf_input tinput[1];
@@ -813,7 +814,6 @@ static int LtrasModuleTerm3(struct og_ltra_module_input *module_input, struct og
           return (0);
         }
 
-        unsigned char words[DPcPathSize];
         memcpy(words + words_length, trfs->Ba + word->start, word->length);
         new_word->string = words + words_length;
         new_word->string_length = word->length;

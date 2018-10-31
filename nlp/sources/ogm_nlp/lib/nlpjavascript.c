@@ -19,6 +19,8 @@ static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsInitBetterErrorMessage(og_nlp_th ctrl_nlp_th);
 static og_status NlpJsDukCESU8toUTF8(og_nlp_th ctrl_nlp_th, og_string cesu, int cesu_length, og_string *utf8);
 
+#define DOgNlpJsMomentSecretName "moment_lib_%06X"
+
 static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 {
   og_nlp_th ctrl_nlp_th = udata;
@@ -33,6 +35,8 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
   ctrl_nlp_th->js->variables = g_string_chunk_new(sizeof(unsigned char));
   g_queue_init(ctrl_nlp_th->js->variables_name_list);
   g_queue_init(ctrl_nlp_th->js->variables_values);
+
+  ctrl_nlp_th->js->random_number = g_random_int_range(1, 0xFFFFFF);
 
   ctrl_nlp_th->js->duk_perm_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
   if (ctrl_nlp_th->js->duk_perm_context == NULL)
@@ -64,10 +68,10 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpJsInitBetterErrorMessage(ctrl_nlp_th));
 
-  IFE(NlpJsInitIsolatedEval(ctrl_nlp_th));
-
   // load and init libs
   IFE(NlpJsLoadLibMoment(ctrl_nlp_th));
+
+  IFE(NlpJsInitIsolatedEval(ctrl_nlp_th));
 
   ctrl_nlp_th->js->duk_request_context = NULL;
 
@@ -82,18 +86,22 @@ static og_status NlpJsInitIsolatedEval(og_nlp_th ctrl_nlp_th)
   // https://github.com/rotaready/moment-range#node--npm
   og_string duktape_nlp = ""   // keep format
           "const duktape_nlp = Object.freeze({ \n"
-          "  eval: function(moment, script_to_eval) { \n"// protect moment change
+          "  eval: function(script_to_eval) { \n"// protect moment change
           "    var duktape_nlp = undefined;\n"// protect duktape_nlp access/change
           "    var Duktape = undefined;\n"// protect duktape_nlp access/change
-          "    return eval(script_to_eval);\n"
-          "  } \n"
-          "});\n"
-          "";
+          "    var moment = "DOgNlpJsMomentSecretName";\n"// protect moment access/change
+  "    return eval(script_to_eval);\n"
+  "  } \n"
+  "});\n"
+  "";
 
-  if (duk_peval_string(ctx, duktape_nlp) != 0)
+  og_char_buffer duktape_nlp_buff[DPcPathSize];
+  snprintf(duktape_nlp_buff, DPcPathSize, duktape_nlp, ctrl_nlp_th->js->random_number);
+
+  if (duk_peval_string(ctx, duktape_nlp_buff) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsInitIsolatedEval failed : \n%s", duktape_nlp);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: NlpJsInitIsolatedEval failed : \n%s", duktape_nlp_buff);
     DPcErr;
   }
   else
@@ -136,21 +144,24 @@ static og_status NlpJsLoadLibMoment(og_nlp_th ctrl_nlp_th)
 
   // https://github.com/rotaready/moment-range#node--npm
   og_string require = ""   // keep format
-          "const moment = require('moment');\n"// moment
-          "var moment_range = require('moment-range');\n"// moment-range
-          "moment_range.extendMoment(moment);\n"// extends
-          "moment_range = undefined;\n"// remove unused variables
-          "";
+          "const " DOgNlpJsMomentSecretName " = require('moment');\n"// moment
+  "var moment_range = require('moment-range');\n"// moment-range
+  "moment_range.extendMoment(" DOgNlpJsMomentSecretName ");\n"// extends
+  "moment_range = undefined;\n"// remove unused variables
+  "";
 
-  if (duk_peval_string(ctx, require) != 0)
+  og_char_buffer require_buff[DPcPathSize];
+  snprintf(require_buff, DPcPathSize, require, ctrl_nlp_th->js->random_number, ctrl_nlp_th->js->random_number);
+
+  if (duk_peval_string(ctx, require_buff) != 0)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "%s", duk_safe_to_string(ctx, -1));
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading libs 'moment' failed : \n%s", require);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: loading libs 'moment' failed : \n%s", require_buff);
     DPcErr;
   }
   else
   {
-    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs 'moment' done.");
+    NlpLog(DOgNlpTraceJs, "NlpJsInit: loading libs 'moment' done. ("DOgNlpJsMomentSecretName")", ctrl_nlp_th->js->random_number);
   }
 
   DONE;
@@ -408,10 +419,14 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceJs)
   {
+    og_char_buffer now_eval[DPcPathSize];
+    snprintf(now_eval, DPcPathSize, DOgNlpJsMomentSecretName ".now_form_request.toJSON()",
+        ctrl_nlp_th->js->random_number);
+
     // show now
     og_char_buffer now[DPcPathSize];
     now[0] = '\0';
-    if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
+    if (duk_peval_string(ctx, now_eval) == 0)
     {
       snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
     }
@@ -425,22 +440,21 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     DPcErr;
   }
   duk_push_string(ctx, "eval");
-  if (!duk_get_global_string(ctx, "moment"))
-  {
-    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: unable to access to 'moment' variable."));
-    DPcErr;
-  }
   duk_push_string(ctx, enhanced_script);
 
   // eval securely
-  if (duk_pcall_prop(ctx, -4, 2) != 0)
+  if (duk_pcall_prop(ctx, -3, 1) != 0)
   {
     og_string error = duk_safe_to_string(ctx, -1);
+
+    og_char_buffer now_eval[DPcPathSize];
+    snprintf(now_eval, DPcPathSize, DOgNlpJsMomentSecretName ".now_form_request.toJSON()",
+        ctrl_nlp_th->js->random_number);
 
     // show now
     og_char_buffer now[DPcPathSize];
     now[0] = '\0';
-    if (duk_peval_string(ctx, "moment.now_form_request.toJSON()") == 0)
+    if (duk_peval_string(ctx, now_eval) == 0)
     {
       snprintf(now, DPcPathSize, "// now returned by `moment()` is '%s'\n", duk_safe_to_string(ctx, -1));
     }
@@ -561,61 +575,70 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     {
       // object, array, function
       og_string computed_json = duk_json_encode(ctx, -1);
-      int icomputed_json = strlen(computed_json);
-
-      og_string computed_json_converted = NULL;
-      if (!g_utf8_validate(computed_json, icomputed_json, NULL))
+      if (computed_json == NULL)
       {
-        NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
-            " return dummy string, try to convert it from CESU-8");
-
-        IFE(NlpJsDukCESU8toUTF8(ctrl_nlp_th, computed_json, icomputed_json, &computed_json_converted));
-        if (computed_json_converted != NULL)
-        {
-          computed_json = computed_json_converted;
-          icomputed_json = strlen(computed_json);
-
-          NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
-              " return dummy string, try to convert it from CESU-8 successful : %s", computed_json_converted);
-        }
-        else
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed json object"
-              " contains error duk_get_string return dummy string");
-          // free converted string
-          g_free((gchar *) computed_json_converted);
-          DPcErr;
-        }
-
-      }
-
-      // pure string value are surrounded by backquote "\"toto\""
-      if (icomputed_json >= 2 && computed_json[0] == '"' && computed_json[icomputed_json - 1] == '"')
-      {
-        *p_json_anwser = json_stringn(computed_json + 1, icomputed_json - 2);
-
-        // free converted string
-        g_free((gchar *) computed_json_converted);
+        computed_json = "null";
+        *p_json_anwser = json_null();
       }
       else
       {
+        int icomputed_json = strlen(computed_json);
 
-        json_error_t error[1];
-        *p_json_anwser = json_loadb(computed_json, icomputed_json, 0, error);
-        if (*p_json_anwser == NULL)
+        og_string computed_json_converted = NULL;
+        if (!g_utf8_validate(computed_json, icomputed_json, NULL))
         {
-          NlpThrowErrorTh(ctrl_nlp_th,
-              "NlpJsEval : computed json object contains error in ligne %d and column %d , %s , %s \n'%s'", error->line,
-              error->column, error->source, error->text, computed_json);
+          NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
+              " return dummy string, try to convert it from CESU-8");
+
+          IFE(NlpJsDukCESU8toUTF8(ctrl_nlp_th, computed_json, icomputed_json, &computed_json_converted));
+          if (computed_json_converted != NULL)
+          {
+            computed_json = computed_json_converted;
+            icomputed_json = strlen(computed_json);
+
+            NlpLog(DOgNlpTraceJs, "NlpJsEval : computed json object contains error duk_get_string"
+                " return dummy string, try to convert it from CESU-8 successful : %s", computed_json_converted);
+          }
+          else
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "%s", enhanced_script);
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : NlpJsDukCESU8toUTF8 failed computed json object"
+                " contains error duk_get_string return dummy string");
+            // free converted string
+            g_free((gchar *) computed_json_converted);
+            DPcErr;
+          }
+
+        }
+
+        // pure string value are surrounded by backquote "\"toto\""
+        if (icomputed_json >= 2 && computed_json[0] == '"' && computed_json[icomputed_json - 1] == '"')
+        {
+          *p_json_anwser = json_stringn(computed_json + 1, icomputed_json - 2);
 
           // free converted string
           g_free((gchar *) computed_json_converted);
-          DPcErr;
         }
+        else
+        {
 
-        // free converted string
-        g_free((gchar *) computed_json_converted);
+          json_error_t error[1];
+          *p_json_anwser = json_loadb(computed_json, icomputed_json, 0, error);
+          if (*p_json_anwser == NULL)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th,
+                "NlpJsEval : computed json object contains error in ligne %d and column %d , %s , %s \n'%s'",
+                error->line, error->column, error->source, error->text, computed_json);
+
+            // free converted string
+            g_free((gchar *) computed_json_converted);
+            DPcErr;
+          }
+
+          // free converted string
+          g_free((gchar *) computed_json_converted);
+
+        }
 
       }
 
@@ -656,6 +679,7 @@ og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_st
     variable_eval_size = 4;
   }
 
+  // https://github.com/svaarala/duktape/issues/284 : ES2015 Block Scoping is not available now to use `let`
   og_string var_template = "const %s = %s;";
   int var_template_size = strlen(var_template);
   int var_command_size = variable_eval_size + variable_name_size + var_template_size;
@@ -704,15 +728,21 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
     NlpLog(DOgNlpTraceJs, "NlpJsSetNow: %s", date_now);
   }
 
-  og_string offset_reset = "// ====================================================\n"
-      "// Reset now state \n"   //
-      "moment.now_form_request = null; \n"
-      "moment.updateOffset = function() { }; \n"//
-      "moment.now = function() { \n"//
-      "  return new Date(); \n"//
-      "}; \n"//
-      " \n"//
-      "// Set now\n";
+  og_string offset_header_tpl = "// ====================================================\n"
+      "var moment = " DOgNlpJsMomentSecretName " ;\n";
+
+  og_char_buffer offset_header[DPcPathSize];
+  snprintf(offset_header, DPcPathSize, offset_header_tpl, ctrl_nlp_th->js->random_number);
+
+  og_string offset_reset = "\n"   //
+          "// Reset now state \n"//
+          "moment.now_form_request = null; \n"
+          "moment.updateOffset = function() { }; \n"//
+          "moment.now = function() { \n"//
+          "  return new Date(); \n"//
+          "}; \n"//
+          " \n"//
+          "// Set now\n";
 
   og_string offset_setup = ""   //
           "// format moment in ISO with timezone  \n"//
@@ -749,13 +779,13 @@ og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th)
   og_char_buffer now_setup_command[DOgNlpJsSetNowNowScriptSize];
   if (date_now == NULL || date_now[0] == '\0')
   {
-    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%smoment.now_form_request ="
-        " moment.utc();\n\n%s", offset_reset, offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s%smoment.now_form_request ="
+        " moment.utc();\n\n%s", offset_header, offset_reset, offset_setup);
   }
   else
   {
-    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%smoment.now_form_request ="
-        " moment.parseZone('%s');\n\n%s", offset_reset, date_now, offset_setup);
+    snprintf(now_setup_command, DOgNlpJsSetNowNowScriptSize, "%s%smoment.now_form_request ="
+        " moment.parseZone('%s');\n\n%s", offset_header, offset_reset, date_now, offset_setup);
   }
 
   NlpLog(DOgNlpTraceJs, "Sending command to duktape:\n%s", now_setup_command);

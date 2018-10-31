@@ -128,6 +128,12 @@ module Nls
         js_isolation_2 << Expression.new("@{js_isolation_1} jsisolationdeux bis", aliases: { js_isolation_1: js_isolation_1 }, solution: "`{ js_isolation_1: js_isolation_1, js_isolation_2: 'js_isolation_2', bug: undef_variable }`", keep_order: true, glued: false)
         js_isolation_2 << Expression.new("jsisolationdeux", solution: "`{ bug: undef_variable }`", keep_order: true, glued: false)
 
+        js_isolation_moment_1 = package.new_interpretation("js_isolation_moment_1")
+        js_isolation_moment_1 << Expression.new('js_isolation_moment', solution: "leaks", keep_order: true, glued: false)
+
+        js_isolation_moment = package.new_interpretation('js_isolation_moment')
+        js_isolation_moment << Expression.new('@{moment}', aliases: { moment: js_isolation_moment_1, }, solution: "`moment`", keep_order: true, glued: false)
+
         package
       end
 
@@ -304,6 +310,11 @@ module Nls
         now = "2017-01-01T00:00:00+03:00"
         check_interpret("sol moment lib", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00+03:00", now: now)
 
+      end
+
+      def test_solution_moment_isolation
+        check_interpret("js_isolation_moment", interpretation: "js_isolation_moment")
+        check_interpret("sol date", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
       end
 
     end

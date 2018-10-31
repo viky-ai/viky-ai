@@ -565,6 +565,10 @@ struct og_ctrl_nlp_js
   GQueue variables_values[1];
 
   size_t reset_counter;
+
+  /** random number used to protect variable internal name (moment lib). */
+  guint32 random_number;
+
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
