@@ -169,7 +169,13 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     }
     request_expression->request_anys_nb++;
 
-    //rw = rw_next;
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+    {
+      NlpLog(DOgNlpTraceMatch, "NlpRequestAnyAdd: added any from=%d:%d to=%d:%d:", request_position_before->start,
+          request_position_before->length, request_position_after->start, request_position_after->length);
+      IFE(NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any));
+    }
+    break;
   }
 
   DONE;
@@ -431,7 +437,7 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
             request_input_part->request_position_start + request_input_part->request_positions_nb - 1);
         IFN(request_position) DPcErr;
         struct request_word *first_request_word = request_any->queue_request_words->head->data;
-        if (request_position->start + request_position->length < first_request_word->start_position)
+        if (request_position->start + request_position->length <= first_request_word->start_position)
         {
           if (i + 1 < request_expression->orips_nb)
           {
