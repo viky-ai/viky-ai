@@ -46,7 +46,8 @@ module Nls
 
         int1 = package.new_interpretation("test", scope: "public")
         int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, solution: "`{ value1: value1, value2: value2}`", glued: true, keep_order: true)
-#        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, glued: true, keep_order: true)
+        #        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, glued: true,
+# keep_order: true)
 
         package
       end
@@ -206,6 +207,53 @@ module Nls
         check_interpret("ccc ddd hotel p bbb", expected)
 
       end
+
+      def test_email_any
+
+        package = Package.new("test_email_any")
+
+        arobase = package.new_interpretation("arobase")
+        arobase << Expression.new("@", solution: "@")
+
+        domaineany = package.new_interpretation("domaineany")
+        domaineany << Expression.new("domaineany", solution: "domaineany")
+
+        registres_internet = package.new_interpretation("registres_internet")
+        registres_internet << Expression.new(".com", solution: ".com")
+
+        email = package.new_interpretation("email", scope: "public")
+        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => domaineany, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true, glued: false)
+        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => Alias.any, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true, glued: false)
+
+        Nls.remove_all_packages
+        Nls.package_update(package)
+
+        expected = { interpretation: "email", solution: { domaineany: "soprasteria" } }
+        check_interpret("blabla@soprasteria.com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "sopra steria" } }
+        check_interpret("blabla@sopra steria.com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "soprasteria" } }
+        check_interpret("blabla@soprasteria .com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "s op ra steria" } }
+        check_interpret("blabla@ s op ra steria.com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "p e r t i m m" } }
+        check_interpret("blabla@p e r t i m m.com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "p e r t i m m" } }
+        check_interpret("blabla@p e r t i m m .com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "p e r t i m m" } }
+        check_interpret("blabla@ p e r t i m m.com", expected)
+
+        expected = { interpretation: "email", solution: { domaineany: "p e r t i m m" } }
+        check_interpret("blabla@ p e r t i m m .com", expected)
+
+      end
+
     end
   end
 
