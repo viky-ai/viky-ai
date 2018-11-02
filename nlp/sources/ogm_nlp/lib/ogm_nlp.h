@@ -202,6 +202,7 @@ struct expression
   // if value is 0 or more, it means the expression contains an any alias
   // otherwise value is -1
   int alias_any_input_part_position;
+  int any_input_part_position;
 
   og_bool is_recursive;
 

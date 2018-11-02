@@ -26,7 +26,7 @@ module Nls
         ram_size << Expression.new("@{number} GO RAM", aliases: { number: Alias.number}, solution: "`{ size: number}`")
 
         int2 = package.new_interpretation("main_interpretation", { scope: "public" })
-        int2 << Expression.new("ordinateur @{brand} @{ram_size}", aliases: { brand: Alias.any, ram_size: ram_size }, solution: "`{ brand: brand, size: ram_size.size}`")
+        int2 << Expression.new("ordinateur @{brand} @{ram_size}", aliases: { brand: Alias.any, ram_size: ram_size }, solution: "`{ brand: brand, size: ram_size.size}`", keep_order: true)
 
         package
       end
@@ -36,7 +36,7 @@ module Nls
       def test_any_overlap
         expected = {
           solution: {
-            "brand" => "dell",
+            "brand" => "dell avec",
             "size" => 12,
           }
         }
