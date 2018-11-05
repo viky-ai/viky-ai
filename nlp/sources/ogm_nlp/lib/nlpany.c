@@ -258,7 +258,7 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
     if (request_any->is_attached) continue;
-    
+
     og_bool is_ordered = NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any, request_expression);
     IFE(is_ordered);
     if (is_ordered)
@@ -284,7 +284,7 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
     if (request_any->is_attached) continue;
-    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any);
+    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_any, request_expression);
     IFE(distance);
     if (minimum_distance == distance)
     {
