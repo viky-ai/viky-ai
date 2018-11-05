@@ -18,7 +18,7 @@ module Nls
         Nls.package_update(create_package)
       end
 
-       def create_package
+      def create_package
         package = Package.new("package")
 
         int1 = package.new_interpretation("sub_interpretation", { scope: "public" })
@@ -36,7 +36,9 @@ module Nls
       def test_any_punctuation_trim
 
         expected = {
-          "number_people" => 1235
+          solution: {
+            "number" => 1235,
+          }
         }
 
         check_interpret("1234",        expected)
