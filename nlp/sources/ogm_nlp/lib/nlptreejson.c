@@ -17,6 +17,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretation)
 {
+  IFE(NlpSetSuperExpression(ctrl_nlp_th, request_expression));
 
   json_t *json_explanation = json_object();
   IF(json_object_set_new(json_interpretation, "explanation", json_explanation))
@@ -26,12 +27,6 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   }
 
   json_t *json_expression = json_object();
-  IF(json_object_set_new(json_explanation, "expression", json_expression))
-  {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression");
-    DPcErr;
-  }
-
   IFX(request_expression->expression->id)
   {
     json_t *json_expression_id = json_string(request_expression->expression->id);
@@ -78,6 +73,15 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   }
 
   IFE(NlpInterpretTreeJsonRecursive(ctrl_nlp_th, request_expression, request_expression, json_expression));
+
+  IFE(NlpExplainHighlight(ctrl_nlp_th,request_expression,json_explanation));
+
+  IF(json_object_set_new(json_explanation, "expression", json_expression))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression");
+    DPcErr;
+  }
+
   DONE;
 }
 
@@ -189,6 +193,8 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
           NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJsonRecursive: error setting json_sub_expression_text");
           DPcErr;
         }
+
+        IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, request_word));
 
       }
       else if (request_input_part->type == nlp_input_part_type_Interpretation)
