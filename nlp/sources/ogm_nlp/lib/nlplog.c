@@ -150,12 +150,23 @@ og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t packag
 {
   IFN(expression) DPcErr;
 
+  char id_string[DPcPathSize];
+  if (expression->id_start < 0)
+  {
+    id_string[0]=0;
+  }
+  else
+  {
+    og_string id = OgHeapGetCell(package->hexpression_ba, expression->id_start);
+    sprintf(id_string," with id '%s'", id);
+  }
   og_string text = OgHeapGetCell(package->hexpression_ba, expression->text_start);
 
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s%s", text, string_locale,
+      id_string);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     struct alias_compile *alias = OgHeapGetCell(package->halias_compile, expression->alias_start + i);
@@ -263,13 +274,25 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
 {
   IFN(expression) DPcErr;
 
+  char id_string[DPcPathSize];
+  IFN(expression->id)
+  {
+    id_string[0]=0;
+  }
+  else
+  {
+    sprintf(id_string," with id '%s'", expression->id);
+  }
+
   og_string text = expression->text;
 
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s alias_any_input_part_position=%d", text, string_locale,
-      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "", expression->alias_any_input_part_position);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+      "    Expression '%s' with locale %s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "",
+      expression->alias_any_input_part_position);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));

@@ -160,6 +160,7 @@ struct context_compile
 
 struct expression_compile
 {
+  int id_start;
   int text_start;
   og_bool keep_order;
   og_bool glued;
@@ -178,6 +179,8 @@ struct expression
 {
   /** Parent */
   struct interpretation *interpretation;
+
+  og_string id;
 
   og_string text;
 

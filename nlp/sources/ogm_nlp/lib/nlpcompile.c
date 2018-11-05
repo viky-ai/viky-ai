@@ -470,6 +470,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   IFE(NlpJsonToBuffer(json_expression, json_expression_string, DPcPathSize, NULL, JSON_INDENT(2)));
   NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: compiling expression [\n%s]", json_expression_string)
 
+  json_t *json_id = NULL;
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
   json_t *json_glued = NULL;
@@ -482,7 +483,11 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     const char *key = json_object_iter_key(iter);
     NlpLog(DOgNlpTraceCompile, "NlpCompilePackageExpression: found key='%s'", key)
 
-    if (Ogstricmp(key, "expression") == 0)
+    if (Ogstricmp(key, "id") == 0)
+    {
+      json_id = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "expression") == 0)
     {
       json_text = json_object_iter_value(iter);
     }
@@ -513,6 +518,19 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     }
   }
 
+  const char *string_id = NULL;
+
+  IFN(json_id)
+  {
+    string_id = NULL;
+  }
+  else if (!json_is_string(json_id))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: interpretation 'id' is not a string");
+    DPcErr;
+  }
+  string_id = json_string_value(json_id);
+
   IFN(json_text)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: no text");
@@ -523,6 +541,16 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   struct expression_compile *expression = OgHeapNewCell(package->hexpression_compile, &Iexpression);
   IFn(expression) DPcErr;
   IFE(Iexpression);
+
+  IFN(string_id)
+  {
+    expression->id_start = -1;
+  }
+  else
+  {
+    expression->id_start = OgHeapGetCellsUsed(package->hexpression_ba);
+    IFE(OgHeapAppend(package->hexpression_ba, strlen(string_id) + 1, string_id));
+  }
 
   if (json_is_string(json_text))
   {
