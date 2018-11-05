@@ -544,7 +544,7 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
 
   if (request_expression->json_solution)
   {
-    IF(json_object_set(json_interpretation, "solution", request_expression->json_solution))
+    IF(json_object_set_new(json_interpretation, "solution", json_deep_copy(request_expression->json_solution)))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestInterpretation: error setting json_solution");
       DPcErr;

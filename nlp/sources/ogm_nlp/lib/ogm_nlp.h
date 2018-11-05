@@ -51,8 +51,9 @@ struct og_nlp_env
   int NlpJSDukGcPeriod;
 };
 
-/** Nlp env defautl value */
-#define DOgNlpJSDukGcPeriod 100
+/** Nlp env default value */
+#define DOgNlpJSDukGcPeriod   100
+#define DOgNlpMaxRawTextSize  1024
 
 struct ltra_dictionaries
 {
@@ -565,6 +566,10 @@ struct og_ctrl_nlp_js
   GQueue variables_values[1];
 
   size_t reset_counter;
+
+  /** random number used to protect variable internal name (moment lib). */
+  guint32 random_number;
+
 };
 
 /** non matching expression that will be search upon the "why-not-matching" object of an interpret request */
@@ -936,7 +941,7 @@ og_status NlpJsStackRequestSetup(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
-og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval);
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval, int variable_eval_length);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th);
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);

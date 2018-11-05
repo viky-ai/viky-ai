@@ -103,13 +103,21 @@ static og_status NlpMatchGroupNumbersInitConf(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
+static void freeCountryByLang(gpointer glist)
+{
+  if (glist)
+  {
+    g_list_free((GList*) glist);
+  }
+}
+
 og_status NlpMatchGroupNumbersInit(og_nlp_th ctrl_nlp_th)
 {
   struct nlp_match_group_numbers *nmgn = ctrl_nlp_th->group_numbers_settings;
   memset(nmgn, 0, sizeof(struct nlp_match_group_numbers));
 
   nmgn->nlpth = ctrl_nlp_th;
-  nmgn->sep_conf_lang_by_lang_country = g_hash_table_new(g_direct_hash, g_direct_equal);
+  nmgn->sep_conf_lang_by_lang_country = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, freeCountryByLang);
 
   IFE(NlpMatchGroupNumbersInitConf(ctrl_nlp_th));
 
@@ -562,10 +570,10 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceGroupNumbers)
       {
         og_char_buffer current_lang_country[DPcPathSize];
-        NlpLog(DOgNlpTraceGroupNumbers, "NlpMatchGroupNumbersWithLocale: \"%s\" "
-            "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string, value,
-            OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country), locale_conf->sep_conf->thousand_sep,
-            locale_conf->sep_conf->decimal_sep);
+        NlpLog(DOgNlpTraceGroupNumbers,
+            "NlpMatchGroupNumbersWithLocale: \"%s\" " "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")",
+            expression_string, value, OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country),
+            locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
       }
 
     }
@@ -595,9 +603,9 @@ static og_bool NlpMatchGroupNumbersWithLocale(og_nlp_th ctrl_nlp_th, struct numb
           if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceGroupNumbers)
           {
             og_char_buffer current_lang_country[DPcPathSize];
-            NlpLog(DOgNlpTraceGroupNumbers, "NlpMatchGroupNumbersWithLocale: \"%s\" "
-                "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")", expression_string,
-                value, OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country),
+            NlpLog(DOgNlpTraceGroupNumbers,
+                "NlpMatchGroupNumbersWithLocale: \"%s\" " "find group number " DOgPrintDouble " (locale=\"%s\" thousand_sep=\"%s\", decimal_sep=\"%s\")",
+                expression_string, value, OgIso639_3166ToCode(locale_conf->lang_country, current_lang_country),
                 locale_conf->sep_conf->thousand_sep, locale_conf->sep_conf->decimal_sep);
           }
 

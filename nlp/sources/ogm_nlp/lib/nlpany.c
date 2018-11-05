@@ -171,6 +171,12 @@ static og_status NlpRequestAnyAdd(og_nlp_th ctrl_nlp_th, struct request_expressi
     }
     request_expression->request_anys_nb++;
 
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+    {
+      NlpLog(DOgNlpTraceMatch, "NlpRequestAnyAdd: added any from=%d:%d to=%d:%d:", request_position_before->start,
+          request_position_before->length, request_position_after->start, request_position_after->length);
+      IFE(NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any));
+    }
     break;
   }
 
@@ -252,7 +258,7 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
     if (request_any->is_attached) continue;
-
+    
     og_bool is_ordered = NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any, request_expression);
     IFE(is_ordered);
     if (is_ordered)
@@ -278,7 +284,9 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
   {
     struct request_any *request_any = request_anys + root_request_expression->request_any_start + i;
     if (request_any->is_attached) continue;
-    if (minimum_distance == request_any->distance)
+    int distance = NlpRequestAnyDistance(ctrl_nlp_th, request_expression, request_any);
+    IFE(distance);
+    if (minimum_distance == distance)
     {
       og_bool is_ordered = NlpRequestAnyIsOrdered(ctrl_nlp_th, request_any, request_expression);
       IFE(is_ordered);
@@ -566,7 +574,7 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
             request_input_part->request_position_start + request_input_part->request_positions_nb - 1);
         IFN(request_position) DPcErr;
         struct request_word *first_request_word = request_any->queue_request_words->head->data;
-        if (request_position->start + request_position->length < first_request_word->start_position)
+        if (request_position->start + request_position->length <= first_request_word->start_position)
         {
           if (i + 1 < request_expression->orips_nb)
           {
@@ -581,7 +589,8 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
 
               struct request_word *request_word_last = request_any->queue_request_words->tail->data;
 
-              if (request_word_last->start_position + request_word_last->length_position < request_position_next->start) return TRUE;
+              if (request_word_last->start_position + request_word_last->length_position
+                  <= request_position_next->start) return TRUE;
               else return FALSE;
             }
             else return TRUE;
