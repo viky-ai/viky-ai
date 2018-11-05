@@ -26,6 +26,9 @@ module Nls
         letters << Expression.new("b", solution: "b")
         letters << Expression.new("@{number}", aliases: { number: Alias.number } )
 
+        threewords = package.new_interpretation("threewords")
+        threewords << Expression.new("aaa bbb ccc", solution: "aaa bbb ccc", glued: true)
+
 
         glued = package.new_interpretation("glued")
         glued << Expression.new("@{letters1} @{letters2}", aliases: { letters1: letters, letters2: letters }, glued: true)
@@ -58,6 +61,13 @@ module Nls
         expected = { interpretation: "letters", solution: "a" }
         check_interpret("a c b",       expected)
         check_interpret("a,b",       expected)
+      end
+
+      def test_glued_no_keep_order
+        expected = { interpretation: "threewords", solution: "aaa bbb ccc"}
+        check_interpret("aaa bbb ccc" ,expected)
+        check_interpret("bbb ccc aaa", expected)
+        check_interpret("aaa ccc bbb", expected)
       end
 
     end

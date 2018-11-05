@@ -775,6 +775,47 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
   return solution_built;
 }
 
+static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  // Adding the "raw_text" variable for use in javascript
+  unsigned char *raw_text_name = "raw_text";
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_expression->request_position_start);
+  IFN(request_position) DPcErr;
+  int start = request_position[0].start;
+  int last_request_position = request_expression->request_positions_nb - 1;
+  int end = request_position[last_request_position].start + request_position[last_request_position].length;
+  int length = end - start;
+  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start;
+  if (length > DOgNlpMaxRawTextSize)
+  {
+    unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
+    p = g_utf8_find_prev_char(raw_text_string,p);
+    length = p - raw_text_string;
+  }
+  char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
+  int j=0;
+  raw_text_string_value[j++]='"';
+  for (int i=0; i<length; i++)
+  {
+    if (raw_text_string[i]== '"')
+    {
+      raw_text_string_value[j++]='\\';
+    }
+    raw_text_string_value[j++]=raw_text_string[i];
+  }
+  raw_text_string_value[j++]='"';
+  raw_text_string_value[j]=0;
+  int raw_text_string_value_length=j;
+  IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
+
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string);
+
+  DONE;
+}
+
+
+
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution)
 {
@@ -783,6 +824,8 @@ static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expres
   IFE(NlpJsStackLocalWipe(ctrl_nlp_th));
 
   IFE(NlpSolutionBuildSolutionsQueue(ctrl_nlp_th, request_expression));
+
+  IFE(NlpSolutionBuildRawText(ctrl_nlp_th, request_expression));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceSolution)
   {

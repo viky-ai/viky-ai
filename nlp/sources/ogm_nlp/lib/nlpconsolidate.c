@@ -337,6 +337,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   expression->input_parts = NULL;
   expression->input_part_start = -1;
   expression->alias_any_input_part_position = -1;
+  expression->any_input_part_position = -1;
 
   og_string s = expression->text;
   int is = strlen(s);
@@ -535,6 +536,8 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       og_status current_alias_status = NlpConsolidateGetCurrentAliasNb(ctrl_nlp_th, package, expression,
           &expression->alias_any_input_part_position);
       IFE(current_alias_status);
+
+      expression->any_input_part_position = expression->input_parts_nb;
 
       alias_added = TRUE;
     }

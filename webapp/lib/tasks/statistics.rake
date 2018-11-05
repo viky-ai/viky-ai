@@ -186,7 +186,7 @@ namespace :statistics do
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
         # alias does not exist
       end
-      delete_index(client, src_index)
+      delete_index(client, src_index.name)
     end
 
     def index_exists?(client, template)
@@ -215,9 +215,9 @@ namespace :statistics do
       Statistics::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
     end
 
-    def delete_index(client, src_index)
-      client.indices.delete index: src_index.name
-      Statistics::Print.success("Remove previous index #{src_index.name} succeed.")
+    def delete_index(client, index_name)
+      client.indices.delete index: index_name
+      Statistics::Print.success("Remove index #{index_name} succeed.")
     end
 
     def pick_random_node(client)
