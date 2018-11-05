@@ -316,7 +316,6 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
   DONE;
 }
 
-#if 1
 static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression)
 {
@@ -440,44 +439,6 @@ static og_status NlpRequestAnyDistanceFromPositions(og_nlp_th ctrl_nlp_th, struc
   }
   return (minimum_distance);
 }
-
-
-
-#else
-
-static og_status NlpRequestAnyDistance(og_nlp_th ctrl_nlp_th, struct request_any *request_any, struct request_expression *request_expression)
-{
-  struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-      request_expression->request_position_start);
-  IFN(request_positions) DPcErr;
-
-  int minimum_distance = 0xfffffff;
-  for (int i = 0; i < request_expression->request_positions_nb; i++)
-  {
-    struct request_position *request_position = request_positions + i;
-
-    for (GList * rw_iter = request_any->queue_request_words->head; rw_iter; rw_iter = rw_iter->next)
-    {
-      struct request_word *rw = rw_iter->data;
-
-      int pos_rp1 = request_position->start;
-      int pos_rp2 = request_position->start + request_position->length;
-
-      int pos_rw1 = rw->start_position;
-      int pos_rw2 = rw->start_position + rw->length_position;
-
-      int distance = abs(pos_rp1 - pos_rw1);
-      if (distance > abs(pos_rp1 - pos_rw2)) distance = abs(pos_rp1 - pos_rw2);
-      if (distance > abs(pos_rp2 - pos_rw1)) distance = abs(pos_rp2 - pos_rw1);
-      if (distance > abs(pos_rp2 - pos_rw2)) distance = abs(pos_rp2 - pos_rw2);
-
-      if (minimum_distance > distance) minimum_distance = distance;
-    }
-
-  }
-  return (minimum_distance);
-}
-#endif
 
 static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression)
@@ -849,8 +810,7 @@ int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *reque
     struct request_word *rw = iter->data;
 
     length = strlen(string);
-    snprintf(string + length, size - length, "%s%d:%d", (is_first ? "" : " "), rw->start_position,
-        rw->length_position);
+    snprintf(string + length, size - length, "%s%d:%d", (is_first ? "" : " "), rw->start_position, rw->length_position);
 
     is_first = FALSE;
   }
