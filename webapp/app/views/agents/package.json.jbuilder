@@ -9,6 +9,7 @@ json.interpretations @interpretations do |intent|
   json.scope intent[:scope] unless intent[:scope].blank?
   json.expressions intent[:expressions] do |interpretation|
     json.expression interpretation[:expression]
+    json.id interpretation[:id]
     unless interpretation[:aliases].blank?
       json.aliases interpretation[:aliases] do |ialias|
         json.alias ialias[:alias]
