@@ -561,7 +561,6 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       input_part->type = nlp_input_part_type_Regex;
       input_part->alias = alias;
 
-      IFE(NlpInputPartAliasNumberAdd(ctrl_nlp_th, package, Iinput_part));
       alias_added = TRUE;
     }
     break;
