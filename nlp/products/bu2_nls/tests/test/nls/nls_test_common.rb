@@ -476,6 +476,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
         if expected_explanation.has_key?(:scores)
           expected_score = expected_explanation[:scores]
+          assert actual_explanation['scores'], "Actual explanation has no score"
           assert_equal expected_score, actual_explanation['scores'], "Matched on wrong score"
         end
 
@@ -484,7 +485,6 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
           expected_highlight = expected_explanation[:highlight]
           assert actual_explanation['highlight'], "Actual explanation has no highlight"
-          expected_highlight = expected_explanation[:highlight]
           check_highlight expected_highlight, actual_explanation['highlight']
         end
 
@@ -492,7 +492,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
           assert actual_explanation['expression'], "Actual explanation has no expression"
           expected_expression = expected_explanation[:expression]
           check_explanation_expression_value = check_explanation_expression expected_expression, actual_explanation['expression']
-          assert check_explanation_expression_value, "wrong match on expression"
+          assert check_explanation_expression_value, "wrong match on expression\nexpected: #{expected_expression}\nactual: #{actual_explanation['expression']}"
         end
       end
 
@@ -581,7 +581,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
           actual_highlight['words'].each do |actual_word|
             return_value = true if check_highlight_word(expected_word, actual_word)
           end
-          assert return_value, "match on wrong word"
+          assert return_value, "match on wrong word\nexpected word: #{expected_word}\nwords in answer: #{actual_highlight['words']}"
         end
       end
     end
