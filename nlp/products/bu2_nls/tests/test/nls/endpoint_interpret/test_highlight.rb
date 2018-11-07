@@ -13,9 +13,11 @@ module Nls
 
         Nls.remove_all_packages
 
-        Interpretation.default_locale = "en"
+        Interpretation.default_locale = nil
 
         Nls.package_update(create_parent_package)
+        Nls.package_update(create_any_package)
+        Nls.package_update(create_number_package)
       end
 
       def create_parent_package
@@ -28,20 +30,40 @@ module Nls
         blanc << Expression.new("blanc")
 
         cheval_blanc = package.new_interpretation("cheval_blanc", { scope: "public" })
-        cheval_blanc << Expression.new("@{cheval} @{blanc}", aliases: { "cheval" => cheval,  "blanc" => blanc })
+        cheval_blanc << Expression.new("@{cheval} @{blanc}", aliases: { "cheval" => cheval, "blanc" => blanc })
 
         package
       end
 
-      def create_child_package
-        package = Package.new("child_package")
+      def create_any_package
+        package = Package.new("any_package")
 
+        before = package.new_interpretation("before", { scope: "private" })
+        before << Expression.new("before")
 
+        after = package.new_interpretation("after", { scope: "private" })
+        after << Expression.new("after")
+
+        with_any = package.new_interpretation("with_any", { scope: "public" })
+        with_any << Expression.new("@{before} @{any} @{after}", aliases: { "before" => before, "any" => Alias.any, "after" => after }, keep_order: true)
 
         package
       end
 
-      def test_highlight
+      def create_number_package
+        package = Package.new("number_package")
+
+        numbers = package.new_interpretation("numbers", { scope: "public" })
+        numbers << Expression.new("testNumber @{number}", aliases: { "number" => Alias.number }, keep_order: true)
+
+        package
+      end
+
+      def create_regex_package
+        #TODO when regex branch is merged
+      end
+
+      def test_highlight_basic
         expected_explanation = {
           scores: "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:1.00",
           highlight: {
@@ -103,6 +125,214 @@ module Nls
           }
         }
         check_interpret("cheval blanc", interpretations: ["cheval_blanc"], explain: true, explanation: expected_explanation)
+      end
+
+      def test_highlight_wording
+        expected_explanation = {
+          highlight: {
+          summary: "[chevale] [blanc]",
+            words: [
+              {
+                word: "cheval",
+                match: {
+                  expression: "chevale",
+                  interpretation_slug: "cheval",
+                  parent: {
+                    expression: "chevale blanc",
+                    interpretation_slug: "cheval_blanc",
+                  }
+                }
+              },
+              {
+                word: "blanc",
+                match: {
+                  expression: "blanc",
+                  interpretation_slug: "blanc",
+                  parent: {
+                    expression: "chevale blanc",
+                    interpretation_slug: "cheval_blanc",
+                  }
+                }
+              }
+            ]
+          },
+          expression: {
+            text: "@{cheval} @{blanc}",
+            slug: "cheval_blanc",
+            highlight: "[chevale] [blanc]",
+            expressions: [
+              {
+                text: "cheval",
+                slug: "cheval",
+                highlight: "[chevale] blanc",
+                expressions: [
+                  {
+                    word: "cheval"
+                  }
+                ]
+              },
+              {
+                text: "blanc",
+                slug: "blanc",
+                highlight: "chevale [blanc]",
+                expressions: [
+                  {
+                    word: "blanc"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+        check_interpret("chevale blanc", interpretations: ["cheval_blanc"], explain: true, explanation: expected_explanation)
+      end
+
+      def test_highlight_number_english_format
+        expected_explanation = {
+          highlight: {
+            summary: "[testNumber] [12,345.678]",
+            words: [
+              {
+                word: "testnumber",
+                match: {
+                  expression: "testNumber 12,345.678",
+                  interpretation_slug: "numbers",
+                }
+              },
+              {
+                word: "12345.678",
+                match: {
+                  expression: "testNumber 12,345.678",
+                  interpretation_slug: "numbers",
+                }
+              }
+            ]
+          },
+          expression: {
+            text: "testNumber @{number}",
+            slug: "numbers",
+            highlight: "[testNumber] [12,345.678]",
+            expressions: [
+              {
+                word: "testnumber"
+              },
+              {
+                word: "12345.678"
+              }
+            ],
+          }
+        }
+        check_interpret("testNumber 12,345.678", interpretations: ["numbers"], explain: true)
+      end
+
+      def test_highlight_number_french_format
+        expected_explanation = {
+          highlight: {
+            summary: "[testNumber] [12 345,678]",
+            words: [
+              {
+                word: "testnumber",
+                match: {
+                  expression: "testNumber 12 345,678",
+                  interpretation_slug: "numbers",
+                }
+              },
+              {
+                word: "12345.678",
+                match: {
+                  expression: "testNumber 12 345,678",
+                  interpretation_slug: "numbers",
+                }
+              }
+            ]
+          },
+          expression: {
+            text: "testNumber @{number}",
+            slug: "numbers",
+            highlight: "[testNumber] [12 345,678]",
+            expressions: [
+              {
+                word: "testnumber"
+              },
+              {
+                word: "12345.678"
+              }
+            ],
+          }
+        }
+        check_interpret("testNumber 12 345,678", interpretations: ["numbers"], explain: true)
+      end
+
+      def test_highlight_any
+        expected_explanation = {
+          highlight: {
+            summary: "[before] any [after]",
+            words: [
+              {
+                word: "before",
+                match: {
+                  expression: "before",
+                  interpretation_slug: "before",
+                  parent: {
+                    expression: "before any after",
+                    interpretation_slug: "with_any"
+                  }
+                }
+              },
+              {
+                word: "any",
+                match: false
+              },
+              {
+                word: "after",
+                match: {
+                  expression: "after",
+                  interpretation_slug: "after",
+                  parent: {
+                    expression: "before any after",
+                    interpretation_slug: "with_any"
+                  }
+                }
+              }
+            ]
+          },
+          expression: {
+            text: "@{before} @{any} @{after}",
+            slug: "with_any",
+            highlight: "[before] any [after]",
+            expressions: [
+              {
+                text: "before",
+                slug: "before",
+                highlight: "[before] any after",
+                expressions: [
+                  {
+                    word: "before"
+                  }
+                ]
+              },
+              {
+                text: "after",
+                slug: "after",
+                highlight: "before any [after]",
+                expressions: [
+                  {
+                    word: "after"
+                  }
+                ]
+              },
+              {
+                any: "any",
+                highlight: "before [any] after"
+              }
+            ],
+            computed_solution: {
+              any: "any"
+            }
+          }
+        }
+
+        check_interpret("before any after", interpretations: ["with_any"], explain: true)
       end
 
     end
