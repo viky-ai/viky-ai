@@ -18,6 +18,10 @@ class InterpretationsList
       });
     App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0])
 
+    interpretation_id = $(location).attr('hash')
+    unless !interpretation_id?
+      @showHighlightedExpression(interpretation_id)
+
   @incrementTabBadge: ->
     count = $("#current-locale-tab-badge").data('count')
     $("#current-locale-tab-badge").html(count + 1)
@@ -27,6 +31,12 @@ class InterpretationsList
     count = $("#current-locale-tab-badge").data('count')
     $("#current-locale-tab-badge").html(count - 1)
     $("#current-locale-tab-badge").data('count',  count - 1)
+
+  showHighlightedExpression: (id) ->
+    $(id).addClass('highlight')
+    setTimeout ->
+      $(id).removeClass('highlight')
+    ,1000
 
 module.exports = InterpretationsList
 

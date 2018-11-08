@@ -28,10 +28,7 @@ module ApplicationHelper
     end
   end
 
-# Add selection
-# Check where it is used
   def highlight(text)
-    # Remove this?
     if text.count("[") == text.count("]")
       highlights = text.split(' ')
       highlights.each_with_index do |word, index|
@@ -47,7 +44,11 @@ module ApplicationHelper
     html = []
     if !matches['interpretation_slug'].split("/").last.include? "recursive"
       html << "<li>"
-      html << "<a href='/agents/#{matches['interpretation_slug']}'>"
+      if matches['interpretation_slug'].include? "entities_list"
+        html << "<a href='/agents/#{matches['interpretation_slug']}#entity-#{matches['expression_id']}'>"
+      else
+        html << "<a href='/agents/#{matches['interpretation_slug']}?expression_id=#{matches['expression_id']}'>"
+      end
       html << "<span class='list__item__name'>#{matches['expression']}</span>"
       html << "<span class='list__item__desc'>#{matches['interpretation_slug']}</span>"
       html << "</a>"
