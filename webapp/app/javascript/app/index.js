@@ -57,3 +57,5 @@ import './entities/main';
 import './readme/form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
 window.App.EntityForm = require('./entities/entity_form');
+window.App.Highlight = require('./console/highlight');
+

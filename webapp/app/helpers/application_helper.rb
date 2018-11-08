@@ -28,12 +28,32 @@ module ApplicationHelper
     end
   end
 
+# Add selection
+# Check where it is used
   def highlight(text)
+    # Remove this?
     if text.count("[") == text.count("]")
-      text.gsub("[", "<match>").gsub("]", "</match>").html_safe
+      highlights = text.split(' ')
+      highlights.each_with_index do |word, index|
+        highlights[index] = word.gsub('[', "<match class='highlight-words' id='match_#{index}''>").gsub("]", "</match>")
+      end
+      highlights.join(' ').html_safe
     else
       text
     end
+  end
+
+  def expression_list(matches)
+    html = []
+    if !matches['interpretation_slug'].split("/").last.include? "recursive"
+      html << "<li>"
+      html << "<a href='/agents/#{matches['interpretation_slug']}'>"
+      html << "<span class='list__item__name'>#{matches['expression']}</span>"
+      html << "<span class='list__item__desc'>#{matches['interpretation_slug']}</span>"
+      html << "</a>"
+      html << "</li>"
+    end
+    html.join.html_safe
   end
 
 end

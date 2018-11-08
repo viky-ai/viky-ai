@@ -1,3 +1,4 @@
 $("#console-tabs").html("<%= escape_javascript(@tabs) %>");
 $("#console-output").html("<%= escape_javascript(@output) %>");
 $("body").trigger('code:highlight');
+new App.Highlight();

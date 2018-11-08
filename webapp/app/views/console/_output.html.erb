@@ -19,11 +19,10 @@
       </p>
       <ul class="intents">
         <% json['interpretations'].each do |aliasable| %>
-          <li>
-            <a href="/agents/<%= aliasable["slug"] %>">
-
+          <li id="<%= aliasable["id"] %>">
+              <div class="intent_block">
               <div class="intent__header">
-                <span class="intent__header__name"><%= aliasable["name"] %></span>
+                <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
                 <% if aliasable['scope'] == 'public' %>
                   <span class="badge badge--success badge--small">
                     <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
@@ -50,12 +49,26 @@
                   </li>
                   <li>
                     <div class="intent__label"><%= t('views.console.scores') %></div>
-                    <pre class="with-wrap"><%= aliasable["explanation"]["expression"]["scores"] %></pre>
+                    <pre class="with-wrap"><%= aliasable["explanation"]["scores"] %></pre>
                   </li>
                   <li>
                     <div class="intent__label"><%= t('views.console.highlight') %></div>
                     <div class="intent__highlight">
-                      <%= highlight(aliasable["explanation"]["expression"]["highlight"]) %>
+                      <%= highlight(aliasable["explanation"]["highlight"]["summary"]) %>
+                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, index| %>
+                        <% unless word["match"].nil? %>
+                          <div class="expression-show" style="display:none;" id="match_<%= index %>_exp_list">
+                            <ul>
+                                <%= expression_list(word["match"]) %>
+                                <% parent = word["match"]["parent"] %>
+                                <% while !parent.nil? %>
+                                    <%= expression_list(parent) %>
+                                    <% parent = parent["parent"] %>
+                                <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+                      <% end %>
                     </div>
                   </li>
                 <% end %>
@@ -66,7 +79,8 @@
                   </li>
                 <% end %>
               </ul>
-            </a>
+              </div>
+            <!-- </a> -->
           </li>
         <% end %>
       </ul>
