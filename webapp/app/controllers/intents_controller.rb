@@ -18,13 +18,12 @@ class IntentsController < ApplicationController
         locale = selected_interpretation.locale
         redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale, anchor: "interpretation-#{params[:expression_id]}")
       end
-    else
-      @interpretation = Interpretation.new
-      @interpretation.glued = true
-      @interpretation.keep_order = true
-      @interpretation.auto_solution_enabled = true
-      @current_locale = params[:locale] || @intent.ordered_locales.first
     end
+    @interpretation = Interpretation.new
+    @interpretation.glued = true
+    @interpretation.keep_order = true
+    @interpretation.auto_solution_enabled = true
+    @current_locale = params[:locale] || @intent.ordered_locales.first
   end
 
   def new
