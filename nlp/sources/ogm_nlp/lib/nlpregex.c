@@ -64,8 +64,8 @@ static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part
   struct alias *alias = input_part->alias;
   IFN(alias) DPcErr;
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpRegexBuildAlias: found alias '%s' %s='%s'", alias->alias,
-      NlpAliasTypeString(alias->type), alias->regex);
+  NlpLog(DOgNlpTraceConsolidate, "NlpRegexBuildAlias: found alias '%s' %s='%s'", alias->alias,
+      NlpAliasTypeString(alias->type), alias->regex_string);
 
   IFE(NlpRegexCompile(ctrl_nlp_th, input_part));
 
@@ -74,14 +74,24 @@ static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part
 
 static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct input_part *input_part)
 {
-  GError *regexp_error = NULL;
-  input_part->regex = g_regex_new(input_part->alias->regex, 0, 0, &regexp_error);
-  if (!input_part->regex || regexp_error)
+  struct alias *alias = input_part->alias;
+  if (alias && alias->regex_string)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexCompile: g_regex_new failed on main : %s", regexp_error->message);
-    g_error_free(regexp_error);
-    DPcErr;
+    GError *regexp_error = NULL;
+    alias->regex = g_regex_new(alias->regex_string, 0, 0, &regexp_error);
+    if (regexp_error)
+    {
+      struct interpretation *interpretation = input_part->expression->interpretation;
+
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexCompile: g_regex_new failed on alias :"
+          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
+          input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
+          regexp_error->message);
+      g_error_free(regexp_error);
+      DPcErr;
+    }
   }
+
   DONE;
 }
 
@@ -138,21 +148,25 @@ static og_status NlpRegexMatchExpression(og_nlp_th ctrl_nlp_th, struct expressio
 static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part)
 {
   if (input_part->type != nlp_input_part_type_Regex) DONE;
+
+  struct alias *alias = input_part->alias;
+  if (alias->type != nlp_alias_type_Regex) DONE;
+
   og_string sentence = ctrl_nlp_th->request_sentence;
   size_t sentence_word_count = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_word);
 
-  int start_match_position = 0;
-  int end_match_position = 0;
-
-  if (input_part->regex)
+  if (alias->regex)
   {
     // match the regular expression
     GMatchInfo *match_info = NULL;
     GError *regexp_error = NULL;
-    og_bool match = g_regex_match_full(input_part->regex, sentence, -1, 0, 0, &match_info, &regexp_error);
+    g_regex_match_full(alias->regex, sentence, -1, 0, 0, &match_info, &regexp_error);
     if (regexp_error)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_regex_match_all_full failed on execution : %s",
+      struct interpretation *interpretation = input_part->expression->interpretation;
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexMatchInputPart: g_regex_match_full failed on execution on alias :"
+          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
+          input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
           regexp_error->message);
       g_error_free(regexp_error);
 
@@ -164,47 +178,47 @@ static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part
       DPcErr;
     }
 
-    if (match)
+    while (g_match_info_matches(match_info))
     {
-      while (g_match_info_matches(match_info))
+
+      int start_pos = -1;
+      int end_pos = -1;
+
+      if (g_match_info_fetch_pos(match_info, 0, &start_pos, &end_pos))
       {
-        g_match_info_fetch_pos(match_info, 0, &start_match_position, &end_match_position);
 
-        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-        {
-          OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-              "NlpMatchRegexes: matched sentence with regex '%s' start=%d end=%d", sentence, start_match_position,
-              end_match_position);
-        }
-        IFE(
-            NlpRegexAddWord(ctrl_nlp_th, start_match_position, end_match_position - start_match_position, input_part,
-                sentence_word_count));
+        NlpLog(DOgNlpTraceMatch, "NlpMatchRegexes: matched sentence with regex"
+            " '%s' start=%d end=%d", sentence, start_pos, end_pos);
 
-        g_match_info_next(match_info, &regexp_error);
-
-        if (regexp_error)
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_match_info_next failed on execution : %s",
-              regexp_error->message);
-          g_error_free(regexp_error);
-
-          if (match_info != NULL)
-          {
-            g_match_info_free(match_info);
-          }
-
-          DPcErr;
-        }
+        IFE(NlpRegexAddWord(ctrl_nlp_th, start_pos, end_pos - start_pos, input_part, sentence_word_count));
       }
 
-      g_match_info_free(match_info);
-      match_info = NULL;
+      g_match_info_next(match_info, &regexp_error);
+
+      if (regexp_error)
+      {
+        struct interpretation *interpretation = input_part->expression->interpretation;
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_match_info_next failed on execution on alias :"
+            " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
+            input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
+            regexp_error->message);
+        g_error_free(regexp_error);
+
+        if (match_info != NULL)
+        {
+          g_match_info_free(match_info);
+        }
+
+        DPcErr;
+      }
+
     }
 
     // ensure match_info freeing
     if (match_info != NULL)
     {
       g_match_info_free(match_info);
+      match_info = NULL;
     }
 
   }
@@ -221,7 +235,7 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
 
   char normalized_string_word[DPcPathSize];
   int length_normalized_string_word = OgUtf8Normalize(word_length, s + word_start, DPcPathSize, normalized_string_word);
-  NlpLog(DOgNlpTraceConsolidate, "NlpRegexAddWord: normalized word '%.*s'", length_normalized_string_word,
+  NlpLog(DOgNlpTraceMatch, "NlpRegexAddWord: normalized word '%.*s'", length_normalized_string_word,
       normalized_string_word)
 
   size_t Irequest_word;
@@ -315,7 +329,7 @@ static og_status NlpRegexLogExpression(og_nlp_th ctrl_nlp_th, struct expression 
 static og_status NlpRegexLogInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part)
 {
   if (input_part->type != nlp_input_part_type_Regex) DONE;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "regex '%s' '%s'", input_part->alias->alias, input_part->alias->regex);
+  NlpLog(DOgNlpTraceMinimal, "regex '%s' '%s'", input_part->alias->alias, input_part->alias->regex_string);
   DONE;
 }
 

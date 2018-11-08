@@ -202,6 +202,11 @@ static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t pac
     IFN(alias->alias) DPcErr;
 
     alias->type = alias_compile->type;
+    alias->slug = NULL;
+    alias->id = NULL;
+    alias->package_id = NULL;
+    alias->regex_string = NULL;
+
     if (alias->type == nlp_alias_type_Interpretation)
     {
       alias->slug = OgHeapGetCell(package->halias_ba, alias_compile->slug_start);
@@ -215,15 +220,9 @@ static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t pac
     }
     else if (alias->type == nlp_alias_type_Regex)
     {
-      alias->regex = OgHeapGetCell(package->halias_ba, alias_compile->regex_start);
+      alias->regex_string = OgHeapGetCell(package->halias_ba, alias_compile->regex_start);
     }
 
-    else
-    {
-      alias->slug = NULL;
-      alias->id = NULL;
-      alias->package_id = NULL;
-    }
   }
 
   // free compile heap
@@ -619,7 +618,6 @@ struct input_part *NlpConsolidateCreateInputPart(og_nlp_th ctrl_nlp_th, package_
   IF(Iinput_part) return (NULL);
   input_part->self_index = Iinput_part;
   input_part->expression = expression;
-  input_part->regex = NULL;
 
   if (expression->input_parts_nb == 0)
   {

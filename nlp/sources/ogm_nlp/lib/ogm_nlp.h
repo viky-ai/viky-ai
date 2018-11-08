@@ -151,11 +151,15 @@ struct alias
   og_string alias;
   int alias_length;
 
-  /** interpretation */
+  /** type interpretation */
   og_string slug;
   og_string id;
   og_string package_id;
-  og_string regex;
+
+  /** type regex */
+  og_string regex_string;
+  GRegex *regex;
+
 };
 
 struct context_compile
@@ -290,8 +294,6 @@ struct input_part
     /** nlp_input_part_type_Interpretation */
     struct alias *alias;
   };
-
-  GRegex *regex;
 
 };
 

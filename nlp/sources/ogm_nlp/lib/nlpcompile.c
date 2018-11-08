@@ -177,7 +177,12 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
 
   // We do not use a package heap because we dont want synchronization on that heap
   package_t package = NlpPackageCreate(ctrl_nlp_th, string_id, string_slug);
-  IFN(package) DPcErr;
+  if (!package)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpPackageCreate: failed on package '%s' '%s'",
+        string_slug, string_id);
+    DPcErr;
+  }
 
   int array_size = json_array_size(json_interpretations);
   for (int i = 0; i < array_size; i++)
@@ -185,12 +190,17 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
     json_t *json_interpretation = json_array_get(json_interpretations, i);
     if (json_is_object(json_interpretation))
     {
-      IFE(NlpCompilePackageInterpretation(ctrl_nlp_th, package, json_interpretation));
+      IF(NlpCompilePackageInterpretation(ctrl_nlp_th, package, json_interpretation))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpCompilePackageInterpretation :"
+            " failed on package '%s' '%s'", package->slug, package->id);
+        DPcErr;
+      }
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageinterpretations: json_interpretation at position %d is not an object", i);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: failed on package '%s' '%s', "
+          "json_interpretation at position %d is not an object", package->slug, package->id, i);
       DPcErr;
     }
   }
@@ -201,7 +211,12 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
   }
 
   // freeze memory structure
-  IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
+  IF(NlpConsolidatePackage(ctrl_nlp_th, package))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpConsolidatePackage : "
+        "failed on package '%s' '%s'", package->slug, package->id);
+    DPcErr;
+  }
 
   // publish package
   IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));

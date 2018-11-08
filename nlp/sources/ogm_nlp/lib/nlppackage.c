@@ -7,7 +7,6 @@
 #include "ogm_nlp.h"
 
 static og_status NlpPackageFlush(package_t package);
-static og_status NlpPackageInputPartFlush(package_t package, struct input_part *input_part);
 
 package_t NlpPackageCreate(og_nlp_th ctrl_nlp_th, og_string string_id, og_string string_slug)
 {
@@ -333,10 +332,6 @@ static og_status NlpPackageExpressionsFlush(package_t package)
   {
     struct expression *expression = OgHeapGetCell(package->hexpression, i);
     IFN(expression) DPcErr;
-    for (int j = 0; j < expression->input_parts_nb; j++)
-    {
-      IFE(NlpPackageInputPartFlush(package, expression->input_parts + j));
-    }
 
     json_decrefp(&expression->json_solution);
   }
@@ -347,12 +342,25 @@ static og_status NlpPackageExpressionsFlush(package_t package)
   DONE;
 }
 
-static og_status NlpPackageInputPartFlush(package_t package, struct input_part *input_part)
+static og_status NlpPackageAliasesFlush(package_t package)
 {
-  IFX(input_part->regex)
+  int aliases_used = OgHeapGetCellsUsed(package->halias);
+  if (aliases_used > 0)
   {
-    g_regex_unref(input_part->regex);
+    struct alias *all_aliases = OgHeapGetCell(package->halias, 0);
+    for (int i = 0; i < aliases_used; i++)
+    {
+      struct alias *alias = all_aliases + i;
+
+      // flush regex
+      if (alias->type == nlp_alias_type_Regex && alias->regex)
+      {
+        g_regex_unref(alias->regex);
+        alias->regex = NULL;
+      }
+    }
   }
+
   DONE;
 }
 
@@ -367,6 +375,7 @@ static og_status NlpPackageFlush(package_t package)
   NlpPackageInterpretationsFlush(package);
   NlpPackageContextsFlush(package);
   NlpPackageExpressionsFlush(package);
+  NlpPackageAliasesFlush(package);
 
   OgHeapFlush(package->halias_ba);
   package->halias_ba = NULL;

@@ -48,7 +48,7 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
     regex_string[0]=0;
     if (request_word->is_regex)
     {
-      snprintf(regex_string, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex);
+      snprintf(regex_string, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex_string);
 
     }
     NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s%s:", string_request_word, number, regex_string);

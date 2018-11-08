@@ -66,7 +66,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
   while (at_least_one_input_part_added);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "\nLooking for any expressions");
+  NlpLog(DOgNlpTraceMatch, "\nLooking for any expressions");
 
   IFE(NlpMatchValidateListsWithoutAny(ctrl_nlp_th));
 
