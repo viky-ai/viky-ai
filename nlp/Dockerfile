@@ -28,7 +28,7 @@ ADD tools                           /builds/nls/tools
 
 RUN buildinit.pl
 RUN factory.pl -c external_dependencies fullclean
-RUN factory.pl -c external_dependencies redebug
+RUN factory.pl -c external_dependencies rebuild
 
 ADD products/bu2_nls/bin            /builds/nls/products/bu2_nls/bin
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
