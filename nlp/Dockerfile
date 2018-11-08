@@ -39,8 +39,8 @@ ADD products/bu2_nls/LICENSE.TXT    /builds/nls/products/bu2_nls/LICENSE.TXT
 ADD sources                         /builds/nls/sources
 
 RUN genmake.pl linux64 all
-RUN factory.pl -p bu2_nls redebug
-RUN factory.pl -s bu2_nls   debug
+RUN factory.pl -p bu2_nls rebuild
+RUN factory.pl -s bu2_nls   build
 
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
