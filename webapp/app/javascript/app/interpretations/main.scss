@@ -381,3 +381,35 @@ trix-editor{
     }
   }
 }
+
+.simple-list-content{
+  margin: 0.5em 0;
+  ul{
+    padding:0 ;
+    list-style: none;
+    li{
+      border-bottom: 1px solid #eee;
+      padding: .4em 2em;
+      a{
+        text-decoration: none;
+      }
+      span.list__item__name{
+        word-break: break-word;
+        &:focus,
+        &:hover{
+             text-decoration: underline;
+        }
+      }
+      span.list__item__desc{
+        word-break: break-word;
+        display: block;
+        color: #aaa;
+        font-size: .8em;
+        line-height: 1.4em;
+      }
+    }
+    li:last-child{
+      border-bottom: none;
+    }
+  }
+}
