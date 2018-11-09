@@ -22,6 +22,20 @@
         </span>
       </a>
 
+      <div class="card-list__item__actions">
+        <% if intent.is_used_by(@agent).any? %>
+          <a href="<%= user_agent_intent_get_used_by_intents_path(agent_owner, @agent, intent) %>" class="btn btn--outline btn--small"
+             title="<%= t('views.intents.index.used_by_title')  %>"
+             data-action="open-remote-modal">
+              <%= t('views.intents.index.used_by')  %>
+          </a>
+        <% else %>
+          <span class="btn btn--disabled btn--outline btn--small" title="<%= t('views.intents.index.not_used_by_title')  %>">
+            <%= t('views.intents.index.used_by') %>
+          </span>
+        <% end %>
+      </div>
+
       <% if current_user_can_edit %>
         <div class="card-list__item__actions">
           <div class="dropdown">
@@ -34,16 +48,6 @@
             </div>
             <div class="dropdown__content dropdown__content--hidden dropdown__content--on-right">
               <ul>
-                <% if intent.is_used_by(@agent).any? %>
-                  <li>
-                    <a href="<%= user_agent_intent_get_used_by_intents_path(agent_owner, @agent, intent) %>"
-                       data-action="open-remote-modal">
-                    <span class="icon icon--x-small">
-                      <%= icon_information %>
-                    </span><%= t('views.intents.index.used_by')  %>
-                    </a>
-                  </li>
-                <% end %>
                 <li>
                   <a href="<%= edit_user_agent_intent_path(agent_owner, @agent, intent) %>"
                      data-action="open-remote-modal">

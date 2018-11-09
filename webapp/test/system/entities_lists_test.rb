@@ -164,18 +164,15 @@ class EntitiesListsTest < ApplicationSystemTestCase
   end
 
   test 'Used_by menu' do
-    admin = users(:admin)
     go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_public' do
-      entity_with_used_by = all('.dropdown__trigger > button')[1]
-      entity_with_used_by.click
-      assert page.has_link?('Used by...')
+      assert all('li').last.has_link?('Used by...')
       click_link('Used by...')
     end
 
     assert page.has_text?('Interpretations using weather_dates')
     within '.modal' do
-       within '#intents-list-is_public' do
+      within '#intents-list-is_public' do
         assert page.has_link?('weather_forecast')
       end
 
@@ -187,9 +184,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     page.refresh
 
     within '#entities_lists-list-is_public' do
-      entity_without_used_by = all('.dropdown__trigger > button')[0]
-      entity_without_used_by.click
-      assert page.has_no_link?('Used by...')
+      assert all('li').first.has_no_link?('Used by...')
     end
   end
 end

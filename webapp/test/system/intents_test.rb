@@ -218,15 +218,13 @@ class IntentsTest < ApplicationSystemTestCase
     go_to_agent_intents('admin', 'terminator')
 
     within '#intents-list-is_public' do
-      first('.dropdown__trigger > button').click
-      assert page.has_no_link?('Used by...')
+      assert first('li').has_no_link?('Used by...')
     end
 
     page.refresh
 
     within '#intents-list-is_private' do
-      first('.dropdown__trigger > button').click
-      assert page.has_link?('Used by...')
+      assert first('li').has_link?('Used by...')
       # click link and check
       click_link 'Used by...'
     end

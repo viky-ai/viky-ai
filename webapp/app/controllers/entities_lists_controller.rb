@@ -138,10 +138,10 @@ class EntitiesListsController < ApplicationController
 
     def check_user_rights
       case action_name
-        when 'show', 'index'
+        when 'show', 'index', 'get_used_by_intents'
           access_denied unless current_user.can? :show, @agent
         when 'new', 'create', 'edit', 'update', 'confirm_destroy',
-             'destroy', 'update_positions', 'get_used_by_intents'
+             'destroy', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
         when 'move_to_agent'
           if current_user.can? :edit, @agent

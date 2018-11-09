@@ -176,10 +176,9 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'Used_by interpretations forbidden' do
-    sign_in users(:confirmed)
+  test 'Used_by interpretations allowed for show users' do
+    sign_in users(:show_on_agent_weather)
     get user_agent_entities_list_get_used_by_intents_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
-    assert_redirected_to agents_path
-    assert_equal 'Unauthorized operation.', flash[:alert]
+    assert_response :success
   end
 end

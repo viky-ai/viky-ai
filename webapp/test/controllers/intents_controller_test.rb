@@ -209,10 +209,9 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'Used_by interpretations forbidden' do
+  test 'Used_by interpretations allowed for show users' do
     sign_in users(:confirmed)
     get user_agent_intent_get_used_by_intents_url(users(:admin), agents(:terminator), intents(:simple_where))
-    assert_redirected_to agents_path
-    assert_equal 'Unauthorized operation.', flash[:alert]
+    assert_response :success
   end
 end
