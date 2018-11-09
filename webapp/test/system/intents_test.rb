@@ -231,13 +231,10 @@ class IntentsTest < ApplicationSystemTestCase
 
     assert page.has_text?('Interpretations using simple_where')
     within '.modal' do
-      within '#intents-list-is_public' do
-        assert page.has_link?('terminator_find')
-      end
-
-      within '#intents-list-is_private' do
-        assert_no_css('li')
-      end
+      assert page.has_link?('terminator_find')
+      click_link('terminator_find')
     end
+
+    assert current_url.include?("/agents/admin/terminator/interpretations#intent-#{intents(:terminator_find).id}")
   end
 end

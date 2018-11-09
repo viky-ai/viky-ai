@@ -165,26 +165,21 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
   test 'Used_by menu' do
     go_to_agent_entities_lists('admin', 'weather')
+
     within '#entities_lists-list-is_public' do
+      assert all('li').first.has_no_link?('Used by...')
       assert all('li').last.has_link?('Used by...')
       click_link('Used by...')
     end
 
-    assert page.has_text?('Interpretations using weather_dates')
     within '.modal' do
-      within '#intents-list-is_public' do
-        assert page.has_link?('weather_forecast')
-      end
-
-      within '#intents-list-is_private' do
-        assert_no_css('li')
-      end
+      assert page.has_text?('Interpretations using weather_dates')
+      assert page.has_link?('weather_forecast')
+      click_link('weather_forecast')
     end
 
-    page.refresh
-
-    within '#entities_lists-list-is_public' do
-      assert all('li').first.has_no_link?('Used by...')
+    within('#intents-list-is_public') do
+      assert page.has_link?('weather_forecast')
     end
   end
 end

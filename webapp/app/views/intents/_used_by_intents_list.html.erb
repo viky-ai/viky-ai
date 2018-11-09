@@ -13,29 +13,37 @@
     </h5>
       <% private_intents = intents_list.is_private %>
       <% public_intents = intents_list.is_public %>
-      <div class="simple-list-content">
+      <div class="intent-simple-list-content">
         <ul class="<% if intents_list.count == 0 %>card-list--empty<% end %>"
             data-empty-content="<%= t('views.intents.used_by_list.empty_list.public') %>"
             id="intents-list-is_public">
           <% public_intents.each do |intent| %>
             <li>
-              <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
-                <span class="list__item__name"><%= intent.intentname %></span>
-                <span class="badge badge--success badge--small">
+              <% href_link = from_list ? user_agent_intents_path(agent_owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(agent_owner, @agent, intent) %>
+
+              <a href="<%= href_link %>">
+                <h6>
+                  <span><%= intent.intentname %></span>
+                  <span class="badge badge--success badge--small">
                     <%= t('activerecord.attributes.entities_list.visibility_is_public').upcase %>
                   </span>
-                <span class="list__item__desc"><%= intent.slug %></span>
+                </h6>
+
+                <p><%= intent.slug %></p>
               </a>
             </li>
           <% end %>
           <% private_intents.each do |intent| %>
             <li>
               <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
-                <span class="card-list__item__name"><%= intent.intentname %></span>
-                <span class="badge badge--warning badge--small">
-                    <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
-                </span>
-                <span class="card-list__item__desc"><%= intent.slug %></span>
+                <h6>
+                  <span><%= intent.intentname %></span>
+                  <span class="badge badge--warning badge--small">
+                  <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
+                  </span>
+                </h6>
+
+                <p><%= intent.slug %></p>
               </a>
             </li>
           <% end %>
