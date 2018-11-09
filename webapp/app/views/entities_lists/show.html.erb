@@ -18,6 +18,15 @@
     <% end %>
   </div>
   <div class="header__tools">
+    <% if @entities_list.is_used_by(@agent).any? %>
+      <a href="<%= user_agent_entities_list_get_used_by_intents_path(@agent.owner, @agent, @entities_list) %>" class="btn btn--small"
+         title="<%= t('views.intents.index.used_by_title')  %>"
+         data-action="open-remote-modal">
+          <%= t('views.intents.index.used_by')  %>
+      </a>
+    <% else %>
+      <small><%= t('views.intents.index.not_used_by_title') %></small>
+    <% end %>
     <% if current_user.can?(:edit, @agent) %>
       <a href="<%= new_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
          data-action="open-remote-modal" class="btn btn--small">

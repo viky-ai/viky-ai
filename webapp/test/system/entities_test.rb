@@ -12,6 +12,18 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
     assert page.has_text?('Entities lists / weather_conditions PUBLIC')
+    assert page.has_text?('Not used by any interpretation')
+  end
+
+  test 'Used by button in entity details' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_dates))
+    assert page.has_link?('Used by...')
+    click_link 'Used by...'
+    within('.modal__main') do
+      assert page.has_text?('Interpretations using weather_dates')
+      click_link('weather_forecast')
+    end
+    assert page.has_text?('Interpretations / weather_forecast')
   end
 
 
