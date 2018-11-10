@@ -367,6 +367,21 @@ static og_bool NlpRequestExpressionSame(og_nlp_th ctrl_nlp_th, struct request_ex
 
 og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpression)
+  {
+    static int nb_calls = 0;
+    nb_calls++;
+    NlpLog(DOgNlpTraceMatchExpression,
+        "NlpRequestExpressionIsOrdered: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d",
+        nb_calls, request_expression->expression->alias_any_input_part_position,
+        request_expression->expression->any_input_part_position, request_expression->orips_nb);
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 2));
+  }
+
+
+  og_bool is_ordered = TRUE;
+
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
@@ -374,37 +389,43 @@ og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expr
     struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
     IFN(request_input_part2) DPcErr;
 
-    og_bool is_ordered = NlpRequestInputPartsAreOrdered(ctrl_nlp_th, request_input_part1, request_input_part2);
+    is_ordered = NlpRequestInputPartsAreOrdered(ctrl_nlp_th, request_input_part1, request_input_part2);
     IFE(is_ordered);
-    if (!is_ordered) return FALSE;
+    if (!is_ordered)
+    {
+      break;
+    }
   }
+  NlpLog(DOgNlpTraceMatchExpression,"NlpRequestExpressionIsOrdered: expression %s",(is_ordered?"is ordered":"is not ordered"));
 
-  return TRUE;
+  return is_ordered;
 }
 
 static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpression)
   {
-    NlpLog(DOgNlpTraceMatch,
-        "NlpRequestExpressionIsGlued: starting on expression: alias_any_input_part_position=%d any_input_part_position=%d orips=%d",
-        request_expression->expression->alias_any_input_part_position,
+    static int nb_calls = 0;
+    nb_calls++;
+    NlpLog(DOgNlpTraceMatchExpression,
+        "NlpRequestExpressionIsGlued: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d",
+        nb_calls, request_expression->expression->alias_any_input_part_position,
         request_expression->expression->any_input_part_position, request_expression->orips_nb);
-    IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 2));
   }
 
+  og_bool is_glued = TRUE;
   int any_input_part_position = request_expression->expression->any_input_part_position;
 
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part1) DPcErr;
-    og_bool is_glued = FALSE;
     if (request_expression->expression->keep_order)
     {
-      if (any_input_part_position == i || any_input_part_position == i+1) continue;
-      struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i+1);
+      if (any_input_part_position == i + 1) continue;
+      struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
       IFN(request_input_part2) DPcErr;
       is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
       IFE(is_glued);
@@ -412,6 +433,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
     }
     else
     {
+      is_glued = FALSE;
       for (int j = i + 1; j < request_expression->orips_nb; j++)
       {
         if (any_input_part_position == i || any_input_part_position == j)
@@ -427,11 +449,13 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
           if (is_glued) break;
         }
       }
-      if (!is_glued) return FALSE;
+      if (!is_glued) break;
     }
   }
 
-  return TRUE;
+  NlpLog(DOgNlpTraceMatchExpression,"NlpRequestExpressionIsGlued: expression %s",(is_glued?"is glued":"is not glued"));
+
+  return is_glued;
 }
 
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
