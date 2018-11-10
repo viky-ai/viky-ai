@@ -55,7 +55,7 @@ module Nls
       end
 
 
-      def test_any_keep_order_glued
+      def test_any_glued
         # When the keep_order is FALSE, the three possible any 'avant' 'bla bla' and 'apres' are equally possible
         # we choose the last one by default in the algorithm
         expected = { interpretation: "word_any_word", solution: { milieu: "apres"} }
@@ -81,6 +81,84 @@ module Nls
 
         expected = { interpretation: "alias_any", solution: { milieu: "bla bla"} }
         check_interpret("avant debut bla bla", expected)
+
+      end
+
+      def test_any_glued_more
+
+        Nls.remove_all_packages
+
+        package = Package.new("any_keep_order_glued_more")
+
+        debut = package.new_interpretation("debut", scope: "private")
+        debut << Expression.new("debut", solution: "debut")
+
+        debutaaa = package.new_interpretation("debutaaa", scope: "private")
+        debutaaa << Expression.new("debutaaa", solution: "debutaaa")
+
+        debutbbb = package.new_interpretation("debutbbb", scope: "private")
+        debutbbb << Expression.new("debutbbb", solution: "debutbbb")
+
+        fin = package.new_interpretation("fin", scope: "private" )
+        fin << Expression.new("fin", solution: "fin")
+
+        finaaa = package.new_interpretation("finaaa", scope: "private")
+        finaaa << Expression.new("finaaa", solution: "finaaa")
+
+        finbbb = package.new_interpretation("finbbb", scope: "private")
+        finbbb << Expression.new("finbbb", solution: "finbbb")
+
+        word_word_any_word = package.new_interpretation("word_word_any_word", { scope: "public" })
+        word_word_any_word << Expression.new("motdebutaaa motdebutbbb @{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+
+        word_any_word_word = package.new_interpretation("word_any_word_word", { scope: "public" })
+        word_any_word_word << Expression.new("motdebut @{milieu} motfinaaa motfinbbb", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+
+        alias_alias_any_alias = package.new_interpretation("alias_alias_any_alias", { scope: "public" })
+        alias_alias_any_alias << Expression.new("@{debutaaa} @{debutbbb} @{milieu} @{fin}", aliases: { debutaaa: debutaaa, debutbbb: debutbbb, milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glued: true)
+
+        alias_any_alias_alias = package.new_interpretation("alias_any_alias_alias", { scope: "public" })
+        alias_any_alias_alias << Expression.new("@{debut} @{milieu} @{finaaa} @{finbbb}", aliases: { debut: debut, milieu: Alias.any, finaaa: finaaa, finbbb: finbbb}, solution: "`{ milieu: milieu}`", glued: true)
+
+        Nls.package_update(package)
+
+        expected = { interpretation: "word_word_any_word", solution: { milieu: "apres"} }
+        check_interpret("avant motdebutaaa motdebutbbb bla bla motfin apres", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("avant motdebutaaa pasbien motdebutbbb bla bla motfin apres", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "word_any_word_word", solution: { milieu: "apres"} }
+        check_interpret("avant motdebut bla bla motfinaaa motfinbbb apres", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("avant motdebut bla bla motfinaaa pasbien motfinbbb apres", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "alias_alias_any_alias", solution: { milieu: "apres"} }
+        check_interpret("avant debutaaa debutbbb bla bla fin apres", expected)
+
+        expected = { interpretation: "alias_alias_any_alias", solution: { milieu: "apres"} }
+        check_interpret("avant debutbbb debutaaa bla bla fin apres", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("avant debutaaa pasbien debutbbb bla bla fin apres", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "alias_any_alias_alias", solution: { milieu: "apres"} }
+        check_interpret("avant debut bla bla finaaa finbbb apres", expected)
+
+        expected = { interpretation: "alias_any_alias_alias", solution: { milieu: "apres"} }
+        check_interpret("avant debut bla bla finbbb finaaa apres", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("avant debut bla bla finaaa pasbien finbbb apres", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
 
       end
 

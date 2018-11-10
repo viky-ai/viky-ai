@@ -424,7 +424,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
     IFN(request_input_part1) DPcErr;
     if (request_expression->expression->keep_order)
     {
-      if (any_input_part_position == i + 1) continue;
+      if (i == any_input_part_position - 1) continue;
       struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
       IFN(request_input_part2) DPcErr;
       is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
@@ -436,9 +436,10 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
       is_glued = FALSE;
       for (int j = i + 1; j < request_expression->orips_nb; j++)
       {
-        if (any_input_part_position == i || any_input_part_position == j)
+        if (i == any_input_part_position - 1 && j == any_input_part_position)
         {
           is_glued = TRUE;
+          break;
         }
         else
         {
