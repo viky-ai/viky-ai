@@ -45,11 +45,22 @@ og_status NlpExplainHighlightFlush(og_nlp_th ctrl_nlp_th)
 }
 
 og_status NlpExplainHighlightAddWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    struct request_word *request_word)
+    struct request_word *request_word, struct request_any *request_any)
 {
   struct highlight_word highlight_word[1];
   highlight_word->request_expression = request_expression;
-  highlight_word->request_word = request_word;
+
+  IFN(request_any)
+  {
+    highlight_word->is_any = FALSE;
+    highlight_word->request_word = request_word;
+  }
+  else
+  {
+    highlight_word->is_any = TRUE;
+    highlight_word->request_any = request_any;
+  }
+
   IFE(OgHeapAppend(ctrl_nlp_th->hhighlight_word, 1, highlight_word));
   DONE;
 }
@@ -109,15 +120,31 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
   {
     struct highlight_word *highlight_word = highlight_words + i;
     json_t *json_word = json_object();
+    og_string string_highlight_word = NULL;
+    char string_any[DPcPathSize];
 
-    struct request_word *request_word = highlight_word->request_word;
-    og_string string_request_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-    IFN(string_request_word) DPcErr;
-
-    json_t *json_request_word_text = json_string(string_request_word);
-    IF(json_object_set_new(json_word, "word", json_request_word_text))
+    if (highlight_word->is_any)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_request_word_text");
+      struct request_any *request_any = highlight_word->request_any;
+      NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
+      string_highlight_word = string_any;
+      IF(json_object_set_new(json_word, "is-any", json_true()))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_word is-any to true");
+        DPcErr;
+      }
+    }
+    else
+    {
+      struct request_word *request_word = highlight_word->request_word;
+      string_highlight_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+      IFN(string_highlight_word) DPcErr;
+    }
+
+    json_t *json_highlight_word_text = json_string(string_highlight_word);
+    IF(json_object_set_new(json_word, "word", json_highlight_word_text))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_highlight_word_text");
       DPcErr;
     }
     IF(json_array_append_new(json_words, json_word))
@@ -130,7 +157,7 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
     {
       IF(json_object_set_new(json_word, "match", json_null()))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_request_word_text");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_word to null");
         DPcErr;
       }
 
@@ -163,15 +190,32 @@ static og_status NlpExplainHighlightAddBasicWord(og_nlp_th ctrl_nlp_th, int Ireq
   for (int i = 0; i < highlight_word_used; i++)
   {
     struct highlight_word *highlight_word = highlight_words + i;
-    if (highlight_word->request_word->start_position <= request_word->start_position
-        && request_word->start_position + request_word->length_position
-            <= highlight_word->request_word->start_position + highlight_word->request_word->length_position)
+    if (highlight_word->is_any)
     {
-      DONE;
+      struct request_word *first_request_word_any = highlight_word->request_any->queue_request_words->head->data;
+      int start_position = first_request_word_any->start_position;
+
+      struct request_word *last_request_word_any = highlight_word->request_any->queue_request_words->tail->data;
+      int end_position = last_request_word_any->start_position + last_request_word_any->length_position;
+
+      if (start_position <= request_word->start_position
+          && request_word->start_position + request_word->length_position <= end_position)
+      {
+        DONE;
+      }
+    }
+    else
+    {
+      if (highlight_word->request_word->start_position <= request_word->start_position
+          && request_word->start_position + request_word->length_position
+              <= highlight_word->request_word->start_position + highlight_word->request_word->length_position)
+      {
+        DONE;
+      }
     }
 
   }
-  IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, NULL, request_word));
+  IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, NULL, request_word, NULL));
 
   DONE;
 }
@@ -193,9 +237,32 @@ static int NlpExplainHighlightCmp(gconstpointer ptr_highlight_word1, gconstpoint
   struct highlight_word *highlight_word1 = (struct highlight_word *) ptr_highlight_word1;
   struct highlight_word *highlight_word2 = (struct highlight_word *) ptr_highlight_word2;
 
-  if (highlight_word1->request_word->start_position != highlight_word2->request_word->start_position)
+  int start_position1;
+  if (highlight_word1->is_any)
   {
-    return (highlight_word1->request_word->start_position - highlight_word2->request_word->start_position);
+    struct request_word *first_request_word_any = highlight_word1->request_any->queue_request_words->head->data;
+    start_position1 = first_request_word_any->start_position;
+  }
+  else
+  {
+    start_position1 = highlight_word1->request_word->start_position;
+  }
+
+  int start_position2;
+  if (highlight_word2->is_any)
+  {
+    struct request_word *first_request_word_any = highlight_word2->request_any->queue_request_words->head->data;
+    start_position2 = first_request_word_any->start_position;
+  }
+  else
+  {
+    start_position2 = highlight_word2->request_word->start_position;
+  }
+
+
+  if (start_position1 != start_position2)
+  {
+    return (start_position1 - start_position2);
   }
 
   return (highlight_word1 - highlight_word2);
@@ -297,9 +364,16 @@ og_status NlpExplainHighlightLog(og_nlp_th ctrl_nlp_th)
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpExplainHighlightLog: list of highlight words:");
   for (int i = 0; i < highlight_word_used; i++)
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "highlight word %d:", i);
     struct highlight_word *highlight_word = highlight_words + i;
-    NlpLogRequestWord(ctrl_nlp_th, highlight_word->request_word);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "highlight word %d%s:", i, ((highlight_word->is_any)?" (any)":""));
+    if (highlight_word->is_any)
+    {
+      NlpRequestExpressionAnyLog(ctrl_nlp_th, highlight_word->request_any);
+    }
+    else
+    {
+      NlpLogRequestWord(ctrl_nlp_th, highlight_word->request_word);
+    }
     IFX(highlight_word->request_expression)
     {
       NlpRequestExpressionLog(ctrl_nlp_th, highlight_word->request_expression, 0);

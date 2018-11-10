@@ -624,8 +624,13 @@ struct nlp_match_group_numbers
 
 struct highlight_word
 {
-struct request_word *request_word;
-struct request_expression *request_expression;
+  og_bool is_any;
+  union
+  {
+    struct request_word *request_word;
+    struct request_any *request_any;
+  };
+  struct request_expression *request_expression;
 };
 
 struct og_ctrl_nlp_threaded
@@ -1032,7 +1037,7 @@ og_status NlpExplainHighlightInit(og_nlp_th ctrl_nlp_th, og_string name);
 og_status NlpExplainHighlightReset(og_nlp_th ctrl_nlp_th);
 og_status NlpExplainHighlightFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpExplainHighlightAddWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    struct request_word *request_word);
+    struct request_word *request_word, struct request_any *request_any);
 og_status NlpExplainHighlight(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_explanation);
 og_status NlpExplainHighlightLog(og_nlp_th ctrl_nlp_th);

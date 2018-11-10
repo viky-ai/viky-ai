@@ -194,7 +194,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
           DPcErr;
         }
 
-        IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, request_word));
+        IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, request_word, NULL));
 
       }
       else if (request_input_part->type == nlp_input_part_type_Interpretation)
@@ -241,7 +241,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_highlight");
       DPcErr;
     }
-
+    IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, NULL, request_any));
   }
 
   IF(json_object_set_new(json_expression, "expressions", json_expressions))
