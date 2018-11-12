@@ -91,6 +91,14 @@ class CardListHelper
       else
         $('.card-list li .card-list__item__draggable').hide()
 
+  @showHighlightedItem: (id) ->
+    element = $(id)
+    if element?
+      element.addClass('highlight')
+      setTimeout ->
+        element.removeClass('highlight')
+      ,2000
+
 Setup = ->
   $('ul.card-list[data-behavior="sortable"]').each((index, element) ->
     new CardList($(element).attr('id'), $(element).data('group'))

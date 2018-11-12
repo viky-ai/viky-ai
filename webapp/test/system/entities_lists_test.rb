@@ -178,8 +178,11 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link('weather_forecast')
     end
 
-    within('#intents-list-is_public') do
+    within('.intent-simple-list-content') do
       assert page.has_link?('weather_forecast')
+      click_link('weather_forecast')
     end
+
+     assert page.has_text?('Interpretations / weather_forecast')
   end
 end

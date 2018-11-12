@@ -35,7 +35,8 @@
           <% end %>
           <% private_intents.each do |intent| %>
             <li>
-              <a href="<%= user_agent_intent_path(agent_owner, @agent, intent) %>">
+              <% href_link = from_list ? user_agent_intents_path(agent_owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(agent_owner, @agent, intent) %>
+              <a href="<%= href_link %>">
                 <h6>
                   <span><%= intent.intentname %></span>
                   <span class="badge badge--warning badge--small">

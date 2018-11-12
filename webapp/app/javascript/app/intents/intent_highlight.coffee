@@ -4,16 +4,7 @@ class IntentHighlight
   constructor: ->
     intent_id = $(location).attr('hash')
     if intent_id?
-      @showHighlightedIntent(intent_id)
-
-  showHighlightedIntent: (id) ->
-    element = $(id)
-    if element?
-      element.addClass('highlight')
-      setTimeout ->
-        element.removeClass('highlight')
-      ,1000
-
+      App.CardListHelper.showHighlightedItem(intent_id)
 
 Setup = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "index"
