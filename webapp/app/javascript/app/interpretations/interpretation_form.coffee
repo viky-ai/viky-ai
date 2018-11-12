@@ -270,6 +270,12 @@ class AliasesForm
       else
         return false
 
+  openRailroadlink: (event) ->
+    event.preventDefault()
+    regex_value = $(event.target).closest('.regex_field').find('input')[0].value
+    railroad_link = $(event.target).attr('href')
+    window.open("#{railroad_link}##{encodeURIComponent(regex_value)}", '_blank')
+
   previous_ids: ->
     ids = []
     for input in @form_container.find("input[name*='[id]']")
@@ -421,7 +427,7 @@ class AliasesForm
           </td>
         "
       line.push "
-        <td colspan='2'><a href='https://regexper.com/' target='_blank'>Railroad Diagram</a></td>
+        <td colspan='2'><a href='https://regexper.com/' target='_blank' class='railroad_link'>Railroad Diagram</a></td>
         </tr>
         <tr class='spacer'><td colspan='5'></td></tr>
       "
@@ -453,6 +459,8 @@ class AliasesForm
       if @form_container.find('.regex_field').length > 0
         $('.regex_field').on 'blur', 'input', (event) =>
           @showRegexStatus(event.target)
+        $('.railroad_link').on 'click', (event) =>
+          @openRailroadlink(event)
     else
       @form_container.hide()
 
