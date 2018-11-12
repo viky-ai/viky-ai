@@ -44,10 +44,6 @@
               <ul>
               <% unless aliasable["explanation"].nil? %>
                   <li>
-                    <div class="intent__label"><%= t('views.console.expression_text') %></div>
-                    <pre><%= highlight(aliasable["explanation"]["expression"]["text"]) %></pre>
-                  </li>
-                  <li>
                     <div class="intent__label"><%= t('views.console.scores') %></div>
                     <pre class="with-wrap"><%= aliasable["explanation"]["scores"] %></pre>
                   </li>
