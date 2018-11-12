@@ -180,9 +180,8 @@ class EntitiesListsTest < ApplicationSystemTestCase
 
     within('.intent-simple-list-content') do
       assert page.has_link?('weather_forecast')
-      click_link('weather_forecast')
     end
-
-     assert page.has_text?('Interpretations / weather_forecast')
+    assert current_url.include?("/agents/admin/weather/interpretations#intent-#{intents(:weather_forecast).id}")
   end
+
 end
