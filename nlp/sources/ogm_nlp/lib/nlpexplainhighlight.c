@@ -128,9 +128,9 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
       struct request_any *request_any = highlight_word->request_any;
       NlpRequestAnyString(ctrl_nlp_th, request_any, DPcPathSize, string_any);
       string_highlight_word = string_any;
-      IF(json_object_set_new(json_word, "is-any", json_true()))
+      IF(json_object_set_new(json_word, "is_any", json_true()))
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_word is-any to true");
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpExplainHighlightJson: error setting json_word is_any to true");
         DPcErr;
       }
     }
