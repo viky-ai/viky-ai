@@ -93,11 +93,15 @@ class CardListHelper
 
   @showHighlightedItem: (id) ->
     element = $(id)
-    if element?
+    if element.length > 0
       element.addClass('highlight')
-      setTimeout ->
-        element.removeClass('highlight')
-      ,2000
+      $(document).on('click', @removeHighlights)
+
+  @removeHighlights: ->
+    highlighted_item = $('li.highlight')
+    if highlighted_item.length > 0
+      highlighted_item.removeClass('highlight')
+      $(document).off('click', @removeHighlights)
 
 Setup = ->
   $('ul.card-list[data-behavior="sortable"]').each((index, element) ->

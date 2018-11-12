@@ -3,7 +3,7 @@ $ = require('jquery')
 class IntentHighlight
   constructor: ->
     intent_id = $(location).attr('hash')
-    if intent_id?
+    if intent_id != ''
       App.CardListHelper.showHighlightedItem(intent_id)
 
 Setup = ->
