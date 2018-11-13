@@ -314,7 +314,6 @@ static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th,
 static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
     struct request_expression *request_expression, json_t *json_expression)
 {
-  int start_position, end_position, length_position;
   struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
   IFn(request_position1) DPcErr;
@@ -322,9 +321,31 @@ static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
       request_expression->request_position_start + request_expression->request_positions_nb - 1);
   IFn(request_position2) DPcErr;
 
-  start_position = request_position1->start;
-  end_position = request_position2->start + request_position2->length;
-  length_position = end_position - start_position;
+  int start_position_expression = request_position1->start;
+  int end_position_expression = request_position2->start + request_position2->length;
+
+  int start_position_any = start_position_expression;
+  int end_position_any = end_position_expression;
+
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
+
+    struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
+    start_position_any = first_request_word_any->start_position;
+
+    struct request_word *last_request_word_any = request_any->queue_request_words->tail->data;
+    end_position_any = last_request_word_any->start_position + last_request_word_any->length_position;
+  }
+
+  int start_position = start_position_expression;
+  if (start_position_any < start_position) start_position = start_position_any;
+
+  int end_position = end_position_expression;
+  if (end_position < end_position_any) end_position = end_position_any;
+
+  int length_position = end_position - start_position;
 
   og_string s = ctrl_nlp_th->request_sentence;
   unsigned char string_expression[DPcPathSize];
