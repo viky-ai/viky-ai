@@ -17,6 +17,7 @@ class IntentsController < ApplicationController
       if selected_interpretation
         locale = selected_interpretation.locale
         redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale, anchor: "interpretation-#{params[:expression_id]}")
+        return
       end
     end
     @interpretation = Interpretation.new
