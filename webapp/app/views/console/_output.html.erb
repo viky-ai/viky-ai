@@ -50,10 +50,10 @@
                   <li>
                     <div class="intent__label"><%= t('views.console.highlight') %></div>
                     <div class="intent__highlight">
-                      <%= highlight(aliasable["explanation"]["highlight"]["summary"]) %>
-                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, index| %>
+                      <%= highlight(aliasable["explanation"]["highlight"]["words"]) %>
+                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, position| %>
                         <% unless word["match"].nil? %>
-                          <div class="expression-show" style="display:none;" id="match_<%= index %>_exp_list">
+                          <div class="expression-show" style="display:none;" id="match_<%= position %>_exp_list">
                             <ul>
                                 <%= expression_list(word["match"]) %>
                                 <% parent = word["match"]["parent"] %>

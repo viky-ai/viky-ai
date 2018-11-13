@@ -157,6 +157,9 @@
               border: 1px solid rgba(#000, .05);
               cursor: pointer;
             }
+            match.is_any{
+              background-color: orange;
+            }
             match.current{
               border: 1px solid #3bb8d7;
               box-shadow: 0 0 5px #3bb8d7;

@@ -73,6 +73,10 @@ class ConsoleTest < ApplicationSystemTestCase
                           "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
                           "expression_id" => "cdf8d742-6cdb-43e9-8aa3-3b9e71cf0747",
                         }
+                      },
+                      {
+                        "word" => "viki.ai",
+                        "match" => nil
                       }
                     ]
                   },

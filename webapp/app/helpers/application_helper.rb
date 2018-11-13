@@ -28,17 +28,23 @@ module ApplicationHelper
     end
   end
 
-  def highlight(text)
-    if text.count("[") == text.count("]")
-      highlights = text.split(' ')
-      highlights.each_with_index do |word, index|
-        highlights[index] = word.gsub('[', "<match class='highlight-words' id='match_#{index}''>").gsub("]", "</match>")
-      end
-      highlights.join(' ').html_safe
+  def highlight(words)
+    highlights = []
+    words.each_with_index do |word, position|
+      if word['match'].nil?
+      highlights << word['word']
     else
-      text
+      highlight_class = "highlight-words"
+      if !word['is_any'].nil? && word['is_any']
+        highlight_class << " is_any"
+      end
+      highlights << "<match class='#{highlight_class}' id='match_#{position}''>#{word['word']}</match>"
     end
+    end
+
+    highlights.join(' ').html_safe
   end
+
 
   def expression_list(matches)
     html = []
