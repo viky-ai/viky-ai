@@ -17,6 +17,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretation)
 {
+  IFE(NlpExplainHighlightReset(ctrl_nlp_th));
   IFE(NlpSetSuperExpression(ctrl_nlp_th, request_expression));
 
   json_t *json_explanation = json_object();
