@@ -12,11 +12,11 @@ static og_status NlpExplainHighlightAddBasicWord(og_nlp_th ctrl_nlp_th, int Ireq
 static og_status NlpExplainHighlightSort(og_nlp_th ctrl_nlp_th);
 static int NlpExplainHighlightCmp(gconstpointer ptr_highlight_word1, gconstpointer ptr_highlight_word2,
     gpointer user_data);
-static og_status NlpInterpretTreeMatchJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+static og_status NlpInterpretTreeMatchJson(og_nlp_th ctrl_nlp_th, struct highlight_word *highlight_word,
     json_t *json_expression);
-static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th,
+static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th, struct highlight_word *highlight_word,
     struct request_expression *request_expression, json_t *json_expression, og_bool is_root);
-static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
+static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th, struct highlight_word *highlight_word,
     struct request_expression *request_expression, json_t *json_expression);
 
 og_status NlpExplainHighlightInit(og_nlp_th ctrl_nlp_th, og_string name)
@@ -139,8 +139,7 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
     {
       struct request_word *request_word = highlight_word->request_word;
       og_string s = ctrl_nlp_th->request_sentence;
-      snprintf(string_highlight_word_buffer, DPcPathSize, "%.*s", request_word->length_position,
-          s + request_word->start_position);
+      snprintf(string_highlight_word_buffer, DPcPathSize, "%.*s", request_word->length_position, s + request_word->start_position);
       string_highlight_word = string_highlight_word_buffer;
     }
 
@@ -167,7 +166,7 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
     }
     else
     {
-      IFE(NlpInterpretTreeMatchJson(ctrl_nlp_th, highlight_word->request_expression, json_word));
+      IFE(NlpInterpretTreeMatchJson(ctrl_nlp_th, highlight_word, json_word));
     }
 
   }
@@ -271,15 +270,15 @@ static int NlpExplainHighlightCmp(gconstpointer ptr_highlight_word1, gconstpoint
   return (highlight_word1 - highlight_word2);
 }
 
-static og_status NlpInterpretTreeMatchJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+static og_status NlpInterpretTreeMatchJson(og_nlp_th ctrl_nlp_th, struct highlight_word *highlight_word,
     json_t *json_expression)
 {
-  IFE(NlpInterpretTreeMatchJsonRecursive(ctrl_nlp_th, request_expression, json_expression, TRUE));
+  IFE(NlpInterpretTreeMatchJsonRecursive(ctrl_nlp_th, highlight_word, highlight_word->request_expression, json_expression, TRUE));
   DONE;
 }
 
 static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, json_t *json_expression, og_bool is_root)
+    struct highlight_word *highlight_word, struct request_expression *request_expression, json_t *json_expression, og_bool is_root)
 {
   og_string name = "parent";
   if (is_root) name = "match";
@@ -292,7 +291,7 @@ static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th,
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeMatchJsonExpression: error setting parent");
       DPcErr;
     }
-    IFE(NlpInterpretTreeMatchJsonExpression(ctrl_nlp_th, request_expression, json_super_expression));
+    IFE(NlpInterpretTreeMatchJsonExpression(ctrl_nlp_th, highlight_word, request_expression, json_super_expression));
   }
   else
   {
@@ -307,15 +306,15 @@ static og_status NlpInterpretTreeMatchJsonRecursive(og_nlp_th ctrl_nlp_th,
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeMatchJsonExpression: error setting parent");
       DPcErr;
     }
-    IFE(NlpInterpretTreeMatchJsonExpression(ctrl_nlp_th, request_expression, json_super_expression));
+    IFE(NlpInterpretTreeMatchJsonExpression(ctrl_nlp_th, highlight_word, request_expression, json_super_expression));
 
-    IFE(NlpInterpretTreeMatchJsonRecursive(ctrl_nlp_th, super_request_expression, json_super_expression, FALSE));
+    IFE(NlpInterpretTreeMatchJsonRecursive(ctrl_nlp_th, highlight_word, super_request_expression, json_super_expression, FALSE));
   }
   DONE;
 }
 
 static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, json_t *json_expression)
+    struct highlight_word *highlight_word, struct request_expression *request_expression, json_t *json_expression)
 {
   struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
@@ -330,10 +329,9 @@ static og_status NlpInterpretTreeMatchJsonExpression(og_nlp_th ctrl_nlp_th,
   int start_position_any = start_position_expression;
   int end_position_any = end_position_expression;
 
-  if (request_expression->Irequest_any >= 0)
+  if (highlight_word->is_any)
   {
-    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-    IFN(request_any) DPcErr;
+    struct request_any *request_any = highlight_word->request_any;
 
     struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
     start_position_any = first_request_word_any->start_position;
