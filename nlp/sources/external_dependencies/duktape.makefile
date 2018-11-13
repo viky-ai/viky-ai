@@ -9,21 +9,23 @@ include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 .PHONY: all redebug debug build make clean fullclean
 
-redebug: rebuild
+debug: $(DBINPATH)/libduktape.so $(SRCPATH)/include/duktape.h
 
-debug: build
+build: $(RBINPATH)/libduktape.so $(SRCPATH)/include/duktape.h
+
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug
 
 rebuild:
 	$(MAKE) -f $(CURRENT_MAKEFILE) clean
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
-build: $(DBINPATH)/libduktape.so $(SRCPATH)/include/duktape.h
-
 duktape: all
 
 all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) build
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug build
 
 fullclean: clean
 	-cd duktape && $(MAKE) cleanall
@@ -32,6 +34,7 @@ fullclean: clean
 clean:
 	rm -f  $(SRCPATH)/include/duktape.h
 	rm -f  $(DBINPATH)/libduktape.so*
+	rm -f  $(RBINPATH)/libduktape.so*
 
 SRCS_C=duktape/dist/duktape.c duktape/dist/duk_module_node.c duktape/dist/duk_console.c
 
@@ -60,9 +63,12 @@ duktape/dist/duk_console.c duktape/dist/duk_console.h: duktape/dist/duktape.h du
 $(DBINPATH)/libduktape.so: duktape/dist/libduktape.so
 	cp -af duktape/dist/libduktape.so $(DBINPATH)/
 
+$(RBINPATH)/libduktape.so: duktape/dist/libduktape.so
+	cp -af duktape/dist/libduktape.so $(RBINPATH)/
+
 $(SRCPATH)/include/duktape.h: duktape/dist/duktape.h duktape/dist/duk_config.h duktape/dist/duk_console.h duktape/dist/duk_module_node.h
 	mkdir -p $(SRCPATH)/include/
-	cp -af duktape/dist/duk_config.h $(SRCPATH)/include/
+	cp -af duktape/dist/duk_config.h      $(SRCPATH)/include/
 	cp -af duktape/dist/duk_module_node.h $(SRCPATH)/include/
 	cp -af duktape/dist/duk_console.h     $(SRCPATH)/include/
 	cp -af duktape/dist/duktape.h         $(SRCPATH)/include/

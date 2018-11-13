@@ -28,7 +28,7 @@ ADD tools                           /builds/nls/tools
 
 RUN buildinit.pl
 RUN factory.pl -c external_dependencies fullclean
-RUN factory.pl -c external_dependencies redebug
+RUN factory.pl -c external_dependencies rebuild
 
 ADD products/bu2_nls/bin            /builds/nls/products/bu2_nls/bin
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
@@ -39,8 +39,8 @@ ADD products/bu2_nls/LICENSE.TXT    /builds/nls/products/bu2_nls/LICENSE.TXT
 ADD sources                         /builds/nls/sources
 
 RUN genmake.pl linux64 all
-RUN factory.pl -p bu2_nls redebug
-RUN factory.pl -s bu2_nls   debug
+RUN factory.pl -p bu2_nls rebuild
+RUN factory.pl -s bu2_nls   build
 
 # ============================================================================
 # Setup a lightweigth image only with minimal binaries
