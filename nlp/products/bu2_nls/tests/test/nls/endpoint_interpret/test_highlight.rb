@@ -133,7 +133,7 @@ module Nls
           summary: "[chevale] [blanc]",
             words: [
               {
-                word: "cheval",
+                word: "chevale",
                 match: {
                   expression: "chevale",
                   interpretation_slug: "cheval",

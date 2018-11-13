@@ -121,6 +121,7 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
     struct highlight_word *highlight_word = highlight_words + i;
     json_t *json_word = json_object();
     og_string string_highlight_word = NULL;
+    unsigned char string_highlight_word_buffer[DPcPathSize+1];
     char string_any[DPcPathSize];
 
     if (highlight_word->is_any)
@@ -137,8 +138,10 @@ static og_status NlpExplainHighlightJson(og_nlp_th ctrl_nlp_th, struct request_e
     else
     {
       struct request_word *request_word = highlight_word->request_word;
-      string_highlight_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-      IFN(string_highlight_word) DPcErr;
+      og_string s = ctrl_nlp_th->request_sentence;
+      snprintf(string_highlight_word_buffer, DPcPathSize, "%.*s", request_word->length_position,
+          s + request_word->start_position);
+      string_highlight_word = string_highlight_word_buffer;
     }
 
     json_t *json_highlight_word_text = json_string(string_highlight_word);
