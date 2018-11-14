@@ -77,9 +77,10 @@ class InterpretationAlias < ApplicationRecord
 
     def check_valid_regex
       return if reg_exp.nil?
+
       begin
-        valid_regex = Regexp.new(reg_exp)
-      rescue RegexpError => e
+        Regexp.new(reg_exp)
+      rescue RegexpError
         errors.add(:reg_exp, I18n.t('errors.interpretation_alias.valid_regex'))
       end
     end

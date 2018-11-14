@@ -151,10 +151,10 @@ module InterpretationHelper
         if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
           if interpretation_alias.type_number?
             color = "black"
-            title = "Number" if interpretation_alias.type_number?
+            title = "Number"
           elsif interpretation_alias.type_regex?
-            color= "black"
-            title = interpretation_alias.reg_exp
+            color = "black"
+            title = "Regex: #{interpretation_alias.reg_exp}"
           else
             title = interpretation_alias.interpretation_aliasable.slug
             color = interpretation_alias.interpretation_aliasable.color
