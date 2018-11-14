@@ -1,12 +1,33 @@
 <a href="#" data-action="console-enter-fullscreen" class="toggle-console">Console</a>
 
+<% agent = @console_agent || @agent %>
 <aside class="console-container">
-  <div class="console" id="console-<%= @agent.id %>" data-turbolinks-permanent>
+  <div class="console" id="console-<%= agent.id %>" data-turbolinks-permanent>
     <div class="console__header">
       <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
       <div class="console__endpoint">
-        <span class="badge badge--small badge--success">GET</span>
-        <code>/api/v1/<%= @agent.slug %>/interpret.json</code>
+            <span class="badge badge--small badge--success">GET</span>
+            <code>/api/v1/<%= agent.slug %>/interpret.json</code>
+      </div>
+
+      <div class="agent-compact">
+        <% if agent.image.nil? %>
+          <% css_class = "background-color-gradient__#{agent.color}" %>
+        <% else %>
+          <% css_class = "agent-compact__id__visual--image" %>
+          <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
+        <% end %>
+        <a href="#" class="agent-compact__id">
+          <div class="agent-compact__id__visual <%= css_class %>" style="<%= css_style %>">
+            <span class="agent-compact__id__visual__ribbon">public</span>
+          </div>
+          <div class="agent-compact__id__data">
+            <h5>
+              <%= agent.name %>
+            </h5>
+            <h6><%= agent.slug %></h6>
+          </div>
+        </a>
       </div>
 
       <a href="#" id="console-enter-fullscreen"
@@ -27,7 +48,7 @@
       </a>
     </div>
 
-    <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
+    <%= form_with url: interpret_user_agent_path(agent.owner, agent), method: :get, id: 'js-console-form' do |f| %>
       <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
       <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
       <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
