@@ -11,7 +11,7 @@ class Highlight
       $(event.target).removeClass("current")
       $("##{interpretation_id} ##{event.target.id}_exp_list").hide()
     else
-      $("##{interpretation_id} .expression-show").hide()
+      $("##{interpretation_id} .matched-list").hide()
       $("##{interpretation_id} .highlight-words").removeClass("current")
       $(event.target).addClass("current")
       $("##{interpretation_id} ##{event.target.id}_exp_list").show()

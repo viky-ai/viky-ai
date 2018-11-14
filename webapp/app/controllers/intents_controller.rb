@@ -15,16 +15,14 @@ class IntentsController < ApplicationController
     if params[:expression_id]
       selected_interpretation = Interpretation.find_by id: params[:expression_id]
       if selected_interpretation
-        locale = selected_interpretation.locale
-        redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale, anchor: "interpretation-#{params[:expression_id]}")
-        return
+        expression_locale = selected_interpretation.locale
       end
     end
     @interpretation = Interpretation.new
     @interpretation.glued = true
     @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
-    @current_locale = params[:locale] || @intent.ordered_locales.first
+    @current_locale = expression_locale || params[:locale] || @intent.ordered_locales.first
   end
 
   def new

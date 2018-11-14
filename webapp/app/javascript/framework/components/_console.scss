@@ -199,7 +199,7 @@
     }
   }
 
-  .expression-show{
+  .matched-list{
     word-break: break-all;
     background-color: #f5f5f5;
     padding: 0 .1em 0 .2em;
@@ -210,17 +210,17 @@
         padding: .4em 0 .1em 0;
         a{
           text-decoration: none;
-          .list__item__name{
+          .matched-list__item__name{
             &:focus,
             &:hover{
                  text-decoration: underline;
             }
           }
         }
-        span.list__item__name{
+        span.matched-list__item__name{
           display: block;
         }
-        span.list__item__desc{
+        span.matched-list__item__desc{
           display: block;
           color: #aaa;
           font-size: .8em;
@@ -228,8 +228,6 @@
         }
     }
     }
-    .card-list a{
-      display: block;
-    }
   }
+
 }

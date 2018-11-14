@@ -53,10 +53,10 @@ module ApplicationHelper
       if matches['interpretation_slug'].include? "entities_list"
         html << "<a href='/agents/#{matches['interpretation_slug']}#entity-#{matches['expression_id']}'>"
       else
-        html << "<a href='/agents/#{matches['interpretation_slug']}?expression_id=#{matches['expression_id']}'>"
+        html << "<a href='/agents/#{matches['interpretation_slug']}?expression_id=#{matches['expression_id']}#interpretation-#{matches['expression_id']}'>"
       end
-      html << "<span class='list__item__name'>#{matches['expression']}</span>"
-      html << "<span class='list__item__desc'>#{matches['interpretation_slug']}</span>"
+      html << "<span class='matched-list__item__name'>#{matches['expression']}</span>"
+      html << "<span class='matched-list__item__desc'>#{matches['interpretation_slug']}</span>"
       html << "</a>"
       html << "</li>"
     end
