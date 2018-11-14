@@ -197,11 +197,12 @@ class Nlp::Package
       elist.entities.order(position: :desc).each do |entity|
         entity.terms.each do |term|
           expression = {}
-          expression[:expression] = term['term']
-          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution] = build_entities_list_solution(entity)
-          expression[:keep_order] = true
-          expression[:glued]      = true
+          expression[:expression]    = term['term']
+          expression[:locale]        = term['locale'] unless term['locale'] == Locales::ANY
+          expression[:solution]      = build_entities_list_solution(entity)
+          expression[:keep_order]    = true
+          expression[:glued]         = true
+          expression[:glue_strength] = 'punctuation'
           expressions << expression
         end
       end
