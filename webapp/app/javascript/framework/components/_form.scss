@@ -189,6 +189,20 @@
     background-color: #f5f5f5;
     color: #666;
     white-space: nowrap;
+    &.addon--error{
+      background-color: rgba($alert_color, .035);
+      color: $alert_color;
+      .icon svg{
+        fill: $alert_color;
+      }
+    }
+    &.addon--success{
+      background-color: rgba($success_color, .035);
+      color: $success_color;
+      .icon svg{
+        fill: $success_color;
+      }
+    }
   }
   .field_with_errors{
     input[type='text'],
