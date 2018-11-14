@@ -147,17 +147,14 @@ endif
 CFLAGS  = -std=gnu99 -fPIC $(ADDITIONAL_WARNING_ERROR_FLAG) $(DISABLED_WARNING) -D_REENTRANT -DDPcCompiler=DPcCompilerGcc -DDPcSystem=DPcSystemUnix  -DDPcArch=DPcArchlinux -D_LARGEFILE_SOURCE `getconf LFS_CFLAGS` $(INCLUDES)
 CFLAGSR = -O2 -L$(RBINPATH) $(CFLAGS) -DNDEBUG
 CFLAGSD =     -L$(DBINPATH) $(CFLAGS) $(DEBUG_GCC_FLAGS)
-CFLAGSP = -pg -L$(PBINPATH) $(CFLAGS) $(DEBUG_GCC_FLAGS)
 
 # Pertimm-only compile flags
 CFLAGSR_INTERNAL = $(CFLAGSR)
 CFLAGSD_INTERNAL = $(CFLAGSD)
-CFLAGSP_INTERNAL = $(CFLAGSP)
 
 # Pertimm-only link flags
 LFLAGSR_INTERNAL = -Wl,-rpath-link,$(RBINPATH)
 LFLAGSD_INTERNAL = -Wl,-rpath-link,$(DBINPATH)
-LFLAGSP_INTERNAL = -Wl,-rpath-link,$(PBINPATH)
 
 RPATH_LIB = -Wl,-rpath,'$$ORIGIN'
 RPATH_PROG = -Wl,-rpath,'$$ORIGIN:$$ORIGIN/lib/linux:$$ORIGIN/private/bin'
@@ -182,16 +179,6 @@ $(DBINPATH):
 
 $(DLINKPATH):
 	@if test ! -d $(DLINKPATH) ; then mkdir -p $(DLINKPATH) ; fi
-
-
-$(PBINPATH):
-	@if test ! -d $(PBINPATH) ; then mkdir -p $(PBINPATH) ; fi
-
-#$(PLIBPATH):
-#	@if test ! -d $(PLIBPATH) ; then mkdir -p $(PLIBPATH) ; fi
-
-$(PLINKPATH):
-	@if test ! -d $(PLINKPATH) ; then mkdir -p $(PLINKPATH) ; fi
 
 $(LOGPATH) :
 	@if test ! -d $(LOGPATH); then mkdir $(LOGPATH); fi
