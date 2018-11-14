@@ -8,9 +8,24 @@ include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 .PHONY: all redebug debug build make clean fullclean
 
-redebug: rebuild
 
-debug: build
+debug: $(DBINPATH)/libjansson.so $(SRCPATH)/include/jansson.h $(SRCPATH)/include/jansson_config.h
+
+build: $(RBINPATH)/libjansson.so $(SRCPATH)/include/jansson.h $(SRCPATH)/include/jansson_config.h
+
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
+
+redebug:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug
+
+glib: all
+
+all:
+	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build debug
 
 rebuild:
 	$(MAKE) -f $(CURRENT_MAKEFILE) clean
@@ -22,7 +37,7 @@ jansson: all
 
 all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) build
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug build
 
 fullclean: clean
 	-cd jansson && $(MAKE) clean
@@ -34,6 +49,7 @@ clean:
 	rm -f $(SRCPATH)/include/jansson_config.h
 	rm -f $(SRCPATH)/include/jansson.h
 	rm -f $(DBINPATH)/libjansson.so*
+	rm -f $(RBINPATH)/libjansson.so*
 
 make: jansson/Makefile
 	cd jansson && $(MAKE)
@@ -49,7 +65,11 @@ jansson/Makefile: jansson/configure
 
 $(DBINPATH)/libjansson.so: make
 	mkdir -p $(DBINPATH)
-	cp -af jansson/src/.libs/libjansson.so* $(DBINPATH)
+	cp -af jansson/src/.libs/libjansson.so* $(DBINPATH)/
+
+$(RBINPATH)/libjansson.so: $(DBINPATH)/libjansson.so
+	mkdir -p $(RBINPATH)
+	cp -af jansson/src/.libs/libjansson.so* $(RBINPATH)/
 
 $(SRCPATH)/include/jansson.h: make
 	mkdir -p $(SRCPATH)/include/

@@ -8,21 +8,24 @@ include $(OG_REPO_PATH)/sources/makefile.defs.linux
 
 .PHONY: all redebug debug build make clean fullclean uriparser
 
-redebug: rebuild
+debug: $(DBINPATH)/liburiparser.so $(SRCPATH)/include/uriparser/Uri.h
 
-debug: build
+build: $(RBINPATH)/liburiparser.so $(SRCPATH)/include/uriparser/Uri.h
 
 rebuild:
 	$(MAKE) -f $(CURRENT_MAKEFILE) clean
 	$(MAKE) -f $(CURRENT_MAKEFILE) build
 
-build: $(DBINPATH)/liburiparser.so $(SRCPATH)/include/uriparser/Uri.h
+redebug:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug
+
 
 uriparser: all
 
 all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
-	$(MAKE) -f $(CURRENT_MAKEFILE) build
+	$(MAKE) -f $(CURRENT_MAKEFILE) debug build
 
 fullclean: clean
 	-cd uriparser && $(MAKE) clean
@@ -33,6 +36,7 @@ fullclean: clean
 clean:
 	rm -f $(SRCPATH)/include/uriparser/*.h
 	rm -f $(DBINPATH)/liburiparser.so*
+	rm -f $(RBINPATH)/liburiparser.so*
 
 make: uriparser/Makefile
 	cd uriparser && $(MAKE)
@@ -50,7 +54,11 @@ uriparser/Makefile: uriparser/configure
 
 $(DBINPATH)/liburiparser.so: make
 	mkdir -p $(DBINPATH)
-	cp -af uriparser/.libs/liburiparser.so* $(DBINPATH)
+	cp -af uriparser/.libs/liburiparser.so* $(DBINPATH)/
+
+$(RBINPATH)/liburiparser.so: $(DBINPATH)/liburiparser.so
+	mkdir -p $(RBINPATH)
+	cp -af uriparser/.libs/liburiparser.so* $(RBINPATH)/
 
 $(SRCPATH)/include/uriparser/Uri.h: make
 	mkdir -p $(SRCPATH)/include/uriparser
