@@ -268,8 +268,18 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression '%s' with locale %s%s%s alias_any_input_part_position=%d", text, string_locale,
-      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "", expression->alias_any_input_part_position);
+  unsigned char string_glue_strength[DPcPathSize];
+  string_glue_strength[0]=0;
+  if (expression->glue_strength != nlp_glue_strength_Total)
+  {
+    sprintf(string_glue_strength," glue_strength=%s",NlpGlueStrengthString(expression->glue_strength));
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
+      "    Expression '%s' with locale %s%s%s%s alias_any_input_part_position=%d", text, string_locale,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "", string_glue_strength,
+      expression->alias_any_input_part_position);
+
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     IFE(NlpPackageAliasLog(ctrl_nlp_th, package, expression->aliases + i));
@@ -409,6 +419,21 @@ const char *NlpAliasTypeString(enum nlp_alias_type type)
 
   }
   return "alias_unknown";
+}
+
+const char *NlpGlueStrengthString(enum nlp_glue_strength glue_strength)
+{
+
+  switch (glue_strength)
+  {
+    case nlp_glue_strength_Nil:
+      return "nil";
+    case nlp_glue_strength_Total:
+      return "total";
+    case nlp_glue_strength_Punctuation:
+      return "punctuation";
+  }
+  return "glue_strength_unknown";
 }
 
 static og_status NlpLogJanssonRefCounterRecursive(og_nlp_th ctrl_nlp_th, og_string key, json_t *json_value, int depth);

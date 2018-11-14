@@ -158,11 +158,17 @@ struct context_compile
   int flag_start;
 };
 
+enum nlp_glue_strength
+{
+  nlp_glue_strength_Nil = 0, nlp_glue_strength_Total, nlp_glue_strength_Punctuation
+};
+
 struct expression_compile
 {
   int text_start;
   og_bool keep_order;
   og_bool glued;
+  enum nlp_glue_strength glue_strength;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -183,6 +189,7 @@ struct expression
 
   og_bool keep_order;
   og_bool glued;
+  enum nlp_glue_strength glue_strength;
 
   int locale;
 
@@ -767,6 +774,7 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word);
 const char *NlpAliasTypeString(enum nlp_alias_type type);
+const char *NlpGlueStrengthString(enum nlp_glue_strength glue_strength);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);

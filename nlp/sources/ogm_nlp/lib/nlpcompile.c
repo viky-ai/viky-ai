@@ -473,6 +473,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
   json_t *json_glued = NULL;
+  json_t *json_glue_strength = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -493,6 +494,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "glued") == 0)
     {
       json_glued = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "glue-strength") == 0)
+    {
+      json_glue_strength = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -599,6 +604,33 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glued is not a boolean");
     DPcErr;
   }
+
+  expression->glue_strength = nlp_glue_strength_Total;
+  if (json_glue_strength == NULL)
+  {
+    expression->glue_strength = nlp_glue_strength_Total;
+  }
+  else if (json_is_string(json_glue_strength))
+  {
+    const char *string_glue_strength = json_string_value(json_glue_strength);
+    if (!Ogstricmp(string_glue_strength,"total")) expression->glue_strength = nlp_glue_strength_Total;
+    else if (!Ogstricmp(string_glue_strength,"punctuation")) expression->glue_strength = nlp_glue_strength_Punctuation;
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength value '%s' is not valid",string_glue_strength);
+      DPcErr;
+    }
+  }
+  else if (json_is_null(json_glue_strength))
+  {
+    expression->glue_strength = nlp_glue_strength_Total;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength is not a string");
+    DPcErr;
+  }
+
 
   IFN(json_aliases)
   {
