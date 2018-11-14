@@ -30,28 +30,34 @@
           </tr>
         </thead>
         <tbody>
-        <% for interpretation_alias in interpretation.interpretation_aliases %>
-          <% json_alias = JSON.parse(alias_to_json(interpretation_alias)) %>
+        <% interpretation.interpretation_aliases.order(position_start: :asc).each do |ia| %>
+          <% json_alias = JSON.parse(alias_to_json(ia)) %>
           <tr>
             <td>
               <%= json_alias['aliasname'] %>
             </td>
             <td>
-              <% slug = "" %>
-              <% if json_alias['nature'] == 'type_regex' %>
-                <% slug = json_alias['reg_exp'] %>
-              <% elsif json_alias['nature'] != 'type_number' %>
+              <% if ['type_intent', 'type_entities_list'].include? json_alias['nature'] %>
                 <% slug = "#{json_alias['slug'].split('/').first}/#{json_alias['slug'].split('/').second}/" %>
-              <% end %>
-              <span class='<%= json_alias['color'] %>'>
-                <% if json_alias['url'].blank? %>
-                  <small><%= slug %></small><%= json_alias['slug'].split('/').last %>
-                <% else %>
-                  <a href='<%= json_alias['url'] %>'>
+                <span class='<%= json_alias['color'] %>'>
+                  <% if json_alias['url'].blank? %>
                     <small><%= slug %></small><%= json_alias['slug'].split('/').last %>
-                  </a>
-                <% end %>
-              </span>
+                  <% else %>
+                    <a href='<%= json_alias['url'] %>'>
+                      <small><%= slug %></small><%= json_alias['slug'].split('/').last %>
+                    </a>
+                  <% end %>
+                </span>
+              <% elsif json_alias['nature'] == 'type_number' %>
+                <span class='<%= json_alias['color'] %>'>
+                  <%= json_alias['slug'] %>
+                </span>
+              <% elsif json_alias['nature'] == 'type_regex' %>
+                <span class='<%= json_alias['color'] %>'>
+                  <%= json_alias['slug'] %>
+                  <code title="<%= json_alias['reg_exp'] %>"><%= truncate(json_alias['reg_exp'], length: 80) %></code>
+                </span>
+              <% end %>
             </td>
             <td class='options'>
               <label>
@@ -59,7 +65,9 @@
                 <% if json_alias['any_enabled'] %>Any<% end %>
               </label>
             </td>
-            <td><%= interpretation_alias.interpretation.expression[interpretation_alias.position_start..interpretation_alias.position_end-1] %></td>
+            <td>
+              <%= ia.interpretation.expression[ia.position_start..ia.position_end-1] %>
+            </td>
           </tr>
         <% end %>
         </tbody>

@@ -65,7 +65,7 @@ module InterpretationHelper
         reg_exp: interpretation_alias.reg_exp,
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
-        slug: ''
+        slug: t("views.interpretations.regex")
       }
     else
       current_aliasable = interpretation_alias.interpretation_aliasable
