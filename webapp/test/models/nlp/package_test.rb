@@ -691,7 +691,7 @@ class PackageTest < ActiveSupport::TestCase
       aliasname: 'name',
       interpretation_id: interpretation.id,
       nature: 'type_regex',
-      reg_exp: '[A-Za-z-,]'
+      reg_exp: '[A-Za-z,-]'
     )
     assert regex_alias.save
 
@@ -711,7 +711,7 @@ class PackageTest < ActiveSupport::TestCase
                 {
                   "alias"   => "name",
                   "type"    => "regex",
-                  "regex"   => "[A-Za-z-,]"
+                  "regex"   => "[A-Za-z,-]"
                 }
               ],
               "locale"     => "en"
