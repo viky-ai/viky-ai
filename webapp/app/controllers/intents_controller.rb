@@ -18,6 +18,9 @@ class IntentsController < ApplicationController
         expression_locale = selected_interpretation.locale
       end
     end
+    if params[:console_agent]
+      @console_agent = Agent.find_by id: params[:console_agent]
+    end
     @interpretation = Interpretation.new
     @interpretation.glued = true
     @interpretation.keep_order = true

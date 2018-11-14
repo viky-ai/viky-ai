@@ -22,7 +22,7 @@
           <li id="<%= aliasable["id"] %>">
               <div class="intent_block">
               <div class="intent__header">
-                <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
+                <a href="/agents/<%= aliasable["slug"] %>?console_agent=<%= current_agent.id %>" class="intent__header__name"><%= aliasable["name"] %></a>
                 <% if aliasable['scope'] == 'public' %>
                   <span class="badge badge--success badge--small">
                     <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
@@ -55,10 +55,10 @@
                         <% unless word["match"].nil? %>
                           <div class="matched-list" style="display:none;" id="match_<%= position %>_exp_list">
                             <ul>
-                                <%= expression_list(word["match"]) %>
+                                <%= expression_list(word["match"], current_agent.id) %>
                                 <% parent = word["match"]["parent"] %>
                                 <% while !parent.nil? %>
-                                    <%= expression_list(parent) %>
+                                    <%= expression_list(parent, current_agent.id) %>
                                     <% parent = parent["parent"] %>
                                 <% end %>
                             </ul>

@@ -22,7 +22,7 @@ class ConsoleController < ApplicationController
         )
         @output = render_to_string(
           partial: 'output',
-          locals: { data: data, current_tab: current_tab }
+          locals: { data: data, current_tab: current_tab, current_agent: agent }
         )
       }
     end

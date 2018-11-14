@@ -238,4 +238,105 @@ class ConsoleTest < ApplicationSystemTestCase
 
     assert page.has_content?('What the weather like tomorrow ?')
   end
+
+  test "Console is persisted when navigating between matched expressions" do
+    go_to_agents_index
+    click_link "My awesome weather bot admin/weather"
+
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "weather terminator"
+      all('.dropdown__trigger > .btn')[1].click
+      click_link 'Verbose ON'
+
+      Nlp::Interpret.any_instance.stubs('proceed').returns(
+        {
+          status: 200,
+          body: {
+            interpretations: [
+              {
+                "id" => intents(:weather_forecast).id,
+                "slug" => "admin/weather/weather_forecast",
+                "name" => "weather_forecast",
+                "score" => 1.0,
+                "explanation" => {
+                  "scores" => "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:0.90",
+                  "highlight" => {
+                    "summary" => "[weather]",
+                    "words" => [
+                      {
+                        "word" => "weather",
+                        "match" => {
+                          "expression" => "weather",
+                          "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
+                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
+                          "expression_id" => interpretations(:weather_forecast_tomorrow),
+                        }
+                      }
+                    ]
+                  },
+                  "expression" => {
+                    "text" => "weather",
+                    "slug" => "admin/weather/interpretations/weather_forecast",
+                    "highlight" => "[weather]",
+                    "expressions" => [
+                      {
+                        "word" => "weather"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "id" => intents(:terminator_find).id,
+                "slug" => "admin/terminator/terminator_find",
+                "name" => "terminator_find",
+                "score" => 1.0,
+                "explanation" => {
+                  "scores" => "cov:1.00 loc:1.00 spell:1.00 olap:1.00 any:1.00 ctx:1.00 scope:0.90",
+                  "highlight" => {
+                    "summary" => "[terminator]",
+                    "words" => [
+                      {
+                        "word" => "terminator",
+                        "match" => {
+                          "expression" => "terminator",
+                          "interpretation_slug" => "admin/terminator/interpretations/terminator_find",
+                          "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418959",
+                          "expression_id" => interpretations(:terminator_find_sarah),
+                        }
+                      }
+                    ]
+                  },
+                  "expression" => {
+                    "text" => "terminator",
+                    "slug" => "admin/terminator/interpretations/terminator_find",
+                    "highlight" => "[terminator]",
+                    "expressions" => [
+                      {
+                        "word" => "terminator"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      )
+      assert page.has_content?('Verbose ON')
+      assert page.has_content?('2 interpretations found.')
+      assert page.has_content?('weather terminator')
+
+      page.find('.highlight-words', :text => 'terminator').click
+      assert page.has_link?('admin/terminator/interpretations/terminator_find')
+      click_link('admin/terminator/interpretations/terminator_find')
+    end
+
+    assert page.has_content?('Where is Sarah Connor ?')
+    within('.console') do
+      assert page.has_content?('2 interpretations found.')
+      assert page.has_content?('weather terminator')
+    end
+  end
+
 end
