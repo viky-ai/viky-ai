@@ -29,8 +29,17 @@ module InterpretationHelper
   def number_to_json()
     JSON.generate({
       color:  "intent-black",
-      aliasname: t("views.interpretations.number"),
+      aliasname: t("views.interpretations.number").downcase,
       nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_number])
+    })
+  end
+
+  def regex_to_json()
+    JSON.generate({
+      color: "intent-black",
+      aliasname: t("views.interpretations.regex").downcase,
+      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex]),
+      reg_exp: ""
     })
   end
 
@@ -48,6 +57,16 @@ module InterpretationHelper
         is_list: interpretation_alias.is_list,
         any_enabled: interpretation_alias.any_enabled,
         slug: t("views.interpretations.number")
+      }
+    elsif interpretation_alias.type_regex?
+      data = {
+        color: "intent-black",
+        aliasname: interpretation_alias.aliasname,
+        nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex]),
+        reg_exp: interpretation_alias.reg_exp,
+        is_list: interpretation_alias.is_list,
+        any_enabled: interpretation_alias.any_enabled,
+        slug: t("views.interpretations.regex")
       }
     else
       current_aliasable = interpretation_alias.interpretation_aliasable
@@ -81,6 +100,10 @@ module InterpretationHelper
     data[:id] = interpretation_alias.id unless interpretation_alias.id.nil?
     unless interpretation_alias.errors[:aliasname].empty?
       data[:aliasname_errors] = display_errors(interpretation_alias, :aliasname)
+    end
+
+    unless interpretation_alias.errors[:reg_exp].empty?
+      data[:regex_errors] = display_errors(interpretation_alias, :reg_exp)
     end
 
     JSON.generate(data)
@@ -129,7 +152,10 @@ module InterpretationHelper
         if !interpretation_alias.nil? && index == interpretation_alias.position_end - 1
           if interpretation_alias.type_number?
             color = "black"
-            title = "Number" if interpretation_alias.type_number?
+            title = "Number"
+          elsif interpretation_alias.type_regex?
+            color = "black"
+            title = "Regex: #{interpretation_alias.reg_exp}"
           else
             title = interpretation_alias.interpretation_aliasable.slug
             color = interpretation_alias.interpretation_aliasable.color

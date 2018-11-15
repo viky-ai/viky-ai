@@ -66,6 +66,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "soleil",
@@ -73,6 +74,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "pluie",
@@ -80,6 +82,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "rain",
@@ -87,6 +90,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         },
@@ -101,6 +105,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tout à l'heure",
@@ -108,6 +113,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "today",
@@ -115,12 +121,14 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tomorrow",
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         }
@@ -705,4 +713,48 @@ class PackageTest < ActiveSupport::TestCase
 
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
+
+  test 'Package generation with regex type' do
+    agent = agents(:terminator)
+    interpretation = interpretations(:terminator_find_sarah)
+    assert entities_lists(:terminator_targets).destroy
+
+    regex_alias = InterpretationAlias.new(
+      position_start: 9,
+      position_end: 21,
+      aliasname: 'name',
+      interpretation_id: interpretation.id,
+      nature: 'type_regex',
+      reg_exp: '[A-Za-z,-]'
+    )
+    assert regex_alias.save
+
+    package = Nlp::Package.new(agent)
+    expected = {
+      "id"   => agent.id,
+      "slug" => "admin/terminator",
+      "interpretations" => [
+        {
+          "id"    => interpretation.intent.id,
+          "slug"  => "admin/terminator/interpretations/terminator_find",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression" => "Where is @{name} ?",
+              "aliases"    => [
+                {
+                  "alias"   => "name",
+                  "type"    => "regex",
+                  "regex"   => "[A-Za-z,-]"
+                }
+              ],
+              "locale"     => "en"
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, package.generate_json
+  end
+
 end

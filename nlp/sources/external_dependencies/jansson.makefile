@@ -27,10 +27,6 @@ all:
 	$(MAKE) -f $(CURRENT_MAKEFILE) fullclean
 	$(MAKE) -f $(CURRENT_MAKEFILE) build debug
 
-rebuild:
-	$(MAKE) -f $(CURRENT_MAKEFILE) clean
-	$(MAKE) -f $(CURRENT_MAKEFILE) build
-
 build: $(DBINPATH)/libjansson.so $(SRCPATH)/include/jansson.h $(SRCPATH)/include/jansson_config.h
 
 jansson: all

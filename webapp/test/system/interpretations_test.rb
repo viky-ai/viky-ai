@@ -363,6 +363,41 @@ class InterpretationsTest < ApplicationSystemTestCase
   end
 
 
+  test 'Create an interpretation with regex' do
+    admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
+
+    assert page.has_link?('Where is Sarah Connor ?')
+
+    first('trix-editor').click.set('Find Sarah')
+    select_text_in_trix('trix-editor', 5, 10)
+    assert page.has_link?('Regex')
+
+    click_link('Regex')
+
+    within('.aliases') do
+      assert page.has_link?('Railroad Diagram')
+      assert page.has_text?('Sarah')
+      assert page.has_text?('Blank Regex')
+
+      find("input[name*='reg_exp']").set('[[[')
+      assert page.has_text?('Invalid Regex')
+
+      find("input[name*='reg_exp']").set('^[a-zA-z-]')
+      assert page.has_text?('Valid Regex')
+    end
+
+    click_button 'Add'
+
+    assert page.has_link?('Find Sarah')
+
+    click_link('Find Sarah')
+    assert page.has_text?('Regex')
+    expected_regex = '^[a-zA-z-]'
+    assert_equal expected_regex, find("input[name*='reg_exp']").value
+    assert page.has_text?('Valid Regex')
+  end
+
+
   private
 
     def admin_go_to_intent_show(agent, intent)

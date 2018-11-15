@@ -306,7 +306,7 @@ static og_status NlpPackageAliasDump(og_nlp_th ctrl_nlp_th, package_t package, s
       DPcErr;
     }
   }
-  else if (alias->type == nlp_alias_type_type_Interpretation)
+  else if (alias->type == nlp_alias_type_Interpretation)
   {
     json_t *json_slug = json_string(alias->slug);
     IF(json_object_set_new(json_alias, "slug", json_slug))

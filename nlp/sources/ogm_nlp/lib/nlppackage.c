@@ -342,6 +342,28 @@ static og_status NlpPackageExpressionsFlush(package_t package)
   DONE;
 }
 
+static og_status NlpPackageAliasesFlush(package_t package)
+{
+  int aliases_used = OgHeapGetCellsUsed(package->halias);
+  if (aliases_used > 0)
+  {
+    struct alias *all_aliases = OgHeapGetCell(package->halias, 0);
+    for (int i = 0; i < aliases_used; i++)
+    {
+      struct alias *alias = all_aliases + i;
+
+      // flush regex
+      if (alias->type == nlp_alias_type_Regex && alias->regex)
+      {
+        g_regex_unref(alias->regex);
+        alias->regex = NULL;
+      }
+    }
+  }
+
+  DONE;
+}
+
 static og_status NlpPackageFlush(package_t package)
 {
   if (package == NULL) CONT;
@@ -353,6 +375,7 @@ static og_status NlpPackageFlush(package_t package)
   NlpPackageInterpretationsFlush(package);
   NlpPackageContextsFlush(package);
   NlpPackageExpressionsFlush(package);
+  NlpPackageAliasesFlush(package);
 
   OgHeapFlush(package->halias_ba);
   package->halias_ba = NULL;

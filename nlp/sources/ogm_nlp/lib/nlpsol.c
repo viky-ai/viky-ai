@@ -93,6 +93,10 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
         {
           must_combine_solution = TRUE;
         }
+        else if (request_input_part->input_part && request_input_part->input_part->type == nlp_input_part_type_Regex)
+        {
+          must_combine_solution = TRUE;
+        }
       }
       else if (request_input_part->type == nlp_input_part_type_Interpretation)
       {
@@ -264,7 +268,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
             alias_solutions_nb, DOgAliasSolutionSize);
         DPcErr;
 
@@ -308,7 +312,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
         if (alias_solutions_nb >= DOgAliasSolutionSize)
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
               alias_solutions_nb, DOgAliasSolutionSize);
           DPcErr;
 
@@ -345,7 +349,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
               alias->alias, solution);
           if (alias_solutions_nb >= DOgAliasSolutionSize)
           {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
                 alias_solutions_nb, DOgAliasSolutionSize);
             DPcErr;
 
@@ -353,6 +357,30 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
           alias_solution->alias = alias;
           alias_solution->json_solution = json_solution_number;
+          g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+          alias_solutions_nb++;
+
+        }
+        else if (request_word->is_regex)
+        {
+          json_t *json_solution_regex = NULL;
+          json_solution_regex = json_string(string_request_word);
+
+          struct alias *alias = request_input_part->input_part->alias;
+          char solution[DPcPathSize];
+          NlpSolutionString(ctrl_nlp_th, json_solution_regex, DPcPathSize, solution);
+          NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (regex): %s",
+              alias->alias, solution);
+          if (alias_solutions_nb >= DOgAliasSolutionSize)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+                alias_solutions_nb, DOgAliasSolutionSize);
+            DPcErr;
+
+          }
+          struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+          alias_solution->alias = alias;
+          alias_solution->json_solution = json_solution_regex;
           g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
           alias_solutions_nb++;
 
@@ -391,7 +419,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
           alias_solutions_nb, DOgAliasSolutionSize);
       DPcErr;
 

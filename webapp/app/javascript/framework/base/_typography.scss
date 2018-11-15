@@ -114,3 +114,12 @@ select,
 textarea{
   font-family: $family-sans-serif;
 }
+
+pre{
+  font-family: $family-monospace;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: $family-monospace;
+}

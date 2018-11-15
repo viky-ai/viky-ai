@@ -31,7 +31,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     )
     assert !type_entities_list.save
     assert_equal ["Entities list can't be blank"], type_entities_list.errors.full_messages
-    end
+  end
 
 
   test 'remove intent used as alias remove related interpretation alias' do
@@ -361,5 +361,44 @@ class InterpretationAliasTest < ActiveSupport::TestCase
          }
        ]
     })
+  end
+
+  test 'Alias type regex should have a regular expression' do
+    regexp_invalid = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'where',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex'
+    )
+    assert !regexp_invalid.save
+    assert_not_nil regexp_invalid.errors[:reg_exp]
+    expected_msg = ['Regular expression can\'t be blank']
+    assert_equal expected_msg, regexp_invalid.errors.full_messages
+
+    regexp_valid = InterpretationAlias.new(
+      position_start: 8,
+      position_end: 21,
+      aliasname: 'name',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex',
+      reg_exp: '[a-b]'
+    )
+    assert regexp_valid.save
+  end
+
+  test 'Regular expression should be valid' do
+    regexp_invalid = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'where',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex',
+      reg_exp: '['
+    )
+    assert !regexp_invalid.save
+    assert_not_nil regexp_invalid.errors[:reg_exp]
+    expected_msg = ['Regular expression should be valid']
+    assert_equal expected_msg, regexp_invalid.errors.full_messages
   end
 end
