@@ -8,7 +8,7 @@
 
 static inline og_bool NlpParseUnicharIsSkipPunctuation(struct og_nlp_parse_conf *parse_conf, gunichar c);
 static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
-    og_string current_word, og_bool *p_skip);
+    og_string current_word, og_bool *p_skip, og_bool *p_expression);
 
 static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word_length);
 
@@ -56,7 +56,8 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
       {
 
         og_bool is_skipped = FALSE;
-        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped);
+        og_bool is_expression = FALSE;
+        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped, &is_expression);
         IFE(length);
         if (length > 0)
         {
@@ -83,7 +84,8 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
       case 2:   // in word not digit
       {
         og_bool is_skipped = FALSE;
-        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped);
+        og_bool is_expression = FALSE;
+        int length = NlpParseIsPunctuationInternal(parse_conf, is - i, s + i, &is_skipped, &is_expression);
         IFE(length);
         if (length > 0)
         {
@@ -132,7 +134,7 @@ og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word)
+static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word, og_bool is_expression_punct)
 {
   struct og_nlp_parse_conf *parse_conf = ctrl_nlp->parse_conf;
 
@@ -140,15 +142,27 @@ static og_status NlpParseAddPunctWord(og_nlp ctrl_nlp, og_string utf8_word)
   if (g_utf8_find_next_char(utf8_word, utf8_word + utf8_word_size) == NULL)
   {
     // single unicode char treated as word
-
-    if (parse_conf->punct_char_word_used >= DOgNlpParsePunctCharMaxNb)
+    if (is_expression_punct)
     {
-      NlpThrowError(ctrl_nlp, "NlpParseAddPunctWord : too many punctuation char treated as word %d",
-      DOgNlpParsePunctCharMaxNb);
-      DPcErr;
+      if (parse_conf->punct_char_word_expression_used >= DOgNlpParsePunctCharMaxNb)
+      {
+        NlpThrowError(ctrl_nlp, "NlpParseAddPunctWord : too many punctuation char treated as word %d",
+        DOgNlpParsePunctCharMaxNb);
+        DPcErr;
+      }
+      parse_conf->punct_char_word_expression[parse_conf->punct_char_word_expression_used++] = g_utf8_get_char(utf8_word);
+    }
+    else
+    {
+      if (parse_conf->punct_char_word_used >= DOgNlpParsePunctCharMaxNb)
+      {
+        NlpThrowError(ctrl_nlp, "NlpParseAddPunctWord : too many punctuation char treated as word %d",
+        DOgNlpParsePunctCharMaxNb);
+        DPcErr;
+      }
+      parse_conf->punct_char_word[parse_conf->punct_char_word_used++] = g_utf8_get_char(utf8_word);
     }
 
-    parse_conf->punct_char_word[parse_conf->punct_char_word_used++] = g_utf8_get_char(utf8_word);
 
   }
   else
@@ -180,10 +194,17 @@ og_status NlpParseConfInit(og_nlp ctrl_nlp)
 {
 
   // add punct treated as word
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "<="));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, ">="));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "<>"));
-  IFE(NlpParseAddPunctWord(ctrl_nlp, "!="));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "<=",FALSE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, ">=",FALSE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "<>",FALSE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "!=",FALSE));
+
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "-",TRUE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "_",TRUE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "'",TRUE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "/",TRUE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "–",TRUE));
+  IFE(NlpParseAddPunctWord(ctrl_nlp, "’",TRUE));
 
   // sort longer word fist
   qsort(ctrl_nlp->parse_conf->punct_word, DOgNlpParsePunctWordMaxNb, sizeof(struct og_nlp_punctuation_word),
@@ -239,9 +260,10 @@ static inline og_bool NlpParseUnicharIsSkipPunctuation(struct og_nlp_parse_conf 
 }
 
 static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_conf, int max_word_size,
-    og_string current_word, og_bool *p_skip)
+    og_string current_word, og_bool *p_skip, og_bool *p_expression)
 {
   if (p_skip) *p_skip = FALSE;
+  if (p_expression) *p_expression = FALSE;
 
   // treat end of string as skipped punct
   if (max_word_size <= 0 || current_word[0] == '\0')
@@ -273,6 +295,15 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
 
     if (!single_punct_word_found)
     {
+      // looking for expression punctuation used for glue_strength
+      for (int i = 0; i < parse_conf->punct_char_word_expression_used; i++)
+      {
+        if (first_char == parse_conf->punct_char_word_expression[i])
+        {
+          *p_expression = TRUE;
+          break;
+        }
+      }
       // code define single char punctuation word
       for (int i = 0; i < parse_conf->punct_char_word_used; i++)
       {
@@ -343,13 +374,13 @@ static inline int NlpParseIsPunctuationInternal(struct og_nlp_parse_conf *parse_
 }
 
 og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
-    int *p_punct_length_bytes)
+    og_bool *p_expression, int *p_punct_length_bytes)
 {
   if (p_punct_length_bytes) *p_punct_length_bytes = 0;
 
   struct og_nlp_parse_conf *parse_conf = ctrl_nlp_th->ctrl_nlp->parse_conf;
 
-  int word_length_bytes = NlpParseIsPunctuationInternal(parse_conf, max_word_size, current_word, p_skip);
+  int word_length_bytes = NlpParseIsPunctuationInternal(parse_conf, max_word_size, current_word, p_skip, p_expression);
   IFE(word_length_bytes);
   if (word_length_bytes > 0)
   {
@@ -412,16 +443,21 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->spelling_score = 1.0;
 
   request_word->is_punctuation = FALSE;
+  request_word->is_expression_punctuation = FALSE;
   og_bool punct_length = 0;
   og_bool is_skipped = FALSE;
-  og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, word_length, s + word_start, &is_skipped, &punct_length);
+  og_bool is_expression = FALSE;
+  og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, word_length, s + word_start, &is_skipped, &is_expression, &punct_length);
   IFE(is_punct);
   if (is_punct)
   {
     request_word->is_punctuation = TRUE;
+    if (is_expression)
+    {
+      request_word->is_expression_punctuation = TRUE;
+    }
   }
   request_word->nb_matched_words = 1;
-
   DONE;
 }
 

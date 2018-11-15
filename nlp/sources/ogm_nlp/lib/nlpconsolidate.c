@@ -146,6 +146,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
 
     expression->keep_order = expression_compile->keep_order;
     expression->glued = expression_compile->glued;
+    expression->glue_strength = expression_compile->glue_strength;
 
     expression->locale = expression_compile->locale;
     expression->aliases_nb = expression_compile->aliases_nb;
@@ -381,14 +382,19 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
         {
           og_bool punct_length = 0;
           og_bool is_skipped = FALSE;
-          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &punct_length);
+          og_bool is_expression = FALSE;
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression, &punct_length);
           IFE(is_punct);
           if (is_punct)
           {
             if (!is_skipped)
             {
-              // add punctuation word
-              IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+              // add punctuation word, except if glue-strength of expression is "punctuation"
+              // in that case, we want to add the expression without all expression punctuations
+              if (!(expression->glue_strength == nlp_glue_strength_Punctuation && is_expression))
+              {
+                IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+              }
               state = 1;
             }
             i += punct_length - 1;
@@ -434,7 +440,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
       {
         og_bool punct_length = 0;
         og_bool is_skip = FALSE;
-        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skip, &punct_length);
+        og_bool is_expression = FALSE;
+        og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skip, &is_expression, &punct_length);
         IFE(is_punct);
         if (is_punct)
         {
@@ -443,8 +450,12 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
 
           if (!is_skip)
           {
-            // add punctuation word
-            IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+            // add punctuation word, except if glue-strength of expression is "punctuation"
+            // in that case, we want to add the expression without all expression punctuations
+            if (!(expression->glue_strength == nlp_glue_strength_Punctuation && is_expression))
+            {
+              IFE(NlpConsolidateAddWord(ctrl_nlp_th, package, expression, s + i, punct_length));
+            }
             state = 1;
           }
           i += punct_length - 1;

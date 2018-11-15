@@ -8,6 +8,7 @@ module Nls
     attr_reader :aliases
     attr_reader :keep_order
     attr_reader :glued
+    attr_reader :glue_strength
     attr_accessor :solution
     attr_accessor :interpretation
 
@@ -23,7 +24,10 @@ module Nls
       @glued = false
       @glued = opts[:glued] if opts.has_key?(:glued)
 
-      @solution = nil
+      @glue_strength = "total"
+      @glue_strength = opts[:glue_strength] if opts.has_key?(:glue_strength)
+
+        @solution = nil
       @solution = opts[:solution] if opts.has_key?(:solution)
 
       @aliases = []
@@ -82,6 +86,7 @@ module Nls
       hash['expression'] = @expression
       hash['keep-order'] = true if @keep_order
       hash['glued'] = true if @glued
+      hash['glue-strength'] = @glue_strength if @glue_strength != "total"
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash['locale'] = @locale if !@locale.nil?
       if !@solution.nil?

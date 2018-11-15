@@ -66,6 +66,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "soleil",
@@ -73,6 +74,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "pluie",
@@ -80,6 +82,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "rain",
@@ -87,6 +90,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         },
@@ -101,6 +105,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tout à l'heure",
@@ -108,6 +113,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "today",
@@ -115,12 +121,14 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tomorrow",
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         }
