@@ -5,7 +5,13 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
   end
 
   def show
-    @agent = Agent.find(params[:id])
-    render json: Nlp::Package.new(@agent).generate_json
+    Rails.logger.silence(Logger::INFO) do
+      time = Benchmark.measure do
+        @agent = Agent.find(params[:id])
+        json = Nlp::Package.new(@agent).generate_json
+        render json: json
+      end
+      Rails.logger.info("  Generate package #{@agent.id} - #{@agent.slug} in #{(time.real*1000.0).round(1)} ms")
+    end
   end
 end

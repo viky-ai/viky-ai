@@ -72,7 +72,10 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
   if (request_word->is_regex)
   {
-    IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
+    if (package == request_word->regex_input_part->expression->interpretation->package)
+    {
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
+    }
   }
 
   if (request_word->is_number)
