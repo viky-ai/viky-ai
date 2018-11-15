@@ -290,7 +290,7 @@ class AliasesRegexForm
             placeholder='Enter a regular expression'>"
 
   html_railroad: ->
-    url = "https://regexper.com/##{encodeURIComponent(@regexp)}"
+    url = "https://jex.im/regulex/#!flags=&re=#{encodeURIComponent(@regexp)}"
     "<span class='addon'>
       <a href='#{url}' target='_blank' class='railroad_link' data-turbolinks='false'>
         <span class='icon icon--x-small'>#{@svg_open_in_new()}</span>
