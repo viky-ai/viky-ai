@@ -9,12 +9,16 @@ class Console
 
     $("body").on 'click', (event) => @dispatch(event)
 
+    $("#js-console-form").on 'change', ':input', (event) =>
+      $("#console-reset-btn").show()
+
     $("body").on 'console-select-now-type-auto', (event) =>
       $('#js-console-now-input-container').hide()
       $('#js-console-now-input-container input').val(moment().format())
 
     $("body").on 'console-select-now-type-manual', (event) =>
       $('#js-console-now-input-container').show()
+      $("#console-reset-btn").show()
 
     $("body").on 'ajax:before', (event) =>
       if $(event.target).attr('id') == "js-console-form"
@@ -28,6 +32,7 @@ class Console
         @timeout = setTimeout ->
           $(".console__output").removeClass('console__output__loading')
         , 500
+        $("#console-reset-btn").show()
 
 
   dispatch: (event) ->
@@ -61,6 +66,19 @@ class Console
       return $(event.target)
     else
       return $(event.target).closest('a')
+
+ showResetLink: () ->
+  console.log 'called'
+  language = $('input.js-language-input').val()
+  verbose = $('input.js-verbose-input').val()
+  now_visible = $('#js-console-now-input-container').is(':visible')
+  interpret_field = $('#interpret-sentence').val()
+  console.log language
+  console.log verbose
+  console.log now_visible
+  console.log interpret_field
+  # if language != '*' || verbose != 'false' || now_visible || interpret_field != ""
+  $("#console-reset-btn").show()
 
 Setup = ->
   if $('.console-container').length == 1
