@@ -29,7 +29,7 @@ module InterpretationHelper
   def number_to_json()
     JSON.generate({
       color:  "intent-black",
-      aliasname: t("views.interpretations.number"),
+      aliasname: t("views.interpretations.number").downcase,
       nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_number])
     })
   end
@@ -37,7 +37,7 @@ module InterpretationHelper
   def regex_to_json()
     JSON.generate({
       color: "intent-black",
-      aliasname: t("views.interpretations.regex"),
+      aliasname: t("views.interpretations.regex").downcase,
       nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex]),
       reg_exp: ""
     })
