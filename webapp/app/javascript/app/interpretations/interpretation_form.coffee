@@ -286,6 +286,7 @@ class AliasesRegexForm
     "<input type='text'
             name='interpretation[interpretation_aliases_attributes][][reg_exp]'
             value='#{@regexp}'
+            class='code'
             placeholder='Enter a regular expression'>"
 
   html_railroad: ->
@@ -411,12 +412,12 @@ class AliasesForm
     if alias.aliasname_errors
       line.push "
           <div class='field_with_errors'>
-            <input type='text' name='#{name_prefix}[aliasname]'      value='#{@aliasname(alias)}' />
+            <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />
           </div>
           #{alias.aliasname_errors}"
     else
       line.push "
-          <input type='text' name='#{name_prefix}[aliasname]'        value='#{@aliasname(alias)}' />"
+          <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />"
 
     line.push "
           <input type='hidden' name='#{name_prefix}[position_start]'                value='#{alias.start}' />

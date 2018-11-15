@@ -177,6 +177,10 @@
     text-align: center;
   }
 
+  input[type='text'].code{
+    font-family: $family-monospace;
+  }
+
 
   .addon{
     line-height: 1.5;
@@ -385,6 +389,12 @@ ul.color-picker{
   height: auto;
   border: 1px solid #ddd;
   border-radius: 3px;
+  .CodeMirror-code{
+    font-family: $family-monospace;
+    font-size: .8em;
+    line-height: 1.4em;
+  }
+
   &.CodeMirror-focused{
     border-color: $focus_color;
     box-shadow: 0 0 0 2px rgba($focus_color, .25);

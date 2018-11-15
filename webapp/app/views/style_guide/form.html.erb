@@ -208,6 +208,19 @@
 </section>
 
 
+<section>
+  <h2>Inline code input</h2>
+  <%= highlight_html do %>
+<div class="field">
+  <label for="code">Code</label>
+  <input type="text" name="code" id="code" class="code" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+</div>
+<div class="field">
+  <label for="no-code">Withour code class</label>
+  <input type="text" name="no-code" id="no-code" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+</div>
+  <% end %>
+</section>
 
 <section>
   <h2>File upload</h2>
