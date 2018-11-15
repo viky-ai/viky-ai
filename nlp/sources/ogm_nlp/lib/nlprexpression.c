@@ -433,48 +433,10 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
         IFE(is_glued);
         if (!is_glued)
         {
-          // All words between end of request_input_part1 and start of request_input_part2
-          // must be expression punctuations
-          struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-              request_input_part1->request_position_start + request_input_part1->request_positions_nb - 1);
-          IFN(request_position) DPcErr;
-          int end_request_input_part1 = request_position->start + request_position->length;
-          request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_input_part2->request_position_start);
-          IFN(request_position) DPcErr;
-          int start_request_input_part2 = request_position->start;
-
-          struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
-          IFN(request_words) DPcErr;
-          int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
-          og_bool all_words_in_between_are_expression_punctuations = TRUE;
-          for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
-          {
-            struct request_word *request_word = request_words + w;
-            if (state == 1)   // outside the texte zone
-            {
-              if (request_word->start_position >= end_request_input_part1)
-              {
-                state = 2;
-                w--;
-              }
-            }
-            else if (state == 2)   // inside the texte zone
-            {
-              if (request_word->start_position + request_word->length_position <= start_request_input_part2)
-              {
-                if (!request_word->is_expression_punctuation)
-                {
-                  all_words_in_between_are_expression_punctuations = FALSE;
-                  break;
-                }
-              }
-              break;
-            }
-          }
-          if (all_words_in_between_are_expression_punctuations) is_glued = TRUE;
+          is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+          IFE(is_glued);
+          if (!is_glued) break;
         }
-
-
       }
       else
       {
@@ -500,6 +462,12 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
           is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
           IFE(is_glued);
           if (is_glued) break;
+          if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+          {
+            is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+            IFE(is_glued);
+            if (is_glued) break;
+          }
         }
       }
       if (!is_glued) break;
