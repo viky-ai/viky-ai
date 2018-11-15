@@ -390,6 +390,10 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->start_position = word_start;
   request_word->length_position = word_length;
 
+  request_word->is_auto_complete_word = FALSE;
+  request_word->is_regex = FALSE;
+  request_word->regex_input_part = NULL;
+
   request_word->is_number = TRUE;
   for (int i = 0; i < length_normalized_string_word; i++)
   {
@@ -416,6 +420,7 @@ static og_status NlpParseAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   {
     request_word->is_punctuation = TRUE;
   }
+  request_word->nb_matched_words = 1;
 
   DONE;
 }

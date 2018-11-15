@@ -202,7 +202,12 @@ static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t pac
     IFN(alias->alias) DPcErr;
 
     alias->type = alias_compile->type;
-    if (alias->type == nlp_alias_type_type_Interpretation)
+    alias->slug = NULL;
+    alias->id = NULL;
+    alias->package_id = NULL;
+    alias->regex_string = NULL;
+
+    if (alias->type == nlp_alias_type_Interpretation)
     {
       alias->slug = OgHeapGetCell(package->halias_ba, alias_compile->slug_start);
       IFN(alias->slug) DPcErr;
@@ -213,12 +218,11 @@ static og_status NlpConsolidatePrepareAlias(og_nlp_th ctrl_nlp_th, package_t pac
       alias->package_id = OgHeapGetCell(package->halias_ba, alias_compile->package_id_start);
       IFN(alias->package_id) DPcErr;
     }
-    else
+    else if (alias->type == nlp_alias_type_Regex)
     {
-      alias->slug = NULL;
-      alias->id = NULL;
-      alias->package_id = NULL;
+      alias->regex_string = OgHeapGetCell(package->halias_ba, alias_compile->regex_start);
     }
+
   }
 
   // free compile heap
@@ -273,6 +277,7 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
   package->consolidate_done = TRUE;
 
   IFE(NlpLtracPackage(ctrl_nlp_th, package));
+  IFE(NlpRegexBuildPackage(ctrl_nlp_th, package));
   DONE;
 }
 
@@ -495,7 +500,7 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
     if (length_string_alias != alias->alias_length) continue;
     if (memcmp(string_alias, alias->alias, length_string_alias)) continue;
 
-    if (alias->type == nlp_alias_type_type_Interpretation)
+    if (alias->type == nlp_alias_type_Interpretation)
     {
       size_t Iinput_part;
       struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
@@ -544,6 +549,17 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
       input_part->alias = alias;
 
       IFE(NlpInputPartAliasNumberAdd(ctrl_nlp_th, package, Iinput_part));
+
+      alias_added = TRUE;
+    }
+    else if (alias->type == nlp_alias_type_Regex)
+    {
+      size_t Iinput_part;
+      struct input_part *input_part = NlpConsolidateCreateInputPart(ctrl_nlp_th, package, expression, &Iinput_part);
+      IFN(input_part) DPcErr;
+      input_part->type = nlp_input_part_type_Regex;
+      input_part->alias = alias;
+
       alias_added = TRUE;
     }
     break;
@@ -552,7 +568,7 @@ static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package
   if (!alias_added)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateAddAlias: alias '%.*s' not found in expression '%s'"
-        " in intepretation '%s' '%s'", length_string_alias, string_alias, expression->text,
+        " in interpretation '%s' '%s'", length_string_alias, string_alias, expression->text,
         expression->interpretation->slug, expression->interpretation->id);
     DPcErr;
   }

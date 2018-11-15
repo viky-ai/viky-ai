@@ -257,6 +257,9 @@ class Nlp::Package
       }
       if ialias.type_number?
         result[:type] = 'number'
+      elsif ialias.type_regex?
+        result[:type] = 'regex'
+        result[:regex] = ialias.reg_exp
       else
         result[:package] = @agent.id
         if ialias.is_list

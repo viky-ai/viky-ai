@@ -38,7 +38,7 @@
           "summary summary" auto
           "solution solution" auto
           "submit delete" 1fr /
-          1fr 1fr;
+          2fr 1fr;
   @media (min-width: 424px){
     grid-template:
             "interpretation interpretation" auto
@@ -55,7 +55,6 @@
     grid-area: delete;
     justify-self: end;
   }
-
 }
 
 .interpretations-show{
@@ -321,8 +320,15 @@ trix-editor{
       border-bottom: 1px solid #eee;
     }
     td, th{
-      padding: .15em 0.5em .15em 0;
+      padding: .25em .75em .25em .75em;
       vertical-align: middle;
+      &:first-child{
+        padding-left: 0;
+        padding-right: .25em;
+      }
+      &:last-child{
+        padding-right: 0;
+      }
     }
     td{
       line-height: 2em;
@@ -380,4 +386,46 @@ trix-editor{
       }
     }
   }
+
+  .regex-header{
+    td{
+      border-bottom: none;
+    }
+    td:nth-child(2){
+      padding: .25em 0.75em 0 0;
+      & > span{
+        display: inline-block;
+        background-color: #f5f5f5;
+        padding: .3em .75em;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+      }
+    }
+  }
+  .regex-form{
+    td{
+      padding: 0;
+      border-bottom: none;
+    }
+    & > td > div{
+      background-color: #f5f5f5;
+      border-radius: 3px;
+      padding: .5em;
+    }
+    .hide-on-small-screen{
+      display: none;
+      @media (min-width: 600px){
+        display: inline;
+      }
+    }
+  }
+
+  code{
+    font-size: .8em;
+    background-color: #f5f5f5;
+    padding: .25em;
+    border-radius: 2px;
+    margin-left: .5em;
+  }
 }
+
