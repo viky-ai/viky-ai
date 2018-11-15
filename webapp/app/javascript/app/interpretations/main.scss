@@ -38,7 +38,7 @@
           "summary summary" auto
           "solution solution" auto
           "submit delete" 1fr /
-          1fr 1fr;
+          2fr 1fr;
   @media (min-width: 424px){
     grid-template:
             "interpretation interpretation" auto
@@ -411,6 +411,12 @@ trix-editor{
       background-color: #f5f5f5;
       border-radius: 3px;
       padding: .5em;
+    }
+    .hide-on-small-screen{
+      display: none;
+      @media (min-width: 600px){
+        display: inline;
+      }
     }
   }
 
