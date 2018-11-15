@@ -31,10 +31,44 @@ module Nls
 
       def test_glue_strength
         expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW serie 4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW-serie 4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
         check_interpret("BMW-serie-4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW_serie_4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW'serie'4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW/serie/4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW–serie–4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW’serie’4", expected)
 
         expected = { interpretation: "car", solution: "audi_a4" }
         check_interpret("Audi A4", expected)
+
+        expected = { interpretation: "car", solution: "bmw_serie_4" }
+        check_interpret("BMW--serie---4", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("Audi-A4", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("BMW&serie&4", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
 
       end
 

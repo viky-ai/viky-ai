@@ -346,6 +346,7 @@ struct request_word
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
+  og_bool is_expression_punctuation;
 
   /**
    * chain the list in order to ignore merged words
@@ -537,6 +538,10 @@ struct og_nlp_parse_conf
   /** Single unicode char treated as word */
   gunichar punct_char_word[DOgNlpParsePunctCharMaxNb];
   int punct_char_word_used;
+
+  /** Single unicode char for expression treated as word used by glue_strength */
+  gunichar punct_char_word_expression[DOgNlpParsePunctCharMaxNb];
+  int punct_char_word_expression_used;
 
   /** Multiple char ward in utf-8  treated as word */
   struct og_nlp_punctuation_word punct_word[DOgNlpParsePunctWordMaxNb];
@@ -852,7 +857,7 @@ og_status NlpParseConfInit(og_nlp ctrl_nlp);
 og_status NlpParseConfFlush(og_nlp ctrl_nlp);
 og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th);
 og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
-    int *p_punct_length_bytes);
+    og_bool *p_expression, int *p_punct_length_bytes);
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,

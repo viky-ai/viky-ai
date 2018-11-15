@@ -395,7 +395,14 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
   is_punctuation[0] = 0;
   if (request_word->is_punctuation)
   {
-    snprintf(is_punctuation, DPcPathSize, " (punctuation)");
+    if (request_word->is_expression_punctuation)
+    {
+      snprintf(is_punctuation, DPcPathSize, " (expression punctuation)");
+    }
+    else
+    {
+      snprintf(is_punctuation, DPcPathSize, " (punctuation)");
+    }
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", request_word->self_index, string_request_word,
