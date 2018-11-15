@@ -29,3 +29,6 @@ en:
       scores: Scores
       highlight: Highlight
       solution: Solution
+      reset:
+        title: Reset
+        help_text: Reset console

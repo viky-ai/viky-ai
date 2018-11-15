@@ -46,14 +46,14 @@ module ApplicationHelper
   end
 
 
-  def expression_list(matches, console_agent)
+  def expression_list(matches)
     html = []
     if !matches['interpretation_slug'].split("/").last.include? "recursive"
       html << "<li>"
       if matches['interpretation_slug'].include? "entities_list"
-        html << "<a href='/agents/#{matches['interpretation_slug']}?console_agent=#{console_agent}#entity-#{matches['expression_id']}'>"
+        html << "<a href='/agents/#{matches['interpretation_slug']}#entity-#{matches['expression_id']}'>"
       else
-        html << "<a href='/agents/#{matches['interpretation_slug']}?console_agent=#{console_agent}&expression_id=#{matches['expression_id']}#interpretation-#{matches['expression_id']}'>"
+        html << "<a href='/agents/#{matches['interpretation_slug']}?expression_id=#{matches['expression_id']}#interpretation-#{matches['expression_id']}'>"
       end
       html << "<span class='matched-list__item__name'>#{matches['expression']}</span>"
       html << "<span class='matched-list__item__desc'>#{matches['interpretation_slug']}</span>"

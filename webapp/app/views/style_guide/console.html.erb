@@ -5,38 +5,59 @@
 
 <section>
   <%= highlight_html do %>
+
 <div class="console">
   <div class="console__header">
-    Console <small>- Test your agent live!</small>
-    <div class="console__endpoint">
-            <span class="badge badge--small badge--success">GET</span>
-            <code>/api/v1/interpret.json</code>
-    </div>
-
-    <div class="agent-compact">
-      <a href="#" class="agent-compact__id">
-        <div class="agent-compact__id__visual background-color-gradient__brown">
-          <span class="agent-compact__id__visual__ribbon">public</span>
+      <div class="console__header__content">
+        <div class="console__header__content__title">
+          <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
+          <div class="console__endpoint">
+                <span class="badge badge--small badge--success">GET</span>
+                <code>/api/v1/interpret.json</code>
+          </div>
         </div>
-        <div class="agent-compact__id__data">
-          <h5>
-            <span>My awesome first agent</span>
-          </h5>
+
+        <div class="console__header__content__actions">
+          <a href="?"
+            class="btn btn--plain console-reset"
+            title="<%= t('views.console.reset.help_text') %>"
+            data-turbolinks="false">
+            <%= t('views.console.reset.title') %>
+          </a>
+
+          <a href="#" id="console-enter-fullscreen"
+             data-action="console-enter-fullscreen"
+             title="<%= t('views.console.fullscreen_enter') %>"
+             class="console__header__fullscreen_btn btn btn--plain">
+            <span class="icon">
+              <%= icon_fullscreen %>
+            </span>
+          </a>
+          <a href="#" id="console-leave-fullscreen"
+             data-action="console-leave-fullscreen"
+             title="<%= t('views.console.fullscreen_leave') %>"
+             class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
+            <span class="icon">
+              <%= icon_close %>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <div class="console__header__agent">
+        <div class="console__header__agent__visual background-color-gradient__brown">
+        </div>
+        <div class="console__header__agent__data">
+          <h5>My awesome first agent</h5>
           <h6>username/agentname</h6>
         </div>
-      </a>
+      </div>
     </div>
 
-    <a href="#" class="console__header__fullscreen_btn btn btn--plain">
-      <span class="icon">
-        <%= icon_fullscreen %>
-      </span>
-    </a>
-  </div>
+
   <form>
     <div class="field">
       <div class="control">
-
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button class="btn btn--outline btn--small">

@@ -12,9 +12,6 @@ class EntitiesListsController < ApplicationController
   end
 
   def show
-    if params[:console_agent]
-      @console_agent = Agent.find_by id: params[:console_agent]
-    end
     respond_to do |format|
       format.html { @entity = Entity.new }
       format.csv do
