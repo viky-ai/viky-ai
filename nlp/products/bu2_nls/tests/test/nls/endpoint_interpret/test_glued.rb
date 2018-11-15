@@ -74,9 +74,9 @@ module Nls
 
       def test_glued_no_keep_order_glue_expression
         expected = { interpretation: "dash_expression", solution: "ddd-eee-fff"}
-        check_interpret("ddd eee fff" ,expected)
-        check_interpret("eee fff ddd", expected)
-        check_interpret("ddd fff eee", expected)
+        check_interpret("ddd/eee/fff" ,expected)
+        check_interpret("eee/fff/ddd", expected)
+        check_interpret("ddd/fff/eee", expected)
       end
 
     end
