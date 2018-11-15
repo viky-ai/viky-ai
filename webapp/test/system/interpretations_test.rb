@@ -350,6 +350,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert_equal "0", first('#current-locale-tab-badge').text
   end
 
+
   test 'Create an interpretation with regex' do
     admin_go_to_intent_show(agents(:terminator), intents(:terminator_find))
 
@@ -364,12 +365,12 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.aliases') do
       assert page.has_link?('Railroad Diagram')
       assert page.has_text?('Sarah')
-      assert page.has_text?('Invalid Regex')
-      find("input[name*='reg_exp']").set('^[a-zA-z-]')
-    end
+      assert page.has_text?('Blank Regex')
 
-    page.find("body").click
-    within('.aliases') do
+      find("input[name*='reg_exp']").set('[[[')
+      assert page.has_text?('Invalid Regex')
+
+      find("input[name*='reg_exp']").set('^[a-zA-z-]')
       assert page.has_text?('Valid Regex')
     end
 
