@@ -9,6 +9,7 @@
 
 static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th);
 
+
 /**
  * Parse the request and then working on all words of the sentence
  * to encode the matching algorithm.
@@ -17,6 +18,9 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 {
   // The request sentence is in : ctrl_nlp_th->request_sentence
   IFE(NlpParseRequestSentence(ctrl_nlp_th));
+
+  // matching the sentence on regular expressions
+  IFE(NlpRegexMatch(ctrl_nlp_th));
 
   IFE(NlpAutoComplete(ctrl_nlp_th));
 
@@ -62,7 +66,7 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
   while (at_least_one_input_part_added);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "\nLooking for any expressions");
+  NlpLog(DOgNlpTraceMatch, "\nLooking for any expressions");
 
   IFE(NlpMatchValidateListsWithoutAny(ctrl_nlp_th));
 

@@ -49,6 +49,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;
   request_expression->recursive_without_any_chosen = FALSE;
+  request_expression->nb_matched_words = 0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -427,9 +428,23 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
       if (i == any_input_part_position - 1) continue;
       struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
       IFN(request_input_part2) DPcErr;
-      is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
-      IFE(is_glued);
-      if (!is_glued) return FALSE;
+      if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+      {
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+        IFE(is_glued);
+        if (!is_glued)
+        {
+          is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+          IFE(is_glued);
+          if (!is_glued) break;
+        }
+      }
+      else
+      {
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+        IFE(is_glued);
+        if (!is_glued) break;
+      }
     }
     else
     {
@@ -448,6 +463,12 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
           is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
           IFE(is_glued);
           if (is_glued) break;
+          if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+          {
+            is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+            IFE(is_glued);
+            if (is_glued) break;
+          }
         }
       }
       if (!is_glued) break;

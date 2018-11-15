@@ -124,7 +124,7 @@ static og_status NlpCheckMissingPackages(og_nlp_th ctrl_nlp_th, package_t packag
       for (int a = 0; a < expression->aliases_nb; a++)
       {
         struct alias *alias = expression->aliases + a;
-        if (alias->type == nlp_alias_type_type_Interpretation)
+        if (alias->type == nlp_alias_type_Interpretation)
         {
           IFE(NlpCheckMissingPackage(ctrl_nlp_th, expression, alias));
         }

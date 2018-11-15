@@ -33,7 +33,10 @@
 #define DOgNlpBaNumber 0x100
 
 #define DOgNlpInterpretationExpressionMaxLength   0x800
+#define DOgNlpInterpretationRegexMaxLength        0x1000
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
+
+#define DOgNlpMaximumRegex          100
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -127,7 +130,7 @@ typedef struct package *package_t;
 
 enum nlp_alias_type
 {
-  nlp_alias_type_Nil = 0, nlp_alias_type_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number
+  nlp_alias_type_Nil = 0, nlp_alias_type_Interpretation, nlp_alias_type_Any, nlp_alias_type_Number, nlp_alias_type_Regex
 };
 
 struct alias_compile
@@ -137,6 +140,7 @@ struct alias_compile
   int slug_start, slug_length;       // interpretation slug
   int id_start, id_length;           // interpretation id
   int package_id_start, package_id_length;
+  int regex_start, regex_length;
 };
 
 struct alias
@@ -147,10 +151,15 @@ struct alias
   og_string alias;
   int alias_length;
 
-  /** interpretation */
+  /** type interpretation */
   og_string slug;
   og_string id;
   og_string package_id;
+
+  /** type regex */
+  og_string regex_string;
+  GRegex *regex;
+
 };
 
 struct context_compile
@@ -158,11 +167,17 @@ struct context_compile
   int flag_start;
 };
 
+enum nlp_glue_strength
+{
+  nlp_glue_strength_Nil = 0, nlp_glue_strength_Total, nlp_glue_strength_Punctuation
+};
+
 struct expression_compile
 {
   int text_start;
   og_bool keep_order;
   og_bool glued;
+  enum nlp_glue_strength glue_strength;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -183,6 +198,7 @@ struct expression
 
   og_bool keep_order;
   og_bool glued;
+  enum nlp_glue_strength glue_strength;
 
   int locale;
 
@@ -256,7 +272,11 @@ struct interpret_package
 
 enum nlp_input_part_type
 {
-  nlp_input_part_type_Nil = 0, nlp_input_part_type_Word, nlp_input_part_type_Interpretation, nlp_input_part_type_Number
+  nlp_input_part_type_Nil = 0,
+  nlp_input_part_type_Word,
+  nlp_input_part_type_Interpretation,
+  nlp_input_part_type_Number,
+  nlp_input_part_type_Regex
 };
 
 struct input_part_word
@@ -334,11 +354,16 @@ struct request_word
   int start_position;
   int length_position;
 
+  int nb_matched_words;
+
   og_bool is_number;
   double number_value;
   double spelling_score;
   og_bool is_auto_complete_word;
   og_bool is_punctuation;
+  og_bool is_expression_punctuation;
+  og_bool is_regex;
+  struct input_part *regex_input_part;
 
   /**
    * chain the list in order to ignore merged words
@@ -450,6 +475,8 @@ struct request_expression
   int request_position_start;
   int request_positions_nb;
 
+  int nb_matched_words;
+
   int safe_request_position_start;
   int safe_request_positions_nb;
 
@@ -530,6 +557,10 @@ struct og_nlp_parse_conf
   /** Single unicode char treated as word */
   gunichar punct_char_word[DOgNlpParsePunctCharMaxNb];
   int punct_char_word_used;
+
+  /** Single unicode char for expression treated as word used by glue_strength */
+  gunichar punct_char_word_expression[DOgNlpParsePunctCharMaxNb];
+  int punct_char_word_expression_used;
 
   /** Multiple char ward in utf-8  treated as word */
   struct og_nlp_punctuation_word punct_word[DOgNlpParsePunctWordMaxNb];
@@ -767,6 +798,7 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
 og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th);
 og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word);
 const char *NlpAliasTypeString(enum nlp_alias_type type);
+const char *NlpGlueStrengthString(enum nlp_glue_strength glue_strength);
 
 /* nlpsynchro.c */
 og_status OgNlpSynchroUnLockAll(og_nlp_th ctrl_nlp_th);
@@ -844,7 +876,7 @@ og_status NlpParseConfInit(og_nlp ctrl_nlp);
 og_status NlpParseConfFlush(og_nlp ctrl_nlp);
 og_status NlpParseRequestSentence(og_nlp_th ctrl_nlp_th);
 og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_string current_word, og_bool *p_skip,
-    int *p_punct_length_bytes);
+    og_bool *p_expression, int *p_punct_length_bytes);
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
@@ -856,6 +888,8 @@ struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct 
 og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2);
+og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
 og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part);
@@ -1015,5 +1049,10 @@ og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string nam
 og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
+/* nlpregex.c */
+og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
+og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 
 

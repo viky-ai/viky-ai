@@ -39,8 +39,8 @@
       color: #aaa;
     }
     code{
-      font-size: .9em;
-      font-family: monospace;
+      font-size: .725em;
+      font-family: $family-monospace;
     }
     .console__header__fullscreen_btn{
       position: absolute;
@@ -147,11 +147,11 @@
           }
           .intent__highlight{
             color: #666;
-            font-size: .9em;
-            font-family: monospace;
+            font-size: .7em;
+            font-family: $family-monospace;
             match{
               background-color: yellow;
-              padding: .1em .2em 0 .2em;
+              padding: 0 .2em 0 .2em;
               border-radius: 1px;
               margin: 0 2px;
               border: 1px solid rgba(#000, .05);
@@ -161,7 +161,7 @@
             padding: 0;
             color: #666;
             font-size: .7em;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-family: $family-monospace;
           }
         }
       }

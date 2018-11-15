@@ -149,7 +149,7 @@ class InterpretationsController < ApplicationController
         :expression, :locale, :keep_order, :glued, :solution, :auto_solution_enabled,
         :interpretation_aliases_attributes => [
           :id, :nature, :position_start, :position_end,
-          :aliasname, :interpretation_aliasable_id, :interpretation_aliasable_type,
+          :aliasname, :reg_exp, :interpretation_aliasable_id, :interpretation_aliasable_type,
           :is_list, :any_enabled,
           :_destroy
         ]

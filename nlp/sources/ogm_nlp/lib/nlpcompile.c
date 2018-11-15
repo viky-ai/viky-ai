@@ -177,7 +177,12 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
 
   // We do not use a package heap because we dont want synchronization on that heap
   package_t package = NlpPackageCreate(ctrl_nlp_th, string_id, string_slug);
-  IFN(package) DPcErr;
+  if (!package)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpPackageCreate: failed on package '%s' '%s'",
+        string_slug, string_id);
+    DPcErr;
+  }
 
   int array_size = json_array_size(json_interpretations);
   for (int i = 0; i < array_size; i++)
@@ -185,12 +190,17 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
     json_t *json_interpretation = json_array_get(json_interpretations, i);
     if (json_is_object(json_interpretation))
     {
-      IFE(NlpCompilePackageInterpretation(ctrl_nlp_th, package, json_interpretation));
+      IF(NlpCompilePackageInterpretation(ctrl_nlp_th, package, json_interpretation))
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpCompilePackageInterpretation :"
+            " failed on package '%s' '%s'", package->slug, package->id);
+        DPcErr;
+      }
     }
     else
     {
-      NlpThrowErrorTh(ctrl_nlp_th,
-          "NlpCompilePackageinterpretations: json_interpretation at position %d is not an object", i);
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: failed on package '%s' '%s', "
+          "json_interpretation at position %d is not an object", package->slug, package->id, i);
       DPcErr;
     }
   }
@@ -201,7 +211,12 @@ static int NlpCompilePackageInterpretations(og_nlp_th ctrl_nlp_th, struct og_nlp
   }
 
   // freeze memory structure
-  IFE(NlpConsolidatePackage(ctrl_nlp_th, package));
+  IF(NlpConsolidatePackage(ctrl_nlp_th, package))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageinterpretations: NlpConsolidatePackage : "
+        "failed on package '%s' '%s'", package->slug, package->id);
+    DPcErr;
+  }
 
   // publish package
   IFE(NlpPackageAddOrReplace(ctrl_nlp_th, package));
@@ -473,6 +488,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_text = NULL;
   json_t *json_keep_order = NULL;
   json_t *json_glued = NULL;
+  json_t *json_glue_strength = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -493,6 +509,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "glued") == 0)
     {
       json_glued = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "glue-strength") == 0)
+    {
+      json_glue_strength = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -600,6 +620,33 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
+  expression->glue_strength = nlp_glue_strength_Total;
+  if (json_glue_strength == NULL)
+  {
+    expression->glue_strength = nlp_glue_strength_Total;
+  }
+  else if (json_is_string(json_glue_strength))
+  {
+    const char *string_glue_strength = json_string_value(json_glue_strength);
+    if (!Ogstricmp(string_glue_strength,"total")) expression->glue_strength = nlp_glue_strength_Total;
+    else if (!Ogstricmp(string_glue_strength,"punctuation")) expression->glue_strength = nlp_glue_strength_Punctuation;
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength value '%s' is not valid",string_glue_strength);
+      DPcErr;
+    }
+  }
+  else if (json_is_null(json_glue_strength))
+  {
+    expression->glue_strength = nlp_glue_strength_Total;
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_strength is not a string");
+    DPcErr;
+  }
+
+
   IFN(json_aliases)
   {
     expression->alias_start = (-1);
@@ -675,6 +722,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
   json_t *json_id = NULL;
   json_t *json_package = NULL;
   json_t *json_alias_type = NULL;
+  json_t *json_regex = NULL;
 
   for (void *iter = json_object_iter(json_alias); iter; iter = json_object_iter_next(json_alias, iter))
   {
@@ -699,6 +747,10 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     else if (Ogstricmp(key, "type") == 0)
     {
       json_alias_type = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "regex") == 0)
+    {
+      json_regex = json_object_iter_value(iter);
     }
     else
     {
@@ -725,7 +777,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     DPcErr;
   }
 
-  alias->type = nlp_alias_type_type_Interpretation;
+  alias->type = nlp_alias_type_Interpretation;
   if (json_alias_type != NULL)
   {
     if (json_is_string(json_alias_type))
@@ -733,6 +785,7 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
       const char *string_alias_type = json_string_value(json_alias_type);
       if (!Ogstricmp(string_alias_type, "any")) alias->type = nlp_alias_type_Any;
       else if (!Ogstricmp(string_alias_type, "number")) alias->type = nlp_alias_type_Number;
+      else if (!Ogstricmp(string_alias_type, "regex")) alias->type = nlp_alias_type_Regex;
       else
       {
         NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: unknown type '%s'", string_alias_type);
@@ -746,7 +799,28 @@ static int NlpCompilePackageExpressionAlias(og_nlp_th ctrl_nlp_th, package_t pac
     }
   }
 
-  if (alias->type == nlp_alias_type_type_Interpretation)
+  if (json_regex != NULL)
+  {
+    if (json_is_string(json_regex))
+    {
+      const char *string_regex = json_string_value(json_regex);
+      alias->regex_start = OgHeapGetCellsUsed(package->halias_ba);
+      alias->regex_length = strlen(string_regex);
+      if (alias->regex_length > DOgNlpInterpretationRegexMaxLength)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: regex is too long");
+        DPcErr;
+      }
+      IFE(OgHeapAppend(package->halias_ba, alias->regex_length + 1, string_regex));
+    }
+    else
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpressionAlias: regex is not a string");
+      DPcErr;
+    }
+  }
+
+  if (alias->type == nlp_alias_type_Interpretation)
   {
     if (json_slug == NULL)
     {
