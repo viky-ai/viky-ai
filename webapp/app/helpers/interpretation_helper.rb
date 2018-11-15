@@ -38,7 +38,8 @@ module InterpretationHelper
     JSON.generate({
       color: "intent-black",
       aliasname: t("views.interpretations.regex"),
-      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex])
+      nature: InterpretationAlias.natures.key(InterpretationAlias.natures[:type_regex]),
+      reg_exp: ""
     })
   end
 

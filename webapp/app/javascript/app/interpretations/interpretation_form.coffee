@@ -208,6 +208,114 @@ class TagRemovePopup
       @hide()
 
 
+class AliasesRegexForm
+  constructor: (regexp) ->
+    @regexp = regexp
+
+  isRegexBlank: ->
+    @regexp.replace(/\s/g, "") == ""
+
+  isRegexValid: ->
+    try
+      new RegExp(@regexp)
+      return true
+    catch
+      return false
+
+  update: (container) ->
+    validation_addon = container.find('span.addon').first()
+    validation_addon.replaceWith(@html_regex_addon())
+    railroad_addon = container.find('span.addon').last()
+    railroad_addon.replaceWith(@html_railroad())
+
+  @setListeners: ->
+    inputs_selector = "input[name='interpretation[interpretation_aliases_attributes][][reg_exp]']"
+    $(inputs_selector).on "input", (event) ->
+      container = $(event.target).closest('.control')
+      form = new AliasesRegexForm($(event.target).val())
+      form.update(container)
+
+  html: ->
+    code = []
+    code.push "
+      <tr class='regex-form'>
+        <td colspan='5'>
+          <div>
+            <div class='field'>
+              <div class='control control--merged'>"
+    code.push @html_regex_addon()
+    code.push @html_input()
+    code.push @html_railroad()
+    code.push "
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>"
+    code.join('')
+
+
+  html_regex_addon: ->
+    if @isRegexBlank()
+      @html_regex_blank_addon()
+    else
+      if @isRegexValid()
+        @html_valid_addon()
+      else
+        @html_regex_invalid_addon()
+
+  html_valid_addon: ->
+    "<span class='addon addon--success'>
+      <span class='icon icon--x-small'>#{@svg_check()}</span>
+      Valid<span class='hide-on-small-screen'> Regex</span>
+    </span>"
+
+  html_regex_blank_addon: ->
+    "<span class='addon addon--error'>
+      <span class='icon icon--x-small'>#{@svg_alert()}</span>
+      Blank<span class='hide-on-small-screen'> Regex</span>
+    </span>"
+
+  html_regex_invalid_addon: ->
+    "<span class='addon addon--error'>
+      <span class='icon icon--x-small'>#{@svg_alert()}</span>
+      Invalid<span class='hide-on-small-screen'> Regex</span>
+    </span>"
+
+  html_input: ->
+    "<input type='text'
+            name='interpretation[interpretation_aliases_attributes][][reg_exp]'
+            value='#{@regexp}'
+            placeholder='Enter a regular expression'>"
+
+  html_railroad: ->
+    url = "https://regexper.com/##{encodeURIComponent(@regexp)}"
+    "<span class='addon'>
+      <a href='#{url}' target='_blank' class='railroad_link' data-turbolinks='false'>
+        <span class='icon icon--x-small'>#{@svg_open_in_new()}</span>
+        <span>Railroad<span class='hide-on-small-screen'> Diagram</span></span>
+      </a>
+    </span>"
+
+  svg_alert: ->
+    "<svg xmlns='http://www.w3.org/2000/svg'
+          width='24' height='24' viewBox='0 0 24 24'>
+       <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+     </svg>"
+
+  svg_check: ->
+    "<svg xmlns='http://www.w3.org/2000/svg'
+          width='24' height='24' viewBox='0 0 24 24'>
+       <path d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z' />
+     </svg>"
+
+  svg_open_in_new: ->
+    "<svg xmlns='http://www.w3.org/2000/svg'
+          fill='#000000' height='24' viewBox='0 0 24 24' width='24'>
+       <path d='M0 0h24v24H0z' fill='none'/>
+       <path d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/>
+     </svg>"
+
 
 
 class AliasesForm
@@ -226,41 +334,6 @@ class AliasesForm
     else
       return alias.aliasname.replace(new RegExp('-', 'g'), '_')
 
-  getRegexp: (alias) ->
-    id = "#{alias.id}_regex_details"
-    if $("##{id}").length == 1
-      return $($("##{id} input[name*=reg_exp]")).val()
-    else
-      return alias.reg_exp
-
-  isValidRegex: (value) ->
-    isValid = if value?.length then true else false
-    try
-      new RegExp(value)
-    catch
-      isValid = false
-    return isValid
-
-  showRegexStatus: (element) ->
-    regex_status_td = $(element).closest('.regex_field').children('#regex_check')
-
-    # remove error class from the regular expression input field
-    $(element).closest('.field_with_errors').removeClass('field_with_errors')
-    $(element).closest('td').children('.help--error').hide()
-
-    if(@isValidRegex(element.value))
-      tick_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>'
-      valid_html = "<span class='icon icon icon--small icon--green'>#{tick_icon}</span> Valid Regex"
-      regex_status_td.addClass('valid_text')
-      regex_status_td.removeClass('invalid_text')
-      regex_status_td.html(valid_html)
-    else
-      remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
-      invalid_html = "<span class='icon icon icon--small icon--red'>#{remove_icon}</span> Invalid Regex"
-      regex_status_td.addClass('invalid_text')
-      regex_status_td.removeClass('valid_text')
-      regex_status_td.html(invalid_html)
-
   isChecked: (alias, attribute) ->
     if $("##{alias.id}").length == 1
       return $($("#" + alias.id + " input[name*=#{attribute}]")).is(':checked')
@@ -269,12 +342,6 @@ class AliasesForm
         return alias[attribute]
       else
         return false
-
-  openRailroadlink: (event) ->
-    event.preventDefault()
-    regex_value = $(event.target).closest('.regex_field').find('input')[0].value
-    railroad_link = $(event.target).attr('href')
-    window.open("#{railroad_link}##{encodeURIComponent(regex_value)}", '_blank')
 
   previous_ids: ->
     ids = []
@@ -309,7 +376,6 @@ class AliasesForm
         <input type='hidden' name='#{name_prefix}[_destroy]'                      value='1' />"
     @form_container.closest('form').prepend(html.join(''))
 
-
   build_line: (alias) ->
     name_prefix = "interpretation[interpretation_aliases_attributes][]"
     if alias.state == 'new' || alias.id == undefined
@@ -330,11 +396,15 @@ class AliasesForm
 
     is_list_checked = if @isChecked(alias, 'is_list') then 'checked' else ''
     any_enabled_checked = if @isChecked(alias, 'any_enabled') then 'checked' else ''
-    reg_exp = if @getRegexp(alias)? then "value='#{@getRegexp(alias)}'" else ''
 
     line = []
+
+    if alias.nature == 'type_regex'
+      line.push "<tr id='#{alias.id}' class='regex-header'>"
+    else
+      line.push "<tr id='#{alias.id}'>"
+
     line.push "
-    <tr id='#{alias.id}'>
       <td>
         <div class='field'>"
 
@@ -357,27 +427,21 @@ class AliasesForm
           <input type='hidden' name='#{name_prefix}[id]'                            value='#{alias_id_value}' />
         </div>
       </td>"
-    if alias.nature == 'type_number'
-      line.push "
-        <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
-      "
-    else if alias.nature == 'type_regex'
-      line.push "
-        <td class='regex_field'><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
-      "
-    else
-      line.push "
-        <td><span class='#{alias.color}' title='#{reference_title}'><a href='/agents/#{alias.slug}'>#{reference_html}</a></span></td>
-      "
 
     if alias.nature == 'type_number' || alias.nature == 'type_regex'
       line.push "
+        <td><span class='#{alias.color}' title='#{reference_title}'>#{reference_html}</span></td>
         <td>
           <input type='hidden' name='#{name_prefix}[is_list]'     value='false' />
           <input type='hidden' name='#{name_prefix}[any_enabled]' value='false' />
         </td>"
     else
       line.push "
+        <td>
+          <span class='#{alias.color}' title='#{reference_title}'>
+            <a href='/agents/#{alias.slug}'>#{reference_html}</a>
+          </span>
+        </td>
         <td class='options'>
           <label>
             <input type='radio' name='#{name_prefix}[is_list]' value='true' #{is_list_checked} /> List
@@ -390,47 +454,24 @@ class AliasesForm
 
     line.push "<td>#{alias.selection}</td>"
     trix_id =  @form_container.closest('form').find('trix-editor').attr('trix-id')
-    remove_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>'
-    line.push "<td><a href='#' data-action='remove-alias' data-editor-id='#{trix_id}' data-alias-id='#{alias.id}'><span class=\"icon icon--small\">#{remove_icon}</span></a></td>"
+    line.push "
+      <td>
+        <a href='#' data-action='remove-alias' data-editor-id='#{trix_id}' data-alias-id='#{alias.id}'>
+          <span class=\"icon icon--small\">
+            <svg xmlns='http://www.w3.org/2000/svg'
+                 xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1'
+                 width='24' height='24' viewBox='0 0 24 24'>
+              <path d='M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z' />
+            </svg>
+          </span>
+        </a>
+      </td>"
     line.push "</tr>"
+
     if alias.nature == 'type_regex'
-      field_id = "#{alias.id}_regex_details"
-      if alias.regex_errors
-        line.push "<tr class='regex_field' id='#{field_id}'>
-            <td colspan='2' class='field'>
-              <div class='field_with_errors'>
-                <input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'>
-              </div>
-              #{alias.regex_errors}
-            </td>
-          "
-      else
-        line.push "
-          <tr class='regex_field' id='#{field_id}'>
-            <td colspan='2' class='field'>
-              <input type='text' name='#{name_prefix}[reg_exp]' #{reg_exp} placeholder='Enter a regular expression'>
-            </td>
-        "
-      if @isValidRegex(@getRegexp(alias))
-        tick_icon = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>'
-        line.push "
-          <td class='valid_text' id='regex_check'>
-            <span class='icon icon icon--small icon--green'>#{tick_icon}</span>
-            Valid Regex
-          </td>
-        "
-      else
-        line.push "
-          <td class='invalid_text' id='regex_check'>
-            <span class='icon icon icon--small icon--red'>#{remove_icon}</span>
-            Invalid Regex
-          </td>
-        "
-      line.push "
-        <td colspan='2'><a href='https://regexper.com/' target='_blank' class='railroad_link'>Railroad Diagram</a></td>
-        </tr>
-        <tr class='spacer'><td colspan='5'></td></tr>
-      "
+      regex_input = new AliasesRegexForm(alias.reg_exp)
+      line.push regex_input.html()
+
     line.join("")
 
   update_aliases: ->
@@ -456,13 +497,10 @@ class AliasesForm
 
     if @form_container.find('td').length > 0
       @form_container.show()
-      if @form_container.find('.regex_field').length > 0
-        $('.regex_field').on 'blur', 'input', (event) =>
-          @showRegexStatus(event.target)
-        $('.railroad_link').on 'click', (event) =>
-          @openRailroadlink(event)
     else
       @form_container.hide()
+
+    AliasesRegexForm.setListeners()
 
 
 class InterpretationTagger
@@ -593,6 +631,7 @@ class InterpretationTagger
           result.push(p)
           found_content = true
     return result
+
 
 class InterpretationSolutions
   constructor: ->
