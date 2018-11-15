@@ -782,21 +782,45 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
   IFN(request_position) DPcErr;
-  int start = request_position[0].start;
+
+  int start_position_expression = request_position[0].start;
   int last_request_position = request_expression->request_positions_nb - 1;
-  int end = request_position[last_request_position].start + request_position[last_request_position].length;
-  int length = end - start;
-  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start;
-  if (length > DOgNlpMaxRawTextSize)
+  int end_position_expression = request_position[last_request_position].start + request_position[last_request_position].length;
+
+  int start_position_any = start_position_expression;
+  int end_position_any = end_position_expression;
+
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
+
+    struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
+    start_position_any = first_request_word_any->start_position;
+
+    struct request_word *last_request_word_any = request_any->queue_request_words->tail->data;
+    end_position_any = last_request_word_any->start_position + last_request_word_any->length_position;
+  }
+
+  int start_position = start_position_expression;
+  if (start_position_any < start_position) start_position = start_position_any;
+
+  int end_position = end_position_expression;
+  if (end_position < end_position_any) end_position = end_position_any;
+
+  int length_position = end_position - start_position;
+
+  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start_position;
+  if (length_position > DOgNlpMaxRawTextSize)
   {
     unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
     p = g_utf8_find_prev_char(raw_text_string,p);
-    length = p - raw_text_string;
+    length_position = p - raw_text_string;
   }
   char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
   int j=0;
   raw_text_string_value[j++]='"';
-  for (int i=0; i<length; i++)
+  for (int i=0; i<length_position; i++)
   {
     if (raw_text_string[i]== '"')
     {
