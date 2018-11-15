@@ -412,10 +412,19 @@ trix-editor{
       border-radius: 3px;
       padding: .5em;
     }
+    .control > .addon:first-child{
+      min-width: 80px;
+      text-align: center;
+    }
     .hide-on-small-screen{
       display: none;
-      @media (min-width: 600px){
+    }
+    @media (min-width: 600px){
+      .hide-on-small-screen{
         display: inline;
+      }
+      .control > .addon:first-child{
+        min-width: 120px;
       }
     }
   }
