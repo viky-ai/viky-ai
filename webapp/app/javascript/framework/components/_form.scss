@@ -177,6 +177,10 @@
     text-align: center;
   }
 
+  input[type='text'].code{
+    font-family: $family-monospace;
+  }
+
 
   .addon{
     line-height: 1.5;
@@ -189,6 +193,35 @@
     background-color: #f5f5f5;
     color: #666;
     white-space: nowrap;
+    a{
+      color: #666;
+      text-decoration: none;
+      &:hover span{
+        color: #222;
+        text-decoration: underline;
+      }
+    }
+    .icon svg{
+      fill: #666;
+    }
+    &.addon--error{
+      background-color: lighten($alert_color, 38%);
+      color: $alert_color;
+      border: 1px solid desaturate(lighten($alert_color, 20%), 10%);
+      border-top: 1px solid desaturate(lighten($alert_color, 15%), 10%);
+      .icon svg{
+        fill: $alert_color;
+      }
+    }
+    &.addon--success{
+      background-color: lighten($success_color, 49%);
+      border: 1px solid desaturate(lighten($success_color, 30%), 40%);
+      border-top: 1px solid desaturate(lighten($success_color, 25%), 40%);
+      color: $success_color;
+      .icon svg{
+        fill: $success_color;
+      }
+    }
   }
   .field_with_errors{
     input[type='text'],
@@ -356,6 +389,12 @@ ul.color-picker{
   height: auto;
   border: 1px solid #ddd;
   border-radius: 3px;
+  .CodeMirror-code{
+    font-family: $family-monospace;
+    font-size: .8em;
+    line-height: 1.4em;
+  }
+
   &.CodeMirror-focused{
     border-color: $focus_color;
     box-shadow: 0 0 0 2px rgba($focus_color, .25);

@@ -49,7 +49,17 @@ og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_st
   IFN(request_position) DPcErr;
   for (int i = 0; i + 1 < request_positions_nb; i++)
   {
-    if (!memcmp(request_position + i, request_position + i + 1, sizeof(struct request_position))) return TRUE;
+    int starti = request_position[i].start;
+    int endi = request_position[i].start+request_position[i].length;
+    int startip1 = request_position[i+1].start;
+    int endip1 = request_position[i+1].start+request_position[i+1].length;
+    if (starti==startip1 && endi==endip1) return TRUE;
+    // because positions are sorted we know that start[i] < start[i+1]
+    // so an overlap means that start[i+1] < end[i]
+    // start[i]    end[i]
+    //        start[i+1]   end[i+1]
+    if (startip1 < endi) return TRUE;
+
   }
   return FALSE;
 }

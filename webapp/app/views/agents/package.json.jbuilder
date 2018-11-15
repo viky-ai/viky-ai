@@ -16,6 +16,7 @@ json.interpretations @interpretations do |intent|
         json.id ialias[:id]      if ialias[:type].blank?
         json.package @agent.id   if ialias[:type].blank?
         json.type ialias[:type]  unless ialias[:type].blank?
+        json.regex ialias[:regex] if ialias[:type] == 'regex'
       end
     end
     json.locale interpretation[:locale]               unless interpretation[:locale].blank?

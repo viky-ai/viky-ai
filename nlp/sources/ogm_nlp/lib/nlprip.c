@@ -226,6 +226,12 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       snprintf(string_input_part, DPcPathSize, "number");
       break;
     }
+    case nlp_input_part_type_Regex:
+    {
+      // should not be used
+      snprintf(string_input_part, DPcPathSize, "regex");
+      break;
+    }
 
   }
 

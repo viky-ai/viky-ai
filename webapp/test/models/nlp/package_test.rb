@@ -687,4 +687,48 @@ class PackageTest < ActiveSupport::TestCase
 
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
+
+  test 'Package generation with regex type' do
+    agent = agents(:terminator)
+    interpretation = interpretations(:terminator_find_sarah)
+    assert entities_lists(:terminator_targets).destroy
+
+    regex_alias = InterpretationAlias.new(
+      position_start: 9,
+      position_end: 21,
+      aliasname: 'name',
+      interpretation_id: interpretation.id,
+      nature: 'type_regex',
+      reg_exp: '[A-Za-z,-]'
+    )
+    assert regex_alias.save
+
+    package = Nlp::Package.new(agent)
+    expected = {
+      "id"   => agent.id,
+      "slug" => "admin/terminator",
+      "interpretations" => [
+        {
+          "id"    => interpretation.intent.id,
+          "slug"  => "admin/terminator/interpretations/terminator_find",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression" => "Where is @{name} ?",
+              "aliases"    => [
+                {
+                  "alias"   => "name",
+                  "type"    => "regex",
+                  "regex"   => "[A-Za-z,-]"
+                }
+              ],
+              "locale"     => "en"
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, package.generate_json
+  end
+
 end

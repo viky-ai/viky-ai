@@ -139,14 +139,8 @@
                 </span>
               </td>
               <td class='options'>
-                <label>
-                  <input value="true" type="radio"/>
-                  List
-                </label>
-                <label>
-                  <input value="true" type="radio"/>
-                  Any
-                </label>
+                <label><input value="true" type="radio"/> List</label>
+                <label><input value="true" type="radio"/> Any</label>
               </td>
               <td>Hello</td>
               <td>
@@ -200,4 +194,211 @@
   App.CodeEditor.buildJavaScriptEditor($("#solution__123456")[0]);
 </script>
   <% end %>
+</section>
+
+
+
+<section>
+  <h2>Aliases table</h2>
+  <h3>Editable</h3>
+  <%= highlight_html do %>
+<div class="aliases">
+  <table>
+    <thead>
+    <tr>
+      <th>Parameter name</th>
+      <th>Interpretation</th>
+      <th>Options</th>
+      <th>Selection</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="greetings" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="intent-red" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>greetings</a>
+          </span>
+        </td>
+        <td class='options'>
+          <label><input value="true" type="radio"/> List</label>
+          <label><input value="true" type="radio"/> Any</label>
+        </td>
+        <td>Hello</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="age" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="intent-black">Number</span>
+        </td>
+        <td class='options'></td>
+        <td>12</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+      </tr>
+
+      <tr class="regex-header">
+        <td>
+          <div class="field">
+            <input value="hex_value" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span><span class="intent-black">Regex</span></span>
+        </td>
+        <td class='options'></td>
+        <td>#000</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+      <tr class="regex-form">
+        <td colspan="5">
+          <div>
+            <div class="field">
+              <div class="control control--merged">
+                <span class="addon addon--success">
+                  <span class="icon icon--x-small"><%= icon_check %></span>
+                  Valid Regex
+                </span>
+                <input type="text" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+                <span class="addon">
+                  <a href="#">
+                    <span class="icon icon--x-small">
+                      <%= icon_open_in_new %>
+                    </span>
+                    <span>Railroad Diagram</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <div class="field">
+            <input value="joke" type="text"/>
+          </div>
+        </td>
+        <td>
+          <span class="intent-green" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>joke</a>
+          </span>
+        </td>
+        <td class='options'>
+          <label><input value="true" type="radio"/> List</label>
+          <label><input value="true" type="radio"/> Any</label>
+        </td>
+        <td>Blague</td>
+        <td>
+          <a href="#">
+            <span class="icon icon--small">
+              <%= icon_close %>
+            </span>
+          </a>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+  <% end %>
+
+
+
+  <h3>Not editable</h3>
+  <%= highlight_html do %>
+<div class="aliases">
+  <table>
+    <thead>
+    <tr>
+      <th>Parameter name</th>
+      <th>Interpretation</th>
+      <th>Options</th>
+      <th>Selection</th>
+    </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>greetings</td>
+        <td>
+          <span class="intent-red" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>greetings</a>
+          </span>
+        </td>
+        <td class='options'>
+        </td>
+        <td>Hello</td>
+      </tr>
+
+      <tr>
+        <td>age</td>
+        <td>
+          <span class="intent-black">Number</span>
+        </td>
+        <td class='options'></td>
+        <td>12</td>
+      </tr>
+      </tr>
+
+      <tr>
+        <td>hex_value</td>
+        <td>
+          <span class="intent-black">Regex</span>
+          <code>^#?([a-f0-9]{6}|[a-f0-9]{3})$</code>
+        </td>
+        <td class='options'></td>
+        <td>#000</td>
+      </tr>
+
+      <tr>
+        <td>joke</td>
+        <td>
+          <span class="intent-green" title="viky/shopping/greetings">
+            <a href="#"><small>viky/shopping/</small>joke</a>
+          </span>
+        </td>
+        <td class='options'>
+        </td>
+        <td>Blague</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+  <% end %>
+
+
 </section>

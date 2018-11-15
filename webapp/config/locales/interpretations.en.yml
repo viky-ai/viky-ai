@@ -33,6 +33,7 @@ en:
         remove-tags:
           msg: Remove annotation(s)
       number: Number
+      regex: Regex
       solution_label: Define the solution using JavaScript code
       solution_label_readonly: Solution using JavaScript code
 

@@ -48,7 +48,7 @@ module Nls
             if _alias.kind_of? Alias
               add_alias(_alias)
             elsif _alias.kind_of? AliasSpecificType
-              new_alias = Alias.new(nil, { name: alias_name, type: _alias.type })
+              new_alias = Alias.new(nil, { name: alias_name, type: _alias.type, regex: _alias.regex })
               add_alias(new_alias)
             elsif _alias.kind_of? Interpretation
               interpretation = _alias

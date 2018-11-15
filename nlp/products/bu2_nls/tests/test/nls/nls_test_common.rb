@@ -187,6 +187,22 @@ module Nls
 
     end
 
+    def create_regex_package
+      package = Package.new("regex_package")
+
+      email = package.new_interpretation("email", { scope: "private" })
+      email << Expression.new("@{email}", aliases: { email: Alias.regex("[a-z]+@[a-z]+\.[a-z]+") }, solution: "`{ email: email }`")
+
+      emails = package.new_interpretation("emails", { scope: "public" })
+      emails << Expression.new("@{email}", aliases: { email: email })
+      emails << Expression.new("@{email} @{emails}", aliases: { email: email, emails: emails })
+
+      @available_packages[package.slug] = package
+
+      package
+    end
+
+
     def create_building_feature_any
       pg_building_feature = Package.new("pg-building-feature")
 

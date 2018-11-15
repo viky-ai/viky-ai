@@ -83,11 +83,11 @@ module Nls
 
       end
 
-      def test_any_keep_order_glued_more
+      def test_any_keep_order_glued_middle
 
         Nls.remove_all_packages
 
-        package = Package.new("any_keep_order_glued_more")
+        package = Package.new("test_any_keep_order_glued_middle")
 
         debut = package.new_interpretation("debut", scope: "private")
         debut << Expression.new("debut", solution: "debut")
@@ -174,6 +174,67 @@ module Nls
         assert exception.message.include?("Actual answer did not match on any interpretation")
 
       end
+
+      def test_any_keep_order_glued_ends
+
+        Nls.remove_all_packages
+
+        package = Package.new("test_any_keep_order_glued_ends")
+
+        debut = package.new_interpretation("debut", scope: "private")
+        debut << Expression.new("debut", solution: "debut")
+
+        fin = package.new_interpretation("fin", scope: "private" )
+        fin << Expression.new("fin", solution: "fin")
+
+        any_word_word = package.new_interpretation("any_word_word", { scope: "public" })
+        any_word_word << Expression.new("@{debut} motfinaaa motfinbbb", aliases: { debut: Alias.any}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        word_word_any = package.new_interpretation("word_word_any", { scope: "public" })
+        word_word_any << Expression.new("motdebutaaa motdebutbbb @{fin}", aliases: { fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        any_alias = package.new_interpretation("any_alias", { scope: "public" })
+        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        alias_any = package.new_interpretation("alias_any", { scope: "public" })
+        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        Nls.package_update(package)
+
+        expected = { interpretation: "any_word_word", solution: { debut: "bla bla"} }
+        check_interpret("bla bla motfinaaa motfinbbb", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("motfinaaa motfinbbb bla bla", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "word_word_any", solution: { fin: "bla bla"} }
+        check_interpret("motdebutaaa motdebutbbb bla bla", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("bla bla motdebutaaa motdebutbbb", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "any_alias", solution: { debut: "bla bla"} }
+        check_interpret("bla bla fin", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("fin bla bla", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "alias_any", solution: { fin: "bla bla"} }
+        check_interpret("debut bla bla", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("bla bla debut", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+      end
+
 
     end
   end

@@ -114,6 +114,24 @@
     <span class="addon">This in an addon at end</span>
   </div>
 </div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon addon--success">
+      <span class="icon icon--x-small"><%= icon_check %></span>
+      Well done bro!
+    </span>
+    <input type="text" placeholder="One input" name="username" />
+  </div>
+</div>
+<div class="field">
+  <div class="control control--merged">
+    <span class="addon addon--error">
+    <span class="icon icon--x-small"><%= icon_alert %></span>
+      Oops, something append...
+    </span>
+    <input type="text" placeholder="One input" name="username" />
+  </div>
+</div>
   <% end %>
 </section>
 
@@ -190,6 +208,19 @@
 </section>
 
 
+<section>
+  <h2>Inline code input</h2>
+  <%= highlight_html do %>
+<div class="field">
+  <label for="code">Code</label>
+  <input type="text" name="code" id="code" class="code" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+</div>
+<div class="field">
+  <label for="no-code">Withour code class</label>
+  <input type="text" name="no-code" id="no-code" value="^#?([a-f0-9]{6}|[a-f0-9]{3})$" />
+</div>
+  <% end %>
+</section>
 
 <section>
   <h2>File upload</h2>

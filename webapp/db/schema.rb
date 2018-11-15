@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180827124416) do
+ActiveRecord::Schema.define(version: 20181023152900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 20180827124416) do
     t.boolean "is_list", default: false
     t.boolean "any_enabled", default: false
     t.string "interpretation_aliasable_type"
+    t.string "reg_exp"
     t.index ["interpretation_aliasable_type", "interpretation_aliasable_id"], name: "index_ialiases_on_ialiasable_type_and_ialiasable_id"
     t.index ["interpretation_id"], name: "index_interpretation_aliases_on_interpretation_id"
   end

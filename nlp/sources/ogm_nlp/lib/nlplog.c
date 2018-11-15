@@ -176,13 +176,19 @@ og_status NlpPackageCompileAliasLog(og_nlp_th ctrl_nlp_th, package_t package, st
 
   og_string string_alias = OgHeapGetCell(package->halias_ba, alias->alias_start);
 
-  if (alias->type == nlp_alias_type_type_Interpretation)
+  if (alias->type == nlp_alias_type_Interpretation)
   {
     og_string string_slug = OgHeapGetCell(package->halias_ba, alias->slug_start);
     og_string string_id = OgHeapGetCell(package->halias_ba, alias->id_start);
     og_string string_package = OgHeapGetCell(package->halias_ba, alias->package_id_start);
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' '%s' '%s' '%s'", string_alias, string_slug,
         string_id, string_package);
+  }
+  else if (alias->type == nlp_alias_type_Regex)
+  {
+    og_string string_regex = OgHeapGetCell(package->halias_ba, alias->regex_start);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias compile '%s' %s='%s'", string_alias,
+        NlpAliasTypeString(alias->type), string_regex);
   }
   else
   {
@@ -310,10 +316,15 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
 
 {
   IFN(alias) DPcErr;
-  if (alias->type == nlp_alias_type_type_Interpretation)
+  if (alias->type == nlp_alias_type_Interpretation)
   {
     OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' '%s' '%s' '%s'", alias->alias, alias->slug,
         alias->id, alias->package_id);
+  }
+  else if (alias->type == nlp_alias_type_Regex)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s='%s'", alias->alias,
+        NlpAliasTypeString(alias->type), alias->regex_string);
   }
   else
   {
@@ -358,6 +369,13 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
           NlpAliasTypeString(alias->type));
       break;
     }
+    case nlp_input_part_type_Regex:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part %s", Iinput_part,
+          NlpAliasTypeString(alias->type));
+      break;
+    }
   }
 
   DONE;
@@ -380,7 +398,8 @@ og_status NlpLogRequestWords(og_nlp_th ctrl_nlp_th)
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
 
-  for (struct request_word *rw = first_request_word; rw; rw = rw->next) {
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next)
+  {
     IFE(NlpLogRequestWord(ctrl_nlp_th, rw));
   }
   DONE;
@@ -405,8 +424,15 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
     }
   }
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s", request_word->self_index, string_request_word,
-      request_word->start_position, request_word->length_position, is_punctuation);
+  unsigned char is_regex[DPcPathSize];
+  is_regex[0] = 0;
+  if (request_word->is_regex)
+  {
+    snprintf(is_regex, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex_string);
+  }
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s%s", request_word->self_index, string_request_word,
+      request_word->start_position, request_word->length_position, is_regex, is_punctuation);
   DONE;
 }
 
@@ -417,12 +443,14 @@ const char *NlpAliasTypeString(enum nlp_alias_type type)
   {
     case nlp_alias_type_Nil:
       return "nil";
-    case nlp_alias_type_type_Interpretation:
+    case nlp_alias_type_Interpretation:
       return "interpretation";
     case nlp_alias_type_Any:
       return "any";
     case nlp_alias_type_Number:
       return "number";
+    case nlp_alias_type_Regex:
+      return "regex";
 
   }
   return "alias_unknown";

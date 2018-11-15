@@ -153,6 +153,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
 
+
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
   IFE(OgHeapFlush(ctrl_nlp_th->hinterpret_package));
@@ -260,6 +261,12 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
+  {
+    NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: list of regexes found for request:");
+    IFE(NlpRegexLog(ctrl_nlp_th));
+  }
 
   // ====================================
   // look for matching interpretation
