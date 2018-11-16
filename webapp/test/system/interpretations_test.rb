@@ -368,8 +368,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     assert page.has_link?('Where is Sarah Connor ?')
 
-    first('trix-editor').click.set('Find Sarah')
-    select_text_in_trix('trix-editor', 5, 10)
+    first('trix-editor').click.set('Detect Sarah')
+    select_text_in_trix('trix-editor', 7, 12)
     assert page.has_link?('Regex')
 
     click_link('Regex')
@@ -388,9 +388,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     click_button 'Add'
 
-    assert page.has_link?('Find Sarah')
+    assert page.has_link?('Detect Sarah')
 
-    click_link('Find Sarah')
+    click_link('Detect Sarah')
     assert page.has_text?('Regex')
     expected_regex = '^[a-zA-z-]'
     assert_equal expected_regex, find("input[name*='reg_exp']").value
