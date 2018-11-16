@@ -20,7 +20,7 @@
 
           <% public_intents.each do |intent| %>
             <li>
-              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
+              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "smooth-scroll-to-intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
               <a href="<%= href_link %>">
                 <h6>
                   <span><%= intent.intentname %></span>
@@ -35,7 +35,7 @@
 
           <% private_intents.each do |intent| %>
             <li>
-              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
+              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "smooth-scroll-to-intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
               <a href="<%= href_link %>">
                 <h6>
                   <span><%= intent.intentname %></span>
