@@ -111,11 +111,6 @@ class EntitiesListsController < ApplicationController
     end
   end
 
-  def get_used_by_intents
-    used_by_intents_list = @entities_list.aliased_intents
-    render partial: 'intents/used_by_intents_list', locals: {intents_list: used_by_intents_list, entities_list: @entities_list, is_intent: false, agent_owner: @owner, agent: @agent, from_list: params[:from_list] == 'true'}
-  end
-
 
   private
 
@@ -138,21 +133,21 @@ class EntitiesListsController < ApplicationController
 
     def check_user_rights
       case action_name
-        when 'show', 'index', 'get_used_by_intents'
-          access_denied unless current_user.can? :show, @agent
-        when 'new', 'create', 'edit', 'update', 'confirm_destroy',
-             'destroy', 'update_positions'
-          access_denied unless current_user.can? :edit, @agent
-        when 'move_to_agent'
-          if current_user.can? :edit, @agent
-            user_destination  = User.friendly.find(params[:user])
-            @agent_destination = user_destination.agents.friendly.find(params[:agent])
-            access_denied unless current_user.can? :edit, @agent_destination
-          else
-            access_denied
-          end
+      when 'show', 'index'
+        access_denied unless current_user.can? :show, @agent
+      when 'new', 'create', 'edit', 'update', 'confirm_destroy',
+           'destroy', 'update_positions'
+        access_denied unless current_user.can? :edit, @agent
+      when 'move_to_agent'
+        if current_user.can? :edit, @agent
+          user_destination = User.friendly.find(params[:user])
+          @agent_destination = user_destination.agents.friendly.find(params[:agent])
+          access_denied unless current_user.can? :edit, @agent_destination
         else
           access_denied
+        end
+      else
+        access_denied
       end
     end
 end

@@ -2,25 +2,25 @@
   <div class="modal__overlay" data-action='close-modal'></div>
   <div class="modal__main">
     <h5 class="modal__main__title">
-      <% if is_intent %>
-        <%= t('views.intents.used_by_list.title_html', name: intent.intentname) %>
+      <% if @entities_list.nil? %>
+        <%= t('views.intents.used_by_list.title_html', name: @intent.intentname) %>
       <% else %>
-        <%= t('views.intents.used_by_list.title_html', name: entities_list.listname) %>
+        <%= t('views.intents.used_by_list.title_html', name: @entities_list.listname) %>
       <% end %>
       <button class="modal__main__title__close" data-action='close-modal'>
         <%= icon_close %>
       </button>
     </h5>
-      <% private_intents = intents_list.is_private %>
-      <% public_intents = intents_list.is_public %>
+      <% private_intents = @intents.is_private %>
+      <% public_intents = @intents.is_public %>
       <div class="intent-simple-list-content">
-        <ul class="<% if intents_list.count == 0 %>card-list--empty<% end %>"
+        <ul class="<% if @intents.count == 0 %>card-list--empty<% end %>"
             data-empty-content="<%= t('views.intents.used_by_list.empty_list.public') %>"
             id="intents-list-is_public">
+
           <% public_intents.each do |intent| %>
             <li>
-              <% href_link = from_list ? user_agent_intents_path(agent_owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(agent_owner, @agent, intent) %>
-
+              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
               <a href="<%= href_link %>">
                 <h6>
                   <span><%= intent.intentname %></span>
@@ -28,14 +28,14 @@
                     <%= t('activerecord.attributes.entities_list.visibility_is_public').upcase %>
                   </span>
                 </h6>
-
                 <p><%= intent.slug %></p>
               </a>
             </li>
           <% end %>
+
           <% private_intents.each do |intent| %>
             <li>
-              <% href_link = from_list ? user_agent_intents_path(agent_owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(agent_owner, @agent, intent) %>
+              <% href_link = @user_comes_from_index ? user_agent_intents_path(@owner, @agent, anchor: "intent-#{intent.id}") : user_agent_intent_path(@owner, @agent, intent) %>
               <a href="<%= href_link %>">
                 <h6>
                   <span><%= intent.intentname %></span>
@@ -43,11 +43,11 @@
                   <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
                   </span>
                 </h6>
-
                 <p><%= intent.slug %></p>
               </a>
             </li>
           <% end %>
+
         </ul>
       </div>
   </div>

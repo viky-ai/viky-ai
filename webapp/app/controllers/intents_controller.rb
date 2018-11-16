@@ -142,18 +142,6 @@ class IntentsController < ApplicationController
     end
   end
 
-  def get_used_by_intents
-    used_by_intents_list = @intent.aliased_intents
-    render partial: 'used_by_intents_list', locals: {
-      intents_list: used_by_intents_list,
-      intent: @intent,
-      is_intent: true,
-      agent_owner: @owner,
-      agent: @agent,
-      from_list: params[:from_list]
-    }
-  end
-
 
   private
 
@@ -176,7 +164,7 @@ class IntentsController < ApplicationController
 
     def check_user_rights
       case action_name
-      when 'show', 'index', 'get_used_by_intents'
+      when 'show', 'index'
         access_denied unless current_user.can? :show, @agent
       when 'new', 'create', 'edit', 'update', 'confirm_destroy',
            'destroy', 'update_positions', 'select_new_locale',

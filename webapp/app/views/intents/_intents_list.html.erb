@@ -24,7 +24,8 @@
 
       <div class="card-list__item__actions">
         <% if intent.aliased_intents.any? %>
-          <a href="<%= user_agent_intent_get_used_by_intents_path(agent_owner, @agent, intent, from_list: true) %>" class="btn btn--outline btn--small"
+          <a href="<%= user_agent_intent_aliased_intents_path(agent_owner, @agent, intent) %>"
+             class="btn btn--outline btn--small"
              title="<%= t('views.intents.index.used_by_title')  %>"
              data-action="open-remote-modal">
               <%= t('views.intents.index.used_by')  %>

@@ -69,14 +69,17 @@ Rails.application.routes.draw do
           member do
             post :move_to_agent
           end
+
           get :select_new_locale
           post :add_locale
           delete :remove_locale
           get :confirm_destroy
-          get :get_used_by_intents
+
           collection do
             post :update_positions
           end
+
+          resources :aliased_intents, only: :index
 
           resources :interpretations, only: [:show, :create, :edit, :update, :destroy] do
             member do
@@ -93,11 +96,14 @@ Rails.application.routes.draw do
           member do
             post :move_to_agent
           end
+
           get :confirm_destroy
-          get :get_used_by_intents
+
           collection do
             post :update_positions
           end
+
+          resources :aliased_intents, only: :index
 
           resources :entities, only: [:show, :create, :edit, :update, :destroy] do
             member do
