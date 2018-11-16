@@ -47,7 +47,7 @@ class EntitiesList < ApplicationRecord
   end
 
   def is_used_by
-    Intent.where(agent: agent)
+    Intent.where(agent_id: agent_id)
           .joins(interpretations: :interpretation_aliases)
           .where(interpretation_aliases: { interpretation_aliasable: self })
           .distinct
