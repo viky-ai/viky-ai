@@ -23,7 +23,7 @@
       </a>
 
       <div class="card-list__item__actions">
-        <% if intent.is_used_by(@agent).any? %>
+        <% if intent.is_used_by.any? %>
           <a href="<%= user_agent_intent_get_used_by_intents_path(agent_owner, @agent, intent, from_list: true) %>" class="btn btn--outline btn--small"
              title="<%= t('views.intents.index.used_by_title')  %>"
              data-action="open-remote-modal">

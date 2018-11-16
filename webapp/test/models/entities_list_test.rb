@@ -360,21 +360,22 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal weather.agent.id, agents(:weather).id
   end
 
+
   test 'Get intents that are using the current entity' do
     current_entity = entities_lists(:weather_dates)
-    current_agent = agents(:weather)
     expected = [intents(:weather_forecast)]
-    actual = current_entity.is_used_by(current_agent)
+    actual = current_entity.is_used_by
     assert_equal expected, actual
   end
 
+
   test 'No intents that are using the current entity' do
     current_entity = entities_lists(:terminator_targets)
-    current_agent = agents(:terminator)
     expected = []
-    actual = current_entity.is_used_by(current_agent)
-    assert_equal expected,actual
+    actual = current_entity.is_used_by
+    assert_equal expected, actual
   end
+
 
   private
 

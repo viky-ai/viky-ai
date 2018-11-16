@@ -143,8 +143,15 @@ class IntentsController < ApplicationController
   end
 
   def get_used_by_intents
-    used_by_intents_list = @intent.is_used_by(@agent)
-    render partial: 'used_by_intents_list', locals: {intents_list: used_by_intents_list, intent: @intent, is_intent: true, agent_owner: @owner, agent: @agent, from_list: params[:from_list]}
+    used_by_intents_list = @intent.is_used_by
+    render partial: 'used_by_intents_list', locals: {
+      intents_list: used_by_intents_list,
+      intent: @intent,
+      is_intent: true,
+      agent_owner: @owner,
+      agent: @agent,
+      from_list: params[:from_list]
+    }
   end
 
 
