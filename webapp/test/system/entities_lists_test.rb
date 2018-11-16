@@ -163,7 +163,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     end
   end
 
-  test 'Used_by menu' do
+  test 'aliased intents' do
     go_to_agent_entities_lists('admin', 'weather')
 
     within '#entities_lists-list-is_public' do
@@ -178,10 +178,11 @@ class EntitiesListsTest < ApplicationSystemTestCase
       click_link('weather_forecast')
     end
 
-    within('.intent-simple-list-content') do
+    within('.aliased-intents-list') do
       assert page.has_link?('weather_forecast')
     end
-    assert current_url.include?("/agents/admin/weather/interpretations#intent-#{intents(:weather_forecast).id}")
+    expected = "/agents/admin/weather/interpretations#intent-#{intents(:weather_forecast).id}"
+    assert current_url.include?(expected)
   end
 
 end

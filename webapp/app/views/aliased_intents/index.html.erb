@@ -13,7 +13,7 @@
     </h5>
       <% private_intents = @intents.is_private %>
       <% public_intents = @intents.is_public %>
-      <div class="intent-simple-list-content">
+      <div class="aliased-intents-list">
         <ul class="<% if @intents.count == 0 %>card-list--empty<% end %>"
             data-empty-content="<%= t('views.intents.used_by_list.empty_list.public') %>"
             id="intents-list-is_public">

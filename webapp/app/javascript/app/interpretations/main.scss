@@ -437,38 +437,3 @@ trix-editor{
     margin-left: .5em;
   }
 }
-
-.intent-simple-list-content{
-  margin: 0.5em 0;
-  ul{
-    padding:0 ;
-    list-style: none;
-    margin-bottom: 0.5em;
-    li{
-      border-bottom: 1px solid #eee;
-      padding: .4em 2em;
-      a{
-        text-decoration: none;
-        h6{
-          word-break: break-word;
-          margin: 0;
-          font-size: 1em;
-          font-weight: 300;
-        }
-        p{
-          word-break: break-word;
-          color: #aaa;
-          font-size: .8em;
-          margin: 0;
-        }
-        &:focus,
-        &:hover{
-          h6 span:first-child{
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-
-  }
-}
