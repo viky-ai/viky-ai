@@ -718,6 +718,8 @@ class PackageTest < ActiveSupport::TestCase
     agent = agents(:terminator)
     interpretation = interpretations(:terminator_find_sarah)
     assert entities_lists(:terminator_targets).destroy
+    assert interpretations(:terminator_where).destroy
+    assert intents(:simple_where).destroy
 
     regex_alias = InterpretationAlias.new(
       position_start: 9,
