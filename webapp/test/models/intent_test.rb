@@ -217,17 +217,17 @@ class IntentTest < ActiveSupport::TestCase
     assert_equal weather.agent.id, agents(:weather).id
   end
 
-  test 'Get intents that are using the current intent' do
+  test 'Get intents that are using the current intent (aliased_intents)' do
     current_intent = intents(:simple_where)
     expected = [intents(:terminator_find)]
-    actual = current_intent.is_used_by
+    actual = current_intent.aliased_intents
     assert_equal expected, actual
   end
 
-  test 'No intents that are using the current intent' do
+  test 'No intents that are using the current intent (aliased_intents)' do
     current_intent = intents(:weather_forecast)
     expected = []
-    actual = current_intent.is_used_by
+    actual = current_intent.aliased_intents
     assert_equal expected, actual
   end
 
@@ -263,7 +263,7 @@ class IntentTest < ActiveSupport::TestCase
     assert interpretation_alias.save
 
     expected = [intents(:terminator_find)]
-    actual = current_intent.is_used_by
+    actual = current_intent.aliased_intents
     assert_equal expected, actual
     assert_not_includes actual, weather_loc_intent
   end

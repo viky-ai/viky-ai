@@ -18,7 +18,7 @@
     <% end %>
   </div>
   <div class="header__tools">
-  <% if @intent.is_used_by.any? %>
+  <% if @intent.aliased_intents.any? %>
     <a href="<%= user_agent_intent_get_used_by_intents_path(@agent.owner, @agent, @intent) %>" class="btn btn--small"
        title="<%= t('views.intents.index.used_by_title')  %>"
        data-action="open-remote-modal">

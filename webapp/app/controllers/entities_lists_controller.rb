@@ -112,7 +112,7 @@ class EntitiesListsController < ApplicationController
   end
 
   def get_used_by_intents
-    used_by_intents_list = @entities_list.is_used_by
+    used_by_intents_list = @entities_list.aliased_intents
     render partial: 'intents/used_by_intents_list', locals: {intents_list: used_by_intents_list, entities_list: @entities_list, is_intent: false, agent_owner: @owner, agent: @agent, from_list: params[:from_list] == 'true'}
   end
 
