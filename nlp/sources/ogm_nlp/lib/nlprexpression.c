@@ -728,6 +728,14 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
         score->overlap, score->any, score->scope);
   }
 
+//  char sortdata[DPcPathSize];
+//  sortdata[0] = 0;
+//  sprintf(sortdata, " sortdata=[inter-scope=%d scope=%.2f avs=%d kar=%d rpn=%d om=%d na=%d total_score=%.2f level=%d]",
+//      request_expression->expression->interpretation->scope, request_expression->score->scope,
+//      request_expression->any_validate_status, request_expression->keep_as_result,
+//      request_expression->request_positions_nb, request_expression->overlap_mark, request_expression->nb_anys,
+//      request_expression->total_score, request_expression->level);
+//
   char ac_request_word[DPcPathSize];
   ac_request_word[0] = 0;
   if (request_expression->auto_complete_request_word)
@@ -756,7 +764,7 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   }
 
   struct expression *expression = request_expression->expression;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s",
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
       expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores,
