@@ -103,6 +103,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th, request_expression));
   IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
+  IFE(NlpSetAnyTopology(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
 
@@ -410,20 +411,22 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
     static int nb_calls = 0;
     nb_calls++;
     NlpLog(DOgNlpTraceMatchExpression,
-        "NlpRequestExpressionIsGlued: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d",
+        "NlpRequestExpressionIsGlued: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d any_topology=%s",
         nb_calls, request_expression->expression->alias_any_input_part_position,
-        request_expression->expression->any_input_part_position, request_expression->orips_nb);
+        request_expression->expression->any_input_part_position, request_expression->orips_nb,
+        NlpAnyTopologyString(request_expression->any_topology));
     IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 2));
   }
 
   og_bool is_glued = TRUE;
+  og_bool keep_order = request_expression->expression->keep_order;
   int any_input_part_position = request_expression->expression->any_input_part_position;
 
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part1) DPcErr;
-    if (request_expression->expression->keep_order)
+    if (keep_order)
     {
       if (i == any_input_part_position - 1) continue;
       struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);

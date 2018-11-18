@@ -699,6 +699,57 @@ og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request
   DONE;
 }
 
+og_status NlpSetAnyTopology(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  request_expression->any_topology = DOgNlpAnyTopologyNil;
+
+  // First calculate internal any topology
+  int any_input_part_position = request_expression->expression->any_input_part_position;
+  if (any_input_part_position >= 0)
+  {
+    if (any_input_part_position == 0)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyLeft;
+    }
+    else if (any_input_part_position == request_expression->expression->input_parts_nb)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyRight;
+    }
+  }
+
+  // Then calculate any topology coming from subexpressions
+  struct request_input_part *request_input_part_start = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, 0);
+  IFN(request_input_part_start) DPcErr;
+
+  if (request_input_part_start->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part_start->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    if (sub_request_expression->any_topology == DOgNlpAnyTopologyLeft)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyLeft;
+    }
+  }
+
+  struct request_input_part *request_input_part_end = NlpGetRequestInputPart(ctrl_nlp_th, request_expression,
+      request_expression->orips_nb - 1);
+  IFN(request_input_part_end) DPcErr;
+
+  if (request_input_part_end->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part_end->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    if (sub_request_expression->any_topology == DOgNlpAnyTopologyRight)
+    {
+      request_expression->any_topology = DOgNlpAnyTopologyRight;
+    }
+  }
+
+  DONE;
+}
+
 og_status NlpGetNbAnysAttached(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   request_expression->nb_anys_attached = 0;
@@ -856,4 +907,17 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
 
   DONE;
 }
+
+og_string NlpAnyTopologyString(int any_topology)
+{
+  switch (any_topology)
+  {
+    case DOgNlpAnyTopologyNil: return "nil";
+    case DOgNlpAnyTopologyLeft: return "left";
+    case DOgNlpAnyTopologyRight: return "right";
+    case DOgNlpAnyTopologyBothSide: return "bothside";
+  }
+return "unknown";
+}
+
 

@@ -235,6 +235,51 @@ module Nls
 
       end
 
+      def test_any_keep_order_topology
+
+        Nls.remove_all_packages
+
+        package = Package.new("test_any_keep_order_topology")
+
+        debut = package.new_interpretation("debut", scope: "private")
+        debut << Expression.new("debut", solution: "debut")
+
+        fin = package.new_interpretation("fin", scope: "private" )
+        fin << Expression.new("fin", solution: "fin")
+
+        any_alias = package.new_interpretation("any_alias", { scope: "public" })
+        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        alias_any = package.new_interpretation("alias_any", { scope: "public" })
+        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        above_alias_any = package.new_interpretation("above_alias_any", { scope: "public" })
+        above_alias_any << Expression.new("@{alias_any} aboveapres", aliases: { alias_any: alias_any }, solution: "`alias_any`", keep_order: true, glued: true)
+
+        above_above_alias_any = package.new_interpretation("above_above_alias_any", { scope: "public" })
+        above_above_alias_any << Expression.new("top @{above_alias_any} top", aliases: { above_alias_any: above_alias_any }, solution: "`above_alias_any`", keep_order: true, glued: true)
+
+        above_any_alias = package.new_interpretation("above_any_alias", { scope: "public" })
+        above_any_alias << Expression.new("aboveavant @{any_alias}", aliases: { any_alias: any_alias }, solution: "`any_alias`", keep_order: true, glued: true)
+
+        above_above_any_alias = package.new_interpretation("above_above_any_alias", { scope: "public" })
+        above_above_any_alias << Expression.new("top @{above_any_alias} top", aliases: { above_any_alias: above_any_alias }, solution: "`above_any_alias`", keep_order: true, glued: true)
+
+        Nls.package_update(package)
+
+        expected = { interpretation: "above_alias_any", solution: { fin: "bla bla"} }
+        check_interpret("debut bla bla aboveapres", expected)
+
+        expected = { interpretation: "above_any_alias", solution: { debut: "bla bla"} }
+        check_interpret("aboveavant bla bla fin", expected)
+
+        expected = { interpretation: "above_above_alias_any", solution: { fin: "bla bla"} }
+        check_interpret("top debut bla bla aboveapres top", expected)
+
+        expected = { interpretation: "above_above_any_alias", solution: { debut: "bla bla"} }
+        check_interpret("top aboveavant bla bla fin top", expected)
+
+      end
 
     end
   end

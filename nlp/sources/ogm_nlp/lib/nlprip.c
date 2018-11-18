@@ -105,8 +105,28 @@ og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_inp
 }
 
 og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
-    struct request_input_part *request_input_part2)
+    struct request_input_part *request_input_part2, og_bool keep_order)
 {
+  if (request_input_part1->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part1->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    int any_topology = DOgNlpAnyTopologyBothSide;
+    if (keep_order) any_topology = DOgNlpAnyTopologyRight;
+    if (sub_request_expression->any_topology & any_topology) return (TRUE);
+  }
+
+  if (request_input_part2->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part2->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    int any_topology = DOgNlpAnyTopologyBothSide;
+    if (keep_order) any_topology = DOgNlpAnyTopologyLeft;
+    if (sub_request_expression->any_topology & any_topology) return (TRUE);
+  }
+
   return NlpRequestPositionsAreGlued(ctrl_nlp_th, request_input_part1->request_position_start,
       request_input_part1->request_positions_nb, request_input_part2->request_position_start,
       request_input_part2->request_positions_nb);
