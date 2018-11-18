@@ -433,7 +433,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
       IFN(request_input_part2) DPcErr;
       if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
       {
-        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
         IFE(is_glued);
         if (!is_glued)
         {
@@ -444,7 +444,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
       }
       else
       {
-        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
         IFE(is_glued);
         if (!is_glued) break;
       }
@@ -463,7 +463,7 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
         {
           struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, j);
           IFN(request_input_part2) DPcErr;
-          is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+          is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
           IFE(is_glued);
           if (is_glued) break;
           if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
