@@ -235,11 +235,11 @@ module Nls
 
       end
 
-      def test_any_keep_order_topology
+      def test_any_keep_order_glued_topology
 
         Nls.remove_all_packages
 
-        package = Package.new("test_any_keep_order_topology")
+        package = Package.new("test_any_keep_order_glued_topology")
 
         debut = package.new_interpretation("debut", scope: "private")
         debut << Expression.new("debut", solution: "debut")
