@@ -5,10 +5,6 @@ class EntitiesListForm
     $('body').on 'modal:load', (event) =>
       @setup() if $("#modal_container .js-entities_list-form").length == 1
 
-    entity_id = $(location).attr('hash')
-    unless entity_id == ''
-       App.CardListHelper.showHighlightedItem(entity_id)
-
   setup: ->
     if $('.field_with_errors input').length == 0
       App.FocusInput.atEnd('#entities_list_listname')

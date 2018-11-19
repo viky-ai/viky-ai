@@ -18,10 +18,6 @@ class InterpretationsList
       });
     App.CodeEditor.buildJavaScriptEditor($("#solution__new_interpretation")[0])
 
-    interpretation_id = $(location).attr('hash')
-    unless interpretation_id == ''
-       App.CardListHelper.showHighlightedItem(interpretation_id)
-
   @incrementTabBadge: ->
     count = $("#current-locale-tab-badge").data('count')
     $("#current-locale-tab-badge").html(count + 1)

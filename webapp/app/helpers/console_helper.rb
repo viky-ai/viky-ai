@@ -24,17 +24,17 @@ module ConsoleHelper
     html = []
     unless matches['interpretation_slug'].split('/').last.include? 'recursive'
       html << '<li>'
-
       if matches['interpretation_slug'].include? 'entities_list'
-        html << "<a href='/agents/#{matches['interpretation_slug']}#entity-#{matches['expression_id']}'>"
+        href = "/agents/#{matches['interpretation_slug']}"
+        href << "#smooth-scroll-to-entity-#{matches['expression_id']}"
       else
         id = matches['expression_id']
         interpretation = Interpretation.find_by_id(id)
         href = "/agents/#{matches['interpretation_slug']}"
         href << "?locale=#{interpretation.locale}"
-        href << "#interpretation-#{id}"
-        html << "<a href='#{href}'>"
+        href << "#smooth-scroll-to-interpretation-#{id}"
       end
+      html << "<a href='#{href}'>"
       html << "<em>#{matches['expression']}</em>"
       html << "<span>#{matches['interpretation_slug']}</span>"
       html << '</a>'
