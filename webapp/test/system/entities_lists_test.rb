@@ -181,7 +181,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     within('.aliased-intents-list') do
       assert page.has_link?('weather_forecast')
     end
-    expected = "/agents/admin/weather/interpretations#intent-#{intents(:weather_forecast).id}"
+    expected = "/agents/admin/weather/interpretations#smooth-scroll-to-intent-#{intents(:weather_forecast).id}"
     assert current_url.include?(expected)
   end
 
