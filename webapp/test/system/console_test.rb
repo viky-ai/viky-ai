@@ -2,7 +2,6 @@ require "application_system_test_case"
 
 class ConsoleTest < ApplicationSystemTestCase
 
-
   test 'console basic interaction' do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
@@ -71,7 +70,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "Hello world",
                           "interpretation_slug" => "weather_forecast",
                           "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => "cdf8d742-6cdb-43e9-8aa3-3b9e71cf0747",
+                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
                         }
                       },
                       {
@@ -204,7 +203,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
                           "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => interpretations(:weather_forecast_tomorrow),
+                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
                         }
                       }
                     ]
@@ -269,7 +268,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "weather",
                           "interpretation_slug" => "admin/weather/interpretations/weather_forecast",
                           "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418958",
-                          "expression_id" => interpretations(:weather_forecast_tomorrow),
+                          "expression_id" => interpretations(:weather_forecast_tomorrow).id,
                         }
                       }
                     ]
@@ -302,7 +301,7 @@ class ConsoleTest < ApplicationSystemTestCase
                           "expression" => "terminator",
                           "interpretation_slug" => "admin/terminator/interpretations/terminator_find",
                           "interpretation_id" => "6b50f2d9-2a25-493c-8b93-104968418959",
-                          "expression_id" => interpretations(:terminator_find_sarah),
+                          "expression_id" => interpretations(:terminator_find_sarah).id,
                         }
                       }
                     ]
