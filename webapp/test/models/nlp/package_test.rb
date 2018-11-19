@@ -585,6 +585,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions"=>  [
               {
                 "expression"=>"Find",
+                "id"=>"55495e57-e816-5b14-b665-2205a6ccf263",
                 "locale"=>"en",
                 "solution"=>"Find"
               }
@@ -597,6 +598,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "@{find} Sarah Connor",
+              "id"=>"dfcf3b39-2f54-5847-b717-a8040707f232",
               "aliases"=> [
                 {
                   "alias" => "find",
@@ -773,6 +775,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Where is @{name} ?",
+              "id"=>"223bbbb3-e8cf-5063-8d1a-b8c4c168bda4",
               "aliases"    => [
                 {
                   "alias"   => "name",
