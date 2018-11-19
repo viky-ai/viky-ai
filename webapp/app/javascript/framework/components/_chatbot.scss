@@ -221,12 +221,14 @@ $chatbot_statement_radius: 8px;
 .sg .chatbot__widget--text p code,
 .sg .chatbot__widget--text li code,
 .chatbot__widget--text code{
-  padding: .2em .25em .1em .25em;
+  padding: 0 .25em;
   background-color: rgba(#fff, .5);
   border: 1px solid rgba(#000, .1);
   color: darken($primary-color, 10%);
-  font-size: .9em;
+  font-size: .85em;
+  line-height: 1em;
   border-radius: 2px;
+  font-family: $family-monospace;
 }
 
 

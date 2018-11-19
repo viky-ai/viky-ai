@@ -105,12 +105,79 @@ og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_inp
 }
 
 og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
-    struct request_input_part *request_input_part2)
+    struct request_input_part *request_input_part2, og_bool keep_order)
 {
+  if (request_input_part1->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part1->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    int any_topology = DOgNlpAnyTopologyBothSide;
+    if (keep_order) any_topology = DOgNlpAnyTopologyRight;
+    if (sub_request_expression->any_topology & any_topology) return (TRUE);
+  }
+
+  if (request_input_part2->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part2->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    int any_topology = DOgNlpAnyTopologyBothSide;
+    if (keep_order) any_topology = DOgNlpAnyTopologyLeft;
+    if (sub_request_expression->any_topology & any_topology) return (TRUE);
+  }
+
   return NlpRequestPositionsAreGlued(ctrl_nlp_th, request_input_part1->request_position_start,
       request_input_part1->request_positions_nb, request_input_part2->request_position_start,
       request_input_part2->request_positions_nb);
 }
+
+og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
+    struct request_input_part *request_input_part2)
+{
+  og_bool is_glued = FALSE;
+  // All words between end of request_input_part1 and start of request_input_part2
+  // must be expression punctuations
+  struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_input_part1->request_position_start + request_input_part1->request_positions_nb - 1);
+  IFN(request_position) DPcErr;
+  int end_request_input_part1 = request_position->start + request_position->length;
+  request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_input_part2->request_position_start);
+  IFN(request_position) DPcErr;
+  int start_request_input_part2 = request_position->start;
+
+  struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+  IFN(request_words) DPcErr;
+  int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+  og_bool all_words_in_between_are_expression_punctuations = TRUE;
+  for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+  {
+    struct request_word *request_word = request_words + w;
+    if (state == 1)   // outside the texte zone
+    {
+      if (request_word->start_position >= end_request_input_part1)
+      {
+        state = 2;
+        w--;
+      }
+    }
+    else if (state == 2)   // inside the texte zone
+    {
+      if (request_word->start_position + request_word->length_position <= start_request_input_part2)
+      {
+        if (!request_word->is_expression_punctuation)
+        {
+          all_words_in_between_are_expression_punctuations = FALSE;
+          break;
+        }
+      }
+      break;
+    }
+  }
+  if (all_words_in_between_are_expression_punctuations) is_glued = TRUE;
+  return (is_glued);
+}
+
 
 static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part)
 {
@@ -177,6 +244,12 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
     {
       // should not be used
       snprintf(string_input_part, DPcPathSize, "number");
+      break;
+    }
+    case nlp_input_part_type_Regex:
+    {
+      // should not be used
+      snprintf(string_input_part, DPcPathSize, "regex");
       break;
     }
 

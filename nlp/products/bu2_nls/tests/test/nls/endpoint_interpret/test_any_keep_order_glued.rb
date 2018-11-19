@@ -83,11 +83,11 @@ module Nls
 
       end
 
-      def test_any_keep_order_glued_more
+      def test_any_keep_order_glued_middle
 
         Nls.remove_all_packages
 
-        package = Package.new("any_keep_order_glued_more")
+        package = Package.new("test_any_keep_order_glued_middle")
 
         debut = package.new_interpretation("debut", scope: "private")
         debut << Expression.new("debut", solution: "debut")
@@ -172,6 +172,112 @@ module Nls
           check_interpret("avant debut bla bla finbbb finaaa apres", expected)
         end
         assert exception.message.include?("Actual answer did not match on any interpretation")
+
+      end
+
+      def test_any_keep_order_glued_ends
+
+        Nls.remove_all_packages
+
+        package = Package.new("test_any_keep_order_glued_ends")
+
+        debut = package.new_interpretation("debut", scope: "private")
+        debut << Expression.new("debut", solution: "debut")
+
+        fin = package.new_interpretation("fin", scope: "private" )
+        fin << Expression.new("fin", solution: "fin")
+
+        any_word_word = package.new_interpretation("any_word_word", { scope: "public" })
+        any_word_word << Expression.new("@{debut} motfinaaa motfinbbb", aliases: { debut: Alias.any}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        word_word_any = package.new_interpretation("word_word_any", { scope: "public" })
+        word_word_any << Expression.new("motdebutaaa motdebutbbb @{fin}", aliases: { fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        any_alias = package.new_interpretation("any_alias", { scope: "public" })
+        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        alias_any = package.new_interpretation("alias_any", { scope: "public" })
+        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        Nls.package_update(package)
+
+        expected = { interpretation: "any_word_word", solution: { debut: "bla bla"} }
+        check_interpret("bla bla motfinaaa motfinbbb", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("motfinaaa motfinbbb bla bla", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "word_word_any", solution: { fin: "bla bla"} }
+        check_interpret("motdebutaaa motdebutbbb bla bla", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("bla bla motdebutaaa motdebutbbb", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "any_alias", solution: { debut: "bla bla"} }
+        check_interpret("bla bla fin", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("fin bla bla", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+        expected = { interpretation: "alias_any", solution: { fin: "bla bla"} }
+        check_interpret("debut bla bla", expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("bla bla debut", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
+
+      end
+
+      def test_any_keep_order_glued_topology
+
+        Nls.remove_all_packages
+
+        package = Package.new("test_any_keep_order_glued_topology")
+
+        debut = package.new_interpretation("debut", scope: "private")
+        debut << Expression.new("debut", solution: "debut")
+
+        fin = package.new_interpretation("fin", scope: "private" )
+        fin << Expression.new("fin", solution: "fin")
+
+        any_alias = package.new_interpretation("any_alias", { scope: "public" })
+        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", keep_order: true, glued: true)
+
+        alias_any = package.new_interpretation("alias_any", { scope: "public" })
+        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", keep_order: true, glued: true)
+
+        above_alias_any = package.new_interpretation("above_alias_any", { scope: "public" })
+        above_alias_any << Expression.new("@{alias_any} aboveapres", aliases: { alias_any: alias_any }, solution: "`alias_any`", keep_order: true, glued: true)
+
+        above_above_alias_any = package.new_interpretation("above_above_alias_any", { scope: "public" })
+        above_above_alias_any << Expression.new("top @{above_alias_any} top", aliases: { above_alias_any: above_alias_any }, solution: "`above_alias_any`", keep_order: true, glued: true)
+
+        above_any_alias = package.new_interpretation("above_any_alias", { scope: "public" })
+        above_any_alias << Expression.new("aboveavant @{any_alias}", aliases: { any_alias: any_alias }, solution: "`any_alias`", keep_order: true, glued: true)
+
+        above_above_any_alias = package.new_interpretation("above_above_any_alias", { scope: "public" })
+        above_above_any_alias << Expression.new("top @{above_any_alias} top", aliases: { above_any_alias: above_any_alias }, solution: "`above_any_alias`", keep_order: true, glued: true)
+
+        Nls.package_update(package)
+
+        expected = { interpretation: "above_alias_any", solution: { fin: "bla bla"} }
+        check_interpret("debut bla bla aboveapres", expected)
+
+        expected = { interpretation: "above_any_alias", solution: { debut: "bla bla"} }
+        check_interpret("aboveavant bla bla fin", expected)
+
+        expected = { interpretation: "above_above_alias_any", solution: { fin: "bla bla"} }
+        check_interpret("top debut bla bla aboveapres top", expected)
+
+        expected = { interpretation: "above_above_any_alias", solution: { debut: "bla bla"} }
+        check_interpret("top aboveavant bla bla fin top", expected)
 
       end
 

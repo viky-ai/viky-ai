@@ -37,6 +37,7 @@
     <file>nlpparse.c</file>
     <file>nlprip.c</file>
     <file>nlprecal.c</file>
+    <file>nlpregex.c</file>
     <file>nlprexpression.c</file>
     <file>nlpreopt.c</file>
     <file>nlpreclean.c</file>

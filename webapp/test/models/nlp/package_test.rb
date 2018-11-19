@@ -70,6 +70,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "soleil",
@@ -78,6 +79,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "pluie",
@@ -86,6 +88,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "rain",
@@ -94,6 +97,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         },
@@ -109,6 +113,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tout à l'heure",
@@ -117,6 +122,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "today",
@@ -125,6 +131,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             },
             {
               "expression" => "tomorrow",
@@ -132,6 +139,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glued"      => true,
+              "glue-strength" => "punctuation",
             }
           ]
         }
@@ -571,10 +579,34 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/terminator",
       "interpretations" => [
         {
+          "id"=>"997928ef-e905-535e-b36a-2f64b7349c3b",
+          "slug"=>"admin/terminator/interpretations/simple_where",
+          "scope"=>"private",
+          "expressions"=>  [
+              {
+                "expression"=>"Find",
+                "locale"=>"en",
+                "solution"=>"Find"
+              }
+            ]
+        },
+        {
           "id" => "6a04a399-6606-5c51-93fc-14766af0c30c",
           "slug" => "admin/terminator/interpretations/terminator_find",
           "scope" => "public",
           "expressions" => [
+            {
+              "expression" => "@{find} Sarah Connor",
+              "aliases"=> [
+                {
+                  "alias" => "find",
+                  "slug" => "admin/terminator/interpretations/simple_where",
+                  "id" => "997928ef-e905-535e-b36a-2f64b7349c3b",
+                  "package" => "794f5279-8ed5-5563-9229-3d2573f23051"
+                }
+              ],
+              "locale"=>"en"
+            },
             {
               "expression" => "Where is Sarah Connor ?",
               "id"         => interpretations(:terminator_find_sarah).id,
@@ -582,7 +614,9 @@ class PackageTest < ActiveSupport::TestCase
               "solution" => "Where is Sarah Connor ?"
             }
           ]
-        }, {
+        },
+        {
+
           "id" => "1f45c98f-b39b-5a8b-a4a7-8379bea19f0a",
           "slug" => "admin/terminator/entities_lists/terminator_targets",
           "scope" => "private",
@@ -709,4 +743,50 @@ class PackageTest < ActiveSupport::TestCase
 
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
+
+  test 'Package generation with regex type' do
+    agent = agents(:terminator)
+    interpretation = interpretations(:terminator_find_sarah)
+    assert entities_lists(:terminator_targets).destroy
+    assert interpretations(:terminator_where).destroy
+    assert intents(:simple_where).destroy
+
+    regex_alias = InterpretationAlias.new(
+      position_start: 9,
+      position_end: 21,
+      aliasname: 'name',
+      interpretation_id: interpretation.id,
+      nature: 'type_regex',
+      reg_exp: '[A-Za-z,-]'
+    )
+    assert regex_alias.save
+
+    package = Nlp::Package.new(agent)
+    expected = {
+      "id"   => agent.id,
+      "slug" => "admin/terminator",
+      "interpretations" => [
+        {
+          "id"    => interpretation.intent.id,
+          "slug"  => "admin/terminator/interpretations/terminator_find",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression" => "Where is @{name} ?",
+              "aliases"    => [
+                {
+                  "alias"   => "name",
+                  "type"    => "regex",
+                  "regex"   => "[A-Za-z,-]"
+                }
+              ],
+              "locale"     => "en"
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, package.generate_json
+  end
+
 end

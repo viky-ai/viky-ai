@@ -46,6 +46,13 @@ class EntitiesList < ApplicationRecord
     entities_import.proceed(self)
   end
 
+  def aliased_intents
+    Intent.where(agent_id: agent_id)
+          .joins(interpretations: :interpretation_aliases)
+          .where(interpretation_aliases: { interpretation_aliasable: self })
+          .distinct
+          .order('position desc, created_at desc')
+  end
 
   private
 

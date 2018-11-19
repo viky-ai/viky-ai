@@ -13,7 +13,7 @@ debug: $(DBINPATH)/libduktape.so $(SRCPATH)/include/duktape.h
 
 build: $(RBINPATH)/libduktape.so $(SRCPATH)/include/duktape.h
 
-rebuild:
+redebug:
 	$(MAKE) -f $(CURRENT_MAKEFILE) clean
 	$(MAKE) -f $(CURRENT_MAKEFILE) debug
 

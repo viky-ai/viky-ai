@@ -42,7 +42,17 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
     snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
   }
 
-  NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s:", string_request_word, number);
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    unsigned char regex_string[DPcPathSize];
+    regex_string[0]=0;
+    if (request_word->is_regex)
+    {
+      snprintf(regex_string, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex_string);
+
+    }
+    NlpLog(DOgNlpTraceMatch, "Looking for input parts for string '%s'%s%s:", string_request_word, number, regex_string);
+  }
 
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
@@ -59,6 +69,14 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
     unsigned char *input, struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
+
+  if (request_word->is_regex)
+  {
+    if (package == request_word->regex_input_part->expression->interpretation->package)
+    {
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
+    }
+  }
 
   if (request_word->is_number)
   {

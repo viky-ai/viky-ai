@@ -445,6 +445,14 @@ static og_status NlpRequestAnyIsOrdered(og_nlp_th ctrl_nlp_th, struct request_an
 {
   og_bool is_ordered = NlpRequestAnyIsOrdered1(ctrl_nlp_th, request_any, request_expression);
   IFE(is_ordered);
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered: checking order with any to check:")
+    NlpRequestExpressionAnyLog(ctrl_nlp_th, request_any);
+    NlpLog(DOgNlpTraceMatch, "NlpRequestAnyIsOrdered1: return %s on expression:", is_ordered?"ordered":"not ordered")
+    IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+  }
   if (!is_ordered) return FALSE;
 
   og_bool global_is_ordered = TRUE;
@@ -521,49 +529,43 @@ static og_status NlpRequestAnyIsOrdered1(og_nlp_th ctrl_nlp_th, struct request_a
 {
   if (!request_expression->expression->keep_order) return TRUE;
 
-  int Ialias = 0;
-  for (int i = 0; i < request_expression->orips_nb; i++)
+  int any_input_part_position = request_expression->expression->any_input_part_position;
+  if (request_expression->expression->any_input_part_position < 0
+      || request_expression->orips_nb < request_expression->expression->any_input_part_position) return TRUE;
+
+  struct request_input_part *request_input_part_before = NULL;
+  if (any_input_part_position-1 >= 0)
   {
-    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
-    IFN(request_input_part) DPcErr;
-    if (request_input_part->type == nlp_input_part_type_Interpretation)
-    {
-      Ialias++;
-      if (request_expression->expression->alias_any_input_part_position == Ialias)
-      {
-        struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-            request_input_part->request_position_start + request_input_part->request_positions_nb - 1);
-        IFN(request_position) DPcErr;
-        struct request_word *first_request_word = request_any->queue_request_words->head->data;
-        if (request_position->start + request_position->length <= first_request_word->start_position)
-        {
-          if (i + 1 < request_expression->orips_nb)
-          {
-            struct request_input_part *request_input_part_next = NlpGetRequestInputPart(ctrl_nlp_th, request_expression,
-                i + 1);
-            IFN(request_input_part_next) DPcErr;
-            if (request_input_part_next->type == nlp_input_part_type_Interpretation)
-            {
-              struct request_position *request_position_next = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-                  request_input_part_next->request_position_start);
-              IFN(request_position) DPcErr;
-
-              struct request_word *request_word_last = request_any->queue_request_words->tail->data;
-
-              if (request_word_last->start_position + request_word_last->length_position
-                  <= request_position_next->start) return TRUE;
-              else return FALSE;
-            }
-            else return TRUE;
-
-          }
-          else return TRUE;
-        }
-        else return FALSE;
-      }
-    }
+    request_input_part_before = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, any_input_part_position-1);
+    IFN(request_input_part_before) DPcErr;
   }
-  return TRUE;
+
+  struct request_input_part *request_input_part_after = NULL;
+  if (any_input_part_position < request_expression->orips_nb)
+  {
+    request_input_part_after = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, any_input_part_position);
+    IFN(request_input_part_after) DPcErr;
+  }
+
+  IFX(request_input_part_before)
+  {
+    struct request_word *first_any_request_word = request_any->queue_request_words->head->data;
+    struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_input_part_before->request_position_start + request_input_part_before->request_positions_nb - 1);
+    IFN(request_position) DPcErr;
+    if (first_any_request_word->start_position < request_position->start + request_position->length) return FALSE;
+  }
+
+  IFX(request_input_part_after)
+  {
+    struct request_word *last_any_request_word = request_any->queue_request_words->tail->data;
+    struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_input_part_after->request_position_start);
+    IFN(request_position) DPcErr;
+
+    if (last_any_request_word->start_position + last_any_request_word->length_position > request_position->start) return FALSE;
+  }
+return TRUE;
 }
 
 static og_status NlpRequestAnyAddPositions(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
@@ -694,6 +696,57 @@ og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request
   {
     request_expression->nb_anys++;
   }
+  DONE;
+}
+
+og_status NlpSetAnyTopology(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+{
+  request_expression->any_topology = DOgNlpAnyTopologyNil;
+
+  // First calculate internal any topology
+  int any_input_part_position = request_expression->expression->any_input_part_position;
+  if (any_input_part_position >= 0)
+  {
+    if (any_input_part_position == 0)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyLeft;
+    }
+    else if (any_input_part_position == request_expression->expression->input_parts_nb)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyRight;
+    }
+  }
+
+  // Then calculate any topology coming from subexpressions
+  struct request_input_part *request_input_part_start = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, 0);
+  IFN(request_input_part_start) DPcErr;
+
+  if (request_input_part_start->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part_start->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    if (sub_request_expression->any_topology == DOgNlpAnyTopologyLeft)
+    {
+      request_expression->any_topology |= DOgNlpAnyTopologyLeft;
+    }
+  }
+
+  struct request_input_part *request_input_part_end = NlpGetRequestInputPart(ctrl_nlp_th, request_expression,
+      request_expression->orips_nb - 1);
+  IFN(request_input_part_end) DPcErr;
+
+  if (request_input_part_end->type == nlp_input_part_type_Interpretation)
+  {
+    struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+        request_input_part_end->Irequest_expression);
+    IFN(sub_request_expression) DPcErr;
+    if (sub_request_expression->any_topology == DOgNlpAnyTopologyRight)
+    {
+      request_expression->any_topology = DOgNlpAnyTopologyRight;
+    }
+  }
+
   DONE;
 }
 
@@ -854,4 +907,17 @@ int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request
 
   DONE;
 }
+
+og_string NlpAnyTopologyString(int any_topology)
+{
+  switch (any_topology)
+  {
+    case DOgNlpAnyTopologyNil: return "nil";
+    case DOgNlpAnyTopologyLeft: return "left";
+    case DOgNlpAnyTopologyRight: return "right";
+    case DOgNlpAnyTopologyBothSide: return "bothside";
+  }
+return "unknown";
+}
+
 

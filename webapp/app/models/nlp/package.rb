@@ -207,6 +207,7 @@ class Nlp::Package
           expression[:solution] = build_entities_list_solution(entity)
           expression[:keep_order] = true
           expression[:glued]      = true
+          expression[:glue_strength] = 'punctuation'
           expressions << expression
         end
       end
@@ -262,6 +263,9 @@ class Nlp::Package
       }
       if ialias.type_number?
         result[:type] = 'number'
+      elsif ialias.type_regex?
+        result[:type] = 'regex'
+        result[:regex] = ialias.reg_exp
       else
         result[:package] = @agent.id
         if ialias.is_list

@@ -44,6 +44,8 @@ import './console/console';
 
 import './intents/main';
 import './intents/intent_form';
+import './intents/intent_highlight';
+
 
 import './entities_lists/main';
 import './entities_lists/entities_list_form';
@@ -53,6 +55,8 @@ import './interpretations/main';
 import './interpretations/interpretation_form';
 
 import './entities/main';
+
+import './aliased_intents/main';
 
 import './readme/form';
 window.App.InterpretationsList = require('./interpretations/interpretations_list');

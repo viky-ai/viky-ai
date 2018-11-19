@@ -49,6 +49,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->safe_request_position_start = (-1);
   request_expression->safe_request_positions_nb = 0;
   request_expression->recursive_without_any_chosen = FALSE;
+  request_expression->nb_matched_words = 0;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
   IF(request_expression->request_position_start) DPcErr;
@@ -102,6 +103,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   IFE(NlpCalculateScoreDuringParsing(ctrl_nlp_th, request_expression));
   IFE(NlpSetNbAnys(ctrl_nlp_th, request_expression));
+  IFE(NlpSetAnyTopology(ctrl_nlp_th, request_expression));
 
   int must_add_request_expression = TRUE;
 
@@ -409,27 +411,43 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
     static int nb_calls = 0;
     nb_calls++;
     NlpLog(DOgNlpTraceMatchExpression,
-        "NlpRequestExpressionIsGlued: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d",
+        "NlpRequestExpressionIsGlued: starting on expression (%d): alias_any_input_part_position=%d any_input_part_position=%d orips=%d any_topology=%s",
         nb_calls, request_expression->expression->alias_any_input_part_position,
-        request_expression->expression->any_input_part_position, request_expression->orips_nb);
+        request_expression->expression->any_input_part_position, request_expression->orips_nb,
+        NlpAnyTopologyString(request_expression->any_topology));
     IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 2));
   }
 
   og_bool is_glued = TRUE;
+  og_bool keep_order = request_expression->expression->keep_order;
   int any_input_part_position = request_expression->expression->any_input_part_position;
 
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
   {
     struct request_input_part *request_input_part1 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
     IFN(request_input_part1) DPcErr;
-    if (request_expression->expression->keep_order)
+    if (keep_order)
     {
       if (i == any_input_part_position - 1) continue;
       struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i + 1);
       IFN(request_input_part2) DPcErr;
-      is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
-      IFE(is_glued);
-      if (!is_glued) return FALSE;
+      if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+      {
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
+        IFE(is_glued);
+        if (!is_glued)
+        {
+          is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+          IFE(is_glued);
+          if (!is_glued) break;
+        }
+      }
+      else
+      {
+        is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
+        IFE(is_glued);
+        if (!is_glued) break;
+      }
     }
     else
     {
@@ -445,9 +463,15 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
         {
           struct request_input_part *request_input_part2 = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, j);
           IFN(request_input_part2) DPcErr;
-          is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+          is_glued = NlpRequestInputPartsAreGlued(ctrl_nlp_th, request_input_part1, request_input_part2, keep_order);
           IFE(is_glued);
           if (is_glued) break;
+          if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+          {
+            is_glued = NlpRequestInputPartsAreExpressionGlued(ctrl_nlp_th, request_input_part1, request_input_part2);
+            IFE(is_glued);
+            if (is_glued) break;
+          }
         }
       }
       if (!is_glued) break;
@@ -707,6 +731,14 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
         score->overlap, score->any, score->scope);
   }
 
+  char sortdata[DPcPathSize];
+  sortdata[0] = 0;
+//  sprintf(sortdata, " sortdata=[inter-scope=%d scope=%.2f avs=%d kar=%d rpn=%d om=%d na=%d total_score=%.2f level=%d]",
+//      request_expression->expression->interpretation->scope, request_expression->score->scope,
+//      request_expression->any_validate_status, request_expression->keep_as_result,
+//      request_expression->request_positions_nb, request_expression->overlap_mark, request_expression->nb_anys,
+//      request_expression->total_score, request_expression->level);
+//
   char ac_request_word[DPcPathSize];
   ac_request_word[0] = 0;
   if (request_expression->auto_complete_request_word)
@@ -735,11 +767,11 @@ og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expressi
   }
 
   struct expression *expression = request_expression->expression;
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s",
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s%2d:%d%s [%s] '%.*s' in interpretation '%s': '%s'%s%s%s%s%s%s%s%s%s",
       string_offset, request_expression->self_index, request_expression->level,
       (request_expression->keep_as_result ? "*" : ""), string_positions, DPcPathSize, expression->text,
       expression->interpretation->slug, highlight, (solution[0] ? " " : ""), solution, any, overlap_mark, scores,
-      ac_request_word, alias_name, rwac);
+      ac_request_word, alias_name, rwac, sortdata);
   DONE;
 }
 

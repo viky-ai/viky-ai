@@ -166,4 +166,5 @@ class EntitiesListsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
     assert response.body.include?('Unauthorized operation.')
   end
+
 end

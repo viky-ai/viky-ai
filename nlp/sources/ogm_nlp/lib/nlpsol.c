@@ -93,6 +93,10 @@ static og_bool NlpSolutionCalculateRecursive(og_nlp_th ctrl_nlp_th, struct reque
         {
           must_combine_solution = TRUE;
         }
+        else if (request_input_part->input_part && request_input_part->input_part->type == nlp_input_part_type_Regex)
+        {
+          must_combine_solution = TRUE;
+        }
       }
       else if (request_input_part->type == nlp_input_part_type_Interpretation)
       {
@@ -264,7 +268,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
       if (alias_solutions_nb >= DOgAliasSolutionSize)
       {
-        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
             alias_solutions_nb, DOgAliasSolutionSize);
         DPcErr;
 
@@ -308,7 +312,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
         if (alias_solutions_nb >= DOgAliasSolutionSize)
         {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+          NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
               alias_solutions_nb, DOgAliasSolutionSize);
           DPcErr;
 
@@ -345,7 +349,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
               alias->alias, solution);
           if (alias_solutions_nb >= DOgAliasSolutionSize)
           {
-            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
                 alias_solutions_nb, DOgAliasSolutionSize);
             DPcErr;
 
@@ -353,6 +357,30 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
           struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
           alias_solution->alias = alias;
           alias_solution->json_solution = json_solution_number;
+          g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
+          alias_solutions_nb++;
+
+        }
+        else if (request_word->is_regex)
+        {
+          json_t *json_solution_regex = NULL;
+          json_solution_regex = json_string(string_request_word);
+
+          struct alias *alias = request_input_part->input_part->alias;
+          char solution[DPcPathSize];
+          NlpSolutionString(ctrl_nlp_th, json_solution_regex, DPcPathSize, solution);
+          NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildSolutionsQueue: for alias '%s' building solution (regex): %s",
+              alias->alias, solution);
+          if (alias_solutions_nb >= DOgAliasSolutionSize)
+          {
+            NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+                alias_solutions_nb, DOgAliasSolutionSize);
+            DPcErr;
+
+          }
+          struct alias_solution *alias_solution = g_slice_new0(struct alias_solution);
+          alias_solution->alias = alias;
+          alias_solution->json_solution = json_solution_regex;
           g_queue_push_tail(request_expression->tmp_solutions, alias_solution);
           alias_solutions_nb++;
 
@@ -391,7 +419,7 @@ static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct requ
 
     if (alias_solutions_nb >= DOgAliasSolutionSize)
     {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionCombine: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildSolutionsQueue: alias_solutions_nb (%d) >= DOgAliasSolutionSize (%d)",
           alias_solutions_nb, DOgAliasSolutionSize);
       DPcErr;
 
@@ -754,21 +782,45 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
       request_expression->request_position_start);
   IFN(request_position) DPcErr;
-  int start = request_position[0].start;
+
+  int start_position_expression = request_position[0].start;
   int last_request_position = request_expression->request_positions_nb - 1;
-  int end = request_position[last_request_position].start + request_position[last_request_position].length;
-  int length = end - start;
-  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start;
-  if (length > DOgNlpMaxRawTextSize)
+  int end_position_expression = request_position[last_request_position].start + request_position[last_request_position].length;
+
+  int start_position_any = start_position_expression;
+  int end_position_any = end_position_expression;
+
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
+
+    struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
+    start_position_any = first_request_word_any->start_position;
+
+    struct request_word *last_request_word_any = request_any->queue_request_words->tail->data;
+    end_position_any = last_request_word_any->start_position + last_request_word_any->length_position;
+  }
+
+  int start_position = start_position_expression;
+  if (start_position_any < start_position) start_position = start_position_any;
+
+  int end_position = end_position_expression;
+  if (end_position < end_position_any) end_position = end_position_any;
+
+  int length_position = end_position - start_position;
+
+  const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start_position;
+  if (length_position > DOgNlpMaxRawTextSize)
   {
     unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
     p = g_utf8_find_prev_char(raw_text_string,p);
-    length = p - raw_text_string;
+    length_position = p - raw_text_string;
   }
   char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
   int j=0;
   raw_text_string_value[j++]='"';
-  for (int i=0; i<length; i++)
+  for (int i=0; i<length_position; i++)
   {
     if (raw_text_string[i]== '"')
     {

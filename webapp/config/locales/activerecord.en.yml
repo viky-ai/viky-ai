@@ -66,6 +66,7 @@ en:
         solution: Solution
       interpretation_alias:
         aliasname: Parameter name
+        reg_exp: Regular expression
       entity:
         auto_solution_enabled: Auto solution
         solution: Solution
@@ -113,6 +114,7 @@ en:
       aliasname_uniqueness: 'has already been taken'
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
+      valid_regex: "should be valid"
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:

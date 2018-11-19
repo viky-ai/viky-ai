@@ -30,3 +30,12 @@ weather_confirmed_question:
   color: black
   position: 0
   visibility: 1
+
+simple_where:
+  intentname: simple_where
+  locales: <%= ['en'].to_json.inspect  %>
+  description: Simple where expressions
+  agent: terminator
+  color: red
+  position: 1
+  visibility: 1

@@ -122,11 +122,12 @@ static og_status NlpWhyJsonMInputPart(og_nlp_th ctrl_nlp_th, struct nm_expressio
         NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonMInputPart: error setting json_word");
         DPcErr;
       }
-      
+
       break;
     }
     case nlp_input_part_type_Interpretation:
     case nlp_input_part_type_Number:
+    case nlp_input_part_type_Regex:
     {
       json_t *json_alias = json_string(m_input_part->input_part->alias->alias);
       IF(json_object_set_new(json_input_part, "alias", json_alias))
@@ -233,6 +234,7 @@ static og_status NlpWhyJsonMExpression(og_nlp_th ctrl_nlp_th, struct nm_expressi
       break;
     }
     case nlp_input_part_type_Number:
+    case nlp_input_part_type_Regex:
     {
       // should not be used
       break;
@@ -323,6 +325,7 @@ static og_status NlpWhyJsonMInputPartDiagnostic(og_nlp_th ctrl_nlp_th, struct nm
     }
     case nlp_input_part_type_Interpretation:
     case nlp_input_part_type_Number:
+    case nlp_input_part_type_Regex:
     {
       struct alias *alias = m_input_part->input_part->alias;
       snprintf(diagnostic, DPcPathSize,
