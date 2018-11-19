@@ -1,7 +1,6 @@
 <div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
   <% if data[:status] == 200 %>
     <% json = JSON.parse(data[:body]) %>
-
     <% if json['interpretations'].empty? %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
@@ -18,9 +17,9 @@
         <%= t('views.console.intent_found', count: json['interpretations'].count) %>
       </p>
       <ul class="intents">
-        <% json['interpretations'].each do |aliasable| %>
+        <% json['interpretations'].each_with_index do |aliasable, interpretation_index| %>
           <li id="<%= aliasable["id"] %>">
-              <div class="intent_block">
+            <div class="intent_block">
               <div class="intent__header">
                 <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
                 <% if aliasable['scope'] == 'public' %>
@@ -40,9 +39,8 @@
                   <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
                 </span>
               </div>
-
               <ul>
-              <% unless aliasable["explanation"].nil? %>
+                <% unless aliasable["explanation"].nil? %>
                   <li>
                     <div class="intent__label"><%= t('views.console.scores') %></div>
                     <pre class="with-wrap"><%= aliasable["explanation"]["scores"] %></pre>
@@ -50,19 +48,17 @@
                   <li>
                     <div class="intent__label"><%= t('views.console.highlight') %></div>
                     <div class="intent__highlight">
-                      <%= highlight(aliasable["explanation"]["highlight"]["words"]) %>
-                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, position| %>
+                      <%= highlight(aliasable["explanation"]["highlight"]["words"], interpretation_index) %>
+                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
                         <% unless word["match"].nil? %>
-                          <div class="matched-list" style="display:none;" id="match_<%= position %>_exp_list">
-                            <ul>
-                                <%= expression_list(word["match"]) %>
-                                <% parent = word["match"]["parent"] %>
-                                <% while !parent.nil? %>
-                                    <%= expression_list(parent) %>
-                                    <% parent = parent["parent"] %>
-                                <% end %>
-                            </ul>
-                          </div>
+                          <ul style="display:none;" id="highlight-explain-<%= interpretation_index %>-<%= word_index %>">
+                            <%= expression_list(word["match"]) %>
+                            <% parent = word["match"]["parent"] %>
+                            <% while !parent.nil? %>
+                              <%= expression_list(parent) %>
+                              <% parent = parent["parent"] %>
+                            <% end %>
+                          </ul>
                         <% end %>
                       <% end %>
                     </div>
@@ -75,8 +71,7 @@
                   </li>
                 <% end %>
               </ul>
-              </div>
-            <!-- </a> -->
+            </div>
           </li>
         <% end %>
       </ul>

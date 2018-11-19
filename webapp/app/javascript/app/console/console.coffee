@@ -61,8 +61,18 @@ class Console
       $(".toggle-console").show()
       $("body").trigger("console:leave-fullscreen")
 
+    if action == 'console-explain-highlighted-word'
+      event.preventDefault()
+      $('.intent__highlight ul').hide()
+      if $(event.target).hasClass('current')
+        $('.intent__highlight match').removeClass('current')
+      else
+        $('.intent__highlight match').removeClass('current')
+        $(event.target).addClass('current')
+        $($(event.target).data('target')).show()
+
   get_link_target: (event) ->
-    if $(event.target).is('a')
+    if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)
     else
       return $(event.target).closest('a')

@@ -28,18 +28,21 @@ module ApplicationHelper
     end
   end
 
-  def highlight(words)
+  def highlight(words, interpretation_index)
     highlights = []
-    words.each_with_index do |word, position|
+    words.each_with_index do |word, word_index|
       if word['match'].nil?
-      highlights << word['word']
-    else
-      highlight_class = "highlight-words"
-      if !word['is_any'].nil? && word['is_any']
-        highlight_class << " is_any"
+        highlights << word['word']
+      else
+        action = "console-explain-highlighted-word"
+        target = "#highlight-explain-#{interpretation_index}-#{word_index}"
+        html_match = []
+        html_match << "<match class='highlight-words' data-action='#{action}' data-target='#{target}'>"
+        html_match << word['word']
+        html_match << "<sup>(Any)</sup>" if word['is_any'] == true
+        html_match << "</match>"
+        highlights << html_match.join('')
       end
-      highlights << "<match class='#{highlight_class}' id='match_#{position}''>#{word['word']}</match>"
-    end
     end
 
     highlights.join(' ').html_safe
@@ -48,17 +51,17 @@ module ApplicationHelper
 
   def expression_list(matches)
     html = []
-    if !matches['interpretation_slug'].split("/").last.include? "recursive"
-      html << "<li>"
-      if matches['interpretation_slug'].include? "entities_list"
+    unless matches['interpretation_slug'].split('/').last.include? 'recursive'
+      html << '<li>'
+      if matches['interpretation_slug'].include? 'entities_list'
         html << "<a href='/agents/#{matches['interpretation_slug']}#entity-#{matches['expression_id']}'>"
       else
         html << "<a href='/agents/#{matches['interpretation_slug']}?expression_id=#{matches['expression_id']}#interpretation-#{matches['expression_id']}'>"
       end
-      html << "<span class='matched-list__item__name'>#{matches['expression']}</span>"
-      html << "<span class='matched-list__item__desc'>#{matches['interpretation_slug']}</span>"
-      html << "</a>"
-      html << "</li>"
+      html << "<em>#{matches['expression']}</em>"
+      html << "<span>#{matches['interpretation_slug']}</span>"
+      html << '</a>'
+      html << '</li>'
     end
     html.join.html_safe
   end

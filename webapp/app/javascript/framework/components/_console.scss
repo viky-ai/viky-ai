@@ -22,6 +22,7 @@
     display: none !important;
   }
 }
+
 .console{
   @include display_flex();
   flex-direction: column;
@@ -184,6 +185,7 @@
             line-height: 1em;
             margin-bottom: .15em;
           }
+
           .intent__highlight{
             color: #666;
             font-size: .7em;
@@ -195,13 +197,46 @@
               margin: 0 2px;
               border: 1px solid rgba(#000, .05);
               cursor: pointer;
+              &.current{
+                box-shadow: 0 0 0 2px rgba($primary_color, .25);
+                background-color: $primary_color;
+                color: #fff;
+              }
             }
-            match.is_any{
-              background-color: orange;
-            }
-            match.current{
-              border: 1px solid #3bb8d7;
-              box-shadow: 0 0 5px #3bb8d7;
+            ul{
+              word-break: break-all;
+              background-color: rgba($primary_color, .05);
+              li{
+                border-bottom: 1px solid #fff;
+                padding: 0;
+                &:last-child{
+                  border-bottom: none;
+                }
+                a{
+                  display: block;
+                  text-decoration: none;
+                  line-height: 1.4em;
+                  padding: .25em .5em;
+                  border-left: 2px solid transparent;
+                  border-radius: 1px;
+                  em{
+                    display: block;
+                    font-style: normal;
+                    color: darken($primary_color, 10%);
+                  }
+                  span{
+                    display: block;
+                    color: rgba(#000, .5);
+                  }
+                  &:hover,
+                  &:focus{
+                    border-left-color: $primary_color;
+                    em{
+                      text-decoration: underline;
+                    }
+                  }
+                }
+              }
             }
           }
           pre{
@@ -237,38 +272,6 @@
 
     }
   }
-
-  .matched-list{
-    word-break: break-all;
-    background-color: #f5f5f5;
-    padding: 0 .1em 0 .2em;
-    margin-bottom: .2em;
-    ul{
-      li{
-        border-bottom: 1px solid #eee;
-        padding: .4em 0 .1em 0;
-        a{
-          text-decoration: none;
-          .matched-list__item__name{
-            &:focus,
-            &:hover{
-                 text-decoration: underline;
-            }
-          }
-        }
-        span.matched-list__item__name{
-          display: block;
-        }
-        span.matched-list__item__desc{
-          display: block;
-          color: #aaa;
-          font-size: .8em;
-          line-height: 1.4em;
-        }
-    }
-    }
-  }
-
 }
 .console-reset-button{
   position: absolute;
