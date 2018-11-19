@@ -12,17 +12,11 @@ class IntentsController < ApplicationController
   end
 
   def show
-    if params[:expression_id]
-      selected_interpretation = Interpretation.find_by id: params[:expression_id]
-      if selected_interpretation
-        expression_locale = selected_interpretation.locale
-      end
-    end
     @interpretation = Interpretation.new
     @interpretation.glued = true
     @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
-    @current_locale = expression_locale || params[:locale] || @intent.ordered_locales.first
+    @current_locale = params[:locale] || @intent.ordered_locales.first
   end
 
   def new
