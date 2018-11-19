@@ -6,6 +6,9 @@ en:
         list_public_title_html: <span class="badge badge--success badge--medium">PUBLIC</span> interpretations
         list_private_title_html: <span class="badge badge--warning badge--medium">PRIVATE</span> interpretations
         new: New interpretation
+        used_by: Used by...
+        used_by_title: Used by at least an interpretation
+        not_used_by_title: Not used by any interpretation
         configure: Configure
         move_to: Move to...
         quick_move_to: "Move to %{agent}"
@@ -46,4 +49,8 @@ en:
           Create the first interpretation with the button above.
         message_show_html: >
           No interpretation entered for the "%{agent}" agent.
-
+      used_by_list:
+        title_html: "Interpretations using <strong>%{name}</strong>"
+        empty_list:
+          private: "There are no private interpretations using this."
+          public: "There are no public interpretations using this."

@@ -13,3 +13,11 @@ weather_forecast_tomorrow_when:
   interpretation: weather_forecast_tomorrow
   interpretation_aliasable: weather_dates(EntitiesList)
   nature: <%= InterpretationAlias.natures[:type_entities_list] %>
+
+terminator_find_where:
+  aliasname: find
+  position_start: 0
+  position_end: 4
+  interpretation: terminator_where
+  interpretation_aliasable: simple_where(Intent)
+  nature: <%= InterpretationAlias.natures[:type_intent] %>

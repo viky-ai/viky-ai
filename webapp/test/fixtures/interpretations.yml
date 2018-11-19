@@ -28,3 +28,18 @@ terminator_find_sarah:
   locale: 'en'
   auto_solution_enabled: true
   position: 0
+
+terminator_where:
+  expression: Find Sarah Connor
+  intent: terminator_find
+  locale: 'en'
+  auto_solution_enabled: true
+  position: 1
+
+terminator_simple_where_1:
+  expression: Find
+  intent: simple_where
+  locale: 'en'
+  auto_solution_enabled: true
+  position: 2
+

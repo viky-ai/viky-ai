@@ -73,6 +73,10 @@ If you need more information, see sections below.
 16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`
 17. Start Foreman : `$ foreman start`
 18. Invite you as admin : `$ ./bin/rails users:invite_admin[<your@email.com>]`
+19. System tests require chromedriver.
+    a. Download its binary from (https://sites.google.com/a/chromium.org/chromedriver/downloads).
+    b. Unzip the file.
+    c. Move the file to `/usr/lib/chromium-browser/`
 
 _Troubleshooting_ : sometimes Foreman fails on the Cerebro service. It is because we setup a Docker link between the dev stats container and the Cerebro container. This container may start too fast before the statistics container. Thus the link cannot be established and the Cerebro container fails. You have two solutions : either you can restart Foreman and hope to have some luck with the timing or you can increase the `sleep` delay in your `Procfile`.
 

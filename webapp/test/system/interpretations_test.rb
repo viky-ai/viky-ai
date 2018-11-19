@@ -25,6 +25,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     click_link 'weather_forecast'
     assert page.has_text?('Interpretations / weather_forecast PUBLIC')
+    assert page.has_text?('Not used by any interpretation')
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather/weather_question')
@@ -34,6 +35,17 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_no_field?('trix-editor')
       assert page.has_no_field?("input[name*='aliasname']")
     end
+  end
+
+  test 'Used by button in interpretation details' do
+    admin_go_to_intent_show(agents(:terminator), intents(:simple_where))
+    assert page.has_link?('Used by...')
+    click_link('Used by...')
+    within('.modal__main') do
+      assert page.has_text?('Interpretations using simple_where')
+      click_link('terminator_find')
+    end
+    assert page.has_text?('Interpretations / terminator_find')
   end
 
 
@@ -356,8 +368,8 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     assert page.has_link?('Where is Sarah Connor ?')
 
-    first('trix-editor').click.set('Find Sarah')
-    select_text_in_trix('trix-editor', 5, 10)
+    first('trix-editor').click.set('Detect Sarah')
+    select_text_in_trix('trix-editor', 7, 12)
     assert page.has_link?('Regex')
 
     click_link('Regex')
@@ -376,9 +388,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     click_button 'Add'
 
-    assert page.has_link?('Find Sarah')
+    assert page.has_link?('Detect Sarah')
 
-    click_link('Find Sarah')
+    click_link('Detect Sarah')
     assert page.has_text?('Regex')
     expected_regex = '^[a-zA-z-]'
     assert_equal expected_regex, find("input[name*='reg_exp']").value
@@ -391,7 +403,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     def admin_go_to_intent_show(agent, intent)
       admin_login
       visit user_agent_intent_path(users(:admin), agent, intent)
-      assert page.has_text?("Interpretations / #{intent.intentname} PUBLIC")
+      visibility = intent.is_public? ? 'PUBLIC' : 'PRIVATE'
+      assert page.has_text?("Interpretations / #{intent.intentname} #{visibility}")
     end
 
     def fill_in_editor_field(text)

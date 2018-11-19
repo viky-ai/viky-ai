@@ -162,4 +162,27 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_no_text?('Weather bot confirmed/weather')
     end
   end
+
+  test 'aliased intents' do
+    go_to_agent_entities_lists('admin', 'weather')
+
+    within '#entities_lists-list-is_public' do
+      assert all('li').first.has_no_link?('Used by...')
+      assert all('li').last.has_link?('Used by...')
+      click_link('Used by...')
+    end
+
+    within '.modal' do
+      assert page.has_text?('Interpretations using weather_dates')
+      assert page.has_link?('weather_forecast')
+      click_link('weather_forecast')
+    end
+
+    within('.aliased-intents-list') do
+      assert page.has_link?('weather_forecast')
+    end
+    expected = "/agents/admin/weather/interpretations#smooth-scroll-to-intent-#{intents(:weather_forecast).id}"
+    assert current_url.include?(expected)
+  end
+
 end

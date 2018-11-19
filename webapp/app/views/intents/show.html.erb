@@ -17,6 +17,18 @@
       </span>
     <% end %>
   </div>
+  <div class="header__tools">
+  <% if @intent.aliased_intents.any? %>
+    <a href="<%= user_agent_intent_aliased_intents_path(@agent.owner, @agent, @intent) %>"
+       class="btn btn--small"
+       title="<%= t('views.intents.index.used_by_title')  %>"
+       data-action="open-remote-modal">
+        <%= t('views.intents.index.used_by')  %>
+    </a>
+  <% else %>
+    <small><%= t('views.intents.index.not_used_by_title') %></small>
+  <% end %>
+  </div>
 </div>
 
 <%= render 'interpretations/index', current_locale: @locale %>
