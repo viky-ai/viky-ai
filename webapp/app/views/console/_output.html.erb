@@ -52,10 +52,10 @@
                       <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
                         <% unless word["match"].nil? %>
                           <ul style="display:none;" id="highlight-explain-<%= interpretation_index %>-<%= word_index %>">
-                            <%= expression_list(word["match"]) %>
+                            <%= highlight_explain_item(word["match"]) %>
                             <% parent = word["match"]["parent"] %>
                             <% while !parent.nil? %>
-                              <%= expression_list(parent) %>
+                              <%= highlight_explain_item(parent) %>
                               <% parent = parent["parent"] %>
                             <% end %>
                           </ul>
