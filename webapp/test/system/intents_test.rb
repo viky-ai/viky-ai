@@ -15,6 +15,7 @@ class IntentsTest < ApplicationSystemTestCase
     assert page.has_text?('Interpretation has been successfully created.')
   end
 
+
   test 'Errors on intent creation' do
     go_to_agent_intents('admin', 'terminator')
     click_link 'New interpretation'
@@ -235,6 +236,6 @@ class IntentsTest < ApplicationSystemTestCase
       click_link('terminator_find')
     end
 
-    assert current_url.include?("/agents/admin/terminator/interpretations#intent-#{intents(:terminator_find).id}")
+    assert current_url.include?("/agents/admin/terminator/interpretations#smooth-scroll-to-intent-#{intents(:terminator_find).id}")
   end
 end
