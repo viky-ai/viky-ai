@@ -624,6 +624,16 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         end
       end
 
+      if expected_word.has_key?(:is_any)
+        if(!actual_word['is_any'].nil?)
+          if expected_word[:is_any]==true &&  actual_word['is_any']==true
+            return true
+          end
+        else
+          return false
+        end
+      end
+
       return true
     end
 

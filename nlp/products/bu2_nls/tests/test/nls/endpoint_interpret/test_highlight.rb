@@ -18,6 +18,7 @@ module Nls
         Nls.package_update(create_parent_package)
         Nls.package_update(create_any_package)
         Nls.package_update(create_number_package)
+        Nls.package_update(create_regex_package)
       end
 
       def create_parent_package
@@ -60,7 +61,15 @@ module Nls
       end
 
       def create_regex_package
-        #TODO when regex branch is merged
+        package = Package.new("package")
+
+        email = package.new_interpretation("email", { scope: "private" })
+        email << Expression.new("@{email}", aliases: { email: Alias.regex("[a-z]+@[a-z]+\.[a-z]+") }, solution: "`{ email: email }`")
+
+        sentence = package.new_interpretation("sentence", { scope: "public" })
+        sentence << Expression.new("email: @{email}", aliases: { email: email}, keep_order: true)
+
+        package
       end
 
       def test_highlight_basic
@@ -76,7 +85,7 @@ module Nls
                   interpretation_slug: "cheval",
                   parent: {
                     expression: "cheval blanc",
-                    interpretation_slug: "cheval_blanc",
+                    interpretation_slug: "cheval_blanc"
                   }
                 }
               },
@@ -87,7 +96,7 @@ module Nls
                   interpretation_slug: "blanc",
                   parent: {
                     expression: "cheval blanc",
-                    interpretation_slug: "cheval_blanc",
+                    interpretation_slug: "cheval_blanc"
                   }
                 }
               }
@@ -139,7 +148,7 @@ module Nls
                   interpretation_slug: "cheval",
                   parent: {
                     expression: "chevale blanc",
-                    interpretation_slug: "cheval_blanc",
+                    interpretation_slug: "cheval_blanc"
                   }
                 }
               },
@@ -150,7 +159,7 @@ module Nls
                   interpretation_slug: "blanc",
                   parent: {
                     expression: "chevale blanc",
-                    interpretation_slug: "cheval_blanc",
+                    interpretation_slug: "cheval_blanc"
                   }
                 }
               }
@@ -193,17 +202,17 @@ module Nls
             summary: "[testNumber] [12,345.678]",
             words: [
               {
-                word: "testnumber",
+                word: "testNumber",
                 match: {
                   expression: "testNumber 12,345.678",
-                  interpretation_slug: "numbers",
+                  interpretation_slug: "numbers"
                 }
               },
               {
-                word: "12345.678",
+                word: "12,345.678",
                 match: {
                   expression: "testNumber 12,345.678",
-                  interpretation_slug: "numbers",
+                  interpretation_slug: "numbers"
                 }
               }
             ]
@@ -222,7 +231,7 @@ module Nls
             ],
           }
         }
-        check_interpret("testNumber 12,345.678", interpretations: ["numbers"], explain: true)
+        check_interpret("testNumber 12,345.678", interpretations: ["numbers"], explain: true, explanation: expected_explanation)
       end
 
       def test_highlight_number_french_format
@@ -231,14 +240,14 @@ module Nls
             summary: "[testNumber] [12 345,678]",
             words: [
               {
-                word: "testnumber",
+                word: "testNumber",
                 match: {
                   expression: "testNumber 12 345,678",
                   interpretation_slug: "numbers",
                 }
               },
               {
-                word: "12345.678",
+                word: "12 345,678",
                 match: {
                   expression: "testNumber 12 345,678",
                   interpretation_slug: "numbers",
@@ -260,7 +269,7 @@ module Nls
             ],
           }
         }
-        check_interpret("testNumber 12 345,678", interpretations: ["numbers"], explain: true)
+        check_interpret("testNumber 12 345,678", interpretations: ["numbers"], explain: true, explanation: expected_explanation)
       end
 
       def test_highlight_any
@@ -280,8 +289,12 @@ module Nls
                 }
               },
               {
+                is_any: true,
                 word: "any",
-                match: false
+                match: {
+                  expression: "before any after",
+                  interpretation_slug: "with_any"
+                }
               },
               {
                 word: "after",
@@ -332,7 +345,75 @@ module Nls
           }
         }
 
-        check_interpret("before any after", interpretations: ["with_any"], explain: true)
+        check_interpret("before any after", interpretations: ["with_any"], explain: true, explanation: expected_explanation)
+      end
+
+      def test_highlight_regex
+        expected_explanation = {
+
+          highlight: {
+            summary: "[email][:] [sebastien@pertimm.com]",
+            words: [
+              {
+                word: "email",
+                match: {
+                  expression: "email: sebastien@pertimm.com",
+                  interpretation_slug: "sentence",
+                }
+              },
+              {
+                word: ":",
+                match: {
+                  expression: "email: sebastien@pertimm.com",
+                  interpretation_slug: "sentence",
+                }
+              },
+              {
+                word: "sebastien@pertimm.com",
+                match: {
+                  expression: "sebastien@pertimm.com",
+                  interpretation_slug: "email",
+                  parent: {
+                    expression: "email: sebastien@pertimm.com",
+                    interpretation_slug: "sentence",
+                  }
+                }
+              }
+            ]
+          },
+          expression: {
+            text: "email: @{email}",
+            slug: "sentence",
+            highlight: "[email][:] [sebastien@pertimm.com]",
+            expressions: [
+              {
+                word: "email"
+              },
+              {
+                word: ":"
+              },
+              {
+                text: "@{email}",
+                slug: "email",
+                highlight: "email: [sebastien@pertimm.com]",
+                expressions: [
+                  {
+                    word: "sebastien@pertimm.com"
+                  }
+                ],
+                package_solution: "`{ email: email }`",
+                computed_solution: {
+                  email: "sebastien@pertimm.com"
+                }
+              }
+            ],
+            computed_solution: {
+              email: "sebastien@pertimm.com"
+            }
+          }
+        }
+
+        check_interpret("email: sebastien@pertimm.com", interpretations: ["sentence"], explain: true, explanation: expected_explanation)
       end
 
     end
