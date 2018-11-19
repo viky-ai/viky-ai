@@ -214,4 +214,28 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_no_text?('Weather bot confirmed/weather')
     end
   end
+
+  test 'Used by menu' do
+    go_to_agent_intents('admin', 'terminator')
+
+    within '#intents-list-is_public' do
+      assert first('li').has_no_link?('Used by...')
+    end
+
+    page.refresh
+
+    within '#intents-list-is_private' do
+      assert first('li').has_link?('Used by...')
+      # click link and check
+      click_link 'Used by...'
+    end
+
+    assert page.has_text?('Interpretations using simple_where')
+    within '.modal' do
+      assert page.has_link?('terminator_find')
+      click_link('terminator_find')
+    end
+
+    assert current_url.include?("/agents/admin/terminator/interpretations#smooth-scroll-to-intent-#{intents(:terminator_find).id}")
+  end
 end

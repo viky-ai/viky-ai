@@ -210,6 +210,16 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
   struct interpretation *interpretation1 = request_expression1->expression->interpretation;
   struct interpretation *interpretation2 = request_expression2->expression->interpretation;
 
+  // We want to put at the end any expressions that not validated
+  // but when they are validated, they can have value of 1 or 2
+  int avs1 = request_expression1->any_validate_status;
+  int avs2 = request_expression2->any_validate_status;
+  if (avs1) avs1= 1;
+  if (avs2) avs2= 1;
+  if (avs1 != avs2)
+  {
+    return (avs2 - avs1);
+  }
   if (interpretation1->scope != interpretation2->scope)
   {
     return (interpretation1->scope - interpretation2->scope);
@@ -219,10 +229,6 @@ static int NlpRequestExpressionCmp(gconstpointer ptr_request_expression1, gconst
     double cmp = request_expression2->score->scope - request_expression1->score->scope;
     if (cmp > 0) return 1;
     else return -1;
-  }
-  if (request_expression1->any_validate_status != request_expression2->any_validate_status)
-  {
-    return (request_expression2->any_validate_status - request_expression1->any_validate_status);
   }
   if (request_expression1->keep_as_result != request_expression2->keep_as_result)
   {

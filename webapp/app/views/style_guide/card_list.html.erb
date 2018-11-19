@@ -301,3 +301,26 @@
 </script>
   <% end %>
 </section>
+
+<section>
+  <h2>Highlighted List</h2>
+  <%= highlight_html do %>
+<ul class="card-list">
+  <li class="highlight">
+    <div class="card-list__item__draggable"></div>
+    <a href="#">
+      <span class="card-list__item__name">Lorem ipsum</span>
+      <span class="card-list__item__desc">Dolor sit amet, consectetur adipisicing elit.</span>
+      <div class="card-list__item__stats">xxx items</div>
+    </a>
+  </li>
+  <li>
+    <div class="card-list__item__draggable"></div>
+    <a href="#" >
+      <span class="card-list__item__name">Id praesentium error expedita hic accusamus consectetur</span>
+      <div class="card-list__item__stats">xxx items</div>
+    </a>
+  </li>
+</ul>
+  <% end %>
+</section>

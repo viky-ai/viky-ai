@@ -462,6 +462,11 @@ struct request_score
   double scope;
 };
 
+#define DOgNlpAnyTopologyNil      0
+#define DOgNlpAnyTopologyLeft     1
+#define DOgNlpAnyTopologyRight    2
+#define DOgNlpAnyTopologyBothSide (DOgNlpAnyTopologyLeft+DOgNlpAnyTopologyRight)
+
 struct request_expression
 {
   int self_index;
@@ -511,6 +516,8 @@ struct request_expression
   int nb_anys_attached;
   /** 0: invalidated, 1: unknown, 2: validated **/
   int any_validate_status;
+  /** nil, left, right, or both size **/
+  int any_topology;
 
   /* sorted flat representation of the recursive list
    * when flat_list->length != 0 use this structure to navigate
@@ -888,7 +895,7 @@ struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct 
 og_bool NlpRequestInputPartsAreOrdered(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_bool NlpRequestInputPartsAreGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
-    struct request_input_part *request_input_part2);
+    struct request_input_part *request_input_part2, og_bool keep_order);
 og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part1,
     struct request_input_part *request_input_part2);
 og_status NlpRequestInputPartsLog(og_nlp_th ctrl_nlp_th, int request_input_part_start, char *title);
@@ -938,6 +945,7 @@ og_status NlpRequestAnysAdd(og_nlp_th ctrl_nlp_th, struct request_expression *re
 og_status NlpRequestAnyAddRequestExpression(og_nlp_th ctrl_nlp_th, struct request_any *request_any,
     struct request_expression *request_expression);
 og_status NlpSetNbAnys(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_status NlpSetAnyTopology(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpGetNbAnysAttached(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnysLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 int NlpRequestExpressionAnyLog(og_nlp_th ctrl_nlp_th, struct request_any *request_any);
@@ -946,6 +954,7 @@ og_status NlpRequestAnyAddClosest(og_nlp_th ctrl_nlp_th, struct request_expressi
 int NlpRequestAnyString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 int NlpRequestAnyPositionString(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
 int NlpRequestAnyStringPretty(og_nlp_th ctrl_nlp_th, struct request_any *request_any, int size, char *string);
+og_string NlpAnyTopologyString(int any_topology);
 
 /* nlpanyopt.c */
 int NlpRequestAnyOptimizeMatch(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,

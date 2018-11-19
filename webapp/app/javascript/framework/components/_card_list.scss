@@ -69,6 +69,12 @@
       }
     }
 
+    &.highlight{
+      box-shadow: 0 0 0 1px $primary_color,
+                  0 0 0 3px rgba($primary_color, .5),
+                  0 4px 3px rgba(0, 0, 0, .1);
+    }
+
     & > span,
     & > a{
       width: 100%;

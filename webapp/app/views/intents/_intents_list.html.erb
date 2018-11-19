@@ -8,7 +8,7 @@
     data-group="intents-list"
     data-key="<%= visibility %>">
   <% intents.each do |intent| %>
-    <li data-id="<%= intent.id %>">
+    <li id="intent-<%= intent.id %>" data-id="<%= intent.id %>">
 
       <% if current_user_can_edit %>
         <div class="card-list__item__draggable"></div>
@@ -21,6 +21,21 @@
           <%= t('views.intents.index.interpretations', count: intent.interpretations.size) %>
         </span>
       </a>
+
+      <div class="card-list__item__actions">
+        <% if intent.aliased_intents.any? %>
+          <a href="<%= user_agent_intent_aliased_intents_path(agent_owner, @agent, intent) %>"
+             class="btn btn--outline btn--small"
+             title="<%= t('views.intents.index.used_by_title')  %>"
+             data-action="open-remote-modal">
+              <%= t('views.intents.index.used_by')  %>
+          </a>
+        <% else %>
+          <span class="btn btn--disabled btn--outline btn--small" title="<%= t('views.intents.index.not_used_by_title')  %>">
+            <%= t('views.intents.index.used_by') %>
+          </span>
+        <% end %>
+      </div>
 
       <% if current_user_can_edit %>
         <div class="card-list__item__actions">

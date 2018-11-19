@@ -28,6 +28,9 @@
   .header__tools{
     order: 2;
     margin-bottom: .5em;
+    small{
+      color: #aaa;
+    }
   }
   .header__search{
     min-width: 100%;
