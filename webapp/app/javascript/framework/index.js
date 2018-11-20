@@ -34,6 +34,7 @@ import './console'
 window.App.FocusInput = require('./focus')
 import './button_group'
 import './upload_input'
+import './highlight_and_scroll_to';
 
 // Expose jQuery
 window.$ = require('jquery');
