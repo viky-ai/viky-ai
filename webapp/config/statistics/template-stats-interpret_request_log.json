@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "index_patterns": "stats-interpret_request_log-*",
   "aliases": {
     "search-stats-interpret_request_log": {}
@@ -36,6 +36,32 @@
         },
         "status": {
           "type": "integer"
+        },
+        "context":{
+          "properties":{
+            "test":{
+              "type": "keyword"
+            },
+            "ip":{
+              "type": "ip"
+            },
+            "user_id":{
+              "type": "keyword"
+            },
+            "session":{
+              "type": "keyword"
+            },
+            "client_type":{
+              "type": "keyword"
+            },
+            "agent_version":{
+              "type": "keyword"
+            },
+            "bot_version" :{
+              "type": "keyword"
+            }
+
+          }
         },
         "body": {
           "properties": {

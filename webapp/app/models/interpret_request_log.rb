@@ -6,7 +6,7 @@ class InterpretRequestLog
 
   INDEX_TYPE = 'log'.freeze
 
-  attr_reader :id, :timestamp, :sentence, :language, :now, :status, :body
+  attr_reader :id, :timestamp, :sentence, :language, :now, :status, :body, :context
 
   def self.count(params = {})
     client = IndexManager.client
@@ -31,6 +31,7 @@ class InterpretRequestLog
     @now = params[:now]
     @status = params[:status]
     @body = params[:body]
+    @context = build_context
   end
 
   def with_response(status, body)
@@ -59,7 +60,12 @@ class InterpretRequestLog
         agent_slug: @agent.slug,
         owner_id: @agent.owner.id,
         status: @status,
-        body: @body
+        body: @body,
+        context: @context
       }
+    end
+
+    def build_context
+      {}
     end
 end
