@@ -8,51 +8,50 @@
 
 <div class="console">
   <div class="console__header">
-      <div class="console__header__content">
-        <div class="console__header__content__title">
-          <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
-          <div class="console__endpoint">
-                <span class="badge badge--small badge--success">GET</span>
-                <code>/api/v1/interpret.json</code>
-          </div>
-        </div>
 
-        <div class="console__header__content__actions">
-          <a href="?"
-            class="btn btn--plain console-reset"
-            title="<%= t('views.console.reset.help_text') %>"
-            data-turbolinks="false">
-            <%= t('views.console.reset.title') %>
-          </a>
+    <div class="console__header__visual background-color-gradient__brown">
+    </div>
 
-          <a href="#" id="console-enter-fullscreen"
-             data-action="console-enter-fullscreen"
-             title="<%= t('views.console.fullscreen_enter') %>"
-             class="console__header__fullscreen_btn btn btn--plain">
-            <span class="icon">
-              <%= icon_fullscreen %>
-            </span>
-          </a>
-          <a href="#" id="console-leave-fullscreen"
-             data-action="console-leave-fullscreen"
-             title="<%= t('views.console.fullscreen_leave') %>"
-             class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
-            <span class="icon">
-              <%= icon_close %>
-            </span>
-          </a>
-        </div>
-      </div>
-
-      <div class="console__header__agent">
-        <div class="console__header__agent__visual background-color-gradient__brown">
-        </div>
-        <div class="console__header__agent__data">
-          <h5>My awesome first agent</h5>
-          <h6>username/agentname</h6>
-        </div>
+    <div class="console__header__content">
+      <div class="console__header__content__title">
+        <strong>
+          My awesome first agent <em>- <%= t('views.console.title') %></em>
+        </strong>
+        <small>
+          <span class="badge badge--small badge--success">GET</span>
+          <code>/api/v1/interpret.json</code>
+        </small>
       </div>
     </div>
+
+    <div class="console__header__actions">
+      <a href="?"
+        class="btn btn--small btn--plain console-reset"
+        title="<%= t('views.console.reset.help_text') %>">
+        <span class="icon icon--small" title="<%= t('views.console.reset.title') %>">
+          <%= icon_refresh %>
+        </span>
+      </a>
+
+      <a href="#" id="console-enter-fullscreen"
+         data-action="console-enter-fullscreen"
+         title="<%= t('views.console.fullscreen_enter') %>"
+         class="console__header__fullscreen_btn btn btn--small btn--plain">
+        <span class="icon icon--small">
+          <%= icon_fullscreen %>
+        </span>
+      </a>
+      <a href="#" id="console-leave-fullscreen"
+         data-action="console-leave-fullscreen"
+         title="<%= t('views.console.fullscreen_leave') %>"
+         class="console__header__fullscreen_btn btn btn--small btn--plain" style="display:none;">
+        <span class="icon icon--small">
+          <%= icon_close %>
+        </span>
+      </a>
+    </div>
+
+  </div>
 
 
   <form>

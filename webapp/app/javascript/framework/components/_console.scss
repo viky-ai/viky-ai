@@ -32,68 +32,65 @@
   overflow: hidden;
 
   .console__header{
+    display: grid;
+    grid-template-columns: 100px calc(100% - 200px - 0.5em) 100px;
+    grid-column-gap: .25em;
+
     position: relative;
-    padding: 1em 1em 1em 1em;
-    border-bottom: 1px solid rgba(#000, .1);
-    small{
-      font-size: 1em;
-      color: #aaa;
-    }
-    code{
-      font-size: .725em;
-      font-family: $family-monospace;
+    padding: 1em 1em 0 1em;
+
+    .console__header__visual{
+      &.console__header__visual--image{
+        background-size: cover;
+        background-position: center center;
+      }
+      @include ribbon-container();
+      .console__header__visual__ribbon{
+        @include ribbon-small();
+      }
     }
 
     .console__header__content{
-      display: grid;
-      grid-template-columns: 70% auto;
-
-      .console__header__content__title{
-        padding: 0.5em 0;
+      padding: .1em 0 .4em .25em;
+      strong{
+        font-size: 1em;
+        font-weight: 300;
+        height: 1.5em;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        em{
+          font-style: normal;
+          color: #999;
+        }
       }
-
-      .console__header__content__actions{
-        text-align: right;
-
-        .console-reset{
-          font-size: 1em;
+      small{
+        font-size: 1em;
+        height: 1.5em;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        code{
+          font-size: .7em;
+          font-family: $family-monospace;
         }
       }
     }
 
-    .console__header__agent{
-      display: grid;
-      grid-gap: .5em;
-      grid-template-columns: 5.8em 1fr;
-
-      .console__header__agent__data{
-        padding: .5em 0 .5em 0;
-
-        h5{
-          font-weight: 300;
-          font-size: 1em;
-          margin: 0;
-          line-height: 1.3em;
-          color: #000;
-          white-space: nowrap;
-        }
-
-        h6{
-          margin: 0;
-          font-weight: 300;
-          font-size: .8em;
-          line-height: 1.2em;
-          color: #888;
-        }
-      }
+    .console__header__actions{
+      text-align: right;
     }
   }
 
   form{
-    margin: 1.25em 1em;
-
+    margin: 1em 1em 0 1em;
     .field--console-now{
       font-size: .8em;
+    }
+    .field{
+      margin-bottom: .5em;
     }
   }
 
