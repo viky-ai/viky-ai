@@ -1,6 +1,20 @@
 $ = require('jquery');
 moment = require('moment');
 
+class ConsolePreserveScroll
+  scrollTop = 0
+
+  save: ->
+    element = $('#console-output')
+    scrollTop = element.scrollTop() if element.length == 1
+
+  restore: ->
+    element = $('#console-output')
+    element.scrollTop(scrollTop) if element.length == 1
+
+$(document).on('turbolinks:before-render', -> ConsolePreserveScroll::save())
+$(document).on('turbolinks:render', -> ConsolePreserveScroll::restore())
+
 
 class Console
   constructor: ->
@@ -30,6 +44,7 @@ class Console
           $(".console__output").removeClass('console__output__loading')
         , 500
         $("#console-reset-btn").show()
+        $('#console-output').scrollTop(0)
 
   dispatch: (event) ->
     link = @get_link_target(event)
