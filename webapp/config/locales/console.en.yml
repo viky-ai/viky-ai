@@ -2,7 +2,6 @@ en:
   views:
     console:
       title: Console
-      tagline: Test your agent live
       sentence_placeholder: Say something...
       tabs:
         explain: Explain
@@ -29,3 +28,5 @@ en:
       scores: Scores
       highlight: Highlight
       solution: Solution
+      reset:
+        title: Reset console to the current agent

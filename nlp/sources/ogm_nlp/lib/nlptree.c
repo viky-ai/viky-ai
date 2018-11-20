@@ -8,7 +8,6 @@
 
 static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_expression,
     struct request_expression *request_expression, int offset);
-static og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 static og_status NlpInterpretTreeLogRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression, int offset);
@@ -103,7 +102,7 @@ static og_status NlpInterpretTreeAttachAnyRecursive(og_nlp_th ctrl_nlp_th, struc
   DONE;
 }
 
-static og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
+og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   if (request_expression->sorted_flat_list->length > 0)
   {

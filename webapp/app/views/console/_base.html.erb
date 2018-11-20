@@ -1,30 +1,66 @@
 <a href="#" data-action="console-enter-fullscreen" class="toggle-console">Console</a>
 
 <aside class="console-container">
-  <div class="console" id="console-<%= @agent.id %>" data-turbolinks-permanent>
+  <div class="console" id="console" data-turbolinks-permanent>
     <div class="console__header">
-      <%= t('views.console.title') %> <small>- <%= t('views.console.tagline') %></small>
-      <div class="console__endpoint">
-        <span class="badge badge--small badge--success">GET</span>
-        <code>/api/v1/<%= @agent.slug %>/interpret.json</code>
+
+      <% if @agent.image.nil? %>
+        <% css_class = "background-color-gradient__#{@agent.color}" %>
+      <% else %>
+        <% css_class = "console__header__visual--image" %>
+        <% css_style = "background-image: url(#{@agent.image_url(:background)});" %>
+      <% end %>
+      <div class="console__header__visual <%= css_class %>" style="<%= css_style %>">
+        <% if @agent.is_public? %>
+          <span class="console__header__visual__ribbon">
+            <%= t('activerecord.attributes.agent.visibility_is_public') %>
+          </span>
+        <% end %>
       </div>
 
-      <a href="#" id="console-enter-fullscreen"
-         data-action="console-enter-fullscreen"
-         title="<%= t('views.console.fullscreen_enter') %>"
-         class="console__header__fullscreen_btn btn btn--plain">
-        <span class="icon">
-          <%= icon_fullscreen %>
-        </span>
-      </a>
-      <a href="#" id="console-leave-fullscreen"
-         data-action="console-leave-fullscreen"
-         title="<%= t('views.console.fullscreen_leave') %>"
-         class="console__header__fullscreen_btn btn btn--plain" style="display:none;">
-        <span class="icon">
-          <%= icon_close %>
-        </span>
-      </a>
+      <div class="console__header__content">
+        <div class="console__header__content__title">
+          <strong>
+            <%= @agent.name %>
+            <em>- <%= t('views.console.title') %></em>
+          </strong>
+          <small>
+            <span class="badge badge--small badge--success">GET</span>
+            <code>/api/v1/<%= @agent.slug %>/interpret.json</code>
+          </small>
+        </div>
+      </div>
+
+      <div class="console__header__actions">
+        <a href="?"
+           id="console-reset-btn"
+           class="btn btn--small btn--plain console-reset"
+           title="<%= t('views.console.reset.title') %>"
+           data-turbolinks="false"
+           style="display:none;">
+          <span class="icon icon--small">
+            <%= icon_refresh %>
+          </span>
+        </a>
+
+        <a href="#" id="console-enter-fullscreen"
+           data-action="console-enter-fullscreen"
+           title="<%= t('views.console.fullscreen_enter') %>"
+           class="console__header__fullscreen_btn btn btn--small btn--plain">
+          <span class="icon icon--small">
+            <%= icon_fullscreen %>
+          </span>
+        </a>
+        <a href="#" id="console-leave-fullscreen"
+           data-action="console-leave-fullscreen"
+           title="<%= t('views.console.fullscreen_leave') %>"
+           class="console__header__fullscreen_btn btn btn--small btn--plain" style="display:none;">
+          <span class="icon icon--small">
+            <%= icon_close %>
+          </span>
+        </a>
+      </div>
+
     </div>
 
     <%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>

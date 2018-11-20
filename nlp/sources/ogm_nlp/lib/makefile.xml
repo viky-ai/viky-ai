@@ -16,6 +16,7 @@
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
     <file>nlperr.c</file>
+    <file>nlpexplainhighlight.c</file>
     <file>nlpglue.c</file>
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>

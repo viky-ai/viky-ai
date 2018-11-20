@@ -68,3 +68,10 @@
   transform: rotate(-45deg);
   text-shadow: 0 1px 0 rgba(black, .25);
 }
+@mixin ribbon-small{
+  @include ribbon();
+  font-size: .6em;
+  top: 1em;
+  left: -3em;
+  line-height: 1.6em;
+}

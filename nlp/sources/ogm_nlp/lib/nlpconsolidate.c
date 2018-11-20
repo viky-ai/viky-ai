@@ -141,6 +141,16 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     struct expression_compile *expression_compile = all_expression_compile + i;
     struct expression *expression = all_expression + i;
 
+    if (expression_compile->id_start < 0)
+    {
+      expression->id = NULL;
+    }
+    else
+    {
+      expression->id = OgHeapGetCell(package->hexpression_ba, expression_compile->id_start);
+      IFN(expression->id) DPcErr;
+    }
+
     expression->text = OgHeapGetCell(package->hexpression_ba, expression_compile->text_start);
     IFN(expression->text) DPcErr;
 

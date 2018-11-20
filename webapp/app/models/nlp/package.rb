@@ -126,6 +126,7 @@ class Nlp::Package
 
         expression = {}
         expression[:expression] = "@{#{ialias.aliasname}}"
+        expression[:id] = ialias.interpretation.id
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
@@ -134,6 +135,7 @@ class Nlp::Package
 
         expression = {}
         expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+        expression[:id] = ialias.interpretation.id
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:aliases] << build_internal_alias(ialias, true)
@@ -144,6 +146,7 @@ class Nlp::Package
         if ialias.any_enabled
           expression = {}
           expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+          expression[:id] = ialias.interpretation.id
           expression[:aliases] = []
           expression[:aliases] << {
             alias: ialias.aliasname,
@@ -158,8 +161,8 @@ class Nlp::Package
         interpretation_hash[:expressions] = expressions
         interpretations << interpretation_hash
       end
-
       interpretations
+
     end
 
     def build_intent(intent)
@@ -172,6 +175,7 @@ class Nlp::Package
       intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
         expression = {}
         expression[:expression] = interpretation.expression_with_aliases
+        expression[:id]         = interpretation.id
         expression[:aliases]    = build_aliases(interpretation)
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
@@ -197,11 +201,12 @@ class Nlp::Package
       elist.entities.order(position: :desc).each do |entity|
         entity.terms.each do |term|
           expression = {}
-          expression[:expression]    = term['term']
-          expression[:locale]        = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution]      = build_entities_list_solution(entity)
-          expression[:keep_order]    = true
-          expression[:glued]         = true
+          expression[:expression] = term['term']
+          expression[:id] = entity.id
+          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+          expression[:solution] = build_entities_list_solution(entity)
+          expression[:keep_order] = true
+          expression[:glued]      = true
           expression[:glue_strength] = 'punctuation'
           expressions << expression
         end

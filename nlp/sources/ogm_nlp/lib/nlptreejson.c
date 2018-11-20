@@ -17,6 +17,8 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
 og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_interpretation)
 {
+  IFE(NlpExplainHighlightReset(ctrl_nlp_th));
+  IFE(NlpSetSuperExpression(ctrl_nlp_th, request_expression));
 
   json_t *json_explanation = json_object();
   IF(json_object_set_new(json_interpretation, "explanation", json_explanation))
@@ -26,10 +28,14 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   }
 
   json_t *json_expression = json_object();
-  IF(json_object_set_new(json_explanation, "expression", json_expression))
+  IFX(request_expression->expression->id)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression");
-    DPcErr;
+    json_t *json_expression_id = json_string(request_expression->expression->id);
+    IF(json_object_set_new(json_expression, "id", json_expression_id))
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_id");
+      DPcErr;
+    }
   }
 
   json_t *json_expression_text = json_string(request_expression->expression->text);
@@ -68,6 +74,15 @@ og_status NlpInterpretTreeJson(og_nlp_th ctrl_nlp_th, struct request_expression 
   }
 
   IFE(NlpInterpretTreeJsonRecursive(ctrl_nlp_th, request_expression, request_expression, json_expression));
+
+  IFE(NlpExplainHighlight(ctrl_nlp_th,request_expression,json_explanation));
+
+  IF(json_object_set_new(json_explanation, "expression", json_expression))
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression");
+    DPcErr;
+  }
+
   DONE;
 }
 
@@ -180,6 +195,8 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
           DPcErr;
         }
 
+        IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, request_word, NULL));
+
       }
       else if (request_input_part->type == nlp_input_part_type_Interpretation)
       {
@@ -225,7 +242,7 @@ static og_status NlpInterpretTreeJsonRecursive(og_nlp_th ctrl_nlp_th,
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretTreeJson: error setting json_expression_highlight");
       DPcErr;
     }
-
+    IFE(NlpExplainHighlightAddWord(ctrl_nlp_th, request_expression, NULL, request_any));
   }
 
   IF(json_object_set_new(json_expression, "expressions", json_expressions))
