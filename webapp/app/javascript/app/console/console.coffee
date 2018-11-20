@@ -9,9 +9,6 @@ class Console
 
     $("body").on 'click', (event) => @dispatch(event)
 
-    $("#js-console-form").on 'change', ':input', (event) =>
-      $("#console-reset-btn").show()
-
     $("body").on 'console-select-now-type-auto', (event) =>
       $('#js-console-now-input-container').hide()
       $('#js-console-now-input-container input').val(moment().format())
@@ -34,10 +31,10 @@ class Console
         , 500
         $("#console-reset-btn").show()
 
-
   dispatch: (event) ->
     link = @get_link_target(event)
-    action = link.data('action')
+
+    action = link.data('action') if link
 
     if action == 'console-enter-fullscreen'
       event.preventDefault()
@@ -64,18 +61,21 @@ class Console
     if action == 'console-explain-highlighted-word'
       event.preventDefault()
       $('.intent__highlight ul').hide()
-      if $(event.target).hasClass('current')
+      if link.hasClass('current')
         $('.intent__highlight match').removeClass('current')
       else
         $('.intent__highlight match').removeClass('current')
-        $(event.target).addClass('current')
-        $($(event.target).data('target')).show()
+        link.addClass('current')
+        $(link.data('target')).show()
 
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)
     else
-      return $(event.target).closest('a')
+      if $(event.target).closest('a').length == 1
+        return $(event.target).closest('a')
+      if $(event.target).closest('match').length == 1
+        return $(event.target).closest('match')
 
 Setup = ->
   if $('.console-container').length == 1
