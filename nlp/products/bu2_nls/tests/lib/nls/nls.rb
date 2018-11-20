@@ -147,12 +147,10 @@ module Nls
       if body_to_write.kind_of? Array
         body_to_write.each do |body_item|
           body_item["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
-          body_item["show-explanation"] = false
           body_item["primary-package"] = nil if(!body_item.has_key?("primary-package"))
         end
       else
         body_to_write["why-not-matching"] = {"expression" => nil, "interpretation" => nil}
-        body_to_write["show-explanation"] = false
         body_to_write["primary-package"] = nil if(!body_to_write.has_key?("primary-package"))
       end
 

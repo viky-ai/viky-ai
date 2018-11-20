@@ -343,7 +343,10 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         show_private[i] = false
         show_private[i] = expected[i][:show_private] if expected[i].has_key?(:show_private)
 
-        request << json_interpret_body(packages[i], sentence[i], Interpretation.default_locale, false, now[i], primary_package[i], show_private[i])
+        explain = false
+        explain = expected[:explain] if expected.has_key?(:explain)
+
+        request << json_interpret_body(packages[i], sentence[i], Interpretation.default_locale, explain, now[i], primary_package[i], show_private[i])
       end
 
       ap expected if globaldebug
@@ -458,9 +461,12 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       show_private = false
       show_private = expected[:show_private] if expected.has_key?(:show_private)
 
+      explain = false
+      explain = expected[:explain] if expected.has_key?(:explain)
+
       ap expected if debug
       # creation et exécution de la requete
-      request = json_interpret_body(packages, sentence, Interpretation.default_locale, false, now, primary_package, show_private)
+      request = json_interpret_body(packages, sentence, Interpretation.default_locale, explain, now, primary_package, show_private)
       ap request if debug
       actual = Nls.interpret(request)
       ap actual if debug
@@ -478,6 +484,33 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       assert !actual['interpretations'].empty?, "Actual answer did not match on any interpretation"
 
       match_intepretation = actual['interpretations'].first
+
+      if expected.has_key?(:explanation)
+        assert match_intepretation['explanation'], "Actual answer has no explanation"
+        expected_explanation = expected[:explanation]
+        actual_explanation = match_intepretation['explanation']
+
+        if expected_explanation.has_key?(:scores)
+          expected_score = expected_explanation[:scores]
+          assert actual_explanation['scores'], "Actual explanation has no score"
+          assert_equal expected_score, actual_explanation['scores'], "Matched on wrong score"
+        end
+
+
+        if expected_explanation.has_key?(:highlight)
+
+          expected_highlight = expected_explanation[:highlight]
+          assert actual_explanation['highlight'], "Actual explanation has no highlight"
+          check_highlight expected_highlight, actual_explanation['highlight']
+        end
+
+        if expected_explanation.has_key?(:expression)
+          assert actual_explanation['expression'], "Actual explanation has no expression"
+          expected_expression = expected_explanation[:expression]
+          check_explanation_expression_value = check_explanation_expression expected_expression, actual_explanation['expression']
+          assert check_explanation_expression_value, "wrong match on expression\nexpected: #{expected_expression}\nactual: #{actual_explanation['expression']}"
+        end
+      end
 
       if expected.has_key?(:warnings)
 
@@ -545,6 +578,171 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
       return actual
 
+    end
+
+    def check_highlight(expected_highlight, actual_highlight)
+      if expected_highlight.has_key?(:summary)
+        assert actual_highlight['summary'], "Actual explanation has no summary"
+        expected_summary = expected_highlight[:summary]
+        assert_equal expected_summary, actual_highlight['summary'], "Matched on wrong summary"
+      end
+
+      if expected_highlight.has_key?(:words)
+        assert actual_highlight['words'], "Actual explanation has no words"
+        expected_words = expected_highlight[:words]
+        assert_kind_of Array, expected_words, "expected Words is not an array"
+        assert_kind_of Array, actual_highlight['words'], "actual Words is not an array"
+        expected_words.each do |expected_word|
+          return_value = false
+          actual_highlight['words'].each do |actual_word|
+            return_value = true if check_highlight_word(expected_word, actual_word)
+          end
+          assert return_value, "match on wrong word\nexpected word: #{expected_word}\nwords in answer: #{actual_highlight['words']}"
+        end
+      end
+    end
+
+    def check_highlight_word(expected_word, actual_word)
+
+      if expected_word.has_key?(:word)
+        if(!actual_word['word'].nil?)
+          if expected_word[:word] != actual_word['word']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_word.has_key?(:match)
+        if(!actual_word['match'].nil?)
+          if !check_highlight_match_or_parent(expected_word[:match], actual_word['match'])
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_word.has_key?(:is_any)
+        if(!actual_word['is_any'].nil?)
+          if expected_word[:is_any]==true &&  actual_word['is_any']==true
+            return true
+          end
+        else
+          return false
+        end
+      end
+
+      return true
+    end
+
+    def check_highlight_match_or_parent(expected_match, actual_match)
+
+      if expected_match.has_key?(:expression)
+        if(!actual_match['expression'].nil?)
+          if expected_match[:expression] != actual_match['expression']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_match.has_key?(:interpretation_slug)
+        if(!actual_match['interpretation_slug'].nil?)
+          if expected_match[:interpretation_slug] != actual_match['interpretation_slug']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_match.has_key?(:parent)
+        if(!actual_match['parent'].nil?)
+          if !check_highlight_match_or_parent(expected_match[:parent],actual_match['parent'])
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      return true
+    end
+
+    def check_explanation_expression(expected_expression, actual_expression)
+
+      if expected_expression.has_key?(:text)
+        if(!actual_expression['text'].nil?)
+          if expected_expression[:text] != actual_expression['text']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_expression.has_key?(:slug)
+        if(!actual_expression['slug'].nil?)
+          if expected_expression[:slug] != actual_expression['slug']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_expression.has_key?(:highlight)
+        if(!actual_expression['highlight'].nil?)
+          if expected_expression[:highlight] != actual_expression['highlight']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_expression.has_key?(:scores)
+        if(!actual_expression['scores'].nil?)
+          if expected_expression[:scores] != actual_expression['scores']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_expression.has_key?(:word)
+        if(!actual_expression['word'].nil?)
+          if expected_expression[:word] != actual_expression['word']
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      if expected_expression.has_key?(:expressions)
+        if(!actual_expression['expressions'].nil?)
+          if(actual_expression['expressions'].kind_of?(Array))
+            expected_expression[:expressions].each do |expected_sub_expression|
+              expected_sub_expression_matched = false
+              actual_expression['expressions'].each do |actual_sub_expression|
+                expected_sub_expression_matched = true if(check_explanation_expression(expected_sub_expression, actual_sub_expression))
+              end
+              return false if(!expected_sub_expression_matched)
+            end
+          else
+            return false
+          end
+        else
+          return false
+        end
+      end
+
+      return true
     end
 
     def assert_exception_has_message expected_error, exception, msg = nil
