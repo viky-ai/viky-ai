@@ -323,8 +323,8 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
   }
   else if (alias->type == nlp_alias_type_Regex)
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s='%s'", alias->alias,
-        NlpAliasTypeString(alias->type), alias->regex_string);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s='%.*s'", alias->alias,
+        NlpAliasTypeString(alias->type), DOgNlpMaximumRegexStringSizeLogged, alias->regex_string);
   }
   else
   {
@@ -428,7 +428,8 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
   is_regex[0] = 0;
   if (request_word->is_regex)
   {
-    snprintf(is_regex, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex_string);
+    snprintf(is_regex, DPcPathSize, " (regex='%.*s')", DOgNlpMaximumRegexStringSizeLogged,
+        request_word->regex_input_part->alias->regex_string);
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s%s", request_word->self_index, string_request_word,
