@@ -32,7 +32,7 @@ class InterpretRequestLog
     @body = params[:body]
     @context = params[:context].present? ? params[:context] : {}
     unless @context['test'].present?
-      @context['client_type'] = context['client_type'].present? ? context['client_type']: 'bot'
+      @context['client_type'] = @context['client_type'].present? ? @context['client_type']: 'bot'
       @context['agent_version'] = @agent.updated_at
     end
   end

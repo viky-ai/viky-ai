@@ -146,7 +146,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
         timestamp: '2018-11-21T16:00:00.000+02:00',
         sentence: 'What the weather like today ?',
         agent: agents(:weather),
-        context: {:client_type => 'console', :user_id => '078602e7-0578-49d4-96ee-d8ee2f9b1ecf'}
+        context: {'client_type' => 'console', 'user_id' => '078602e7-0578-49d4-96ee-d8ee2f9b1ecf'}
       ).with_response('200', {
         'interpretations' => [{
           'package': '132154f2-4545-4ae2-a802-3d39a2a5013f',
