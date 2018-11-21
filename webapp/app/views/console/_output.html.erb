@@ -1,7 +1,6 @@
 <div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
   <% if data[:status] == 200 %>
     <% json = JSON.parse(data[:body]) %>
-
     <% if json['interpretations'].empty? %>
       <p>
         <span class="badge badge--success"><%= data[:status] %></span>
@@ -18,12 +17,11 @@
         <%= t('views.console.intent_found', count: json['interpretations'].count) %>
       </p>
       <ul class="intents">
-        <% json['interpretations'].each do |aliasable| %>
-          <li>
-            <a href="/agents/<%= aliasable["slug"] %>">
-
+        <% json['interpretations'].each_with_index do |aliasable, interpretation_index| %>
+          <li id="<%= aliasable["id"] %>">
+            <div class="intent_block">
               <div class="intent__header">
-                <span class="intent__header__name"><%= aliasable["name"] %></span>
+                <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
                 <% if aliasable['scope'] == 'public' %>
                   <span class="badge badge--success badge--small">
                     <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
@@ -41,21 +39,28 @@
                   <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
                 </span>
               </div>
-
               <ul>
-              <% unless aliasable["explanation"].nil? %>
-                  <li>
-                    <div class="intent__label"><%= t('views.console.expression_text') %></div>
-                    <pre><%= highlight(aliasable["explanation"]["expression"]["text"]) %></pre>
-                  </li>
+                <% unless aliasable["explanation"].nil? %>
                   <li>
                     <div class="intent__label"><%= t('views.console.scores') %></div>
-                    <pre class="with-wrap"><%= aliasable["explanation"]["expression"]["scores"] %></pre>
+                    <pre class="with-wrap"><%= aliasable["explanation"]["scores"] %></pre>
                   </li>
                   <li>
                     <div class="intent__label"><%= t('views.console.highlight') %></div>
                     <div class="intent__highlight">
-                      <%= highlight(aliasable["explanation"]["expression"]["highlight"]) %>
+                      <%= highlight(aliasable["explanation"]["highlight"]["words"], interpretation_index) %>
+                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
+                        <% unless word["match"].nil? %>
+                          <ul style="display:none;" id="highlight-explain-<%= interpretation_index %>-<%= word_index %>">
+                            <%= highlight_explain_item(word["match"]) %>
+                            <% parent = word["match"]["parent"] %>
+                            <% while !parent.nil? %>
+                              <%= highlight_explain_item(parent) %>
+                              <% parent = parent["parent"] %>
+                            <% end %>
+                          </ul>
+                        <% end %>
+                      <% end %>
                     </div>
                   </li>
                 <% end %>
@@ -66,7 +71,7 @@
                   </li>
                 <% end %>
               </ul>
-            </a>
+            </div>
           </li>
         <% end %>
       </ul>
