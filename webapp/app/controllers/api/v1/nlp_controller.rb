@@ -55,13 +55,15 @@ class Api::V1::NlpController < Api::V1::ApplicationController
 
     def build_log_request
       parameters = interpret_parameters
+
       context = {}
       request.headers.each do |key, value|
-       if key.starts_with?('HTTP_context_')
-        context_key = key.slice('HTTP_context_'.length..-1)
+       if key.starts_with?('HTTP_CONTEXT_')
+        context_key = key.gsub('HTTP_CONTEXT_', '').downcase
         context[context_key] = value
        end
       end
+
       @log = InterpretRequestLog.new(
         timestamp: Time.now.iso8601(3),
         sentence: parameters['sentence'],
