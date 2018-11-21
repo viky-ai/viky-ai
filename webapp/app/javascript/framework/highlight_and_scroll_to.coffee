@@ -1,6 +1,6 @@
 $ = require('jquery')
 
-class IntentHighlight
+class HighlightAndScrollTo
   constructor: ->
     intent_id = $(location).attr('hash').replace('smooth-scroll-to-', '')
     if intent_id
@@ -9,8 +9,6 @@ class IntentHighlight
         $(intent_id)[0].scrollIntoView({ block: 'center', behavior: 'smooth' })
 
 Setup = ->
-  if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "index"
-    new IntentHighlight()
-
+  new HighlightAndScrollTo()
 
 $(document).on('turbolinks:load', Setup)

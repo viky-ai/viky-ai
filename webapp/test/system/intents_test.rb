@@ -222,8 +222,6 @@ class IntentsTest < ApplicationSystemTestCase
       assert first('li').has_no_link?('Used by...')
     end
 
-    page.refresh
-
     within '#intents-list-is_private' do
       assert first('li').has_link?('Used by...')
       # click link and check

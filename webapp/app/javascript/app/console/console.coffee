@@ -1,6 +1,20 @@
 $ = require('jquery');
 moment = require('moment');
 
+class ConsolePreserveScroll
+  scrollTop = 0
+
+  save: ->
+    element = $('#console-output')
+    scrollTop = element.scrollTop() if element.length == 1
+
+  restore: ->
+    element = $('#console-output')
+    element.scrollTop(scrollTop) if element.length == 1
+
+$(document).on('turbolinks:before-render', -> ConsolePreserveScroll::save())
+$(document).on('turbolinks:render', -> ConsolePreserveScroll::restore())
+
 
 class Console
   constructor: ->
@@ -15,6 +29,7 @@ class Console
 
     $("body").on 'console-select-now-type-manual', (event) =>
       $('#js-console-now-input-container').show()
+      $("#console-reset-btn").show()
 
     $("body").on 'ajax:before', (event) =>
       if $(event.target).attr('id') == "js-console-form"
@@ -28,11 +43,13 @@ class Console
         @timeout = setTimeout ->
           $(".console__output").removeClass('console__output__loading')
         , 500
-
+        $("#console-reset-btn").show()
+        $('#console-output').scrollTop(0)
 
   dispatch: (event) ->
     link = @get_link_target(event)
-    action = link.data('action')
+
+    action = link.data('action') if link
 
     if action == 'console-enter-fullscreen'
       event.preventDefault()
@@ -56,11 +73,24 @@ class Console
       $(".toggle-console").show()
       $("body").trigger("console:leave-fullscreen")
 
+    if action == 'console-explain-highlighted-word'
+      event.preventDefault()
+      $('.intent__highlight ul').hide()
+      if link.hasClass('current')
+        $('.intent__highlight match').removeClass('current')
+      else
+        $('.intent__highlight match').removeClass('current')
+        link.addClass('current')
+        $(link.data('target')).show()
+
   get_link_target: (event) ->
-    if $(event.target).is('a')
+    if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)
     else
-      return $(event.target).closest('a')
+      if $(event.target).closest('a').length == 1
+        return $(event.target).closest('a')
+      if $(event.target).closest('match').length == 1
+        return $(event.target).closest('match')
 
 Setup = ->
   if $('.console-container').length == 1

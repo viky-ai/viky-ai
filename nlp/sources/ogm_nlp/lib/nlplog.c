@@ -150,12 +150,23 @@ og_status NlpPackageCompileExpressionLog(og_nlp_th ctrl_nlp_th, package_t packag
 {
   IFN(expression) DPcErr;
 
+  char id_string[DPcPathSize];
+  if (expression->id_start < 0)
+  {
+    id_string[0]=0;
+  }
+  else
+  {
+    og_string id = OgHeapGetCell(package->hexpression_ba, expression->id_start);
+    sprintf(id_string," with id '%s'", id);
+  }
   og_string text = OgHeapGetCell(package->hexpression_ba, expression->text_start);
 
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s", text, string_locale);
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "    Expression compile '%s' with locale %s%s", text, string_locale,
+      id_string);
   for (int i = 0; i < expression->aliases_nb; i++)
   {
     struct alias_compile *alias = OgHeapGetCell(package->halias_compile, expression->alias_start + i);
@@ -269,6 +280,16 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
 {
   IFN(expression) DPcErr;
 
+  char id_string[DPcPathSize];
+  IFN(expression->id)
+  {
+    id_string[0]=0;
+  }
+  else
+  {
+    sprintf(id_string," with id '%s'", expression->id);
+  }
+
   og_string text = expression->text;
 
   unsigned char string_locale[DPcPathSize];
@@ -282,8 +303,8 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      "    Expression '%s' with locale %s%s%s%s alias_any_input_part_position=%d", text, string_locale,
-      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "", string_glue_strength,
+      "    Expression '%s' with locale %s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
+      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "",  string_glue_strength,
       expression->alias_any_input_part_position);
 
   for (int i = 0; i < expression->aliases_nb; i++)
@@ -323,8 +344,8 @@ og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct al
   }
   else if (alias->type == nlp_alias_type_Regex)
   {
-    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s='%s'", alias->alias,
-        NlpAliasTypeString(alias->type), alias->regex_string);
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      alias '%s' %s='%.*s'", alias->alias,
+        NlpAliasTypeString(alias->type), DOgNlpMaximumRegexStringSizeLogged, alias->regex_string);
   }
   else
   {
@@ -428,7 +449,8 @@ og_status NlpLogRequestWord(og_nlp_th ctrl_nlp_th, struct request_word *request_
   is_regex[0] = 0;
   if (request_word->is_regex)
   {
-    snprintf(is_regex, DPcPathSize, " (regex='%s')",request_word->regex_input_part->alias->regex_string);
+    snprintf(is_regex, DPcPathSize, " (regex='%.*s')", DOgNlpMaximumRegexStringSizeLogged,
+        request_word->regex_input_part->alias->regex_string);
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%4d: '%s' at %d:%d%s%s", request_word->self_index, string_request_word,

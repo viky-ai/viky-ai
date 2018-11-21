@@ -52,11 +52,7 @@
         background-position: center center;
       }
       .agent-compact__id__visual__ribbon{
-        @include ribbon();
-        font-size: .6em;
-        top: 1em;
-        left: -3em;
-        line-height: 1.6em;
+        @include ribbon-small();
       }
     }
     .agent-compact__id__data{

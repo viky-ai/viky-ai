@@ -64,8 +64,8 @@ static og_status NlpRegexBuildInputPart(og_nlp_th ctrl_nlp_th, struct input_part
   struct alias *alias = input_part->alias;
   IFN(alias) DPcErr;
 
-  NlpLog(DOgNlpTraceConsolidate, "NlpRegexBuildAlias: found alias '%s' %s='%s'", alias->alias,
-      NlpAliasTypeString(alias->type), alias->regex_string);
+  NlpLog(DOgNlpTraceConsolidate, "NlpRegexBuildAlias: found alias '%s' %s='%.*s'", alias->alias,
+      NlpAliasTypeString(alias->type), DOgNlpMaximumRegexStringSizeLogged, alias->regex_string);
 
   IFE(NlpRegexCompile(ctrl_nlp_th, input_part));
 
@@ -84,9 +84,9 @@ static og_status NlpRegexCompile(og_nlp_th ctrl_nlp_th, struct input_part *input
       struct interpretation *interpretation = input_part->expression->interpretation;
 
       NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexCompile: g_regex_new failed on alias :"
-          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
-          input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
-          regexp_error->message);
+          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%.*s' : %s", alias->alias,
+          input_part->expression->text, interpretation->slug, interpretation->id, DOgNlpMaximumRegexStringSizeLogged,
+          alias->regex_string, regexp_error->message);
       g_error_free(regexp_error);
       DPcErr;
     }
@@ -165,9 +165,9 @@ static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part
     {
       struct interpretation *interpretation = input_part->expression->interpretation;
       NlpThrowErrorTh(ctrl_nlp_th, "NlpRegexMatchInputPart: g_regex_match_full failed on execution on alias :"
-          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
-          input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
-          regexp_error->message);
+          " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%.*s' : %s", alias->alias,
+          input_part->expression->text, interpretation->slug, interpretation->id, DOgNlpMaximumRegexStringSizeLogged,
+          alias->regex_string, regexp_error->message);
       g_error_free(regexp_error);
 
       if (match_info != NULL)
@@ -199,8 +199,9 @@ static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part
       {
         struct interpretation *interpretation = input_part->expression->interpretation;
         NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_match_info_next failed on execution on alias :"
-            " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%s' : %s", alias->alias,
-            input_part->expression->text, interpretation->slug, interpretation->id, alias->regex_string,
+            " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%.*s' : %s", alias->alias,
+            input_part->expression->text, interpretation->slug, interpretation->id, DOgNlpMaximumRegexStringSizeLogged,
+            alias->regex_string,
             regexp_error->message);
         g_error_free(regexp_error);
 
@@ -329,7 +330,8 @@ static og_status NlpRegexLogExpression(og_nlp_th ctrl_nlp_th, struct expression 
 static og_status NlpRegexLogInputPart(og_nlp_th ctrl_nlp_th, struct input_part *input_part)
 {
   if (input_part->type != nlp_input_part_type_Regex) DONE;
-  NlpLog(DOgNlpTraceMinimal, "regex '%s' '%s'", input_part->alias->alias, input_part->alias->regex_string);
+  NlpLog(DOgNlpTraceMinimal, "regex '%s' '%.*s'", input_part->alias->alias, DOgNlpMaximumRegexStringSizeLogged,
+      input_part->alias->regex_string);
   DONE;
 }
 

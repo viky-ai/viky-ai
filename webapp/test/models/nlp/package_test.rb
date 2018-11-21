@@ -17,11 +17,13 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Quel temps fera-t-il demain ?",
+              "id"         => interpretations(:weather_forecast_demain).id,
               "locale"     => "fr",
               "solution"   => "Quel temps fera-t-il demain ?"
             },
             {
               "expression" => "@{question} @{when} ?",
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -50,6 +52,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "What the weather like",
+              "id"         => interpretations(:weather_question_like).id,
               "locale"     => "en",
               "solution"   => "What the weather like"
             }
@@ -61,23 +64,8 @@ class PackageTest < ActiveSupport::TestCase
           'scope'    => 'public',
           "expressions" => [
             {
-              "expression" => "sun",
-              "locale"     => "en",
-              "solution"   => "sun",
-              "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
-            },
-            {
-              "expression" => "soleil",
-              "locale"     => "fr",
-              "solution"   => "sun",
-              "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
-            },
-            {
               "expression" => "pluie",
+              "id"         => entities(:weather_raining).id,
               "locale"     => "fr",
               "solution"   => "pluie",
               "keep-order" => true,
@@ -86,8 +74,27 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "rain",
+              "id"         => entities(:weather_raining).id,
               "locale"     => "en",
               "solution"   => "pluie",
+              "keep-order" => true,
+              "glued"      => true,
+              "glue-strength" => "punctuation",
+            },
+            {
+              "expression" => "sun",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "en",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glued"      => true,
+              "glue-strength" => "punctuation",
+            },
+            {
+              "expression" => "soleil",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "fr",
+              "solution"   => "sun",
               "keep-order" => true,
               "glued"      => true,
               "glue-strength" => "punctuation",
@@ -101,6 +108,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "aujourd'hui",
+              "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
@@ -109,6 +117,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "tout à l'heure",
+              "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
@@ -117,6 +126,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "today",
+              "id"         => entities(:weather_dates_today).id,
               "locale"     => "en",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
@@ -125,6 +135,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "tomorrow",
+              "id"         => entities(:weather_dates_tomorrow).id,
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glued"      => true,
@@ -163,6 +174,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Quel temps fera-t-il demain ?",
+              "id"         => interpretations(:weather_forecast_demain).id,
               "solution"   => "Quel temps fera-t-il demain ?"
             }
           ]
@@ -195,6 +207,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "What the weather like",
+              "id"         => interpretations(:weather_question_like).id,
               "locale"     => "en",
               "solution"   => "What the weather like"
             }
@@ -204,7 +217,6 @@ class PackageTest < ActiveSupport::TestCase
     }
     assert_equal expected, p.generate_json
   end
-
 
   test 'Package generation with alias list' do
     weather = agents(:weather)
@@ -221,12 +233,13 @@ class PackageTest < ActiveSupport::TestCase
       "slug" => "admin/weather",
       "interpretations" => [
         {
-          "id" => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-          "slug" => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-          'scope' => 'hidden',
+          "id"          => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
+          "slug"        => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
+          "scope"       => "hidden",
           "expressions" => [
             {
               "expression" => "@{question}",
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -240,6 +253,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "@{question} @{question_recursive}",
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -266,11 +280,13 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Quel temps fera-t-il demain ?",
+              "id"         => interpretations(:weather_forecast_demain).id,
               "locale"     => "fr",
               "solution"   => "Quel temps fera-t-il demain ?"
             },
             {
               "expression" => "@{question} tomorrow ?",
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               "aliases"    => [
                 {
                   "alias"   => "question",
@@ -293,6 +309,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "What the weather like",
+              "id"         => interpretations(:weather_question_like).id,
               "locale"     => "en",
               "solution"   => "What the weather like"
             }
@@ -302,7 +319,6 @@ class PackageTest < ActiveSupport::TestCase
     }
     assert_equal expected, p.generate_json
   end
-
 
   test 'Package generation with alias list any' do
     weather = agents(:weather)
@@ -326,6 +342,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => '@{question}',
+              'id'         => interpretations(:weather_forecast_tomorrow).id,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -339,6 +356,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               'expression' => '@{question} @{question_recursive}',
+              'id'         => interpretations(:weather_forecast_tomorrow).id,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -357,8 +375,9 @@ class PackageTest < ActiveSupport::TestCase
               "glued"       => true
             },
             {
-              'expression' => '@{question} @{question_recursive}',
-              'aliases'    => [
+              'expression'  => '@{question} @{question_recursive}',
+              'id'          =>  interpretations(:weather_forecast_tomorrow).id,
+              'aliases'     => [
                 {
                   'alias'   => 'question',
                   'type'    => 'any'
@@ -382,11 +401,13 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'Quel temps fera-t-il demain ?',
+              'id'         => interpretations(:weather_forecast_demain).id,
               'locale'     => 'fr',
               'solution'   => "Quel temps fera-t-il demain ?"
             },
             {
               'expression' => '@{question} tomorrow ?',
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -409,6 +430,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'What the weather like',
+              "id"         => interpretations(:weather_question_like).id,
               'locale'     => 'en',
               'solution'   => "What the weather like"
             }
@@ -441,11 +463,13 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'Quel temps fera-t-il demain ?',
+              'id'         => interpretations(:weather_forecast_demain).id,
               'locale'     => 'fr',
               'solution'   => 'Quel temps fera-t-il demain ?'
             },
             {
               'expression' => '@{question} tomorrow ?',
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -461,6 +485,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               'expression' => '@{question} tomorrow ?',
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               'aliases'    => [
                 {
                   'alias'   => 'question',
@@ -481,6 +506,7 @@ class PackageTest < ActiveSupport::TestCase
           'expressions' => [
             {
               'expression' => 'What the weather like',
+              "id"         => interpretations(:weather_question_like).id,
               'locale'     => 'en',
               'solution'   => "What the weather like"
             }
@@ -512,11 +538,13 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Quel temps fera-t-il demain ?",
+              "id"         => interpretations(:weather_forecast_demain).id,
               "locale" => "fr",
               "solution" => "Quel temps fera-t-il demain ?"
             },
             {
               "expression" => "@{question} tomorrow ?",
+              "id"         => interpretations(:weather_forecast_tomorrow).id,
               "aliases" => [
                 {
                   "alias" => "question",
@@ -539,6 +567,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "What the weather like",
+              "id"         => interpretations(:weather_question_like).id,
               "locale" => "en",
               "solution" => "What the weather like"
             }
@@ -556,6 +585,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions"=>  [
               {
                 "expression"=>"Find",
+                "id"=>"55495e57-e816-5b14-b665-2205a6ccf263",
                 "locale"=>"en",
                 "solution"=>"Find"
               }
@@ -568,6 +598,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "@{find} Sarah Connor",
+              "id"=>"dfcf3b39-2f54-5847-b717-a8040707f232",
               "aliases"=> [
                 {
                   "alias" => "find",
@@ -580,6 +611,7 @@ class PackageTest < ActiveSupport::TestCase
             },
             {
               "expression" => "Where is Sarah Connor ?",
+              "id"         => interpretations(:terminator_find_sarah).id,
               "locale" => "en",
               "solution" => "Where is Sarah Connor ?"
             }
@@ -743,6 +775,7 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => [
             {
               "expression" => "Where is @{name} ?",
+              "id"=>"223bbbb3-e8cf-5063-8d1a-b8c4c168bda4",
               "aliases"    => [
                 {
                   "alias"   => "name",

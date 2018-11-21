@@ -37,6 +37,7 @@
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
 
 #define DOgNlpMaximumRegex          100
+#define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -174,6 +175,7 @@ enum nlp_glue_strength
 
 struct expression_compile
 {
+  int id_start;
   int text_start;
   og_bool keep_order;
   og_bool glued;
@@ -193,6 +195,8 @@ struct expression
 {
   /** Parent */
   struct interpretation *interpretation;
+
+  og_string id;
 
   og_string text;
 
@@ -657,6 +661,17 @@ struct nlp_match_group_numbers
 
 };
 
+struct highlight_word
+{
+  og_bool is_any;
+  union
+  {
+    struct request_word *request_word;
+    struct request_any *request_any;
+  };
+  struct request_expression *request_expression;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -716,6 +731,8 @@ struct og_ctrl_nlp_threaded
   og_heap hrequest_position;
 
   og_heap hrequest_any;
+
+  og_heap hhighlight_word;
 
   /**
    * List of package_t currently used by the og_ctrl_nlp_threaded
@@ -936,6 +953,7 @@ og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expr
 
 /* nlptree.c */
 og_status NlpInterpretTreeLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
+og_status NlpSetSuperExpression(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
 /* nlpany.c */
 og_status NlpInterpretAnyFlush(og_nlp_th ctrl_nlp_th);
@@ -1058,10 +1076,19 @@ og_status NlpRequestExpressionListsSortInit(og_nlp_th ctrl_nlp_th, og_string nam
 og_status NlpRequestExpressionListsSortFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestExpressionListsSort(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
+/* nlpexplainhighlight.c */
+og_status NlpExplainHighlightInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpExplainHighlightReset(og_nlp_th ctrl_nlp_th);
+og_status NlpExplainHighlightFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpExplainHighlightAddWord(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct request_word *request_word, struct request_any *request_any);
+og_status NlpExplainHighlight(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    json_t *json_explanation);
+og_status NlpExplainHighlightLog(og_nlp_th ctrl_nlp_th);
+
 /* nlpregex.c */
 og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
-
 
