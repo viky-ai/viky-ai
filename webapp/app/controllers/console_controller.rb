@@ -1,5 +1,7 @@
 class ConsoleController < ApplicationController
 
+  CLIENT_TYPE = 'console'
+
   def interpret
     owner = User.friendly.find(params[:user_id])
     agent = owner.agents.friendly.find(params[:id])
@@ -38,7 +40,12 @@ class ConsoleController < ApplicationController
     end
 
     def get_interpretation(owner, agent, sentence, verbose, language, now)
-      req = Rack::Request.new({ "rack.input" => {}, "REQUEST_METHOD" => "GET" })
+
+      req = Rack::Request.new({
+        "rack.input" => {},
+        "REQUEST_METHOD" => "GET",
+        "HTTP_context_client_type" => CLIENT_TYPE,
+        "HTTP_context_user_id" => current_user.id})
       req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
 
       params = {
