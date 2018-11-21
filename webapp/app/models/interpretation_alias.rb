@@ -7,7 +7,7 @@ class InterpretationAlias < ApplicationRecord
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
   validates :aliasname, presence: true
-  validates :reg_exp, presence: true, if: -> { self.type_regex? }
+  validates :reg_exp, presence: true, length: { maximum: 1000 }, if: -> { self.type_regex? }
 
   validate :interpretation_aliasable_present, unless: -> { self.type_number? || self.type_regex? }
   validate :check_position_start_greater_than_end

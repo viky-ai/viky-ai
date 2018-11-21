@@ -379,10 +379,10 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Sarah')
       assert page.has_text?('Blank Regex')
 
-      find("input[name*='reg_exp']").set('[[[')
+      find("textarea[name*='reg_exp']").set('[[[')
       assert page.has_text?('Invalid Regex')
 
-      find("input[name*='reg_exp']").set('^[a-zA-z-]')
+      find("textarea[name*='reg_exp']").set('^[a-zA-z-]')
       assert page.has_text?('Valid Regex')
     end
 
@@ -393,7 +393,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_link('Detect Sarah')
     assert page.has_text?('Regex')
     expected_regex = '^[a-zA-z-]'
-    assert_equal expected_regex, find("input[name*='reg_exp']").value
+    assert_equal expected_regex, find("textarea[name*='reg_exp']").value
     assert page.has_text?('Valid Regex')
   end
 
