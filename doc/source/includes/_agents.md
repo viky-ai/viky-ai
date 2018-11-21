@@ -82,3 +82,63 @@ This endpoint retrieves all the interpretations extracted from the `sentence` st
 <aside class="notice">
   Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.: <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
 </aside>
+
+### Headers
+
+Besides the <code>Agent-Token</code> and <code>Accept-Language</code> headers, headers beginning with <code>Context</code> can be used to provide additional metadata about the request.
+
+<table class="header-table">
+  <thead>
+    <tr>
+      <th>Header</th>
+      <th>Mandatory</th>
+      <th>Example</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Agent-Token</td>
+      <td>yes</td>
+      <td>22d40714c5dbde3eb86a179a0729f486</td>
+      <td>The API token of the agent.</td>
+    </tr>
+    <tr>
+      <td>Accept-Language</td>
+      <td>no</td>
+      <td>fr-CH, fr;q=0.9</td>
+      <td>The language code in which the sentence is written.</td>
+    </tr>
+    <tr>
+      <td>Context-Client-Type</td>
+      <td>no</td>
+      <td>console</td>
+      <td>The medium through which the API is accessed.</td>
+    </tr>
+    <tr>
+      <td>Context-User-Id</td>
+      <td>no</td>
+      <td>78945698</td>
+      <td>The unique ID of the user.</td>
+    </tr>
+    <tr>
+      <td>Context-Session-Id</td>
+      <td>no</td>
+      <td>0112f97b-e5dd-47a4-b848</td>
+      <td>The ID of the session in case of chat sessions.</td>
+    </tr>
+    <tr>
+      <td>Context-Bot-Version</td>
+      <td>no</td>
+      <td>1.2.1</td>
+      <td>The bot version if the client type is 'bot'.</td>
+    </tr>
+    <tr>
+      <td>Context-Test</td>
+      <td>no</td>
+      <td>viky-test-agents</td>
+      <td>The type of test performed if the request was made for test purposes.</td>
+    </tr>
+  </tbody>
+</table>
+
