@@ -7,7 +7,6 @@ class InterpretRequestLog
   INDEX_TYPE = 'log'.freeze
 
   attr_reader :id, :timestamp, :sentence, :language, :now, :status, :body, :context
-
   def self.count(params = {})
     client = IndexManager.client
     result = client.count index: SEARCH_ALIAS_NAME, body: params
@@ -31,7 +30,11 @@ class InterpretRequestLog
     @now = params[:now]
     @status = params[:status]
     @body = params[:body]
-    @context = build_context
+    @context = params[:context].present? ? params[:context] : {}
+    unless @context['test'].present?
+      @context['client_type'] = context['client_type'].present? ? context['client_type']: 'bot'
+      @context['agent_version'] = @agent.updated_at
+    end
   end
 
   def with_response(status, body)
@@ -63,9 +66,5 @@ class InterpretRequestLog
         body: @body,
         context: @context
       }
-    end
-
-    def build_context
-      {}
     end
 end
