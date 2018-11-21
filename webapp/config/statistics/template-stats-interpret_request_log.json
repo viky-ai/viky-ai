@@ -38,30 +38,7 @@
           "type": "integer"
         },
         "context":{
-          "properties":{
-            "test":{
-              "type": "keyword"
-            },
-            "ip":{
-              "type": "ip"
-            },
-            "user_id":{
-              "type": "keyword"
-            },
-            "session":{
-              "type": "keyword"
-            },
-            "client_type":{
-              "type": "keyword"
-            },
-            "agent_version":{
-              "type": "keyword"
-            },
-            "bot_version" :{
-              "type": "keyword"
-            }
-
-          }
+          "type": "object"
         },
         "body": {
           "properties": {
