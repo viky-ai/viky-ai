@@ -24,7 +24,14 @@
 
   .control--merged{
     @include display_flex();
+    align-items: flex-start;
 
+    textarea.autosize{
+      height: calc(1.5em + 0.375em + 0.375em);
+      resize: none;
+    }
+
+    textarea,
     input[type='text'],
     input[type='email'],
     input[type='password'],
@@ -46,6 +53,7 @@
       width:100%;
     }
 
+    textarea:first-child,
     input[type='text']:first-child,
     input[type='email']:first-child,
     input[type='password']:first-child,
@@ -64,6 +72,7 @@
       border-bottom-left-radius: 3px;
     }
 
+    textarea:last-child,
     input[type='text']:last-child,
     input[type='email']:last-child,
     input[type='password']:last-child,

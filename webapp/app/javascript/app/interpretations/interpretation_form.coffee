@@ -1,4 +1,5 @@
 $ = require('jquery');
+autosize = require('autosize');
 
 # https://github.com/kelektiv/node-uuid
 UUID = require('uuid/v1')
@@ -229,7 +230,8 @@ class AliasesRegexForm
     railroad_addon.replaceWith(@html_railroad())
 
   @setListeners: ->
-    inputs_selector = "input[name='interpretation[interpretation_aliases_attributes][][reg_exp]']"
+    inputs_selector = "textarea[name='interpretation[interpretation_aliases_attributes][][reg_exp]']"
+    autosize(textarea) for textarea in $(inputs_selector)
     $(inputs_selector).on "input", (event) ->
       container = $(event.target).closest('.control')
       form = new AliasesRegexForm($(event.target).val())
@@ -283,11 +285,11 @@ class AliasesRegexForm
     </span>"
 
   html_input: ->
-    "<input type='text'
-            name='interpretation[interpretation_aliases_attributes][][reg_exp]'
-            value='#{@regexp}'
-            class='code'
-            placeholder='Enter a regular expression'>"
+    "<textarea
+      maxlength='1000'
+      name='interpretation[interpretation_aliases_attributes][][reg_exp]'
+      class='code autosize'
+      placeholder='Enter a regular expression'>#{@regexp}</textarea>"
 
   html_railroad: ->
     url = "https://jex.im/regulex/#!flags=&re=#{encodeURIComponent(@regexp)}"

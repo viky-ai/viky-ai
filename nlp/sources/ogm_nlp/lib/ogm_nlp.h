@@ -37,6 +37,7 @@
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
 
 #define DOgNlpMaximumRegex          100
+#define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
 
 #define DOgNlpMaximumOwnedLock      16
 
