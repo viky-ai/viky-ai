@@ -199,7 +199,7 @@ class Nlp::Package
       interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
       expressions = []
 
-      elist.entities.order(position: :desc).find_each do |entity|
+      elist.entities.find_each do |entity|
         entity.terms.each do |term|
           expression = {}
           expression[:expression] = term['term']
