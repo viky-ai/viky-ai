@@ -180,6 +180,7 @@ GEM
     nio4r (2.3.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
+    oj (3.7.1)
     orm_adapter (0.5.0)
     pg (0.21.0)
     postmark (1.11.0)
@@ -381,6 +382,7 @@ DEPENDENCIES
   mail_safe
   mini_magick (>= 4.3.5)
   mocha
+  oj
   pg (~> 0.18)
   postmark-rails
   premailer-rails
