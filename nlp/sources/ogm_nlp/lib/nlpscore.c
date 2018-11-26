@@ -8,6 +8,8 @@
 
 static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
+static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression, struct request_score *score);
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
@@ -63,6 +65,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   score->spelling /= score->coverage;
   score->locale /= score->coverage;
 
+  IFE(NlpCalculateScoreGluePunctuations(ctrl_nlp_th, request_expression, score));
+
   if (request_expression->expression->alias_any_input_part_position >= 0)
   {
     if (request_expression->Irequest_any >= 0)
@@ -107,6 +111,55 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
 
   DONE;
 }
+
+static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression, struct request_score *score)
+{
+  if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+  {
+    int nb_words = ctrl_nlp_th->basic_group_request_word_nb;
+
+    struct request_position *request_position_start = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_expression->request_position_start);
+    IFN(request_position_start) DPcErr;
+
+    struct request_position *request_position_end = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_expression->request_position_start + request_expression->request_positions_nb - 1);
+    IFN(request_position_end) DPcErr;
+
+    int re_start_position = request_position_start->start + request_position_start->length;
+    int re_end_position = request_position_end->start;
+
+    struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+    IFN(request_words) DPcErr;
+    int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+    for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+    {
+      struct request_word *request_word = request_words + w;
+      if (state == 1)   // outside the texte zone
+      {
+        if (request_word->start_position >= re_start_position)
+        {
+          state = 2;
+          w--;
+        }
+      }
+      else if (state == 2)   // inside the texte zone
+      {
+        if (request_word->start_position + request_word->length_position <= re_end_position)
+        {
+          if (request_word->is_expression_punctuation)
+          {
+            score->coverage += (double)request_word->nb_matched_words / nb_words;
+          }
+        }
+      }
+    }
+  }
+  DONE;
+}
+
+
 
 /*
  * It is necessary to do the calculation during the parsing phase

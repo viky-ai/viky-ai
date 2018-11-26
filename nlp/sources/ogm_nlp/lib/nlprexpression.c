@@ -8,6 +8,8 @@
 
 #define DOgNlpMaxNbAnys 2
 
+static og_status NlpRequestExpressionAddGluePunctuations(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression);
 static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
     struct request_expression *request_expression, struct request_expression **psame_request_expression);
 static og_bool NlpRequestExpressionIsIncludedInNoanyRequestExpression(og_nlp_th ctrl_nlp_th,
@@ -62,7 +64,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     struct request_input_part *request_input_part = request_input_parts + match_zone_input_part[i].current;
     nb_request_positions += request_input_part->request_positions_nb;
   }
-  // pre-allocation to avoid reallocation in the
+  // pre-allocation to avoid reallocation in the heap
   int request_position_start = OgHeapAddCells(ctrl_nlp_th->hrequest_position, nb_request_positions);
   IFE(request_position_start);
   if (request_position_start != request_expression->request_position_start)
@@ -87,7 +89,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   }
   request_expression->request_positions_nb += request_position_current - request_position_start;
 
-  IF(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb)) DPcErr;
+  IFE(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb));
 
   // Necessary for NlpRequestExpressionOverlapMark and NlpRequestExpressionIsOrdered
   request_expression->orip_start = (-1);
@@ -275,6 +277,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   og_bool request_expression_added = TRUE;
   if (must_add_request_expression)
   {
+    IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));
     *prequest_expression = request_expression;
   }
   else
@@ -286,6 +289,64 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     *prequest_expression = NULL;
   }
   return (request_expression_added);
+}
+
+static og_status NlpRequestExpressionAddGluePunctuations(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression)
+{
+  if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
+  {
+    og_bool punctuation_word_added = FALSE;
+    struct request_position *request_position_start = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_expression->request_position_start);
+    IFN(request_position_start) DPcErr;
+
+    struct request_position *request_position_end = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_expression->request_position_start + request_expression->request_positions_nb - 1);
+    IFN(request_position_end) DPcErr;
+
+    int re_start_position = request_position_start->start + request_position_start->length;
+    int re_end_position = request_position_end->start;
+
+    struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
+    IFN(request_words) DPcErr;
+    int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+    for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+    {
+      struct request_word *request_word = request_words + w;
+      if (state == 1)   // outside the texte zone
+      {
+        if (request_word->start_position >= re_start_position)
+        {
+          state = 2;
+          w--;
+        }
+      }
+      else if (state == 2)   // inside the texte zone
+      {
+        if (request_word->start_position + request_word->length_position <= re_end_position)
+        {
+          if (request_word->is_expression_punctuation)
+          {
+            punctuation_word_added = TRUE;
+            size_t Irequest_position;
+            IFE(
+                NlpRequestPositionAdd(ctrl_nlp_th, request_word->start_position, request_word->length_position,
+                    &Irequest_position));
+            request_expression->request_positions_nb++;
+
+          }
+        }
+      }
+    }
+    if (punctuation_word_added)
+    {
+      IFE(
+          NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start,
+              request_expression->request_positions_nb));
+    }
+  }
+  DONE;
 }
 
 static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
