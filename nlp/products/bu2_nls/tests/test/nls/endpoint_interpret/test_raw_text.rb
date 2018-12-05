@@ -35,6 +35,9 @@ module Nls
         word_any = package.new_interpretation("word_any", { scope: "public" })
         word_any << Expression.new("motdebut @{fin}", aliases: { fin: Alias.any}, solution: "`{ raw: raw_text}`", keep_order: true, glued: true)
 
+        global_any = package.new_interpretation("global_any", { scope: "public" })
+        global_any << Expression.new("motdebutglobal @{word_any}", aliases: { word_any: word_any}, solution: "`{ raw: raw_text}`")
+
         package
       end
 
@@ -58,6 +61,11 @@ module Nls
       def test_word_any
         expected = { interpretation: "word_any", solution: { raw: "motdebut blabla" } }
         check_interpret("motdebut blabla",        expected)
+      end
+
+      def test_global_any
+        expected = { interpretation: "global_any", solution: { raw: "motdebutglobal motdebut blabla" } }
+        check_interpret("motdebutglobal motdebut blabla",        expected)
       end
 
     end

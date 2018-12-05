@@ -15,6 +15,8 @@ static og_bool NlpSolutionCombine(og_nlp_th ctrl_nlp_th, struct request_expressi
 static og_bool NlpSolutionBuildSolutionsQueue(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpSolutionMergeObjectsRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     og_string solution_key, json_t *sub_solution);
+static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any);
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     json_t *json_package_solution);
 static og_status NlpSolutionClean(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
@@ -790,17 +792,7 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   int start_position_any = start_position_expression;
   int end_position_any = end_position_expression;
 
-  if (request_expression->Irequest_any >= 0)
-  {
-    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
-    IFN(request_any) DPcErr;
-
-    struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
-    start_position_any = first_request_word_any->start_position;
-
-    struct request_word *last_request_word_any = request_any->queue_request_words->tail->data;
-    end_position_any = last_request_word_any->start_position + last_request_word_any->length_position;
-  }
+  IFE(NlpSolutionBuildRawTextGetAnyPositions(ctrl_nlp_th, request_expression, &start_position_any, &end_position_any));
 
   int start_position = start_position_expression;
   if (start_position_any < start_position) start_position = start_position_any;
@@ -838,6 +830,46 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   DONE;
 }
 
+
+static og_status NlpSolutionBuildRawTextGetAnyPositions(og_nlp_th ctrl_nlp_th,
+    struct request_expression *request_expression, int *pstart_position_any, int *pend_position_any)
+{
+
+  int start_position_any = *pstart_position_any;
+  int end_position_any = *pend_position_any;
+
+  if (request_expression->Irequest_any >= 0)
+  {
+    struct request_any *request_any = OgHeapGetCell(ctrl_nlp_th->hrequest_any, request_expression->Irequest_any);
+    IFN(request_any) DPcErr;
+
+    struct request_word *first_request_word_any = request_any->queue_request_words->head->data;
+    start_position_any = first_request_word_any->start_position;
+
+    struct request_word *last_request_word_any = request_any->queue_request_words->tail->data;
+    end_position_any = last_request_word_any->start_position + last_request_word_any->length_position;
+  }
+
+  if (start_position_any < *pstart_position_any) *pstart_position_any = start_position_any;
+  if (*pend_position_any < end_position_any) *pend_position_any = end_position_any;
+
+  for (int i = 0; i < request_expression->orips_nb; i++)
+  {
+    struct request_input_part *request_input_part = NlpGetRequestInputPart(ctrl_nlp_th, request_expression, i);
+    IFN(request_input_part) DPcErr;
+
+    if (request_input_part->type == nlp_input_part_type_Interpretation)
+    {
+      struct request_expression *sub_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression,
+          request_input_part->Irequest_expression);
+      IFN(sub_request_expression) DPcErr;
+      IFE(
+          NlpSolutionBuildRawTextGetAnyPositions(ctrl_nlp_th, sub_request_expression, pstart_position_any,
+              pend_position_any));
+    }
+  }
+  DONE;
+}
 
 
 static og_bool NlpSolutionComputeJS(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
