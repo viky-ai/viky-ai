@@ -55,13 +55,13 @@ module Nls
         )
 
         check_interpret("hello scope",
-          interpretations: ["scope_public_1", "scope_public_2"],
+          interpretations: ["scope_public_1"],
           packages: [ @package_1, @package_2 ],
           primary_package: @package_1
         )
 
         check_interpret("hello scope",
-          interpretations: ["scope_public_2", "scope_public_1"],
+          interpretations: ["scope_public_2"],
           packages: [ @package_1, @package_2 ],
           primary_package: @package_2
         )
