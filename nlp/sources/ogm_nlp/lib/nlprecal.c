@@ -50,6 +50,21 @@ og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th)
         continue;
       }
     }
+    else if (interpretation->scope == nlp_interpretation_scope_type_public)
+    {
+      if (ctrl_nlp_th->primary_package != NULL && interpretation->package != ctrl_nlp_th->primary_package)
+      {
+        // this is a secondary agent public interpretation
+        if (ctrl_nlp_th->show_private)
+        {
+          // secondary agent public interpretation kept only when show_private
+        }
+        else
+        {
+          continue;
+        }
+      }
+    }
 
     request_expression->any_validate_status = 1;
     g_queue_push_tail(sorted_request_expressions, request_expressions + i);
