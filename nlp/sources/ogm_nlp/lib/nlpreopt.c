@@ -190,7 +190,9 @@ static og_bool NlpRequestExpressionIsIncluded(og_nlp_th ctrl_nlp_th, struct requ
   if (request_expression_big->overlap_mark == request_expression->overlap_mark && request_expression->nb_anys) return FALSE;
   // Keeping variety of expression at vocabulary level, but not higher (when expressions have aliases)
   // This is ok, because this does not create any combinatory explosions
-  if (request_expression->expression->aliases_nb == 0) return FALSE;
+  // We keep also variety of expression when expression has only one alias,
+  // because this also does not create any combinatory explosions
+  if (request_expression->expression->aliases_nb <= 1) return FALSE;
   return NlpRequestPositionIsIncluded(ctrl_nlp_th, cache, request_expression_big->request_position_start,
       request_expression_big->request_positions_nb, request_expression->request_position_start,
       request_expression->request_positions_nb);
