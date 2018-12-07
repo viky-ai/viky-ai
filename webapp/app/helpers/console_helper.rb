@@ -24,17 +24,25 @@ module ConsoleHelper
     html = []
     unless matches['interpretation_slug'].split('/').last.include? 'recursive'
       html << '<li>'
+      id = matches['expression_id']
       if matches['interpretation_slug'].include? 'entities_list'
+        entity = Entity.find(id)
+        agent = entity.entities_list.agent
         href = "/agents/#{matches['interpretation_slug']}"
         href << "#smooth-scroll-to-entity-#{matches['expression_id']}"
       else
-        id = matches['expression_id']
         interpretation = Interpretation.find_by_id(id)
+        agent = interpretation.intent.agent
         href = "/agents/#{matches['interpretation_slug']}"
         href << "?locale=#{interpretation.locale}"
         href << "#smooth-scroll-to-interpretation-#{id}"
       end
-      html << "<a href='#{href}'>"
+      unless current_user.can?(:show, agent)
+        href = ""
+        link_class="link_disabled"
+        title="No access rights for this agent"
+      end
+      html << "<a href='#{href}' class='#{link_class}' title='#{title}'>"
       html << "<em>#{matches['expression']}</em>"
       html << "<span>#{matches['interpretation_slug']}</span>"
       html << '</a>'

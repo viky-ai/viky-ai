@@ -232,6 +232,21 @@
                       text-decoration: underline;
                     }
                   }
+
+                  &.link_disabled{
+                    background: #f9f9f9;
+                    cursor: not-allowed;
+                    em{
+                      color: #666;
+                    }
+                    &:hover,
+                    &:focus{
+                      border-left-color: #bbb;
+                      em{
+                        text-decoration: underline;
+                      }
+                    }
+                  }
                 }
               }
             }
