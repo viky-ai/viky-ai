@@ -60,8 +60,7 @@ class AgentsNewTest < ApplicationSystemTestCase
       # Display import file imput in order to allow capybara attach_file
       page.execute_script("$('#agent_image').css('opacity','1')")
 
-      # https://github.com/teampoltergeist/poltergeist/issues/866
-      attach_file('agent_image', file).click
+      attach_file('agent_image', file)
 
       click_button 'Create'
     end

@@ -24,20 +24,30 @@ module ConsoleHelper
     html = []
     unless matches['interpretation_slug'].split('/').last.include? 'recursive'
       html << '<li>'
+      id = matches['expression_id']
       if matches['interpretation_slug'].include? 'entities_list'
+        entity = Entity.find(id)
+        agent = entity.entities_list.agent
         href = "/agents/#{matches['interpretation_slug']}"
         href << "#smooth-scroll-to-entity-#{matches['expression_id']}"
       else
-        id = matches['expression_id']
         interpretation = Interpretation.find_by_id(id)
+        agent = interpretation.intent.agent
         href = "/agents/#{matches['interpretation_slug']}"
         href << "?locale=#{interpretation.locale}"
         href << "#smooth-scroll-to-interpretation-#{id}"
       end
-      html << "<a href='#{href}'>"
-      html << "<em>#{matches['expression']}</em>"
-      html << "<span>#{matches['interpretation_slug']}</span>"
-      html << '</a>'
+      if current_user.can?(:show, agent)
+        html << "<a href='#{href}'>"
+        html << "  <em>#{matches['expression']}</em>"
+        html << "  <span>#{matches['interpretation_slug']}</span>"
+        html << '</a>'
+      else
+        html << "<span title='#{t('views.console.no_access')}'>"
+        html << "  <em>#{matches['expression']}</em>"
+        html << "  <span>#{matches['interpretation_slug']}</span>"
+        html << '</span>'
+      end
       html << '</li>'
     end
     html.join.html_safe

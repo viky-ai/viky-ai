@@ -237,6 +237,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   if (must_add_request_expression)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
+    IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));
 
     struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
     IFn(request_expressions) DPcErr;
@@ -277,7 +278,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   og_bool request_expression_added = TRUE;
   if (must_add_request_expression)
   {
-    IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));
     *prequest_expression = request_expression;
   }
   else
@@ -363,7 +363,7 @@ static og_bool NlpRequestExpressionExists(og_nlp_th ctrl_nlp_th, struct request_
 //      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
 //          "NlpRequestExpressionExists compared equal new request expression with same request expression:");
 //      IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 0));
-//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, all_request_expression + i, 0));
+//      IFE(NlpInterpretTreeLog(ctrl_nlp_th, cache->request_expressions + i, 0));
       *psame_request_expression = cache->request_expressions + i;
       return TRUE;
     }
