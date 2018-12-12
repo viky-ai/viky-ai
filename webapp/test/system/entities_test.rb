@@ -15,6 +15,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_text?('Not used by any interpretation')
   end
 
+
   test 'Used by button in entity details' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_dates))
     assert page.has_link?('Used by...')
@@ -197,7 +198,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
       # Display import file imput in order to allow capybara attach_file
       page.execute_script("$('#import_file').css('opacity','1')");
-      attach_file('import_file', file).click
+      attach_file('import_file', file)
 
       click_button 'Import'
     end
@@ -216,7 +217,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
       # Display import file imput in order to allow capybara attach_file
       page.execute_script("$('#import_file').css('opacity','1')");
-      attach_file('import_file', file).click
+      attach_file('import_file', file)
 
       choose 'Replace'
       click_button 'Import'
