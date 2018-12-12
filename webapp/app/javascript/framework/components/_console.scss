@@ -209,7 +209,9 @@
                 &:last-child{
                   border-bottom: none;
                 }
-                a{
+
+                & > a,
+                & > span{
                   display: block;
                   text-decoration: none;
                   line-height: 1.4em;
@@ -219,11 +221,15 @@
                   em{
                     display: block;
                     font-style: normal;
-                    color: darken($primary_color, 10%);
                   }
                   span{
                     display: block;
                     color: rgba(#000, .5);
+                  }
+                }
+                & > a{
+                  em{
+                    color: darken($primary_color, 10%);
                   }
                   &:hover,
                   &:focus{
@@ -232,20 +238,16 @@
                       text-decoration: underline;
                     }
                   }
-
-                  &.link_disabled{
-                    background: #f9f9f9;
-                    cursor: not-allowed;
-                    em{
-                      color: #666;
-                    }
-                    &:hover,
-                    &:focus{
-                      border-left-color: #bbb;
-                      em{
-                        text-decoration: underline;
-                      }
-                    }
+                }
+                & > span{
+                  background: #f9f9f9;
+                  cursor: not-allowed;
+                  em{
+                    color: #666;
+                  }
+                  &:hover,
+                  &:focus{
+                    border-left-color: #bbb;
                   }
                 }
               }

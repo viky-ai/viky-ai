@@ -30,3 +30,4 @@ en:
       solution: Solution
       reset:
         title: Reset console to the current agent
+      no_access: You do not have access to this agent.

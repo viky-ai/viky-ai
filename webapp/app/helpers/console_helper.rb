@@ -37,15 +37,17 @@ module ConsoleHelper
         href << "?locale=#{interpretation.locale}"
         href << "#smooth-scroll-to-interpretation-#{id}"
       end
-      unless current_user.can?(:show, agent)
-        href = ""
-        link_class="link_disabled"
-        title="No access rights for this agent"
+      if current_user.can?(:show, agent)
+        html << "<a href='#{href}'>"
+        html << "  <em>#{matches['expression']}</em>"
+        html << "  <span>#{matches['interpretation_slug']}</span>"
+        html << '</a>'
+      else
+        html << "<span title='#{t('views.console.no_access')}'>"
+        html << "  <em>#{matches['expression']}</em>"
+        html << "  <span>#{matches['interpretation_slug']}</span>"
+        html << '</span>'
       end
-      html << "<a href='#{href}' class='#{link_class}' title='#{title}'>"
-      html << "<em>#{matches['expression']}</em>"
-      html << "<span>#{matches['interpretation_slug']}</span>"
-      html << '</a>'
       html << '</li>'
     end
     html.join.html_safe
