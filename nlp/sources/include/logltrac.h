@@ -52,6 +52,7 @@ DEFPUBLIC(void *) OgLtracInit(pr(struct og_ltrac_param *));
 DEFPUBLIC(int) OgLtracFlush(pr(void *));
 
 DEFPUBLIC(int) OgLtracDicInit(void *handle, struct og_ltrac_dictionaries *dictionaries);
+DEFPUBLIC(int) OgLtracFrequenciesSet(void *handle, int min_frequency, int min_frequency_swap);
 DEFPUBLIC(int) OgLtracDicWrite(void *handle);
 
 DEFPUBLIC(int) OgLtracAddWord(void *handle, struct og_ltrac_word_input *word_input);

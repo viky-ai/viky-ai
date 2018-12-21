@@ -81,6 +81,15 @@ PUBLIC(int) OgLtracDicInit(void *handle, struct og_ltrac_dictionaries *dictionar
   DONE;
 }
 
+PUBLIC(int) OgLtracFrequenciesSet(void *handle, int min_frequency, int min_frequency_swap)
+{
+  struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
+  struct og_ltrac_input *input = ctrl_ltrac->input;
+  input->min_frequency = min_frequency;
+  input->min_frequency_swap = min_frequency_swap;
+  DONE;
+}
+
 PUBLIC(int) OgLtracDicWrite(void *handle)
 {
   struct og_ctrl_ltrac *ctrl_ltrac = (struct og_ctrl_ltrac *) handle;
