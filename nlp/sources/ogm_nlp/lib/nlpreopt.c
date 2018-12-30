@@ -103,7 +103,7 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th, str
     struct request_expression *request_expression = cache->request_expressions + i;
     if (request_expression->analyzed) continue;
     if (request_expression->expression->interpretation != first_request_expression->expression->interpretation) continue;
-    if (request_expression->expression->interpretation->is_recursive) continue;
+    if (request_expression->expression->interpretation->is_recursive && request_expression->expression->aliases_nb > 1) continue;
 
     request_position = cache->request_positions + request_expression->request_position_start;
     int request_start_position = request_position->start;
@@ -210,12 +210,21 @@ static og_bool NlpRequestExpressionIsIncluded(og_nlp_th ctrl_nlp_th, struct requ
   // because this also does not create any combinatory explosions
   if (request_expression->expression->aliases_nb <= 1)
   {
-    // If the request has the same position (for example spellchecking difference)
-    // we keep only one expression with best score
-    og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, cache, request_expression_big->request_position_start,
-        request_expression_big->request_positions_nb, request_expression->request_position_start,
-        request_expression->request_positions_nb);
-    if (!same_positions) return FALSE;
+    // When we have several recursive elements that overlap, we keep only the biggest one
+    og_bool same_recursive_element = FALSE;
+    if (request_expression_big->expression == request_expression->expression)
+    {
+      if (request_expression_big->expression->interpretation->is_recursive) same_recursive_element = TRUE;
+    }
+    if (!same_recursive_element)
+    {
+      // If the request has the same position (for example spellchecking difference)
+      // we keep only one expression with best score
+      og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, cache,
+          request_expression_big->request_position_start, request_expression_big->request_positions_nb,
+          request_expression->request_position_start, request_expression->request_positions_nb);
+      if (!same_positions) return FALSE;
+    }
   }
   return NlpRequestPositionIsIncluded(ctrl_nlp_th, cache, request_expression_big->request_position_start,
       request_expression_big->request_positions_nb, request_expression->request_position_start,
