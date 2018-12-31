@@ -490,6 +490,7 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
   json_t *json_keep_order = NULL;
   json_t *json_glued = NULL;
   json_t *json_glue_strength = NULL;
+  json_t *json_glue_distance = NULL;
   json_t *json_aliases = NULL;
   json_t *json_locale = NULL;
   json_t *json_solution = NULL;
@@ -518,6 +519,10 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     else if (Ogstricmp(key, "glue-strength") == 0)
     {
       json_glue_strength = json_object_iter_value(iter);
+    }
+    else if (Ogstricmp(key, "glue-distance") == 0)
+    {
+      json_glue_distance = json_object_iter_value(iter);
     }
     else if (Ogstricmp(key, "aliases") == 0)
     {
@@ -674,6 +679,20 @@ static int NlpCompilePackageExpression(og_nlp_th ctrl_nlp_th, package_t package,
     DPcErr;
   }
 
+
+  if (json_glue_distance == NULL)
+  {
+    expression->glue_distance = DOgNlpDefaultGlueDistance;
+  }
+  else if (json_is_integer(json_glue_distance))
+  {
+    expression->glue_distance = json_integer_value(json_glue_distance);
+  }
+  else
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpCompilePackageExpression: glue_distance is not an integer");
+    DPcErr;
+  }
 
   IFN(json_aliases)
   {

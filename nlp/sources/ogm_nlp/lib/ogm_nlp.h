@@ -41,6 +41,9 @@
 
 #define DOgNlpMaximumOwnedLock      16
 
+// Max default distance (in number of chars) between two input parts in an expression
+#define DOgNlpDefaultGlueDistance   20
+
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
@@ -180,6 +183,7 @@ struct expression_compile
   og_bool keep_order;
   og_bool glued;
   enum nlp_glue_strength glue_strength;
+  int glue_distance;
   int alias_start, aliases_nb;
   int locale;
   int input_part_start, input_parts_nb;
@@ -203,6 +207,7 @@ struct expression
   og_bool keep_order;
   og_bool glued;
   enum nlp_glue_strength glue_strength;
+  int glue_distance;
 
   int locale;
 
