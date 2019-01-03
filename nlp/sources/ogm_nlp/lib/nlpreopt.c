@@ -87,6 +87,13 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th, str
 {
   struct request_expression *first_request_expression = cache->request_expressions + Irequest_expression;
 
+  struct request_position *request_position;
+  request_position = cache->request_positions + first_request_expression->request_position_start;
+  int first_request_start_position = request_position->start;
+  request_position = cache->request_positions + first_request_expression->request_position_start
+      + first_request_expression->request_positions_nb - 1;
+  int first_request_end_position = request_position->start + request_position->length;
+
   GQueue queue_request_expression[1];
   g_queue_init(queue_request_expression);
 
@@ -96,7 +103,16 @@ static og_status NlpRequestExpressionOptimizeIncluded(og_nlp_th ctrl_nlp_th, str
     struct request_expression *request_expression = cache->request_expressions + i;
     if (request_expression->analyzed) continue;
     if (request_expression->expression->interpretation != first_request_expression->expression->interpretation) continue;
-    if (request_expression->expression->interpretation->is_recursive) continue;
+    if (request_expression->expression->interpretation->is_recursive && request_expression->expression->aliases_nb > 1) continue;
+
+    request_position = cache->request_positions + request_expression->request_position_start;
+    int request_start_position = request_position->start;
+    request_position = cache->request_positions + request_expression->request_position_start
+        + request_expression->request_positions_nb - 1;
+    int request_end_position = request_position->start + request_position->length;
+    if (first_request_end_position < request_start_position ||
+        request_end_position < first_request_start_position) continue;
+
     g_queue_push_tail(queue_request_expression, request_expression);
     request_expression->analyzed = 1;
   }
@@ -192,7 +208,24 @@ static og_bool NlpRequestExpressionIsIncluded(og_nlp_th ctrl_nlp_th, struct requ
   // This is ok, because this does not create any combinatory explosions
   // We keep also variety of expression when expression has only one alias,
   // because this also does not create any combinatory explosions
-  if (request_expression->expression->aliases_nb <= 1) return FALSE;
+  if (request_expression->expression->aliases_nb <= 1)
+  {
+    // When we have several recursive elements that overlap, we keep only the biggest one
+    og_bool same_recursive_element = FALSE;
+    if (request_expression_big->expression == request_expression->expression)
+    {
+      if (request_expression_big->expression->interpretation->is_recursive) same_recursive_element = TRUE;
+    }
+    if (!same_recursive_element)
+    {
+      // If the request has the same position (for example spellchecking difference)
+      // we keep only one expression with best score
+      og_bool same_positions = NlpRequestPositionSame(ctrl_nlp_th, cache,
+          request_expression_big->request_position_start, request_expression_big->request_positions_nb,
+          request_expression->request_position_start, request_expression->request_positions_nb);
+      if (!same_positions) return FALSE;
+    }
+  }
   return NlpRequestPositionIsIncluded(ctrl_nlp_th, cache, request_expression_big->request_position_start,
       request_expression_big->request_positions_nb, request_expression->request_position_start,
       request_expression->request_positions_nb);
