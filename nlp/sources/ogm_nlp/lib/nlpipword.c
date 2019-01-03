@@ -18,6 +18,7 @@ og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package)
   sprintf(aut_param->name, "package_ha_word");
   package->ha_word = OgAutInit(aut_param);
   IFn(package->ha_word) DPcErr;
+  package->nb_words = 0;
   DONE;
 }
 
@@ -41,6 +42,8 @@ og_status NlpInputPartWordAdd(og_nlp_th ctrl_nlp_th, package_t package, og_strin
 
   int length = p - buffer;
   IFE(OgAutAdd(package->ha_word, length, buffer));
+
+  package->nb_words++;
 
   DONE;
 }

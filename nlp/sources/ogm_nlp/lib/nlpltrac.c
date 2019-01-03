@@ -41,6 +41,8 @@ static og_status NlpLtracPackageInit(og_nlp_th ctrl_nlp_th, package_t package)
   package->ltra_dictionaries->ha_base = dictionaries->ha_base;
   package->ltra_dictionaries->ha_swap = dictionaries->ha_swap;
   package->ltra_dictionaries->ha_phon = dictionaries->ha_phon;
+
+  IFE(OgLtracFrequenciesSet(ctrl_nlp_th->hltrac,package->ltra_min_frequency,package->ltra_min_frequency_swap));
   DONE;
 }
 
@@ -88,7 +90,24 @@ og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package)
   int retour, nstate0, nstate1, iout;
   int sep_old = 0, frequency;
 
-  NlpLog(DOgNlpTraceLtrac, "Creating ltrac package '%s' '%s':", package->slug, package->id);
+  int log2_nb_words = log2(package->nb_words);
+
+  if (log2_nb_words <= 10)
+  {
+    package->ltra_min_frequency = 1;
+    package->ltra_min_frequency_swap = 1;
+  }
+  else
+  {
+    package->ltra_min_frequency = (log2_nb_words - 10) / 2;
+    if (package->ltra_min_frequency < 1) package->ltra_min_frequency = 1;
+    package->ltra_min_frequency_swap = package->ltra_min_frequency * 2;
+  }
+
+  NlpLog(DOgNlpTraceLtrac,
+      "Creating ltrac package '%s' '%s' from %d words log2=%d ltra_min_frequency=%d ltra_min_frequency_swap=%d",
+      package->slug, package->id, package->nb_words, log2_nb_words, package->ltra_min_frequency,
+      package->ltra_min_frequency_swap);
 
   IFE(NlpLtracPackageInit(ctrl_nlp_th, package));
 
@@ -147,11 +166,22 @@ static og_status NlpLtracAdd(og_nlp_th ctrl_nlp_th, unsigned char *word, int wor
 {
   if (word_length <= 0) DONE;
 
-  NlpLog(DOgNlpTraceLtrac, "  NlpLtracAdd: adding %.*s with frequency %d", word_length, word, frequency);
-
   int uni_length;
   unsigned char uni[DPcPathSize];
   IFE(OgCpToUni(word_length, word , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
+
+  og_bool keep_word = FALSE;
+  for (int i=0; i<uni_length; i+=2)
+  {
+    int c = (uni[i]<<8)+uni[i+1];
+    if (OgUniIspunct(c)) continue;
+    if (OgUniIsdigit(c)) continue;
+    keep_word = TRUE;
+  }
+
+  if (!keep_word) DONE;
+
+  NlpLog(DOgNlpTraceLtrac, "  NlpLtracAdd: adding %.*s with frequency %d", word_length, word, frequency);
 
   struct og_ltrac_word_input word_input[1];
   word_input->value_length = uni_length;
