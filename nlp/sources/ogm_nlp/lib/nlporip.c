@@ -10,8 +10,8 @@
 og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
 {
   int request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
-  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
-  IFN(request_input_part) DPcErr;
+  struct request_input_part *request_input_parts = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
+  IFN(request_input_parts) DPcErr;
 
   IFE(OgHeapReset(ctrl_nlp_th->horiginal_request_input_part));
   IFE(OgHeapAddCells(ctrl_nlp_th->horiginal_request_input_part, request_input_part_used));
@@ -21,7 +21,7 @@ og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
 
   for (int i=0; i<request_input_part_used; i++)
   {
-    original_request_input_part[request_input_part[i].Ioriginal_request_input_part].Irequest_input_part = i;
+    original_request_input_part[request_input_parts[i].Ioriginal_request_input_part].Irequest_input_part = i;
   }
 DONE;
 }
