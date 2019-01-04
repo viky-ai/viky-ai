@@ -158,7 +158,9 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
           }
         }]
     })
+    assert_not log.persisted?
     assert log.save
+    assert log.persisted?
   end
 
   test 'Limit context size' do
@@ -179,7 +181,8 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       }]
     })
     assert !log.save
-    expected = 'Context is too long (maximum is 1000 items)'
+    assert_not log.persisted?
+    expected = [:context_to_s, "is too long (maximum is 1000 characters)"]
     assert_equal expected, log.errors.first
   end
 end

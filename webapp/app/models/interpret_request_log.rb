@@ -1,12 +1,16 @@
 class InterpretRequestLog
+  include ActiveModel::Model
 
   INDEX_NAME = 'stats-interpret_request_log'.freeze
   INDEX_ALIAS_NAME = ['index', INDEX_NAME].join('-').freeze
   SEARCH_ALIAS_NAME = ['search', INDEX_NAME].join('-').freeze
-
   INDEX_TYPE = 'log'.freeze
 
-  attr_reader :id, :timestamp, :sentence, :language, :now, :status, :body, :context, :errors
+  attr_accessor :id, :agent, :timestamp, :sentence, :language, :now, :status, :body, :context
+
+  validates :context_to_s, length: {
+    maximum: 1000, too_long: I18n.t('errors.interpret_request_log.too_long')
+  }
 
   def self.count(params = {})
     client = IndexManager.client
@@ -19,29 +23,24 @@ class InterpretRequestLog
     result = client.get index: SEARCH_ALIAS_NAME, type: INDEX_TYPE, id: id
     params = result['_source'].symbolize_keys
     params[:id] = result['_id']
+    params.delete(:agent_slug)
+    params.delete(:owner_id)
     InterpretRequestLog.new params
   end
 
-  def initialize(params = {})
-    @errors = []
-
-    @id = params[:id]
-    @agent = params[:agent].present? ? params[:agent] : Agent.find(params[:agent_id])
-    @timestamp = params[:timestamp]
-    @sentence = params.fetch(:sentence, '')
-    @language = params[:language]
-    @now = params[:now]
-    @status = params[:status]
-    @body = params[:body]
-    @context = params[:context].present? ? params[:context] : {}
+  def initialize(attributes = {})
+    if attributes[:agent].blank?
+      attributes[:agent] = Agent.find(attributes[:agent_id])
+      attributes.delete(:agent_id)
+    end
+    super
+    @agent ||= Agent.find(attributes[:agent_id])
+    @sentence ||= ''
+    @context ||= {}
     unless @context['test'].present?
       @context['client_type'] = @context['client_type'].present? ? @context['client_type']: 'bot'
       @context['agent_version'] = @agent.updated_at
     end
-  end
-
-  def valid?
-    @errors.empty?
   end
 
   def with_response(status, body)
@@ -51,14 +50,15 @@ class InterpretRequestLog
   end
 
   def save
-    validate_context_size
-    if valid?
-      refresh = Rails.env == 'test'
-      client = IndexManager.client
-      result = client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: to_json, id: @id, refresh: refresh
-      @id = result['_id']
-    end
-    valid?
+    return false unless valid?
+    refresh = Rails.env == 'test'
+    client = IndexManager.client
+    result = client.index index: INDEX_ALIAS_NAME, type: INDEX_TYPE, body: to_json, id: @id, refresh: refresh
+    @id = result['_id']
+  end
+
+  def persisted?
+    @id.present?
   end
 
 
@@ -79,7 +79,7 @@ class InterpretRequestLog
       }
     end
 
-    def validate_context_size
-      @errors << I18n.t('errors.interpret_request_log.context_too_long', count: 1000) if @context.to_s.size > 1000
+    def context_to_s
+      @context.to_s
     end
 end
