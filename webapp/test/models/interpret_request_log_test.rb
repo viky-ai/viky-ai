@@ -148,16 +148,38 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
         agent: agents(:weather),
         context: {'client_type' => 'console', 'user_id' => '078602e7-0578-49d4-96ee-d8ee2f9b1ecf'}
       ).with_response('200', {
-        'interpretations' => [{
-          'package': '132154f2-4545-4ae2-a802-3d39a2a5013f',
-          'id' => 'a342f0ff-5d49-4a29-bc37-a9d754b99a7b',
-          'slug' => 'viky/weather/interpretations/weather_question',
-          'score' => '0.83',
-          'solution' => {
-            'date' => 'today'
+        interpretations: [{
+          package: '132154f2-4545-4ae2-a802-3d39a2a5013f',
+          id: 'a342f0ff-5d49-4a29-bc37-a9d754b99a7b',
+          slug: 'viky/weather/interpretations/weather_question',
+          score: '0.83',
+          solution: {
+            date: 'today'
           }
         }]
     })
     assert log.save
+  end
+
+  test 'Limit context size' do
+    log = InterpretRequestLog.new(
+      timestamp: '2018-11-21T16:00:00.000+02:00',
+      sentence: 'What the weather like today ?',
+      agent: agents(:weather),
+      context: { 'foo' => 'bar' * 1000 }
+    ).with_response('200', {
+      interpretations: [{
+        package: '132154f2-4545-4ae2-a802-3d39a2a5013f',
+        id: 'a342f0ff-5d49-4a29-bc37-a9d754b99a7b',
+        slug: 'viky/weather/interpretations/weather_question',
+        score: '0.83',
+        solution: {
+          date: 'today'
+        }
+      }]
+    })
+    assert !log.save
+    expected = 'Context is too long (maximum is 1000 items)'
+    assert_equal expected, log.errors.first
   end
 end

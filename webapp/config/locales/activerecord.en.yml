@@ -130,3 +130,5 @@ en:
       communication_failure: 'The bot does not reply. The link seems broken.'
       bot_failure: 'The bot replied with an error.'
       unknown_request_failure: 'Unknown error while requesting the bot.'
+    interpret_request_log:
+      context_too_long: 'Context is too long (maximum is %{count} items)'
