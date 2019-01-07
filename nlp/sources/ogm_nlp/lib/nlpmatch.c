@@ -53,9 +53,9 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, "List of request input parts after NlpMatchWords:"));
   }
 
+  ctrl_nlp_th->level = 0;
   ctrl_nlp_th->accept_any_expressions = FALSE;
   // Getting all matching expressions and thus interpretations and getting all new input_parts
-  ctrl_nlp_th->level = 0;
   int at_least_one_input_part_added = 0;
   do
   {
@@ -66,7 +66,11 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   }
   while (at_least_one_input_part_added);
 
-  NlpLog(DOgNlpTraceMatch, "\nLooking for any expressions");
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "");
+    OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "Looking for any expressions");
+  }
 
   IFE(NlpMatchValidateListsWithoutAny(ctrl_nlp_th));
 

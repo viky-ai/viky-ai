@@ -226,8 +226,9 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
       {
         snprintf(number, DPcPathSize, " -> " DOgPrintDouble, request_word->number_value);
       }
-      snprintf(string_input_part, DPcPathSize, "[%s] word:%s%s %d:%d", string_positions, string_request_word, number,
-          request_word->start_position, request_word->length_position);
+      snprintf(string_input_part, DPcPathSize, "[%s] '%s' word:%s%s %d:%d", string_positions,
+          request_input_part->input_part->expression->text, string_request_word, number, request_word->start_position,
+          request_word->length_position);
       break;
     }
     case nlp_input_part_type_Interpretation:
@@ -236,8 +237,8 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
           request_input_part->Irequest_expression);
       IFN(request_expression) DPcErr;
       struct interpretation *interpretation = request_expression->expression->interpretation;
-      snprintf(string_input_part, DPcPathSize, "[%s] interpretation: '%s' '%s'", string_positions, interpretation->slug,
-          interpretation->id);
+      snprintf(string_input_part, DPcPathSize, "[%s] '%s' interpretation: '%s'", string_positions,
+          request_input_part->input_part->expression->text, interpretation->slug);
       break;
     }
     case nlp_input_part_type_Number:

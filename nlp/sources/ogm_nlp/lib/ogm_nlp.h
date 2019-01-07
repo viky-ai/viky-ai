@@ -810,6 +810,7 @@ og_status NlpPackageContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct 
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
 og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part);
+og_status NlpPackageInputPartExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part, char *label);
 og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 
 og_status NlpPackageCompileLog(og_nlp_th ctrl_nlp_th, package_t package);
@@ -939,6 +940,8 @@ og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expre
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
 og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionIncluded(og_nlp_th ctrl_nlp_th, struct request_position *request_positions,
     int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
