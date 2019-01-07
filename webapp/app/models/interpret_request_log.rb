@@ -37,10 +37,7 @@ class InterpretRequestLog
     @agent ||= Agent.find(attributes[:agent_id])
     @sentence ||= ''
     @context ||= {}
-    unless @context['test'].present?
-      @context['client_type'] = @context['client_type'].present? ? @context['client_type']: 'bot'
-      @context['agent_version'] = @agent.updated_at
-    end
+    @context['agent_version'] = @agent.updated_at
   end
 
   def with_response(status, body)

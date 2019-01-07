@@ -4,7 +4,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
   before_action :check_agent_token
 
   def interpret
-    @nlp = Nlp::Interpret.new(interpret_parameters)
+    @nlp = Nlp::Interpret.new(interpret_parameters.except(:context))
 
     @nlp.agent_token = request.headers["Agent-Token"]     if @nlp.agent_token.blank?
     @nlp.language    = request.headers["Accept-Language"] if @nlp.language.blank?
@@ -49,20 +49,20 @@ class Api::V1::NlpController < Api::V1::ApplicationController
 
     def interpret_parameters
       params.permit(
-        :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
+        :ownername,
+        :agentname,
+        :format,
+        :sentence,
+        :language,
+        :agent_token,
+        :verbose,
+        :now,
+        context: {}
       )
     end
 
     def build_log_request
       parameters = interpret_parameters
-
-      context = {}
-      request.headers.each do |key, value|
-       if key.starts_with?('HTTP_CONTEXT_')
-        context_key = key.gsub('HTTP_CONTEXT_', '').downcase
-        context[context_key] = value
-       end
-      end
 
       @log = InterpretRequestLog.new(
         timestamp: Time.now.iso8601(3),
@@ -70,7 +70,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         language: parameters['language'],
         now: parameters['now'],
         agent: @agent,
-        context: context
+        context: parameters['context']
       )
     end
 end
