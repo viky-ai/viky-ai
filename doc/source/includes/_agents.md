@@ -3,7 +3,11 @@
 ## Interpret
 
 ```shell
-curl -G "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?now=2017-12-05T08:30:20+01:00" --data-urlencode "sentence=I want to go from NY to LA" \
+curl -G "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?" \
+    --data-urlencode "now=2017-12-05T08:30:20+01:00" \
+    --data-urlencode "sentence=I want to go from NY to LA" \
+    --data-urlencode "context['session_id']='0112f97b-e5dd-47a4-b848'" \
+    --data-urlencode "context['bot_version']='1.2.1'" \
   -H "Agent-Token: the-agent-token" \
   -H "Accept-Language: en-gb"
 ```
@@ -76,9 +80,11 @@ This endpoint retrieves all the interpretations extracted from the `sentence` st
       <td>2017-12-20T08:30:20+01:00</td>
       <td>The user current time with the UTC offset</td>
     </tr>
+    <tr>
+      <td>context</td>
+      <td>no</td>
+      <td>{ session_id: '0112f97b-e5dd-47a4-b848', bot_version: '1.2.1' }</td>
+      <td>A custom hash for statsitics purpose.</td>
+    </tr>
   </tbody>
 </table>
-
-<aside class="notice">
-  Remember — the language can be specified also in the request <code>Accept-Language</code> header using all country variants and the q-weighting factors, e.g.: <code>Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5</code>
-</aside>
