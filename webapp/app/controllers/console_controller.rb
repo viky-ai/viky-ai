@@ -49,7 +49,7 @@ class ConsoleController < ApplicationController
         language: language,
         now: now,
         context: {
-          cilent_type: 'console',
+          client_type: 'console',
           user_id: current_user.id
         }
       }
