@@ -9,7 +9,7 @@ class InterpretRequestLog
   attr_accessor :id, :agent, :timestamp, :sentence, :language, :now, :status, :body, :context
 
   validates :context_to_s, length: {
-    maximum: 1000, too_long: I18n.t('errors.interpret_request_log.too_long')
+    maximum: 1000
   }
 
   def self.count(params = {})
