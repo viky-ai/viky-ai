@@ -231,6 +231,7 @@ struct expression
   int any_input_part_position;
 
   og_bool is_recursive;
+  og_bool is_super_list;
 
   json_t *json_solution;
 };
@@ -271,6 +272,7 @@ struct interpretation
   struct expression *expressions;
 
   og_bool is_recursive;
+  og_bool is_super_list;
 };
 
 struct interpret_package
@@ -772,6 +774,8 @@ struct og_ctrl_nlp_threaded
   og_heap hre_to_sort;
 
   og_bool accept_any_expressions;
+
+  struct expression *super_list;
 };
 
 struct og_ctrl_nlp
@@ -1099,4 +1103,8 @@ og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
+
+/* nlpsuperlist.c */
+og_status NlpConsolidateSuperListPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
 

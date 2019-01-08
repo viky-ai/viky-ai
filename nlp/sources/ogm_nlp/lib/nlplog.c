@@ -243,8 +243,12 @@ og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, 
   recursive[0]=0;
   if (interpretation->is_recursive) sprintf(recursive," recursive");
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s'%s:", interpretation->slug,
-      interpretation->id, recursive);
+  unsigned char super_list[DPcPathSize];
+  super_list[0]=0;
+  if (interpretation->is_super_list) sprintf(super_list," super_list");
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s'%s%s:", interpretation->slug,
+      interpretation->id, recursive, super_list);
 
   for (int i = 0; i < interpretation->contexts_nb; i++)
   {
@@ -288,6 +292,10 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   recursive[0]=0;
   if (expression->is_recursive) sprintf(recursive," recursive");
 
+  unsigned char super_list[DPcPathSize];
+  super_list[0]=0;
+  if (expression->is_super_list) sprintf(super_list," super_list");
+
   char id_string[DPcPathSize];
   IFN(expression->id)
   {
@@ -311,9 +319,9 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      "    Expression '%s' with locale %s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
+      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
       expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "",  string_glue_strength, recursive,
-      expression->alias_any_input_part_position);
+      super_list, expression->alias_any_input_part_position);
 
   for (int i = 0; i < expression->aliases_nb; i++)
   {
