@@ -15,6 +15,8 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
 static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package);
 static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
+static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int Iinput_part);
 
 /*
  * A super list is a recursive list called from a public interpretation
@@ -242,6 +244,7 @@ og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinpu
 og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
 {
   ctrl_nlp_th->level++;
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     char buffer[DPcPathSize];
@@ -268,23 +271,13 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
     }
     if (first_expression)
     {
-      og_status Irequest_input_part = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression,
-          ctrl_nlp_th->super_list_interpret_package, ctrl_nlp_th->super_list_single->input_parts[0].self_index);
-      IFE(Irequest_input_part);
-      struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-          Irequest_input_part);
-      IFN(request_input_part) DPcErr;
-
-      size_t Ioriginal_request_input_part;
-      struct original_request_input_part *original_request_input_part = OgHeapNewCell(
-          ctrl_nlp_th->horiginal_request_input_part, &Ioriginal_request_input_part);
-      IFN(original_request_input_part) DPcErr;
-      original_request_input_part->Irequest_input_part = Irequest_input_part;
+      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression,
+          ctrl_nlp_th->super_list_single->input_parts[0].self_index);
 
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
       {
         char buffer[DPcPathSize];
-        snprintf(buffer, DPcPathSize, "NlpSuperListValidate: list of new request input parts for first expressions:");
+        snprintf(buffer, DPcPathSize, "NlpSuperListCreate: list of new request input parts for first expressions:");
         IFE(NlpRequestInputPartsLog(ctrl_nlp_th, new_request_input_part_start, buffer));
       }
 
@@ -313,35 +306,16 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
     }
     else
     {
-      og_status Irequest_input_part = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression,
-          ctrl_nlp_th->super_list_interpret_package, ctrl_nlp_th->super_list->input_parts[0].self_index);
-      IFE(Irequest_input_part);
-      struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-          Irequest_input_part);
-      IFN(request_input_part) DPcErr;
+      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression,
+          ctrl_nlp_th->super_list->input_parts[0].self_index);
 
-      size_t Ioriginal_request_input_part;
-      struct original_request_input_part *original_request_input_part = OgHeapNewCell(
-          ctrl_nlp_th->horiginal_request_input_part, &Ioriginal_request_input_part);
-      IFN(original_request_input_part) DPcErr;
-      original_request_input_part->Irequest_input_part = Irequest_input_part;
-
-      og_status Irequest_input_part_recur = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, new_request_expression,
-          ctrl_nlp_th->super_list_interpret_package, ctrl_nlp_th->super_list->input_parts[1].self_index);
-      IFE(Irequest_input_part_recur);
-      struct request_input_part *request_input_part_recur = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part,
-          Irequest_input_part_recur);
-      IFN(request_input_part_recur) DPcErr;
-
-      original_request_input_part = OgHeapNewCell(ctrl_nlp_th->horiginal_request_input_part,
-          &Ioriginal_request_input_part);
-      IFN(original_request_input_part) DPcErr;
-      original_request_input_part->Irequest_input_part = Irequest_input_part_recur;
+      og_status Irequest_input_part_recur = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression,
+          ctrl_nlp_th->super_list->input_parts[1].self_index);
 
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
       {
         char buffer[DPcPathSize];
-        snprintf(buffer, DPcPathSize, "NlpSuperListValidate: list of new request input parts for next expressions:");
+        snprintf(buffer, DPcPathSize, "NlpSuperListCreate: list of new request input parts for next expressions:");
         IFE(NlpRequestInputPartsLog(ctrl_nlp_th, new_request_input_part_start, buffer));
       }
 
@@ -369,17 +343,9 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
   if (new_request_expression == NULL) DONE;
 
   ctrl_nlp_th->level++;
-  og_status Irequest_input_part = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, new_request_expression,
-      ctrl_nlp_th->super_list_interpret_package, ctrl_nlp_th->super_list_public_mother->input_parts[0].self_index);
-  IFE(Irequest_input_part);
-  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
-  IFN(request_input_part) DPcErr;
 
-  size_t Ioriginal_request_input_part;
-  struct original_request_input_part *original_request_input_part = OgHeapNewCell(
-      ctrl_nlp_th->horiginal_request_input_part, &Ioriginal_request_input_part);
-  IFN(original_request_input_part) DPcErr;
-  original_request_input_part->Irequest_input_part = Irequest_input_part;
+  og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression,
+      ctrl_nlp_th->super_list_public_mother->input_parts[0].self_index);
 
   struct match_zone_input_part match_zone_input_part[1];
   match_zone_input_part->current = Irequest_input_part;
@@ -397,5 +363,23 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
   }
 
   DONE;
+}
+
+static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    int Iinput_part)
+{
+  og_status Irequest_input_part = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression,
+      ctrl_nlp_th->super_list_interpret_package, Iinput_part);
+  IFE(Irequest_input_part);
+  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
+  IFN(request_input_part) DPcErr;
+
+  size_t Ioriginal_request_input_part;
+  struct original_request_input_part *original_request_input_part = OgHeapNewCell(
+      ctrl_nlp_th->horiginal_request_input_part, &Ioriginal_request_input_part);
+  IFN(original_request_input_part) DPcErr;
+  original_request_input_part->Irequest_input_part = Irequest_input_part;
+
+  return (Irequest_input_part);
 }
 
