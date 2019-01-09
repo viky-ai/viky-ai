@@ -90,6 +90,12 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   {
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
   }
+
+  if (ctrl_nlp_th->super_list != NULL)
+  {
+    IFE(NlpSuperListCreate(ctrl_nlp_th));
+  }
+
   IFE(NlpRequestExpressionsCalculate(ctrl_nlp_th));
 
   IFE(NlpWhyCalculate(ctrl_nlp_th));

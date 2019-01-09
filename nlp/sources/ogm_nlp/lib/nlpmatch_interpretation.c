@@ -85,6 +85,10 @@ static og_bool NlpMatchInterpretationInPackage(og_nlp_th ctrl_nlp_th, struct req
       unsigned char *p = out;
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
 
+      og_bool validated = NlpSuperListValidate(ctrl_nlp_th,package,Iinput_part);
+      IFE(validated);
+      if (!validated) continue;
+
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
       {
         IFE(NlpPackageInputPartExpressionLog(ctrl_nlp_th, package, Iinput_part, "  found"));

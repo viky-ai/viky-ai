@@ -229,7 +229,7 @@ static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, struct expression *expressi
   }
 
   og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
-      &request_expression);
+      &request_expression, FALSE);
   IF(request_expression_added) DPcErr;
 
   if (request_expression_added)

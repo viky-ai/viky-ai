@@ -25,7 +25,8 @@ static og_status NlpRequestInterpretationBuild(og_nlp_th ctrl_nlp_th, struct req
     json_t *json_interpretations);
 
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
-    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression)
+    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression,
+    og_bool is_super_list)
 {
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   int request_position_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);
@@ -109,7 +110,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   int must_add_request_expression = TRUE;
 
-  if (must_add_request_expression)
+  if (must_add_request_expression && !is_super_list)
   {
     if (request_expression->nb_anys == 0 && ctrl_nlp_th->accept_any_expressions)
     {
@@ -172,7 +173,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-  if (must_add_request_expression)
+  if (must_add_request_expression && !is_super_list)
   {
     if (request_expression->expression->is_recursive)
     {
@@ -234,7 +235,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-  if (must_add_request_expression)
+  if (must_add_request_expression  && !is_super_list)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
     IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));

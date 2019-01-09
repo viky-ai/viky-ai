@@ -60,7 +60,7 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct req
 
   IFE(NlpRequestInputPartGetSparseMark(ctrl_nlp_th, request_input_part));
 
-  DONE;
+  return(request_input_part->Ioriginal_request_input_part);
 }
 
 static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,

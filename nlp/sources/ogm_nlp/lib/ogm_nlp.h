@@ -776,6 +776,11 @@ struct og_ctrl_nlp_threaded
   og_bool accept_any_expressions;
 
   struct expression *super_list;
+  struct alias *super_list_alias;
+  struct interpretation *super_list_interpretation;
+  struct expression *super_list_single;
+  struct interpret_package *super_list_interpret_package;
+  struct expression *super_list_public_mother;
 };
 
 struct og_ctrl_nlp
@@ -930,7 +935,8 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 
 /* nlprexpression.c */
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
-    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
+    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression,
+    og_bool is_super_list);
 og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
@@ -1107,4 +1113,8 @@ og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 /* nlpsuperlist.c */
 og_status NlpConsolidateSuperListPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
+og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
+og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th);
+
+
 
