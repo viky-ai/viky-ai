@@ -679,6 +679,16 @@ struct highlight_word
   struct request_expression *request_expression;
 };
 
+struct super_list
+{
+  struct expression *recursive_expression;
+  struct alias *alias;
+  struct interpretation *interpretation;
+  struct expression *single_expression;
+  struct interpret_package *interpret_package;
+  struct expression *public_mother;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -775,12 +785,7 @@ struct og_ctrl_nlp_threaded
 
   og_bool accept_any_expressions;
 
-  struct expression *super_list;
-  struct alias *super_list_alias;
-  struct interpretation *super_list_interpretation;
-  struct expression *super_list_single;
-  struct interpret_package *super_list_interpret_package;
-  struct expression *super_list_public_mother;
+  struct super_list super_list[1];
 };
 
 struct og_ctrl_nlp
