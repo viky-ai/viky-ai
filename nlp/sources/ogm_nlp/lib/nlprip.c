@@ -10,7 +10,6 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package, int Iinput_part);
 static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part);
 
-
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
     struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number)
 {
@@ -60,7 +59,7 @@ og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct req
 
   IFE(NlpRequestInputPartGetSparseMark(ctrl_nlp_th, request_input_part));
 
-  return(request_input_part->Ioriginal_request_input_part);
+  return (request_input_part->Ioriginal_request_input_part);
 }
 
 static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
@@ -148,21 +147,16 @@ og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct req
 
   struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(request_words) DPcErr;
-  int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
+  int basic_request_word_used = ctrl_nlp_th->basic_request_word_used;
   og_bool all_words_in_between_are_expression_punctuations = TRUE;
-  for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+  int Irequest_word_start;
+  og_bool found = NlpRequestWordGet(ctrl_nlp_th, end_request_input_part1, &Irequest_word_start);
+  IFE(found);
+  if (found)
   {
-    struct request_word *request_word = request_words + w;
-    if (state == 1)   // outside the texte zone
+    for (int w = Irequest_word_start; w < basic_request_word_used; w++)
     {
-      if (request_word->start_position >= end_request_input_part1)
-      {
-        state = 2;
-        w--;
-      }
-    }
-    else if (state == 2)   // inside the texte zone
-    {
+      struct request_word *request_word = request_words + w;
       if (request_word->start_position + request_word->length_position <= start_request_input_part2)
       {
         if (!request_word->is_expression_punctuation)
@@ -177,7 +171,6 @@ og_bool NlpRequestInputPartsAreExpressionGlued(og_nlp_th ctrl_nlp_th, struct req
   if (all_words_in_between_are_expression_punctuations) is_glued = TRUE;
   return (is_glued);
 }
-
 
 static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part)
 {

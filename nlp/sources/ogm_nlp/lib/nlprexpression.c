@@ -90,7 +90,9 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   }
   request_expression->request_positions_nb += request_position_current - request_position_start;
 
-  IFE(NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start, request_expression->request_positions_nb));
+  IFE(
+      NlpRequestPositionSort(ctrl_nlp_th, request_expression->request_position_start,
+          request_expression->request_positions_nb));
 
   // Necessary for NlpRequestExpressionOverlapMark and NlpRequestExpressionIsOrdered
   request_expression->orip_start = (-1);
@@ -235,7 +237,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-  if (must_add_request_expression  && !is_super_list)
+  if (must_add_request_expression && !is_super_list)
   {
     IFE(NlpGetAutoCompleteRequestWord(ctrl_nlp_th, request_expression));
     IFE(NlpRequestExpressionAddGluePunctuations(ctrl_nlp_th,request_expression));
@@ -298,33 +300,28 @@ static og_status NlpRequestExpressionAddGluePunctuations(og_nlp_th ctrl_nlp_th,
   if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
   {
     og_bool punctuation_word_added = FALSE;
-    struct request_position *request_position_start = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-        request_expression->request_position_start);
-    IFN(request_position_start) DPcErr;
+    struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position, 0);
+    IFN(request_positions) DPcErr;
 
-    struct request_position *request_position_end = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-        request_expression->request_position_start + request_expression->request_positions_nb - 1);
-    IFN(request_position_end) DPcErr;
+    struct request_position *request_position_start = request_positions + request_expression->request_position_start;
+
+    struct request_position *request_position_end = request_positions + request_expression->request_position_start
+        + request_expression->request_positions_nb - 1;
 
     int re_start_position = request_position_start->start + request_position_start->length;
     int re_end_position = request_position_end->start;
 
     struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
     IFN(request_words) DPcErr;
-    int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
-    for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+    int basic_request_word_used = ctrl_nlp_th->basic_request_word_used;
+    int Irequest_word_start;
+    og_bool found = NlpRequestWordGet(ctrl_nlp_th, re_start_position, &Irequest_word_start);
+    IFE(found);
+    if (found)
     {
-      struct request_word *request_word = request_words + w;
-      if (state == 1)   // outside the texte zone
+      for (int w = Irequest_word_start; w < basic_request_word_used; w++)
       {
-        if (request_word->start_position >= re_start_position)
-        {
-          state = 2;
-          w--;
-        }
-      }
-      else if (state == 2)   // inside the texte zone
-      {
+        struct request_word *request_word = request_words + w;
         if (request_word->start_position + request_word->length_position <= re_end_position)
         {
           if (request_word->is_expression_punctuation)
@@ -443,7 +440,6 @@ og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expr
     IFE(NlpInterpretTreeLog(ctrl_nlp_th, request_expression, 2));
   }
 
-
   og_bool is_ordered = TRUE;
 
   for (int i = 0; i + 1 < request_expression->orips_nb; i++)
@@ -460,7 +456,8 @@ og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expr
       break;
     }
   }
-  NlpLog(DOgNlpTraceMatchExpression,"NlpRequestExpressionIsOrdered: expression %s",(is_ordered?"is ordered":"is not ordered"));
+  NlpLog(DOgNlpTraceMatchExpression, "NlpRequestExpressionIsOrdered: expression %s",
+      (is_ordered ? "is ordered" : "is not ordered"));
 
   return is_ordered;
 }
@@ -540,7 +537,8 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
     }
   }
 
-  NlpLog(DOgNlpTraceMatchExpression,"NlpRequestExpressionIsGlued: expression %s",(is_glued?"is glued":"is not glued"));
+  NlpLog(DOgNlpTraceMatchExpression, "NlpRequestExpressionIsGlued: expression %s",
+      (is_glued ? "is glued" : "is not glued"));
 
   return is_glued;
 }

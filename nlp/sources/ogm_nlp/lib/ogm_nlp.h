@@ -1121,5 +1121,6 @@ og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
 og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
 og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th);
 
-
+/* nlprword.c */
+og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);
 
