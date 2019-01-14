@@ -38,14 +38,20 @@ class ConsoleController < ApplicationController
     end
 
     def get_interpretation(owner, agent, sentence, verbose, language, now)
-      req = Rack::Request.new({ "rack.input" => {}, "REQUEST_METHOD" => "GET" })
+      req = Rack::Request.new(
+        "rack.input" => {},
+        "REQUEST_METHOD" => "GET")
       req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
 
       params = {
         agent_token: agent.api_token,
         sentence: sentence,
         language: language,
-        now: now
+        now: now,
+        context: {
+          client_type: 'console',
+          user_id: current_user.id
+        }
       }
       params[:verbose] = verbose if verbose == "true"
       params.each { |k, v| req.update_param(k, v) }
