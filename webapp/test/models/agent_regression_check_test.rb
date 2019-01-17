@@ -90,4 +90,75 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert agent_regression_check.destroy
     assert_equal 0, AgentRegressionCheck.where(id: agent_regression_check_id).count
   end
+
+  test 'Run a successful agent test' do
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: '200',
+      body: {
+        'interpretations' => [{
+          'id' => intents(:weather_question).id,
+          'slug' => intents(:weather_question).slug,
+          'package' => intents(:weather_question).agent.id,
+          'score' => '0.3',
+          'solution' => { 'question' => 'what' }
+        }, {
+          'id' => intents(:weather_forecast).id,
+          'slug' => intents(:weather_forecast).slug,
+          'package' => intents(:weather_forecast).agent.id,
+          'score' => '1.0',
+          'solution' => interpretations(:weather_forecast_tomorrow).solution
+        }]
+      }
+    )
+    agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
+    assert agent_regression_check.run
+
+    assert agent_regression_check.passed?
+    assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.unknown?
+    expected = {
+      'package' => intents(:weather_forecast).agent.id,
+      'id' => intents(:weather_forecast).id,
+      'score' => '1.0',
+      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
+    }
+    assert_equal expected, agent_regression_check.expected
+    assert_equal agent_regression_check.got, agent_regression_check.expected
+  end
+
+  test 'Run a failed agent test' do
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: '200',
+      body: {
+        'interpretations' => [{
+          'id' => intents(:weather_forecast).id,
+          'slug' => intents(:weather_forecast).slug,
+          'package' => intents(:weather_forecast).agent.id,
+          'score' => '0.3',
+          'solution' => interpretations(:weather_forecast_tomorrow).solution
+        }]
+      }
+    )
+    agent_regression_check = agent_regression_checks(:weather_test_forecast_london)
+    assert agent_regression_check.run
+
+    assert_not agent_regression_check.passed?
+    assert agent_regression_check.failed?
+    assert_not agent_regression_check.unknown?
+    assert_not_equal agent_regression_check.got, agent_regression_check.expected
+  end
+
+  test 'Run an agent test but NLP is unreachable' do
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: '404',
+      body: {}
+    )
+    agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
+    assert agent_regression_check.run
+
+    assert_not agent_regression_check.passed?
+    assert_not agent_regression_check.failed?
+    assert agent_regression_check.unknown?
+    assert_empty agent_regression_check.got
+  end
 end
