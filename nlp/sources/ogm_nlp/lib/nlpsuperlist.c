@@ -240,11 +240,9 @@ og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinpu
   return TRUE;
 }
 
-og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
+og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
 {
   struct super_list *super_list = ctrl_nlp_th->super_list;
-
-  ctrl_nlp_th->level++;
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -265,6 +263,8 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
     struct request_expression *request_expression = request_expressions + i;
     int new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
     if (request_expression->expression->interpretation != super_list->interpretation) continue;
+    if (request_expression->consumed_by_super_list) continue;
+    request_expression->consumed_by_super_list = TRUE;
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
       NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: working on the following expression:");
@@ -290,6 +290,7 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
       IF(request_expression_added) DPcErr;
       if (request_expression_added)
       {
+        new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
           NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list_single:");
@@ -330,6 +331,7 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
       if (request_expression_added)
       {
         new_request_expression = current_new_request_expression;
+        new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
           NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list:");
@@ -341,29 +343,23 @@ og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
   }
 
   // Could not find any input part for the super list
-  if (new_request_expression == NULL) DONE;
-
-  ctrl_nlp_th->level++;
-
-  og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression,
-      super_list->public_mother->input_parts[0].self_index);
-
-  struct match_zone_input_part match_zone_input_part[1];
-  match_zone_input_part->current = Irequest_input_part;
-  og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, super_list->public_mother,
-      match_zone_input_part, &new_request_expression, TRUE);
-  IF(request_expression_added) DPcErr;
-  if (request_expression_added)
+  if (new_request_expression == NULL)
   {
-    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-    {
-      NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list_single:");
-      //IFE(NlpRequestExpressionLog(ctrl_nlp_th, new_request_expression, 2));
-      IFE(NlpInterpretTreeLog(ctrl_nlp_th, new_request_expression, 2));
-    }
+    NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression not created from super_list_single:");
+    return FALSE;
   }
 
-  DONE;
+  new_request_expression->super_list_status = nlp_super_list_status_Top;
+  ctrl_nlp_th->new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list_single:");
+    //IFE(NlpRequestExpressionLog(ctrl_nlp_th, new_request_expression, 2));
+    IFE(NlpInterpretTreeLog(ctrl_nlp_th, new_request_expression, 2));
+  }
+
+  return TRUE;
 }
 
 static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -374,6 +370,8 @@ static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct reque
   IFE(Irequest_input_part);
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
   IFN(request_input_part) DPcErr;
+
+  request_input_part->super_list_status = nlp_super_list_status_Part;
 
   size_t Ioriginal_request_input_part;
   struct original_request_input_part *original_request_input_part = OgHeapNewCell(

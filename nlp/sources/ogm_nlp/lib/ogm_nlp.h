@@ -390,6 +390,11 @@ struct accept_language
   float quality_factor;
 };
 
+enum nlp_super_list_status
+{
+  nlp_super_list_status_Nil = 0, nlp_super_list_status_Part, nlp_super_list_status_Top
+};
+
 struct request_input_part
 {
   /** from zero (only words) to N */
@@ -422,6 +427,8 @@ struct request_input_part
   og_bool interpret_word_as_number;
 
   int sparse_mark;
+
+  enum nlp_super_list_status super_list_status;
 };
 
 struct request_position
@@ -541,6 +548,9 @@ struct request_expression
   GQueue tmp_solutions[1];
 
   json_t *json_solution;
+
+  og_bool consumed_by_super_list;
+  enum nlp_super_list_status super_list_status;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -950,7 +960,6 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
 
-
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
 og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
@@ -1025,7 +1034,8 @@ og_status NlpJsStackRequestSetup(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
-og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval, int variable_eval_length);
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval,
+    int variable_eval_length);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th);
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
@@ -1119,7 +1129,7 @@ og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 og_status NlpConsolidateSuperListPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
 og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
-og_status NlpSuperListCreate(og_nlp_th ctrl_nlp_th);
+og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th);
 
 /* nlprword.c */
 og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);

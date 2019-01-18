@@ -40,6 +40,8 @@ og_bool NlpMatchInterpretations(og_nlp_th ctrl_nlp_th)
 
 static og_bool NlpMatchInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
+  if (request_expression->super_list_status == nlp_super_list_status_Part) return FALSE;
+
   struct interpretation *interpretation = request_expression->expression->interpretation;
   NlpLog(DOgNlpTraceMatch, "Looking for input parts for interpretation '%s' containing expression '%.*s':",
       interpretation->slug, DPcPathSize, request_expression->expression->text);

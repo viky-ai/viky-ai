@@ -48,6 +48,9 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
   for (int i = 0; i < request_input_part_used; i++)
   {
     struct request_input_part *request_input_part = request_input_parts + i;
+
+    if (request_input_part->super_list_status == nlp_super_list_status_Part) continue;
+
     struct expression *expression = request_input_part->input_part->expression;
 
     if (expression->input_parts != request_input_part->input_part) continue;
