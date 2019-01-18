@@ -2,6 +2,9 @@ require 'test_helper'
 
 class NlsControllerTest < ActionDispatch::IntegrationTest
 
+  setup do
+    IndexManager.reset_indices
+  end
 
   test "Interpret route" do
     assert_routing({
@@ -111,4 +114,52 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+  test 'Provide statistics contexts with the sentence' do
+    intent = intents(:weather_forecast)
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: '200',
+      body: {
+        'interpretations' => [
+          {
+            'package' => agent.id,
+            'id'      => intent.id,
+            'slug'    => 'weather_forecast',
+            'score'   => 1.0
+          }
+        ]
+      }
+    )
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: 'test context',
+          agent_token: agent.api_token,
+          context: {
+            session_id: 'abc',
+            bot_version: '1.1-a58b'
+          }
+        }
+
+    expected = {
+      'interpretations' => [
+        {
+          'id'    => intent.id,
+          'slug'  => 'weather_forecast',
+          'name'  => 'weather_forecast',
+          'score' => 1.0
+        }
+      ]
+    }
+    assert_equal expected, JSON.parse(response.body)
+    client = IndexManager.client
+    result = client.search index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+                           type: InterpretRequestLog::INDEX_TYPE,
+                           body: { query: { match: { sentence: 'test context' } } },
+                           size: 1
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal 'abc', found[:context]['session_id']
+    assert_equal '1.1-a58b', found[:context]['bot_version']
+    assert_equal agent.updated_at, found[:context]['agent_version']
+  end
 end

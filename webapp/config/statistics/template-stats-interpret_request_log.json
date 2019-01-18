@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "index_patterns": "stats-interpret_request_log-*",
   "aliases": {
     "search-stats-interpret_request_log": {}
@@ -36,6 +36,9 @@
         },
         "status": {
           "type": "integer"
+        },
+        "context":{
+          "type": "object"
         },
         "body": {
           "properties": {

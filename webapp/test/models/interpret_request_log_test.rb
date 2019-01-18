@@ -140,4 +140,49 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     })
     assert log.save
   end
+
+  test 'Log an interpretation with a context info' do
+    log = InterpretRequestLog.new(
+        timestamp: '2018-11-21T16:00:00.000+02:00',
+        sentence: 'What the weather like today ?',
+        agent: agents(:weather),
+        context: {'client_type' => 'console', 'user_id' => '078602e7-0578-49d4-96ee-d8ee2f9b1ecf'}
+      ).with_response('200', {
+        interpretations: [{
+          package: '132154f2-4545-4ae2-a802-3d39a2a5013f',
+          id: 'a342f0ff-5d49-4a29-bc37-a9d754b99a7b',
+          slug: 'viky/weather/interpretations/weather_question',
+          score: '0.83',
+          solution: {
+            date: 'today'
+          }
+        }]
+    })
+    assert_not log.persisted?
+    assert log.save
+    assert log.persisted?
+  end
+
+  test 'Limit context size' do
+    log = InterpretRequestLog.new(
+      timestamp: '2018-11-21T16:00:00.000+02:00',
+      sentence: 'What the weather like today ?',
+      agent: agents(:weather),
+      context: { 'foo' => 'bar' * 1000 }
+    ).with_response('200', {
+      interpretations: [{
+        package: '132154f2-4545-4ae2-a802-3d39a2a5013f',
+        id: 'a342f0ff-5d49-4a29-bc37-a9d754b99a7b',
+        slug: 'viky/weather/interpretations/weather_question',
+        score: '0.83',
+        solution: {
+          date: 'today'
+        }
+      }]
+    })
+    assert !log.save
+    assert_not log.persisted?
+    expected = [:context_to_s, "is too long (maximum is 1000 characters)"]
+    assert_equal expected, log.errors.first
+  end
 end

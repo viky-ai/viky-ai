@@ -122,12 +122,15 @@ struct package
 
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
+  int nb_words;
 
   /** Automaton : "<interpretation_id>\1<Iinput_part>" */
   void *ha_interpretation_id;
 
   /** Automatons for ltrac/ltraf */
   struct ltra_dictionaries ltra_dictionaries[1];
+  int ltra_min_frequency;
+  int ltra_min_frequency_swap;
 };
 
 typedef struct package *package_t;
