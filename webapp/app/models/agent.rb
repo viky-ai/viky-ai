@@ -180,6 +180,12 @@ class Agent < ApplicationRecord
     end
   end
 
+  def run_tests
+    agent_regression_checks.each do |test|
+      AgentRegressionCheckRunJob.perform_later test
+    end
+  end
+
 
   private
 
