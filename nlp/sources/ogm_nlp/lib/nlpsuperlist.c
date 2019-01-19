@@ -7,6 +7,8 @@
  *  Dev : January 2019
  *  Version 1.0
  */
+#include <lognlp.h>
+
 #include "ogm_nlp.h"
 
 static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretations,
@@ -15,6 +17,9 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
 static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package);
 static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
+static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions, og_bool use_any_request_expressions);
+static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
+    gpointer user_data);
 static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Iinput_part);
 
@@ -240,34 +245,67 @@ og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinpu
   return TRUE;
 }
 
+
 og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
 {
   struct super_list *super_list = ctrl_nlp_th->super_list;
-
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "NlpSuperListCreate: list of all request expression at level %d:",
-        ctrl_nlp_th->level);
-    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
-  }
 
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
   IFN(request_expressions) DPcErr;
 
-  og_bool first_expression = TRUE;
-  struct request_expression *new_request_expression = NULL;
+  GQueue sorted_request_expressions[1];
+  g_queue_init(sorted_request_expressions);
+
   for (int i = 0; i < request_expression_used; i++)
   {
     struct request_expression *request_expression = request_expressions + i;
-    int new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
     if (request_expression->expression->interpretation != super_list->interpretation) continue;
     if (request_expression->consumed_by_super_list) continue;
+    g_queue_push_tail(sorted_request_expressions, request_expressions + i);
+  }
+
+  // sort again to take into account scores
+  g_queue_sort(sorted_request_expressions, NlpSuperListRequestExpressionCmp, NULL);
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  {
+    NlpLog(DOgNlpTraceMatch,
+        "NlpSuperListCreate: list of super list request expressions at level %d:", ctrl_nlp_th->level);
+    for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+    {
+      struct request_expression *request_expression = iter->data;
+      IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
+    }
+  }
+
+  og_bool super_list_created = FALSE;
+  og_bool super_list_built;
+  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, FALSE));
+  if (super_list_built) super_list_created = TRUE;
+  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, TRUE));
+  if (super_list_built) super_list_created = TRUE;
+
+  g_queue_clear(sorted_request_expressions);
+
+  return (super_list_created);
+}
+
+static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions, og_bool use_any_request_expressions)
+{
+  struct super_list *super_list = ctrl_nlp_th->super_list;
+
+  og_bool first_expression = TRUE;
+  struct request_expression *new_request_expression = NULL;
+  for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
+  {
+    struct request_expression *request_expression = iter->data;
+    if (request_expression->nb_anys > 0 && !use_any_request_expressions) continue;
+    int new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
     request_expression->consumed_by_super_list = TRUE;
     if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
     {
-      NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: working on the following expression:");
+      NlpLog(DOgNlpTraceMatch, "NlpSuperListBuild: working on the following expression:");
       IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
     }
     if (first_expression)
@@ -278,7 +316,7 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
       {
         char buffer[DPcPathSize];
-        snprintf(buffer, DPcPathSize, "NlpSuperListCreate: list of new request input parts for first expressions:");
+        snprintf(buffer, DPcPathSize, "NlpSuperListBuild: list of new request input parts for first expressions:");
         IFE(NlpRequestInputPartsLog(ctrl_nlp_th, new_request_input_part_start, buffer));
       }
 
@@ -293,15 +331,14 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
         new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
-          NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list_single:");
-          //IFE(NlpRequestExpressionLog(ctrl_nlp_th, new_request_expression, 2));
+          NlpLog(DOgNlpTraceMatch, "NlpSuperListBuild: new request_expression created from super_list_single:");
           IFE(NlpInterpretTreeLog(ctrl_nlp_th, new_request_expression, 2));
         }
       }
       else
       {
         NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpSuperListCreate: could not create new_request_expression from super_list_single");
+            "NlpSuperListBuild: could not create new_request_expression from super_list_single");
         DPcErr;
       }
       first_expression = FALSE;
@@ -317,7 +354,7 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
       {
         char buffer[DPcPathSize];
-        snprintf(buffer, DPcPathSize, "NlpSuperListCreate: list of new request input parts for next expressions:");
+        snprintf(buffer, DPcPathSize, "NlpSuperListBuild: list of new request input parts for next expressions:");
         IFE(NlpRequestInputPartsLog(ctrl_nlp_th, new_request_input_part_start, buffer));
       }
 
@@ -334,13 +371,13 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
         new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
-          NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression created from super_list:");
-          //IFE(NlpRequestExpressionLog(ctrl_nlp_th, new_request_expression, 2));
+          NlpLog(DOgNlpTraceMatch, "NlpSuperListBuild: new request_expression created from super_list:");
           IFE(NlpInterpretTreeLog(ctrl_nlp_th, new_request_expression, 2));
         }
       }
     }
   }
+
 
   // Could not find any input part for the super list
   if (new_request_expression == NULL)
@@ -361,6 +398,44 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
 
   return TRUE;
 }
+
+
+
+static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
+    gpointer user_data)
+{
+  struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
+  struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
+
+  if (request_expression1->request_positions_nb != request_expression2->request_positions_nb)
+  {
+    return (request_expression2->request_positions_nb - request_expression1->request_positions_nb);
+  }
+  if (request_expression1->overlap_mark != request_expression2->overlap_mark)
+  {
+    return (request_expression1->overlap_mark - request_expression2->overlap_mark);
+  }
+  if (request_expression1->nb_anys != request_expression2->nb_anys)
+  {
+    return (request_expression2->nb_anys - request_expression1->nb_anys);
+  }
+  if (request_expression1->total_score != request_expression2->total_score)
+  {
+    double cmp = request_expression2->total_score - request_expression1->total_score;
+    if (cmp > 0) return 1;
+    else return -1;
+  }
+  if (request_expression1->level != request_expression2->level)
+  {
+    return (request_expression2->level - request_expression1->level);
+  }
+
+  // Just to make sure it is different
+  return request_expression1 - request_expression2;
+}
+
+
+
 
 static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     int Iinput_part)
