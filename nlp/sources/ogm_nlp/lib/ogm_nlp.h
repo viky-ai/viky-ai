@@ -798,7 +798,8 @@ struct og_ctrl_nlp_threaded
 
   og_bool accept_any_expressions;
 
-  struct super_list super_list[1];
+  og_heap hsuper_list;
+
 };
 
 struct og_ctrl_nlp
@@ -1129,10 +1130,13 @@ og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
 
 /* nlpsuperlist.c */
+og_status NlpSuperListInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpSuperListReset(og_nlp_th ctrl_nlp_th);
+og_status NlpSuperListFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpConsolidateSuperListPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
 og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
-og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th);
+og_bool NlpSuperListsCreate(og_nlp_th ctrl_nlp_th);
 
 /* nlprword.c */
 og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);

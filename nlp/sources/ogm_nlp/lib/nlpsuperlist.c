@@ -15,13 +15,41 @@ static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, st
     int Iinterpretation);
 static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
 static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
-    struct interpret_package *interpret_package);
-static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
-static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions, og_bool use_any_request_expressions);
-static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
-    gpointer user_data);
+    struct interpret_package *interpret_package, struct super_list *super_list);
+static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
+    struct super_list *super_list);
+static og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th, struct super_list *super_list);
+static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions,
+    struct super_list *super_list, og_bool use_any_request_expressions);
+static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1,
+    gconstpointer ptr_request_expression2, gpointer user_data);
 static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int Iinput_part);
+    struct super_list *super_list, int Iinput_part);
+
+og_status NlpSuperListInit(og_nlp_th ctrl_nlp_th, og_string name)
+{
+  og_char_buffer nlpc_name[DPcPathSize];
+  snprintf(nlpc_name, DPcPathSize, "%s_super_list", name);
+  ctrl_nlp_th->hsuper_list = OgHeapInit(ctrl_nlp_th->hmsg, nlpc_name, sizeof(struct super_list), 1);
+  IFN(ctrl_nlp_th->hsuper_list)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpSuperListInit : error on OgHeapInit(%s)", nlpc_name);
+    DPcErr;
+  }
+  DONE;
+}
+
+og_status NlpSuperListReset(og_nlp_th ctrl_nlp_th)
+{
+  IFE(OgHeapReset(ctrl_nlp_th->hsuper_list));
+  DONE;
+}
+
+og_status NlpSuperListFlush(og_nlp_th ctrl_nlp_th)
+{
+  IFE(OgHeapFlush(ctrl_nlp_th->hsuper_list));
+  DONE;
+}
 
 /*
  * A super list is a recursive list called from a public interpretation
@@ -82,8 +110,6 @@ og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th)
 {
   struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
 
-  ctrl_nlp_th->super_list->recursive_expression = NULL;
-
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
   {
@@ -96,7 +122,9 @@ og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th)
 static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package)
 {
   package_t package = interpret_package->package;
-  struct super_list *super_list = ctrl_nlp_th->super_list;
+  struct super_list super_list[1];
+  memset(super_list, 0, sizeof(struct super_list));
+
   struct interpretation *interpretations = OgHeapGetCell(package->hinterpretation, 0);
   IFN(interpretations) DPcErr;
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
@@ -128,14 +156,14 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
                 NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list alias:");
                 IFE(NlpPackageAliasLog(ctrl_nlp_th, package, super_list->alias));
               }
-              IFE(NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_package));
-              og_bool found = NlpSuperListMotherPublicGetInPackage(ctrl_nlp_th, interpret_package);
+              IFE(NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_package, super_list));
+              og_bool found = NlpSuperListMotherPublicGetInPackage(ctrl_nlp_th, interpret_package, super_list);
               IFE(found);
               if (!found)
               {
                 NlpLog(DOgNlpTraceConsolidate,
                     "NlpSuperListGetInPackage: public mother not found, super list not created:");
-                memset(super_list,0,sizeof(struct super_list));
+                memset(super_list, 0, sizeof(struct super_list));
                 DONE;
               }
               break;
@@ -161,14 +189,19 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
       }
     }
   }
+
+  if (super_list->recursive_expression != NULL)
+  {
+    IFE(OgHeapAppend(ctrl_nlp_th->hsuper_list, 1, super_list));
+  }
+
   DONE;
 }
 
 static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
-    struct interpret_package *interpret_package)
+    struct interpret_package *interpret_package, struct super_list *super_list)
 {
   package_t package = interpret_package->package;
-  struct super_list *super_list = ctrl_nlp_th->super_list;
   struct interpretation *interpretations = OgHeapGetCell(package->hinterpretation, 0);
   IFN(interpretations) DPcErr;
   int interpretation_used = OgHeapGetCellsUsed(package->hinterpretation);
@@ -189,10 +222,10 @@ static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
   DONE;
 }
 
-static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package)
+static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
+    struct super_list *super_list)
 {
   package_t package = interpret_package->package;
-  struct super_list *super_list = ctrl_nlp_th->super_list;
   struct expression *expressions = OgHeapGetCell(package->hexpression, 0);
   IFN(expressions) DPcErr;
   int expressions_used = OgHeapGetCellsUsed(package->hexpression);
@@ -234,22 +267,42 @@ static og_bool NlpSuperListMotherPublicGetInPackage(og_nlp_th ctrl_nlp_th, struc
 
 og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part)
 {
-  struct super_list *super_list = ctrl_nlp_th->super_list;
-  if (super_list->recursive_expression == NULL) return TRUE;
   struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
   IFN(input_part) DPcErr;
-  if (input_part->expression->interpretation == super_list->recursive_expression->interpretation)
+
+  int super_list_used = OgHeapGetCellsUsed(ctrl_nlp_th->hsuper_list);
+  struct super_list *super_lists = OgHeapGetCell(ctrl_nlp_th->hsuper_list, 0);
+  IFN(super_lists) DPcErr;
+
+  for (int i = 0; i < super_list_used; i++)
   {
-    return FALSE;
+    struct super_list *super_list = super_lists + i;
+    if (input_part->expression->interpretation == super_list->recursive_expression->interpretation)
+    {
+      return FALSE;
+    }
   }
   return TRUE;
 }
 
-
-og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
+og_bool NlpSuperListsCreate(og_nlp_th ctrl_nlp_th)
 {
-  struct super_list *super_list = ctrl_nlp_th->super_list;
+  int super_list_used = OgHeapGetCellsUsed(ctrl_nlp_th->hsuper_list);
+  struct super_list *super_lists = OgHeapGetCell(ctrl_nlp_th->hsuper_list, 0);
+  IFN(super_lists) DPcErr;
 
+  int at_least_one_super_list_created = FALSE;
+  for (int i = 0; i < super_list_used; i++)
+  {
+    og_bool super_list_created;
+    IFE(super_list_created = NlpSuperListCreate(ctrl_nlp_th, super_lists + i));
+    if (super_list_created) at_least_one_super_list_created = TRUE;
+  }
+  return at_least_one_super_list_created;
+}
+
+static og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th, struct super_list *super_list)
+{
   int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
   struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
   IFN(request_expressions) DPcErr;
@@ -265,13 +318,13 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
     g_queue_push_tail(sorted_request_expressions, request_expressions + i);
   }
 
-  // sort again to take into account scores
+// sort again to take into account scores
   g_queue_sort(sorted_request_expressions, NlpSuperListRequestExpressionCmp, NULL);
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    NlpLog(DOgNlpTraceMatch,
-        "NlpSuperListCreate: list of super list request expressions at level %d:", ctrl_nlp_th->level);
+    NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: list of super list request expressions at level %d:",
+        ctrl_nlp_th->level);
     for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
     {
       struct request_expression *request_expression = iter->data;
@@ -281,9 +334,9 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
 
   og_bool super_list_created = FALSE;
   og_bool super_list_built;
-  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, FALSE));
+  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, super_list, FALSE));
   if (super_list_built) super_list_created = TRUE;
-  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, TRUE));
+  IFE(super_list_built = NlpSuperListBuild(ctrl_nlp_th, sorted_request_expressions, super_list, TRUE));
   if (super_list_built) super_list_created = TRUE;
 
   g_queue_clear(sorted_request_expressions);
@@ -291,10 +344,9 @@ og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th)
   return (super_list_created);
 }
 
-static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions, og_bool use_any_request_expressions)
+static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions,
+    struct super_list *super_list, og_bool use_any_request_expressions)
 {
-  struct super_list *super_list = ctrl_nlp_th->super_list;
-
   og_bool first_expression = TRUE;
   struct request_expression *new_request_expression = NULL;
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
@@ -310,7 +362,7 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
     }
     if (first_expression)
     {
-      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression,
+      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression, super_list,
           super_list->single_expression->input_parts[0].self_index);
 
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -345,10 +397,10 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
     }
     else
     {
-      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression,
+      og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression, super_list,
           super_list->recursive_expression->input_parts[0].self_index);
 
-      og_status Irequest_input_part_recur = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression,
+      og_status Irequest_input_part_recur = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression, super_list,
           super_list->recursive_expression->input_parts[1].self_index);
 
       if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
@@ -378,8 +430,7 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
     }
   }
 
-
-  // Could not find any input part for the super list
+// Could not find any input part for the super list
   if (new_request_expression == NULL)
   {
     NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: new request_expression not created from super_list_single:");
@@ -399,10 +450,8 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
   return TRUE;
 }
 
-
-
-static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1, gconstpointer ptr_request_expression2,
-    gpointer user_data)
+static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1,
+    gconstpointer ptr_request_expression2, gpointer user_data)
 {
   struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
   struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
@@ -430,18 +479,15 @@ static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression
     return (request_expression2->level - request_expression1->level);
   }
 
-  // Just to make sure it is different
+// Just to make sure it is different
   return request_expression1 - request_expression2;
 }
 
-
-
-
 static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
-    int Iinput_part)
+    struct super_list *super_list, int Iinput_part)
 {
   og_status Irequest_input_part = NlpRequestInputPartAddInterpretation(ctrl_nlp_th, request_expression,
-      ctrl_nlp_th->super_list->interpret_package, Iinput_part);
+      super_list->interpret_package, Iinput_part);
   IFE(Irequest_input_part);
   struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
   IFN(request_input_part) DPcErr;
