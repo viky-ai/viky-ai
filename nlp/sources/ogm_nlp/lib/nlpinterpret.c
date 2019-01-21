@@ -266,6 +266,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
 
+  IFE(NlpSuperListGet(ctrl_nlp_th));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
   {
     NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: list of regexes found for request:");

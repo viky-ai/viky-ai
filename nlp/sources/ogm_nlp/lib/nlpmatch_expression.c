@@ -9,12 +9,12 @@
 
 static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length);
-static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int start, int length);
+static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expression *expression,
+    int Irequest_input_part, struct match_zone_input_part *match_zone_input_part, int start, int length);
 static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part, int start, int length);
 static int NlpInputPartPositionCmp(gconstpointer ptr_input_part_position1, gconstpointer ptr_input_part_position2,
-  gpointer user_data);
+    gpointer user_data);
 static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part);
 static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstpointer ptr_request_input_part2,
@@ -39,7 +39,7 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following input parts:",
+    snprintf(buffer, DPcPathSize, "Looking for expressions at level %d using the following request input parts:",
         ctrl_nlp_th->level);
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, buffer));
   }
@@ -48,6 +48,9 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
   for (int i = 0; i < request_input_part_used; i++)
   {
     struct request_input_part *request_input_part = request_input_parts + i;
+
+    if (request_input_part->super_list_status == nlp_super_list_status_Part) continue;
+
     struct expression *expression = request_input_part->input_part->expression;
 
     if (expression->input_parts != request_input_part->input_part) continue;
@@ -130,8 +133,8 @@ static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, struct expression *exp
       match_zone_input_part_length));
 }
 
-static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
-    struct match_zone_input_part *match_zone_input_part, int start, int length)
+static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expression *expression,
+    int Irequest_input_part, struct match_zone_input_part *match_zone_input_part, int start, int length)
 {
   if (length == 0)
   {
@@ -140,7 +143,8 @@ static int NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expres
   for (int i = 0; i < match_zone_input_part[start].length; i++)
   {
     match_zone_input_part[start].current = match_zone_input_part[start].start + i;
-    og_bool too_far = NlpInputPartsTooFar(ctrl_nlp_th, expression, Irequest_input_part, match_zone_input_part, start, length);
+    og_bool too_far = NlpInputPartsTooFar(ctrl_nlp_th, expression, Irequest_input_part, match_zone_input_part, start,
+        length);
     IFE(too_far);
     if (too_far) continue;
     IFE(
@@ -160,7 +164,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
 {
   og_bool too_far = FALSE;
   if (start < 1) return (FALSE);
-  if (expression->is_recursive) return(FALSE);
+  if (expression->is_recursive) return (FALSE);
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     NlpLog(DOgNlpTraceMatch, "NlpInputPartsTooFar at %d/%d: checking following request_input_parts:", start + 1,
@@ -185,9 +189,9 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
   g_qsort_with_data(input_part_position, start + 1, sizeof(struct input_part_position), NlpInputPartPositionCmp,
       ctrl_nlp_th);
   int max_distance = 0;
-  for (int i = 0; i+1 <= start; i++)
+  for (int i = 0; i + 1 <= start; i++)
   {
-    int distance = input_part_position[i+1].start - input_part_position[i].end;
+    int distance = input_part_position[i + 1].start - input_part_position[i].end;
     if (max_distance < distance) max_distance = distance;
   }
   if (max_distance > expression->glue_distance) too_far = TRUE;
@@ -195,7 +199,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
   {
     char string_too_far[DPcPathSize];
     if (too_far) sprintf(string_too_far, " (too far, max is %d)", expression->glue_distance);
-    else sprintf(string_too_far, " (correct distance, max is %d)",expression->glue_distance);
+    else sprintf(string_too_far, " (correct distance, max is %d)", expression->glue_distance);
     NlpLog(DOgNlpTraceMatch, "NlpInputPartsTooFar at %d/%d: max_distance is %d%s", start + 1, start + length,
         max_distance, string_too_far);
   }
@@ -203,7 +207,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
 }
 
 static int NlpInputPartPositionCmp(gconstpointer ptr_input_part_position1, gconstpointer ptr_input_part_position2,
-  gpointer user_data)
+    gpointer user_data)
 {
   struct input_part_position *input_part_position1 = (struct input_part_position *) ptr_input_part_position1;
   struct input_part_position *input_part_position2 = (struct input_part_position *) ptr_input_part_position2;
@@ -214,80 +218,80 @@ static int NlpInputPartPositionCmp(gconstpointer ptr_input_part_position1, gcons
   return (input_part_position1->end - input_part_position2->end);
 }
 
-
 static int NlpMatchExpression(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
-  struct match_zone_input_part *match_zone_input_part)
+    struct match_zone_input_part *match_zone_input_part)
 {
-struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
-IFN(request_input_part) DPcErr;
-struct request_expression *request_expression = NULL;
+  struct request_input_part *request_input_part = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, Irequest_input_part);
+  IFN(request_input_part) DPcErr;
+  struct request_expression *request_expression = NULL;
 
-if (expression != request_input_part->input_part->expression)
-{
-  NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchExpression: incoherent expression");
-  DPcErr;
-}
-
-og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
-    &request_expression);
-IF(request_expression_added) DPcErr;
-
-if (request_expression_added)
-{
-  char string_input_parts[DPcPathSize];
-  string_input_parts[0] = 0;
-  for (int i = 0; i < expression->input_parts_nb; i++)
+  if (expression != request_input_part->input_part->expression)
   {
-    sprintf(string_input_parts + strlen(string_input_parts), "%s%d", (i ? ":" : ""), match_zone_input_part[i].current);
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchExpression: incoherent expression");
+    DPcErr;
   }
 
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  og_bool request_expression_added = NlpRequestExpressionAdd(ctrl_nlp_th, expression, match_zone_input_part,
+      &request_expression, FALSE);
+  IF(request_expression_added) DPcErr;
+
+  if (request_expression_added)
   {
-    char string_positions[DPcPathSize];
-    NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
-        request_expression->request_positions_nb, DPcPathSize, string_positions);
+    char string_input_parts[DPcPathSize];
+    string_input_parts[0] = 0;
+    for (int i = 0; i < expression->input_parts_nb; i++)
+    {
+      sprintf(string_input_parts + strlen(string_input_parts), "%s%d", (i ? ":" : ""),
+          match_zone_input_part[i].current);
+    }
 
-    char highlight[DPcPathSize];
-    NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
-        request_expression->request_positions_nb, DPcPathSize, highlight);
+    if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+    {
+      char string_positions[DPcPathSize];
+      NlpRequestPositionString(ctrl_nlp_th, request_expression->request_position_start,
+          request_expression->request_positions_nb, DPcPathSize, string_positions);
 
-    NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d : '%s'", DPcPathSize,
-        expression->text, string_positions, string_input_parts, ctrl_nlp_th->level, highlight)
+      char highlight[DPcPathSize];
+      NlpRequestPositionStringHighlight(ctrl_nlp_th, request_expression->request_position_start,
+          request_expression->request_positions_nb, DPcPathSize, highlight);
+
+      NlpLog(DOgNlpTraceMatch, "found expression '%.*s' [%s] with request_input_parts %s at level %d : '%s'",
+          DPcPathSize, expression->text, string_positions, string_input_parts, ctrl_nlp_th->level, highlight)
+    }
   }
-}
 
-DONE;
+  DONE;
 }
 
 static int NlpRequestInputPartCmp(gconstpointer ptr_request_input_part1, gconstpointer ptr_request_input_part2,
-  gpointer user_data)
+    gpointer user_data)
 {
-struct request_input_part *request_input_part1 = (struct request_input_part *) ptr_request_input_part1;
-struct request_input_part *request_input_part2 = (struct request_input_part *) ptr_request_input_part2;
-og_nlp_th ctrl_nlp_th = user_data;
+  struct request_input_part *request_input_part1 = (struct request_input_part *) ptr_request_input_part1;
+  struct request_input_part *request_input_part2 = (struct request_input_part *) ptr_request_input_part2;
+  og_nlp_th ctrl_nlp_th = user_data;
 
-if (request_input_part1->interpret_package != request_input_part2->interpret_package)
-{
-  return (request_input_part1->interpret_package - request_input_part2->interpret_package);
-}
-if (request_input_part1->Iinput_part != request_input_part2->Iinput_part)
-{
-  return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
-}
-if (request_input_part1->request_positions_nb != request_input_part2->request_positions_nb)
-{
-  return (request_input_part2->request_positions_nb - request_input_part1->request_positions_nb);
-}
-if (request_input_part1->sparse_mark != request_input_part2->sparse_mark)
-{
-  return (request_input_part1->sparse_mark - request_input_part2->sparse_mark);
-}
+  if (request_input_part1->interpret_package != request_input_part2->interpret_package)
+  {
+    return (request_input_part1->interpret_package - request_input_part2->interpret_package);
+  }
+  if (request_input_part1->Iinput_part != request_input_part2->Iinput_part)
+  {
+    return (request_input_part1->Iinput_part - request_input_part2->Iinput_part);
+  }
+  if (request_input_part1->request_positions_nb != request_input_part2->request_positions_nb)
+  {
+    return (request_input_part2->request_positions_nb - request_input_part1->request_positions_nb);
+  }
+  if (request_input_part1->sparse_mark != request_input_part2->sparse_mark)
+  {
+    return (request_input_part1->sparse_mark - request_input_part2->sparse_mark);
+  }
 
-struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-    request_input_part1->request_position_start);
-struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
-    request_input_part2->request_position_start);
+  struct request_position *request_position1 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_input_part1->request_position_start);
+  struct request_position *request_position2 = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+      request_input_part2->request_position_start);
 
-return (request_position1->start - request_position2->start);
+  return (request_position1->start - request_position2->start);
 }
 

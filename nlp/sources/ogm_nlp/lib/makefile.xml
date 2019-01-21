@@ -42,8 +42,10 @@
     <file>nlpreopt.c</file>
     <file>nlpreclean.c</file>
     <file>nlprelist.c</file>
+    <file>nlprword.c</file>
     <file>nlpscore.c</file>
     <file>nlpsol.c</file>
+    <file>nlpsuperlist.c</file>
     <file>nlprposition.c</file>
     <file>nlptree.c</file>
     <file>nlptreejson.c</file>
