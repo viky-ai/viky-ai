@@ -208,5 +208,20 @@
 
     <div class="console__output" id="console-output"></div>
 
+    <a href="#" class="console__footer">
+      <div class="console__footer__status">
+        <% if @agent.agent_regression_checks.exists? %>
+          <% status = @agent.any_tests_failed? ? 'failure' : 'success' %>
+        <% else %>
+          <% status = 'running' %>
+        <% end %>
+        <span class="ts-status ts-status--<%= status %>" ></span>
+        <%= t('views.console.regression_check.tests', count: @agent.agent_regression_checks.count) %>, <%= t('views.console.regression_check.failures', count: @agent.agent_regression_checks.where(state: 'failed').count) %>
+      </div>
+      <div class="console__footer__time">
+        7 min ago
+      </div>
+    </a>
+
   </div>
 </aside>

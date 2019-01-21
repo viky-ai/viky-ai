@@ -186,6 +186,10 @@ class Agent < ApplicationRecord
     end
   end
 
+  def any_tests_failed?
+    agent_regression_checks.where(state: 'failed').exists?
+  end
+
 
   private
 

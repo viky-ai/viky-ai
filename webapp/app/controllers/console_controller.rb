@@ -20,9 +20,15 @@ class ConsoleController < ApplicationController
           partial: 'tabs',
           locals: { current_tab: current_tab }
         )
+        user_query = {
+          sentence: sentence,
+          language: language,
+          now: now,
+          verbose: verbose != 'false'
+        }
         @output = render_to_string(
           partial: 'output',
-          locals: { data: data, current_tab: current_tab}
+          locals: { data: data, current_tab: current_tab, agent: agent, user_query: user_query }
         )
       }
     end

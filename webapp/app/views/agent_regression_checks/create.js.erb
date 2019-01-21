@@ -1,0 +1,2 @@
+$('.console__footer__status').empty();
+$('.console__footer__status').html("<span class=\"ts-status ts-status--success\"></span> <%= t('views.console.regression_check.tests', count: @agent.agent_regression_checks.count) %>, 0 failure");

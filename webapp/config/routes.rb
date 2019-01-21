@@ -117,6 +117,8 @@ Rails.application.routes.draw do
           end
         end
 
+        resources :agent_regression_checks, only: [:create]
+
         resources :bots, except: [:show] do
           member do
             get :confirm_destroy

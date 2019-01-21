@@ -521,4 +521,16 @@ class AgentTest < ActiveSupport::TestCase
     agent = agents(:weather)
     assert_equal 'admin/weather', agent.slug
   end
+
+
+  test 'Test agent regression any failed' do
+    agent = agents(:weather)
+    assert agent.any_tests_failed?
+
+    regression_check = agent_regression_checks(:weather_test_forecast_london)
+    regression_check.state = 'passed'
+    regression_check.save
+
+    assert_not agent.any_tests_failed?
+  end
 end

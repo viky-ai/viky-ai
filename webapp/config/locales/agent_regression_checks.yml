@@ -1,0 +1,5 @@
+en:
+  views:
+    agent_regression_checks:
+      new:
+        failed_message: 'Failed to save new regression test.'
