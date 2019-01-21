@@ -243,8 +243,12 @@ og_status NlpPackageInterpretationLog(og_nlp_th ctrl_nlp_th, package_t package, 
   recursive[0]=0;
   if (interpretation->is_recursive) sprintf(recursive," recursive");
 
-  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s'%s:", interpretation->slug,
-      interpretation->id, recursive);
+  unsigned char super_list[DPcPathSize];
+  super_list[0]=0;
+  if (interpretation->is_super_list) sprintf(super_list," super_list");
+
+  OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  Interpretation '%s' '%s'%s%s:", interpretation->slug,
+      interpretation->id, recursive, super_list);
 
   for (int i = 0; i < interpretation->contexts_nb; i++)
   {
@@ -288,6 +292,10 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   recursive[0]=0;
   if (expression->is_recursive) sprintf(recursive," recursive");
 
+  unsigned char super_list[DPcPathSize];
+  super_list[0]=0;
+  if (expression->is_super_list) sprintf(super_list," super_list");
+
   char id_string[DPcPathSize];
   IFN(expression->id)
   {
@@ -311,9 +319,9 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   }
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
-      "    Expression '%s' with locale %s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
+      "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
       expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "",  string_glue_strength, recursive,
-      expression->alias_any_input_part_position);
+      super_list, expression->alias_any_input_part_position);
 
   for (int i = 0; i < expression->aliases_nb; i++)
   {
@@ -387,8 +395,8 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
     case nlp_input_part_type_Interpretation:
     {
       struct alias *alias = input_part->alias;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part interpretation '%s' '%s' in package '%s'",
-          Iinput_part, alias->slug, alias->id, alias->package_id);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "      %4d input_part interpretation '%s'",
+          Iinput_part, alias->slug);
       break;
     }
     case nlp_input_part_type_Number:
@@ -409,6 +417,54 @@ og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struc
 
   DONE;
 }
+
+
+og_status NlpPackageInputPartExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part, char *label)
+
+{
+  struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
+  IFN(input_part) DPcErr;
+
+  switch (input_part->type)
+  {
+    case nlp_input_part_type_Nil:
+    {
+      break;
+    }
+    case nlp_input_part_type_Word:
+    {
+      og_string string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
+      IFN(string_word) DPcErr;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s %4d input_part word '%s' in expression '%s'", label,
+          Iinput_part, string_word, input_part->expression->text);
+      break;
+    }
+    case nlp_input_part_type_Interpretation:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s %4d input_part interpretation '%s' in expression '%s'", label,
+          Iinput_part, alias->slug, input_part->expression->text);
+      break;
+    }
+    case nlp_input_part_type_Number:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s %4d input_part %s in expression '%s'", label, Iinput_part,
+          NlpAliasTypeString(alias->type), input_part->expression->text);
+      break;
+    }
+    case nlp_input_part_type_Regex:
+    {
+      struct alias *alias = input_part->alias;
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "%s %4d input_part %s in expression '%s'", label, Iinput_part,
+          NlpAliasTypeString(alias->type), input_part->expression->text);
+      break;
+    }
+  }
+
+  DONE;
+}
+
 
 og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
 {

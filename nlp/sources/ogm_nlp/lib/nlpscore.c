@@ -8,8 +8,8 @@
 
 static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct request_expression *root_request_expression,
     struct request_expression *request_expression);
-static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, struct request_score *score);
+static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct request_score *score);
 static og_status NlpCalculateTotalScore(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 static og_status NlpCalculateScoreMatchScope(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
 
@@ -37,9 +37,9 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     if (request_input_part->type == nlp_input_part_type_Word)
     {
       struct request_word *request_word = request_input_part->request_word;
-      score->coverage += (double)request_word->nb_matched_words / nb_words;
-      score->spelling += (double)request_word->nb_matched_words * request_word->spelling_score / nb_words;
-      score->locale += (double)request_word->nb_matched_words / nb_words;
+      score->coverage += (double) request_word->nb_matched_words / nb_words;
+      score->spelling += (double) request_word->nb_matched_words * request_word->spelling_score / nb_words;
+      score->locale += (double) request_word->nb_matched_words / nb_words;
       request_expression->nb_matched_words += request_word->nb_matched_words;
     }
 
@@ -52,7 +52,7 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
       request_expression->nb_matched_words += sub_request_expression->nb_matched_words;
       score->locale += sub_request_expression->score->locale * sub_request_expression->score->coverage;
       score->spelling += sub_request_expression->score->spelling * sub_request_expression->score->coverage;
-      score->coverage = (double)request_expression->nb_matched_words / nb_words;
+      score->coverage = (double) request_expression->nb_matched_words / nb_words;
       score->any *= sub_request_expression->score->any;
     }
     else
@@ -112,8 +112,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
   DONE;
 }
 
-static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
-    struct request_expression *request_expression, struct request_score *score)
+static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
+    struct request_score *score)
 {
   if (request_expression->expression->glue_strength == nlp_glue_strength_Punctuation)
   {
@@ -132,25 +132,20 @@ static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
 
     struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
     IFN(request_words) DPcErr;
-    int nb_basic_request_word_for_ltras = ctrl_nlp_th->basic_request_word_used;
-    for (int state = 1, w = 0; w < nb_basic_request_word_for_ltras; w++)
+    int basic_request_word_used = ctrl_nlp_th->basic_request_word_used;
+    int Irequest_word_start;
+    og_bool found = NlpRequestWordGet(ctrl_nlp_th, re_start_position, &Irequest_word_start);
+    IFE(found);
+    if (found)
     {
-      struct request_word *request_word = request_words + w;
-      if (state == 1)   // outside the texte zone
+      for (int w = Irequest_word_start; w < basic_request_word_used; w++)
       {
-        if (request_word->start_position >= re_start_position)
-        {
-          state = 2;
-          w--;
-        }
-      }
-      else if (state == 2)   // inside the texte zone
-      {
+        struct request_word *request_word = request_words + w;
         if (request_word->start_position + request_word->length_position <= re_end_position)
         {
           if (request_word->is_expression_punctuation)
           {
-            score->coverage += (double)request_word->nb_matched_words / nb_words;
+            score->coverage += (double) request_word->nb_matched_words / nb_words;
           }
         }
       }
@@ -158,8 +153,6 @@ static og_status NlpCalculateScoreGluePunctuations(og_nlp_th ctrl_nlp_th,
   }
   DONE;
 }
-
-
 
 /*
  * It is necessary to do the calculation during the parsing phase

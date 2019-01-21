@@ -43,6 +43,26 @@ og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, struct request_expression_
   return TRUE;
 }
 
+/*
+ * Checks if if position2 is included in position 1
+ */
+og_bool NlpRequestPositionIncluded(og_nlp_th ctrl_nlp_th, struct request_position *request_positions,
+    int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2)
+{
+  int start_position1 = request_positions[request_position_start1].start;
+  int start_position2 = request_positions[request_position_start2].start;
+
+  int request_position_end1 = request_position_start1 + request_positions_nb1 - 1;
+  int request_position_end2 = request_position_start2 + request_positions_nb2 - 1;
+
+  int end_position1 = request_positions[request_position_end1].start + request_positions[request_position_end1].length;
+  int end_position2 = request_positions[request_position_end2].start + request_positions[request_position_end2].length;
+
+  if (start_position1 <= start_position2 && end_position2 <= end_position1) return TRUE;
+  return (FALSE);
+}
+
+
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb)
 {
   struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position, request_position_start);

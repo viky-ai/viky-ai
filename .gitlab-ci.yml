@@ -373,6 +373,9 @@ backup_restore_dev:
 
     local CI_DOCKER_IMAGE="$1"
 
+    echo "Pulling ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
+    docker pull ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
     docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
 
