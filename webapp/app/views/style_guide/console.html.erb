@@ -1,11 +1,21 @@
+<style>
+  .console{
+    height: 30em;
+    max-width: 30em;
+    box-shadow: 0 0 0  5px rgba(0, 0, 0, .05),
+                0 0 0 10px rgba(0, 0, 0, .05),
+                0 0 0 15px rgba(0, 0, 0, .05);
+  }
+</style>
+
 <div class="sg-intro">
   <h1>Console</h1>
   <p>Agent test UI.</p>
 </div>
 
 <section>
+  <h2>Structure</h2>
   <%= highlight_html do %>
-
 <div class="console">
   <div class="console__header">
 
@@ -25,33 +35,19 @@
     </div>
 
     <div class="console__header__actions">
-      <a href="?"
-        class="btn btn--small btn--plain console-reset"
-        title="<%= t('views.console.reset.title') %>">
+      <a href="#" class="btn btn--small btn--plain">
         <span class="icon icon--small">
           <%= icon_refresh %>
         </span>
       </a>
-      <a href="#" id="console-enter-fullscreen"
-         data-action="console-enter-fullscreen"
-         title="<%= t('views.console.fullscreen_enter') %>"
-         class="console__header__fullscreen_btn btn btn--small btn--plain">
+      <a href="#" class=" btn btn--small btn--plain">
         <span class="icon icon--small">
           <%= icon_fullscreen %>
-        </span>
-      </a>
-      <a href="#" id="console-leave-fullscreen"
-         data-action="console-leave-fullscreen"
-         title="<%= t('views.console.fullscreen_leave') %>"
-         class="console__header__fullscreen_btn btn btn--small btn--plain" style="display:none;">
-        <span class="icon icon--small">
-          <%= icon_close %>
         </span>
       </a>
     </div>
 
   </div>
-
 
   <form>
     <div class="field">
@@ -73,7 +69,6 @@
             </ul>
           </div>
         </div>
-
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button class="btn btn--outline btn--small">
@@ -90,12 +85,12 @@
             </ul>
           </div>
         </div>
-
       </div>
     </div>
     <div class="field">
       <div class="control control--merged">
-        <input type="text" placeholder="Say something..." name="sentence" />
+        <input type="text" placeholder="Say something..." name="sentence"
+               value="Racontes moi une blague" />
         <button class="btn btn--primary">
           <span class="icon icon--small">
             <%= icon_check %>
@@ -104,35 +99,80 @@
       </div>
     </div>
   </form>
-  <div class="tabs tabs--small tabs--on-center">
-    <ul>
-      <li><a href="#" class="current" data-action="console-switch-to-explain">Explain</a></li>
-      <li><a href="#" data-action="console-switch-to-json">JSON</a></li>
-    </ul>
+
+  <div class="console__tabs">
+    <div class="tabs tabs--small tabs--on-center">
+      <ul>
+        <li>
+          <a href="#" class="current" data-action="console-switch-to-explain">Explain</a>
+        </li>
+        <li>
+          <a href="#" data-action="console-switch-to-json">JSON</a>
+        </li>
+      </ul>
+    </div>
   </div>
+
   <div class="console__output">
-    <div id="console-explain">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi doloribus tenetur, ut repudiandae velit dolor, sunt beatae aspernatur quod, laudantium consequatur architecto sit quaerat molestias, inventore nisi eos a porro.
+    <div class="c-explain" id="console-explain">
+      <p>
+        <span class="badge badge--success">200</span>
+        <%= t('views.console.intent_found', count: 1) %>
+      </p>
+      <ul class="c-intents">
+        <li class="c-intent">
+          <div class="c-intent__header">
+            <a href="#">Interpretation</a>
+            <span class="c-intent__header__slug">
+              user/agent
+            </span>
+            <span class="c-intent__header__score">
+              <span class="badge badge--grey badge--small badge--outline">
+                0.99
+              </span>
+            </span>
+          </div>
+          <ul>
+            <li>
+              <div class="c-intent__label">Solution</div>
+              <pre><code class='language-javascript'>{
+  "type": "query",
+  "joke": {
+    "query": "Comment ramasse-t-on la papaye ?",
+    "response": "Avec une foufourche"
+  }
+}</code></pre>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <div class="c-explain__footer">
+        <a href="#">Go to API endpoint</a>
+        <a href="#">Download package</a>
+      </div>
     </div>
     <div id="console-json" style="display:none;">
       <pre><code class='language-javascript'>{
-  "intents": [
+  "interpretations": [
     {
-      "id": "db3dd17d-fd3f-42a7-9d65-fd5a09894015",
-      "slug": "admin/terminator/hello",
-      "name": "hello",
-      "score": 0.7
-    },
-    {
-      "id": "affdd17d-fd3f-90a7-9d65-fd5a09893033",
-      "slug": "admin/terminator/hello-world",
-      "name": "hello-world",
-      "score": 0.5
+      "id": "18650ef2-89fd-4bd6-92a5-a4a7a969d3c1",
+      "slug": "jmvallet/the-best-agent-ever/interpretations/give-me-a-joke",
+      "name": "give-me-a-joke",
+      "score": 0.87,
+      "solution": {
+        "type": "query",
+        "joke": {
+          "query": "Comment ramasse-t-on la papaye ?",
+          "response": "Avec une foufourche"
+        }
+      }
     }
   ]
 }</code></pre>
     </div>
   </div>
+
 </div>
   <% end %>
 </section>

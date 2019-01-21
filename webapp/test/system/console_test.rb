@@ -228,8 +228,8 @@ class ConsoleTest < ApplicationSystemTestCase
       assert page.has_content?('1 interpretation found.')
       assert page.has_content?('weather')
 
-      within('.intent__highlight') do
-        page.find('.highlight-words', :text => 'weather').click
+      within('.c-intent__highlight') do
+        page.find('.highlight-words', text: 'weather').click
         assert page.has_link?('admin/weather/interpretations/weather_forecast')
         click_link('admin/weather/interpretations/weather_forecast')
       end

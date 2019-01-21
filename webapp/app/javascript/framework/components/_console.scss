@@ -94,13 +94,11 @@
     }
   }
 
-  .tabs{
-    margin: 0;
-    min-height: calc(2.3em + 3px);
-    max-height: calc(2.3em + 3px);
-    height: calc(2.3em + 3px);
+  .console__tabs{
+    .tabs{
+      margin: 0;
+    }
   }
-
 
   .console__output{
     height: 100%;
@@ -124,171 +122,168 @@
       margin: 0;
       background-color: transparent;
     }
-    pre.with-wrap{
-      white-space: normal;
-      line-height: 1.5em;
-    }
+  }
+}
 
-    #console-explain{
-      padding: 1em;
-      p{
-        margin: 0;
+
+.c-explain{
+  padding: 1em;
+  p{
+    margin: 0;
+  }
+  .c-explain__footer{
+    margin-top: 2em;
+    font-size: .8em;
+    text-align: center;
+    a{
+      color: #ccc;
+      text-decoration: none;
+      margin: 0 1em;
+      &:hover{
+        color: #222;
+        text-decoration: underline;
       }
-      .intents{
-        list-style: none;
-        padding: 0;
-        & > li .intent_block{
-          display:block;
-          padding: .5em 1em;
-          text-decoration: none;
-          border-left: 4px solid transparent;
-          box-shadow: 0 1px 2px rgba(black, .2);
-          border-radius: 2px;
-          margin-bottom: .75em;
-          .intent__header{
-            position: relative;
-            margin-right: 2em;
-            .intent__header__name{
-              text-decoration: underline;
-            }
-            .intent__header__slug{
-              color: #aaa;
-              font-size: .8em;
-            }
-            .intent__header__score{
-              position: absolute;
-              right: -2em;
-            }
-          }
-          ul{
-            list-style-type: none;
-            padding: 0;
-            margin-top: .2em;
-            li{
-              border-bottom: 1px solid #eee;
-              padding: .4em 0 .1em 0;
-              &:last-child{
-                border-bottom: none;
-              }
-            }
-          }
-          &:hover{
-            border-left: 4px solid $primary-color;
-          }
-          .intent__label{
-            color: #888;
-            text-transform: uppercase;
-            font-size: .65em;
-            line-height: 1em;
-            margin-bottom: .15em;
-          }
-
-          .intent__highlight{
-            color: #666;
-            font-size: .7em;
-            font-family: $family-monospace;
-            match{
-              background-color: yellow;
-              padding: 0 .2em 0 .2em;
-              border-radius: 1px;
-              margin: 0 2px;
-              border: 1px solid rgba(#000, .05);
-              cursor: pointer;
-              &.current{
-                box-shadow: 0 0 0 2px rgba($primary_color, .25);
-                background-color: $primary_color;
-                color: #fff;
-              }
-            }
-            ul{
-              word-break: break-all;
-              background-color: rgba($primary_color, .05);
-              li{
-                border-bottom: 1px solid #fff;
-                padding: 0;
-                &:last-child{
-                  border-bottom: none;
-                }
-
-                & > a,
-                & > span{
-                  display: block;
-                  text-decoration: none;
-                  line-height: 1.4em;
-                  padding: .25em .5em;
-                  border-left: 2px solid transparent;
-                  border-radius: 1px;
-                  em{
-                    display: block;
-                    font-style: normal;
-                  }
-                  span{
-                    display: block;
-                    color: rgba(#000, .5);
-                  }
-                }
-                & > a{
-                  em{
-                    color: darken($primary_color, 10%);
-                  }
-                  &:hover,
-                  &:focus{
-                    border-left-color: $primary_color;
-                    em{
-                      text-decoration: underline;
-                    }
-                  }
-                }
-                & > span{
-                  background: #f9f9f9;
-                  cursor: not-allowed;
-                  em{
-                    color: #666;
-                  }
-                  &:hover,
-                  &:focus{
-                    border-left-color: #bbb;
-                  }
-                }
-              }
-            }
-          }
-          pre{
-            padding: 0;
-            color: #666;
-            font-size: .7em;
-            font-family: $family-monospace;
-          }
-        }
-      }
-
-      .api_links{
-        margin-top: 3em;
-        padding-top: 1em;
-        font-size: .8em;
-        text-align: center;
-        border-top: 1px dotted #eee;
-        display: flex;
-        justify-content: space-evenly;
-        .endpoint a{
-          color: #bbb;
-          &:hover{
-            color: #222;
-          }
-        }
-        .download_package a{
-          color: #bbb;
-          &:hover{
-            color: #222;
-          }
-        }
-      }
-
     }
   }
 }
-.console-reset-button{
-  position: absolute;
-  top: 4em;
-  right: 3em;
+
+.c-intents{
+  list-style: none;
+  padding: 0;
+}
+
+.c-intent{
+  display: block;
+  padding: .5em 1em;
+  text-decoration: none;
+  border-left: 4px solid transparent;
+  box-shadow: 0 1px 2px rgba(black, .2);
+  border-radius: 2px;
+  margin-bottom: .75em;
+
+  &:hover{
+    border-left: 4px solid $primary-color;
+  }
+
+  .c-intent__header{
+    position: relative;
+    margin-right: 2em;
+    .c-intent__header__name{
+      text-decoration: underline;
+    }
+    .c-intent__header__slug{
+      color: #aaa;
+      font-size: .8em;
+    }
+    .c-intent__header__score{
+      position: absolute;
+      right: -2em;
+    }
+  }
+
+  ul{
+    list-style-type: none;
+    padding: 0;
+    margin-top: .2em;
+    li{
+      border-bottom: 1px solid #eee;
+      padding: .4em 0 .1em 0;
+      &:last-child{
+        border-bottom: none;
+      }
+    }
+  }
+
+  .c-intent__label{
+    color: #888;
+    text-transform: uppercase;
+    font-size: .65em;
+    line-height: 1em;
+    margin-bottom: .15em;
+  }
+
+  .c-intent__scores{
+    white-space: normal;
+    line-height: 1.5em;
+  }
+
+  .c-intent__highlight{
+    color: #666;
+    font-size: .7em;
+    font-family: $family-monospace;
+    match{
+      background-color: yellow;
+      padding: 0 .2em 0 .2em;
+      border-radius: 1px;
+      margin: 0 2px;
+      border: 1px solid rgba(#000, .05);
+      cursor: pointer;
+      &.current{
+        box-shadow: 0 0 0 2px rgba($primary_color, .25);
+        background-color: $primary_color;
+        color: #fff;
+      }
+    }
+    ul{
+      word-break: break-all;
+      background-color: rgba($primary_color, .05);
+      li{
+        border-bottom: 1px solid #fff;
+        padding: 0;
+        &:last-child{
+          border-bottom: none;
+        }
+
+        & > a,
+        & > span{
+          display: block;
+          text-decoration: none;
+          line-height: 1.4em;
+          padding: .25em .5em;
+          border-left: 2px solid transparent;
+          border-radius: 1px;
+          em{
+            display: block;
+            font-style: normal;
+          }
+          span{
+            display: block;
+            color: rgba(#000, .5);
+          }
+        }
+        & > a{
+          em{
+            color: darken($primary_color, 10%);
+          }
+          &:hover,
+          &:focus{
+            border-left-color: $primary_color;
+            em{
+              text-decoration: underline;
+            }
+          }
+        }
+        & > span{
+          background: #f9f9f9;
+          cursor: not-allowed;
+          em{
+            color: #666;
+          }
+          &:hover,
+          &:focus{
+            border-left-color: #bbb;
+          }
+        }
+
+      }
+    }
+  }
+
+  pre{
+    padding: 0;
+    color: #666;
+    font-size: .7em;
+    font-family: $family-monospace;
+  }
+
 }
