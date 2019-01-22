@@ -80,14 +80,19 @@ test_webapp:
     GIT_STRATEGY: none
     VIKYAPP_DB_USERNAME: superman
     VIKYAPP_DB_PASSWORD: sup_3rman
-    VIKYAPP_DB_HOST: postgres
+    # VIKYAPP_DB_HOST: postgres
+    VIKYAPP_DB_HOST: localhost
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
-    VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://redis/1"
-    VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis/2"
-    VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
-    VIKYAPP_STATISTICS_VISUALIZER_URL: "http://kibana:5601"
+    VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://localhost/1"
+    VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://localhost/2"
+    VIKYAPP_STATISTICS_URL: "http://localhost:9200"
+    VIKYAPP_STATISTICS_VISUALIZER_URL: "http://localhost:5601"
+    # VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://redis/1"
+    # VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis/2"
+    # VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
+    # VIKYAPP_STATISTICS_VISUALIZER_URL: "http://kibana:5601"
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
@@ -107,7 +112,7 @@ test_nlp:
     - redis:3.2-alpine
   variables:
     GIT_STRATEGY: none
-    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://redis/3"
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://localhost/3"
   script:
     - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
 
