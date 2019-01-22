@@ -123,6 +123,51 @@
       background-color: transparent;
     }
   }
+
+  .console__footer{
+    @include display_flex();
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(#000, .05);
+    padding: 1em;
+    text-decoration: none;
+    background-color: rgba(#000, .025);
+    &:hover,
+    &:focus{
+      background-color: rgba(#000, .05);
+    }
+    .console__footer__status{
+      color: rgba(#000, .9);
+    }
+    .console__footer__time{
+      color: rgba(#000, .5);
+    }
+  }
+}
+
+// Test suite status
+@keyframes statusRunning {
+    0%    { opacity: 1; }
+   100%    { opacity: 0.5;}
+}
+.ts-status{
+  background-color: #888;
+  display: inline-block;
+  width: .8em;
+  height: .8em;
+  vertical-align: middle;
+  border-radius: 20px;
+  margin-right: .25em;
+
+  &.ts-status--running{
+    animation: 2s ease-in-out statusRunning infinite alternate;
+  }
+  &.ts-status--success{
+    background-color: $success_color;
+  }
+  &.ts-status--failure{
+    background-color: $alert_color;
+  }
 }
 
 
@@ -284,6 +329,18 @@
     color: #666;
     font-size: .7em;
     font-family: $family-monospace;
+  }
+
+  .c-intent__footer{
+    @include display_flex();
+    justify-content: space-between;
+    align-items: center;
+    margin-top: .5em;
+
+    .c-intent__footer__status{
+      font-size: .8em;
+    }
+
   }
 
 }

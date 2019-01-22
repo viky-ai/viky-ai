@@ -1,10 +1,14 @@
 <style>
+  .sg .component-and-code .component{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 1em;
+    padding: 1em;
+  }
   .console{
-    height: 30em;
+    height: 35em;
     max-width: 30em;
-    box-shadow: 0 0 0  5px rgba(0, 0, 0, .05),
-                0 0 0 10px rgba(0, 0, 0, .05),
-                0 0 0 15px rgba(0, 0, 0, .05);
+    border: 5px solid rgba(0, 0, 0, .075);
   }
 </style>
 
@@ -144,6 +148,15 @@
 }</code></pre>
             </li>
           </ul>
+          <div class="c-intent__footer">
+            <div class="c-intent__footer__status">
+              <span class="ts-status ts-status--success"></span>
+              Succeed
+            </div>
+            <div class="c-intent__footer__action">
+              <a href="#" class="btn btn--small btn--primary">Update test</a>
+            </div>
+          </div>
         </li>
       </ul>
 
@@ -173,6 +186,61 @@
     </div>
   </div>
 
+  <a href="#" class="console__footer">
+    <div class="console__footer__status">
+      <span class="ts-status ts-status--success"></span>
+      27 tests, 0 failure
+    </div>
+    <div class="console__footer__time">
+      7 min ago
+    </div>
+  </a>
+
+</div>
+  <% end %>
+</section>
+
+
+
+<section>
+  <h2>Footer states</h2>
+  <%= highlight_html do %>
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="console__footer__status">
+      <span class="ts-status ts-status--running"></span>
+      27 tests, running...
+    </div>
+    <div class="console__footer__time">
+    </div>
+  </a>
+</div>
+
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="console__footer__status">
+      <span class="ts-status ts-status--success"></span>
+      27 tests, 0 failure
+    </div>
+    <div class="console__footer__time">
+      7 min ago
+    </div>
+  </a>
+</div>
+
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="console__footer__status">
+      <span class="ts-status ts-status--failure"></span>
+      27 tests, 3 failures
+    </div>
+    <div class="console__footer__time">
+      15 min ago
+    </div>
+  </a>
 </div>
   <% end %>
 </section>
