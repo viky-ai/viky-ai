@@ -118,7 +118,7 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
     if (new_request_expression_used > ctrl_nlp_th->new_request_expression_start)
     {
       char buffer[DPcPathSize];
-      snprintf(buffer, DPcPathSize, "List of new request expression at level %d:", ctrl_nlp_th->level);
+      snprintf(buffer, DPcPathSize, "NlpMatchExpressions: list of new request expression at level %d:", ctrl_nlp_th->level);
       IFE(NlpRequestExpressionsLog(ctrl_nlp_th, ctrl_nlp_th->new_request_expression_start, buffer));
     }
   }
@@ -165,9 +165,9 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
   og_bool too_far = FALSE;
   if (start < 1) return (FALSE);
   if (expression->is_recursive) return (FALSE);
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
   {
-    NlpLog(DOgNlpTraceMatch, "NlpInputPartsTooFar at %d/%d: checking following request_input_parts:", start + 1,
+    NlpLog(DOgNlpTraceMatchExpressionZone, "NlpInputPartsTooFar at %d/%d: checking following request_input_parts:", start + 1,
         start + length);
     for (int i = 0; i <= start; i++)
     {
@@ -195,12 +195,12 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
     if (max_distance < distance) max_distance = distance;
   }
   if (max_distance > expression->glue_distance) too_far = TRUE;
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
   {
     char string_too_far[DPcPathSize];
     if (too_far) sprintf(string_too_far, " (too far, max is %d)", expression->glue_distance);
     else sprintf(string_too_far, " (correct distance, max is %d)", expression->glue_distance);
-    NlpLog(DOgNlpTraceMatch, "NlpInputPartsTooFar at %d/%d: max_distance is %d%s", start + 1, start + length,
+    NlpLog(DOgNlpTraceMatchExpressionZone, "NlpInputPartsTooFar at %d/%d: max_distance is %d%s", start + 1, start + length,
         max_distance, string_too_far);
   }
   return (too_far);

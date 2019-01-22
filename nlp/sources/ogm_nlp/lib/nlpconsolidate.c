@@ -339,6 +339,23 @@ static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t p
     IFE(NlpConsolidateExpression(ctrl_nlp_th, package, interpretation, expression));
   }
 
+  if (interpretation->is_recursive)
+  {
+    if (interpretation->expressions_nb != 2)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th,
+          "NlpConsolidateInterpretation : recursive interpretation has %d expressions, it should be 2",
+          interpretation->expressions_nb);
+      DPcErr;
+    }
+    for (int i = 0; i < interpretation->expressions_nb; i++)
+    {
+      struct expression *expression = interpretation->expressions + i;
+      if (expression->is_recursive) continue;
+      expression->is_recursive_single = TRUE;
+    }
+  }
+
   DONE;
 }
 
@@ -399,7 +416,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
           og_bool punct_length = 0;
           og_bool is_skipped = FALSE;
           og_bool is_expression = FALSE;
-          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression, &punct_length);
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression,
+              &punct_length);
           IFE(is_punct);
           if (is_punct)
           {

@@ -130,7 +130,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-  if (must_add_request_expression)
+  if (must_add_request_expression && !is_super_list)
   {
     if (request_expression->expression->keep_order)
     {
@@ -140,7 +140,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
     }
   }
 
-  if (must_add_request_expression)
+  if (must_add_request_expression && !is_super_list)
   {
     if (request_expression->expression->glued)
     {
@@ -543,6 +543,22 @@ static og_bool NlpRequestExpressionIsGlued(og_nlp_th ctrl_nlp_th, struct request
       (is_glued ? "is glued" : "is not glued"));
 
   return is_glued;
+}
+
+og_bool NlpRequestExpressionsAreGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2, og_bool keep_order)
+{
+  int any_topology = DOgNlpAnyTopologyBothSide;
+  if (keep_order) any_topology = DOgNlpAnyTopologyRight;
+  if (request_expression1->any_topology & any_topology) return (TRUE);
+
+  any_topology = DOgNlpAnyTopologyBothSide;
+  if (keep_order) any_topology = DOgNlpAnyTopologyLeft;
+  if (request_expression2->any_topology & any_topology) return (TRUE);
+
+  return NlpRequestPositionsAreGlued(ctrl_nlp_th, request_expression1->request_position_start,
+      request_expression1->request_positions_nb, request_expression2->request_position_start,
+      request_expression2->request_positions_nb);
 }
 
 static og_status NlpRequestExpressionOverlapMark(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)

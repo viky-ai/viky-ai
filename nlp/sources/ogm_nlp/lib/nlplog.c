@@ -291,6 +291,7 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char recursive[DPcPathSize];
   recursive[0]=0;
   if (expression->is_recursive) sprintf(recursive," recursive");
+  else if (expression->is_recursive_single) sprintf(recursive," recursive_single");
 
   unsigned char super_list[DPcPathSize];
   super_list[0]=0;
