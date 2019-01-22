@@ -3,5 +3,9 @@ class AgentRegressionCheckRunJob < ApplicationJob
 
   def perform(agent_test)
     agent_test.run
+    ActionCable.server.broadcast 'agent_regression_checks_channel',
+                                 agent_id: agent_test.agent.id,
+                                 check_id: agent_test.id,
+                                 state: agent_test.state
   end
 end

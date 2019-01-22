@@ -12,6 +12,10 @@ class AgentRegressionChecksController < ApplicationController
     end
   end
 
+  def run
+    @agent.run_tests
+  end
+
   private
 
     def regression_check_params
@@ -34,6 +38,8 @@ class AgentRegressionChecksController < ApplicationController
 
     def check_user_rights
       case action_name
+        when 'run'
+          access_denied unless current_user.can? :show, @agent
         when 'create'
           access_denied unless current_user.can? :edit, @agent
         else

@@ -20,7 +20,7 @@ class AgentRegressionCheck < ApplicationRecord
       language: language,
       now: now.iso8601,
       verbose: false,
-      client_type: 'regression_test',
+      client_type: 'regression_test'
     }
     response = Nlp::PublicInterpret.request_public_api(request_params, agent)
     status = response[:status]

@@ -117,7 +117,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :agent_regression_checks, only: [:create]
+        resources :agent_regression_checks, only: [:create] do
+          collection do
+            post :run
+          end
+        end
 
         resources :bots, except: [:show] do
           member do
