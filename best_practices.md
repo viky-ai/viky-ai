@@ -4,7 +4,7 @@ Avec l'experience nous pouvons commencer à préparer des règle de nommage des 
 
 * Les différents noms des interpretations/entities seront écrits en anglais, sauf besoin explicite, à voir selon client
 
-* Les interprétation contenant une liste seront préfixées par "liste". ex: liste\_criteres
+* Les interprétation contenant une liste seront préfixées par "list" (en anglais). ex: list\_criteres
 
     selon la langue, celà peut être un suffixe. ex en anglais : criteria\_list
 
@@ -12,7 +12,7 @@ Avec l'experience nous pouvons commencer à préparer des règle de nommage des 
     
     Ces éléments sont des interprétations.
 
-    Ces interpretations doivent être préfixées par "element". ex: element\_critere ou post-fixée en anglais: criteria\_element
+    Ces interpretations doivent être préfixées par "element" (en anglais). ex: element\_critere ou post-fixée en anglais: criteria\_element
 
 > Exemple:
 
@@ -30,7 +30,7 @@ Avec l'experience nous pouvons commencer à préparer des règle de nommage des 
 
 > Les mots maîtrise, compétence, connaissance, expertise, capacité, exprime le concept de compétence mais pas une competence, l'interprétation sera donc nommée "competence"
 
-> Les mots "bien organisé" "autonomie", "développement" "conception assistée par ordinateur" sont des compétences, l'interprétation sera donc nommée "compétences"
+> Les mots "bien organisé" "autonomie", "développement" "conception assistée par ordinateur" sont des compétences, l'interprétation sera donc nommée "competences"
     
 * Les articles prépositions et conjonctions ne seront pas spécifiées, sauf besoin explicite de différenciation. 
 
@@ -42,4 +42,4 @@ Avec l'experience nous pouvons commencer à préparer des règle de nommage des 
 
 * Les éléments de ponctuation ne seront pas spécifiées, sauf besoin explicite (identification de séparateur, etc...)
 
-A priori, dans le cas de Pertimm, et comme les agents sont généralement multi-lingues, la dénomination se devrait d'être anglaise, au moins dans tous les usages faits par Pertimm. Ce qui simplifiera la lecture : on ne devra pas jongler entre liste_criteres et criteria_list ou element_critere ou criterium_element.
+A priori, dans le cas de Pertimm, et comme les agents sont généralement multi-lingues, la dénomination se devrait d'être anglaise, au moins dans tous les usages faits par Pertimm. Ce qui simplifiera la lecture : on ne devra pas jongler entre list_criteres et criteria_list ou element_critere ou criterium_element.
