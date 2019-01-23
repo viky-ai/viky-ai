@@ -102,14 +102,13 @@ test_webapp:
 
   script:
     - apt update
-    - apt install -y iputils-ping paping
+    - apt install -y iputils-ping nmap
     - hostname
     - ifconfig -a
-    - paping --help
-    - paping -p 80 google.com
+    - nmap -p 22 google.com
     - ping -c 1 google.fr
-    - ping 127.0.0.1
-    - ping postgres.svc.cluster.local
+    - ping -c 1 127.0.0.1
+    - ping -c 1 postgres.svc.cluster.local
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
