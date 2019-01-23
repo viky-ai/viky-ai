@@ -95,11 +95,16 @@ test_webapp:
     VIKYAPP_STATISTICS_VISUALIZER_URL: "http://127.0.0.1:5601"
   services:
     - postgres:9.6-alpine
-    - redis:3.2-alpine
+    - name: redis:3.2-alpine
     - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
     - docker.elastic.co/kibana/kibana:6.3.0
 
   script:
+    - hostname
+    - ifconfig -a
+    - ping -c 1 google.fr
+    - ping 127.0.0.1
+    - ping postgres.svc.cluster.local
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
