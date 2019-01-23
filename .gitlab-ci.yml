@@ -104,7 +104,6 @@ test_webapp:
     - apt update
     - apt install -y iputils-ping nmap
     - hostname
-    - ifconfig -a
     - nmap -p 22 google.com
     - ping -c 1 google.fr
     - ping -c 1 127.0.0.1
