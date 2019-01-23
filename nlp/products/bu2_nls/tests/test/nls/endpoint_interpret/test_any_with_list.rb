@@ -45,10 +45,11 @@ module Nls
         i_hotel_feature << Expression.new("@{activity}", aliases: {activity: i_activity})
 
         i_hotel_features = package.new_interpretation("hotel_features", { scope: "private" })
+        i_hotel_features << Expression.new("@{hotel_feature}", aliases: {hotel_feature: i_hotel_feature })
         i_hotel_features << Expression.new("@{hotel_feature} @{hotel_features}", aliases: {hotel_feature: i_hotel_feature, hotel_features: i_hotel_features })
 
         i_book_hotel = package.new_interpretation("book_hotel", { scope: "public" })
-        i_book_hotel << Expression.new("@{go} @{hotel_features}", aliases: { go: i_go, hotel_features: i_hotel_feature })
+        i_book_hotel << Expression.new("@{go} @{hotel_features}", aliases: { go: i_go, hotel_features: i_hotel_features })
         i_book_hotel << Expression.new("@{go} @{to_location}", aliases: { go: i_go, to_location: i_to_location })
 
         package
@@ -58,7 +59,7 @@ module Nls
 
       def test_any_with_list
 
-        expected = { interpretation: "book_hotel", solution: {"location"=>"tombouctou"} }
+        expected = { interpretation: "book_hotel", solution: {"hotel_features"=>[{"location"=>"tombouctou"}]} }
         check_interpret("to go to tombouctou",        expected)
         check_interpret("I want to go to tombouctou", expected)
 

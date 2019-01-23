@@ -55,9 +55,9 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   IFE(NlpMatchCreate(ctrl_nlp_th));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-   {
-     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
-   }
+  {
+    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
+  }
 
   IFE(NlpRequestExpressionsCalculate(ctrl_nlp_th));
 
@@ -94,15 +94,11 @@ static int NlpMatchCreate(og_nlp_th ctrl_nlp_th)
     }
     while (at_least_one_input_part_added);
 
-    if (ctrl_nlp_th->super_list->recursive_expression != NULL)
+    IFE(super_list_created = NlpSuperListsCreate(ctrl_nlp_th));
+    if (super_list_created)
     {
-      IFE(super_list_created = NlpSuperListCreate(ctrl_nlp_th));
       IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
       ctrl_nlp_th->level++;
-    }
-    else
-    {
-      super_list_created = FALSE;
     }
   }
   while (super_list_created);
