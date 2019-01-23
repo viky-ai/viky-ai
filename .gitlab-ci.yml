@@ -103,13 +103,19 @@ test_webapp:
     - apt update
     - apt install -y nmap
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
+    - sleep 10
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 10
     - nmap -n -PN -sT -sU -p- 127.0.0.1
     - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
     - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
+    - sleep 60
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 60
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 60
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
