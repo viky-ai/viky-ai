@@ -97,6 +97,7 @@ test_webapp:
   services:
     - postgres:9.6-alpine
     - name: redis:3.2-alpine
+      alias: redis
     - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
     - docker.elastic.co/kibana/kibana:6.3.0
 
@@ -104,10 +105,11 @@ test_webapp:
     - apt update
     - apt install -y iputils-ping nmap
     - hostname
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
     - nmap -p 22 google.com
     - ping -c 1 google.fr
     - ping -c 1 127.0.0.1
-    - ping -c 1 postgres.svc.cluster.local
+    - ping -c 1 redis.svc.cluster.local
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
