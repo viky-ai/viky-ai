@@ -234,7 +234,6 @@ struct expression
   int any_input_part_position;
 
   og_bool is_recursive;
-  og_bool is_recursive_single;
   og_bool is_super_list;
 
   json_t *json_solution;

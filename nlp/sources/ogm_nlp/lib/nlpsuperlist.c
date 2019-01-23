@@ -97,6 +97,8 @@ static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, st
   {
     struct interpretation *interpretation = interpretations + i;
     if (!interpretation->is_recursive) continue;
+    // Super list recursive interpretation have only two expression: recursive and single
+    if (interpretation->expressions_nb != 2) continue;
     if (public_alias->type != nlp_alias_type_Interpretation) continue;
     if (strcmp(interpretation->id, public_alias->id)) continue;
     interpretation->is_super_list = TRUE;
@@ -137,7 +139,6 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
 {
   package_t package = interpret_package->package;
   struct super_list super_list[1];
-  memset(super_list, 0, sizeof(struct super_list));
 
   struct interpretation *interpretations = OgHeapGetCell(package->hinterpretation, 0);
   IFN(interpretations) DPcErr;
@@ -146,43 +147,36 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
   {
     struct interpretation *interpretation = interpretations + i;
     if (!interpretation->is_super_list) continue;
+    memset(super_list, 0, sizeof(struct super_list));
     for (int j = 0; j < interpretation->expressions_nb; j++)
     {
       if (interpretation->expressions[j].is_super_list)
       {
-        if (super_list->recursive_expression == NULL)
+        super_list->recursive_expression = interpretation->expressions + j;
+        if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
         {
-          super_list->recursive_expression = interpretation->expressions + j;
-          if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
+          NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list expression:");
+          IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, super_list->recursive_expression));
+        }
+        struct expression *expression = super_list->recursive_expression;
+        for (int a = 0; a < expression->aliases_nb; a++)
+        {
+          struct alias *alias = expression->aliases + a;
+          if (strcmp(alias->id, expression->interpretation->id))
           {
-            NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list expression:");
-            IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, super_list->recursive_expression));
-          }
-          struct expression *expression = super_list->recursive_expression;
-          for (int a = 0; a < expression->aliases_nb; a++)
-          {
-            struct alias *alias = expression->aliases + a;
-            if (strcmp(alias->id, expression->interpretation->id))
+            super_list->alias = alias;
+            if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
             {
-              super_list->alias = alias;
-              if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
-              {
-                NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list alias:");
-                IFE(NlpPackageAliasLog(ctrl_nlp_th, package, super_list->alias));
-              }
-              IFE(NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_package, super_list));
-              break;
+              NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list alias:");
+              IFE(NlpPackageAliasLog(ctrl_nlp_th, package, super_list->alias));
             }
+            IFE(NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_package, super_list));
+            break;
           }
-          super_list->interpret_package = interpret_package;
         }
-        else
-        {
-          NlpThrowErrorTh(ctrl_nlp_th, "NlpSuperListGetInPackage : cannot have more than one super list expression");
-          DPcErr;
-        }
+        super_list->interpret_package = interpret_package;
       }
-      else
+      else // can only be the single expression, because super_list interpretation have only two expressions
       {
         super_list->single_expression = interpretation->expressions + j;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceConsolidate)
@@ -190,15 +184,14 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
           NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list single expression:");
           IFE(NlpPackageExpressionLog(ctrl_nlp_th, package, super_list->single_expression));
         }
-
       }
+    }
+    if (super_list->recursive_expression != NULL)
+    {
+      IFE(OgHeapAppend(ctrl_nlp_th->hsuper_list, 1, super_list));
     }
   }
 
-  if (super_list->recursive_expression != NULL)
-  {
-    IFE(OgHeapAppend(ctrl_nlp_th->hsuper_list, 1, super_list));
-  }
 
   DONE;
 }
