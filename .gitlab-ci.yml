@@ -101,7 +101,6 @@ test_webapp:
 
   script:
     - hostname
-    - ifconfig -a
     - ping -c 1 google.fr
     - ping 127.0.0.1
     - ping postgres.svc.cluster.local
