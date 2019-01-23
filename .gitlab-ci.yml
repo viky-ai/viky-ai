@@ -1,5 +1,5 @@
 stages:
-  - prerequist
+  #  - prerequist
   - build
   - test
   - docker_tag
@@ -27,49 +27,49 @@ variables:
 
 # Build docker image
 
-build_ruby_base:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
+# build_ruby_base:
+#   <<: *kubernetes_runner
+#   services:
+#     - docker:stable-dind
+#   stage: prerequist
+#   script:
+#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
+#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
-build_backup:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+# build_backup:
+#   <<: *kubernetes_runner
+#   services:
+#     - docker:stable-dind
+#   stage: prerequist
+#   script:
+#     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
-build_elastic:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: prerequist
-  script:
-    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
+# build_elastic:
+#   <<: *kubernetes_runner
+#   services:
+#     - docker:stable-dind
+#   stage: prerequist
+#   script:
+#     - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
-build_webapp:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: build
-  script:
-    - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
-    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
-    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
+# build_webapp:
+#   <<: *kubernetes_runner
+#   services:
+#     - docker:stable-dind
+#   stage: build
+#   script:
+#     - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
+#     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
+#     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
-build_nlp:
-  <<: *kubernetes_runner
-  services:
-    - docker:stable-dind
-  stage: build
-  script:
-    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
-    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+# build_nlp:
+#   <<: *kubernetes_runner
+#   services:
+#     - docker:stable-dind
+#   stage: build
+#   script:
+#     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
+#     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
 # Test
 test_webapp:
@@ -85,21 +85,20 @@ test_webapp:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
-    VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://localhost/1"
-    VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://localhost/2"
-    VIKYAPP_STATISTICS_URL: "http://localhost:9200"
-    VIKYAPP_STATISTICS_VISUALIZER_URL: "http://localhost:5601"
     # VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://redis/1"
     # VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis/2"
     # VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
     # VIKYAPP_STATISTICS_VISUALIZER_URL: "http://kibana:5601"
+    VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://127.0.0.1:6379/1"
+    VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://127.0.0.1:6379/2"
+    VIKYAPP_STATISTICS_URL: "http://127.0.0.1:9200"
+    VIKYAPP_STATISTICS_VISUALIZER_URL: "http://127.0.0.1:5601"
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-      alias: elasticsearch
-    - name: docker.elastic.co/kibana/kibana:6.3.0
-      alias: kibana
+    - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    - docker.elastic.co/kibana/kibana:6.3.0
+
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
@@ -112,7 +111,7 @@ test_nlp:
     - redis:3.2-alpine
   variables:
     GIT_STRATEGY: none
-    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://localhost/3"
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://127.0.0.1:6379/3"
   script:
     - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
 
