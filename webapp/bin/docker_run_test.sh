@@ -14,3 +14,7 @@ sleep 1
 
 # Run system tests
 ./bin/rails test:system
+
+echo "Am Done"
+
+exit
