@@ -101,7 +101,11 @@ test_webapp:
     - docker.elastic.co/kibana/kibana:6.3.0
 
   script:
+    - apt install -y iputils-ping paping
     - hostname
+    - ifconfig -a
+    - paping --help
+    - paping -p 80 google.com
     - ping -c 1 google.fr
     - ping 127.0.0.1
     - ping postgres.svc.cluster.local
