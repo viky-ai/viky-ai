@@ -106,13 +106,8 @@ test_webapp:
 
   script:
     - apt update
-    - apt install -y iputils-ping nmap
-    - hostname
+    - apt install -y nmap
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - nmap -p 22 google.com
-    - ping -c 1 google.fr
-    - ping -c 1 127.0.0.1
-    - ping -c 1 redis.svc.cluster.local
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
