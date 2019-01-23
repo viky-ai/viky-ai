@@ -3,6 +3,8 @@ set -x -e
 
 sleep 1
 
+echo "Am Starting"
+
 # Setup DB
 ./bin/rails db:reset
 
