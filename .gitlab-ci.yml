@@ -116,6 +116,12 @@ test_webapp:
     - sleep 60
     - nmap -n -PN -sT -sU -p- 127.0.0.1
     - sleep 60
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 180
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 180
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 180
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
