@@ -1,5 +1,5 @@
 stages:
-  #  - prerequist
+  - prerequist
   - build
   - test
   - docker_tag
@@ -23,53 +23,53 @@ variables:
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
-  TRACE: 0
+  TRACE: "0"
 
 # Build docker image
 
-# build_ruby_base:
-#   <<: *kubernetes_runner
-#   services:
-#     - docker:stable-dind
-#   stage: prerequist
-#   script:
-#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
-#     - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
+build_ruby_base:
+  <<: *kubernetes_runner
+  services:
+    - docker:stable-dind
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}      deployment/docker_tools/ruby_base "--target image_ruby_base"
+    - docker_build ${DOCKER_IMAGE_TOOLS_RUBY}_test deployment/docker_tools/ruby_base "--target image_ruby_base_test"
 
-# build_backup:
-#   <<: *kubernetes_runner
-#   services:
-#     - docker:stable-dind
-#   stage: prerequist
-#   script:
-#     - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
+build_backup:
+  <<: *kubernetes_runner
+  services:
+    - docker:stable-dind
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_TOOLS_BACKUP} deployment/docker_tools/backup
 
-# build_elastic:
-#   <<: *kubernetes_runner
-#   services:
-#     - docker:stable-dind
-#   stage: prerequist
-#   script:
-#     - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
+build_elastic:
+  <<: *kubernetes_runner
+  services:
+    - docker:stable-dind
+  stage: prerequist
+  script:
+    - docker_build ${DOCKER_IMAGE_ELASTICSEARCH} deployment/docker_tools/elasticsearch
 
-# build_webapp:
-#   <<: *kubernetes_runner
-#   services:
-#     - docker:stable-dind
-#   stage: build
-#   script:
-#     - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
-#     - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
-#     - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
+build_webapp:
+  <<: *kubernetes_runner
+  services:
+    - docker:stable-dind
+  stage: build
+  script:
+    - docker_build ${DOCKER_IMAGE_DOC}      doc    "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_doc_run"
+    - docker_build ${DOCKER_IMAGE_APP}      webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_run"
+    - docker_build ${DOCKER_IMAGE_APP}_test webapp "--build-arg VIKY_IMAGE_TAG=${CI_COMMIT_REF_SLUG} --target image_ruby_test"
 
-# build_nlp:
-#   <<: *kubernetes_runner
-#   services:
-#     - docker:stable-dind
-#   stage: build
-#   script:
-#     - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
-#     - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
+build_nlp:
+  <<: *kubernetes_runner
+  services:
+    - docker:stable-dind
+  stage: build
+  script:
+    - docker_build ${DOCKER_IMAGE_NLP}      nlp "--target run_image"
+    - docker_build ${DOCKER_IMAGE_NLP}_test nlp "--target test_image"
 
 # Test
 test_webapp:
@@ -97,352 +97,352 @@ test_webapp:
     - postgres:9.6-alpine
     - redis:3.2-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-      alias: elasticsearch
-      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"]
+      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
     - docker.elastic.co/kibana/kibana:6.3.0
   before_script:
     - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5432"; do sleep 10; done # postgres
-    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5601"; do sleep 10; done # kibana
     - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/6379"; do sleep 10; done # redis
     - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/9200"; do sleep 10; done # es
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5601"; do sleep 10; done # kibana
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
-# test_nlp:
-#   <<: *kubernetes_runner
-#   stage: test
-#   image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
-#   services:
-#     - redis:3.2-alpine
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://127.0.0.1:6379/3"
-#   script:
-#     - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
+test_nlp:
+  <<: *kubernetes_runner
+  stage: test
+  image: ${DOCKER_IMAGE_NLP}_test:${CI_COMMIT_REF_SLUG}
+  services:
+    - redis:3.2-alpine
+  before_script:
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/6379"; do sleep 10; done # redis
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://127.0.0.1:6379/3"
+  script:
+    - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
+# Tag docker image to lasted
+tag_webapp:
+  <<: *kubernetes_runner
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_APP}
 
-# # Tag docker image to lasted
-# tag_webapp:
-#   <<: *kubernetes_runner
-#   stage: docker_tag
-#   only:
-#     - develop
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - docker_tag_latest ${DOCKER_IMAGE_APP}
+tag_nlp:
+  <<: *kubernetes_runner
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_NLP}
 
-# tag_nlp:
-#   <<: *kubernetes_runner
-#   stage: docker_tag
-#   only:
-#     - develop
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - docker_tag_latest ${DOCKER_IMAGE_NLP}
+tag_ruby_base:
+  <<: *kubernetes_runner
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
 
-# tag_ruby_base:
-#   <<: *kubernetes_runner
-#   stage: docker_tag
-#   only:
-#     - develop
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}
-#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_RUBY}_test
+tag_backup:
+  <<: *kubernetes_runner
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
 
-# tag_backup:
-#   <<: *kubernetes_runner
-#   stage: docker_tag
-#   only:
-#     - develop
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - docker_tag_latest ${DOCKER_IMAGE_TOOLS_BACKUP}
+tag_elastic:
+  <<: *kubernetes_runner
+  stage: docker_tag
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker_tag_latest ${DOCKER_IMAGE_ELASTICSEARCH}
 
-# tag_elastic:
-#   <<: *kubernetes_runner
-#   stage: docker_tag
-#   only:
-#     - develop
-#   variables:
-#     GIT_STRATEGY: none
-#   script:
-#     - docker_tag_latest ${DOCKER_IMAGE_ELASTICSEARCH}
+# Deploy any branches on rancher dev
+deploy_dev:
+  <<: *kubernetes_runner
+  stage: deploy
+  except:
+    - master
+    - tags
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  dependencies:
+    - build_webapp
+    - build_nlp
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    on_stop: delete_env
+  variables:
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+  script:
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - cd deployment
+    - echo "Deploy ..."
+    - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml  --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
 
-# # Deploy any branches on rancher dev
-# deploy_dev:
-#   <<: *kubernetes_runner
-#   stage: deploy
-#   except:
-#     - master
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   dependencies:
-#     - build_webapp
-#     - build_nlp
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     on_stop: delete_env
-#   variables:
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-#   script:
-#     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - cd deployment
-#     - echo "Deploy ..."
-#     - rancher --wait --environment dev up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml  --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
+# Deploy master on rancher preprod
+deploy_preprod:
+  <<: *kubernetes_runner
+  stage: deploy
+  only:
+    - master
+  except:
+    - tags
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  dependencies:
+    - build_webapp
+    - build_nlp
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    VIKYAPP_AUTO_BACKUP: "true"
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+  script:
+    - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/preprod ( ${CI_ENVIRONMENT_URL} )"
+    - cd deployment
+    - viky_backup
+    - echo "Deploy ..."
+    - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
 
-# # Deploy master on rancher preprod
-# deploy_preprod:
-#   <<: *kubernetes_runner
-#   stage: deploy
-#   only:
-#     - master
-#   except:
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   dependencies:
-#     - build_webapp
-#     - build_nlp
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     VIKYAPP_AUTO_BACKUP: "true"
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-#   script:
-#     - echo "Deploy ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/preprod ( ${CI_ENVIRONMENT_URL} )"
-#     - cd deployment
-#     - viky_backup
-#     - echo "Deploy ..."
-#     - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
+# remove environment
+delete_env:
+  <<: *kubernetes_runner
+  stage: admin
+  except:
+    - master
+    - tags
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    action: stop
+  variables:
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+    VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
+  script:
+    - echo "Remove ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher --debug --environment dev rm --stop --type stack ${VIKYAPP_DEPLOY_RANCHER_STACK}
+  when: manual
+  allow_failure: true
 
-# # remove environment
-# delete_env:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   except:
-#     - master
-#     - tags
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     action: stop
-#   variables:
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
-#   script:
-#     - echo "Remove ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher --debug --environment dev rm --stop --type stack ${VIKYAPP_DEPLOY_RANCHER_STACK}
-#   when: manual
-#   allow_failure: true
+# invite admin user
+invite_admin_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
 
-# # invite admin user
-# invite_admin_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
-#   when: manual
-#   allow_failure: true
+# invite admin user
+invite_admin_preprod:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+  script:
+    - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
+  when: manual
+  allow_failure: true
 
-# # invite admin user
-# invite_admin_preprod:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   only:
-#     - master
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#   script:
-#     - echo "Add user ${GITLAB_USER_EMAIL} as admin on ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - TASK_CMD="./bin/rails users:invite_admin[${GITLAB_USER_EMAIL}]"
-#     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
-#   when: manual
-#   allow_failure: true
+# backup
+backup_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+  when: manual
+  allow_failure: true
 
-# # backup
-# backup_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
-#   when: manual
-#   allow_failure: true
+# backup
+backup_preprod:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+  script:
+    - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+  when: manual
+  allow_failure: true
 
-# # backup
-# backup_preprod:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   only:
-#     - master
-#   environment:
-#     name: viky-preprod
-#     url: https://viky-beta.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
-#     VIKYAPP_BASEURL: https://viky-beta.viky.ai
-#   script:
-#     - echo "Backup platform data from ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
-#   when: manual
-#   allow_failure: true
+# backup restore
+backup_restore_dev:
+  <<: *kubernetes_runner
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK} is starting ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
+    - echo "Backup current data ..."
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/backup.sh
+    - sleep 5
+    - echo "Stopping platform ${VIKYAPP_DEPLOY_RANCHER_STACK} ..."
+    - rancher --wait --environment dev stop ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
+    - sleep 5
+    - echo "Restart databases and backup tools ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
+    - sleep 5
+    - echo "Restart backup tools ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/backup                --type service
+    - sleep 5
+    - echo "Restoring data ..."
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
+    - sleep 2
+    - echo "Restarting platform ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
+  when: manual
+  allow_failure: true
 
-# # backup restore
-# backup_restore_dev:
-#   <<: *kubernetes_runner
-#   stage: admin
-#   image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
-#   except:
-#     - master
-#     - tags
-#   environment:
-#     name: ${CI_COMMIT_REF_NAME}
-#     url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   variables:
-#     GIT_STRATEGY: none
-#     VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
-#     VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
-#   script:
-#     - echo "Restore data from preprod (https://viky-beta.viky.ai) to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
-#     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK} is starting ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
-#     - echo "Backup current data ..."
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/backup.sh
-#     - sleep 5
-#     - echo "Stopping platform ${VIKYAPP_DEPLOY_RANCHER_STACK} ..."
-#     - rancher --wait --environment dev stop ${VIKYAPP_DEPLOY_RANCHER_STACK}                 --type stack
-#     - sleep 5
-#     - echo "Restart databases and backup tools ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-postgresql  --type service
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
-#     - sleep 5
-#     - echo "Restart backup tools ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/backup                --type service
-#     - sleep 5
-#     - echo "Restoring data ..."
-#     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
-#     - sleep 2
-#     - echo "Restarting platform ..."
-#     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
-#   when: manual
-#   allow_failure: true
+# ---------------------------------------------------------------------------
 
-# # ---------------------------------------------------------------------------
+.auto_devops: &auto_devops |
+  # Auto DevOps variables and functions
+  [[ "$TRACE" == "1" ]] && set -x
 
-# .auto_devops: &auto_devops |
-#   # Auto DevOps variables and functions
-#   [[ "$TRACE" == "1" ]] && set -x
+  function viky_backup ()
+  {
+    echo "Backing up data ..."
+    rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
 
-#   function viky_backup ()
-#   {
-#     echo "Backing up data ..."
-#     rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 bash /backup/backup.sh
+    if [ $? -ne 0 ]; then
+      (>&2 echo "Backing up data FAILED")
+    fi
+    echo ""
+    return 0
+  }
 
-#     if [ $? -ne 0 ]; then
-#       (>&2 echo "Backing up data FAILED")
-#     fi
-#     echo ""
-#     return 0
-#   }
+  function docker_build ()
+  {
+    # login to private registry
+    docker_login
 
-#   function docker_build ()
-#   {
-#     # login to private registry
-#     docker_login
+    local CI_DOCKER_IMAGE="$1"
+    local CI_DOCKER_DIR="$2"
+    local CI_DOCKER_IMAGE_BUILD_OPT="$3"
 
-#     local CI_DOCKER_IMAGE="$1"
-#     local CI_DOCKER_DIR="$2"
-#     local CI_DOCKER_IMAGE_BUILD_OPT="$3"
+    echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
+    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
+    echo ""
 
-#     echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} from dir ${CI_DOCKER_DIR} ..."
-#     docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
-#     echo ""
+    echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+    echo ""
+  }
 
-#     echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
-#     docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
-#     echo ""
-#   }
+  function docker_tag_latest ()
+  {
+    # login to private registry
+    docker_login
 
-#   function docker_tag_latest ()
-#   {
-#     # login to private registry
-#     docker_login
+    local CI_DOCKER_IMAGE="$1"
 
-#     local CI_DOCKER_IMAGE="$1"
+    echo "Pulling ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
+    docker pull ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
 
-#     echo "Pulling ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
-#     docker pull ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+    echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
+    docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
 
-#     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to ${CI_DOCKER_IMAGE}:latest"
-#     docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_IMAGE}:latest
+    echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:latest
+    echo ""
+  }
 
-#     echo "Pushing ${CI_DOCKER_IMAGE}:latest to GitLab Container Registry ..."
-#     docker push ${CI_DOCKER_IMAGE}:latest
-#     echo ""
-#   }
+  function docker_login ()
+  {
+    if [[ -n "$CI_REGISTRY_USER" ]]; then
+      echo "Logging to GitLab Container Registry with CI credentials ..."
+      echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+      echo ""
+    fi
+  }
 
-#   function docker_login ()
-#   {
-#     if [[ -n "$CI_REGISTRY_USER" ]]; then
-#       echo "Logging to GitLab Container Registry with CI credentials ..."
-#       echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
-#       echo ""
-#     fi
-#   }
+  function rancher_exec ()
+  {
+    local RANCHER_ENV=$1
 
-#   function rancher_exec ()
-#   {
-#     local RANCHER_ENV=$1
+    # simulate a tty with script command https://github.com/rancher/rancher/issues/7971#issuecomment-286856228
+    local CURRENT_COMMAND="rancher --wait --environment ${RANCHER_ENV} exec -t ${@:2}"
+    echo "Exec : ${CURRENT_COMMAND}"
+    script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
+    return $?
+  }
 
-#     # simulate a tty with script command https://github.com/rancher/rancher/issues/7971#issuecomment-286856228
-#     local CURRENT_COMMAND="rancher --wait --environment ${RANCHER_ENV} exec -t ${@:2}"
-#     echo "Exec : ${CURRENT_COMMAND}"
-#     script --return --flush --quiet --command "${CURRENT_COMMAND}" /dev/null
-#     return $?
-#   }
-
-# before_script:
-#   - *auto_devops
+before_script:
+  - *auto_devops
