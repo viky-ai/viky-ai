@@ -75,7 +75,8 @@ variables:
 test_webapp:
   <<: *kubernetes_runner
   stage: test
-  image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
+  # image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
+  image: ubuntu:16.04
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DB_USERNAME: superman
