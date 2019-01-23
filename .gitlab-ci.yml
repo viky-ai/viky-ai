@@ -96,7 +96,9 @@ test_webapp:
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
-    - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+      alias: elasticsearch
+      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"]
     - docker.elastic.co/kibana/kibana:6.3.0
 
   script:
@@ -111,17 +113,13 @@ test_webapp:
     - nmap -n -PN -sT -sU -p- 127.0.0.1
     - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 60
+    - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 60
+    - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 60
+    - sleep 20
     - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 180
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 180
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 180
+    - sleep 20
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
