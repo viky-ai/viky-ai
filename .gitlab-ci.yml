@@ -75,8 +75,7 @@ variables:
 test_webapp:
   <<: *kubernetes_runner
   stage: test
-  # image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
-  image: ubuntu:16.04
+  image: ${DOCKER_IMAGE_APP}_test:${CI_COMMIT_REF_SLUG}
   variables:
     GIT_STRATEGY: none
     VIKYAPP_DB_USERNAME: superman
@@ -95,19 +94,22 @@ test_webapp:
     VIKYAPP_STATISTICS_URL: "http://127.0.0.1:9200"
     VIKYAPP_STATISTICS_VISUALIZER_URL: "http://127.0.0.1:5601"
   services:
-    - name: postgres:9.6-alpine
-      alias: postgresqltest
-    - name: redis:3.2-alpine
-      alias: redis
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-      alias: elasticsearch
-    - name: docker.elastic.co/kibana/kibana:6.3.0
-      alias: kibana
+    - postgres:9.6-alpine
+    - redis:3.2-alpine
+    - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    - docker.elastic.co/kibana/kibana:6.3.0
 
   script:
     - apt update
     - apt install -y nmap
     - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 20
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 20
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 20
+    - nmap -n -PN -sT -sU -p- 127.0.0.1
+    - sleep 20
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
