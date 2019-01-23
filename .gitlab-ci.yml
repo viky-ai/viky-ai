@@ -95,11 +95,14 @@ test_webapp:
     VIKYAPP_STATISTICS_URL: "http://127.0.0.1:9200"
     VIKYAPP_STATISTICS_VISUALIZER_URL: "http://127.0.0.1:5601"
   services:
-    - postgres:9.6-alpine
+    - name: postgres:9.6-alpine
+      alias: postgresqltest
     - name: redis:3.2-alpine
       alias: redis
-    - docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-    - docker.elastic.co/kibana/kibana:6.3.0
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+      alias: elasticsearch
+    - name: docker.elastic.co/kibana/kibana:6.3.0
+      alias: kibana
 
   script:
     - apt update
