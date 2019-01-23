@@ -81,7 +81,7 @@ test_webapp:
     VIKYAPP_DB_USERNAME: superman
     VIKYAPP_DB_PASSWORD: sup_3rman
     # VIKYAPP_DB_HOST: postgres
-    VIKYAPP_DB_HOST: localhost
+    VIKYAPP_DB_HOST: "127.0.0.1"
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
@@ -100,26 +100,12 @@ test_webapp:
       alias: elasticsearch
       command: ["bin/elasticsearch", "-Ediscovery.type=single-node"]
     - docker.elastic.co/kibana/kibana:6.3.0
-
+  before_script:
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5432"; do sleep 10; done # postgres
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5601"; do sleep 10; done # kibana
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/6379"; do sleep 10; done # redis
+    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/9200"; do sleep 10; done # es
   script:
-    - apt update
-    - apt install -y nmap
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 10
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 10
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
-    - nmap -n -PN -sT -sU -p- 127.0.0.1
-    - sleep 20
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
 # test_nlp:
