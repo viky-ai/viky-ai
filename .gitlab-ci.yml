@@ -101,6 +101,7 @@ test_webapp:
     - docker.elastic.co/kibana/kibana:6.3.0
 
   script:
+    - apt update
     - apt install -y iputils-ping paping
     - hostname
     - ifconfig -a
