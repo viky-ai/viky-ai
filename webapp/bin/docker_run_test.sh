@@ -3,7 +3,7 @@ set -x -e
 
 sleep 1
 
-echo "Am Starting"
+export DISABLE_SPRING=true
 
 # Setup DB
 ./bin/rails db:reset
@@ -16,7 +16,3 @@ echo "Am Starting"
 
 # Run system tests
 ./bin/rails test:system
-
-echo "Am Done"
-
-kill -9 1
