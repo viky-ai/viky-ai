@@ -15,7 +15,6 @@ image: docker:stable
 variables:
   SKIP_TEST: "false"
   GIT_SUBMODULE_STRATEGY: recursive
-  DOCKER_HOST: "tcp://dood.gitlab-runner.svc.cluster.local:2375"
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
