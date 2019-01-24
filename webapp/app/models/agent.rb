@@ -190,6 +190,10 @@ class Agent < ApplicationRecord
     agent_regression_checks.where(state: 'failed').exists?
   end
 
+  def sentence_tested?(sentence)
+    agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip).exists?
+  end
+
 
   private
 

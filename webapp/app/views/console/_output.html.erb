@@ -71,12 +71,14 @@
                 <% end %>
               </ul>
             <div class="c-intent__footer">
-              <div class="c-intent__footer__status">
-                <span class="ts-status ts-status--success"></span>
-                Succeed
-              </div>
-              <div class="c-intent__footer__action">
-                <% if current_user.can?(:edit, agent) && interpretation_index.zero? %>
+                <div class="c-intent__footer__status">
+                  <% if agent.sentence_tested?(user_query[:sentence]) %>
+                    <span class="ts-status ts-status--success"></span>
+                    Succeed
+                  <% end %>
+                </div>
+                <div class="c-intent__footer__action">
+                <% if !agent.sentence_tested?(user_query[:sentence]) && current_user.can?(:edit, agent) && interpretation_index.zero? %>
                   <%= form_with url: user_agent_agent_regression_checks_path(current_user, agent), method: :post, scope: 'regression_check' do |f| %>
                     <%= f.hidden_field :sentence, value: user_query[:sentence] %>
                     <%= f.hidden_field :language, value: user_query[:language] %>

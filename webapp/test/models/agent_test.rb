@@ -533,4 +533,12 @@ class AgentTest < ActiveSupport::TestCase
 
     assert_not agent.any_tests_failed?
   end
+
+
+  test 'Test a sentence is already tested' do
+    agent = agents(:weather)
+    assert agent.sentence_tested?('Quel temps fera-t-il demain ?')
+    assert agent.sentence_tested?('quel temps fera-t-il demain ?')
+    assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ')
+  end
 end
