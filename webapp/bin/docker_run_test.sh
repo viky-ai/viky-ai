@@ -19,4 +19,4 @@ echo "Am Starting"
 
 echo "Am Done"
 
-exit
+kill -9 1
