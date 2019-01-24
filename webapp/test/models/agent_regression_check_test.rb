@@ -93,7 +93,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
   test 'Run a successful agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
-      status: '200',
+      status: 200,
       body: {
         'interpretations' => [{
           'id' => intents(:weather_question).id,
@@ -111,7 +111,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       }
     )
     agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
-    assert agent_regression_check.run
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    assert agent_regression_check.run(users(:admin), base_url)
 
     assert agent_regression_check.passed?
     assert_not agent_regression_check.failed?
@@ -128,7 +129,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
   test 'Run a failed agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
-      status: '200',
+      status: 200,
       body: {
         'interpretations' => [{
           'id' => intents(:weather_forecast).id,
@@ -140,7 +141,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       }
     )
     agent_regression_check = agent_regression_checks(:weather_test_forecast_london)
-    assert agent_regression_check.run
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    assert agent_regression_check.run(users(:admin), base_url)
 
     assert_not agent_regression_check.passed?
     assert agent_regression_check.failed?
@@ -150,11 +152,12 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
   test 'Run an agent test but NLP is unreachable' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
-      status: '404',
+      status: 404,
       body: {}
     )
     agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
-    assert agent_regression_check.run
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    assert agent_regression_check.run(users(:admin), base_url)
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?
