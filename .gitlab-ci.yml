@@ -400,7 +400,7 @@ backup_restore_dev:
     local CI_DOCKER_IMAGE_BUILD_OPT="$3"
 
     echo "Build docker image ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} from dir ${CI_DOCKER_DIR} ..."
-    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} ${CI_DOCKER_DIR}
+    docker build --pull ${CI_DOCKER_IMAGE_BUILD_OPT} -t ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} ${CI_DOCKER_DIR}
     echo ""
 
     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} to ${CI_DOCKER_IMAGE}:latest"
