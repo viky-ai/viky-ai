@@ -1,6 +1,9 @@
 #!/bin/bash
 set -x -e
-source ./functions.sh
+
+ls -l
+
+source functions.sh
 
 sleep 1
 
