@@ -7,10 +7,10 @@ source functions.sh
 
 sleep 1
 
-DB_POSTGRES = echo $(parse_url "$VIKYAPP_DB_HOST")
-DB_REDIS = echo $(parse_url "$VIKYAPP_ACTIONCABLE_REDIS_URL")
-ES = echo $(parse_url "$VIKYAPP_STATISTICS_URL")
-KIBANA = echo $(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
+DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
+DB_REDIS=$(parse_url "$VIKYAPP_ACTIONCABLE_REDIS_URL")
+ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
+KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
 
 echo "DB_POSTGRES $DB_POSTGRES"
 echo "DB_REDIS $DB_REDIS"
