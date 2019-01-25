@@ -16,7 +16,7 @@ echo "ES $ES"
 echo "KIBANA $KIBANA"
 
 # wait for services
-/usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA -timeout 60s
+/usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS:6379 -wait tcp://$ES -wait tcp://$KIBANA -timeout 60s
 
 # Setup DB
 ./bin/rails db:reset
