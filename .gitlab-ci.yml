@@ -13,9 +13,9 @@ image: docker:stable
     - kubernetes
 
 variables:
-  SKIP_TEST: "false"
+  SKIP_TEST: 'false'
   GIT_SUBMODULE_STRATEGY: recursive
-  DOCKER_HOST: "tcp://dood:2375"
+  DOCKER_HOST: 'tcp://dood:2375'
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
   DOCKER_IMAGE_DOC: $CI_REGISTRY_IMAGE/doc
@@ -24,7 +24,7 @@ variables:
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
   DEBUG_IMAGE: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
-  TRACE: "0"
+  TRACE: '0'
 
 # Build docker image
 
@@ -82,7 +82,7 @@ test_webapp:
     VIKYAPP_DB_USERNAME: superman
     VIKYAPP_DB_PASSWORD: sup_3rman
     # VIKYAPP_DB_HOST: postgres
-    VIKYAPP_DB_HOST: "127.0.0.1"
+    VIKYAPP_DB_HOST: '127.0.0.1'
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
@@ -90,21 +90,16 @@ test_webapp:
     # VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://redis/2"
     # VIKYAPP_STATISTICS_URL: "http://elasticsearch:9200"
     # VIKYAPP_STATISTICS_VISUALIZER_URL: "http://kibana:5601"
-    VIKYAPP_ACTIONCABLE_REDIS_URL: "redis://127.0.0.1:6379/1"
-    VIKYAPP_ACTIVEJOB_REDIS_URL: "redis://127.0.0.1:6379/2"
-    VIKYAPP_STATISTICS_URL: "http://127.0.0.1:9200"
-    VIKYAPP_STATISTICS_VISUALIZER_URL: "http://127.0.0.1:5601"
+    VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://127.0.0.1:6379/1'
+    VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://127.0.0.1:6379/2'
+    VIKYAPP_STATISTICS_URL: 'http://127.0.0.1:9200'
+    VIKYAPP_STATISTICS_VISUALIZER_URL: 'http://127.0.0.1:5601'
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-      command: ["bin/elasticsearch", "-Ediscovery.type=single-node"] # Important other wise, port 9200 will never be exposed
+      command: ['bin/elasticsearch', '-Ediscovery.type=single-node'] # Important other wise, port 9200 will never be exposed
     - docker.elastic.co/kibana/kibana:6.3.0
-  before_script:
-    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5432"; do sleep 10; done # postgres
-    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/6379"; do sleep 10; done # redis
-    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/9200"; do sleep 10; done # es
-    - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/5601"; do sleep 10; done # kibana
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
@@ -119,7 +114,7 @@ test_nlp:
     - while ! timeout 1 bash -c "echo > /dev/tcp/localhost/6379"; do sleep 10; done # redis
   variables:
     GIT_STRATEGY: none
-    VIKYAPP_REDIS_PACKAGE_NOTIFIER: "redis://127.0.0.1:6379/3"
+    VIKYAPP_REDIS_PACKAGE_NOTIFIER: 'redis://127.0.0.1:6379/3'
   script:
     - if [ "$SKIP_TEST" != "true" ]; then /docker_run_test.sh ; fi
 # Tag docker image to lasted
@@ -215,7 +210,7 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta.viky.ai
   variables:
-    VIKYAPP_AUTO_BACKUP: "true"
+    VIKYAPP_AUTO_BACKUP: 'true'
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
     VIKYAPP_BASEURL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
