@@ -167,7 +167,11 @@ module Nls
         ddd << Expression.new("ddd", solution: "ddd")
 
         element = package.new_interpretation("element")
-        element << Expression.new("@{ddd}", aliases: { ddd: ddd }, keep_order: true, glued: true)
+        # Avec les super lists, on ne crée que la liste complète donc la perturbation va pertuber,
+        # mais sur un cas limite, où il est nécessaire d'avoir toutes les combinatoires de listes
+        # Il serait possible d'indiquer de ne pas créer une super list sur une liste récursive
+        # pour garder toutes la combinatoire, mais ce ne serait que sur des cas très spécifiques.
+        #element << Expression.new("@{ddd}", aliases: { ddd: ddd }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glued: true)
         element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glued: true)
 

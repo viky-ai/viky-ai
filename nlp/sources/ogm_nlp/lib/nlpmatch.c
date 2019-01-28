@@ -7,8 +7,7 @@
 #include "ogm_nlp.h"
 #include <stdlib.h>
 
-static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th);
-
+static int NlpMatchCreate(og_nlp_th ctrl_nlp_th);
 
 /**
  * Parse the request and then working on all words of the sentence
@@ -53,39 +52,13 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
     IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, "List of request input parts after NlpMatchWords:"));
   }
 
-  ctrl_nlp_th->accept_any_expressions = FALSE;
-  // Getting all matching expressions and thus interpretations and getting all new input_parts
-  ctrl_nlp_th->level = 0;
-  int at_least_one_input_part_added = 0;
-  do
-  {
-    IFE(NlpMatchExpressions(ctrl_nlp_th));
-    IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
-    IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
-    ctrl_nlp_th->level++;
-  }
-  while (at_least_one_input_part_added);
-
-  NlpLog(DOgNlpTraceMatch, "\nLooking for any expressions");
-
-  IFE(NlpMatchValidateListsWithoutAny(ctrl_nlp_th));
-
-  ctrl_nlp_th->accept_any_expressions = TRUE;
-  // Getting all matching expressions and thus interpretations and getting all new input_parts
-  at_least_one_input_part_added = 0;
-  do
-  {
-    IFE(NlpMatchExpressions(ctrl_nlp_th));
-    IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
-    IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
-    ctrl_nlp_th->level++;
-  }
-  while (at_least_one_input_part_added);
+  IFE(NlpMatchCreate(ctrl_nlp_th));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, "List of request expressions finally found:"));
   }
+
   IFE(NlpRequestExpressionsCalculate(ctrl_nlp_th));
 
   IFE(NlpWhyCalculate(ctrl_nlp_th));
@@ -93,58 +66,42 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static int NlpMatchValidateListsWithoutAny(og_nlp_th ctrl_nlp_th)
+static int NlpMatchCreate(og_nlp_th ctrl_nlp_th)
 {
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
+  ctrl_nlp_th->level = 0;
+  og_bool super_list_created = FALSE;
+  do
   {
-    char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "NlpMatchValidateListWithoutAny: list of all request expressions at level %d before:",
-        ctrl_nlp_th->level);
-    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
-  }
-
-  GQueue chosen_recursive_interpretation[1];
-  g_queue_init(chosen_recursive_interpretation);
-
-  int request_expression_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_expression);
-  struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
-
-  for (int i = request_expression_used - 1; i >= 0; i--)
-  {
-    struct request_expression *request_expression = request_expressions + i;
-    IFN(request_expression) DPcErr;
-    request_expression->recursive_without_any_chosen = FALSE;
-    if (request_expression->expression->interpretation->is_recursive)
+    ctrl_nlp_th->accept_any_expressions = FALSE;
+    int at_least_one_input_part_added = 0;
+    do
     {
-      og_bool found_interpretation = FALSE;
-      for (GList *iter = chosen_recursive_interpretation->head; iter; iter = iter->next)
-      {
-        struct interpretation *interpretation = iter->data;
-        if (interpretation == request_expression->expression->interpretation)
-        {
-          found_interpretation = TRUE;
-          break;
-        }
-      }
-      if (!found_interpretation)
-      {
-        g_queue_push_tail(chosen_recursive_interpretation, request_expression->expression->interpretation);
-        request_expression->recursive_without_any_chosen = TRUE;
-      }
+      IFE(NlpMatchExpressions(ctrl_nlp_th));
+      IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
+      IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
+      ctrl_nlp_th->level++;
+    }
+    while (at_least_one_input_part_added);
+
+    ctrl_nlp_th->accept_any_expressions = TRUE;
+    at_least_one_input_part_added = 0;
+    do
+    {
+      IFE(NlpMatchExpressions(ctrl_nlp_th));
+      IFE(NlpRequestExpressionsOptimize(ctrl_nlp_th));
+      IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
+      ctrl_nlp_th->level++;
+    }
+    while (at_least_one_input_part_added);
+
+    IFE(super_list_created = NlpSuperListsCreate(ctrl_nlp_th));
+    if (super_list_created)
+    {
+      IFE(at_least_one_input_part_added = NlpMatchInterpretations(ctrl_nlp_th));
+      ctrl_nlp_th->level++;
     }
   }
-
-  g_queue_clear(chosen_recursive_interpretation);
-
-  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
-  {
-    char buffer[DPcPathSize];
-    snprintf(buffer, DPcPathSize, "NlpMatchValidateListWithoutAny: list of all request expressions at level %d after:",
-        ctrl_nlp_th->level);
-    IFE(NlpRequestExpressionsLog(ctrl_nlp_th, 0, buffer));
-  }
-
-
+  while (super_list_created);
   DONE;
 }
 

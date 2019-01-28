@@ -117,6 +117,7 @@ og_status NlpInterpretInit(og_nlp_th ctrl_nlp_th, struct og_nlp_threaded_param *
   IFE(NlpMatchGroupNumbersInit(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortInit(ctrl_nlp_th, param->name));
   IFE(NlpExplainHighlightInit(ctrl_nlp_th, param->name));
+  IFE(NlpSuperListInit(ctrl_nlp_th, param->name));
 
 
   DONE;
@@ -126,6 +127,7 @@ og_status NlpInterpretReset(og_nlp_th ctrl_nlp_th)
 {
   IFE(NlpInterpretRequestReset(ctrl_nlp_th));
   IFE(NlpExplainHighlightReset(ctrl_nlp_th));
+  IFE(NlpSuperListReset(ctrl_nlp_th));
 
   DONE;
 }
@@ -156,7 +158,7 @@ og_status NlpInterpretFlush(og_nlp_th ctrl_nlp_th)
   IFE(NlpWhyNotMatchingFlush(ctrl_nlp_th));
   IFE(NlpRequestExpressionListsSortFlush(ctrl_nlp_th));
   IFE(NlpExplainHighlightFlush(ctrl_nlp_th));
-
+  IFE(NlpSuperListFlush(ctrl_nlp_th));
 
   g_queue_clear(ctrl_nlp_th->sorted_request_expressions);
   IFE(NlpInterpretAnyFlush(ctrl_nlp_th));
@@ -265,6 +267,8 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
 
   // parse
   IFE(NlpInterpretRequestParse(ctrl_nlp_th, json_request));
+
+  IFE(NlpSuperListGet(ctrl_nlp_th));
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
   {

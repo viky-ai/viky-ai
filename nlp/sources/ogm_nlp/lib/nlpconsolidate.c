@@ -73,6 +73,7 @@ static og_status NlpConsolidatePrepareInterpretation(og_nlp_th ctrl_nlp_th, pack
       interpretation->expressions = NULL;
     }
     interpretation->is_recursive = FALSE;
+    interpretation->is_super_list = FALSE;
   }
 
   // free compile heap
@@ -176,6 +177,7 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     expression_compile->json_solution = NULL;
 
     expression->is_recursive = FALSE;
+    expression->is_super_list = FALSE;
   }
 
   // free compile heap
@@ -290,6 +292,8 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
 
   IFE(NlpLtracPackage(ctrl_nlp_th, package));
   IFE(NlpRegexBuildPackage(ctrl_nlp_th, package));
+  IFE(NlpConsolidateSuperListPackage(ctrl_nlp_th, package));
+
   DONE;
 }
 
@@ -344,6 +348,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   IFN(expression) DPcErr;
 
   expression->interpretation = interpretation;
+  if (interpretation->is_super_list && expression->is_recursive) expression->is_super_list = TRUE;
   expression->input_parts_nb = 0;
   expression->input_parts = NULL;
   expression->input_part_start = -1;
@@ -394,7 +399,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
           og_bool punct_length = 0;
           og_bool is_skipped = FALSE;
           og_bool is_expression = FALSE;
-          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression, &punct_length);
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression,
+              &punct_length);
           IFE(is_punct);
           if (is_punct)
           {

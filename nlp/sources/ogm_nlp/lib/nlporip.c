@@ -6,7 +6,6 @@
  */
 #include "ogm_nlp.h"
 
-
 og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
 {
   int request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
@@ -19,11 +18,11 @@ og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
   struct original_request_input_part *original_request_input_part = OgHeapGetCell(ctrl_nlp_th->horiginal_request_input_part, 0);
   IFN(original_request_input_part) DPcErr;
 
-  for (int i=0; i<request_input_part_used; i++)
+  for (int i = 0; i < request_input_part_used; i++)
   {
     original_request_input_part[request_input_parts[i].Ioriginal_request_input_part].Irequest_input_part = i;
   }
-DONE;
+  DONE;
 }
 
 og_status NlpRequestExpressionAddOrip(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,

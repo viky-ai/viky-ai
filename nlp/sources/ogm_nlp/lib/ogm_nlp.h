@@ -234,6 +234,7 @@ struct expression
   int any_input_part_position;
 
   og_bool is_recursive;
+  og_bool is_super_list;
 
   json_t *json_solution;
 };
@@ -274,6 +275,7 @@ struct interpretation
   struct expression *expressions;
 
   og_bool is_recursive;
+  og_bool is_super_list;
 };
 
 struct interpret_package
@@ -391,6 +393,11 @@ struct accept_language
   float quality_factor;
 };
 
+enum nlp_super_list_status
+{
+  nlp_super_list_status_Nil = 0, nlp_super_list_status_Part, nlp_super_list_status_Top
+};
+
 struct request_input_part
 {
   /** from zero (only words) to N */
@@ -423,6 +430,8 @@ struct request_input_part
   og_bool interpret_word_as_number;
 
   int sparse_mark;
+
+  enum nlp_super_list_status super_list_status;
 };
 
 struct request_position
@@ -542,6 +551,9 @@ struct request_expression
   GQueue tmp_solutions[1];
 
   json_t *json_solution;
+
+  og_bool consumed_by_super_list;
+  enum nlp_super_list_status super_list_status;
 };
 
 #define DOgMatchZoneInputPartSize 0x100
@@ -680,6 +692,15 @@ struct highlight_word
   struct request_expression *request_expression;
 };
 
+struct super_list
+{
+  struct expression *recursive_expression;
+  struct alias *alias;
+  struct interpretation *interpretation;
+  struct expression *single_expression;
+  struct interpret_package *interpret_package;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -775,6 +796,9 @@ struct og_ctrl_nlp_threaded
   og_heap hre_to_sort;
 
   og_bool accept_any_expressions;
+
+  og_heap hsuper_list;
+
 };
 
 struct og_ctrl_nlp
@@ -813,6 +837,7 @@ og_status NlpPackageContextLog(og_nlp_th ctrl_nlp_th, package_t package, struct 
 og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 og_status NlpPackageAliasLog(og_nlp_th ctrl_nlp_th, package_t package, struct alias *alias);
 og_status NlpPackageInputPartLog(og_nlp_th ctrl_nlp_th, package_t package, struct input_part *input_part);
+og_status NlpPackageInputPartExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part, char *label);
 og_status NlpPackageExpressionSolutionLog(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 
 og_status NlpPackageCompileLog(og_nlp_th ctrl_nlp_th, package_t package);
@@ -928,8 +953,11 @@ og_status NlpRequestInputPartLog(og_nlp_th ctrl_nlp_th, int Irequest_input_part)
 
 /* nlprexpression.c */
 og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expression,
-    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression);
+    struct match_zone_input_part *match_zone_input_part, struct request_expression **prequest_expression,
+    og_bool is_super_list);
 og_bool NlpRequestExpressionIsOrdered(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression);
+og_bool NlpRequestExpressionsAreGlued(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression1,
+    struct request_expression *request_expression2, og_bool keep_order);
 og_status NlpRequestExpressionsCalculate(og_nlp_th ctrl_nlp_th);
 og_status NlpRequestInterpretationsBuild(og_nlp_th ctrl_nlp_th, json_t *json_interpretations);
 og_status NlpSortedRequestExpressionsLog(og_nlp_th ctrl_nlp_th, char *title);
@@ -937,11 +965,12 @@ og_status NlpRequestExpressionsLog(og_nlp_th ctrl_nlp_th, int request_expression
 og_status NlpRequestExpressionLog(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression, int offset);
 og_status NlpRequestExpressionShowTree(og_nlp_th ctrl_nlp_th, int Irequest_expression, og_string label);
 
-
 /* nlprposition.c */
 og_status NlpRequestPositionAdd(og_nlp_th ctrl_nlp_th, int start, int length, size_t *pIrequest_position);
 og_status NlpRequestPositionSort(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_bool NlpRequestPositionSame(og_nlp_th ctrl_nlp_th, struct request_expression_access_cache *cache,
+    int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2);
+og_bool NlpRequestPositionIncluded(og_nlp_th ctrl_nlp_th, struct request_position *request_positions,
     int request_position_start1, int request_positions_nb1, int request_position_start2, int request_positions_nb2);
 og_bool NlpRequestPositionOverlap(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
 og_status NlpRequestPositionDistance(og_nlp_th ctrl_nlp_th, int request_position_start, int request_positions_nb);
@@ -1010,7 +1039,8 @@ og_status NlpJsStackRequestSetup(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th);
 og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th);
 og_status NlpJsFlush(og_nlp_th ctrl_nlp_th);
-og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval, int variable_eval_length);
+og_status NlpJsAddVariable(og_nlp_th ctrl_nlp_th, og_string variable_name, og_string variable_eval,
+    int variable_eval_length);
 og_status NlpJsAddVariableJson(og_nlp_th ctrl_nlp_th, og_string variable_name, json_t *variable_value);
 og_status NlpJsSetNow(og_nlp_th ctrl_nlp_th);
 og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int js_script_size, og_string js_script, json_t **p_json_anwser);
@@ -1099,4 +1129,16 @@ og_status NlpRegexBuildPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexPackageLog(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpRegexMatch(og_nlp_th ctrl_nlp_th);
 og_status NlpRegexLog(og_nlp_th ctrl_nlp_th);
+
+/* nlpsuperlist.c */
+og_status NlpSuperListInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpSuperListReset(og_nlp_th ctrl_nlp_th);
+og_status NlpSuperListFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpConsolidateSuperListPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpSuperListGet(og_nlp_th ctrl_nlp_th);
+og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part);
+og_bool NlpSuperListsCreate(og_nlp_th ctrl_nlp_th);
+
+/* nlprword.c */
+og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);
 
