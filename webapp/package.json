@@ -2,11 +2,13 @@
   "name": "webapp",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^3.0.1",
+    "@rails/webpacker": "3.5",
     "@tweenjs/tween.js": "^17.2.0",
     "accessor-fn": "^1.2.2",
     "autosize": "^4.0.2",
     "codemirror": "^5.32.0",
+    "coffee-loader": "^0.9.0",
+    "coffeescript": "1.12.7",
     "jquery": "^3.2.1",
     "kapsule": "^1.9.0",
     "local-time": "^2.0.0",
@@ -15,6 +17,7 @@
     "mousetrap": "^1.6.1",
     "normalize.css": "^7.0.0",
     "prismjs": "^1.7.0",
+    "resolve-url-loader": "^3.0.0",
     "selectize": "^0.12.4",
     "slick-carousel": "^1.8.1",
     "sortablejs": "^1.7.0",
@@ -26,6 +29,6 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "webpack-dev-server": "^2.7.1"
+    "webpack-dev-server": "2.11.2"
   }
 }

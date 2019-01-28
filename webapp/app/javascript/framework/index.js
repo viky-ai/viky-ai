@@ -10,9 +10,9 @@ import 'prismjs/themes/prism.css';
 require('prismjs');
 require('prismjs/components/prism-json.js');
 require('prismjs/components/prism-ruby.js');
-import './highlight';
+import './highlight.coffee';
 
-// CodeMirror (https://github.com/codemirror/CodeMirror)
+//CodeMirror (https://github.com/codemirror/CodeMirror)
 window.CodeMirror = require('codemirror');
 import 'codemirror/addon/display/autorefresh'
 import 'codemirror/mode/javascript/javascript'
@@ -20,21 +20,21 @@ import 'codemirror/mode/gfm/gfm'
 import 'codemirror/lib/codemirror.css'
 
 // CSS framework
-import './main'
+import './main.scss'
 
-// Coffee
-import './password';
-import './dropdown';
+// // Coffee
+import './password.coffee';
+import './dropdown.coffee';
 window.App.Modal = require('./modal')
-import './form_delete_validation'
-import './color_picker'
+import './form_delete_validation.coffee'
+import './color_picker.coffee'
 window.App.Message = require('./message')
-import './user_search'
-import './console'
+import './user_search.coffee'
+import './console.coffee'
 window.App.FocusInput = require('./focus')
-import './button_group'
-import './upload_input'
-import './highlight_and_scroll_to';
+import './button_group.coffee'
+import './upload_input.coffee'
+import './highlight_and_scroll_to.coffee';
 
 // Expose jQuery
 window.$ = require('jquery');
