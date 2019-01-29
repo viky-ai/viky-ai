@@ -1,5 +1,7 @@
 #!/bin/bash
-set -x -e
+set -e
+
+source functions.sh
 
 ls -l
 
@@ -7,6 +9,8 @@ source functions.sh
 
 sleep 1
 
+# Parse postgres, redis, es and kibana urls from Env Variables
+# .gitlab-ci -> test_webapp -> variables
 DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
 DB_REDIS=$(parse_url "$VIKYAPP_ACTIONCABLE_REDIS_URL")
 ES=$(parse_url "$VIKYAPP_STATISTICS_URL")

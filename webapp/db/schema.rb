@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 20181121091528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pgcrypto"
+  # enable_extension "pgcrypto" this is now activated on the build side
 
   create_table "agent_arcs", force: :cascade do |t|
     t.uuid "source_id"

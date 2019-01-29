@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 set -e
 
+source functions.sh
+
 sigterm_handler() {
-	echo "STOP signal received, try to gracefully shutdown all services..."
+  echo "STOP signal received, try to gracefully shutdown all services..."
 
-	if [[ -e ./tmp/pids/server.pid ]]; then
-		pkill --signal SIGTERM --pidfile ./tmp/pids/server.pid
-	fi
+  if [[ -e ./tmp/pids/server.pid ]]; then
+    pkill --signal SIGTERM --pidfile ./tmp/pids/server.pid
+  fi
 
-	if [[ -e ./tmp/pids/sidekiq.pid ]]; then
-		pkill --signal SIGTERM --pidfile ./tmp/pids/sidekiq.pid
-	fi
+  if [[ -e ./tmp/pids/sidekiq.pid ]]; then
+    pkill --signal SIGTERM --pidfile ./tmp/pids/sidekiq.pid
+  fi
 
-	# wait for stop
-	wait
+  # wait for stop
+  wait
 }
 
 trap "sigterm_handler; exit" SIGTERM
@@ -25,63 +27,76 @@ rm -f ./tmp/pids/sidekiq.pid
 # Check data migration
 if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
 
-	# wait for services
-	/usr/local/bin/dockerize -wait tcp://db-postgresql:5432 -wait tcp://db-redis:6379 -timeout 60s
+  # Parse postgres and redis urls from Env Variables
+  # docker-compose.yml -> x-app -> environment
+  DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
+  DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
 
-	echo "Database setup"
-	echo "Check if database exist ..."
+  echo "Waiting for postgres on $DB_POSTGRES"
+  echo "Waiting for redis on $DB_REDIS"
 
-	DB_TMP_VERSION=$(./bin/rails db:version | grep "Current version" 2>/dev/null)
-	DB_CREATED=$?
-	DB_VERSION=0
-	if [ $DB_CREATED -eq 0 ]; then
-		DB_VERSION=$(echo "${DB_TMP_VERSION}" | cut -d":" -f2)
-	fi
+  # wait for services
+  /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -timeout 120s
 
-	if [ $DB_CREATED -ne 0 -o $DB_VERSION -eq 0 ]; then
-		echo "Database schema missing or empty, try to create ...\n"
-		./bin/rails db:setup
-	else
-		echo "Try to run db:migrate from schema version ${DB_VERSION} ..."
-		./bin/rails db:migrate
-	fi
+  echo "Database setup"
+  echo "Check if database exist ..."
 
-	echo "Database setup completed."
+  DB_TMP_VERSION=$(./bin/rails db:version | grep "Current version" 2>/dev/null)
+  DB_CREATED=$?
+  DB_VERSION=0
+  if [ $DB_CREATED -eq 0 ]; then
+    DB_VERSION=$(echo "${DB_TMP_VERSION}" | cut -d":" -f2)
+  fi
 
-	# wait for services
-	/usr/local/bin/dockerize -wait tcp://stats-service:9200 -timeout 60s
+  if [ $DB_CREATED -ne 0 -o $DB_VERSION -eq 0 ]; then
+    echo "Database schema missing or empty, try to create ...\n"
+    ./bin/rails db:setup
+  else
+    echo "Try to run db:migrate from schema version ${DB_VERSION} ..."
+    ./bin/rails db:migrate
+  fi
 
-	echo "Statistics setup"
-	./bin/rails statistics:setup
+  # Parse Elastic Search url from Env Variables
+  # docker-compose.yml -> x-app -> environment
+  echo "Database setup completed."
 
-	echo "Statistics reindexing if needed"
-	./bin/rails statistics:reindex:all
+  ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
+  echo "Waiting for ES on $ES"
 
-	echo "Statistics setup completed."
+  # wait for services
+  /usr/local/bin/dockerize -wait tcp://$ES -timeout 60s
 
-	echo "Rake tasks scheduler setup."
-	bundle exec whenever --update-crontab
+  echo "Statistics setup"
+  ./bin/rails statistics:setup
+
+  echo "Statistics reindexing if needed"
+  ./bin/rails statistics:reindex:all
+
+  echo "Statistics setup completed."
+
+  echo "Rake tasks scheduler setup."
+  bundle exec whenever --update-crontab
 fi
 
 if [[ "$1" != "config" ]]; then
 
-	case "$1" in
-	worker)
-		# Start one worker
-		bundle exec sidekiq -C config/sidekiq.yml &
-		;;
-	stats-rollover)
-		echo "Statistics rollover"
-		./bin/rails statistics:rollover
-		;;
-	*)
-		echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
+  case "$1" in
+  worker)
+    # Start one worker
+    bundle exec sidekiq -C config/sidekiq.yml &
+    ;;
+  stats-rollover)
+    echo "Statistics rollover"
+    ./bin/rails statistics:rollover
+    ;;
+  *)
+    echo "viky.ai will be available on ${VIKYAPP_BASEURL}"
 
-		# Start web server
-		./bin/rails server -b 0.0.0.0 -p 3000 &
-		;;
-	esac
+    # Start web server
+    ./bin/rails server -b 0.0.0.0 -p 3000 &
+    ;;
+  esac
 
-	# wait for signal
-	wait
+  # wait for signal
+  wait
 fi

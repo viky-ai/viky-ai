@@ -399,7 +399,8 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
           og_bool punct_length = 0;
           og_bool is_skipped = FALSE;
           og_bool is_expression = FALSE;
-          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression, &punct_length);
+          og_bool is_punct = NlpParseIsPunctuation(ctrl_nlp_th, is - i, s + i, &is_skipped, &is_expression,
+              &punct_length);
           IFE(is_punct);
           if (is_punct)
           {
