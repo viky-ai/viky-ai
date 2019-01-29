@@ -123,6 +123,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert agent_regression_check.passed?
     assert_not agent_regression_check.failed?
     assert_not agent_regression_check.unknown?
+    assert_not agent_regression_check.running?
     expected = {
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
@@ -152,6 +153,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
     assert_not agent_regression_check.passed?
     assert agent_regression_check.failed?
+    assert_not agent_regression_check.running?
     assert_not agent_regression_check.unknown?
     assert_not_equal agent_regression_check.got, agent_regression_check.expected
   end
@@ -167,7 +169,25 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.running?
     assert agent_regression_check.unknown?
+    assert_empty agent_regression_check.got
+  end
+
+  test 'Run an erroneous agent test' do
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 422,
+      body: {}
+    )
+    agent_regression_check = @regression_weather_forecast
+    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
+    assert agent_regression_check.run(users(:admin), base_url)
+
+    assert_not agent_regression_check.passed?
+    assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.unknown?
+    assert_not agent_regression_check.running?
+    assert agent_regression_check.error?
     assert_empty agent_regression_check.got
   end
 end
