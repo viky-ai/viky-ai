@@ -524,18 +524,21 @@ class AgentTest < ActiveSupport::TestCase
 
 
   test 'Test agent regression any failed' do
+    create_agent_regression_check_fixtures
+
     agent = agents(:weather)
     assert agent.any_tests_failed?
 
-    regression_check = agent_regression_checks(:weather_test_forecast_london)
-    regression_check.state = 'passed'
-    regression_check.save
+    @regression_weather_question.state = 'passed'
+    @regression_weather_question.save
 
     assert_not agent.any_tests_failed?
   end
 
 
   test 'Test a sentence is already tested' do
+    create_agent_regression_check_fixtures
+
     agent = agents(:weather)
     assert agent.sentence_tested?('Quel temps fera-t-il demain ?')
     assert agent.sentence_tested?('quel temps fera-t-il demain ?')

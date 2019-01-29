@@ -1,6 +1,11 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentRegressionCheckTest < ActiveSupport::TestCase
+
+  setup do
+    create_agent_regression_check_fixtures
+  end
 
   test 'Basic AgentRegressionCheck creation & agent association' do
     assert_equal 2, agents(:weather).agent_regression_checks.count
@@ -83,7 +88,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   end
 
   test 'AgentRegressionCheck destroy' do
-    agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
+    agent_regression_check = @regression_weather_forecast
     agent_regression_check_id = agent_regression_check.id
 
     assert_equal 1, AgentRegressionCheck.where(id: agent_regression_check_id).count
@@ -110,7 +115,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
         }]
       }
     )
-    agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
+
+    agent_regression_check = @regression_weather_forecast
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     assert agent_regression_check.run(users(:admin), base_url)
 
@@ -140,7 +146,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
         }]
       }
     )
-    agent_regression_check = agent_regression_checks(:weather_test_forecast_london)
+    agent_regression_check = @regression_weather_question
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     assert agent_regression_check.run(users(:admin), base_url)
 
@@ -155,7 +161,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       status: 404,
       body: {}
     )
-    agent_regression_check = agent_regression_checks(:weather_test_forecast_tomorrow)
+    agent_regression_check = @regression_weather_forecast
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
     assert agent_regression_check.run(users(:admin), base_url)
 

@@ -3,6 +3,9 @@ require 'model_test_helper'
 
 class AgentRegressionChecksTest < ApplicationSystemTestCase
 
+  def setup
+    create_agent_regression_check_fixtures
+  end
 
   test 'Add new regression test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
