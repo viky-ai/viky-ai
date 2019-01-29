@@ -401,9 +401,17 @@ backup_restore_dev:
     echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} to ${CI_DOCKER_IMAGE}:latest"
     docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} ${CI_DOCKER_IMAGE}:latest
 
+    echo "Taggging ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} to ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}"
+    docker tag ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
     echo ""
     echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID} to GitLab Container Registry ..."
     docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}_${CI_PIPELINE_ID}
+
+    echo ""
+    echo "Pushing ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG} to GitLab Container Registry ..."
+    docker push ${CI_DOCKER_IMAGE}:${CI_COMMIT_REF_SLUG}
+
     echo ""
   }
 
