@@ -98,14 +98,8 @@ test_webapp:
     - postgres:9.6-alpine
     - redis:3.2-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-      command: [
-          'bin/elasticsearch',
-          '-Ediscovery.type=single-node',
-          '-Enetwork.host=_site_',
-        ] # Important other wise, port 9200 will never be exposed
-      alias: elasticsearch
-    - name: docker.elastic.co/kibana/kibana:6.3.0
-      alias: kibana
+      command: ['bin/elasticsearch', '-Ediscovery.type=single-node'] # Important other wise, port 9200 will never be exposed
+    - docker.elastic.co/kibana/kibana:6.3.0
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi
