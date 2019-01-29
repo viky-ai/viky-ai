@@ -186,6 +186,13 @@ class Agent < ApplicationRecord
     end
   end
 
+  def json_test_suite
+    ApplicationController.render(
+      template: 'agent_regression_checks/index',
+      assigns: { agent: self }
+    )
+  end
+
   def any_tests_failed?
     agent_regression_checks.where(state: 'failed').exists?
   end

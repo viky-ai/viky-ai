@@ -9,6 +9,7 @@ class AgentRegressionCheck < ApplicationRecord
 
   validates :expected_as_str, length: { maximum: 10_000 }
 
+  # [:unknown, :passed, :failed, :error, :running]
   enum state: [:unknown, :passed, :failed]
 
   def run(user_who_started_run, base_url)
@@ -39,7 +40,9 @@ class AgentRegressionCheck < ApplicationRecord
     save
   end
 
+
   private
+
     def expected_as_str
       expected.to_s
     end

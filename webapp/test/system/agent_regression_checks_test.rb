@@ -28,7 +28,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       )
       assert page.has_content?('2 tests, 1 failure')
       click_button 'Add to tests suite'
-      assert page.has_content?('3 tests, 0 failure')
+      assert page.has_content?('3 tests, 1 failure')
     end
   end
+
 end

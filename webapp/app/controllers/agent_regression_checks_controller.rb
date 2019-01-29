@@ -6,9 +6,7 @@ class AgentRegressionChecksController < ApplicationController
   def create
     regression_check = AgentRegressionCheck.new(regression_check_params)
     regression_check.agent = @agent
-    if regression_check.save
-      render locals: {count: @agent.agent_regression_checks.count}
-    else
+    unless regression_check.save
       redirect_to user_agent_path(@agent.owner, @agent),
         alert: t('views.agent_regression_checks.new.failed_message')
     end

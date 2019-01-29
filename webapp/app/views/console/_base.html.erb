@@ -206,22 +206,21 @@
       <div class="tabs tabs--small tabs--on-center" id="console-tabs"></div>
     </div>
 
-    <div class="console__output" id="console-output"></div>
+    <div class="console__output" id="console-output">
+    </div>
 
-    <a href="#" class="console__footer">
+    <a href="#" class="console__footer" id="console-footer" v-if='summary.visible'>
       <div class="console__footer__status">
-        <% if @agent.agent_regression_checks.exists? %>
-          <% status = @agent.any_tests_failed? ? 'failure' : 'success' %>
-        <% else %>
-          <% status = 'running' %>
-        <% end %>
-        <span class="ts-status ts-status--<%= status %>" ></span>
-        <%= t('views.console.regression_check.tests', count: @agent.agent_regression_checks.count) %>, <%= t('views.console.regression_check.failures', count: @agent.agent_regression_checks.where(state: 'failed').count) %>
+        <span :class="'ts-status ts-status--' + summary.status"></span>
+        {{summary.count_i18n}}, {{summary.failed_count_i18n}}
       </div>
       <div class="console__footer__time">
-        7 min ago
+        <span>{{summary.last_update}}</span>
       </div>
     </a>
-
   </div>
 </aside>
+
+<script>
+  test_suite_data = <%= @agent.json_test_suite.html_safe %>
+</script>
