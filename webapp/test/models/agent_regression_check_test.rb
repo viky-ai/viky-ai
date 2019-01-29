@@ -117,8 +117,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     )
 
     agent_regression_check = @regression_weather_forecast
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-    assert agent_regression_check.run(users(:admin), base_url)
+    assert agent_regression_check.run(users(:admin))
 
     assert agent_regression_check.passed?
     assert_not agent_regression_check.failed?
@@ -148,8 +147,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       }
     )
     agent_regression_check = @regression_weather_question
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-    assert agent_regression_check.run(users(:admin), base_url)
+    assert agent_regression_check.run(users(:admin))
 
     assert_not agent_regression_check.passed?
     assert agent_regression_check.failed?
@@ -164,8 +162,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       body: {}
     )
     agent_regression_check = @regression_weather_forecast
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-    assert agent_regression_check.run(users(:admin), base_url)
+    assert agent_regression_check.run(users(:admin))
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?
@@ -180,8 +177,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       body: {}
     )
     agent_regression_check = @regression_weather_forecast
-    base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }
-    assert agent_regression_check.run(users(:admin), base_url)
+    assert agent_regression_check.run(users(:admin))
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?

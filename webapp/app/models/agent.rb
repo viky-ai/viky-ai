@@ -180,9 +180,9 @@ class Agent < ApplicationRecord
     end
   end
 
-  def run_tests(user_who_started_run, base_url)
+  def run_tests(user_who_started_run)
     agent_regression_checks.each do |test|
-      AgentRegressionCheckRunJob.perform_later test, user_who_started_run, base_url
+      AgentRegressionCheckRunJob.perform_later test, user_who_started_run
     end
   end
 

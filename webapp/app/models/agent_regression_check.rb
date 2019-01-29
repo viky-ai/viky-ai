@@ -11,7 +11,7 @@ class AgentRegressionCheck < ApplicationRecord
 
   enum state: [:unknown, :passed, :failed, :error, :running]
 
-  def run(user_who_started_run, base_url)
+  def run(user_who_started_run)
     self.state = 'running'
     save
 
@@ -23,7 +23,7 @@ class AgentRegressionCheck < ApplicationRecord
       client_type: 'regression_test',
       user_id: user_who_started_run.id
     }
-    response = Nlp::PublicInterpret.request_public_api(request_params, agent, base_url)
+    response = Nlp::PublicInterpret.request_public_api(request_params, agent)
     status = response[:status]
 
     if status == 200
