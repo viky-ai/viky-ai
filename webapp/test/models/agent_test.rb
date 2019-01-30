@@ -9,6 +9,7 @@ class AgentTest < ActiveSupport::TestCase
       agentname: "agenta",
       description: "Agent A decription",
       visibility: 'is_public',
+      nlp_updated_at: '2019-01-21 10:07:53.484942',
       source_agent: {
         id: agents(:terminator).id,
         slug: agents(:terminator).slug,
@@ -543,5 +544,24 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.sentence_tested?('Quel temps fera-t-il demain ?')
     assert agent.sentence_tested?('quel temps fera-t-il demain ?')
     assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ')
+  end
+
+
+  test 'Reset nlp updated at when the agent is updated' do
+    agent = agents(:weather)
+    assert_nil agent.nlp_updated_at
+    assert_not agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2000-01-01 01:01:01.000000'
+    assert_not agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2020-01-01 01:01:01.000000'
+    assert agent.synced_with_nlp?
+
+    agent.updated_at = '2018-01-01 01:01:01.000000'
+    agent.nlp_updated_at = '2018-01-01 01:01:01.000000'
+    assert agent.synced_with_nlp?
   end
 end
