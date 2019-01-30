@@ -162,8 +162,9 @@ Rails.application.routes.draw do
 
   # API internal without versioning
   namespace :api_internal do
-    get '/packages',     to: 'packages#index'
-    get '/packages/:id', to: 'packages#show'
+    get '/packages',              to: 'packages#index'
+    get '/packages/:id',          to: 'packages#show'
+    post '/packages/:id/updated', to: 'packages#updated'
   end
 
   get 'style-guide', to: 'style_guide#index'

@@ -22,7 +22,12 @@ module NlpRoute
     def get_package(id)
       puts " + PackageApiWrapper GET  #{VIKY_URL}/api_internal/packages/#{id}.json"
       response = RestClient.get "#{VIKY_URL}/api_internal/packages/#{id}.json", content_type: :json, 'Access-Token' => VIKYAPP_INTERNAL_API_TOKEN
-      { version: response.headers['ETag'], data: response.body }
+      { version: response.headers[:etag], data: response.body }
+    end
+
+    def notify_updated_package(id, payload)
+      puts " + PackageApiWrapper POST #{VIKY_URL}/api_internal/packages/#{id}/updated"
+      RestClient.post "#{VIKY_URL}/api_internal/packages/#{id}/updated", payload, 'Access-Token' => VIKYAPP_INTERNAL_API_TOKEN
     end
 
     # Send package to NLP

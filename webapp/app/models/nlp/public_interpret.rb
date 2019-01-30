@@ -13,10 +13,10 @@ module Nlp::PublicInterpret
       language: request_params[:language],
       now: request_params[:now],
       context: {
-        client_type: request_params[:client_type],
-        user_id: request_params[:user_id]
+        client_type: request_params[:client_type]
       }
     }
+    params[:context][:user_id] = request_params[:user_id] if request_params[:user_id].present?
     params[:verbose] = request_params[:verbose] if request_params[:verbose] == 'true'
     params.each { |k, v| req.update_param(k, v) }
     base_url = ENV.fetch('VIKYAPP_BASEURL') { 'http://localhost:3000' }

@@ -39,13 +39,11 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
-  after_create_commit do
-    Nlp::Package.new(self).push
-  end
+  after_create_commit :nlp_push
 
-  after_update_commit do
-    Nlp::Package.new(self).push
-  end
+  after_update_commit :nlp_push, unless: proc { |record|
+    record.previous_changes.size == 2 && record.previous_changes[:nlp_updated_at].present?
+  }
 
   after_destroy do
     Nlp::Package.new(self).destroy
@@ -180,9 +178,9 @@ class Agent < ApplicationRecord
     end
   end
 
-  def run_tests(user_who_started_run)
+  def run_tests
     agent_regression_checks.each do |test|
-      AgentRegressionCheckRunJob.perform_later test, user_who_started_run
+      AgentRegressionCheckRunJob.perform_later test
     end
   end
 
@@ -243,5 +241,9 @@ class Agent < ApplicationRecord
     def clean_agentname
       return if agentname.nil?
       self.agentname = agentname.parameterize(separator: '-')
+    end
+
+    def nlp_push
+      Nlp::Package.new(self).push
     end
 end

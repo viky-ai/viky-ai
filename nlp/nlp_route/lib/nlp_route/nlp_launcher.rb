@@ -129,13 +129,12 @@ module NlpRoute
                   package = wrapper.get_package(id)
                   wrapper.update_or_create(id, package)
 
-                  # notify update
                   notify_payload = {
                     status: 'success',
-                    package_id: id,
-                    version: package[:version]
+                    version: package[:version],
+                    nlp_updated_at: DateTime.now
                   }
-                  redis.publish(:viky_packages_updated_notifications, notify_payload.to_json)
+                  wrapper.notify_updated_package(id, notify_payload)
 
                 elsif parsed_message['event'] == 'delete'
                   wrapper.delete(id)
@@ -152,11 +151,10 @@ module NlpRoute
                 # notify NOT update
                 notify_payload = {
                   status: 'failed',
-                  package_id: id,
                   version: package[:version],
                   error: e.inspect
                 }
-                redis.publish(:viky_packages_updated_notifications, notify_payload.to_json)
+                wrapper.notify_updated_package(id, notify_payload)
               end
             end
 

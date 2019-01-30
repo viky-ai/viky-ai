@@ -117,7 +117,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     )
 
     agent_regression_check = @regression_weather_forecast
-    assert agent_regression_check.run(users(:admin))
+    assert agent_regression_check.run
 
     assert agent_regression_check.passed?
     assert_not agent_regression_check.failed?
@@ -147,7 +147,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       }
     )
     agent_regression_check = @regression_weather_question
-    assert agent_regression_check.run(users(:admin))
+    assert agent_regression_check.run
 
     assert_not agent_regression_check.passed?
     assert agent_regression_check.failed?
@@ -162,7 +162,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       body: {}
     )
     agent_regression_check = @regression_weather_forecast
-    assert agent_regression_check.run(users(:admin))
+    assert agent_regression_check.run
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?
@@ -177,7 +177,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       body: {}
     )
     agent_regression_check = @regression_weather_forecast
-    assert agent_regression_check.run(users(:admin))
+    assert agent_regression_check.run
 
     assert_not agent_regression_check.passed?
     assert_not agent_regression_check.failed?
