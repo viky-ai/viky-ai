@@ -27,12 +27,16 @@ class AgentRegressionCheck < ApplicationRecord
 
     if status == 200
       interpretation = JSON.parse(response[:body])['interpretations'].sort_by { | interpretation | interpretation[:score].to_f }.last
-      self.got = {
-        'package' => Intent.find(interpretation['id']).agent.id,
-        'id' => interpretation['id'],
-        'score' => interpretation['score'].to_s,
-        'solution' => interpretation['solution'].to_json.to_s
-      }
+      if interpretation.nil?
+        self.got = {}
+      else
+        self.got = {
+          'package' => Intent.find(interpretation['id']).agent.id,
+          'id' => interpretation['id'],
+          'score' => interpretation['score'].to_s,
+          'solution' => interpretation['solution'].to_json.to_s
+        }
+      end
       self.state = self.got == self.expected ? 'passed' : 'failed'
     elsif status == 401 || status == 404
       self.got = ''

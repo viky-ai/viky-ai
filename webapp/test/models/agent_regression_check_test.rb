@@ -156,6 +156,24 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_not_equal agent_regression_check.got, agent_regression_check.expected
   end
 
+  test 'Run a succes agent test but empty nothing match' do
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+        'interpretations' => []
+      }
+    )
+    agent_regression_check = @regression_weather_question
+    assert agent_regression_check.run
+
+    assert_not agent_regression_check.passed?
+    assert agent_regression_check.failed?
+    assert_not agent_regression_check.running?
+    assert_not agent_regression_check.unknown?
+    assert_not agent_regression_check.error?
+    assert_not_equal agent_regression_check.got, agent_regression_check.expected
+  end
+
   test 'Run an agent test but NLP is unreachable' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 404,
