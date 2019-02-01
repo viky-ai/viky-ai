@@ -14,7 +14,7 @@
 // Super List glued Request Expression
 struct slgre
 {
-  struct request_expression *request_expression;
+  int Irequest_expression;
 };
 
 static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretations,
@@ -28,7 +28,7 @@ static og_bool NlpSuperListCreateOne(og_nlp_th ctrl_nlp_th, struct super_list *s
 static og_bool NlpSuperListCreateGlued(og_nlp_th ctrl_nlp_th, struct super_list *super_list,
     GQueue *sorted_request_expressions);
 static og_bool NlpSuperListCreateGluedRecursive(og_nlp_th ctrl_nlp_th, struct super_list *super_list, GList *iter,
-    struct slgre *slgre, int slgre_length);
+    struct slgre *slgre, int slgre_length, int *plast_position);
 static og_bool NlpSuperListCreateGluedSingle(og_nlp_th ctrl_nlp_th, struct super_list *super_list, struct slgre *slgre,
     int slgre_length);
 static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_expressions,
@@ -85,7 +85,7 @@ static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, st
     int Iinterpretation)
 {
   struct interpretation *public_interpretation = interpretations + Iinterpretation;
-  if (public_interpretation->scope != nlp_interpretation_scope_type_public) DONE;
+  //if (public_interpretation->scope != nlp_interpretation_scope_type_public) DONE;
 
   if (public_interpretation->expressions_nb != 1) DONE;
   struct expression *public_expression = public_interpretation->expressions;
@@ -271,7 +271,7 @@ static og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th, struct super_list *supe
     struct request_expression *request_expression = request_expressions + i;
     if (request_expression->expression->interpretation != super_list->interpretation) continue;
     if (request_expression->consumed_by_super_list) continue;
-    g_queue_push_tail(sorted_request_expressions, request_expressions + i);
+    g_queue_push_tail(sorted_request_expressions, GINT_TO_POINTER(request_expressions[i].self_index));
   }
 
   if (super_list->recursive_expression->glued)
@@ -307,7 +307,7 @@ static og_bool NlpSuperListCreateOne(og_nlp_th ctrl_nlp_th, struct super_list *s
 {
   og_bool super_list_created = FALSE;
   // sort again to take into account scores
-  g_queue_sort(sorted_request_expressions, NlpSuperListRequestExpressionCmp, NULL);
+  g_queue_sort(sorted_request_expressions, NlpSuperListRequestExpressionCmp, ctrl_nlp_th);
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
@@ -315,7 +315,9 @@ static og_bool NlpSuperListCreateOne(og_nlp_th ctrl_nlp_th, struct super_list *s
         ctrl_nlp_th->level);
     for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
     {
-      struct request_expression *request_expression = iter->data;
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+      IFN(request_expression) DPcErr;
       IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
     }
   }
@@ -342,7 +344,9 @@ static og_bool NlpSuperListCreateGlued(og_nlp_th ctrl_nlp_th, struct super_list 
         ctrl_nlp_th->level);
     for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
     {
-      struct request_expression *request_expression = iter->data;
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+      IFN(request_expression) DPcErr;
       IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
     }
   }
@@ -354,11 +358,24 @@ static og_bool NlpSuperListCreateGlued(og_nlp_th ctrl_nlp_th, struct super_list 
     NlpThrowErrorTh(ctrl_nlp_th, "NlpSuperListCreateGlued : malloc error on slgre");
     DPcErr;
   }
+  // Using last_position to avoid creating a combinatory explosion
+  int last_position = 0;
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
-    struct request_expression *request_expression = iter->data;
-    slgre[0].request_expression = request_expression;
-    og_bool glued_super_list_created = NlpSuperListCreateGluedRecursive(ctrl_nlp_th, super_list, iter->next, slgre, 1);
+    int Irequest_expression = GPOINTER_TO_INT(iter->data);
+    struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+    IFN(request_expression) DPcErr;
+
+    struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+        request_expression->request_position_start);
+    IFN(request_position) DPcErr;
+    int last_request_position = request_expression->request_positions_nb - 1;
+    int end_position_expression = request_position[last_request_position].start + request_position[last_request_position].length;
+    if (end_position_expression <= last_position) continue;
+    last_position = end_position_expression;
+
+    slgre[0].Irequest_expression = request_expression->self_index;
+    og_bool glued_super_list_created = NlpSuperListCreateGluedRecursive(ctrl_nlp_th, super_list, iter->next, slgre, 1, &last_position);
     IFE(glued_super_list_created);
     if (glued_super_list_created) at_least_one_glued_super_list_created = TRUE;
   }
@@ -369,7 +386,7 @@ static og_bool NlpSuperListCreateGlued(og_nlp_th ctrl_nlp_th, struct super_list 
 }
 
 static og_bool NlpSuperListCreateGluedRecursive(og_nlp_th ctrl_nlp_th, struct super_list *super_list, GList *iter_first,
-    struct slgre *slgre, int slgre_length)
+    struct slgre *slgre, int slgre_length, int *plast_position)
 {
   og_bool at_least_one_glued_super_list_created = FALSE;
   og_bool glued_super_list_created;
@@ -383,8 +400,27 @@ static og_bool NlpSuperListCreateGluedRecursive(og_nlp_th ctrl_nlp_th, struct su
   {
     for (GList *iter = iter_first; iter; iter = iter->next)
     {
-      struct request_expression *request_expression = iter->data;
-      og_bool are_glued = NlpRequestExpressionsAreGlued(ctrl_nlp_th, slgre[slgre_length - 1].request_expression,
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+      IFN(request_expression) DPcErr;
+
+      struct request_position *request_position = OgHeapGetCell(ctrl_nlp_th->hrequest_position,
+          request_expression->request_position_start);
+      IFN(request_position) DPcErr;
+      int last_request_position = request_expression->request_positions_nb - 1;
+      int end_position_expression = request_position[last_request_position].start + request_position[last_request_position].length;
+      if (end_position_expression <= *plast_position)
+      {
+        glued_super_list_created = NlpSuperListCreateGluedSingle(ctrl_nlp_th, super_list, slgre, slgre_length);
+        IFE(glued_super_list_created);
+        if (glued_super_list_created) at_least_one_glued_super_list_created = TRUE;
+        continue;
+      }
+
+      struct request_expression *slgre_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, slgre[slgre_length - 1].Irequest_expression);
+      IFN(slgre_request_expression) DPcErr;
+
+      og_bool are_glued = NlpRequestExpressionsAreGlued(ctrl_nlp_th, slgre_request_expression,
           request_expression, FALSE);
       IFE(are_glued);
 
@@ -398,9 +434,10 @@ static og_bool NlpSuperListCreateGluedRecursive(og_nlp_th ctrl_nlp_th, struct su
 
       if (are_glued)
       {
-        slgre[slgre_length++].request_expression = request_expression;
+        *plast_position = end_position_expression;
+        slgre[slgre_length++].Irequest_expression = request_expression->self_index;
         glued_super_list_created = NlpSuperListCreateGluedRecursive(ctrl_nlp_th, super_list, iter->next, slgre,
-            slgre_length);
+            slgre_length, plast_position);
         IFE(glued_super_list_created);
         if (glued_super_list_created) at_least_one_glued_super_list_created = TRUE;
         slgre_length--;
@@ -426,7 +463,9 @@ static og_bool NlpSuperListCreateGluedSingle(og_nlp_th ctrl_nlp_th, struct super
       NlpLog(DOgNlpTraceMatch, "NlpSuperListCreateGluedSingle: ordered candidate list:", ctrl_nlp_th->level);
       for (int i = 0; i < slgre_length; i++)
       {
-        IFE(NlpRequestExpressionLog(ctrl_nlp_th, slgre[i].request_expression, 2));
+        struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, slgre[i].Irequest_expression);
+        IFN(request_expression) DPcErr;
+        IFE(NlpRequestExpressionLog(ctrl_nlp_th, request_expression, 2));
       }
     }
 
@@ -435,7 +474,9 @@ static og_bool NlpSuperListCreateGluedSingle(og_nlp_th ctrl_nlp_th, struct super
 
     for (int i = 0; i < slgre_length; i++)
     {
-      g_queue_push_tail(sorted_request_expressions, slgre[i].request_expression);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, slgre[i].Irequest_expression);
+      IFN(request_expression) DPcErr;
+      g_queue_push_tail(sorted_request_expressions, GINT_TO_POINTER(request_expression->self_index));
     }
 
     og_bool super_list_created = NlpSuperListCreateOne(ctrl_nlp_th, super_list, sorted_request_expressions);
@@ -453,13 +494,16 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
 {
   og_bool first_expression = TRUE;
   struct request_expression *new_request_expression = NULL;
+  int Inew_request_expression = (-1);
 
   if (use_any_request_expressions)
   {
     og_bool found_any = FALSE;
     for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
     {
-      struct request_expression *request_expression = iter->data;
+      int Irequest_expression = GPOINTER_TO_INT(iter->data);
+      struct request_expression *request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Irequest_expression);
+      IFN(request_expression) DPcErr;
       if (request_expression->nb_anys > 0)
       {
         found_any = TRUE;
@@ -481,7 +525,10 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
 
   for (GList *iter = sorted_request_expressions->head; iter; iter = iter->next)
   {
-    struct request_expression *request_expression = iter->data;
+    int Irequest_expression = GPOINTER_TO_INT(iter->data);
+    struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+    IFN(request_expressions) DPcErr;
+    struct request_expression *request_expression = request_expressions + Irequest_expression;
     if (request_expression->nb_anys > 0 && !use_any_request_expressions) continue;
     int new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
     request_expression->consumed_by_super_list = TRUE;
@@ -510,6 +557,7 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
       IF(request_expression_added) DPcErr;
       if (request_expression_added)
       {
+        Inew_request_expression = new_request_expression->self_index;
         new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
@@ -529,6 +577,9 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
     {
       og_status Irequest_input_part = NlpSuperListInputPartCreate(ctrl_nlp_th, request_expression, super_list,
           super_list->recursive_expression->input_parts[0].self_index);
+
+      new_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Inew_request_expression);
+      IFN(new_request_expression) DPcErr;
 
       og_status Irequest_input_part_recur = NlpSuperListInputPartCreate(ctrl_nlp_th, new_request_expression, super_list,
           super_list->recursive_expression->input_parts[1].self_index);
@@ -550,6 +601,7 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
       if (request_expression_added)
       {
         new_request_expression = current_new_request_expression;
+        Inew_request_expression = new_request_expression->self_index;
         new_request_expression->super_list_status = nlp_super_list_status_Part;
         if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
         {
@@ -566,6 +618,9 @@ static og_bool NlpSuperListBuild(og_nlp_th ctrl_nlp_th, GQueue *sorted_request_e
     NlpLog(DOgNlpTraceMatch, "NlpSuperListBuild: new request_expression not created %s:", string_using_any);
     return FALSE;
   }
+
+  new_request_expression = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, Inew_request_expression);
+  IFN(new_request_expression) DPcErr;
 
   new_request_expression->super_list_status = nlp_super_list_status_Top;
   ctrl_nlp_th->new_request_input_part_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
@@ -603,8 +658,15 @@ static og_status NlpSuperListInputPartCreate(og_nlp_th ctrl_nlp_th, struct reque
 static int NlpSuperListRequestExpressionCmp(gconstpointer ptr_request_expression1,
     gconstpointer ptr_request_expression2, gpointer user_data)
 {
-  struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
-  struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
+  og_nlp_th ctrl_nlp_th = (og_nlp_th) user_data;
+  int Irequest_expression1 = GPOINTER_TO_INT(ptr_request_expression1);
+  int Irequest_expression2 = GPOINTER_TO_INT(ptr_request_expression2);
+
+  struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+  IFN(request_expressions) DPcErr;
+
+  struct request_expression *request_expression1 = request_expressions + Irequest_expression1;
+  struct request_expression *request_expression2 = request_expressions + Irequest_expression2;
 
   if (request_expression1->request_positions_nb != request_expression2->request_positions_nb)
   {
@@ -637,8 +699,14 @@ static int NlpSuperListRequestExpressionGlueCmp(gconstpointer ptr_request_expres
     gconstpointer ptr_request_expression2, gpointer user_data)
 {
   og_nlp_th ctrl_nlp_th = (og_nlp_th) user_data;
-  struct request_expression *request_expression1 = (struct request_expression *) ptr_request_expression1;
-  struct request_expression *request_expression2 = (struct request_expression *) ptr_request_expression2;
+  int Irequest_expression1 = GPOINTER_TO_INT(ptr_request_expression1);
+  int Irequest_expression2 = GPOINTER_TO_INT(ptr_request_expression2);
+
+  struct request_expression *request_expressions = OgHeapGetCell(ctrl_nlp_th->hrequest_expression, 0);
+  IFN(request_expressions) DPcErr;
+
+  struct request_expression *request_expression1 = request_expressions + Irequest_expression1;
+  struct request_expression *request_expression2 = request_expressions + Irequest_expression2;
 
   struct request_position *request_positions = OgHeapGetCell(ctrl_nlp_th->hrequest_position, 0);
   IFN(request_positions) DPcErr;
