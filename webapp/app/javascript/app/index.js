@@ -42,6 +42,8 @@ import './dependencies/dependencies_filter.coffee';
 
 import './console/console.coffee';
 import './console/console_footer.coffee';
+import './console/console_test_suite.coffee';
+
 
 import './intents/main.scss';
 import './intents/intent_form.coffee';

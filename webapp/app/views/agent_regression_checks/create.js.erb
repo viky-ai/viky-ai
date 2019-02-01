@@ -1,2 +1,4 @@
 data = <%= @agent.json_test_suite.html_safe %>;
 App.ConsoleFooter.summary = data.summary;
+App.ConsoleTestSuite.summary = data.summary;
+App.ConsoleTestSuite.tests = data.tests;

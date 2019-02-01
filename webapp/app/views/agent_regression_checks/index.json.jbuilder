@@ -24,4 +24,10 @@ json.summary do
   json.last_update l(last_update, format: :short)
 end
 
-json.tests tests
+json.tests tests do |test|
+  json.state test.state
+  json.sentence test.sentence
+  json.language test.language
+  json.expected test.expected
+  json.got test.got
+end

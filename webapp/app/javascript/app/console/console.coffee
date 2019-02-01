@@ -83,6 +83,16 @@ class Console
         link.addClass('current')
         $(link.data('target')).show()
 
+    if action == 'console-show-cts'
+      event.preventDefault()
+      $('#console').slideUp()
+      $('#console-ts').show()
+
+    if action == 'console-hide-cts'
+      event.preventDefault()
+      $('#console').slideDown()
+      $('#console-ts').hide()
+
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)

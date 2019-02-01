@@ -209,7 +209,10 @@
     <div class="console__output" id="console-output">
     </div>
 
-    <a href="#" class="console__footer" id="console-footer" v-if='summary.visible'>
+    <a href="#" class="console__footer"
+       id="console-footer"
+       v-if='summary.visible'
+       data-action="console-show-cts">
       <div class="console__footer__status">
         <span :class="'ts-status ts-status--' + summary.status"></span>
         {{summary.count_i18n}}, {{summary.failed_count_i18n}}
@@ -219,6 +222,37 @@
       </div>
     </a>
   </div>
+
+  <div class="console" id="console-ts" data-turbolinks-permanent style="display:none;">
+    <div class="cts">
+      <div class="cts__header">
+        <div>
+          <span :class="'ts-status ts-status--' + summary.status"></span>
+          {{summary.count_i18n}}, {{summary.failed_count_i18n}}
+        </div>
+        <small>{{summary.last_update}}</small>
+        <div>
+          <!-- TODO: Add link to run the test -->
+          <a href="#" class="btn btn--small btn--primary">Run</a>
+          <a href="#" data-action="console-hide-cts">
+            <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span>
+          </a>
+        </div>
+      </div>
+      <ul class="cts__list">
+        <li v-for="test in tests">
+          <a href="#" class="cts-item">
+            <div><div class="cts-item__grip"></div></div>
+            <div class="cts-item__summary">
+              <span class="ts-status ts-status--success"></span>
+              <span>{{ test.sentence }}</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+  </div>
+</div>
+
 </aside>
 
 <script>
