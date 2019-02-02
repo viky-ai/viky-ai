@@ -61,6 +61,7 @@ struct og_nlp_env
 /** Nlp env default value */
 #define DOgNlpJSDukGcPeriod   100
 #define DOgNlpMaxRawTextSize  1024
+#define DOgNlpMaxRequestRawTextSize  8092
 
 struct ltra_dictionaries
 {

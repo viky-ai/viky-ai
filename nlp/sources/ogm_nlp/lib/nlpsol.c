@@ -824,8 +824,40 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   raw_text_string_value[j]=0;
   int raw_text_string_value_length=j;
   IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string_value);
 
-  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string);
+  unsigned char *start_position_name = "start_position";
+  char start_position_string[DPcPathSize];
+  int start_position_string_length = snprintf(start_position_string, DPcPathSize, "%d", start_position);
+  IFE(NlpJsAddVariable(ctrl_nlp_th, start_position_name, start_position_string, start_position_string_length));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: start_position is '%s'",start_position_string);
+
+  unsigned char *end_position_name = "end_position";
+  char end_position_string[DPcPathSize];
+  int end_position_string_length = snprintf(end_position_string, DPcPathSize, "%d", end_position);
+  IFE(NlpJsAddVariable(ctrl_nlp_th, end_position_name, end_position_string, end_position_string_length));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: end_position is '%s'",end_position_string);
+
+  unsigned char *request_raw_text_name = "request_raw_text";
+  const unsigned char *request_raw_text_string = ctrl_nlp_th->request_sentence;
+  length_position = strlen(ctrl_nlp_th->request_sentence);
+  if (length_position > DOgNlpMaxRequestRawTextSize) length_position = DOgNlpMaxRequestRawTextSize;
+  char request_raw_text_string_value[DOgNlpMaxRequestRawTextSize*2+9];
+  j=0;
+  request_raw_text_string_value[j++]='"';
+  for (int i=0; i<length_position; i++)
+  {
+    if (request_raw_text_string[i]== '"')
+    {
+      request_raw_text_string_value[j++]='\\';
+    }
+    request_raw_text_string_value[j++]=request_raw_text_string[i];
+  }
+  request_raw_text_string_value[j++]='"';
+  request_raw_text_string_value[j]=0;
+  int request_raw_text_string_value_length=j;
+  IFE(NlpJsAddVariable(ctrl_nlp_th, request_raw_text_name, request_raw_text_string_value, request_raw_text_string_value_length));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: request_raw_text is '%.*s'",DPcPathSize,request_raw_text_string_value);
 
   DONE;
 }
