@@ -553,7 +553,6 @@ struct request_expression
 
   json_t *json_solution;
 
-  og_bool consumed_by_super_list;
   enum nlp_super_list_status super_list_status;
 };
 
