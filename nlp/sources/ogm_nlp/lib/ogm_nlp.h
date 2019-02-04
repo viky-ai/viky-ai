@@ -61,6 +61,7 @@ struct og_nlp_env
 /** Nlp env default value */
 #define DOgNlpJSDukGcPeriod   100
 #define DOgNlpMaxRawTextSize  1024
+#define DOgNlpMaxRequestRawTextSize  8092
 
 struct ltra_dictionaries
 {
@@ -552,7 +553,6 @@ struct request_expression
 
   json_t *json_solution;
 
-  og_bool consumed_by_super_list;
   enum nlp_super_list_status super_list_status;
 };
 

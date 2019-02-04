@@ -30,7 +30,7 @@ module Nls
         int_cheval << Expression.new("cheval", solution: "`{ raw: raw_text }`")
 
         int_petit_blanc = package.new_interpretation("petit_blanc", { scope: "public" })
-        int_petit_blanc << Expression.new("@{petit} @{blanc}", aliases: { petit: int_petit, blanc: int_blanc }, solution: "`{ petit: petit, blanc: blanc, my_raw: raw_text }`")
+        int_petit_blanc << Expression.new("@{petit} @{blanc}", aliases: { petit: int_petit, blanc: int_blanc }, solution: "`{ petit: petit, blanc: blanc, my_raw: raw_text, debut: start_position, fin: end_position, tout: request_raw_text }`")
 
         word_any = package.new_interpretation("word_any", { scope: "public" })
         word_any << Expression.new("motdebut @{fin}", aliases: { fin: Alias.any}, solution: "`{ raw: raw_text}`", keep_order: true, glued: true)
@@ -49,12 +49,12 @@ module Nls
       end
 
       def test_petit_blanc
-        expected = { interpretation: "petit_blanc", solution: { petit: "petit", blanc: "blanc", my_raw: "petit verre blanc" } }
+        expected = { interpretation: "petit_blanc", solution: { petit: "petit", blanc: "blanc", my_raw: "petit verre blanc", debut: 3, fin: 20, tout:"un petit verre blanc" } }
         check_interpret("un petit verre blanc",        expected)
       end
 
       def test_petit_blanc_quote
-        expected = { interpretation: "petit_blanc", solution: { petit: "petit", blanc: "blanc", my_raw: "petit \" verre blanc" } }
+        expected = { interpretation: "petit_blanc", solution: { petit: "petit", blanc: "blanc", my_raw: "petit \" verre blanc", debut: 3, fin: 22, tout:"un petit \" verre blanc" } }
         check_interpret("un petit \" verre blanc",        expected)
       end
 
