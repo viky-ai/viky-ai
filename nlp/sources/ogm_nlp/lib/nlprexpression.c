@@ -53,7 +53,6 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
   request_expression->safe_request_positions_nb = 0;
   request_expression->recursive_without_any_chosen = FALSE;
   request_expression->nb_matched_words = 0;
-  request_expression->consumed_by_super_list = FALSE;
   request_expression->super_list_status = nlp_super_list_status_Nil;
 
   request_expression->request_position_start = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_position);

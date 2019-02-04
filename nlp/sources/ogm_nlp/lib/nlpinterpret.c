@@ -255,6 +255,8 @@ PUBLIC(og_status) OgNlpInterpret(og_nlp_th ctrl_nlp_th, struct og_nlp_interpret_
 
 static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json_t *json_answer)
 {
+  ogint64_t micro_clock_start = OgMicroClock();
+
   // reset previews interpretations
   IFE(NlpInterpretRequestReset(ctrl_nlp_th));
 
@@ -298,6 +300,13 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
   }
 
   NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: finished interpreting request [\n%s]", json_request_string)
+
+  if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceInterpret)
+  {
+    char v[128];
+    OgFormatThousand((int) (OgMicroClock() - micro_clock_start), v);
+    NlpLog(DOgNlpTraceInterpret, "NlpInterpretRequest: finished after %s micro-seconds", v)
+  }
 
   DONE;
 }
