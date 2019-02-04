@@ -36,7 +36,7 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
   echo "Waiting for redis on $DB_REDIS"
 
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -timeout 120s
+  /usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -timeout 300s
 
   echo "Database setup"
   echo "Check if database exist ..."
@@ -64,7 +64,7 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
   echo "Waiting for ES on $ES"
 
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://$ES -timeout 60s
+  /usr/local/bin/dockerize -wait tcp://$ES -timeout 300s
 
   echo "Statistics setup"
   ./bin/rails statistics:setup
