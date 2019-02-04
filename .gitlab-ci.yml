@@ -9,7 +9,7 @@ stages:
 image: docker:dind
 
 variables:
-  SKIP_TEST: "false"
+  SKIP_TEST: 'false'
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
@@ -18,7 +18,7 @@ variables:
   DOCKER_IMAGE_TOOLS_RUBY: $CI_REGISTRY_IMAGE/tools_ruby_base
   DOCKER_IMAGE_TOOLS_BACKUP: $CI_REGISTRY_IMAGE/tools_backup
   DOCKER_IMAGE_ELASTICSEARCH: $CI_REGISTRY_IMAGE/elasticsearch
-  TRACE: 0
+  TRACE: '0'
 
 # Build docker image
 
@@ -63,14 +63,20 @@ test_webapp:
     POSTGRES_USER: superman
     POSTGRES_PASSWORD: sup_3rman
     POSTGRES_DB: vikyapp_test
-    VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis/1'
-    VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis/2'
+    VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis:6379/1'
+    VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis:6379/2'
     VIKYAPP_STATISTICS_URL: 'http://elasticsearch:9200'
     VIKYAPP_STATISTICS_VISUALIZER_URL: 'http://kibana:5601'
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
     - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+      command:
+        [
+          'bin/elasticsearch',
+          '-Ediscovery.type=single-node',
+          '-Enetwork.host=_site_',
+        ]
       alias: elasticsearch
     - name: docker.elastic.co/kibana/kibana:6.3.0
       alias: kibana
@@ -175,7 +181,7 @@ deploy_preprod:
     name: viky-preprod
     url: https://viky-beta.viky.ai
   variables:
-    VIKYAPP_AUTO_BACKUP: "true"
+    VIKYAPP_AUTO_BACKUP: 'true'
     VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
     VIKYAPP_BASEURL: https://viky-beta.viky.ai
     VIKY_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
@@ -185,7 +191,6 @@ deploy_preprod:
     - viky_backup
     - echo "Deploy ..."
     - rancher --wait --environment preprod up --stack ${VIKYAPP_DEPLOY_RANCHER_STACK} --file docker-compose.yml --file docker-compose-infra.yml --file docker-compose-rancher.yml -d --batch-size 1 --pull --force-upgrade --confirm-upgrade --prune
-
 
 # remove environment
 delete_env:
@@ -248,7 +253,6 @@ invite_admin_preprod:
     - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}-app-master-1 ${TASK_CMD}
   when: manual
   allow_failure: true
-
 
 # backup
 backup_dev:
@@ -327,7 +331,6 @@ backup_restore_dev:
     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
   when: manual
   allow_failure: true
-
 
 # ---------------------------------------------------------------------------
 
