@@ -20,7 +20,8 @@ struct slgre
 static og_status NlpConsolidateSuperListInterpretation(og_nlp_th ctrl_nlp_th, struct interpretation *interpretations,
     int Iinterpretation);
 static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
-static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
+static og_bool NlpSuperListAliasInterpretationGetInPackages(og_nlp_th ctrl_nlp_th, struct super_list *super_list);
+static og_bool NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package, struct super_list *super_list);
 static og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th, struct super_list *super_list);
 static og_bool NlpSuperListCreateOne(og_nlp_th ctrl_nlp_th, struct super_list *super_list,
@@ -172,7 +173,7 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
               NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list alias:");
               IFE(NlpPackageAliasLog(ctrl_nlp_th, package, super_list->alias));
             }
-            IFE(NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_package, super_list));
+            IFE(NlpSuperListAliasInterpretationGetInPackages(ctrl_nlp_th, super_list));
             break;
           }
         }
@@ -188,7 +189,7 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
         }
       }
     }
-    if (super_list->recursive_expression != NULL)
+    if (super_list->recursive_expression != NULL && super_list->interpretation != NULL)
     {
       IFE(OgHeapAppend(ctrl_nlp_th->hsuper_list, 1, super_list));
     }
@@ -198,7 +199,24 @@ static og_status NlpSuperListGetInPackage(og_nlp_th ctrl_nlp_th, struct interpre
   DONE;
 }
 
-static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
+static og_bool NlpSuperListAliasInterpretationGetInPackages(og_nlp_th ctrl_nlp_th, struct super_list *super_list)
+{
+  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
+
+  int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
+  for (int i = 0; i < interpret_package_used; i++)
+  {
+    og_bool found = NlpSuperListAliasInterpretationGetInPackage(ctrl_nlp_th, interpret_packages + i, super_list);
+    IFE(found);
+    if (found)
+    {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+static og_bool NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
     struct interpret_package *interpret_package, struct super_list *super_list)
 {
   package_t package = interpret_package->package;
@@ -216,10 +234,10 @@ static int NlpSuperListAliasInterpretationGetInPackage(og_nlp_th ctrl_nlp_th,
         NlpLog(DOgNlpTraceConsolidate, "NlpSuperListGetInPackage: found super list interpretation:");
         IFE(NlpPackageInterpretationLog(ctrl_nlp_th, package, super_list->interpretation));
       }
-      break;
+      return TRUE;
     }
   }
-  DONE;
+  return FALSE;
 }
 
 og_bool NlpSuperListValidate(og_nlp_th ctrl_nlp_th, package_t package, int Iinput_part)
