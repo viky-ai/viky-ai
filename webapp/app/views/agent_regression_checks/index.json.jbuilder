@@ -2,7 +2,7 @@ if @agent.agent_regression_checks.exists?
   visible = true
   status = @agent.any_tests_failed? ? 'failure' : 'success'
   count  = @agent.agent_regression_checks.count
-  failed_count = @agent.agent_regression_checks.failed.count
+  failed_count = @agent.agent_regression_checks.failure.count
   last_update = @agent.agent_regression_checks.order('updated_at').last.updated_at
   tests = @agent.agent_regression_checks
 else

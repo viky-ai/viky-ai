@@ -24,7 +24,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       now: '2019-01-17T09:00:00+01:00',
       expected: expected_nlp,
       got: expected_nlp,
-      state: 'passed',
+      state: 'success',
       position: 2,
       agent: agents(:weather)
     )
@@ -36,16 +36,16 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal DateTime.parse('2019-01-17T09:00:00+01:00'), agent_regression_check.now
     assert_equal expected_nlp, agent_regression_check.expected
     assert_equal expected_nlp, agent_regression_check.got
-    assert_equal 'passed', agent_regression_check.state
-    assert agent_regression_check.passed?
+    assert_equal 'success', agent_regression_check.state
+    assert agent_regression_check.success?
     assert_not agent_regression_check.unknown?
-    assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.failure?
     assert_equal 2, agent_regression_check.position
   end
 
 
   test 'Agent, sentence and expected are mandatory' do
-    agent_regression_check = AgentRegressionCheck.new(state: 'failed')
+    agent_regression_check = AgentRegressionCheck.new(state: 'failure')
     assert_not agent_regression_check.save
 
     expected = {
@@ -119,8 +119,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = @regression_weather_forecast
     assert agent_regression_check.run
 
-    assert agent_regression_check.passed?
-    assert_not agent_regression_check.failed?
+    assert agent_regression_check.success?
+    assert_not agent_regression_check.failure?
     assert_not agent_regression_check.unknown?
     assert_not agent_regression_check.running?
     expected = {
@@ -149,8 +149,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = @regression_weather_question
     assert agent_regression_check.run
 
-    assert_not agent_regression_check.passed?
-    assert agent_regression_check.failed?
+    assert_not agent_regression_check.success?
+    assert agent_regression_check.failure?
     assert_not agent_regression_check.running?
     assert_not agent_regression_check.unknown?
     assert_not_equal agent_regression_check.got, agent_regression_check.expected
@@ -166,8 +166,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = @regression_weather_question
     assert agent_regression_check.run
 
-    assert_not agent_regression_check.passed?
-    assert agent_regression_check.failed?
+    assert_not agent_regression_check.success?
+    assert agent_regression_check.failure?
     assert_not agent_regression_check.running?
     assert_not agent_regression_check.unknown?
     assert_not agent_regression_check.error?
@@ -182,8 +182,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = @regression_weather_forecast
     assert agent_regression_check.run
 
-    assert_not agent_regression_check.passed?
-    assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.success?
+    assert_not agent_regression_check.failure?
     assert_not agent_regression_check.running?
     assert agent_regression_check.unknown?
     assert_empty agent_regression_check.got
@@ -197,8 +197,8 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = @regression_weather_forecast
     assert agent_regression_check.run
 
-    assert_not agent_regression_check.passed?
-    assert_not agent_regression_check.failed?
+    assert_not agent_regression_check.success?
+    assert_not agent_regression_check.failure?
     assert_not agent_regression_check.unknown?
     assert_not agent_regression_check.running?
     assert agent_regression_check.error?

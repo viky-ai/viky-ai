@@ -530,7 +530,7 @@ class AgentTest < ActiveSupport::TestCase
     agent = agents(:weather)
     assert agent.any_tests_failed?
 
-    @regression_weather_question.state = 'passed'
+    @regression_weather_question.state = 'success'
     @regression_weather_question.save
 
     assert_not agent.any_tests_failed?

@@ -192,7 +192,7 @@ class Agent < ApplicationRecord
   end
 
   def any_tests_failed?
-    agent_regression_checks.where(state: 'failed').exists?
+    agent_regression_checks.where(state: 'failure').exists?
   end
 
   def sentence_tested?(sentence)

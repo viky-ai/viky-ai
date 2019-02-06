@@ -9,7 +9,7 @@ class AgentRegressionCheck < ApplicationRecord
 
   validates :expected_as_str, length: { maximum: 10_000 }
 
-  enum state: [:unknown, :passed, :failed, :error, :running]
+  enum state: [:unknown, :success, :failure, :error, :running]
 
   def run
     self.state = 'running'
@@ -37,7 +37,7 @@ class AgentRegressionCheck < ApplicationRecord
           'solution' => interpretation['solution'].to_json.to_s
         }
       end
-      self.state = self.got == self.expected ? 'passed' : 'failed'
+      self.state = self.got == self.expected ? 'success' : 'failure'
     elsif status == 401 || status == 404
       self.got = ''
       self.state = 'unknown'
