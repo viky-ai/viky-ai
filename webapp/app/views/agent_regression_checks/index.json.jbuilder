@@ -22,6 +22,7 @@ json.summary do
   json.failed_count failed_count
   json.failed_count_i18n t('views.console.regression_check.failures', count: failed_count)
   json.last_update l(last_update, format: :short)
+  json.timestamp Time.now.to_f * 1000
 end
 
 json.tests tests do |test|

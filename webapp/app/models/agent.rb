@@ -179,9 +179,7 @@ class Agent < ApplicationRecord
   end
 
   def run_tests
-    agent_regression_checks.each do |test|
-      AgentRegressionCheckRunJob.perform_later test
-    end
+    AgentRegressionCheckRunJob.perform_later self
   end
 
   def json_test_suite
