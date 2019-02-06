@@ -227,7 +227,7 @@
     <div class="cts">
       <div class="cts__header">
         <div>
-          <span :class="'ts-status ts-status--' + summary.status"></span>
+          <span v-bind:class="'ts-status ts-status--' + summary.status"></span>
           {{summary.count_i18n}}, {{summary.failed_count_i18n}}
         </div>
         <small>{{summary.last_update}}</small>
@@ -240,14 +240,46 @@
         </div>
       </div>
       <ul class="cts__list">
-        <li v-for="test in tests">
-          <a href="#" class="cts-item">
+        <li v-for="test in tests" :key="test.id">
+          <a href="#" class="cts-item" v-on:click.stop="showDetails(test.id)" v-bind:id="'cts-item-summary-'+ test.id">
             <div><div class="cts-item__grip"></div></div>
             <div class="cts-item__summary">
-              <span class="ts-status ts-status--success"></span>
+              <span :class="'ts-status ts-status--' + test.state"></span>
               <span>{{ test.sentence }}</span>
             </div>
           </a>
+
+          <div class="cts-item" v-bind:id="'cts-item-details-' + test.id" style="display:none;">
+            <div><div class="cts-item__grip"></div></div>
+            <div class="cts-item__full">
+                <div class="cts-item__full__status">
+                  <span :class="'ts-status ts-status--' + test.state"></span>
+                </div>
+                <div class="cts-item__full__detail">
+                  <a href="#" class="cts-item__full__detail__close" v-on:click.stop="hideDetails(test.id)">
+                    <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span>
+                  </a>
+                  <div class="cts-item__full__detail__label"><%= t('views.console.regression_check.test.query') %></div>
+                  <div class="cts-item__full__detail__value">{{ test.sentence }}</div>
+                  <div class="cts-item__full__detail__label"><%= t('views.console.regression_check.test.language') %></div>
+                  <div class="cts-item__full__detail__value">{{ test.language }}</div>
+                  <div class="cts-item__full__detail__label"><%= t('views.console.regression_check.test.result') %></div>
+                  <div class="cts-item__full__detail__value">
+                    <pre class="language-javascript"><test-detail v-bind:expected="test.expected" v-bind:got="test.got"/></pre>
+                  </pre>
+                  </div>
+                  <!-- TODO: user who created this?? -->
+                  <div class="cts-item__full__detail__by">
+                    Created by Jean-Marie Vallet, Jan 05, 2018.
+                  </div>
+                  <!-- TODO: Edit and Delete actions -->
+                  <div class="cts-item__full__detail__actions">
+                    <a href="#" class="btn btn--small btn--primary">Edit</a>
+                    <a href="#" class="btn btn--small btn--destructive">Delete</a>
+                  </div>
+                </div>
+            </div>
+          </div>
         </li>
       </ul>
   </div>

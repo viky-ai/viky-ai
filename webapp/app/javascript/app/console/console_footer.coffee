@@ -6,10 +6,13 @@ class ConsoleFooter
       unless App.ConsoleFooter
         App.ConsoleFooter = new Vue({
           el: '#console-footer',
-          data: test_suite_data
+          data: {
+            summary: test_suite_data.summary
+          }
         })
     else
       App.ConsoleFooter = null
+
 
 Setup = -> new ConsoleFooter()
 

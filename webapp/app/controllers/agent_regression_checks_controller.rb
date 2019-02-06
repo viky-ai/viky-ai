@@ -4,9 +4,9 @@ class AgentRegressionChecksController < ApplicationController
   before_action :check_user_rights
 
   def create
-    regression_check = AgentRegressionCheck.new(regression_check_params)
-    regression_check.agent = @agent
-    unless regression_check.save
+    @regression_check = AgentRegressionCheck.new(regression_check_params)
+    @regression_check.agent = @agent
+    unless @regression_check.save
       redirect_to user_agent_path(@agent.owner, @agent),
         alert: t('views.agent_regression_checks.new.failed_message')
     end

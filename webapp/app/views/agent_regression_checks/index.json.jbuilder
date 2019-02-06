@@ -25,9 +25,5 @@ json.summary do
 end
 
 json.tests tests do |test|
-  json.state test.state
-  json.sentence test.sentence
-  json.language test.language
-  json.expected test.expected
-  json.got test.got
+  json.partial! 'agent_regression_checks/regression_check', test: test
 end

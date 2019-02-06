@@ -48,6 +48,12 @@ class AgentRegressionCheck < ApplicationRecord
     save
   end
 
+  def to_json
+    ApplicationController.render(
+      template: 'agent_regression_checks/_regression_check',
+      locals: { test: self }
+    )
+  end
 
   private
 
