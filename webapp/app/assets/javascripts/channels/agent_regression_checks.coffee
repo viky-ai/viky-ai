@@ -2,4 +2,11 @@ App.agent_regression_checks = App.cable.subscriptions.create 'AgentRegressionChe
 
   received: (data) ->
     if $('.agent-header').data()['agent_id'] == data.agent_id
-      console.log(data)
+      for test in App.ConsoleTestSuite.tests
+        if data.check_id == test.id
+          test.state = if data.state == 'passed' then 'success' else 'failure'
+
+      if App.ConsoleTestSuite.tests.some((check) -> check.state == 'failure')
+        App.ConsoleTestSuite.summary.status = 'failure'
+      else
+        App.ConsoleTestSuite.summary.status = 'success'
