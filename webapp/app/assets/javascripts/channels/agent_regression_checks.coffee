@@ -9,4 +9,7 @@ App.agent_regression_checks = App.cable.subscriptions.create 'AgentRegressionChe
       if App.ConsoleTestSuite.tests.some((check) -> check.state == 'failure')
         App.ConsoleTestSuite.summary.status = 'failure'
       else
-        App.ConsoleTestSuite.summary.status = 'success'
+        if App.ConsoleTestSuite.tests.some((check) -> check.state == 'running')
+          App.ConsoleTestSuite.summary.status = 'running'
+        else
+          App.ConsoleTestSuite.summary.status = 'success'
