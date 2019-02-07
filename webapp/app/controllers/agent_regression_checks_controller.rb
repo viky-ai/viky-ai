@@ -16,6 +16,14 @@ class AgentRegressionChecksController < ApplicationController
     @agent.run_tests
   end
 
+  def destroy
+    @regression_check  = AgentRegressionCheck.find(params[:id])
+    unless @regression_check.destroy
+      render json: "Destroy failed", status: :unprocessable_entity
+    end
+    render 'create'
+  end
+
   private
 
     def regression_check_params
@@ -40,7 +48,7 @@ class AgentRegressionChecksController < ApplicationController
       case action_name
         when 'run'
           access_denied unless current_user.can? :show, @agent
-        when 'create'
+        when 'create', 'destroy'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

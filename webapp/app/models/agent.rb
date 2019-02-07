@@ -182,10 +182,11 @@ class Agent < ApplicationRecord
     AgentRegressionCheckRunJob.perform_later self
   end
 
-  def json_test_suite
+  def json_test_suite(current_user)
     ApplicationController.render(
       template: 'agent_regression_checks/index',
-      assigns: { agent: self }
+      assigns: { agent: self },
+      locals: { user: current_user }
     )
   end
 

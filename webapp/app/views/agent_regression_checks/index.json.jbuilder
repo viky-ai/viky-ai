@@ -26,5 +26,5 @@ json.summary do
 end
 
 json.tests tests do |test|
-  json.partial! 'agent_regression_checks/regression_check', test: test
+  json.partial! 'agent_regression_checks/regression_check', test: test, user: user
 end

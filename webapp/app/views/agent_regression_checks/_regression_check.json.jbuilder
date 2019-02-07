@@ -5,3 +5,4 @@ json.language  test.language
 json.expected  test.expected
 json.got       test.got
 json.timestamp Time.now.to_f * 1000
+json.deleteUrl  user_agent_agent_regression_check_path(user, test.agent, test)
