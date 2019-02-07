@@ -1,6 +1,11 @@
 require 'test_helper'
+require 'model_test_helper'
 
 class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
+
+  def setup
+    create_agent_regression_check_fixtures
+  end
   #
   # Create
   #
@@ -42,5 +47,37 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     post run_user_agent_agent_regression_checks_url(users(:admin), agents(:weather))
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
+  end
+
+  # test 'Run agent regression checks forbidden' do
+  #   sign_in users(:show_on_agent_weather)
+  #   post run_user_agent_agent_regression_checks_url(users(:admin), agents(:weather))
+  #   assert_redirected_to agents_url
+  #   assert_equal 'Unauthorized operation.', flash[:alert]
+  # end
+
+  #
+  # Delete
+  #
+  test 'Delete non existing regression check' do
+    sign_in users(:edit_on_agent_weather)
+    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), '12345')
+    assert_response :not_found
+  end
+
+  test 'Delete a running test' do
+    sign_in users(:edit_on_agent_weather)
+
+    @regression_weather_question.state = 'running'
+    @regression_weather_question.save
+
+    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_question)
+    assert_response :unprocessable_entity
+  end
+
+  test 'Delete a test - success' do
+    sign_in users(:edit_on_agent_weather)
+    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_forecast), xhr: true
+    assert_response :success
   end
 end

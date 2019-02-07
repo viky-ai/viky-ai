@@ -83,7 +83,57 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert 3, find('ul.cts__list').all('li').count
       assert page.has_content?("hello")
     end
-
   end
+
+  test 'Delete test - failure' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    test_to_delete = @regression_weather_question
+    @regression_weather_question.state = 'running'
+    @regression_weather_question.save
+
+    within('.console') do
+      assert page.has_content?('2 tests, 1 failure')
+      find('#console-footer').click
+    end
+
+    within('#console-ts') do
+      assert page.has_content?('2 tests, 1 failure')
+      click_link("Quel temps fera-t-il demain ?")
+      assert page.has_content?('Delete')
+      click_link 'Delete'
+      assert page.has_content?('Are you sure?')
+    end
+
+    within('.cts-item-delete') do
+      click_link 'Delete'
+    end
+    assert page.has_content?('2 tests, 1 failure')
+    assert 2, find('ul.cts__list').all('li').count
+  end
+
+  test 'Delete test - success' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    within('.console') do
+      assert page.has_content?('2 tests, 1 failure')
+      find('#console-footer').click
+    end
+
+    within('#console-ts') do
+      assert page.has_content?('2 tests, 1 failure')
+      click_link("Quel temps fera-t-il demain ?")
+      assert page.has_content?('Delete')
+      click_link 'Delete'
+      assert page.has_content?('Are you sure?')
+    end
+
+    within('.cts-item-delete') do
+      click_link 'Delete'
+    end
+    assert page.has_content?('1 test, 1 failure')
+    assert 1, find('ul.cts__list').all('li').count
+  end
+
+
 
 end

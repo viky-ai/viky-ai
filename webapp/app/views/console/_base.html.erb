@@ -267,7 +267,7 @@
                     <div class="cts-item__full__detail__value">
                       <pre class="language-javascript"><test-detail v-bind:expected="test.expected" v-bind:got="test.got"></test-detail></pre>
                     </div>
-                    <!-- TODO: Edit and Delete actions -->
+                    <!-- TODO: Edit action -->
                     <% if current_user.can?(:edit, @agent) %>
                       <div class="cts-item__full__detail__actions">
                         <template v-if="test.state == 'running'">
