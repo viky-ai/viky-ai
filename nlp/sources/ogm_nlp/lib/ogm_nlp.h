@@ -38,6 +38,7 @@
 
 #define DOgNlpMaximumRegex          100
 #define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
+#define DOgNlpMaxEntitySize   512
 
 #define DOgNlpMaximumOwnedLock      16
 
@@ -124,6 +125,11 @@ struct package
   /** Automaton : "<string_word>\1<Iinput_part>" */
   void *ha_word;
   int nb_words;
+
+  /** Automaton : "<nb_words><string_entity\1<ptr_expression>" */
+  void *ha_entity;
+  int nb_entities;
+  int max_nb_words_per_entity;
 
   /** Automaton : "<interpretation_id>\1<Iinput_part>" */
   void *ha_interpretation_id;
@@ -1141,4 +1147,15 @@ og_bool NlpSuperListsCreate(og_nlp_th ctrl_nlp_th);
 
 /* nlprword.c */
 og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);
+
+/* nlpentity.c */
+og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpEntityFlush(package_t package);
+og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, og_string string_word,
+    int length_string_word, struct expression *expression);
+og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpmatch_entity.c */
+og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th);
+
 

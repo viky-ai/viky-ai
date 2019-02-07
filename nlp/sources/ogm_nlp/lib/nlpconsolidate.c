@@ -9,6 +9,8 @@
 static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
 static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation *interpretation, struct expression *expression);
+static int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+static int NlpConsolidateExpressionEntity(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias);
 static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
@@ -288,6 +290,9 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
   IFE(OgAuf(package->ha_word, FALSE));
   IFE(OgAufClean(package->ha_word));
 
+  IFE(OgAuf(package->ha_entity, FALSE));
+  IFE(OgAufClean(package->ha_entity));
+
   package->consolidate_done = TRUE;
 
   IFE(NlpLtracPackage(ctrl_nlp_th, package));
@@ -319,6 +324,7 @@ og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package)
   {
     IFE(NlpPackageLog(ctrl_nlp_th, "after consolidate", package));
     IFE(NlpInputPartWordLog(ctrl_nlp_th, package));
+    IFE(NlpEntityLog(ctrl_nlp_th, package));
     IFE(NlpInputPartAliasLog(ctrl_nlp_th, package));
     IFE(NlpNumberInputPartLog(ctrl_nlp_th, package));
   }
@@ -511,6 +517,80 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
     DPcErr;
   }
 
+  og_bool is_entity = FALSE;
+  if (expression->aliases_nb == 0 && expression->input_parts_nb > 1 && expression->keep_order && expression->glued
+      && expression->glue_strength == nlp_glue_strength_Punctuation) is_entity = TRUE;
+
+  if (is_entity)
+  {
+    IFE(NlpConsolidateExpressionEntity(ctrl_nlp_th, package, expression));
+  }
+  else
+  {
+    IFE(NlpConsolidateExpressionWord(ctrl_nlp_th, package, expression));
+  }
+
+  DONE;
+}
+
+static int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+{
+  struct input_part *input_parts = OgHeapGetCell(package->hinput_part, 0);
+  IFN(input_parts) DPcErr;
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    struct input_part *input_part = input_parts + expression->input_part_start + i;
+    if (input_part->type != nlp_input_part_type_Word) continue;
+    og_string normalized_string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
+    IFN(normalized_string_word) DPcErr;
+    int length_normalized_string_word = strlen(normalized_string_word);
+    IFE(
+        NlpInputPartWordAdd(ctrl_nlp_th, package, normalized_string_word, length_normalized_string_word,
+            input_part->self_index));
+  }
+  DONE;
+}
+
+static int NlpConsolidateExpressionEntity(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+{
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateExpressionEntity: expression is an entity");
+
+  int string_entity_length = 0;
+  unsigned char string_entity[DOgNlpMaxEntitySize];
+
+  struct input_part *input_parts = OgHeapGetCell(package->hinput_part, 0);
+  IFN(input_parts) DPcErr;
+  for (int i = 0; i < expression->input_parts_nb; i++)
+  {
+    struct input_part *input_part = input_parts + expression->input_part_start + i;
+    if (input_part->type != nlp_input_part_type_Word)
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpConsolidateExpressionEntity: input_part type != nlp_input_part_type_Word");
+      DPcErr;
+    }
+    og_string normalized_string_word = OgHeapGetCell(package->hinput_part_ba, input_part->word->word_start);
+    IFN(normalized_string_word) DPcErr;
+    int length_normalized_string_word = strlen(normalized_string_word);
+    if (i > 0)
+    {
+      string_entity[string_entity_length++] = ' ';
+    }
+    if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
+    {
+      // We do not store very long entities
+      NlpLog(DOgNlpTraceMinimal, "NlpConsolidateExpressionEntity: expression is too long");
+      DONE;
+    }
+    memcpy(string_entity + string_entity_length, normalized_string_word, length_normalized_string_word);
+    string_entity_length += length_normalized_string_word;
+  }
+
+  string_entity[string_entity_length] = 0;
+
+  NlpLog(DOgNlpTraceConsolidate, "NlpConsolidateExpressionEntity: entity to add is '%s'", string_entity);
+
+  IFE(NlpEntityAdd(ctrl_nlp_th, package, expression->input_parts_nb, string_entity, string_entity_length, expression));
+
   DONE;
 }
 
@@ -630,8 +710,6 @@ static og_status NlpConsolidateAddWord(og_nlp_th ctrl_nlp_th, package_t package,
   input_part->word->raw_word_start = OgHeapGetCellsUsed(package->hinput_part_ba);
   IFE(OgHeapAppend(package->hinput_part_ba, length_string_word, string_word));
   IFE(OgHeapAppend(package->hinput_part_ba, 1, ""));
-
-  IFE(NlpInputPartWordAdd(ctrl_nlp_th, package, normalized_string_word, length_normalized_string_word, Iinput_part));
 
   DONE;
 }

@@ -15,6 +15,7 @@
     <file>nlpcompile.c</file>
     <file>nlpconsolidate.c</file>
     <file>nlpdump.c</file>
+    <file>nlpentity.c</file>
     <file>nlperr.c</file>
     <file>nlpexplainhighlight.c</file>
     <file>nlpglue.c</file>
@@ -28,6 +29,7 @@
     <file>nlpinterpret.c</file>
     <file>nlpmatch.c</file>
     <file>nlpmatch_word.c</file>
+    <file>nlpmatch_entity.c</file>
     <file>nlpmatch_expression.c</file>
     <file>nlpmatch_interpretation.c</file>
     <file>nlpmatch_group_numbers.c</file>
