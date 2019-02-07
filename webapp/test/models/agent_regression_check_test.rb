@@ -96,6 +96,16 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal 0, AgentRegressionCheck.where(id: agent_regression_check_id).count
   end
 
+  test 'Running test should not be deleted' do
+    agent_regression_check = @regression_weather_forecast
+    @regression_weather_forecast.state = 'running'
+    assert @regression_weather_forecast.save
+
+    assert !@regression_weather_forecast.destroy
+    expected_error = { base: ["Regression test cannot be deleted in running state."] }
+    assert_equal expected_error, @regression_weather_forecast.errors.messages
+  end
+
   test 'Run a successful agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,

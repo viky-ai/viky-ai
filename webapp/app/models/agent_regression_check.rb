@@ -11,6 +11,8 @@ class AgentRegressionCheck < ApplicationRecord
 
   enum state: [:unknown, :success, :failure, :error, :running]
 
+  before_destroy :check_running_state
+
   def run
     self.state = 'running'
     save
@@ -59,5 +61,12 @@ class AgentRegressionCheck < ApplicationRecord
 
     def expected_as_str
       expected.to_s
+    end
+
+    def check_running_state
+      if self.state == 'running'
+        errors.add(:base, I18n.t('errors.agent_regression_checks.delete.running'))
+        throw(:abort)
+      end
     end
 end

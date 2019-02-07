@@ -41,7 +41,3 @@ en:
           zero: "0 failure"
           one: "1 failure"
           other: "%{count} failures"
-        test:
-          query: Query
-          language: Language
-          result: Expected & Got

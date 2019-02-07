@@ -4,3 +4,12 @@ en:
       new:
         failed_message: 'Failed to save new regression test.'
       run: "Run"
+      not_found: The regression test cannot be found.
+      query: Query
+      language: Language
+      result: Expected & Got
+      edit: Edit
+      delete:
+        label: Delete
+        confirm: Are you sure?
+        cancel: Cancel

@@ -17,11 +17,16 @@ class AgentRegressionChecksController < ApplicationController
   end
 
   def destroy
-    @regression_check  = AgentRegressionCheck.find(params[:id])
-    unless @regression_check.destroy
-      render json: "Destroy failed", status: :unprocessable_entity
+    @regression_check  = AgentRegressionCheck.find_by_id(params[:id])
+    if @regression_check.nil?
+      render json: t('views.agent_regression_checks.not_found'), status: :not_found
+    else
+      unless @regression_check.destroy
+        render json: @regression_check.errors.messages[:base], status: :unprocessable_entity
+        return
+      end
+      render 'create'
     end
-    render 'create'
   end
 
   private

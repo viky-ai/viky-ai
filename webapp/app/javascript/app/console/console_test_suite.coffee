@@ -47,7 +47,7 @@ class ConsoleTestSuite
                   "X-CSRF-TOKEN": csrfToken
                 }
                 error: (data) =>
-                  App.Message.alert('Destroy failed')
+                  App.Message.alert(data.responseText)
                   this.cancelRemove(event)
 
             cancelRemove: (event) ->
