@@ -49,13 +49,6 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
 
-  # test 'Run agent regression checks forbidden' do
-  #   sign_in users(:show_on_agent_weather)
-  #   post run_user_agent_agent_regression_checks_url(users(:admin), agents(:weather))
-  #   assert_redirected_to agents_url
-  #   assert_equal 'Unauthorized operation.', flash[:alert]
-  # end
-
   #
   # Delete
   #
