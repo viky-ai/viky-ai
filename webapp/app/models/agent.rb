@@ -198,6 +198,11 @@ class Agent < ApplicationRecord
     agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip).exists?
   end
 
+  def regression_check_for(sentence)
+    agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip).first
+  end
+
+
   def synced_with_nlp?
     return false if nlp_updated_at.nil?
     nlp_updated_at >= updated_at

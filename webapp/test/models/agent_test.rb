@@ -544,6 +544,18 @@ class AgentTest < ActiveSupport::TestCase
     assert agent.sentence_tested?('Quel temps fera-t-il demain ?')
     assert agent.sentence_tested?('quel temps fera-t-il demain ?')
     assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ')
+    assert_not agent.sentence_tested?('random input : qlsjlqsjdflqsd')
+  end
+
+
+  test 'Test find a regression check from a sentence' do
+    create_agent_regression_check_fixtures
+
+    agent = agents(:weather)
+    assert @regression_weather_forecast.id, agent.regression_check_for('Quel temps fera-t-il demain ?').id
+    assert @regression_weather_forecast.id, agent.regression_check_for('quel temps fera-t-il demain ?').id
+    assert @regression_weather_forecast.id, agent.regression_check_for(' Quel temps fera-t-il demain ?   ').id
+    assert_not agent.regression_check_for('random input : qlsjlqsjdflqsd')
   end
 
 
