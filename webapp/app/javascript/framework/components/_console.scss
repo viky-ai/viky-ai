@@ -515,9 +515,10 @@ a.cts-item{
     }
   }
 }
-.cts-list-enter-active, .cts-list-leave-active {
+.cts-list-leave-active {
   transition: all 0.5s;
 }
-.cts-list-enter, .cts-list-leave-to {
+.cts-list-leave-to {
+  transform: translateY(50px);
   opacity: 0;
 }
