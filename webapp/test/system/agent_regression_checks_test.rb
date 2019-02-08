@@ -9,26 +9,59 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   test 'Add new regression test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+        interpretations: [
+          {
+            'id' => intents(:weather_forecast).id,
+            'slug' => intents(:weather_forecast).slug,
+            'package' => intents(:weather_forecast).agent.id,
+            'score' => '1.0',
+            'solution' => interpretations(:weather_forecast_tomorrow).solution
+          }
+        ]
+      }
+    )
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       first('button').click
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
+      assert page.has_content?('2 tests, 1 failure')
+      click_button 'Add to tests suite'
+      assert page.has_content?('3 tests, 1 failure')
+    end
+  end
+
+  test 'Can add only the first intent' do
+    go_to_agent_show(users(:admin), agents(:terminator))
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      {
         status: 200,
         body: {
           interpretations: [
             {
-              'id' => intents(:weather_forecast).id,
-              'slug' => intents(:weather_forecast).slug,
-              'package' => intents(:weather_forecast).agent.id,
-              'score' => '1.0',
-              'solution' => interpretations(:weather_forecast_tomorrow).solution
+              "id" => intents(:terminator_find).id,
+              "slug" => "admin/terminator/terminator_find",
+              "name" => "terminator_find",
+              "score" => 1.0
+            },
+            {
+              "id" => intents(:weather_forecast).id,
+              "slug" => "admin/weather/weather_forecast",
+              "name" => "weather_forecast",
+              "score" => 1.0
             }
           ]
         }
-      )
-      assert page.has_content?('2 tests, 1 failure')
-      click_button 'Add to tests suite'
-      assert page.has_content?('3 tests, 1 failure')
+      }
+    )
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "weather terminator"
+      first('button').click
+      assert page.has_text? '2 interpretations found.'
+      assert page.has_button? 'Add to tests suite'
+      assert_equal 1, find('.c-intents').all('input.btn').count
+      assert_equal 1, find('.c-intents > li:first-child').all('input.btn').count
     end
   end
 
@@ -133,7 +166,4 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     assert page.has_content?('1 test, 1 failure')
     assert 1, find('ul.cts__list').all('li').count
   end
-
-
-
 end

@@ -194,14 +194,23 @@ class Agent < ApplicationRecord
     agent_regression_checks.where(state: 'failure').exists?
   end
 
-  def sentence_tested?(sentence)
-    agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip).exists?
+  def sentence_tested?(sentence, language, now)
+    time_parse = (now.kind_of?(String) ? Time.parse(now) : now) unless now.blank?
+    agent_regression_checks
+      .where('lower(sentence) = lower(?)', sentence.strip)
+      .where(language: language)
+      .where(now: time_parse)
+      .exists?
   end
 
-  def regression_check_for(sentence)
-    agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip).first
+  def regression_check_for(sentence, language, now)
+    time_parse = now.kind_of?(String) ? Time.parse(now) : now
+    agent_regression_checks.where('lower(sentence) = lower(?)', sentence.strip)
+      .where('lower(sentence) = lower(?)', sentence.strip)
+      .where(language: language)
+      .where(now: time_parse)
+      .first
   end
-
 
   def synced_with_nlp?
     return false if nlp_updated_at.nil?

@@ -541,10 +541,12 @@ class AgentTest < ActiveSupport::TestCase
     create_agent_regression_check_fixtures
 
     agent = agents(:weather)
-    assert agent.sentence_tested?('Quel temps fera-t-il demain ?')
-    assert agent.sentence_tested?('quel temps fera-t-il demain ?')
-    assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ')
-    assert_not agent.sentence_tested?('random input : qlsjlqsjdflqsd')
+    assert agent.sentence_tested?('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
+    assert agent.sentence_tested?('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
+    assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00')
+    assert_not agent.sentence_tested?('random input : qlsjlqsjdflqsd', '*', '2019-01-21 12:00:00')
+    assert_not agent.sentence_tested?('Quel temps fera-t-il demain ?', 'fr', '2019-01-21 12:00:00')
+    assert_not agent.sentence_tested?('Quel temps fera-t-il demain ?', '*', '2019-12-12 12:12:12')
   end
 
 
@@ -552,10 +554,12 @@ class AgentTest < ActiveSupport::TestCase
     create_agent_regression_check_fixtures
 
     agent = agents(:weather)
-    assert @regression_weather_forecast.id, agent.regression_check_for('Quel temps fera-t-il demain ?').id
-    assert @regression_weather_forecast.id, agent.regression_check_for('quel temps fera-t-il demain ?').id
-    assert @regression_weather_forecast.id, agent.regression_check_for(' Quel temps fera-t-il demain ?   ').id
-    assert_not agent.regression_check_for('random input : qlsjlqsjdflqsd')
+    assert @regression_weather_forecast.id, agent.regression_check_for('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
+    assert @regression_weather_forecast.id, agent.regression_check_for('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
+    assert @regression_weather_forecast.id, agent.regression_check_for(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00').id
+    assert_not agent.regression_check_for('random input : qlsjlqsjdflqsd', '*', '2019-01-21 12:00:00')
+    assert_not agent.regression_check_for('Quel temps fera-t-il demain ?', 'fr', '2019-01-21 12:00:00')
+    assert_not agent.regression_check_for('Quel temps fera-t-il demain ?', '*', '2019-12-12 12:12:12')
   end
 
 

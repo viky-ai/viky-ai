@@ -72,14 +72,14 @@
               </ul>
             <div class="c-intent__footer">
                 <div class="c-intent__footer__status">
-                  <% if agent.sentence_tested?(user_query[:sentence]) && interpretation_index.zero? %>
-                    <% regression_check = agent.regression_check_for user_query[:sentence] %>
+                  <% if interpretation_index.zero? && agent.sentence_tested?(user_query[:sentence], user_query[:language], user_query[:now]) %>
+                    <% regression_check = agent.regression_check_for(user_query[:sentence], user_query[:language], user_query[:now]) %>
                     <span class="ts-status ts-status--<%= regression_check.state %>"></span>
                     <%= t("views.agent_regression_checks.indicator.#{regression_check.state}")%>
                   <% end %>
                 </div>
                 <div class="c-intent__footer__action">
-                <% if !agent.sentence_tested?(user_query[:sentence]) && current_user.can?(:edit, agent) && interpretation_index.zero? %>
+                <% if interpretation_index.zero? && !agent.sentence_tested?(user_query[:sentence], user_query[:language], user_query[:now]) && current_user.can?(:edit, agent) %>
                   <%= form_with url: user_agent_agent_regression_checks_path(current_user, agent), method: :post, scope: 'regression_check' do |f| %>
                     <%= f.hidden_field :sentence, value: user_query[:sentence] %>
                     <%= f.hidden_field :language, value: user_query[:language] %>
@@ -90,7 +90,7 @@
                     <%= f.hidden_field 'expected[solution]', value: aliasable['solution'].to_json %>
                     <%= f.submit t('views.console.regression_check.add'), class: 'btn btn--small btn--primary'%>
                   <% end %>
-                <% elsif regression_check.has_changed(aliasable) %>
+                <% elsif interpretation_index.zero? && agent.sentence_tested?(user_query[:sentence], user_query[:language], user_query[:now]) && regression_check.has_changed(aliasable) %>
                     <a href="#" class="btn btn--small btn--primary">Update test</a>
                 <% end %>
               </div>
