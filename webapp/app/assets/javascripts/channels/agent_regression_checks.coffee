@@ -12,4 +12,5 @@ App.agent_regression_checks = App.cable.subscriptions.create 'AgentRegressionChe
         for test in App.ConsoleTestSuite.tests
           if data.check_id == test.id && data.timestamp > test.timestamp
             test.state = data.state
+            test.got = data.got
             test.timestamp = data.timestamp

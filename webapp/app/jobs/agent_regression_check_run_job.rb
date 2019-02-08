@@ -15,12 +15,14 @@ class AgentRegressionCheckRunJob < ApplicationJob
                                    agent_id: agent.id,
                                    check_id: test.id,
                                    state: 'running',
+                                   got: {},
                                    timestamp: Time.now.to_f * 1000
       test.run
       ActionCable.server.broadcast 'agent_regression_checks_channel',
                                    agent_id: agent.id,
                                    check_id: test.id,
                                    state: test.state,
+                                   got: test.got,
                                    timestamp: Time.now.to_f * 1000
       ActionCable.server.broadcast 'agent_regression_checks_channel',
                                    agent_id: agent.id,
