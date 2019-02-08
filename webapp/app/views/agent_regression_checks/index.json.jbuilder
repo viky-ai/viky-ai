@@ -25,6 +25,8 @@ json.summary do
   json.timestamp Time.now.to_f * 1000
 end
 
+json.interpret_url interpret_user_agent_path(user, @agent)
+
 json.tests tests do |test|
   json.partial! 'agent_regression_checks/regression_check', test: test, user: user
 end

@@ -1,4 +1,5 @@
 import Vue from 'vue/dist/vue.esm'
+moment = require('moment');
 
 class ConsoleTestSuite
   constructor: ->
@@ -39,7 +40,7 @@ class ConsoleTestSuite
 
             removeTest: (index, event) ->
               csrfToken = $('meta[name="csrf-token"]').attr('content')
-              deleteUrl = this.tests[index].deleteUrl
+              deleteUrl = this.tests[index].delete_url
               $.ajax
                 url: deleteUrl,
                 method: "DELETE",
@@ -54,6 +55,31 @@ class ConsoleTestSuite
               confirmBlock = $(event.target).parents('.cts-item-delete')
               confirmBlock.hide()
               confirmBlock.siblings('div.cts-item').removeClass('cts-item--behind')
+
+            updateTest: (index, event) ->
+              csrfToken = $('meta[name="csrf-token"]').attr('content')
+              interpretUrl = this.interpret_url
+              regressionCheck = this.tests[index]
+              $.ajax
+                url: interpretUrl,
+                method: "GET",
+                headers: {
+                  "X-CSRF-TOKEN": csrfToken
+                },
+                data:{
+                  interpret: {
+                    sentence: regressionCheck.sentence,
+                    language: regressionCheck.language,
+                    current_tab: $('#console-current-tab-input').val(),
+                    verbose: $('.js-verbose-input').val(),
+                    # TODO: ??
+                    now: moment().format()
+                  }
+                }
+                complete: () ->
+                  $('#console').show()
+                  $('#js-console-form input[name="interpret[sentence]"]').val(regressionCheck.sentence)
+                  $('#console-ts').hide()
           },
 
         })

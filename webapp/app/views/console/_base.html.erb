@@ -275,7 +275,7 @@
                           <span class="btn btn--small btn--destructive btn--disabled"><%= t('views.agent_regression_checks.delete.label') %></span>
                         </template>
                         <template v-else>
-                          <a href="#" class="btn btn--small btn--primary"><%= t('views.agent_regression_checks.edit') %></a>
+                          <a href="#" class="btn btn--small btn--primary" v-on:click.stop="updateTest(index, $event)"><%= t('views.agent_regression_checks.edit') %></a>
                           <a href="#" class="btn btn--small btn--destructive" v-on:click.stop="showRemoveConfirm"><%= t('views.agent_regression_checks.delete.label') %></a>
                         </template>
 
