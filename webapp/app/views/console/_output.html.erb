@@ -90,6 +90,8 @@
                     <%= f.hidden_field 'expected[solution]', value: aliasable['solution'].to_json %>
                     <%= f.submit t('views.console.regression_check.add'), class: 'btn btn--small btn--primary'%>
                   <% end %>
+                <% elsif regression_check.has_changed(aliasable) %>
+                    <a href="#" class="btn btn--small btn--primary">Update test</a>
                 <% end %>
               </div>
             </div>

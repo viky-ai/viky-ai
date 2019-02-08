@@ -57,6 +57,16 @@ class AgentRegressionCheck < ApplicationRecord
     )
   end
 
+  def has_changed(interpretation)
+    new_result = {
+      'package' => Intent.find(interpretation['id']).agent.id,
+      'id' => interpretation['id'],
+      'score' => interpretation['score'].to_s,
+      'solution'=> interpretation['solution'].to_json.to_s
+    }
+    self.expected != new_result
+  end
+
   private
 
     def expected_as_str
