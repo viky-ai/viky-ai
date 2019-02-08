@@ -72,7 +72,7 @@
               </ul>
             <div class="c-intent__footer">
                 <div class="c-intent__footer__status">
-                  <% if agent.sentence_tested?(user_query[:sentence]) %>
+                  <% if agent.sentence_tested?(user_query[:sentence]) && interpretation_index.zero? %>
                     <% regression_check = agent.regression_check_for user_query[:sentence] %>
                     <span class="ts-status ts-status--<%= regression_check.state %>"></span>
                     <%= t("views.agent_regression_checks.indicator.#{regression_check.state}")%>
