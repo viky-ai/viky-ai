@@ -826,15 +826,17 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string_value);
 
+  int start_position_char = g_utf8_pointer_to_offset(ctrl_nlp_th->request_sentence,ctrl_nlp_th->request_sentence+start_position);
   unsigned char *start_position_name = "start_position";
   char start_position_string[DPcPathSize];
-  int start_position_string_length = snprintf(start_position_string, DPcPathSize, "%d", start_position);
+  int start_position_string_length = snprintf(start_position_string, DPcPathSize, "%d", start_position_char);
   IFE(NlpJsAddVariable(ctrl_nlp_th, start_position_name, start_position_string, start_position_string_length));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: start_position is '%s'",start_position_string);
 
+  int end_position_char = g_utf8_pointer_to_offset(ctrl_nlp_th->request_sentence,ctrl_nlp_th->request_sentence+end_position);
   unsigned char *end_position_name = "end_position";
   char end_position_string[DPcPathSize];
-  int end_position_string_length = snprintf(end_position_string, DPcPathSize, "%d", end_position);
+  int end_position_string_length = snprintf(end_position_string, DPcPathSize, "%d", end_position_char);
   IFE(NlpJsAddVariable(ctrl_nlp_th, end_position_name, end_position_string, end_position_string_length));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: end_position is '%s'",end_position_string);
 
