@@ -32,7 +32,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
   end
 
-  test 'Can add only the first intent' do
+  test 'Can only add the first intent' do
     go_to_agent_show(users(:admin), agents(:terminator))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       {
@@ -62,6 +62,37 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_button? 'Add to tests suite'
       assert_equal 1, find('.c-intents').all('input.btn').count
       assert_equal 1, find('.c-intents > li:first-child').all('input.btn').count
+    end
+  end
+
+  test 'Detect sentence already tested' do
+    go_to_agent_show(users(:admin), agents(:weather))
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+        interpretations: [{
+          "id" => intents(:weather_forecast).id,
+          "slug" => "admin/weather/weather_forecast",
+          "name" => "weather_forecast",
+          "score" => 1.0
+        }]
+      }
+    )
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "Quel temps fera-t-il demain ?"
+      first('button').click
+      assert page.has_text?('Update test')
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'en'
+      first('button').click
+      assert page.has_button?('Add to tests suite')
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'Language: Auto'
+      all('.dropdown__trigger > .btn')[2].click
+      click_link 'Manual now'
+      fill_in 'interpret[now]', with: '2019-02-11T01:00:00+01:00'
+      first('button').click
+      assert page.has_button?('Add to tests suite')
     end
   end
 
