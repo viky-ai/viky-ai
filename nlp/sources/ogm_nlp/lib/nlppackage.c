@@ -373,6 +373,7 @@ static og_status NlpPackageFlush(package_t package)
   NlpInputPartWordFlush(package);
   NlpInputPartAliasFlush(package);
   NlpLtracPackageFlush(package);
+  NlpLtracEntityPackageFlush(package);
 
   NlpPackageInterpretationsFlush(package);
   NlpPackageContextsFlush(package);

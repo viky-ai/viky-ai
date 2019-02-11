@@ -24,7 +24,9 @@
     <file>nlplocale.c</file>
     <file>nlplog.c</file>
     <file>nlpltrac.c</file>
+    <file>nlpltrac_entity.c</file>
     <file>nlpltras.c</file>
+    <file>nlpltras_entity.c</file>
     <file>nlpjavascript.c</file>
     <file>nlpinterpret.c</file>
     <file>nlpmatch.c</file>

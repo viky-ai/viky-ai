@@ -45,6 +45,8 @@
 // Max default distance (in number of chars) between two input parts in an expression
 #define DOgNlpDefaultGlueDistance   20
 
+#define DOgNlpEntitySeparator 0x80
+
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
@@ -138,6 +140,12 @@ struct package
   struct ltra_dictionaries ltra_dictionaries[1];
   int ltra_min_frequency;
   int ltra_min_frequency_swap;
+
+  /** Automatons for ltrac/ltraf entities */
+  struct ltra_dictionaries ltra_entity_dictionaries[1];
+  int ltra_entity_min_frequency;
+  int ltra_entity_min_frequency_swap;
+
 };
 
 typedef struct package *package_t;
@@ -1074,18 +1082,25 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
 
-/* nlpltras.c */
-og_status NlpLtras(og_nlp_th ctrl_nlp_th);
-
 /* nlpltrac.c */
 og_status NlpLtracInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpLtracPackageFlush(package_t package);
 
+/* nlpltrac_entity.c */
+og_status NlpLtracEntityPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpLtracEntityPackageFlush(package_t package);
+
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpLtras(og_nlp_th ctrl_nlp_th);
+
+/* nlpltras_entity.c */
+og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
+    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
+    int string_entity_length);
 
 /* nlpwhy.c */
 og_status NlpWhyNotMatchingInit(og_nlp_th ctrl_nlp_th, og_string name);
@@ -1157,5 +1172,9 @@ og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpmatch_entity.c */
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
+    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
+    int string_entity_length, og_bool must_spellcheck);
+
 
 

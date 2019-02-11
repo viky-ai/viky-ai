@@ -9,9 +9,6 @@
 static og_status NlpMatchEntitiesNgrams(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
     int global_max_nb_words_per_entity);
 static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int ngram_size);
-static og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
-    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length);
 
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
 {
@@ -55,6 +52,8 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
   struct request_word *request_word_list[ngram_size];
   int request_word_list_length = 0;
 
+  if (request_word->is_punctuation) DONE;
+
   request_word_list[request_word_list_length++] = request_word;
 
   for (struct request_word *rw = request_word->next; rw; rw = rw->next)
@@ -62,6 +61,7 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
     // ignore non basic word (build from ltras)
     if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
     if (rw->is_expression_punctuation) continue;
+    if (rw->is_punctuation) break;
     request_word_list[request_word_list_length++] = rw;
     if (request_word_list_length >= ngram_size) break;
   }
@@ -92,7 +92,7 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
 
   string_entity[string_entity_length] = 0;
 
-  NlpLog(DOgNlpTraceConsolidate, "NlpMatchEntitiesNgram: entity to search is '%s'", string_entity);
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgram: entity to search is '%s'", string_entity);
 
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
@@ -100,19 +100,22 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
     og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, string_entity, string_entity_length);
+        request_word_list_length, string_entity, string_entity_length, FALSE);
     IFE(status);
   }
 
   DONE;
 }
 
-static og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
+og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
     struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length)
+    int string_entity_length, og_bool must_spellcheck)
 {
   package_t package = interpret_package->package;
   if (request_word_list_length > package->max_nb_words_per_entity) DONE;
+
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: entity to search is '%s' must_spellcheck=%d", string_entity,
+      must_spellcheck);
 
   unsigned char buffer[DPcAutMaxBufferSize + 9];
   unsigned char *p;
@@ -140,8 +143,7 @@ static og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct in
       p = out;
       IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
       expression = (struct expression *) expression_ptr;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "NlpMatchEntitiesNgramInPackage: found expression '%s'",
-          expression->text);
+      NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: found expression '%s'", expression->text);
 
       if (expression->input_parts_nb != request_word_list_length)
       {
@@ -160,6 +162,13 @@ static og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct in
 
     }
     while ((retour = OgAufScann(package->ha_entity, &iout, out, nstate0, &nstate1, states)));
+  }
+
+  if (must_spellcheck)
+  {
+    og_status status = NlpLtrasEntityPackage(ctrl_nlp_th, interpret_package, request_word_list,
+        request_word_list_length, string_entity, string_entity_length);
+    IFE(status);
   }
 
   DONE;
