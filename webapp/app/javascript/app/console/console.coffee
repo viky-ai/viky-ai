@@ -19,13 +19,11 @@ $(document).on('turbolinks:render', -> ConsolePreserveScroll::restore())
 class Console
   constructor: ->
     @timeout = null
-    $('#js-console-now-input-container input').val(moment().format())
 
     $("body").on 'click', (event) => @dispatch(event)
 
     $("body").on 'console-select-now-type-auto', (event) =>
       $('#js-console-now-input-container').hide()
-      $('#js-console-now-input-container input').val(moment().format())
 
     $("body").on 'console-select-now-type-manual', (event) =>
       $('#js-console-now-input-container').show()
