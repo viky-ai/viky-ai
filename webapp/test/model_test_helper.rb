@@ -28,7 +28,6 @@ def create_agent_regression_check_fixtures
     expected: {
       package: agents(:weather).id,
       id: intents(:weather_forecast).id,
-      score: "1.0",
       solution: interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
   })
@@ -44,7 +43,6 @@ def create_agent_regression_check_fixtures
     expected: {
       package: agents(:weather).id,
       id: intents(:weather_question).id,
-      score: "0.65",
       solution: interpretations(:weather_question_like).solution.to_json.to_s
     }
   })

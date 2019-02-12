@@ -11,12 +11,9 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal 2, agents(:weather).agent_regression_checks.count
 
     expected_nlp = {
-      interpretations: [{
-        id: '1234567890',
-        slug: 'admin/weather/interpretation/weather_forecast',
-        name: 'weather_forecast',
-        score: 1.0
-      }]
+      'package' => intents(:weather_forecast).agent.id,
+      'id' => intents(:weather_forecast).id,
+      'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
     }.with_indifferent_access
     agent_regression_check = AgentRegressionCheck.new(
       sentence: 'What the weather like ?',
@@ -97,7 +94,6 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   end
 
   test 'Running test should not be deleted' do
-    agent_regression_check = @regression_weather_forecast
     @regression_weather_forecast.state = 'running'
     assert @regression_weather_forecast.save
 
@@ -136,7 +132,6 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     expected = {
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
-      'score' => '1.0',
       'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
     }
     assert_equal expected, agent_regression_check.expected

@@ -86,7 +86,6 @@
                     <%= f.hidden_field :now, value: user_query[:now] %>
                     <%= f.hidden_field 'expected[package]', value: Intent.find(aliasable['id']).agent.id %>
                     <%= f.hidden_field 'expected[id]', value: aliasable['id'] %>
-                    <%= f.hidden_field 'expected[score]', value: aliasable['score'] %>
                     <%= f.hidden_field 'expected[solution]', value: aliasable['solution'].to_json %>
                     <%= f.submit t('views.console.regression_check.add'), class: 'btn btn--small btn--primary'%>
                   <% end %>

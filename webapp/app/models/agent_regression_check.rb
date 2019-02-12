@@ -35,7 +35,6 @@ class AgentRegressionCheck < ApplicationRecord
         self.got = {
           'package' => Intent.find(interpretation['id']).agent.id,
           'id' => interpretation['id'],
-          'score' => interpretation['score'].to_s,
           'solution' => interpretation['solution'].to_json.to_s
         }
       end
@@ -61,7 +60,6 @@ class AgentRegressionCheck < ApplicationRecord
     new_result = {
       'package' => Intent.find(interpretation['id']).agent.id,
       'id' => interpretation['id'],
-      'score' => interpretation['score'].to_s,
       'solution'=> interpretation['solution'].to_json.to_s
     }
     self.expected != new_result
