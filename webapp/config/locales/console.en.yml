@@ -33,6 +33,7 @@ en:
       no_access: You do not have access to this agent.
       regression_check:
         add: "Add to tests suite"
+        update: Update
         tests:
           zero: "0 test"
           one: "1 test"

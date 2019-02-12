@@ -14,6 +14,16 @@ class ConsoleController < ApplicationController
 
     data = get_interpretation(agent, sentence, verbose, language, now)
 
+    @regression_check =  agent.regression_check_for(sentence, language, now)
+    if @regression_check.nil?
+      @regression_check = AgentRegressionCheck.new(
+        sentence: sentence,
+        language: language,
+        now: now,
+        agent: agent
+        )
+    end
+
     respond_to do |format|
       format.js {
         @tabs = render_to_string(

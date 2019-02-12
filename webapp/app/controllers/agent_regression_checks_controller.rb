@@ -1,7 +1,10 @@
 class AgentRegressionChecksController < ApplicationController
   before_action :set_owner
   before_action :set_agent
+  before_action :set_regression_check, only: [:update, :destroy]
   before_action :check_user_rights
+
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   def create
     @regression_check = AgentRegressionCheck.new(regression_check_params)
@@ -17,17 +20,22 @@ class AgentRegressionChecksController < ApplicationController
     @agent.run_tests
   end
 
-  def destroy
-    @regression_check  = AgentRegressionCheck.find_by_id(params[:id])
-    if @regression_check.nil?
-      render json: t('views.agent_regression_checks.not_found'), status: :not_found
-    else
-      unless @regression_check.destroy
-        render json: @regression_check.errors.messages[:base], status: :unprocessable_entity
-        return
-      end
+  def update
+    if @regression_check.update(regression_check_params)
+      # run test suite
       notify_ui
+      # render 'create', status: :ok
+    else
+      render json: t('views.agent_regression_checks.update.fail'), status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    unless @regression_check.destroy
+      render json: @regression_check.errors.messages[:base], status: :unprocessable_entity
+      return
+    end
+    notify_ui
   end
 
   private
@@ -49,11 +57,15 @@ class AgentRegressionChecksController < ApplicationController
       @agent = @owner.agents.friendly.find(params[:agent_id])
     end
 
+    def set_regression_check
+      @regression_check = AgentRegressionCheck.find(params[:id])
+    end
+
     def check_user_rights
       case action_name
         when 'run'
           access_denied unless current_user.can? :show, @agent
-        when 'create', 'destroy'
+        when 'create', 'destroy', 'update'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied
@@ -72,4 +84,9 @@ class AgentRegressionChecksController < ApplicationController
         payload: JSON.parse(payload)
       )
     end
+
+    def record_not_found
+      render json: t('views.agent_regression_checks.not_found'), status: :not_found
+    end
+
 end

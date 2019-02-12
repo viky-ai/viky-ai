@@ -72,8 +72,7 @@ class ConsoleTestSuite
                     language: regressionCheck.language,
                     current_tab: $('#console-current-tab-input').val(),
                     verbose: $('.js-verbose-input').val(),
-                    # TODO: ??
-                    now: moment().format()
+                    now: regressionCheck.now
                   }
                 }
                 complete: () ->

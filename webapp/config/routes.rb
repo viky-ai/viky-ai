@@ -117,7 +117,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :agent_regression_checks, only: [:create, :destroy] do
+        resources :agent_regression_checks, only: [:create, :update, :destroy] do
           collection do
             post :run
           end

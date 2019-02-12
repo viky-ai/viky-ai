@@ -3,11 +3,14 @@ en:
     agent_regression_checks:
       new:
         failed_message: 'Failed to save new regression test.'
+      update:
+        fail: Failed to update the regression test.
       run: "Run"
       indicator:
         success: "Succeed"
         failure: "Failed"
         running: "Running..."
+        unknown: "Unknown"
       not_found: The regression test cannot be found.
       not_yet_run: Not yet run.
       run_error: Error while requesting NLP.
