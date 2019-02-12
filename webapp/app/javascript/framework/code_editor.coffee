@@ -10,6 +10,7 @@ class CodeEditor
       autoRefresh: true,
       tabSize: 2,
       insertSoftTab: true,
+      lineWrapping: true,
       extraKeys:
         'Tab': (editor) -> editor.execCommand 'insertSoftTab'
     }
