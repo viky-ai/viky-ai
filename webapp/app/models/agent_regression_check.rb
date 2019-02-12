@@ -20,10 +20,10 @@ class AgentRegressionCheck < ApplicationRecord
     request_params = {
       sentence: sentence,
       language: language,
-      now: now.iso8601,
       verbose: false,
       client_type: 'regression_test'
     }
+    request_params[:now] = now.iso8601 if now.present?
     response = Nlp::PublicInterpret.request_public_api(request_params, agent)
     status = response[:status]
 
