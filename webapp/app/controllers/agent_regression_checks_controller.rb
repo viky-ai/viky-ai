@@ -10,6 +10,7 @@ class AgentRegressionChecksController < ApplicationController
       redirect_to user_agent_path(@agent.owner, @agent),
         alert: t('views.agent_regression_checks.new.failed_message')
     end
+    notify_ui
   end
 
   def run
@@ -25,7 +26,7 @@ class AgentRegressionChecksController < ApplicationController
         render json: @regression_check.errors.messages[:base], status: :unprocessable_entity
         return
       end
-      render 'create'
+      notify_ui
     end
   end
 
@@ -57,5 +58,18 @@ class AgentRegressionChecksController < ApplicationController
         else
           access_denied
       end
+    end
+
+    def notify_ui
+      payload = ApplicationController.render(
+        template: 'agent_regression_checks/index',
+        assigns: { agent: @agent }
+      )
+      ActionCable.server.broadcast(
+        'agent_regression_checks_channel',
+        agent_id: @agent.id,
+        timestamp: Time.now.to_f * 1000,
+        payload: JSON.parse(payload)
+      )
     end
 end
