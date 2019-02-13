@@ -68,6 +68,8 @@ module Nls
         check_interpret("motdebut test1\rtest2",        expected)
         expected = { interpretation: "word_any", solution: { raw: "motdebut test1\ntest2" } }
         check_interpret("motdebut test1\ntest2",        expected)
+        expected = { interpretation: "word_any", solution: { raw: "motdebut testà@t" } }
+        check_interpret("motdebut testà@t",        expected)
       end
 
       def test_global_any
