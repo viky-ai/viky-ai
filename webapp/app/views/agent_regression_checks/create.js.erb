@@ -1,5 +1,5 @@
-data = <%= @agent.json_test_suite(current_user).html_safe %>;
-// new_test = <%= @regression_check.to_json(current_user).html_safe %>;
+data = <%= @agent.json_test_suite.html_safe %>;
+// new_test = <%= @regression_check.to_json.html_safe %>;
 App.ConsoleFooter.summary = data.summary;
 App.ConsoleTestSuite.summary = data.summary;
 // App.ConsoleTestSuite.tests.push(new_test);

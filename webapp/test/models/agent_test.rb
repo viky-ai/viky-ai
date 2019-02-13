@@ -524,16 +524,49 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test agent regression any failed' do
+  test 'Test agent regression global state' do
     create_agent_regression_check_fixtures
 
     agent = agents(:weather)
-    assert agent.any_tests_failed?
+    @regression_weather_forecast.state = 'running'
+    @regression_weather_forecast.save
+    %w[running error failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'running', agent.regression_checks_global_state
+    end
 
-    @regression_weather_question.state = 'success'
-    @regression_weather_question.save
+    @regression_weather_forecast.state = 'error'
+    @regression_weather_forecast.save
+    %w[error failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'error', agent.regression_checks_global_state
+    end
 
-    assert_not agent.any_tests_failed?
+    @regression_weather_forecast.state = 'failure'
+    @regression_weather_forecast.save
+    %w[failure unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'failure', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'unknown'
+    @regression_weather_forecast.save
+    %w[unknown success].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'unknown', agent.regression_checks_global_state
+    end
+
+    @regression_weather_forecast.state = 'success'
+    @regression_weather_forecast.save
+    ['success'].each do |state|
+      @regression_weather_question.state = state
+      @regression_weather_question.save
+      assert_equal 'success', agent.regression_checks_global_state
+    end
   end
 
 

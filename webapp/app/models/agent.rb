@@ -182,16 +182,19 @@ class Agent < ApplicationRecord
     AgentRegressionCheckRunJob.perform_later self
   end
 
-  def json_test_suite(current_user)
+  def json_test_suite
     ApplicationController.render(
       template: 'agent_regression_checks/index',
-      assigns: { agent: self },
-      locals: { user: current_user }
+      assigns: { agent: self }
     )
   end
 
-  def any_tests_failed?
-    agent_regression_checks.where(state: 'failure').exists?
+  def regression_checks_global_state
+    return 'running' if agent_regression_checks.where(state: 'running').exists?
+    return 'error'   if agent_regression_checks.where(state: 'error').exists?
+    return 'failure' if agent_regression_checks.where(state: 'failure').exists?
+    return 'success' if agent_regression_checks.where(state: 'success').count == agent_regression_checks.count
+    'unknown'
   end
 
   def sentence_tested?(sentence, language, now)
