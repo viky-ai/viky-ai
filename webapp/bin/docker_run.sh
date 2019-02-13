@@ -61,10 +61,12 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
   echo "Database setup completed."
 
   ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
+  KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
   echo "Waiting for ES on $ES"
+  echo "Waiting for KIBANA on $KIBANA"
 
   # wait for services
-  /usr/local/bin/dockerize -wait tcp://$ES -timeout 300s
+  /usr/local/bin/dockerize -wait tcp://$ES -wait tcp://$KIBANA -timeout 300s
 
   echo "Statistics setup"
   ./bin/rails statistics:setup

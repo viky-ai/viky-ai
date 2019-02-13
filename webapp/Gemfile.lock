@@ -40,6 +40,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    ansi (1.5.0)
     arel (8.0.0)
     awesome_print (1.8.0)
     backports (3.11.3)
@@ -171,6 +172,11 @@ GEM
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
+    minitest-reporters (1.3.6)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
     mocha (1.4.0)
       metaclass (~> 0.0.1)
     multi_json (1.13.1)
@@ -265,6 +271,7 @@ GEM
     rinku (1.7.3)
     ruby-enum (0.7.2)
       i18n
+    ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
     rubyzip (1.2.2)
     sanitize (2.1.0)
@@ -381,6 +388,7 @@ DEPENDENCIES
   local_time
   mail_safe
   mini_magick (>= 4.3.5)
+  minitest-reporters
   mocha
   oj
   pg (~> 0.18)
@@ -415,4 +423,4 @@ DEPENDENCIES
   whenever (~> 0.10.0)
 
 BUNDLED WITH
-   1.16.4
+   1.17.1

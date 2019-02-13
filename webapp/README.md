@@ -51,7 +51,7 @@ If you need more information, see sections below.
     ```bash
     $ mkdir ./viky
     $ cd viky
-    $ git clone git@gitlab.pertimm.corp:viky.ai/platform.git
+    $ git clone git@gitlab.pertimm.net:viky.ai/platform.git
     ```
 11. Install every dependencies :
     ```bash

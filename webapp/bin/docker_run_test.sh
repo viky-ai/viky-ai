@@ -3,26 +3,19 @@ set -e
 
 source functions.sh
 
-ls -l
-
-source functions.sh
-
-sleep 1
-
 # Parse postgres, redis, es and kibana urls from Env Variables
 # .gitlab-ci -> test_webapp -> variables
 DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
 DB_REDIS=$(parse_url "$VIKYAPP_ACTIONCABLE_REDIS_URL")
 ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
-KIBANA=$(parse_url "$VIKYAPP_STATISTICS_VISUALIZER_URL")
 
 echo "DB_POSTGRES $DB_POSTGRES"
 echo "DB_REDIS $DB_REDIS"
 echo "ES $ES"
-echo "KIBANA $KIBANA"
+echo "Test ${CI_NODE_INDEX}/${CI_NODE_TOTAL}"
 
 # wait for services
-/usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -wait tcp://$KIBANA -timeout 60s
+/usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -wait tcp://$ES -timeout 120s
 
 export DISABLE_SPRING=true
 
@@ -32,8 +25,16 @@ export DISABLE_SPRING=true
 # Setup statistics
 ./bin/rails statistics:setup
 
-# Run tests
-./bin/rails test
+if [[ "$1" == "unit" ]] || [[ "$1" == "" ]]; then
 
-# Run system tests
-./bin/rails test:system
+  # Run tests
+  ./bin/rails test
+
+fi
+
+if [[ "$1" == "system" ]] || [[ "$1" == "" ]]; then
+
+  # Run system tests
+  ./bin/rails test:system
+
+fi
