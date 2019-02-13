@@ -787,7 +787,8 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
 
   int start_position_expression = request_position[0].start;
   int last_request_position = request_expression->request_positions_nb - 1;
-  int end_position_expression = request_position[last_request_position].start + request_position[last_request_position].length;
+  int end_position_expression = request_position[last_request_position].start
+      + request_position[last_request_position].length;
 
   int start_position_any = start_position_expression;
   int end_position_any = end_position_expression;
@@ -806,60 +807,54 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   if (length_position > DOgNlpMaxRawTextSize)
   {
     unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
-    p = g_utf8_find_prev_char(raw_text_string,p);
+    p = g_utf8_find_prev_char(raw_text_string, p);
     length_position = p - raw_text_string;
   }
   char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
-  int j=0;
-  raw_text_string_value[j++]='"';
-  for (int i=0; i<length_position; i++)
-  {
-    if (raw_text_string[i]== '"')
-    {
-      raw_text_string_value[j++]='\\';
-    }
-    raw_text_string_value[j++]=raw_text_string[i];
-  }
-  raw_text_string_value[j++]='"';
-  raw_text_string_value[j]=0;
-  int raw_text_string_value_length=j;
-  IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, raw_text_string_value_length));
-  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'",raw_text_string_value);
+  snprintf(raw_text_string_value, DOgNlpMaxRawTextSize, "%.*s", length_position, raw_text_string);
+  gchar *raw_text_string_escaped = g_strescape(raw_text_string_value, NULL);
+  snprintf(raw_text_string_value, DOgNlpMaxRawTextSize, "\"%s\"", raw_text_string_escaped);
+  g_free(raw_text_string_escaped);
+  raw_text_string_escaped = NULL;
+
+  IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, -1));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'", raw_text_string_value);
 
   int start_position_char = g_utf8_pointer_to_offset(ctrl_nlp_th->request_sentence,ctrl_nlp_th->request_sentence+start_position);
   unsigned char *start_position_name = "start_position";
   char start_position_string[DPcPathSize];
   int start_position_string_length = snprintf(start_position_string, DPcPathSize, "%d", start_position_char);
   IFE(NlpJsAddVariable(ctrl_nlp_th, start_position_name, start_position_string, start_position_string_length));
-  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: start_position is '%s'",start_position_string);
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: start_position is '%s'", start_position_string);
 
-  int end_position_char = g_utf8_pointer_to_offset(ctrl_nlp_th->request_sentence,ctrl_nlp_th->request_sentence+end_position);
+  int end_position_char = g_utf8_pointer_to_offset(ctrl_nlp_th->request_sentence,
+      ctrl_nlp_th->request_sentence + end_position);
   unsigned char *end_position_name = "end_position";
   char end_position_string[DPcPathSize];
   int end_position_string_length = snprintf(end_position_string, DPcPathSize, "%d", end_position_char);
   IFE(NlpJsAddVariable(ctrl_nlp_th, end_position_name, end_position_string, end_position_string_length));
-  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: end_position is '%s'",end_position_string);
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: end_position is '%s'", end_position_string);
 
   unsigned char *request_raw_text_name = "request_raw_text";
   const unsigned char *request_raw_text_string = ctrl_nlp_th->request_sentence;
   length_position = strlen(ctrl_nlp_th->request_sentence);
-  if (length_position > DOgNlpMaxRequestRawTextSize) length_position = DOgNlpMaxRequestRawTextSize;
-  char request_raw_text_string_value[DOgNlpMaxRequestRawTextSize*2+9];
-  j=0;
-  request_raw_text_string_value[j++]='"';
-  for (int i=0; i<length_position; i++)
+  if (length_position > DOgNlpMaxRequestRawTextSize)
   {
-    if (request_raw_text_string[i]== '"')
-    {
-      request_raw_text_string_value[j++]='\\';
-    }
-    request_raw_text_string_value[j++]=request_raw_text_string[i];
+    unsigned char *p = (unsigned char *) (request_raw_text_string + DOgNlpMaxRequestRawTextSize);
+    p = g_utf8_find_prev_char(request_raw_text_string, p);
+    length_position = p - request_raw_text_string;
   }
-  request_raw_text_string_value[j++]='"';
-  request_raw_text_string_value[j]=0;
-  int request_raw_text_string_value_length=j;
-  IFE(NlpJsAddVariable(ctrl_nlp_th, request_raw_text_name, request_raw_text_string_value, request_raw_text_string_value_length));
-  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: request_raw_text is '%.*s'",DPcPathSize,request_raw_text_string_value);
+
+  char request_raw_text_value[DOgNlpMaxRequestRawTextSize*2+9];
+  snprintf(request_raw_text_value, DOgNlpMaxRequestRawTextSize, "%.*s", length_position, request_raw_text_string);
+
+  gchar *request_raw_text_escaped = g_strescape(request_raw_text_value, NULL);
+  snprintf(request_raw_text_value, DOgNlpMaxRequestRawTextSize, "\"%s\"", request_raw_text_escaped);
+  g_free(request_raw_text_escaped);
+  raw_text_string_escaped = NULL;
+
+  IFE(NlpJsAddVariable(ctrl_nlp_th, request_raw_text_name, request_raw_text_value, -1));
+  NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: request_raw_text is '%s'", request_raw_text_value);
 
   DONE;
 }
