@@ -1,12 +1,12 @@
 [submodule "uriparser"]
 	path = nlp/sources/external_dependencies/uriparser
-  url = http://gitlab.pertimm.corp/viky.ai/dependencies/uriparser.git
+  url = https://gitlab.pertimm.net/viky.ai/dependencies/uriparser.git
 [submodule "jansson"]
 	path = nlp/sources/external_dependencies/jansson
-  url = http://gitlab.pertimm.corp/viky.ai/dependencies/jansson.git
+  url = https://gitlab.pertimm.net/viky.ai/dependencies/jansson.git
 [submodule "glib"]
 	path = nlp/sources/external_dependencies/glib
-  url = http://gitlab.pertimm.corp/viky.ai/dependencies/glib.git
+  url = https://gitlab.pertimm.net/viky.ai/dependencies/glib.git
 [submodule "nlp/sources/external_dependencies/duktape"]
 	path = nlp/sources/external_dependencies/duktape
-	url = http://gitlab.pertimm.corp/viky.ai/dependencies/duktape.git
+	url = https://gitlab.pertimm.net/viky.ai/dependencies/duktape.git

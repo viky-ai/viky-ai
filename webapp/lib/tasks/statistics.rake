@@ -30,11 +30,10 @@ namespace :statistics do
 
       end
     end
-    Statistics::Print.step("Configure Kibana.")
-    begin
+
+    unless ENV.fetch('VIKYAPP_STATISTICS_VISUALIZER_URL', nil).blank?
+      Statistics::Print.step('Configure Kibana.')
       StatisticsVisualizer.new.configure
-    rescue RuntimeError => e
-      Statistics::Print.error(e)
     end
   end
 
