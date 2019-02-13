@@ -11,7 +11,7 @@ class Interpretation < ApplicationRecord
 
   validates :expression, presence: true
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
-  validates :solution, length: { maximum: 2000 }
+  validates :solution, length: { maximum: 5000 }
 
   before_save :cleanup
 
