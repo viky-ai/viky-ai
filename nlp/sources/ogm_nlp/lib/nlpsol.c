@@ -777,6 +777,76 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
   return solution_built;
 }
 
+static og_status NlpSolutionBuildRawTextToString(og_nlp_th ctrl_nlp_th, int buffer_size, gchar buffer[],
+    int raw_size, og_string raw)
+{
+  // 6 is max the size of a char in UTF-8
+  int max_buffer_size = buffer_size - 6;
+  if (max_buffer_size < 2)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpSolutionBuildRawTextToString: buffer size is too small %d (at least 8 bytes)",
+        buffer_size);
+    DPcErr;
+  }
+
+  int j = 0;
+  buffer[j++] = '"';
+
+  og_string end = raw + raw_size;
+  for (const gchar *p = raw; p && j < max_buffer_size; p = g_utf8_find_next_char(p, end))
+  {
+    gunichar c = g_utf8_get_char(p);
+    switch (*p)
+    {
+      case '\b':
+        buffer[j++] = '\\';
+        buffer[j++] = 'b';
+        break;
+      case '\f':
+        buffer[j++] = '\\';
+        buffer[j++] = 'f';
+        break;
+      case '\n':
+        buffer[j++] = '\\';
+        buffer[j++] = 'n';
+        break;
+      case '\r':
+        buffer[j++] = '\\';
+        buffer[j++] = 'r';
+        break;
+      case '\t':
+        buffer[j++] = '\\';
+        buffer[j++] = 't';
+        break;
+      case '\v':
+        buffer[j++] = '\\';
+        buffer[j++] = 'v';
+        break;
+      case '\\':
+        buffer[j++] = '\\';
+        buffer[j++] = '\\';
+        break;
+      case '"':
+        buffer[j++] = '\\';
+        buffer[j++] = '"';
+        break;
+      default:
+      {
+        gchar utf_8_char[6];
+        int iutf_8_char = g_unichar_to_utf8(c, utf_8_char);
+        memcpy(buffer + j, utf_8_char, iutf_8_char);
+        j = j + iutf_8_char;
+      }
+        break;
+    }
+  }
+
+  buffer[j++] = '"';
+  buffer[j] = 0;
+
+  DONE;
+}
+
 static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression)
 {
   // Adding the "raw_text" variable for use in javascript
@@ -804,18 +874,8 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   int length_position = end_position - start_position;
 
   const unsigned char *raw_text_string = ctrl_nlp_th->request_sentence + start_position;
-  if (length_position > DOgNlpMaxRawTextSize)
-  {
-    unsigned char *p = (unsigned char *) (raw_text_string + DOgNlpMaxRawTextSize);
-    p = g_utf8_find_prev_char(raw_text_string, p);
-    length_position = p - raw_text_string;
-  }
-  char raw_text_string_value[DOgNlpMaxRawTextSize*2+9];
-  snprintf(raw_text_string_value, DOgNlpMaxRawTextSize, "%.*s", length_position, raw_text_string);
-  gchar *raw_text_string_escaped = g_strescape(raw_text_string_value, NULL);
-  snprintf(raw_text_string_value, DOgNlpMaxRawTextSize, "\"%s\"", raw_text_string_escaped);
-  g_free(raw_text_string_escaped);
-  raw_text_string_escaped = NULL;
+  char raw_text_string_value[DOgNlpMaxRawTextSize];
+  IFE(NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRawTextSize, raw_text_string_value, (length_position > DOgNlpMaxRawTextSize ? DOgNlpMaxRawTextSize : length_position), raw_text_string));
 
   IFE(NlpJsAddVariable(ctrl_nlp_th, raw_text_name, raw_text_string_value, -1));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: raw_text is '%s'", raw_text_string_value);
@@ -838,20 +898,9 @@ static og_status NlpSolutionBuildRawText(og_nlp_th ctrl_nlp_th, struct request_e
   unsigned char *request_raw_text_name = "request_raw_text";
   const unsigned char *request_raw_text_string = ctrl_nlp_th->request_sentence;
   length_position = strlen(ctrl_nlp_th->request_sentence);
-  if (length_position > DOgNlpMaxRequestRawTextSize)
-  {
-    unsigned char *p = (unsigned char *) (request_raw_text_string + DOgNlpMaxRequestRawTextSize);
-    p = g_utf8_find_prev_char(request_raw_text_string, p);
-    length_position = p - request_raw_text_string;
-  }
 
   char request_raw_text_value[DOgNlpMaxRequestRawTextSize*2+9];
-  snprintf(request_raw_text_value, DOgNlpMaxRequestRawTextSize, "%.*s", length_position, request_raw_text_string);
-
-  gchar *request_raw_text_escaped = g_strescape(request_raw_text_value, NULL);
-  snprintf(request_raw_text_value, DOgNlpMaxRequestRawTextSize, "\"%s\"", request_raw_text_escaped);
-  g_free(request_raw_text_escaped);
-  raw_text_string_escaped = NULL;
+  IFE(NlpSolutionBuildRawTextToString(ctrl_nlp_th, DOgNlpMaxRequestRawTextSize, request_raw_text_value, (length_position > DOgNlpMaxRequestRawTextSize ? DOgNlpMaxRequestRawTextSize : length_position), request_raw_text_string));
 
   IFE(NlpJsAddVariable(ctrl_nlp_th, request_raw_text_name, request_raw_text_value, -1));
   NlpLog(DOgNlpTraceSolution, "NlpSolutionBuildRawText: request_raw_text is '%s'", request_raw_text_value);
