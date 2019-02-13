@@ -28,7 +28,7 @@ class AgentRegressionCheck < ApplicationRecord
     status = response[:status]
 
     if status == 200
-      interpretation = JSON.parse(response[:body])['interpretations'].sort_by { | interpretation | interpretation[:score].to_f }.last
+      interpretation = JSON.parse(response[:body])['interpretations'].first
       if interpretation.nil?
         self.got = {}
       else

@@ -107,17 +107,17 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       status: 200,
       body: {
         'interpretations' => [{
-          'id' => intents(:weather_question).id,
-          'slug' => intents(:weather_question).slug,
-          'package' => intents(:weather_question).agent.id,
-          'score' => '0.3',
-          'solution' => { 'question' => 'what' }
-        }, {
           'id' => intents(:weather_forecast).id,
           'slug' => intents(:weather_forecast).slug,
           'package' => intents(:weather_forecast).agent.id,
           'score' => '1.0',
           'solution' => interpretations(:weather_forecast_tomorrow).solution
+        }, {
+          'id' => intents(:weather_question).id,
+          'slug' => intents(:weather_question).slug,
+          'package' => intents(:weather_question).agent.id,
+          'score' => '0.3',
+          'solution' => { 'question' => 'what' }
         }]
       }
     )
