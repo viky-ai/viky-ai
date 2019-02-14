@@ -234,7 +234,7 @@
         <div>
           <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true %>
           <a href="#" data-action="console-hide-cts">
-            <%= icon_close %>
+            <span class="icon"><%= icon_close %></span>
           </a>
         </div>
       </div>
