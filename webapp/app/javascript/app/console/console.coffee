@@ -85,13 +85,15 @@ class Console
 
     if action == 'console-show-cts'
       event.preventDefault()
-      $('#console').slideUp()
-      $('#console-ts').show()
+      $('.panels-switch__panel').last()
+        .addClass('panels-switch__panel--show')
+        .removeClass('panels-switch__panel--hide')
 
     if action == 'console-hide-cts'
       event.preventDefault()
-      $('#console').slideDown()
-      $('#console-ts').hide()
+      $('.panels-switch__panel').last()
+        .addClass('panels-switch__panel--hide')
+        .removeClass('panels-switch__panel--show')
 
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')

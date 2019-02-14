@@ -23,6 +23,21 @@
   }
 }
 
+.panels-switch{
+  height: 100%;
+  overflow: hidden;
+  .panels-switch__panel{
+    height: 100%;
+    transition: transform .3s ease-in-out;
+    &.panels-switch__panel--show{
+      transform: translateY(-100%);
+    }
+    &.panels-switch__panel--hide{
+      transform: translateY(0%);
+    }
+  }
+}
+
 .console{
   @include display_flex();
   flex-direction: column;

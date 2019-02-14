@@ -76,10 +76,11 @@ class ConsoleTestSuite
                   }
                 }
                 complete: () ->
-                  $('#console').show()
                   # TODO: update interpret form
                   $('#js-console-form input[name="interpret[sentence]"]').val(regressionCheck.sentence)
-                  $('#console-ts').hide()
+                  $('.panels-switch__panel').last()
+                    .addClass('panels-switch__panel--hide')
+                    .removeClass('panels-switch__panel--show')
           },
 
         })
