@@ -11,21 +11,19 @@ class ConsoleTestSuite
           data: test_suite_data,
           components: {
             testDetail: {
-              props:{
-                details: Object
-              },
+              props: ['details'],
               template: '<pre class="language-javascript"><code class="language-javascript" v-html="detailsAsJs"></code></pre>',
               computed: {
                 detailsAsJs: () ->
-                  expected_json = JSON.stringify(this.details, null, 2)
-                  return Prism.highlight(expected_json, Prism.languages.javascript, 'javascript')
+                  details_json = JSON.stringify(this.details, null, 2)
+                  return Prism.highlight(details_json, Prism.languages.javascript, 'javascript')
               },
             }
           }
           methods: {
-            isExpectedSameAsGot: (expected, got) ->
-              expected_json = JSON.stringify(expected, null, 2)
-              got_json = JSON.stringify(got, null, 2)
+            isSolutionSame: (expected, got) ->
+              expected_json = JSON.stringify(expected.solution, null, 2)
+              got_json = JSON.stringify(got.solution, null, 2)
               return expected_json == got_json
 
             showDetails: (testId) ->

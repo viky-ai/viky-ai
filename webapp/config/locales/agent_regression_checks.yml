@@ -18,9 +18,13 @@ en:
       not_intent_found: No intent found.
       query: Query
       language: Language
-      result: Expected & Got
-      result_expect: Expected
-      result_got: Got
+      result_slug: Expected & Got slug
+      result_slug_expect: Expected slug
+      result_slug_got: Got slug
+      result_solution: Expected & Got solution
+      result_solution_expect: Expected solution
+      result_solution_got: Got solution
+      result_got_message: Got message
       edit: Edit
       delete:
         label: Delete

@@ -263,21 +263,65 @@
                         <div class="cts-item__full__detail__value">{{ test.sentence }}</div>
                         <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.language') %></div>
                         <div class="cts-item__full__detail__value">{{ test.language }}</div>
-                        <template v-if="isExpectedSameAsGot(test.expected, test.got)">
-                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result') %></div>
+                        <template v-if="test.state == 'success'">
+                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_slug') %></div>
                           <div class="cts-item__full__detail__value">
-                            <test-detail v-bind:details="test.expected"></test-detail>
+                            <test-detail v-bind:details="test.expected.slug"></test-detail>
+                          </div>
+                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_solution') %></div>
+                          <div class="cts-item__full__detail__value">
+                            <test-detail v-bind:details="test.expected.solution"></test-detail>
                           </div>
                         </template>
                         <template v-else>
-                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_expect') %></div>
-                          <div class="cts-item__full__detail__value">
-                            <test-detail v-bind:details="test.expected"></test-detail>
-                          </div>
-                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_got') %></div>
-                          <div class="cts-item__full__detail__value">
-                            <test-detail v-bind:details="test.got"></test-detail>
-                          </div>
+                          <template v-if="test.got.message">
+                            <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_slug_expect') %></div>
+                            <div class="cts-item__full__detail__value">
+                              <test-detail v-bind:details="test.expected.slug"></test-detail>
+                            </div>
+                            <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_solution_expect') %></div>
+                            <div class="cts-item__full__detail__value">
+                              <test-detail v-bind:details="test.expected.solution"></test-detail>
+                            </div>
+                            <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_got_message') %></div>
+                            <div class="cts-item__full__detail__value">
+                              <test-detail v-bind:details="test.got.message"></test-detail>
+                            </div>
+                          </template>
+                          <template v-else>
+                            <template v-if="test.expected.slug == test.got.slug">
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_slug') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.expected.slug"></test-detail>
+                              </div>
+                            </template>
+                            <template v-else>
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_slug_expect') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.expected.slug"></test-detail>
+                              </div>
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_slug_got') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.got.slug"></test-detail>
+                              </div>
+                            </template>
+                            <template v-if="isSolutionSame(test.expected, test.got)">
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_solution') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.expected.solution"></test-detail>
+                              </div>
+                            </template>
+                            <template v-else>
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_solution_expect') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.expected.solution"></test-detail>
+                              </div>
+                              <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_solution_got') %></div>
+                              <div class="cts-item__full__detail__value">
+                                <test-detail v-bind:details="test.got.solution"></test-detail>
+                              </div>
+                            </template>
+                          </template>
                         </template>
                         <!-- TODO: Edit action -->
                         <% if current_user.can?(:edit, @agent) %>
