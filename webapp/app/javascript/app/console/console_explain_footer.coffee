@@ -1,6 +1,6 @@
 import Vue from 'vue/dist/vue.esm'
 
-class ConsoleExplain
+class ConsoleExplainFooter
   constructor: ->
     if $('#console-intent-footer').length == 1
       App.ConsoleExplainFooter = new Vue({
@@ -66,6 +66,6 @@ class ConsoleExplain
 
 Setup = ->
  $("body").on 'console:load_explain_footer', (event) =>
-  new ConsoleExplain()
+  new ConsoleExplainFooter()
 
 $(document).on('turbolinks:load', Setup)
