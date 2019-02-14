@@ -10,10 +10,15 @@ class ConsoleExplainFooter
         },
         computed: {
           testExists: () ->
-            if this.test.id == null then false else true
+            this.test.id?
+
+          needsUpdate: () ->
+            updateState = (this.test.state != 'success' and this.test.state != 'running')
+            this.testExists and updateState
+
         },
         methods: {
-          updateTest: (packageId, id, score, solution) ->
+          updateTest: (packageId, id, solution) ->
             csrfToken = $('meta[name="csrf-token"]').attr('content')
             updateUrl = this.test.update_url
             $.ajax
@@ -34,7 +39,7 @@ class ConsoleExplainFooter
                 error: (data) =>
                   App.Message.alert(data.responseText)
 
-          addTest: (packageId, id, score, solution) ->
+          addTest: (packageId, id, solution) ->
             csrfToken = $('meta[name="csrf-token"]').attr('content')
             createUrl = this.test.create_url
             $.ajax

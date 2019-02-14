@@ -82,16 +82,17 @@
                   <% if current_user.can?(:edit, agent) %>
                     <a href="#"
                        class="btn btn--small btn--primary"
-                       v-if="testExists"
-                       v-on:click.stop="updateTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>','<%= aliasable["score"] %>','<%= aliasable['solution'].to_json %>')">
-                      <%= t('views.console.regression_check.update') %>
+                       v-if="!testExists"
+                       v-on:click.stop="addTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
+                       <%= t('views.console.regression_check.add') %>
                     </a>
                     <a href="#"
                        class="btn btn--small btn--primary"
-                       v-else
-                       v-on:click.stop="addTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>','<%= aliasable["score"] %>','<%= aliasable['solution'].to_json %>')">
-                       <%= t('views.console.regression_check.add') %>
+                       v-else-if="needsUpdate"
+                       v-on:click.stop="updateTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
+                      <%= t('views.console.regression_check.update') %>
                     </a>
+
                   <% end %>
                 </div>
               </div>
