@@ -63,6 +63,15 @@ module Nls
         check_interpret("motdebut blabla",        expected)
       end
 
+      def test_with_ctrl_char
+        expected = { interpretation: "word_any", solution: { raw: "motdebut test1\rtest2" } }
+        check_interpret("motdebut test1\rtest2",        expected)
+        expected = { interpretation: "word_any", solution: { raw: "motdebut test1\ntest2" } }
+        check_interpret("motdebut test1\ntest2",        expected)
+        expected = { interpretation: "word_any", solution: { raw: "motdebut testà@t" } }
+        check_interpret("motdebut testà@t",        expected)
+      end
+
       def test_global_any
         expected = { interpretation: "global_any", solution: { raw: "motdebutglobal motdebut blabla" } }
         check_interpret("motdebutglobal motdebut blabla",        expected)

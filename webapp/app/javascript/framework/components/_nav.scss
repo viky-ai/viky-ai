@@ -34,7 +34,7 @@
           color: #fff;
           background-color: rgba(black, .5);
           .icon svg{
-            fill: rgba(white, .9);
+            fill: rgba(white, .6);
           }
         }
         &.current{
@@ -53,15 +53,18 @@
     .dropdown__trigger{
       display:block;
       padding: 1rem;
-      color: rgba(white, .7);
+      color: rgba(white, .6);
       text-decoration: none;
       .icon svg{
-        fill: rgba(white, .7);
+        fill: rgba(white, .6);
       }
       &:hover,
       &:focus{
         color: #fff;
         background-color: rgba(black, .5);
+        .icon svg{
+          fill: rgba(white, .9);
+        }
       }
     }
     .dropdown__content{
@@ -70,13 +73,20 @@
         font-size: 1em;
         color: rgba(white, .7);
         .icon svg{
-          fill: rgba(white, .7);
+          fill: rgba(white, .4);
         }
         &.current,
         &:hover{
           background-color: rgba(black, .5);
           color: #fff;
+          .icon svg{
+            fill: rgba(white, .6);
+          }
         }
+      }
+      ul li.separator{
+        border-top: 1px solid rgba(#fff, .1);
+        box-shadow: 0 -1px #000;
       }
     }
 

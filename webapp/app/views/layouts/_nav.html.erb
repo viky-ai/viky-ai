@@ -18,6 +18,7 @@
           <%= t('views.nav.chatbots') %>
         </a>
       </li>
+
       <% if current_user.admin %>
         <% cerebro_url = Rails.env.development? ? 'http://localhost:9201' : '/cerebro/'%>
         <% kibana_url = Rails.env.development? ? 'http://localhost:5601/kibana/' : '/kibana/'%>
@@ -26,23 +27,35 @@
             <%= t('views.nav.backend.users') %>
           </a>
         </li>
-        <li class="more" style="display:none;">
-          <div class="dropdown">
-            <a href="#" class="dropdown__trigger">
-              <span class="icon">
-                <%= icon_dots %>
-              </span>
-            </a>
-            <div class="dropdown__content dropdown__content--hidden">
-              <ul>
+      <% end %>
+
+      <li class="more" style="display:none;">
+        <div class="dropdown">
+          <a href="#" class="dropdown__trigger">
+            <span class="icon">
+              <%= icon_dots %>
+            </span>
+          </a>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <% if current_user.admin %>
                 <li>
                   <a href="<%= backend_users_path %>" <% if controller_path.include?('backend') %>class="current"<% end %>>
                     <%= t('views.nav.backend.users') %>
                   </a>
                 </li>
-                <li>
-                  <a href="/style-guide/icon" data-turbolinks="false">
+              <% end %>
+              <li>
+                <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
+                  <%= t('views.nav.doc') %>
+                  <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+                </a>
+              </li>
+              <% if current_user.admin %>
+                <li class="separator">
+                  <a href="/style-guide/icon" data-turbolinks="false" target="_blank">
                     <%= t('views.nav.backend.style_guide') %>
+                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
                   </a>
                 </li>
                 <li>
@@ -69,19 +82,25 @@
                     <span class="icon icon--x-small"><%= icon_open_in_new %></span>
                   </a>
                 </li>
-                <li>
-                  <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-                    <%= t('views.nav.doc') %>
-                    <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
+              <% end %>
+            </ul>
           </div>
-        </li>
+        </div>
+      </li>
+
+      <li class="secondary">
+        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
+          <%= t('views.nav.doc') %>
+          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
+        </a>
+      </li>
+
+
+      <% if current_user.admin %>
         <li class="secondary">
-          <a href="/style-guide/icon" data-turbolinks="false">
+          <a href="/style-guide/icon" data-turbolinks="false" target="_blank">
             <%= t('views.nav.backend.style_guide') %>
+            <span class="icon icon--x-small"><%= icon_open_in_new %></span>
           </a>
         </li>
         <li class="secondary">
@@ -109,12 +128,6 @@
           </a>
         </li>
       <% end %>
-      <li class="secondary">
-        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-          <%= t('views.nav.doc') %>
-          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-        </a>
-      </li>
     </ul>
   </div>
 
