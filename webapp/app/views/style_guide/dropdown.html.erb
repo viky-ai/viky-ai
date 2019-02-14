@@ -66,14 +66,69 @@
 <section>
   <h2>JS Behaviors</h2>
   <p>3 available behaviors throught <code>data-behavior</code> attribute.</p>
-  <ul>
-    <li><code>populate-input</code></li>
-    <li><code>submit-form</code></li>
-    <li><code>replace-trigger-label</code></li>
-  </ul>
+
+  <table>
+    <thead>
+      <tr>
+        <th><code>data-behavior</code> value</th>
+        <th>Behavior description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code>populate-input</code>
+        </td>
+        <td>
+          <p>Populate one input found via <code>data-input-selector</code> attribute value with <code>data-input-value</code> attribute value.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>replace-trigger-label</code>
+        </td>
+        <td>
+          <p>
+            Replace trigger label found via <code>data-replace-selector</code> attribute value with <code>data-replace-with</code> attribute value.</p>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>submit-form</code>
+        </td>
+        <td>
+          <p>
+            Submit a form found via <code>data-form-selector</code> attribute value.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>trigger-event</code>
+        </td>
+        <td>
+          <p>
+            Fire on <code>body</code> the JS event defined by <code>data-trigger-event</code> attribute value.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    You can also play with drowpdown via JavaScript events. The event <code>dropdown:click</code> allow to update a dropdown specifying a <code>dropdown_selector</code> to identify the dropdown and a <code>on</code> used to identify the link on which the click is made.
+  </p>
+  <p>
+    The event <code>dropdown:click</code> will take care of <code>populate-input</code>, <code>replace-trigger-label</code> and <code>trigger-event</code> behaviors.
+  </p>
+  <pre>
+    $('body').trigger('dropdown:click', { selector: '#my-dropdown', on: 'email' })
+  </pre>
+
   <%= highlight_html do %>
 <form class="dropdown-form-example" action="/style-guide">
-  <div class="dropdown">
+  <div class="dropdown" id="my-dropdown">
     <div class="dropdown__trigger">
       <button class="btn">
         <span class="btn__label">Sort by last action</span>

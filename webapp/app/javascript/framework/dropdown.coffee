@@ -3,22 +3,31 @@ $ = require('jquery');
 class Dropdown
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)
+    $('body').on 'dropdown:click', (event, data) => @click(data)
 
-  dispatch: (event) ->
-    behavior = @get_link_with_behaviors(event).data('behavior')
+  behaviors: (node) ->
+    behavior = node.data('behavior')
     behaviors = []
     if behavior
       behaviors.push(b.trim()) for b in  behavior.split(',')
-      for behavior in behaviors
+    behaviors
+
+  dispatch: (event) ->
+    node = @get_link_with_behaviors(event)
+    if node.data('behavior')
+      for behavior in @behaviors(node)
         switch behavior
           when "populate-input"
-            @populate_input(event)
+            event.preventDefault()
+            @populate_input(node)
           when "submit-form"
-            @submit_form(event)
+            event.preventDefault()
+            @submit_form(node)
           when "replace-trigger-label"
-            @replace_trigger_label(event)
+            event.preventDefault()
+            @replace_trigger_label(node)
           when "trigger-event"
-            @trigger_event(event)
+            @trigger_event(node)
     else
       dropdown = $(event.target).closest('.dropdown')
       if dropdown.length == 1
@@ -41,8 +50,6 @@ class Dropdown
     criteria = $('body').height() - dropdown.offset().top - dropdown.height() - dropdown.find(".dropdown__content").height()
     dropdown.find('.dropdown__content').addClass('dropdown__content--on-top') if criteria < 0
 
-
-
   close: (dropdown) ->
     dropdown.find('.dropdown__content').addClass('dropdown__content--hidden')
     dropdown.find('.dropdown__overlay').hide()
@@ -59,17 +66,13 @@ class Dropdown
       return $(event.target).closest('a')
 
   # Behaviors
-  populate_input: (event) ->
-    event.preventDefault()
-    node = @get_link_with_behaviors(event)
+  populate_input: (node) ->
     input_selector = node.data('input-selector')
     input_value = node.data('input-value')
     $(input_selector).val(input_value)
     @close(node.closest('.dropdown'))
 
-  replace_trigger_label: (event) ->
-    event.preventDefault()
-    node = @get_link_with_behaviors(event)
+  replace_trigger_label: (node) ->
     replace_with = node.data('replace-with')
     replace_selector = node.data('replace-selector')
     btn = node.closest('.dropdown').find(".dropdown__trigger #{replace_selector}")
@@ -79,11 +82,8 @@ class Dropdown
     node.addClass('current')
     @close(node.closest('.dropdown'))
 
-  submit_form: (event) ->
-    event.preventDefault()
-    node = @get_link_with_behaviors(event)
+  submit_form: (node) ->
     form_selector = node.data('form-selector')
-
     if $(form_selector).data('remote')
       form = document.querySelector(form_selector);
       Rails.fire(form, 'submit')
@@ -92,10 +92,29 @@ class Dropdown
       params = $(form_selector).serialize()
       Turbolinks.visit("#{action}?#{params}")
 
-  trigger_event: (event) ->
-    node = @get_link_with_behaviors(event)
+  trigger_event: (node) ->
     event_to_fire = node.data('trigger-event')
     $('body').trigger(event_to_fire)
+
+  # Update via JS event "dropdown:update"
+  click: (data) ->
+    selector = data.selector
+    value    = data.on
+    if selector
+      for link in $(selector).find('a')
+        if $(link).data('input-value') && $(link).data('input-value').toString() == value
+          node = $(link)
+        if $(link).html().includes(value)
+          node = $(link)
+      if node
+        for behavior in @behaviors(node)
+          switch behavior
+            when "populate-input"
+              @populate_input(node)
+            when "replace-trigger-label"
+              @replace_trigger_label(node)
+            when "trigger-event"
+              @trigger_event(node)
 
 Setup = ->
   new Dropdown()
