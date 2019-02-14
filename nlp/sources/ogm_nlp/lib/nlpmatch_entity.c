@@ -100,7 +100,7 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
     og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, string_entity, string_entity_length, FALSE);
+        request_word_list_length, string_entity, string_entity_length, TRUE);
     IFE(status);
   }
 
@@ -113,6 +113,7 @@ og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret
 {
   package_t package = interpret_package->package;
   if (request_word_list_length > package->max_nb_words_per_entity) DONE;
+  if (package->nb_entities <= 0) DONE;
 
   NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: entity to search is '%s' must_spellcheck=%d", string_entity,
       must_spellcheck);

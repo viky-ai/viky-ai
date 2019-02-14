@@ -9,7 +9,7 @@
 static og_status NlpConsolidateInterpretation(og_nlp_th ctrl_nlp_th, package_t package, int Iinterpretation);
 static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t package,
     struct interpretation *interpretation, struct expression *expression);
-static int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 static int NlpConsolidateExpressionEntity(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
 static og_status NlpConsolidateAddAlias(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression,
     og_string string_alias, int length_string_alias);
@@ -266,6 +266,8 @@ static og_status NlpConsolidatePrepare(og_nlp_th ctrl_nlp_th, package_t package)
 
 static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package)
 {
+  IFE(NlpReduceEntities(ctrl_nlp_th, package));
+
   int expression_used = OgHeapGetCellsUsed(package->hexpression);
   struct expression *all_expression = OgHeapGetCell(package->hexpression, 0);
   for (int i = 0; i < expression_used; i++)
@@ -290,8 +292,11 @@ static og_status NlpConsolidateFinalize(og_nlp_th ctrl_nlp_th, package_t package
   IFE(OgAuf(package->ha_word, FALSE));
   IFE(OgAufClean(package->ha_word));
 
-  IFE(OgAuf(package->ha_entity, FALSE));
-  IFE(OgAufClean(package->ha_entity));
+  IFX(package->ha_entity)
+  {
+    IFE(OgAuf(package->ha_entity, FALSE));
+    IFE(OgAufClean(package->ha_entity));
+  }
 
   package->consolidate_done = TRUE;
 
@@ -534,7 +539,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   DONE;
 }
 
-static int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
+int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression)
 {
   struct input_part *input_parts = OgHeapGetCell(package->hinput_part, 0);
   IFN(input_parts) DPcErr;

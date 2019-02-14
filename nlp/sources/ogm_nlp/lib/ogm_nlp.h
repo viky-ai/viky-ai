@@ -905,6 +905,8 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
 /* nlpconsolidate.c */
 og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
+int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+
 
 /* nlpipword.c */
 og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
@@ -1168,6 +1170,7 @@ og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpEntityFlush(package_t package);
 og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, og_string string_word,
     int length_string_word, struct expression *expression);
+og_status NlpReduceEntities(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpmatch_entity.c */

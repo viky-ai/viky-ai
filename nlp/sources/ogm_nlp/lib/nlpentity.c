@@ -6,6 +6,8 @@
  */
 #include "ogm_nlp.h"
 
+#define DOgNlpMinEntityNumber 1000
+
 og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package)
 {
   struct og_aut_param aut_param[1];
@@ -25,7 +27,10 @@ og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package)
 
 og_status NlpEntityFlush(package_t package)
 {
+  IFN(package->ha_entity) DONE;
   IFE(OgAutFlush(package->ha_entity));
+  package->ha_entity = NULL;
+  package->nb_entities = 0;
   DONE;
 }
 
@@ -52,6 +57,56 @@ og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, o
 
   package->nb_entities++;
   if (package->max_nb_words_per_entity < nb_words) package->max_nb_words_per_entity = nb_words;
+
+  DONE;
+}
+
+
+og_status NlpReduceEntities(og_nlp_th ctrl_nlp_th, package_t package)
+{
+  // we remove all entities and put them back from ha_entity to ha_word
+  if (package->nb_entities >= DOgNlpMinEntityNumber) DONE;
+
+  unsigned char out[DPcAutMaxBufferSize + 9];
+  oindex states[DPcAutMaxBufferSize + 9];
+  int retour, nstate0, nstate1, iout;
+
+  if ((retour = OgAutScanf(package->ha_entity, 0, "", &iout, out, &nstate0, &nstate1, states)))
+  {
+    do
+    {
+      IFE(retour);
+      int nb_words;
+      unsigned char *entity = out;
+      IFE(DOgPnin4(ctrl_nlp_th->herr,&entity,&nb_words));
+      int offset_nb_words = entity - out;
+
+      int sep = -1;
+      for (int i = offset_nb_words; i < iout; i++)
+      {
+        if (out[i] == '\1')
+        {
+          sep = i;
+          break;
+        }
+      }
+      if (sep < 0)
+      {
+        NlpThrowErrorTh(ctrl_nlp_th, "NlpEntityLog: error in ha_entity");
+        DPcErr;
+      }
+
+      long expression_ptr;
+      struct expression *expression;
+      unsigned char *p = out + sep + 1;
+      IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
+      expression = (struct expression *) expression_ptr;
+      IFE(NlpConsolidateExpressionWord(ctrl_nlp_th, package, expression));
+    }
+    while ((retour = OgAutScann(package->ha_entity, &iout, out, nstate0, &nstate1, states)));
+  }
+
+  IFE(NlpEntityFlush(package));
 
   DONE;
 }
