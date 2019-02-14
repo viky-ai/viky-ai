@@ -2,9 +2,14 @@ json.id        test.id
 json.state     test.state
 json.sentence  test.sentence
 json.language  test.language
+
 json.expected  do
-  json.slug     Intent.find(test.expected['id']).slug
-  json.solution JSON.parse(test.expected['solution'])
+    if test.expected.present?
+      json.slug     Intent.find(test.expected['id']).slug
+      json.solution JSON.parse(test.expected['solution'])
+    else
+      ''
+    end
 end
 
 json.got case test.state

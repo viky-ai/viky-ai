@@ -14,6 +14,7 @@ class AgentRegressionChecksController < ApplicationController
         alert: t('views.agent_regression_checks.new.failed_message')
     end
     notify_ui
+    render json: @regression_check.to_json, status: :created
   end
 
   def run
@@ -22,9 +23,8 @@ class AgentRegressionChecksController < ApplicationController
 
   def update
     if @regression_check.update(regression_check_params)
-      # run test suite
-      notify_ui
-      # render 'create', status: :ok
+      @agent.run_tests
+      head :ok
     else
       render json: t('views.agent_regression_checks.update.fail'), status: :unprocessable_entity
     end
@@ -36,6 +36,7 @@ class AgentRegressionChecksController < ApplicationController
       return
     end
     notify_ui
+    head :no_content
   end
 
   private

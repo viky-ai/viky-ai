@@ -77,6 +77,7 @@ class ConsoleTestSuite
                 }
                 complete: () ->
                   $('#console').show()
+                  # TODO: update interpret form
                   $('#js-console-form input[name="interpret[sentence]"]').val(regressionCheck.sentence)
                   $('#console-ts').hide()
           },

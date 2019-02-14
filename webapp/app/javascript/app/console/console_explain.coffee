@@ -55,6 +55,8 @@ class ConsoleExplain
                     }
                   }
                 }
+                success: (data) =>
+                  this.test = data
         }
       })
     else
