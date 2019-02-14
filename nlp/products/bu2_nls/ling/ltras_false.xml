@@ -4,6 +4,12 @@
     <false_transformation>
       <from_any/>
       <to>
+        <w>paris</w>
+      </to>
+    </false_transformation>
+    <false_transformation>
+      <from_any/>
+      <to>
         <w>avec</w>
       </to>
     </false_transformation>
@@ -64,6 +70,12 @@
     <false_transformation>
       <from>
         <w>please</w>
+      </from>
+      <to_any/>
+    </false_transformation>
+    <false_transformation>
+      <from>
+        <w>other</w>
       </from>
       <to_any/>
     </false_transformation>
