@@ -263,10 +263,23 @@
                         <div class="cts-item__full__detail__value">{{ test.sentence }}</div>
                         <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.language') %></div>
                         <div class="cts-item__full__detail__value">{{ test.language }}</div>
-                        <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result') %></div>
-                        <div class="cts-item__full__detail__value">
-                          <pre class="language-javascript"><test-detail v-bind:expected="test.expected" v-bind:got="test.got"></test-detail></pre>
-                        </div>
+                        <template v-if="isExpectedSameAsGot(test.expected, test.got)">
+                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result') %></div>
+                          <div class="cts-item__full__detail__value">
+                            <test-detail v-bind:details="test.expected"></test-detail>
+                          </div>
+                        </template>
+                        <template v-else>
+                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_expect') %></div>
+                          <div class="cts-item__full__detail__value">
+                            <test-detail v-bind:details="test.expected"></test-detail>
+                          </div>
+                          <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.result_got') %></div>
+                          <div class="cts-item__full__detail__value">
+                            <test-detail v-bind:details="test.got"></test-detail>
+                          </div>
+                        </template>
+                        <!-- TODO: Edit action -->
                         <% if current_user.can?(:edit, @agent) %>
                           <div class="cts-item__full__detail__actions">
                             <template v-if="test.state == 'running'">

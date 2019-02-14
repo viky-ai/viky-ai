@@ -19,6 +19,8 @@ en:
       query: Query
       language: Language
       result: Expected & Got
+      result_expect: Expected
+      result_got: Got
       edit: Edit
       delete:
         label: Delete

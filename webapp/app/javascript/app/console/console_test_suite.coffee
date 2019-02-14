@@ -12,19 +12,22 @@ class ConsoleTestSuite
           components: {
             testDetail: {
               props:{
-                expected: Object,
-                got: Object
+                details: Object
               },
-              template:'<code class="language-javascript" v-html="testData"></code>',
+              template: '<pre class="language-javascript"><code class="language-javascript" v-html="detailsAsJs"></code></pre>',
               computed: {
-                testData: () ->
-                  expected = Prism.highlight(JSON.stringify(this.expected, null, 2), Prism.languages.javascript, 'javascript')
-                  got = Prism.highlight(JSON.stringify(this.got, null, 2), Prism.languages.javascript, 'javascript')
-                  return expected + '<br>' + got
-              }
+                detailsAsJs: () ->
+                  expected_json = JSON.stringify(this.details, null, 2)
+                  return Prism.highlight(expected_json, Prism.languages.javascript, 'javascript')
+              },
             }
           }
           methods: {
+            isExpectedSameAsGot: (expected, got) ->
+              expected_json = JSON.stringify(expected, null, 2)
+              got_json = JSON.stringify(got, null, 2)
+              return expected_json == got_json
+
             showDetails: (testId) ->
               $("#cts-item-details-#{testId}").show()
               $("#cts-item-summary-#{testId}").hide()
