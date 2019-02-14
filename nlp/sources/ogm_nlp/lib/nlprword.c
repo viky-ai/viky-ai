@@ -26,6 +26,11 @@ og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_wo
     int difference = (end - start) / 2;
     int current = start + difference;
     struct request_word *request_word = request_words + current;
+    if (request_word->start_position == position)
+    {
+      *pIrequest_word = current;
+      return TRUE;
+    }
     if (difference <= 1)
     {
       int Irequest_word;
