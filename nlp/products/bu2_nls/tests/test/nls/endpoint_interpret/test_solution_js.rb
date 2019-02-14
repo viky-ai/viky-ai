@@ -317,6 +317,27 @@ module Nls
         check_interpret("sol date", interpretation: "solution_test_js", solution: "2017-12-03T00:00:00.000Z")
       end
 
+      def test_big_solution
+
+        solution = {}
+        (1024*128).times do |i|
+          solution["js_key_#{i}"] = "js_value_#{i}"
+        end
+
+        package = Package.new('big_sol_test_package')
+        package.default_glued = true
+        package.default_keep_order = true
+        interpretation = package.new_interpretation('big_sol_test')
+        interpretation << Expression.new("big sol test", solution: "`#{JSON.pretty_generate(solution)}`")
+        Nls.package_update(package)
+
+        File.open("/tmp/temp.json","w") do |f|
+          f.write(solution.to_json)
+        end
+
+        check_interpret('big sol test', interpretation: 'big_sol_test', solution: solution)
+      end
+
     end
   end
 
