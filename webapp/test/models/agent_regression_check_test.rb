@@ -85,7 +85,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   end
 
   test 'AgentRegressionCheck destroy' do
-    agent_regression_check = @regression_weather_forecast
+    agent_regression_check = @regression_weather_question
     agent_regression_check_id = agent_regression_check.id
 
     assert_equal 1, AgentRegressionCheck.where(id: agent_regression_check_id).count

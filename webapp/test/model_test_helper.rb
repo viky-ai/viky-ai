@@ -23,7 +23,7 @@ def create_agent_regression_check_fixtures
     sentence: "Quel temps fera-t-il demain ?",
     language: "*",
     agent: agents(:weather),
-    state: 0,
+    state: 4,
     position: 0,
     expected: {
       package: agents(:weather).id,

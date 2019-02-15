@@ -28,10 +28,10 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "hello"
       first('button').click
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
       click_button 'Add to tests suite'
       assert page.has_content?('3 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
     end
   end
 
@@ -86,7 +86,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     within('.console') do
       fill_in 'interpret[sentence]', with: "Quel temps fera-t-il demain ?"
       first('button').click
-      assert page.has_text?('Update')
+      assert page.has_no_button?('Update')
+      assert page.has_no_button?('Add to tests suite')
+
       all('.dropdown__trigger > .btn')[0].click
       click_link 'en'
       first('button').click
@@ -106,13 +108,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
       assert 2, find('.cts__list').all('li').count
       assert page.has_content?("Quel temps fera-t-il demain ?")
       assert page.has_content?("What's the weather like in London ?")
@@ -129,7 +131,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Regression test panel - Add new test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
-      fill_in 'interpret[sentence]', with: "hello"
+      fill_in 'interpret[sentence]', with: "new test"
       first('button').click
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         status: 200,
@@ -146,7 +148,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
         }
       )
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
       click_button 'Add to tests suite'
       assert page.has_content?('3 tests')
       assert page.has_content?('0 success, 1 failure') # TODO
@@ -157,17 +159,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_content?('3 tests')
       assert page.has_content?('0 success, 1 failure') # TODO
       assert 3, find('ul.cts__list').all('li').count
-      assert page.has_content?("hello")
+      assert page.has_content?("new test")
     end
   end
 
 
-  test 'Delete test - failure' do
+  test 'Edit and delete button should be disabled for running tests' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
-
-    test_to_delete = @regression_weather_question
-    @regression_weather_question.state = 'running'
-    @regression_weather_question.save
 
     within('.console') do
       assert page.has_content?('2 tests')
@@ -177,19 +175,16 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('#console-ts') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_link?("Quel temps fera-t-il demain ?")
       click_link("Quel temps fera-t-il demain ?")
-      assert page.has_content?('Delete')
-      click_button 'Delete'
-      assert page.has_content?('Are you sure?')
     end
 
-    within('.cts-item-delete') do
-      click_button 'Delete'
+    within('.cts-item__full') do
+      assert page.has_content?("Quel temps fera-t-il demain ?")
+      assert page.has_button?('Delete', disabled: true)
+      assert page.has_button?('Edit', disabled: true)
     end
-    assert page.has_content?('2 tests')
-    assert page.has_content?('0 success, 1 failure') # TODO
-    assert 2, find('ul.cts__list').all('li').count
   end
 
 
@@ -197,24 +192,87 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
-      click_link("Quel temps fera-t-il demain ?")
-      assert page.has_content?('Delete')
-      click_button 'Delete'
-      assert page.has_content?('Are you sure?')
+      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_link?("What's the weather like in London ?")
+      click_link("What's the weather like in London ?")
+    end
+
+     within('.cts-item__full') do
+      assert page.has_content?("What's the weather like in London ?")
+      assert page.has_button?('Delete')
+      click_button('Delete')
     end
 
     within('.cts-item-delete') do
-      click_button 'Delete'
+      assert page.has_content?('Are you sure?')
+      assert page.has_button?('Delete')
+      assert page.has_link?('Cancel')
+      click_button('Delete')
     end
-    # assert page.has_content?('1 tests')
-    assert page.has_content?('0 success, 1 failure') # TODO
-    assert 1, find('ul.cts__list').all('li').count
+
+    within('#console-ts') do
+      assert page.has_content?('1 test')
+      assert page.has_content?('1 running, 0 success, 0 failure')
+      assert 1, find('ul.cts__list').all('li').count
+      assert page.has_no_content?("What's the weather like in London ?")
+    end
+  end
+
+  test 'Edit test' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      {
+        status: 200,
+        body: {
+          interpretations: [
+            {
+              "id" => intents(:weather_forecast).id,
+              "slug" => "admin/weather/weather_forecast",
+              "name" => "weather_forecast",
+              "score" => 1.0,
+              "solution" => interpretations(:weather_question_like).solution.to_json.to_s
+            }
+          ]
+        }
+      }
+    )
+
+    within('#console') do
+      assert page.has_content?('2 tests')
+      assert page.has_content?('1 running, 0 success, 1 failure')
+      find('#console-footer').click
+    end
+
+    within('#console-ts') do
+      assert page.has_content?('2 tests')
+      assert page.has_content?('1 running, 0 success, 1 failure')
+      click_link("What's the weather like in London ?")
+    end
+
+    within('.cts-item__full') do
+      assert page.has_content?("What's the weather like in London ?")
+      assert page.has_button?('Edit')
+      click_button('Edit')
+    end
+
+    within('#js-console-form') do
+      assert page.has_content?('en')
+      assert page.has_content?('Manual now')
+    end
+
+    within('#console-explain') do
+      assert page.has_content?('1 interpretation found.')
+      assert page.has_content?('Failed')
+      assert page.has_button?('Update')
+      click_button('Update')
+    end
+    # TODO test websocket?
   end
 end

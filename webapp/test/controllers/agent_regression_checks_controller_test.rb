@@ -16,7 +16,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
         regression_check: { sentence: 'Quel temps fait-il à Paris ?', expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, score: '1.0', solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json }, now: '2019-01-17T09:00:00+01:00', language: 'fr', agent_id: agents(:weather) },
         format: :js
       }
-    assert :success
+    assert_response :created
     assert_nil flash[:alert]
   end
 
@@ -60,17 +60,35 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
 
   test 'Delete a running test' do
     sign_in users(:edit_on_agent_weather)
-
-    @regression_weather_question.state = 'running'
-    @regression_weather_question.save
-
-    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_question)
+    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_forecast)
     assert_response :unprocessable_entity
   end
 
   test 'Delete a test - success' do
     sign_in users(:edit_on_agent_weather)
-    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_forecast), xhr: true
+    delete user_agent_agent_regression_check_path(users(:admin), agents(:weather), @regression_weather_question), xhr: true
     assert_response :success
+  end
+
+  #
+  # Edit
+  #
+  test 'Edit a test - success' do
+    sign_in users(:edit_on_agent_weather)
+    put user_agent_agent_regression_check_url(users(:admin), agents(:weather), @regression_weather_question), xhr: true,
+      params: {
+        regression_check: { expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json } },
+        format: :js
+      }
+    assert_response :ok
+  end
+
+  test 'Edit a non existing test' do
+    sign_in users(:edit_on_agent_weather)
+    put user_agent_agent_regression_check_url(users(:admin), agents(:weather), '123'), xhr: true,
+      params: {
+        regression_check: { expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json } },
+        format: :js
+      }
   end
 end
