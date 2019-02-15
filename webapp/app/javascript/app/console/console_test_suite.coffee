@@ -53,30 +53,11 @@ class ConsoleTestSuite
               confirmBlock.siblings('div.cts-item').removeClass('cts-item--behind')
 
             updateTest: (index, event) ->
-              csrfToken = $('meta[name="csrf-token"]').attr('content')
-              interpretUrl = this.interpret_url
               regressionCheck = this.tests[index]
-              $.ajax
-                url: interpretUrl,
-                method: "GET",
-                headers: {
-                  "X-CSRF-TOKEN": csrfToken
-                },
-                data:{
-                  interpret: {
-                    sentence: regressionCheck.sentence,
-                    language: regressionCheck.language,
-                    current_tab: $('#console-current-tab-input').val(),
-                    verbose: $('.js-verbose-input').val(),
-                    now: regressionCheck.now
-                  }
-                }
-                complete: () ->
-                  # TODO: update interpret form
-                  $('#js-console-form input[name="interpret[sentence]"]').val(regressionCheck.sentence)
-                  $('.panels-switch__panel').last()
-                    .addClass('panels-switch__panel--hide')
-                    .removeClass('panels-switch__panel--show')
+              $('.panels-switch__panel').last()
+                .addClass('panels-switch__panel--hide')
+                .removeClass('panels-switch__panel--show')
+              $("body").trigger('console-submit-form', {sentence: regressionCheck.sentence, language: regressionCheck.language, now: regressionCheck.now})
           },
 
         })

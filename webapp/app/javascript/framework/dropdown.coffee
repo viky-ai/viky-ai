@@ -96,7 +96,7 @@ class Dropdown
     event_to_fire = node.data('trigger-event')
     $('body').trigger(event_to_fire)
 
-  # Update via JS event "dropdown:update"
+  # Update via JS event "dropdown:click"
   click: (data) ->
     selector = data.selector
     value    = data.on

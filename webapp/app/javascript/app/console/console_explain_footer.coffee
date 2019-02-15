@@ -15,7 +15,6 @@ class ConsoleExplainFooter
           needsUpdate: () ->
             updateState = (this.test.state != 'success' and this.test.state != 'running')
             this.testExists and updateState
-
         },
         methods: {
           updateTest: (packageId, id, solution) ->
@@ -66,8 +65,6 @@ class ConsoleExplainFooter
       })
     else
       App.ConsoleExplainFooter = null
-
-
 
 Setup = ->
  $("body").on 'console:load_explain_footer', (event) =>

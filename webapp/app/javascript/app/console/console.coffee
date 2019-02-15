@@ -46,6 +46,9 @@ class Console
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
 
+    $("body").on 'console-submit-form', (event, data) =>
+      @send_interpret_request(data)
+
   dispatch: (event) ->
     link = @get_link_target(event)
 
@@ -103,6 +106,19 @@ class Console
         return $(event.target).closest('a')
       if $(event.target).closest('match').length == 1
         return $(event.target).closest('match')
+
+  send_interpret_request: (data) ->
+    now = if data.now? then 'Manual now' else 'Auto now'
+    nowUpdater = { selector: '#console-dropdown-now-type', on: now }
+    languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
+    $('body').trigger('dropdown:click', nowUpdater)
+    $('body').trigger('dropdown:click', languageUpdater)
+
+    $('#js-console-input-sentence').val(data.sentence)
+    $('.js-language-input').val(data.language)
+    $('#js-console-now-input-container input').val(data.now) if data.now?
+
+    Rails.fire($('#js-console-form')[0], 'submit')
 
 Setup = ->
   if $('.console-container').length == 1
