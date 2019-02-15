@@ -31,6 +31,7 @@ og_status NlpEntityFlush(package_t package)
   IFE(OgAutFlush(package->ha_entity));
   package->ha_entity = NULL;
   package->nb_entities = 0;
+  package->max_nb_words_per_entity = 0;
   DONE;
 }
 
