@@ -27,9 +27,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       first('button').click
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       click_button 'Add to tests suite'
-      assert page.has_content?('3 tests, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
     end
   end
 
@@ -103,12 +105,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Regression test panel' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       assert 2, find('.cts__list').all('li').count
       assert page.has_content?("Quel temps fera-t-il demain ?")
       assert page.has_content?("What's the weather like in London ?")
@@ -141,14 +145,17 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
           ]
         }
       )
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       click_button 'Add to tests suite'
-      assert page.has_content?('3 tests, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
-      assert page.has_content?('3 tests, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       assert 3, find('ul.cts__list').all('li').count
       assert page.has_content?("hello")
     end
@@ -163,12 +170,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     @regression_weather_question.save
 
     within('.console') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       click_link("Quel temps fera-t-il demain ?")
       assert page.has_content?('Delete')
       click_button 'Delete'
@@ -178,7 +187,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     within('.cts-item-delete') do
       click_button 'Delete'
     end
-    assert page.has_content?('2 tests, 1 failure')
+    assert page.has_content?('2 tests')
+    assert page.has_content?('0 success, 1 failure') # TODO
     assert 2, find('ul.cts__list').all('li').count
   end
 
@@ -186,12 +196,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Delete test - success' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       find('#console-footer').click
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests, 1 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('0 success, 1 failure') # TODO
       click_link("Quel temps fera-t-il demain ?")
       assert page.has_content?('Delete')
       click_button 'Delete'
@@ -201,8 +213,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     within('.cts-item-delete') do
       click_button 'Delete'
     end
-    # TODO FIX
-    # assert page.has_content?('1 test, 1 failure')
+    # assert page.has_content?('1 tests')
+    assert page.has_content?('0 success, 1 failure') # TODO
     assert 1, find('ul.cts__list').all('li').count
   end
 end

@@ -216,16 +216,9 @@
            id="console-footer"
            v-if='summary.visible'
            data-action="console-show-cts">
-          <div class="console__footer__status">
-            <span :class="'ts-status ts-status--' + summary.status"></span>
-            {{summary.count_i18n}}, {{summary.failed_count_i18n}}
-          </div>
-          <div class="console__footer__time">
-            <span>{{summary.last_update}}</span>
-          </div>
+          <%= render 'console/ts_summary' %>
         </a>
       </div>
-
 
 
     </div>
@@ -234,13 +227,11 @@
       <div class="console">
         <div class="cts">
           <div class="cts__header">
+            <%= render 'console/ts_summary' %>
             <div>
-              <span v-bind:class="'ts-status ts-status--' + summary.status"></span>
-              {{summary.count_i18n}}, {{summary.failed_count_i18n}}
-            </div>
-            <small>{{summary.last_update}}</small>
-            <div>
-              <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true %>
+              <template v-if="summary.count > 0">
+                <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true %>&nbsp;&nbsp;&nbsp;
+              </template>
               <a href="#" data-action="console-hide-cts">
                 <span class="icon"><%= icon_close %></span>
               </a>
@@ -318,7 +309,6 @@
           </ul>
         </div>
       </div>
-
 
     </div>
   </div>

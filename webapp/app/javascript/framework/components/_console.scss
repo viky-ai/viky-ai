@@ -144,46 +144,71 @@
   }
 
   .console__footer{
-    @include display_flex();
-    justify-content: space-between;
-    align-items: center;
+    display: block;
     border-top: 1px solid rgba(#000, .05);
-    padding: 1em;
+    padding: .75em 1em;
     text-decoration: none;
     background-color: rgba(#000, .025);
     &:hover,
     &:focus{
       background-color: rgba(#000, .05);
     }
-    .console__footer__status{
-      color: rgba(#000, .9);
-    }
-    .console__footer__time{
-      color: rgba(#000, .5);
-    }
   }
 }
 
+
+.ts-summary{
+  .ts-summary__primary{
+    color: rgba(#000, .9);
+    small{
+      color: rgba(#000, .5);
+      font-size: 1em;
+    }
+  }
+  .ts-summary__secondary{
+    color: rgba(#000, .6);
+    font-size: .85em;
+    padding-left: 1.5em;
+    line-height: 1.3em;
+  }
+}
+
+
+
 // Test suite status
 @keyframes statusRunning {
-    0%    { opacity: 1; }
-   100%    { opacity: 0.25;}
+  0% {
+    box-shadow: 0 0 0 0 rgba(#999, .25);
+    background-color: rgba(#999, .6)
+  }
+  50%{
+    background-color: rgba(#999, 1)
+  }
+  70%{
+    box-shadow: 0 0 0 10px rgba(#999, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(#999, 0);
+    background-color: rgba(#999, .6)
+  }
 }
 .ts-status{
-  background-color: #888;
+  background-color: #999;
   display: inline-block;
   width: .8em;
   height: .8em;
   border-radius: 20px;
-  margin-right: .5em;
+  margin-right: .25em;
+  vertical-align: middle;
 
   &.ts-status--running{
-    animation: 1.5s ease-in-out statusRunning infinite alternate;
+    animation: .75s ease-in-out statusRunning infinite;
   }
   &.ts-status--success{
     background-color: $success_color;
   }
-  &.ts-status--failure{
+  &.ts-status--failure,
+  &.ts-status--error{
     background-color: $alert_color;
   }
 }
@@ -367,14 +392,10 @@
   .cts__header{
     @include display_flex();
     justify-content: space-between;
-    align-items: center;
-    padding: 1em 1em 1em 1.25em;
+    align-items: top;
+    padding: .75em 1em .75em 1.25em;
     background-color: rgba(#000, .025);
     border-bottom: 1px solid rgba(#000, 0.075);
-    small{
-      font-size: .9em;
-      color: rgba(#000, .5);
-    }
   }
   .cts__list{
     height: 100%;

@@ -187,12 +187,14 @@
   </div>
 
   <a href="#" class="console__footer">
-    <div class="console__footer__status">
-      <span class="ts-status ts-status--success"></span>
-      27 tests, 0 failure
-    </div>
-    <div class="console__footer__time">
-      7 min ago
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--success"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        27 success, 0 failure • 15 Feb 12:37
+      </div>
     </div>
   </a>
 
@@ -208,24 +210,14 @@
 <div class="console">
   <div class="console__output"></div>
   <a href="#" class="console__footer">
-    <div class="console__footer__status">
-      <span class="ts-status ts-status--running"></span>
-      27 tests, running...
-    </div>
-    <div class="console__footer__time">
-    </div>
-  </a>
-</div>
-
-<div class="console">
-  <div class="console__output"></div>
-  <a href="#" class="console__footer">
-    <div class="console__footer__status">
-      <span class="ts-status ts-status--success"></span>
-      27 tests, 0 failure
-    </div>
-    <div class="console__footer__time">
-      7 min ago
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--running"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        15 running, 12 success, 0 failure
+      </div>
     </div>
   </a>
 </div>
@@ -233,12 +225,29 @@
 <div class="console">
   <div class="console__output"></div>
   <a href="#" class="console__footer">
-    <div class="console__footer__status">
-      <span class="ts-status ts-status--failure"></span>
-      27 tests, 3 failures
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--success"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        27 success, 0 failure • 15 Feb 12:37
+      </div>
     </div>
-    <div class="console__footer__time">
-      15 min ago
+  </a>
+</div>
+
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--failure"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        23 success, 4 failures • 15 Feb 12:37
+      </div>
     </div>
   </a>
 </div>
@@ -253,13 +262,17 @@
 <div class="console">
   <div class="cts">
     <div class="cts__header">
-      <div>
-        <span class="ts-status ts-status--failure"></span>
-        4 tests, 1 failure
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--failure"></span>
+          Tests suite <small>• 5 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          4 tests, 1 failure • 15 Feb 12:37
+        </div>
       </div>
-      <small>2 min ago</small>
       <div>
-        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
         <a href="#">
           <span class="icon"><%= icon_close %></span>
         </a>
@@ -312,13 +325,17 @@
 <div class="console">
   <div class="cts">
     <div class="cts__header">
-      <div>
-        <span class="ts-status ts-status--failure"></span>
-        4 tests, 1 failure
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--running"></span>
+          Tests suite <small>• 27 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          15 running, 12 success, 0 failure
+        </div>
       </div>
-      <small>2 min ago</small>
       <div>
-        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
         <a href="#">
           <span class="icon"><%= icon_close %></span>
         </a>
@@ -405,13 +422,17 @@
 <div class="console">
   <div class="cts">
     <div class="cts__header">
-      <div>
-        <span class="ts-status ts-status--failure"></span>
-        4 tests, 1 failure
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--failure"></span>
+          Tests suite <small>• 5 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          4 tests, 1 failure • 15 Feb 12:37
+        </div>
       </div>
-      <small>2 min ago</small>
       <div>
-        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
         <a href="#">
           <span class="icon"><%= icon_close %></span>
         </a>

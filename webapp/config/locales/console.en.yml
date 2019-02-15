@@ -34,11 +34,21 @@ en:
       regression_check:
         add: "Add to tests suite"
         update: Update
-        tests:
-          zero: "0 test"
-          one: "1 test"
-          other: "%{count} tests"
-        failures:
-          zero: "0 failure"
-          one: "1 failure"
-          other: "%{count} failures"
+        summary:
+          tests_suite: Tests suite
+          tests:
+            zero: "0 test"
+            one: "1 test"
+            other: "%{count} tests"
+          running:
+            zero: "0 running"
+            one: "1 running"
+            other: "%{count} running"
+          success:
+            zero: "0 success"
+            one: "1 success"
+            other: "%{count} success"
+          failures:
+            zero: "0 failure"
+            one: "1 failure"
+            other: "%{count} failures"
