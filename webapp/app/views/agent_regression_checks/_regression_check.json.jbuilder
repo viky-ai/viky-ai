@@ -12,28 +12,20 @@ json.expected  do
   end
 end
 
-json.got case test.state
-          when 'unknown'
-            { message: t('views.agent_regression_checks.not_yet_run') }
-          when 'error'
-            { message: t('views.agent_regression_checks.run_error') }
-          when 'running'
-            { message: t('views.agent_regression_checks.running') }
-          when 'success'
-            {
-              slug:     Intent.find(test.got['id']).slug,
-              solution: JSON.parse(test.got['solution'])
-            }
-          else
-            if test.got.present?
-              {
-                slug:     Intent.find(test.got['id']).slug,
-                solution: JSON.parse(test.got['solution'])
-              }
-            else
-              { message: t('views.agent_regression_checks.not_intent_found') }
-            end
-        end
+got = if test.success?
+        {
+          slug:     Intent.find(test.got['id']).slug,
+          solution: JSON.parse(test.got['solution'])
+        }
+      elsif test.failure? && test.got.present?
+        {
+          slug:     Intent.find(test.got['id']).slug,
+          solution: JSON.parse(test.got['solution'])
+        }
+      else
+        { message: t("views.agent_regression_checks.got_message.#{test.state}") }
+      end
+json.got got
 
 json.state_i18n  t("views.agent_regression_checks.indicator.#{test.state}")
 json.now         test.now

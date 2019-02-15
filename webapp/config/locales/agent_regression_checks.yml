@@ -12,10 +12,11 @@ en:
         running: "Running..."
         unknown: "Unknown"
       not_found: The regression test cannot be found.
-      not_yet_run: Not yet run.
-      run_error: Error while requesting NLP.
-      running: Running
-      not_intent_found: No intent found.
+      got_message:
+        unknown: Not yet run.
+        error: Error while requesting NLP.
+        running: Running
+        failure: No intent found.
       query: Query
       language: Language
       result_slug: Expected & Got slug
