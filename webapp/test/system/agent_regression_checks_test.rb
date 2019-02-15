@@ -122,7 +122,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       within('ul.cts__list') do
         click_link("Quel temps fera-t-il demain ?")
         assert page.has_content?("Quel temps fera-t-il demain ?")
-        assert page.has_content?("EXPECTED & GOT")
+        assert page.has_content?("EXPECTED SLUG")
+        assert page.has_content?("EXPECTED SOLUTION")
+        assert page.has_content?("GOT")
       end
     end
   end

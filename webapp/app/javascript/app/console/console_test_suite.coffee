@@ -10,22 +10,31 @@ class ConsoleTestSuite
           el: '#console-ts',
           data: test_suite_data,
           components: {
-            testDetail: {
-              props: ['details'],
-              template: '<pre class="language-javascript"><code class="language-javascript" v-html="detailsAsJs"></code></pre>',
-              computed: {
-                detailsAsJs: () ->
-                  details_json = JSON.stringify(this.details, null, 2)
-                  return Prism.highlight(details_json, Prism.languages.javascript, 'javascript')
+            testDiff: {
+              props: {
+                test: Object
+              },
+              template: "
+                <div>
+                  <template v-for='row in test.diff_rows'>
+                    <div class='cts-item__full__detail__label'>{{ row.label }}</div>
+                    <div class='cts-item__full__detail__value'>
+                      <pre class='language-javascript'>
+                        <code class='language-javascript' v-html='$options.filters.diffAsJs(row.value)'>
+                        </code>
+                      </pre>
+                    </div>
+                  </template>
+                </div>
+              ",
+              filters: {
+                diffAsJs: (raw_string) ->
+                  json_string = JSON.stringify(raw_string, null, 2)
+                  Prism.highlight(json_string, Prism.languages.javascript, 'javascript')
               },
             }
           }
           methods: {
-            isSolutionSame: (expected, got) ->
-              expected_json = JSON.stringify(expected.solution, null, 2)
-              got_json = JSON.stringify(got.solution, null, 2)
-              return expected_json == got_json
-
             showDetails: (testId) ->
               $("#cts-item-details-#{testId}").show()
               $("#cts-item-summary-#{testId}").hide()

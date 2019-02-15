@@ -19,11 +19,11 @@ en:
         failure: No intent found.
       query: Query
       language: Language
-      result_slug: Expected & Got slug
-      result_slug_expect: Expected slug
+      result_slug_all: Expected & Got slug
+      result_slug_expected: Expected slug
       result_slug_got: Got slug
-      result_solution: Expected & Got solution
-      result_solution_expect: Expected solution
+      result_solution_all: Expected & Got solution
+      result_solution_expected: Expected solution
       result_solution_got: Got solution
       result_got_message: Got message
       edit: Edit
