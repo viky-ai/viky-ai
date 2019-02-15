@@ -335,7 +335,10 @@ module Nls
           f.write(solution.to_json)
         end
 
-        check_interpret('big sol test', interpretation: 'big_sol_test', solution: solution)
+        assert_raises RestClient::InternalServerError, "NlpJsEval : js script size is too long" do
+          check_interpret('big sol test', interpretation: 'big_sol_test', solution: solution)
+        end
+
       end
 
     end
