@@ -23,6 +23,8 @@ og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
         package->max_nb_words_per_entity;
   }
 
+  if (global_max_nb_words_per_entity > DOgNlpMaxWordsPerEntity) global_max_nb_words_per_entity = DOgNlpMaxWordsPerEntity;
+
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
 
@@ -52,8 +54,6 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
   struct request_word *request_word_list[ngram_size];
   int request_word_list_length = 0;
 
-  if (request_word->is_punctuation) DONE;
-
   request_word_list[request_word_list_length++] = request_word;
 
   for (struct request_word *rw = request_word->next; rw; rw = rw->next)
@@ -61,7 +61,6 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
     // ignore non basic word (build from ltras)
     if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
     if (rw->is_expression_punctuation) continue;
-    if (rw->is_punctuation) break;
     request_word_list[request_word_list_length++] = rw;
     if (request_word_list_length >= ngram_size) break;
   }

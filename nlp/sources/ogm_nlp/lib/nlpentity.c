@@ -6,8 +6,6 @@
  */
 #include "ogm_nlp.h"
 
-#define DOgNlpMinEntityNumber 1000
-
 og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package)
 {
   struct og_aut_param aut_param[1];
@@ -41,6 +39,13 @@ og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, o
   unsigned char buffer[DPcAutMaxBufferSize];
   unsigned char *p;
   int ibuffer = 0;
+
+  if (nb_words > DOgNlpMaxWordsPerEntity)
+  {
+    // Too long entity goes back to the word automaton
+    IFE(NlpConsolidateExpressionWord(ctrl_nlp_th, package, expression));
+    DONE;
+  }
 
   p = buffer + ibuffer;
   OggNout(nb_words, &p);

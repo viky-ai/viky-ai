@@ -45,7 +45,9 @@
 // Max default distance (in number of chars) between two input parts in an expression
 #define DOgNlpDefaultGlueDistance   20
 
-#define DOgNlpEntitySeparator 0x80
+#define DOgNlpMaxWordsPerEntity     4
+#define DOgNlpMinEntityNumber       1000
+#define DOgNlpEntitySeparator       0x80
 
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
