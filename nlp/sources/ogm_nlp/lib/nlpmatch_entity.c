@@ -99,8 +99,11 @@ static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_wor
   {
     struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
     IFN(interpret_package) DPcErr;
+    // must_spellcheck takes a lot of time when it is TRUE (do the spell check on entities
+    // So, for the moment we set it to FALSE, because it is better to answer fast than to answer some corrections
+    // We will see later to have an option to enable or disable spellcheck in the package
     og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, string_entity, string_entity_length, TRUE);
+        request_word_list_length, string_entity, string_entity_length, FALSE);
     IFE(status);
   }
 
