@@ -80,19 +80,16 @@
                 </div>
                 <div class="c-intent__footer__action">
                   <% if current_user.can?(:edit, agent) %>
-                    <a href="#"
-                       class="btn btn--small btn--primary"
+                    <button class="btn btn--small btn--primary"
                        v-if="!testExists"
-                       v-on:click.stop="addTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
+                       v-on:click="addTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
                        <%= t('views.console.regression_check.add') %>
-                    </a>
-                    <a href="#"
-                       class="btn btn--small btn--primary"
+                    </button>
+                    <button class="btn btn--small btn--primary"
                        v-else-if="needsUpdate"
-                       v-on:click.stop="updateTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
+                       v-on:click="updateTest('<%= Intent.find(aliasable['id']).agent.id %>', '<%= aliasable['id'] %>', '<%= aliasable['solution'].to_json %>')">
                       <%= t('views.console.regression_check.update') %>
-                    </a>
-
+                    </button>
                   <% end %>
                 </div>
               </div>

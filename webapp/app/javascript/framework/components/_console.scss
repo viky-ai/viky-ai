@@ -531,7 +531,7 @@ a.cts-item{
   }
 }
 .cts-list-leave-active {
-  transition: all 0.5s;
+  transition: all 0.25s;
 }
 .cts-list-leave-to {
   transform: translateY(50px);

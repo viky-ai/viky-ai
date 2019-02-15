@@ -44,12 +44,8 @@ class ConsoleTestSuite
               $.ajax
                 url: deleteUrl,
                 method: "DELETE",
-                headers: {
-                  "X-CSRF-TOKEN": csrfToken
-                }
-                error: (data) =>
-                  App.Message.alert(data.responseText)
-                  this.cancelRemove(event)
+                headers: { "X-CSRF-TOKEN": csrfToken }
+                error: (data) -> App.Message.alert(data.responseText)
 
             cancelRemove: (event) ->
               confirmBlock = $(event.target).parents('.cts-item-delete')

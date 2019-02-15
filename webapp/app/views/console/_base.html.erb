@@ -276,18 +276,24 @@
                         <div class="cts-item__full__detail__value">
                           <pre class="language-javascript"><test-detail v-bind:expected="test.expected" v-bind:got="test.got"></test-detail></pre>
                         </div>
-                        <!-- TODO: Edit action -->
                         <% if current_user.can?(:edit, @agent) %>
                           <div class="cts-item__full__detail__actions">
                             <template v-if="test.state == 'running'">
-                              <span class="btn btn--small btn--primary btn--disabled"><%= t('views.agent_regression_checks.edit') %></span>
-                              <span class="btn btn--small btn--destructive btn--disabled"><%= t('views.agent_regression_checks.delete.label') %></span>
+                              <button disabled class="btn btn--small btn--primary btn--disabled">
+                                <%= t('views.agent_regression_checks.edit') %>
+                              </button>
+                              <button disabled class="btn btn--small btn--destructive btn--disabled">
+                                <%= t('views.agent_regression_checks.delete.label') %>
+                              </button>
                             </template>
                             <template v-else>
-                              <a href="#" class="btn btn--small btn--primary" v-on:click.stop="updateTest(index, $event)"><%= t('views.agent_regression_checks.edit') %></a>
-                              <a href="#" class="btn btn--small btn--destructive" v-on:click.stop="showRemoveConfirm"><%= t('views.agent_regression_checks.delete.label') %></a>
+                              <button class="btn btn--small btn--primary" v-on:click="updateTest(index, $event)">
+                                <%= t('views.agent_regression_checks.edit') %>
+                              </button>
+                              <button class="btn btn--small btn--destructive" v-on:click="showRemoveConfirm">
+                                <%= t('views.agent_regression_checks.delete.label') %>
+                              </button>
                             </template>
-
                           </div>
                         <% end %>
                       </div>
@@ -297,8 +303,13 @@
                   <div>
                     <p><%= t('views.agent_regression_checks.delete.confirm') %></p>
                     <p>
-                      <a href="#" class="btn btn--destructive" v-on:click.stop="removeTest(index, $event)"><%= t('views.agent_regression_checks.delete.label') %></a>
-                      <a href="#" v-on:click.stop="cancelRemove"><%= t('views.agent_regression_checks.delete.cancel') %></a>
+                      <button class="btn btn--destructive" v-on:click="removeTest(index, $event)">
+                        <%= t('views.agent_regression_checks.delete.label') %>
+                      </button>
+                      &nbsp;
+                      <a href="#" v-on:click.stop="cancelRemove">
+                        <%= t('views.agent_regression_checks.delete.cancel') %>
+                      </a>
                     </p>
                   </div>
                 </div>

@@ -324,17 +324,18 @@ class ConsoleTest < ApplicationSystemTestCase
       )
       assert page.has_content?('Verbose ON')
       assert page.has_content?('2 interpretations found.')
-      assert page.has_content?('weather terminator')
+      assert page.has_content?('My awesome weather')
 
-      page.find('.highlight-words', :text => 'terminator').click
+      page.find('.highlight-words', text: 'terminator').click
       assert page.has_link?('admin/terminator/interpretations/terminator_find')
       click_link('admin/terminator/interpretations/terminator_find')
     end
 
     assert page.has_content?('Where is Sarah Connor ?')
     within('.console') do
+      assert page.has_content?('Verbose ON')
       assert page.has_content?('2 interpretations found.')
-      assert page.has_content?('weather terminator')
+      assert page.has_content?('My awesome weather')
     end
   end
 
