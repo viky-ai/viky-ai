@@ -46,7 +46,7 @@
 #define DOgNlpDefaultGlueDistance   20
 
 #define DOgNlpMaxWordsPerEntity     4
-#define DOgNlpMinEntityNumber       1000
+#define DOgNlpMinEntityNumber       500
 #define DOgNlpEntitySeparator       0x80
 
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
