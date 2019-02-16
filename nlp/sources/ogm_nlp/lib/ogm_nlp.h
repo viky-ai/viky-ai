@@ -32,9 +32,11 @@
 #define DOgNlpRequestPositionNumber (DOgNlpRequestExpressionNumber*2+DOgNlpRequestInputPartNumber)
 #define DOgNlpBaNumber 0x100
 
+#define DOgNlpInterpretationSentenceMaxLength     0x10000
 #define DOgNlpInterpretationExpressionMaxLength   0x800
 #define DOgNlpInterpretationRegexMaxLength        0x1000
 #define DOgNlpInterpretationContextFlagMaxLength  0x400
+#define DOgNlpInterpretationSolutionMaxLength     0x2000
 
 #define DOgNlpMaximumRegex          100
 #define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
@@ -633,6 +635,9 @@ struct og_ctrl_nlp_js
 
   /** Request ctx : wipped at the ends of the request */
   duk_context *duk_request_context;
+
+  /** buffer store intermediate js computation */
+  og_heap buffer;
 
   /** variables store variables as string */
   GStringChunk *variables;

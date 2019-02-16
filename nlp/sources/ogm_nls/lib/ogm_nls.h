@@ -24,7 +24,6 @@
 typedef struct og_listening_thread og_listening_thread;
 
 #define DOgNlsPortNumber  9345
-#define DOgNlsIntentPhraseMaxLength 0x800
 
 struct timeout_conf_context
 {
