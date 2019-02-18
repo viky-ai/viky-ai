@@ -241,7 +241,7 @@
           <ul class="cts__list">
             <transition-group name="cts-list">
               <li v-for="(test,index) in tests" :key="test.id">
-                <a href="#" class="cts-item" v-on:click.stop="showDetails(test.id)" v-bind:id="'cts-item-summary-'+ test.id">
+                <a href="#" class="cts-item" v-on:click.prevent="showDetails(test.id)" v-bind:id="'cts-item-summary-'+ test.id">
                   <div><div class="cts-item__grip"></div></div>
                   <div class="cts-item__summary">
                     <span :class="'ts-status ts-status--' + test.state"></span>
@@ -256,7 +256,7 @@
                         <span :class="'ts-status ts-status--' + test.state"></span>
                       </div>
                       <div class="cts-item__full__detail">
-                        <a href="#" class="cts-item__full__detail__close" v-on:click.stop="hideDetails(test.id)">
+                        <a href="#" class="cts-item__full__detail__close" v-on:click.prevent="hideDetails(test.id)">
                           <span class="icon"><%= icon_close %></span>
                         </a>
                         <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.query') %></div>
@@ -296,7 +296,7 @@
                         <%= t('views.agent_regression_checks.delete.label') %>
                       </button>
                       &nbsp;
-                      <a href="#" v-on:click.stop="cancelRemove">
+                      <a href="#" v-on:click.prevent="cancelRemove">
                         <%= t('views.agent_regression_checks.delete.cancel') %>
                       </a>
                     </p>
