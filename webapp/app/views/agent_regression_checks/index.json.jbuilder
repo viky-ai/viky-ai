@@ -37,8 +37,14 @@ json.summary do
   json.last_update l(last_update, format: :short)
 end
 
-json.interpret_url interpret_user_agent_path(@agent.owner, @agent)
+owner = @agent.owner
 
-json.tests @agent.agent_regression_checks do |test|
-  json.partial! 'agent_regression_checks/regression_check', test: test
-end
+json.interpret_url interpret_user_agent_path(owner, @agent)
+
+json.tests @agent.agent_regression_checks,
+  partial: 'agent_regression_checks/regression_check',
+  as: :test,
+  locals: {
+    agent: @agent,
+    owner: owner
+}

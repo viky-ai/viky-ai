@@ -52,7 +52,7 @@ class AgentRegressionCheck < ApplicationRecord
   def to_json
     ApplicationController.render(
       template: 'agent_regression_checks/_regression_check',
-      locals: { test: self }
+      locals: { test: self, agent: self.agent, owner: self.agent.owner }
     )
   end
 
@@ -64,6 +64,7 @@ class AgentRegressionCheck < ApplicationRecord
     }
     self.expected != new_result
   end
+
 
   private
 
