@@ -591,6 +591,7 @@ class AgentTest < ActiveSupport::TestCase
     agent = agents(:weather)
     @regression_weather_forecast.now = '2019-01-21 12:00:00'
     @regression_weather_forecast.save
+    force_reset_model_cache(@regression_weather_forecast)
     assert_equal @regression_weather_forecast.id, agent.regression_check_for('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
     assert_equal @regression_weather_forecast.id, agent.regression_check_for('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
     assert_equal @regression_weather_forecast.id, agent.regression_check_for(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00').id
