@@ -457,13 +457,24 @@
         font-size: .65em;
         line-height: 1em;
         margin-bottom: .25em;
+        small{
+          text-transform:none;
+          font-size: 1em;
+          color: #aaa;
+        }
       }
       .cts-item__full__detail__value{
         margin-bottom: .75em;
       }
-      .cts-item__full__detail__by{
-        color: #888;
+      .cts-item__full__detail__value + .cts-item__full__detail__value{
+        margin-top: -.75em;
+      }
+      .cts-item__full__detail__error{
+        background-color: rgba($alert_color, .05);
+        color: $alert_color;
         font-size: .8em;
+        padding: .5em 1em;
+        border-radius: 2px;
       }
       .cts-item__full__detail__actions{
         margin-top: .5em;

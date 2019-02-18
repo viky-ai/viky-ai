@@ -47,4 +47,4 @@ json.tests @agent.agent_regression_checks,
   locals: {
     agent: @agent,
     owner: owner
-}
+  }

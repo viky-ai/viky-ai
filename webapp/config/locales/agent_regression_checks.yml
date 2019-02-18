@@ -12,20 +12,25 @@ en:
         running: "Running..."
         unknown: "Unknown"
       not_found: The regression test cannot be found.
-      got_message:
-        unknown: Not yet run.
-        error: Error while requesting NLP.
-        running: Running
-        failure: No intent found.
       query: Query
       language: Language
-      result_slug_all: Expected & Got slug
-      result_slug_expected: Expected slug
-      result_slug_got: Got slug
-      result_solution_all: Expected & Got solution
-      result_solution_expected: Expected solution
-      result_solution_got: Got solution
-      result_got_message: Got message
+      result:
+        slug:
+          expected_got_ok_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: Slug <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: Slug <small>(Expected)</small>
+        solution:
+          expected_got_ok_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: Solution <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: Solution <small>(Expected)</small>
+        error_error_html:
+          <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          Error while requesting NLP.
+        error_no_intent_html:
+          <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          No interpretation found.
       edit: Edit
       delete:
         label: Delete

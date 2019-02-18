@@ -34,7 +34,7 @@ def create_agent_regression_check_fixtures
   @regression_weather_forecast.save!
 
   @regression_weather_question = AgentRegressionCheck.new({
-    sentence: "What's the weather like in London ?",
+    sentence: "What's the weather like in London?",
     language: "en",
     now: "2019-01-20 14:00:15.000000",
     agent: agents(:weather),

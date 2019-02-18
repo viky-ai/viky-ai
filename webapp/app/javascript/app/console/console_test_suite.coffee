@@ -17,10 +17,17 @@ class ConsoleTestSuite
               template: "
                 <div>
                   <template v-for='row in test.diff_rows'>
-                    <div class='cts-item__full__detail__label'>{{ row.label }}</div>
-                    <div class='cts-item__full__detail__value'>
-                      <pre class='language-javascript'><code class='language-javascript' v-html='$options.filters.diffAsJs(row.value)'></code></pre>
-                    </div>
+                    <template v-if='row.label'>
+                      <div class='cts-item__full__detail__label' v-html='row.label'></div>
+                    </template>
+                    <template v-if='row.value'>
+                      <div class='cts-item__full__detail__value'>
+                        <pre class='language-javascript'><code class='language-javascript' v-html='$options.filters.diffAsJs(row.value)'></code></pre>
+                      </div>
+                    </template>
+                    <template v-if='row.error'>
+                      <div class='cts-item__full__detail__error' v-html='row.error'></div>
+                    </template>
                   </template>
                 </div>
               ",
