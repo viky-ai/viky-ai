@@ -19,10 +19,7 @@ class ConsoleTestSuite
                   <template v-for='row in test.diff_rows'>
                     <div class='cts-item__full__detail__label'>{{ row.label }}</div>
                     <div class='cts-item__full__detail__value'>
-                      <pre class='language-javascript'>
-                        <code class='language-javascript' v-html='$options.filters.diffAsJs(row.value)'>
-                        </code>
-                      </pre>
+                      <pre class='language-javascript'><code class='language-javascript' v-html='$options.filters.diffAsJs(row.value)'></code></pre>
                     </div>
                   </template>
                 </div>
