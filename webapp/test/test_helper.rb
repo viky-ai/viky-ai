@@ -20,4 +20,4 @@ Shrine.storages = {
   store: Shrine::Storage::Memory.new,
 }
 
-require 'mocha/mini_test'
+require 'mocha/minitest'
