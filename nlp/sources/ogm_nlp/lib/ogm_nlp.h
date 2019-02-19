@@ -810,7 +810,7 @@ struct og_ctrl_nlp_threaded
 #define DOgLemNameSize 256
 
 struct lem_data {
-  int active,codepage;
+  og_bool active;
   char root[DOgLemNameSize];
   void *ha_root;
   };

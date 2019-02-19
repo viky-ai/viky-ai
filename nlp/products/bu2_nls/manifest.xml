@@ -47,6 +47,12 @@
     <component name="ogm_nlp/prog/ognlp" />
     <component name="ogm_nls/prog/ogm_nls" />
 
+    <!-- utilities programs -->
+    <component name="ogm_aut/prog/ogaut" />
+
+    <!-- ressource -->
+    <resource name="morphology/fr"/>
+
   </use>
 
   <packaging>
@@ -61,6 +67,9 @@
 
         <copy source="%OG_REPO_PATH%/products/bu2_nls/conf" target="./"  />
         <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" />
+        <directory name="ling">
+          <copy source="%OG_REPO_PATH%/resources/morphology/fr/build/frroot.auf" target="./" />
+        </directory>
         <copy source="%OG_REPO_PATH%/products/bu2_nls/node_modules" target="./" />
 
         <directory name="control" />

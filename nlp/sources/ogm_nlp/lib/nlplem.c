@@ -16,21 +16,20 @@ static og_status NlpLemAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, i
 
 og_status NlpLemInit(og_nlp ctrl_nlp)
 {
-  ctrl_nlp->ld[DOgLangFR].active = 1;
-  ctrl_nlp->ld[DOgLangFR].codepage = DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangEN].active=1; ctrl_nlp->ld[DOgLangEN].codepage=DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangDE].active=1; ctrl_nlp->ld[DOgLangDE].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangRO].active=1; ctrl_nlp->ld[DOgLangRO].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangAR].active=1; ctrl_nlp->ld[DOgLangAR].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangES].active=1; ctrl_nlp->ld[DOgLangES].codepage=DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangIT].active=1; ctrl_nlp->ld[DOgLangIT].codepage=DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangPL].active=1; ctrl_nlp->ld[DOgLangPL].codepage=DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangPT].active=1; ctrl_nlp->ld[DOgLangPT].codepage=DOgCodePageANSI;
-//  ctrl_nlp->ld[DOgLangFI].active=1; ctrl_nlp->ld[DOgLangFI].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangCS].active=1; ctrl_nlp->ld[DOgLangCS].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangNL].active=1; ctrl_nlp->ld[DOgLangNL].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangHU].active=1; ctrl_nlp->ld[DOgLangHU].codepage=DOgCodePageUTF8;
-//  ctrl_nlp->ld[DOgLangRU].active=1; ctrl_nlp->ld[DOgLangRU].codepage=DOgCodePageUTF8;
+  ctrl_nlp->ld[DOgLangFR].active = TRUE;
+//  ctrl_nlp->ld[DOgLangEN].active=TRUE;
+//  ctrl_nlp->ld[DOgLangDE].active=TRUE;
+//  ctrl_nlp->ld[DOgLangRO].active=TRUE;
+//  ctrl_nlp->ld[DOgLangAR].active=TRUE;
+//  ctrl_nlp->ld[DOgLangES].active=TRUE;
+//  ctrl_nlp->ld[DOgLangIT].active=TRUE;
+//  ctrl_nlp->ld[DOgLangPL].active=TRUE;
+//  ctrl_nlp->ld[DOgLangPT].active=TRUE;
+//  ctrl_nlp->ld[DOgLangFI].active=TRUE;
+//  ctrl_nlp->ld[DOgLangCS].active=TRUE;
+//  ctrl_nlp->ld[DOgLangNL].active=TRUE;
+//  ctrl_nlp->ld[DOgLangHU].active=TRUE;
+//  ctrl_nlp->ld[DOgLangRU].active=TRUE;
 
   for (int i = 0; i < DOgLangMax; i++)
   {
@@ -131,68 +130,65 @@ static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int la
   int retour, nstate0, nstate1, iout;
   oindex states[DPcAutMaxBufferSize + 9];
   unsigned char out[DPcAutMaxBufferSize + 8];
-  unsigned char mot[DPcPathSize], lwmot[DPcPathSize], result[DPcPathSize], utf8[DPcPathSize];
-  unsigned char strdecal[100], strtermi[200];
-  unsigned char unires[DPcPathSize];
-  unsigned char bad_dic_entry[DPcPathSize];
-  int imot, i, decal, iresult, iunires, iutf8;
 
   /** Gets form words (automaton encoded in ld->codepage) **/
   struct request_word *request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word);
   IFN(request_word) DPcErr;
-  og_string word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
-  IFN(word) DPcErr;
-  int word_length = request_word->length;
+  og_string mot = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+  IFN(mot) DPcErr;
 
-  NlpLog(DOgNlpTraceMinimal, "NlpLemWordLang: starting with '%s'", word);
+  unsigned char lwmot[DPcPathSize];
+  int imot = request_word->length;
+  snprintf(lwmot, DPcPathSize, "%.*s", imot, mot);
 
-  int uni_length;
-  unsigned char uni[DPcPathSize];
-  IFE(OgCpToUni(word_length, word , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
-  IFE(OgUniToCp(uni_length,uni,DPcPathSize,&imot,lwmot,ld->codepage, NULL, NULL));
-  lwmot[imot++] = ':';
-  lwmot[imot] = 0;
+  NlpLog(DOgNlpTraceLem, "NlpLemWordLang: starting with '%s'", lwmot);
+
+  int ilwmot = imot;
+  lwmot[ilwmot++] = ':';
+  lwmot[ilwmot] = 0;
 
   if ((retour = OgAufScanf(ha, -1, lwmot, &iout, out, &nstate0, &nstate1, states)))
   {
     do
     {
       IFE(retour);
+      int i = 0;
       for (i = 0; i < iout; i++)
       {
         if (!PcIsdigit(out[i])) break;
       }
-      snprintf(result, DPcPathSize, "%.*s", imot, lwmot);
+
+      unsigned char result[DPcPathSize];
+      snprintf(result, DPcPathSize, "%.*s", imot, mot);
+      unsigned char strdecal[100];
       snprintf(strdecal, 100, "%.*s", i, out);
-      decal = atoi(strdecal);
+      int decal = atoi(strdecal);
+      unsigned char strtermi[200];
       snprintf(strtermi, 200, "%.*s", iout - i, out + i);
 
       // check for bad dictionnary input : for instance sa:3casatiune won't make the system crash
       // it will bypass it and check the next dictionary entry
       int result_length = strlen(result);
-      int fulldecal = (imot - 1 - decal);
+      int fulldecal = (imot - decal);
       if (result_length < fulldecal || fulldecal < 0)
       {
+        unsigned char bad_dic_entry[DPcPathSize];
         snprintf(bad_dic_entry, DPcPathSize, "%s:%s", mot, out);
         NlpLog(DOgNlpTraceLem, "NlpLemWordLang: bad dictionary entry '%s' with lexicon entry '%s'", bad_dic_entry,
             ld->root);
         continue;
       }
 
-      strcpy(result + fulldecal, strtermi); /** -1 because of ':' **/
-      iresult = strlen(result);
+      strcpy(result + fulldecal, strtermi);
+      int iresult = strlen(result);
 
       if (iresult == 0) continue;
 
-      IFE(OgCpToUni(iresult,result,DPcPathSize,&iunires,unires,ld->codepage,NULL,NULL));
-      IFE(OgUniToCp(iunires,unires,DPcPathSize,&iutf8,utf8,DOgCodePageUTF8, NULL, NULL));
-
       /** result is the same as the original form **/
       //TODO test si même form
-      NlpLog(DOgNlpTraceMinimal, "NlpLemWordLang: found '%s'", utf8);
-      og_status status = NlpLemAddWord(ctrl_nlp_th, Irequest_word, iutf8, utf8, langid);
+      NlpLog(DOgNlpTraceLem, "NlpLemWordLang: found '%s'", result);
+      og_status status = NlpLemAddWord(ctrl_nlp_th, Irequest_word, iresult, result, langid);
       IFE(status);
-
 
     }
     while ((retour = OgAufScann(ha, &iout, out, nstate0, &nstate1, states)));
@@ -231,7 +227,7 @@ static og_status NlpLemAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, i
   IFE(OgHeapAppend(ctrl_nlp_th->hba, request_word->raw_length, corrected_word));
   IFE(OgHeapAppend(ctrl_nlp_th->hba, 1, ""));
 
-// Necessary because of possible reallocation of hrequest_word
+  // Necessary because of possible reallocation of hrequest_word
   request_word_basic = OgHeapGetCell(ctrl_nlp_th->hrequest_word, Irequest_word_basic);
   IFN(request_word_basic) DPcErr;
   request_word->start_position = request_word_basic->start_position;

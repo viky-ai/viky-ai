@@ -30,6 +30,7 @@ RUN buildinit.pl
 RUN factory.pl -c external_dependencies fullclean
 RUN factory.pl -c external_dependencies rebuild
 
+ADD resources/morphology            /builds/nls/resources/morphology
 ADD products/bu2_nls/bin            /builds/nls/products/bu2_nls/bin
 ADD products/bu2_nls/conf           /builds/nls/products/bu2_nls/conf
 ADD products/bu2_nls/ling           /builds/nls/products/bu2_nls/ling

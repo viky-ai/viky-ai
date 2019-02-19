@@ -1,0 +1,14 @@
+require 'rubygems'
+require 'bundler/setup'
+
+require 'rake'
+require 'rake/testtask'
+
+task :default => :test
+
+desc "Run all unit test"
+Rake::TestTask.new do |t|
+  t.libs << 'lib'
+  t.test_files = FileList.new('test/*_test.rb')
+  t.warning = false
+end
