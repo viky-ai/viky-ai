@@ -198,7 +198,7 @@
               <button class='btn btn--primary'
                       data-disable-with='<span class="icon icon--small icon--spin"><%= icon_loading %></span>'>
                 <span class='icon icon--small'>
-                  <%= icon_check %>
+                  <%= icon_send %>
                 </span>
               </button>
             </div>
@@ -264,23 +264,26 @@
                         <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.language') %></div>
                         <div class="cts-item__full__detail__value">{{ test.language }}</div>
                         <test-diff v-bind:test="test"></test-diff>
-                        <!-- TODO: Edit action -->
                         <% if current_user.can?(:edit, @agent) %>
                           <div class="cts-item__full__detail__actions">
                             <template v-if="test.state == 'running'">
                               <button disabled class="btn btn--small btn--primary btn--disabled">
-                                <%= t('views.agent_regression_checks.edit') %>
+                                <%= t('views.agent_regression_checks.send') %>
                               </button>
                               <button disabled class="btn btn--small btn--destructive btn--disabled">
-                                <%= t('views.agent_regression_checks.delete.label') %>
+                                <%= t('views.agent_regression_checks.delete') %>
                               </button>
                             </template>
                             <template v-else>
-                              <button class="btn btn--small btn--primary" v-on:click="updateTest(index, $event)">
-                                <%= t('views.agent_regression_checks.edit') %>
+                              <button class="btn btn--small btn--outline btn--primary"
+                                      v-on:click="updateTest(index, $event)">
+                                <span class="icon icon--x-small"><%= icon_send %></span>
+                                <%= t('views.agent_regression_checks.send') %>
                               </button>
-                              <button class="btn btn--small btn--destructive" v-on:click="showRemoveConfirm">
-                                <%= t('views.agent_regression_checks.delete.label') %>
+                              <button class="btn btn--small btn--outline btn--destructive"
+                                      v-on:click="showRemoveConfirm">
+                                <span class="icon icon--x-small"><%= icon_delete %></span>
+                                <%= t('views.agent_regression_checks.delete') %>
                               </button>
                             </template>
                           </div>
@@ -290,14 +293,14 @@
                 </div>
                 <div class="cts-item-delete" style="display:none;">
                   <div>
-                    <p><%= t('views.agent_regression_checks.delete.confirm') %></p>
+                    <p><%= t('views.agent_regression_checks.delete_confirm.query') %></p>
                     <p>
                       <button class="btn btn--destructive" v-on:click="removeTest(index, $event)">
-                        <%= t('views.agent_regression_checks.delete.label') %>
+                        <%= t('views.agent_regression_checks.delete_confirm.delete') %>
                       </button>
                       &nbsp;
                       <a href="#" v-on:click.prevent="cancelRemove">
-                        <%= t('views.agent_regression_checks.delete.cancel') %>
+                        <%= t('views.agent_regression_checks.delete_confirm.cancel') %>
                       </a>
                     </p>
                   </div>

@@ -31,8 +31,9 @@ en:
         error_no_intent_html:
           <span class='icon icon--x-small icon--alert'>%{icon}</span>
           No interpretation found.
-      edit: Edit
-      delete:
-        label: Delete
-        confirm: Are you sure?
-        cancel: Cancel
+      send: Send
+      delete: Delete
+      delete_confirm:
+        query: Are you sure?
+        delete: Yes, delete
+        cancel: No, cancel

@@ -183,7 +183,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.cts-item__full') do
       assert page.has_button?('Delete', disabled: true)
-      assert page.has_button?('Edit', disabled: true)
+      assert page.has_button?('Send', disabled: true)
     end
   end
 
@@ -208,9 +208,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.cts-item-delete') do
       assert page.has_content?('Are you sure?')
-      assert page.has_button?('Delete')
-      assert page.has_link?('Cancel')
-      click_button('Delete')
+      assert page.has_button?('Yes, delete')
+      assert page.has_link?('No, cancel')
+      click_button('Yes, delete')
     end
 
     within('#console-ts') do
@@ -257,8 +257,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.cts-item__full') do
       assert page.has_content?("What's the weather like in London?")
-      assert page.has_button?('Edit')
-      click_button('Edit')
+      assert page.has_button?('Send')
+      click_button('Send')
     end
 
     within('#js-console-form') do
