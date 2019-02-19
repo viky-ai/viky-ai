@@ -13,15 +13,11 @@ class AgentRegressionCheckRunJob < ApplicationJob
   private
 
     def notify(agent)
-      payload = ApplicationController.render(
-        template: 'agent_regression_checks/index',
-        assigns: { agent: agent }
-      )
       ActionCable.server.broadcast(
         'agent_regression_checks_channel',
         agent_id: agent.id,
         timestamp: Time.now.to_f * 1000,
-        payload: JSON.parse(payload)
+        payload: JSON.parse(agent.regression_checks_to_json)
       )
     end
 end

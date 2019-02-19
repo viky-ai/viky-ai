@@ -23,7 +23,7 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
         if DateTime.parse(params['version']) >= agent.updated_at.to_datetime
           agent.nlp_updated_at = params['nlp_updated_at']
           agent.save
-          agent.run_tests
+          agent.run_regression_checks
         end
       end
     else

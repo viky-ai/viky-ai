@@ -21,7 +21,7 @@ class ConsoleController < ApplicationController
         language: language,
         now: now,
         agent: agent
-        )
+      )
     end
 
     respond_to do |format|

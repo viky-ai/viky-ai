@@ -18,12 +18,12 @@ class AgentRegressionChecksController < ApplicationController
   end
 
   def run
-    @agent.run_tests
+    @agent.run_regression_checks
   end
 
   def update
     if @regression_check.update(regression_check_params)
-      @agent.run_tests
+      @agent.run_regression_checks
       head :ok
     else
       render json: t('views.agent_regression_checks.update.fail'), status: :unprocessable_entity
@@ -74,15 +74,11 @@ class AgentRegressionChecksController < ApplicationController
     end
 
     def notify_ui
-      payload = ApplicationController.render(
-        template: 'agent_regression_checks/index',
-        assigns: { agent: @agent }
-      )
       ActionCable.server.broadcast(
         'agent_regression_checks_channel',
         agent_id: @agent.id,
         timestamp: Time.now.to_f * 1000,
-        payload: JSON.parse(payload)
+        payload: JSON.parse(@agent.regression_checks_to_json)
       )
     end
 

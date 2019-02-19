@@ -178,11 +178,11 @@ class Agent < ApplicationRecord
     end
   end
 
-  def run_tests
+  def run_regression_checks
     AgentRegressionCheckRunJob.perform_later self
   end
 
-  def json_test_suite
+  def regression_checks_to_json
     ApplicationController.render(
       template: 'agent_regression_checks/index',
       assigns: { agent: self }
