@@ -812,7 +812,9 @@ struct og_ctrl_nlp_threaded
 struct lem_data {
   og_bool active;
   char root[DOgLemNameSize];
+  char form[DOgLemNameSize];
   void *ha_root;
+  void *ha_form;
   };
 
 struct og_ctrl_nlp

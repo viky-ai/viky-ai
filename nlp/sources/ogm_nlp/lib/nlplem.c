@@ -10,7 +10,7 @@
 static og_status NlpLemInitLang(og_nlp ctrl_nlp, int langid);
 static og_status NlpLemFlushLang(og_nlp ctrl_nlp, int langid);
 static og_status NlpLemWord(og_nlp_th ctrl_nlp_th, int Irequest_word);
-static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int langid);
+static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int langid, og_bool is_root);
 static og_status NlpLemAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic, int length_corrected_word,
     og_string corrected_word, int lang_id);
 
@@ -51,6 +51,7 @@ static og_status NlpLemInitLang(og_nlp ctrl_nlp, int langid)
   else strcpy(ling, "ling");
 
   sprintf(ld->root, "%s/%sroot.auf", ling, OgIso639ToCode(langid));
+  sprintf(ld->form, "%s/%sform.auf", ling, OgIso639ToCode(langid));
 
   memset(aut_param, 0, sizeof(struct og_aut_param));
   aut_param->herr = ctrl_nlp->herr;
@@ -61,17 +62,29 @@ static og_status NlpLemInitLang(og_nlp ctrl_nlp, int langid)
 
   if (!access(ld->root, 0))
   {
-    sprintf(aut_param->name, "ssi root");
+    sprintf(aut_param->name, "nlp %sroot", OgIso639ToCode(langid));
     IFn(ld->ha_root=OgAutInit(aut_param)) return (0);
     IFE(OgAufRead(ld->ha_root, ld->root));
   }
   else
   {
     OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpLemInit1: automaton '%s' does not exist", ld->root);
-    ld->ha_root = 0;
+    ld->ha_root = NULL;
   }
 
-  if (ld->ha_root == 0) ld->active = 0;
+  if (!access(ld->form, 0))
+  {
+    sprintf(aut_param->name, "nlp %sform", OgIso639ToCode(langid));
+    IFn(ld->ha_form=OgAutInit(aut_param)) return (0);
+    IFE(OgAufRead(ld->ha_form, ld->form));
+  }
+  else
+  {
+    OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "NlpLemInit1: automaton '%s' does not exist", ld->form);
+    ld->ha_form = NULL;
+  }
+
+  if (ld->ha_root == NULL && ld->ha_form == NULL) ld->active = 0;
 
   DONE;
 }
@@ -91,6 +104,7 @@ static og_status NlpLemFlushLang(og_nlp ctrl_nlp, int langid)
   struct lem_data *ld = ctrl_nlp->ld + langid;
   if (!ld->active) DONE;
   IFE(OgAutFlush(ld->ha_root));
+  IFE(OgAutFlush(ld->ha_form));
   DONE;
 }
 
@@ -113,18 +127,21 @@ static og_status NlpLemWord(og_nlp_th ctrl_nlp_th, int Irequest_word)
 {
   for (int i = 0; i < DOgLangMax; i++)
   {
-    IFE(NlpLemWordLang(ctrl_nlp_th, Irequest_word, i));
+    IFE(NlpLemWordLang(ctrl_nlp_th, Irequest_word, i, TRUE));
+    IFE(NlpLemWordLang(ctrl_nlp_th, Irequest_word, i, FALSE));
   }
 
   DONE;
 }
 
-static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int langid)
+static og_status NlpLemWordLang(og_nlp_th ctrl_nlp_th, int Irequest_word, int langid, og_bool is_root)
 {
   struct lem_data *ld = ctrl_nlp_th->ctrl_nlp->ld + langid;
 
   if (!ld->active) DONE;
-  void *ha = ld->ha_root;
+  void *ha = ld->ha_form;
+  if (is_root) ha = ld->ha_root;
+
   IFn(ha) DONE;
 
   int retour, nstate0, nstate1, iout;

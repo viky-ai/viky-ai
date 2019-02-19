@@ -21,6 +21,9 @@ module Nls
         etre = lem_package.new_interpretation('etre')
         etre << Expression.new('être', locale: 'fr')
 
+        avoir = lem_package.new_interpretation('avoir')
+        avoir << Expression.new('avoir', locale: 'fr')
+
         cheval = lem_package.new_interpretation('cheval')
         cheval << Expression.new('cheval', locale: 'fr')
 
@@ -41,6 +44,9 @@ module Nls
 
         check_interpret('sommes', interpretation: 'etre', score: 0.99)
         check_interpret('fûmes', interpretation: 'etre', score: 0.99)
+
+        check_interpret('ont', interpretation: 'avoir', score: 0.99)
+        check_interpret('eurent', interpretation: 'avoir', score: 0.99)
 
         exception = assert_raises Minitest::Assertion do
           check_interpret('bols', interpretation: 'bol')
