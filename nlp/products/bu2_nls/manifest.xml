@@ -69,6 +69,7 @@
         <copy source="%OG_REPO_PATH%/products/bu2_nls/ling" target="./" />
         <directory name="ling">
           <copy source="%OG_REPO_PATH%/resources/morphology/fr/build/frroot.auf" target="./" />
+          <copy source="%OG_REPO_PATH%/resources/morphology/fr/build/frform.auf" target="./" />
         </directory>
         <copy source="%OG_REPO_PATH%/products/bu2_nls/node_modules" target="./" />
 

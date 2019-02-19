@@ -30,13 +30,24 @@ module Nls
         sol = lem_package.new_interpretation('sol')
         sol << Expression.new('sol', locale: 'fr')
 
+        # form
+        chiffonnier = lem_package.new_interpretation('chiffonnieres')
+        chiffonnier << Expression.new('chiffonnières', locale: 'fr')
+
+        bonhomme = lem_package.new_interpretation('bonshommes')
+        bonhomme << Expression.new('bonshommes', locale: 'fr')
+
+        madame = lem_package.new_interpretation('mesdames')
+        madame << Expression.new('mesdames', locale: 'fr')
+
+        # no locale fr
         bol = lem_package.new_interpretation('bol')
         bol << Expression.new('bol')
 
         Nls.package_update(lem_package)
       end
 
-      def test_lem_simple
+      def test_lem_root
         check_interpret('travailler', interpretation: 'travailler', score: 1.0)
         check_interpret('travaillerions', interpretation: 'travailler', score: 0.99)
         check_interpret('chevaux', interpretation: 'cheval', score: 0.99)
@@ -52,6 +63,12 @@ module Nls
           check_interpret('bols', interpretation: 'bol')
         end
         assert exception.message.include?('Actual answer did not match on any interpretation')
+      end
+
+      def test_lem_form
+        check_interpret('chiffonnier', interpretation: 'chiffonnieres', score: 0.99)
+        check_interpret('bonhomme', interpretation: 'bonshommes', score: 0.99)
+        check_interpret('madame', interpretation: 'mesdames', score: 0.99)
       end
     end
   end

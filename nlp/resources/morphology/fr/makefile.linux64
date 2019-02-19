@@ -18,7 +18,7 @@ ESOURCES = $(SOURCES:%.txt=sources/%.txt)
 # add utilities to path
 export PATH := $(OG_REPO_PATH)/build/debug/bin:$(OG_REPO_PATH)/build/release/bin:$(PATH)
 
-dico: build/frroot.auf
+dico: build/frroot.auf build/frform.auf
 all: dico
 build: dico
 debug: dico
@@ -33,6 +33,9 @@ fullclean: clean
 	\rm -rf $(REP_FR)/build/
 	\rm -rf $(REP_FR)/log/
 
+build/%.auf: build/%
+	ogaut -c -auf -m $<
+
 # frtotal avec les verbes
 build/frtotal: $(ESOURCES)
 	@mkdir -p $(@D)
@@ -45,13 +48,18 @@ build/frtotal: $(ESOURCES)
 	cat build/frtotal_acc build/frtotal_unacc | sort -u > build/frtotal
 
 build/frtotal.root: build/frtotal
-	@mkdir -p $(@D)
-	ruby $(MORPHO_UTILS)/bin/getroot.rb build/frtotal
+	ruby $(MORPHO_UTILS)/bin/getroot.rb build/frtotal root
 
 build/frroot: build/frtotal.root
-	@mkdir -p $(@D)
 	cat build/frtotal.root | sort -u > build/frroot
 
-build/frroot.auf: build/frroot
-	@mkdir -p $(@D)
-	ogaut -c -auf -m build/frroot
+# frtotal sans les verbes
+build/frtotal_no_verbs: build/frtotal
+	cat build/frtotal | grep -v "+V" > build/frtotal_no_verbs
+
+build/frtotal.form: build/frtotal_no_verbs
+	ruby $(MORPHO_UTILS)/bin/getroot.rb build/frtotal_no_verbs form
+	mv build/frtotal_no_verbs.form build/frtotal.form
+
+build/frform: build/frtotal.form
+	cat build/frtotal.form | sort -u > build/frform
