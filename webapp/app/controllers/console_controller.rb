@@ -14,7 +14,7 @@ class ConsoleController < ApplicationController
 
     data = get_interpretation(agent, sentence, verbose, language, now)
 
-    @regression_check =  agent.regression_check_for(sentence, language, now)
+    @regression_check =  agent.find_regression_check_with(sentence, language, now)
     if @regression_check.nil?
       @regression_check = AgentRegressionCheck.new(
         sentence: sentence,

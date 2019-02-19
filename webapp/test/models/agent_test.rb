@@ -570,19 +570,38 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test find a regression check from a sentence' do
+  test 'Test find a regression check from sentence, language and now params' do
     create_agent_regression_check_fixtures
 
     agent = agents(:weather)
     @regression_weather_forecast.now = '2019-01-21 12:00:00'
     @regression_weather_forecast.save
-    force_reset_model_cache(@regression_weather_forecast)
-    assert_equal @regression_weather_forecast.id, agent.regression_check_for('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
-    assert_equal @regression_weather_forecast.id, agent.regression_check_for('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00').id
-    assert_equal @regression_weather_forecast.id, agent.regression_check_for(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00').id
-    assert_not agent.regression_check_for('random input : qlsjlqsjdflqsd', '*', '2019-01-21 12:00:00')
-    assert_not agent.regression_check_for('Quel temps fera-t-il demain ?', 'fr', '2019-01-21 12:00:00')
-    assert_not agent.regression_check_for('Quel temps fera-t-il demain ?', '*', '2019-12-12 12:12:12')
+    expected_id = @regression_weather_forecast.id
+
+    rc = agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
+    assert_equal expected_id, rc.id
+
+    rc = agent.find_regression_check_with('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
+    assert_equal expected_id, rc.id
+
+    rc = agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00')
+    assert_equal expected_id, rc.id
+
+    assert_nil agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', '*', nil)
+    assert_nil agent.find_regression_check_with('random input : qlsjlqsjdflqsd', '*', '2019-01-21 12:00:00')
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', 'fr', '2019-01-21 12:00:00')
+    assert_nil agent.find_regression_check_with('Quel temps fera-t-il demain ?', '*', '2019-12-12 12:12:12')
+
+    @regression_weather_forecast.now = nil
+    @regression_weather_forecast.save
+
+    rc = agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', '*', nil)
+    assert_equal expected_id, rc.id
+
+    rc = agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', '*', '')
+    assert_equal expected_id, rc.id
+
+    assert_nil agent.find_regression_check_with(' Quel temps fera-t-il demain ?   ', 'fr', '')
   end
 
 

@@ -197,7 +197,7 @@ class Agent < ApplicationRecord
     'unknown'
   end
 
-  def regression_check_for(sentence, language, now)
+  def find_regression_check_with(sentence, language, now)
     time_parse = (now.kind_of?(String) ? Time.parse(now) : now) unless now.blank?
     agent_regression_checks
       .where('lower(sentence) = lower(?)', sentence.strip)
