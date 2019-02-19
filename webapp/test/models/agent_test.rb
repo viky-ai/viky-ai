@@ -570,21 +570,6 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Test a sentence is already tested' do
-    create_agent_regression_check_fixtures
-
-    agent = agents(:weather)
-    @regression_weather_forecast.now = '2019-01-21 12:00:00'
-    @regression_weather_forecast.save
-    assert agent.sentence_tested?('Quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
-    assert agent.sentence_tested?('quel temps fera-t-il demain ?', '*', '2019-01-21 12:00:00')
-    assert agent.sentence_tested?(' Quel temps fera-t-il demain ?   ', '*', '2019-01-21 12:00:00')
-    assert_not agent.sentence_tested?('random input : qlsjlqsjdflqsd', '*', '2019-01-21 12:00:00')
-    assert_not agent.sentence_tested?('Quel temps fera-t-il demain ?', 'fr', '2019-01-21 12:00:00')
-    assert_not agent.sentence_tested?('Quel temps fera-t-il demain ?', '*', '2019-12-12 12:12:12')
-  end
-
-
   test 'Test find a regression check from a sentence' do
     create_agent_regression_check_fixtures
 
