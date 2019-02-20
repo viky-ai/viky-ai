@@ -4,7 +4,7 @@ class AgentRegressionCheckRunJob < ApplicationJob
   def perform(agent)
     agent.agent_regression_checks.update_all(state: 'running')
     notify(agent)
-    agent.agent_regression_checks.each do |test|
+    agent.agent_regression_checks.order("RANDOM()").each do |test|
       test.run
       notify(agent)
     end
