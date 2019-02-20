@@ -396,6 +396,7 @@ struct request_word
   og_bool is_punctuation;
   og_bool is_expression_punctuation;
   og_bool is_regex;
+  og_bool lang_id;
   struct input_part *regex_input_part;
 
   /**
@@ -822,6 +823,16 @@ struct og_ctrl_nlp_threaded
 
 };
 
+#define DOgLemNameSize 256
+
+struct lem_data {
+  og_bool active;
+  char root[DOgLemNameSize];
+  char form[DOgLemNameSize];
+  void *ha_root;
+  void *ha_form;
+  };
+
 struct og_ctrl_nlp
 {
   void *herr, *hmsg;
@@ -839,6 +850,8 @@ struct og_ctrl_nlp
 
   /** Parsing configuration */
   struct og_nlp_parse_conf parse_conf[1];
+
+  struct lem_data ld[DOgLangMax];
 
 };
 
@@ -1171,6 +1184,12 @@ og_bool NlpSuperListsCreate(og_nlp_th ctrl_nlp_th);
 
 /* nlprword.c */
 og_bool NlpRequestWordGet(og_nlp_th ctrl_nlp_th, int position, int *pIrequest_word);
+
+/* nlplem.c */
+og_status NlpLemInit(og_nlp ctrl_nlp);
+og_status NlpLemFlush(og_nlp ctrl_nlp);
+og_status NlpLem(og_nlp_th ctrl_nlp_th);
+
 
 /* nlpentity.c */
 og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package);

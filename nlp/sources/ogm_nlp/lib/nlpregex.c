@@ -264,6 +264,7 @@ static og_status NlpRegexAddWord(og_nlp_th ctrl_nlp_th, int word_start, int word
   request_word->is_regex = TRUE;
   request_word->regex_input_part = input_part;
   request_word->spelling_score = 1.0;
+  request_word->lang_id = DOgLangNil;
 
   int wordCount = 0;
   for (size_t i = 0; i < sentence_word_count; i++)

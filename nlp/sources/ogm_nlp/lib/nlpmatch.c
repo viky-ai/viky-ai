@@ -23,6 +23,8 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpAutoComplete(ctrl_nlp_th));
 
+  IFE(NlpLem(ctrl_nlp_th));
+
   IFE(NlpLtras(ctrl_nlp_th));
 
   // function to chain words in order to re-order them if needed

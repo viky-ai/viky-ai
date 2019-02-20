@@ -21,6 +21,7 @@
     <file>nlpglue.c</file>
     <file>nlpipalias.c</file>
     <file>nlpipword.c</file>
+    <file>nlplem.c</file>
     <file>nlplocale.c</file>
     <file>nlplog.c</file>
     <file>nlpltrac.c</file>

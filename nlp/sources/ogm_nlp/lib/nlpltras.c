@@ -183,6 +183,7 @@ static og_status NlpLtrasAddWord(og_nlp_th ctrl_nlp_th, int Irequest_word_basic,
   request_word->nb_matched_words = 1;
 
   request_word->spelling_score = spelling_score;
+  request_word->lang_id = DOgLangNil;
 
   DONE;
 }
