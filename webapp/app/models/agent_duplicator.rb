@@ -12,6 +12,7 @@ class AgentDuplicator
       include_association :entities_lists, clone_with: EntitiesListsCloner
       include_association :intents, clone_with: IntentsCloner
       include_association :out_arcs
+      include_association :agent_regression_checks
 
       nullify :api_token
 
