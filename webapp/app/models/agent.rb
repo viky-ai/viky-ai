@@ -32,7 +32,7 @@ class Agent < ApplicationRecord
   validates :owner_id, presence: true
   validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
-  validate :owner_presence_in_users
+  validate  :owner_presence_in_users
 
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create

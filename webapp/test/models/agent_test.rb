@@ -37,7 +37,10 @@ class AgentTest < ActiveSupport::TestCase
       description: "Agent A decription"
     )
     assert !agent.save
-    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
+    expected = [
+      "Owner can't be blank",
+      "Users list does not includes agent owner"
+    ]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -104,21 +107,33 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
-  test "Remove users from agent & ensure owner stay present" do
+  test "Ensure owner present" do
     agent = Agent.new(
       name: "Agent 1",
-      agentname: "aaa"
+      agentname: "aaa",
+      memberships: [
+        Membership.new(user_id: users(:admin).id, rights: "all")
+      ]
     )
-    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     assert agent.save
 
-    agent.users = []
-    assert !agent.valid?
-    expected = ["Users list does not includes agent owner"]
+    agent = Agent.new(
+      name: "Agent 2",
+      agentname: "bbb",
+      memberships: []
+    )
+    assert_not agent.save
+    expected = ["Owner can't be blank", "Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
 
-    agent.users << users(:confirmed)
-    assert !agent.save
+    agent = Agent.new(
+      name: "Agent 2",
+      agentname: "bbb",
+      memberships: [
+        Membership.new(user_id: users(:admin).id, rights: "show")
+      ]
+    )
+    assert_not agent.save
     expected = ["Users list does not includes agent owner"]
     assert_equal expected, agent.errors.full_messages
   end
@@ -473,7 +488,7 @@ class AgentTest < ActiveSupport::TestCase
     weather_confirmed.memberships << Membership.new(user: current_user, rights: 'edit')
     assert weather_confirmed.save
 
-    other_agent_with_edit = Agent.create(
+    other_agent_with_edit = Agent.new(
       name: 'Other_agent_with_edit',
       agentname: 'other_agent_with_edit'.parameterize,
       memberships: [
@@ -483,7 +498,7 @@ class AgentTest < ActiveSupport::TestCase
     )
     assert other_agent_with_edit.save
 
-    other_agent_without_edit = Agent.create(
+    other_agent_without_edit = Agent.new(
       name: 'Other_agent_without_edit',
       agentname: 'other_agent_without_edit'.parameterize,
       memberships: [
