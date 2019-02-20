@@ -6,6 +6,7 @@ en:
       update:
         fail: Failed to update the regression test.
       run: "Run"
+      starting: Starting...
       indicator:
         success: "Succeed"
         failure: "Failed"

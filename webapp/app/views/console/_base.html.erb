@@ -229,8 +229,9 @@
           <div class="cts__header">
             <%= render 'console/ts_summary' %>
             <div>
-              <template v-if="summary.count > 0">
-                <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true %>&nbsp;&nbsp;&nbsp;
+              <template v-if="summary.count > 0 && summary.status != 'running'">
+                <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true,
+                  data: { disable_with: t('views.agent_regression_checks.starting') } %>&nbsp;&nbsp;&nbsp;
               </template>
               <a href="#" data-action="console-hide-cts">
                 <span class="icon"><%= icon_close %></span>
