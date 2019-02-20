@@ -7,6 +7,22 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     create_agent_regression_check_fixtures
   end
 
+  def wait_until_tests_suite_is_complete
+    if all('#console-ts').size == 1
+      locator = '#console-ts .cts__header .ts-status'
+    else
+      locator = '#console-footer .ts-status'
+    end
+    i = 0
+    while (
+        find(locator)[:class].include?('ts-status--running') ||
+        find(locator)[:class].include?('ts-status--unknown')
+      ) && i < 10 do
+      sleep 0.2
+      i = i + 1
+    end
+  end
+
   test 'Add new test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
@@ -37,6 +53,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       perform_enqueued_jobs do
         agents(:weather).run_regression_checks
       end
+
+      wait_until_tests_suite_is_complete
 
       assert page.has_content?('3 tests')
       assert page.has_content?('2 success, 1 failure')
@@ -193,6 +211,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       click_button('Yes, delete')
     end
 
+    wait_until_tests_suite_is_complete
+
     within('#console-ts') do
       assert page.has_content?('1 test')
       assert page.has_content?('1 running, 0 success, 0 failure')
@@ -256,6 +276,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     perform_enqueued_jobs do
       agents(:weather).run_regression_checks
     end
+
+    wait_until_tests_suite_is_complete
 
     assert page.has_content?('2 tests')
     assert page.has_content?('1 success, 1 failure')
