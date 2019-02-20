@@ -1,6 +1,6 @@
 class AgentRegressionCheck < ApplicationRecord
   include Positionable
-  positionable_ancestor :agent
+  positionable_ancestor :agent, touch: false
 
   belongs_to :agent
 
