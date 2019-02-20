@@ -15,6 +15,7 @@ class AgentRegressionCheck < ApplicationRecord
   enum state: [:unknown, :success, :failure, :error, :running]
 
   before_destroy :check_running_state
+  before_validation :clean_sentence
 
   def run
     self.state = 'running'
@@ -61,6 +62,10 @@ class AgentRegressionCheck < ApplicationRecord
 
 
   private
+
+    def clean_sentence
+      self.sentence = sentence.strip unless sentence.nil?
+    end
 
     def expected_as_str
       expected.to_s
