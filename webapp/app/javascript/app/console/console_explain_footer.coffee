@@ -13,7 +13,11 @@ class ConsoleExplainFooter
             this.test.id?
 
           needsUpdate: () ->
-            updateState = (this.test.state != 'success' and this.test.state != 'running')
+            updateState = (
+              this.test.state != 'success' and
+              this.test.state != 'running' and
+              this.test.state != 'unknown'
+            )
             this.testExists and updateState
         },
         methods: {

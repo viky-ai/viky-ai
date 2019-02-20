@@ -7,9 +7,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     create_agent_regression_check_fixtures
   end
 
-
-  test 'Add new regression test' do
+  test 'Add new test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
@@ -24,19 +24,35 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
         ]
       }
     )
+
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       first('button').click
       assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure')
+
       click_button 'Add to tests suite'
+      assert page.has_content?('Not run yet...')
+
+      perform_enqueued_jobs do
+        agents(:weather).run_regression_checks
+      end
+
       assert page.has_content?('3 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('2 success, 1 failure')
+      find('#console-footer').click
+    end
+
+    within('#console-ts') do
+      sleep 0.2 # Wait Animation
+      assert page.has_content?('3 tests')
+      assert page.has_content?('2 success, 1 failure')
+      assert 3, find('ul.cts__list').all('li').count
     end
   end
 
 
-  test 'Can only add the first intent' do
+  test 'Can only add test for the first intent' do
     go_to_agent_show(users(:admin), agents(:terminator))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       {
@@ -70,7 +86,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
-  test 'Detect sentence already tested' do
+  test 'Detect interpretation already tested' do
     go_to_agent_show(users(:admin), agents(:weather))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -104,17 +120,17 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
-  test 'Regression test panel' do
+  test 'Display tests suite panel' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure')
       find('#console-footer').click
     end
 
     within('#console-ts') do
       assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 0 success, 1 failure')
       assert 2, find('.cts__list').all('li').count
       assert page.has_content?("Quel temps fera-t-il demain ?")
       assert page.has_content?("What's the weather like in London?")
@@ -125,42 +141,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
         assert page.has_content?("SLUG (Expected)")
         assert page.has_content?("SOLUTION (Expected)")
       end
-    end
-  end
-
-
-  test 'Regression test panel - Add new test' do
-    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
-    within('.console') do
-      fill_in 'interpret[sentence]', with: "new test"
-      first('button').click
-      Nlp::Interpret.any_instance.stubs('proceed').returns(
-        status: 200,
-        body: {
-          interpretations: [
-            {
-              'id' => intents(:weather_forecast).id,
-              'slug' => intents(:weather_forecast).slug,
-              'package' => intents(:weather_forecast).agent.id,
-              'score' => '1.0',
-              'solution' => interpretations(:weather_forecast_tomorrow).solution
-            }
-          ]
-        }
-      )
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
-      click_button 'Add to tests suite'
-      assert page.has_content?('3 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
-      find('#console-footer').click
-    end
-
-    within('#console-ts') do
-      assert page.has_content?('3 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
-      assert 3, find('ul.cts__list').all('li').count
-      assert page.has_content?("new test")
     end
   end
 
@@ -222,7 +202,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
-  test 'Edit test' do
+  test 'Send test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
@@ -272,6 +252,12 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_button?('Update')
       click_button('Update')
     end
-    # TODO test websocket?
+
+    perform_enqueued_jobs do
+      agents(:weather).run_regression_checks
+    end
+
+    assert page.has_content?('2 tests')
+    assert page.has_content?('1 success, 1 failure')
   end
 end

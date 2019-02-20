@@ -13,7 +13,7 @@ class AgentRegressionChecksController < ApplicationController
       redirect_to user_agent_path(@agent.owner, @agent),
         alert: t('views.agent_regression_checks.new.failed_message')
     end
-    notify_ui
+    @agent.run_regression_checks
     render json: @regression_check.to_json, status: :created
   end
 

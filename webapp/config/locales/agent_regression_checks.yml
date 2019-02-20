@@ -10,7 +10,7 @@ en:
         success: "Succeed"
         failure: "Failed"
         running: "Running..."
-        unknown: "Unknown"
+        unknown: "Not run yet..."
       not_found: The regression test cannot be found.
       query: Query
       language: Language
