@@ -64,6 +64,12 @@ PUBLIC(og_nlp) OgNlpInit(struct og_nlp_param *param)
     return NULL;
   }
 
+  IF(NlpLemInit(ctrl_nlp))
+  {
+    NlpThrowError(ctrl_nlp, "OgNlpInit: NlpLemInit failed");
+    return NULL;
+  }
+
   return ctrl_nlp;
 }
 
@@ -84,6 +90,8 @@ PUBLIC(int) OgNlpFlush(og_nlp ctrl_nlp)
 {
 
   OgMsg(ctrl_nlp->hmsg, "", DOgMsgDestInLog, "OgNlpFlush in progress");
+
+  NlpLemFlush(ctrl_nlp);
 
   NlpParseConfFlush(ctrl_nlp);
 
