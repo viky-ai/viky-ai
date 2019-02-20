@@ -40,8 +40,9 @@ end
 owner = @agent.owner
 
 json.interpret_url interpret_user_agent_path(owner, @agent)
+json.update_positions_url update_positions_user_agent_agent_regression_checks_path(owner, @agent)
 
-json.tests @agent.agent_regression_checks,
+json.tests @agent.agent_regression_checks.order(position: :desc),
   partial: 'agent_regression_checks/regression_check',
   as: :test,
   locals: {

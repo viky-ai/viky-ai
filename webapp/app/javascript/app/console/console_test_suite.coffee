@@ -1,5 +1,6 @@
 import Vue from 'vue/dist/vue.esm'
 moment = require('moment');
+draggable = require('vuedraggable');
 
 class ConsoleTestSuite
   constructor: ->
@@ -10,6 +11,7 @@ class ConsoleTestSuite
           el: '#console-ts',
           data: test_suite_data,
           components: {
+            draggable,
             testDiff: {
               props: {
                 test: Object
@@ -39,6 +41,14 @@ class ConsoleTestSuite
             }
           }
           methods: {
+            onUpdate: (evt) ->
+              csrfToken = $('meta[name="csrf-token"]').attr('content')
+              $.ajax
+                url: this.update_positions_url
+                method: 'POST'
+                headers: { "X-CSRF-TOKEN": csrfToken }
+                data: {ids: this.tests.map((test) -> test.id)}
+
             showDetails: (testId) ->
               $("#cts-item-details-#{testId}").show()
               $("#cts-item-summary-#{testId}").hide()

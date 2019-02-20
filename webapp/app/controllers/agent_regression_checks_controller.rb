@@ -1,8 +1,8 @@
 class AgentRegressionChecksController < ApplicationController
   before_action :set_owner
   before_action :set_agent
-  before_action :set_regression_check, only: [:update, :destroy]
   before_action :check_user_rights
+  before_action :set_regression_check, only: [:update, :destroy]
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
@@ -28,6 +28,11 @@ class AgentRegressionChecksController < ApplicationController
     else
       render json: t('views.agent_regression_checks.update.fail'), status: :unprocessable_entity
     end
+  end
+
+  def update_positions
+    AgentRegressionCheck.update_positions(@agent, params[:ids])
+    notify_ui
   end
 
   def destroy
@@ -66,7 +71,7 @@ class AgentRegressionChecksController < ApplicationController
       case action_name
         when 'run'
           access_denied unless current_user.can? :show, @agent
-        when 'create', 'destroy', 'update'
+        when 'create', 'destroy', 'update', 'update_positions'
           access_denied unless current_user.can? :edit, @agent
         else
           access_denied

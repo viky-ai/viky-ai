@@ -91,4 +91,27 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
         format: :js
       }
   end
+
+  #
+  # Update position
+  #
+  test 'Update regression check position allowed' do
+    sign_in users(:admin)
+    post update_positions_user_agent_agent_regression_checks_url(users(:admin), agents(:weather)),
+      params: {
+        ids: [@regression_weather_forecast.id, @regression_weather_question.id],
+      }
+    assert :success
+    assert_nil flash[:alert]
+  end
+
+  test 'Update regression check position forbidden' do
+    sign_in users(:show_on_agent_weather)
+    post update_positions_user_agent_agent_regression_checks_url(users(:admin), agents(:weather)),
+      params: {
+        ids: [@regression_weather_forecast.id, @regression_weather_question.id],
+      }
+    assert_redirected_to agents_url
+    assert_equal 'Unauthorized operation.', flash[:alert]
+  end
 end

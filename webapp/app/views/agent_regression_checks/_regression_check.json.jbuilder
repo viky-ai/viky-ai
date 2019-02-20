@@ -2,6 +2,7 @@ json.id        test.id
 json.state     test.state
 json.sentence  test.sentence
 json.language  test.language
+json.position  test.position
 
 json.state_i18n  t("views.agent_regression_checks.indicator.#{test.state}")
 json.now         test.now

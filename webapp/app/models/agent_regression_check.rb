@@ -1,4 +1,7 @@
 class AgentRegressionCheck < ApplicationRecord
+  include Positionable
+  positionable_ancestor :agent
+
   belongs_to :agent
 
   serialize :expected, JSON

@@ -120,6 +120,7 @@ Rails.application.routes.draw do
         resources :agent_regression_checks, only: [:create, :update, :destroy] do
           collection do
             post :run
+            post :update_positions
           end
         end
 

@@ -30,7 +30,8 @@
     "vue": "^2.5.22",
     "vue-loader": "14.2.2",
     "vue-template-compiler": "^2.5.22",
-    "vue-turbolinks": "^2.0.4"
+    "vue-turbolinks": "^2.0.4",
+    "vuedraggable": "^2.17.0"
   },
   "devDependencies": {
     "webpack-dev-server": "2.11.2"
