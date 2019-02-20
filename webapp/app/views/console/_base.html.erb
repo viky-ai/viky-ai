@@ -267,10 +267,12 @@
                         <% if current_user.can?(:edit, @agent) %>
                           <div class="cts-item__full__detail__actions">
                             <template v-if="test.state == 'running'">
-                              <button disabled class="btn btn--small btn--primary btn--disabled">
+                              <button disabled class="btn btn--small btn--outline btn--primary btn--disabled">
+                                <span class="icon icon--x-small"><%= icon_send %></span>
                                 <%= t('views.agent_regression_checks.send') %>
                               </button>
-                              <button disabled class="btn btn--small btn--destructive btn--disabled">
+                              <button disabled class="btn btn--small btn--outline btn--destructive btn--disabled">
+                                <span class="icon icon--x-small"><%= icon_delete %></span>
                                 <%= t('views.agent_regression_checks.delete') %>
                               </button>
                             </template>
