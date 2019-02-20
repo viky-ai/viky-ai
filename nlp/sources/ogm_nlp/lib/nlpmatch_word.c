@@ -108,6 +108,13 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
       NlpLog(DOgNlpTraceMatch, "    found input part %d in request package %d", Iinput_part,
           interpret_package->self_index)
+      if (request_word->lang_id != DOgLangNil)
+      {
+        struct input_part *input_part = OgHeapGetCell(package->hinput_part, Iinput_part);
+        IFN(input_part) DPcErr;
+        // Lemmatisation is accepted only on expressions with same locale
+        if (input_part->expression->locale != request_word->lang_id) continue;
+      }
       IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part,FALSE));
     }
     while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));

@@ -112,7 +112,7 @@ module Nls
         end
 
         package = available_packages['datetime1']
-        expected_error = "NlsCheckRequestString : empty text in request"
+        expected_error = "NlpInterpretRequestBuildSentence: sentence is empty"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls.interpret_package(package, "")
@@ -130,12 +130,12 @@ module Nls
 
         package = available_packages['datetime1']
 
-        sentence = "abcdefghij"
-        210.times do
+        sentence = "abcdefghi"
+        (64*1024/10).times do
           sentence << "abcdefghij"
         end
 
-        expected_error = "NlsCheckRequestString : too long text in request"
+        expected_error = "NlpInterpretRequestBuildSentence: too long text in sentence"
 
         exception = assert_raises RestClient::ExceptionWithResponse do
           Nls.interpret_package(package, sentence)

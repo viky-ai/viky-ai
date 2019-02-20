@@ -32,20 +32,31 @@ static void NlpJsDuketapeErrorHandler(void *udata, const char *msg)
 
 og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 {
-  ctrl_nlp_th->js->variables = g_string_chunk_new(sizeof(unsigned char));
-  g_queue_init(ctrl_nlp_th->js->variables_name_list);
-  g_queue_init(ctrl_nlp_th->js->variables_values);
+  struct og_ctrl_nlp_js *js = ctrl_nlp_th->js;
 
-  ctrl_nlp_th->js->random_number = g_random_int_range(1, 0xFFFFFF);
+  og_char_buffer heap_name[DPcPathSize];
+  snprintf(heap_name, DPcPathSize, "%s_js_buffer_heap", ctrl_nlp_th->name);
+  js->buffer = OgHeapInit(ctrl_nlp_th->hmsg, heap_name, sizeof(og_char_buffer), 256);
+  IFN(js->buffer)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit : error on OgHeapInit(%s)", heap_name);
+    DPcErr;
+  }
 
-  ctrl_nlp_th->js->duk_perm_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
-  if (ctrl_nlp_th->js->duk_perm_context == NULL)
+  js->variables = g_string_chunk_new(sizeof(unsigned char));
+  g_queue_init(js->variables_name_list);
+  g_queue_init(js->variables_values);
+
+  js->random_number = g_random_int_range(1, 0xFFFFFF);
+
+  js->duk_perm_context = duk_create_heap(NULL, NULL, NULL, ctrl_nlp_th, NlpJsDuketapeErrorHandler);
+  if (js->duk_perm_context == NULL)
   {
     NlpThrowErrorTh(ctrl_nlp_th, "NlpJsInit: unable to init js context");
     DPcErr;
   }
 
-  duk_context *ctx = ctrl_nlp_th->js->duk_perm_context;
+  duk_context *ctx = js->duk_perm_context;
 
   // push og_nlp_th pointer as hidden og_nlp_th variable
   duk_push_pointer(ctx, ctrl_nlp_th);
@@ -73,9 +84,9 @@ og_status NlpJsInit(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpJsInitIsolatedEval(ctrl_nlp_th));
 
-  ctrl_nlp_th->js->duk_request_context = NULL;
+  js->duk_request_context = NULL;
 
-  ctrl_nlp_th->js->reset_counter = 0;
+  js->reset_counter = 0;
   DONE;
 }
 
@@ -275,6 +286,9 @@ og_status NlpJsFlush(og_nlp_th ctrl_nlp_th)
   g_string_chunk_free(ctrl_nlp_th->js->variables);
   ctrl_nlp_th->js->variables = NULL;
 
+  OgHeapFlush(ctrl_nlp_th->js->buffer);
+  ctrl_nlp_th->js->buffer = NULL;
+
   duk_context *ctx = ctrl_nlp_th->js->duk_perm_context;
   if (ctx != NULL)
   {
@@ -333,6 +347,8 @@ og_bool NlpJsStackRequestWipe(og_nlp_th ctrl_nlp_th)
   duk_pop(perm_ctx);
   ctrl_nlp_th->js->duk_request_context = NULL;
 
+  IFE(OgHeapResetWithoutReduce(ctrl_nlp_th->js->buffer));
+
   return TRUE;
 }
 
@@ -370,6 +386,8 @@ og_bool NlpJsStackLocalWipe(og_nlp_th ctrl_nlp_th)
   g_queue_clear(ctrl_nlp_th->js->variables_values);
   g_string_chunk_clear(ctrl_nlp_th->js->variables);
 
+  IFE(OgHeapReset(ctrl_nlp_th->js->buffer));
+
   return cleaned;
 }
 
@@ -393,18 +411,42 @@ og_status NlpJsEval(og_nlp_th ctrl_nlp_th, int original_js_script_size, og_strin
     CONT;
   }
 
-  // use a localbuffer
+  // check size according to VLA use on stack, use a heap instead
+  if (original_js_script_size > DOgNlpInterpretationSolutionMaxLength)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval : js script size is too long");
+    DPcErr;
+  }
+
+  // use heap buffer
+  // // 1 is \0 and 6 is minimal length for (\n\n)\0
+  int buffer_size = original_js_script_size + 1 + original_js_script_size + 6;
+  og_char_buffer *buffer = OgHeapGetBufferReuse(ctrl_nlp_th->js->buffer, buffer_size);
+  if (buffer == NULL)
+  {
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: OgHeapGetBufferReuse failed"));
+    DPcErr;
+  }
+
+  // 1 is \0
+  og_char_buffer *js_script = OgHeapGetBufferNew(ctrl_nlp_th->js->buffer, original_js_script_size + 1);
+  if (js_script == NULL)
+  {
+    IFE(NlpThrowErrorTh(ctrl_nlp_th, "NlpJsEval: OgHeapGetBufferNew failed"));
+    DPcErr;
+  }
+
   int js_script_size = original_js_script_size;
-  og_char_buffer js_script[js_script_size + 1];
   snprintf(js_script, js_script_size + 1, "%.*s", original_js_script_size, original_js_script);
 
   // trim
   og_string trimed_script = g_strstrip(js_script);
   int trimed_script_length = strlen(trimed_script);
+  IFE(OgHeapSetCellsUsed(ctrl_nlp_th->js->buffer, trimed_script_length + 1));
 
   // 6 is minimal length for (\n\n)\0
   int enhanced_script_size = trimed_script_length + 6;
-  og_char_buffer enhanced_script[enhanced_script_size];
+  og_char_buffer *enhanced_script = OgHeapGetBufferNew(ctrl_nlp_th->js->buffer, enhanced_script_size);
   enhanced_script[0] = '\0';
 
   // starting and ending '{' '}' => surround by '(' ')'

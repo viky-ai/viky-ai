@@ -764,8 +764,8 @@ static og_status NlpSolutionComputeJSRecursive(og_nlp_th ctrl_nlp_th, struct req
       {
         struct expression *ex = request_expression->expression;
         NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpSolutionComputeJSRecursive : Error creating json_solution_computed_value for expression '%s' in '%s' '%s'",
-            ex->text, ex->interpretation->slug, ex->interpretation->id);
+            "NlpSolutionComputeJSRecursive : Error creating json_solution_computed_value for expression '%s' '%s' in '%s' '%s'",
+            ex->text, ex->interpretation->id, ex->interpretation->slug, ex->interpretation->id);
         DPcErr;
       }
 

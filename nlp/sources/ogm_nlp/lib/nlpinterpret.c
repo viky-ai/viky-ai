@@ -578,10 +578,23 @@ static og_status NlpInterpretRequestBuildSentence(og_nlp_th ctrl_nlp_th, json_t 
   {
     ctrl_nlp_th->request_sentence = json_string_value(json_sentence);
 
+
     if (!g_utf8_validate(ctrl_nlp_th->request_sentence, -1, NULL))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: sentence contain invalid UTF-8 : '%s'",
           ctrl_nlp_th->request_sentence);
+      DPcErr;
+    }
+
+    if (ctrl_nlp_th->request_sentence[0] == '\0')
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: sentence is empty");
+      DPcErr;
+    }
+
+    if (strlen(ctrl_nlp_th->request_sentence) >= DOgNlpInterpretationSentenceMaxLength )
+    {
+      NlpThrowErrorTh(ctrl_nlp_th, "NlpInterpretRequestBuildSentence: too long text in sentence");
       DPcErr;
     }
 
