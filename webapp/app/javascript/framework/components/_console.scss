@@ -375,6 +375,10 @@
 
     .c-intent__footer__status{
       font-size: .8em;
+      .ts-status{
+        vertical-align: unset;
+
+      }
     }
 
   }
