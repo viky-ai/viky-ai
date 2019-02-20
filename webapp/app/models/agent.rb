@@ -211,6 +211,7 @@ class Agent < ApplicationRecord
     nlp_updated_at >= updated_at
   end
 
+
   private
 
     def search_available_agents(conditions, q)
@@ -251,6 +252,17 @@ class Agent < ApplicationRecord
     end
 
     def nlp_push
+      agent_regression_checks.update_all(state: 'running')
+      notify_tests_suite_ui
       Nlp::Package.new(self).push
+    end
+
+    def notify_tests_suite_ui
+      ActionCable.server.broadcast(
+        'agent_regression_checks_channel',
+        agent_id: self.id,
+        timestamp: Time.now.to_f * 1000,
+        payload: JSON.parse(regression_checks_to_json)
+      )
     end
 end
