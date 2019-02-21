@@ -1,4 +1,5 @@
-$(document).on "turbolinks:load", ->
+document.addEventListener "turbolinks:load", ->
+
   if $('body').data('controller-name') == 'chatbots' && $('body').data('controller-action') == 'show'
     unless App.chat_session
       App.chat_session = App.cable.subscriptions.create "ChatSessionChannel",

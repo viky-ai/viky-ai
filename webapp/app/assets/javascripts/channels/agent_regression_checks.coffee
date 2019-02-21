@@ -1,7 +1,10 @@
-$(document).on "turbolinks:load", ->
+document.addEventListener "turbolinks:load", ->
+
   if $('.console-container').length == 1
-    agent_id = $('.agent-header').data()['agent_id']
-    App.agent_regression_checks = App.cable.subscriptions.create { channel: 'AgentRegressionChecksChannel', agent_id: agent_id },
+    agent_id = document.querySelector('main > .agent-header').dataset['agent_id']
+    App.agent_regression_checks = App.cable.subscriptions.create {
+        channel: 'AgentRegressionChecksChannel', agent_id: agent_id
+      },
       received: (data) ->
         if data.timestamp > App.ConsoleTestSuite.timestamp
           App.ConsoleFooter.summary = data.payload.summary
