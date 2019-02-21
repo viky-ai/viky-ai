@@ -15,6 +15,7 @@ en:
       not_found: The regression test cannot be found.
       query: Query
       language: Language
+      now: Now
       result:
         slug:
           expected_got_ok_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
