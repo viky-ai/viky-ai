@@ -54,6 +54,17 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   end
 
 
+  test 'Sentence cleanup before save' do
+    agent_regression_check = AgentRegressionCheck.new(
+      agent: agents(:weather),
+      sentence: ' Ecrire des tests tu dois ',
+      expected: '{ "citation": true, "author": "Olivier D."}'
+    )
+    assert agent_regression_check.save
+    assert_equal "Ecrire des tests tu dois", agent_regression_check.sentence
+  end
+
+
   test 'Sentence maximum length' do
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
@@ -67,6 +78,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     }
     assert_equal expected, agent_regression_check.errors.messages
   end
+
 
   test 'Expected maximum length' do
     agent_regression_check = AgentRegressionCheck.new(
@@ -84,6 +96,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal expected, agent_regression_check.errors.messages
   end
 
+
   test 'AgentRegressionCheck destroy' do
     agent_regression_check = @regression_weather_question
     agent_regression_check_id = agent_regression_check.id
@@ -93,6 +106,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal 0, AgentRegressionCheck.where(id: agent_regression_check_id).count
   end
 
+
   test 'Running test should not be deleted' do
     @regression_weather_forecast.state = 'running'
     assert @regression_weather_forecast.save
@@ -101,6 +115,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     expected_error = { base: ["Regression test cannot be deleted in running state."] }
     assert_equal expected_error, @regression_weather_forecast.errors.messages
   end
+
 
   test 'Run a successful agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
@@ -138,6 +153,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_equal agent_regression_check.got, agent_regression_check.expected
   end
 
+
   test 'Run a failed agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -161,6 +177,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_not_equal agent_regression_check.got, agent_regression_check.expected
   end
 
+
   test 'Run a succes agent test but empty nothing match' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
@@ -179,6 +196,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_not_equal agent_regression_check.got, agent_regression_check.expected
   end
 
+
   test 'Run an agent test but NLP is unreachable' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 404,
@@ -193,6 +211,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert agent_regression_check.unknown?
     assert_empty agent_regression_check.got
   end
+
 
   test 'Run an erroneous agent test' do
     Nlp::Interpret.any_instance.stubs('proceed').returns(
