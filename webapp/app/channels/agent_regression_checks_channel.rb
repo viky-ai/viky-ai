@@ -1,5 +1,10 @@
 class AgentRegressionChecksChannel < ApplicationCable::Channel
   def subscribed
-    stream_from 'agent_regression_checks_channel'
+    stop_all_streams
+    stream_from "agent_regression_checks_channel_#{params[:agent_id]}"
+  end
+
+  def unsubscribed
+    stop_all_streams
   end
 end
