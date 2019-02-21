@@ -41,6 +41,7 @@
 #define DOgNlpMaximumRegex          100
 #define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
 #define DOgNlpMaxEntitySize   512
+#define DOgNlpMaxNbWordsPerEntity 10
 
 #define DOgNlpMaximumOwnedLock      16
 

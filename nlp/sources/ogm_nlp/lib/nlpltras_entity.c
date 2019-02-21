@@ -84,9 +84,9 @@ og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package 
     }
     double score_spelling = pow(trf->final_score, 4);
     NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: found entity '%s' with score %.2f", words, score_spelling);
-    og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, words, strlen(words), FALSE);
-    IFE(status);
+//    og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
+//        request_word_list_length, words, strlen(words), FALSE);
+//    IFE(status);
   }
 
   IFE(OgLtrasTrfsDestroy(ctrl_nlp_th->hltras, trfs));

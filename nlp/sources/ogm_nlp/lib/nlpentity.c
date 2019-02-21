@@ -47,12 +47,9 @@ og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, o
     DONE;
   }
 
-  p = buffer + ibuffer;
-  OggNout(nb_words, &p);
-
-  ibuffer = p - buffer;
   memcpy(buffer + ibuffer, string_word, length_string_word);
   ibuffer += length_string_word;
+  buffer[ibuffer++] = ' ';
   buffer[ibuffer++] = '\1';
 
   p = buffer + ibuffer;
@@ -130,13 +127,10 @@ og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package)
     do
     {
       IFE(retour);
-      int nb_words;
       unsigned char *entity = out;
-      IFE(DOgPnin4(ctrl_nlp_th->herr,&entity,&nb_words));
-      int offset_nb_words = entity - out;
 
       int sep = -1;
-      for (int i = offset_nb_words; i < iout; i++)
+      for (int i = 0; i < iout; i++)
       {
         if (out[i] == '\1')
         {
@@ -155,7 +149,7 @@ og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package)
       unsigned char *p = out + sep + 1;
       IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
       expression = (struct expression *) expression_ptr;
-      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : '%s'", sep-offset_nb_words, entity, expression->text);
+      OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog, "  %.*s : '%s'", sep, entity, expression->text);
     }
     while ((retour = OgAufScann(package->ha_entity, &iout, out, nstate0, &nstate1, states)));
   }

@@ -6,24 +6,47 @@
  */
 #include "ogm_nlp.h"
 
-static og_status NlpMatchEntitiesNgrams(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    int global_max_nb_words_per_entity);
-static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int ngram_size);
+enum nlp_match_entity_type
+{
+  nlp_match_entity_type_Nil = 0, nlp_match_entity_type_Partial, nlp_match_entity_type_Full
+};
+
+struct nlp_match_entities_ctrl
+{
+  og_nlp_th ctrl_nlp_th;
+  struct interpret_package *interpret_package;
+  struct request_word *request_word_list[DOgNlpMaxNbWordsPerEntity];
+  int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
+  int request_word_list_length;
+  unsigned char string_entity[DOgNlpMaxEntitySize];
+};
+
+static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
+static og_status NlpMatchEntitiesAddWord(struct nlp_match_entities_ctrl *me_ctrl, struct request_word *request_word);
+static og_status NlpMatchEntitiesRemoveWord(struct nlp_match_entities_ctrl *me_ctrl);
+static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ctrl *me_ctrl);
+static og_status NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl, enum nlp_match_entity_type *match_entity_type,
+    struct expression **pexpression);
+static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out);
 
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
 {
-  int global_max_nb_words_per_entity = 0;
+  struct interpret_package *interpret_packages = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, 0);
+  IFN(interpret_packages) DPcErr;
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
   {
-    struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
-    IFN(interpret_package) DPcErr;
-    package_t package = interpret_package->package;
-    if (global_max_nb_words_per_entity < package->max_nb_words_per_entity) global_max_nb_words_per_entity =
-        package->max_nb_words_per_entity;
+    IFE(NlpMatchEntitiesInPackage(ctrl_nlp_th, interpret_packages + i));
   }
+  DONE;
+}
 
-  if (global_max_nb_words_per_entity > DOgNlpMaxWordsPerEntity) global_max_nb_words_per_entity = DOgNlpMaxWordsPerEntity;
+static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package)
+{
+  struct nlp_match_entities_ctrl me_ctrl[1];
+  memset(me_ctrl, 0, sizeof(struct nlp_match_entities_ctrl));
+  me_ctrl->ctrl_nlp_th = ctrl_nlp_th;
+  me_ctrl->interpret_package = interpret_package;
 
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
@@ -33,147 +56,166 @@ og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
     // ignore non basic word (build from ltras)
     if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
     if (rw->is_expression_punctuation) continue;
-    IFE(NlpMatchEntitiesNgrams(ctrl_nlp_th, rw, global_max_nb_words_per_entity));
-  }
 
+    IFE(NlpMatchEntitiesAddWord(me_ctrl, rw));
+    IFE(NlpMatchEntitiesInPackageRecursive(me_ctrl));
+    IFE(NlpMatchEntitiesRemoveWord(me_ctrl));
+  }
   DONE;
 }
 
-static og_status NlpMatchEntitiesNgrams(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    int global_max_nb_words_per_entity)
+static og_status NlpMatchEntitiesAddWord(struct nlp_match_entities_ctrl *me_ctrl, struct request_word *request_word)
 {
-  for (int i = 2; i <= global_max_nb_words_per_entity; i++)
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+
+  int string_entity_length = 0;
+  if (me_ctrl->request_word_list_length > 0)
   {
-    IFE(NlpMatchEntitiesNgram(ctrl_nlp_th, request_word, i));
+    string_entity_length = me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 1];
   }
+  me_ctrl->request_word_list[me_ctrl->request_word_list_length] = request_word;
+
+  og_string normalized_string_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+  IFN(normalized_string_word) DPcErr;
+  int length_normalized_string_word = request_word->length;
+  if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
+  {
+    // We do not store very long entities
+    NlpLog(DOgNlpTraceMinimal, "NlpMatchEntitiesAddWord: entity is too long");
+    DONE;
+  }
+  memcpy(me_ctrl->string_entity + string_entity_length, normalized_string_word, length_normalized_string_word);
+
+  string_entity_length += length_normalized_string_word;
+  me_ctrl->string_entity[string_entity_length++] = ' ';
+  me_ctrl->string_entity[string_entity_length] = 0;
+
+  me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length] = string_entity_length;
+
+  me_ctrl->request_word_list_length++;
   DONE;
 }
 
-static og_status NlpMatchEntitiesNgram(og_nlp_th ctrl_nlp_th, struct request_word *request_word, int ngram_size)
+static og_status NlpMatchEntitiesRemoveWord(struct nlp_match_entities_ctrl *me_ctrl)
 {
-  struct request_word *request_word_list[ngram_size];
-  int request_word_list_length = 0;
+  me_ctrl->request_word_list_length--;
+  int string_entity_length = me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 1];
 
-  request_word_list[request_word_list_length++] = request_word;
+  me_ctrl->string_entity[string_entity_length] = 0;
+  DONE;
+}
 
-  for (struct request_word *rw = request_word->next; rw; rw = rw->next)
+static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ctrl *me_ctrl)
+{
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesInPackageRecursive: request_word to search is '%s' length=%d",
+      me_ctrl->string_entity, me_ctrl->request_word_list_length);
+
+  struct expression *expression;
+  enum nlp_match_entity_type match_entity_type;
+  IFE(NlpMatchEntity(me_ctrl, &match_entity_type, &expression));
+
+  switch (match_entity_type)
+  {
+    case nlp_match_entity_type_Nil:
+      // Don't go any further, or look for lemmatisation on last word or spelling on the beginning string
+      DONE;
+    case nlp_match_entity_type_Partial:
+      // No entity found but go on, we are on the right track
+      break;
+    case nlp_match_entity_type_Full:
+      // Found an entity and go on for more
+      break;
+  }
+
+  struct request_word *last_request_word = me_ctrl->request_word_list[me_ctrl->request_word_list_length - 1];
+  struct request_word *next_request_word = last_request_word->next;
+
+  IFN(next_request_word) DONE;
+
+  for (struct request_word *rw = next_request_word; rw; rw = rw->next)
   {
     // ignore non basic word (build from ltras)
     if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;
     if (rw->is_expression_punctuation) continue;
-    request_word_list[request_word_list_length++] = rw;
-    if (request_word_list_length >= ngram_size) break;
-  }
 
-  if (request_word_list_length != ngram_size) DONE;
-
-  int string_entity_length = 0;
-  unsigned char string_entity[DOgNlpMaxEntitySize];
-
-  for (int i = 0; i < request_word_list_length; i++)
-  {
-    og_string normalized_string_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word_list[i]->start);
-    IFN(normalized_string_word) DPcErr;
-    int length_normalized_string_word = request_word_list[i]->length;
-    if (i > 0)
-    {
-      string_entity[string_entity_length++] = ' ';
-    }
-    if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
-    {
-      // We do not store very long entities
-      NlpLog(DOgNlpTraceMinimal, "NlpMatchEntitiesNgram: expression is too long");
-      DONE;
-    }
-    memcpy(string_entity + string_entity_length, normalized_string_word, length_normalized_string_word);
-    string_entity_length += length_normalized_string_word;
-  }
-
-  string_entity[string_entity_length] = 0;
-
-  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgram: entity to search is '%s'", string_entity);
-
-  int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
-  for (int i = 0; i < interpret_package_used; i++)
-  {
-    struct interpret_package *interpret_package = OgHeapGetCell(ctrl_nlp_th->hinterpret_package, i);
-    IFN(interpret_package) DPcErr;
-    // must_spellcheck takes a lot of time when it is TRUE (do the spell check on entities
-    // So, for the moment we set it to FALSE, because it is better to answer fast than to answer some corrections
-    // We will see later to have an option to enable or disable spellcheck in the package
-    og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, string_entity, string_entity_length, FALSE);
-    IFE(status);
+    IFE(NlpMatchEntitiesAddWord(me_ctrl, rw));
+    IFE(NlpMatchEntitiesInPackageRecursive(me_ctrl));
+    IFE(NlpMatchEntitiesRemoveWord(me_ctrl));
+    break;
   }
 
   DONE;
 }
 
-og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
-    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length, og_bool must_spellcheck)
+static og_status NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl, enum nlp_match_entity_type *match_entity_type,
+    struct expression **pexpression)
 {
-  package_t package = interpret_package->package;
-  if (request_word_list_length > package->max_nb_words_per_entity) DONE;
-  if (package->nb_entities <= 0) DONE;
+  *match_entity_type = nlp_match_entity_type_Nil;
 
-  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: entity to search is '%s' must_spellcheck=%d", string_entity,
-      must_spellcheck);
-
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+  package_t package = me_ctrl->interpret_package->package;
   unsigned char buffer[DPcAutMaxBufferSize + 9];
-  unsigned char *p;
   int ibuffer = 0;
 
-  p = buffer + ibuffer;
-  OggNout(request_word_list_length, &p);
-
-  ibuffer = p - buffer;
-  memcpy(buffer + ibuffer, string_entity, string_entity_length);
+  int string_entity_length = strlen(me_ctrl->string_entity);
+  memcpy(buffer + ibuffer, me_ctrl->string_entity, string_entity_length);
   ibuffer += string_entity_length;
-  buffer[ibuffer++] = '\1';
+  buffer[ibuffer] = 0;
 
   unsigned char out[DPcAutMaxBufferSize + 9];
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-  if ((retour = OgAufScanf(package->ha_entity, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states)))
+  // Checking if we have at least one result
+  if ((retour = OgAufScanf(package->ha_entity, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states))) do
   {
-    do
+    IFE(retour);
+    if (retour && iout > 0)
     {
-      IFE(retour);
-      long expression_ptr;
-      struct expression *expression;
-      p = out;
-      IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
-      expression = (struct expression *) expression_ptr;
-      NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: found expression '%s'", expression->text);
-
-      if (expression->input_parts_nb != request_word_list_length)
+      if (out[0] == '\1')
       {
-        NlpThrowErrorTh(ctrl_nlp_th,
-            "NlpMatchEntitiesNgramInPackage: expression->input_parts_nb (%d) != request_word_list_length (%d)",
-            expression->input_parts_nb, request_word_list_length);
-        DPcErr;
-
+        NlpLog(DOgNlpTraceMatch, "NlpMatchEntity: found full '%s'", buffer);
+        *match_entity_type = nlp_match_entity_type_Full;
+        IFE(NlpMatchEntityAdd(me_ctrl, iout - 1, out + 1));
       }
-      for (int i = 0; i < request_word_list_length; i++)
+      else
       {
-        og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word_list[i], interpret_package,
-            expression->input_parts[i].self_index, FALSE);
-        IFE(status);
+        NlpLog(DOgNlpTraceMatch, "NlpMatchEntity: found partial '%s'", buffer);
+        *match_entity_type = nlp_match_entity_type_Partial;
+        break;
       }
-
     }
-    while ((retour = OgAufScann(package->ha_entity, &iout, out, nstate0, &nstate1, states)));
   }
+  while ((retour = OgAufScann(package->ha_entity, &iout, out, nstate0, &nstate1, states)));
 
-  if (must_spellcheck)
+  DONE;
+}
+
+static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out)
+{
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+
+  long expression_ptr;
+  unsigned char *p = out;
+  IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
+  struct expression *expression = (struct expression *) expression_ptr;
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: found expression '%s'", expression->text);
+
+  if (expression->input_parts_nb != me_ctrl->request_word_list_length)
   {
-    og_status status = NlpLtrasEntityPackage(ctrl_nlp_th, interpret_package, request_word_list,
-        request_word_list_length, string_entity, string_entity_length);
+    NlpThrowErrorTh(ctrl_nlp_th,
+        "NlpMatchEntitiesNgramInPackage: expression->input_parts_nb (%d) != request_word_list_length (%d)",
+        expression->input_parts_nb, me_ctrl->request_word_list_length);
+    DPcErr;
+
+  }
+  for (int i = 0; i < me_ctrl->request_word_list_length; i++)
+  {
+    og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, me_ctrl->request_word_list[i],
+        me_ctrl->interpret_package, expression->input_parts[i].self_index, FALSE);
     IFE(status);
   }
 
   DONE;
 }
-
