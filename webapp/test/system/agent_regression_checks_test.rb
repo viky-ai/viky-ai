@@ -18,9 +18,9 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     while (
         find(locator)[:class].include?('ts-status--running') ||
         find(locator)[:class].include?('ts-status--unknown')
-      ) && i < 10 do
+      ) && i < 20 do
       ap find(locator)[:class]
-      sleep 0.2
+      sleep 0.25
       i = i + 1
     end
   end
@@ -271,6 +271,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_content?('Failed')
       assert page.has_button?('Update')
       click_button('Update')
+      assert page.has_content?('Not run yet...')
     end
 
     perform_enqueued_jobs do
