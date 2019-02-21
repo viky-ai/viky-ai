@@ -7,7 +7,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   Capybara.register_driver(:headless_chrome) do |app|
     capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
       chromeOptions: {
-        args: %w{headless no-sandbox disable-dev-shm-usage window-size=1200,720}
+        args: %w{headless no-sandbox window-size=1200,720}
       }
     )
     driver_options = {
