@@ -69,7 +69,12 @@ class ConsoleTestSuite
                 url: deleteUrl,
                 method: "DELETE",
                 headers: { "X-CSRF-TOKEN": csrfToken }
-                error: (data) -> App.Message.alert(data.responseText)
+                error: (data) ->
+                  App.Message.alert(data.responseText)
+                success: (response) =>
+                  this.summary = response.tests_suite.summary
+                  this.tests = response.tests_suite.tests
+                  App.ConsoleFooter.summary = response.tests_suite.summary
 
             cancelRemove: (event) ->
               confirmBlock = $(event.target).parents('.cts-item-delete')
@@ -81,7 +86,12 @@ class ConsoleTestSuite
               $('.panels-switch__panel').last()
                 .addClass('panels-switch__panel--hide')
                 .removeClass('panels-switch__panel--show')
-              $("body").trigger('console-submit-form', {sentence: regressionCheck.sentence, language: regressionCheck.language, now: regressionCheck.now})
+              $("body").trigger('console-submit-form', {
+                  sentence: regressionCheck.sentence,
+                  language: regressionCheck.language,
+                  now: regressionCheck.now
+                }
+              )
           },
 
         })

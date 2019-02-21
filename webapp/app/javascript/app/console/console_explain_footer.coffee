@@ -37,7 +37,12 @@ class ConsoleExplainFooter
                   }
                 }
               }
-              error: (data) =>
+              success: (response) =>
+                this.test = response.test
+                App.ConsoleFooter.summary = response.tests_suite.summary
+                App.ConsoleTestSuite.summary = response.tests_suite.summary
+                App.ConsoleTestSuite.tests = response.tests_suite.tests
+              error: (data) ->
                 App.Message.alert(data.responseText)
 
           addTest: (packageId, id, solution) ->
@@ -59,8 +64,13 @@ class ConsoleExplainFooter
                   }
                 }
               }
-              success: (data) =>
-                this.test = data
+              error: (data) ->
+                App.Message.alert(data.responseText)
+              success: (response) =>
+                this.test = response.test
+                App.ConsoleFooter.summary = response.tests_suite.summary
+                App.ConsoleTestSuite.summary = response.tests_suite.summary
+                App.ConsoleTestSuite.tests = response.tests_suite.tests
         }
       })
     else

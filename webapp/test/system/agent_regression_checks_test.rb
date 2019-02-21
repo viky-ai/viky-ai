@@ -13,11 +13,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     else
       locator = '#console-footer .ts-status'
     end
+    sleep 0.2
     i = 0
     while (
         find(locator)[:class].include?('ts-status--running') ||
         find(locator)[:class].include?('ts-status--unknown')
       ) && i < 10 do
+      ap find(locator)[:class]
       sleep 0.2
       i = i + 1
     end
@@ -210,8 +212,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_link?('No, cancel')
       click_button('Yes, delete')
     end
-
-    wait_until_tests_suite_is_complete
 
     within('#console-ts') do
       assert page.has_content?('1 test')

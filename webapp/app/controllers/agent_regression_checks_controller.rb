@@ -9,12 +9,16 @@ class AgentRegressionChecksController < ApplicationController
   def create
     @regression_check = AgentRegressionCheck.new(regression_check_params)
     @regression_check.agent = @agent
-    unless @regression_check.save
-      redirect_to user_agent_path(@agent.owner, @agent),
-        alert: t('views.agent_regression_checks.new.failed_message')
+
+    if @regression_check.save
+      @agent.run_regression_checks
+      render json: {
+        test: JSON.parse(@regression_check.to_json),
+        tests_suite: JSON.parse(@agent.regression_checks_to_json)
+      }, status: :created
+    else
+      render json: t('views.agent_regression_checks.new.failed_message'), status: :unprocessable_entity
     end
-    @agent.run_regression_checks
-    render json: @regression_check.to_json, status: :created
   end
 
   def run
@@ -23,8 +27,13 @@ class AgentRegressionChecksController < ApplicationController
 
   def update
     if @regression_check.update(regression_check_params)
+      @regression_check.state = 'unknown'
+      @regression_check.save
       @agent.run_regression_checks
-      head :ok
+      render json: {
+        test: JSON.parse(@regression_check.to_json),
+        tests_suite: JSON.parse(@agent.regression_checks_to_json)
+      }, status: :ok
     else
       render json: t('views.agent_regression_checks.update.fail'), status: :unprocessable_entity
     end
@@ -36,12 +45,15 @@ class AgentRegressionChecksController < ApplicationController
   end
 
   def destroy
-    unless @regression_check.destroy
+    if @regression_check.destroy
+      notify_ui
+      render json: {
+        test: JSON.parse(@regression_check.to_json),
+        tests_suite: JSON.parse(@agent.regression_checks_to_json)
+      }
+    else
       render json: @regression_check.errors.messages[:base], status: :unprocessable_entity
-      return
     end
-    notify_ui
-    head :no_content
   end
 
   private
