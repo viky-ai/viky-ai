@@ -7,23 +7,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     create_agent_regression_check_fixtures
   end
 
-  def wait_until_tests_suite_is_complete
-    if all('#console-ts').size == 1
-      locator = '#console-ts .cts__header .ts-status'
-    else
-      locator = '#console-footer .ts-status'
-    end
-    sleep 0.2
-    i = 0
-    while (
-        find(locator)[:class].include?('ts-status--running') ||
-        find(locator)[:class].include?('ts-status--unknown')
-      ) && i < 20 do
-      ap find(locator)[:class]
-      sleep 0.25
-      i = i + 1
-    end
-  end
 
   test 'Add new test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
@@ -52,21 +35,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       click_button 'Add to tests suite'
       assert page.has_content?('Not run yet...')
 
-      perform_enqueued_jobs do
-        agents(:weather).run_regression_checks
-      end
-
-      wait_until_tests_suite_is_complete
-
       assert page.has_content?('3 tests')
-      assert page.has_content?('2 success, 1 failure')
       find('#console-footer').click
     end
 
     within('#console-ts') do
       sleep 0.2 # Wait Animation
       assert page.has_content?('3 tests')
-      assert page.has_content?('2 success, 1 failure')
       assert 3, find('ul.cts__list').all('li').count
     end
   end
@@ -274,13 +249,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_content?('Not run yet...')
     end
 
-    perform_enqueued_jobs do
-      agents(:weather).run_regression_checks
-    end
-
-    wait_until_tests_suite_is_complete
-
     assert page.has_content?('2 tests')
-    assert page.has_content?('1 success, 1 failure')
   end
 end

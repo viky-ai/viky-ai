@@ -2,7 +2,7 @@ if @agent.agent_regression_checks.exists?
   visible = true
   status = @agent.regression_checks_global_state
   count  = @agent.agent_regression_checks.count
-  running_count = @agent.agent_regression_checks.running.count
+  running_count = @agent.agent_regression_checks.where(state: [:running, :unknown]).count
   success_count = @agent.agent_regression_checks.success.count
   failed_count = @agent.agent_regression_checks.where(state: [:failure, :error]).count
   last_update = @agent.agent_regression_checks.order('updated_at').last.updated_at
