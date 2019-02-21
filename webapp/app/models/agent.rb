@@ -259,7 +259,7 @@ class Agent < ApplicationRecord
 
     def notify_tests_suite_ui
       ActionCable.server.broadcast(
-        'agent_regression_checks_channel',
+        "agent_regression_checks_channel_#{self.id}",
         agent_id: self.id,
         timestamp: Time.now.to_f * 1000,
         payload: JSON.parse(regression_checks_to_json)
