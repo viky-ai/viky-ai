@@ -43,13 +43,17 @@
                 </div>
                 <div class="cts-item__full__detail__value">{{ test.sentence }}</div>
 
-                <div class="cts-item__full__detail__label">
-                  <%= t('views.agent_regression_checks.language') %>
-                </div>
-                <div class="cts-item__full__detail__value">{{ test.language }}</div>
+                <template v-if="test.language != '*'">
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.language') %>
+                  </div>
+                  <div class="cts-item__full__detail__value">{{ test.language }}</div>
+                </template>
 
                 <template v-if="test.now">
-                  <div class="cts-item__full__detail__label"><%= t('views.agent_regression_checks.now') %></div>
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.now') %>
+                  </div>
                   <div class="cts-item__full__detail__value">{{ test.now }}</div>
                 </template>
 
