@@ -34,6 +34,9 @@ en:
       regression_check:
         add: "Add to tests suite"
         update: Update
+        sentence_too_long:
+          Adding this to the tests suite is not possible because the text to
+          analyze exceeds 200 characters ({{test.sentence.length}} characters).
         summary:
           tests_suite: Tests suite
           tests:

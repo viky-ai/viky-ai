@@ -372,15 +372,16 @@
     justify-content: space-between;
     align-items: center;
     margin-top: .5em;
-
     .c-intent__footer__status{
       font-size: .8em;
       .ts-status{
         vertical-align: unset;
-
       }
     }
-
+    .c-intent__footer__action__note{
+      font-size: .8em;
+      color: #666;
+    }
   }
 
 }

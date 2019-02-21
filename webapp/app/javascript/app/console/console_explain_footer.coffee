@@ -9,16 +9,17 @@ class ConsoleExplainFooter
           test: regression_check
         },
         computed: {
-          testExists: () ->
+          exists: ->
             this.test.id?
 
-          needsUpdate: () ->
-            updateState = (
-              this.test.state != 'success' and
-              this.test.state != 'running' and
-              this.test.state != 'unknown'
-            )
-            this.testExists and updateState
+          tooLong: ->
+            this.test.sentence.length > 200
+
+          canAdd: ->
+            !this.tooLong && !this.test.id?
+
+          canUpdate:  ->
+            (this.test.state == 'error' || this.test.state == 'failure') && this.test.id?
         },
         methods: {
           updateTest: (packageId, id, solution) ->

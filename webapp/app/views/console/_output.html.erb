@@ -73,7 +73,7 @@
             <% if interpretation_index.zero? %>
               <div class="c-intent__footer" id="console-intent-footer">
                 <div class="c-intent__footer__status">
-                  <template v-if="testExists">
+                  <template v-if="exists">
                     <span :class="'ts-status ts-status--' + test.state"></span>
                     {{ test.state_i18n }}
                   </template>
@@ -82,17 +82,21 @@
                   <% if current_user.can?(:edit, agent) %>
                     <% packageId = Intent.find(aliasable['id']).agent.id %>
                     <% aliasableId = aliasable['id'] %>
-                    <% solution = aliasable['solution'].to_json %>
+                    <% solution = escape_javascript(aliasable['solution'].to_json) %>
                     <button class="btn btn--small btn--primary"
-                       v-if="!testExists"
-                       v-on:click="addTest('<%= packageId %>', '<%= aliasableId %>', '<%= escape_javascript(solution) %>')">
-                       <%= t('views.console.regression_check.add') %>
+                      v-if="canAdd"
+                      v-on:click="addTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
+                      <%= t('views.console.regression_check.add') %>
                     </button>
                     <button class="btn btn--small btn--primary"
-                       v-else-if="needsUpdate"
-                       v-on:click.stop="updateTest('<%= packageId %>', '<%= aliasableId %>', '<%= escape_javascript(solution) %>')">
+                      v-if="canUpdate"
+                      v-on:click="updateTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
                       <%= t('views.console.regression_check.update') %>
                     </button>
+                    <div v-if="tooLong" class="c-intent__footer__action__note">
+                      <span class="icon icon--x-small icon--orange"><%= icon_alert %></span>
+                      <%= t('views.console.regression_check.sentence_too_long') %>
+                    </div>
                   <% end %>
                 </div>
               </div>

@@ -47,6 +47,30 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   end
 
 
+  test 'Try to add a new test but sentence is too long' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+        interpretations: [
+          {
+            'id' => intents(:weather_forecast).id,
+            'slug' => intents(:weather_forecast).slug,
+            'package' => intents(:weather_forecast).agent.id,
+            'score' => '1.0',
+            'solution' => interpretations(:weather_forecast_tomorrow).solution
+          }
+        ]
+      }
+    )
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "A "*101
+      first('button').click
+      assert page.has_content?('Adding this to the tests suite is not possible')
+    end
+  end
+
+
   test 'Can only add test for the first intent' do
     go_to_agent_show(users(:admin), agents(:terminator))
     Nlp::Interpret.any_instance.stubs('proceed').returns(

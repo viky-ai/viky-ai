@@ -68,13 +68,13 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   test 'Sentence maximum length' do
     agent_regression_check = AgentRegressionCheck.new(
       agent: agents(:weather),
-      sentence: 'a' * 2051,
+      sentence: 'a' * 201,
       expected: '{}'
     )
     assert_not agent_regression_check.save
 
     expected = {
-      sentence: ['is too long (maximum is 2050 characters)']
+      sentence: ['is too long (maximum is 200 characters)']
     }
     assert_equal expected, agent_regression_check.errors.messages
   end
