@@ -4,10 +4,19 @@ class AgentRegressionCheckRunJob < ApplicationJob
   def perform(agent)
     agent.agent_regression_checks.update_all(state: 'running')
     notify(agent)
-    agent.agent_regression_checks.order("RANDOM()").each do |test|
+
+    count = agent.agent_regression_checks.count
+
+    agent.agent_regression_checks.order("RANDOM()").each_with_index do |test, i|
       test.run
-      notify(agent)
+      if count > 10
+        notify(agent) if (i % (count / 10)) == 0
+      else
+        notify(agent)
+      end
     end
+
+    notify(agent)
   end
 
   private
