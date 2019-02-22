@@ -182,10 +182,10 @@ class Agent < ApplicationRecord
   end
 
   def run_regression_checks
-    if agent_regression_checks.count == 0
-      notify_tests_suite_ui
-    else
+    if agent_regression_checks.exists?
       AgentRegressionCheckRunJob.perform_later self
+    else
+      notify_tests_suite_ui
     end
   end
 
