@@ -71,12 +71,20 @@ module NlpRoute
       # Load all packages ids
       wrapper = PackageApiWrapper.new
       packages_ids = wrapper.list_id
-      Parallel.map(packages_ids, in_threads: Parallel.processor_count) do |package_id|
+      payloads = Parallel.map(packages_ids, in_threads: Parallel.processor_count) do |package_id|
+        payloads = []
         begin
           retries ||= 3
 
           package = wrapper.get_package(package_id)
           wrapper.update_or_create(package_id, package)
+
+          payloads << {
+            package_id: package_id,
+            status: 'success',
+            version: package[:version],
+            nlp_updated_at: DateTime.now
+          }
         rescue StandardError => e
           if (retries -= 1).zero?
             puts "Init package #{package_id} failed (forever) : #{e.inspect}"
@@ -86,6 +94,13 @@ module NlpRoute
             sleep 0.3
             retry
           end
+        end
+        payloads
+      end
+
+      if ENV.fetch('VIKYAPP_RUN_TESTS_ON_INIT') { 'true' } == 'true'
+        payloads.flatten.each do |payload|
+          wrapper.notify_updated_package(payload[:package_id], payload)
         end
       end
     end
