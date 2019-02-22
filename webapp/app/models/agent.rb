@@ -179,7 +179,9 @@ class Agent < ApplicationRecord
   end
 
   def run_regression_checks
-    if agent_regression_checks.count > 0
+    if agent_regression_checks.count == 0
+      notify_tests_suite_ui
+    else
       AgentRegressionCheckRunJob.perform_later self
     end
   end
