@@ -40,13 +40,6 @@ og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, o
   unsigned char *p;
   int ibuffer = 0;
 
-  if (nb_words > DOgNlpMaxWordsPerEntity)
-  {
-    // Too long entity goes back to the word automaton
-    IFE(NlpConsolidateExpressionWord(ctrl_nlp_th, package, expression));
-    DONE;
-  }
-
   memcpy(buffer + ibuffer, string_word, length_string_word);
   ibuffer += length_string_word;
   buffer[ibuffer++] = ' ';

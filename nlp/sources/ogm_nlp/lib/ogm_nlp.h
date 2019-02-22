@@ -48,7 +48,6 @@
 // Max default distance (in number of chars) between two input parts in an expression
 #define DOgNlpDefaultGlueDistance   20
 
-#define DOgNlpMaxWordsPerEntity     4
 #define DOgNlpMinEntityNumber       500
 #define DOgNlpEntitySeparator       0x80
 

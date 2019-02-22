@@ -25,6 +25,7 @@ module Nls
         car = package.new_interpretation("entities", { scope: "public" })
 
         car << Expression.new("maison de campagne", solution: "maison de campagne", keep_order: true, glued: true, glue_strength: "punctuation")
+        car << Expression.new("chemin du petit", solution: "chemin du petit", keep_order: true, glued: true, glue_strength: "punctuation")
         car << Expression.new("chemin du petit bois", solution: "chemin du petit bois", keep_order: true, glued: true, glue_strength: "punctuation")
         car << Expression.new("rivière de la belle etoile", solution: "rivière de la belle etoile", keep_order: true, glued: true, glue_strength: "punctuation")
 
@@ -552,6 +553,9 @@ module Nls
         expected = { interpretation: "entities", solution: "maison de campagne" }
         check_interpret("before maison de campagne after", expected)
 
+        expected = { interpretation: "entities", solution: "chemin du petit" }
+        check_interpret("before chemin du petit after", expected)
+
         expected = { interpretation: "entities", solution: "chemin du petit bois" }
         check_interpret("before chemin du petit bois after", expected)
 
@@ -562,6 +566,23 @@ module Nls
         check_interpret("before aaa aaa bbb after", expected)
 
       end
+
+      def test_entities_lemmatisation
+
+        expected = { interpretation: "entities", solution: "maison de campagne" }
+        check_interpret("before maisons de campagne after", expected)
+
+        expected = { interpretation: "entities", solution: "maison de campagne" }
+        check_interpret("before maison de campagnes after", expected)
+
+        expected = { interpretation: "entities", solution: "maison de campagne" }
+        check_interpret("before maisons de campagnes after", expected)
+
+        expected = { interpretation: "entities", solution: "rivière de la belle etoile" }
+        check_interpret("before rivières de la belle etoile after", expected)
+
+      end
+
 
     end
   end
