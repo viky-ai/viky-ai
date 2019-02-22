@@ -2,15 +2,17 @@ class AgentRegressionCheckRunJob < ApplicationJob
   queue_as :agent_regression_checks
 
   def perform(agent)
-    agent.agent_regression_checks.update_all(state: 'running')
+    now = Time.zone.now
+    agent.agent_regression_checks.update_all(state: 'running', updated_at: now)
     notify(agent)
 
     count = agent.agent_regression_checks.count
 
     agent.agent_regression_checks.order("RANDOM()").each_with_index do |test, i|
+      next if test.reload.updated_at > now
       test.run
       if count > 10
-        notify(agent) if (i % (count / 10)) == 0
+        notify(agent) if ((i + 1) % (count / 10)) == 0
       else
         notify(agent)
       end
