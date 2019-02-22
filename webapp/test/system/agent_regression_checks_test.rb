@@ -7,7 +7,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     create_agent_regression_check_fixtures
   end
 
-
   test 'Add new test' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
@@ -46,6 +45,60 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
   end
 
+  test 'Add new test with language and now' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+        interpretations: [
+          {
+            'id' => intents(:weather_forecast).id,
+            'slug' => intents(:weather_forecast).slug,
+            'package' => intents(:weather_forecast).agent.id,
+            'score' => '1.0',
+            'solution' => interpretations(:weather_forecast_tomorrow).solution
+          }
+        ]
+      }
+    )
+
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "hello"
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'en'
+      all('.dropdown__trigger > .btn')[2].click
+      click_link 'Manual now'
+      fill_in 'interpret[now]', with: "2017-12-05T15:14:01+01:00"
+      first('button').click
+      assert page.has_content?('2 tests')
+      assert page.has_content?('1 running, 0 success, 1 failure')
+
+      click_button 'Add to tests suite'
+      assert page.has_content?('Not run yet...')
+
+      assert page.has_content?('3 tests')
+      find('#console-footer').click
+    end
+
+     within('#console-ts') do
+      sleep 0.2 # Wait Animation
+      assert page.has_content?('3 tests')
+      assert 3, find('ul.cts__list').all('li').count
+      assert page.has_link?('hello')
+      click_link("hello")
+
+     within('.cts-item__full') do
+        assert page.has_content?("hello")
+        assert page.has_content?("SLUG (Expected)")
+        assert page.has_content?("SOLUTION (Expected)")
+        assert page.has_content?('LANGUAGE')
+        assert page.has_content?('en')
+        assert page.has_content?('NOW')
+        assert page.has_content?('2017-12-05T15:14:01.000+01:00')
+      end
+    end
+  end
 
   test 'Try to add a new test but sentence is too long' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
