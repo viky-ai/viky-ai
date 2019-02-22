@@ -149,6 +149,11 @@
   height: 12em;
 }
 
+.field input[readonly='readonly'].agent-token-input{
+  color: #aaa;
+  text-align: center;
+}
+
 .agent-upload__new.field--upload{
   height: 12em;
 }

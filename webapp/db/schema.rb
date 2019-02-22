@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181121091528) do
+ActiveRecord::Schema.define(version: 20190130141915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,20 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.uuid "source_id"
     t.uuid "target_id"
     t.index ["source_id", "target_id"], name: "index_agent_arcs_on_source_id_and_target_id", unique: true
+  end
+
+  create_table "agent_regression_checks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "sentence"
+    t.string "language"
+    t.datetime "now"
+    t.uuid "agent_id"
+    t.text "expected"
+    t.text "got"
+    t.integer "state", default: 0
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["agent_id"], name: "index_agent_regression_checks_on_agent_id"
   end
 
   create_table "agents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -34,6 +48,7 @@ ActiveRecord::Schema.define(version: 20181121091528) do
     t.string "api_token"
     t.integer "visibility", default: 0
     t.string "source_agent"
+    t.datetime "nlp_updated_at"
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
@@ -220,6 +235,7 @@ ActiveRecord::Schema.define(version: 20181121091528) do
 
   add_foreign_key "agent_arcs", "agents", column: "source_id", on_delete: :cascade
   add_foreign_key "agent_arcs", "agents", column: "target_id", on_delete: :cascade
+  add_foreign_key "agent_regression_checks", "agents", on_delete: :cascade
   add_foreign_key "agents", "users", column: "owner_id"
   add_foreign_key "bots", "agents", on_delete: :cascade
   add_foreign_key "chat_sessions", "bots", on_delete: :cascade

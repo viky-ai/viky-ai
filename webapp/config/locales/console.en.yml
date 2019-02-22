@@ -31,3 +31,27 @@ en:
       reset:
         title: Reset console to the current agent
       no_access: You do not have access to this agent.
+      regression_check:
+        add: "Add to tests suite"
+        update: Update
+        sentence_too_long:
+          Adding this to the tests suite is not possible because the text to
+          analyze exceeds 200 characters ({{test.sentence.length}} characters).
+        summary:
+          tests_suite: Tests suite
+          tests:
+            zero: "0 test"
+            one: "1 test"
+            other: "%{count} tests"
+          running:
+            zero: "0 running"
+            one: "1 running"
+            other: "%{count} running"
+          success:
+            zero: "0 success"
+            one: "1 success"
+            other: "%{count} success"
+          failures:
+            zero: "0 failure"
+            one: "1 failure"
+            other: "%{count} failures"

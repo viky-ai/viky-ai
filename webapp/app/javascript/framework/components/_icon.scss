@@ -73,6 +73,13 @@
     }
   }
 
+  &.icon--success svg{
+    fill: $success_color;
+  }
+  &.icon--alert svg{
+    fill: $alert_color;
+  }
+
 }
 
 .btn--primary .icon,

@@ -1,11 +1,25 @@
+<style>
+  .sg .component-and-code .component{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: .5em;
+    padding: .5em;
+  }
+  .console{
+    height: 35em;
+    max-width: 30em;
+    border: 1px solid rgba(0, 0, 0, .075);
+  }
+</style>
+
 <div class="sg-intro">
   <h1>Console</h1>
   <p>Agent test UI.</p>
 </div>
 
 <section>
+  <h2>Structure</h2>
   <%= highlight_html do %>
-
 <div class="console">
   <div class="console__header">
 
@@ -25,33 +39,19 @@
     </div>
 
     <div class="console__header__actions">
-      <a href="?"
-        class="btn btn--small btn--plain console-reset"
-        title="<%= t('views.console.reset.title') %>">
+      <a href="#" class="btn btn--small btn--plain">
         <span class="icon icon--small">
           <%= icon_refresh %>
         </span>
       </a>
-      <a href="#" id="console-enter-fullscreen"
-         data-action="console-enter-fullscreen"
-         title="<%= t('views.console.fullscreen_enter') %>"
-         class="console__header__fullscreen_btn btn btn--small btn--plain">
+      <a href="#" class=" btn btn--small btn--plain">
         <span class="icon icon--small">
           <%= icon_fullscreen %>
-        </span>
-      </a>
-      <a href="#" id="console-leave-fullscreen"
-         data-action="console-leave-fullscreen"
-         title="<%= t('views.console.fullscreen_leave') %>"
-         class="console__header__fullscreen_btn btn btn--small btn--plain" style="display:none;">
-        <span class="icon icon--small">
-          <%= icon_close %>
         </span>
       </a>
     </div>
 
   </div>
-
 
   <form>
     <div class="field">
@@ -73,7 +73,6 @@
             </ul>
           </div>
         </div>
-
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button class="btn btn--outline btn--small">
@@ -90,12 +89,12 @@
             </ul>
           </div>
         </div>
-
       </div>
     </div>
     <div class="field">
       <div class="control control--merged">
-        <input type="text" placeholder="Say something..." name="sentence" />
+        <input type="text" placeholder="Say something..." name="sentence"
+               value="Racontes moi une blague" />
         <button class="btn btn--primary">
           <span class="icon icon--small">
             <%= icon_check %>
@@ -104,35 +103,415 @@
       </div>
     </div>
   </form>
-  <div class="tabs tabs--small tabs--on-center">
-    <ul>
-      <li><a href="#" class="current" data-action="console-switch-to-explain">Explain</a></li>
-      <li><a href="#" data-action="console-switch-to-json">JSON</a></li>
-    </ul>
+
+  <div class="console__tabs">
+    <div class="tabs tabs--small tabs--on-center">
+      <ul>
+        <li>
+          <a href="#" class="current" data-action="console-switch-to-explain">Explain</a>
+        </li>
+        <li>
+          <a href="#" data-action="console-switch-to-json">JSON</a>
+        </li>
+      </ul>
+    </div>
   </div>
+
   <div class="console__output">
-    <div id="console-explain">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi doloribus tenetur, ut repudiandae velit dolor, sunt beatae aspernatur quod, laudantium consequatur architecto sit quaerat molestias, inventore nisi eos a porro.
+    <div class="c-explain" id="console-explain">
+      <p>
+        <span class="badge badge--success">200</span>
+        <%= t('views.console.intent_found', count: 1) %>
+      </p>
+      <ul class="c-intents">
+        <li class="c-intent">
+          <div class="c-intent__header">
+            <a href="#">Interpretation</a>
+            <span class="c-intent__header__slug">
+              user/agent
+            </span>
+            <span class="c-intent__header__score">
+              <span class="badge badge--grey badge--small badge--outline">
+                0.99
+              </span>
+            </span>
+          </div>
+          <ul>
+            <li>
+              <div class="c-intent__label">Solution</div>
+              <pre><code class='language-javascript'>{
+  "type": "query",
+  "joke": {
+    "query": "Comment ramasse-t-on la papaye ?",
+    "response": "Avec une foufourche"
+  }
+}</code></pre>
+            </li>
+          </ul>
+          <div class="c-intent__footer">
+            <div class="c-intent__footer__status">
+              <span class="ts-status ts-status--success"></span>
+              Succeed
+            </div>
+            <div class="c-intent__footer__action">
+              <a href="#" class="btn btn--small btn--primary">Update test</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="c-explain__footer">
+        <a href="#">Go to API endpoint</a>
+        <a href="#">Download package</a>
+      </div>
     </div>
     <div id="console-json" style="display:none;">
       <pre><code class='language-javascript'>{
-  "intents": [
+  "interpretations": [
     {
-      "id": "db3dd17d-fd3f-42a7-9d65-fd5a09894015",
-      "slug": "admin/terminator/hello",
-      "name": "hello",
-      "score": 0.7
-    },
-    {
-      "id": "affdd17d-fd3f-90a7-9d65-fd5a09893033",
-      "slug": "admin/terminator/hello-world",
-      "name": "hello-world",
-      "score": 0.5
+      "id": "18650ef2-89fd-4bd6-92a5-a4a7a969d3c1",
+      "slug": "jmvallet/the-best-agent-ever/interpretations/give-me-a-joke",
+      "name": "give-me-a-joke",
+      "score": 0.87,
+      "solution": {
+        "type": "query",
+        "joke": {
+          "query": "Comment ramasse-t-on la papaye ?",
+          "response": "Avec une foufourche"
+        }
+      }
     }
   ]
 }</code></pre>
     </div>
   </div>
+
+  <a href="#" class="console__footer">
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--success"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        27 success, 0 failure • 15 Feb 12:37
+      </div>
+    </div>
+  </a>
+
 </div>
   <% end %>
 </section>
+
+
+
+<section>
+  <h2>Footer states</h2>
+  <%= highlight_html do %>
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--running"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        15 running, 12 success, 0 failure
+      </div>
+    </div>
+  </a>
+</div>
+
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--success"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        27 success, 0 failure • 15 Feb 12:37
+      </div>
+    </div>
+  </a>
+</div>
+
+<div class="console">
+  <div class="console__output"></div>
+  <a href="#" class="console__footer">
+    <div class="ts-summary">
+      <div class="ts-summary__primary">
+        <span class="ts-status ts-status--failure"></span>
+        Tests suite <small>• 27 tests</small>
+      </div>
+      <div class="ts-summary__secondary">
+        23 success, 4 failures • 15 Feb 12:37
+      </div>
+    </div>
+  </a>
+</div>
+  <% end %>
+</section>
+
+
+
+<section>
+  <h2>Tests suite</h2>
+  <%= highlight_html do %>
+<div class="console">
+  <div class="cts">
+    <div class="cts__header">
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--failure"></span>
+          Tests suite <small>• 5 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          4 tests, 1 failure • 15 Feb 12:37
+        </div>
+      </div>
+      <div>
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
+        <a href="#">
+          <span class="icon"><%= icon_close %></span>
+        </a>
+      </div>
+    </div>
+    <ul class="cts__list">
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>Racontes moi une blague</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--failure"></span>
+            <span>Tell me a joke</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>Asperiores est adipisci quas dolorum</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>
+              Asperiores est adipisci quas dolorum, doloribus
+              rem eveniet nostrum, inventore
+            </span>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="console">
+  <div class="cts">
+    <div class="cts__header">
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--running"></span>
+          Tests suite <small>• 27 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          15 running, 12 success, 0 failure
+        </div>
+      </div>
+      <div>
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
+        <a href="#">
+          <span class="icon"><%= icon_close %></span>
+        </a>
+      </div>
+    </div>
+    <ul class="cts__list">
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>Racontes moi une blague</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <div class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__full">
+            <div class="cts-item__full__status">
+              <span class="ts-status ts-status--failure"></span>
+            </div>
+            <div class="cts-item__full__detail">
+              <a href="#" class="cts-item__full__detail__close">
+                <span class="icon"><%= icon_close %></span>
+              </a>
+              <div class="cts-item__full__detail__label">Query</div>
+              <div class="cts-item__full__detail__value">Tell me a joke</div>
+              <div class="cts-item__full__detail__label">Language</div>
+              <div class="cts-item__full__detail__value">en</div>
+              <div class="cts-item__full__detail__label">Solution <small>(Expected & Got)</small></div>
+              <div class="cts-item__full__detail__value">
+                <pre><code class='language-javascript'>{
+  "type": "query",
+  "joke": {
+    "query": "Anton, do you think I’m a bad mother?",
+    "response": "My name is Paul."
+  }
+}
+{
+  "type": "query",
+  "joke": {
+    "query": "Anton, do you think I’m a bad mother?",
+    "response": "My name is John."
+  }
+}</code></pre>
+              </div>
+              <div class="cts-item__full__detail__actions">
+                <a href="#" class="btn btn--small btn--primary">Edit</a>
+                <a href="#" class="btn btn--small btn--destructive">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>Asperiores est adipisci quas dolorum</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>
+              Asperiores est adipisci quas dolorum, doloribus
+              rem eveniet nostrum, inventore
+            </span>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="console">
+  <div class="cts">
+    <div class="cts__header">
+      <div class="ts-summary">
+        <div class="ts-summary__primary">
+          <span class="ts-status ts-status--failure"></span>
+          Tests suite <small>• 5 tests</small>
+        </div>
+        <div class="ts-summary__secondary">
+          4 tests, 1 failure • 15 Feb 12:37
+        </div>
+      </div>
+      <div>
+        <a href="#" class="btn btn--small btn--primary">Run</a>&nbsp;&nbsp;
+        <a href="#">
+          <span class="icon"><%= icon_close %></span>
+        </a>
+      </div>
+    </div>
+    <ul class="cts__list">
+      <li>
+        <div class="cts-item cts-item--behind">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__full">
+            <div class="cts-item__full__status">
+              <span class="ts-status ts-status--success"></span>
+            </div>
+            <div class="cts-item__full__detail">
+              <a href="#" class="cts-item__full__detail__close">
+                <span class="icon"><%= icon_close %></span>
+              </a>
+              <div class="cts-item__full__detail__label">Query</div>
+              <div class="cts-item__full__detail__value">Racontes moi une blague</div>
+              <div class="cts-item__full__detail__label">Language</div>
+              <div class="cts-item__full__detail__value">fr</div>
+              <div class="cts-item__full__detail__label">Solution <small>(Expected & Got)</small></div>
+              <div class="cts-item__full__detail__value">
+                <pre><code class='language-javascript'>{
+  "type": "query",
+  "joke": {
+    "query": "Comment ramasse-t-on la papaye ?",
+    "response": "Avec une foufourche"
+  }
+}</code></pre>
+              </div>
+              <div class="cts-item__full__detail__actions">
+                <a href="#" class="btn btn--small btn--primary">Edit</a>
+                <a href="#" class="btn btn--small btn--destructive">Delete</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cts-item-delete">
+          <div>
+            <p>Are you sure?</p>
+            <p>
+              <a href="#" class="btn btn--destructive">Delete</a>
+              &nbsp;
+              <a href="#">Cancel</a>
+            </p>
+          </div>
+        </div>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--failure"></span>
+            <span>Tell me a joke</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>Asperiores est adipisci quas dolorum</span>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="cts-item">
+          <div><div class="cts-item__grip"></div></div>
+          <div class="cts-item__summary">
+            <span class="ts-status ts-status--success"></span>
+            <span>
+              Asperiores est adipisci quas dolorum, doloribus
+              rem eveniet nostrum, inventore
+            </span>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+  <% end %>
+</section>
+

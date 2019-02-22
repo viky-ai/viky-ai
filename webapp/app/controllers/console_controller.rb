@@ -12,7 +12,17 @@ class ConsoleController < ApplicationController
     current_tab = interpret_params[:current_tab]
     now         = interpret_params[:now]
 
-    data = get_interpretation(owner, agent, sentence, verbose, language, now)
+    data = get_interpretation(agent, sentence, verbose, language, now)
+
+    @regression_check =  agent.find_regression_check_with(sentence, language, now)
+    if @regression_check.nil?
+      @regression_check = AgentRegressionCheck.new(
+        sentence: sentence,
+        language: language,
+        now: now,
+        agent: agent
+      )
+    end
 
     respond_to do |format|
       format.js {
@@ -20,9 +30,15 @@ class ConsoleController < ApplicationController
           partial: 'tabs',
           locals: { current_tab: current_tab }
         )
+        user_query = {
+          sentence: sentence,
+          language: language,
+          now: now,
+          verbose: verbose != 'false'
+        }
         @output = render_to_string(
           partial: 'output',
-          locals: { data: data, current_tab: current_tab}
+          locals: { data: data, current_tab: current_tab, agent: agent, user_query: user_query }
         )
       }
     end
@@ -37,34 +53,16 @@ class ConsoleController < ApplicationController
       )
     end
 
-    def get_interpretation(owner, agent, sentence, verbose, language, now)
-      req = Rack::Request.new(
-        "rack.input" => {},
-        "REQUEST_METHOD" => "GET")
-      req.path_info = "/api/v1/agents/#{owner.username}/#{agent.agentname}/interpret.json"
-
-      params = {
-        agent_token: agent.api_token,
+    def get_interpretation(agent, sentence, verbose, language, now)
+      request_params = {
         sentence: sentence,
         language: language,
         now: now,
-        context: {
-          client_type: 'console',
-          user_id: current_user.id
-        }
+        verbose: verbose,
+        client_type: 'console',
+        user_id: current_user.id,
       }
-      params[:verbose] = verbose if verbose == "true"
-      params.each { |k, v| req.update_param(k, v) }
-      path = request.base_url + req.path_info + '?' + params.to_query
-
-      response = Rails.application.call(req.env)
-      status, headers, body = response
-
-      result = {
-        path: path,
-        status: status,
-      }
-      result[:body] = status == 200 ? body.first : body.body
+      result = Nlp::PublicInterpret.request_public_api(request_params, agent)
       result[:package_path] = full_export_user_agent_url(agent.owner, agent, format: 'json') if current_user.admin?
       result
     end

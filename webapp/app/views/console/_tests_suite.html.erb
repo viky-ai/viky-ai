@@ -1,0 +1,117 @@
+<div class="cts">
+  <div class="cts__header">
+    <%= render 'console/tests_suite_summary' %>
+    <div>
+      <template v-if="summary.count > 0 && summary.status != 'running'">
+        <%= link_to t('views.agent_regression_checks.run'), run_user_agent_agent_regression_checks_path(@agent.owner, @agent), method: 'post', class: 'btn btn--small btn--primary', remote: true,
+          data: { disable_with: t('views.agent_regression_checks.starting') } %>&nbsp;&nbsp;&nbsp;
+      </template>
+      <a href="#" data-action="console-hide-cts">
+        <span class="icon"><%= icon_close %></span>
+      </a>
+    </div>
+  </div>
+
+  <ul class="cts__list">
+    <% if current_user.can?(:edit, @agent) %>
+    <draggable v-model="tests" :options="{handle:'.cts-item__grip', animation: 100}" @update="onPositionUpdate">
+    <% end %>
+      <transition-group name="cts-list">
+        <li v-for="(test,index) in tests" :key="test.id">
+          <a href="#" class="cts-item"
+             v-on:click.prevent="showDetails(test.id)"
+             v-bind:id="'cts-item-summary-'+ test.id">
+
+            <div>
+              <div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div>
+            </div>
+            <div class="cts-item__summary">
+              <span :class="'ts-status ts-status--' + test.state"></span>
+              <span>{{ test.sentence }}</span>
+            </div>
+          </a>
+
+          <div class="cts-item" v-bind:id="'cts-item-details-' + test.id" style="display:none;">
+            <div><div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div></div>
+            <div class="cts-item__full">
+              <div class="cts-item__full__status">
+                <span :class="'ts-status ts-status--' + test.state"></span>
+              </div>
+              <div class="cts-item__full__detail">
+
+                <a href="#" class="cts-item__full__detail__close" v-on:click.prevent="hideDetails(test.id)">
+                  <span class="icon"><%= icon_close %></span>
+                </a>
+
+                <div class="cts-item__full__detail__label">
+                  <%= t('views.agent_regression_checks.query') %>
+                </div>
+                <div class="cts-item__full__detail__value">{{ test.sentence }}</div>
+
+                <template v-if="test.language != '*'">
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.language') %>
+                  </div>
+                  <div class="cts-item__full__detail__value">{{ test.language }}</div>
+                </template>
+
+                <template v-if="test.now">
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.now') %>
+                  </div>
+                  <div class="cts-item__full__detail__value">{{ test.now }}</div>
+                </template>
+
+                <test-diff v-bind:test="test"></test-diff>
+
+                <% if current_user.can?(:edit, @agent) %>
+                  <div class="cts-item__full__detail__actions">
+                    <template v-if="test.state == 'running'">
+                      <button disabled class="btn btn--small btn--outline btn--primary btn--disabled">
+                        <span class="icon icon--x-small"><%= icon_send %></span>
+                        <%= t('views.agent_regression_checks.send') %>
+                      </button>
+                      <button disabled class="btn btn--small btn--outline btn--destructive btn--disabled">
+                        <span class="icon icon--x-small"><%= icon_delete %></span>
+                        <%= t('views.agent_regression_checks.delete') %>
+                      </button>
+                    </template>
+                    <template v-else>
+                      <button class="btn btn--small btn--outline btn--primary"
+                              v-on:click="updateTest(index, $event)">
+                        <span class="icon icon--x-small"><%= icon_send %></span>
+                        <%= t('views.agent_regression_checks.send') %>
+                      </button>
+                      <button class="btn btn--small btn--outline btn--destructive"
+                              v-on:click="showRemoveConfirm">
+                        <span class="icon icon--x-small"><%= icon_delete %></span>
+                        <%= t('views.agent_regression_checks.delete') %>
+                      </button>
+                    </template>
+                  </div>
+                <% end %>
+
+              </div>
+            </div>
+          </div>
+          <div class="cts-item-delete" style="display:none;">
+            <div>
+              <p><%= t('views.agent_regression_checks.delete_confirm.query') %></p>
+              <p>
+                <button class="btn btn--destructive" v-on:click="removeTest(index, $event)">
+                  <%= t('views.agent_regression_checks.delete_confirm.delete') %>
+                </button>
+                &nbsp;
+                <a href="#" v-on:click.prevent="cancelRemove">
+                  <%= t('views.agent_regression_checks.delete_confirm.cancel') %>
+                </a>
+              </p>
+            </div>
+          </div>
+        </li>
+      </transition-group>
+    <% if current_user.can?(:edit, @agent) %>
+    </draggable>
+    <% end %>
+  </ul>
+</div>

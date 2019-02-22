@@ -1,0 +1,42 @@
+en:
+  views:
+    agent_regression_checks:
+      new:
+        failed_message: 'Failed to save new regression test.'
+      update:
+        fail: Failed to update the regression test.
+      run: "Run"
+      starting: Starting...
+      indicator:
+        success: "Succeed"
+        failure: "Failed"
+        running: "Running..."
+        unknown: "Not run yet..."
+      not_found: The regression test cannot be found.
+      query: Query
+      language: Language
+      now: Now
+      result:
+        slug:
+          expected_got_ok_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: Slug <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: Slug <small>(Expected)</small>
+          missing: Expected interpretation has been removed form viky.ai.
+        solution:
+          expected_got_ok_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
+          expected_got_ko_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected_ko_html: Solution <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          expected: Solution <small>(Expected)</small>
+        error_error_html:
+          <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          Error while requesting NLP.
+        error_no_intent_html:
+          <span class='icon icon--x-small icon--alert'>%{icon}</span>
+          No interpretation found.
+      send: Send
+      delete: Delete
+      delete_confirm:
+        query: Are you sure?
+        delete: Yes, delete
+        cancel: No, cancel
