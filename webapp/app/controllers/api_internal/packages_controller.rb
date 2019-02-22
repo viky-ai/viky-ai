@@ -21,8 +21,7 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
       agent = Agent.find(params['id'])
       unless agent.synced_with_nlp?
         if DateTime.parse(params['version']) >= agent.updated_at.to_datetime
-          agent.nlp_updated_at = params['nlp_updated_at']
-          agent.save
+          agent.update_columns(nlp_updated_at: params['nlp_updated_at'])
           agent.run_regression_checks
         end
       end
