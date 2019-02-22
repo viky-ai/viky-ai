@@ -1,7 +1,9 @@
-class ApiInternal::ApplicationController < ApplicationController
-  skip_before_action :authenticate_user!
-  before_action :check_token, :check_format
-  
+class ApiInternal::ApplicationController < ActionController::API
+  include AbstractController::Translation
+
+  before_action :check_token
+  before_action :check_format, except: [:updated]
+
   protected
 
     def check_format

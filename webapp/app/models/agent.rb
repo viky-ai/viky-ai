@@ -17,6 +17,7 @@ class Agent < ApplicationRecord
   has_many :intents, dependent: :destroy
   has_many :entities_lists, dependent: :destroy
   has_many :bots, dependent: :destroy
+  has_many :agent_regression_checks, dependent: :destroy
 
   has_many :in_arcs,  foreign_key: 'target_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :target
   has_many :out_arcs, foreign_key: 'source_id', class_name: 'AgentArc', dependent: :destroy, inverse_of: :source
@@ -31,19 +32,20 @@ class Agent < ApplicationRecord
   validates :owner_id, presence: true
   validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
-  validate :owner_presence_in_users
+  validate  :owner_presence_in_users
 
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
-  after_create_commit do
-    Nlp::Package.new(self).push
-  end
-
-  after_update_commit do
-    Nlp::Package.new(self).push
+  after_update_commit do |record|
+    if @need_nlp_push || record.previous_changes[:agentname].present?
+      agent_regression_checks.update_all(state: 'running')
+      notify_tests_suite_ui
+      Nlp::Package.new(self).push
+      @need_nlp_push = false
+    end
   end
 
   after_destroy do
@@ -179,6 +181,47 @@ class Agent < ApplicationRecord
     end
   end
 
+  def run_regression_checks
+    if agent_regression_checks.exists?
+      AgentRegressionCheckRunJob.perform_later self
+    else
+      notify_tests_suite_ui
+    end
+  end
+
+  def regression_checks_to_json
+    ApplicationController.render(
+      template: 'agent_regression_checks/index',
+      assigns: { agent: self }
+    )
+  end
+
+  def regression_checks_global_state
+    return 'running' if agent_regression_checks.where(state: 'running').exists?
+    return 'error'   if agent_regression_checks.where(state: 'error').exists?
+    return 'failure' if agent_regression_checks.where(state: 'failure').exists?
+    return 'success' if agent_regression_checks.where(state: 'success').count == agent_regression_checks.count
+    'unknown'
+  end
+
+  def find_regression_check_with(sentence, language, now)
+    time_parse = (now.kind_of?(String) ? Time.parse(now) : now) unless now.blank?
+    agent_regression_checks
+      .where('lower(sentence) = lower(?)', sentence.strip)
+      .where(language: language)
+      .where(now: time_parse)
+      .first
+  end
+
+  def need_nlp_sync
+    @need_nlp_push = true
+  end
+
+  def synced_with_nlp?
+    return false if nlp_updated_at.nil?
+    nlp_updated_at >= updated_at
+  end
+
 
   private
 
@@ -217,5 +260,14 @@ class Agent < ApplicationRecord
     def clean_agentname
       return if agentname.nil?
       self.agentname = agentname.parameterize(separator: '-')
+    end
+
+    def notify_tests_suite_ui
+      ActionCable.server.broadcast(
+        "agent_regression_checks_channel_#{self.id}",
+        agent_id: self.id,
+        timestamp: Time.now.to_f * 1000,
+        payload: JSON.parse(regression_checks_to_json)
+      )
     end
 end

@@ -130,3 +130,6 @@ en:
       communication_failure: 'The bot does not reply. The link seems broken.'
       bot_failure: 'The bot replied with an error.'
       unknown_request_failure: 'Unknown error while requesting the bot.'
+    agent_regression_checks:
+      delete:
+        running: Regression test cannot be deleted in running state.

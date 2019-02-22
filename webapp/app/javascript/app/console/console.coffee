@@ -19,15 +19,15 @@ $(document).on('turbolinks:render', -> ConsolePreserveScroll::restore())
 class Console
   constructor: ->
     @timeout = null
-    $('#js-console-now-input-container input').val(moment().format())
 
     $("body").on 'click', (event) => @dispatch(event)
 
     $("body").on 'console-select-now-type-auto', (event) =>
       $('#js-console-now-input-container').hide()
-      $('#js-console-now-input-container input').val(moment().format())
+      $('#js-console-now-input-container input').val('')
 
     $("body").on 'console-select-now-type-manual', (event) =>
+      $('#js-console-now-input-container input').val(moment().format())
       $('#js-console-now-input-container').show()
       $("#console-reset-btn").show()
 
@@ -45,6 +45,9 @@ class Console
         , 500
         $("#console-reset-btn").show()
         $('#console-output').scrollTop(0)
+
+    $("body").on 'console-submit-form', (event, data) =>
+      @send_interpret_request(data)
 
   dispatch: (event) ->
     link = @get_link_target(event)
@@ -83,6 +86,18 @@ class Console
         link.addClass('current')
         $(link.data('target')).show()
 
+    if action == 'console-show-cts'
+      event.preventDefault()
+      $('.panels-switch__panel').last()
+        .addClass('panels-switch__panel--show')
+        .removeClass('panels-switch__panel--hide')
+
+    if action == 'console-hide-cts'
+      event.preventDefault()
+      $('.panels-switch__panel').last()
+        .addClass('panels-switch__panel--hide')
+        .removeClass('panels-switch__panel--show')
+
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)
@@ -91,6 +106,19 @@ class Console
         return $(event.target).closest('a')
       if $(event.target).closest('match').length == 1
         return $(event.target).closest('match')
+
+  send_interpret_request: (data) ->
+    now = if data.now? then 'Manual now' else 'Auto now'
+    nowUpdater = { selector: '#console-dropdown-now-type', on: now }
+    languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
+    $('body').trigger('dropdown:click', nowUpdater)
+    $('body').trigger('dropdown:click', languageUpdater)
+
+    $('#js-console-input-sentence').val(data.sentence)
+    $('.js-language-input').val(data.language)
+    $('#js-console-now-input-container input').val(data.now) if data.now?
+
+    Rails.fire($('#js-console-form')[0], 'submit')
 
 Setup = ->
   if $('.console-container').length == 1

@@ -19,6 +19,10 @@ class EntitiesList < ApplicationRecord
 
   before_validation :clean_listname
 
+  after_commit do
+    agent.need_nlp_sync
+  end
+
   def slug
     "#{agent.slug}/entities_lists/#{listname}"
   end

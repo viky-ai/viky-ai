@@ -1,3 +1,6 @@
 $("#console-tabs").html("<%= escape_javascript(@tabs) %>");
 $("#console-output").html("<%= escape_javascript(@output) %>");
 $("body").trigger('code:highlight');
+
+regression_check = <%= @regression_check.to_json.html_safe %>;
+$("body").trigger('console:load_explain_footer');

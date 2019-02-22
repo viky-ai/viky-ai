@@ -1,4 +1,4 @@
-<div id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
+<div class="c-explain" id="console-explain" <% if current_tab == 'json' %>style="display:none;"<% end %>>
   <% if data[:status] == 200 %>
     <% json = JSON.parse(data[:body]) %>
     <% if json['interpretations'].empty? %>
@@ -16,67 +16,95 @@
         <% end %>
         <%= t('views.console.intent_found', count: json['interpretations'].count) %>
       </p>
-      <ul class="intents">
+      <ul class="c-intents">
         <% json['interpretations'].each_with_index do |aliasable, interpretation_index| %>
-          <li id="<%= aliasable["id"] %>">
-            <div class="intent_block">
-              <div class="intent__header">
-                <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
-                <% if aliasable['scope'] == 'public' %>
-                  <span class="badge badge--success badge--small">
-                    <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
-                  </span>
-                <% end %>
-                <% if aliasable['scope'] == 'private' %>
-                  <span class="badge badge--warning badge--small">
-                    <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
-                  </span>
-                <% end %>
-                <span class="intent__header__slug">
-                  (<%= "#{aliasable["slug"].split('/').first}/#{aliasable["slug"].split('/').second}" %>)
+          <li id="<%= aliasable["id"] %>" class="c-intent">
+            <div class="c-intent__header">
+              <a href="/agents/<%= aliasable["slug"] %>" class="intent__header__name"><%= aliasable["name"] %></a>
+              <% if aliasable['scope'] == 'public' %>
+                <span class="badge badge--success badge--small">
+                  <%= t('activerecord.attributes.intent.visibility_is_public').upcase %>
                 </span>
-                <span class="intent__header__score">
-                  <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
+              <% end %>
+              <% if aliasable['scope'] == 'private' %>
+                <span class="badge badge--warning badge--small">
+                  <%= t('activerecord.attributes.intent.visibility_is_private').upcase %>
                 </span>
-              </div>
-              <ul>
-                <% unless aliasable["explanation"].nil? %>
-                  <li>
-                    <div class="intent__label"><%= t('views.console.scores') %></div>
-                    <pre class="with-wrap"><%= aliasable["explanation"]["scores"] %></pre>
-                  </li>
-                  <li>
-                    <div class="intent__label"><%= t('views.console.highlight') %></div>
-                    <div class="intent__highlight">
-                      <%= highlight(aliasable["explanation"]["highlight"]["words"], interpretation_index) %>
-                      <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
-                        <% unless word["match"].nil? %>
-                          <ul style="display:none;" id="highlight-explain-<%= interpretation_index %>-<%= word_index %>">
-                            <%= highlight_explain_item(word["match"]) %>
-                            <% parent = word["match"]["parent"] %>
-                            <% while !parent.nil? %>
-                              <%= highlight_explain_item(parent) %>
-                              <% parent = parent["parent"] %>
-                            <% end %>
-                          </ul>
-                        <% end %>
-                      <% end %>
-                    </div>
-                  </li>
-                <% end %>
-                <% unless aliasable["solution"].nil? %>
-                  <li>
-                    <div class="intent__label"><%= t('views.console.solution') %></div>
-                    <pre><code class='language-javascript'><%= JSON.pretty_generate(aliasable["solution"]) %></code></pre>
-                  </li>
-                <% end %>
-              </ul>
+              <% end %>
+              <span class="c-intent__header__slug">
+                (<%= "#{aliasable["slug"].split('/').first}/#{aliasable["slug"].split('/').second}" %>)
+              </span>
+              <span class="c-intent__header__score">
+                <span class="badge badge--grey badge--small badge--outline"><%= aliasable["score"] %></span>
+              </span>
             </div>
+            <ul>
+              <% unless aliasable["explanation"].nil? %>
+                <li>
+                  <div class="c-intent__label"><%= t('views.console.scores') %></div>
+                  <pre class="c-intent__scores"><%= aliasable["explanation"]["scores"] %></pre>
+                </li>
+                <li>
+                  <div class="c-intent__label"><%= t('views.console.highlight') %></div>
+                  <div class="c-intent__highlight">
+                    <%= highlight(aliasable["explanation"]["highlight"]["words"], interpretation_index) %>
+                    <% aliasable["explanation"]["highlight"]["words"].each_with_index do |word, word_index| %>
+                      <% unless word["match"].nil? %>
+                        <ul style="display:none;" id="highlight-explain-<%= interpretation_index %>-<%= word_index %>">
+                          <%= highlight_explain_item(word["match"]) %>
+                          <% parent = word["match"]["parent"] %>
+                          <% while !parent.nil? %>
+                            <%= highlight_explain_item(parent) %>
+                            <% parent = parent["parent"] %>
+                          <% end %>
+                        </ul>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </li>
+              <% end %>
+              <% unless aliasable["solution"].nil? %>
+                <li>
+                  <div class="c-intent__label"><%= t('views.console.solution') %></div>
+                    <pre><code class='language-javascript'><%= JSON.pretty_generate(aliasable["solution"]) %></code></pre>
+                </li>
+              <% end %>
+            </ul>
+            <% if interpretation_index.zero? %>
+              <div class="c-intent__footer" id="console-intent-footer">
+                <div class="c-intent__footer__status">
+                  <template v-if="exists">
+                    <span :class="'ts-status ts-status--' + test.state"></span>
+                    {{ test.state_i18n }}
+                  </template>
+                </div>
+                <div class="c-intent__footer__action">
+                  <% if current_user.can?(:edit, agent) %>
+                    <% packageId = Intent.find(aliasable['id']).agent.id %>
+                    <% aliasableId = aliasable['id'] %>
+                    <% solution = escape_javascript(aliasable['solution'].to_json) %>
+                    <button class="btn btn--small btn--primary"
+                      v-if="canAdd"
+                      v-on:click="addTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
+                      <%= t('views.console.regression_check.add') %>
+                    </button>
+                    <button class="btn btn--small btn--primary"
+                      v-if="canUpdate"
+                      v-on:click="updateTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
+                      <%= t('views.console.regression_check.update') %>
+                    </button>
+                    <div v-if="tooLong" class="c-intent__footer__action__note">
+                      <span class="icon icon--x-small icon--orange"><%= icon_alert %></span>
+                      <%= t('views.console.regression_check.sentence_too_long') %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
           </li>
         <% end %>
       </ul>
     <% end %>
-
   <% else %>
     <p>
       <span class="badge badge--danger"><%= data[:status] %></span>
@@ -84,22 +112,18 @@
     </p>
   <% end %>
 
-  <div class="api_links">
-    <p class="endpoint">
-      <a href="<%= data[:path] %>" target="_blank">
-        <%= t('views.console.go_to_api_endpoint') %>
-      </a>
-    </p>
+  <div class="c-explain__footer">
+    <a href="<%= data[:path] %>" target="_blank">
+      <%= t('views.console.go_to_api_endpoint') %>
+    </a>
     <% if current_user.admin? %>
-      <p class="download_package">
-        <a href="<%= data[:package_path]%>" target="_blank">
-          <%= t('views.console.download_package') %>
-        </a>
-      </p>
+      <a href="<%= data[:package_path]%>" target="_blank">
+        <%= t('views.console.download_package') %>
+      </a>
     <% end %>
   </div>
-
 </div>
+
 <div id="console-json" <% if current_tab == 'explain' %>style="display:none;"<% end %>>
   <pre><code class='language-javascript'><%= JSON.pretty_generate(JSON.parse(data[:body])) %></code></pre>
 </div>
