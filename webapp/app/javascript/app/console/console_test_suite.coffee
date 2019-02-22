@@ -41,7 +41,7 @@ class ConsoleTestSuite
             }
           }
           methods: {
-            onUpdate: (evt) ->
+            onPositionUpdate: (evt) ->
               csrfToken = $('meta[name="csrf-token"]').attr('content')
               $.ajax
                 url: this.update_positions_url

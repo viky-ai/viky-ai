@@ -13,13 +13,18 @@
   </div>
 
   <ul class="cts__list">
-    <draggable v-model="tests" :options="{handle:'.cts-item__grip', animation: 100}" @update="onUpdate">
+    <% if current_user.can?(:edit, @agent) %>
+    <draggable v-model="tests" :options="{handle:'.cts-item__grip', animation: 100}" @update="onPositionUpdate">
+    <% end %>
       <transition-group name="cts-list">
         <li v-for="(test,index) in tests" :key="test.id">
           <a href="#" class="cts-item"
              v-on:click.prevent="showDetails(test.id)"
              v-bind:id="'cts-item-summary-'+ test.id">
-            <div><div class="cts-item__grip"></div></div>
+
+            <div>
+              <div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div>
+            </div>
             <div class="cts-item__summary">
               <span :class="'ts-status ts-status--' + test.state"></span>
               <span>{{ test.sentence }}</span>
@@ -27,7 +32,7 @@
           </a>
 
           <div class="cts-item" v-bind:id="'cts-item-details-' + test.id" style="display:none;">
-            <div><div class="cts-item__grip"></div></div>
+            <div><div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div></div>
             <div class="cts-item__full">
               <div class="cts-item__full__status">
                 <span :class="'ts-status ts-status--' + test.state"></span>
@@ -105,6 +110,8 @@
           </div>
         </li>
       </transition-group>
+    <% if current_user.can?(:edit, @agent) %>
     </draggable>
+    <% end %>
   </ul>
 </div>

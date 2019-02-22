@@ -515,6 +515,12 @@
       opacity: .5;
       cursor: move;
     }
+    &.cts-item__grip--disabled{
+      opacity: 0;
+      &:hover{
+        cursor: auto;
+      }
+    }
   }
 
 }
