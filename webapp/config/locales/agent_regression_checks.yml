@@ -22,6 +22,7 @@ en:
           expected_got_ko_html: Slug <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
           expected_ko_html: Slug <small>(Expected)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
           expected: Slug <small>(Expected)</small>
+          missing: Expected interpretation has been removed form viky.ai.
         solution:
           expected_got_ok_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--success'>%{icon}</span>
           expected_got_ko_html: Solution <small>(Expected & Got)</small> <span class='icon icon--x-small icon--alert'>%{icon}</span>
