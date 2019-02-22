@@ -723,6 +723,16 @@ struct super_list
   struct interpret_package *interpret_package;
 };
 
+struct nlp_match_entities_ctrl
+{
+  og_nlp_th ctrl_nlp_th;
+  struct interpret_package *interpret_package;
+  struct request_word *request_word_list[DOgNlpMaxNbWordsPerEntity];
+  int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
+  int request_word_list_length;
+  unsigned char string_entity[DOgNlpMaxEntitySize];
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -820,6 +830,9 @@ struct og_ctrl_nlp_threaded
   og_bool accept_any_expressions;
 
   og_heap hsuper_list;
+
+  void *ha_prepare_entity;
+  og_heap hprepare_entity;
 
 };
 
@@ -1113,6 +1126,9 @@ og_status NlpLtracPackageFlush(package_t package);
 /* nlpltrac_entity.c */
 og_status NlpLtracEntityPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpLtracEntityPackageFlush(package_t package);
+og_status NlpLtracEntityPrepareInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpLtracEntityPrepareReset(og_nlp_th ctrl_nlp_th);
+og_status NlpLtracEntityPrepareFlush(og_nlp_th ctrl_nlp_th);
 
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
@@ -1120,9 +1136,7 @@ og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
 /* nlpltras_entity.c */
-og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
-    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length);
+og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl);
 
 /* nlpwhy.c */
 og_status NlpWhyNotMatchingInit(og_nlp_th ctrl_nlp_th, og_string name);
@@ -1201,9 +1215,7 @@ og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package);
 
 /* nlpmatch_entity.c */
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th);
-og_status NlpMatchEntitiesNgramInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
-    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length, og_bool must_spellcheck);
-
-
+og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
+og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
+    int length_normalized_string_word, unsigned char *normalized_string_word);
 

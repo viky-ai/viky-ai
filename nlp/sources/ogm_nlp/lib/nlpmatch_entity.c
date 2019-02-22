@@ -6,28 +6,12 @@
  */
 #include "ogm_nlp.h"
 
-enum nlp_match_entity_type
-{
-  nlp_match_entity_type_Nil = 0, nlp_match_entity_type_Partial, nlp_match_entity_type_Full
-};
-
-struct nlp_match_entities_ctrl
-{
-  og_nlp_th ctrl_nlp_th;
-  struct interpret_package *interpret_package;
-  struct request_word *request_word_list[DOgNlpMaxNbWordsPerEntity];
-  int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
-  int request_word_list_length;
-  unsigned char string_entity[DOgNlpMaxEntitySize];
-};
-
 static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
 static og_status NlpMatchEntitiesAddWord(struct nlp_match_entities_ctrl *me_ctrl, struct request_word *request_word);
 static og_status NlpMatchEntitiesRemoveWord(struct nlp_match_entities_ctrl *me_ctrl);
 static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entities_ctrl *me_ctrl,
     struct request_word *request_word);
 static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ctrl *me_ctrl);
-static og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
 static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl);
 static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out);
 
@@ -114,7 +98,7 @@ static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entiti
 
   if (me_ctrl->request_word_list_length <= 0)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchEntitiesChangeToAlternativeWord: no word in equest_word_list");
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchEntitiesChangeToAlternativeWord: no word in request_word_list");
     DPcErr;
   }
 
@@ -127,6 +111,40 @@ static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entiti
   og_string normalized_string_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(normalized_string_word) DPcErr;
   int length_normalized_string_word = request_word->length;
+  if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
+  {
+    // We do not store very long entities
+    NlpLog(DOgNlpTraceMinimal, "NlpMatchEntitiesAddWord: entity is too long");
+    DONE;
+  }
+  memcpy(me_ctrl->string_entity + string_entity_length, normalized_string_word, length_normalized_string_word);
+
+  string_entity_length += length_normalized_string_word;
+  me_ctrl->string_entity[string_entity_length++] = ' ';
+  me_ctrl->string_entity[string_entity_length] = 0;
+
+  me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 1] = string_entity_length;
+  DONE;
+
+}
+
+og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
+    int length_normalized_string_word, unsigned char *normalized_string_word)
+{
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+
+  if (me_ctrl->request_word_list_length <= 0)
+  {
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchEntitiesChangeToAlternativeWord: no word in request_word_list");
+    DPcErr;
+  }
+
+  int string_entity_length = 0;
+  if (me_ctrl->request_word_list_length > 1)
+  {
+    string_entity_length = me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 2];
+  }
+
   if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
   {
     // We do not store very long entities
@@ -168,11 +186,13 @@ static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ct
       IFE(NlpMatchCurrentEntity(me_ctrl));
     }
   }
+  // Looking for spelling mistakes
+  IFE(NlpLtrasEntity(me_ctrl));
 
   DONE;
 }
 
-static og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl)
+og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl)
 {
   og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
   NlpLog(DOgNlpTraceMatch, "NlpMatchCurrentEntity: request_word to search is '%s' length=%d", me_ctrl->string_entity,
@@ -266,9 +286,8 @@ static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int 
         "NlpMatchEntitiesNgramInPackage: expression->input_parts_nb (%d) != request_word_list_length (%d)",
         expression->input_parts_nb, me_ctrl->request_word_list_length);
     DPcErr;
-
   }
-  for (int i = 0; i < me_ctrl->request_word_list_length; i++)
+  for (int i = 0; i < expression->input_parts_nb; i++)
   {
     og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, me_ctrl->request_word_list[i],
         me_ctrl->interpret_package, expression->input_parts[i].self_index, FALSE);

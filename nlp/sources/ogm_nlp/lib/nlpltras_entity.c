@@ -7,16 +7,17 @@
 #include "ogm_nlp.h"
 #include <logltras.h>
 
-og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package,
-    struct request_word **request_word_list, int request_word_list_length, unsigned char *string_entity,
-    int string_entity_length)
+og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
 {
-  package_t package = interpret_package->package;
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+  package_t package = me_ctrl->interpret_package->package;
   IFE(OgLtrasHaBaseSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_base));
   IFE(OgLtrasHaSwapSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_swap));
   IFE(OgLtrasHaPhonSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_phon));
 
-  NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: entity to search is '%s'", string_entity);
+  NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: entity to search is '%s'", me_ctrl->string_entity);
+
+  int string_entity_length = strlen(me_ctrl->string_entity);
 
   struct og_ltra_trfs *trfs;
   struct og_ltras_input input[1];
@@ -24,7 +25,7 @@ og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package 
 
   int uni_length;
   unsigned char uni[DPcPathSize];
-  IFE(OgCpToUni(string_entity_length, string_entity , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
+  IFE(OgCpToUni(string_entity_length, me_ctrl->string_entity , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));
   for (int i = 0; i < uni_length; i += 2)
   {
     int c = (uni[i] << 8) + uni[i + 1];
@@ -82,11 +83,15 @@ og_status NlpLtrasEntityPackage(og_nlp_th ctrl_nlp_th, struct interpret_package 
       IFE(OgUniToCp(is,u,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
+    // Removing the space at the end.
+    int length_words = strlen(words);
+    length_words--;
+    words[length_words] = 0;
     double score_spelling = pow(trf->final_score, 4);
     NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: found entity '%s' with score %.2f", words, score_spelling);
-//    og_status status = NlpMatchEntitiesNgramInPackage(ctrl_nlp_th, interpret_package, request_word_list,
-//        request_word_list_length, words, strlen(words), FALSE);
-//    IFE(status);
+    IFE(NlpMatchEntitiesChangeToAlternativeString(me_ctrl, length_words, words));
+    IFE(NlpMatchCurrentEntity(me_ctrl));
+
   }
 
   IFE(OgLtrasTrfsDestroy(ctrl_nlp_th->hltras, trfs));
