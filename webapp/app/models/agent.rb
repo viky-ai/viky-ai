@@ -39,11 +39,14 @@ class Agent < ApplicationRecord
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
-  after_create_commit :nlp_push
-
-  after_update_commit :nlp_push, unless: proc { |record|
-    record.previous_changes.size == 2 && record.previous_changes[:nlp_updated_at].present?
-  }
+  after_update_commit do |record|
+    if @need_nlp_push || record.previous_changes[:agentname].present?
+      agent_regression_checks.update_all(state: 'running')
+      notify_tests_suite_ui
+      Nlp::Package.new(self).push
+      @need_nlp_push = false
+    end
+  end
 
   after_destroy do
     Nlp::Package.new(self).destroy
@@ -210,6 +213,10 @@ class Agent < ApplicationRecord
       .first
   end
 
+  def need_nlp_sync
+    @need_nlp_push = true
+  end
+
   def synced_with_nlp?
     return false if nlp_updated_at.nil?
     nlp_updated_at >= updated_at
@@ -253,12 +260,6 @@ class Agent < ApplicationRecord
     def clean_agentname
       return if agentname.nil?
       self.agentname = agentname.parameterize(separator: '-')
-    end
-
-    def nlp_push
-      agent_regression_checks.update_all(state: 'running')
-      notify_tests_suite_ui
-      Nlp::Package.new(self).push
     end
 
     def notify_tests_suite_ui

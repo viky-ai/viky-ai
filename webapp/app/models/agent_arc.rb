@@ -37,8 +37,11 @@ class AgentArc < ApplicationRecord
   private
 
     def remove_target_related_interpretation_aliases
-      target_related_interpretation_aliases.each { |ia| ia.destroy }
-      Nlp::Package.new(source).push
+      related_aliases = target_related_interpretation_aliases
+      if related_aliases.present?
+        related_aliases.each(&:destroy)
+        source.need_nlp_sync
+      end
     end
 
     def check_acyclic

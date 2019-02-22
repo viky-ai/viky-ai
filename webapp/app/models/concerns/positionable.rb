@@ -21,6 +21,8 @@ module Positionable
       else
         update_without_visibility(parent, public_list)
       end
+      parent.need_nlp_sync if @ancestor_classname == 'agent'
+      parent.touch if @touch_ancestor
     end
 
 
@@ -38,7 +40,6 @@ module Positionable
           update_order(public_list, current_public_objs, self.visibilities[:is_public])
           update_order(private_list, current_private_objs, self.visibilities[:is_private])
         end
-        parent.touch if @touch_ancestor
       end
 
       def update_without_visibility(parent, list)
@@ -47,7 +48,6 @@ module Positionable
         Agent.no_touching do
           update_order(list, current_objs)
         end
-        parent.touch if @touch_ancestor
       end
 
       def update_order(new_ids, current, visibility = nil)
