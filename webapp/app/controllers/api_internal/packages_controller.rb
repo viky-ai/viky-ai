@@ -29,5 +29,6 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
     else
       Rails.logger.warn("  Error while updating package (#{params['id']}) on NLS : #{params['error']}")
     end
+    head :no_content
   end
 end

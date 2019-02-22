@@ -179,7 +179,9 @@ class Agent < ApplicationRecord
   end
 
   def run_regression_checks
-    AgentRegressionCheckRunJob.perform_later self
+    if agent_regression_checks.count > 0
+      AgentRegressionCheckRunJob.perform_later self
+    end
   end
 
   def regression_checks_to_json
