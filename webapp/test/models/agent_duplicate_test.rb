@@ -104,6 +104,14 @@ class AgentDuplicateTest < ActiveSupport::TestCase
       interpretation: interpretations(:weather_forecast_tomorrow),
       nature: 'type_number'
     )
+    assert InterpretationAlias.create(
+      position_start: 35,
+      position_end: 40,
+      aliasname: 'regex',
+      interpretation: interpretations(:weather_forecast_tomorrow),
+      nature: 'type_regex',
+      reg_exp: 'A'
+    )
 
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
     assert new_agent.save
@@ -170,7 +178,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
           assert_equal alias_agent.any_enabled, alias_new_agent.any_enabled
           assert_not_equal alias_agent.id, alias_new_agent.id
           assert_not_equal alias_agent.interpretation.id, alias_new_agent.interpretation.id
-          unless alias_agent.nature == 'type_number'
+          unless ['type_number', 'type_regex'].include? alias_agent.nature
             assert_not_equal alias_agent.interpretation_aliasable.id, alias_new_agent.interpretation_aliasable.id
           end
         end
