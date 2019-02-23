@@ -15,7 +15,7 @@ og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
   IFE(OgLtrasHaSwapSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_swap));
   IFE(OgLtrasHaPhonSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_phon));
 
-  NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: entity to search is '%s'", me_ctrl->string_entity);
+  NlpLog(DOgNlpTraceMatch, "NlpLtrasEntity: entity to search is '%s'", me_ctrl->string_entity);
 
   int string_entity_length = strlen(me_ctrl->string_entity);
 
@@ -46,7 +46,7 @@ og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
 
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceLtras)
   {
-    OgMsg(ctrl_nlp_th->hmsg, "ltras", DOgMsgDestInLog, "NlpLtrasEntityPackage: list of linguistic transformations:");
+    OgMsg(ctrl_nlp_th->hmsg, "ltras", DOgMsgDestInLog, "NlpLtrasEntity: list of linguistic transformations:");
     IFE(OgLtrasTrfsLog(ctrl_nlp_th->hltras, trfs));
   }
 
@@ -88,7 +88,7 @@ og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
     length_words--;
     words[length_words] = 0;
     double score_spelling = pow(trf->final_score, 4);
-    NlpLog(DOgNlpTraceMatch, "NlpLtrasEntityPackage: found entity '%s' with score %.2f", words, score_spelling);
+    NlpLog(DOgNlpTraceMatch, "NlpLtrasEntity: found entity '%s' with score %.2f", words, score_spelling);
     IFE(NlpMatchEntitiesChangeToAlternativeString(me_ctrl, length_words, words));
     IFE(NlpMatchCurrentEntity(me_ctrl));
 

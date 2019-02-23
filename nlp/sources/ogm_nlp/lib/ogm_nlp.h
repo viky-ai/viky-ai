@@ -731,6 +731,8 @@ struct nlp_match_entities_ctrl
   int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
   int request_word_list_length;
   unsigned char string_entity[DOgNlpMaxEntitySize];
+  /** HashTable key: pointer (expression) , value: int (1) */
+  GHashTable *expression_hash;
 };
 
 struct og_ctrl_nlp_threaded

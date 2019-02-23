@@ -7,6 +7,7 @@
 #include "ogm_nlp.h"
 
 static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpret_package *interpret_package);
+static og_status NlpMatchEntitiesInPackage1(struct nlp_match_entities_ctrl *me_ctrl);
 static og_status NlpMatchEntitiesAddWord(struct nlp_match_entities_ctrl *me_ctrl, struct request_word *request_word);
 static og_status NlpMatchEntitiesRemoveWord(struct nlp_match_entities_ctrl *me_ctrl);
 static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entities_ctrl *me_ctrl,
@@ -33,7 +34,18 @@ static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpr
   memset(me_ctrl, 0, sizeof(struct nlp_match_entities_ctrl));
   me_ctrl->ctrl_nlp_th = ctrl_nlp_th;
   me_ctrl->interpret_package = interpret_package;
+  me_ctrl->expression_hash = g_hash_table_new(g_direct_hash, g_direct_equal);
 
+  og_status status = NlpMatchEntitiesInPackage1(me_ctrl);
+
+  g_hash_table_destroy(me_ctrl->expression_hash);
+
+  return status;
+}
+
+static og_status NlpMatchEntitiesInPackage1(struct nlp_match_entities_ctrl *me_ctrl)
+{
+  og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
 
@@ -140,11 +152,6 @@ og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ct
   }
 
   int string_entity_length = 0;
-  if (me_ctrl->request_word_list_length > 1)
-  {
-    string_entity_length = me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 2];
-  }
-
   if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
   {
     // We do not store very long entities
@@ -278,12 +285,19 @@ static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int 
   unsigned char *p = out;
   IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
   struct expression *expression = (struct expression *) expression_ptr;
-  NlpLog(DOgNlpTraceMatch, "NlpMatchEntitiesNgramInPackage: found expression '%s'", expression->text);
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: found expression '%s'", expression->text);
+
+  gpointer result = g_hash_table_lookup(me_ctrl->expression_hash, expression);
+  IFX(result)
+  {
+    NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: expression '%s' already created", expression->text);
+    DONE;
+  }
+  g_hash_table_insert(me_ctrl->expression_hash, expression, GINT_TO_POINTER(1));
 
   if (expression->input_parts_nb != me_ctrl->request_word_list_length)
   {
-    NlpThrowErrorTh(ctrl_nlp_th,
-        "NlpMatchEntitiesNgramInPackage: expression->input_parts_nb (%d) != request_word_list_length (%d)",
+    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchEntityAdd: expression->input_parts_nb (%d) != request_word_list_length (%d)",
         expression->input_parts_nb, me_ctrl->request_word_list_length);
     DPcErr;
   }
