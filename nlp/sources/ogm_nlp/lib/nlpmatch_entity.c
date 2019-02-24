@@ -14,7 +14,7 @@ static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entiti
     struct request_word *request_word);
 static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ctrl *me_ctrl);
 static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl);
-static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out);
+static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out);
 
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
 {
@@ -261,8 +261,9 @@ static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl)
       if (out[0] == '\1')
       {
         NlpLog(DOgNlpTraceMatch, "NlpMatchEntity: found full '%s'", buffer);
-        IFE(NlpMatchEntityAdd(me_ctrl, iout - 1, out + 1));
-        found_entity = TRUE;
+        og_bool added = NlpMatchEntityAdd(me_ctrl, iout - 1, out + 1);
+        IFE(added);
+        if (added) found_entity = TRUE;
       }
       else
       {
@@ -277,7 +278,7 @@ static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl)
   return found_entity;
 }
 
-static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out)
+static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out)
 {
   og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
 
@@ -297,9 +298,12 @@ static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int 
 
   if (expression->input_parts_nb != me_ctrl->request_word_list_length)
   {
-    NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchEntityAdd: expression->input_parts_nb (%d) != request_word_list_length (%d)",
+    // Typical case: "maisonde campagne", can be handled later by creating non basic words "maison" and "de"
+    // and then creating the expression using those new non basic words
+    NlpLog(DOgNlpTraceMatch,
+        "NlpMatchEntityAdd: expression->input_parts_nb (%d) != request_word_list_length (%d), not handled yet",
         expression->input_parts_nb, me_ctrl->request_word_list_length);
-    DPcErr;
+    return FALSE;
   }
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
@@ -308,5 +312,5 @@ static og_status NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int 
     IFE(status);
   }
 
-  DONE;
+  return TRUE;
 }
