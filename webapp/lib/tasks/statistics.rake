@@ -30,11 +30,13 @@ namespace :statistics do
 
       end
     end
-    Statistics::Print.step("Configure Kibana.")
-    begin
-      StatisticsVisualizer.new.configure
-    rescue RuntimeError => e
-      Statistics::Print.error(e)
+    unless Rails.env == 'test'
+      Statistics::Print.step("Configure Kibana.")
+      begin
+        StatisticsVisualizer.new.configure
+      rescue RuntimeError => e
+        Statistics::Print.error(e)
+      end
     end
   end
 
