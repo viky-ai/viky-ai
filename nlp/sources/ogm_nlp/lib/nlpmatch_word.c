@@ -75,7 +75,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
   {
     if (package == request_word->regex_input_part->expression->interpretation->package)
     {
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE,1.0));
     }
   }
 
@@ -89,7 +89,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
       // There is not need to have a special input part here for number words
       og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package,
-          number_input_part->Iinput_part, TRUE);
+          number_input_part->Iinput_part, TRUE, 1.0);
       IFE(status);
     }
   }
@@ -115,7 +115,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
         // Lemmatisation is accepted only on expressions with same locale
         if (input_part->expression->locale != request_word->lang_id) continue;
       }
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part,FALSE));
+      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part,FALSE,1.0));
     }
     while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }

@@ -452,6 +452,8 @@ struct request_input_part
   int sparse_mark;
 
   enum nlp_super_list_status super_list_status;
+
+  double score_spelling; // used by entity matching
 };
 
 struct request_position
@@ -728,11 +730,13 @@ struct nlp_match_entities_ctrl
   og_nlp_th ctrl_nlp_th;
   struct interpret_package *interpret_package;
   struct request_word *request_word_list[DOgNlpMaxNbWordsPerEntity];
+  struct request_word *alternative_request_word_list[DOgNlpMaxNbWordsPerEntity];
   int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
   int request_word_list_length;
   unsigned char string_entity[DOgNlpMaxEntitySize];
   /** HashTable key: pointer (expression) , value: int (1) */
   GHashTable *expression_hash;
+  double score_spelling;
 };
 
 struct og_ctrl_nlp_threaded
@@ -988,7 +992,8 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_number);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number,
+    double score_spelling);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,

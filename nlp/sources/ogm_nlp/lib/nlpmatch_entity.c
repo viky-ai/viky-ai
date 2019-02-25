@@ -35,6 +35,7 @@ static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpr
   me_ctrl->ctrl_nlp_th = ctrl_nlp_th;
   me_ctrl->interpret_package = interpret_package;
   me_ctrl->expression_hash = g_hash_table_new(g_direct_hash, g_direct_equal);
+  me_ctrl->score_spelling = 1.0;
 
   og_status status = NlpMatchEntitiesInPackage1(me_ctrl);
 
@@ -72,6 +73,7 @@ static og_status NlpMatchEntitiesAddWord(struct nlp_match_entities_ctrl *me_ctrl
     string_entity_length = me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 1];
   }
   me_ctrl->request_word_list[me_ctrl->request_word_list_length] = request_word;
+  me_ctrl->alternative_request_word_list[me_ctrl->request_word_list_length] = NULL;
 
   og_string normalized_string_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
   IFN(normalized_string_word) DPcErr;
@@ -136,6 +138,9 @@ static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entiti
   me_ctrl->string_entity[string_entity_length] = 0;
 
   me_ctrl->string_entity_length_list[me_ctrl->request_word_list_length - 1] = string_entity_length;
+
+  me_ctrl->alternative_request_word_list[me_ctrl->request_word_list_length - 1] = request_word;
+
   DONE;
 
 }
@@ -286,7 +291,8 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
   unsigned char *p = out;
   IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
   struct expression *expression = (struct expression *) expression_ptr;
-  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: found expression '%s'", expression->text);
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: found expression '%s' with score_spelling=%.2f", expression->text,
+      me_ctrl->score_spelling);
 
   gpointer result = g_hash_table_lookup(me_ctrl->expression_hash, expression);
   IFX(result)
@@ -307,8 +313,13 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
   }
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
-    og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, me_ctrl->request_word_list[i],
-        me_ctrl->interpret_package, expression->input_parts[i].self_index, FALSE);
+    struct request_word *request_word = me_ctrl->request_word_list[i];
+    IFX(me_ctrl->alternative_request_word_list[i])
+    {
+      request_word = me_ctrl->alternative_request_word_list[i];
+    }
+    og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word,
+        me_ctrl->interpret_package, expression->input_parts[i].self_index, FALSE, me_ctrl->score_spelling);
     IFE(status);
   }
 
