@@ -78,10 +78,20 @@ class InterpretationTest < ActiveSupport::TestCase
 
   test 'Check interpretation solution is valid' do
     interpretation = interpretations(:weather_forecast_tomorrow)
-    interpretation.solution = (['a'] * 5001).join('')
+    interpretation.solution = (['a'] * 8193).join('')
     assert !interpretation.valid?
     expected = {
-      solution: ['is too long (maximum is 5000 characters)']
+      solution: ['is too long (maximum is 8192 bytes)']
+    }
+    assert_equal expected, interpretation.errors.messages
+  end
+
+  test 'Check expression size' do
+    interpretation = interpretations(:weather_forecast_tomorrow)
+    interpretation.expression = (['À'] * 1025).join('')
+    assert !interpretation.valid?
+    expected = {
+      expression: ['is too long (maximum is 2048 bytes)']
     }
     assert_equal expected, interpretation.errors.messages
   end

@@ -15,6 +15,7 @@ class Nlp::Interpret
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
   validate :now_format
+  validate :sentence_size
 
   before_validation :set_default
 
@@ -109,6 +110,12 @@ class Nlp::Interpret
         rescue ArgumentError => e
           errors.add :now, I18n.t('nlp.interpret.invalid_now_format')
         end
+      end
+    end
+
+    def sentence_size
+      if self.sentence.bytesize > 64000
+        errors.add :sentence, I18n.t('nlp.interpret.sentence_too_long', count: 64000)
       end
     end
 

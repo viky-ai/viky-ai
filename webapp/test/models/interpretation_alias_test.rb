@@ -321,6 +321,14 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert interpretation_alias.validate
   end
 
+  test 'Aliasname can be maximum of 2048 bytes' do
+    interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
+
+    interpretation_alias.aliasname = 'Ò' * 1025
+    assert !interpretation_alias.validate
+    assert ['Parameter name is too long (maximum is 2048 bytes)'], interpretation_alias.errors.full_messages
+  end
+
 
   test 'Invert alias names' do
     interpretation = Interpretation.new({
@@ -400,5 +408,22 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert_not_nil regexp_invalid.errors[:reg_exp]
     expected_msg = ['Regular expression should be valid']
     assert_equal expected_msg, regexp_invalid.errors.full_messages
+  end
+
+  test 'Regular expression should be less than 4096 bytes' do
+    test_regexp = InterpretationAlias.new(
+      position_start: 0,
+      position_end: 5,
+      aliasname: 'where',
+      interpretation_id: interpretations(:terminator_find_sarah).id,
+      nature: 'type_regex',
+      reg_exp: "[a#{'b' * 4097}c]"
+    )
+    assert !test_regexp.save
+    assert_not_nil test_regexp.errors[:reg_exp]
+    assert_equal ['Regular expression is too long (maximum is 4096 bytes)'], test_regexp.errors.full_messages
+
+    test_regexp.reg_exp = "[a#{'b' * 4000}c]"
+    assert test_regexp.save
   end
 end
