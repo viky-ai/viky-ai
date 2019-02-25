@@ -83,18 +83,18 @@ namespace :statistics do
       inactive_indices = indices.second.select { |index| index.need_reindexing? inactive_template }
       if (active_indices + inactive_indices).empty?
         Statistics::Print.step('Nothing to reindex.')
-        exit 0
-      end
-      Statistics::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
-      active_indices.each do |src_index|
-        dest_index = StatisticsIndex.from_template active_template
-        Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-        reindex_into_new(client, src_index, dest_index)
-      end
-      inactive_indices.each do |src_index|
-        dest_index = StatisticsIndex.from_template inactive_template
-        Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-        reindex_into_new(client, src_index, dest_index)
+      else
+        Statistics::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
+        active_indices.each do |src_index|
+          dest_index = StatisticsIndex.from_template active_template
+          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          reindex_into_new(client, src_index, dest_index)
+        end
+        inactive_indices.each do |src_index|
+          dest_index = StatisticsIndex.from_template inactive_template
+          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          reindex_into_new(client, src_index, dest_index)
+        end
       end
     end
   end
