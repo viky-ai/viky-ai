@@ -96,11 +96,6 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
-      solution:
-        too_long: "is too long (maximum is %{count} bytes)"
-      expression:
-        too_long: "is too long (maximum is %{count} bytes)"
-
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
@@ -120,10 +115,6 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
       valid_regex: "should be valid"
-      regex:
-        too_long: "is too long (maximum is %{count} bytes)"
-      aliasname:
-        too_long: "is too long (maximum is %{count} bytes)"
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:
@@ -142,3 +133,5 @@ en:
     agent_regression_checks:
       delete:
         running: Regression test cannot be deleted in running state.
+    messages:
+      too_large: 'is too large' #TODO add byte + char message

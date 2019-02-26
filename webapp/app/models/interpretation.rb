@@ -9,10 +9,9 @@ class Interpretation < ApplicationRecord
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
-  validates :expression, presence: true
+  validates :expression, presence: true, byte_size: { maximum: 2048 }
+  validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
-  validate :solution_size
-  validate :expression_size
 
   before_save :cleanup
 
@@ -48,19 +47,4 @@ class Interpretation < ApplicationRecord
         self.solution = ''
       end
     end
-
-    def solution_size
-      max_solution_size = 8192
-      if solution.bytesize > max_solution_size
-        errors.add :solution, I18n.t('errors.interpretation.solution.too_long', count: max_solution_size)
-      end
-    end
-
-    def expression_size
-      max_exp_size = 2048
-      if expression.bytesize > max_exp_size
-        errors.add :expression, I18n.t('errors.interpretation.expression.too_long', count: max_exp_size)
-      end
-    end
-
 end

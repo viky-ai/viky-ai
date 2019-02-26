@@ -6,13 +6,12 @@ class InterpretationAlias < ApplicationRecord
 
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
-  validates :aliasname, presence: true
-  validates :reg_exp, presence: true, if: -> { self.type_regex? }
+  validates :aliasname, presence: true, byte_size: { maximum: 2048 }
+  validates :reg_exp, presence: true, byte_size: { maximum: 4096 }, if: -> { self.type_regex? }
 
   validate :interpretation_aliasable_present, unless: -> { self.type_number? || self.type_regex? }
   validate :check_position_start_greater_than_end
   validate :no_overlap
-  validate :check_aliasname_size
   validate :check_aliasname_uniqueness
   validate :check_aliasname_valid_javascript_variable
   validate :check_valid_regex
@@ -76,22 +75,8 @@ class InterpretationAlias < ApplicationRecord
       errors.add(:aliasname, I18n.t('errors.interpretation_alias.aliasname_valid_javascript_variable')) if javascript_reserved_keywords.any? { |item| item == aliasname }
     end
 
-    def check_aliasname_size
-      max_aliasname_size = 2048
-      if aliasname.bytesize >  max_aliasname_size
-        errors.add :reg_exp, I18n.t('errors.interpretation_alias.aliasname.too_long', count: max_aliasname_size)
-      end
-    end
-
     def check_valid_regex
-      max_regex_size = 4096
-
       return if reg_exp.nil?
-
-      if reg_exp.bytesize > max_regex_size
-        errors.add :reg_exp, I18n.t('errors.interpretation_alias.regex_too_long', count: max_regex_size)
-      end
-
       begin
         Regexp.new(reg_exp)
       rescue RegexpError
