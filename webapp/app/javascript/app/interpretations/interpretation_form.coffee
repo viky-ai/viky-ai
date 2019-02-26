@@ -286,7 +286,7 @@ class AliasesRegexForm
 
   html_input: ->
     "<textarea
-      maxlength='1000'
+      maxlength='3000'
       name='interpretation[interpretation_aliases_attributes][][reg_exp]'
       class='code autosize'
       placeholder='Enter a regular expression'>#{@regexp}</textarea>"
