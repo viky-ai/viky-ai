@@ -10,12 +10,12 @@ class Nlp::Interpret
   attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
+  validates :sentence, byte_size: { maximum: 7000 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
   validate :now_format
-  validate :sentence_size
 
   before_validation :set_default
 
@@ -112,11 +112,4 @@ class Nlp::Interpret
         end
       end
     end
-
-    def sentence_size
-      if self.sentence.bytesize > 64000
-        errors.add :sentence, I18n.t('nlp.interpret.sentence_too_long', count: 64000)
-      end
-    end
-
 end

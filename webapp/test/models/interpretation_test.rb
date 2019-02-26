@@ -81,7 +81,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.solution = (['a'] * 8193).join('')
     assert !interpretation.valid?
     expected = {
-      solution: ['is too long (maximum is 8192 bytes)']
+      solution: ['is too long']
     }
     assert_equal expected, interpretation.errors.messages
   end
@@ -91,7 +91,7 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.expression = (['À'] * 1025).join('')
     assert !interpretation.valid?
     expected = {
-      expression: ['is too long (maximum is 2048 bytes)']
+      expression: ['is too long']
     }
     assert_equal expected, interpretation.errors.messages
   end

@@ -1,5 +1,6 @@
 class ByteSizeValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
+    return if value.nil?
     if options.key?(:minimum)
       if value.bytesize < options[:minimum]
         record.errors.add attribute, :too_small, count: options[:minimum]

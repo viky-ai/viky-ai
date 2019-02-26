@@ -115,4 +115,17 @@ class InterpretTest < ActiveSupport::TestCase
     )
     assert_equal [weather.id, terminator.id], interpret.packages
   end
+
+  test 'Test a long interpretation sentence' do
+    weather = agents(:weather)
+    interpret = Nlp::Interpret.new(
+      ownername: weather.owner.username,
+      agentname: weather.agentname,
+      agent_token: weather.api_token,
+      sentence: 'hello' * 2000,
+      format: 'json'
+    )
+    assert interpret.invalid?
+    assert_equal ['Sentence is too long'], interpret.errors.full_messages
+  end
 end

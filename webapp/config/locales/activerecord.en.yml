@@ -134,4 +134,4 @@ en:
       delete:
         running: Regression test cannot be deleted in running state.
     messages:
-      too_large: 'is too large' #TODO add byte + char message
+      too_large: 'is too long'

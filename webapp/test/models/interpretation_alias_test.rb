@@ -321,12 +321,12 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     assert interpretation_alias.validate
   end
 
-  test 'Aliasname can be maximum of 2048 bytes' do
+  test 'Aliasname can be of maximum 2048 bytes' do
     interpretation_alias = interpretation_aliases(:weather_forecast_tomorrow_question)
 
     interpretation_alias.aliasname = 'Ò' * 1025
     assert !interpretation_alias.validate
-    assert ['Parameter name is too long (maximum is 2048 bytes)'], interpretation_alias.errors.full_messages
+    assert_equal 'Parameter name is too long', interpretation_alias.errors.full_messages[0]
   end
 
 
@@ -421,7 +421,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     )
     assert !test_regexp.save
     assert_not_nil test_regexp.errors[:reg_exp]
-    assert_equal ['Regular expression is too long (maximum is 4096 bytes)'], test_regexp.errors.full_messages
+    assert_equal ['Regular expression is too long'], test_regexp.errors.full_messages
 
     test_regexp.reg_exp = "[a#{'b' * 4000}c]"
     assert test_regexp.save
