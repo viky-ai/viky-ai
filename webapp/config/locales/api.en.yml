@@ -9,6 +9,5 @@ en:
       invalid_ownername: is incorrect, '%{ownername}' user doesn't exist
       invalid_agentname: is incorrect, '%{ownername}' user doesn't own '%{agentname}' agent
       invalid_now_format: is incorrect, please use ISO 8601 format, i.e. 2017-12-05T15:23:17+01:00
-      sentence_too_long: is too long (maximum is %{count} bytes)
   statements:
     expired_session: 'Expired chat session'

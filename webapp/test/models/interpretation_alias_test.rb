@@ -326,7 +326,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
 
     interpretation_alias.aliasname = 'Ò' * 1025
     assert !interpretation_alias.validate
-    assert_equal 'Parameter name is too long', interpretation_alias.errors.full_messages[0]
+    assert_equal 'Parameter name (2050 bytes) is too long (maximum is 2048 bytes)', interpretation_alias.errors.full_messages[0]
   end
 
 
@@ -421,7 +421,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
     )
     assert !test_regexp.save
     assert_not_nil test_regexp.errors[:reg_exp]
-    assert_equal ['Regular expression is too long'], test_regexp.errors.full_messages
+    assert_equal ['Regular expression (4101 bytes) is too long (maximum is 4096 bytes)'], test_regexp.errors.full_messages
 
     test_regexp.reg_exp = "[a#{'b' * 4000}c]"
     assert test_regexp.save

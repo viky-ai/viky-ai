@@ -126,6 +126,6 @@ class InterpretTest < ActiveSupport::TestCase
       format: 'json'
     )
     assert interpret.invalid?
-    assert_equal ['Sentence is too long'], interpret.errors.full_messages
+    assert_equal ['Sentence (10000 bytes) is too long (maximum is 7000 bytes)'], interpret.errors.full_messages
   end
 end
