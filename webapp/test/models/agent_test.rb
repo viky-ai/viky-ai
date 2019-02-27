@@ -228,6 +228,73 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Agent locales default on create" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.valid?
+    assert agent.save
+    expected = [Locales::ANY, 'en', 'fr']
+    assert_equal expected, agent.locales
+  end
+
+
+  test "Agent locales are deduplicated" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["en", "fr", "fr", "en"]
+    assert agent.save
+    assert_equal ["en", "fr"], agent.locales
+  end
+
+
+  test "Agent locales presence on update" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    agent.locales = []
+    assert_not agent.save
+    expected = ["Locales can't be blank"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent locales are include in available locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["missing_locale_1", "missing_locale_2"]
+    assert_not agent.save
+    expected = ["Locales unknown 'missing_locale_1'", "Locales unknown 'missing_locale_2'"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent ordered_locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa",
+      locales: ["fr", "en", "*"]
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    assert_equal ["fr", "en", "*"], agent.locales
+    assert_equal ["*", "en", "fr"], agent.ordered_locales
+  end
+
+
   test "Test agent slug" do
     agent = users(:admin).agents.friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name

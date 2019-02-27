@@ -83,6 +83,7 @@ en:
         agents_presence: You must delete all the agents you own
     agent:
       owner_presence_in_users: list does not includes agent owner
+      unknown_locale: "unknown '%{current_locale}'"
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
         invalid_username: Please select a valid new owner
