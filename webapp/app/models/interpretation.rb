@@ -9,6 +9,8 @@ class Interpretation < ApplicationRecord
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
+  enum proximity: { glued: 0, very_close: 10, close: 20, far: 50 }
+
   validates :expression, presence: true
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
   validates :solution, length: { maximum: 5000 }
