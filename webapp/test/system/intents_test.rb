@@ -103,40 +103,6 @@ class IntentsTest < ApplicationSystemTestCase
   end
 
 
-  test 'Remove locale of an intent' do
-    go_to_agent_intents('admin', 'weather')
-    click_link 'weather_forecast'
-
-    assert page.has_link?('en')
-    assert page.has_link?('fr')
-
-    within('.card') do
-      click_link 'en'
-    end
-    within('#interpretations-list') do
-      click_link 'What the weather like tomorrow ?'
-      assert page.has_text?('Cancel')
-      all('a').last.click
-    end
-
-    assert page.has_text?('Do you want to remove it ?')
-    click_link 'Yes, remove "en" tab'
-    within('.card') do
-      assert page.has_no_link?('en')
-      assert page.has_link?('fr')
-    end
-
-    assert page.has_text?('Quel temps fera-t-il demain ?')
-
-    within('#interpretations-list') do
-      click_link 'Quel temps fera-t-il demain ?'
-      assert page.has_text?('Cancel')
-      all('a').last.click
-    end
-    assert page.has_text?('Start adding expressions using the form below.')
-  end
-
-
   test 'Move intent to another agent' do
     intent = intents(:weather_question)
     intent.visibility = Intent.visibilities[:is_private]

@@ -16,7 +16,7 @@ class IntentsController < ApplicationController
     @interpretation.glued = true
     @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
-    @current_locale = params[:locale] || @intent.ordered_locales.first
+    @current_locale = params[:locale] || @agent.ordered_locales.first
   end
 
   def new
@@ -88,35 +88,20 @@ class IntentsController < ApplicationController
   end
 
   def select_new_locale
-    available_locales = Locales::ALL - @intent.locales
+    available_locales = Locales::ALL - @agent.locales
     render partial: 'select_new_locale', locals: { available_locales: available_locales }
   end
 
   def add_locale
     locale_to_add = params[:locale_to_add]
-    @intent.locales << locale_to_add
+    @agent.locales << locale_to_add
 
-    if @intent.save
+    if @agent.save
       redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: locale_to_add)
     else
       redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales.first), alert: t(
           'views.intents.add_locale.errors_message',
-          errors: @intent.errors.full_messages.join(', ')
-      )
-    end
-  end
-
-  def remove_locale
-    locale_to_remove = params[:locale_to_remove]
-    locale_to_remove_index = @intent.locales.index(locale_to_remove)
-    previous_locale_index = locale_to_remove_index <= 0 ? 0 : locale_to_remove_index - 1
-    @intent.locales -= [locale_to_remove]
-    if @intent.save
-      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales[previous_locale_index])
-    else
-      redirect_to user_agent_intent_path(@owner, @agent, @intent, locale: @intent.locales[locale_to_remove_index]), alert: t(
-          'views.intents.remove_locale.errors_message',
-          errors: @intent.errors.full_messages.join(', ')
+          errors: @agent.errors.full_messages.join(', ')
       )
     end
   end
@@ -166,9 +151,9 @@ class IntentsController < ApplicationController
       case action_name
       when 'show', 'index'
         access_denied unless current_user.can? :show, @agent
-      when 'new', 'create', 'edit', 'update', 'confirm_destroy',
-           'destroy', 'update_positions', 'select_new_locale',
-           'add_locale', 'remove_locale'
+      when 'new', 'create', 'edit', 'update',
+           'confirm_destroy', 'destroy', 'update_positions',
+           'select_new_locale', 'add_locale'
         access_denied unless current_user.can? :edit, @agent
       when 'move_to_agent'
         if current_user.can? :edit, @agent

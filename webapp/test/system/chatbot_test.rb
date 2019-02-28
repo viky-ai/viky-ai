@@ -71,7 +71,7 @@ class ChatbotTest < ApplicationSystemTestCase
       assert page.has_content?('Arnold')
       assert page.has_content?('Weather')
 
-      all('.dropdown__trigger > button').first.click
+      first('.btn--chatbot-options').click
       click_link 'Exclude WIP'
 
       assert page.has_no_content?('Arnold')
