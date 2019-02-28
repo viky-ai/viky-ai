@@ -9,7 +9,7 @@ stages:
 image: docker:dind
 
 variables:
-  SKIP_TEST: 'true'
+  SKIP_TEST: 'false'
   GIT_SUBMODULE_STRATEGY: recursive
   DOCKER_DRIVER: overlay
   DOCKER_IMAGE_APP: $CI_REGISTRY_IMAGE/app
