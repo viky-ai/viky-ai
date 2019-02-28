@@ -7,6 +7,11 @@ namespace :statistics do
     environments.each do |environment|
       Statistics::Print.step("Environment #{environment}.")
       client = IndexManager.client environment
+      Statistics::Print.substep('Wait cluster to be ready.')
+      unless IndexManager.cluster_ready?(client)
+        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        exit 1
+      end
       IndexManager.fetch_template_configurations.each do |template_conf|
         active_template = StatisticsIndexTemplate.new template_conf
         Statistics::Print.substep("Index #{active_template.index_name}.")
@@ -47,6 +52,11 @@ namespace :statistics do
     Statistics::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
     client = IndexManager.client
+    Statistics::Print.substep('Wait statistics cluster to be ready.')
+    unless IndexManager.cluster_ready?(client)
+      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      exit 1
+    end
     unless index_exists?(client, src_name)
       Statistics::Print.error("Source index #{src_name} does not exists.")
       exit 1
@@ -72,6 +82,11 @@ namespace :statistics do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
       client = IndexManager.client
+      Statistics::Print.substep('Wait statistics cluster to be ready.')
+      unless IndexManager.cluster_ready?(client)
+        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        exit 1
+      end
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
       active_template = StatisticsIndexTemplate.new template_conf
       save_template(client, active_template)
@@ -107,6 +122,11 @@ namespace :statistics do
     max_docs = 100_00
     Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = IndexManager.client
+    Statistics::Print.substep('Wait statistics cluster to be ready.')
+    unless IndexManager.cluster_ready?(client)
+      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      exit 1
+    end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     active_template = StatisticsIndexTemplate.new template_conf
     dest_index = StatisticsIndex.from_template active_template

@@ -5,6 +5,21 @@ module IndexManager
     Elasticsearch::Client.new(config[:client].symbolize_keys)
   end
 
+  def self.cluster_ready?(client)
+    expected_status = Rails.env.production? ? 'green' : 'yellow'
+    retry_count = 0
+    cluster_ready = false
+    while !cluster_ready && retry_count < 3 do
+      begin
+        client.cluster.health(wait_for_status: expected_status)
+        cluster_ready = true
+      rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => e
+        retry_count += 1
+      end
+    end
+    cluster_ready
+  end
+
   def self.fetch_statistics_configuration(environment = Rails.env)
     config = Rails.application.config_for(:statistics, env: environment).symbolize_keys
     raise "Missing statistics configuration for environment #{environment}" if config.empty?
