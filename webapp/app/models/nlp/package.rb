@@ -130,8 +130,8 @@ class Nlp::Package
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
-        expressions << expression
+
+        expressions << build_proximity_values(ialias.interpretation, expression)
 
         expression = {}
         expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
@@ -140,8 +140,8 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias)
         expression[:aliases] << build_internal_alias(ialias, true)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
-        expressions << expression
+
+        expressions << build_proximity_values(ialias.interpretation, expression)
 
         if ialias.any_enabled
           expression = {}
@@ -154,8 +154,8 @@ class Nlp::Package
           }
           expression[:aliases] << build_internal_alias(ialias, true)
           expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-          expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
-          expressions << expression
+
+          expressions << build_proximity_values(ialias.interpretation, expression)
         end
 
         interpretation_hash[:expressions] = expressions
@@ -179,9 +179,10 @@ class Nlp::Package
         expression[:aliases]    = build_aliases(interpretation)
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
-        expression[:glued]      = interpretation.glued      if interpretation.glued
         expression[:solution]   = build_interpretation_solution(interpretation)
-        expressions << expression
+
+        expressions << build_proximity_values(interpretation, expression)
+
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
@@ -300,5 +301,15 @@ class Nlp::Package
         result = "`#{entity.solution}`" unless entity.solution.blank?
       end
       result
+    end
+
+    def build_proximity_values(interpretation, expression)
+      if interpretation.glued?
+        expression[:glued] = true
+      else
+        expression[:glued] = false
+        expression[:glue_distance] = Interpretation.proximities[interpretation.proximity]
+      end
+      expression
     end
 end

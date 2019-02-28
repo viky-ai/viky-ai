@@ -16,10 +16,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale"     => "fr",
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glued"         => false,
+              "glue-distance" => 20
             },
             {
               "expression" => "@{question} @{when} ?",
@@ -51,10 +53,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         },
@@ -173,9 +177,11 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -206,10 +212,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'private',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -279,10 +287,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale"     => "fr",
-              "solution"   => "Quel temps fera-t-il demain ?"
+              "expression"     => "Quel temps fera-t-il demain ?",
+              "id"             => interpretations(:weather_forecast_demain).id,
+              "locale"         => "fr",
+              "solution"       => "Quel temps fera-t-il demain ?",
+              "glued"          => false,
+              "glue-distance"  => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
@@ -308,10 +318,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale"     => "en",
-              "solution"   => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -400,10 +412,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'Quel temps fera-t-il demain ?',
-              'id'         => interpretations(:weather_forecast_demain).id,
-              'locale'     => 'fr',
-              'solution'   => "Quel temps fera-t-il demain ?"
+              'expression'    => 'Quel temps fera-t-il demain ?',
+              'id'            => interpretations(:weather_forecast_demain).id,
+              'locale'        => 'fr',
+              'solution'      => "Quel temps fera-t-il demain ?",
+              "glued"         => false,
+              "glue-distance" => 20
             },
             {
               'expression' => '@{question} tomorrow ?',
@@ -429,10 +443,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'What the weather like',
-              "id"         => interpretations(:weather_question_like).id,
-              'locale'     => 'en',
-              'solution'   => "What the weather like"
+              'expression'    => 'What the weather like',
+              "id"            => interpretations(:weather_question_like).id,
+              'locale'        => 'en',
+              'solution'      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -462,10 +478,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'Quel temps fera-t-il demain ?',
-              'id'         => interpretations(:weather_forecast_demain).id,
-              'locale'     => 'fr',
-              'solution'   => 'Quel temps fera-t-il demain ?'
+              'expression'    => 'Quel temps fera-t-il demain ?',
+              'id'            => interpretations(:weather_forecast_demain).id,
+              'locale'        => 'fr',
+              'solution'      => 'Quel temps fera-t-il demain ?',
+              "glued"         => false,
+              "glue-distance" => 20
             },
             {
               'expression' => '@{question} tomorrow ?',
@@ -505,10 +523,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           'expressions' => [
             {
-              'expression' => 'What the weather like',
-              "id"         => interpretations(:weather_question_like).id,
-              'locale'     => 'en',
-              'solution'   => "What the weather like"
+              'expression'    => 'What the weather like',
+              "id"            => interpretations(:weather_question_like).id,
+              'locale'        => 'en',
+              'solution'      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -537,10 +557,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "Quel temps fera-t-il demain ?",
-              "id"         => interpretations(:weather_forecast_demain).id,
-              "locale" => "fr",
-              "solution" => "Quel temps fera-t-il demain ?"
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glued"         => false,
+              "glue-distance" => 20
             },
             {
               "expression" => "@{question} tomorrow ?",
@@ -566,10 +588,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope' => 'public',
           "expressions" => [
             {
-              "expression" => "What the weather like",
-              "id"         => interpretations(:weather_question_like).id,
-              "locale" => "en",
-              "solution" => "What the weather like"
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
@@ -584,10 +608,12 @@ class PackageTest < ActiveSupport::TestCase
           "scope"=>"private",
           "expressions"=>  [
               {
-                "expression"=>"Find",
-                "id"=>"55495e57-e816-5b14-b665-2205a6ccf263",
-                "locale"=>"en",
-                "solution"=>"Find"
+                "expression"    =>"Find",
+                "id"            =>"55495e57-e816-5b14-b665-2205a6ccf263",
+                "locale"        =>"en",
+                "solution"      =>"Find",
+                "glued"         => false,
+                "glue-distance" => 20
               }
             ]
         },
@@ -601,19 +627,23 @@ class PackageTest < ActiveSupport::TestCase
               "id"=>"dfcf3b39-2f54-5847-b717-a8040707f232",
               "aliases"=> [
                 {
-                  "alias" => "find",
-                  "slug" => "admin/terminator/interpretations/simple_where",
-                  "id" => "997928ef-e905-535e-b36a-2f64b7349c3b",
+                  "alias"   => "find",
+                  "slug"    => "admin/terminator/interpretations/simple_where",
+                  "id"      => "997928ef-e905-535e-b36a-2f64b7349c3b",
                   "package" => "794f5279-8ed5-5563-9229-3d2573f23051"
                 }
               ],
-              "locale"=>"en"
+              "locale"        =>"en",
+              "glued"         => false,
+              "glue-distance" => 20
             },
             {
-              "expression" => "Where is Sarah Connor ?",
-              "id"         => interpretations(:terminator_find_sarah).id,
-              "locale" => "en",
-              "solution" => "Where is Sarah Connor ?"
+              "expression"    => "Where is Sarah Connor ?",
+              "id"            => interpretations(:terminator_find_sarah).id,
+              "locale"        => "en",
+              "solution"      => "Where is Sarah Connor ?",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         },
@@ -783,7 +813,9 @@ class PackageTest < ActiveSupport::TestCase
                   "regex"   => "[A-Za-z,-]"
                 }
               ],
-              "locale"     => "en"
+              "locale"        => "en",
+              "glued"         => false,
+              "glue-distance" => 20
             }
           ]
         }
