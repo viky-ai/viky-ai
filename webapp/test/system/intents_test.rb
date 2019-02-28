@@ -70,7 +70,7 @@ class IntentsTest < ApplicationSystemTestCase
 
 
   test 'Reorganize intents' do
-    intent = Intent.new(intentname: 'test', locales: ['en'])
+    intent = Intent.new(intentname: 'test')
     intent.agent = agents(:weather)
     assert intent.save
 

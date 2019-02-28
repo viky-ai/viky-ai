@@ -1,3 +1,7 @@
+class Intent < ApplicationRecord
+  serialize :locales, JSON
+end
+
 class AddLocalesToAgent < ActiveRecord::Migration[5.1]
   def up
     ActiveRecord::Base.record_timestamps = false

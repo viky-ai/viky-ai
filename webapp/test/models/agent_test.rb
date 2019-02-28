@@ -455,14 +455,16 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     assert_equal 2, agent_weather.reachable_intents(current_intent).count
     assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting',
-      locales: ['en'],
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
@@ -474,7 +476,10 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
@@ -485,13 +490,11 @@ class AgentTest < ActiveSupport::TestCase
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting_public',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_public'
     )
     assert Intent.create(
       intentname: 'greeting_private',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_private'
     )

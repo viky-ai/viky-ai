@@ -9,7 +9,6 @@ class IntentTest < ActiveSupport::TestCase
     intent = Intent.new(
       intentname: 'greeting',
       description: 'Hello random citizen !',
-      locales: ['en'],
       visibility: 'is_private'
     )
     intent.agent = agents(:weather)
@@ -32,19 +31,24 @@ class IntentTest < ActiveSupport::TestCase
 
     expected = {
       agent: ['must exist'],
-      intentname: ['is too short (minimum is 3 characters)', 'can\'t be blank'],
-      locales: ['can\'t be blank']
+      intentname: ['is too short (minimum is 3 characters)', 'can\'t be blank']
     }
     assert_equal expected, intent.errors.messages
   end
 
 
   test 'Unique intentname per agent' do
-    intent = Intent.new(intentname: 'hello', description: 'Hello random citizen !', locales: ['en'])
+    intent = Intent.new(
+      intentname: 'hello',
+      description: 'Hello random citizen !'
+    )
     intent.agent = agents(:weather)
     assert intent.save
 
-    other_intent = Intent.new(intentname: 'hello', description: 'Another way to greet you...', locales: ['en'])
+    other_intent = Intent.new(
+      intentname: 'hello',
+      description: 'Another way to greet you...'
+    )
     other_intent.agent = agents(:weather)
     assert !other_intent.save
 
@@ -56,7 +60,10 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname minimal length' do
-    intent = Intent.new(intentname: 'h', description: 'Hello random citizen !', locales: ['en'])
+    intent = Intent.new(
+      intentname: 'h',
+      description: 'Hello random citizen !'
+    )
     intent.agent = agents(:weather)
     assert !intent.save
 
@@ -68,7 +75,10 @@ class IntentTest < ActiveSupport::TestCase
 
 
   test 'Check intentname is cleaned' do
-    intent = Intent.new(intentname: "H3ll-#'!o", description: 'Hello random citizen !', locales: ['en'])
+    intent = Intent.new(
+      intentname: "H3ll-#'!o",
+      description: 'Hello random citizen !'
+    )
     intent.agent = agents(:weather)
     assert intent.save
 
@@ -96,63 +106,9 @@ class IntentTest < ActiveSupport::TestCase
   end
 
 
-  test 'Add a locale to an intent' do
-    intent = intents(:terminator_find)
-
-    assert_equal %w[en], intent.locales
-    intent.locales << 'fr'
-    assert intent.save
-    assert_equal %w[en fr], intent.locales
-  end
-
-
-  test 'Add an unknown locale to an intent' do
-    intent = intents(:weather_forecast)
-    intent.locales << 'xx-XX'
-
-    assert !intent.save
-    expected = {
-      locales: ["unknown 'xx-XX'"]
-    }
-    assert_equal expected, intent.errors.messages
-  end
-
-
-  test 'Remove a locale from an intent' do
-    intent = intents(:weather_forecast)
-    assert_equal %w[en fr], intent.locales
-    intent.locales -= ['fr']
-    assert intent.save
-    assert_equal %w[en], intent.locales
-  end
-
-
-  test 'Remove an unknown locale from an intent' do
-    intent = intents(:weather_forecast)
-    assert_equal %w[en fr], intent.locales
-    intent.locales -= ['xx-XX']
-    assert intent.save
-    assert_equal %w[en fr], intent.locales
-  end
-
-
-  test 'Remove the last locale from an intent' do
-    intent = intents(:weather_forecast)
-    intent.locales -= ['fr']
-    assert intent.save
-    intent.locales -= ['en']
-    assert !intent.save
-    expected = {
-        locales: ['can\'t be blank']
-    }
-    assert_equal expected, intent.errors.messages
-  end
-
-
   test 'Do not override color at creation if already set' do
     intent = Intent.new(
       intentname: 'greeting',
-      locales: ['en'],
       color: 'blue'
     )
     intent.agent = agents(:weather)
@@ -171,19 +127,16 @@ class IntentTest < ActiveSupport::TestCase
     agent = agents(:weather_confirmed)
     intent_0 = Intent.create(
       intentname: 'intent_0',
-      locales: ['en'],
       position: 0,
       agent: agent
     )
     intent_1 = Intent.create(
       intentname: 'intent_1',
-      locales: ['en'],
       position: 1,
       agent: agent
     )
     intent_2 = Intent.create(
       intentname: 'intent_2',
-      locales: ['en'],
       position: 2,
       agent: agent
     )
@@ -241,15 +194,13 @@ class IntentTest < ActiveSupport::TestCase
     weather_loc_intent = Intent.new(
       intentname: 'weather_location',
       description: 'Find locations with similar weather',
-      locales: ['en'],
       visibility: 'is_private'
     )
     weather_loc_intent.agent = dependent_agent
     assert weather_loc_intent.save
 
     interpretation = interpretation = Interpretation.new(
-      expression: 'Where is it raining?',
-      locale: 'en'
+      expression: 'Where is it raining?'
     )
     interpretation.intent = weather_loc_intent
     interpretation_alias = InterpretationAlias.new(
