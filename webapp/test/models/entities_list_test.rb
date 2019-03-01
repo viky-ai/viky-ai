@@ -12,7 +12,8 @@ class EntitiesListTest < ActiveSupport::TestCase
       visibility: 'is_private',
       position: 23,
       color: 'red',
-      agent: agents(:weather)
+      agent: agents(:weather),
+      proximity: 'glued'
     )
     assert entities_list.save
 
@@ -22,6 +23,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 3, agents(:weather).entities_lists.count
     assert EntitiesList::AVAILABLE_COLORS.one? { |color| color == entities_list.color }
     assert_equal 'is_private', entities_list.visibility
+    assert entities_list.proximity_glued?
     assert !entities_list.is_public?
     assert entities_list.is_private?
   end

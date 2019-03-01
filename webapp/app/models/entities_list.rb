@@ -11,6 +11,8 @@ class EntitiesList < ApplicationRecord
   has_many :entities, dependent: :destroy
   has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
 
+  enum proximity: ExpressionProximity::PROXIMITIES, _prefix: :proximity
+
   enum visibility: [:is_public, :is_private]
 
   validates :listname, uniqueness: { scope: [:agent_id] },
@@ -56,6 +58,10 @@ class EntitiesList < ApplicationRecord
           .where(interpretation_aliases: { interpretation_aliasable: self })
           .distinct
           .order('position desc, created_at desc')
+  end
+
+  def proximity
+    @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
   end
 
   private

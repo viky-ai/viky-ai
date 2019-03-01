@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190130141915) do
+ActiveRecord::Schema.define(version: 20190301133440) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.uuid "agent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "proximity", default: 2
     t.index ["agent_id"], name: "index_entities_lists_on_agent_id"
   end
 
@@ -165,9 +166,9 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.string "locale"
     t.integer "position", default: 0
     t.boolean "keep_order", default: false
-    t.boolean "glued", default: false
     t.text "solution"
     t.boolean "auto_solution_enabled", default: true
+    t.integer "proximity", default: 2
     t.index ["intent_id"], name: "index_interpretations_on_intent_id"
   end
 
