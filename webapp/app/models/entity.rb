@@ -47,8 +47,9 @@ class Entity < ApplicationRecord
 
     def validate_locales_exists
       return unless terms.instance_of?(Array)
+      locales = entities_list.agent.locales
       terms.each do |json|
-        unless Locales::ALL.include?(json['locale'])
+        unless locales.include?(json['locale'])
           errors.add(:terms, I18n.t('errors.entity.unknown_locale', current_locale: json['locale']))
         end
       end

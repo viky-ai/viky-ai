@@ -9,8 +9,8 @@ class AddLocalesToAgent < ActiveRecord::Migration[5.1]
       add_column :agents, :locales, :jsonb
       Agent.reset_column_information
       Agent.all.each do |agent|
-        locales = agent.intents.pluck(:locales).flatten.uniq
-        agent.locales = Locales::ALL.select { |l| locales.include?(l) }
+        intents_locales = agent.intents.pluck(:locales).flatten.uniq
+        agent.locales = Locales::ALL.select { |l| intents_locales.include?(l) }
         agent.locales = [Locales::ANY, 'en', 'fr'] if agent.locales.blank?
         agent.save!
       end

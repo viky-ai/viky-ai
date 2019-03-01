@@ -121,7 +121,14 @@ class EntityTest < ActiveSupport::TestCase
     entity.terms = "soleil:xy"
     assert !entity.save
     expected = {
-      terms: ["unknown locale 'xy'"]
+      terms: ["uses an unauthorized locale 'xy' for this agent"]
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = "soleil:pt"
+    assert !entity.save
+    expected = {
+      terms: ["uses an unauthorized locale 'pt' for this agent"]
     }
     assert_equal expected, entity.errors.messages
 

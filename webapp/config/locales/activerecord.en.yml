@@ -100,7 +100,7 @@ en:
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
-      unknown_locale: "unknown locale '%{current_locale}'"
+      unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       import:
         no_file: 'must be present'
