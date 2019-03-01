@@ -9,7 +9,7 @@ class Interpretation < ApplicationRecord
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
-  enum proximity: { glued: 0, very_close: 10, close: 20, far: 50 }
+  enum proximity: ExpressionProximity::PROXIMITIES, _prefix: :proximity
 
   validates :expression, presence: true
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
@@ -38,6 +38,9 @@ class Interpretation < ApplicationRecord
     result.join('')
   end
 
+  def proximity
+    @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
+  end
 
   private
 

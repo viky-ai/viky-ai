@@ -304,11 +304,11 @@ class Nlp::Package
     end
 
     def build_proximity_values(interpretation, expression)
-      if interpretation.glued?
+      if interpretation.proximity_glued?
         expression[:glued] = true
       else
         expression[:glued] = false
-        expression[:glue_distance] = Interpretation.proximities[interpretation.proximity]
+        expression[:glue_distance] = interpretation.proximity.get_distance
       end
       expression
     end

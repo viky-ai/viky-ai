@@ -23,7 +23,7 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal 'Good morning John', interpretation.expression
     assert_equal intents(:weather_forecast).id, interpretation.intent.id
     assert_equal false, interpretation.keep_order
-    assert_equal false, interpretation.glued
+    assert_equal 'close', interpretation.proximity.to_s
     assert interpretation.solution.nil?
     assert_equal 3, intents(:weather_forecast).interpretations.count
     assert_equal interpretation_alias.id, interpretation.interpretation_aliases.reload[0].id

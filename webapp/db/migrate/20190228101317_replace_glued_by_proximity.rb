@@ -1,6 +1,6 @@
 class ReplaceGluedByProximity < ActiveRecord::Migration[5.1]
-  def change
-    add_column :interpretations, :proximity, :integer, default: 20
+  def up
+    add_column :interpretations, :proximity, :integer, default: 2
 
     Interpretation.where(glued: true).in_batches do |interpretations|
       interpretations.update_all(proximity: 'glued')
@@ -10,7 +10,20 @@ class ReplaceGluedByProximity < ActiveRecord::Migration[5.1]
       interpretations.update_all(proximity: 'close')
     end
 
-    # TODO: uncomment
-    # remove_column :interpretations, :glued, :boolean
+    remove_column :interpretations, :glued, :boolean
+  end
+
+  def down
+    add_column :interpretations, :glued, :boolean, default: false
+
+    Interpretation.where(proximity: 'glued').in_batches do |interpretations|
+      interpretations.update_all(glued: true)
+    end
+
+    Interpretation.where.not(proximity: 'glued').in_batches do |interpretations|
+      interpretations.update_all(glued: false)
+    end
+
+    remove_column :interpretations, :proximity
   end
 end
