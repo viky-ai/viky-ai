@@ -576,7 +576,7 @@ class InterpretationTagger
 
   syncExpressionInput: =>
     input = $(@editor.element).closest('form').find('textarea[name="interpretation[expression]"]')
-    input.val(@editor.getDocument().toString())
+    input.val(@editor.getDocument().toString().trim())
 
   syncAliasesForm: ->
     form_container = $(@editor.element).closest('form').find('.aliases')
