@@ -116,8 +116,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glued"      => false,
+              "glue-distance" => 20
             },
             {
               "expression" => "tout à l'heure",
@@ -125,8 +125,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glued"      => false,
+              "glue-distance" => 20
             },
             {
               "expression" => "today",
@@ -134,16 +134,16 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glued"      => false,
+              "glue-distance" => 20
             },
             {
               "expression" => "tomorrow",
               "id"         => entities(:weather_dates_tomorrow).id,
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
-              "glued"      => true,
-              "glue-strength" => "punctuation",
+              "glued"      => false,
+              "glue-distance" => 20
             }
           ]
         }

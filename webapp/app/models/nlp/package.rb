@@ -131,7 +131,7 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
 
-        expressions << build_proximity_values(ialias.interpretation, expression)
+        expressions << build_interpretation_proximity(ialias.interpretation, expression)
 
         expression = {}
         expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
@@ -141,7 +141,7 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias, true)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
 
-        expressions << build_proximity_values(ialias.interpretation, expression)
+        expressions << build_interpretation_proximity(ialias.interpretation, expression)
 
         if ialias.any_enabled
           expression = {}
@@ -155,7 +155,7 @@ class Nlp::Package
           expression[:aliases] << build_internal_alias(ialias, true)
           expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
 
-          expressions << build_proximity_values(ialias.interpretation, expression)
+          expressions << build_interpretation_proximity(ialias.interpretation, expression)
         end
 
         interpretation_hash[:expressions] = expressions
@@ -181,7 +181,7 @@ class Nlp::Package
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
         expression[:solution]   = build_interpretation_solution(interpretation)
 
-        expressions << build_proximity_values(interpretation, expression)
+        expressions << build_interpretation_proximity(interpretation, expression)
 
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
@@ -199,17 +199,16 @@ class Nlp::Package
       interpretation_hash[:slug] = elist.slug
       interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
       expressions = []
+      proximity_values = build_entities_list_proximity(elist)
 
       elist.entities.find_each do |entity|
         entity.terms.each do |term|
-          expression = {}
+          expression = proximity_values.deep_dup
           expression[:expression] = term['term']
           expression[:id] = entity.id
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
           expression[:solution] = build_entities_list_solution(entity)
           expression[:keep_order] = true
-          expression[:glued]      = true
-          expression[:glue_strength] = 'punctuation'
           expressions << expression
         end
       end
@@ -303,7 +302,7 @@ class Nlp::Package
       result
     end
 
-    def build_proximity_values(interpretation, expression)
+    def build_interpretation_proximity(interpretation, expression)
       if interpretation.proximity_glued?
         expression[:glued] = true
       else
@@ -311,5 +310,19 @@ class Nlp::Package
         expression[:glue_distance] = interpretation.proximity.get_distance
       end
       expression
+    end
+
+    def build_entities_list_proximity(entity)
+      if entity.proximity_glued?
+        {
+          glued: true,
+          glue_strength: 'punctuation'
+        }
+      else
+        {
+          glued: false,
+          glue_distance: entity.proximity.get_distance
+        }
+      end
     end
 end
