@@ -9,9 +9,9 @@ class Interpretation < ApplicationRecord
 
   accepts_nested_attributes_for :interpretation_aliases, allow_destroy: true
 
-  validates :expression, presence: true
+  validates :expression, presence: true, byte_size: { maximum: 2048 }
+  validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
-  validates :solution, length: { maximum: 5000 }
 
   before_save :cleanup
 
@@ -47,5 +47,4 @@ class Interpretation < ApplicationRecord
         self.solution = ''
       end
     end
-
 end
