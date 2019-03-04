@@ -62,11 +62,10 @@ class InterpretRequestLog
   private
 
     def to_json
-      {
+      result = {
         timestamp: @timestamp,
         sentence: @sentence,
         language: @language,
-        now: @now,
         agent_id: @agent.id,
         agent_slug: @agent.slug,
         owner_id: @agent.owner.id,
@@ -74,6 +73,8 @@ class InterpretRequestLog
         body: @body,
         context: @context
       }
+      result[:now] = @now if @now.present?
+      result
     end
 
     def context_to_s

@@ -8,9 +8,9 @@
 * Yarn (1.0.1)         ( https://yarnpkg.com/lang/en/docs/install/ )
 * PostgreSQL (9.6.5)   ( `sudo apt-get install -y postgresql postgresql-contrib libpq-dev` )
 * Redis (3.2)          ( `sudo apt-get install redis-server` or `sudo apt-get install redis` )
-* ElasticSearch (6.3)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.3.0`)
+* ElasticSearch (6.6)  ( use docker : `docker pull docker.elastic.co/elasticsearch/elasticsearch:6.6.1`)
 * Cerebro              ( use docker : `docker pull yannart/cerebro` )
-* Kibana               ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.3.0` )
+* Kibana               ( use docker : `docker pull docker.elastic.co/kibana/kibana:6.6.1` )
 * ImageMagick          ( `sudo apt-get install -y graphicsmagick-imagemagick-compat` )
 * Graphviz             ( `sudo apt-get install -y graphviz` )
 * Docker 17.09.0-ce    ( [see below](#docker) )
@@ -66,8 +66,8 @@ If you need more information, see sections below.
 13. Create databases : `$ ./bin/rails db:setup`
 14. Start statistics containers (dev + tests) :
     ```bash
-    $ docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.3.0
-    $ docker run -p 9222:9200                                                        -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    $ docker run -p 9200:9200 -v $(pwd)/tmp:/backup_data -e "path.repo=/backup_data" -e "discovery.type=single-node" -e "node.name=viky-stats01-dev"  --rm --mount 'type=volume,src=vikyapp_stats01_dev,dst=/usr/share/elasticsearch/data'  --name viky-stats01-dev  docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    $ docker run -p 9222:9200                                                        -e "discovery.type=single-node" -e "node.name=viky-stats01-test" --rm --mount 'type=volume,src=vikyapp_stats01_test,dst=/usr/share/elasticsearch/data' --name viky-stats01-test docker.elastic.co/elasticsearch/elasticsearch:6.6.1
     ```
 15. Setup statistics : `$ ./bin/rails statistics:setup`
 16. Stop both statistics containers : `$ docker stop viky-stats01-dev viky-stats01-test`

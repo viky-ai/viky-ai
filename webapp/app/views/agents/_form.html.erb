@@ -5,7 +5,7 @@
     <div class="field field--api-token">
       <div class="control control--merged">
         <span class="addon">API token</span>
-        <%= f.text_field :api_token, id: :agent_api_token, readonly: true %>
+        <%= f.text_field :api_token, id: :agent_api_token, readonly: true, class: "agent-token-input" %>
         <a href="<%= generate_token_user_agent_path(current_user, agent) %>" class="btn"
            data-action="generate-token" title="<%= t('views.agents.form.api_token.generate_btn') %>">
           <span class="icon icon--x-small"><%= icon_loading %></span>

@@ -113,3 +113,4 @@ en:
       agents_selection:
         title_html: 'Move <strong>%{name}</strong> to&hellip;'
         not_found: No agent found.
+      nlp_error: 'Error while updating package on NLS %{error}'

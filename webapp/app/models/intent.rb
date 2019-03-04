@@ -23,6 +23,10 @@ class Intent < ApplicationRecord
 
   before_validation :clean_intentname
 
+  after_commit do
+    agent.need_nlp_sync
+  end
+
   def interpretations_with_local(locale)
     interpretations.where(locale: locale)
   end

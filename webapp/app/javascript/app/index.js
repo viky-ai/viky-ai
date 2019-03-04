@@ -21,42 +21,45 @@ import 'autosize'
 import LocalTime from "local-time"
 LocalTime.start()
 
-import './nav/nav';
+import './nav/nav.coffee';
 
-import './profile/main';
+import './profile/main.scss';
 
-import './authentication/main';
+import './authentication/main.scss';
 
-import './chatbots/main';
+import './chatbots/main.scss';
 window.App.Statement = require('./chatbots/statements');
 
-import './agents/agent_form';
-import './agents/main';
-import './agents/transfer_ownership_form';
+import './agents/agent_form.coffee';
+import './agents/main.scss';
+import './agents/transfer_ownership_form.coffee';
 window.App.AgentDuplicator = require('./agents/duplicator');
 
-import './bots/main';
-import './bots/bot_form';
+import './bots/main.scss';
+import './bots/bot_form.coffee';
 
-import './dependencies/dependencies_filter';
+import './dependencies/dependencies_filter.coffee';
 
-import './console/console';
+import './console/console.coffee';
+import './console/console_explain_footer.coffee'
+import './console/console_footer.coffee';
+import './console/console_test_suite.coffee';
 
-import './intents/main';
-import './intents/intent_form';
+import './intents/main.scss';
+import './intents/intent_form.coffee';
 
-import './entities_lists/main';
-import './entities_lists/entities_list_form';
-import './entities_lists/entities_import_form';
+import './entities_lists/main.scss';
+import './entities_lists/entities_list_form.coffee';
+import './entities_lists/entities_import_form.coffee';
 
-import './interpretations/main';
-import './interpretations/interpretation_form';
+import './interpretations/main.scss';
+import './interpretations/interpretation_form.coffee';
 
-import './entities/main';
+import './entities/main.scss';
 
-import './aliased_intents/main';
+import './aliased_intents/main.scss';
 
-import './readme/form';
+import './readme/form.coffee';
 
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
 window.App.EntityForm = require('./entities/entity_form');

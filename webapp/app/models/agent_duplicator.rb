@@ -12,6 +12,7 @@ class AgentDuplicator
       include_association :entities_lists, clone_with: EntitiesListsCloner
       include_association :intents, clone_with: IntentsCloner
       include_association :out_arcs
+      include_association :agent_regression_checks
 
       nullify :api_token
 
@@ -65,7 +66,7 @@ class AgentDuplicator
       new_agent.intents.each do |intent|
         intent.interpretations.each do |interpretation|
           interpretation.interpretation_aliases
-            .reject { |ialias| ialias.nature == 'type_number' }
+            .reject { |ialias| ['type_number', 'type_regex'].include? ialias.nature }
             .select { |ialias| ialias.interpretation_aliasable.agent.id == @agent.id }
             .each { |ialias| aliases_to_fix << ialias }
         end

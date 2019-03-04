@@ -5,7 +5,7 @@
   <% css_style = "background-image: url(#{agent.image_url(:background)});" %>
 <% end %>
 
-<div class="agent-header">
+<div class="agent-header" data-agent_id=<%= "#{agent.id}" %>>
 
   <a href="<%= user_agent_path(agent.owner, agent) %>" class="agent-header__visual <%= css_class %>" style="<%= css_style %>">
     <% if agent.is_public? %>

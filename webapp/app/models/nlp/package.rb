@@ -49,19 +49,17 @@ class Nlp::Package
   end
 
   def generate_json
-    JSON.parse(
-      ApplicationController.render(
-        template: 'agents/package',
-        assigns: { agent: @agent, interpretations: build_tree },
-        format: :json
-      )
+    ApplicationController.render(
+      template: 'agents/package',
+      assigns: { agent: @agent, interpretations: build_tree },
+      format: :json
     )
   end
 
   def full_json_export
     packages_list = full_packages_map(@agent).values
     packages_list.collect do |package|
-      Nlp::Package.new(package).generate_json
+      JSON.parse(Nlp::Package.new(package).generate_json)
     end
   end
 

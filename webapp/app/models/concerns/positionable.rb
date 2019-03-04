@@ -9,8 +9,10 @@ module Positionable
   module ClassMethods
     attr_reader :ancestor_classname
 
-    def positionable_ancestor(parent)
-      @ancestor_classname = parent.to_s
+    def positionable_ancestor(*attributes)
+      parent_name = attributes.first
+      @ancestor_classname = parent_name.to_s
+      @touch_ancestor = attributes.size > 1 ? attributes.second[:touch] : true
     end
 
     def update_positions(parent, public_list, private_list = nil)
@@ -19,6 +21,8 @@ module Positionable
       else
         update_without_visibility(parent, public_list)
       end
+      parent.need_nlp_sync if @ancestor_classname == 'agent'
+      parent.touch if @touch_ancestor
     end
 
 
@@ -36,7 +40,6 @@ module Positionable
           update_order(public_list, current_public_objs, self.visibilities[:is_public])
           update_order(private_list, current_private_objs, self.visibilities[:is_private])
         end
-        parent.touch
       end
 
       def update_without_visibility(parent, list)
@@ -45,7 +48,6 @@ module Positionable
         Agent.no_touching do
           update_order(list, current_objs)
         end
-        parent.touch
       end
 
       def update_order(new_ids, current, visibility = nil)
