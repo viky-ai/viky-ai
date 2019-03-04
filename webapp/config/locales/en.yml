@@ -22,4 +22,11 @@ en:
       title: Error 404
       comment: The requested page does not exist.
       action_message_html: Please go back to your <a href="/">Agents list</a>.
+  expression:
+    proximity:
+      label: 'Proximity: '
+      glued: Glued
+      very_close: Very Close
+      close: Close
+      far: Far
 

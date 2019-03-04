@@ -12,6 +12,7 @@
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"                        value="" />
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
   <% end %>
+  <%= f.hidden_field :proximity, id: "proximity__new_interpretation" %>
 
   <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
@@ -19,8 +20,32 @@
         <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
         <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
         &nbsp;
-        <%= f.check_box :glued, id: "glued__#{interpretation.id}" %>
-        <%= f.label :glued, for: "glued__#{interpretation.id}" %>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--small">
+              <%= t('expression.proximity.label') %><span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <% Interpretation.proximities.each_key do |proximity| %>
+                <li>
+                  <a href="#" <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
+                     data-behavior="populate-input, replace-trigger-label"
+                     data-input-selector="#proximity__new_interpretation"
+                     data-input-value="<%= proximity %>"
+                     data-replace-selector=".btn__label"
+                     data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
+                    <%= t("expression.proximity.#{proximity}") %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
         &nbsp;
         <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
         <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>

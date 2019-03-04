@@ -3,6 +3,7 @@
               class: 'interpretations-form' do |f| %>
 
   <%= f.hidden_field :locale, value: @current_locale %>
+  <%= f.hidden_field :proximity, id: "proximity__new_interpretation", value: interpretation.proximity %>
 
   <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
@@ -10,8 +11,33 @@
         <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
         <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
         &nbsp;
-        <%= f.check_box :glued, id: "glued__new_interpretation" %>
-        <%= f.label :glued, for: "glued__new_interpretation" %>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn btn--small">
+              <%= t('expression.proximity.label') %><span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <% Interpretation.proximities.each_key do |proximity| %>
+                <li>
+                  <% label = t("expression.proximity.#{proximity}") %>
+                  <a href="#"
+                     data-behavior="populate-input, replace-trigger-label"
+                     data-input-selector="#proximity__new_interpretation"
+                     data-input-value="<%= proximity %>"
+                     data-replace-selector=".btn__label"
+                     data-replace-with="Proximity: <%= t("expression.proximity.#{proximity}") %>">
+                    <%= t("expression.proximity.#{proximity}") %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
         &nbsp;
         <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__new_interpretation" %>
         <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__new_interpretation" %>

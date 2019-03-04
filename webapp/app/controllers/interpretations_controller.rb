@@ -14,7 +14,7 @@ class InterpretationsController < ApplicationController
       if interpretation.save
         format.js do
           new_interpretation = Interpretation.new(
-            glued: true,
+            proximity: 'glued',
             keep_order: true,
             auto_solution_enabled: true
           )
@@ -146,7 +146,7 @@ class InterpretationsController < ApplicationController
 
     def interpretation_params
       p = params.require(:interpretation).permit(
-        :expression, :locale, :keep_order, :glued, :solution, :auto_solution_enabled,
+        :expression, :locale, :keep_order, :proximity, :solution, :auto_solution_enabled,
         :interpretation_aliases_attributes => [
           :id, :nature, :position_start, :position_end,
           :aliasname, :reg_exp, :interpretation_aliasable_id, :interpretation_aliasable_type,
