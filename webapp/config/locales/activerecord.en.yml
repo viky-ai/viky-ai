@@ -58,6 +58,7 @@ en:
         visibility: Visibility
         visibility_is_private: Private
         visibility_is_public: Public
+        proximity: Proximity
       interpretation:
         expression: Expression
         keep_order: Keep order

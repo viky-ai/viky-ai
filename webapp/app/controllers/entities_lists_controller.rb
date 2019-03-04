@@ -24,7 +24,8 @@ class EntitiesListsController < ApplicationController
 
   def new
     @entities_list = EntitiesList.new(
-      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private])
+      visibility: EntitiesList.visibilities.key(EntitiesList.visibilities[:is_private]),
+      proximity: 'glued'
     )
     render partial: 'new'
   end
@@ -120,7 +121,7 @@ class EntitiesListsController < ApplicationController
     end
 
     def entities_list_params
-      params.require(:entities_list).permit(:listname, :description, :visibility)
+      params.require(:entities_list).permit(:listname, :description, :visibility, :proximity)
     end
 
     def set_owner
