@@ -7,11 +7,11 @@ class ByteSizeValidator < ActiveModel::EachValidator
       if actual_size < options[:minimum]
         record.errors.add attribute, :too_small, count: options[:minimum], actual: actual_size
       end
-    elsif options.key?(:maximum)
+    end
+    if options.key?(:maximum)
       if actual_size > options[:maximum]
         record.errors.add attribute, :too_large, count: options[:maximum], actual: actual_size
       end
     end
   end
-
 end
