@@ -19,10 +19,10 @@ class Entity < ApplicationRecord
   before_validation :build_solution
 
   def terms_to_s
-    return "" if terms.nil?
+    return '' if terms.blank?
     terms.collect { |term|
       if term['locale'] == Locales::ANY
-        "#{term['term']}"
+        term['term']
       else
         "#{term['term']}:#{term['locale']}"
       end
@@ -59,10 +59,8 @@ class Entity < ApplicationRecord
 
     def validate_terms_present
       return unless terms.instance_of?(Array)
-      terms.each do |json|
-        if json['term'].empty?
-          errors.add(:terms, I18n.t('errors.entity.term_abscent'))
-        end
+      if terms.any? { |json| json['term'].empty? }
+        errors.add(:terms, I18n.t('errors.entity.term_abscent'))
       end
     end
 
