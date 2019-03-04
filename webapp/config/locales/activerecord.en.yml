@@ -134,5 +134,5 @@ en:
       delete:
         running: Regression test cannot be deleted in running state.
     messages:
-      too_large: '(%{actual} bytes) is too long (maximum is %{count} bytes)'
-      too_small: '(%{actual} bytes) is too short (minimum is %{count} bytes)'
+      too_large: '(%{actual}) is too long (maximum is %{count})'
+      too_small: '(%{actual}) is too short (minimum is %{count})'
