@@ -1,6 +1,7 @@
 class StatisticsIndex
 
-  attr_reader :name, :state, :version, :snapshot_id
+  attr_reader :base_name, :state, :version, :uid
+  attr_accessor :snapshot_id
 
   def self.from_template(template)
     StatisticsIndex.new template.index_name, template.state, template.version
@@ -10,25 +11,30 @@ class StatisticsIndex
     base_name = name.split('-')[1]
     state = name.split('-')[2]
     version = name.split('-')[3]
-    id = name.split('-')[4]
-    index = StatisticsIndex.new base_name, state, version, id
+    uid = name.split('-')[4]
     if name.split('-').size == 6
       snapshot_id = name.split('-')[-2]
-      index.snapshot_id = snapshot_id
+      uid = name.split('-')[-1]
+    else
+      snapshot_id = nil
     end
-    index
+    StatisticsIndex.new base_name, state, version, uid, snapshot_id
   end
 
-  def initialize(base_name, state, version, id = nil)
+  def initialize(base_name, state, version, uid = nil, snapshot_id = nil)
+    @base_name = base_name
     @state = state
     @version = version.to_i
-    uniq_id = id.present? ? id : SecureRandom.hex(4)
-    @name = ['stats', base_name, state, version, uniq_id].join('-')
+    @uid = uid.present? ? uid : SecureRandom.hex(4)
+    @snapshot_id = snapshot_id
   end
 
-  def snapshot_id=(id)
-    @snapshot_id = id
-    @name = (@name.split('-')[0..3] << id << @name.split('-')[4]).join('-')
+  def name
+    if @snapshot_id.present?
+      ['stats', @base_name, @state, @version, @snapshot_id, @uid].join('-')
+    else
+      ['stats', @base_name, @state, @version, @uid].join('-')
+    end
   end
 
   def snapshot?
