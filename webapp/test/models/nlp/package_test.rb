@@ -145,7 +145,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -181,7 +181,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -215,8 +215,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
+
 
   test 'Package generation with alias list' do
     weather = agents(:weather)
@@ -317,8 +318,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
+
 
   test 'Package generation with alias list any' do
     weather = agents(:weather)
@@ -438,7 +440,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -514,7 +516,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 
@@ -789,7 +791,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, package.generate_json
+    assert_equal expected, JSON.parse(package.generate_json)
   end
 
 end

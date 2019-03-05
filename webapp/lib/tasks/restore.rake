@@ -217,16 +217,6 @@ namespace :restore do
 
     def synchronize_NLP
       Restore::Print::step("Synchronize with NLP")
-      backup_dir = File.join(Rails.root, 'import', 'development')
-      Restore::Print::substep("Stash packages from import/ to #{backup_dir}")
-      unless Dir.exist?(backup_dir)
-        FileUtils.mkdir backup_dir
-        FileUtils.cp(Dir.glob(File.join(Rails.root, 'import', '/*.json')), backup_dir)
-      else
-        Restore::Print::notice("    [skipping] Stash directory is already present")
-      end
-      Restore::Print::substep("Reinit NLP")
-
       begin
         Rake::Task['packages:reinit'].invoke
       rescue => e

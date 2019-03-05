@@ -7,6 +7,11 @@ namespace :statistics do
     environments.each do |environment|
       Statistics::Print.step("Environment #{environment}.")
       client = IndexManager.client environment
+      Statistics::Print.substep('Wait cluster to be ready.')
+      unless IndexManager.cluster_ready?(client)
+        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        exit 1
+      end
       IndexManager.fetch_template_configurations.each do |template_conf|
         active_template = StatisticsIndexTemplate.new template_conf
         Statistics::Print.substep("Index #{active_template.index_name}.")
@@ -15,26 +20,29 @@ namespace :statistics do
         save_template(client, inactive_template) unless template_exists?(client, inactive_template)
 
         alias_name = InterpretRequestLog::INDEX_ALIAS_NAME
-        if !client.indices.exists_alias?(name: alias_name) && client.indices.exists?(index: alias_name)
-          Statistics::Print.notice("Index like #{active_template.index_patterns} already exists, with same as alias name (#{alias_name}), delete it beacause it should not exists.")
+        if index_exists?(client, alias_name)
+          Statistics::Print.notice("Delete index with same name as alias (#{alias_name}) because it should not exists.")
           client.indices.delete index: alias_name
         end
 
-        if index_exists?(client, active_template)
+        index_with_valid_regexp_pattern = "#{active_template.index_patterns[0..-2]}.*"
+        if index_exists?(client, index_with_valid_regexp_pattern)
           Statistics::Print.notice("Index like #{active_template.index_patterns} already exists : skipping index creation.")
         else
           index = StatisticsIndex.from_template active_template
           create_index(client, index)
-          update_index_aliases(client, [ { add: { index: index.name, alias: alias_name } } ], alias_name)
+          update_index_aliases(client, [{ add: { index: index.name, alias: alias_name } }], alias_name)
         end
 
       end
     end
-    Statistics::Print.step("Configure Kibana.")
-    begin
-      StatisticsVisualizer.new.configure
-    rescue RuntimeError => e
-      Statistics::Print.error(e)
+    unless Rails.env == 'test'
+      Statistics::Print.step("Configure Kibana.")
+      begin
+        StatisticsVisualizer.new.configure
+      rescue RuntimeError => e
+        Statistics::Print.error(e)
+      end
     end
   end
 
@@ -44,7 +52,12 @@ namespace :statistics do
     Statistics::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
     client = IndexManager.client
-    unless client.indices.exists? index: src_name
+    Statistics::Print.substep('Wait statistics cluster to be ready.')
+    unless IndexManager.cluster_ready?(client)
+      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      exit 1
+    end
+    unless index_exists?(client, src_name)
       Statistics::Print.error("Source index #{src_name} does not exists.")
       exit 1
     end
@@ -69,6 +82,11 @@ namespace :statistics do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
       client = IndexManager.client
+      Statistics::Print.substep('Wait statistics cluster to be ready.')
+      unless IndexManager.cluster_ready?(client)
+        Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+        exit 1
+      end
       template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
       active_template = StatisticsIndexTemplate.new template_conf
       save_template(client, active_template)
@@ -81,18 +99,18 @@ namespace :statistics do
       inactive_indices = indices.second.select { |index| index.need_reindexing? inactive_template }
       if (active_indices + inactive_indices).empty?
         Statistics::Print.step('Nothing to reindex.')
-        exit 0
-      end
-      Statistics::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
-      active_indices.each do |src_index|
-        dest_index = StatisticsIndex.from_template active_template
-        Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-        reindex_into_new(client, src_index, dest_index)
-      end
-      inactive_indices.each do |src_index|
-        dest_index = StatisticsIndex.from_template inactive_template
-        Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
-        reindex_into_new(client, src_index, dest_index)
+      else
+        Statistics::Print.step("Reindex indices #{(active_indices.map(&:name) + inactive_indices.map(&:name))}.")
+        active_indices.each do |src_index|
+          dest_index = StatisticsIndex.from_template active_template
+          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          reindex_into_new(client, src_index, dest_index)
+        end
+        inactive_indices.each do |src_index|
+          dest_index = StatisticsIndex.from_template inactive_template
+          Statistics::Print.substep("Reindex #{src_index.name} to #{dest_index.name}.")
+          reindex_into_new(client, src_index, dest_index)
+        end
       end
     end
   end
@@ -104,6 +122,11 @@ namespace :statistics do
     max_docs = 100_00
     Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = IndexManager.client
+    Statistics::Print.substep('Wait statistics cluster to be ready.')
+    unless IndexManager.cluster_ready?(client)
+      Statistics::Print.error('Cannot perform tasks : cluster is not ready')
+      exit 1
+    end
     template_conf = IndexManager.fetch_template_configurations('template-stats-interpret_request_log').first
     active_template = StatisticsIndexTemplate.new template_conf
     dest_index = StatisticsIndex.from_template active_template
@@ -189,12 +212,11 @@ namespace :statistics do
       delete_index(client, src_index.name)
     end
 
-    def index_exists?(client, template)
-      expected_status = Rails.env == 'production' ? 'green' : 'yellow'
-      index_present = client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
-        index =~ Regexp.new(template.index_patterns, Regexp::IGNORECASE)
+    def index_exists?(client, index_to_find)
+      expected_status = Rails.env.production? ? 'green' : 'yellow'
+      client.cluster.health(level: 'indices', wait_for_status: expected_status)['indices'].keys.any? do |index|
+        index =~ /^#{index_to_find}$/i
       end
-      index_present
     end
 
     def create_index(client, index)

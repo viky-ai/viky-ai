@@ -55,6 +55,19 @@ class EntityTest < ActiveSupport::TestCase
   end
 
 
+  test 'Entity terms length in bytes' do
+    entity = entities(:weather_sunny)
+    entity.terms = [
+      { 'term' => 'À' * 2000, 'locale' => 'en' },
+    ]
+    assert entity.invalid?
+    expected = {
+      terms: ['(3.906 KB) is too long (maximum is 2 KB)']
+    }
+    assert_equal expected, entity.errors.messages
+  end
+
+
   test 'Set position on new entity' do
     entity = Entity.new(
       terms: [{ term: 'Jacques', locale: 'fr' }],

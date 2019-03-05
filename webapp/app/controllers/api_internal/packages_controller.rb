@@ -10,7 +10,7 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
         @agent = Agent.find(params[:id])
         json = Nlp::Package.new(@agent).generate_json
         headers['ETag'] = @agent.updated_at.iso8601(9)
-        render json: json
+        render body: json, content_type: "application/json"
       end
       Rails.logger.info("  Generate package #{@agent.id} - #{@agent.slug} in #{(time.real*1000.0).round(1)} ms")
     end

@@ -66,11 +66,10 @@ test_webapp:
     VIKYAPP_ACTIONCABLE_REDIS_URL: 'redis://redis:6379/1'
     VIKYAPP_ACTIVEJOB_REDIS_URL: 'redis://redis:6379/2'
     VIKYAPP_STATISTICS_URL: 'http://elasticsearch:9200'
-    VIKYAPP_STATISTICS_VISUALIZER_URL: 'http://kibana:5601'
   services:
     - postgres:9.6-alpine
     - redis:3.2-alpine
-    - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    - name: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
       command:
         [
           'bin/elasticsearch',
@@ -78,8 +77,6 @@ test_webapp:
           '-Enetwork.host=_site_',
         ]
       alias: elasticsearch
-    - name: docker.elastic.co/kibana/kibana:6.3.0
-      alias: kibana
   script:
     - cd /webapp
     - if [ "$SKIP_TEST" != "true" ]; then ./bin/docker_run_test.sh ; fi

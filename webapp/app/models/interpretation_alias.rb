@@ -6,8 +6,8 @@ class InterpretationAlias < ApplicationRecord
 
   validates :position_start, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :position_end, numericality: { only_integer: true, greater_than: 0 }
-  validates :aliasname, presence: true
-  validates :reg_exp, presence: true, length: { maximum: 1000 }, if: -> { self.type_regex? }
+  validates :aliasname, presence: true, byte_size: { maximum: 2048 }
+  validates :reg_exp, presence: true, byte_size: { maximum: 4096 }, if: -> { self.type_regex? }
 
   validate :interpretation_aliasable_present, unless: -> { self.type_number? || self.type_regex? }
   validate :check_position_start_greater_than_end
@@ -77,7 +77,6 @@ class InterpretationAlias < ApplicationRecord
 
     def check_valid_regex
       return if reg_exp.nil?
-
       begin
         Regexp.new(reg_exp)
       rescue RegexpError
