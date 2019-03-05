@@ -98,6 +98,7 @@ Rails.application.routes.draw do
           end
 
           get :confirm_destroy
+          put :update_proximity
 
           collection do
             post :update_positions

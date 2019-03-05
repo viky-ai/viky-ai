@@ -74,6 +74,15 @@ class EntitiesListsController < ApplicationController
     EntitiesList.update_positions(@agent, params[:is_public], params[:is_private])
   end
 
+  def update_proximity
+    if @entities_list.update(proximity: entities_list_params[:proximity])
+      render partial: 'update_proximity'
+    else
+      redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
+            alert: t('views.entities_lists.edit.proximity.error_message')
+    end
+  end
+
   def confirm_destroy
     render partial: 'confirm_destroy'
   end
@@ -137,7 +146,7 @@ class EntitiesListsController < ApplicationController
       when 'show', 'index'
         access_denied unless current_user.can? :show, @agent
       when 'new', 'create', 'edit', 'update', 'confirm_destroy',
-           'destroy', 'update_positions'
+           'destroy', 'update_positions', 'update_proximity'
         access_denied unless current_user.can? :edit, @agent
       when 'move_to_agent'
         if current_user.can? :edit, @agent

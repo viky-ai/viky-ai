@@ -43,6 +43,9 @@ en:
         title: Edit entities list
         btn: Update
         success_message: Your entities list has been successfully updated.
+        proximity:
+          success_message: Proximity value for the entities list has been successfully updated.
+          error_message: Proximity value for the entities list could not be updated.
       confirm_destroy:
         title: Are you sure?
         content_html: "You're about to delete entities list: <strong>%{name}</strong>."
