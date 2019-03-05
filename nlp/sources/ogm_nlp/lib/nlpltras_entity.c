@@ -83,6 +83,7 @@ og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
       IFE(OgUniToCp(is,u,DPcPathSize,&isword,sword,DOgCodePageUTF8,0,0));
       sprintf(words + strlen(words), "%s%s", (i ? " " : ""), sword);
     }
+
     // Removing the space at the end.
     int length_words = strlen(words);
     length_words--;

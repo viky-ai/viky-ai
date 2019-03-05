@@ -198,6 +198,7 @@ static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ct
       IFE(NlpMatchCurrentEntity(me_ctrl));
     }
   }
+
   // Looking for spelling mistakes
   IFE(NlpLtrasEntity(me_ctrl));
 
@@ -213,11 +214,11 @@ og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl)
   og_bool found_entity = NlpMatchEntity(me_ctrl);
   IFE(found_entity);
 
-// Don't go any further, the rest of the entity will not match
+  // Don't go any further, the rest of the entity will not match
   if (!found_entity) DONE;
 
-// No entity found but go on, we are on the right track, we have a partial match
-// Found an entity and go on for more entities (longer)
+  // No entity found but go on, we are on the right track, we have a partial match
+  // Found an entity and go on for more entities (longer)
 
   struct request_word *last_request_word = me_ctrl->request_word_list[me_ctrl->request_word_list_length - 1];
   struct request_word *next_request_word = last_request_word->next;
@@ -257,7 +258,7 @@ static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl)
   oindex states[DPcAutMaxBufferSize + 9];
   int retour, nstate0, nstate1, iout;
 
-// Checking if we have at least one result
+  // Checking if we have at least one result
   if ((retour = OgAufScanf(package->ha_entity, ibuffer, buffer, &iout, out, &nstate0, &nstate1, states))) do
   {
     IFE(retour);
@@ -311,6 +312,7 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
         expression->input_parts_nb, me_ctrl->request_word_list_length);
     return FALSE;
   }
+
   for (int i = 0; i < expression->input_parts_nb; i++)
   {
     struct request_word *request_word = me_ctrl->request_word_list[i];
@@ -318,8 +320,8 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
     {
       request_word = me_ctrl->alternative_request_word_list[i];
     }
-    og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word,
-        me_ctrl->interpret_package, expression->input_parts[i].self_index, FALSE, me_ctrl->score_spelling);
+    og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, me_ctrl->interpret_package,
+        expression->input_parts[i].self_index, FALSE, me_ctrl->score_spelling);
     IFE(status);
   }
 
