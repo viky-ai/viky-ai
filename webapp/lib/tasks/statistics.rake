@@ -230,10 +230,13 @@ namespace :statistics do
     end
 
     def reindex(client, src_index, dest_index)
-      result = client.reindex(wait_for_completion: true, body: {
-        source: { index: src_index.name },
-        dest: { index: dest_index.name }
-      })
+      result = client.reindex(
+        wait_for_completion: true,
+        timeout: '5m',
+        body: {
+          source: { index: src_index.name },
+          dest: { index: dest_index.name }
+        })
       Statistics::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
       Statistics::Print.notice("Reindexing result : #{result.to_json}")
     end
