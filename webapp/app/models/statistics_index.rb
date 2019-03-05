@@ -12,12 +12,7 @@ class StatisticsIndex
     state = name.split('-')[2]
     version = name.split('-')[3]
     uid = name.split('-')[4]
-    if name.split('-').size == 6
-      snapshot_id = name.split('-')[-2]
-      uid = name.split('-')[-1]
-    else
-      snapshot_id = nil
-    end
+    snapshot_id = name.split('-').size == 6 ? name.split('-')[-1] : nil
     StatisticsIndex.new base_name, state, version, uid, snapshot_id
   end
 
@@ -30,11 +25,9 @@ class StatisticsIndex
   end
 
   def name
-    if @snapshot_id.present?
-      ['stats', @base_name, @state, @version, @snapshot_id, @uid].join('-')
-    else
-      ['stats', @base_name, @state, @version, @uid].join('-')
-    end
+    name_parts = ['stats', @base_name, @state, @version, @uid]
+    name_parts << @snapshot_id if @snapshot_id.present?
+    name_parts.join('-')
   end
 
   def snapshot?
