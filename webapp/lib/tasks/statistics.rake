@@ -119,7 +119,7 @@ namespace :statistics do
   desc 'Roll over index if older than 7 days or have more than 100 000 documents'
   task :rollover => :environment do |t, args|
     max_age = '7d'
-    max_docs = 100_00
+    max_docs = 100_000
     Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = IndexManager.client
     Statistics::Print.substep('Wait statistics cluster to be ready.')
