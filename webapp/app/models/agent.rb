@@ -110,6 +110,21 @@ class Agent < ApplicationRecord
     Locales::ALL.select { |l| locales.include?(l) }
   end
 
+  def ordered_and_used_locales
+    entities_locales = Entity.select(:locales)
+      .where(entities_list_id: entities_lists.pluck(:id))
+      .distinct
+      .collect{|i| i.locales}.flatten.uniq
+
+    interpretations_locales = Interpretation.select(:locale)
+      .where(intent_id: intents.pluck(:id))
+      .distinct
+      .collect{|i| i.locale}.flatten.uniq
+
+    all_used_locales = (entities_locales + interpretations_locales).flatten.uniq
+    Locales::ALL.select { |l| all_used_locales.include?(l) }
+  end
+
   def available_successors(q = {})
     conditions = Agent
                    .joins(:memberships)

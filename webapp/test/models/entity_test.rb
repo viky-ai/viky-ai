@@ -16,6 +16,7 @@ class EntityTest < ActiveSupport::TestCase
       entities_list: entities_lists(:weather_conditions)
     )
     assert entity.save
+    assert_equal ["en", "fr"], entity.locales
     assert_equal "{gender: 'male'}", entity.solution
     assert !entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
@@ -38,6 +39,8 @@ class EntityTest < ActiveSupport::TestCase
       entities_list: ['must exist'],
     }
     assert_equal expected, entity.errors.messages
+    assert_nil entity.locales
+    assert_nil entity.solution
   end
 
 
@@ -78,7 +81,7 @@ class EntityTest < ActiveSupport::TestCase
   end
 
 
-  test 'Add a term to an entity' do
+  test 'Add a term to an entity and update locales' do
     entity = entities(:weather_sunny)
     expected = [
       { 'term' => 'sun', 'locale' => 'en' },
@@ -93,6 +96,7 @@ class EntityTest < ActiveSupport::TestCase
       { 'term' => 'Sol','locale' => 'es' }
     ]
     assert_equal expected, entity.terms
+    assert_equal ["en", "fr", "es"], entity.locales
   end
 
 
@@ -107,6 +111,7 @@ class EntityTest < ActiveSupport::TestCase
       { 'term' => 'James', 'locale' => '*' }
     ]
     assert_equal expected, entity.terms
+    assert_equal ["*"], entity.locales
   end
 
 
@@ -122,6 +127,7 @@ class EntityTest < ActiveSupport::TestCase
       { 'term' => 'sun', 'locale' => 'en' }
     ]
     assert_equal expected, entity.terms
+    assert_equal ["en", "fr"], entity.locales
 
     entity.terms = "soleil:\nsun"
     assert entity.save
@@ -130,32 +136,37 @@ class EntityTest < ActiveSupport::TestCase
       { 'term' => 'sun', 'locale' => '*' }
     ]
     assert_equal expected, entity.terms
+    assert_equal ["*"], entity.locales
 
     entity.terms = "soleil:xy"
-    assert !entity.save
+    assert_not entity.save
     expected = {
       terms: ["uses an unauthorized locale 'xy' for this agent"]
     }
     assert_equal expected, entity.errors.messages
+    assert_equal ["*"], entity.locales
 
     entity.terms = "soleil:pt"
-    assert !entity.save
+    assert_not entity.save
     expected = {
       terms: ["uses an unauthorized locale 'pt' for this agent"]
     }
     assert_equal expected, entity.errors.messages
+    assert_equal ["*"], entity.locales
 
     entity.terms = ":fr"
-    assert !entity.save
+    assert_not entity.save
     expected = {
       terms: ["can't contains only locale information"]
     }
     assert_equal expected, entity.errors.messages
+    assert_equal ["*"], entity.locales
 
     entity.terms = "soleil:en:fr"
     assert entity.save
     expected = [{ 'term' => 'soleil:en', 'locale' => 'fr' }]
     assert_equal expected, entity.terms
+    assert_equal ["fr"], entity.locales
   end
 
 

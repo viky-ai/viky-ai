@@ -295,6 +295,13 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Agent used_locales" do
+    assert_equal ["*", "en", "fr"], agents(:weather).ordered_and_used_locales
+    assert_equal ["en"], agents(:terminator).ordered_and_used_locales
+    assert_equal [], agents(:weather_confirmed).ordered_and_used_locales
+  end
+
+
   test "Test agent slug" do
     agent = users(:admin).agents.friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name

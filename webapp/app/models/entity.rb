@@ -17,6 +17,7 @@ class Entity < ApplicationRecord
 
   before_validation :parse_terms
   before_validation :build_solution
+  after_validation :build_locales
 
   def terms_to_s
     return '' if terms.blank?
@@ -45,6 +46,13 @@ class Entity < ApplicationRecord
         self.solution = self.terms
       else
         self.solution = self.terms.first['term']
+      end
+    end
+
+    def build_locales
+      if errors.empty?
+        locales = self.terms.collect{|t| t["locale"]}.uniq
+        self.locales = Locales::ALL.select { |l| locales.include?(l) }
       end
     end
 
