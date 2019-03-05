@@ -10,6 +10,7 @@ class Nlp::Interpret
   attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
+  validates :sentence, byte_size: { maximum: 7000 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
   validate :ownername_and_agentname_consistency
@@ -111,5 +112,4 @@ class Nlp::Interpret
         end
       end
     end
-
 end
