@@ -23,9 +23,10 @@ class UserImageUploader < Shrine
   end
 
   process(:store) do |io, _context|
+    pipeline = ImageProcessing::MiniMagick.source(io.download)
     {
       original: io,
-      square: resize_to_fill!(io.download, 600, 600, gravity: "Center")
+      square: pipeline.resize_to_fill!(600, 600, gravity: 'Center')
     }
   end
 
