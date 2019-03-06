@@ -64,6 +64,7 @@ en:
         keep_order: Keep order
         auto_solution_enabled: Auto solution
         solution: Solution
+        proximity: Proximity
       interpretation_alias:
         aliasname: Parameter name
         reg_exp: Regular expression
