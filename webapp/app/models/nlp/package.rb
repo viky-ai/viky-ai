@@ -302,6 +302,7 @@ class Nlp::Package
       result
     end
 
+    # TODO: remove 'glued' attribute
     def build_interpretation_proximity(interpretation, expression)
       if interpretation.proximity_glued?
         expression[:glued] = true

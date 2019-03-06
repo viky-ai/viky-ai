@@ -15,39 +15,44 @@
   <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
       <div class="trix-control__option <% if rtl?(interpretation.locale) %>trix-control__option--rtl<% end %>">
-        <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
-        <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
-        &nbsp;
-        <%= f.hidden_field :proximity, id: "proximity__#{interpretation.id}" %>
-        <div class="dropdown">
-          <div class="dropdown__trigger">
-            <button class="btn btn--small">
-              <%= t('expression.proximity.label') %><span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
-              <span class="icon icon--x-small">
-                <%= icon_arrow_down %>
-              </span>
-            </button>
-          </div>
-          <div class="dropdown__content dropdown__content--hidden">
-            <ul>
-              <% Interpretation.proximities.each_key do |proximity| %>
-                <li>
-                  <a href="#" <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
-                     data-behavior="populate-input, replace-trigger-label"
-                     data-input-selector="#proximity__<%= interpretation.id %>"
-                     data-input-value="<%= proximity %>"
-                     data-replace-selector=".btn__label"
-                     data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
-                    <%= t("expression.proximity.#{proximity}") %>
-                  </a>
-                </li>
-              <% end %>
-            </ul>
+        <div class="trix-control__option__child">
+          <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
+          <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
+        </div>
+        <div class="trix-control__option__child">
+          <%= f.hidden_field :proximity, id: "proximity__#{interpretation.id}" %>
+          <label><%= t('expression.proximity.label') %></label>
+          <div class="dropdown">
+            <div class="dropdown__trigger">
+              <button class="btn btn--small">
+                <span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
+                <span class="icon icon--x-small">
+                  <%= icon_arrow_down %>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown__content dropdown__content--hidden">
+              <ul>
+                <% Interpretation.proximities.each_key do |proximity| %>
+                  <li>
+                    <a href="#" <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
+                       data-behavior="populate-input, replace-trigger-label"
+                       data-input-selector="#proximity__<%= interpretation.id %>"
+                       data-input-value="<%= proximity %>"
+                       data-replace-selector=".btn__label"
+                       data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
+                      <%= t("expression.proximity.#{proximity}") %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
           </div>
         </div>
-        &nbsp;
-        <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
-        <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>
+        <div class="trix-control__option__child">
+          <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
+          <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>
+        </div>
       </div>
       <textarea name="interpretation[expression]" style="display:none;"
         id="<%= "expression-#{interpretation.id}" %>"><%= display_expression_for_trix(interpretation) %></textarea>
@@ -58,7 +63,7 @@
     <%= display_errors(interpretation, :expression) %>
     <%= display_errors(interpretation, :locale) %>
     <%= display_errors(interpretation, :keep_order) %>
-    <%= display_errors(interpretation, :glued) %>
+    <%= display_errors(interpretation, :proximity) %>
   </div>
 
   <div class="aliases <% if rtl?(interpretation.locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display: none;"></div>

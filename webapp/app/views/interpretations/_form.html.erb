@@ -9,8 +9,8 @@
     <div class="control trix-control">
       <div class="trix-control__option  <% if rtl?(@current_locale) %>trix-control__option--rtl<% end %>">
         <div class="trix-control__option__child">
-        <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
-        <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
+          <%= f.check_box :keep_order, id: "keep_order__new_interpretation" %>
+          <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
         </div>
         <div class="trix-control__option__child">
           <label><%= t('expression.proximity.label') %></label>
@@ -56,7 +56,7 @@
     <%= display_errors(interpretation, :expression) %>
     <%= display_errors(interpretation, :locale) %>
     <%= display_errors(interpretation, :keep_order) %>
-    <%= display_errors(interpretation, :glued) %>
+    <%= display_errors(interpretation, :proximity) %>
   </div>
 
   <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display:none;"></div>

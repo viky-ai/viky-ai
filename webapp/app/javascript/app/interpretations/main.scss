@@ -153,14 +153,18 @@
       line-height: 1em;
       margin: 0;
       font-weight: 300;
-      font-size: .8em;
     }
     button{
       line-height: 1em;
+      font-size: 1em;
+    }
+    .dropdown__content > ul > li > a{
+      font-size: 1em;
     }
     .trix-control__option__child{
       margin-right: 1em;
       line-height: 1em;
+      font-size: 0.8em;
     }
     .trix-control__option__child:last-child{
       margin-right: 0;

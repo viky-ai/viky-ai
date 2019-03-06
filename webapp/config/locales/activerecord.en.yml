@@ -62,7 +62,6 @@ en:
       interpretation:
         expression: Expression
         keep_order: Keep order
-        glued: Glued
         auto_solution_enabled: Auto solution
         solution: Solution
       interpretation_alias:

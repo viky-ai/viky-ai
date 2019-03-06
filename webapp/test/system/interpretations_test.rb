@@ -55,6 +55,8 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert_equal "1", first('#current-locale-tab-badge').text
 
     first('trix-editor').click.set('Good morning')
+    all('.dropdown__trigger > .btn')[0].click
+    click_link 'Very Close'
     click_button 'Add'
     assert page.has_text?('Good morning')
 
@@ -213,7 +215,8 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       first('trix-editor').click.set('Salut à tous')
       check('interpretation[keep_order]')
-      check('interpretation[glued]')
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'Very Close'
       uncheck('interpretation[auto_solution_enabled]')
       fill_in_editor_field '10'
       click_button 'Update'
