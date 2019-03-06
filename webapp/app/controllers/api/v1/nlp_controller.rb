@@ -57,6 +57,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         :agent_token,
         :verbose,
         :now,
+        :spellchecking,
         context: {}
       )
     end
