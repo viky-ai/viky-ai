@@ -16,6 +16,10 @@
         <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
       </span>
     <% end %>
+    <span class="merged-badges">
+      <span class="badge"><%= t('expression.proximity.label') %></span>
+      <span class="badge badge--grey"><%= t("expression.proximity.#{@entities_list.proximity}") %></span>
+    </span>
   </div>
   <div class="header__tools">
     <% if @entities_list.aliased_intents.any? %>
@@ -44,48 +48,16 @@
       </span>
       <%= t('views.entities_lists.show.export_btn') %>
     </a>
-  </div>
-</div>
-
-<div>
-  <% if current_user.can?(:edit, @agent) %>
-    <%= form_with scope: :entities_list, url: user_agent_entities_list_update_proximity_path(current_user, @agent, @entities_list),
-                method: :put, id: 'update_proximity_entities_list' do |f| %>
-      <div class="field">
-        <%= f.hidden_field :proximity, id: 'entities_list_proximity' %>
-        <div class="dropdown">
-          <div class="dropdown__trigger">
-            <button class="btn btn--small">
-              <%= t('expression.proximity.label') %><span class="btn__label"><%= t("expression.proximity.#{@entities_list.proximity}") %></span>
-              <span class="icon icon--x-small">
-                <%= icon_arrow_down %>
-              </span>
-            </button>
-          </div>
-          <div class="dropdown__content dropdown__content--hidden">
-            <ul>
-              <% EntitiesList.proximities.each_key do |proximity| %>
-                <li>
-                  <% label = t("expression.proximity.#{proximity}") %>
-                  <a href="#" <% if proximity == @entities_list.proximity.to_s %>class="current"<% end %>
-                     data-behavior="populate-input, replace-trigger-label, submit-form"
-                     data-input-selector="#entities_list_proximity"
-                     data-input-value="<%= proximity %>"
-                     data-replace-selector=".btn__label"
-                     data-replace-with="<%= t("expression.proximity.#{proximity}") %>"
-                     data-form-selector="#update_proximity_entities_list">
-                    <%= t("expression.proximity.#{proximity}") %>
-                  </a>
-                </li>
-              <% end %>
-            </ul>
-          </div>
-        </div>
-      </div>
+    <% if current_user.can?(:edit, @agent) %>
+      <a href="<%= edit_user_agent_entities_list_path(@agent.owner, @agent, @entities_list) %>"
+         data-action="open-remote-modal" class="btn btn--small">
+        <span class="icon icon--x-small">
+          <%= icon_settings %>
+        </span>
+        <%= t('views.entities_lists.index.configure') %>
+      </a>
     <% end %>
-  <% else %>
-    <span class='badge'><%= t('expression.proximity.label') %><%= t("expression.proximity.#{@entities_list.proximity}") %></span>
-  <% end %>
+  </div>
 </div>
 
 <%= render 'entities/index' %>

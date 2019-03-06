@@ -24,7 +24,7 @@ en:
       action_message_html: Please go back to your <a href="/">Agents list</a>.
   expression:
     proximity:
-      label: 'Proximity: '
+      label: Proximity
       glued: Glued
       very_close: Very Close
       close: Close

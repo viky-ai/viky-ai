@@ -12,14 +12,13 @@
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][nature]"                        value="" />
     <input type="hidden" name="interpretation[interpretation_aliases_attributes][][_destroy]"                      value="1" />
   <% end %>
-  <%= f.hidden_field :proximity, id: "proximity__new_interpretation" %>
-
   <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
       <div class="trix-control__option <% if rtl?(interpretation.locale) %>trix-control__option--rtl<% end %>">
         <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
         <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
         &nbsp;
+        <%= f.hidden_field :proximity, id: "proximity__#{interpretation.id}" %>
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button class="btn btn--small">
@@ -35,7 +34,7 @@
                 <li>
                   <a href="#" <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
                      data-behavior="populate-input, replace-trigger-label"
-                     data-input-selector="#proximity__new_interpretation"
+                     data-input-selector="#proximity__<%= interpretation.id %>"
                      data-input-value="<%= proximity %>"
                      data-replace-selector=".btn__label"
                      data-replace-with="<%= t("expression.proximity.#{proximity}") %>">

@@ -54,11 +54,16 @@ class EntitiesListsController < ApplicationController
   end
 
   def update
+    request_origin = params[:origin]
     respond_to do |format|
       if @entities_list.update(entities_list_params)
         format.json {
-          redirect_to user_agent_entities_lists_path(@owner, @agent),
-            notice: t('views.entities_lists.edit.success_message')
+          if request_origin == "index"
+            redirect_url = user_agent_entities_lists_path(@owner, @agent)
+          elsif request_origin == "show"
+            redirect_url = user_agent_entities_list_path(@owner, @agent, @entities_list)
+          end
+          redirect_to redirect_url, notice: t('views.entities_lists.edit.success_message')
         }
       else
         format.json {

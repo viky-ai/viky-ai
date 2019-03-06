@@ -172,8 +172,12 @@ module InterpretationHelper
     if interpretation.keep_order
       result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"
     end
+
     proximity_label = "expression.proximity.#{interpretation.proximity}"
-    result << " <span class='badge'>#{t(proximity_label)}</span>"
+    result << " <span class='merged-badges'>"
+    result << " <span class='badge'>#{t('expression.proximity.label')}</span>"
+    result << " <span class='badge badge--grey'>#{t(proximity_label)}</span></span>"
+
     if interpretation.auto_solution_enabled
       result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
     end
