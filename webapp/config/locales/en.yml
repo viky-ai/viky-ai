@@ -22,4 +22,12 @@ en:
       title: Error 404
       comment: The requested page does not exist.
       action_message_html: Please go back to your <a href="/">Agents list</a>.
+  locales:
+    no_locale: No language
+    fr: French
+    en: English
+    es: Spanish
+    pt: Portuguese
+    zh: Chinese
+    ar: Arabic
 

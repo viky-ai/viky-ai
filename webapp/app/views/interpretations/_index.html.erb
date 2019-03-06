@@ -3,7 +3,7 @@
     <ul>
       <% for agent_locale in @agent.ordered_locales %>
         <% if agent_locale == Locales::ANY %>
-          <% link_name = t('views.interpretations.locales.no_locale') %>
+          <% link_name = t('locales.no_locale') %>
         <% else %>
           <% link_name = agent_locale %>
         <% end %>

@@ -263,7 +263,7 @@ class AgentTest < ActiveSupport::TestCase
 
     agent.locales = []
     assert_not agent.save
-    expected = ["Locales can't be blank"]
+    expected = ["Languages can't be blank"]
     assert_equal expected, agent.errors.full_messages
   end
 
@@ -276,7 +276,7 @@ class AgentTest < ActiveSupport::TestCase
     agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
     agent.locales = ["missing_locale_1", "missing_locale_2"]
     assert_not agent.save
-    expected = ["Locales unknown 'missing_locale_1'", "Locales unknown 'missing_locale_2'"]
+    expected = ["Languages unknown 'missing_locale_1'", "Languages unknown 'missing_locale_2'"]
     assert_equal expected, agent.errors.full_messages
   end
 

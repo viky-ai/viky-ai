@@ -9,14 +9,6 @@ en:
         update_btn: "Update"
         cancel_btn: "Cancel"
       delete_failed: "Ooops, delete failed."
-      locales:
-        no_locale: No language
-        fr: (French)
-        en: (English)
-        es: (Spanish)
-        pt: (Portuguese)
-        zh: (Chinese)
-        ar: (Arabic)
       blankslate:
         no_expression: No expression entered for the "%{language}" tab.
         start: Start adding expressions using the form below.

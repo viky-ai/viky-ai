@@ -114,6 +114,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?('Remove favorite')
   end
 
+
   test 'Remove an agent to favorites' do
     admin = users(:admin)
     weather = agents(:weather)
