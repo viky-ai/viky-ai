@@ -69,6 +69,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         timestamp: Time.now.iso8601(3),
         sentence: parameters['sentence'],
         language: parameters['language'],
+        spellchecking: parameters['spellchecking'],
         now: parameters['now'],
         agent: @agent,
         context: parameters['context']
