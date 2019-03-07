@@ -804,4 +804,139 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, package.generate_json
   end
 
+  test 'Package generation with different proximity values' do
+    weather = agents(:weather)
+    interpretation_far = interpretations(:weather_forecast_demain)
+    interpretation_far.proximity = 'far'
+    assert interpretation_far.save
+
+    interpretation_very_close = interpretations(:weather_question_like)
+    interpretation_very_close.proximity = 'very_close'
+    assert interpretation_very_close.save
+
+    entities_far = entities_lists(:weather_dates)
+    entities_far.proximity = 'far'
+    assert entities_far.save
+
+    assert interpretations(:weather_forecast_tomorrow).destroy
+    p = Nlp::Package.new(weather)
+
+    expected = {
+      "id"   => weather.id,
+      "slug" => "admin/weather",
+      "interpretations" => [
+        {
+          "id"    => intents(:weather_forecast).id,
+          "slug"  => "admin/weather/interpretations/weather_forecast",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression"    => "Quel temps fera-t-il demain ?",
+              "id"            => interpretations(:weather_forecast_demain).id,
+              "locale"        => "fr",
+              "solution"      => "Quel temps fera-t-il demain ?",
+              "glue-distance" => 50
+            }
+          ]
+        },
+        {
+          "id"    => intents(:weather_question).id,
+          "slug"  => "admin/weather/interpretations/weather_question",
+          'scope' => 'public',
+          "expressions" => [
+            {
+              "expression"    => "What the weather like",
+              "id"            => interpretations(:weather_question_like).id,
+              "locale"        => "en",
+              "solution"      => "What the weather like",
+              "glue-distance" => 10
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_conditions).id,
+          "slug"     => "admin/weather/entities_lists/weather_conditions",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "solution"      => "pluie",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+            },
+            {
+              "expression" => "rain",
+              "id"         => entities(:weather_raining).id,
+              "locale"     => "en",
+              "solution"   => "pluie",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+            },
+            {
+              "expression" => "sun",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "en",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+            },
+            {
+              "expression" => "soleil",
+              "id"         => entities(:weather_sunny).id,
+              "locale"     => "fr",
+              "solution"   => "sun",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+            }
+          ]
+        },
+        {
+          "id"       => entities_lists(:weather_dates).id,
+          "slug"     => "admin/weather/entities_lists/weather_dates",
+          'scope'    => 'public',
+          "expressions" => [
+            {
+              "expression" => "aujourd'hui",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "tout à l'heure",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "fr",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "today",
+              "id"         => entities(:weather_dates_today).id,
+              "locale"     => "en",
+              "solution"   => "`{\"date\": \"today\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            },
+            {
+              "expression" => "tomorrow",
+              "id"         => entities(:weather_dates_tomorrow).id,
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
+              "keep-order" => true,
+              "glue-distance" => 50
+            }
+          ]
+        }
+      ]
+    }
+    assert_equal expected, p.generate_json
+  end
+
 end
