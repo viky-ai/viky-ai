@@ -146,14 +146,6 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal expected, entity.errors.messages
     assert_equal ["*"], entity.locales
 
-    entity.terms = "soleil:pt"
-    assert_not entity.save
-    expected = {
-      terms: ["uses an unauthorized locale 'pt' for this agent"]
-    }
-    assert_equal expected, entity.errors.messages
-    assert_equal ["*"], entity.locales
-
     entity.terms = ":fr"
     assert_not entity.save
     expected = {
@@ -167,6 +159,27 @@ class EntityTest < ActiveSupport::TestCase
     expected = [{ 'term' => 'soleil:en', 'locale' => 'fr' }]
     assert_equal expected, entity.terms
     assert_equal ["fr"], entity.locales
+  end
+
+
+  test 'Terms locales and agent locales update' do
+    entity = Entity.new(
+      auto_solution_enabled: false,
+      entities_list: entities_lists(:weather_conditions)
+    )
+    expected = ["*", "en", "fr", "es"]
+    assert_equal expected, entity.entities_list.agent.locales
+    entity.terms = "soleil:pt"
+    assert entity.save
+
+    expected = ["*", "en", "fr", "es", "pt"]
+    assert_equal expected, entity.entities_list.agent.locales
+    assert_equal ["pt"], entity.locales
+
+    entity.terms = "soleil:ar"
+    assert entity.save
+    expected = ["*", "en", "fr", "es", "pt", "ar"]
+    assert_equal ["ar"], entity.locales
   end
 
 

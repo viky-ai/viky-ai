@@ -18,6 +18,7 @@ class Entity < ApplicationRecord
   before_validation :parse_terms
   before_validation :build_solution
   after_validation :build_locales
+  after_save :update_agent_locales
 
   def terms_to_s
     return '' if terms.blank?
@@ -58,11 +59,18 @@ class Entity < ApplicationRecord
 
     def validate_locales_exists
       return unless terms.instance_of?(Array)
-      locales = entities_list.agent.locales
       terms.each do |json|
-        unless locales.include?(json['locale'])
+        unless Locales::ALL.include?(json['locale'])
           errors.add(:terms, I18n.t('errors.entity.unknown_locale', current_locale: json['locale']))
         end
+      end
+    end
+
+    def update_agent_locales
+      agent = entities_list.agent
+      agent_locales = (agent.locales + locales).uniq
+      if agent_locales != agent.locales
+        agent.update_columns(locales: agent_locales)
       end
     end
 
