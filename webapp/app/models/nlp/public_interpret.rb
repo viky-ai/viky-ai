@@ -11,6 +11,7 @@ module Nlp::PublicInterpret
       agent_token: agent.api_token,
       sentence: request_params[:sentence],
       language: request_params[:language],
+      spellchecking: request_params[:spellchecking],
       now: request_params[:now],
       context: {
         client_type: request_params[:client_type]

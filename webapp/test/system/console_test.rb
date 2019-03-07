@@ -24,7 +24,7 @@ class ConsoleTest < ApplicationSystemTestCase
   end
 
 
-  test 'console basic interaction with content & verbose mode' do
+  test 'console basic interaction with content, verbose mode, now and spellchecking' do
     go_to_agents_index
     click_link "My awesome weather bot admin/weather"
 
@@ -115,6 +115,15 @@ class ConsoleTest < ApplicationSystemTestCase
       all('.dropdown__trigger > .btn')[2].click
       click_link 'Auto now'
       assert_equal 0, all("input[name='interpret[now]']").count
+
+      # Spellchecking
+      assert page.has_content?('Spellchecking: inactive')
+      all('.dropdown__trigger > .btn')[3].click
+      click_link 'Spellchecking: high'
+
+      assert page.has_content?('Spellchecking: high')
+      assert page.has_content?('1 interpretation found.')
+      assert page.has_content?('Hello world viki.ai')
     end
   end
 

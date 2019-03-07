@@ -6,15 +6,16 @@ class ConsoleController < ApplicationController
 
     access_denied unless current_user.can? :show, agent
 
-    sentence    = interpret_params[:sentence]
-    verbose     = interpret_params[:verbose]
-    language    = interpret_params[:language]
-    current_tab = interpret_params[:current_tab]
-    now         = interpret_params[:now]
+    sentence      = interpret_params[:sentence]
+    verbose       = interpret_params[:verbose]
+    language      = interpret_params[:language]
+    spellchecking = interpret_params[:spellchecking]
+    current_tab   = interpret_params[:current_tab]
+    now           = interpret_params[:now]
 
-    data = get_interpretation(agent, sentence, verbose, language, now)
+    data = get_interpretation(agent, sentence, verbose, language, spellchecking, now)
 
-    @regression_check =  agent.find_regression_check_with(sentence, language, now)
+    @regression_check = agent.find_regression_check_with(sentence, language, now)
     if @regression_check.nil?
       @regression_check = AgentRegressionCheck.new(
         sentence: sentence,
@@ -49,14 +50,15 @@ class ConsoleController < ApplicationController
 
     def interpret_params
       params.require(:interpret).permit(
-        :sentence, :verbose, :language, :current_tab, :now
+        :sentence, :verbose, :language, :spellchecking, :current_tab, :now
       )
     end
 
-    def get_interpretation(agent, sentence, verbose, language, now)
+    def get_interpretation(agent, sentence, verbose, language, spellchecking, now)
       request_params = {
         sentence: sentence,
         language: language,
+        spellchecking: spellchecking,
         now: now,
         verbose: verbose,
         client_type: 'console',

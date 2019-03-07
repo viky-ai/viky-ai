@@ -22,6 +22,11 @@ en:
       go_to_api_endpoint: Go to API endpoint
       download_package: Download package
       all_locales: "Language: Auto"
+      spellchecking:
+        inactive: "Spellchecking: inactive"
+        low: "Spellchecking: low"
+        medium: "Spellchecking: medium"
+        high: "Spellchecking: high"
       fullscreen_enter: Enter in fullscreen mode
       fullscreen_leave: Leave fullscreen mode
       expression_text: Expression

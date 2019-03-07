@@ -2,6 +2,7 @@
   <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
   <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
   <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
+  <input type='hidden' name='interpret[spellchecking]' value="" class="js-spellchecking-input" />
 
   <script>$('.js-verbose-input').val("false");</script>
   <script>$('.js-language-input').val("*");</script>
@@ -40,6 +41,36 @@
           </ul>
         </div>
       </div>
+
+
+      <div class="dropdown" id='console-dropdown-spellchecking'>
+        <div class="dropdown__trigger">
+          <span class="btn btn--outline btn--small">
+            <span class="btn__label"><%= t('views.console.spellchecking.inactive') %></span>
+            <span class="icon icon--x-small">
+              <%= icon_arrow_down %>
+            </span>
+          </span>
+        </div>
+        <div class="dropdown__content dropdown__content--hidden">
+          <ul>
+            <% ['inactive', 'low', 'medium', 'high'].each do |spellcheck| %>
+              <li>
+                <a href="#" <% if spellcheck == 'inactive' %>class="current"<% end %>
+                   data-behavior="populate-input, replace-trigger-label, submit-form"
+                   data-input-selector=".js-spellchecking-input"
+                   data-input-value="<%= spellcheck %>"
+                   data-form-selector="#js-console-form"
+                   data-replace-with="<%= t("views.console.spellchecking.#{spellcheck}") %>"
+                   data-replace-selector=".btn__label">
+                  <%= t("views.console.spellchecking.#{spellcheck}") %>
+                </a>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+
 
       <div class="dropdown" id='console-dropdown-verbose'>
         <div class="dropdown__trigger">
@@ -112,7 +143,6 @@
           </ul>
         </div>
       </div>
-
     </div>
   </div>
 
