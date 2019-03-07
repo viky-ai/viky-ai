@@ -20,7 +20,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_forecast_demain).id,
               "locale"        => "fr",
               "solution"      => "Quel temps fera-t-il demain ?",
-              "glued"         => false,
               "glue-distance" => 20
             },
             {
@@ -40,10 +39,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en",
-              "keep-order" => true,
-              "glued"      => true,
-              "solution"   => "`forecast.tomorrow`"
+              "locale"         => "en",
+              "keep-order"     => true,
+              "glue-distance" => 0,
+              "solution"       => "`forecast.tomorrow`"
             }
           ]
         },
@@ -57,7 +56,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               "locale"        => "en",
               "solution"      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -68,12 +66,12 @@ class PackageTest < ActiveSupport::TestCase
           'scope'    => 'public',
           "expressions" => [
             {
-              "expression" => "pluie",
-              "id"         => entities(:weather_raining).id,
-              "locale"     => "fr",
-              "solution"   => "pluie",
-              "keep-order" => true,
-              "glued"      => true,
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "solution"      => "pluie",
+              "keep-order"    => true,
+              "glue-distance" => 0,
               "glue-strength" => "punctuation",
             },
             {
@@ -82,7 +80,7 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "pluie",
               "keep-order" => true,
-              "glued"      => true,
+              "glue-distance" => 0,
               "glue-strength" => "punctuation",
             },
             {
@@ -91,7 +89,7 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "sun",
               "keep-order" => true,
-              "glued"      => true,
+              "glue-distance" => 0,
               "glue-strength" => "punctuation",
             },
             {
@@ -100,7 +98,7 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "sun",
               "keep-order" => true,
-              "glued"      => true,
+              "glue-distance" => 0,
               "glue-strength" => "punctuation",
             }
           ]
@@ -116,7 +114,6 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => false,
               "glue-distance" => 20
             },
             {
@@ -125,7 +122,6 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => false,
               "glue-distance" => 20
             },
             {
@@ -134,7 +130,6 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glued"      => false,
               "glue-distance" => 20
             },
             {
@@ -142,7 +137,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"         => entities(:weather_dates_tomorrow).id,
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
-              "glued"      => false,
               "glue-distance" => 20
             }
           ]
@@ -180,7 +174,6 @@ class PackageTest < ActiveSupport::TestCase
               "expression"    => "Quel temps fera-t-il demain ?",
               "id"            => interpretations(:weather_forecast_demain).id,
               "solution"      => "Quel temps fera-t-il demain ?",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -216,7 +209,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               "locale"        => "en",
               "solution"      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -256,8 +248,8 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             },
             {
               "expression" => "@{question} @{question_recursive}",
@@ -276,8 +268,8 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             }
           ]
         },
@@ -291,7 +283,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"             => interpretations(:weather_forecast_demain).id,
               "locale"         => "fr",
               "solution"       => "Quel temps fera-t-il demain ?",
-              "glued"          => false,
               "glue-distance"  => 20
             },
             {
@@ -305,10 +296,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale"     => "en",
-              "keep-order" => true,
-              "glued"      => true,
-              "solution"   => "`forecast.tomorrow`"
+              "locale"        => "en",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "solution"      => "`forecast.tomorrow`"
             }
           ]
         },
@@ -322,7 +313,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               "locale"        => "en",
               "solution"      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -363,8 +353,8 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             },
             {
               'expression' => '@{question} @{question_recursive}',
@@ -383,8 +373,8 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             },
             {
               'expression'  => '@{question} @{question_recursive}',
@@ -401,8 +391,8 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              "keep-order"  => true,
-              "glued"       => true
+              "keep-order"    => true,
+              "glue-distance" => 0
             }
           ]
         },
@@ -416,7 +406,6 @@ class PackageTest < ActiveSupport::TestCase
               'id'            => interpretations(:weather_forecast_demain).id,
               'locale'        => 'fr',
               'solution'      => "Quel temps fera-t-il demain ?",
-              "glued"         => false,
               "glue-distance" => 20
             },
             {
@@ -430,10 +419,10 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
+              'locale'        => 'en',
+              'keep-order'    => true,
+              'glue-distance' => 0,
+              'solution'      => '`forecast.tomorrow`'
             }
           ]
         },
@@ -447,7 +436,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               'locale'        => 'en',
               'solution'      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -482,7 +470,6 @@ class PackageTest < ActiveSupport::TestCase
               'id'            => interpretations(:weather_forecast_demain).id,
               'locale'        => 'fr',
               'solution'      => 'Quel temps fera-t-il demain ?',
-              "glued"         => false,
               "glue-distance" => 20
             },
             {
@@ -496,10 +483,10 @@ class PackageTest < ActiveSupport::TestCase
                   'package' => weather.id
                 }
               ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
+              'locale'        => 'en',
+              'keep-order'    => true,
+              'glue-distance' => 0,
+              'solution'      => '`forecast.tomorrow`'
             },
             {
               'expression' => '@{question} tomorrow ?',
@@ -510,10 +497,10 @@ class PackageTest < ActiveSupport::TestCase
                   'type'    => 'any'
                 }
               ],
-              'locale'     => 'en',
-              'keep-order' => true,
-              'glued'      => true,
-              'solution'   => '`forecast.tomorrow`'
+              'locale'        => 'en',
+              'keep-order'    => true,
+              'glue-distance' => 0,
+              'solution'      => '`forecast.tomorrow`'
             }
           ]
         },
@@ -527,7 +514,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               'locale'        => 'en',
               'solution'      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -561,7 +547,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_forecast_demain).id,
               "locale"        => "fr",
               "solution"      => "Quel temps fera-t-il demain ?",
-              "glued"         => false,
               "glue-distance" => 20
             },
             {
@@ -575,10 +560,10 @@ class PackageTest < ActiveSupport::TestCase
                   "package" => weather.id
                 }
               ],
-              "locale" => "en",
-              "keep-order" => true,
-              "glued" => true,
-              "solution" => "`forecast.tomorrow`"
+              "locale"        => "en",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "solution"      => "`forecast.tomorrow`"
             }
           ]
         },
@@ -592,7 +577,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_question_like).id,
               "locale"        => "en",
               "solution"      => "What the weather like",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -612,7 +596,6 @@ class PackageTest < ActiveSupport::TestCase
                 "id"            =>"55495e57-e816-5b14-b665-2205a6ccf263",
                 "locale"        =>"en",
                 "solution"      =>"Find",
-                "glued"         => false,
                 "glue-distance" => 20
               }
             ]
@@ -634,7 +617,6 @@ class PackageTest < ActiveSupport::TestCase
                 }
               ],
               "locale"        =>"en",
-              "glued"         => false,
               "glue-distance" => 20
             },
             {
@@ -642,7 +624,6 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:terminator_find_sarah).id,
               "locale"        => "en",
               "solution"      => "Where is Sarah Connor ?",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
@@ -814,7 +795,6 @@ class PackageTest < ActiveSupport::TestCase
                 }
               ],
               "locale"        => "en",
-              "glued"         => false,
               "glue-distance" => 20
             }
           ]
