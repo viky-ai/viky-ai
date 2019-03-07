@@ -103,6 +103,48 @@ class IntentsTest < ApplicationSystemTestCase
   end
 
 
+  test 'locale navigation persistence' do
+    go_to_agent_intents('admin', 'terminator')
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+
+    # Add fr locale
+    click_link '+'
+    within('.modal') do
+      assert page.has_text?('Choose a language')
+      click_link('fr (French)')
+    end
+    assert page.has_text?('fr')
+    assert_equal "fr 0", first('li[data-locale] a.current').text
+
+    # Add es locale
+    click_link '+'
+    within('.modal') do
+      assert page.has_text?('Choose a language')
+      click_link('es (Spanish)')
+    end
+    assert page.has_text?('es')
+    assert_equal "es 0", first('li[data-locale] a.current').text
+
+    # Leaves and comes back
+    within '.header__breadcrumb' do
+      click_link 'Interpretations'
+    end
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+    assert_equal "es 0", first('li[data-locale] a.current').text
+
+    # Switch to fr, leaves and comes back
+    click_link 'fr 0'
+    within '.header__breadcrumb' do
+      click_link 'Interpretations'
+    end
+    click_link 'terminator_find'
+    assert page.has_text?('+')
+    assert_equal "fr 0", first('li[data-locale] a.current').text
+  end
+
+
   test 'Move intent to another agent' do
     intent = intents(:weather_question)
     intent.visibility = Intent.visibilities[:is_private]

@@ -16,7 +16,15 @@ class IntentsController < ApplicationController
     @interpretation.glued = true
     @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
-    @current_locale = params[:locale] || @agent.ordered_locales.first
+
+    ui_state = UserUiState.new(current_user)
+    if @agent.locales.include? params[:locale]
+      ui_state.agent_locale = params[:locale]
+      ui_state.save
+      @current_locale = params[:locale]
+    else
+      @current_locale = ui_state.agent_locale(@agent)
+    end
   end
 
   def new

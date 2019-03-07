@@ -11,6 +11,7 @@ class UserUiStateTest < ActiveSupport::TestCase
     assert_nil user_state.last_destination_agent(agent)
   end
 
+
   test "existing destination" do
     user = users(:admin)
     agent = agents(:weather)
@@ -19,6 +20,29 @@ class UserUiStateTest < ActiveSupport::TestCase
     user.save
     user_state = UserUiState.new(user)
     assert_not_nil user_state.last_destination_agent(agent)
+  end
+
+
+  test "agent locale" do
+    # Initial state
+    agent = agents(:weather)
+    user = users(:edit_on_agent_weather)
+    user_state = UserUiState.new(user)
+    assert_equal agent.ordered_locales.first, user_state.agent_locale(agent)
+
+    # Set existing locale for agent weather
+    user_state.agent_locale = "fr"
+    user_state.save
+
+    user_state = UserUiState.new(user)
+    assert_equal "fr", user_state.agent_locale(agent)
+
+    # Set missing locale for agent weather
+    user_state.agent_locale = "pt"
+    user_state.save
+
+    user_state = UserUiState.new(user)
+    assert_equal "*", user_state.agent_locale(agent)
   end
 
 end
