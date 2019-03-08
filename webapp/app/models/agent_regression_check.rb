@@ -4,9 +4,6 @@ class AgentRegressionCheck < ApplicationRecord
 
   belongs_to :agent
 
-  serialize :expected, JSON
-  serialize :got, JSON
-
   validates :sentence, length: { maximum: 200 }, presence: true
   validates :expected, presence: true
 
