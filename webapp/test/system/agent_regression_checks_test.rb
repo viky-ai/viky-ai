@@ -28,21 +28,58 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
       first('button').click
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
 
       click_button 'Add to tests suite'
       assert page.has_content?('Not run yet...')
 
-      assert page.has_content?('3 tests')
+      assert page.has_content?('4 tests')
       find('#console-footer').click
     end
 
     within('#console-ts') do
       sleep 0.2 # Wait Animation
-      assert page.has_content?('3 tests')
-      assert 3, find('ul.cts__list').all('li').count
+      assert page.has_content?('4 tests')
+      assert 4, find('ul.cts__list').all('li').count
     end
+  end
+
+  test 'Add a new test for entities list' do
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: 200,
+      body: {
+          'interpretations' => [{
+            'id' => entities_lists(:weather_conditions).id,
+            'slug' => entities_lists(:weather_conditions).slug,
+            'package' => entities_lists(:weather_conditions).agent.id,
+            'score' => '1.0',
+            'solution' => entities(:weather_sunny).solution
+          }]
+        }
+    )
+
+    within('.console') do
+      fill_in 'interpret[sentence]', with: "sun"
+      first('button').click
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
+
+      click_button 'Add to tests suite'
+      assert page.has_content?('Not run yet...')
+
+      assert page.has_content?('4 tests')
+      find('#console-footer').click
+    end
+
+    within('#console-ts') do
+      sleep 0.2 # Wait Animation
+      assert page.has_content?('4 tests')
+      assert 4, find('ul.cts__list').all('li').count
+    end
+
   end
 
   test 'Add new test with language and now' do
@@ -71,20 +108,20 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       click_link 'Manual now'
       fill_in 'interpret[now]', with: "2017-12-05T15:14:01+01:00"
       first('button').click
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
 
       click_button 'Add to tests suite'
       assert page.has_content?('Not run yet...')
 
-      assert page.has_content?('3 tests')
+      assert page.has_content?('4 tests')
       find('#console-footer').click
     end
 
      within('#console-ts') do
       sleep 0.2 # Wait Animation
-      assert page.has_content?('3 tests')
-      assert 3, find('ul.cts__list').all('li').count
+      assert page.has_content?('4 tests')
+      assert 4, find('ul.cts__list').all('li').count
       assert page.has_link?('hello')
       click_link("hello")
 
@@ -195,14 +232,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Display tests suite panel' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
     within('.console') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       find('#console-footer').click
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       assert 2, find('.cts__list').all('li').count
       assert page.has_content?("Quel temps fera-t-il demain ?")
       assert page.has_content?("What's the weather like in London?")
@@ -221,15 +258,15 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('0 success, 1 failure') # TODO
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       find('#console-footer').click
       sleep 0.2 # Wait Animation
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       click_link("Quel temps fera-t-il demain ?")
     end
 
@@ -244,15 +281,15 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     within('.console') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure') # TODO
       find('#console-footer').click
       sleep 0.2 # Wait Animation
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure') # TODO
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure') # TODO
       click_link("What's the weather like in London?")
       assert page.has_text?('Delete')
       click_button('Delete')
@@ -266,8 +303,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     end
 
     within('#console-ts') do
-      assert page.has_content?('1 test')
-      assert page.has_content?('1 running, 0 success, 0 failure')
+      assert page.has_content?('2 tests')
+      assert page.has_content?('1 running, 1 success, 0 failure')
       assert 1, find('ul.cts__list').all('li').count
       assert page.has_no_content?("What's the weather like in London ?")
     end
@@ -295,15 +332,15 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
 
     within('#console') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       find('#console-footer').click
       sleep 0.2 # Wait Animation
     end
 
     within('#console-ts') do
-      assert page.has_content?('2 tests')
-      assert page.has_content?('1 running, 0 success, 1 failure')
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
       click_link("What's the weather like in London?")
     end
 
@@ -326,6 +363,6 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert page.has_content?('Not run yet...')
     end
 
-    assert page.has_content?('2 tests')
+    assert page.has_content?('3 tests')
   end
 end

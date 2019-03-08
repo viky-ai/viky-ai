@@ -8,9 +8,10 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
   end
 
   test 'Basic AgentRegressionCheck creation & agent association' do
-    assert_equal 2, agents(:weather).agent_regression_checks.count
+    assert_equal 3, agents(:weather).agent_regression_checks.count
 
     expected_nlp = {
+      'root_type' => 'intent',
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
       'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
@@ -26,7 +27,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
       agent: agents(:weather)
     )
     assert agent_regression_check.save
-    assert_equal 3, agents(:weather).agent_regression_checks.count
+    assert_equal 4, agents(:weather).agent_regression_checks.count
 
     assert_equal 'What the weather like ?', agent_regression_check.sentence
     assert_equal 'fr', agent_regression_check.language
@@ -228,4 +229,29 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert agent_regression_check.error?
     assert_empty agent_regression_check.got
   end
+
+test 'Run a successful agent test for entities list' do
+      Nlp::Interpret.any_instance.stubs('proceed').returns(
+        status: 200,
+        body: {
+          'interpretations' => [{
+            'id' => entities_lists(:weather_conditions).id,
+            'slug' => entities_lists(:weather_conditions).slug,
+            'package' => entities_lists(:weather_conditions).agent.id,
+            'score' => '1.0',
+            'solution' => entities(:weather_sunny).solution
+          }]
+        }
+      )
+
+      agent_regression_check = @regression_weather_condition
+      assert agent_regression_check.run
+
+      assert agent_regression_check.success?
+      assert_not agent_regression_check.failure?
+      assert_not agent_regression_check.unknown?
+      assert_not agent_regression_check.running?
+      assert_equal agent_regression_check.got, agent_regression_check.expected
+    end
+
 end
