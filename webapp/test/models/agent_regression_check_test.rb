@@ -146,6 +146,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     assert_not agent_regression_check.unknown?
     assert_not agent_regression_check.running?
     expected = {
+      'root_type' => 'intent',
       'package' => intents(:weather_forecast).agent.id,
       'id' => intents(:weather_forecast).id,
       'solution' => interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
