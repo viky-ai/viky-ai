@@ -7,8 +7,7 @@ namespace :statistics do
     environments.each do |environment|
       Statistics::Print.step("Environment #{environment}.")
       client = IndexManager.client environment
-      Statistics::Print.substep('Wait cluster to be ready.')
-      unless IndexManager.cluster_ready?(client)
+      unless cluster_ready?(client)
         Statistics::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
@@ -52,8 +51,7 @@ namespace :statistics do
     Statistics::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
     client = IndexManager.client
-    Statistics::Print.substep('Wait statistics cluster to be ready.')
-    unless IndexManager.cluster_ready?(client)
+    unless cluster_ready?(client)
       Statistics::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
@@ -82,8 +80,7 @@ namespace :statistics do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
       client = IndexManager.client
-      Statistics::Print.substep('Wait statistics cluster to be ready.')
-      unless IndexManager.cluster_ready?(client)
+      unless cluster_ready?(client)
         Statistics::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
       end
@@ -119,11 +116,10 @@ namespace :statistics do
   desc 'Roll over index if older than 7 days or have more than 100 000 documents'
   task :rollover => :environment do |t, args|
     max_age = '7d'
-    max_docs = 100_00
+    max_docs = 100_000
     Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
     client = IndexManager.client
-    Statistics::Print.substep('Wait statistics cluster to be ready.')
-    unless IndexManager.cluster_ready?(client)
+    unless cluster_ready?(client)
       Statistics::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
     end
@@ -230,11 +226,15 @@ namespace :statistics do
     end
 
     def reindex(client, src_index, dest_index)
-      client.reindex(wait_for_completion: true, body: {
-        source: { index: src_index.name },
-        dest: { index: dest_index.name }
-      })
+      result = client.reindex(
+        wait_for_completion: true,
+        timeout: '5m',
+        body: {
+          source: { index: src_index.name },
+          dest: { index: dest_index.name }
+        })
       Statistics::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
+      Statistics::Print.notice("Reindexing result : #{result.to_json}")
     end
 
     def delete_index(client, index_name)
@@ -246,6 +246,25 @@ namespace :statistics do
       node_stats = client.nodes.info()['nodes']
       shrink_node = node_stats.keys.sample
       node_stats[shrink_node]['name']
+    end
+
+    def cluster_ready?(client)
+      expected_status = Rails.env.production? ? 'green' : 'yellow'
+      retry_count = 0
+      max_retries = 3
+      cluster_ready = false
+      timetout = '30s'
+      while !cluster_ready && retry_count < max_retries do
+        Statistics::Print.substep("Wait for #{timetout} statistics cluster to be ready...")
+        begin
+          client.cluster.health(wait_for_status: expected_status, timeout: timetout)
+          cluster_ready = true
+        rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => e
+          retry_count += 1
+          Statistics::Print.notice("Cluster is not ready for the #{retry_count}/#{max_retries} attempt")
+        end
+      end
+      cluster_ready
     end
 
 

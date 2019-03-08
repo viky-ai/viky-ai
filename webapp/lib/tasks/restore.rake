@@ -187,7 +187,7 @@ namespace :restore do
       client.snapshot.restore repository: repository_name, snapshot: selected_snapshot, wait_for_completion: true, body: {
         indices: 'stats-interpret_request_log-*',
         rename_pattern: 'stats-interpret_request_log-(\w+)-([0-9]+)-(.+)',
-        rename_replacement: "stats-interpret_request_log-$1-$2-#{uniq_id}-$3",
+        rename_replacement: "stats-interpret_request_log-$1-$2-$3-#{uniq_id}",
         index_settings: {
           'index.number_of_replicas' => 0
         }

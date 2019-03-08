@@ -27,7 +27,7 @@ class AgentDuplicator
         source.image_attacher.copy(record.image_attacher)
       end
     end
-    fix_interpretation_aliases(new_agent)
+    fix_interpretation_aliases(new_agent.to_record)
   end
 
   private

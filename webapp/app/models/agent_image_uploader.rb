@@ -19,10 +19,11 @@ class AgentImageUploader < Shrine
   end
 
   process(:store) do |io, _context|
+    pipeline = ImageProcessing::MiniMagick.source(io.download)
     {
       original: io,
-      background: resize_to_fill!(io.download, 640, 360, gravity: 'Center'),
-      avatar: resize_to_fill!(io.download, 96, 96, gravity: 'Center')
+      background: pipeline.resize_to_fill!(640, 360, gravity: 'Center'),
+      avatar: pipeline.resize_to_fill!(96, 96, gravity: 'Center')
     }
   end
 end
