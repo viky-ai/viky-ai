@@ -74,7 +74,7 @@
       <span class="solution-label">
         <%= t('views.interpretations.solution_label') %>
       </span>
-      <%= f.text_area :solution, id: "solution__#{interpretation.id}", maxlength: '2000', spellcheck: 'false' %>
+      <%= f.text_area :solution, id: "solution__#{interpretation.id}", maxlength: '6000', spellcheck: 'false' %>
     </div>
     <%= display_errors(interpretation, :solution) %>
   </div>

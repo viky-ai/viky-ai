@@ -57,6 +57,7 @@ RUN set -ex; \
       ca-certificates \
       curl \
       g++ \
+      libgmp-dev \
       libxml2 \
       wget \
     ; \
