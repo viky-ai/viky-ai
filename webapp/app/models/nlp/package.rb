@@ -129,6 +129,7 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
         expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         expression = {}
@@ -139,6 +140,7 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias, true)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
         expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         if ialias.any_enabled
@@ -153,6 +155,7 @@ class Nlp::Package
           expression[:aliases] << build_internal_alias(ialias, true)
           expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
           expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+          expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
           expressions << expression
         end
 
@@ -178,6 +181,7 @@ class Nlp::Package
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
         expression[:glue_distance] = interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if interpretation.proximity_accepts_punctuations?
         expression[:solution]   = build_interpretation_solution(interpretation)
         expressions << expression
 

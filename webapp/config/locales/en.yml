@@ -26,6 +26,7 @@ en:
     proximity:
       label: Proximity
       glued: Glued
+      accepts_punctuations: Accepts Punctuations
       very_close: Very Close
       close: Close
       far: Far

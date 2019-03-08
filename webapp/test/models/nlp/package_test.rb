@@ -72,7 +72,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"      => "pluie",
               "keep-order"    => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "rain",
@@ -81,7 +81,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "sun",
@@ -90,7 +90,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "soleil",
@@ -99,7 +99,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             }
           ]
         },
@@ -114,7 +114,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 20
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "tout à l'heure",
@@ -122,7 +123,8 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "fr",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 20
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "today",
@@ -130,14 +132,16 @@ class PackageTest < ActiveSupport::TestCase
               "locale"     => "en",
               "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 20
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "tomorrow",
               "id"         => entities(:weather_dates_tomorrow).id,
               "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
-              "glue-distance" => 20
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation"
             }
           ]
         }
@@ -809,7 +813,7 @@ class PackageTest < ActiveSupport::TestCase
   test 'Package generation with different proximity values' do
     weather = agents(:weather)
     interpretation_far = interpretations(:weather_forecast_demain)
-    interpretation_far.proximity = 'far'
+    interpretation_far.proximity = 'accepts_punctuations'
     assert interpretation_far.save
 
     interpretation_very_close = interpretations(:weather_question_like)
@@ -837,7 +841,8 @@ class PackageTest < ActiveSupport::TestCase
               "id"            => interpretations(:weather_forecast_demain).id,
               "locale"        => "fr",
               "solution"      => "Quel temps fera-t-il demain ?",
-              "glue-distance" => 50
+              "glue-distance" => 0,
+              "glue-strength" => 'punctuation'
             }
           ]
         },
@@ -867,7 +872,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"      => "pluie",
               "keep-order"    => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "rain",
@@ -876,7 +881,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "pluie",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "sun",
@@ -885,7 +890,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             },
             {
               "expression" => "soleil",
@@ -894,7 +899,7 @@ class PackageTest < ActiveSupport::TestCase
               "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation",
+              "glue-strength" => "punctuation"
             }
           ]
         },
@@ -938,7 +943,7 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, p.generate_json
+    assert_equal expected, JSON.parse(p.generate_json)
   end
 
 end

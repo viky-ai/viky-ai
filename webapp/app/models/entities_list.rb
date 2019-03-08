@@ -11,7 +11,7 @@ class EntitiesList < ApplicationRecord
   has_many :entities, dependent: :destroy
   has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
 
-  enum proximity: ExpressionProximity::PROXIMITIES, _prefix: :proximity
+  enum proximity: ExpressionProximity::ENTITY_PROXIMITES, _prefix: :proximity
 
   enum visibility: [:is_public, :is_private]
 

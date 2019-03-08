@@ -1,6 +1,6 @@
 class ReplaceGluedByProximity < ActiveRecord::Migration[5.1]
   def up
-    add_column :interpretations, :proximity, :integer, default: 2
+    add_column :interpretations, :proximity, :integer, default: Interpretation.proximities['close']
 
     Interpretation.where(glued: true).in_batches do |interpretations|
       interpretations.update_all(proximity: 'glued')

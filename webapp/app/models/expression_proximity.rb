@@ -1,6 +1,7 @@
 class ExpressionProximity
 
-  PROXIMITIES = %w(glued very_close close far).freeze
+  INTERPRETATION_PROXIMITIES = %w(glued accepts_punctuations very_close close far).freeze
+  ENTITY_PROXIMITES = %w(glued very_close close far).freeze
 
   def initialize(proximity)
     @proximity = proximity
@@ -8,14 +9,14 @@ class ExpressionProximity
 
   def get_distance
     case @proximity
-    when "glued"
-      0
-    when "very_close"
-      10
-    when "close"
-      20
-    when "far"
-      50
+      when "glued", "accepts_punctuations"
+        0
+      when "very_close"
+        10
+      when "close"
+        20
+      when "far"
+        50
     end
   end
 
