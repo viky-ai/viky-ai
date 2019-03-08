@@ -36,11 +36,7 @@ class AgentRegressionCheck < ApplicationRecord
       if interpretation.nil?
         self.got = {}
       else
-        self.got = {
-          'package' => Intent.find(interpretation['id']).agent.id,
-          'id' => interpretation['id'],
-          'solution' => interpretation['solution'].to_json.to_s
-        }
+        self.got = AgentRegressionCheck::prepare_result(interpretation)
       end
       self.state = self.got == self.expected ? 'success' : 'failure'
     elsif status == 401 || status == 404
@@ -60,6 +56,34 @@ class AgentRegressionCheck < ApplicationRecord
     )
   end
 
+  def self.prepare_result(interpretation)
+    if interpretation['slug'].include? 'entities_lists'
+      type = 'entities_list'
+      interpret_root = EntitiesList.find_by_id(interpretation['id'])
+    else
+      type = 'intent'
+      interpret_root = Intent.find_by_id(interpretation['id'])
+    end
+
+    if interpret_root.nil?
+      {}
+    else
+      {
+        'root_type' => type,
+        'package' => interpret_root.agent.id,
+        'id' => interpretation['id'],
+        'solution' => interpretation['solution'].to_json.to_s
+      }
+    end
+  end
+
+  def interpret_root
+    if expected['root_type'] == 'entities_list'
+      EntitiesList.find_by_id(expected['id'])
+    else
+      Intent.find_by_id(expected['id'])
+    end
+  end
 
   private
 
