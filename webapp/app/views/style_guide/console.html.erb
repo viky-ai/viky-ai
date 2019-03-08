@@ -53,13 +53,14 @@
 
   </div>
 
-  <form>
-    <div class="field">
+  <form class="console-form">
+    <div class="field field--inline">
       <div class="control">
+        <label for="console-language_button">Language</label>
         <div class="dropdown">
           <div class="dropdown__trigger">
-            <button class="btn btn--outline btn--small">
-              fr
+            <button id="console-language_button" class="btn btn--outline btn--small">
+              <span class="btn__label">fr</span>
               <span class="icon icon--x-small">
                 <%= icon_arrow_down %>
               </span>
@@ -73,10 +74,13 @@
             </ul>
           </div>
         </div>
+      </div>
+      <div class="control">
+        <label for="console-spellchecking_button">Spellchecking</label>
         <div class="dropdown">
           <div class="dropdown__trigger">
-            <button class="btn btn--outline btn--small">
-              Verbose OFF
+            <button id="console-spellchecking_button" class="btn btn--outline btn--small">
+              <span class="btn__label">Inactive</span>
               <span class="icon icon--x-small">
                 <%= icon_arrow_down %>
               </span>
@@ -84,8 +88,28 @@
           </div>
           <div class="dropdown__content dropdown__content--hidden">
             <ul>
-              <li><a href="#" class="current">Verbose OFF</a></li>
-              <li><a href="#">Verbose ON</a></li>
+              <li><a href="#" class="current">Inactive</a></li>
+              <li><a href="#">Low</a></li>
+              <li><a href="#">High</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="control">
+        <label for="console-verbose_button">Verbose</label>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button id="console-verbose_button" class="btn btn--outline btn--small">
+              <span class="btn__label">OFF</span>
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <li><a href="#" class="current">OFF</a></li>
+              <li><a href="#">ON</a></li>
             </ul>
           </div>
         </div>

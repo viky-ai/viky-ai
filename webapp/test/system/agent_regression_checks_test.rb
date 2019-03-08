@@ -155,7 +155,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "A "*101
-      first('button').click
+      all('button').last.click
       assert page.has_content?('Adding this to the tests suite is not possible')
     end
   end
@@ -183,7 +183,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather terminator"
-      first('button').click
+      all('button').last.click
       assert page.has_text? '2 interpretations found.'
       assert page.has_button? 'Add to tests suite'
       assert_equal 1, find_all('.c-intents button').count
@@ -208,20 +208,19 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "Quel temps fera-t-il demain ?"
-      first('button').click
+      all('button').last.click
       assert page.has_no_button?('Update')
       assert page.has_no_button?('Add to tests suite')
 
       all('.dropdown__trigger > .btn')[0].click
       click_link 'en'
-      first('button').click
+      all('button').last.click
       assert page.has_button?('Add to tests suite')
       all('.dropdown__trigger > .btn')[0].click
-      click_link 'Language: Auto'
-      all('.dropdown__trigger > .btn')[2].click
-      click_link 'Manual now'
+      click_link 'Auto'
+      click_button 'Manual'
       fill_in 'interpret[now]', with: '2019-02-11T01:00:00+01:00'
-      first('button').click
+      all('button').last.click
       assert page.has_button?('Add to tests suite')
     end
   end
@@ -346,7 +345,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('#js-console-form') do
       assert page.has_content?('en')
-      assert page.has_content?('Manual now')
+      assert first('button[data-trigger-event="console-select-now-type-manual"]').matches_css?(".btn--primary")
     end
 
     within('#console-explain') do

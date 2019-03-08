@@ -30,6 +30,7 @@ class Console
       $('#js-console-now-input-container input').val(moment().format())
       $('#js-console-now-input-container').show()
       $("#console-reset-btn").show()
+      App.FocusInput.atEnd('#js-console-now-input-container input')
 
     $("body").on 'ajax:before', (event) =>
       if $(event.target).attr('id') == "js-console-form"
@@ -108,10 +109,10 @@ class Console
         return $(event.target).closest('match')
 
   send_interpret_request: (data) ->
-    now = if data.now? then 'Manual now' else 'Auto now'
-    nowUpdater = { selector: '#console-dropdown-now-type', on: now }
+    now = if data.now? then 'Manual' else 'Auto'
+    nowUpdater = { selector: '#console-buttongroup-now-type', on: now }
     languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
-    $('body').trigger('dropdown:click', nowUpdater)
+    $('body').trigger('buttongroup:click', nowUpdater)
     $('body').trigger('dropdown:click', languageUpdater)
 
     $('#js-console-input-sentence').val(data.sentence)

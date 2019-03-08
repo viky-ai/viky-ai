@@ -3,6 +3,7 @@ $ = require('jquery');
 class ButtonGroup
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)
+    $('body').on 'buttongroup:click', (event, data) => @click(data)
 
   dispatch: (event) ->
     if $(event.target).is('button')
@@ -16,6 +17,8 @@ class ButtonGroup
         @change_value(input_selector, input_value)
         behavior = group.data('behavior')
         @submit_form(event, group) if behavior == 'submit-form'
+        trigger_event = button.data('trigger-event')
+        @trigger_event(button) if trigger_event
 
   display: (group, selected_button) ->
     $(group).children().removeClass('btn--primary')
@@ -35,6 +38,24 @@ class ButtonGroup
       action = $(form_selector).attr('action')
       params = $(form_selector).serialize()
       Turbolinks.visit("#{action}?#{params}")
+
+  trigger_event: (node) ->
+    event_to_fire = node.data('trigger-event')
+    $('body').trigger(event_to_fire)
+
+  # Update via JS event "buttongroup:click"
+  click: (data) ->
+    selector = data.selector
+    value    = data.on
+    if selector
+      for button in $(selector).find('button')
+        if $(button).html().includes(value)
+          node = $(button)
+      if node
+        @display(node.closest('.btn-group'), node)
+        if node.data('trigger-event')
+          event = node.data('trigger-event')
+          $('body').trigger(event)
 
 Setup = ->
   new ButtonGroup()

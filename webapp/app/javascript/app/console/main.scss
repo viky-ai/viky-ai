@@ -1,0 +1,23 @@
+.console-form {
+
+  label {
+    font-size: .8em;
+    font-weight: 200;
+    margin-bottom: .25em;
+  }
+
+  .field .control {
+    margin-right: 1em;
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+
+  #console-language_button {
+    width: 5.0em;
+  }
+
+  #console-spellchecking_button {
+    width: 6.6em;
+  }
+}

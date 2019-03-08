@@ -1,4 +1,4 @@
-<%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form' do |f| %>
+<%= form_with url: interpret_user_agent_path(@agent.owner, @agent), method: :get, id: 'js-console-form', class: 'console-form' do |f| %>
   <input type='hidden' name='interpret[current_tab]' value="explain" id="console-current-tab-input" />
   <input type='hidden' name='interpret[verbose]' value="false" class="js-verbose-input" />
   <input type='hidden' name='interpret[language]' value="" class="js-language-input" />
@@ -7,17 +7,17 @@
   <script>$('.js-verbose-input').val("false");</script>
   <script>$('.js-language-input').val("*");</script>
 
-  <div class="field">
+  <div class="field field--inline">
     <div class="control">
-
+      <label for="console-language_button"><%= t('views.console.locales.label') %></label>
       <div class="dropdown" id='console-dropdown-locale'>
         <div class="dropdown__trigger">
-          <span class="btn btn--outline btn--small">
-            <span class="btn__label"><%= t('views.console.all_locales') %></span>
+          <button id="console-language_button" class="btn btn--outline btn--small" type="button">
+            <span class="btn__label"><%= t('views.console.locales.all') %></span>
             <span class="icon icon--x-small">
               <%= icon_arrow_down %>
             </span>
-          </span>
+          </button>
         </div>
         <div class="dropdown__content dropdown__content--hidden">
           <ul>
@@ -28,10 +28,10 @@
                   data-input-selector=".js-language-input"
                   data-input-value="<%= l %>"
                   data-form-selector="#js-console-form"
-                  data-replace-with="<% if l == "*" %><%= t('views.console.all_locales') %><% else %><%= l %><% end %>"
+                  data-replace-with="<% if l == "*" %><%= t('views.console.locales.all') %><% else %><%= l %><% end %>"
                   data-replace-selector=".btn__label">
                   <% if l == "*" %>
-                    <%= t('views.console.all_locales') %>
+                    <%= t('views.console.locales.all') %>
                   <% else %>
                     <%= l %>
                   <% end %>
@@ -41,16 +41,18 @@
           </ul>
         </div>
       </div>
+    </div>
 
-
+    <div class="control">
+      <label for="console-spellchecking_button"><%= t('views.console.spellchecking.label') %></label>
       <div class="dropdown" id='console-dropdown-spellchecking'>
         <div class="dropdown__trigger">
-          <span class="btn btn--outline btn--small">
+          <button id="console-spellchecking_button" class="btn btn--outline btn--small" type="button">
             <span class="btn__label"><%= t('views.console.spellchecking.inactive') %></span>
             <span class="icon icon--x-small">
               <%= icon_arrow_down %>
             </span>
-          </span>
+          </button>
         </div>
         <div class="dropdown__content dropdown__content--hidden">
           <ul>
@@ -70,85 +72,39 @@
           </ul>
         </div>
       </div>
+    </div>
 
-
-      <div class="dropdown" id='console-dropdown-verbose'>
-        <div class="dropdown__trigger">
-          <span class="btn btn--outline btn--small">
-            <span class="btn__label"><%= t('views.console.verbose_off') %></span>
-            <span class="icon icon--x-small">
-              <%= icon_arrow_down %>
-            </span>
-          </span>
-        </div>
-        <div class="dropdown__content dropdown__content--hidden">
-          <ul>
-            <li>
-              <a href="#" class="current"
-                data-behavior="populate-input, replace-trigger-label, submit-form"
+    <div class="control">
+      <label for="console-verbose_button"><%= t('views.console.verbose.label') %></label>
+      <div class="btn-group"
+           data-behavior="submit-form"
+           data-form-selector="#js-console-form">
+        <button class="btn btn--primary btn--small" type="button"
                 data-input-selector=".js-verbose-input"
-                data-input-value="false"
-                data-form-selector="#js-console-form"
-                data-replace-with="<%= t('views.console.verbose_off') %>"
-                data-replace-selector=".btn__label">
-                <%= t('views.console.verbose_off') %>
-              </a>
-            </li>
-            <li>
-              <a href="#"
-                data-behavior="populate-input, replace-trigger-label, submit-form"
+                data-input-value="false"><%= t('views.console.verbose.disable') %></button>
+        <button class="btn btn--small" type="button"
                 data-input-selector=".js-verbose-input"
-                data-input-value="true"
-                data-form-selector="#js-console-form"
-                data-replace-with="<%= t('views.console.verbose_on') %>"
-                data-replace-selector=".btn__label">
-                <%= t('views.console.verbose_on') %>
-              </a>
-            </li>
-          </ul>
-        </div>
+                data-input-value="true"><%= t('views.console.verbose.enable') %></button>
       </div>
+    </div>
 
-
-      <div class="dropdown" id='console-dropdown-now-type'>
-        <div class="dropdown__trigger">
-          <span class="btn btn--outline btn--small">
-            <span class="btn__label"><%= t('views.console.datetime_auto') %></span>
-            <span class="icon icon--x-small">
-              <%= icon_arrow_down %>
-            </span>
-          </span>
-        </div>
-        <div class="dropdown__content dropdown__content--hidden">
-          <ul>
-            <li>
-              <a href="#" class="current"
-                data-behavior="trigger-event, replace-trigger-label, submit-form"
-                data-form-selector="#js-console-form"
-                data-replace-with="<%= t('views.console.datetime_auto') %>"
-                data-replace-selector=".btn__label"
-                data-trigger-event="console-select-now-type-auto">
-                <%= t('views.console.datetime_auto') %>
-              </a>
-            </li>
-            <li>
-              <a href="#"
-                data-behavior="replace-trigger-label, trigger-event"
-                data-replace-with="<%= t('views.console.datetime_manual') %>"
-                data-replace-selector=".btn__label"
-                data-trigger-event="console-select-now-type-manual">
-                <%= t('views.console.datetime_manual') %>
-              </a>
-            </li>
-          </ul>
-        </div>
+    <div class="control">
+      <label for="console-datetime_button"><%= t('views.console.datetime.label') %></label>
+      <div id="console-buttongroup-now-type"
+           class="btn-group"
+           data-behavior="submit-form"
+           data-form-selector="#js-console-form">
+        <button class="btn btn--primary btn--small" type="button"
+                data-trigger-event="console-select-now-type-auto"><%= t('views.console.datetime.auto') %></button>
+        <button class="btn btn--small" type="button"
+                data-trigger-event="console-select-now-type-manual"><%= t('views.console.datetime.manual') %></button>
       </div>
     </div>
   </div>
 
   <div class='field field--console-now' id="js-console-now-input-container" style="display:none;">
     <div class='control control--merged'>
-      <span class="addon"><%= t('views.console.datetime_addon') %></span>
+      <span class="addon"><%= t('views.console.datetime.addon') %></span>
       <input type='text' name='interpret[now]' value="" />
     </div>
   </div>
