@@ -92,8 +92,8 @@ module Nls
         # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.9 }
         # check_interpret('before maisonde campagne after', expected)
 
-        # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
-        # check_interpret('before maison de campane after', expected)
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
+        check_interpret('before maison de campane after', expected)
       end
     end
   end

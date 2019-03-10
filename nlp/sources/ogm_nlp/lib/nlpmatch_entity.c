@@ -186,6 +186,9 @@ static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ct
   struct request_word *request_words = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(request_words) DPcErr;
 
+  // Looking for spelling mistakes
+  IFE(NlpLtrasEntity(me_ctrl));
+
   struct request_word *last_request_word = me_ctrl->request_word_list[me_ctrl->request_word_list_length - 1];
 
   for (int i = ctrl_nlp_th->basic_request_word_used; i < request_word_used; i++)
@@ -198,9 +201,6 @@ static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ct
       IFE(NlpMatchCurrentEntity(me_ctrl));
     }
   }
-
-  // Looking for spelling mistakes
-  IFE(NlpLtrasEntity(me_ctrl));
 
   DONE;
 }
