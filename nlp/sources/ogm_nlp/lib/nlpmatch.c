@@ -49,9 +49,11 @@ og_status NlpMatch(og_nlp_th ctrl_nlp_th)
 
   // Scanning all the words and create the list of input parts that match the words
   IFE(NlpMatchWords(ctrl_nlp_th));
+  IFE(NlpMatchEntities(ctrl_nlp_th));
+
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
-    IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, "List of request input parts after NlpMatchWords:"));
+    IFE(NlpRequestInputPartsLog(ctrl_nlp_th, 0, "List of request input parts after NlpMatchWords and NlpMatchEntities:"));
   }
 
   IFE(NlpMatchCreate(ctrl_nlp_th));

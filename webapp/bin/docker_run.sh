@@ -73,9 +73,6 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
 	./bin/rails statistics:reindex:all
 
 	echo "Statistics setup completed."
-
-	echo "Rake tasks scheduler setup."
-	bundle exec whenever --update-crontab
 fi
 
 if [[ "$1" != "config" ]]; then

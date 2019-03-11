@@ -47,7 +47,7 @@ gem 'local_time'
 gem 'sidekiq'
 
 # Use ElasticSearch for stats
-gem 'elasticsearch-model', '~> 5.0'
+gem 'elasticsearch', '~> 6.0'
 
 # Use Foreman to run app and dependencies
 gem 'foreman'
@@ -77,9 +77,6 @@ gem 'premailer-rails'
 
 # Duplicate model
 gem 'clowne'
-
-# Start rake tasks periodically
-gem 'whenever', '~> 0.10.0'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'

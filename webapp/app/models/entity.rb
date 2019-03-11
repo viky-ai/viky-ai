@@ -2,6 +2,8 @@ class Entity < ApplicationRecord
   include Positionable
   positionable_ancestor :entities_list
 
+  include ActionView::Helpers::NumberHelper
+
   belongs_to :entities_list, touch: true
 
   serialize :terms, JSON
@@ -11,15 +13,16 @@ class Entity < ApplicationRecord
   validates :terms, length: { maximum: 5000 }, presence: true
   validate :validate_locales_exists
   validate :validate_terms_present
+  validate :validate_terms_length_in_bytes
 
   before_validation :parse_terms
   before_validation :build_solution
 
   def terms_to_s
-    return "" if terms.nil?
+    return '' if terms.blank?
     terms.collect { |term|
       if term['locale'] == Locales::ANY
-        "#{term['term']}"
+        term['term']
       else
         "#{term['term']}:#{term['locale']}"
       end
@@ -56,9 +59,17 @@ class Entity < ApplicationRecord
 
     def validate_terms_present
       return unless terms.instance_of?(Array)
+      if terms.any? { |json| json['term'].empty? }
+        errors.add(:terms, I18n.t('errors.entity.term_abscent'))
+      end
+    end
+
+    def validate_terms_length_in_bytes
+      return unless terms.instance_of?(Array)
       terms.each do |json|
-        if json['term'].empty?
-          errors.add(:terms, I18n.t('errors.entity.term_abscent'))
+        actual_size = json['term'].bytesize
+        if actual_size > 2048
+          errors.add(:terms, I18n.t('errors.messages.too_large', actual: number_to_human_size(actual_size, precision: 4), count: number_to_human_size(2048, precision: 4)))
         end
       end
     end

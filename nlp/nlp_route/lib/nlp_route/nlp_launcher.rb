@@ -186,9 +186,6 @@ module NlpRoute
 
     def self.exec(cmd)
       Open3.popen3(cmd, chdir: pwd, err: :out) do |_stdin, stdout, _stderr, wait_thr|
-        stdout.each do |line|
-          print line.to_s
-        end
 
         # Process::Status object returned.
         exit_status = wait_thr.value

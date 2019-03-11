@@ -41,7 +41,8 @@ static og_status NlpCalculateScoreRecursive(og_nlp_th ctrl_nlp_th, struct reques
     {
       struct request_word *request_word = request_input_part->request_word;
       score->coverage += (double) request_word->nb_matched_words / nb_words;
-      score->spelling += (double) request_word->nb_matched_words * request_word->spelling_score / nb_words;
+      score->spelling += (double) request_word->nb_matched_words * request_word->spelling_score
+          * request_input_part->score_spelling / nb_words;
       score->locale += (double) request_word->nb_matched_words / nb_words;
       request_expression->nb_matched_words += request_word->nb_matched_words;
     }
@@ -131,7 +132,7 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
     {
       struct request_word *request_word = request_input_part->request_word;
       score->locale += 1;
-      score->spelling += request_word->spelling_score;
+      score->spelling += request_word->spelling_score*request_input_part->score_spelling;
     }
 
     else if (request_input_part->type == nlp_input_part_type_Interpretation)

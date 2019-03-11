@@ -27,7 +27,7 @@ class AgentDuplicator
         source.image_attacher.copy(record.image_attacher)
       end
     end
-    fix_interpretation_aliases(new_agent)
+    fix_interpretation_aliases(new_agent.to_record)
   end
 
   private
@@ -66,7 +66,7 @@ class AgentDuplicator
       new_agent.intents.each do |intent|
         intent.interpretations.each do |interpretation|
           interpretation.interpretation_aliases
-            .reject { |ialias| ialias.nature == 'type_number' }
+            .reject { |ialias| ['type_number', 'type_regex'].include? ialias.nature }
             .select { |ialias| ialias.interpretation_aliasable.agent.id == @agent.id }
             .each { |ialias| aliases_to_fix << ialias }
         end

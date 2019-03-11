@@ -34,7 +34,8 @@ int LtracDicSwapAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *di
     IFE(LtracDicSwapAddOneLetter(ctrl_ltrac, dic_input, i));
     if (i < dic_input->value_length - 2)
     {
-      IFE(LtracDicSwapAddTwoLetters(ctrl_ltrac, dic_input, i));
+      //Disactivate swap with two letters, because it creates big dictionaries
+      //IFE(LtracDicSwapAddTwoLetters(ctrl_ltrac, dic_input, i));
     }
     IFE(LtracDicSwapAddTwoSameLetters(ctrl_ltrac, dic_input, i, &index_double1, index_double2));
   }

@@ -116,7 +116,6 @@ class ConsoleTest < ApplicationSystemTestCase
       click_link 'Auto now'
       assert_equal 0, all("input[name='interpret[now]']").count
     end
-
   end
 
 
@@ -172,6 +171,7 @@ class ConsoleTest < ApplicationSystemTestCase
     assert page.has_text?('Interpretations / my-new-intent-updated PUBLIC')
     assert page.has_content?('No interpretation found.')
   end
+
 
   test "Highlighted text should be clickable and should show the matched interpretations" do
     go_to_agents_index
@@ -229,14 +229,27 @@ class ConsoleTest < ApplicationSystemTestCase
       assert page.has_content?('weather')
 
       within('.c-intent__highlight') do
+        # Show highlight
         page.find('.highlight-words', text: 'weather').click
         assert page.has_link?('admin/weather/interpretations/weather_forecast')
+        click_link('admin/weather/interpretations/weather_forecast')
+
+        # Hide highlight
+        page.find('.highlight-words', text: 'weather').click
+        assert_not page.has_link?('admin/weather/interpretations/weather_forecast')
+
+        # Show highlight again
+        page.find('.highlight-words', text: 'weather').click
+        assert page.has_link?('admin/weather/interpretations/weather_forecast')
+
+        # Navigate througth highlighted interpretation
         click_link('admin/weather/interpretations/weather_forecast')
       end
     end
 
     assert page.has_content?('What the weather like tomorrow ?')
   end
+
 
   test "Console is persisted when navigating between matched expressions" do
     go_to_agents_index
