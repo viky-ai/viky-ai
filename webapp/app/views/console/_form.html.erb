@@ -77,12 +77,13 @@
     <div class="control">
       <label for="console-verbose_button"><%= t('views.console.verbose.label') %></label>
       <div class="btn-group"
-           data-behavior="submit-form"
            data-form-selector="#js-console-form">
         <button class="btn btn--primary btn--small" type="button"
+                data-behavior="submit-form"
                 data-input-selector=".js-verbose-input"
                 data-input-value="false"><%= t('views.console.verbose.disable') %></button>
         <button class="btn btn--small" type="button"
+                data-behavior="submit-form"
                 data-input-selector=".js-verbose-input"
                 data-input-value="true"><%= t('views.console.verbose.enable') %></button>
       </div>
@@ -92,9 +93,9 @@
       <label for="console-datetime_button"><%= t('views.console.datetime.label') %></label>
       <div id="console-buttongroup-now-type"
            class="btn-group"
-           data-behavior="submit-form"
            data-form-selector="#js-console-form">
         <button class="btn btn--primary btn--small" type="button"
+                data-behavior="submit-form"
                 data-trigger-event="console-select-now-type-auto"><%= t('views.console.datetime.auto') %></button>
         <button class="btn btn--small" type="button"
                 data-trigger-event="console-select-now-type-manual"><%= t('views.console.datetime.manual') %></button>

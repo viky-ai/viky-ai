@@ -15,7 +15,7 @@ class ButtonGroup
         input_selector = button.data('input-selector')
         input_value = button.data('input-value')
         @change_value(input_selector, input_value)
-        behavior = group.data('behavior')
+        behavior = button.data('behavior')
         @submit_form(event, group) if behavior == 'submit-form'
         trigger_event = button.data('trigger-event')
         @trigger_event(button) if trigger_event
