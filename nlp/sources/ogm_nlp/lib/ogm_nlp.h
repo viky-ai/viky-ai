@@ -56,6 +56,16 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+/** Spellchecking level */
+enum nlp_spellchecking_level
+{
+  nlp_spellchecking_level_inactive = 0,
+  nlp_spellchecking_level_low = 1 ,
+  nlp_spellchecking_level_medium =  2,
+  nlp_spellchecking_level_high = 3
+};
+
+
 // %.15g means, 15 significant figures not decimal, default is 6.
 #define DOgPrintDouble "%.15g"
 
@@ -739,6 +749,8 @@ struct nlp_match_entities_ctrl
   double score_spelling;
 };
 
+
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -785,6 +797,7 @@ struct og_ctrl_nlp_threaded
   og_string date_now;
   og_heap hrequest_word;
   og_heap hba;
+  enum nlp_spellchecking_level spellchecking_level;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;

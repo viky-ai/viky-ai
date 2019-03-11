@@ -35,7 +35,7 @@ module Nls
       def test_ltras_single_words
 
         sentence = "with a nice swimmang poool with spa for 3 peoople and sea vieew"
-        check_interpret(sentence, interpretation: "ltras", score: 0.94)
+        check_interpret(sentence, interpretation: "ltras", score: 0.94, spellchecking: :medium)
 
       end
 

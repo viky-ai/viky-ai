@@ -67,7 +67,18 @@ module Nls
       end
     end
 
-    def json_interpret_body(package, sentence, locale = Interpretation.default_locale, explain = false, now = nil, primary_package = nil, show_private = false)
+    def json_interpret_body(package, sentence, opts = {})
+
+      default_opt = {
+        locale: Interpretation.default_locale,
+        explain: false,
+        now: nil,
+        primary_package: nil,
+        show_private: nil,
+        spellchecking: nil
+      }
+      opts = default_opt.merge(opts)
+
       request = {}
 
       if package == "*"
@@ -87,18 +98,25 @@ module Nls
         request['packages'] = [package_id]
       end
 
-      primary_package_id = nil
-      if !primary_package.nil?
+      primary_package = opts[:primary_package]
+      unless primary_package.nil?
         primary_package_id = primary_package
         primary_package_id = primary_package.id.to_s if primary_package.kind_of? Package
       end
 
-      request['primary-package'] = primary_package_id if !primary_package_id.nil?
+      spellchecking = opts[:spellchecking]
+      spellchecking_valid_values = [nil, :inactive, :low, :medium, :high]
+      unless  spellchecking_valid_values.include?(spellchecking)
+        raise "spellchecking: not in #{spellchecking_valid_values}"
+      end
+
       request['sentence'] = sentence
-      request['Accept-Language'] = locale if !locale.nil?
-      request['now'] = now if !now.nil?
-      request['show-explanation'] = true  if explain
-      request['show-private'] = show_private
+      request['primary-package'] = primary_package_id unless primary_package_id.nil?
+      request['spellchecking'] = spellchecking        unless spellchecking.nil?
+      request['Accept-Language'] = opts[:locale]      unless opts[:locale].nil?
+      request['now'] = opts[:now]                     unless opts[:now].nil?
+      request['show-explanation'] = true              if     opts[:explain]
+      request['show-private'] = true                  if     opts[:show_private]
 
       request
     end
@@ -346,7 +364,19 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         explain = false
         explain = expected[:explain] if expected.has_key?(:explain)
 
-        request << json_interpret_body(packages[i], sentence[i], Interpretation.default_locale, explain, now[i], primary_package[i], show_private[i])
+        spellchecking = nil
+        spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
+
+        opts = {
+          locale: Interpretation.default_locale,
+          explain: explain,
+          now: now[i],
+          primary_package: primary_package[i],
+          show_private: show_private[i],
+          spellchecking: spellchecking
+        }
+
+        request << json_interpret_body(packages[i], sentence[i], opts)
       end
 
       ap expected if globaldebug
@@ -464,9 +494,21 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       explain = false
       explain = expected[:explain] if expected.has_key?(:explain)
 
+      spellchecking = nil
+      spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
+
+      opts = {
+        locale: Interpretation.default_locale,
+        explain: explain,
+        now: now,
+        primary_package: primary_package,
+        show_private: show_private,
+        spellchecking: spellchecking
+      }
+
       ap expected if debug
       # creation et exécution de la requete
-      request = json_interpret_body(packages, sentence, Interpretation.default_locale, explain, now, primary_package, show_private)
+      request = json_interpret_body(packages, sentence, opts)
       ap request if debug
       actual = Nls.interpret(request)
       ap actual if debug
