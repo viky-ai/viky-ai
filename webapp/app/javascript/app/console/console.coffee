@@ -112,11 +112,14 @@ class Console
     now = if data.now? then 'Manual' else 'Auto'
     nowUpdater = { selector: '#console-buttongroup-now-type', on: now }
     languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
+    spellcheckingUpdater = { selector: '#console-dropdown-spellchecking', on: data.spellchecking }
     $('body').trigger('buttongroup:click', nowUpdater)
     $('body').trigger('dropdown:click', languageUpdater)
+    $('body').trigger('dropdown:click', spellcheckingUpdater)
 
     $('#js-console-input-sentence').val(data.sentence)
     $('.js-language-input').val(data.language)
+    $('.js-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
 
     Rails.fire($('#js-console-form')[0], 'submit')

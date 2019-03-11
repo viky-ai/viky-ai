@@ -27,7 +27,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      first('button').click
+      click_button 'console-send-sentence'
       assert page.has_content?('3 tests')
       assert page.has_content?('1 running, 1 success, 1 failure')
 
@@ -63,7 +63,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "sun"
-      first('button').click
+      click_button 'console-send-sentence'
       assert page.has_content?('3 tests')
       assert page.has_content?('1 running, 1 success, 1 failure')
 
@@ -82,7 +82,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
   end
 
-  test 'Add new test with language and now' do
+  test 'Add new test with language, now and spellchecking' do
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
@@ -104,10 +104,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       fill_in 'interpret[sentence]', with: "hello"
       all('.dropdown__trigger > .btn')[0].click
       click_link 'en'
-      all('.dropdown__trigger > .btn')[2].click
-      click_link 'Manual now'
+      all('.dropdown__trigger > .btn')[1].click
+      click_link 'Medium'
+      click_button 'Manual'
       fill_in 'interpret[now]', with: "2017-12-05T15:14:01+01:00"
-      first('button').click
+      click_button 'console-send-sentence'
       assert page.has_content?('3 tests')
       assert page.has_content?('1 running, 1 success, 1 failure')
 
@@ -131,6 +132,8 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
         assert page.has_content?("SOLUTION (Expected)")
         assert page.has_content?('LANGUAGE')
         assert page.has_content?('en')
+        assert page.has_content?('SPELLCHECKING')
+        assert page.has_content?('Medium')
         assert page.has_content?('NOW')
         assert page.has_content?('2017-12-05T15:14:01.000+01:00')
       end
@@ -155,7 +158,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "A "*101
-      all('button').last.click
+      click_button 'console-send-sentence'
       assert page.has_content?('Adding this to the tests suite is not possible')
     end
   end
@@ -183,7 +186,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "weather terminator"
-      all('button').last.click
+      click_button 'console-send-sentence'
       assert page.has_text? '2 interpretations found.'
       assert page.has_button? 'Add to tests suite'
       assert_equal 1, find_all('.c-intents button').count
@@ -208,19 +211,19 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     )
     within('.console') do
       fill_in 'interpret[sentence]', with: "Quel temps fera-t-il demain ?"
-      all('button').last.click
+      click_button 'console-send-sentence'
       assert page.has_no_button?('Update')
       assert page.has_no_button?('Add to tests suite')
 
       all('.dropdown__trigger > .btn')[0].click
       click_link 'en'
-      all('button').last.click
+      click_button 'console-send-sentence'
       assert page.has_button?('Add to tests suite')
       all('.dropdown__trigger > .btn')[0].click
       click_link 'Auto'
       click_button 'Manual'
       fill_in 'interpret[now]', with: '2019-02-11T01:00:00+01:00'
-      all('button').last.click
+      click_button 'console-send-sentence'
       assert page.has_button?('Add to tests suite')
     end
   end
@@ -345,6 +348,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('#js-console-form') do
       assert page.has_content?('en')
+      assert page.has_content?('High')
       assert first('button[data-trigger-event="console-select-now-type-manual"]').matches_css?(".btn--primary")
     end
 

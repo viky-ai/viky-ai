@@ -53,6 +53,7 @@ class ConsoleExplainFooter
                 regression_check: {
                   sentence: this.test.sentence,
                   language: this.test.language,
+                  spellchecking: this.test.spellchecking,
                   now: this.test.now,
                   expected: JSON.parse(result)
                 }

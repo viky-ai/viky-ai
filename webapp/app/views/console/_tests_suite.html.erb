@@ -57,6 +57,13 @@
                   <div class="cts-item__full__detail__value">{{ test.language }}</div>
                 </template>
 
+                <template v-if="test.spellchecking != 'inactive'">
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.spellchecking.label') %>
+                  </div>
+                  <div class="cts-item__full__detail__value">{{ test.spellchecking_i18n }}</div>
+                </template>
+
                 <template v-if="test.now">
                   <div class="cts-item__full__detail__label">
                     <%= t('views.agent_regression_checks.now') %>

@@ -8,7 +8,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      all('button').last.click
+      click_button 'console-send-sentence'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
@@ -30,7 +30,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "Hello world viki.ai"
-      all('button').last.click
+      click_button 'console-send-sentence'
 
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
@@ -133,7 +133,7 @@ class ConsoleTest < ApplicationSystemTestCase
 
     within('.console') do
       fill_in 'interpret[sentence]', with: "hello"
-      all('button').last.click
+      click_button 'console-send-sentence'
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,

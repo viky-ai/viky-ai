@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20190312150519) do
     t.integer "position", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "spellchecking"
     t.index ["agent_id"], name: "index_agent_regression_checks_on_agent_id"
   end
 

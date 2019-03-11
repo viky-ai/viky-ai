@@ -89,6 +89,7 @@ class ConsoleTestSuite
               $("body").trigger('console-submit-form', {
                   sentence: regressionCheck.sentence,
                   language: regressionCheck.language,
+                  spellchecking: regressionCheck.spellchecking,
                   now: regressionCheck.now
                 }
               )
