@@ -96,6 +96,9 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
+      only_one_any: Only one alias with "Any" option is permitted
+      one_alias_one_any: '"Any" option is not permitted with only one alias.'
+      only_one_list: Only one alias with "List" option is permitted
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
@@ -115,6 +118,7 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
       valid_regex: "should be valid"
+      list_and_any_not_compatible: Option "list" and "Any" are not compatible
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:

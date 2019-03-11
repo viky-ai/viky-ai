@@ -12,6 +12,7 @@ class Interpretation < ApplicationRecord
   validates :expression, presence: true, byte_size: { maximum: 2048 }
   validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
+  validate :check_aliases_any_and_list_options
 
   before_save :cleanup
 
@@ -38,6 +39,21 @@ class Interpretation < ApplicationRecord
 
 
   private
+
+    def check_aliases_any_and_list_options
+      if interpretation_aliases.size == 1
+        if interpretation_aliases.first.any_enabled
+          errors.add(:base, I18n.t('errors.interpretation.one_alias_one_any'))
+        end
+      elsif interpretation_aliases.size > 1
+        if interpretation_aliases.select {|a| a.any_enabled}.size > 1
+          errors.add(:base, I18n.t('errors.interpretation.only_one_any'))
+        end
+        if interpretation_aliases.select {|a| a.is_list}.size > 1
+          errors.add(:base, I18n.t('errors.interpretation.only_one_list'))
+        end
+      end
+    end
 
     def cleanup
       self.expression = ActionController::Base.helpers.strip_tags(expression.strip) unless expression.nil?
