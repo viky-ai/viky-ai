@@ -46,7 +46,7 @@ if test.expected.present?
           value: Intent.find(test.got['id']).slug
         }
       end
-      if test.expected['solution'] == test.expected['got']
+      if test.expected['solution'] == test.got['solution']
         diff_rows << {
           label: t('views.agent_regression_checks.result.solution.expected_got_ok_html', icon: icon_check),
           value: JSON.parse(test.expected['solution'])

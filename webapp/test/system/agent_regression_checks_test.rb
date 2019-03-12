@@ -365,4 +365,31 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     assert page.has_content?('3 tests')
   end
+
+
+  test 'Regression check fail when different slugs but same solutions' do
+    @regression_weather_condition.got = @regression_weather_condition.expected
+    @regression_weather_condition.got['id'] = intents(:weather_question).id,
+    @regression_weather_condition.got['root_type'] = 'intent'
+    @regression_weather_condition.state = 'failure'
+    assert @regression_weather_condition.save
+
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    within('.console') do
+      assert page.has_content?('3 tests')
+      find('#console-footer').click
+      sleep 0.2 # Wait Animation
+    end
+
+    within('#console-ts') do
+      assert page.has_content?('3 tests')
+      click_link('Sun today')
+    end
+
+    within('.cts-item__full') do
+      assert page.has_content?('Sun today')
+      assert find_all('.cts-item__full__detail__value').one? { |d| d.text == "\"sun\"" }
+    end
+  end
 end
