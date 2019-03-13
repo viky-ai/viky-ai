@@ -23,6 +23,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     assert_equal agent.color, new_agent.color
     assert_equal "#{agent.agentname}-copy", new_agent.agentname
     assert_equal 'is_private', new_agent.visibility
+    assert_equal agent.locales, new_agent.locales
     assert_not_equal agent.api_token, new_agent.api_token
     assert_nil new_agent.owner
 
