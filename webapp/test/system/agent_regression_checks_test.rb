@@ -390,4 +390,37 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       assert find_all('.cts-item__full__detail__value').one? { |d| d.text == "\"sun\"" }
     end
   end
+
+
+  test 'Failed regression check with got referring to an entities list' do
+    @regression_weather_question.got = {
+      'root_type' => 'entities_list',
+      'package'   => entities_lists(:weather_conditions).agent.id,
+      'id'        => entities_lists(:weather_conditions).id,
+      'slug'      => entities_lists(:weather_conditions).slug,
+      'solution'  => entities(:weather_raining).solution.to_json.to_s
+    }
+    @regression_weather_question.state = 'failure'
+    assert @regression_weather_question.save
+
+    go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
+
+    within('.console') do
+      assert page.has_content?('3 tests')
+      find('#console-footer').click
+      sleep 0.2 # Wait Animation
+    end
+
+    within('#console-ts') do
+      assert page.has_content?('3 tests')
+      assert page.has_content?('1 running, 1 success, 1 failure')
+      click_link("What's the weather like in London?")
+    end
+
+    within('.cts-item__full') do
+      assert page.has_content?("What's the weather like in London?")
+      assert page.has_content?(intents(:weather_question).slug)
+      assert page.has_content?(entities_lists(:weather_conditions).slug)
+    end
+  end
 end

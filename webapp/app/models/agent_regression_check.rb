@@ -57,7 +57,7 @@ class AgentRegressionCheck < ApplicationRecord
   end
 
   def self.prepare_result(interpretation)
-    if interpretation['slug'].include? 'entities_lists'
+    if interpretation['slug'].include? '/entities_lists/'
       type = 'entities_list'
       interpret_root = EntitiesList.find_by_id(interpretation['id'])
     else
@@ -77,12 +77,16 @@ class AgentRegressionCheck < ApplicationRecord
     end
   end
 
-  def interpret_root
-    if expected['root_type'] == 'entities_list'
-      EntitiesList.find_by_id(expected['id'])
-    else
-      Intent.find_by_id(expected['id'])
-    end
+  def expected_removed?
+    !typed_interpret(expected['root_type']).exists?(expected['id'])
+  end
+
+  def expected_slug
+    typed_interpret(expected['root_type']).find_by_id(expected['id']).slug
+  end
+
+  def got_slug
+    typed_interpret(got['root_type']).find_by_id(got['id']).slug
   end
 
   private
@@ -100,5 +104,9 @@ class AgentRegressionCheck < ApplicationRecord
         errors.add(:base, I18n.t('errors.agent_regression_checks.delete.running'))
         throw(:abort)
       end
+    end
+
+    def typed_interpret(type)
+      type == 'entities_list' ? EntitiesList : Intent
     end
 end
