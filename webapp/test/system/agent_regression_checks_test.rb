@@ -51,14 +51,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-          'interpretations' => [{
-            'id' => entities_lists(:weather_conditions).id,
-            'slug' => entities_lists(:weather_conditions).slug,
-            'package' => entities_lists(:weather_conditions).agent.id,
-            'score' => '1.0',
-            'solution' => entities(:weather_sunny).solution
-          }]
-        }
+        'interpretations' => [{
+          'id' => entities_lists(:weather_conditions).id,
+          'slug' => entities_lists(:weather_conditions).slug,
+          'package' => entities_lists(:weather_conditions).agent.id,
+          'score' => '1.0',
+          'solution' => entities(:weather_sunny).solution
+        }]
+      }
     )
 
     within('.console') do
@@ -164,24 +164,21 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
   test 'Can only add test for the first intent' do
     go_to_agent_show(users(:admin), agents(:terminator))
     Nlp::Interpret.any_instance.stubs('proceed').returns(
-      {
-        status: 200,
-        body: {
-          interpretations: [
-            {
-              "id" => intents(:terminator_find).id,
-              "slug" => "admin/terminator/terminator_find",
-              "name" => "terminator_find",
-              "score" => 1.0
-            },
-            {
-              "id" => intents(:weather_forecast).id,
-              "slug" => "admin/weather/weather_forecast",
-              "name" => "weather_forecast",
-              "score" => 1.0
-            }
-          ]
-        }
+      status: 200,
+      body: {
+        interpretations: [{
+          'id' => intents(:terminator_find).id,
+          'slug' => intents(:terminator_find).slug,
+          'package' => intents(:terminator_find).agent.id,
+          'score' => '1.0',
+          'solution' => interpretations(:terminator_find_sarah).solution
+        }, {
+          'id' => intents(:weather_forecast).id,
+          'slug' => intents(:weather_forecast).slug,
+          'package' => intents(:weather_forecast).agent.id,
+          'score' => '1.0',
+          'solution' => interpretations(:weather_forecast_tomorrow).solution
+        }]
       }
     )
     within('.console') do
@@ -201,10 +198,11 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
       status: 200,
       body: {
         interpretations: [{
-          "id" => intents(:weather_forecast).id,
-          "slug" => "admin/weather/weather_forecast",
-          "name" => "weather_forecast",
-          "score" => 1.0
+          'id' => intents(:weather_forecast).id,
+          'slug' => intents(:weather_forecast).slug,
+          'package' => intents(:weather_forecast).agent.id,
+          'score' => '1.0',
+          'solution' => interpretations(:weather_forecast_tomorrow).solution
         }]
       }
     )
@@ -315,19 +313,15 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     go_to_agent_show(users(:edit_on_agent_weather), agents(:weather))
 
     Nlp::Interpret.any_instance.stubs('proceed').returns(
-      {
-        status: 200,
-        body: {
-          interpretations: [
-            {
-              "id" => intents(:weather_forecast).id,
-              "slug" => "admin/weather/weather_forecast",
-              "name" => "weather_forecast",
-              "score" => 1.0,
-              "solution" => interpretations(:weather_question_like).solution.to_json.to_s
-            }
-          ]
-        }
+      status: 200,
+      body: {
+        interpretations: [{
+          'id' => intents(:weather_forecast).id,
+          'slug' => intents(:weather_forecast).slug,
+          'package' => intents(:weather_forecast).agent.id,
+          'score' => '1.0',
+          'solution' => interpretations(:weather_question_like).solution
+        }]
       }
     )
 
@@ -368,9 +362,13 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
 
   test 'Regression check fail when different slugs but same solutions' do
-    @regression_weather_condition.got = @regression_weather_condition.expected
-    @regression_weather_condition.got['id'] = intents(:weather_question).id,
-    @regression_weather_condition.got['root_type'] = 'intent'
+    @regression_weather_condition.got = {
+      'root_type' => 'intent',
+      'package'   => intents(:weather_question).agent.id,
+      'id'        => intents(:weather_question).id,
+      'slug'      => intents(:weather_question).slug,
+      'solution'  => interpretations(:weather_question_like).solution.to_json.to_s
+    }
     @regression_weather_condition.state = 'failure'
     assert @regression_weather_condition.save
 
