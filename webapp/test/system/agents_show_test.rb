@@ -114,6 +114,7 @@ class AgentsShowTest < ApplicationSystemTestCase
     assert page.has_text?('Remove favorite')
   end
 
+
   test 'Remove an agent to favorites' do
     admin = users(:admin)
     weather = agents(:weather)
@@ -149,6 +150,13 @@ class AgentsShowTest < ApplicationSystemTestCase
     go_to_agent_intents('admin', 'weather-copy')
     click_link 'weather_forecast'
     assert page.has_text?('Interpretations / weather_forecast PUBLIC')
+
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
+
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather-copy/interpretations/weather_question')

@@ -76,7 +76,7 @@ class EntitiesTest < ApplicationSystemTestCase
       fill_in 'Terms', with: "Canicule:xx"
       click_button 'Update'
     end
-    assert page.has_text?("Terms unknown locale 'xx'")
+    assert page.has_text?("Terms uses an unauthorized locale 'xx' for this agent")
   end
 
 

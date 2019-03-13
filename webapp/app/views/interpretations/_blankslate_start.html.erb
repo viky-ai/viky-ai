@@ -1,4 +1,5 @@
-<div id="blankslate-start" <% if !(intent.interpretations_with_local(@current_locale).empty? && intent.locales.size == 1) %>style="display:none;"<% end %>>
+<div id="blankslate-start"
+     <% unless intent.interpretations_with_local(@current_locale).empty? %>style="display:none;"<% end %>>
 
   <div class="card">
     <div class="card-content">
@@ -9,16 +10,17 @@
                        <%= image_path "robot-idle@2x.png" %> 2x' />
         </div>
         <div class="blankslate__content">
-          <% if current_user.can? :edit, agent %>
-            <%= t('views.interpretations.blankslate.start_html') %>
+          <% if current_locale == Locales::ANY %>
+            <% language = t('locales.no_locale') %>
           <% else %>
-            <% if current_locale == Locales::ANY %>
-              <% language = t('views.interpretations.locales.no_locale') %>
-            <% else %>
-              <% language = current_locale %>
-            <% end %>
-            <%= t('views.interpretations.blankslate.no_expression_html', language: language) %>
+            <% language = current_locale %>
           <% end %>
+          <p>
+            <%= t('views.interpretations.blankslate.no_expression', language: language) %>
+            <% if current_user.can? :edit, agent %>
+              <br /><%= t('views.interpretations.blankslate.start') %>
+            <% end %>
+          </p>
         </div>
       </div>
     </div>
