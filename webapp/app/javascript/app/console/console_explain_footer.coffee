@@ -22,7 +22,7 @@ class ConsoleExplainFooter
             (this.test.state == 'error' || this.test.state == 'failure') && this.test.id?
         },
         methods: {
-          updateTest: (packageId, id, solution) ->
+          updateTest: (result) ->
             csrfToken = $('meta[name="csrf-token"]').attr('content')
             updateUrl = this.test.update_url
             $.ajax
@@ -31,11 +31,7 @@ class ConsoleExplainFooter
               headers: { "X-CSRF-TOKEN": csrfToken },
               data:{
                 regression_check: {
-                  expected: {
-                    package: packageId,
-                    id: id,
-                    solution: solution
-                  }
+                  expected: JSON.parse(result)
                 }
               }
               success: (response) =>
@@ -46,7 +42,7 @@ class ConsoleExplainFooter
               error: (data) ->
                 App.Message.alert(data.responseText)
 
-          addTest: (packageId, id, solution) ->
+          addTest: (result) ->
             csrfToken = $('meta[name="csrf-token"]').attr('content')
             createUrl = this.test.create_url
             $.ajax
@@ -58,11 +54,7 @@ class ConsoleExplainFooter
                   sentence: this.test.sentence,
                   language: this.test.language,
                   now: this.test.now,
-                  expected: {
-                    package: packageId,
-                    id: id,
-                    solution: solution
-                  }
+                  expected: JSON.parse(result)
                 }
               }
               error: (data) ->

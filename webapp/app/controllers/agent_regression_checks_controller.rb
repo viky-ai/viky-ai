@@ -63,7 +63,8 @@ class AgentRegressionChecksController < ApplicationController
             .permit(:sentence, :language, :now, expected: [
               :package,
               :id,
-              :solution
+              :solution,
+              :root_type
             ])
     end
 
