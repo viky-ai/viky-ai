@@ -14,11 +14,10 @@ json.create_url  user_agent_agent_regression_checks_path(owner, agent)
 if test.expected.present?
   diff_rows = []
 
-  intent_expected = Intent.find_by_id(test.expected['id'])
-  if intent_expected.nil?
+  if test.expected_removed?
     slug_expected = t('views.agent_regression_checks.result.slug.missing')
   else
-    slug_expected = intent_expected.slug
+    slug_expected = test.expected_slug
   end
 
   if test.success?
@@ -43,10 +42,10 @@ if test.expected.present?
           value: slug_expected
         }
         diff_rows << {
-          value: Intent.find(test.got['id']).slug
+          value: test.got_slug
         }
       end
-      if test.expected['solution'] == test.expected['got']
+      if test.expected['solution'] == test.got['solution']
         diff_rows << {
           label: t('views.agent_regression_checks.result.solution.expected_got_ok_html', icon: icon_check),
           value: JSON.parse(test.expected['solution'])
