@@ -706,6 +706,17 @@ SetupForm = ->
 
 $(document).on('trix-initialize', SetupForm)
 
+
+preventHTMLPaste = (event) ->
+  $(event.target).on 'paste', (event) ->
+    clipboard = event.originalEvent.clipboardData
+    data = clipboard.getData('text')
+    event.preventDefault()
+    event.currentTarget.editor.insertString(data)
+
+$(document).on('trix-before-initialize', preventHTMLPaste)
+
+
 SetupPopUps = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
     new PopupAddTag()
