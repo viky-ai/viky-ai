@@ -26,6 +26,12 @@ class InterpretationsTest < ApplicationSystemTestCase
     click_link 'weather_forecast'
     assert page.has_text?('Interpretations / weather_forecast PUBLIC')
     assert page.has_text?('Not used by any interpretation')
+
+    within('.card .tabs') do
+      click_link 'en'
+    end
+    assert page.has_link?('What the weather like tomorrow ?')
+
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('admin/weather/weather_question')
@@ -53,6 +59,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal "1", first('#current-locale-tab-badge').text
 
     first('trix-editor').click.set('Good morning')
@@ -66,6 +77,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with intent alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
@@ -98,6 +114,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with entities_list alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
@@ -129,6 +150,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Create an interpretation with numbers' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
@@ -168,19 +194,24 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Errors on interpretation creation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert_equal "0", first('#current-locale-tab-badge').text
 
     first('trix-editor').click.set('')
     click_button 'Add'
     assert page.has_text?('Expression can\'t be blank')
 
-    assert_equal "1", first('#current-locale-tab-badge').text
+    assert_equal "0", first('#current-locale-tab-badge').text
   end
 
 
   test 'Errors on interpretation creation with alias' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
+    within('.card .tabs') do
+      click_link 'en'
+    end
+
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
     assert_equal "What the weather like", first('.interpretation-resume__alias-blue').text
 
@@ -202,11 +233,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (simple)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'fr'
     end
-    assert page.has_link?('Quel temps fera-t-il demain ?')
 
+    assert page.has_link?('Quel temps fera-t-il demain ?')
     assert_equal '1', first('#current-locale-tab-badge').text
 
     within('#interpretations-list') do
@@ -228,7 +259,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (add alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -267,7 +298,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation (remove alias)' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -288,7 +319,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Remove alias from summary board' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
     assert page.has_link?('What the weather like tomorrow ?')
@@ -316,11 +347,12 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Update an interpretation and cancel' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    within('.card') do
+    within('.card .tabs') do
       click_link 'en'
     end
 
     assert page.has_link?('What the weather like tomorrow ?')
+
     within('#interpretations-list') do
       click_link 'What the weather like tomorrow ?'
       assert page.has_text?('Cancel')
@@ -333,7 +365,7 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'change locale via drag & drop' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    expected = ["en 1", "fr 1", "+"]
+    expected = ["No language 0", "en 1", "fr 1", "es 0", "+"]
     assert_equal expected, all(".card > .tabs ul li").collect(&:text)
 
     # Does not works...
@@ -350,8 +382,11 @@ class InterpretationsTest < ApplicationSystemTestCase
   test 'Delete an interpretation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
 
-    assert page.has_link?('What the weather like tomorrow ?')
+    within('.card .tabs') do
+      click_link 'en'
+    end
 
+    assert page.has_link?('What the weather like tomorrow ?')
     assert_equal "1", first('#current-locale-tab-badge').text
 
     within('#interpretations-list') do

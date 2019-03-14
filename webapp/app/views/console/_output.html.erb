@@ -80,17 +80,15 @@
                 </div>
                 <div class="c-intent__footer__action">
                   <% if current_user.can?(:edit, agent) %>
-                    <% packageId = Intent.find(aliasable['id']).agent.id %>
-                    <% aliasableId = aliasable['id'] %>
-                    <% solution = escape_javascript(aliasable['solution'].to_json) %>
+                    <% result = AgentRegressionCheck::prepare_result(aliasable) %>
                     <button class="btn btn--small btn--primary"
                       v-if="canAdd"
-                      v-on:click="addTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
+                      v-on:click="addTest('<%= escape_javascript(result.to_json) %>')">
                       <%= t('views.console.regression_check.add') %>
                     </button>
                     <button class="btn btn--small btn--primary"
                       v-if="canUpdate"
-                      v-on:click="updateTest('<%= packageId %>', '<%= aliasableId %>', '<%= solution %>')">
+                      v-on:click="updateTest('<%= escape_javascript(result.to_json) %>')">
                       <%= t('views.console.regression_check.update') %>
                     </button>
                     <div v-if="tooLong" class="c-intent__footer__action__note">

@@ -14,8 +14,6 @@ class User < ApplicationRecord
   scope :not_confirmed, -> { where(confirmed_at: nil) }
   scope :locked, -> { where.not(locked_at: nil) }
 
-  serialize :ui_state, JSON
-
   # Include default devise modules except :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,

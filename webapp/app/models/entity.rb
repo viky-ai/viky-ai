@@ -6,8 +6,6 @@ class Entity < ApplicationRecord
 
   belongs_to :entities_list, touch: true
 
-  serialize :terms, JSON
-
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
   validates :terms, length: { maximum: 5000 }, presence: true
@@ -17,6 +15,7 @@ class Entity < ApplicationRecord
 
   before_validation :parse_terms
   before_validation :build_solution
+  after_save :update_agent_locales
 
   def terms_to_s
     return '' if terms.blank?
@@ -54,6 +53,15 @@ class Entity < ApplicationRecord
         unless Locales::ALL.include?(json['locale'])
           errors.add(:terms, I18n.t('errors.entity.unknown_locale', current_locale: json['locale']))
         end
+      end
+    end
+
+    def update_agent_locales
+      agent = entities_list.agent
+      entity_locales = terms.collect{|t| t["locale"]}.uniq
+      agent_locales = (agent.locales + entity_locales).uniq
+      if agent_locales != agent.locales
+        agent.update_columns(locales: agent_locales)
       end
     end
 

@@ -9,8 +9,7 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
 
     intent = Intent.new(
       intentname: 'greeting',
-      description: 'Hello random citizen !',
-      locales: ['en']
+      description: 'Hello random citizen !'
     )
     intent.agent = agent
 
@@ -186,7 +185,6 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     child = create_agent("Agent A")
     intent_child = Intent.create(
       intentname: 'intent_child',
-      locales: ['en'],
       agent: child
     )
     interpretation_child = Interpretation.create(
@@ -198,7 +196,6 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     parent = create_agent("Agent B")
     intent_parent = Intent.create(
       intentname: 'intent_parent',
-      locales: ['en'],
       agent: parent
     )
 
@@ -229,7 +226,6 @@ class AgentUpdatedAtTest < ActiveSupport::TestCase
     child = create_agent("Agent A")
     intent_child = Intent.create(
       intentname: 'intent_child',
-      locales: ['en'],
       agent: child
     )
     interpretation_child = Interpretation.create(

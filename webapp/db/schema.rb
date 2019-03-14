@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190130141915) do
+ActiveRecord::Schema.define(version: 20190312150519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.string "language"
     t.datetime "now"
     t.uuid "agent_id"
-    t.text "expected"
-    t.text "got"
+    t.jsonb "expected"
+    t.jsonb "got"
     t.integer "state", default: 0
     t.integer "position", default: 0
     t.datetime "created_at", null: false
@@ -47,8 +47,9 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.text "image_data"
     t.string "api_token"
     t.integer "visibility", default: 0
-    t.string "source_agent"
+    t.jsonb "source_agent"
     t.datetime "nlp_updated_at"
+    t.jsonb "locales"
     t.index ["api_token"], name: "index_agents_on_api_token", unique: true
     t.index ["owner_id", "agentname"], name: "index_agents_on_owner_id_and_agentname", unique: true
   end
@@ -76,7 +77,7 @@ ActiveRecord::Schema.define(version: 20190130141915) do
   create_table "chat_statements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "speaker"
     t.integer "nature", default: 0
-    t.string "content"
+    t.jsonb "content"
     t.uuid "chat_session_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -86,12 +87,13 @@ ActiveRecord::Schema.define(version: 20190130141915) do
   create_table "entities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "solution"
     t.boolean "auto_solution_enabled", default: true
-    t.text "terms"
+    t.jsonb "terms"
     t.uuid "entities_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
     t.index ["entities_list_id"], name: "index_entities_on_entities_list_id"
+    t.index ["terms"], name: "index_entities_on_terms", using: :gin
   end
 
   create_table "entities_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -135,7 +137,6 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
-    t.string "locales"
     t.string "color"
     t.integer "visibility", default: 0
     t.index ["agent_id"], name: "index_intents_on_agent_id"
@@ -221,7 +222,7 @@ ActiveRecord::Schema.define(version: 20190130141915) do
     t.string "name"
     t.text "bio"
     t.text "image_data"
-    t.string "ui_state", default: "{}"
+    t.jsonb "ui_state", default: {}
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

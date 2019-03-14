@@ -3,7 +3,7 @@
 bot_greeting:
   speaker: bot
   nature: text
-  content: <%= { text: "Hello, I am a chat bot. What can I do for you ?" }.to_json.inspect %>
+  content: { text: "Hello, I am a chat bot. What can I do for you ?" }
   chat_session: one
   created_at: "2017-02-02 01:00:00"
   updated_at: "2017-02-02 01:00:00"
@@ -11,7 +11,7 @@ bot_greeting:
 user_question:
   speaker: user
   nature: text
-  content: <%= { text: "What's the weather like tomorrow ?" }.to_json.inspect %>
+  content: { text: "What's the weather like tomorrow ?" }
   chat_session: one
   created_at: "2017-02-02 02:00:00"
   updated_at: "2017-02-02 02:00:00"
@@ -20,7 +20,7 @@ user_question:
 bot_previous_greeting:
   speaker: bot
   nature: text
-  content: <%= { text: "Hello, I am a chat bot. What can I do for you ?" }.to_json.inspect %>
+  content: { text: "Hello, I am a chat bot. What can I do for you ?" }
   chat_session: two
   created_at: "2017-01-01 01:00:00"
   updated_at: "2017-01-01 01:00:00"

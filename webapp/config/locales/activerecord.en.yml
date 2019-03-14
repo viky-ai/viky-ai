@@ -46,6 +46,7 @@ en:
         visibility: Visibility
         visibility_is_private: Private
         visibility_is_public: Public
+        locales: Languages
       intent:
         intentname: ID
         description: Description
@@ -85,6 +86,7 @@ en:
         agents_presence: You must delete all the agents you own
     agent:
       owner_presence_in_users: list does not includes agent owner
+      unknown_locale: "unknown '%{current_locale}'"
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
         invalid_username: Please select a valid new owner
@@ -104,7 +106,7 @@ en:
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
-      unknown_locale: "unknown locale '%{current_locale}'"
+      unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       import:
         no_file: 'must be present'
