@@ -30,6 +30,10 @@
 
   <div class="aliases <% if rtl?(@current_locale) %>aliases--rtl<% end %> interpretations-form__summary" style="display:none;"></div>
 
+  <div class="interpretations-form__aliases-errors">
+    <%= display_errors(interpretation, :base) %>
+  </div>
+
   <div class="field field--for-solution interpretations-form__solution" style="display:none;">
     <div class="control">
       <span class="solution-label">Solution</span>

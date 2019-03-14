@@ -453,7 +453,7 @@ class InterpretationAliasTest < ActiveSupport::TestCase
       any_enabled: true,
     )
     assert_not interpretation_alias.save
-    expected = ["Option \"list\" and \"Any\" are not compatible"]
+    expected = ['Options "List" and "Any" are not compatibles on the same annotation.']
     assert_equal expected, interpretation_alias.errors.full_messages
 
     interpretation_alias.any_enabled = false

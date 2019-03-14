@@ -63,7 +63,7 @@ class InterpretationAlias < ApplicationRecord
       for ialias in list_without_destroy
         himself = ialias.position_start == position_start && ialias.position_end == position_end
         unless himself
-          dup_found ||= ialias.aliasname == aliasname
+          dup_found ||= (ialias.aliasname == aliasname && !aliasname.blank?)
         end
         break if dup_found
       end

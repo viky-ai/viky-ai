@@ -64,7 +64,9 @@ en:
         glued: Glued
         auto_solution_enabled: Auto solution
         solution: Solution
+        base: ""
       interpretation_alias:
+        base: ""
         aliasname: Parameter name
         reg_exp: Regular expression
       entity:
@@ -96,9 +98,9 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
-      only_one_any: Only one alias with "Any" option is permitted
-      one_alias_one_any: '"Any" option is not permitted with only one alias.'
-      only_one_list: Only one alias with "List" option is permitted
+      only_one_any: Only one annotation with "Any" option is permitted.
+      one_alias_one_any: '"Any" option is not permitted with only one annotation.'
+      only_one_list: Only one annotation with "List" option is permitted.
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
@@ -118,7 +120,7 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
       valid_regex: "should be valid"
-      list_and_any_not_compatible: Option "list" and "Any" are not compatible
+      list_and_any_not_compatible: Options "List" and "Any" are not compatibles on the same annotation.
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:
