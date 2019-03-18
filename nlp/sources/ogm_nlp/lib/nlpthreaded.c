@@ -69,6 +69,18 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
 
   IF(NlpLtracEntityPrepareInit(ctrl_nlp_th, param->name)) return NULL;
 
+  struct og_stm_param stm_param[1];
+  memset(stm_param,0,sizeof(struct og_stm_param));
+  stm_param->herr=ctrl_nlp_th->herr;
+  stm_param->hmsg=ctrl_nlp_th->hmsg;
+  stm_param->hmutex=ctrl_nlp_th->hmutex;
+  stm_param->loginfo.trace = DOgStmTraceMinimal+DOgStmTraceMemory;
+  stm_param->loginfo.where = ctrl_nlp_th->loginfo->where;
+  strcpy(stm_param->WorkingDirectory,ctrl_nlp_th->ctrl_nlp->WorkingDirectory);
+  IFn(ctrl_nlp_th->hstm=OgStmInit(stm_param)) return(0);
+  IF(OgStmInitDefaultCosts(ctrl_nlp_th->hstm,ctrl_nlp_th->levenshtein_costs)) return(0);
+  ctrl_nlp_th->levenshtein_costs->punctuation_cost = 0.01;
+
   return ctrl_nlp_th;
 
 }
@@ -111,6 +123,8 @@ PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
   IFE(NlpLtrasFlush(ctrl_nlp_th));
 
   IFE(NlpLtracEntityPrepareFlush(ctrl_nlp_th));
+
+  IFE(OgStmFlush(ctrl_nlp_th->hstm));
 
   IFE(OgMsgFlush(ctrl_nlp_th->hmsg));
 
