@@ -28,28 +28,28 @@ module Nls
         fin << Expression.new("fin", solution: "fin")
 
         word_any_word = package.new_interpretation("word_any_word", { scope: "public" })
-        word_any_word << Expression.new("motdebut @{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        word_any_word << Expression.new("motdebut @{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         word_any_alias = package.new_interpretation("word_any_alias", { scope: "public" })
-        word_any_alias << Expression.new("motdebut @{milieu} @{fin}", aliases: { milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glued: true)
+        word_any_alias << Expression.new("motdebut @{milieu} @{fin}", aliases: { milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         alias_any_word = package.new_interpretation("alias_any_word", { scope: "public" })
-        alias_any_word << Expression.new("@{debut} @{milieu} motfin", aliases: { debut: debut, milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        alias_any_word << Expression.new("@{debut} @{milieu} motfin", aliases: { debut: debut, milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         alias_any_alias = package.new_interpretation("alias_any_alias", { scope: "public" })
-        alias_any_alias << Expression.new("@{debut} @{milieu} @{fin}", aliases: { debut: debut, milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glued: true)
+        alias_any_alias << Expression.new("@{debut} @{milieu} @{fin}", aliases: { debut: debut, milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         any_word = package.new_interpretation("any_word", { scope: "public" })
-        any_word << Expression.new("@{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        any_word << Expression.new("@{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         any_alias = package.new_interpretation("any_alias", { scope: "public" })
-        any_alias << Expression.new("@{milieu} @{fin}", aliases: { milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glued: true)
+        any_alias << Expression.new("@{milieu} @{fin}", aliases: { milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         word_any = package.new_interpretation("word_any", { scope: "public" })
-        word_any << Expression.new("motdebut @{milieu}", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        word_any << Expression.new("motdebut @{milieu}", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         alias_any = package.new_interpretation("alias_any", { scope: "public" })
-        alias_any << Expression.new("@{debut} @{milieu}", aliases: { debut: debut, milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        alias_any << Expression.new("@{debut} @{milieu}", aliases: { debut: debut, milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         package
       end
@@ -109,16 +109,16 @@ module Nls
         finbbb << Expression.new("finbbb", solution: "finbbb")
 
         word_word_any_word = package.new_interpretation("word_word_any_word", { scope: "public" })
-        word_word_any_word << Expression.new("motdebutaaa motdebutbbb @{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        word_word_any_word << Expression.new("motdebutaaa motdebutbbb @{milieu} motfin", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         word_any_word_word = package.new_interpretation("word_any_word_word", { scope: "public" })
-        word_any_word_word << Expression.new("motdebut @{milieu} motfinaaa motfinbbb", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glued: true)
+        word_any_word_word << Expression.new("motdebut @{milieu} motfinaaa motfinbbb", aliases: { milieu: Alias.any}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         alias_alias_any_alias = package.new_interpretation("alias_alias_any_alias", { scope: "public" })
-        alias_alias_any_alias << Expression.new("@{debutaaa} @{debutbbb} @{milieu} @{fin}", aliases: { debutaaa: debutaaa, debutbbb: debutbbb, milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glued: true)
+        alias_alias_any_alias << Expression.new("@{debutaaa} @{debutbbb} @{milieu} @{fin}", aliases: { debutaaa: debutaaa, debutbbb: debutbbb, milieu: Alias.any, fin: fin}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         alias_any_alias_alias = package.new_interpretation("alias_any_alias_alias", { scope: "public" })
-        alias_any_alias_alias << Expression.new("@{debut} @{milieu} @{finaaa} @{finbbb}", aliases: { debut: debut, milieu: Alias.any, finaaa: finaaa, finbbb: finbbb}, solution: "`{ milieu: milieu}`", glued: true)
+        alias_any_alias_alias << Expression.new("@{debut} @{milieu} @{finaaa} @{finbbb}", aliases: { debut: debut, milieu: Alias.any, finaaa: finaaa, finbbb: finbbb}, solution: "`{ milieu: milieu}`", glue_distance: 0)
 
         Nls.package_update(package)
 
@@ -175,22 +175,22 @@ module Nls
         fin << Expression.new("fin", solution: "fin")
 
         any_alias = package.new_interpretation("any_alias", { scope: "public" })
-        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", glued: true)
+        any_alias << Expression.new("@{debut} @{fin}", aliases: { debut: Alias.any, fin: fin}, solution: "`{ debut: debut}`", glue_distance: 0)
 
         alias_any = package.new_interpretation("alias_any", { scope: "public" })
-        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", glued: true)
+        alias_any << Expression.new("@{debut} @{fin}", aliases: { debut: debut, fin: Alias.any}, solution: "`{ fin: fin}`", glue_distance: 0)
 
         above_alias_any = package.new_interpretation("above_alias_any", { scope: "public" })
-        above_alias_any << Expression.new("@{alias_any} aboveapres", aliases: { alias_any: alias_any }, solution: "`alias_any`", glued: true)
+        above_alias_any << Expression.new("@{alias_any} aboveapres", aliases: { alias_any: alias_any }, solution: "`alias_any`", glue_distance: 0)
 
         above_above_alias_any = package.new_interpretation("above_above_alias_any", { scope: "public" })
-        above_above_alias_any << Expression.new("top @{above_alias_any} top", aliases: { above_alias_any: above_alias_any }, solution: "`above_alias_any`", glued: true)
+        above_above_alias_any << Expression.new("top @{above_alias_any} top", aliases: { above_alias_any: above_alias_any }, solution: "`above_alias_any`", glue_distance: 0)
 
         above_any_alias = package.new_interpretation("above_any_alias", { scope: "public" })
-        above_any_alias << Expression.new("aboveavant @{any_alias}", aliases: { any_alias: any_alias }, solution: "`any_alias`", glued: true)
+        above_any_alias << Expression.new("aboveavant @{any_alias}", aliases: { any_alias: any_alias }, solution: "`any_alias`", glue_distance: 0)
 
         above_above_any_alias = package.new_interpretation("above_above_any_alias", { scope: "public" })
-        above_above_any_alias << Expression.new("top @{above_any_alias} top", aliases: { above_any_alias: above_any_alias }, solution: "`above_any_alias`", glued: true)
+        above_above_any_alias << Expression.new("top @{above_any_alias} top", aliases: { above_any_alias: above_any_alias }, solution: "`above_any_alias`", glue_distance: 0)
 
         Nls.package_update(package)
 

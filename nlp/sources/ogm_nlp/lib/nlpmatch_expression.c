@@ -194,7 +194,9 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
     int distance = input_part_position[i + 1].start - input_part_position[i].end;
     if (max_distance < distance) max_distance = distance;
   }
-  if (max_distance > expression->glue_distance) too_far = TRUE;
+  int glue_distance = expression->glue_distance;
+  if (expression->glue_distance == 0 ) glue_distance = DOgNlpDefaultGlueDistance;
+  if (max_distance > glue_distance) too_far = TRUE;
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
   {
     char string_too_far[DPcPathSize];

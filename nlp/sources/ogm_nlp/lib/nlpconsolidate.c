@@ -156,7 +156,6 @@ static og_status NlpConsolidatePrepareExpression(og_nlp_th ctrl_nlp_th, package_
     IFN(expression->text) DPcErr;
 
     expression->keep_order = expression_compile->keep_order;
-    expression->glued = expression_compile->glued;
     expression->glue_strength = expression_compile->glue_strength;
     expression->glue_distance = expression_compile->glue_distance;
 

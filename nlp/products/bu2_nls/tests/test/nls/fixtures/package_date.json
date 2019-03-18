@@ -387,7 +387,7 @@
         {
           "expression": "@{day} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -414,7 +414,7 @@
         {
           "expression": "@{month} @{preposition_the} @{day}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -446,7 +446,7 @@
         {
           "expression": "@{day} @{month} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -468,7 +468,7 @@
         {
           "expression": "@{month} @{preposition_the} @{day} @{coma} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -500,7 +500,7 @@
         {
           "expression": "@{day} @{slash1} @{month} @{slash2} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -568,7 +568,7 @@
         {
           "expression": "@{preposition_date_begin} @{date_begin} @{preposition_date_end} @{date_end}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
