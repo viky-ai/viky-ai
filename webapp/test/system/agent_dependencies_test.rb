@@ -70,7 +70,9 @@ class AgentsDependenciesTest < ApplicationSystemTestCase
     # Add Expression & create an alias from dependency
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/terminator/interpretations/terminator_find').click
+    within '#popup-add-tag' do
+      find_link('admin/terminator/interpretations/terminator_find').click
+    end
     click_button 'Add'
 
     assert page.has_text?("Salut Marcel")
