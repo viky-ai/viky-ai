@@ -415,8 +415,7 @@ class AliasesForm
       line.push "
           <div class='field_with_errors'>
             <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />
-          </div>
-          #{alias.aliasname_errors}"
+          </div>"
     else
       line.push "
           <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />"
@@ -470,6 +469,14 @@ class AliasesForm
         </a>
       </td>"
     line.push "</tr>"
+
+    errors = []
+    errors.push alias.aliasname_errors if alias.aliasname_errors
+    errors.push alias.base_errors if alias.base_errors
+    if errors.length > 0
+      line.push "
+        <tr class='alias-errors'><td colspan='5'>#{errors.join('')}</td></tr>
+      "
 
     if alias.nature == 'type_regex'
       regex_input = new AliasesRegexForm(alias.reg_exp)
