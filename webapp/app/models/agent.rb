@@ -25,17 +25,18 @@ class Agent < ApplicationRecord
   has_many :predecessors, through: :in_arcs, source: :source
   has_many :successors, through: :out_arcs, source: :target
 
-  serialize :source_agent, JSON
-
   validates :name, presence: true
   validates :agentname, uniqueness: { scope: [:owner_id] }, length: { in: 3..25 }, presence: true
   validates :owner_id, presence: true
   validates :api_token, presence: true, uniqueness: true, length: { in: 32..32 }
   validates :color, inclusion: { in: :available_colors }
+  validates :locales, presence: true
+  validate  :check_locales
   validate  :owner_presence_in_users
 
   before_validation :ensure_api_token, on: :create
   before_validation :add_owner_id, on: :create
+  before_validation :clean_locales, on: :create
   before_validation :clean_agentname
   before_destroy :check_collaborators_presence, prepend: true
 
@@ -101,6 +102,25 @@ class Agent < ApplicationRecord
       'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green',
       'lime', 'yellow', 'amber', 'orange', 'deep-orange'
     ]
+  end
+
+  def ordered_locales
+    Locales::ALL.select { |l| locales.include?(l) }
+  end
+
+  def ordered_and_used_locales
+    entities_locales = Entity.select("distinct value->'locale' as language")
+          .where(entities_list_id: entities_lists.pluck(:id))
+          .from("entities, jsonb_array_elements(entities.terms)")
+          .collect{|e| e['language']}
+
+    interpretations_locales = Interpretation.select(:locale)
+      .where(intent_id: intents.pluck(:id))
+      .distinct
+      .collect{|i| i.locale}.flatten.uniq
+
+    all_used_locales = (entities_locales + interpretations_locales).flatten.uniq
+    Locales::ALL.select { |l| all_used_locales.include?(l) }
   end
 
   def available_successors(q = {})
@@ -260,6 +280,23 @@ class Agent < ApplicationRecord
     def clean_agentname
       return if agentname.nil?
       self.agentname = agentname.parameterize(separator: '-')
+    end
+
+    def clean_locales
+      if locales.blank?
+        self.locales = [Locales::ANY, 'en', 'fr']
+      else
+        self.locales = locales.uniq
+      end
+    end
+
+    def check_locales
+      return if locales.blank?
+      locales.each do |locale|
+        unless Locales::ALL.include? locale
+          errors.add(:locales, I18n.t('errors.agent.unknown_locale', current_locale: locale))
+        end
+      end
     end
 
     def notify_tests_suite_ui

@@ -32,6 +32,8 @@ fi
 cd /nlp_route
 bundle exec ./bin/nlp-route &
 NLP_ROUTE_PID=$!
+touch ${NLS_INSTALL_PATH}/log/ogm_nls.log
+tail -f --pid=${NLP_ROUTE_PID} ${NLS_INSTALL_PATH}/log/ogm_nls.log
 
 # wait for signal
 wait

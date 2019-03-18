@@ -74,6 +74,7 @@ en:
         upload_info: "The maximum file size allowed is 2Mo. Preferably 16:9 format."
         api_token:
           generate_btn: Re-generate
+        locale_help: Not deactivable because used by interpretations and/or entities.
       new:
         title: Create a new agent
         btn: Create

@@ -101,6 +101,27 @@ class AgentsNewTest < ApplicationSystemTestCase
   end
 
 
+  test "Agent creation with default locales then update" do
+    go_to_agents_creation
+    within(".modal") do
+      fill_in 'Name', with: 'Locales test'
+      fill_in 'ID', with: 'locales-test'
+      click_button 'Public'
+      first("button.background-color__red").click
+      click_button 'Create'
+    end
+    assert page.has_text?('Your agent has been successfully created.')
+    assert_equal ["*", "en", "fr"], Agent.find_by_name('Locales test').ordered_locales
+    click_link 'Configure'
+    within(".modal") do
+      uncheck("fr (French)")
+      click_button 'Update'
+    end
+    assert page.has_text?('Your agent has been successfully updated.')
+    assert_equal ["*", "en"], Agent.find_by_name('Locales test').ordered_locales
+  end
+
+
   test "Agent creation form cancel" do
     go_to_agents_creation
     click_button 'Cancel'
@@ -143,4 +164,5 @@ class AgentsNewTest < ApplicationSystemTestCase
       assert_nil first("#agent_api_token")
     end
   end
+
 end

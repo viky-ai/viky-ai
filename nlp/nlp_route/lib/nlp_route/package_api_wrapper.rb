@@ -33,7 +33,7 @@ module NlpRoute
     # Send package to NLP
     def update_or_create(id, package)
       puts " + PackageApiWrapper POST #{NLP_URL}/packages/#{id}"
-      RestClient.post "#{NLP_URL}/packages/#{id}", package[:data]
+      RestClient.post "#{NLP_URL}/packages/#{id}?timeout=45000", package[:data]
     end
 
     # delete package to NLP

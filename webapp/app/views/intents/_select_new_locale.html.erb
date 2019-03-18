@@ -18,9 +18,9 @@
         <ul>
           <% for possible_locale in available_locales %>
             <% if possible_locale == Locales::ANY %>
-              <% name = t('views.interpretations.locales.no_locale') %>
+              <% name = t('locales.no_locale') %>
             <% else %>
-              <% name = possible_locale + " <small>" + t("views.interpretations.locales.#{possible_locale}") + "</small>" %>
+              <% name = possible_locale + " <small>(" + t("locales.#{possible_locale}") + ")</small>" %>
             <% end %>
             <li>
               <%= link_to(
