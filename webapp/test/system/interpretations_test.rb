@@ -43,6 +43,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
   end
 
+
   test 'Used by button in interpretation details' do
     admin_go_to_intent_show(agents(:terminator), intents(:simple_where))
     assert page.has_link?('Used by...')
