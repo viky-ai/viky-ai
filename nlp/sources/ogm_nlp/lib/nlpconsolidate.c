@@ -523,7 +523,7 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   }
 
   og_bool is_entity = FALSE;
-  if (expression->aliases_nb == 0 && expression->input_parts_nb > 1 && expression->keep_order && expression->glued
+  if (expression->aliases_nb == 0 && expression->input_parts_nb > 1 && expression->keep_order && expression->glue_distance == 0
       && expression->glue_strength == nlp_glue_strength_Punctuation) is_entity = TRUE;
 
   if (is_entity)
