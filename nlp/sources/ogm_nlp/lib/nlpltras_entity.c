@@ -91,8 +91,7 @@ og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
     int length_words = strlen(words);
     length_words--;
     words[length_words] = 0;
-    me_ctrl->score_spelling = pow(trf->final_score, 4);
-    NlpLog(DOgNlpTraceMatch, "NlpLtrasEntity: found entity '%s' with score %.2f", words, me_ctrl->score_spelling);
+    NlpLog(DOgNlpTraceMatch, "NlpLtrasEntity: found entity '%s' with score %.2f", words, trf->final_score);
     IFE(NlpMatchEntitiesChangeToAlternativeString(me_ctrl, length_words, words));
     IFE(NlpMatchCurrentEntity(me_ctrl));
 

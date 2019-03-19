@@ -14,7 +14,8 @@ static og_status NlpMatchEntitiesChangeToAlternativeWord(struct nlp_match_entiti
     struct request_word *request_word);
 static og_status NlpMatchEntitiesInPackageRecursive(struct nlp_match_entities_ctrl *me_ctrl);
 static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl);
-static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out);
+static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int ibuffer, unsigned char *buffer, int iout,
+    unsigned char *out);
 
 og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
 {
@@ -39,7 +40,6 @@ static og_status NlpMatchEntitiesInPackage(og_nlp_th ctrl_nlp_th, struct interpr
   me_ctrl->ctrl_nlp_th = ctrl_nlp_th;
   me_ctrl->interpret_package = interpret_package;
   me_ctrl->expression_hash = g_hash_table_new(g_direct_hash, g_direct_equal);
-  me_ctrl->score_spelling = 1.0;
 
   og_status status = NlpMatchEntitiesInPackage1(me_ctrl);
 
@@ -271,7 +271,7 @@ static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl)
       if (out[0] == '\1')
       {
         NlpLog(DOgNlpTraceMatch, "NlpMatchEntity: found full '%s'", buffer);
-        og_bool added = NlpMatchEntityAdd(me_ctrl, iout - 1, out + 1);
+        og_bool added = NlpMatchEntityAdd(me_ctrl, ibuffer, buffer, iout - 1, out + 1);
         IFE(added);
         if (added) found_entity = TRUE;
       }
@@ -288,7 +288,8 @@ static og_bool NlpMatchEntity(struct nlp_match_entities_ctrl *me_ctrl)
   return found_entity;
 }
 
-static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int iout, unsigned char *out)
+static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int ibuffer, unsigned char *buffer, int iout,
+    unsigned char *out)
 {
   og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
 
@@ -296,8 +297,46 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
   unsigned char *p = out;
   IFE(DOgPnin8(ctrl_nlp_th->herr,&p,&expression_ptr));
   struct expression *expression = (struct expression *) expression_ptr;
-  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: found expression '%s' with score_spelling=%.2f", expression->text,
-      me_ctrl->score_spelling);
+
+  int string_entity_length = 0;
+  unsigned char string_entity[DOgNlpMaxEntitySize];
+  for (int i = 0; i < me_ctrl->request_word_list_length; i++)
+  {
+    struct request_word *request_word = me_ctrl->request_word_list[i];
+    og_string normalized_string_word = OgHeapGetCell(ctrl_nlp_th->hba, request_word->start);
+    IFN(normalized_string_word) DPcErr;
+    int length_normalized_string_word = request_word->length;
+    if (string_entity_length + length_normalized_string_word + 1 >= DOgNlpMaxEntitySize)
+    {
+      // We do not store very long entities
+      NlpLog(DOgNlpTraceMinimal, "NlpMatchEntityAdd: entity is too long");
+      DONE;
+    }
+    memcpy(string_entity + string_entity_length, normalized_string_word, length_normalized_string_word);
+    string_entity_length += length_normalized_string_word;
+    string_entity[string_entity_length++] = ' ';
+    string_entity[string_entity_length] = 0;
+  }
+
+  int iuni1;
+  unsigned char uni1[DOgNlpMaxEntitySize * 2];
+  int iuni2;
+  unsigned char uni2[DOgNlpMaxEntitySize * 2];
+  IFE(OgCpToUni(string_entity_length, string_entity, DPcPathSize, &iuni1, uni1, DOgCodePageUTF8, 0, 0));
+  IFE(OgCpToUni(ibuffer, buffer, DPcPathSize, &iuni2, uni2, DOgCodePageUTF8, 0, 0));
+
+  double dlevenshtein_distance = OgStmLevenshteinFast(ctrl_nlp_th->hstm, iuni1, uni1, iuni2, uni2,
+      ctrl_nlp_th->levenshtein_costs);
+  IFE(dlevenshtein_distance);
+  double score_spelling =  1.0 - dlevenshtein_distance;
+
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: score_spelling between original '%.*s' and found '%.*s' is %.2f",
+      string_entity_length, string_entity, ibuffer, buffer, score_spelling);
+
+  score_spelling = pow(score_spelling, 4);
+
+  NlpLog(DOgNlpTraceMatch, "NlpMatchEntityAdd: found expression '%s' with augmented score_spelling=%.2f", expression->text,
+      score_spelling);
 
   gpointer result = g_hash_table_lookup(me_ctrl->expression_hash, expression);
   IFX(result)
@@ -325,7 +364,7 @@ static og_bool NlpMatchEntityAdd(struct nlp_match_entities_ctrl *me_ctrl, int io
       request_word = me_ctrl->alternative_request_word_list[i];
     }
     og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, me_ctrl->interpret_package,
-        expression->input_parts[i].self_index, FALSE, me_ctrl->score_spelling);
+        expression->input_parts[i].self_index, FALSE, score_spelling);
     IFE(status);
   }
 

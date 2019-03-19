@@ -99,7 +99,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text?('Choose a language')
       click_link('fr (French)')
     end
-    assert page.has_text?('fr')
+    assert page.has_text?('fr 0')
   end
 
 
@@ -114,7 +114,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text?('Choose a language')
       click_link('fr (French)')
     end
-    assert page.has_text?('fr')
+    assert page.has_text?('fr 0')
     assert_equal "fr 0", first('li[data-locale] a.current').text
 
     # Add es locale
@@ -123,7 +123,7 @@ class IntentsTest < ApplicationSystemTestCase
       assert page.has_text?('Choose a language')
       click_link('es (Spanish)')
     end
-    assert page.has_text?('es')
+    assert page.has_text?('es 0')
     assert_equal "es 0", first('li[data-locale] a.current').text
 
     # Leaves and comes back

@@ -87,8 +87,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('.aliases') do
       assert page.has_link?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
@@ -102,8 +103,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Il fait beau ?')
     select_text_in_trix("trix-editor", 9, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('#interpretations-form .aliases') do
       click_link 'admin/weather/interpretations/weather_question'
     end
@@ -124,7 +126,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Y a-t-il du soleil ?')
     select_text_in_trix("trix-editor", 12, 18)
-    find_link('admin/weather/entities_lists/weather_conditions').click
+    within '#popup-add-tag' do
+      find_link('admin/weather/entities_lists/weather_conditions').click
+    end
 
     within('.aliases') do
       assert page.has_link?('admin/weather/entities_lists/weather_conditions')
@@ -160,13 +164,19 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set("Le 01/01/2018 j'achète de l'Aspirine")
     select_text_in_trix("trix-editor", 3, 5)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     select_text_in_trix("trix-editor", 6, 8)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     select_text_in_trix("trix-editor", 9, 13)
-    find_link('Number').click
+    within '#popup-add-tag' do
+      find_link('Number').click
+    end
 
     within('.aliases') do
       inputs = all("input[name*='aliasname']")
@@ -217,8 +227,9 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Salut Marcel')
     select_text_in_trix("trix-editor", 6, 12)
-    find_link('admin/weather/interpretations/weather_question').click
-
+    within '#popup-add-tag' do
+      find_link('admin/weather/interpretations/weather_question').click
+    end
     within('.aliases') do
       assert page.has_text?('admin/weather/interpretations/weather_question')
       assert page.has_text?('Marcel')
@@ -308,7 +319,9 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       select_text_in_trix("#interpretations-list trix-editor", 0, 21)
     end
-    find_link('Remove annotation(s)').click
+    within '#popup-remove-tag' do
+      find_link('Remove annotation(s)').click
+    end
     click_button 'Update'
 
     assert page.has_link?('What the weather like tomorrow ?')
@@ -406,9 +419,11 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Detect Sarah')
     select_text_in_trix('trix-editor', 7, 12)
-    assert page.has_link?('Regex')
 
-    click_link('Regex')
+    within '#popup-add-tag' do
+      assert page.has_link?('Regex')
+      click_link('Regex')
+    end
 
     within('.aliases') do
       assert page.has_link?('Railroad Diagram')
