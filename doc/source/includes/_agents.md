@@ -79,7 +79,7 @@ This endpoint retrieves all the interpretations extracted from the `sentence` st
       <td>spellchecking</td>
       <td>no</td>
       <td>high</td>
-      <td>How wide the spellchecking is run. Possible values are : <code>inactive</code>, <code>low</code>, <code>medium</code> or <code>high</code>. </td>
+      <td>How wide the spellchecking is run. Possible values are : <code>inactive</code>, <code>low</code>, <code>medium</code> or <code>high</code>. Default is <code>low</code>.</td>
     </tr>
     <tr>
       <td>now</td>

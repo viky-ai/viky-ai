@@ -37,7 +37,7 @@ class Nlp::Interpret
   def nlp_params
     p = {
       "Accept-Language"  => language,
-      'spellchecking'    => spellchecking.present? ? spellchecking : 'inactive',
+      'spellchecking'    => spellchecking.present? ? spellchecking : 'low',
       "primary-package"  => agent.id,
       "packages"         => packages,
       "sentence"         => sentence,

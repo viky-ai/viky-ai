@@ -45,7 +45,7 @@
       <div class="dropdown" id='console-dropdown-spellchecking'>
         <div class="dropdown__trigger">
           <button id="console-spellchecking_button" class="btn btn--outline btn--small" type="button">
-            <span class="btn__label"><%= t('views.console.spellchecking.inactive') %></span>
+            <span class="btn__label"><%= t('views.console.spellchecking.low') %></span>
             <span class="icon icon--x-small">
               <%= icon_arrow_down %>
             </span>
@@ -55,7 +55,7 @@
           <ul>
             <% ['inactive', 'low', 'medium', 'high'].each do |spellcheck| %>
               <li>
-                <a href="#" <% if spellcheck == 'inactive' %>class="current"<% end %>
+                <a href="#" <% if spellcheck == 'low' %>class="current"<% end %>
                    data-behavior="populate-input, replace-trigger-label, submit-form"
                    data-input-selector=".js-spellchecking-input"
                    data-input-value="<%= spellcheck %>"
