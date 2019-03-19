@@ -173,18 +173,20 @@ module InterpretationHelper
       result << "</span>"
     end
 
-    if interpretation.keep_order
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"
-    end
+    result << " <span class='merged-badges'>"
+    result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"
+    result << " <span class='badge badge--primary'><span class='icon icon--small icon--white'>"
+    result << "#{interpretation.keep_order? ? icon_check : icon_close}</span></span></span>"
 
     proximity_label = "expression.proximity.#{interpretation.proximity}"
     result << " <span class='merged-badges'>"
     result << " <span class='badge'>#{t('expression.proximity.label')}</span>"
-    result << " <span class='badge badge--grey'>#{t(proximity_label)}</span></span>"
+    result << " <span class='badge badge--primary'>#{t(proximity_label)}</span></span>"
 
-    if interpretation.auto_solution_enabled
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
-    end
+    result << " <span class='merged-badges'>"
+    result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
+    result << " <span class='badge badge--primary'><span class='icon icon--small icon--white'>"
+    result << "#{interpretation.auto_solution_enabled? ? icon_check : icon_close}</span></span></span>"
 
     result.join('').html_safe
   end
