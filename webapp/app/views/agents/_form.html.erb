@@ -77,9 +77,46 @@
 
   <div class="field">
     <div class="control">
+      <span class="label"><%= t('activerecord.attributes.agent.locales')%></span>
+      <% used_locales = agent.ordered_and_used_locales %>
+      <div class="agent-locales">
+        <% Locales::ALL.each do |locale| %>
+          <% if used_locales.include? locale %>
+            <span class="label">
+              <input type="hidden" value="<%= locale %>" name="agent[locales][]" />
+              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
+                <% if agent.locales.include? locale %>checked<% end %> disabled />
+              <% if locale == Locales::ANY %>
+                <%= t('locales.no_locale') %>
+              <% else %>
+                <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
+              <% end %>
+              <span class="icon icon--x-small"
+                title="<%= t('views.agents.form.locale_help') %>">
+                <%= icon_information %>
+              </span>
+            </span>
+          <% else %>
+            <label>
+              <input type="checkbox" name="agent[locales][]" value="<%= locale %>"
+                <% if agent.locales.include? locale %>checked<% end %> />
+              <% if locale == Locales::ANY %>
+                <%= t('locales.no_locale') %>
+              <% else %>
+                <%= "#{locale} <small>(#{t('locales.'+locale)})</small>".html_safe %>
+              <% end %>
+            </label>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
 
       <div class="agent-background-header">
-        <label><%= t('views.agents.form.background_label') %></label>
+        <span class="label"><%= t('views.agents.form.background_label') %></span>
         <div class="btn-group" <% unless agent.image.nil? %>style="display:none;"<% end %>>
           <button class="btn btn--small <% if agent.image.nil? %>btn--primary <% end %>"
             type="button"

@@ -45,7 +45,7 @@ static og_status NlpMatchWord(og_nlp_th ctrl_nlp_th, struct request_word *reques
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatch)
   {
     unsigned char regex_string[DPcPathSize];
-    regex_string[0]=0;
+    regex_string[0] = 0;
     if (request_word->is_regex)
     {
       snprintf(regex_string, DPcPathSize, " (regex='%.*s')", DOgNlpMaximumRegexStringSizeLogged,
@@ -75,7 +75,9 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
   {
     if (package == request_word->regex_input_part->expression->interpretation->package)
     {
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, request_word->regex_input_part->self_index,FALSE));
+      og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package,
+          request_word->regex_input_part->self_index, FALSE, 1.0);
+      IFE(status);
     }
   }
 
@@ -89,7 +91,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
 
       // There is not need to have a special input part here for number words
       og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package,
-          number_input_part->Iinput_part, TRUE);
+          number_input_part->Iinput_part, TRUE, 1.0);
       IFE(status);
     }
   }
@@ -105,7 +107,7 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
       IFE(retour);
       int Iinput_part;
       unsigned char *p = out;
-      IFE(DOgPnin4(ctrl_nlp_th->herr,&p,&Iinput_part));
+      IFE(DOgPnin4(ctrl_nlp_th->herr, &p, &Iinput_part));
       NlpLog(DOgNlpTraceMatch, "    found input part %d in request package %d", Iinput_part,
           interpret_package->self_index)
       if (request_word->lang_id != DOgLangNil)
@@ -115,7 +117,10 @@ static og_status NlpMatchWordInPackage(og_nlp_th ctrl_nlp_th, struct request_wor
         // Lemmatisation is accepted only on expressions with same locale
         if (input_part->expression->locale != request_word->lang_id) continue;
       }
-      IFE(NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part,FALSE));
+
+      og_status status = NlpRequestInputPartAddWord(ctrl_nlp_th, request_word, interpret_package, Iinput_part, FALSE,
+          1.0);
+      IFE(status);
     }
     while ((retour = OgAufScann(package->ha_word, &iout, out, nstate0, &nstate1, states)));
   }
@@ -150,7 +155,6 @@ og_status NlpMatchWordChainRequestWords(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-
 og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
 {
   // replace basic_request_word_used
@@ -159,7 +163,7 @@ og_status NlpMatchWordChainUpdateWordCount(og_nlp_th ctrl_nlp_th)
   struct request_word *first_request_word = OgHeapGetCell(ctrl_nlp_th->hrequest_word, 0);
   IFN(first_request_word) DPcErr;
 
-  for (struct request_word *rw = first_request_word; rw ; rw = rw->next)
+  for (struct request_word *rw = first_request_word; rw; rw = rw->next)
   {
     // ignore non basic word (build from ltras)
     if (rw->self_index >= ctrl_nlp_th->basic_request_word_used) break;

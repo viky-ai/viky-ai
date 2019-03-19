@@ -327,131 +327,6 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, JSON.parse(p.generate_json)
   end
 
-
-  test 'Package generation with alias list any' do
-    weather = agents(:weather)
-    assert entities_lists(:weather_conditions).destroy
-    assert entities_lists(:weather_dates).destroy
-    ialias = interpretation_aliases(:weather_forecast_tomorrow_question)
-    ialias.is_list = true
-    ialias.any_enabled = true
-    assert ialias.save
-
-    p = Nlp::Package.new(weather)
-
-    expected = {
-      'id'   => weather.id,
-      'slug' => 'admin/weather',
-      'interpretations' => [
-        {
-          'id' => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-          'slug' => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-          'scope' => 'hidden',
-          'expressions' => [
-            {
-              'expression' => '@{question}',
-              'id'         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => 'admin/weather/interpretations/weather_question',
-                  'id'      => intents(:weather_question).id,
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"    => true,
-              "glue-distance" => 0
-            },
-            {
-              'expression' => '@{question} @{question_recursive}',
-              'id'         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => 'admin/weather/interpretations/weather_question',
-                  'id'      => intents(:weather_question).id,
-                  'package' => weather.id
-                },
-                {
-                  'alias'   => 'question_recursive',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"    => true,
-              "glue-distance" => 0
-            },
-            {
-              'expression'  => '@{question} @{question_recursive}',
-              'id'          =>  interpretations(:weather_forecast_tomorrow).id,
-              'aliases'     => [
-                {
-                  'alias'   => 'question',
-                  'type'    => 'any'
-                },
-                {
-                  'alias'   => 'question_recursive',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              "keep-order"    => true,
-              "glue-distance" => 0
-            }
-          ]
-        },
-        {
-          'id'    => intents(:weather_forecast).id,
-          'slug'  => 'admin/weather/interpretations/weather_forecast',
-          'scope' => 'public',
-          'expressions' => [
-            {
-              'expression'    => 'Quel temps fera-t-il demain ?',
-              'id'            => interpretations(:weather_forecast_demain).id,
-              'locale'        => 'fr',
-              'solution'      => "Quel temps fera-t-il demain ?",
-              "glue-distance" => 20
-            },
-            {
-              'expression' => '@{question} tomorrow ?',
-              "id"         => interpretations(:weather_forecast_tomorrow).id,
-              'aliases'    => [
-                {
-                  'alias'   => 'question',
-                  'slug'    => "admin/weather/interpretations/weather_question_#{ialias.id}_recursive",
-                  'id'      => "#{intents(:weather_question).id}_#{ialias.id}_recursive",
-                  'package' => weather.id
-                }
-              ],
-              'locale'        => 'en',
-              'keep-order'    => true,
-              'glue-distance' => 0,
-              'solution'      => '`forecast.tomorrow`'
-            }
-          ]
-        },
-        {
-          'id'    => intents(:weather_question).id,
-          'slug'  => 'admin/weather/interpretations/weather_question',
-          'scope' => 'public',
-          'expressions' => [
-            {
-              'expression'    => 'What the weather like',
-              "id"            => interpretations(:weather_question_like).id,
-              'locale'        => 'en',
-              'solution'      => "What the weather like",
-              "glue-distance" => 20
-            }
-          ]
-        }
-      ]
-    }
-    assert_equal expected, JSON.parse(p.generate_json)
-  end
-
-
   test 'Package generation with alias any' do
     weather = agents(:weather)
     assert entities_lists(:weather_conditions).destroy
@@ -635,7 +510,6 @@ class PackageTest < ActiveSupport::TestCase
           ]
         },
         {
-
           "id" => "1f45c98f-b39b-5a8b-a4a7-8379bea19f0a",
           "slug" => "admin/terminator/entities_lists/terminator_targets",
           "scope" => "private",
@@ -644,6 +518,7 @@ class PackageTest < ActiveSupport::TestCase
     }]
     assert_equal expected, p.full_json_export
   end
+
 
   test 'No interpretation alias' do
     expected_expression = 'I want to go to Paris from London'
@@ -762,6 +637,7 @@ class PackageTest < ActiveSupport::TestCase
 
     assert_equal expected_expression, interpretation.expression_with_aliases
   end
+
 
   test 'Package generation with regex type' do
     agent = agents(:terminator)

@@ -35,23 +35,27 @@
 .interpretations-form{
   grid-template:
           "interpretation interpretation" auto
-          "summary summary" auto
+          "aliases aliases" auto
+          "aliases-errors aliases-errors" auto
           "solution solution" auto
           "submit delete" 1fr /
           2fr 1fr;
   @media (min-width: 424px){
     grid-template:
             "interpretation interpretation" auto
-            "summary summary" auto
+            "aliases aliases" auto
+            "aliases-errors aliases-errors" auto
             "solution solution" auto
             "submit delete" 1fr /
-    1fr 1fr;
+            1fr 1fr;
   }
   .field--submit {
+    margin-top: 1em;
     margin-bottom: 0;
     grid-area: submit;
   }
   .interpretations-form__delete {
+    margin-top: 1em;
     grid-area: delete;
     justify-self: end;
   }
@@ -60,7 +64,7 @@
 .interpretations-show{
   grid-template:
     "interpretation close" auto
-    "summary summary" auto
+    "aliases aliases" auto
     "solution solution" auto /
     1fr 1fr;
 
@@ -80,11 +84,22 @@
 
   .interpretations-form__summary,
   .interpretations-show__summary{
-    grid-area: summary;
+    grid-area: aliases;
+  }
+
+  .interpretations-form__aliases-errors{
+    grid-area: aliases-errors;
+    color: $alert_color;
+    font-size: .8em;
+    line-height: 1.5em;
+    .icon svg{
+      fill: $alert_color;
+    }
   }
 
   .interpretations-form__solution,
   .interpretations-show__solution{
+    margin-top: 1em;
     grid-area: solution;
   }
 
@@ -330,13 +345,14 @@ trix-editor{
 .aliases{
   table{
     line-height: 1em;
-    margin: 0 0 1em 0;
-    th{
-      border-bottom: 1px solid #eee;
+    margin: 0;
+    tbody tr{
+      border-top: 1px solid #eee;
     }
     td, th{
-      padding: .25em .75em .25em .75em;
+      padding: .5em .75em .5em .75em;
       vertical-align: middle;
+      border: none;
       &:first-child{
         padding-left: 0;
         padding-right: .25em;
@@ -346,7 +362,7 @@ trix-editor{
       }
     }
     td{
-      line-height: 2em;
+      line-height: 1.5em;
     }
     th a{
       text-decoration: none;
@@ -393,6 +409,20 @@ trix-editor{
     }
   }
 
+  .alias-errors{
+    color: $alert_color;
+    font-size: .9em;
+    background-color: #fff;
+    border-top: none;
+    td{
+      padding-top: 0;
+      line-height: 1.5em;
+    }
+    .icon svg{
+      fill: $alert_color;
+    }
+  }
+
   &.aliases--rtl{
     table{
       th:last-child,
@@ -404,22 +434,23 @@ trix-editor{
 
   .regex-header{
     td{
-      border-bottom: none;
+      padding: .5em .75em .25em .75em;
     }
     td:nth-child(2){
       padding: .25em 0.75em 0 0;
       & > span{
         display: inline-block;
         background-color: #f5f5f5;
-        padding: .3em .75em;
+        padding: .65em .75em;
         border-top-left-radius: 3px;
         border-top-right-radius: 3px;
       }
     }
   }
   .regex-form{
+    border: none;
     td{
-      padding: 0;
+      padding: 0 0 .25em 0;
       border-bottom: none;
     }
     & > td > div{

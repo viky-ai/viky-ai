@@ -1,3 +1,5 @@
+<% current_user_can_edit_agent = current_user.can?(:edit, @agent) %>
+
 <div class="cts">
   <div class="cts__header">
     <%= render 'console/tests_suite_summary' %>
@@ -13,7 +15,7 @@
   </div>
 
   <ul class="cts__list">
-    <% if current_user.can?(:edit, @agent) %>
+    <% if current_user_can_edit_agent %>
     <draggable v-model="tests" :options="{handle:'.cts-item__grip', animation: 100}" @update="onPositionUpdate">
     <% end %>
       <transition-group name="cts-list">
@@ -23,7 +25,7 @@
              v-bind:id="'cts-item-summary-'+ test.id">
 
             <div>
-              <div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div>
+              <div class="cts-item__grip <% unless current_user_can_edit_agent %>cts-item__grip--disabled<% end %>"></div>
             </div>
             <div class="cts-item__summary">
               <span :class="'ts-status ts-status--' + test.state"></span>
@@ -32,7 +34,7 @@
           </a>
 
           <div class="cts-item" v-bind:id="'cts-item-details-' + test.id" style="display:none;">
-            <div><div class="cts-item__grip <% unless current_user.can?(:edit, @agent) %>cts-item__grip--disabled<% end %>"></div></div>
+            <div><div class="cts-item__grip <% unless current_user_can_edit_agent %>cts-item__grip--disabled<% end %>"></div></div>
             <div class="cts-item__full">
               <div class="cts-item__full__status">
                 <span :class="'ts-status ts-status--' + test.state"></span>
@@ -64,7 +66,7 @@
 
                 <test-diff v-bind:test="test"></test-diff>
 
-                <% if current_user.can?(:edit, @agent) %>
+                <% if current_user_can_edit_agent %>
                   <div class="cts-item__full__detail__actions">
                     <template v-if="test.state == 'running'">
                       <button disabled class="btn btn--small btn--outline btn--primary btn--disabled">
@@ -110,7 +112,7 @@
           </div>
         </li>
       </transition-group>
-    <% if current_user.can?(:edit, @agent) %>
+    <% if current_user_can_edit_agent %>
     </draggable>
     <% end %>
   </ul>

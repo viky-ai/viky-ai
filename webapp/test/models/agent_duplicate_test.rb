@@ -17,14 +17,15 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     )
     new_agent = AgentDuplicator.new(agent, users(:admin)).duplicate
 
-    assert new_agent.id.nil?
+    assert_nil new_agent.id
     assert_equal "#{agent.name} [COPY]", new_agent.name
     assert_equal agent.description, new_agent.description
     assert_equal agent.color, new_agent.color
     assert_equal "#{agent.agentname}-copy", new_agent.agentname
     assert_equal 'is_private', new_agent.visibility
+    assert_equal agent.locales, new_agent.locales
     assert_not_equal agent.api_token, new_agent.api_token
-    assert new_agent.owner.nil?
+    assert_nil new_agent.owner
 
     assert new_agent.save
     assert_not_equal agent.id, new_agent.id
@@ -152,7 +153,6 @@ class AgentDuplicateTest < ActiveSupport::TestCase
     intents.each do |intent_agent, intent_new_agent|
       assert_equal intent_agent.intentname, intent_new_agent.intentname
       assert_equal intent_agent.visibility, intent_new_agent.visibility
-      assert_equal intent_agent.locales, intent_new_agent.locales
       assert_not_equal intent_agent.id, intent_new_agent.id
 
       assert_equal intent_agent.interpretations.size, intent_new_agent.interpretations.size

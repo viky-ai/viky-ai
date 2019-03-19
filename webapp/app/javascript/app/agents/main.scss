@@ -174,6 +174,28 @@
   }
 }
 
+.agent-locales{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column-gap: .5em;
+  grid-row-gap: .25em;
+  margin-bottom: 1.5em;
+  .label,
+  label{
+    font-weight: 300;
+    margin-bottom: 0;
+    small{
+      color: #666;
+    }
+    .icon--x-small{
+      vertical-align: middle;
+      svg{
+        fill: #666;
+      }
+    }
+  }
+}
+
 
 /**
  * Agent dependencies

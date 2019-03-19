@@ -1,6 +1,5 @@
 weather_forecast:
   intentname: weather_forecast
-  locales: <%= ['en', 'fr'].to_json.inspect  %>
   description: Ask futur weather
   agent: weather
   color: red
@@ -8,7 +7,6 @@ weather_forecast:
 
 weather_question:
   intentname: weather_question
-  locales: <%= ['en', 'fr'].to_json.inspect  %>
   description:
   agent: weather
   color: blue
@@ -16,7 +14,6 @@ weather_question:
 
 terminator_find:
   intentname: terminator_find
-  locales: <%= ['en'].to_json.inspect  %>
   description: Find Sarah Connor
   agent: terminator
   color: green
@@ -24,7 +21,6 @@ terminator_find:
 
 weather_confirmed_question:
   intentname: weather_question
-  locales: <%= ['en'].to_json.inspect  %>
   description: Another weather question
   agent: weather_confirmed
   color: black
@@ -33,7 +29,6 @@ weather_confirmed_question:
 
 simple_where:
   intentname: simple_where
-  locales: <%= ['en'].to_json.inspect  %>
   description: Simple where expressions
   agent: terminator
   color: red

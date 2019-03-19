@@ -11,7 +11,8 @@ static struct request_input_part *NlpRequestInputPartAdd(og_nlp_th ctrl_nlp_th,
 static og_status NlpRequestInputPartGetSparseMark(og_nlp_th ctrl_nlp_th, struct request_input_part *request_input_part);
 
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number)
+    struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number,
+    double score_spelling)
 {
   struct request_input_part *request_input_part = NlpRequestInputPartAdd(ctrl_nlp_th, interpret_package, Iinput_part);
   IFN(request_input_part) DPcErr;
@@ -26,6 +27,7 @@ og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word 
   request_input_part->request_positions_nb = 1;
   request_input_part->request_position_distance = 0;
   request_input_part->interpret_word_as_number = interpret_word_as_number;
+  request_input_part->score_spelling = score_spelling;
 
   IFE(NlpRequestInputPartGetSparseMark(ctrl_nlp_th, request_input_part));
 

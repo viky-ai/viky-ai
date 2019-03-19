@@ -12,7 +12,10 @@ module Nls
     attr_accessor :solution
     attr_accessor :interpretation
 
-    def initialize(expression, opts = {})
+    def initialize(expression, opts_default = {}, opts = {})
+
+      opts.merge! opts_default
+
       @expression = expression
 
       @locale = nil

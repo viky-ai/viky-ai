@@ -13,7 +13,19 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
     post user_agent_agent_regression_checks_url(users(:admin), agents(:weather)),
       params: {
-        regression_check: { sentence: 'Quel temps fait-il à Paris ?', expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, score: '1.0', solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json }, now: '2019-01-17T09:00:00+01:00', language: 'fr', agent_id: agents(:weather) },
+        regression_check: {
+          sentence: 'Quel temps fait-il à Paris ?',
+          expected: {
+            root_type: 'intent',
+            package: agents(:weather).id,
+            id: Intent.where(intentname: 'weather_forecast').first.id,
+            score: '1.0',
+            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+          },
+          now: '2019-01-17T09:00:00+01:00',
+          language: 'fr',
+          agent_id: agents(:weather)
+        },
         format: :js
       }
     assert_response :created
@@ -24,7 +36,19 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:show_on_agent_weather)
     post user_agent_agent_regression_checks_url(users(:admin), agents(:weather)),
       params: {
-        regression_check: { sentence: 'Quel temps fait-il à Paris ?', expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, score: '1.0', solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json }, now: '2019-01-17T09:00:00+01:00', language: 'fr', agent_id: agents(:weather) },
+        regression_check: {
+          sentence: 'Quel temps fait-il à Paris ?',
+          expected: {
+            root_type: 'intent',
+            package: agents(:weather).id,
+            id: Intent.where(intentname: 'weather_forecast').first.id,
+            score: '1.0',
+            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+          },
+          now: '2019-01-17T09:00:00+01:00',
+          language: 'fr',
+          agent_id: agents(:weather)
+        },
         format: :js
       }
     assert_redirected_to agents_url
@@ -77,7 +101,14 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
     put user_agent_agent_regression_check_url(users(:admin), agents(:weather), @regression_weather_question), xhr: true,
       params: {
-        regression_check: { expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json } },
+        regression_check: {
+          expected: {
+            root_type: 'intent',
+            package: agents(:weather).id,
+            id: Intent.where(intentname: 'weather_forecast').first.id,
+            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+          }
+        },
         format: :js
       }
     assert_response :ok
@@ -87,7 +118,14 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:edit_on_agent_weather)
     put user_agent_agent_regression_check_url(users(:admin), agents(:weather), '123'), xhr: true,
       params: {
-        regression_check: { expected: { package: agents(:weather).id, id: Intent.where(intentname: 'weather_forecast').first.id, solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json } },
+        regression_check: {
+          expected: {
+            root_type: 'intent',
+            package: agents(:weather).id,
+            id: Intent.where(intentname: 'weather_forecast').first.id,
+            solution: Interpretation.where(expression: 'What the weather like tomorrow ?').first.solution.to_json
+          }
+        },
         format: :js
       }
   end

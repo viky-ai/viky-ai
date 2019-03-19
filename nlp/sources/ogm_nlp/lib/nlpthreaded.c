@@ -67,6 +67,8 @@ PUBLIC(og_nlp_th) OgNlpThreadedInit(og_nlp ctrl_nlp, struct og_nlp_threaded_para
   IF(NlpLtracInit(ctrl_nlp_th)) return NULL;
   IF(NlpLtrasInit(ctrl_nlp_th)) return NULL;
 
+  IF(NlpLtracEntityPrepareInit(ctrl_nlp_th, param->name)) return NULL;
+
   return ctrl_nlp_th;
 
 }
@@ -107,6 +109,8 @@ PUBLIC(og_status) OgNlpThreadedFlush(og_nlp_th ctrl_nlp_th)
 
   IFE(NlpLtracFlush(ctrl_nlp_th));
   IFE(NlpLtrasFlush(ctrl_nlp_th));
+
+  IFE(NlpLtracEntityPrepareFlush(ctrl_nlp_th));
 
   IFE(OgMsgFlush(ctrl_nlp_th->hmsg));
 

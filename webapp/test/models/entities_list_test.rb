@@ -173,14 +173,16 @@ class EntitiesListTest < ActiveSupport::TestCase
   end
 
   test 'Import entities from CSV' do
+    elist = entities_lists(:weather_conditions)
+    assert_equal ["*", "en", "fr", "es"], elist.agent.locales
+
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "cloudy|nuageux:fr,False,\"{'weather': 'cloudy'}\"\n"
+    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
     io << "\n"
 
     entities_import = EntitiesImport.new(build_import_params(io))
-    elist = entities_lists(:weather_conditions)
 
     assert_equal 2, elist.entities.count
     assert elist.from_csv(entities_import)
@@ -194,12 +196,13 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 3, snow.position
 
     cloudy = elist.entities.find_by_solution("{'weather': 'cloudy'}")
-    cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'nuageux', 'locale' => 'fr' }]
+    cloudy_terms = [{ 'term' => 'cloudy', 'locale' => '*' }, { 'term' => 'غائم', 'locale' => 'ar' }]
     assert_equal cloudy_terms, cloudy.terms
     assert_equal false, cloudy.auto_solution_enabled
     assert_equal "{'weather': 'cloudy'}", cloudy.solution
     assert_equal 2, cloudy.position
     assert_equal 6, Entity.all.count
+    assert_equal ["*", "en", "fr", "es", "ar"], elist.agent.locales
   end
 
 

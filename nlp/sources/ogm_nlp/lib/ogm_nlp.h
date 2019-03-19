@@ -40,11 +40,16 @@
 
 #define DOgNlpMaximumRegex          100
 #define DOgNlpMaximumRegexStringSizeLogged  512 // Must be smaller than DPcPathSize
+#define DOgNlpMaxEntitySize   512
+#define DOgNlpMaxNbWordsPerEntity 10
 
 #define DOgNlpMaximumOwnedLock      16
 
 // Max default distance (in number of chars) between two input parts in an expression
 #define DOgNlpDefaultGlueDistance   20
+
+#define DOgNlpMinEntityNumber       500
+#define DOgNlpEntitySeparator       0x80
 
 #define NlpLog(nlptrace,nlpformat, ...) if (ctrl_nlp_th->loginfo->trace & nlptrace) \
   { \
@@ -127,6 +132,11 @@ struct package
   void *ha_word;
   int nb_words;
 
+  /** Automaton : "<nb_words><string_entity\1<ptr_expression>" */
+  void *ha_entity;
+  int nb_entities;
+  int max_nb_words_per_entity;
+
   /** Automaton : "<interpretation_id>\1<Iinput_part>" */
   void *ha_interpretation_id;
 
@@ -134,6 +144,12 @@ struct package
   struct ltra_dictionaries ltra_dictionaries[1];
   int ltra_min_frequency;
   int ltra_min_frequency_swap;
+
+  /** Automatons for ltrac/ltraf entities */
+  struct ltra_dictionaries ltra_entity_dictionaries[1];
+  int ltra_entity_min_frequency;
+  int ltra_entity_min_frequency_swap;
+
 };
 
 typedef struct package *package_t;
@@ -434,6 +450,8 @@ struct request_input_part
   int sparse_mark;
 
   enum nlp_super_list_status super_list_status;
+
+  double score_spelling; // used by entity matching
 };
 
 struct request_position
@@ -705,6 +723,20 @@ struct super_list
   struct interpret_package *interpret_package;
 };
 
+struct nlp_match_entities_ctrl
+{
+  og_nlp_th ctrl_nlp_th;
+  struct interpret_package *interpret_package;
+  struct request_word *request_word_list[DOgNlpMaxNbWordsPerEntity];
+  struct request_word *alternative_request_word_list[DOgNlpMaxNbWordsPerEntity];
+  int string_entity_length_list[DOgNlpMaxNbWordsPerEntity];
+  int request_word_list_length;
+  unsigned char string_entity[DOgNlpMaxEntitySize];
+  /** HashTable key: pointer (expression) , value: int (1) */
+  GHashTable *expression_hash;
+  double score_spelling;
+};
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -802,6 +834,9 @@ struct og_ctrl_nlp_threaded
   og_bool accept_any_expressions;
 
   og_heap hsuper_list;
+
+  void *ha_prepare_entity;
+  og_heap hprepare_entity;
 
 };
 
@@ -907,6 +942,8 @@ og_status NlpCompilePackage(og_nlp_th ctrl_nlp_th, struct og_nlp_compile_input *
 
 /* nlpconsolidate.c */
 og_status NlpConsolidatePackage(og_nlp_th ctrl_nlp_th, package_t package);
+int NlpConsolidateExpressionWord(og_nlp_th ctrl_nlp_th, package_t package, struct expression *expression);
+
 
 /* nlpipword.c */
 og_status NlpInputPartWordInit(og_nlp_th ctrl_nlp_th, package_t package);
@@ -953,7 +990,8 @@ og_bool NlpParseIsPunctuation(og_nlp_th ctrl_nlp_th, int max_word_size, og_strin
 
 /* nlprip.c */
 og_status NlpRequestInputPartAddWord(og_nlp_th ctrl_nlp_th, struct request_word *request_word,
-    struct interpret_package *interpret_package, int Iinput_part, og_bool word_as_number);
+    struct interpret_package *interpret_package, int Iinput_part, og_bool interpret_word_as_number,
+    double score_spelling);
 og_status NlpRequestInputPartAddInterpretation(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
     struct interpret_package *interpret_package, int Iinput_part);
 struct request_input_part *NlpGetRequestInputPart(og_nlp_th ctrl_nlp_th, struct request_expression *request_expression,
@@ -1084,18 +1122,26 @@ og_status NlpCalculateScoreDuringParsing(og_nlp_th ctrl_nlp_th, struct request_e
 /* nlpclean.c */
 og_status NlpRequestExpressionsClean(og_nlp_th ctrl_nlp_th);
 
-/* nlpltras.c */
-og_status NlpLtras(og_nlp_th ctrl_nlp_th);
-
 /* nlpltrac.c */
 og_status NlpLtracInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracFlush(og_nlp_th ctrl_nlp_th);
 og_status NlpLtracPackage(og_nlp_th ctrl_nlp_th, package_t package);
 og_status NlpLtracPackageFlush(package_t package);
 
+/* nlpltrac_entity.c */
+og_status NlpLtracEntityPackage(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpLtracEntityPackageFlush(package_t package);
+og_status NlpLtracEntityPrepareInit(og_nlp_th ctrl_nlp_th, og_string name);
+og_status NlpLtracEntityPrepareReset(og_nlp_th ctrl_nlp_th);
+og_status NlpLtracEntityPrepareFlush(og_nlp_th ctrl_nlp_th);
+
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpLtras(og_nlp_th ctrl_nlp_th);
+
+/* nlpltras_entity.c */
+og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl);
 
 /* nlpwhy.c */
 og_status NlpWhyNotMatchingInit(og_nlp_th ctrl_nlp_th, og_string name);
@@ -1163,4 +1209,18 @@ og_status NlpLemInit(og_nlp ctrl_nlp);
 og_status NlpLemFlush(og_nlp ctrl_nlp);
 og_status NlpLem(og_nlp_th ctrl_nlp_th);
 
+
+/* nlpentity.c */
+og_status NlpEntityInit(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpEntityFlush(package_t package);
+og_status NlpEntityAdd(og_nlp_th ctrl_nlp_th, package_t package, int nb_words, og_string string_word,
+    int length_string_word, struct expression *expression);
+og_status NlpReduceEntities(og_nlp_th ctrl_nlp_th, package_t package);
+og_status NlpEntityLog(og_nlp_th ctrl_nlp_th, package_t package);
+
+/* nlpmatch_entity.c */
+og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th);
+og_status NlpMatchCurrentEntity(struct nlp_match_entities_ctrl *me_ctrl);
+og_status NlpMatchEntitiesChangeToAlternativeString(struct nlp_match_entities_ctrl *me_ctrl,
+    int length_normalized_string_word, unsigned char *normalized_string_word);
 

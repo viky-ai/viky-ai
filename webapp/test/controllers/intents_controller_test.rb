@@ -62,6 +62,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert response.body.include?('Unauthorized operation.')
   end
 
+
   #
   # Update
   #
@@ -87,6 +88,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert response.body.include?('Unauthorized operation.')
   end
 
+
   #
   # Confirm_destroy access
   #
@@ -103,6 +105,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
+
 
   #
   # Delete
@@ -121,6 +124,7 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Unauthorized operation.', flash[:alert]
   end
 
+
   #
   # Add locale
   #
@@ -134,23 +138,6 @@ class IntentsControllerTest < ActionDispatch::IntegrationTest
   test 'Add locale forbidden' do
     sign_in users(:show_on_agent_weather)
     post user_agent_intent_add_locale_url(users(:admin), agents(:weather), intents(:weather_forecast), locale_to_add: 'fr')
-    assert_redirected_to agents_url
-    assert_equal 'Unauthorized operation.', flash[:alert]
-  end
-
-  #
-  # Remove locale
-  #
-  test 'Remove locale' do
-    sign_in users(:edit_on_agent_weather)
-    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_forecast), locale_to_remove: 'fr')
-    assert_redirected_to user_agent_intent_path(users(:admin), agents(:weather), intents(:weather_forecast), locale: 'en')
-    assert_nil flash[:alert]
-  end
-
-  test 'Remove  locale forbidden' do
-    sign_in users(:show_on_agent_weather)
-    delete user_agent_intent_remove_locale_url(users(:admin), agents(:weather), intents(:weather_forecast), locale_to_remove: 'fr')
     assert_redirected_to agents_url
     assert_equal 'Unauthorized operation.', flash[:alert]
   end

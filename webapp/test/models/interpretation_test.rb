@@ -86,6 +86,7 @@ class InterpretationTest < ActiveSupport::TestCase
     assert_equal expected, interpretation.errors.messages
   end
 
+
   test 'Check expression size' do
     interpretation = interpretations(:weather_forecast_tomorrow)
     interpretation.expression = (['À'] * 1025).join('')
@@ -94,6 +95,115 @@ class InterpretationTest < ActiveSupport::TestCase
       expression: ['(2.002 KB) is too long (maximum is 2 KB)']
     }
     assert_equal expected, interpretation.errors.messages
+  end
+
+
+  test "Aliases any constraint : only one any" do
+    interpretation = interpretations(:weather_forecast_demain)
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 6,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        }
+      ]
+    )
+    expected = ["Only one annotation with \"Any\" option is permitted."]
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test "Aliases any constraint : one alias one any" do
+    interpretation = interpretations(:weather_forecast_demain)
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        }
+      ]
+    )
+    expected = ["\"Any\" option is not permitted with only one annotation."]
+    assert_equal expected, interpretation.errors.full_messages
+
+
+    interpretation.reload
+    assert interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 5,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          any_enabled: false,
+        }
+      ]
+    )
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          id: interpretation.interpretation_aliases.last.id,
+          _destroy:  true,
+        }
+      ]
+    )
+    expected = ["\"Any\" option is not permitted with only one annotation."]
+    assert_equal expected, interpretation.errors.full_messages
+  end
+
+
+  test "Aliases any constraint : only one list" do
+    interpretation = interpretations(:weather_forecast_demain)
+
+    assert_not interpretation.update(
+      interpretation_aliases_attributes: [
+        {
+          aliasname: "first",
+          position_start: 0,
+          position_end: 4,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          is_list: true,
+        },
+        {
+          aliasname: "second",
+          position_start: 6,
+          position_end: 10,
+          interpretation: interpretations(:weather_forecast_demain),
+          interpretation_aliasable: intents(:weather_question),
+          is_list: true,
+        }
+      ]
+    )
+    expected = ["Only one annotation with \"List\" option is permitted."]
+    assert_equal expected, interpretation.errors.full_messages
   end
 
 

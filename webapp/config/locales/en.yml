@@ -30,4 +30,11 @@ en:
       very_close: Very Close
       close: Close
       far: Far
-
+  locales:
+    no_locale: No language
+    fr: French
+    en: English
+    es: Spanish
+    pt: Portuguese
+    zh: Chinese
+    ar: Arabic

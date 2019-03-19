@@ -26,6 +26,7 @@ def create_agent_regression_check_fixtures
     state: 4,
     position: 0,
     expected: {
+      root_type: 'intent',
       package: agents(:weather).id,
       id: intents(:weather_forecast).id,
       solution: interpretations(:weather_forecast_tomorrow).solution.to_json.to_s
@@ -41,10 +42,27 @@ def create_agent_regression_check_fixtures
     state: 2,
     position: 1,
     expected: {
+      root_type: 'intent',
       package: agents(:weather).id,
       id: intents(:weather_question).id,
       solution: interpretations(:weather_question_like).solution.to_json.to_s
     }
   })
   @regression_weather_question.save!
+
+  @regression_weather_condition = AgentRegressionCheck.new({
+    sentence: "Sun today",
+    language: "en",
+    now: "2019-01-20 14:00:15.000000",
+    agent: agents(:weather),
+    state: 1,
+    position: 2,
+    expected: {
+      root_type: 'entities_list',
+      package: agents(:weather).id,
+      id: entities_lists(:weather_conditions).id,
+      solution: entities(:weather_sunny).solution.to_json.to_s
+    }
+  })
+  @regression_weather_condition.save!
 end
