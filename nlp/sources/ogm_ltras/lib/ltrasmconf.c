@@ -77,7 +77,6 @@ static int OgLtrasModuleReadConf1(void *, int, int, unsigned char *);
 static int ReadScore(void *ptr, struct og_read_tag *rt);
 static int ReadMaxTrans(void *ptr, struct og_read_tag *rt);
 static int ReadParameter(void *ptr, struct og_read_tag *rt);
-static int InterpolateScores(struct og_ctrl_ltras *ctrl_ltras, double *ms);
 static int InterpolateMaxTrans(struct og_ctrl_ltras *ctrl_ltras, int *mt, int default_maximum_transformations);
 static og_status initTransformationAndScores(struct og_ctrl_ltras *ctrl_ltras, int some_maximum_transformation,
     int default_maximum_transformations);
@@ -246,8 +245,8 @@ static og_status initTransformationAndScores(struct og_ctrl_ltras *ctrl_ltras, i
     default_maximum_transformations = 1;
   }
 
-  IFE(InterpolateScores(ctrl_ltras, ctrl_ltras->minimum_score));
-  IFE(InterpolateScores(ctrl_ltras, ctrl_ltras->minimum_final_score));
+  IFE(OgLtrasModuleReadConfInterpolateScores(ctrl_ltras, ctrl_ltras->minimum_score));
+  IFE(OgLtrasModuleReadConfInterpolateScores(ctrl_ltras, ctrl_ltras->minimum_final_score));
   IFE(InterpolateMaxTrans(ctrl_ltras, ctrl_ltras->maximum_transformation, default_maximum_transformations));
 
   DONE;
@@ -796,8 +795,10 @@ static int ReadParameter(void *ptr, struct og_read_tag *rt)
   DONE;
 }
 
-static int InterpolateScores(struct og_ctrl_ltras *ctrl_ltras, double *ms)
+og_status OgLtrasModuleReadConfInterpolateScores(void *hltras, double *ms)
 {
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) hltras;
+
   int i, j, imin, imax, ilast, inext, first;
   double a, b;
 
@@ -847,7 +848,7 @@ static int InterpolateScores(struct og_ctrl_ltras *ctrl_ltras, double *ms)
 
   if (ctrl_ltras->loginfo->trace & DOgLtrasTraceModuleConf)
   {
-    OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "InterpolateScores: list of scores:");
+    OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, "OgLtrasModuleReadConfInterpolateScores: list of scores:");
     for (i = imin; i <= imax; i++)
     {
       OgMsg(ctrl_ltras->hmsg, "", DOgMsgDestInLog, " %2d: %2f", i, ms[i]);

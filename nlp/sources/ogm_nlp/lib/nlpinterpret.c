@@ -278,6 +278,9 @@ static int NlpInterpretRequest(og_nlp_th ctrl_nlp_th, json_t *json_request, json
     IFE(NlpRegexLog(ctrl_nlp_th));
   }
 
+  // Setup ltras according to ctrl_nlp_th->spellchecking_level
+  IFE(NlpLtrasRequestSetup(ctrl_nlp_th));
+
   // ====================================
   // look for matching interpretation
   // ====================================
@@ -363,6 +366,7 @@ static og_status NlpInterpretRequestReset(og_nlp_th ctrl_nlp_th)
 
   ctrl_nlp_th->request_sentence = NULL;
   ctrl_nlp_th->date_now = NULL;
+  ctrl_nlp_th->spellchecking_level = nlp_spellchecking_level_low;
   ctrl_nlp_th->show_explanation = FALSE;
   ctrl_nlp_th->show_private = FALSE;
   ctrl_nlp_th->primary_package = NULL;

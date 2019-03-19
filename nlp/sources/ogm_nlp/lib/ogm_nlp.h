@@ -1153,6 +1153,7 @@ og_status NlpLtracEntityPrepareFlush(og_nlp_th ctrl_nlp_th);
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpLtrasRequestSetup(og_nlp_th ctrl_nlp_th);
 og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
 /* nlpltras_entity.c */

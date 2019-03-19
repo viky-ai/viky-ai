@@ -440,7 +440,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
         if expected[i].has_key?(:interpretation)
           expected_interpretation = expected[i][:interpretation]
           slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
-          assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
+          assert slug_match, "match on wrong interpretation : \n  actual: slug:#{match_intepretation['slug']}, id:#{match_intepretation['id']}\n  expected: #{expected_interpretation}"
         end
 
         if expected[i].has_key?(:solution)
@@ -484,6 +484,9 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
 
       now = expected[:now]
 
+      locale = Interpretation.default_locale
+      locale = expected[:locale] if expected.has_key?(:locale)
+
       packages = "*"
       packages = expected[:packages] if expected.has_key?(:packages)
       primary_package = expected[:primary_package]
@@ -498,7 +501,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       spellchecking = expected[:spellchecking] if expected.has_key?(:spellchecking)
 
       opts = {
-        locale: Interpretation.default_locale,
+        locale: locale,
         explain: explain,
         now: now,
         primary_package: primary_package,
@@ -517,8 +520,8 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       assert_kind_of Array, actual['interpretations'], "Actual answer['interpretations'] is not an Array : #{actual['interpretations']}"
 
       if (expected.has_key?(:interpretations) && expected[:interpretations].kind_of?(Array) && expected[:interpretations].empty?) ||
-      (expected.has_key?(:interpretation)  && expected[:interpretation].nil?)
-        assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation"
+         (expected.has_key?(:interpretation) && expected[:interpretation].nil?)
+        assert actual['interpretations'].empty?, "Actual answer should not match on any interpretation. Matching #{actual['interpretations']}"
         # skip other assert
         return actual
       end
@@ -591,7 +594,7 @@ numbers_list << Expression.new("@{number} @{numbers}", aliases: {number: numbers
       if expected.has_key?(:interpretation)
         expected_interpretation = expected[:interpretation]
         slug_match = match_intepretation['slug'] == expected_interpretation || match_intepretation['id'] == expected_interpretation
-        assert slug_match, "match on wrong interpretation : id = #{match_intepretation['id']}, slug = #{match_intepretation['slug']}"
+        assert slug_match, "match on wrong interpretation : \n  actual: slug:#{match_intepretation['slug']}, id:#{match_intepretation['id']}\n  expected: #{expected_interpretation}"
       end
 
       if expected.has_key?(:solution)

@@ -10,6 +10,9 @@
 og_status NlpLtrasEntity(struct nlp_match_entities_ctrl *me_ctrl)
 {
   og_nlp_th ctrl_nlp_th = me_ctrl->ctrl_nlp_th;
+
+  if (ctrl_nlp_th->spellchecking_level == nlp_spellchecking_level_inactive) CONT;
+
   package_t package = me_ctrl->interpret_package->package;
   IFE(OgLtrasHaBaseSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_base));
   IFE(OgLtrasHaSwapSet(ctrl_nlp_th->hltras, package->ltra_entity_dictionaries->ha_swap));

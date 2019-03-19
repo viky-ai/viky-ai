@@ -23,7 +23,11 @@ og_status NlpMatchEntities(og_nlp_th ctrl_nlp_th)
   int interpret_package_used = OgHeapGetCellsUsed(ctrl_nlp_th->hinterpret_package);
   for (int i = 0; i < interpret_package_used; i++)
   {
-    IFE(NlpMatchEntitiesInPackage(ctrl_nlp_th, interpret_packages + i));
+    struct interpret_package *interpret_package = interpret_packages + i;
+    if (interpret_package->package->ha_entity)
+    {
+      IFE(NlpMatchEntitiesInPackage(ctrl_nlp_th, interpret_packages + i));
+    }
   }
   DONE;
 }

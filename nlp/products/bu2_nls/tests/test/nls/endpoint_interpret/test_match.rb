@@ -257,7 +257,7 @@ module Nls
         deepness = create_deepness_package
         Nls.package_update(deepness)
 
-        request1 = json_interpret_body(deepness, "Je voudrai aller à Paris", locale: "fr")
+        request1 = json_interpret_body(deepness, "Je voudrais aller à Paris", locale: "fr")
         actual1 = Nls.interpret(request1)
         assert_equal actual1["interpretations"][0]["score"], actual1["interpretations"][1]["score"]
 
@@ -273,7 +273,7 @@ module Nls
         actual4 = Nls.interpret(request4)
         assert_equal actual4["interpretations"][0]["score"], actual4["interpretations"][1]["score"]
 
-        request5 = json_interpret_body(deepness, "Je voudrai aller à Paris toto", locale: "fr")
+        request5 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "fr")
         actual5 = Nls.interpret(request5)
         assert_equal actual5["interpretations"][0]["score"], actual5["interpretations"][1]["score"]
       end
