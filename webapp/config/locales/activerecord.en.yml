@@ -46,6 +46,7 @@ en:
         visibility: Visibility
         visibility_is_private: Private
         visibility_is_public: Public
+        locales: Languages
       intent:
         intentname: ID
         description: Description
@@ -64,7 +65,9 @@ en:
         glued: Glued
         auto_solution_enabled: Auto solution
         solution: Solution
+        base: ""
       interpretation_alias:
+        base: ""
         aliasname: Parameter name
         reg_exp: Regular expression
       entity:
@@ -83,6 +86,7 @@ en:
         agents_presence: You must delete all the agents you own
     agent:
       owner_presence_in_users: list does not includes agent owner
+      unknown_locale: "unknown '%{current_locale}'"
       transfer_ownership:
         duplicate_agentname: This user already have an agent with this ID
         invalid_username: Please select a valid new owner
@@ -96,10 +100,13 @@ en:
     interpretation:
       invalid_json: "invalid json"
       interpretation_aliases_overlap: position overlap
+      only_one_any: Only one annotation with "Any" option is permitted.
+      one_alias_one_any: '"Any" option is not permitted with only one annotation.'
+      only_one_list: Only one annotation with "List" option is permitted.
     entities_lists:
       unknown_agent: 'does not exist'
     entity:
-      unknown_locale: "unknown locale '%{current_locale}'"
+      unknown_locale: "uses an unauthorized locale '%{current_locale}' for this agent"
       term_abscent: "can't contains only locale information"
       import:
         no_file: 'must be present'
@@ -115,6 +122,7 @@ en:
       aliasname_valid_javascript_variable: 'is invalid'
       nature_blank: "can't be blank"
       valid_regex: "should be valid"
+      list_and_any_not_compatible: Options "List" and "Any" are not compatibles on the same annotation.
     chat_statement:
       invalid_nature: "invalid nature, found: %{nature}"
       buttons:

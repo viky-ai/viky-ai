@@ -83,6 +83,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   end
 
   def select_text_in_trix(selector, position_start, position_end)
+    sleep(0.1)
     script = "$('#{selector}').first().trigger('select-text', [#{position_start},#{position_end}])"
     page.execute_script(script)
   end

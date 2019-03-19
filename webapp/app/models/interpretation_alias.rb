@@ -15,6 +15,7 @@ class InterpretationAlias < ApplicationRecord
   validate :check_aliasname_uniqueness
   validate :check_aliasname_valid_javascript_variable
   validate :check_valid_regex
+  validate :check_list_and_any_options
 
   private
 
@@ -62,7 +63,7 @@ class InterpretationAlias < ApplicationRecord
       for ialias in list_without_destroy
         himself = ialias.position_start == position_start && ialias.position_end == position_end
         unless himself
-          dup_found ||= ialias.aliasname == aliasname
+          dup_found ||= (ialias.aliasname == aliasname && !aliasname.blank?)
         end
         break if dup_found
       end
@@ -81,6 +82,12 @@ class InterpretationAlias < ApplicationRecord
         Regexp.new(reg_exp)
       rescue RegexpError
         errors.add(:reg_exp, I18n.t('errors.interpretation_alias.valid_regex'))
+      end
+    end
+
+    def check_list_and_any_options
+      if is_list && any_enabled
+        errors.add(:base, I18n.t('errors.interpretation_alias.list_and_any_not_compatible'))
       end
     end
 

@@ -113,7 +113,9 @@ class Nlp::Package
 
       InterpretationAlias
         .includes(:interpretation)
-        .where(is_list: true, interpretations: { intent_id: intent.id }).order('interpretations.position DESC, interpretations.locale ASC').order(:position_start).each do |ialias|
+        .where(is_list: true, interpretations: { intent_id: intent.id })
+        .order('interpretations.position DESC, interpretations.locale ASC')
+        .order(:position_start).each do |ialias|
 
         interpretation_hash = {}
         interpretation_hash[:id]   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
@@ -140,21 +142,6 @@ class Nlp::Package
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
         expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
         expressions << expression
-
-        if ialias.any_enabled
-          expression = {}
-          expression[:expression] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-          expression[:id] = ialias.interpretation.id
-          expression[:aliases] = []
-          expression[:aliases] << {
-            alias: ialias.aliasname,
-            type: 'any'
-          }
-          expression[:aliases] << build_internal_alias(ialias, true)
-          expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-          expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
-          expressions << expression
-        end
 
         interpretation_hash[:expressions] = expressions
         interpretations << interpretation_hash

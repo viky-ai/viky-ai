@@ -20,6 +20,20 @@ class UserUiState
     (@state['agent_search'] || {}).with_indifferent_access
   end
 
+  def agent_locale=(locale)
+    @state.merge!(
+      agent_locale: locale
+    )
+  end
+
+  def agent_locale(current_agent)
+    if current_agent.locales.include? @state['agent_locale']
+      @state['agent_locale']
+    else
+      current_agent.ordered_locales.first
+    end
+  end
+
   def chatbot_search=(new_state)
     @state.merge!(
       chatbot_search: {

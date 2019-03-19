@@ -156,7 +156,7 @@ class PopupAddTag
 
 
 
-class TagRemovePopup
+class PopupRemoveTag
   constructor: ->
     $('body').on 'popup-remove-tag:show', (event, id, position) => @show(id, position)
     $('body').on 'popup-remove-tag:hide', (event) => @hide()
@@ -188,6 +188,9 @@ class TagRemovePopup
     $('#popup-remove-tag ul li a').removeClass('focus')
     @removeKeyListener()
 
+  select: ->
+    $('#popup-remove-tag ul li a').first().trigger('click')
+
   removeKeyListener: ->
     Mousetrap.unbind('down')
     Mousetrap.unbind('space')
@@ -202,11 +205,13 @@ class TagRemovePopup
 
     Mousetrap.bindGlobal 'space', (event) =>
       event.preventDefault()
-      $('#popup-remove-tag ul li a').first().trigger('click')
+      @select()
 
     Mousetrap.bindGlobal 'esc', (event) =>
       event.preventDefault()
       @hide()
+
+
 
 
 class AliasesRegexForm
@@ -415,8 +420,7 @@ class AliasesForm
       line.push "
           <div class='field_with_errors'>
             <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />
-          </div>
-          #{alias.aliasname_errors}"
+          </div>"
     else
       line.push "
           <input type='text' name='#{name_prefix}[aliasname]' class='code' value='#{@aliasname(alias)}' />"
@@ -470,6 +474,14 @@ class AliasesForm
         </a>
       </td>"
     line.push "</tr>"
+
+    errors = []
+    errors.push alias.aliasname_errors if alias.aliasname_errors
+    errors.push alias.base_errors if alias.base_errors
+    if errors.length > 0
+      line.push "
+        <tr class='alias-errors'><td colspan='5'>#{errors.join('')}</td></tr>
+      "
 
     if alias.nature == 'type_regex'
       regex_input = new AliasesRegexForm(alias.reg_exp)
@@ -706,11 +718,42 @@ SetupForm = ->
 
 $(document).on('trix-initialize', SetupForm)
 
+
+preventHTMLPaste = (event) ->
+  $(event.target).on 'paste', (event) ->
+    clipboard = event.originalEvent.clipboardData
+    data = clipboard.getData('text')
+    event.preventDefault()
+    event.currentTarget.editor.insertString(data)
+
+$(document).on('trix-before-initialize', preventHTMLPaste)
+
+
+popup_add_tag = null
+popup_remove_tag = null
+
 SetupPopUps = ->
   if $('body').data('controller-name') == "intents" && $('body').data('controller-action') == "show"
-    new PopupAddTag()
-    new TagRemovePopup()
+    popup_add_tag    = new PopupAddTag()
+    popup_remove_tag = new PopupRemoveTag()
     new InterpretationSolutions()
     new InterpretationOptions()
 
 $(document).on('turbolinks:load', SetupPopUps)
+
+
+allowEnterInPopup = (event) ->
+  $('#popup-add-tag input').on 'keydown', (event) ->
+    keycode = event.which
+    if keycode == 13
+      event.preventDefault()
+      popup_add_tag.select() if $('#popup-add-tag:visible').length == 1
+
+  $(event.target).on 'keydown', (event) ->
+    keycode = event.which
+    if keycode == 13
+      event.preventDefault()
+      popup_add_tag.select() if $('#popup-add-tag:visible').length == 1
+      popup_remove_tag.select() if $('#popup-remove-tag:visible').length == 1
+
+$(document).on('trix-before-initialize', allowEnterInPopup)

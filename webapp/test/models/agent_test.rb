@@ -228,6 +228,80 @@ class AgentTest < ActiveSupport::TestCase
   end
 
 
+  test "Agent locales default on create" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.valid?
+    assert agent.save
+    expected = [Locales::ANY, 'en', 'fr']
+    assert_equal expected, agent.locales
+  end
+
+
+  test "Agent locales are deduplicated" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["en", "fr", "fr", "en"]
+    assert agent.save
+    assert_equal ["en", "fr"], agent.locales
+  end
+
+
+  test "Agent locales presence on update" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    agent.locales = []
+    assert_not agent.save
+    expected = ["Languages can't be blank"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent locales are include in available locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa"
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    agent.locales = ["missing_locale_1", "missing_locale_2"]
+    assert_not agent.save
+    expected = ["Languages unknown 'missing_locale_1'", "Languages unknown 'missing_locale_2'"]
+    assert_equal expected, agent.errors.full_messages
+  end
+
+
+  test "Agent ordered_locales" do
+    agent = Agent.new(
+      name: "Agent 1",
+      agentname: "aaa",
+      locales: ["fr", "en", "*"]
+    )
+    agent.memberships << Membership.new(user_id: users(:admin).id, rights: "all")
+    assert agent.save
+
+    assert_equal ["fr", "en", "*"], agent.locales
+    assert_equal ["*", "en", "fr"], agent.ordered_locales
+  end
+
+
+  test "Agent used_locales" do
+    assert_equal ["*", "en", "fr"], agents(:weather).ordered_and_used_locales
+    assert_equal ["en"], agents(:terminator).ordered_and_used_locales
+    assert_equal [], agents(:weather_confirmed).ordered_and_used_locales
+  end
+
+
   test "Test agent slug" do
     agent = users(:admin).agents.friendly.find("weather")
     assert_equal "My awesome weather bot", agent.name
@@ -388,14 +462,16 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     assert_equal 2, agent_weather.reachable_intents(current_intent).count
     assert_equal ['weather_forecast', 'weather_question'], agent_weather.reachable_intents(current_intent).collect(&:intentname)
 
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting',
-      locales: ['en'],
       agent: agent_successor
     )
     assert AgentArc.create(source: agent_weather, target: agent_successor)
@@ -407,7 +483,10 @@ class AgentTest < ActiveSupport::TestCase
 
   test 'List reachable public/private intents for agent' do
     agent_weather = agents(:weather)
-    current_intent = Intent.create(intentname: 'current_intent', locales: ['en'], agent: agent_weather,)
+    current_intent = Intent.create(
+      intentname: 'current_intent',
+      agent: agent_weather
+    )
     intent_greetings = intents(:weather_forecast)
     intent_greetings.visibility = 'is_public'
     assert intent_greetings.save
@@ -418,13 +497,11 @@ class AgentTest < ActiveSupport::TestCase
     agent_successor = agents(:weather_confirmed)
     assert Intent.create(
       intentname: 'greeting_public',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_public'
     )
     assert Intent.create(
       intentname: 'greeting_private',
-      locales: ['en'],
       agent: agent_successor,
       visibility: 'is_private'
     )

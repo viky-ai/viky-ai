@@ -25,7 +25,7 @@
     "three-dragcontrols": "^0.88.1",
     "three-forcegraph": "^1.9.2",
     "three-trackballcontrols": "^0.0.7",
-    "trix": "^0.11.1",
+    "trix": "^1.1.0",
     "uuid": "^3.1.0",
     "vue": "^2.5.22",
     "vue-loader": "14.2.2",

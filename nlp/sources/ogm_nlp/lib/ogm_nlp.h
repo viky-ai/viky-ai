@@ -6,6 +6,7 @@
  */
 #include <lognlp.h>
 #include <logaut.h>
+#include <logstm.h>
 #include <loguni.h>
 #include <logheap.h>
 #include <logsysi.h>
@@ -736,7 +737,6 @@ struct nlp_match_entities_ctrl
   unsigned char string_entity[DOgNlpMaxEntitySize];
   /** HashTable key: pointer (expression) , value: int (1) */
   GHashTable *expression_hash;
-  double score_spelling;
 };
 
 struct og_ctrl_nlp_threaded
@@ -839,6 +839,9 @@ struct og_ctrl_nlp_threaded
 
   void *ha_prepare_entity;
   og_heap hprepare_entity;
+
+  void *hstm;
+  struct og_stm_levenshtein_input_param levenshtein_costs[1];
 
 };
 
