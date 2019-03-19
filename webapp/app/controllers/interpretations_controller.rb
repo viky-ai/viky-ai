@@ -14,7 +14,7 @@ class InterpretationsController < ApplicationController
       if interpretation.save
         format.js do
           new_interpretation = Interpretation.new(
-            proximity: 'glued',
+            proximity: 'close',
             keep_order: true,
             auto_solution_enabled: true
           )

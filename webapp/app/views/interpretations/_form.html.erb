@@ -29,6 +29,7 @@
                   <li>
                     <% label = t("expression.proximity.#{proximity}") %>
                     <a href="#"
+                       <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
                        data-behavior="populate-input, replace-trigger-label"
                        data-input-selector="#proximity__new_interpretation"
                        data-input-value="<%= proximity %>"

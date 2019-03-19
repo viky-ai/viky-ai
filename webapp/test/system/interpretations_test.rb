@@ -165,6 +165,27 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
   end
 
+  test 'Create an interpretation with proximity value' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+
+    assert_equal "1", first('#current-locale-tab-badge').text
+    within('#interpretations-list') do
+      assert page.has_text?('What the weather like tomorrow ?')
+      assert page.has_text?('Proximity Glued')
+    end
+
+    first('trix-editor').click.set('Sunny day')
+    all('.dropdown__trigger > .btn')[0].click
+    click_link 'Accepts Punctuations'
+    click_button 'Add'
+
+    within('#interpretations-list') do
+      assert page.has_text?('Sunny day')
+      assert page.has_text?('Proximity Accepts Punctuations')
+    end
+    assert_equal "2", first('#current-locale-tab-badge').text
+  end
+
 
   test 'Errors on interpretation creation' do
     admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
@@ -215,8 +236,6 @@ class InterpretationsTest < ApplicationSystemTestCase
       assert page.has_text?('Cancel')
       first('trix-editor').click.set('Salut à tous')
       check('interpretation[keep_order]')
-      all('.dropdown__trigger > .btn')[0].click
-      click_link 'Very Close'
       uncheck('interpretation[auto_solution_enabled]')
       fill_in_editor_field '10'
       click_button 'Update'
@@ -284,6 +303,29 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     assert page.has_link?('What the weather like tomorrow ?')
     assert_equal 1, all('.interpretation-resume').count
+  end
+
+  test 'Update an interpretation (change proximity)' do
+    admin_go_to_intent_show(agents(:weather), intents(:weather_forecast))
+
+    assert page.has_link?('What the weather like tomorrow ?')
+    assert page.has_text?('Proximity Glued')
+
+    assert_equal '1', first('#current-locale-tab-badge').text
+
+    within('#interpretations-list') do
+      click_link 'What the weather like tomorrow ?'
+      assert page.has_text?('Cancel')
+      first('trix-editor').click.set('What the weather like today ?')
+      check('interpretation[keep_order]')
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'Far'
+      click_button 'Update'
+    end
+
+    assert page.has_link?('What the weather like today ?')
+    assert page.has_text?('Proximity Far')
+    assert_equal '1', first('#current-locale-tab-badge').text
   end
 
 
@@ -399,7 +441,6 @@ class InterpretationsTest < ApplicationSystemTestCase
     assert_equal expected_regex, find("textarea[name*='reg_exp']").value
     assert page.has_text?('Valid Regex')
   end
-
 
   private
 
