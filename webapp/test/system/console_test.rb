@@ -116,7 +116,7 @@ class ConsoleTest < ApplicationSystemTestCase
       assert_equal 0, all("input[name='interpret[now]']").count
 
       # Spellchecking
-      assert page.has_content?('Inactive')
+      assert page.has_content?('Low')
       all('.dropdown__trigger > .btn')[1].click
       click_link 'High'
 
