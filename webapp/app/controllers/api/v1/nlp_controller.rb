@@ -12,10 +12,17 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     respond_to do |format|
       format.json {
         if @nlp.valid?
-          @response = @nlp.proceed
-          @log.with_response(@response[:status], @response[:body])
-          unless @response[:status] == '200'
-            render json: @response[:body], status: @response[:status]
+          begin
+            @response = @nlp.proceed
+            status = @response[:status]
+            body = @response[:body]
+            @log.with_response(status, body)
+            render json: body, status: status unless status == '200'
+          rescue Errno::ECONNREFUSED => e
+            status = 503
+            body = { errors: [t('nlp.unavailable')] }
+            @log.with_response(status, { errors: e.message })
+            render json: body, status: status
           end
         else
           status = 422

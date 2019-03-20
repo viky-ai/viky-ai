@@ -162,4 +162,25 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal '1.1-a58b', found[:context]['bot_version']
     assert_equal agent.updated_at, found[:context]['agent_version']
   end
+
+
+  test 'Log even request even when no NLP answer' do
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('proceed').raises(Errno::ECONNREFUSED, 'Failed to open TCP connection')
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: {
+        sentence: 'test NLP crash',
+        agent_token: agent.api_token
+      }
+
+    client = IndexManager.client
+    result = client.search index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+      type: InterpretRequestLog::INDEX_TYPE,
+      body: { query: { match: { sentence: 'test NLP crash' } } },
+      size: 1
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal 503, found[:status]
+    assert_equal 'Connection refused - Failed to open TCP connection', found[:body]['errors']
+  end
 end
