@@ -75,6 +75,12 @@
     </false_transformation>
     <false_transformation>
       <from>
+        <w>non</w>
+      </from>
+      <to_any/>
+    </false_transformation>
+    <false_transformation>
+      <from>
         <w>other</w>
       </from>
       <to_any/>
