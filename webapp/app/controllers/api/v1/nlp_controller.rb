@@ -12,31 +12,34 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     respond_to do |format|
       format.json {
         if @nlp.valid?
-          begin
-            @response = @nlp.proceed
-            status = @response[:status]
-            body = @response[:body]
-            @log.with_response(status, body)
-            render json: body, status: status unless status == '200'
-          rescue Errno::ECONNREFUSED => e
-            status = 503
-            body = { errors: [t('nlp.unavailable')] }
-            @log.with_response(status, { errors: e.message })
-            render json: body, status: status
-          end
+          body, status = request_nlp
         else
           status = 422
           body = { errors: @nlp.errors.full_messages }
           @log.with_response(status, {})
-          render json: body, status: status
         end
         @log.save
+        render json: body, status: status unless status == '200'
       }
     end
   end
 
 
   private
+
+    def request_nlp
+      begin
+        @response = @nlp.proceed
+        status = @response[:status]
+        body = @response[:body]
+        @log.with_response(status, body)
+      rescue Errno::ECONNREFUSED => e
+        status = 503
+        body = { errors: [t('nlp.unavailable')] }
+        @log.with_response(status, { errors: e.message })
+      end
+      [body, status]
+    end
 
     # Auto render 404.json on ActiveRecord::RecordNotFound exception
     def validate_owner_and_agent
