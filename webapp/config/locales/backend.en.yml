@@ -59,3 +59,55 @@ en:
         base: Backend
         user_management: User management
         user_invitation: User invitation
+        dashboard: Platform overview
+      dashboard:
+        indicators:
+          agents:
+            zero: Agent
+            one: Agent
+            other: Agents
+          public_agents:
+            zero: No public agent
+            one: One public agent
+            other: "%{total} public agents"
+          interpretations:
+            zero: Expression
+            one: Expression
+            other: Expressions
+          intents:
+            zero: No interpretation
+            one: One interpretation
+            other: "%{total} interpretations"
+          entities:
+            zero: Entity
+            one: Entity
+            other: Entities
+          entities_lists:
+            zero: No entities list
+            one: One entities list
+            other: "%{total} entities lists"
+          tests:
+            zero: Test
+            one: Test
+            other: Tests
+          readmes:
+            zero: Readme
+            one: Readme
+            other: Readmes
+          readme_percentage: of agents
+          bots:
+            zero: Bot
+            one: Bot
+            other: Bots
+          bots_wip:
+            zero: No WIP
+            one: One WIP
+            other: "%{total} WIP"
+          users:
+            zero: User
+            one: User
+            other: Users
+          users_admin:
+            zero: No administrator
+            one: One administrator
+            other: "%{total} administrators"

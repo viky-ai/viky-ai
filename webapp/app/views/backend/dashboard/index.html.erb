@@ -1,0 +1,16 @@
+<header class="header header--backend-users">
+  <div class="header__breadcrumb">
+    <%= t('views.backend.breadcrumb.base') %> /
+    <strong><%= t('views.backend.breadcrumb.dashboard') %></strong>
+  </div>
+</header>
+
+<div class="dashboard-indicators">
+  <%= render 'indicators_agents' %>
+  <%= render 'indicators_interpretations' %>
+  <%= render 'indicators_entities' %>
+  <%= render 'indicators_tests' %>
+  <%= render 'indicators_readmes' %>
+  <%= render 'indicators_bots' %>
+  <%= render 'indicators_users' %>
+</div>

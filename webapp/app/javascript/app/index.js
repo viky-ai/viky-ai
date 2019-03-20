@@ -61,5 +61,7 @@ import './aliased_intents/main.scss';
 
 import './readme/form.coffee';
 
+import './dashboard/main.scss';
+
 window.App.InterpretationsList = require('./interpretations/interpretations_list');
 window.App.EntityForm = require('./entities/entity_form');

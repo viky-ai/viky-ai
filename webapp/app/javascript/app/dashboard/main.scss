@@ -1,0 +1,31 @@
+.dashboard-indicators{
+  display: grid;
+  grid-row-gap: 1em;
+  grid-column-gap: 1em;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 1em;
+  .card.card--indicator{
+    margin: 0;
+    overflow: hidden;
+    .card-main{
+      padding: 1.5em;
+    }
+    .card-detail{
+      padding: .75em 1.5em;
+      background-color: #fafafa;
+      font-size: .8em;
+      color: rgba(#000, .8);
+      .ts-status{
+        vertical-align: baseline;
+      }
+    }
+  }
+  .card--indicator{
+    text-align: center;
+    strong{
+      display: block;
+      font-size: 1.75em;
+      line-height: 1.2em;
+    }
+  }
+}
