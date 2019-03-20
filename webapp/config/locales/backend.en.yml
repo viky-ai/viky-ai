@@ -71,13 +71,13 @@ en:
             one: One public agent
             other: "%{total} public agents"
           interpretations:
-            zero: Expression
-            one: Expression
-            other: Expressions
+            zero: Interpretation
+            one: Interpretation
+            other: Interpretations
           intents:
-            zero: No interpretation
-            one: One interpretation
-            other: "%{total} interpretations"
+            zero: No intent
+            one: One intent
+            other: "%{total} intents"
           entities:
             zero: Entity
             one: Entity
@@ -111,3 +111,5 @@ en:
             zero: No administrator
             one: One administrator
             other: "%{total} administrators"
+        top_interpretations: Agents with most interpretations
+        top_entities: Agents with most entities

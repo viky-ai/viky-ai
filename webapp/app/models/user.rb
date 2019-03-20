@@ -27,9 +27,9 @@ class User < ApplicationRecord
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
-    return true if action == :show && agent.is_public?
+    return true  if action == :show && agent.is_public?
     return false if memberships.where(agent_id: agent.id).count == 0
-    return true if agent.owner.id == id
+    return true  if agent.owner.id == id
 
     if action == :show
       true

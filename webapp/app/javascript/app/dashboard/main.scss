@@ -1,9 +1,9 @@
 .dashboard-indicators{
   display: grid;
-  grid-row-gap: 1em;
-  grid-column-gap: 1em;
+  grid-row-gap: 2em;
+  grid-column-gap: 2em;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  margin-bottom: 1em;
+  margin-bottom: 2em;
   .card.card--indicator{
     margin: 0;
     overflow: hidden;
@@ -26,6 +26,50 @@
       display: block;
       font-size: 1.75em;
       line-height: 1.2em;
+    }
+  }
+}
+
+
+.dashboard-tops{
+  display: grid;
+  grid-row-gap: 1em;
+  grid-column-gap: 2em;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  .card{
+    padding: 1.5em;
+    overflow: hidden;
+    .card__top{
+      h2{
+        padding: 1.5em;
+        margin: -1.5em -1.5em 1em -1.5em;
+        background-color: #fafafa;
+        font-size: 1em;
+        font-weight: 400;
+      }
+      table{
+        strong{
+          display: block;
+          line-height: 1.4em;
+          font-weight: 300;
+        }
+        small{
+          display: block;
+          line-height: 1.4em;
+        }
+        a{
+          display: block;
+          text-decoration: none;
+          &:hover, &:focus{
+            strong{
+              text-decoration: underline;
+            }
+          }
+        }
+        tbody tr td:nth-child(2){
+          text-align: right;
+        }
+      }
     }
   }
 }

@@ -1,0 +1,31 @@
+<% top_entities_agents = Agent.select('agents.id, COUNT(entities.id) as count')
+              .joins(entities_lists: :entities)
+              .group(:id)
+              .order('COUNT(entities.id) DESC').limit(10) %>
+
+<h2>
+  <%= t("views.backend.dashboard.top_entities") %>
+</h2>
+<table>
+  <tbody>
+    <% top_entities_agents.each do |data| %>
+      <% agent = Agent.find(data['id']) %>
+      <tr>
+        <td>
+          <% if current_user.can? :show, agent %>
+            <a href="<%= user_agent_entities_lists_path(agent.owner, agent) %>">
+              <strong>
+                <%= agent.name %>
+              </strong>
+              <small><%= agent.slug %></small>
+            </a>
+          <% else %>
+            <strong><%= agent.name %></strong>
+            <small><%= agent.slug %></small>
+          <% end %>
+        </td>
+        <td><%= number_with_delimiter(data['count']) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,31 @@
+<% top_interpretations_agents = Agent.select('agents.id, COUNT(interpretations.id) as count')
+              .joins(intents: :interpretations)
+              .group(:id)
+              .order('COUNT(interpretations.id) DESC').limit(10) %>
+
+<h2>
+  <%= t("views.backend.dashboard.top_interpretations") %>
+</h2>
+<table>
+  <tbody>
+    <% top_interpretations_agents.each do |data| %>
+      <% agent = Agent.find(data['id']) %>
+      <tr>
+        <td>
+          <% if current_user.can? :show, agent %>
+            <a href="<%= user_agent_intents_path(agent.owner, agent) %>">
+              <strong>
+                <%= agent.name %>
+              </strong>
+              <small><%= agent.slug %></small>
+            </a>
+          <% else %>
+            <strong><%= agent.name %></strong>
+            <small><%= agent.slug %></small>
+          <% end %>
+        </td>
+        <td><%= number_with_delimiter(data['count']) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

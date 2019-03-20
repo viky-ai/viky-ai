@@ -24,8 +24,8 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert_equal '/backend/dashboard', current_path
     assert page.has_content?('3 Agents')
     assert page.has_content?('One public agent')
-    assert page.has_content?('6 Expressions')
-    assert page.has_content?('5 interpretations')
+    assert page.has_content?('6 Interpretations')
+    assert page.has_content?('5 intents')
     assert page.has_content?('4 Entities')
     assert page.has_content?('4 entities lists')
     assert page.has_content?('0 Test')
@@ -35,6 +35,9 @@ class BackendDashboardTest < ApplicationSystemTestCase
     assert page.has_content?('One WIP')
     assert page.has_content?('7 Users')
     assert page.has_content?('One administrator')
+
+    assert page.has_content?('Agents with most interpretations')
+    assert page.has_content?('Agents with most entities')
   end
 
 end
