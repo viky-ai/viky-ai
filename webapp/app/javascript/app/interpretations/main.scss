@@ -118,13 +118,16 @@
     display:none;
   }
 
+  $trix_padding: 330px;
+  $trix_breakpoint: 700px;
+
   trix-editor{
     padding-top: 2.5em;
     min-height: 4.5em;
-    @media (min-width: 600px){
+    @media (min-width: $trix_breakpoint){
       min-height: 2.5em;
       padding-top: .4em;
-      padding-right: 290px;
+      padding-right: $trix_padding;
     }
     &:focus{
       border-color: $focus_color;
@@ -134,8 +137,8 @@
   }
 
   trix-editor[dir="rtl"]{
-    @media (min-width: 600px){
-      padding-left: 290px;
+    @media (min-width: $trix_breakpoint){
+      padding-left: $trix_padding;
       padding-right: .5em;
     }
     text-align: right;
@@ -149,7 +152,7 @@
     display: flex;
     align-items: baseline;
 
-    @media (min-width: 600px){
+    @media (min-width: $trix_breakpoint){
       width: auto;
       left: auto;
       right: .25em;
@@ -166,6 +169,7 @@
       font-size: 0.8em;
       vertical-align: middle;
       padding: .3em .5em;
+      white-space: nowrap;
       .btn.btn--outline{
         background-color: #fff;
       }
