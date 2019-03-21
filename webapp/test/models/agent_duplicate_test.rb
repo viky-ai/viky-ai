@@ -161,7 +161,7 @@ class AgentDuplicateTest < ActiveSupport::TestCase
         assert_equal inter_agent.expression, inter_new_agent.expression
         assert_equal inter_agent.locale, inter_new_agent.locale
         assert_equal inter_agent.keep_order, inter_new_agent.keep_order
-        assert_equal inter_agent.glued, inter_new_agent.glued
+        assert_equal inter_agent.proximity.to_s, inter_new_agent.proximity.to_s
         assert_equal inter_agent.auto_solution_enabled, inter_new_agent.auto_solution_enabled
         assert inter_agent.solution == inter_new_agent.solution
         assert_not_equal inter_agent.id, inter_new_agent.id

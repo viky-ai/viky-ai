@@ -27,13 +27,13 @@ module Nls
         letters << Expression.new("@{number}", aliases: { number: Alias.number } )
 
         threewords = package.new_interpretation("threewords")
-        threewords << Expression.new("aaa bbb ccc", solution: "aaa bbb ccc", glued: true)
+        threewords << Expression.new("aaa bbb ccc", solution: "aaa bbb ccc", glue_distance: 0)
 
         dash_expression = package.new_interpretation("dash_expression")
-        dash_expression << Expression.new("ddd-eee-fff", solution: "ddd-eee-fff", glued: true, glue_strength: "punctuation")
+        dash_expression << Expression.new("ddd-eee-fff", solution: "ddd-eee-fff", glue_distance: 0, glue_strength: "punctuation")
 
         glued = package.new_interpretation("glued")
-        glued << Expression.new("@{letters1} @{letters2}", aliases: { letters1: letters, letters2: letters }, glued: true)
+        glued << Expression.new("@{letters1} @{letters2}", aliases: { letters1: letters, letters2: letters }, glue_distance: 0)
 
         package
       end

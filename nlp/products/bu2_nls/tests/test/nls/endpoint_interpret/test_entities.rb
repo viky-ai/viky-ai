@@ -77,22 +77,22 @@ module Nls
       end
 
       def test_entities_ltras
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.9 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.92 }
         check_interpret('before maisson de campagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.88 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.91 }
         check_interpret('before maisson de cammpagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.89 }
         check_interpret('before maison de cempagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.82 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.88 }
         check_interpret('before maisson de cempagne after', expected)
 
         # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.9 }
         # check_interpret('before maisonde campagne after', expected)
 
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.89 }
         check_interpret('before maison de campane after', expected)
       end
     end

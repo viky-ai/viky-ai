@@ -141,7 +141,7 @@ og_bool NlpRequestExpressionAdd(og_nlp_th ctrl_nlp_th, struct expression *expres
 
   if (must_add_request_expression && !is_super_list)
   {
-    if (request_expression->expression->glued)
+    if (request_expression->expression->glue_distance == 0)
     {
       og_bool is_glued = NlpRequestExpressionIsGlued(ctrl_nlp_th, request_expression);
       IFE(is_glued);

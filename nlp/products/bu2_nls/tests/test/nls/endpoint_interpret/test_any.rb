@@ -39,14 +39,14 @@ module Nls
         package = Package.new("wrong_package_1")
 
         value1 = package.new_interpretation("value1", scope: "private")
-        value1 << Expression.new("value1", solution: "value1", glued: true, keep_order: true)
+        value1 << Expression.new("value1", solution: "value1", glue_distance: 0, keep_order: true)
 
         value2 = package.new_interpretation("value2", scope: "private")
-        value2 << Expression.new("value2", solution: "value2", glued: true, keep_order: true)
+        value2 << Expression.new("value2", solution: "value2", glue_distance: 0, keep_order: true)
 
         int1 = package.new_interpretation("test", scope: "public")
-        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, solution: "`{ value1: value1, value2: value2}`", glued: true, keep_order: true)
-        #        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, glued: true,
+        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, solution: "`{ value1: value1, value2: value2}`", glue_distance: 0, keep_order: true)
+        #        int1 << Expression.new("@{value1} @{value2}", aliases: { value1: value1, value2: value2}, glue_distance: 0,
 # keep_order: true)
 
         package
@@ -56,7 +56,7 @@ module Nls
         package2 = Package.new("wrong_package_2")
 
         int1 = package2.new_interpretation("test", scope: "public")
-        int1 << Expression.new("test", solution: "`{ value1: value1, value2: value2}`", glued: true, keep_order: true)
+        int1 << Expression.new("test", solution: "`{ value1: value1, value2: value2}`", glue_distance: 0, keep_order: true)
 
         package2
       end
@@ -126,18 +126,18 @@ module Nls
         voc_ax << Expression.new("AC", solution: "AC")
 
         sub_expression = package.new_interpretation("sub_expression", scope: "private")
-        sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => voc_ax}, solution: "`{ a_x: AA }`", keep_order: true, glued: true)
-        sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => Alias.any}, solution: "`{ a_x: AA }`", keep_order: true, glued: true)
+        sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => voc_ax}, solution: "`{ a_x: AA }`", keep_order: true, glue_distance: 0)
+        sub_expression << Expression.new("@{voc_in} @{AA}", aliases: {'voc_in' => voc_in, 'AA' => Alias.any}, solution: "`{ a_x: AA }`", keep_order: true, glue_distance: 0)
 
         element = package.new_interpretation("element", scope: "private")
         element << Expression.new("@{sub_expression}", aliases: {'sub_expression' => sub_expression}, solution: "`sub_expression`")
 
         list = package.new_interpretation("list", scope: "private")
         list.new_expression("@{element}", aliases: { element: element })
-        list.new_expression("@{element} @{list}", aliases: { element: element, list: list }, glued: false)
+        list.new_expression("@{element} @{list}", aliases: { element: element, list: list })
 
         super_interpretation = package.new_interpretation("super_interpretation", { scope: "public" })
-        opts = { keep_order: true, glued: true, aliases: { list: list }, solution: "`{ a: list.list }`"}
+        opts = { keep_order: true, glue_distance: 0, aliases: { list: list }, solution: "`{ a: list.list }`"}
         super_interpretation << Expression.new("@{list}", opts)
 
         Nls.remove_all_packages
@@ -171,9 +171,9 @@ module Nls
         # mais sur un cas limite, où il est nécessaire d'avoir toutes les combinatoires de listes
         # Il serait possible d'indiquer de ne pas créer une super list sur une liste récursive
         # pour garder toutes la combinatoire, mais ce ne serait que sur des cas très spécifiques.
-        #element << Expression.new("@{ddd}", aliases: { ddd: ddd }, keep_order: true, glued: true)
-        element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glued: true)
-        element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glued: true)
+        #element << Expression.new("@{ddd}", aliases: { ddd: ddd }, keep_order: true, glue_distance: 0)
+        element << Expression.new("p @{aaa}", aliases: { aaa: aaa }, keep_order: true, glue_distance: 0)
+        element << Expression.new("p @{aaa}", aliases: { aaa: Alias.any }, keep_order: true, glue_distance: 0)
 
         element_recursive = package.new_interpretation("element_recursive")
         element_recursive << Expression.new("@{element}", aliases: { element: element }, keep_order: true)
@@ -226,8 +226,8 @@ module Nls
         registres_internet << Expression.new(".com", solution: ".com")
 
         email = package.new_interpretation("email", scope: "public")
-        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => domaineany, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true, glued: false)
-        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => Alias.any, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true, glued: false)
+        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => domaineany, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true)
+        email << Expression.new("@{arobase} @{domaineany} @{registres_internet}", aliases: {'arobase' => arobase, 'domaineany' => Alias.any, 'registres_internet' => registres_internet}, solution: "`{ domaineany: domaineany }`", keep_order: true)
 
         Nls.remove_all_packages
         Nls.package_update(package)

@@ -13,7 +13,7 @@ class IntentsController < ApplicationController
 
   def show
     @interpretation = Interpretation.new
-    @interpretation.glued = true
+    @interpretation.proximity = 'close'
     @interpretation.keep_order = true
     @interpretation.auto_solution_enabled = true
 
