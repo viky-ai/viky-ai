@@ -343,6 +343,24 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal 3, Entity.all.count
   end
 
+  test 'Import entities with non existing locale' do
+    elist = entities_lists(:weather_conditions)
+    assert_equal ["*", "en", "fr", "es"], elist.agent.locales
+
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "cloudy:en|nuageuse:rf,False,\"{'weather': 'cloudy'}\"\n"
+    io << "\n"
+
+    entities_import = EntitiesImport.new(build_import_params(io))
+
+    assert_equal 2, elist.entities.count
+    assert !elist.from_csv(entities_import)
+    assert_equal 2, elist.entities.count
+    assert_equal ["Validation failed: Terms uses an unauthorized locale 'rf' for this agent in line 2"], entities_import.errors[:file]
+  end
+
 
   test 'Move entities list to an agent' do
     weather = entities_lists(:weather_conditions)

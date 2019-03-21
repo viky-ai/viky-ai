@@ -48,36 +48,39 @@ class EntitiesImport
       encoding: 'UTF-8'
     }
     result = true
-    ActiveRecord::Base.transaction do
-      csv = CSV.new(@file, options)
-      entities_list.entities.delete_all if @mode == :replace
-      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
-      begin
-        header_valid?(csv)
-        line_count = count_lines(csv)
-        csv.each_with_index do |row, index|
-          next if index.zero?
-          row_length_valid?(row, csv.lineno - 1)
-          auto_solution = parse_auto_solution(row)
-          solution = auto_solution ? '' : parse_solution(row)
-          Entity.create!(
-            terms:                 parse_terms(row),
-            auto_solution_enabled: auto_solution,
-            solution:              solution,
-            position:              entities_max_position + line_count - @count,
-            entities_list:         entities_list
-          )
-          @count += 1
-        end
-      rescue ActiveRecord::ActiveRecordError => e
-        @errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
-        result = false
-        raise ActiveRecord::Rollback
-      rescue CSV::MalformedCSVError => e
-        @errors[:file] << "Bad CSV format: #{e.message}"
-        result = false
-        raise ActiveRecord::Rollback
+    entities_array = []
+    csv = CSV.new(@file, options)
+    entities_list.entities.delete_all if @mode == :replace
+    entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
+    begin
+      header_valid?(csv)
+      line_count = count_lines(csv)
+      csv.each_with_index do |row, index|
+        next if index.zero?
+        row_length_valid?(row, csv.lineno - 1)
+        auto_solution = parse_auto_solution(row)
+        solution = auto_solution ? '' : parse_solution(row)
+        entity = Entity.new(
+          terms: parse_terms(row),
+          auto_solution_enabled: auto_solution,
+          solution: solution,
+          position: entities_max_position + line_count - @count,
+          entities_list: entities_list
+        )
+        entity.validate!
+        entities_array << entity
+        @count += 1
       end
+      Entity.import entities_array, validate: false
+      entities_array.each do |entity|
+        entity.run_callbacks(:save) { true }
+      end
+    rescue ActiveRecord::ActiveRecordError => e
+      @errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
+      result = false
+    rescue CSV::MalformedCSVError => e
+      @errors[:file] << "Bad CSV format: #{e.message}"
+      result = false
     end
     result
   end
