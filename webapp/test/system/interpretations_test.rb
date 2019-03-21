@@ -211,7 +211,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     within('#interpretations-list') do
       assert page.has_text?('What the weather like tomorrow ?')
-      assert page.has_text?('Proximity Glued')
+      assert page.has_text?('Glued')
     end
 
     first('trix-editor').click.set('Sunny day')
@@ -221,7 +221,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     within('#interpretations-list') do
       assert page.has_text?('Sunny day')
-      assert page.has_text?('Proximity Glued + Punc')
+      assert page.has_text?('Glued + Punc')
     end
     assert_equal "2", first('#current-locale-tab-badge').text
   end
@@ -361,7 +361,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert page.has_link?('What the weather like tomorrow ?')
-    assert page.has_text?('Proximity Glued')
+    assert page.has_text?('Glued')
 
     assert_equal '1', first('#current-locale-tab-badge').text
 
@@ -376,7 +376,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     end
 
     assert page.has_link?('What the weather like today ?')
-    assert page.has_text?('Proximity Far')
+    assert page.has_text?('Far')
     assert_equal '1', first('#current-locale-tab-badge').text
   end
 

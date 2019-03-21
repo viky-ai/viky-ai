@@ -35,7 +35,7 @@
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button class="btn">
-              <span class="btn__label"><%= t("expression.proximity.#{@entities_list.proximity}") %></span>
+              <span class="btn__label"><%= t("views.entities_lists.proximity.#{@entities_list.proximity}") %></span>
               <span class="icon icon--x-small">
                 <%= icon_arrow_down %>
               </span>
@@ -51,8 +51,13 @@
                      data-input-selector="#entities_list_proximity"
                      data-input-value="<%= proximity %>"
                      data-replace-selector=".btn__label"
-                     data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
-                    <%= t("expression.proximity.#{proximity}") %>
+                     data-replace-with="<%= t("views.entities_lists.proximity.#{proximity}") %>">
+                    <div class="dropdown__content__item-title">
+                      <%= t("views.entities_lists.proximity.#{proximity}") %>
+                    </div>
+                    <div class="dropdown__content__item-description">
+                      <%= t("views.entities_lists.proximity.help.#{proximity}") %>
+                    </div>
                   </a>
                 </li>
               <% end %>
@@ -66,7 +71,7 @@
   <div class="field">
     <%= f.label :description %>
     <div class="control">
-      <%= f.text_area :description, id: :entities_list_description %>
+      <%= f.text_area :description, id: :entities_list_description, class: "with-4-lines" %>
     </div>
     <%= display_errors(@entities_list, :description) %>
   </div>
@@ -77,7 +82,6 @@
     <% else %>
       <% btn_label = t('views.entities_lists.new.btn') %>
     <% end %>
-
     <%= f.button btn_label, class: "btn btn--primary",
                  data: {
                      disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe

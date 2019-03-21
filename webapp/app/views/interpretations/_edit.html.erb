@@ -15,7 +15,8 @@
   <div class="field interpretations-form__interpretation">
     <div class="control trix-control">
       <div class="trix-control__option <% if rtl?(interpretation.locale) %>trix-control__option--rtl<% end %>">
-        <div class="trix-control__option__child">
+        <div class="trix-control__option__child"
+             title="<%= t("views.interpretations.keep_order_description") %>">
           <%= f.check_box :keep_order, id: "keep_order__#{interpretation.id}" %>
           <%= f.label :keep_order, for: "keep_order__#{interpretation.id}" %>
         </div>
@@ -24,7 +25,9 @@
           <div class="dropdown">
             <div class="dropdown__trigger">
               <button class="btn btn--outline btn--small">
-                <span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
+                <span class="btn__label">
+                  <%= t("views.interpretations.proximity.#{interpretation.proximity}") %>
+                </span>
                 <span class="icon icon--x-small">
                   <%= icon_arrow_down %>
                 </span>
@@ -35,14 +38,18 @@
                 <% Interpretation.proximities.each_key do |proximity| %>
                   <li>
                     <a href="#"
-                       title="<%= t("expression.proximity.help.#{proximity}") %>"
                        <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
                        data-behavior="populate-input, replace-trigger-label"
                        data-input-selector="#proximity__<%= interpretation.id %>"
                        data-input-value="<%= proximity %>"
                        data-replace-selector=".btn__label"
-                       data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
-                      <%= t("expression.proximity.#{proximity}") %>
+                       data-replace-with="<%= t("views.interpretations.proximity.#{proximity}") %>">
+                      <div class="dropdown__content__item-title">
+                        <%= t("views.interpretations.proximity.#{proximity}") %>
+                      </div>
+                      <div class="dropdown__content__item-description">
+                        <%= t("views.interpretations.proximity.description.#{proximity}") %>
+                      </div>
                     </a>
                   </li>
                 <% end %>
@@ -50,7 +57,8 @@
             </div>
           </div>
         </div>
-        <div class="trix-control__option__child">
+        <div class="trix-control__option__child"
+             title="<%= t("views.interpretations.auto_solution_description") %>">
           <%= f.check_box :auto_solution_enabled, id: "auto_solution_enabled__#{interpretation.id}" %>
           <%= f.label :auto_solution_enabled, for: "auto_solution_enabled__#{interpretation.id}" %>
         </div>

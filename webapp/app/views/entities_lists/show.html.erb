@@ -16,9 +16,9 @@
         <%= t('activerecord.attributes.entities_list.visibility_is_private').upcase %>
       </span>
     <% end %>
-    <span class="merged-badges">
-      <span class="badge"><%= t('expression.proximity.label') %></span>
-      <span class="badge badge--primary"><%= t("expression.proximity.#{@entities_list.proximity}") %></span>
+    <span class="badge badge--small"
+          title="<%= t("views.entities_lists.proximity.description.#{@entities_list.proximity}") %>">
+      <%= t("views.entities_lists.proximity.#{@entities_list.proximity}") %>
     </span>
   </div>
   <div class="header__tools">
