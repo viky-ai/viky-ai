@@ -115,8 +115,10 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
 
   test 'Provide statistics contexts with the sentence' do
+    sentence = "test context #{SecureRandom.uuid}"
     intent = intents(:weather_forecast)
     agent = agents(:weather)
+
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: '200',
       body: {
@@ -133,7 +135,7 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
 
     get '/api/v1/agents/admin/weather/interpret.json',
         params: {
-          sentence: 'test context',
+          sentence: sentence,
           agent_token: agent.api_token,
           context: {
             session_id: 'abc',
@@ -153,10 +155,12 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_equal expected, JSON.parse(response.body)
     client = IndexManager.client
-    result = client.search index: InterpretRequestLog::SEARCH_ALIAS_NAME,
-                           type: InterpretRequestLog::INDEX_TYPE,
-                           body: { query: { match: { sentence: 'test context' } } },
-                           size: 1
+    result = client.search(
+      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+      type: InterpretRequestLog::INDEX_TYPE,
+      body: { query: { match: { sentence: sentence } } },
+      size: 1
+    )
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
@@ -164,23 +168,75 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test 'Log even request even when no NLP answer' do
+  test 'Log request even when no more NLP server are available' do
+    sentence = "test NLP crash #{SecureRandom.uuid}"
     agent = agents(:weather)
     Nlp::Interpret.any_instance.stubs('proceed').raises(Errno::ECONNREFUSED, 'Failed to open TCP connection')
 
     get '/api/v1/agents/admin/weather/interpret.json',
-      params: {
-        sentence: 'test NLP crash',
-        agent_token: agent.api_token
-      }
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token
+        }
 
     client = IndexManager.client
-    result = client.search index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+    result = client.search(
+      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
       type: InterpretRequestLog::INDEX_TYPE,
-      body: { query: { match: { sentence: 'test NLP crash' } } },
+      body: { query: { match: { sentence: sentence } } },
       size: 1
+    )
     found = result['hits']['hits'].first['_source'].symbolize_keys
     assert_equal 503, found[:status]
-    assert_equal 'Connection refused - Failed to open TCP connection', found[:body]['errors']
+    assert_equal ['NLS temporarily unavailable', 'No more NLP server are available', 'Connection refused - Failed to open TCP connection'],
+                 found[:body]['errors']
+  end
+
+  test 'Log request even when NLP has just crashed' do
+    sentence = "test NLP crash #{SecureRandom.uuid}"
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('proceed').raises(EOFError, 'end of file reached')
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+        params: {
+          sentence: sentence,
+          agent_token: agent.api_token
+        }
+
+    client = IndexManager.client
+    result = client.search(
+      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+      type: InterpretRequestLog::INDEX_TYPE,
+      body: { query: { match: { sentence: sentence } } },
+      size: 1
+    )
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal 503, found[:status]
+    assert_equal ['NLS temporarily unavailable', 'NLP have just crashed'], found[:body]['errors']
+  end
+
+  test 'Log request even when unexpected error' do
+    sentence = "test NLP Big big error #{SecureRandom.uuid}"
+    agent = agents(:weather)
+    Nlp::Interpret.any_instance.stubs('proceed').raises(RuntimeError, 'Big big error')
+
+    assert_raise RuntimeError do
+      get '/api/v1/agents/admin/weather/interpret.json',
+          params: {
+            sentence: sentence,
+            agent_token: agent.api_token
+          }
+    end
+
+    client = IndexManager.client
+    result = client.search(
+      index: InterpretRequestLog::SEARCH_ALIAS_NAME,
+      type: InterpretRequestLog::INDEX_TYPE,
+      body: { query: { match: { sentence: sentence } } },
+      size: 1
+    )
+    found = result['hits']['hits'].first['_source'].symbolize_keys
+    assert_equal 500, found[:status]
+    assert_equal ['NLS temporarily unavailable', '#<RuntimeError: Big big error>'], found[:body]['errors']
   end
 end

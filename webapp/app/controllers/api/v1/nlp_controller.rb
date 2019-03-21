@@ -16,10 +16,9 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         else
           status = 422
           body = { errors: @nlp.errors.full_messages }
-          @log.with_response(status, {})
+          @log.with_response(status, body).save
         end
-        @log.save
-        render json: body, status: status unless status == '200'
+        render json: body, status: status unless status == 200
       }
     end
   end
@@ -30,13 +29,26 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     def request_nlp
       begin
         @response = @nlp.proceed
-        status = @response[:status]
+        status = @response[:status].to_i
         body = @response[:body]
-        @log.with_response(status, body)
+        log_body = body
+      rescue EOFError => e
+        # NLP has crashed
+        status   = 503
+        body     = { errors: [t('nlp.unavailable')] }
+        log_body = { errors: [t('nlp.unavailable'), 'NLP have just crashed'] }
       rescue Errno::ECONNREFUSED => e
-        status = 503
-        body = { errors: [t('nlp.unavailable')] }
-        @log.with_response(status, { errors: e.message })
+        # no more NLP is running
+        status   = 503
+        body     = { errors: [t('nlp.unavailable')] }
+        log_body = { errors: [t('nlp.unavailable'), 'No more NLP server are available', e.message] }
+      rescue => e
+        # unexpected error
+        status   = 500
+        log_body = { errors: [t('nlp.unavailable'), e.inspect] }
+        raise
+      ensure
+        @log.with_response(status, log_body).save
       end
       [body, status]
     end
