@@ -21,10 +21,9 @@
         </div>
         <div class="trix-control__option__child">
           <%= f.hidden_field :proximity, id: "proximity__#{interpretation.id}" %>
-          <label><%= t('expression.proximity.label') %></label>
           <div class="dropdown">
             <div class="dropdown__trigger">
-              <button class="btn btn--small">
+              <button class="btn btn--outline btn--small">
                 <span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
                 <span class="icon icon--x-small">
                   <%= icon_arrow_down %>
@@ -35,7 +34,9 @@
               <ul>
                 <% Interpretation.proximities.each_key do |proximity| %>
                   <li>
-                    <a href="#" <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
+                    <a href="#"
+                       title="<%= t("expression.proximity.help.#{proximity}") %>"
+                       <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
                        data-behavior="populate-input, replace-trigger-label"
                        data-input-selector="#proximity__<%= interpretation.id %>"
                        data-input-value="<%= proximity %>"

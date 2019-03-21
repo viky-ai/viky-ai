@@ -11,7 +11,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       fill_in 'Description', with: 'List every towns in the world !'
       click_button 'Private'
       all('.dropdown__trigger > .btn')[0].click
-      click_link 'Very Close'
+      click_link 'Very close'
       click_button 'Create'
     end
     assert page.has_text?('Entities list has been successfully created.')
@@ -26,7 +26,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       fill_in 'ID', with: ''
       fill_in 'Description', with: 'List every towns in the world !'
       all('.dropdown__trigger > .btn')[0].click
-      click_link 'Very Close'
+      click_link 'Very close'
       click_button 'Create'
       assert page.has_text?('ID is too short (minimum is 3 characters)')
       assert page.has_text?('ID can\'t be blank')

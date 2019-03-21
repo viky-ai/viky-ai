@@ -13,10 +13,9 @@
           <%= f.label :keep_order, for: "keep_order__new_interpretation" %>
         </div>
         <div class="trix-control__option__child">
-          <label><%= t('expression.proximity.label') %></label>
           <div class="dropdown">
             <div class="dropdown__trigger">
-              <button class="btn btn--small">
+              <button class="btn btn--outline btn--small">
                 <span class="btn__label"><%= t("expression.proximity.#{interpretation.proximity}") %></span>
                 <span class="icon icon--x-small">
                   <%= icon_arrow_down %>
@@ -29,6 +28,7 @@
                   <li>
                     <% label = t("expression.proximity.#{proximity}") %>
                     <a href="#"
+                       title="<%= t("expression.proximity.help.#{proximity}") %>"
                        <% if proximity == interpretation.proximity.to_s %>class="current"<% end %>
                        data-behavior="populate-input, replace-trigger-label"
                        data-input-selector="#proximity__new_interpretation"

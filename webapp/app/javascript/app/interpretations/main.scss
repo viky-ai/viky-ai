@@ -142,10 +142,7 @@
   }
 
   .trix-control__option{
-    padding: .3em;
     position: absolute;
-    border-radius: 2px;
-    background-color: #f5f5f5;
     width: calc(100% - .5em);
     top: .25em;
     left: .25em;
@@ -161,9 +158,23 @@
         left: .25em;
       }
     }
-    input[type="checkbox"]{
-      vertical-align: bottom;
+
+    .trix-control__option__child{
+      background-color: #f3f3f3;
+      border-radius: 2px;
+      margin-right: .25em;
+      font-size: 0.8em;
+      vertical-align: middle;
+      padding: .3em .5em;
+      .btn.btn--outline{
+        background-color: #fff;
+      }
     }
+    .trix-control__option__child:last-child{
+      margin-right: 0;
+    }
+
+    .label,
     label{
       line-height: 1em;
       margin: 0;
@@ -175,14 +186,6 @@
     }
     .dropdown__content > ul > li > a{
       font-size: 1em;
-    }
-    .trix-control__option__child{
-      margin-right: 1em;
-      line-height: 1em;
-      font-size: 0.8em;
-    }
-    .trix-control__option__child:last-child{
-      margin-right: 0;
     }
   }
 }

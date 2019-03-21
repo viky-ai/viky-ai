@@ -68,7 +68,7 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Good morning')
     all('.dropdown__trigger > .btn')[0].click
-    click_link 'Very Close'
+    click_link 'Very close'
     click_button 'Add'
     assert page.has_text?('Good morning')
 
@@ -216,12 +216,12 @@ class InterpretationsTest < ApplicationSystemTestCase
 
     first('trix-editor').click.set('Sunny day')
     all('.dropdown__trigger > .btn')[0].click
-    click_link 'Accepts Punctuations'
+    click_link 'Glued + Punc'
     click_button 'Add'
 
     within('#interpretations-list') do
       assert page.has_text?('Sunny day')
-      assert page.has_text?('Proximity Accepts Punctuations')
+      assert page.has_text?('Proximity Glued + Punc')
     end
     assert_equal "2", first('#current-locale-tab-badge').text
   end
@@ -359,7 +359,7 @@ class InterpretationsTest < ApplicationSystemTestCase
     within('.card .tabs') do
       click_link 'en'
     end
-    
+
     assert page.has_link?('What the weather like tomorrow ?')
     assert page.has_text?('Proximity Glued')
 
