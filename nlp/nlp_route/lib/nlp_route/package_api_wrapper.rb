@@ -42,5 +42,10 @@ module NlpRoute
       RestClient.delete "#{NLP_URL}/packages/#{id}"
       true
     end
+
+    def set_ready
+      puts " + PackageApiWrapper POST #{NLP_URL}/ready"
+      RestClient.post "#{NLP_URL}/ready", nil
+    end
   end
 end

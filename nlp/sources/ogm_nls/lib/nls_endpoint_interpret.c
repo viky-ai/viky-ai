@@ -10,6 +10,14 @@
 og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_request *request,
     struct og_nls_response *response)
 {
+  if (!lt->ctrl_nls->nls_ready)
+  {
+    response->http_status = 503;
+    response->http_message = "NOT READY";
+    json_object_set_new(response->body, "status", json_string("NLS is NOT yet ready, please check again."));
+    DONE;
+  }
+
   IFN(request->body)
   {
     NlsThrowError(lt, "NlsEndpointInterpret : request body is null");

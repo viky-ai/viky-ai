@@ -66,6 +66,7 @@ module NlpRoute
     end
 
     def init
+      start_time = Time.now
       puts 'Loading all packages ...'
 
       # Load all packages ids
@@ -98,11 +99,19 @@ module NlpRoute
         payloads
       end
 
+      if ENV.fetch('NLS_WAIT_TO_BE_READY') { 'false' } == 'true'
+        wrapper.set_ready
+      end
+
       if ENV.fetch('VIKYAPP_RUN_TESTS_ON_INIT') { 'true' } == 'true'
         payloads.flatten.each do |payload|
           wrapper.notify_updated_package(payload[:package_id], payload)
         end
       end
+
+      duration = Time.now - start_time
+      puts "Loading all packages in #{'%.2f' % duration}s."
+
     end
 
     def subscribe

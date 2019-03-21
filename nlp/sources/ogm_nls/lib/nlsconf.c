@@ -55,18 +55,27 @@ static og_bool setTimeout(struct og_ctrl_nls *ctrl_nls, char *conf, og_bool init
   return answer_timeout_specified;
 }
 
-og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nl)
+og_status NlsConfReadEnv(struct og_ctrl_nls *ctrl_nls)
 {
   // Default values
-  struct og_nls_env *env = ctrl_nl->conf->env;
+  struct og_nls_env *env = ctrl_nls->conf->env;
   snprintf(env->listenning_address, DPcPathSize, "0.0.0.0");
   env->listenning_port = DOgNlsPortNumber;
+  ctrl_nls->nls_ready = TRUE;
+  env->wait_to_be_ready = FALSE;
 
   // Values from env
   const gchar *listenning_address = g_getenv("NLS_LISTENNING_ADDRESS");
   if (listenning_address != NULL)
   {
     IFE(OgParseServerAddress(listenning_address, env->listenning_address, &env->listenning_port));
+  }
+
+  const gchar *wait_to_be_ready = g_getenv("NLS_WAIT_TO_BE_READY");
+  if (wait_to_be_ready != NULL && !strcasecmp(wait_to_be_ready, "true"))
+  {
+    env->wait_to_be_ready = TRUE;
+    ctrl_nls->nls_ready = FALSE;
   }
 
   DONE;
@@ -275,7 +284,6 @@ og_status NlsConfReadFile(struct og_ctrl_nls *ctrl_nls, int init)
   {
     ctrl_nls->conf->backlog_indexing_timeout = timeout_ctx->default_timeout;
   }
-
 
   DONE;
 }

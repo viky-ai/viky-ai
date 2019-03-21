@@ -55,11 +55,19 @@ og_bool OgNlsEndpoints(struct og_listening_thread *lt, struct og_nls_request *re
       DPcErr;
     }
   }
-  else if (isEndPointRegistered(request, "/test/", DOgHttpHeaderTypeGet))
+  else if (isEndPointRegistered(request, "/ready/", DOgHttpHeaderTypeGet))
   {
-    IF(NlsEndpointTest(lt, request, response))
+    IF(NlsEndpointReadyGet(lt, request, response))
     {
-      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointTest\"");
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointReadyGet\"");
+      DPcErr;
+    }
+  }
+  else if (isEndPointRegistered(request, "/ready/", DOgHttpHeaderTypePost))
+  {
+    IF(NlsEndpointReadySet(lt, request, response))
+    {
+      NlsThrowError(lt, "OgNlsEndpoints : request error on endpoint : \"GET NlsEndpointReadySet\"");
       DPcErr;
     }
   }
@@ -211,7 +219,6 @@ static og_status NlsEndpointsParseParametersAdd(struct og_listening_thread *lt, 
   DONE;
 }
 
-
 static og_bool isEndPointRegistered(struct og_nls_request *request, og_string registered_uri, int registered_method)
 {
   og_string request_uri = request->raw->hh.request_uri;
@@ -332,7 +339,6 @@ og_status OgNlsEndpointsParseParametersInUrlPath(struct og_listening_thread *lt,
 
   DONE;
 }
-
 
 static og_status paramInUrlPathUntilStop(og_string url_path, og_char_buffer *detected)
 {
