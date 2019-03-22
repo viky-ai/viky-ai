@@ -13,8 +13,13 @@ og_status NlsEndpointInterpret(struct og_listening_thread *lt, struct og_nls_req
   if (!lt->ctrl_nls->nls_ready)
   {
     response->http_status = 503;
-    response->http_message = "NOT READY";
-    json_object_set_new(response->body, "status", json_string("NLS is NOT yet ready, please check again."));
+    response->http_message = "NLS temporarily unavailable";
+
+    json_t *errors = json_array();
+    json_array_append_new(errors, json_string(response->http_message));
+    json_array_append_new(errors, json_string("NLS is NOT yet ready, please check again."));
+    json_object_set_new(response->body, "errors", errors);
+
     DONE;
   }
 

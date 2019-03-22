@@ -16,7 +16,7 @@ og_status NlsEndpointReadyGet(struct og_listening_thread *lt, struct og_nls_requ
   else
   {
     response->http_status = 503;
-    response->http_message = "NOT READY";
+    response->http_message = "NLS temporarily unavailable";
     json_object_set_new(response->body, "status", json_string("NLS is NOT yet ready, please check again."));
   }
   DONE;
