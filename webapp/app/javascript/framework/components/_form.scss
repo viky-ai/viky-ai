@@ -115,6 +115,7 @@
     margin-bottom: .5em;
     line-height: 1.5;
     display: inline-block;
+    vertical-align: middle;
     &.radio,
     &.checkbox{
       width: auto;
@@ -128,6 +129,8 @@
 
   input[type='checkbox']{
     cursor: pointer;
+    vertical-align: middle;
+    margin-bottom: .5em;
   }
 
   input[type='file']{
