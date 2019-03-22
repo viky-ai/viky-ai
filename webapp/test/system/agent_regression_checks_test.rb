@@ -13,7 +13,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [
+        'interpretations' => [
           {
             'id' => intents(:weather_forecast).id,
             'slug' => intents(:weather_forecast).slug,
@@ -88,7 +88,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [
+        'interpretations' => [
           {
             'id' => intents(:weather_forecast).id,
             'slug' => intents(:weather_forecast).slug,
@@ -145,7 +145,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [
+        'interpretations' => [
           {
             'id' => intents(:weather_forecast).id,
             'slug' => intents(:weather_forecast).slug,
@@ -169,7 +169,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [{
+        'interpretations' => [{
           'id' => intents(:terminator_find).id,
           'slug' => intents(:terminator_find).slug,
           'package' => intents(:terminator_find).agent.id,
@@ -200,7 +200,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [{
+        'interpretations' => [{
           'id' => intents(:weather_forecast).id,
           'slug' => intents(:weather_forecast).slug,
           'package' => intents(:weather_forecast).agent.id,
@@ -317,7 +317,7 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: 200,
       body: {
-        interpretations: [{
+        'interpretations' => [{
           'id' => intents(:weather_forecast).id,
           'slug' => intents(:weather_forecast).slug,
           'package' => intents(:weather_forecast).agent.id,
