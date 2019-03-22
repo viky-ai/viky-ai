@@ -56,7 +56,7 @@
   <form class="console-form">
     <div class="field field--inline">
       <div class="control">
-        <label for="console-language_button">Language</label>
+        <span class="label">Language</span>
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button id="console-language_button" class="btn btn--outline btn--small">
@@ -76,7 +76,7 @@
         </div>
       </div>
       <div class="control">
-        <label for="console-spellchecking_button">Spellchecking</label>
+        <span class="label">Spellchecking</span>
         <div class="dropdown">
           <div class="dropdown__trigger">
             <button id="console-spellchecking_button" class="btn btn--outline btn--small">
@@ -96,22 +96,21 @@
         </div>
       </div>
       <div class="control">
-        <label for="console-verbose_button">Verbose</label>
-        <div class="dropdown">
-          <div class="dropdown__trigger">
-            <button id="console-verbose_button" class="btn btn--outline btn--small">
-              <span class="btn__label">OFF</span>
-              <span class="icon icon--x-small">
-                <%= icon_arrow_down %>
-              </span>
-            </button>
-          </div>
-          <div class="dropdown__content dropdown__content--hidden">
-            <ul>
-              <li><a href="#" class="current">OFF</a></li>
-              <li><a href="#">ON</a></li>
-            </ul>
-          </div>
+        <span class="label">Verbose</span>
+        <div class="btn-group">
+          <button class="btn btn--primary btn--small" type="button">ON</button>
+          <button class="btn btn--small" type="button">OFF</button>
+        </div>
+      </div>
+      <div class="control">
+        <span class="label">Now</span>
+        <div class="btn-group">
+          <button class="btn btn--primary btn--small" type="button">
+            Auto
+          </button>
+          <button class="btn btn--small" type="button">
+            Now
+          </button>
         </div>
       </div>
     </div>

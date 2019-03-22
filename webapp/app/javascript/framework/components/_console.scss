@@ -38,6 +38,8 @@
   }
 }
 
+
+
 .console{
   @include display_flex();
   flex-direction: column;
@@ -52,8 +54,10 @@
     grid-column-gap: .25em;
 
     position: relative;
-    padding: 1em 1em 0 1em;
-    height: 72px; // Fix Safari bug
+    padding: 1em;
+    height: calc(72px + 1em); // Fix Safari bug
+    background-color: #fbfbfb;
+    border-bottom: 1px solid #eee;
 
     .console__header__visual{
       &.console__header__visual--image{
@@ -108,6 +112,32 @@
     .field{
       margin-bottom: .5em;
     }
+
+    .field.field--inline{
+      justify-content: flex-start;
+      .label{
+        font-size: .625em;
+        font-weight: 300;
+        margin-bottom: 0em;
+        color: #666;
+        text-transform: uppercase;
+        display: block;
+      }
+      .control{
+        margin-right: .75em;
+        &:last-child{
+          margin-right: 0;
+        }
+      }
+      #console-language_button {
+        width: 5em;
+      }
+      #console-spellchecking_button {
+        width: 6.6em;
+      }
+    }
+
+
   }
 
   .console__tabs{

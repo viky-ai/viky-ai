@@ -40,7 +40,6 @@ import './bots/bot_form.coffee';
 
 import './dependencies/dependencies_filter.coffee';
 
-import './console/main.scss';
 import './console/console.coffee';
 import './console/console_explain_footer.coffee'
 import './console/console_footer.coffee';
