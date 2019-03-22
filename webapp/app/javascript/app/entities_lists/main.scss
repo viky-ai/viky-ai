@@ -1,9 +1,9 @@
-.entities_list-name-and-visibility{
+.entities_list-visibility-and-proximity{
   display: -ms-grid;
   display: grid;
 
   -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
 
   grid-gap: 2em;
 }

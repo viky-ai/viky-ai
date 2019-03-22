@@ -436,7 +436,7 @@
         {
           "expression": "@{day} @{month} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -459,7 +459,7 @@
         {
           "expression": "@{day} @{slash1} @{month} @{slash2} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

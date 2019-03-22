@@ -12,7 +12,26 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_text?('weather_conditions')
     click_link 'weather_conditions'
     assert page.has_text?('Entities lists / weather_conditions PUBLIC')
+    assert page.has_text?('Glued')
     assert page.has_text?('Not used by any interpretation')
+  end
+
+
+  test 'Update proximity for the entities list' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
+    assert page.has_text?('Glued')
+    assert page.has_link?('Configure')
+    click_link 'Configure'
+    within('.modal') do
+      assert page.has_text? 'Edit entities list'
+      all('.dropdown__trigger > .btn')[0].click
+      click_link 'Far'
+      click_button 'Update'
+    end
+    assert page.has_text?('Your entities list has been successfully updated.')
+    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
+    assert page.has_text?('Far')
   end
 
 

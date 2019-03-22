@@ -37,6 +37,56 @@
 
 
 <section>
+  <h2>Complex choices</h2>
+  <p>
+    Use <code>.dropdown__content__item-title</code> & <code>.dropdown__content__item-description</code> in order to add some explanations when choices are complex.
+  </p>
+  <%= highlight_html do %>
+<div class="dropdown">
+  <div class="dropdown__trigger">
+    <button class="btn">
+      CSS
+      <span class="icon icon--x-small">
+        <%= icon_arrow_down %>
+      </span>
+    </button>
+  </div>
+  <div class="dropdown__content dropdown__content--hidden">
+    <ul>
+      <li>
+        <a href="#">
+          <div class="dropdown__content__item-title">
+            HTML
+          </div>
+          <div class="dropdown__content__item-description">
+            Standard markup language for creating web pages and web applications.
+          </div>
+        </a>
+        <a href="#" class="current">
+          <div class="dropdown__content__item-title">
+            CSS
+          </div>
+          <div class="dropdown__content__item-description">
+            Style sheet language used for describing the presentation of a document written in a markup language like HTML.
+          </div>
+        </a>
+        <a href="#">
+          <div class="dropdown__content__item-title">
+            JavaScript
+          </div>
+          <div class="dropdown__content__item-description">
+            High-level, interpreted programming language that conforms to the ECMAScript specification.
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+  <% end %>
+
+</section>
+
+<section>
   <h2>Right alignement</h2>
   <p>
     <code>.dropdown_content</code> is left aligned by default, in order to have a right alignment uses <code>.dropdown__content--on-right</code> class.
@@ -65,7 +115,7 @@
 
 <section>
   <h2>JS Behaviors</h2>
-  <p>3 available behaviors throught <code>data-behavior</code> attribute.</p>
+  <p>3 available behaviors through <code>data-behavior</code> attribute.</p>
 
   <table>
     <thead>

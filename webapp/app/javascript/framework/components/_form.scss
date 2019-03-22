@@ -159,8 +159,19 @@
     }
   }
   textarea{
-    resize:vertical;
+    resize: vertical;
   }
+
+  textarea.with-2-lines{
+    height: calc(3em + 0.375em + 0.375em);
+  }
+  textarea.with-3-lines{
+    height: calc(4.5em + 0.375em + 0.375em);
+  }
+  textarea.with-4-lines{
+    height: calc(6em + 0.375em + 0.375em);
+  }
+
   input::-webkit-input-placeholder{
     opacity: .3;
   }

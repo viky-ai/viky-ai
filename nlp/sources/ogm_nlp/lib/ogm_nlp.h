@@ -214,7 +214,6 @@ struct expression_compile
   int id_start;
   int text_start;
   og_bool keep_order;
-  og_bool glued;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
   int alias_start, aliases_nb;
@@ -238,7 +237,6 @@ struct expression
   og_string text;
 
   og_bool keep_order;
-  og_bool glued;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
 

@@ -311,6 +311,9 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
   unsigned char string_locale[DPcPathSize];
   OgIso639_3166ToCode(expression->locale, string_locale);
 
+  unsigned char string_glue_distance[DPcPathSize];
+  sprintf(string_glue_distance," glue_distance=%d",expression->glue_distance);
+
   unsigned char string_glue_strength[DPcPathSize];
   string_glue_strength[0]=0;
   if (expression->glue_strength != nlp_glue_strength_Total)
@@ -320,7 +323,7 @@ og_status NlpPackageExpressionLog(og_nlp_th ctrl_nlp_th, package_t package, stru
 
   OgMsg(ctrl_nlp_th->hmsg, "", DOgMsgDestInLog,
       "    Expression '%s' with locale %s%s%s%s%s%s%s alias_any_input_part_position=%d", text, string_locale, id_string,
-      expression->keep_order ? " keep-order" : "", expression->glued ? " glued" : "",  string_glue_strength, recursive,
+      expression->keep_order ? " keep-order" : "", string_glue_distance,  string_glue_strength, recursive,
       super_list, expression->alias_any_input_part_position);
 
   for (int i = 0; i < expression->aliases_nb; i++)

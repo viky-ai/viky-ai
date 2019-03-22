@@ -1,14 +1,15 @@
 <%= form_with model: [current_user, @agent, @entities_list], data: { type: 'json' }, class: 'js-entities_list-form' do |f| %>
-  <div class="entities_list-name-and-visibility">
-    <div class="field">
-      <%= f.label :listname %>
-      <span class="badge badge--small badge--outline"><%= t('required') %></span>
-      <div class="control">
-        <%= f.text_field :listname, id: :entities_list_listname %>
-      </div>
-      <%= display_errors(@entities_list, :listname) %>
-    </div>
 
+  <div class="field">
+    <%= f.label :listname %>
+    <span class="badge badge--small badge--outline"><%= t('required') %></span>
+    <div class="control">
+      <%= f.text_field :listname, id: :entities_list_listname %>
+    </div>
+    <%= display_errors(@entities_list, :listname) %>
+  </div>
+
+  <div class="entities_list-visibility-and-proximity">
     <div class="field">
       <div class="control">
         <%= f.label :visibility %>
@@ -26,12 +27,51 @@
         <%= display_errors(@entities_list, :visibility) %>
       </div>
     </div>
+    <div class="field">
+      <%= f.label :proximity %>
+      &nbsp;<span class="badge badge--small badge--outline"><%= t('required') %></span>
+      <div class="control">
+        <%= f.hidden_field :proximity, id: 'entities_list_proximity' %>
+        <div class="dropdown">
+          <div class="dropdown__trigger">
+            <button class="btn">
+              <span class="btn__label"><%= t("views.entities_lists.proximity.#{@entities_list.proximity}") %></span>
+              <span class="icon icon--x-small">
+                <%= icon_arrow_down %>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown__content dropdown__content--hidden">
+            <ul>
+              <% EntitiesList.proximities.each_key do |proximity| %>
+                <li>
+                  <% label = t("expression.proximity.#{proximity}") %>
+                  <a href="#" <% if proximity == @entities_list.proximity.to_s %>class="current"<% end %>
+                     data-behavior="populate-input, replace-trigger-label"
+                     data-input-selector="#entities_list_proximity"
+                     data-input-value="<%= proximity %>"
+                     data-replace-selector=".btn__label"
+                     data-replace-with="<%= t("views.entities_lists.proximity.#{proximity}") %>">
+                    <div class="dropdown__content__item-title">
+                      <%= t("views.entities_lists.proximity.#{proximity}") %>
+                    </div>
+                    <div class="dropdown__content__item-description">
+                      <%= t("views.entities_lists.proximity.help.#{proximity}") %>
+                    </div>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="field">
     <%= f.label :description %>
     <div class="control">
-      <%= f.text_area :description, id: :entities_list_description %>
+      <%= f.text_area :description, id: :entities_list_description, class: "with-4-lines" %>
     </div>
     <%= display_errors(@entities_list, :description) %>
   </div>
@@ -42,7 +82,6 @@
     <% else %>
       <% btn_label = t('views.entities_lists.new.btn') %>
     <% end %>
-
     <%= f.button btn_label, class: "btn btn--primary",
                  data: {
                      disable_with: "<span class='icon icon--spin'>#{icon_loading}</span> #{t('loading')}".html_safe

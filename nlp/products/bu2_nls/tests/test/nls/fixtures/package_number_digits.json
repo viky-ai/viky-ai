@@ -67,7 +67,7 @@
         {
           "expression": "@{number_digits} @{ordinal_suffix}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

@@ -337,7 +337,7 @@
         {
           "expression": "@{preposition_next} @{weekday}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -358,7 +358,7 @@
         {
           "expression": "@{weekday} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -385,7 +385,7 @@
         {
           "expression": "@{preposition_last} @{weekday}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -405,7 +405,7 @@
         {
           "expression": "@{weekday} @{postposition_last}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -432,7 +432,7 @@
         {
           "expression": "@{weekday} @{preposition_in} @{number} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -469,7 +469,7 @@
         {
           "expression": "@{weekday} @{number} @{week} @{postposition_ago}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -496,7 +496,7 @@
         {
           "expression": "@{weekday} @{preposition_ago} @{number} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -533,7 +533,7 @@
         {
           "expression": "@{number} @{day}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -559,7 +559,7 @@
         {
           "expression": "@{number} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -585,7 +585,7 @@
         {
           "expression": "@{number} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -611,7 +611,7 @@
         {
           "expression": "@{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -650,7 +650,7 @@
             }
           ],
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "solution": "`var all_durations = durations.durations || durations;\nif (!Array.isArray(all_durations)) { all_durations = [ all_durations ]; };\nvar sum_durations = null;\nvar min_unit = 'year';\nall_durations.forEach(\n  function (duration_part) {\n    var value = duration_part.duration.value || duration_part.value;\n    var unit = duration_part.duration.unit || duration_part.unit;\n\n    if (sum_durations == null)\n    {\n      sum_durations = moment.duration(value);\n    }\n    else\n    {\n      sum_durations = sum_durations.add(moment.duration(value));\n    } \n\n    if      (min_unit == 'year')                    { min_unit = unit; }\n    else if (min_unit == 'month' && unit == 'week') { min_unit = unit; }\n    else if (min_unit == 'month' && unit == 'day')  { min_unit = unit; }\n    else if (min_unit == 'week' && unit == 'day')   { min_unit = unit; }\n\n\n  }\n);\nsum_durations;\n\nvar result = {\n  duration:\n  {\n    value: sum_durations,\n    unit: min_unit\n  }\n};\nresult;`"
         }
       ]
@@ -662,7 +662,7 @@
         {
           "expression": "@{duration}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -674,7 +674,7 @@
         {
           "expression": "@{duration} @{durations_recursive}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -696,7 +696,7 @@
         {
           "expression": "@{duration_basic}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -708,7 +708,7 @@
         {
           "expression": "@{and} @{duration_basic}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -725,7 +725,7 @@
         {
           "expression": "@{coma} @{duration_basic}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -749,7 +749,7 @@
         {
           "expression": "@{preposition_for} @{durations}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -773,7 +773,7 @@
         {
           "expression": "@{preposition_in} @{latency}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -800,7 +800,7 @@
         {
           "expression": "@{preposition_for} @{special_date}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -822,7 +822,7 @@
         {
           "expression": "@{special_date}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -839,7 +839,7 @@
         {
           "expression": "@{preposition_for} @{special_range}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -857,7 +857,7 @@
         {
           "expression": "@{special_range}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -876,7 +876,7 @@
         {
           "expression": "@{preposition_the} @{week} @{preposition_of} @{special_date}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -908,7 +908,7 @@
         {
           "expression": "@{preposition_the} @{special_date} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -935,7 +935,7 @@
         {
           "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month_year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -967,7 +967,7 @@
         {
           "expression": "@{preposition_the} @{week} @{preposition_of} @{date_day_month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -999,7 +999,7 @@
         {
           "expression": "@{preposition_the} @{week} @{preposition_of} @{date_month_the_day}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1037,7 +1037,7 @@
         {
           "expression": "@{preposition_for} @{durations} @{preposition_in} @{latency}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1073,7 +1073,7 @@
         {
           "expression": "@{preposition_in} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1090,7 +1090,7 @@
         {
           "expression": "@{preposition_inthe} @{month_word} @{preposition_of} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1117,7 +1117,7 @@
         {
           "expression": "@{preposition_for} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1134,7 +1134,7 @@
         {
           "expression": "@{preposition_for} @{month_word} @{preposition_of} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1171,7 +1171,7 @@
         {
           "expression": "@{preposition_in} @{preposition_next} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1193,7 +1193,7 @@
         {
           "expression": "@{preposition_in} @{month_value} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1215,7 +1215,7 @@
         {
           "expression": "@{preposition_inthe} @{preposition_next} @{month_word} @{preposition_of} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1247,7 +1247,7 @@
         {
           "expression": "@{preposition_inthe} @{month_word} @{preposition_of} @{month_value} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1279,7 +1279,7 @@
         {
           "expression": "@{preposition_for} @{preposition_next} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1301,7 +1301,7 @@
         {
           "expression": "@{preposition_for} @{month_value} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1323,7 +1323,7 @@
         {
           "expression": "@{preposition_for} @{preposition_next} @{month_word} @{preposition_of} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1355,7 +1355,7 @@
         {
           "expression": "@{preposition_for} @{month_word} @{preposition_of} @{month_value} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1397,7 +1397,7 @@
         {
           "expression": "@{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1420,7 +1420,7 @@
         {
           "expression": "@{month_value} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1438,7 +1438,7 @@
         {
           "expression": "@{preposition_in} @{month_value} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1471,7 +1471,7 @@
         {
           "expression": "@{month_year} @{preposition_for} @{duration}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1507,7 +1507,7 @@
         {
           "expression": "@{in_next_month} @{preposition_for} @{duration}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1543,7 +1543,7 @@
         {
           "expression": "@{in_month} @{preposition_for} @{duration}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1579,7 +1579,7 @@
         {
           "expression": "@{preposition_next} @{month_value}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1597,7 +1597,7 @@
         {
           "expression": "@{month_value} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1625,7 +1625,7 @@
         {
           "expression": "@{preposition_next} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1643,7 +1643,7 @@
         {
           "expression": "@{preposition_the} @{preposition_next} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1666,7 +1666,7 @@
         {
           "expression": "@{week} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1684,7 +1684,7 @@
         {
           "expression": "@{preposition_the} @{week} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1717,7 +1717,7 @@
         {
           "expression": "@{preposition_last} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1734,7 +1734,7 @@
         {
           "expression": "@{preposition_the} @{preposition_last} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1756,7 +1756,7 @@
         {
           "expression": "@{week} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1774,7 +1774,7 @@
         {
           "expression": "@{preposition_the} @{week} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1807,7 +1807,7 @@
         {
           "expression": "@{preposition_next} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1825,7 +1825,7 @@
         {
           "expression": "@{preposition_the} @{preposition_next} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1848,7 +1848,7 @@
         {
           "expression": "@{month} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1866,7 +1866,7 @@
         {
           "expression": "@{preposition_the} @{month} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1899,7 +1899,7 @@
         {
           "expression": "@{preposition_last} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1916,7 +1916,7 @@
         {
           "expression": "@{preposition_the} @{preposition_last} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1938,7 +1938,7 @@
         {
           "expression": "@{month} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1956,7 +1956,7 @@
         {
           "expression": "@{preposition_the} @{month} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1989,7 +1989,7 @@
         {
           "expression": "@{preposition_next} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2007,7 +2007,7 @@
         {
           "expression": "@{preposition_the} @{preposition_next} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2030,7 +2030,7 @@
         {
           "expression": "@{year} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2048,7 +2048,7 @@
         {
           "expression": "@{preposition_the} @{year} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2081,7 +2081,7 @@
         {
           "expression": "@{preposition_last} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2098,7 +2098,7 @@
         {
           "expression": "@{preposition_the} @{preposition_last} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2120,7 +2120,7 @@
         {
           "expression": "@{year} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2138,7 +2138,7 @@
         {
           "expression": "@{preposition_the} @{year} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2171,7 +2171,7 @@
         {
           "expression": "@{preposition_the} @{number} @{preposition_of} @{preposition_next} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2204,7 +2204,7 @@
         {
           "expression": "@{preposition_the} @{number} @{preposition_of} @{month} @{postposition_next} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2247,7 +2247,7 @@
         {
           "expression": "@{preposition_the} @{number} @{preposition_of} @{preposition_last} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2279,7 +2279,7 @@
         {
           "expression": "@{preposition_the} @{number} @{preposition_of} @{month} @{postposition_last} ",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2322,7 +2322,7 @@
         {
           "expression": "@{preposition_the} @{day_number} @{preposition_in} @{number_of_months} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2365,7 +2365,7 @@
         {
           "expression": "@{preposition_the} @{day_number} @{preposition_ago} @{number_of_months} @{month}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2398,7 +2398,7 @@
         {
           "expression": "@{preposition_the} @{day_number} @{number_of_months} @{month} @{postposition_ago}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2441,7 +2441,7 @@
         {
           "expression": "@{preposition_next} @{special_date}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2458,7 +2458,7 @@
         {
           "expression": "@{special_date} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2485,7 +2485,7 @@
         {
           "expression": "@{preposition_last} @{special_date}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2501,7 +2501,7 @@
         {
           "expression": "@{special_date} @{postposition_last}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2518,7 +2518,7 @@
         {
           "expression": "@{preposition_the} @{special_date} @{postposition_last}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2550,7 +2550,7 @@
         {
           "expression": "@{special_date} @{preposition_in} @{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2587,7 +2587,7 @@
         {
           "expression": "@{special_date} @{preposition_ago} @{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2614,7 +2614,7 @@
         {
           "expression": "@{special_date} @{number} @{year} @{postposition_ago}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2651,7 +2651,7 @@
         {
           "expression": "@{special_date} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2668,7 +2668,7 @@
         {
           "expression": "@{special_date} @{preposition_in} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2690,7 +2690,7 @@
         {
           "expression": "@{preposition_for} @{special_date} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2712,7 +2712,7 @@
         {
           "expression": "@{preposition_for} @{special_date} @{preposition_in} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2749,7 +2749,7 @@
         {
           "expression": "@{date_month_number} @{preposition_the} @{day_number} @{preposition_in} @{year_number} @{year_word}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2787,7 +2787,7 @@
         {
           "expression": "@{preposition_the} @{day_number} @{date_month_number} @{preposition_in} @{year_number} @{year_word}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2835,7 +2835,6 @@
         {
           "expression": "@{date_month_number} @{preposition_the} @{day_number} @{year_number} @{year_word} @{postposition_ago}",
           "keep-order": true,
-          "glued": false,
           "aliases":
           [
             {
@@ -2873,7 +2872,7 @@
         {
           "expression": "@{preposition_the} @{day_number} @{date_month_number} @{preposition_ago} @{year_number} @{year_word}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2921,7 +2920,7 @@
         {
           "expression": "@{preposition_this} @{weekend}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2939,7 +2938,7 @@
         {
           "expression": "@{preposition_next} @{weekend}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2957,7 +2956,7 @@
         {
           "expression": "@{preposition_the} @{preposition_next} @{weekend}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2980,7 +2979,7 @@
         {
           "expression": "@{preposition_the} @{weekend} @{postposition_next}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3013,7 +3012,7 @@
         {
           "expression": "@{preposition_last} @{weekend}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3030,7 +3029,7 @@
         {
           "expression": "@{preposition_the} @{preposition_last} @{weekend}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3052,7 +3051,7 @@
         {
           "expression": "@{preposition_the} @{weekend} @{postposition_last}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3085,7 +3084,7 @@
         {
           "expression": "@{preposition_the} @{weekend} @{preposition_in} @{number} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3128,7 +3127,7 @@
         {
           "expression": "@{preposition_the} @{weekend} @{number} @{week} @{postposition_ago}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3161,7 +3160,7 @@
         {
           "expression": "@{preposition_the} @{weekend} @{preposition_ago} @{number} @{week}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

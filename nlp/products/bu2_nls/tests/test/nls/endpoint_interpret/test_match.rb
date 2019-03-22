@@ -219,11 +219,11 @@ module Nls
       def create_deepness_package
         deepness = Package.new("deepness")
 
-        i_id_like = Interpretation.new("id_like", scope: "private").new_textual("I'd like",{locale: "en", keep_order: true, glued: true})
-        i_id_like.new_textual("Je voudrais",{locale: "fr", keep_order: true, glued: true})
+        i_id_like = Interpretation.new("id_like", scope: "private").new_textual("I'd like",{locale: "en", keep_order: true, glue_distance: 0})
+        i_id_like.new_textual("Je voudrais",{locale: "fr", keep_order: true, glue_distance: 0})
         deepness << i_id_like
 
-        i_to_go = Interpretation.new("to_go", scope: "private").new_textual("to go",{locale: "en", keep_order: true, glued: true})
+        i_to_go = Interpretation.new("to_go", scope: "private").new_textual("to go",{locale: "en", keep_order: true, glue_distance: 0})
         i_to_go.new_textual("aller",{locale: "fr"})
         deepness << i_to_go
 
