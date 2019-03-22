@@ -21,4 +21,18 @@ en:
       regex: Regex
       solution_label: Define the solution using JavaScript code
       solution_label_readonly: Solution using JavaScript code
+      proximity:
+        glued: Glued
+        accepts_punctuations: Glued + Punc
+        very_close: Very close
+        close: Close
+        far: Far
+        description:
+          glued: Terms must be glued.
+          accepts_punctuations: Terms must be glued but viky.ai accepts punctuations.
+          very_close: Terms must be very close.
+          close: Terms must be close.
+          far: Terms can be far.
+      keep_order_description: Terms must be in the same order.
+      auto_solution_description: The solution is deduced automatically.
 

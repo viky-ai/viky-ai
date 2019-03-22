@@ -13,7 +13,7 @@ class ConsoleTest < ApplicationSystemTestCase
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { interpretations: [] }
+          body: { 'interpretations' => [] }
         }
       )
 
@@ -36,7 +36,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -53,7 +53,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -129,7 +129,7 @@ class ConsoleTest < ApplicationSystemTestCase
       Nlp::Interpret.any_instance.stubs('proceed').returns(
         {
           status: 200,
-          body: { interpretations: [] }
+          body: { 'interpretations' => [] }
         }
       )
       assert page.has_content?('No interpretation found.')
@@ -186,7 +186,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",
@@ -264,7 +264,7 @@ class ConsoleTest < ApplicationSystemTestCase
         {
           status: 200,
           body: {
-            interpretations: [
+            'interpretations' => [
               {
                 "id" => intents(:weather_forecast).id,
                 "slug" => "admin/weather/weather_forecast",

@@ -173,14 +173,26 @@ module InterpretationHelper
       result << "</span>"
     end
 
+    result << "&nbsp;"
+    result << "&nbsp;"
+
     if interpretation.keep_order
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.keep_order')}</span>"
+      result << "&nbsp;"
+      result << "<span class='badge' title='#{t("views.interpretations.keep_order_description")}'>"
+      result << t('activerecord.attributes.interpretation.keep_order')
+      result << "</span>"
     end
-    if interpretation.glued
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.glued')}</span>"
-    end
+
+    result << "&nbsp;"
+    result << "<span class='badge' title='#{t("views.interpretations.proximity.description.#{interpretation.proximity}")}'>"
+    result << t("views.interpretations.proximity.#{interpretation.proximity}")
+    result << "</span>"
+
     if interpretation.auto_solution_enabled
-      result << " <span class='badge'>#{t('activerecord.attributes.interpretation.auto_solution_enabled')}</span>"
+      result << "&nbsp;"
+      result << " <span class='badge' title='#{t("views.interpretations.auto_solution_description")}'>"
+      result << t('activerecord.attributes.interpretation.auto_solution_enabled')
+      result << "</span>"
     end
 
     result.join('').html_safe

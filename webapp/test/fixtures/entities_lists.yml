@@ -5,6 +5,7 @@ weather_conditions:
   position: 1
   color: purple
   visibility: 0
+  proximity: 'glued'
 
 weather_dates:
   listname: weather_dates

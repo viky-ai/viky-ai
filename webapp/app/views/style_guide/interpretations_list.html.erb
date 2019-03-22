@@ -25,7 +25,10 @@
             <span class="interpretation-resume__alias-brown" title="viky/shopping/greetings">Hello</span>
             citizen
           </span>
-          <span class="badge">Glued</span>
+          <span class="merged-badges">
+            <span class="badge">Proximity</span>
+            <span class="badge badge--grey">Glued</span>
+          </span>
         </div>
       </div>
       <div class="aliases interpretations-show__summary">
@@ -102,16 +105,44 @@
     <form action="#" class="interpretations-form">
       <div class="field interpretations-form__interpretation">
         <div class="control trix-control">
-          <div class="trix-control__option ">
-            <input id="keep_order__123" value="1" type="checkbox">
-            <label for="keep_order__123">Keep order</label>
-            &nbsp;
-            <input id="glued__456" value="1" type="checkbox" checked>
-            <label for="glued__456">Glued</label>
-            &nbsp;
-            <input id="auto_solution_enabled__789" value="1" type="checkbox">
-            <label for="auto_solution_enabled__789">Auto solution</label>
+          <div class="trix-control__option">
+            <div class="trix-control__option__child">
+              <input id="keep_order__123" value="1" type="checkbox">
+              <label for="keep_order__123">Keep order</label>
+            </div>
+            <div class="trix-control__option__child">
+              <label>Proximity</label>
+              <div class="dropdown">
+                <div class="dropdown__trigger">
+                  <button class="btn btn--small">
+                    <span class="btn__label">Glued</span>
+                    <span class="icon icon--x-small">
+                      <%= icon_arrow_down %>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown__content dropdown__content--hidden">
+                  <ul>
+                    <% Interpretation.proximities.each_key do |proximity| %>
+                      <li>
+                        <a href="#" <% if proximity == 'glued' %>class="current"<% end %>
+                           data-behavior="replace-trigger-label"
+                           data-replace-selector=".btn__label"
+                           data-replace-with="<%= t("expression.proximity.#{proximity}") %>">
+                          <%= t("expression.proximity.#{proximity}") %>
+                        </a>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="trix-control__option__child">
+              <input id="auto_solution_enabled__789" value="1" type="checkbox">
+              <label for="auto_solution_enabled__789">Auto solution</label>
+            </div>
           </div>
+
           <trix-editor input="expression-600ba012-e4bd-4a7d-a62d-97057655d632" placeholder="Add an expression" trix-id="2" toolbar="trix-toolbar-2" contenteditable=""><div><!--block--><a href="{&quot;color&quot;:&quot;intent-brown&quot;,&quot;aliasname&quot;:&quot;where&quot;,&quot;slug&quot;:&quot;olivier/vikipedia/where&quot;,&quot;intent_id&quot;:&quot;8ae3a9fb-f266-401e-919f-bd44a8b279a5&quot;,&quot;nature&quot;:&quot;type_intent&quot;,&quot;id&quot;:&quot;b464a720-0a8a-11e8-a450-0d99b20efd39&quot;,&quot;state&quot;:&quot;new&quot;}">Hello</a> citizen</div></trix-editor>
         </div>
       </div>

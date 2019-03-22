@@ -295,7 +295,7 @@ static og_bool NlpSuperListCreate(og_nlp_th ctrl_nlp_th, struct super_list *supe
     g_queue_push_tail(sorted_request_expressions, GINT_TO_POINTER(request_expressions[i].self_index));
   }
 
-  if (super_list->recursive_expression->glued)
+  if (super_list->recursive_expression->glue_distance == 0)
   {
     NlpLog(DOgNlpTraceMatch, "NlpSuperListCreate: this super list is glued, we need to calculate all the glued lists");
     IFE(super_list_created = NlpSuperListCreateGlued(ctrl_nlp_th, super_list, sorted_request_expressions));

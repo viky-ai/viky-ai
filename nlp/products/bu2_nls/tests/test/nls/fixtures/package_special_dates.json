@@ -50,7 +50,7 @@
         {
           "expression": "@{christmas} @{holidays}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -67,7 +67,7 @@
         {
           "expression": "@{preposition_the} @{christmas} @{holidays}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -89,7 +89,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -171,7 +171,7 @@
         {
           "expression": "@{preposition_the} @{christmas} @{holidays} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -198,7 +198,7 @@
         {
           "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -230,7 +230,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -262,7 +262,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -294,7 +294,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -331,7 +331,7 @@
         {
           "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{year} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -368,7 +368,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{year} @{number}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -421,7 +421,7 @@
         {
           "expression": "@{christmas} @{holidays} @{preposition_in} @{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -453,7 +453,7 @@
         {
           "expression": "@{preposition_the} @{christmas} @{holidays} @{preposition_in} @{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -490,7 +490,7 @@
         {
           "expression": "@{preposition_the} @{holidays} @{preposition_of} @{christmas} @{preposition_in} @{number} @{year}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

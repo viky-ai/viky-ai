@@ -130,7 +130,8 @@ class Nlp::Package
         expression[:aliases] = []
         expression[:aliases] << build_internal_alias(ialias)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
+        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         expression = {}
@@ -140,9 +141,9 @@ class Nlp::Package
         expression[:aliases] << build_internal_alias(ialias)
         expression[:aliases] << build_internal_alias(ialias, true)
         expression[:keep_order] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression[:glued]      = ialias.interpretation.glued      if ialias.interpretation.glued
+        expression[:glue_distance] = ialias.interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
-
         interpretation_hash[:expressions] = expressions
         interpretations << interpretation_hash
       end
@@ -164,9 +165,11 @@ class Nlp::Package
         expression[:aliases]    = build_aliases(interpretation)
         expression[:locale]     = interpretation.locale     unless interpretation.locale == Locales::ANY
         expression[:keep_order] = interpretation.keep_order if interpretation.keep_order
-        expression[:glued]      = interpretation.glued      if interpretation.glued
+        expression[:glue_distance] = interpretation.proximity.get_distance
+        expression[:glue_strength] = 'punctuation' if interpretation.proximity_accepts_punctuations?
         expression[:solution]   = build_interpretation_solution(interpretation)
         expressions << expression
+
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
@@ -192,8 +195,8 @@ class Nlp::Package
           expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
           expression[:solution] = build_entities_list_solution(entity)
           expression[:keep_order] = true
-          expression[:glued]      = true
-          expression[:glue_strength] = 'punctuation'
+          expression[:glue_distance] = elist.proximity.get_distance
+          expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
           expressions << expression
         end
       end

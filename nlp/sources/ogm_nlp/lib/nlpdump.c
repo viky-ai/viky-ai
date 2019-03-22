@@ -248,16 +248,6 @@ static og_status NlpPackageExpressionDump(og_nlp_th ctrl_nlp_th, package_t packa
     }
   }
 
-  if (expression->glued)
-  {
-    json_t *json_glued = json_true();
-    IF(json_object_set_new(json_expression, "glued", json_glued))
-    {
-      NlpThrowErrorTh(ctrl_nlp_th, "NlpPackageExpressionDump : Error while dumping glued");
-      DPcErr;
-    }
-  }
-
   if (expression->json_solution)
   {
     IF(json_object_set(json_expression, "solution", expression->json_solution))

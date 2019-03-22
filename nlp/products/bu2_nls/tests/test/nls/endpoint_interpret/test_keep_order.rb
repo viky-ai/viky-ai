@@ -40,10 +40,10 @@ module Nls
         mixed_keep_order << Expression.new("@{titi} @{tata} @{toto}", keep_order: true, aliases: {titi: titi, tata: tata, toto: toto}, solution: {titi: "titi", tata: "tata", toto: "toto"})
 
         mixed_no_keep_order_glued = package.new_interpretation("mixed_no_keep_order_glued", scope: "public")
-        mixed_no_keep_order_glued << Expression.new("@{titi} @{tata} @{tutu}", glued: true, aliases: {titi: titi, tata: tata, tutu: tutu}, solution: {titi: "titi", tata: "tata", tutu: "tutu"})
+        mixed_no_keep_order_glued << Expression.new("@{titi} @{tata} @{tutu}", glue_distance: 0, aliases: {titi: titi, tata: tata, tutu: tutu}, solution: {titi: "titi", tata: "tata", tutu: "tutu"})
 
         mixed_keep_order_glued = package.new_interpretation("mixed_keep_order_glued", scope: "public")
-        mixed_keep_order_glued << Expression.new("@{toto} @{tata} @{tutu}", keep_order: true, glued: true, aliases: {toto: toto, tata: tata, tutu: tutu}, solution: {toto: "toto", tata: "tata", tutu: "tutu"})
+        mixed_keep_order_glued << Expression.new("@{toto} @{tata} @{tutu}", keep_order: true, glue_distance: 0, aliases: {toto: toto, tata: tata, tutu: tutu}, solution: {toto: "toto", tata: "tata", tutu: "tutu"})
 
         package
       end
