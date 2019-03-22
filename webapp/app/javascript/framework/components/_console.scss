@@ -129,11 +129,11 @@
           margin-right: 0;
         }
       }
-      #console-language_button {
+      .control:nth-child(1) .btn{
         width: 5em;
       }
-      #console-spellchecking_button {
-        width: 6.6em;
+      .control:nth-child(2) .btn{
+        width: 6.5em;
       }
     }
   }
