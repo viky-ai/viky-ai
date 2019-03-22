@@ -1,5 +1,4 @@
-<div class="btn-group"
-     data-form-selector=".agent_search">
+<div class="btn-group">
   <%= f.hidden_field :filter_visibility %>
   <% active_css = @search.filter_visibility == 'all' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_visibility.all'), class: "btn #{active_css}",
@@ -7,6 +6,7 @@
                    input_selector: "input[name='search[filter_visibility]']",
                    input_value: 'all',
                    behavior: 'submit-form',
+                   form_selector: ".agent_search"
                } %>
   <% active_css = @search.filter_visibility == 'private' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_visibility.private'), class: "btn #{active_css}",
@@ -14,6 +14,7 @@
                    input_selector: "input[name='search[filter_visibility]']",
                    input_value: 'private',
                    behavior: 'submit-form',
+                   form_selector: ".agent_search"
                } %>
   <% active_css = @search.filter_visibility == 'public' ? 'btn--primary' : '' %>
   <%= f.button t('views.agents.index.filter_visibility.public'), class: "btn #{active_css}",
@@ -21,5 +22,6 @@
                    input_selector: "input[name='search[filter_visibility]']",
                    input_value: 'public',
                    behavior: 'submit-form',
+                   form_selector: ".agent_search"
                } %>
 </div>

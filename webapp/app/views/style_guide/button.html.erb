@@ -136,38 +136,74 @@
   <p>
     The <code>.btn--primary</code> class mark the selected button.
   </p>
+
+  <h3>Required <code>data-attributes</code></h3>
   <table>
     <thead>
-    <tr>
-      <th><code>data-action</code> value</th>
-      <th>Behavior description</th>
-    </tr>
+      <tr>
+        <th>Required <code>data-attributes</code></th>
+        <th>Description</th>
+      </tr>
     </thead>
     <tbody>
-    <tr>
-      <td><code>data-input-selector</code></td>
-      <td>
-        A CSS selector to select the linked field.
-      </td>
-    </tr>
-    <tr>
-      <td><code>data-input-value</code></td>
-      <td>
-        The actual value to write in the linked field.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <code>trigger-event</code>
-      </td>
-      <td>
-        <p>
-          Fire on <code>body</code> the JS event defined by <code>data-trigger-event</code> attribute value.
-        </p>
-      </td>
-    </tr>
+      <tr>
+        <td><code>data-input-selector</code></td>
+        <td>
+          A CSS selector to select the linked field.
+        </td>
+      </tr>
+      <tr>
+        <td><code>data-input-value</code></td>
+        <td>
+          The actual value to write in the linked field.
+        </td>
+      </tr>
     </tbody>
   </table>
+
+
+  <h3>Optionnal <code>data-attributes</code></h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Optionnal <code>data-attributes</code></th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code>data-trigger-event</code>
+        </td>
+        <td>
+          <p>
+            Fire on <code>body</code> the JS event defined by <code>data-trigger-event</code> attribute value.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>data-behavior="submit-form"</code>
+        </td>
+        <td>
+          <p>
+            Submit a form found via <code>data-form-selector</code> attribute value.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Interact via JS events</h3>
+  <p>
+    You can also play with <code>btn-group</code> via JavaScript events. The event <code>btn-group:click</code> allow to update a <code>btn-group</code> specifying a <code>selector</code> to identify the <code>btn-group</code> and a <code>on</code> used to identify the <code>button</code> on which the click is made.
+  </p>
+
+  <pre>
+    $('body').trigger('btn-group:click', { selector: '#my-btn-group', on: 'Option A' })
+  </pre>
+
   <%= highlight_html do %>
 <div class="btn-group">
   <button class="btn"

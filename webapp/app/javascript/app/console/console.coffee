@@ -122,10 +122,10 @@ class Console
 
   send_interpret_request: (data) ->
     now = if data.now? then 'Manual' else 'Auto'
-    nowUpdater = { selector: '#console-buttongroup-now-type', on: now }
+    nowUpdater = { selector: '#console-btn-group-now-type', on: now }
     languageUpdater = { selector: '#console-dropdown-locale', on: data.language }
     spellcheckingUpdater = { selector: '#console-dropdown-spellchecking', on: data.spellchecking }
-    $('body').trigger('buttongroup:click', nowUpdater)
+    $('body').trigger('btn-group:click', nowUpdater)
     $('body').trigger('dropdown:click', languageUpdater)
     $('body').trigger('dropdown:click', spellcheckingUpdater)
 

@@ -74,29 +74,37 @@
 
     <div class="control">
       <span class="label"><%= t('views.console.verbose.label') %></span>
-      <div class="btn-group"
-           data-form-selector="#js-console-form">
+      <div class="btn-group">
         <button class="btn btn--primary btn--small" type="button"
                 data-behavior="submit-form"
+                data-form-selector="#js-console-form"
                 data-input-selector=".js-verbose-input"
-                data-input-value="false"><%= t('views.console.verbose.disable') %></button>
+                data-input-value="false">
+          <%= t('views.console.verbose.disable') %>
+        </button>
         <button class="btn btn--small" type="button"
                 data-behavior="submit-form"
+                data-form-selector="#js-console-form"
                 data-input-selector=".js-verbose-input"
-                data-input-value="true"><%= t('views.console.verbose.enable') %></button>
+                data-input-value="true">
+          <%= t('views.console.verbose.enable') %>
+        </button>
       </div>
     </div>
 
     <div class="control">
       <span class="label"><%= t('views.console.datetime.label') %></span>
-      <div id="console-buttongroup-now-type"
-           class="btn-group"
-           data-form-selector="#js-console-form">
+      <div id="console-btn-group-now-type" class="btn-group">
         <button class="btn btn--primary btn--small" type="button"
                 data-behavior="submit-form"
-                data-trigger-event="console-select-now-type-auto"><%= t('views.console.datetime.auto') %></button>
+                data-form-selector="#js-console-form"
+                data-trigger-event="console-select-now-type-auto">
+          <%= t('views.console.datetime.auto') %>
+        </button>
         <button class="btn btn--small" type="button"
-                data-trigger-event="console-select-now-type-manual"><%= t('views.console.datetime.manual') %></button>
+                data-trigger-event="console-select-now-type-manual">
+          <%= t('views.console.datetime.manual') %>
+        </button>
       </div>
     </div>
 
