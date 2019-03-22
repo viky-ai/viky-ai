@@ -7,7 +7,7 @@
 #include "ogm_nlp.h"
 #include <stdlib.h>
 
-#define DOgNlpMaxNbExpressionCombinations 10000
+#define DOgNlpMaxNbExpressionCombinations 100000
 
 static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length);
@@ -130,51 +130,48 @@ og_status NlpMatchExpressions(og_nlp_th ctrl_nlp_th)
   DONE;
 }
 
-static int NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
+static og_status NlpMatchExpressionsZone(og_nlp_th ctrl_nlp_th, struct expression *expression, int Irequest_input_part,
     struct match_zone_input_part *match_zone_input_part, int match_zone_input_part_length)
 {
-  int nb_combinations = 1;
+  size_t nb_potential_combinations = 1;
   for (int i = 0; i < match_zone_input_part_length; i++)
   {
-    nb_combinations *= match_zone_input_part[i].length;
-  }
-
-  if (nb_combinations > DOgNlpMaxNbExpressionCombinations)
-  {
-    if (ctrl_nlp_th->accept_any_expressions == FALSE)
+    if (match_zone_input_part[i].length >= 1)
     {
-      NlpLog(DOgNlpTraceMinimal,
-          "NlpMatchExpressionsZone at Irequest_input_part=%d nb_combinations=%d > %d, avoiding expression '%s'",
-          Irequest_input_part, nb_combinations, DOgNlpMaxNbExpressionCombinations, expression->text);
+      nb_potential_combinations *= match_zone_input_part[i].length;
     }
   }
-  int combination_counter = DOgNlpMaxNbExpressionCombinations;
-  return (NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, expression, Irequest_input_part, match_zone_input_part, 0,
-      match_zone_input_part_length, &combination_counter));
+
+  int combination_counter = 0;
+  og_status status = NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, expression, Irequest_input_part,
+      match_zone_input_part, 0, match_zone_input_part_length, &combination_counter);
+
+  return status;
 }
 
 static og_bool NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct expression *expression,
     int Irequest_input_part, struct match_zone_input_part *match_zone_input_part, int start, int length,
     int *pcombination_counter)
 {
-  (*pcombination_counter)--;
-  if (*pcombination_counter <= 0)
-  {
-    if (ctrl_nlp_th->accept_any_expressions == FALSE)
-    {
-      NlpLog(DOgNlpTraceMinimal,
-          "NlpMatchExpressionsZone at Irequest_input_part=%d nb_combinations > %d, avoiding expression '%s'",
-          Irequest_input_part, DOgNlpMaxNbExpressionCombinations, expression->text);
-      NlpWarningAdd(ctrl_nlp_th,
-          "NlpMatchExpressionsZone at Irequest_input_part=%d nb_combinations > %d, avoiding expression '%s'",
-          Irequest_input_part, DOgNlpMaxNbExpressionCombinations, expression->text);
-    }
-    return TRUE;
-  }
+
   if (length == 0)
   {
+    if (*pcombination_counter >= DOgNlpMaxNbExpressionCombinations)
+    {
+      if (ctrl_nlp_th->accept_any_expressions == FALSE)
+      {
+        NlpLog(DOgNlpTraceMinimal, "NlpMatchExpressionsZone: stop searching match, because nb_combinations > %d "
+            " on expression '%s' in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->id,
+            expression->interpretation->slug, Irequest_input_part);
+        NlpWarningAdd(ctrl_nlp_th, "NlpMatchExpressionsZone: stop searching match, because nb_combinations > %d "
+            " on expression '%s' in '%s' at Irequest_input_part=%d", DOgNlpMaxNbExpressionCombinations, expression->id,
+            expression->interpretation->slug, Irequest_input_part);
+      }
+      return TRUE;
+    }
     return (NlpMatchExpression(ctrl_nlp_th, expression, Irequest_input_part, match_zone_input_part));
   }
+
   for (int i = 0; i < match_zone_input_part[start].length; i++)
   {
     match_zone_input_part[start].current = match_zone_input_part[start].start + i;
@@ -182,11 +179,15 @@ static og_bool NlpMatchExpressionsZoneRecursive(og_nlp_th ctrl_nlp_th, struct ex
         length);
     IFE(too_far);
     if (too_far) continue;
-    og_bool must_stop = NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, expression, Irequest_input_part, match_zone_input_part, start + 1,
-            length - 1, pcombination_counter);
+
+    (*pcombination_counter)++;
+
+    og_bool must_stop = NlpMatchExpressionsZoneRecursive(ctrl_nlp_th, expression, Irequest_input_part,
+        match_zone_input_part, start + 1, length - 1, pcombination_counter);
     IFE(must_stop);
     if (must_stop) return TRUE;
   }
+
   return FALSE;
 }
 
@@ -231,7 +232,7 @@ static og_bool NlpInputPartsTooFar(og_nlp_th ctrl_nlp_th, struct expression *exp
     if (max_distance < distance) max_distance = distance;
   }
   int glue_distance = expression->glue_distance;
-  if (expression->glue_distance == 0 ) glue_distance = DOgNlpDefaultGlueDistance;
+  if (expression->glue_distance == 0) glue_distance = DOgNlpDefaultGlueDistance;
   if (max_distance > glue_distance) too_far = TRUE;
   if (ctrl_nlp_th->loginfo->trace & DOgNlpTraceMatchExpressionZone)
   {
