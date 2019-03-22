@@ -136,8 +136,13 @@
         width: 6.6em;
       }
     }
+  }
 
-
+  button:disabled{
+    cursor: not-allowed;
+    .icon{
+      opacity: 0.5;
+    }
   }
 
   .console__tabs{

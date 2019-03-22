@@ -22,6 +22,9 @@ class Console
 
     $("body").on 'click', (event) => @dispatch(event)
 
+    @toogle_form_is_needed()
+    $('#js-console-input-sentence').on 'input', => @toogle_form_is_needed()
+
     $("body").on 'console-select-now-type-auto', (event) =>
       $('#js-console-now-input-container').hide()
       $('#js-console-now-input-container input').val('')
@@ -99,6 +102,15 @@ class Console
         .addClass('panels-switch__panel--hide')
         .removeClass('panels-switch__panel--show')
 
+  toogle_form_is_needed: ->
+    if $('#js-console-input-sentence').val().trim() == ""
+      $('#js-console-form').prop("disabled", true)
+      $('#console-send-sentence').prop("disabled", true)
+    else
+      $('#js-console-form').prop("disabled", false)
+      $('#console-send-sentence').prop("disabled", false)
+
+
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')
       return $(event.target)
@@ -121,6 +133,8 @@ class Console
     $('.js-language-input').val(data.language)
     $('.js-spellchecking-input').val(data.spellchecking)
     $('#js-console-now-input-container input').val(data.now) if data.now?
+
+    @toogle_form_is_needed()
 
     Rails.fire($('#js-console-form')[0], 'submit')
 
