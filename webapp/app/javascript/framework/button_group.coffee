@@ -1,41 +1,49 @@
 $ = require('jquery');
 
-#
-# TODO: make ButtonGroup more coherent with dropdown
-#
 class ButtonGroup
   constructor: ->
     $("body").on 'click', (event) => @dispatch(event)
     $('body').on 'btn-group:click', (event, data) => @click(data)
 
+  behaviors: (button) ->
+    behavior = button.data('behavior')
+    behaviors = []
+    if behavior
+      behaviors.push(b.trim()) for b in  behavior.split(',')
+    behaviors
+
   dispatch: (event) ->
     if $(event.target).is('button')
       button = $(event.target)
       group = button.closest('.btn-group')
+
       if group.length == 1
         event.preventDefault()
-        @display(group, button)
+        @toggle_display(group, button)
 
-        input_selector = button.data('input-selector')
-        input_value = button.data('input-value')
-        @change_value(input_selector, input_value)
+      if button.data('behavior')
+        for behavior in @behaviors(button)
+          switch behavior
+            when "populate-input"
+              event.preventDefault()
+              @populate_input(button)
+            when "submit-form"
+              event.preventDefault()
+              @submit_form(button)
+            when "trigger-event"
+              @trigger_event(button)
 
-        behavior = button.data('behavior')
-        if behavior == 'submit-form'
-          form_selector = button.data('form-selector')
-          @submit_form(form_selector)
-
-        trigger_event = button.data('trigger-event')
-        @trigger_event(button) if trigger_event
-
-  display: (group, selected_button) ->
+  toggle_display: (group, selected_button) ->
     $(group).children().removeClass('btn--primary')
     $(selected_button).addClass('btn--primary')
 
-  change_value: (input_selector, input_value) ->
+  populate_input: (button) ->
+    input_selector = button.data('input-selector')
+    input_value = button.data('input-value')
     $(input_selector).val(input_value)
 
-  submit_form: (form_selector) ->
+  submit_form: (button) ->
+    form_selector = button.data('form-selector')
     if $(form_selector).data('remote')
       form = document.querySelector(form_selector);
       Rails.fire(form, 'submit')
@@ -44,8 +52,8 @@ class ButtonGroup
       params = $(form_selector).serialize()
       Turbolinks.visit("#{action}?#{params}")
 
-  trigger_event: (node) ->
-    event_to_fire = node.data('trigger-event')
+  trigger_event: (button) ->
+    event_to_fire = button.data('trigger-event')
     $('body').trigger(event_to_fire)
 
   # Update via JS event "btn-group:click"
@@ -57,10 +65,14 @@ class ButtonGroup
         if $(button).html().includes(value)
           node = $(button)
       if node
-        @display(node.closest('.btn-group'), node)
-        if node.data('trigger-event')
-          event = node.data('trigger-event')
-          $('body').trigger(event)
+        @toggle_display(node.closest('.btn-group'), node)
+        if node.data('behavior')
+          for behavior in @behaviors(node)
+            switch behavior
+              when "populate-input"
+                @populate_input(node)
+              when "trigger-event"
+                @trigger_event(node)
 
 Setup = ->
   new ButtonGroup()

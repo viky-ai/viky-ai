@@ -18,11 +18,17 @@
         <br />
         <div class="btn-group">
           <button class="btn <% if @entities_list.is_private? %>btn--primary<% end %>" type="button"
-                  data-input-selector="input[name='entities_list[visibility]']"
-                  data-input-value="is_private"><%= t('activerecord.attributes.entities_list.visibility_is_private') %></button>
+            data-behavior= "populate-input"
+            data-input-selector="input[name='entities_list[visibility]']"
+            data-input-value="is_private">
+            <%= t('activerecord.attributes.entities_list.visibility_is_private') %>
+          </button>
           <button class="btn <% if @entities_list.is_public? %>btn--primary<% end %>" type="button"
-                  data-input-selector="input[name='entities_list[visibility]']"
-                  data-input-value="is_public"><%= t('activerecord.attributes.entities_list.visibility_is_public') %></button>
+            data-behavior= "populate-input"
+            data-input-selector="input[name='entities_list[visibility]']"
+            data-input-value="is_public">
+            <%= t('activerecord.attributes.entities_list.visibility_is_public') %>
+          </button>
         </div>
         <%= display_errors(@entities_list, :visibility) %>
       </div>

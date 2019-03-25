@@ -76,14 +76,14 @@
       <span class="label"><%= t('views.console.verbose.label') %></span>
       <div class="btn-group">
         <button class="btn btn--primary btn--small" type="button"
-                data-behavior="submit-form"
+                data-behavior="populate-input, submit-form"
                 data-form-selector="#js-console-form"
                 data-input-selector=".js-verbose-input"
                 data-input-value="false">
           <%= t('views.console.verbose.disable') %>
         </button>
         <button class="btn btn--small" type="button"
-                data-behavior="submit-form"
+                data-behavior="populate-input, submit-form"
                 data-form-selector="#js-console-form"
                 data-input-selector=".js-verbose-input"
                 data-input-value="true">
@@ -96,13 +96,14 @@
       <span class="label"><%= t('views.console.datetime.label') %></span>
       <div id="console-btn-group-now-type" class="btn-group">
         <button class="btn btn--primary btn--small" type="button"
-                data-behavior="submit-form"
-                data-form-selector="#js-console-form"
-                data-trigger-event="console-select-now-type-auto">
+          data-behavior="populate-input, submit-form, trigger-event"
+          data-form-selector="#js-console-form"
+          data-trigger-event="console-select-now-type-auto">
           <%= t('views.console.datetime.auto') %>
         </button>
         <button class="btn btn--small" type="button"
-                data-trigger-event="console-select-now-type-manual">
+          data-behavior="trigger-event"
+          data-trigger-event="console-select-now-type-manual">
           <%= t('views.console.datetime.manual') %>
         </button>
       </div>

@@ -37,10 +37,12 @@
         <div class="btn-group">
           <button class="btn <% if agent.is_private? %>btn--primary<% end %>"
             type="button"
+            data-behavior="populate-input"
             data-input-selector="input[name='agent[visibility]']"
             data-input-value="is_private"><%= t('activerecord.attributes.agent.visibility_is_private') %></button>
           <button class="btn <% if agent.is_public? %>btn--primary<% end %>"
             type="button"
+            data-behavior="populate-input"
             data-input-selector="input[name='agent[visibility]']"
             data-input-value="is_public"><%= t('activerecord.attributes.agent.visibility_is_public') %></button>
         </div>
