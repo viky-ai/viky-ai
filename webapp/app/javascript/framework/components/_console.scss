@@ -138,13 +138,6 @@
     }
   }
 
-  button:disabled{
-    cursor: not-allowed;
-    .icon{
-      opacity: 0.5;
-    }
-  }
-
   .console__tabs{
     .tabs{
       margin: 0;

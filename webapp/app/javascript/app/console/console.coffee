@@ -106,10 +106,11 @@ class Console
     if $('#js-console-input-sentence').val().trim() == ""
       $('#js-console-form').prop("disabled", true)
       $('#console-send-sentence').prop("disabled", true)
+      $('#console-send-sentence').addClass('btn--disabled')
     else
       $('#js-console-form').prop("disabled", false)
       $('#console-send-sentence').prop("disabled", false)
-
+      $('#console-send-sentence').removeClass('btn--disabled')
 
   get_link_target: (event) ->
     if $(event.target).is('a') || $(event.target).is('match')
