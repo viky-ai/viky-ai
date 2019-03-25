@@ -6,6 +6,7 @@
 curl -G "https://www.viky.ai/api/v1/agents/superman/superbot/interpret.json?" \
     --data-urlencode "now=2017-12-05T08:30:20+01:00" \
     --data-urlencode "sentence=I want to go from NY to LA" \
+    --data-urlencode "spellchecking=high"
     --data-urlencode "context['session_id']='0112f97b-e5dd-47a4-b848'" \
     --data-urlencode "context['bot_version']='1.2.1'" \
   -H "Agent-Token: the-agent-token" \
@@ -73,6 +74,12 @@ This endpoint retrieves all the interpretations extracted from the `sentence` st
       <td>no</td>
       <td>en-US, en;q=0.9</td>
       <td>The language code in which the sentence is written.</td>
+    </tr>
+    <tr>
+      <td>spellchecking</td>
+      <td>no</td>
+      <td>high</td>
+      <td>How wide the spellchecking is run. Possible values are : <code>inactive</code>, <code>low</code>, <code>medium</code> or <code>high</code>. Default is <code>low</code>.</td>
     </tr>
     <tr>
       <td>now</td>

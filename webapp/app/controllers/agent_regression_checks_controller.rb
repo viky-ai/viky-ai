@@ -60,7 +60,7 @@ class AgentRegressionChecksController < ApplicationController
 
     def regression_check_params
       params.require(:regression_check)
-            .permit(:sentence, :language, :now, expected: [
+            .permit(:sentence, :language, :spellchecking, :now, expected: [
               :package,
               :id,
               :solution,

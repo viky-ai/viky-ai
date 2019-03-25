@@ -33,7 +33,7 @@ module Nls
         interpretation << Expression.new("emoji 🔥", solution: '`"🔥"`')
         interpretation << Expression.new("emoji 🔥+👋", solution: '`"🔥+👋"`')
         interpretation << Expression.new("emoji array 🔥+👋", solution: '`[ "🔥", "👋" ]`')
-        interpretation << Expression.new("emoji abject 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
+        interpretation << Expression.new("emoji object 🔥+👋", solution: '`{ fire: "🔥", hand: "👋" }`')
         package
       end
 

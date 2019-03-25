@@ -15,6 +15,12 @@ en:
       not_found: The regression test cannot be found.
       query: Query
       language: Language
+      spellchecking:
+        label: Spellchecking
+        inactive: Inactive
+        low: Low
+        medium: Medium
+        high: High
       now: Now
       result:
         slug:

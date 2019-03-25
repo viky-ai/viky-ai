@@ -1,0 +1,102 @@
+<div class="sg-intro">
+  <h1>Buttons group</h1>
+</div>
+
+<section>
+  <h2>Base</h2>
+
+ <%= highlight_html do %>
+<div class="btn-group">
+  <button class="btn btn--primary" type="button">Option A</button>
+  <button class="btn" type="button">Option B</button>
+</div>
+<div class="btn-group">
+  <button class="btn btn--primary" type="button">Variant A</button>
+  <button class="btn" type="button">Variant B</button>
+  <button class="btn" type="button">Variant C</button>
+</div>
+<% end %>
+
+</section>
+
+
+<section>
+  <h2>JavaScript</h2>
+  <h3>Behaviors</h3>
+  <p>
+    3 available behaviors through <code>data-behavior</code> attribute.
+  </p>
+  <p>
+    You can combine them by listing them separated by a comma.
+    For example: <code>data-behavior="populate-input, submit-form"</code>.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th><code>data-behavior</code> value</th>
+        <th>Behavior description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <code>populate-input</code>
+        </td>
+        <td>
+          <p>Populate one input found via <code>data-input-selector</code> attribute value with <code>data-input-value</code> attribute value.</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>submit-form</code>
+        </td>
+        <td>
+          <p>
+            Submit a form found via <code>data-form-selector</code> attribute value.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>trigger-event</code>
+        </td>
+        <td>
+          <p>
+            Fire on <code>body</code> the JS event defined by <code>data-trigger-event</code> attribute value.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <%= highlight_html do %>
+<div class="btn-group">
+  <button class="btn btn--primary" type="button"
+    data-behavior="populate-input"
+    data-input-selector="#js-verbose-input"
+    data-input-value="on">
+    Verbose ON
+  </button>
+  <button class="btn" type="button"
+    data-behavior="populate-input"
+    data-input-selector="#js-verbose-input"
+    data-input-value="off">
+    Verbose OFF
+  </button>
+</div>
+<input type="text" id="js-verbose-input" value="on" />
+  <% end %>
+
+
+  <h3>Interact via JS events</h3>
+  <p>
+    You can also play with <code>btn-group</code> via JavaScript events. The event <code>btn-group:click</code> allow to update a <code>btn-group</code> specifying a <code>selector</code> to identify the <code>btn-group</code> and a <code>on</code> used to identify the <code>button</code> on which the click is made.
+  </p>
+  <p>
+    The event <code>btn-group:click</code> will take care of <code>populate-input</code> & <code>trigger-event</code> behaviors.
+  </p>
+
+  <pre>
+    $('body').trigger('btn-group:click', { selector: '#my-btn-group', on: 'Option A' })
+  </pre>
+</section>

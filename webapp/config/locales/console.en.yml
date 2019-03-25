@@ -14,14 +14,26 @@ en:
       warnings:
         one: "1 Warning"
         other: "%{count} Warnings"
-      verbose_on: Verbose ON
-      verbose_off: Verbose OFF
-      datetime_auto: Auto now
-      datetime_manual: Manual now
-      datetime_addon: Now (ISO 8601)
+      verbose:
+        label: "Verbose"
+        enable: "ON"
+        disable: "OFF"
+      datetime:
+        label: "Now"
+        auto: "Auto"
+        manual: "Manual"
+        addon: "Now (ISO 8601)"
       go_to_api_endpoint: Go to API endpoint
       download_package: Download package
-      all_locales: "Language: Auto"
+      locales:
+        label: "Language"
+        all: "Auto"
+      spellchecking:
+        label: "Spellchecking"
+        inactive: "Inactive"
+        low: "Low"
+        medium: "Medium"
+        high: "High"
       fullscreen_enter: Enter in fullscreen mode
       fullscreen_leave: Leave fullscreen mode
       expression_text: Expression
