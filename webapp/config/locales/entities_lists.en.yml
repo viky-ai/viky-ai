@@ -8,8 +8,9 @@ en:
           select_import:
             title: Import entities
             wait_message: Import in progress, please wait...
-            append_label: Append to current entities
-            replace_label: Replace current entities
+            mode:
+              append: Append to current entities
+              replace: Replace current entities
             submit: Import
             success:
               zero: "No entity imported"
@@ -68,7 +69,7 @@ en:
           close: Terms must be close.
           far: Terms can be far.
         description:
-          glued: "Entities proximity is set to \"Glued\". For an entity containing multiple terms, searched terms must be glued to be found."
-          very_close: "Entities proximity is set to \"Very close\". For an entity containing multiple terms, searched terms must be very close to be found."
-          close: "Entities proximity is set to \"Close\". For an entity containing multiple terms, searched terms must be close to be found."
-          far: "Entities proximity is set to \"Far\". For an entity containing multiple terms, searched terms can be far to be found."
+          glued: 'Entities proximity is set to "Glued". For an entity containing multiple terms, searched terms must be glued to be found.'
+          very_close: 'Entities proximity is set to "Very close". For an entity containing multiple terms, searched terms must be very close to be found.'
+          close: 'Entities proximity is set to "Close". For an entity containing multiple terms, searched terms must be close to be found.'
+          far: 'Entities proximity is set to "Far". For an entity containing multiple terms, searched terms can be far to be found.'

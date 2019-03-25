@@ -102,17 +102,18 @@ class EntitiesController < ApplicationController
   end
 
   def new_import
-    @entities_import = EntitiesImport.new
+    @entities_import = EntitiesImport.new(mode: 'append')
     render partial: 'new_import'
   end
 
   def create_import
     @entities_import = EntitiesImport.new(import_params)
+    @entities_import.entities_list = @entities_list
+
     respond_to do |format|
-      if @entities_list.from_csv @entities_import
+      if @entities_import.save
         format.json {
-          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
-                      notice: t('views.entities_lists.show.import.select_import.success', count: @entities_import.count)
+          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list)
         }
       else
         format.json {

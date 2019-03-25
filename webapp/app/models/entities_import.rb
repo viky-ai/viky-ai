@@ -1,43 +1,17 @@
-class EntitiesImport
+class EntitiesImport < ApplicationRecord
+  include EntitiesImportFileUploader::Attachment.new(:file)
+  validates_presence_of :file, message: I18n.t('errors.entity.import.no_file')
 
-  MAX_FILE_SIZE = 2.megabytes
+  belongs_to :entities_list
 
-  attr_reader :file
-  attr_reader :errors
-  attr_reader :count
+  enum mode: [:append, :replace]
+  enum status: [:queued, :completed, :failed]
 
-  def initialize(params = {})
-    @errors = {
-      file: []
-    }
-    @mode = :append
-    @count = 0
-    if params.present? && params[:file].present?
-      @file      = params[:file].tempfile
-      @mime_type = params[:file].content_type
-      @mode      = :replace if params[:mode] == 'replace' || params[:mode] == :replace
-      @file.set_encoding('utf-8')
-    end
-  end
+  validates :mode, presence: true
 
-  def validate
-    if @file.nil?
-      @errors[:file] << I18n.t('errors.entity.import.no_file')
-      return
-    end
-    @errors[:file] << I18n.t('errors.entity.import.max_file_size') unless @file.size < MAX_FILE_SIZE
-    unless ['text/csv', 'application/vnd.ms-excel'].include? @mime_type
-      @errors[:file] << I18n.t('errors.entity.import.wrong_format')
-    end
-  end
+  after_create :queue_for_import
 
-  def valid?
-    validate
-    @errors[:file].empty?
-  end
-
-  def proceed(entities_list)
-    return false unless valid?
+  def proceed
     options = {
       headers: [
         I18n.t('activerecord.attributes.entity.terms'),
@@ -48,9 +22,10 @@ class EntitiesImport
       encoding: 'UTF-8'
     }
     result = true
+    count = 0
     entities_array = []
-    csv = CSV.new(@file, options)
-    entities_list.entities.delete_all if @mode == :replace
+    csv = CSV.new(file.open(&:read), options)
+    entities_list.entities.delete_all if mode == 'replace'
     entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
     begin
       header_valid?(csv)
@@ -64,29 +39,38 @@ class EntitiesImport
           terms: parse_terms(row),
           auto_solution_enabled: auto_solution,
           solution: solution,
-          position: entities_max_position + line_count - @count,
+          position: entities_max_position + line_count - count,
           entities_list: entities_list
         )
         entity.validate!
         entities_array << entity
-        @count += 1
+        count += 1
       end
-      Entity.import entities_array, validate: false
+      Entity.import entities_array, validate: false, batch_size: 1000
+      # TODO single method in agent 'ordered_and_used_locales'
       entities_array.each do |entity|
         entity.run_callbacks(:save) { true }
       end
     rescue ActiveRecord::ActiveRecordError => e
-      @errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
+      # TODO: change the status
+      self.errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
       result = false
     rescue CSV::MalformedCSVError => e
-      @errors[:file] << "Bad CSV format: #{e.message}"
+      # TODO: change the status
+      self.errors[:file] << "Bad CSV format: #{e.message}"
       result = false
     end
     result
   end
-
-
+  
   private
+
+    def queue_for_import
+      ap 'queing for import'
+      self.status = :queued
+      save
+      ImportEntitiesJob.perform_later self
+    end
 
     def count_lines(csv)
       line_count = 0
@@ -133,4 +117,5 @@ class EntitiesImport
     def parse_solution(row)
       row['Solution'].nil? ? '' : row['Solution']
     end
+
 end

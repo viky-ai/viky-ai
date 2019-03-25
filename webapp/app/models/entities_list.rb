@@ -10,6 +10,7 @@ class EntitiesList < ApplicationRecord
   belongs_to :agent, touch: true
   has_many :entities, dependent: :destroy
   has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
+  has_many :entities_imports, dependent: :destroy
 
   enum proximity: ExpressionProximity::ENTITY_PROXIMITES, _prefix: :proximity
 
@@ -46,10 +47,6 @@ class EntitiesList < ApplicationRecord
         csv << [terms, entity.auto_solution_enabled, entity.solution]
       end
     end
-  end
-
-  def from_csv(entities_import)
-    entities_import.proceed(self)
   end
 
   def aliased_intents
