@@ -239,6 +239,34 @@ int LtrasReset(struct og_ctrl_ltras *ctrl_ltras)
   DONE;
 }
 
+PUBLIC(int) OgLtrasMinimumScoreSet(void *hltras, unsigned minimum_score_size, double *minimum_score)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) hltras;
+
+  unsigned size = (minimum_score_size < DOgLtrasMinimumScoreLength ? minimum_score_size : DOgLtrasMinimumScoreLength);
+
+  memset(ctrl_ltras->minimum_score, 0, sizeof(double) * DOgLtrasMinimumScoreLength);
+  memcpy(ctrl_ltras->minimum_score, minimum_score, sizeof(double) * size);
+
+  IFE(OgLtrasModuleReadConfInterpolateScores(ctrl_ltras, ctrl_ltras->minimum_score));
+
+  DONE;
+}
+
+PUBLIC(int) OgLtrasMinimumScoreFinalSet(void *hltras, unsigned minimum_score_size, double *minimum_score)
+{
+  struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *) hltras;
+
+  unsigned size = (minimum_score_size < DOgLtrasMinimumScoreLength ? minimum_score_size : DOgLtrasMinimumScoreLength);
+
+  memset(ctrl_ltras->minimum_final_score, 0, sizeof(double) * DOgLtrasMinimumScoreLength);
+  memcpy(ctrl_ltras->minimum_final_score, minimum_score, sizeof(double) * size);
+
+  IFE(OgLtrasModuleReadConfInterpolateScores(ctrl_ltras, ctrl_ltras->minimum_final_score));
+
+  DONE;
+}
+
 PUBLIC(void *) OgLtrasHaBase(void *handle)
 {
   struct og_ctrl_ltras *ctrl_ltras = (struct og_ctrl_ltras *)handle;

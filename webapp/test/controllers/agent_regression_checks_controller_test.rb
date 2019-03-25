@@ -24,6 +24,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
           },
           now: '2019-01-17T09:00:00+01:00',
           language: 'fr',
+          spellchecking: 'inactive',
           agent_id: agents(:weather)
         },
         format: :js
@@ -47,6 +48,7 @@ class AgentRegressionChecksControllerTest < ActionDispatch::IntegrationTest
           },
           now: '2019-01-17T09:00:00+01:00',
           language: 'fr',
+          spellchecking: 'inactive',
           agent_id: agents(:weather)
         },
         format: :js

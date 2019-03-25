@@ -56,3 +56,19 @@ en:
       move_to:
         success_message_html: 'Entities list %{name} moved to agent <a href="%{agent_link}">%{agent_name}</a>.'
         errors_message: "Move entities list to agent failed: %{errors}."
+      proximity:
+        glued: Glued
+        accepts_punctuations: Glued + Punc
+        very_close: Very close
+        close: Close
+        far: Far
+        help:
+          glued: Terms must be glued.
+          very_close: Terms must be very close.
+          close: Terms must be close.
+          far: Terms can be far.
+        description:
+          glued: "Entities proximity is set to \"Glued\". For an entity containing multiple terms, searched terms must be glued to be found."
+          very_close: "Entities proximity is set to \"Very close\". For an entity containing multiple terms, searched terms must be very close to be found."
+          close: "Entities proximity is set to \"Close\". For an entity containing multiple terms, searched terms must be close to be found."
+          far: "Entities proximity is set to \"Far\". For an entity containing multiple terms, searched terms can be far to be found."

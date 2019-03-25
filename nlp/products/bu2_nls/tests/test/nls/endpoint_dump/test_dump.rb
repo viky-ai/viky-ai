@@ -15,7 +15,7 @@ module Nls
         i_first_interpretation = Interpretation.new("interpretation_1", { solution: { agaga: "ceci est une solution"}})
         i_first_interpretation.new_textual("mytextual", {
                                                           keep_order: Expression.keep_order,
-                                                          glued: Expression.glued,
+                                                          glue_distance: Expression.glue_distance,
                                                           solution: {"to" => "`town`"}
                                                         })
         package << i_first_interpretation

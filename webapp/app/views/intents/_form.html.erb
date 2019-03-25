@@ -17,11 +17,17 @@
         <br />
         <div class="btn-group">
           <button class="btn <% if @intent.is_private? %>btn--primary<% end %>" type="button"
-                  data-input-selector="input[name='intent[visibility]']"
-                  data-input-value="is_private"><%= t('activerecord.attributes.intent.visibility_is_private') %></button>
+            data-behavior="populate-input"
+            data-input-selector="input[name='intent[visibility]']"
+            data-input-value="is_private">
+            <%= t('activerecord.attributes.intent.visibility_is_private') %>
+          </button>
           <button class="btn <% if @intent.is_public? %>btn--primary<% end %>" type="button"
-                  data-input-selector="input[name='intent[visibility]']"
-                  data-input-value="is_public"><%= t('activerecord.attributes.intent.visibility_is_public') %></button>
+            data-behavior="populate-input"
+            data-input-selector="input[name='intent[visibility]']"
+            data-input-value="is_public">
+            <%= t('activerecord.attributes.intent.visibility_is_public') %>
+          </button>
         </div>
         <%= display_errors(@intent, :visibility) %>
       </div>

@@ -12,24 +12,46 @@ class Api::V1::NlpController < Api::V1::ApplicationController
     respond_to do |format|
       format.json {
         if @nlp.valid?
-          @response = @nlp.proceed
-          @log.with_response(@response[:status], @response[:body])
-          unless @response[:status] == '200'
-            render json: @response[:body], status: @response[:status]
-          end
+          body, status = request_nlp
         else
           status = 422
           body = { errors: @nlp.errors.full_messages }
-          @log.with_response(status, {})
-          render json: body, status: status
+          @log.with_response(status, body).save
         end
-        @log.save
+        render json: body, status: status unless status == 200
       }
     end
   end
 
 
   private
+
+    def request_nlp
+      begin
+        @response = @nlp.proceed
+        status = @response[:status].to_i
+        body = @response[:body]
+        log_body = body
+      rescue EOFError => e
+        # NLP has crashed
+        status   = 503
+        body     = { errors: [t('nlp.unavailable')] }
+        log_body = { errors: [t('nlp.unavailable'), 'NLP have just crashed'] }
+      rescue Errno::ECONNREFUSED => e
+        # no more NLP is running
+        status   = 503
+        body     = { errors: [t('nlp.unavailable')] }
+        log_body = { errors: [t('nlp.unavailable'), 'No more NLP server are available', e.message] }
+      rescue => e
+        # unexpected error
+        status   = 500
+        log_body = { errors: [t('nlp.unavailable'), e.inspect] }
+        raise
+      ensure
+        @log.with_response(status, log_body).save
+      end
+      [body, status]
+    end
 
     # Auto render 404.json on ActiveRecord::RecordNotFound exception
     def validate_owner_and_agent
@@ -57,6 +79,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         :agent_token,
         :verbose,
         :now,
+        :spellchecking,
         context: {}
       )
     end
@@ -68,6 +91,7 @@ class Api::V1::NlpController < Api::V1::ApplicationController
         timestamp: Time.now.iso8601(3),
         sentence: parameters['sentence'],
         language: parameters['language'],
+        spellchecking: parameters['spellchecking'],
         now: parameters['now'],
         agent: @agent,
         context: parameters['context']

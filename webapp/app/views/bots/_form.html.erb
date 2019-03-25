@@ -18,16 +18,20 @@
       <%= f.hidden_field :wip_enabled %>
       <br/>
       <div class="btn-group">
-        <button class="btn
-          <% if @bot.wip_enabled? %>btn--primary
-          <% end %>" type="button"
-                data-input-selector="input[name='bot[wip_enabled]']"
-                data-input-value="1"><%= t('activerecord.attributes.bot.wip_enabled_true') %></button>
-        <button class="btn
-          <% unless @bot.wip_enabled? %>btn--primary
-          <% end %>" type="button"
-                data-input-selector="input[name='bot[wip_enabled]']"
-                data-input-value="0"><%= t('activerecord.attributes.bot.wip_enabled_false') %></button>
+        <button class="btn <% if @bot.wip_enabled? %>btn--primary<% end %>"
+          type="button"
+          data-behavior="populate-input"
+          data-input-selector="input[name='bot[wip_enabled]']"
+          data-input-value="1">
+          <%= t('activerecord.attributes.bot.wip_enabled_true') %>
+        </button>
+        <button class="btn <% unless @bot.wip_enabled? %>btn--primary<% end %>"
+          type="button"
+          data-behavior="populate-input"
+          data-input-selector="input[name='bot[wip_enabled]']"
+          data-input-value="0">
+          <%= t('activerecord.attributes.bot.wip_enabled_false') %>
+        </button>
       </div>
       <div class="help">
         <span class="icon icon--x-small">

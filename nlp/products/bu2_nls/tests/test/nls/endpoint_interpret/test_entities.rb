@@ -21,7 +21,7 @@ module Nls
         # we create 500 entities (and a few more) as it is the limit for entities to be created
         car = package.new_interpretation('entities', scope: 'public')
 
-        opts = { keep_order: true, glued: true, glue_strength: 'punctuation' }
+        opts = { keep_order: true, glue_distance: 0, glue_strength: 'punctuation' }
 
         car << Expression.new('maison de campagne', opts, solution: 'maison de campagne')
         car << Expression.new('chemin du petit', opts, solution: 'chemin du petit')
@@ -77,7 +77,7 @@ module Nls
       end
 
       def test_entities_ltras
-        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.9 }
+        expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.90 }
         check_interpret('before maisson de campagne after', expected)
 
         expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.88 }
@@ -89,7 +89,7 @@ module Nls
         expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.82 }
         check_interpret('before maisson de cempagne after', expected)
 
-        # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.9 }
+        # expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.1 }
         # check_interpret('before maisonde campagne after', expected)
 
         expected = { interpretation: 'entities', solution: 'maison de campagne', score: 0.83 }

@@ -79,7 +79,7 @@
         {
           "expression": "unième",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -655,7 +655,7 @@
         {
           "expression": "dix sept",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -675,7 +675,7 @@
         {
           "expression": "dix septieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -695,7 +695,7 @@
         {
           "expression": "dix huit",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -715,7 +715,7 @@
         {
           "expression": "dix huitieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -735,7 +735,7 @@
         {
           "expression": "dix neuf",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -755,7 +755,7 @@
         {
           "expression": "dix neuvieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ],
@@ -955,7 +955,7 @@
         {
           "expression": "soixante dix",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -979,7 +979,7 @@
         {
           "expression": "soixante dixieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -1003,7 +1003,7 @@
         {
           "expression": "quatre vingt",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -1027,7 +1027,7 @@
         {
           "expression": "quatre vingtieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -1051,7 +1051,7 @@
         {
           "expression": "quatre vingt dix",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -1075,7 +1075,7 @@
         {
           "expression": "quatre vingt dixieme",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -1575,7 +1575,7 @@
         {
           "expression": "@{number_20} @{and} @{number_1}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1599,7 +1599,7 @@
         {
           "expression": "@{number_20} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1619,7 +1619,7 @@
         {
           "expression": "@{number_20} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1655,7 +1655,7 @@
         {
           "expression": "@{number_20} @{and} @{number_1_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1679,7 +1679,7 @@
         {
           "expression": "@{number_20} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1699,7 +1699,7 @@
         {
           "expression": "@{number_20} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1735,7 +1735,7 @@
         {
           "expression": "@{number_30} @{and} @{number_1}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1759,7 +1759,7 @@
         {
           "expression": "@{number_30} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1779,7 +1779,7 @@
         {
           "expression": "@{number_30} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1815,7 +1815,7 @@
         {
           "expression": "@{number_30} @{and} @{number_1_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1839,7 +1839,7 @@
         {
           "expression": "@{number_30} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1859,7 +1859,7 @@
         {
           "expression": "@{number_30} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1895,7 +1895,7 @@
         {
           "expression": "@{number_40} @{and} @{number_1}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1919,7 +1919,7 @@
         {
           "expression": "@{number_40} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1939,7 +1939,7 @@
         {
           "expression": "@{number_40} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1975,7 +1975,7 @@
         {
           "expression": "@{number_40} @{and} @{number_1_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -1999,7 +1999,7 @@
         {
           "expression": "@{number_40} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2019,7 +2019,7 @@
         {
           "expression": "@{number_40} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2055,7 +2055,7 @@
         {
           "expression": "@{number_50} @{and} @{number_1}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2079,7 +2079,7 @@
         {
           "expression": "@{number_50} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2099,7 +2099,7 @@
         {
           "expression": "@{number_50} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2135,7 +2135,7 @@
         {
           "expression": "@{number_50} @{and} @{number_1_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2159,7 +2159,7 @@
         {
           "expression": "@{number_50} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2179,7 +2179,7 @@
         {
           "expression": "@{number_50} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2215,7 +2215,7 @@
         {
           "expression": "@{number_60} @{and} @{number_1}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2239,7 +2239,7 @@
         {
           "expression": "@{number_60} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2275,7 +2275,7 @@
         {
           "expression": "@{number_60} @{and} @{number_1_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2299,7 +2299,7 @@
         {
           "expression": "@{number_60} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2335,7 +2335,7 @@
         {
           "expression": "@{number_70} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2365,7 +2365,7 @@
         {
           "expression": "@{number_60} @{and} @{number_11}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2389,7 +2389,7 @@
         {
           "expression": "@{number_60} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2415,7 +2415,7 @@
         {
           "expression": "@{number_70} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2445,7 +2445,7 @@
         {
           "expression": "@{number_60} @{and} @{number_11_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2469,7 +2469,7 @@
         {
           "expression": "@{number_60} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2495,7 +2495,7 @@
         {
           "expression": "@{number_80} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2531,7 +2531,7 @@
         {
           "expression": "@{number_80} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2567,7 +2567,7 @@
         {
           "expression": "@{number_90} @{number_1_9}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2597,7 +2597,7 @@
         {
           "expression": "@{number_80} @{number_10_19}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2623,7 +2623,7 @@
         {
           "expression": "@{number_90} @{number_1_9_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2653,7 +2653,7 @@
         {
           "expression": "@{number_80} @{number_10_19_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2891,7 +2891,7 @@
         {
           "expression": "@{number_100} @{conjonction_and} @{number_1_99}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2915,7 +2915,7 @@
         {
           "expression": "@{number_100} @{number_1_99}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2951,7 +2951,7 @@
         {
           "expression": "@{number_100} @{conjonction_and} @{number_1_99_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -2975,7 +2975,7 @@
         {
           "expression": "@{number_100} @{number_1_99_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3011,7 +3011,7 @@
         {
           "expression": "@{number_1_9} @{number_100_199}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3047,7 +3047,7 @@
         {
           "expression": "@{number_1_9} @{number_100_199_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3135,7 +3135,7 @@
         {
           "expression": "@{number_1000} @{conjonction_and} @{number_1_99}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3159,7 +3159,7 @@
         {
           "expression": "@{number_1000} @{number_1_99}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3195,7 +3195,7 @@
         {
           "expression": "@{number_1000} @{conjonction_and} @{number_1_99_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3219,7 +3219,7 @@
         {
           "expression": "@{number_1000} @{number_1_99_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3255,7 +3255,7 @@
         {
           "expression": "@{number_1000} @{number_100_999}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3281,7 +3281,7 @@
         {
           "expression": "@{number_1000} @{number_100_999_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3359,7 +3359,7 @@
         {
           "expression": "@{number_1_999} @{number_1000_1999}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {
@@ -3395,7 +3395,7 @@
         {
           "expression": "@{number_1_999} @{number_1000_1999_ordinal}",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "aliases":
           [
             {

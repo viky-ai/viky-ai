@@ -13,6 +13,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T14:25:14.053+02:00',
       sentence: "What 's the weather like ?",
       language: 'en',
+      spellchecking: 'low',
       agent: weather_agent,
     ).with_response('200', {
       'interpretations' => [{
@@ -34,6 +35,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T14:25:14+02:00',
       sentence: "What 's the weather like ?",
       language: 'en',
+      spellchecking: 'low',
       now: '2018-07-10T14:10:36+02:00',
       agent: weather_agent,
     ).with_response('200', {
@@ -50,6 +52,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
     assert_equal log.timestamp, found.timestamp
     assert_equal log.sentence, found.sentence
     assert_equal log.language, found.language
+    assert_equal log.spellchecking, found.spellchecking
     assert_equal log.now, found.now
     assert_equal log.status, found.status
     assert_equal log.body, found.body
@@ -63,6 +66,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T08:00:00.200+02:00',
       sentence: 'What the weather like today ?',
       language: 'en',
+      spellchecking: 'low',
       agent: weather_agent,
     ).with_response('200', {
       'interpretations' => [{
@@ -78,6 +82,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T12:00:00.062+02:00',
       sentence: 'What the weather like tomorrow ?',
       language: 'en',
+      spellchecking: 'low',
       agent: weather_agent,
     ).with_response('200', {
       'interpretations' => [{
@@ -106,6 +111,7 @@ class InterpretRequestLogTest < ActiveSupport::TestCase
       timestamp: '2018-07-04T17:00:00.000+02:00',
       sentence: 'What the weather like next Sunday ?',
       language: 'en',
+      spellchecking: 'low',
       agent: weather_agent,
     ).with_response('200', {})
     assert log.save

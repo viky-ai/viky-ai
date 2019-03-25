@@ -1,12 +1,28 @@
 [
   {
+    "_id": "beb63c90-4c8b-11e9-9579-992d43ed5738",
+    "_type": "dashboard",
+    "_source": {
+      "title": "Viky.ai Diagnostic",
+      "hits": 0,
+      "description": "",
+      "panelsJSON": "[{\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":0,\"w\":37,\"h\":10,\"i\":\"1\"},\"id\":\"c09b7a80-9a56-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"1\",\"title\":\"Requests in error per time\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{\"vis\":{\"colors\":{\"200\":\"#629E51\"},\"legendOpen\":false}},\"gridData\":{\"x\":37,\"y\":0,\"w\":10,\"h\":10,\"i\":\"4\"},\"id\":\"9a4be780-9a5a-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"4\",\"title\":\"Error status distribution\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":10,\"w\":23,\"h\":11,\"i\":\"7\"},\"id\":\"118aa6d0-ba66-11e8-80a5-ff7393372ab8\",\"panelIndex\":\"7\",\"title\":\"Error per agent (Table)\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":23,\"y\":10,\"w\":24,\"h\":11,\"i\":\"8\"},\"id\":\"9a9523b0-457b-11e9-8d03-a95d539e135c\",\"panelIndex\":\"8\",\"type\":\"visualization\",\"version\":\"6.6.1\"},{\"gridData\":{\"x\":0,\"y\":21,\"w\":47,\"h\":10,\"i\":\"9\"},\"version\":\"6.6.1\",\"panelIndex\":\"9\",\"type\":\"search\",\"id\":\"3da3c960-4c8b-11e9-9579-992d43ed5738\",\"embeddableConfig\":{},\"title\":\"NLP Crash request\"}]",
+      "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
+      "version": 1,
+      "timeRestore": false,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[{\"$state\":{\"store\":\"appState\"},\"meta\":{\"alias\":\"StatusCake\",\"disabled\":false,\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"key\":\"agent_id\",\"negate\":true,\"params\":{\"query\":\"2e302823-dc31-45e4-920a-1c4fe5fac459\",\"type\":\"phrase\"},\"type\":\"phrase\",\"value\":\"2e302823-dc31-45e4-920a-1c4fe5fac459\"},\"query\":{\"match\":{\"agent_id\":{\"query\":\"2e302823-dc31-45e4-920a-1c4fe5fac459\",\"type\":\"phrase\"}}}},{\"$state\":{\"store\":\"appState\"},\"meta\":{\"alias\":null,\"disabled\":false,\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"key\":\"status\",\"negate\":true,\"params\":{\"query\":200,\"type\":\"phrase\"},\"type\":\"phrase\",\"value\":\"200\"},\"query\":{\"match\":{\"status\":{\"query\":200,\"type\":\"phrase\"}}}}],\"highlightAll\":true,\"version\":true}"
+      }
+    }
+  },
+  {
     "_id": "cceae050-9a56-11e8-97ac-39aa01b9818b",
     "_type": "dashboard",
     "_source": {
-      "title": "Viky.ai",
+      "title": "Viky.ai Global",
       "hits": 0,
       "description": "",
-      "panelsJSON": "[{\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":0,\"w\":37,\"h\":10,\"i\":\"1\"},\"id\":\"c09b7a80-9a56-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":10,\"w\":47,\"h\":12,\"i\":\"2\"},\"id\":\"4d541b30-9a57-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{\"vis\":{\"colors\":{\"200\":\"#629E51\"},\"legendOpen\":false}},\"gridData\":{\"x\":37,\"y\":0,\"w\":10,\"h\":10,\"i\":\"4\"},\"id\":\"9a4be780-9a5a-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":24,\"y\":22,\"w\":23,\"h\":22,\"i\":\"5\"},\"id\":\"e52fbfc0-ba4d-11e8-8a22-0754cf0ae90f\",\"panelIndex\":\"5\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":22,\"w\":24,\"h\":22,\"i\":\"6\"},\"id\":\"e412d880-9a58-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"6\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":44,\"w\":17,\"h\":15,\"i\":\"7\"},\"id\":\"118aa6d0-ba66-11e8-80a5-ff7393372ab8\",\"panelIndex\":\"7\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":17,\"y\":44,\"w\":30,\"h\":15,\"i\":\"8\"},\"id\":\"9a9523b0-457b-11e9-8d03-a95d539e135c\",\"panelIndex\":\"8\",\"type\":\"visualization\",\"version\":\"6.6.1\"}]",
+      "panelsJSON": "[{\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":4,\"w\":35,\"h\":8,\"i\":\"1\"},\"id\":\"c09b7a80-9a56-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"1\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{\"vis\":{\"legendOpen\":false}},\"gridData\":{\"x\":0,\"y\":12,\"w\":47,\"h\":12,\"i\":\"2\"},\"id\":\"4d541b30-9a57-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"2\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{\"vis\":{\"colors\":{\"200\":\"#629E51\"},\"legendOpen\":false}},\"gridData\":{\"x\":35,\"y\":0,\"w\":12,\"h\":12,\"i\":\"4\"},\"id\":\"9a4be780-9a5a-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"4\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":23,\"y\":24,\"w\":24,\"h\":20,\"i\":\"5\"},\"id\":\"e52fbfc0-ba4d-11e8-8a22-0754cf0ae90f\",\"panelIndex\":\"5\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":44,\"w\":23,\"h\":20,\"i\":\"6\"},\"id\":\"e412d880-9a58-11e8-97ac-39aa01b9818b\",\"panelIndex\":\"6\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"embeddableConfig\":{},\"gridData\":{\"x\":0,\"y\":24,\"w\":23,\"h\":20,\"i\":\"7\"},\"id\":\"118aa6d0-ba66-11e8-80a5-ff7393372ab8\",\"panelIndex\":\"7\",\"type\":\"visualization\",\"version\":\"6.3.0\"},{\"gridData\":{\"x\":0,\"y\":0,\"w\":35,\"h\":4,\"i\":\"8\"},\"version\":\"6.6.1\",\"panelIndex\":\"8\",\"type\":\"visualization\",\"id\":\"a5d29860-4c8e-11e9-9579-992d43ed5738\",\"embeddableConfig\":{}}]",
       "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":true}",
       "version": 1,
       "timeRestore": false,
@@ -26,6 +42,26 @@
     },
     "_migrationVersion": {
       "index-pattern": "6.5.0"
+    }
+  },
+  {
+    "_id": "3da3c960-4c8b-11e9-9579-992d43ed5738",
+    "_type": "search",
+    "_source": {
+      "title": "NLP Crash",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "_source"
+      ],
+      "sort": [
+        "timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"highlightAll\":true,\"version\":true,\"query\":{\"query\":\"body.errors = \\\"NLP have just crashed\\\"\",\"language\":\"lucene\"},\"filter\":[{\"$state\":{\"store\":\"appState\"},\"meta\":{\"alias\":null,\"disabled\":false,\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"key\":\"status\",\"negate\":false,\"params\":{\"query\":503,\"type\":\"phrase\"},\"type\":\"phrase\",\"value\":\"503\"},\"query\":{\"match\":{\"status\":{\"query\":503,\"type\":\"phrase\"}}}}]}"
+      }
     }
   },
   {
@@ -131,12 +167,26 @@
     "_type": "visualization",
     "_source": {
       "title": "Timeout sentences",
-      "visState": "{\"title\":\"Timeout sentences\",\"type\":\"table\",\"params\":{\"perPage\":20,\"showPartialRows\":false,\"showMetricsAtAllLevels\":false,\"sort\":{\"columnIndex\":null,\"direction\":null},\"showTotal\":false,\"totalFunc\":\"sum\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"agent_slug\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"customLabel\":\"Timeout sentences\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"sentence.keyword\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":true,\"missingBucketLabel\":\"Missing\"}}]}",
+      "visState": "{\"title\":\"Timeout sentences\",\"type\":\"table\",\"params\":{\"perPage\":20,\"showPartialRows\":false,\"showMetricsAtAllLevels\":false,\"sort\":{\"columnIndex\":null,\"direction\":null},\"showTotal\":true,\"totalFunc\":\"sum\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"agent_slug\",\"size\":20,\"order\":\"desc\",\"orderBy\":\"1\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\",\"customLabel\":\"Timeout sentences\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"terms\",\"schema\":\"bucket\",\"params\":{\"field\":\"sentence.keyword\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\",\"otherBucket\":true,\"otherBucketLabel\":\"Other\",\"missingBucket\":false,\"missingBucketLabel\":\"Missing\"}}]}",
       "uiStateJSON": "{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":null,\"direction\":null}}}}",
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"query\":{\"query\":\"body.errors = \\\"NlsCancelCleanupOnTimeout\\\"\",\"language\":\"lucene\"},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"query\":{\"query\":\"body.errors = \\\"NlsCancelCleanupOnTimeout\\\"\",\"language\":\"lucene\"},\"filter\":[{\"meta\":{\"index\":\"83b05830-9a55-11e8-b5d4-2d5101fa4aa5\",\"negate\":false,\"disabled\":false,\"alias\":null,\"type\":\"phrase\",\"key\":\"status\",\"value\":\"500\",\"params\":{\"query\":500,\"type\":\"phrase\"}},\"query\":{\"match\":{\"status\":{\"query\":500,\"type\":\"phrase\"}}},\"$state\":{\"store\":\"appState\"}}]}"
+      }
+    }
+  },
+  {
+    "_id": "a5d29860-4c8e-11e9-9579-992d43ed5738",
+    "_type": "visualization",
+    "_source": {
+      "title": "Dashboard header",
+      "visState": "{\"title\":\"Dashboard header\",\"type\":\"markdown\",\"params\":{\"fontSize\":12,\"openLinksInNewTab\":false,\"markdown\":\"[Viky.ai global bashboard](https://viky-develop-platform-dev.viky.ai/kibana/app/kibana#/dashboard/cceae050-9a56-11e8-97ac-39aa01b9818b)  (to diagnose trouble go on [Viky.ai Diagnose bashboard](/kibana/app/kibana#/dashboard/beb63c90-4c8b-11e9-9579-992d43ed5738))\"},\"aggs\":[]}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"
       }
     }
   }

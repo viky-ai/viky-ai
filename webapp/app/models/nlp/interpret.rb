@@ -7,12 +7,13 @@ class Nlp::Interpret
   include ActiveModel::Validations
   include ActiveModel::Validations::Callbacks
 
-  attr_accessor :ownername, :agentname, :format, :sentence, :language, :agent_token, :verbose, :now
+  attr_accessor :ownername, :agentname, :format, :sentence, :language, :spellchecking, :agent_token, :verbose, :now
 
   validates_presence_of :ownername, :agentname, :format, :sentence, :agent_token
   validates :sentence, byte_size: { maximum: 7000 }
   validates_inclusion_of :format, in: %w( json )
   validates_inclusion_of :verbose, in: [ "true", "false" ]
+  validates_inclusion_of :spellchecking, in: %w( inactive low medium high ), allow_blank: true
   validate :ownername_and_agentname_consistency
   validate :agent_token_consistency
   validate :now_format
@@ -35,12 +36,13 @@ class Nlp::Interpret
 
   def nlp_params
     p = {
-      "Accept-Language" => language,
-      "primary-package" => agent.id,
-      "packages" => packages,
-      "sentence" => sentence,
+      "Accept-Language"  => language,
+      'spellchecking'    => spellchecking.present? ? spellchecking : 'low',
+      "primary-package"  => agent.id,
+      "packages"         => packages,
+      "sentence"         => sentence,
       "show-explanation" => verbose == 'true',
-      "show-private" => verbose == 'true'
+      "show-private"     => verbose == 'true'
     }
     p["now"] = now unless now.blank?
     p

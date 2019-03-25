@@ -59,6 +59,11 @@ static int OgNlsRun1(struct og_ctrl_nls *ctrl_nls)
   // write pid in file
   IFE(OgNlsWritePidFile(ctrl_nls));
 
+  if (!ctrl_nls->nls_ready && ctrl_nls->conf->env->wait_to_be_ready)
+  {
+    OgMsg(ctrl_nls->hmsg, "", DOgMsgDestInLog + DOgMsgDestMBox, "NLS is waiting to ready.");
+  }
+
   ctrl_nls->must_stop = 0;
   IFE(OgAddrLoop(ctrl_nls->haddr, OgNlsRun2, (void * ) ctrl_nls));
 
