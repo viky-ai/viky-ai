@@ -38,6 +38,8 @@ class BackendDashboardTest < ApplicationSystemTestCase
 
     assert page.has_content?('Agents with most interpretations')
     assert page.has_content?('Agents with most entities')
+    assert page.has_content?('Agents most used as dependency')
+    assert page.has_content?('Agents with most tests in failure')
   end
 
 end

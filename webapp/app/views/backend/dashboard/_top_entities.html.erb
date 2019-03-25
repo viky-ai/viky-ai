@@ -1,14 +1,10 @@
-<% top_entities_agents = Agent.select('agents.id, COUNT(entities.id) as count')
-              .joins(entities_lists: :entities)
-              .group(:id)
-              .order('COUNT(entities.id) DESC').limit(10) %>
-
 <h2>
   <%= t("views.backend.dashboard.top_entities") %>
 </h2>
+
 <table>
   <tbody>
-    <% top_entities_agents.each do |data| %>
+    <% @top_entities_agents.each do |data| %>
       <% agent = Agent.find(data['id']) %>
       <tr>
         <td>
@@ -29,3 +25,8 @@
     <% end %>
   </tbody>
 </table>
+
+<div class="top-pagination">
+  <%= paginate @top_entities_agents, window: 1, param_name: :entities_page %>
+  <p class="pagination-info"><%= page_entries_info @top_entities_agents %></p>
+</div>

@@ -113,3 +113,6 @@ en:
             other: "%{total} administrators"
         top_interpretations: Agents with most interpretations
         top_entities: Agents with most entities
+        top_predecessors: Agents most used as dependency
+        top_tests_failures: Agents with most tests in failure
+        no_top_tests_failure: All tests pass
