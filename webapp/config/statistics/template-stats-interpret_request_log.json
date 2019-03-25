@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "index_patterns": "stats-interpret_request_log-*",
   "aliases": {
     "search-stats-interpret_request_log": {}
@@ -17,6 +17,9 @@
           "type": "keyword"
         },
         "language": {
+          "type": "keyword"
+        },
+        "spellchecking": {
           "type": "keyword"
         },
         "now": {

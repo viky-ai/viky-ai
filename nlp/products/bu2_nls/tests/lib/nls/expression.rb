@@ -7,8 +7,8 @@ module Nls
     attr_reader :locale
     attr_reader :aliases
     attr_reader :keep_order
-    attr_reader :glued
     attr_reader :glue_strength
+    attr_reader :glue_distance
     attr_accessor :solution
     attr_accessor :interpretation
 
@@ -24,11 +24,11 @@ module Nls
       @keep_order = false
       @keep_order = opts[:keep_order] if opts.has_key?(:keep_order)
 
-      @glued = false
-      @glued = opts[:glued] if opts.has_key?(:glued)
-
       @glue_strength = "total"
       @glue_strength = opts[:glue_strength] if opts.has_key?(:glue_strength)
+
+      @glue_distance = 20
+      @glue_distance = opts[:glue_distance] if opts.has_key?(:glue_distance)
 
         @solution = nil
       @solution = opts[:solution] if opts.has_key?(:solution)
@@ -88,8 +88,8 @@ module Nls
       hash = {}
       hash['expression'] = @expression
       hash['keep-order'] = true if @keep_order
-      hash['glued'] = true if @glued
       hash['glue-strength'] = @glue_strength if @glue_strength != "total"
+      hash['glue-distance'] = @glue_distance if @glue_distance != 20
       hash['aliases'] = @aliases.map{|a| a.to_h} if !@aliases.empty?
       hash['locale'] = @locale if !@locale.nil?
       if !@solution.nil?
@@ -114,8 +114,8 @@ module Nls
       true
     end
 
-    def self.glued
-      true
+    def self.glue_distance
+      20
     end
 
     def self.no_order

@@ -4,6 +4,8 @@ class AgentRegressionCheck < ApplicationRecord
 
   belongs_to :agent
 
+  enum spellchecking: [:inactive, :low, :medium, :high]
+
   validates :sentence, length: { maximum: 200 }, presence: true
   validates :expected, presence: true
 

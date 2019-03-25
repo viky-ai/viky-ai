@@ -19,6 +19,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
     agent_regression_check = AgentRegressionCheck.new(
       sentence: 'What the weather like ?',
       language: 'fr',
+      spellchecking: 'low',
       now: '2019-01-17T09:00:00+01:00',
       expected: expected_nlp,
       got: expected_nlp,
@@ -31,6 +32,7 @@ class AgentRegressionCheckTest < ActiveSupport::TestCase
 
     assert_equal 'What the weather like ?', agent_regression_check.sentence
     assert_equal 'fr', agent_regression_check.language
+    assert_equal 'low', agent_regression_check.spellchecking
     assert_equal DateTime.parse('2019-01-17T09:00:00+01:00'), agent_regression_check.now
     assert_equal expected_nlp, agent_regression_check.expected
     assert_equal expected_nlp, agent_regression_check.got

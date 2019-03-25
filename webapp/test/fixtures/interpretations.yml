@@ -3,7 +3,7 @@ weather_forecast_tomorrow:
   intent: weather_forecast
   locale: 'en'
   keep_order: true
-  glued: true
+  proximity: 'glued'
   auto_solution_enabled: false
   solution: 'forecast.tomorrow'
   position: 0

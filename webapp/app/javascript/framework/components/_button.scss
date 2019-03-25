@@ -175,7 +175,7 @@ a.btn,
   }
 
   &.btn--disabled{
-    opacity: 0.5;
+    opacity: 0.8;
     cursor: not-allowed;
   }
 
@@ -184,8 +184,9 @@ a.btn,
 .btn-group{
   @include display_inline_flex();
   .btn{
-    margin-left: -1px;
     border-radius: 0;
+    border-left-width: 1px;
+    border-right-width: 0;
   }
   .btn:first-child{
     margin-left: 0;
@@ -195,6 +196,13 @@ a.btn,
   .btn:last-child{
     border-top-right-radius: $btn_border_radius;
     border-bottom-right-radius: $btn_border_radius;
+    border-right-width: 1px;
+  }
+  .btn.btn--primary{
+    border-right-width: 1px;
+  }
+  .btn.btn--primary + .btn{
+    border-left-width: 0;
   }
 }
 

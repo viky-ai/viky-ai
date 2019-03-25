@@ -57,6 +57,16 @@
     NlpLogImplementation(ctrl_nlp_th, nlpformat, ##__VA_ARGS__);\
   }
 
+/** Spellchecking level */
+enum nlp_spellchecking_level
+{
+  nlp_spellchecking_level_inactive = 0,
+  nlp_spellchecking_level_low = 1 ,
+  nlp_spellchecking_level_medium =  2,
+  nlp_spellchecking_level_high = 3
+};
+
+
 // %.15g means, 15 significant figures not decimal, default is 6.
 #define DOgPrintDouble "%.15g"
 
@@ -204,7 +214,6 @@ struct expression_compile
   int id_start;
   int text_start;
   og_bool keep_order;
-  og_bool glued;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
   int alias_start, aliases_nb;
@@ -228,7 +237,6 @@ struct expression
   og_string text;
 
   og_bool keep_order;
-  og_bool glued;
   enum nlp_glue_strength glue_strength;
   int glue_distance;
 
@@ -739,6 +747,8 @@ struct nlp_match_entities_ctrl
   GHashTable *expression_hash;
 };
 
+
+
 struct og_ctrl_nlp_threaded
 {
   og_nlp ctrl_nlp;
@@ -785,6 +795,7 @@ struct og_ctrl_nlp_threaded
   og_string date_now;
   og_heap hrequest_word;
   og_heap hba;
+  enum nlp_spellchecking_level spellchecking_level;
 
   /** Heap of struct request_input_part */
   og_heap hrequest_input_part;
@@ -1143,6 +1154,7 @@ og_status NlpLtracEntityPrepareFlush(og_nlp_th ctrl_nlp_th);
 /* nlpltras.c */
 og_status NlpLtrasInit(og_nlp_th ctrl_nlp_th);
 og_status NlpLtrasFlush(og_nlp_th ctrl_nlp_th);
+og_status NlpLtrasRequestSetup(og_nlp_th ctrl_nlp_th);
 og_status NlpLtras(og_nlp_th ctrl_nlp_th);
 
 /* nlpltras_entity.c */

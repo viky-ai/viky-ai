@@ -9,6 +9,7 @@
 og_status NlpOriginalRequestInputPartsCalculate(og_nlp_th ctrl_nlp_th)
 {
   int request_input_part_used = OgHeapGetCellsUsed(ctrl_nlp_th->hrequest_input_part);
+  if (request_input_part_used <= 0) CONT;
   struct request_input_part *request_input_parts = OgHeapGetCell(ctrl_nlp_th->hrequest_input_part, 0);
   IFN(request_input_parts) DPcErr;
 

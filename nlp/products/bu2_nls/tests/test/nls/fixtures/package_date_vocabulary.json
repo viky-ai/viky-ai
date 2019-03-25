@@ -9,13 +9,13 @@
         {
           "expression": "week end",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "week-end",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
@@ -29,13 +29,13 @@
         {
           "expression": "week end",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
           "expression": "week-end",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
@@ -169,19 +169,19 @@
         {
           "expression": "the day before yesterday",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "before yesterday",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "avant hier",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ]
@@ -211,7 +211,7 @@
         {
           "expression": "aujourd'hui",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ]
@@ -237,19 +237,19 @@
         {
           "expression": "the day after tomorrow",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "after tomorrow",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "en"
         },
         {
           "expression": "après demain",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         }
       ]
@@ -801,13 +801,13 @@
         {
           "expression": "Saint Valentin",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {
           "expression": "St Valentin",
           "keep-order": true,
-          "glued": true,
+          "glue-distance": 0,
           "locale": "fr"
         },
         {

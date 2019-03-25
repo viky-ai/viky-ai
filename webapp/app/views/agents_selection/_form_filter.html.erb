@@ -21,17 +21,19 @@
         <%= f.button t('views.agents.index.filter_owner.all'),
               class: "btn #{active_css}",
               data: {
-                 action: 'update-remote-modal',
-                 input_selector: "input[name='search[filter_owner]']",
-                 input_value: 'all'
+                behavior: 'populate-input',
+                input_selector: "input[name='search[filter_owner]']",
+                input_value: 'all',
+                action: 'update-remote-modal'
               } %>
         <% active_css = @search.filter_owner == 'favorites' ? 'btn--primary' : '' %>
         <%= f.button t('views.agents.index.filter_owner.favorites'),
               class: "btn #{active_css}",
               data: {
-                 action: 'update-remote-modal',
-                 input_selector: "input[name='search[filter_owner]']",
-                 input_value: 'favorites'
+                behavior: 'populate-input',
+                input_selector: "input[name='search[filter_owner]']",
+                input_value: 'favorites',
+                action: 'update-remote-modal'
               } %>
       </div>
     </div>

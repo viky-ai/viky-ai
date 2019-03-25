@@ -289,9 +289,9 @@ static og_status NlpWhyJsonNmExpressionDiagnostics(og_nlp_th ctrl_nlp_th, struct
       DPcErr;
     }
   }
-  if (expression->glued)
+  if (expression->glue_distance == 0)
   {
-    json_diagnostic = json_string("Expression is flagged as 'glued', verify the matching by setting it to false");
+    json_diagnostic = json_string("Expression has zero glue_distance, verify the matching by setting it to a bigger value");
     IF(json_array_append_new(json_diagnostics, json_diagnostic))
     {
       NlpThrowErrorTh(ctrl_nlp_th, "NlpWhyJsonNmExpressionDiagnostics : error appending json_diagnostic");

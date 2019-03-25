@@ -224,11 +224,12 @@ class Agent < ApplicationRecord
     'unknown'
   end
 
-  def find_regression_check_with(sentence, language, now)
+  def find_regression_check_with(sentence, language, spellchecking, now)
     time_parse = (now.kind_of?(String) ? Time.parse(now) : now) unless now.blank?
     agent_regression_checks
       .where('lower(sentence) = lower(?)', sentence.strip)
       .where(language: language)
+      .where(spellchecking: spellchecking)
       .where(now: time_parse)
       .first
   end
