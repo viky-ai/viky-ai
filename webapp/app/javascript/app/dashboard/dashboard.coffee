@@ -4,12 +4,13 @@ class DashboardPreserveScroll
   scrollTop = 0
 
   save: ->
-    element = $('main')
-    scrollTop = element.scrollTop() if element.length == 1
+    scrollTop = $('main').scrollTop() if @we_are_in_dashboard()
 
   restore: ->
-    element = $('main')
-    element.scrollTop(scrollTop) if element.length == 1
+    $('main').scrollTop(scrollTop) if @we_are_in_dashboard()
+
+  we_are_in_dashboard: ->
+    $('.dashboard-tops').length == 1
 
 $(document).on('turbolinks:before-render', -> DashboardPreserveScroll::save())
 $(document).on('turbolinks:render', -> DashboardPreserveScroll::restore())
