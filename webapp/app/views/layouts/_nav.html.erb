@@ -1,8 +1,8 @@
 <nav class="h-nav">
 
   <div class="h-nav__header">
-    <a href="/" class="logo">
-      <%= logo_on_dark %>
+    <a href="/">
+      <span class="logo"><%= logo_on_dark %></span>
     </a>
   </div>
 
@@ -16,6 +16,12 @@
       <li>
         <a href="<%= chatbots_path %>" <% if ['chatbots'].include? controller_path %>class="current"<% end %>>
           <%= t('views.nav.chatbots') %>
+        </a>
+      </li>
+      <li>
+        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
+          <%= t('views.nav.doc') %>
+          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
         </a>
       </li>
 
@@ -93,12 +99,6 @@
                   </a>
                 </li>
               <% end %>
-              <li class="separator">
-                <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-                  <%= t('views.nav.doc') %>
-                  <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-                </a>
-              </li>
             </ul>
           </div>
         </div>
@@ -135,12 +135,6 @@
           </a>
         </li>
       <% end %>
-      <li class="secondary">
-        <a href="<%= doc_url %>" data-turbolinks="false" target="_blank">
-          <%= t('views.nav.doc') %>
-          <span class="icon icon--x-small"><%= icon_open_in_new %></span>
-        </a>
-      </li>
     </ul>
   </div>
 
