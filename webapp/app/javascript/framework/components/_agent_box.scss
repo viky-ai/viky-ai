@@ -33,6 +33,7 @@
 
   & > a{
     text-decoration: none;
+    display: block;
     &:hover,
     &:focus{
       .agent-box__header--image {
