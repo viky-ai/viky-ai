@@ -55,13 +55,13 @@ class BackendUsersTest < ApplicationSystemTestCase
     find('.dropdown__trigger', text: 'Sort by last log in').click
     find('.dropdown__content', text: 'Sort by email').click
     expected = [
-      'admin@viky.ai',
-      'confirmed@viky.ai',
-      'edit_on_agent_weather@viky.ai',
+      'admin',
+      'confirmed',
+      'edit_on_agent_weather',
       'invited@viky.ai',
-      'locked@viky.ai',
+      'locked',
       'notconfirmed@viky.ai',
-      'show_on_agent_weather@viky.ai'
+      'show_on_agent_weather'
     ]
 
     find(".field .control:last-child .dropdown__trigger a").assert_text "Sort by email"
@@ -72,14 +72,16 @@ class BackendUsersTest < ApplicationSystemTestCase
   end
 
 
-  test 'Users can be found by email' do
+  test 'Users can be found by search' do
     admin_login
 
     find('nav.h-nav .dropdown__trigger').click
     click_link('Users management')
 
-    fill_in 'search_email', with: 'ocked'
-    click_button '#search'
+    assert page.has_content?('Backend / User management')
+
+    fill_in 'search_query', with: 'ocked'
+    find_button(id: 'search').click
 
     assert page.has_content?('1 user')
     assert page.has_content?('locked@viky.ai')
@@ -87,14 +89,17 @@ class BackendUsersTest < ApplicationSystemTestCase
     assert_equal '/backend/users', current_path
   end
 
-  test 'Users can be found by email trimmed' do
+
+  test 'Users can be found by search trimmed' do
     admin_login
 
     find('nav.h-nav .dropdown__trigger').click
     click_link('Users management')
 
-    fill_in 'search_email', with: ' ocked   '
-    click_button '#search'
+    assert page.has_content?('Backend / User management')
+
+    fill_in 'search_query', with: ' ocked   '
+    find_button(id: 'search').click
 
     assert page.has_content?('1 user')
     assert page.has_content?('locked@viky.ai')

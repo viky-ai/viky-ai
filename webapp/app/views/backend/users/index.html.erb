@@ -12,6 +12,11 @@
     </a>
   </div>
 </header>
+<style>
+  table td{
+    vertical-align: top;
+  }
+</style>
 
 <% unless @users.count == 0 %>
   <div class="card">
@@ -23,6 +28,7 @@
         <thead>
           <tr>
             <th>User</th>
+            <th>Agents</th>
             <th>Status</th>
             <th>Last log in</th>
             <th class="number">Log in count</th>
@@ -33,17 +39,27 @@
           <% @users.each do |user| %>
             <tr>
               <td>
-                <%= user.email %>
-                <% if user.admin? %>
-                  <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
-                <% end %>
-                <br />
+                <div class="user">
+                  <div class="user__avatar">
+                    <img src="<%= user.image_url(:square) %>" />
+                  </div>
+                  <div class="user__info">
+                    <%= user.name_or_username %>
+                    <% if user.admin? %>
+                      <span class="badge badge--primary"><%= t('views.backend.users.index.admin_badge') %></span>
+                    <% end %>
+                    <small><%= user.email %></small>
+                  </div>
+                </div>
+              </td>
+              <td>
                 <span class="merged-badges">
                   <span class="badge">Owner</span>
-                  <span class="badge badge--grey">
+                  <span class="badge badge--primary">
                     <%= user.memberships.where(rights: 'all').count %>
                   </span>
                 </span>
+                <br />
                 <span class="merged-badges">
                   <span class="badge">Collaborator</span>
                   <span class="badge badge--grey">
@@ -51,7 +67,6 @@
                   </span>
                 </span>
               </td>
-
               <td>
                 <% if user.confirmed? %>
                   <span class="badge badge--success">
@@ -65,7 +80,7 @@
                     <p>
                       <small>
                         <%= t('views.backend.users.index.last_confirmation') %>
-                        <%= l(user.confirmation_sent_at, format: :short) %>.
+                        <%= l(user.confirmation_sent_at, format: :long) %>.
                       </small>
                     </p>
                   <% end %>
@@ -78,7 +93,7 @@
                   <p>
                     <small>
                       <%= t('views.backend.users.index.locked_since') %>
-                      <%= l(user.locked_at, format: :short) %>.
+                      <%= l(user.locked_at, format: :long) %>.
                     </small>
                   </p>
                 <% end %>
@@ -86,7 +101,7 @@
                 <% unless user.invitation_status == :not_invited %>
                   <% if user.invitation_status == :valid %>
                     <p>
-                      <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :short)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
+                      <small title="<%= t('views.backend.users.index.invitation_send_on', date: l(user.created_at, format: :long)) %> <% unless user.invited_by.nil? %><%= t('views.backend.users.index.invited_by', email: user.invited_by.email) %><% end %>">
                         <%= t('views.backend.users.index.invitation_expires_in') %>
                         <%= distance_of_time_in_words(
                               user.invitation_sent_at, user.invitation_sent_at + User.invite_for,
@@ -107,7 +122,7 @@
               <td>
                 <% if user.confirmed? %>
                   <% unless user.current_sign_in_at.nil? %>
-                    <%= l(user.current_sign_in_at, format: :short) %>
+                    <%= l(user.current_sign_in_at, format: :long) %>
                   <% end %>
                 <% end %>
               </td>

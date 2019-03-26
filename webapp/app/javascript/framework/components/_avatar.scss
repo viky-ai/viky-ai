@@ -5,7 +5,6 @@
     border-radius: 100%;
     width: 24px;
   }
-
   &.avatar--large{
     img{
       width: 100px;
@@ -16,26 +15,25 @@
 .user{
   @include display_flex();
   align-items: center;
-  span{
-    margin-left: .5em;
-  }
-}
-
-
-.user{
-  @include display_flex();
-  align-items: flex-start;
   .user__avatar{
-    margin-right: .5em;
+    line-height: 0;
     img{
       border-radius: 100%;
       width: 36px;
     }
+    &.user__avatar--small{
+      img{
+        width: 24px;
+      }
+    }
   }
   .user__info{
-    line-height: 1.05em;
+    margin-left: .75em;
+    line-height: 1.5em;
     small{
+      display: block;
       font-size: .85em;
+      line-height: 1.5em;
       color: #888;
     }
   }

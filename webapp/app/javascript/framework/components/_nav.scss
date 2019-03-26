@@ -51,7 +51,7 @@
 
   .dropdown{
     .dropdown__trigger{
-      display:block;
+      display: block;
       padding: 1rem;
       color: rgba(white, .6);
       text-decoration: none;
@@ -93,7 +93,7 @@
   }
 
   &.h-nav__content--hide-user-data{
-    .user span{
+    .user .user__info{
       display: none;
     }
   }

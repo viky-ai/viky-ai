@@ -149,19 +149,19 @@
       <li>
         <a href="<%= profile_path %>" <% if controller_path.include?('profile') %>class="current"<% end %>>
           <div class="user">
-            <div class="avatar">
+            <div class="user__avatar user__avatar--small">
               <img src="<%= current_user.image_url(:square) %>">
             </div>
-            <span>
+            <div class="user__info">
               <% if current_user.name.blank? %>
                 <%= current_user.username %>
               <% else %>
                 <%= current_user.name %>
               <% end %>
               <% if current_user != true_user %>
-                <span class="badge badge--danger"><%= t('views.nav.switched') %></span>
+                &nbsp;<span class="badge badge--danger"><%= t('views.nav.switched') %></span>
               <% end %>
-            </span>
+            </div>
           </div>
         </a>
       </li>
@@ -169,10 +169,12 @@
         <li>
           <a href="<%= stop_impersonating_profile_path %>" rel="nofollow" data-method="post">
             <div class="user">
-              <div class="avatar">
+              <div class="user__avatar user__avatar--small">
                 <img src="<%= true_user.image_url(:square) %>">
               </div>
-              <span><%= t('views.nav.comeback') %></span>
+              <div class="user__info">
+                <%= t('views.nav.comeback') %>
+              </div>
             </div>
           </a>
         </li>
