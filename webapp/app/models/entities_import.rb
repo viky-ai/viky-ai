@@ -24,7 +24,7 @@ class EntitiesImport < ApplicationRecord
     result = true
     count = 0
     entities_array = []
-    csv = CSV.new(file.open(&:read), options)
+    csv = CSV.new(file.open(&:read).force_encoding('UTF-8'), options)
     entities_list.entities.delete_all if mode == 'replace'
     entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
     begin
@@ -47,17 +47,14 @@ class EntitiesImport < ApplicationRecord
         count += 1
       end
       Entity.import entities_array, validate: false, batch_size: 1000
-      # TODO single method in agent 'ordered_and_used_locales'
-      entities_array.each do |entity|
-        entity.run_callbacks(:save) { true }
-      end
+      entities_list.update_agent_locales
     rescue ActiveRecord::ActiveRecordError => e
       # TODO: change the status
-      self.errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
+      errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
       result = false
     rescue CSV::MalformedCSVError => e
       # TODO: change the status
-      self.errors[:file] << "Bad CSV format: #{e.message}"
+      errors[:file] << "Bad CSV format: #{e.message}"
       result = false
     end
     result
@@ -66,7 +63,6 @@ class EntitiesImport < ApplicationRecord
   private
 
     def queue_for_import
-      ap 'queing for import'
       self.status = :queued
       save
       ImportEntitiesJob.perform_later self
