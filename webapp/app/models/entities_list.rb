@@ -49,6 +49,15 @@ class EntitiesList < ApplicationRecord
     end
   end
 
+  def from_csv(entities_import, current_user)
+    if entities_import.save
+      entities_import.queue_for_import(current_user)
+      true
+    else
+      false
+    end
+  end
+
   def update_agent_locales
     used_locales = agent.ordered_and_used_locales
     agent_locales = (agent.locales + used_locales).uniq

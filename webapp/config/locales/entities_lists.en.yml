@@ -7,8 +7,10 @@ en:
           btn: CSV Import
           select_import:
             title: Import entities
-            wait_message: Import in progress, please wait...
+            wait_message: Checking file, please wait...
+            success_message: Entities will be imported shortly...
             mode:
+              label: Import behavior
               append: Append to current entities
               replace: Replace current entities
             submit: Import
@@ -16,6 +18,7 @@ en:
               zero: "No entity imported"
               one: "1 entity imported successfully"
               other: "%{count} entities imported successfully"
+            failed: "Entity import failed: %{errors}"
             max_file_size: The maximum file size allowed is 2Mo.
             file_label: Choose a CSV file to import
         export_btn: CSV Export

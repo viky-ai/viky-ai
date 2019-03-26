@@ -40,7 +40,7 @@
         </div>
 
         <div class="field">
-          <p class="field__title">Import behavior</p>
+          <p class="field__title"><%= t('views.entities_lists.show.import.select_import.mode.label') %></p>
           <% EntitiesImport.modes.each_key do |mode| %>
             <%= import_form.radio_button :mode, mode %>
             <label class="radio">
@@ -53,7 +53,7 @@
         <div class="actions">
           <%= import_form.button t('views.entities_lists.show.import.select_import.submit'),
                                  class: "btn btn--primary"%>
-          <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+          <button id="close-import" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
         </div>
       <% end %>
 
@@ -63,6 +63,15 @@
             <%= icon_loading %>
           </span>
           <%= t('views.entities_lists.show.import.select_import.wait_message') %>
+        </p>
+      </div>
+
+      <div id="success-message" style="display:none">
+        <p>
+          <span class="icon icon--green icon--large">
+            <%= icon_check %>
+          </span>
+          <%= t('views.entities_lists.show.import.select_import.success_message') %>
         </p>
       </div>
 

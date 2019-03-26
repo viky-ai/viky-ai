@@ -9,8 +9,6 @@ class EntitiesImport < ApplicationRecord
 
   validates :mode, presence: true
 
-  after_create :queue_for_import
-
   def proceed
     options = {
       headers: [
@@ -51,22 +49,24 @@ class EntitiesImport < ApplicationRecord
     rescue ActiveRecord::ActiveRecordError => e
       # TODO: change the status
       errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
-      result = false
+      # result = false
+      count = 0
     rescue CSV::MalformedCSVError => e
       # TODO: change the status
       errors[:file] << "Bad CSV format: #{e.message}"
-      result = false
+      # result = false
+      count = 0
     end
-    result
+    count
+  end
+
+  def queue_for_import(current_user)
+    self.status = :queued
+    save
+    ImportEntitiesJob.perform_later(self, current_user)
   end
   
   private
-
-    def queue_for_import
-      self.status = :queued
-      save
-      ImportEntitiesJob.perform_later self
-    end
 
     def count_lines(csv)
       line_count = 0
