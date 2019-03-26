@@ -6,7 +6,12 @@ namespace :statistics do
     environments << 'test' if Rails.env == 'development'
     environments.each do |environment|
       Statistics::Print.step("Environment #{environment}.")
-      client = IndexManager.client environment
+      # use a client with a bigger timeout
+      client = IndexManager.client(
+        transport_options: {
+          request: { timeout: 5.minutes }
+        }
+      )
       unless cluster_ready?(client)
         Statistics::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
@@ -50,7 +55,12 @@ namespace :statistics do
   task :reindex, [:src_index] => :environment do |t, args|
     Statistics::Print.error('Missing param: src index') unless args.src_index.present?
     src_name = args.src_index
-    client = IndexManager.client
+    # use a client with a bigger timeout
+    client = IndexManager.client(
+      transport_options: {
+        request: { timeout: 5.minutes }
+      }
+    )
     unless cluster_ready?(client)
       Statistics::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
@@ -79,7 +89,12 @@ namespace :statistics do
   namespace :reindex do
     desc 'Reindex all statistics indices'
     task :all => :environment do |t, args|
-      client = IndexManager.client
+      # use a client with a bigger timeout
+      client = IndexManager.client(
+        transport_options: {
+          request: { timeout: 5.minutes }
+        }
+      )
       unless cluster_ready?(client)
         Statistics::Print.error('Cannot perform tasks : cluster is not ready')
         exit 1
@@ -118,7 +133,12 @@ namespace :statistics do
     max_age = '7d'
     max_docs = 100_000
     Statistics::Print.step("Roll over alias #{InterpretRequestLog::INDEX_ALIAS_NAME} with conditions max_age=#{max_age} or max_docs=#{max_docs}.")
-    client = IndexManager.client
+    # use a client with a bigger timeout
+    client = IndexManager.client(
+      transport_options: {
+        request: { timeout: 5.minutes }
+      }
+    )
     unless cluster_ready?(client)
       Statistics::Print.error('Cannot perform tasks : cluster is not ready')
       exit 1
@@ -196,7 +216,7 @@ namespace :statistics do
           'index.number_of_replicas' => 0
         }
       end
-      reindex(client, src_index, dest_index)
+      reindex(src_index, dest_index)
       begin
         update_index_aliases(client, [
             { remove: { index: src_index.name, alias: InterpretRequestLog::SEARCH_ALIAS_NAME } },
@@ -225,14 +245,22 @@ namespace :statistics do
       Statistics::Print.success("Update aliases #{index_alias} succeed.")
     end
 
-    def reindex(client, src_index, dest_index)
+    def reindex(src_index, dest_index)
+      Statistics::Print.substep("Wait for reindexing of #{src_index.name} to #{dest_index.name} ...")
+      # use a client with a bigger timeout
+      client = IndexManager.client(
+        transport_options: {
+          request: { timeout: 5.minutes }
+        }
+      )
       result = client.reindex(
         wait_for_completion: true,
-        timeout: '5m',
         body: {
           source: { index: src_index.name },
           dest: { index: dest_index.name }
-        })
+        }
+      )
+
       Statistics::Print.success("Reindexing of #{src_index.name} to #{dest_index.name} succeed.")
       Statistics::Print.notice("Reindexing result : #{result.to_json}")
     end
