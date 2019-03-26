@@ -1,33 +1,17 @@
 .agent-box{
-  box-shadow: 0 2px 3px rgba(black, .1);
+  box-shadow: 0 3px 4px rgba(black, .1);
   border-radius: 2px;
+  position: relative;
+  background-color: #fbfbfb;
+
   .agent-box__header{
     display: block;
-    padding: 7em 0 0 0;
+    padding: 9em 0 0 0;
     text-decoration: none;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     @include ribbon-container();
 
-    h2, h3{
-      font-size:1em;
-      margin: 0;
-      color: #fff;
-      padding: 0 1rem;
-      background-color: rgba(black, .075);
-      text-shadow: 0 1px 0 rgba(black, .3);
-    }
-    h2{
-      font-weight: 400;
-      font-size: 1.1em;
-      padding-top: .5rem;
-      padding-bottom: .1rem;
-    }
-    h3{
-      font-size: .9em;
-      color: rgba(#fff, .9);
-      padding-bottom: .5em;
-    }
     .agent-box__header__role{
       position: absolute;
       top: .2em;
@@ -41,33 +25,56 @@
     &.agent-box__header--image{
       background-size: 100% auto;
       background-position: center center;
-      transition: background-size .15s;
-      h2, h3{
-        transition: background .15s;
-        background-color: rgba(black, .35);
-        text-shadow: 0 1px 0 rgba(black, .5);
+      transition: background-size .15s ease-in-out;
+    }
+  }
+
+
+
+  & > a{
+    text-decoration: none;
+    &:hover,
+    &:focus{
+      .agent-box__header--image {
+        background-size: 105% auto;
+      }
+      .agent-box__avatar{
+        top: calc( 9em - 35px );
       }
     }
   }
 
-  a.agent-box__header{
-    &:hover,
-    &:focus{
-      h2, h3{
-        background-color: rgba(black, .3);
-      }
+  .agent-box__avatar{
+    position: absolute;
+    display: block;
+    top: calc( 9em - 30px );
+    right: .75em;
+    transition: all .15s ease-in-out;
+    img{
+      display: block;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      width: 56px;
     }
   }
 
-  a.agent-box__header--image{
-    &:hover,
-    &:focus{
-      background-size: 110% auto;
-      h2, h3{
-        color: #fff;
-        background-color: rgba(black, .5);
-      }
-    }
+  h2, h3{
+    font-size: 1em;
+    margin: 0;
+    color: #000;
+    padding: 0 1rem;
+    background-color: #fff;
+  }
+  h2{
+    font-weight: 400;
+    font-size: 1.075em;
+    padding-top: .7em;
+    padding-bottom: .1em;
+  }
+  h3{
+    font-size: .8em;
+    color: #999;
+    padding-bottom: .8em;
   }
 
   .agent-box__content{
@@ -75,31 +82,59 @@
     align-items: center;
     justify-content: space-between;
 
-    padding: .5em 1em;
-    border-top: none;
-    background-color: #fff;
+    min-height: 4em;
+    background-color: #fbfbfb;
+
+    border-top: 1px solid #f0f0f0;
+    padding: .4em 1em;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
-    line-height: 1em;
     .agent-box__content__info{
       padding: .2em 0;
-      p.primary{
-        margin: 0 0 .25em 0;
-        font-size: .9em;
-      }
-      p.secondary{
-        margin: 0;
-        color: #aaa;
-        font-size: .8em;
-      }
+      font-size: .75em;
+      color: #999;
+      line-height: 1.5em;
     }
-    .agent-box__content__actions{
+  }
+
+  .avatars-list{
+    line-height: 0;
+    padding-left: .70em;
+    padding-right: .25em;
+    img{
+      position: relative;
+      border: 3px solid #fff;
+      width: 2.25em;
+      height: 2.25em;
+      border-radius: 50%;
+      margin-left: -.75em;
+      z-index: 9;
+      &:nth-child(1){ z-index: 20; }
+      &:nth-child(2){ z-index: 19; }
+      &:nth-child(3){ z-index: 18; }
+      &:nth-child(4){ z-index: 17; }
+      &:nth-child(5){ z-index: 16; }
+      &:nth-child(6){ z-index: 15; }
+      &:nth-child(7){ z-index: 14; }
+      &:nth-child(8){ z-index: 13; }
+      &:nth-child(9){ z-index: 12; }
+      &:nth-child(10){ z-index: 11; }
+      &:nth-child(11){ z-index: 10; }
+      &:nth-child(12){ z-index: 9; }
+      &:nth-child(13){ z-index: 8; }
+      &:nth-child(14){ z-index: 7; }
+      &:nth-child(15){ z-index: 6; }
+      &:nth-child(16){ z-index: 5; }
+      &:nth-child(17){ z-index: 4; }
+      &:nth-child(18){ z-index: 3; }
+      &:nth-child(19){ z-index: 2; }
+      &:nth-child(20){ z-index: 1; }
     }
   }
 }
 
 .agents-box-grid{
-  margin: 1em 0;
+  margin: 1.5em 0;
   display: -ms-grid;
   display: grid;
 
