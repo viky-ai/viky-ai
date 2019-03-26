@@ -1,10 +1,13 @@
+@import '../../framework/abstracts/variables';
+
 .dashboard-indicators{
   display: grid;
-  grid-row-gap: 1.5em;
-  grid-column-gap: 1.5em;
+  grid-row-gap: 2em;
+  grid-column-gap: 2em;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  margin-bottom: 1.5em;
+  margin-bottom: 2em;
   .card.card--indicator{
+    border-top: 3px solid $primary_color;
     margin: 0;
     overflow: hidden;
     .card-main{
@@ -33,8 +36,8 @@
 
 .dashboard-tops{
   display: grid;
-  grid-row-gap: .75em;
-  grid-column-gap: 1.5em;
+  grid-row-gap: 1em;
+  grid-column-gap: 2em;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   .card{
     padding: 1em;
