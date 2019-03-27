@@ -5,7 +5,6 @@ class EntitiesImport < ApplicationRecord
   belongs_to :entities_list
 
   enum mode: [:append, :replace]
-  enum status: [:queued, :completed, :failed]
 
   validates :mode, presence: true
 
@@ -19,51 +18,44 @@ class EntitiesImport < ApplicationRecord
       skip_blanks: true,
       encoding: 'UTF-8'
     }
-    result = true
     count = 0
     entities_array = []
     csv = CSV.new(file.open(&:read).force_encoding('UTF-8'), options)
-    entities_list.entities.delete_all if mode == 'replace'
-    entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
-    begin
-      header_valid?(csv)
-      line_count = count_lines(csv)
-      csv.each_with_index do |row, index|
-        next if index.zero?
-        row_length_valid?(row, csv.lineno - 1)
-        auto_solution = parse_auto_solution(row)
-        solution = auto_solution ? '' : parse_solution(row)
-        entity = Entity.new(
-          terms: parse_terms(row),
-          auto_solution_enabled: auto_solution,
-          solution: solution,
-          position: entities_max_position + line_count - count,
-          entities_list: entities_list
-        )
-        entity.validate!
-        entities_array << entity
-        count += 1
+    ActiveRecord::Base.transaction do
+      entities_list.entities.delete_all if mode == 'replace'
+      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
+      begin
+        header_valid?(csv)
+        line_count = count_lines(csv)
+        csv.each_with_index do |row, index|
+          next if index.zero?
+          row_length_valid?(row, csv.lineno - 1)
+          auto_solution = parse_auto_solution(row)
+          solution = auto_solution ? '' : parse_solution(row)
+          entity = Entity.new(
+            terms: parse_terms(row),
+            auto_solution_enabled: auto_solution,
+            solution: solution,
+            position: entities_max_position + line_count - count,
+            entities_list: entities_list
+          )
+          entity.validate!
+          entities_array << entity
+          count += 1
+        end
+        Entity.import entities_array, validate: false, batch_size: 1000
+        entities_list.update_agent_locales
+      rescue ActiveRecord::ActiveRecordError => e
+        errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
+        count = 0
+        raise ActiveRecord::Rollback
+      rescue CSV::MalformedCSVError => e
+        errors[:file] << "Bad CSV format: #{e.message}"
+        count = 0
+        raise ActiveRecord::Rollback
       end
-      Entity.import entities_array, validate: false, batch_size: 1000
-      entities_list.update_agent_locales
-    rescue ActiveRecord::ActiveRecordError => e
-      # TODO: change the status
-      errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
-      # result = false
-      count = 0
-    rescue CSV::MalformedCSVError => e
-      # TODO: change the status
-      errors[:file] << "Bad CSV format: #{e.message}"
-      # result = false
-      count = 0
     end
     count
-  end
-
-  def queue_for_import(current_user)
-    self.status = :queued
-    save
-    ImportEntitiesJob.perform_later(self, current_user)
   end
   
   private

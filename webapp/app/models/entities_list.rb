@@ -51,7 +51,7 @@ class EntitiesList < ApplicationRecord
 
   def from_csv(entities_import, current_user)
     if entities_import.save
-      entities_import.queue_for_import(current_user)
+      ImportEntitiesJob.perform_later(entities_import, current_user)
       true
     else
       false

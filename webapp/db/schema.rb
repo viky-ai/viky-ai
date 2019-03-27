@@ -98,7 +98,6 @@ ActiveRecord::Schema.define(version: 20190322134748) do
 
   create_table "entities_imports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "file_data"
-    t.integer "status"
     t.integer "mode"
     t.uuid "entities_list_id"
     t.datetime "created_at", null: false

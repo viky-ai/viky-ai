@@ -42,10 +42,8 @@
         <div class="field">
           <p class="field__title"><%= t('views.entities_lists.show.import.select_import.mode.label') %></p>
           <% EntitiesImport.modes.each_key do |mode| %>
-            <%= import_form.radio_button :mode, mode %>
-            <label class="radio">
-              <%= t("views.entities_lists.show.import.select_import.mode.#{mode}") %>
-            </label>
+            <%= import_form.radio_button :mode, mode, id: "import_mode_#{mode}" %>
+            <%= import_form.label :mode, t("views.entities_lists.show.import.select_import.mode.#{mode}"), value: mode, class:'radio'%>
             &nbsp;
          <% end %>
         </div>

@@ -3,14 +3,16 @@ class ImportEntitiesJob < ApplicationJob
 
   def perform(entities_import, current_user)
     count = entities_import.proceed
-    if count.zero?
+    agent = entities_import.entities_list.agent
+    if count.zero? && entities_import.errors.any?
       UserNotificationsChannel.broadcast_to current_user,
                                             alert: I18n.t('views.entities_lists.show.import.select_import.failed',
-                                                          errors: entities_import.errors.full_messages.join(', '))
+                                                          errors: entities_import.errors.full_messages.join(', '),
+                                                          agent: agent.name)
     else
       UserNotificationsChannel.broadcast_to current_user,
                                             notice: I18n.t('views.entities_lists.show.import.select_import.success',
-                                                           count: count)
+                                                           count: count, agent: agent.name)
     end
     entities_import.destroy
   end
