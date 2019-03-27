@@ -354,7 +354,7 @@ cache_clear_dev:
   script:
     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
-    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
     - sleep 5
     - echo "Clear all cache ..."
     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
@@ -376,10 +376,10 @@ cache_clear_preprod:
   script:
     - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/prod ( ${CI_ENVIRONMENT_URL} )"
     - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
-    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service
+    - rancher --wait --environment preprod start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
     - sleep 5
     - echo "Clear all cache ..."
-    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
   when: manual
   allow_failure: true
 
