@@ -87,7 +87,10 @@ class EntitiesController < ApplicationController
   def destroy
     respond_to do |format|
       if @entity.destroy
-        format.js { render partial: 'destroy_succeed' }
+        format.js {
+          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
+            notice: t('views.entities.destroy.success_message')
+        }
       else
         format.js { render partial: 'destroy_failed' }
       end
