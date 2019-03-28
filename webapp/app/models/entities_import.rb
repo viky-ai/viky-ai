@@ -1,7 +1,5 @@
 class EntitiesImport < ApplicationRecord
 
-  # TODO set the file size
-  MAX_FILE_SIZE = 2.megabytes
   BATCH_SIZE = 1000
 
   include EntitiesImportFileUploader::Attachment.new(:file)
