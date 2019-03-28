@@ -170,9 +170,7 @@ class AgentsController < ApplicationController
 
     def check_user_rights
       case action_name
-      when "full_export"
-        access_denied unless current_user.can?(:show, @agent) && current_user.admin?
-      when "show", 'add_favorite', 'delete_favorite', 'duplicate'
+      when "show", 'add_favorite', 'delete_favorite', 'duplicate', 'full_export'
         access_denied unless current_user.can? :show, @agent
       when "edit", "update", "generate_token"
         access_denied unless current_user.can? :edit, @agent

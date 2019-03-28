@@ -257,23 +257,23 @@ module Nls
         deepness = create_deepness_package
         Nls.package_update(deepness)
 
-        request1 = json_interpret_body(deepness, "Je voudrai aller à Paris", "fr")
+        request1 = json_interpret_body(deepness, "Je voudrais aller à Paris", locale: "fr")
         actual1 = Nls.interpret(request1)
         assert_equal actual1["interpretations"][0]["score"], actual1["interpretations"][1]["score"]
 
-        request2 = json_interpret_body(deepness, "Je voudrais aller à Paris", "en")
+        request2 = json_interpret_body(deepness, "Je voudrais aller à Paris", locale: "en")
         actual2 = Nls.interpret(request2)
         assert_equal actual2["interpretations"][0]["score"], actual2["interpretations"][1]["score"]
 
-        request3 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", "fr")
+        request3 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "fr")
         actual3 = Nls.interpret(request3)
         assert_equal actual3["interpretations"][0]["score"], actual3["interpretations"][1]["score"]
 
-        request4 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", "en")
+        request4 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "en")
         actual4 = Nls.interpret(request4)
         assert_equal actual4["interpretations"][0]["score"], actual4["interpretations"][1]["score"]
 
-        request5 = json_interpret_body(deepness, "Je voudrai aller à Paris toto", "fr")
+        request5 = json_interpret_body(deepness, "Je voudrais aller à Paris toto", locale: "fr")
         actual5 = Nls.interpret(request5)
         assert_equal actual5["interpretations"][0]["score"], actual5["interpretations"][1]["score"]
       end
@@ -290,7 +290,7 @@ module Nls
         expected = Answers.new(aller_de_a["want-go-from-to"])
 
         # creation et exécutio de la requete
-        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
@@ -308,21 +308,21 @@ module Nls
         expected = Answers.new(aller_de_a["want-go-from-to"], { town: ["Tokyo", "Paris"]})
 
         # creation et exécution de la requete 1
-        request1 = json_interpret_body(aller_de_a, "I want to go from Tokyo to Paris", Interpretation.default_locale)
+        request1 = json_interpret_body(aller_de_a, "I want to go from Tokyo to Paris")
         actual1 = Nls.interpret(request1)
         expected.first.score = 0.89
         assert_json expected.to_h, actual1
 
         # creation et exécution de la requete 2
         expected.first.solution = { town: ["New York", "Barcelona"] }
-        request2 = json_interpret_body(aller_de_a, "I want to go from New York to Barcelona", Interpretation.default_locale)
+        request2 = json_interpret_body(aller_de_a, "I want to go from New York to Barcelona")
         actual2 = Nls.interpret(request2)
         expected.first.score = 0.88
         assert_json expected.to_h, actual2
 
         # creation et exécution de la requete 3
         expected.first.solution = { town: ["no where", "Paris"] }
-        request3 = json_interpret_body(aller_de_a, "I want to go from no where to Paris", Interpretation.default_locale)
+        request3 = json_interpret_body(aller_de_a, "I want to go from no where to Paris")
         actual3 = Nls.interpret(request3)
         expected.first.score = 0.88
         assert_json expected.to_h, actual3
@@ -340,7 +340,7 @@ module Nls
         expected = Answers.new(go_town["go-town"])
 
          # creation et exécution de la requete
-        request = json_interpret_body(go_town, "go to Paris New York Barcelona", Interpretation.default_locale)
+        request = json_interpret_body(go_town, "go to Paris New York Barcelona")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
@@ -378,7 +378,7 @@ module Nls
         expected = Answers.new(i_want_hotel_with_feature)
 
         # creation et exécution de la requete
-        request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view", Interpretation.default_locale)
+        request = json_interpret_body([want_hotel, pg_building_feature], "I want an hotel with swimming pool with sea view")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
@@ -397,7 +397,7 @@ module Nls
         expected = Answers.new(pg_building_feature["pg-building-features"],[])
 
         # creation et exécution de la requete
-        request = json_interpret_body(pg_building_feature, "with swimming pool with sea view", Interpretation.default_locale)
+        request = json_interpret_body(pg_building_feature, "with swimming pool with sea view")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
       end
@@ -416,7 +416,7 @@ module Nls
         expected = Answers.new(pg_building_feature_any["pg-building-features"], solution, 0.9)
 
         # creation et exécution de la requete
-        request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa", Interpretation.default_locale)
+        request = json_interpret_body(pg_building_feature_any, "with swimming pool with golf with sea view with spa")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
       end
@@ -432,37 +432,37 @@ module Nls
         Nls.package_update(aller_de_a)
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "New York", to: "Paris"}, 0.94)
-        request = json_interpret_body(aller_de_a, "I want to go from New York to Paris", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from New York to Paris")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Paris", to: "New York"}, 0.94)
-        request = json_interpret_body(aller_de_a, "I want to go from Paris to New York", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Paris to New York")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Barcelona", to: "New York"}, 1.0)
-        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to New York")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Perpette Les Oies", to: "Barcelona"}, 0.91)
-        request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Barcelona", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Barcelona")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Barcelona", to: "Perpette Les Oies"}, 0.91)
-        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to Perpette Les Oies", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Barcelona to Perpette Les Oies")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Paris", to: "Perpette Les Oies"}, 0.87)
-        request = json_interpret_body(aller_de_a, "I want to go from Paris to Perpette Les Oies", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Paris to Perpette Les Oies")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "Perpette Les Oies", to: "Paris"}, 0.87)
-        request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Paris", Interpretation.default_locale)
+        request = json_interpret_body(aller_de_a, "I want to go from Perpette Les Oies to Paris")
         actual = Nls.interpret(request)
         assert_json expected.to_h, actual
 
@@ -480,7 +480,7 @@ module Nls
         pg_building_feature = create_building_feature
         Nls.package_update(pg_building_feature)
 
-        request = json_interpret_body([aller_de_a, pg_building_feature], "I want to go from New York to Barcelona with swimming pool", Interpretation.default_locale)
+        request = json_interpret_body([aller_de_a, pg_building_feature], "I want to go from New York to Barcelona with swimming pool")
         actual = Nls.interpret(request)
         expected = Answers.new(aller_de_a["want-go-from-to"], { from: "New York", to: "Barcelona"}, 0.95)
         assert_json expected.to_h, actual

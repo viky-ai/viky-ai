@@ -59,27 +59,8 @@
 
   </parameters>
 
-  <minimum_scores>
-    <minimum_score length="2" score="1.00"/>
-    <minimum_score length="3" score="0.98"/>
-    <minimum_score length="4" score="0.97"/>
-    <minimum_score length="5" score="0.97"/>
-    <minimum_score length="6" score="0.90"/>
-    <minimum_score length="8" score="0.85"/>
-    <minimum_score length="10" score="0.81"/>
-    <minimum_score length="20" score="0.81"/>
-  </minimum_scores>
-
-  <minimum_final_scores>
-    <minimum_final_score length="2" score="1.00"/>
-    <minimum_final_score length="3" score="0.98"/>
-    <minimum_final_score length="4" score="0.97"/>
-    <minimum_final_score length="5" score="0.97"/>
-    <minimum_final_score length="6" score="0.90"/>
-    <minimum_final_score length="8" score="0.85"/>
-    <minimum_final_score length="10" score="0.81"/>
-    <minimum_final_score length="20" score="0.81"/>
-  </minimum_final_scores>
+  <minimum_scores />
+  <minimum_final_scores />
 
   <maximum_transformations>
     <maximum_transformation nb_request_words="1" number="100"/>

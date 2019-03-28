@@ -324,10 +324,65 @@ backup_restore_dev:
     - echo "Restoring data ..."
     - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}-backup-1 /backup/restore.sh
     - sleep 2
-    - echo "Restarting platform ..."
+    - echo "Restart sevices in right order ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/stats-service --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-master     --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-cerebro    --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-data       --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/es-kibana     --type service
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/app-master    --type service
+    - sleep 2
+    - echo "Restarting rest of platform ..."
     - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}                --type stack
   when: manual
   allow_failure: true
+
+# Cache
+cache_clear_dev:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  except:
+    - master
+    - tags
+  environment:
+    name: ${CI_COMMIT_REF_NAME}
+    url: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-${CI_ENVIRONMENT_SLUG}-platform-dev
+    VIKYAPP_BASEURL: https://viky-${CI_ENVIRONMENT_SLUG}-platform-dev.viky.ai
+  script:
+    - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/dev ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
+    - rancher --wait --environment dev start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
+    - sleep 5
+    - echo "Clear all cache ..."
+    - rancher_exec dev ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
+  when: manual
+  allow_failure: true
+
+cache_clear_preprod:
+  stage: admin
+  image: docker-registry.pertimm.net/tools/docker-rancher-cli:latest
+  only:
+    - master
+  environment:
+    name: viky-preprod
+    url: https://viky-beta.viky.ai
+  variables:
+    GIT_STRATEGY: none
+    VIKYAPP_DEPLOY_RANCHER_STACK: viky-beta
+    VIKYAPP_BASEURL: https://viky-beta.viky.ai
+  script:
+    - echo "Clear cache to ${VIKYAPP_DEPLOY_RANCHER_STACK} on ${RANCHER_URL}/prod ( ${CI_ENVIRONMENT_URL} )"
+    - echo "Ensure platform ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis is started ..."
+    - rancher --wait --environment preprod start ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis       --type service || echo "Redis is already running."
+    - sleep 5
+    - echo "Clear all cache ..."
+    - rancher_exec preprod ${VIKYAPP_DEPLOY_RANCHER_STACK}/db-redis redis-cli flushall
+  when: manual
+  allow_failure: true
+
 
 # ---------------------------------------------------------------------------
 

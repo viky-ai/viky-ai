@@ -193,7 +193,7 @@ module Nls
             ]
           }
         }
-        check_interpret("chevale blanc", interpretations: ["cheval_blanc"], explain: true, explanation: expected_explanation)
+        check_interpret("chevale blanc", interpretations: ["cheval_blanc"], spellchecking: :medium, explain: true, explanation: expected_explanation)
       end
 
       def test_highlight_number_english_format

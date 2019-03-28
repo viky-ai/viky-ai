@@ -57,6 +57,13 @@
                   <div class="cts-item__full__detail__value">{{ test.language }}</div>
                 </template>
 
+                <template v-if="test.spellchecking != 'inactive'">
+                  <div class="cts-item__full__detail__label">
+                    <%= t('views.agent_regression_checks.spellchecking.label') %>
+                  </div>
+                  <div class="cts-item__full__detail__value">{{ test.spellchecking_i18n }}</div>
+                </template>
+
                 <template v-if="test.now">
                   <div class="cts-item__full__detail__label">
                     <%= t('views.agent_regression_checks.now') %>
@@ -66,32 +73,34 @@
 
                 <test-diff v-bind:test="test"></test-diff>
 
-                <% if current_user_can_edit_agent %>
-                  <div class="cts-item__full__detail__actions">
-                    <template v-if="test.state == 'running'">
-                      <button disabled class="btn btn--small btn--outline btn--primary btn--disabled">
-                        <span class="icon icon--x-small"><%= icon_send %></span>
-                        <%= t('views.agent_regression_checks.send') %>
-                      </button>
+                <div class="cts-item__full__detail__actions">
+                  <template v-if="test.state == 'running'">
+                    <button disabled class="btn btn--small btn--outline btn--primary btn--disabled">
+                      <span class="icon icon--x-small"><%= icon_send %></span>
+                      <%= t('views.agent_regression_checks.send') %>
+                    </button>
+                    <% if current_user_can_edit_agent %>
                       <button disabled class="btn btn--small btn--outline btn--destructive btn--disabled">
                         <span class="icon icon--x-small"><%= icon_delete %></span>
                         <%= t('views.agent_regression_checks.delete') %>
                       </button>
-                    </template>
-                    <template v-else>
-                      <button class="btn btn--small btn--outline btn--primary"
-                              v-on:click="updateTest(index, $event)">
-                        <span class="icon icon--x-small"><%= icon_send %></span>
-                        <%= t('views.agent_regression_checks.send') %>
-                      </button>
+                    <% end %>
+                  </template>
+                  <template v-else>
+                    <button class="btn btn--small btn--outline btn--primary"
+                            v-on:click="updateTest(index, $event)">
+                      <span class="icon icon--x-small"><%= icon_send %></span>
+                      <%= t('views.agent_regression_checks.send') %>
+                    </button>
+                    <% if current_user_can_edit_agent %>
                       <button class="btn btn--small btn--outline btn--destructive"
                               v-on:click="showRemoveConfirm">
                         <span class="icon icon--x-small"><%= icon_delete %></span>
                         <%= t('views.agent_regression_checks.delete') %>
                       </button>
-                    </template>
-                  </div>
-                <% end %>
+                    <% end %>
+                  </template>
+                </div>
 
               </div>
             </div>

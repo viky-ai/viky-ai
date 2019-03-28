@@ -1,8 +1,8 @@
 module IndexManager
 
-  def self.client(environment = Rails.env)
-    config = fetch_statistics_configuration(environment)
-    Elasticsearch::Client.new(config[:client].symbolize_keys)
+  def self.client(options = {})
+    config = fetch_statistics_configuration()
+    Elasticsearch::Client.new(config[:client].symbolize_keys.merge(options))
   end
 
   def self.fetch_statistics_configuration(environment = Rails.env)

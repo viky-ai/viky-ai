@@ -96,12 +96,12 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     get "/api/v1/agents/admin/weather/interpret.json",
       params: { sentence: "test" },
       headers: { "Agent-Token" => agent.api_token }
-    assert response.code == '200'
+    assert_equal '200', response.code
 
     get "/api/v1/agents/admin/weather/interpret.json",
       params: { sentence: "test", agent_token: "wrong_token" },
       headers: { "Agent-Token" => agent.api_token }
-    assert response.code == '401'
+    assert_equal '401', response.code
   end
 
 
@@ -118,7 +118,6 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     sentence = "test context #{SecureRandom.uuid}"
     intent = intents(:weather_forecast)
     agent = agents(:weather)
-
     Nlp::Interpret.any_instance.stubs('proceed').returns(
       status: '200',
       body: {
@@ -165,6 +164,41 @@ class NlsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'abc', found[:context]['session_id']
     assert_equal '1.1-a58b', found[:context]['bot_version']
     assert_equal agent.updated_at, found[:context]['agent_version']
+  end
+
+
+  test 'Set spellchecking' do
+    intent = intents(:weather_forecast)
+    agent = intent.agent
+    Nlp::Interpret.any_instance.stubs('proceed').returns(
+      status: '200',
+      body: {
+        'interpretations' => [
+          {
+            'package' => agent.id,
+            'id'      => intent.id,
+            'slug'    => 'weather_forecast',
+            'score'   => 1.0
+          }
+        ]
+      }
+    )
+
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: { sentence: 'bonjoir', agent_token: agent.api_token, spellchecking: 'inactive' }
+    assert_equal '200', response.code
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: { sentence: 'bonjoir', agent_token: agent.api_token, spellchecking: 'low' }
+    assert_equal '200', response.code
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: { sentence: 'bonjoir', agent_token: agent.api_token, spellchecking: 'medium' }
+    assert_equal '200', response.code
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: { sentence: 'bonjoir', agent_token: agent.api_token, spellchecking: 'high' }
+    assert_equal '200', response.code
+    get '/api/v1/agents/admin/weather/interpret.json',
+      params: { sentence: 'bonjoir', agent_token: agent.api_token, spellchecking: 'foobar' }
+    assert_equal '422', response.code
   end
 
 
