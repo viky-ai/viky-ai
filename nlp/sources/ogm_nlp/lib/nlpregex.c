@@ -186,11 +186,12 @@ static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part
 
       if (g_match_info_fetch_pos(match_info, 0, &start_pos, &end_pos))
       {
-
-        NlpLog(DOgNlpTraceMatch, "NlpMatchRegexes: matched sentence with regex"
-            " '%s' start=%d end=%d", sentence, start_pos, end_pos);
-
-        IFE(NlpRegexAddWord(ctrl_nlp_th, start_pos, end_pos - start_pos, input_part, sentence_word_count));
+        if (start_pos < end_pos)
+        {
+          NlpLog(DOgNlpTraceMatch, "NlpMatchRegexes: matched sentence with regex"
+              " '%s' start=%d end=%d", sentence, start_pos, end_pos);
+          IFE(NlpRegexAddWord(ctrl_nlp_th, start_pos, end_pos - start_pos, input_part, sentence_word_count));
+        }
       }
 
       g_match_info_next(match_info, &regexp_error);
@@ -201,8 +202,7 @@ static og_status NlpRegexMatchInputPart(og_nlp_th ctrl_nlp_th, struct input_part
         NlpThrowErrorTh(ctrl_nlp_th, "NlpMatchRegexes: g_match_info_next failed on execution on alias :"
             " '%s' of expression '%s' in interpretation '%s' '%s' with regex '%.*s' : %s", alias->alias,
             input_part->expression->text, interpretation->slug, interpretation->id, DOgNlpMaximumRegexStringSizeLogged,
-            alias->regex_string,
-            regexp_error->message);
+            alias->regex_string, regexp_error->message);
         g_error_free(regexp_error);
 
         if (match_info != NULL)

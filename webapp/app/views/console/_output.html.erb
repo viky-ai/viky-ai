@@ -114,11 +114,9 @@
     <a href="<%= data[:path] %>" target="_blank">
       <%= t('views.console.go_to_api_endpoint') %>
     </a>
-    <% if current_user.admin? %>
-      <a href="<%= data[:package_path]%>" target="_blank">
-        <%= t('views.console.download_package') %>
-      </a>
-    <% end %>
+    <a href="<%= data[:package_path]%>" target="_blank">
+      <%= t('views.console.download_package') %>
+    </a>
   </div>
 </div>
 
