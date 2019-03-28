@@ -134,7 +134,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
-
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed

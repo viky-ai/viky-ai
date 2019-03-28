@@ -3,6 +3,10 @@ require 'model_test_helper'
 
 class EntitiesListTest < ActiveSupport::TestCase
 
+  setup do
+    create_entities_import_fixtures
+  end
+
   test 'Basic entities_list creation & agent association' do
     assert_equal 2, agents(:weather).entities_lists.count
 
@@ -170,6 +174,20 @@ class EntitiesListTest < ActiveSupport::TestCase
                 "pluie:fr|rain:en,true,pluie",
                 ''].join("\n")
     assert_equal expected, csv
+  end
+
+  test 'Import entities from csv' do
+    user = users(:admin)
+    entities_list = entities_lists(:weather_conditions)
+
+    assert entities_list.from_csv(@weather_conditions_import, user)
+  end
+
+  test 'Import entities from csv failed' do
+    user = users(:admin)
+    entities_list = entities_lists(:weather_conditions)
+    @weather_conditions_import.file = nil
+    assert !entities_list.from_csv(@weather_conditions_import, user)
   end
 
   test 'Move entities list to an agent' do
