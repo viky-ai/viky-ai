@@ -18,7 +18,7 @@ en:
               zero: "No entity imported for %{agent}"
               one: "1 entity imported successfully for %{agent}"
               other: "%{count} entities imported successfully for %{agent}"
-            failed: "Entity import failed for %{agent}: %{errors}"
+            failed: "Entity import failed for %{agent}</br> %{errors}"
             max_file_size: The maximum file size allowed is 2Mo.
             file_label: Choose a CSV file to import
         export_btn: CSV Export

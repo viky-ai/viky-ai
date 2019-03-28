@@ -58,14 +58,6 @@ class EntitiesList < ApplicationRecord
     end
   end
 
-  def update_agent_locales
-    used_locales = agent.ordered_and_used_locales
-    agent_locales = (agent.locales + used_locales).uniq
-    if agent_locales != agent.locales
-      agent.update_columns(locales: agent_locales)
-    end
-  end
-
   def aliased_intents
     Intent.where(agent_id: agent_id)
           .joins(interpretations: :interpretation_aliases)

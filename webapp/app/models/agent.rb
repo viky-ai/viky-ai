@@ -242,6 +242,14 @@ class Agent < ApplicationRecord
     nlp_updated_at >= updated_at
   end
 
+  def update_locales
+    used_locales = ordered_and_used_locales
+    agent_locales = (locales + used_locales).uniq
+    if agent_locales != locales
+      update_columns(locales: agent_locales)
+    end
+  end
+
 
   private
 

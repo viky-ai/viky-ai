@@ -1,5 +1,9 @@
 class EntitiesImport < ApplicationRecord
+
+  # TODO set the file size
+  MAX_FILE_SIZE = 2.megabytes
   BATCH_SIZE = 1000
+
   include EntitiesImportFileUploader::Attachment.new(:file)
   validates_presence_of :file, message: I18n.t('errors.entity.import.no_file')
 
@@ -49,7 +53,7 @@ class EntitiesImport < ApplicationRecord
           count += 1
         end
         Entity.import entities_array, validate: false unless entities_array.empty?
-        entities_list.update_agent_locales
+        update_entities_list
       rescue ActiveRecord::ActiveRecordError => e
         errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
         count = 0
@@ -109,6 +113,11 @@ class EntitiesImport < ApplicationRecord
 
     def parse_solution(row)
       row['Solution'].nil? ? '' : row['Solution']
+    end
+
+    def update_entities_list
+      entities_list.agent.update_locales
+      entities_list.touch
     end
 
 end
