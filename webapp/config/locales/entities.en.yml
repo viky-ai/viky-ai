@@ -3,7 +3,10 @@ en:
     entities:
       new:
         btn: "Add"
-        placeholder: "Enter multiples terms, optionally you can add a locale separated by a colon if applicable (like 'London:en')"
+        placeholder:
+          "Enter multiples terms, optionally you can add a locale
+          separated by a colon if applicable (like 'London:en')"
+        success_message: Entity has been successfully created.
       index:
         delete_btn: "Delete"
         update_btn: "Update"

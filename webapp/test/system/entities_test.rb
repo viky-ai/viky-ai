@@ -47,7 +47,17 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
-  test 'Create an entity' do
+  test 'Create an entity and failed' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within('.entity-form') do
+      click_button 'Add'
+    end
+    assert page.has_text?("Terms can't be blank")
+    assert page.has_text?("Solution can't be blank")
+  end
+
+
+  test 'Create an entity and succeed' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     assert page.has_no_text?('foggy')
     within('.entity-form') do
@@ -57,6 +67,7 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button 'Add'
     end
     assert page.has_text?('foggy')
+    assert page.has_text?('Entity has been successfully created.')
   end
 
 
@@ -68,7 +79,8 @@ class EntitiesTest < ApplicationSystemTestCase
       check('Auto solution')
       click_button 'Add'
     end
-    assert page.has_text?('foggy')
+    assert page.has_text?('foggy:en')
+    assert page.has_text?('Entity has been successfully created.')
   end
 
 

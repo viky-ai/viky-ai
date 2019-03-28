@@ -12,19 +12,16 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if entity.save
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: Entity.new})
-          @html = render_to_string(partial: 'entity', locals: {
-            entity: entity,
-            can_edit: current_user.can?(:edit, @agent),
-            entities_list: @entities_list,
-            agent: @agent,
-            owner: @owner
-          })
-          render partial: 'create_succeed'
+          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
+            notice: t('views.entities.new.success_message')
         end
       else
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: entity})
+          @html_form = render_to_string(partial: 'form', locals: {
+            agent: @agent,
+            entities_list: @entities_list,
+            entity: entity
+          })
           render partial: 'create_failed', locals: { entity: entity }
         end
       end
