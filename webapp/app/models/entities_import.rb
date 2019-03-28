@@ -1,4 +1,5 @@
 class EntitiesImport < ApplicationRecord
+  BATCH_SIZE = 1000
   include EntitiesImportFileUploader::Attachment.new(:file)
   validates_presence_of :file, message: I18n.t('errors.entity.import.no_file')
 
@@ -41,9 +42,13 @@ class EntitiesImport < ApplicationRecord
           )
           entity.validate!
           entities_array << entity
+          if (index % BATCH_SIZE).zero?
+            Entity.import entities_array, validate: false
+            entities_array = []
+          end
           count += 1
         end
-        Entity.import entities_array, validate: false, batch_size: 1000
+        Entity.import entities_array, validate: false unless entities_array.empty?
         entities_list.update_agent_locales
       rescue ActiveRecord::ActiveRecordError => e
         errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
