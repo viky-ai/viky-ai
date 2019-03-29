@@ -14,7 +14,9 @@
     <tbody>
       <% @top_fail_tests_agents.each do |data| %>
         <% agent = Agent.find(data['id']) %>
-        <tr>
+        <tr title="<%= t("views.backend.dashboard.detail_test_failure",
+            agent_last_update: l(agent.updated_at, format: :short),
+            test_last_run: l(agent.agent_regression_checks.order('updated_at').last.updated_at, format: :short)) %>">
           <td>
             <% if current_user.can? :show, agent %>
               <a href="<%= user_agent_path(agent.owner, agent) %>">

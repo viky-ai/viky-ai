@@ -115,4 +115,5 @@ en:
         top_entities: Agents with most entities
         top_predecessors: Agents most used as dependency
         top_tests_failures: Agents with most tests in failure
+        detail_test_failure: "Agent last update: %{agent_last_update}\nTests last run: %{test_last_run}"
         no_top_tests_failure: All tests pass
