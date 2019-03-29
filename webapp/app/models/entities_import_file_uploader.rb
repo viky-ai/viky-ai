@@ -2,7 +2,7 @@
 
 class EntitiesImportFileUploader < Shrine
   
-  MAX_FILE_SIZE = 5.megabytes
+  MAX_FILE_SIZE = 500.megabytes
 
   plugin :activerecord
   plugin :validation_helpers
