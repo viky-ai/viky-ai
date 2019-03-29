@@ -65,17 +65,8 @@ module Nls
       end
 
       def test_regex_empty_possibility
-
-        expected = {
-          interpretation: "possibly_empty",
-          solution: { maison: "maison" },
-        }
-        check_interpret("maison",        expected)
-
-        exception = assert_raises Minitest::Assertion do
-          check_interpret("cheval", expected)
-        end
-        assert exception.message.include?("Actual answer did not match on any interpretation")
+        check_interpret("maison", interpretation: "possibly_empty", solution: { maison: "maison" })
+        check_interpret("cheval", interpretation: nil)
       end
 
     end
