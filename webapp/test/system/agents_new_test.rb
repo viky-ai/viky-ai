@@ -44,7 +44,13 @@ class AgentsNewTest < ApplicationSystemTestCase
     ]
     go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
-    assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+
+    expected = [
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__red"
+    ]
+    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
   end
 
 
@@ -96,7 +102,12 @@ class AgentsNewTest < ApplicationSystemTestCase
     ]
     go_to_agents_index
     assert_equal expected, (all('.agent-box h2').collect {|n| n.text})
-    assert_equal "Wall-e", first(".background-color-gradient__red h2").text
+    expected = [
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__black",
+      "agent-box__header background-color-gradient__red"
+    ]
+    assert_equal expected,  all('.agent-box__header').collect {|n| n['class']}
     assert_equal 'PUBLIC', first('.background-color-gradient__red span').text
   end
 

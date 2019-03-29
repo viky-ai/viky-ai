@@ -7,7 +7,7 @@ class Backend::UserSearch
   end
 
   def self.keys
-    ["email", "status"]
+    ["query", "status"]
   end
 
   keys.each do |meth|

@@ -1,0 +1,22 @@
+<div class="card card--indicator">
+  <% tests_count = AgentRegressionCheck.count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter(tests_count) %></strong>
+    <%= t("views.backend.dashboard.indicators.tests", count: tests_count) %>
+  </div>
+  <div class="card-detail">
+    <% failure_test_count = AgentRegressionCheck.where(state: [:failure, :error]) %>
+    <% running_test_count = AgentRegressionCheck.running %>
+    <% success_test_count = AgentRegressionCheck.success.count %>
+    <span class="ts-status ts-status--success"></span>
+    <%= number_with_delimiter(success_test_count) %>
+    <% if failure_test_count.exists? %>
+      &nbsp; <span class="ts-status ts-status--failure"></span>
+      <%= number_with_delimiter(failure_test_count.count) %>
+    <% end %>
+    <% if running_test_count.exists? %>
+      &nbsp; <span class="ts-status ts-status--running"></span>
+      <%= number_with_delimiter(running_test_count.count) %>
+    <% end %>
+  </div>
+</div>

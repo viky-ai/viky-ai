@@ -27,9 +27,9 @@ class User < ApplicationRecord
 
   def can?(action, agent)
     return false unless [:edit, :show].include? action
-    return true if action == :show && agent.is_public?
+    return true  if action == :show && agent.is_public?
     return false if memberships.where(agent_id: agent.id).count == 0
-    return true if agent.owner.id == id
+    return true  if agent.owner.id == id
 
     if action == :show
       true
@@ -59,7 +59,14 @@ class User < ApplicationRecord
   def self.search(q = {})
     conditions = where("1 = 1")
 
-    conditions = conditions.where("email LIKE ?", "%#{q[:email]}%")
+    unless q[:query].blank?
+      query = I18n.transliterate q[:query]
+      conditions = conditions.where(
+        "lower(email) LIKE lower(?) OR lower(username) LIKE lower(?)",
+        "%#{query}%",
+        "%#{query}%"
+      )
+    end
 
     case q[:sort_by]
     when "last_action"

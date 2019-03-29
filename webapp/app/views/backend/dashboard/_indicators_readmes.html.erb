@@ -1,0 +1,14 @@
+<div class="card card--indicator">
+  <% agents_count = Agent.count %>
+  <% readmes_count = Readme.count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter(readmes_count) %></strong>
+    <%= t("views.backend.dashboard.indicators.readmes", count: readmes_count) %>
+  </div>
+  <% unless readmes_count.zero? %>
+    <div class="card-detail">
+      <%= number_to_percentage(readmes_count * 100 / agents_count, precision: 0) %>
+      <%= t("views.backend.dashboard.indicators.readme_percentage") %>
+    </div>
+  <% end %>
+</div>

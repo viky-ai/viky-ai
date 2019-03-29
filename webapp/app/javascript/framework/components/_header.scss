@@ -1,6 +1,6 @@
 .header{
-  margin-top: .5em;
-  margin-bottom: 1em;
+  margin-top: .25em;
+  margin-bottom: .75em;
   min-height: 2.25em;
 
   display:flex;
@@ -55,17 +55,17 @@
 
   &.header--agents{
     .header__breadcrumb{
-      min-width: 240px;
+      min-width: 130px;
     }
     .header__search{
-      @media (min-width: 1400px){
+      @media (min-width: 1300px){
         order: 2;
         min-width: auto;
       }
     }
     .header__tools{
       text-align: right;
-      @media (min-width: 1400px){
+      @media (min-width: 1300px){
         order: 3;
       }
     }
