@@ -31,13 +31,17 @@ class EntitiesController < ApplicationController
   def edit
     respond_to do |format|
       format.js {
-        @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+        @form = render_to_string(partial: 'edit.html', locals: {
+          entity: @entity,
+          paginate_is_enabled: paginate_is_enabled?
+        })
         render partial: 'edit'
       }
     end
   end
 
   def update
+    paginate_is_enabled = paginate_is_enabled?
     respond_to do |format|
       if @entity.update(entity_params)
         format.js {
@@ -46,13 +50,17 @@ class EntitiesController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             entities_list: @entities_list,
             agent: @agent,
-            owner: @owner
+            owner: @owner,
+            paginate_is_enabled: paginate_is_enabled
           })
           render partial: 'show'
         }
       else
         format.js do
-          @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+          @form = render_to_string(partial: 'edit.html', locals: {
+            entity: @entity,
+            paginate_is_enabled: paginate_is_enabled
+          })
           render partial: 'edit'
         end
       end
@@ -68,7 +76,8 @@ class EntitiesController < ApplicationController
           can_edit: current_user.can?(:edit, @agent),
           entities_list: @entities_list,
           agent: @agent,
-          owner: @owner
+          owner: @owner,
+          paginate_is_enabled: paginate_is_enabled?
         })
         render partial: 'show'
       }
@@ -126,6 +135,10 @@ class EntitiesController < ApplicationController
 
 
   private
+
+    def paginate_is_enabled?
+      @entities_list.entities.count > 100
+    end
 
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)

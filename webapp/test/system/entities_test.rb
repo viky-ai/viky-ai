@@ -47,6 +47,45 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
+  test 'Pagination enabled or disabled' do
+    entities_list = entities_lists(:weather_conditions)
+    admin_go_to_entities_list_show(agents(:weather), entities_list)
+
+    # Only 2 entities :
+    # - Pagination in disabled
+    # - Entities are draggable
+    page.assert_selector('.card-list__item__draggable', count: 2)
+
+    (1..100).each do |i|
+      Entity.create!({
+        terms: "term_#{i}",
+        auto_solution_enabled: true,
+        entities_list: entities_list
+      })
+    end
+
+    # 102 entities:
+    # - Pagination is enabled
+    # - Entities are not draggable
+    # - Add form is only displayed on first page
+    visit user_agent_entities_list_path(users(:admin), agents(:weather), entities_list)
+
+    assert_text('term_100')
+    page.assert_no_selector('.card-list__item__draggable')
+    page.assert_selector('ul#entities-list li', count: 20)
+    page.assert_selector('#entities-form', count: 1)
+
+    within '.pagination' do
+      click_link "2"
+    end
+
+    assert_text('term_80')
+    page.assert_no_selector('.card-list__item__draggable')
+    page.assert_selector('ul#entities-list li', count: 20)
+    page.assert_no_selector('#entities-form')
+  end
+
+
   test 'Create an entity and failed' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     within('.entity-form') do

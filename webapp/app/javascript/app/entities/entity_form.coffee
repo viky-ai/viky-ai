@@ -60,6 +60,6 @@ module.exports = EntityForm
 
 Setup = ->
   if $('body').data('controller-name') == "entities_lists" && $('body').data('controller-action') == "show"
-    new EntityForm('#entities-form')
+    new EntityForm('#entities-form') if $('#entities-form').length == 1
 
 $(document).on('turbolinks:load', Setup)

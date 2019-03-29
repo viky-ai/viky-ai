@@ -3,7 +3,7 @@
   <% link = can_edit ?
                 edit_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) :
                 show_detailed_user_agent_entities_list_entity_path(owner, agent, entities_list, entity) %>
-  <% if can_edit %>
+  <% if can_edit && !paginate_is_enabled %>
     <div class="card-list__item__draggable"></div>
   <% end %>
   <a href="<%= link %>" data-remote="true" >

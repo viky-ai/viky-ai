@@ -1,4 +1,6 @@
-<div class="card-list__item__draggable"></div>
+<% unless paginate_is_enabled %>
+  <div class="card-list__item__draggable"></div>
+<% end %>
 
 <%= form_with(model: [entity.entities_list.agent.owner, entity.entities_list.agent, entity.entities_list, entity],
               class: 'entity-form',
