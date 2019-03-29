@@ -28,6 +28,9 @@ module Nls
         emails << Expression.new("@{email}", aliases: { email: email })
         emails << Expression.new("@{email} @{emails}", aliases: { email: email, emails: emails })
 
+        possibly_empty = package.new_interpretation("possibly_empty", { scope: "public" })
+        possibly_empty << Expression.new("@{maison}", aliases: { maison: Alias.regex("(maison|)") }, solution: "`{ maison: maison }`")
+
         package
       end
 
@@ -44,8 +47,8 @@ module Nls
         expected = {
           interpretation: "emails",
           solution: [
-            { email: "patrick@pertimm.com" },
-            { email: "sebastien@pertimm.com" },
+          { email: "patrick@pertimm.com" },
+          { email: "sebastien@pertimm.com" },
           ]
         }
         check_interpret("mail patrick@pertimm.com sebastien@pertimm.com",        expected)
@@ -59,6 +62,20 @@ module Nls
         500.times do
           check_interpret("mail patrick@pertimm.com",        expected)
         end
+      end
+
+      def test_regex_empty_possibility
+
+        expected = {
+          interpretation: "possibly_empty",
+          solution: { maison: "maison" },
+        }
+        check_interpret("maison",        expected)
+
+        exception = assert_raises Minitest::Assertion do
+          check_interpret("cheval", expected)
+        end
+        assert exception.message.include?("Actual answer did not match on any interpretation")
       end
 
     end
