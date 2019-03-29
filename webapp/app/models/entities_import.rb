@@ -3,7 +3,7 @@ class EntitiesImport < ApplicationRecord
   BATCH_SIZE = 1000
 
   include EntitiesImportFileUploader::Attachment.new(:file)
-  validates_presence_of :file, message: I18n.t('errors.entity.import.no_file')
+  validates_presence_of :file, message: I18n.t('errors.entities_import.no_file')
 
   belongs_to :entities_list
 
@@ -78,7 +78,7 @@ class EntitiesImport < ApplicationRecord
     def header_valid?(csv)
       header_row = csv.shift
       if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
-        raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_header')
+        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_header')
       end
       csv.rewind
     end
@@ -86,10 +86,10 @@ class EntitiesImport < ApplicationRecord
     def row_length_valid?(row, row_number)
       return if row['Terms'].present? && row['Auto solution'].present? && row['Solution'].present?
       if row['Terms'].nil? || row['Auto solution'].nil?
-        raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_column', row_number: row_number)
+        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
       end
       if !parse_auto_solution(row) && row['Solution'].blank?
-        raise CSV::MalformedCSVError, I18n.t('errors.entity.import.missing_column', row_number: row_number)
+        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
       end
     end
 
@@ -98,14 +98,14 @@ class EntitiesImport < ApplicationRecord
     end
 
     def parse_auto_solution(row)
-      raise ActiveRecord::ActiveRecordError, I18n.t('errors.entity.import.unexpected_autosolution') if row['Auto solution'].blank?
+      raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution') if row['Auto solution'].blank?
       case row['Auto solution'].downcase
         when 'true'
           true
         when 'false'
           false
         else
-          raise ActiveRecord::ActiveRecordError, I18n.t('errors.entity.import.unexpected_autosolution')
+          raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution')
       end
     end
 
