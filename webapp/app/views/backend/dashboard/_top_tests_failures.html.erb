@@ -2,7 +2,7 @@
   <%= t("views.backend.dashboard.top_tests_failures") %>
 </h2>
 
-<% if @top_fail_tests_agents.size == 0 %>
+<% unless @top_fail_tests_agents.exists? %>
   <div class="dashboard-celebration">
     <%= image_tag image_path("illustrations/celebration.svg")  %>
     <p>
@@ -30,19 +30,19 @@
           </td>
           <td>
             <% failure_test_count = data['count'] %>
-            <% running_test_count = agent.agent_regression_checks.running.count %>
-            <% success_test_count = agent.agent_regression_checks.success.count %>
-            <% unless success_test_count.zero? %>
+            <% running_test_count = agent.agent_regression_checks.running %>
+            <% success_test_count = agent.agent_regression_checks.success %>
+            <% if success_test_count.exists? %>
               <span class="ts-status ts-status--success"></span>
-              <%= number_with_delimiter(success_test_count) %>
+              <%= number_with_delimiter(success_test_count.count) %>
             <% end %>
             <% unless failure_test_count.zero? %>
               &nbsp; <span class="ts-status ts-status--failure"></span>
               <%= number_with_delimiter(failure_test_count) %>
             <% end %>
-            <% unless running_test_count.zero? %>
+            <% if running_test_count.exists? %>
               &nbsp; <span class="ts-status ts-status--running"></span>
-              <%= number_with_delimiter(running_test_count) %>
+              <%= number_with_delimiter(running_test_count.count) %>
             <% end %>
           </td>
         </tr>

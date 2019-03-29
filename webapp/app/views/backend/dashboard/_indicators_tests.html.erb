@@ -5,18 +5,18 @@
     <%= t("views.backend.dashboard.indicators.tests", count: tests_count) %>
   </div>
   <div class="card-detail">
-    <% failure_test_count = AgentRegressionCheck.where(state: [:failure, :error]).count %>
-    <% running_test_count = AgentRegressionCheck.running.count %>
+    <% failure_test_count = AgentRegressionCheck.where(state: [:failure, :error]) %>
+    <% running_test_count = AgentRegressionCheck.running %>
     <% success_test_count = AgentRegressionCheck.success.count %>
     <span class="ts-status ts-status--success"></span>
     <%= number_with_delimiter(success_test_count) %>
-    <% unless failure_test_count.zero? %>
+    <% if failure_test_count.exists? %>
       &nbsp; <span class="ts-status ts-status--failure"></span>
-      <%= number_with_delimiter(failure_test_count) %>
+      <%= number_with_delimiter(failure_test_count.count) %>
     <% end %>
-    <% unless running_test_count.zero? %>
+    <% if running_test_count.exists? %>
       &nbsp; <span class="ts-status ts-status--running"></span>
-      <%= number_with_delimiter(running_test_count) %>
+      <%= number_with_delimiter(running_test_count.count) %>
     <% end %>
   </div>
 </div>
