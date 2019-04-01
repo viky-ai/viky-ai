@@ -9,10 +9,16 @@
   <h2>Agent Box</h2>
   <%= highlight_html do %>
 <div class="agent-box">
-  <a href="#" class="agent-box__header background-color-gradient__brown">
-    <span class="agent-box__header__ribbon">public</span>
-    <span class="agent-box__header__role">
-      <span class="badge badge--small badge--primary">Owner</span>
+
+  <a href="#">
+    <div class="agent-box__header background-color-gradient__brown">
+      <span class="agent-box__header__ribbon">public</span>
+      <span class="agent-box__header__role">
+        <span class="badge badge--small badge--primary">Owner</span>
+      </span>
+    </div>
+    <span class="agent-box__avatar">
+      <img src='<%= asset_path("default_avatar.png") %>' />
     </span>
     <h2>
       My awesome first agent
@@ -22,13 +28,20 @@
     </h2>
     <h3>username/agentname</h3>
   </a>
+
   <div class="agent-box__content">
     <div class="agent-box__content__info">
-      <p class="primary">3 collaborators</p>
-      <p class="secondary">Created about 2 hours ago.</p>
+      <div class="avatars-list">
+        <img src='<%= asset_path("default_avatar.png") %>' />
+        <img src='<%= asset_path("default_avatar.png") %>' />
+        <img src='<%= asset_path("default_avatar.png") %>' />
+        <img src='<%= asset_path("default_avatar.png") %>' />
+        <img src='<%= asset_path("default_avatar.png") %>' />
+      </div>
+      5 collaborators. Created about 2 hours ago.
     </div>
     <div class="agent-box__content__actions">
-      <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
+      <a href="#" class="btn"><span class="icon icon--x-small"><%= icon_dots %></span></a>
     </div>
   </div>
 </div>
@@ -76,8 +89,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -100,8 +117,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -119,8 +140,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -138,8 +163,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -157,8 +186,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -176,8 +209,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -195,8 +232,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -214,8 +255,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -233,8 +278,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -252,8 +301,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -271,8 +324,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -290,8 +347,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -309,8 +370,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -328,8 +393,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -347,8 +416,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -366,8 +439,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -385,8 +462,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>
@@ -404,8 +485,12 @@
     </a>
     <div class="agent-box__content">
       <div class="agent-box__content__info">
-        <p class="primary">3 collaborators</p>
-        <p class="secondary">Created about 2 hours ago.</p>
+        <div class="avatars-list">
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+          <img src='<%= asset_path("default_avatar.png") %>' />
+        </div>
+        3 collaborators. Created about 2 hours ago.
       </div>
       <div class="agent-box__content__actions">
         <a href="#" class="btn"><span class="icon"><%= icon_dots %></span></a>

@@ -1,0 +1,13 @@
+<div class="card card--indicator">
+  <% bots_count = Bot.count %>
+  <% bots_wip_count = Bot.where(wip_enabled: true).count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter(bots_count) %></strong>
+    <%= t("views.backend.dashboard.indicators.bots", count: bots_count) %>
+  </div>
+  <div class="card-detail">
+    <%= t("views.backend.dashboard.indicators.bots_wip",
+           count: bots_wip_count,
+           total: number_with_delimiter(bots_wip_count)) %>
+  </div>
+</div>
