@@ -225,4 +225,16 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal [2, 1, 0], [entity_1.position, entity_2.position, entity_0.position]
   end
 
+
+  test 'search' do
+    assert_equal 4, Entity.count
+    assert_equal 1, Entity.search('Soleil').count
+    expected = [
+      {"term" => "sun", "locale" => "en"},
+      {"term" => "soleil", "locale" => "fr"}
+    ]
+    assert_equal expected, Entity.search('Soleil').first.terms
+    assert_equal 0, Entity.search('Missing').count
+  end
+
 end
