@@ -12,7 +12,9 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if entity.save
         format.js do
-          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
+          redirect_to user_agent_entities_list_path(
+              @owner, @agent, @entities_list
+            ),
             notice: t('views.entities.new.success_message')
         end
       else
@@ -87,7 +89,10 @@ class EntitiesController < ApplicationController
   def show_detailed
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'show_detailed.html', locals: { entity: @entity })
+        @show = render_to_string(
+          partial: 'show_detailed.html',
+          locals: { entity: @entity }
+        )
         render partial: 'show_detailed'
       }
     end
@@ -97,8 +102,13 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if @entity.destroy
         format.js {
-          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
-            notice: t('views.entities.destroy.success_message')
+          redirect_to user_agent_entities_list_path(
+            @owner,
+            @agent,
+            @entities_list,
+            search: params[:search]
+          ),
+          notice: t('views.entities.destroy.success_message')
         }
       else
         format.js { render partial: 'destroy_failed' }
@@ -120,13 +130,20 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if @entities_list.from_csv @entities_import
         format.json {
-          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list),
-                      notice: t('views.entities_lists.show.import.select_import.success', count: @entities_import.count)
+          redirect_to user_agent_entities_list_path(
+              @owner, @agent, @entities_list
+            ),
+            notice: t(
+              'views.entities_lists.show.import.select_import.success',
+              count: @entities_import.count
+            )
         }
       else
         format.json {
           render json: {
-            replace_modal_content_with: render_to_string(partial: 'new_import', formats: :html),
+            replace_modal_content_with: render_to_string(
+              partial: 'new_import', formats: :html
+            ),
           }, status: 422
         }
       end

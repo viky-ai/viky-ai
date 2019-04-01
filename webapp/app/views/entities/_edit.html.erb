@@ -49,10 +49,11 @@
     <div class="control">
       <%= link_to t('views.entities.index.delete_btn'),
                   user_agent_entities_list_entity_path(
-                      entity.entities_list.agent.owner,
-                      entity.entities_list.agent,
-                      entity.entities_list,
-                      entity
+                    entity.entities_list.agent.owner,
+                    entity.entities_list.agent,
+                    entity.entities_list,
+                    entity,
+                    search: params[:search]
                   ),
                   method: :delete,
                   remote: true,
