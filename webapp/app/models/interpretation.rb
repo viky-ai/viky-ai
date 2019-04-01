@@ -14,6 +14,7 @@ class Interpretation < ApplicationRecord
   validates :solution, byte_size: { maximum: 8192 }
   validates :locale, inclusion: { in: self::LOCALES }, presence: true
   validate :check_aliases_any_and_list_options
+  validate :check_expression_nlp_length
 
   before_save :cleanup
 
@@ -58,6 +59,11 @@ class Interpretation < ApplicationRecord
           errors.add(:base, I18n.t('errors.interpretation.only_one_list'))
         end
       end
+    end
+
+    def check_expression_nlp_length
+      nlp_max_length = 36
+      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if expression.split(' ').size > nlp_max_length
     end
 
     def cleanup

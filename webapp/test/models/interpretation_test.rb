@@ -248,4 +248,15 @@ class InterpretationTest < ActiveSupport::TestCase
     assert interpretation.save
     assert_equal '', interpretation.expression
   end
+
+
+  test 'Limit maximum number of words in an interpretation' do
+    interpretation = interpretations(:weather_forecast_demain)
+    interpretation.expression = (['a'] * 37).join(' ')
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 NLP words)']
+    }
+    assert_equal expected, interpretation.errors.messages
+  end
 end
