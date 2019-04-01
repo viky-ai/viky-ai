@@ -34,6 +34,10 @@ en:
       agent: Agent
       intent: Intent
       interpretation: Interpretation
+      entity:
+        zero: entity
+        one: entity
+        other: entities
       bot:
         zero: Chatbot
         one: Chatbot

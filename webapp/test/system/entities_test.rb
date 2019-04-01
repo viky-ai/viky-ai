@@ -86,6 +86,40 @@ class EntitiesTest < ApplicationSystemTestCase
   end
 
 
+  test 'search' do
+    entities_list = entities_lists(:weather_conditions)
+    admin_go_to_entities_list_show(agents(:weather), entities_list)
+
+    # Only 2 entities :
+    # - No search
+    page.assert_selector('.entities-search-and-page-entries form', count: 0)
+
+    (1..100).each do |i|
+      Entity.create!({
+        terms: "term_#{i}",
+        auto_solution_enabled: true,
+        entities_list: entities_list
+      })
+    end
+
+    # 102 entities:
+    # - Search enabled
+    visit user_agent_entities_list_path(users(:admin), agents(:weather), entities_list)
+
+    assert_text('term_100')
+
+    within '.entities-search-and-page-entries' do
+      fill_in 'search', with: 'term'
+      first('button').click
+      assert_text("Displaying entities 1 - 20 of 100 in total")
+
+      fill_in 'search', with: 'term_100'
+      first('button').click
+      assert_text("Displaying 1 entity")
+    end
+  end
+
+
   test 'Create an entity and failed' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     within('.entity-form') do

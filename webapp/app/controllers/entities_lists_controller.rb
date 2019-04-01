@@ -19,6 +19,7 @@ class EntitiesListsController < ApplicationController
         @entities = @entities_list
           .entities
           .order(position: :desc, created_at: :desc)
+          .search(params[:search])
         if @paginate_is_enabled
           @entities = @entities.page(params[:page]).per(20)
         end
