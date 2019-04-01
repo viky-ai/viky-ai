@@ -31,7 +31,9 @@ en:
         text: content.text
   activerecord:
     models:
-      agent: Agent
+      agent:
+        one: Agent
+        other: Agents
       intent: Intent
       interpretation: Interpretation
       entity:

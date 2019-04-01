@@ -1,0 +1,13 @@
+<div class="card card--indicator">
+  <% entities_count = Entity.count %>
+  <% entities_lists_count = EntitiesList.count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter(entities_count) %></strong>
+    <%= t("views.backend.dashboard.indicators.entities", count: entities_count) %>
+  </div>
+  <div class="card-detail">
+    <%= t("views.backend.dashboard.indicators.entities_lists",
+           count: entities_count,
+           total: number_with_delimiter(entities_lists_count)) %>
+  </div>
+</div>

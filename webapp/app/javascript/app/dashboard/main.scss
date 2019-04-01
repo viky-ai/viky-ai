@@ -1,0 +1,114 @@
+@import '../../framework/abstracts/variables';
+
+.dashboard-indicators{
+  display: grid;
+  grid-row-gap: 2em;
+  grid-column-gap: 2em;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin-bottom: 2em;
+  .card.card--indicator{
+    border-top: 3px solid $primary_color;
+    margin: 0;
+    overflow: hidden;
+    .card-main{
+      padding: 1.25em 1em .75em 1em;
+    }
+    .card-detail{
+      padding: .5em 1em;
+      background-color: #fafafa;
+      font-size: .8em;
+      color: rgba(#000, .8);
+      .ts-status{
+        vertical-align: baseline;
+      }
+    }
+  }
+  .card--indicator{
+    text-align: center;
+    strong{
+      display: block;
+      font-size: 1.75em;
+      line-height: 1.2em;
+    }
+  }
+}
+
+
+.dashboard-tops{
+  display: grid;
+  grid-row-gap: 1em;
+  grid-column-gap: 2em;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  .card{
+    padding: 1em;
+    overflow: hidden;
+    .card__top{
+      h2{
+        padding: 1em;
+        margin: -1em -1em 0em -1em;
+        background-color: #fafafa;
+        font-size: 1em;
+        font-weight: 400;
+      }
+      table{
+        font-size: .9em;
+        td{
+          padding: 0.5em 0em;
+        }
+        strong{
+          font-size: 1em;
+          display: block;
+          line-height: 1.25em;
+          font-weight: 300;
+        }
+        small{
+          display: block;
+          line-height: 1.5em;
+          font-size: .85em;
+        }
+        a{
+          display: block;
+          text-decoration: none;
+          &:hover, &:focus{
+            strong{
+              text-decoration: underline;
+            }
+          }
+        }
+        .ts-status{
+          width: .6em;
+          height: .6em;
+        }
+        tbody tr td:nth-child(2){
+          text-align: right;
+        }
+      }
+    }
+
+    .top-pagination{
+      margin: 1.5em 0 0 0;
+      font-size: .9em;
+      .pagination{
+        margin: 0 0 0 0;
+      }
+      .pagination-info{
+        text-align: center;
+        font-size: .8em;
+        margin: .5em 0 0 0;
+        color: #aaa;
+      }
+    }
+  }
+
+  .dashboard-celebration{
+    text-align: center;
+    padding: 2em 1em 1em 1em;
+    img{
+      max-width: 60%;
+    }
+    p{
+      font-size: 1em;
+      color: #aaa;
+    }
+  }
+}
