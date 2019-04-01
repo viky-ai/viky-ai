@@ -259,6 +259,13 @@ class InterpretationTest < ActiveSupport::TestCase
     }
     assert_equal expected, interpretation.errors.messages
 
+    interpretation.expression = 'a1.2' * 15
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 NLP words)']
+    }
+    assert_equal expected, interpretation.errors.messages
+
     interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
     assert InterpretationAlias.new(
       aliasname: 'when',

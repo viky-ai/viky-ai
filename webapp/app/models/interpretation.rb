@@ -63,7 +63,10 @@ class Interpretation < ApplicationRecord
 
     def check_expression_nlp_length
       nlp_max_length = 36
-      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if expression_with_aliases.split(' ').size > nlp_max_length
+      exp = expression_with_aliases
+              .gsub(/(\D)(\d)/, '\1 \2')
+              .gsub(/(\d)(\D)/, '\1 \2')
+      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if exp.split(' ').size > nlp_max_length
     end
 
     def cleanup
