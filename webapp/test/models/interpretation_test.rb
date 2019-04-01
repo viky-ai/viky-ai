@@ -258,5 +258,15 @@ class InterpretationTest < ActiveSupport::TestCase
       expression: ['is too long (maximum is 36 NLP words)']
     }
     assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
+    assert InterpretationAlias.new(
+      aliasname: 'when',
+      position_start: 70,
+      position_end: 82,
+      interpretation: interpretation,
+      interpretation_aliasable: entities_lists(:weather_dates)
+    ).save
+    assert interpretation.save
   end
 end
