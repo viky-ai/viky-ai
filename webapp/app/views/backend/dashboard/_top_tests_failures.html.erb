@@ -15,8 +15,8 @@
       <% @top_fail_tests_agents.each do |data| %>
         <% agent = Agent.find(data['id']) %>
         <tr title="<%= t("views.backend.dashboard.detail_test_failure",
-            agent_last_update: l(agent.updated_at, format: :short),
-            test_last_run: l(agent.agent_regression_checks.order('updated_at').last.updated_at, format: :short)) %>">
+            agent_last_update: l(agent.updated_at, format: :long),
+            test_last_run: l(agent.agent_regression_checks.order('updated_at').last.updated_at, format: :long)) %>">
           <td>
             <% if current_user.can? :show, agent %>
               <a href="<%= user_agent_path(agent.owner, agent) %>">
@@ -32,19 +32,19 @@
           </td>
           <td>
             <% failure_test_count = data['count'] %>
-            <% running_test_count = agent.agent_regression_checks.running %>
-            <% success_test_count = agent.agent_regression_checks.success %>
-            <% if success_test_count.exists? %>
+            <% running_test = agent.agent_regression_checks.running %>
+            <% success_test = agent.agent_regression_checks.success %>
+            <% if success_test.exists? %>
               <span class="ts-status ts-status--success"></span>
-              <%= number_with_delimiter(success_test_count.count) %>
+              <%= number_with_delimiter(success_test.count) %>
             <% end %>
             <% unless failure_test_count.zero? %>
               &nbsp; <span class="ts-status ts-status--failure"></span>
               <%= number_with_delimiter(failure_test_count) %>
             <% end %>
-            <% if running_test_count.exists? %>
+            <% if running_test.exists? %>
               &nbsp; <span class="ts-status ts-status--running"></span>
-              <%= number_with_delimiter(running_test_count.count) %>
+              <%= number_with_delimiter(running_test.count) %>
             <% end %>
           </td>
         </tr>
