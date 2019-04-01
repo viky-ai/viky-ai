@@ -7,6 +7,8 @@ en:
           "Enter multiples terms, optionally you can add a locale
           separated by a colon if applicable (like 'London:en')"
         success_message: Entity has been successfully created.
+      search:
+        placeholder: Search entities by terms
       destroy:
         success_message: Entity has been successfully deleted.
         failed_message: "Ooops, delete failed."
