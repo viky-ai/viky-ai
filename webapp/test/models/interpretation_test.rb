@@ -266,6 +266,30 @@ class InterpretationTest < ActiveSupport::TestCase
     }
     assert_equal expected, interpretation.errors.messages
 
+    interpretation.expression = ([
+      '²' * 2, # G_UNICODE_OTHER_NUMBER (No)
+      '_' * 2, # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+      '-' * 2, # G_UNICODE_DASH_PUNCTUATION (Pd)
+      '(' * 2, # G_UNICODE_OPEN_PUNCTUATION (Ps)
+      ')' * 2, # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+      '«' * 2, # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+      '”' * 2, # G_UNICODE_FINAL_PUNCTUATION (Pf)
+      '&' * 2, # G_UNICODE_OTHER_PUNCTUATION (Po)
+      '€' * 2, # G_UNICODE_CURRENCY_SYMBOL (Sc)
+      '^' * 2, # G_UNICODE_MODIFIER_SYMBOL (Sk)
+      '=' * 2, # G_UNICODE_MATH_SYMBOL (Sm)
+      '©' * 2, # G_UNICODE_OTHER_SYMBOL (So)
+      '力' * 2, # G_UNICODE_BREAK_IDEOGRAPHIC (ID)
+      '😀' * 2, # G_UNICODE_BREAK_EMOJI_BASE (EB)
+      '🏿'   * 2,  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
+    ] * 2).join
+
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 NLP words)']
+    }
+    assert_equal expected, interpretation.errors.messages
+
     interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
     assert InterpretationAlias.new(
       aliasname: 'when',

@@ -64,9 +64,25 @@ class Interpretation < ApplicationRecord
     def check_expression_nlp_length
       nlp_max_length = 36
       exp = expression_with_aliases
+              .gsub(/@{[a-zA-Z$_][a-zA-Z0-9$_]*}/, 'alias')
               .gsub(/(\D)(\d)/, '\1 \2')
               .gsub(/(\d)(\D)/, '\1 \2')
-      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if exp.split(' ').size > nlp_max_length
+              .gsub(/(\p{No})/, ' \1 ') # G_UNICODE_OTHER_NUMBER (No)
+              .gsub(/(\p{Pc})/, ' \1 ') # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+              .gsub(/(\p{Pd})/, ' \1 ') # G_UNICODE_DASH_PUNCTUATION (Pd)
+              .gsub(/(\p{Ps})/, ' \1 ') # G_UNICODE_OPEN_PUNCTUATION (Ps)
+              .gsub(/(\p{Pe})/, ' \1 ') # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+              .gsub(/(\p{Pi})/, ' \1 ') # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+              .gsub(/(\p{Pf})/, ' \1 ') # G_UNICODE_FINAL_PUNCTUATION (Pf)
+              .gsub(/(\p{Po})/, ' \1 ') # G_UNICODE_OTHER_PUNCTUATION (Po)
+              .gsub(/(\p{Sc})/, ' \1 ') # G_UNICODE_CURRENCY_SYMBOL (Sc)
+              .gsub(/(\p{Sk})/, ' \1 ') # G_UNICODE_MODIFIER_SYMBOL (Sk)
+              .gsub(/(\p{Sm})/, ' \1 ') # G_UNICODE_MATH_SYMBOL (Sm)
+              .gsub(/(\p{So})/, ' \1 ') # G_UNICODE_OTHER_SYMBOL (So)
+              .gsub(/([\u4e00-\u9FFF])/, ' \1 ') # G_UNICODE_BREAK_IDEOGRAPHIC (ID) https://en.wikipedia.org/wiki/CJK_Unified_Ideographs_(Unicode_block)
+              .gsub(/([\u{1f600}-\u{1f64F}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_BASE (EB) https://en.wikipedia.org/wiki/Emoticons_(Unicode_block)
+              .gsub(/([\u{1F3FB}-\u{1F3FF}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_MODIFIER (EM) https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs#Table_of_emojis_with_modifiers
+      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if exp.split.size > nlp_max_length
     end
 
     def cleanup
