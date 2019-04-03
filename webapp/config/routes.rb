@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       end
       post :impersonate, on: :member
     end
+    get 'dashboard', to: 'dashboard#index'
   end
 
   resource :profile, only: [:show, :edit, :update, :destroy] do

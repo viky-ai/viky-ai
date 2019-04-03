@@ -6,9 +6,9 @@
     ) do |f| %>
   <div class="field field--inline">
     <div class="control control--merged">
-      <%= f.text_field :email, placeholder: "Search by email", accesskey: "s" %>
+      <%= f.text_field :query, placeholder: "Search users", accesskey: "s" %>
       <%= f.button "<span class='icon icon--small'>#{icon_search}</span>".html_safe,
-            class: "btn btn--primary", id: '#search',
+            class: "btn btn--primary", id: 'search',
             data: {
               disable_with: "<span class='icon icon--small icon--spin'>#{icon_loading}</span>".html_safe
             } %>

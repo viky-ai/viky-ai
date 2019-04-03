@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
 
     u = User.new(email: 'not-admin@viky.ai', password: 'Hello baby', username: 'mrwho')
     assert u.save
-    assert !u.admin?
+    assert_not u.admin?
   end
 
 
@@ -19,7 +19,7 @@ class UserTest < ActiveSupport::TestCase
 
     confirmed = User.find_by_email('confirmed@viky.ai')
     confirmed.username = "admin"
-    assert !confirmed.save
+    assert_not confirmed.save
     assert_equal ["has already been taken"], confirmed.errors.messages[:username]
   end
 
@@ -31,7 +31,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "admin-yeah-toto", admin.username
 
     admin.username = "  "
-    assert !admin.save
+    assert_not admin.save
     assert_equal "", admin.username
 
     admin.username = "\" 1   2 3 ABC !?/^äù"
@@ -101,7 +101,7 @@ class UserTest < ActiveSupport::TestCase
     s = Backend::UserSearch.new
     assert_equal 7, User.search(s.options).count
 
-    s = Backend::UserSearch.new(email: 'lock')
+    s = Backend::UserSearch.new(query: 'lock')
     assert_equal 1, User.search(s.options).count
     assert_equal "locked@viky.ai", User.search(s.options).first.email
   end
@@ -114,10 +114,10 @@ class UserTest < ActiveSupport::TestCase
     s = Backend::UserSearch.new(sort_by: 'email')
     assert s.empty?
 
-    s = Backend::UserSearch.new(sort_by: 'email', email: "  ")
+    s = Backend::UserSearch.new(sort_by: 'email', query: "  ")
     assert s.empty?
 
-    s = Backend::UserSearch.new(sort_by: 'email', email: "locked")
+    s = Backend::UserSearch.new(sort_by: 'email', query: "locked")
     assert !s.empty?
   end
 
@@ -173,29 +173,29 @@ class UserTest < ActiveSupport::TestCase
     assert admin_user.can?(:show, weather_agent)
     assert admin_user.owner?(weather_agent)
 
-    assert !admin_user.can?(:delete, weather_agent)
+    assert_not admin_user.can?(:delete, weather_agent)
 
-    assert !admin_user.can?(:edit, weather_confirmed_agent)
-    assert !admin_user.can?(:show, weather_confirmed_agent)
-    assert !admin_user.owner?(weather_confirmed_agent)
+    assert_not admin_user.can?(:edit, weather_confirmed_agent)
+    assert_not admin_user.can?(:show, weather_confirmed_agent)
+    assert_not admin_user.owner?(weather_confirmed_agent)
 
     show_on_agent_weather_user = users(:show_on_agent_weather)
-    assert !show_on_agent_weather_user.can?(:edit, weather_agent)
+    assert_not show_on_agent_weather_user.can?(:edit, weather_agent)
     assert show_on_agent_weather_user.can?(:show, weather_agent)
-    assert !show_on_agent_weather_user.owner?(weather_agent)
+    assert_not show_on_agent_weather_user.owner?(weather_agent)
 
-    assert !show_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
-    assert !show_on_agent_weather_user.can?(:show, weather_confirmed_agent)
-    assert !show_on_agent_weather_user.owner?(weather_confirmed_agent)
+    assert_not show_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
+    assert_not show_on_agent_weather_user.can?(:show, weather_confirmed_agent)
+    assert_not show_on_agent_weather_user.owner?(weather_confirmed_agent)
 
     edit_on_agent_weather_user = users(:edit_on_agent_weather)
     assert edit_on_agent_weather_user.can?(:edit, weather_agent)
     assert edit_on_agent_weather_user.can?(:show, weather_agent)
-    assert !edit_on_agent_weather_user.owner?(weather_agent)
+    assert_not edit_on_agent_weather_user.owner?(weather_agent)
 
-    assert !edit_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
-    assert !edit_on_agent_weather_user.can?(:show, weather_confirmed_agent)
-    assert !edit_on_agent_weather_user.owner?(weather_confirmed_agent)
+    assert_not edit_on_agent_weather_user.can?(:edit, weather_confirmed_agent)
+    assert_not edit_on_agent_weather_user.can?(:show, weather_confirmed_agent)
+    assert_not edit_on_agent_weather_user.owner?(weather_confirmed_agent)
   end
 
 
@@ -203,12 +203,12 @@ class UserTest < ActiveSupport::TestCase
     admin_user = users(:admin)
 
     assert_equal 5, Membership.all.count
-    assert !admin_user.destroy
+    assert_not admin_user.destroy
 
     expected = ["You must delete all the agents you own"]
     assert_equal expected, admin_user.errors.full_messages
 
-    assert !admin_user.can_be_destroyed?
+    assert_not admin_user.can_be_destroyed?
   end
 
 

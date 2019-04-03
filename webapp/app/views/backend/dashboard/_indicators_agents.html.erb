@@ -1,0 +1,13 @@
+<div class="card card--indicator">
+  <% agents_count = Agent.count %>
+  <% public_agents_count = Agent.is_public.count %>
+  <div class="card-main">
+    <strong><%= number_with_delimiter(agents_count) %></strong>
+    <%= t("views.backend.dashboard.indicators.agents", count: agents_count) %>
+  </div>
+  <div class="card-detail">
+    <%= t("views.backend.dashboard.indicators.public_agents",
+           count: public_agents_count,
+           total: number_with_delimiter(public_agents_count)) %>
+  </div>
+</div>
