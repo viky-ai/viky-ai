@@ -82,7 +82,8 @@ class Interpretation < ApplicationRecord
               .gsub(/([\u4e00-\u9FFF])/, ' \1 ') # G_UNICODE_BREAK_IDEOGRAPHIC (ID) https://en.wikipedia.org/wiki/CJK_Unified_Ideographs_(Unicode_block)
               .gsub(/([\u{1f600}-\u{1f64F}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_BASE (EB) https://en.wikipedia.org/wiki/Emoticons_(Unicode_block)
               .gsub(/([\u{1F3FB}-\u{1F3FF}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_MODIFIER (EM) https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs#Table_of_emojis_with_modifiers
-      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length)) if exp.split.size > nlp_max_length
+      actual_count = exp.split.size
+      errors.add(:expression, I18n.t('errors.interpretation.expression_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
     end
 
     def cleanup

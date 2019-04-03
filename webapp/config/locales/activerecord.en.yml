@@ -104,7 +104,7 @@ en:
       only_one_any: Only one annotation with "Any" option is permitted.
       one_alias_one_any: '"Any" option is not permitted with only one annotation.'
       only_one_list: Only one annotation with "List" option is permitted.
-      expression_nlp_length: "is too long (maximum is %{count} NLP words)"
+      expression_nlp_length: "is too long (maximum is %{count} NLP words), found: %{actual_count}"
     entities_lists:
       unknown_agent: "does not exist"
     entity:
