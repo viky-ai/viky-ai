@@ -290,6 +290,9 @@ class InterpretationTest < ActiveSupport::TestCase
     }
     assert_equal expected, interpretation.errors.messages
 
+    interpretation.expression = (['a'] * 36 + ['؀' * 2]).join(' ')
+    assert interpretation.save
+
     interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
     assert InterpretationAlias.new(
       aliasname: 'when',
