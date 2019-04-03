@@ -225,4 +225,50 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal [2, 1, 0], [entity_1.position, entity_2.position, entity_0.position]
   end
 
+
+  test 'Limit maximum number of words in a term entity' do
+    entity = entities(:weather_sunny)
+    entity.terms = [
+      { term: 'Jacques', locale: 'fr' },
+      { term: (['a'] * 37).join(' '), locale: 'en' }
+    ]
+    assert_not entity.save
+    expected = {
+      terms: ['is too long (maximum is 36 NLP words), found: 37']
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = 'a1.2' * 15
+    assert_not entity.save
+    expected = {
+      terms: ['is too long (maximum is 36 NLP words), found: 60']
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = ([
+      '²', # G_UNICODE_OTHER_NUMBER (No)
+      '_', # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+      '-', # G_UNICODE_DASH_PUNCTUATION (Pd)
+      '(', # G_UNICODE_OPEN_PUNCTUATION (Ps)
+      ')', # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+      '«', # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+      '”', # G_UNICODE_FINAL_PUNCTUATION (Pf)
+      '&', # G_UNICODE_OTHER_PUNCTUATION (Po)
+      '€', # G_UNICODE_CURRENCY_SYMBOL (Sc)
+      '^', # G_UNICODE_MODIFIER_SYMBOL (Sk)
+      '=', # G_UNICODE_MATH_SYMBOL (Sm)
+      '©', # G_UNICODE_OTHER_SYMBOL (So)
+      '力', # G_UNICODE_BREAK_IDEOGRAPHIC (ID)
+      '😀', # G_UNICODE_BREAK_EMOJI_BASE (EB)
+      '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
+    ] * 3).join
+    assert_not entity.save
+    expected = {
+      terms: ['is too long (maximum is 36 NLP words), found: 45']
+    }
+    assert_equal expected, entity.errors.messages
+
+    entity.terms = (['a'] * 36 + ['؀' * 2]).join(' ')
+    assert entity.save
+  end
 end
