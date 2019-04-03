@@ -1,5 +1,7 @@
-class EntitiesImport < ApplicationRecord
+require_relative 'measure_helper.rb'
 
+class EntitiesImport < ApplicationRecord
+  
   BATCH_SIZE = 1000
 
   include EntitiesImportFileUploader::Attachment.new(:file)
@@ -23,43 +25,54 @@ class EntitiesImport < ApplicationRecord
     }
     count = 0
     entities_array = []
-    csv = CSV.new(file.open(&:read).force_encoding('UTF-8'), options)
-    ActiveRecord::Base.transaction do
-      entities_list.entities.delete_all if mode == 'replace'
-      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
-      begin
-        header_valid?(csv)
-        line_count = count_lines(csv)
-        csv.each_with_index do |row, index|
-          next if index.zero?
-          row_length_valid?(row, csv.lineno - 1)
-          auto_solution = parse_auto_solution(row)
-          solution = auto_solution ? '' : parse_solution(row)
-          entity = Entity.new(
-            terms: parse_terms(row),
-            auto_solution_enabled: auto_solution,
-            solution: solution,
-            position: entities_max_position + line_count - count,
-            entities_list: entities_list
-          )
-          entity.validate!
-          entities_array << entity
-          if (index % BATCH_SIZE).zero?
-            Entity.import entities_array, validate: false
-            entities_array = []
+    print_memory_usage do
+      print_time_spent do
+        ActiveRecord::Base.transaction do
+          entities_list.entities.delete_all if mode == 'replace'
+          entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
+          begin
+            line_count = count_lines(options)
+            index = 0
+            file.download do |tempfile|
+              tempfile = tempfile.set_encoding('UTF-8')
+              CSV.foreach(tempfile.path, options) do |row|
+                if index.zero?
+                  header_valid?(row)
+                  index += 1
+                  next
+                end
+                row_length_valid?(row, index)
+                auto_solution = parse_auto_solution(row)
+                solution = auto_solution ? '' : parse_solution(row)
+                entity = Entity.new(
+                  terms: parse_terms(row),
+                  auto_solution_enabled: auto_solution,
+                  solution: solution,
+                  position: entities_max_position + line_count - count,
+                  entities_list: entities_list
+                )
+                entity.validate!
+                entities_array << entity
+                if (index % BATCH_SIZE).zero?
+                  Entity.import entities_array, validate: false
+                  entities_array = []
+                end
+                count += 1
+                index += 1
+              end
+            end
+            Entity.import entities_array, validate: false unless entities_array.empty?
+            update_entities_list
+          rescue ActiveRecord::ActiveRecordError => e
+            errors[:file] << "#{e.message} in line #{index}"
+            count = 0
+            raise ActiveRecord::Rollback
+          rescue CSV::MalformedCSVError => e
+            errors[:file] << "Bad CSV format: #{e.message}"
+            count = 0
+            raise ActiveRecord::Rollback
           end
-          count += 1
         end
-        Entity.import entities_array, validate: false unless entities_array.empty?
-        update_entities_list
-      rescue ActiveRecord::ActiveRecordError => e
-        errors[:file] << "#{e.message} in line #{csv.lineno - 1}"
-        count = 0
-        raise ActiveRecord::Rollback
-      rescue CSV::MalformedCSVError => e
-        errors[:file] << "Bad CSV format: #{e.message}"
-        count = 0
-        raise ActiveRecord::Rollback
       end
     end
     count
@@ -67,20 +80,22 @@ class EntitiesImport < ApplicationRecord
   
   private
 
-    def count_lines(csv)
+    def count_lines(options)
       line_count = 0
-      csv.each { line_count += 1 }
+      file.download do |tempfile|
+        CSV.foreach(tempfile.path, options) do |row|
+          line_count += 1
+        end
+      end
       line_count -= 1
-      csv.rewind
+      ap line_count
       line_count
     end
 
-    def header_valid?(csv)
-      header_row = csv.shift
+    def header_valid?(header_row)
       if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
         raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_header')
       end
-      csv.rewind
     end
 
     def row_length_valid?(row, row_number)

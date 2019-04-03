@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class EntitiesImportFileUploader < Shrine
   
   MAX_FILE_SIZE = 5.megabytes
