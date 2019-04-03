@@ -1,4 +1,6 @@
 class EntitiesListsController < ApplicationController
+  include ActionController::Live
+
   skip_before_action :verify_authenticity_token, only: [:update_positions]
   before_action :set_owner
   before_action :set_agent
@@ -15,9 +17,16 @@ class EntitiesListsController < ApplicationController
     respond_to do |format|
       format.html { @entity = Entity.new }
       format.csv do
+        # Stream CSV data in order to minimize RAM usage
+        # and display the save file popup immediately.
         filename = "#{@owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
         response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-        render :show
+        response.headers['Content-Type'] = 'text/event-stream'
+        begin
+          @entities_list.to_csv_in_io(response.stream)
+        ensure
+          response.stream.close
+        end
       end
     end
   end

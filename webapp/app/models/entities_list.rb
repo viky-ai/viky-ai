@@ -30,23 +30,44 @@ class EntitiesList < ApplicationRecord
     "#{agent.slug}/entities_lists/#{listname}"
   end
 
-  def to_csv
-    options = {
-      headers: [
-        I18n.t('activerecord.attributes.entity.terms'),
-        I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
-        I18n.t('activerecord.attributes.entity.solution')
-      ],
-      write_headers: true
-    }
-    CSV.generate(options) do |csv|
-      entities.order(position: :desc).each do |entity|
-        terms = entity.terms
-                      .collect { |t| t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}" }
-                      .join('|')
-        csv << [terms, entity.auto_solution_enabled, entity.solution]
-      end
+  def to_csv_in_io(io)
+    io.write CSV.generate_line([
+      I18n.t('activerecord.attributes.entity.terms'),
+      I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
+      I18n.t('activerecord.attributes.entity.solution')
+    ])
+
+    # We need SQL pagination in order to minimise RAM usage.
+    #
+    # Paginate with a cursor intead of using Rails find_in_batches
+    # Because we need an order sql clause.
+    #
+    cursor_max = entities.order("position DESC").first.position
+    cursor_min = entities.order("position ASC").first.position
+    cursor = cursor_max + 1
+    while cursor > cursor_min do
+      io.write(
+        CSV.generate do |csv|
+          entities.select(:terms, :auto_solution_enabled, :solution, :position)
+            .where("position < ?", cursor)
+            .order("position DESC")
+            .limit(1_000)
+            .each do |entity|
+              terms = entity.terms.collect { |t|
+                t['locale'] == Locales::ANY ? t['term'] : "#{t['term']}:#{t['locale']}"
+              }.join('|')
+              csv << [terms, entity.auto_solution_enabled, entity.solution]
+            cursor = entity.position
+          end
+        end
+      )
     end
+  end
+
+  def to_csv
+    io = StringIO.new
+    to_csv_in_io(io)
+    io.string
   end
 
   def from_csv(entities_import, current_user)
