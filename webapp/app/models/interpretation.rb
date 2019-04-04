@@ -1,3 +1,5 @@
+require 'unicode/emoji'
+
 class Interpretation < ApplicationRecord
   include Positionable
   positionable_ancestor :intent
@@ -80,8 +82,7 @@ class Interpretation < ApplicationRecord
               .gsub(/(\p{Sm})/, ' \1 ') # G_UNICODE_MATH_SYMBOL (Sm)
               .gsub(/(\p{So})/, ' \1 ') # G_UNICODE_OTHER_SYMBOL (So)
               .gsub(/([\u4e00-\u9FFF])/, ' \1 ') # G_UNICODE_BREAK_IDEOGRAPHIC (ID) https://en.wikipedia.org/wiki/CJK_Unified_Ideographs_(Unicode_block)
-              .gsub(/([\u{1f600}-\u{1f64F}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_BASE (EB) https://en.wikipedia.org/wiki/Emoticons_(Unicode_block)
-              .gsub(/([\u{1F3FB}-\u{1F3FF}])/, ' \1 ') # G_UNICODE_BREAK_EMOJI_MODIFIER (EM) https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs#Table_of_emojis_with_modifiers
+              .gsub(Unicode::Emoji::REGEX, ' emoji ') # G_UNICODE_BREAK_EMOJI_BASE (EB) https://en.wikipedia.org/wiki/Emoji#ref_U1F602_tr51
               .gsub(/\p{Cc}/, '') # G_UNICODE_CONTROL (Cc)
               .gsub(/\p{Cf}/, '') # G_UNICODE_FORMAT (Cf)
               .gsub(/\p{Cn}/, '') # G_UNICODE_UNASSIGNED (Cn)
