@@ -16,10 +16,17 @@ module Positionable
     end
 
     def update_positions(parent, public_list, private_list = nil)
-      if self.attribute_method? :visibility
-        update_with_visibility(parent, public_list, private_list)
+      if self.to_s == 'Entity'
+        # Entities use an unique position index scoped by entities_list.
+        # The reordering procedure is therefore specific and used only
+        # for entities_list with less than 100 entities.
+        update_entities_positions(public_list)
       else
-        update_without_visibility(parent, public_list)
+        if self.attribute_method? :visibility
+          update_with_visibility(parent, public_list, private_list)
+        else
+          update_without_visibility(parent, public_list)
+        end
       end
       parent.need_nlp_sync if @ancestor_classname == 'agent'
       parent.touch if @touch_ancestor
@@ -30,6 +37,15 @@ module Positionable
 
       def build_parent_column(parent)
         parent.class.table_name[0..-2] + '_id'
+      end
+
+      def update_entities_positions(list)
+        offset = 0
+        offset = 1_000_000 if self.where(id: list).maximum(:position) <= 1_000_000
+        list.each_with_index do |id, i|
+          item = self.find_by_id(id)
+          item.update_columns(position: offset + list.size - i - 1) unless item.nil?
+        end
       end
 
       def update_with_visibility(parent, public_list, private_list)
@@ -55,9 +71,7 @@ module Positionable
         current.each do |item|
           new_position = new_ids.find_index(item.id)
           unless new_position.nil?
-            item.record_timestamps = false
-            item.update_attribute(:position, count - new_position - 1)
-            item.record_timestamps = true
+            item.update_columns(position: count - new_position - 1)
             item.update_attribute(:visibility, visibility) unless visibility.nil?
           end
         end
