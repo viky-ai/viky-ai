@@ -301,6 +301,7 @@ class InterpretationTest < ActiveSupport::TestCase
       interpretation: interpretation,
       interpretation_aliasable: entities_lists(:weather_dates)
     ).save
+    force_reset_model_cache interpretation
     assert interpretation.save
   end
 end

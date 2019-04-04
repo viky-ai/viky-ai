@@ -25,8 +25,8 @@ class Interpretation < ApplicationRecord
   end
 
   def expression_with_aliases
-    return expression if interpretation_aliases.count == 0
-    ordered_aliases = interpretation_aliases.order(position_start: :asc)
+    return expression if interpretation_aliases.size == 0
+    ordered_aliases = interpretation_aliases.reject(&:_destroy).sort_by(&:position_start)
     result = []
     expression.split('').each_with_index do |character, index|
       interpretation_alias = ordered_aliases.first
