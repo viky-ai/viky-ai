@@ -1,5 +1,3 @@
-require_relative 'measure_helper.rb'
-
 class EntitiesImport < ApplicationRecord
   
   BATCH_SIZE = 1000
