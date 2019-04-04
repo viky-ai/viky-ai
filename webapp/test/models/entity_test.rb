@@ -234,14 +234,14 @@ class EntityTest < ActiveSupport::TestCase
     ]
     assert_not entity.save
     expected = {
-      terms: ['is too long (maximum is 36 NLP words), found: 37']
+      terms: ['is too long (maximum is 36 elements), found: 37']
     }
     assert_equal expected, entity.errors.messages
 
     entity.terms = 'a1.2' * 15
     assert_not entity.save
     expected = {
-      terms: ['is too long (maximum is 36 NLP words), found: 60']
+      terms: ['is too long (maximum is 36 elements), found: 60']
     }
     assert_equal expected, entity.errors.messages
 
@@ -264,7 +264,7 @@ class EntityTest < ActiveSupport::TestCase
     ] * 3).join
     assert_not entity.save
     expected = {
-      terms: ['is too long (maximum is 36 NLP words), found: 45']
+      terms: ['is too long (maximum is 36 elements), found: 45']
     }
     assert_equal expected, entity.errors.messages
 

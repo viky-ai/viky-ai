@@ -255,14 +255,14 @@ class InterpretationTest < ActiveSupport::TestCase
     interpretation.expression = (['a'] * 37).join(' ')
     assert !interpretation.save
     expected = {
-      expression: ['is too long (maximum is 36 NLP words), found: 37']
+      expression: ['is too long (maximum is 36 elements), found: 37']
     }
     assert_equal expected, interpretation.errors.messages
 
     interpretation.expression = 'a1.2' * 15
     assert !interpretation.save
     expected = {
-      expression: ['is too long (maximum is 36 NLP words), found: 60']
+      expression: ['is too long (maximum is 36 elements), found: 60']
     }
     assert_equal expected, interpretation.errors.messages
 
@@ -286,7 +286,7 @@ class InterpretationTest < ActiveSupport::TestCase
 
     assert !interpretation.save
     expected = {
-      expression: ['is too long (maximum is 36 NLP words), found: 45']
+      expression: ['is too long (maximum is 36 elements), found: 45']
     }
     assert_equal expected, interpretation.errors.messages
 
