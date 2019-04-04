@@ -24,55 +24,43 @@ class EntitiesImport < ApplicationRecord
       encoding: 'UTF-8'
     }
     count = 0
+    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id]
     entities_array = []
-    print_memory_usage do
-      print_time_spent do
-        ActiveRecord::Base.transaction do
-          entities_list.entities.delete_all if mode == 'replace'
-          entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
-          begin
-            line_count = count_lines(options)
-            index = 0
-            file.download do |tempfile|
-              tempfile = tempfile.set_encoding('UTF-8')
-              CSV.foreach(tempfile.path, options) do |row|
-                if index.zero?
-                  header_valid?(row)
-                  index += 1
-                  next
-                end
-                row_length_valid?(row, index)
-                auto_solution = parse_auto_solution(row)
-                solution = auto_solution ? '' : parse_solution(row)
-                entity = Entity.new(
-                  terms: parse_terms(row),
-                  auto_solution_enabled: auto_solution,
-                  solution: solution,
-                  position: entities_max_position + line_count - count,
-                  entities_list: entities_list
-                )
-                entity.validate!
-                entities_array << entity
-                if (index % BATCH_SIZE).zero?
-                  Entity.import entities_array, validate: false
-                  entities_array = []
-                end
-                count += 1
-                index += 1
-              end
-            end
-            Entity.import entities_array, validate: false unless entities_array.empty?
-            update_entities_list
-          rescue ActiveRecord::ActiveRecordError => e
-            errors[:file] << "#{e.message} in line #{index}"
-            count = 0
-            raise ActiveRecord::Rollback
-          rescue CSV::MalformedCSVError => e
-            errors[:file] << "Bad CSV format: #{e.message}"
-            count = 0
-            raise ActiveRecord::Rollback
+    ActiveRecord::Base.transaction do
+      entities_list.entities.delete_all if mode == 'replace'
+      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
+      begin
+        line_count = count_lines(options)
+        index = 0
+        CSV.foreach(get_file_location, options) do |row|
+          if index.zero?
+            header_valid?(row)
+            index += 1
+            next
           end
+          row_length_valid?(row, index)
+          auto_solution = parse_auto_solution(row)
+          terms = parse_terms(row)
+          solution = parse_solution(row, terms, auto_solution)
+          position = entities_max_position + line_count - count
+          entities_array << [terms, auto_solution, solution, position, entities_list.id]
+          if (index % BATCH_SIZE).zero?
+            Entity.import! columns, entities_array
+            entities_array = []
+          end
+          count += 1
+          index += 1
         end
+        Entity.import! columns, entities_array unless entities_array.empty?
+        update_entities_list
+      rescue ActiveRecord::ActiveRecordError => e
+        errors[:file] << "#{e.message}"
+        count = 0
+        raise ActiveRecord::Rollback
+      rescue CSV::MalformedCSVError => e
+        errors[:file] << "Bad CSV format: #{e.message}"
+        count = 0
+        raise ActiveRecord::Rollback
       end
     end
     count
@@ -88,7 +76,6 @@ class EntitiesImport < ApplicationRecord
         end
       end
       line_count -= 1
-      ap line_count
       line_count
     end
 
@@ -109,7 +96,12 @@ class EntitiesImport < ApplicationRecord
     end
 
     def parse_terms(row)
-      row['Terms'].present? ? row['Terms'].tr('|', "\n") : row['Terms']
+      terms = row['Terms']
+      if terms.present?
+        terms = terms.tr('|', "\n")
+        terms = EntityTermsParser.new(terms).proceed
+      end
+      terms
     end
 
     def parse_auto_solution(row)
@@ -124,13 +116,34 @@ class EntitiesImport < ApplicationRecord
       end
     end
 
-    def parse_solution(row)
-      row['Solution'].nil? ? '' : row['Solution']
+    def parse_solution(row, terms, auto_solution)
+      solution = row['Solution']
+      if terms.present? && auto_solution
+        if terms.is_a? String
+          solution = terms
+        else
+          solution = terms.first['term']
+        end
+      end
+      solution
     end
 
     def update_entities_list
       entities_list.agent.update_locales
       entities_list.touch
+    end
+
+    def get_file_location
+      if file.storage.is_a? Shrine::Storage::FileSystem
+        file.storage.path(file.id)
+      else # for test environment when Shrine uses in-memory storage
+        tempfile = File.open('temp.csv', 'w+')
+        file.open do |f|
+          tempfile.write(f.read)
+        end
+        tempfile.close
+        tempfile.path
+      end
     end
 
 end

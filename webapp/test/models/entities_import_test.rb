@@ -122,7 +122,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms can't be blank in line 1"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Terms can't be blank"], entities_import.errors[:file]
   end
 
 
@@ -138,7 +138,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Auto solution must be true or false in line 1"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Auto solution must be true or false"], entities_import.errors[:file]
   end
 
 
@@ -258,7 +258,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms uses an unauthorized locale 'rf' for this agent in line 2"], entities_import.errors[:file]
+    assert_equal ["Validation failed: Terms uses an unauthorized locale 'rf' for this agent"], entities_import.errors[:file]
   end
 
   private
@@ -268,6 +268,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
       File.open('temp.csv', 'w+') do |f|
         IO.copy_stream(io, f)
       end
-      EntitiesImport.new(file: File.open('temp.csv'), mode: mode, entities_list: elist)
+      EntitiesImport.new(file:File.open('temp.csv'), mode: mode, entities_list: elist)
     end
 end
