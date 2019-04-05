@@ -21,7 +21,7 @@ class EntitiesListsController < ApplicationController
         # and display the save file popup immediately.
         filename = "#{@owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
         response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-        response.headers['Content-Type'] = 'text/event-stream'
+        response.headers['Content-Type'] = 'text/csv'
         begin
           @entities_list.to_csv_in_io(response.stream)
         ensure
