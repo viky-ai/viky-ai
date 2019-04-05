@@ -95,6 +95,7 @@ Rails.application.routes.draw do
         resources :entities_lists do
           member do
             post :move_to_agent
+            get :export, to: 'entities_lists_exports#show'
           end
 
           get :confirm_destroy
