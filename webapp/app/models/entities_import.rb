@@ -1,58 +1,49 @@
 class EntitiesImport < ApplicationRecord
-
-  BATCH_SIZE = 1000
+  belongs_to :entities_list
 
   include EntitiesImportFileUploader::Attachment.new(:file)
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file')
-
-  belongs_to :entities_list
-
+  validates :mode, presence: true
   enum mode: [:append, :replace]
 
-  validates :mode, presence: true
-
   def proceed
-    options = {
-      headers: [
-        I18n.t('activerecord.attributes.entity.terms'),
-        I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
-        I18n.t('activerecord.attributes.entity.solution')
-      ],
-      skip_blanks: true,
-      encoding: 'UTF-8'
-    }
     count = 0
+    entities_list_id = entities_list.id
     columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id]
-    entities_array = []
+    entities = []
     ActiveRecord::Base.transaction do
-      entities_list.entities.delete_all if mode == 'replace'
-      entities_max_position = entities_list.entities.count.zero? ? 0 : entities_list.entities.maximum(:position)
+      if mode == 'replace'
+        entities_list.entities.delete_all
+      end
+      if entities_list.entities.empty?
+        max_position = 0
+      else
+        max_position = entities_list.entities.maximum(:position)
+      end
+
       begin
-        line_count = count_lines(options)
-        index = 0
-        CSV.foreach(get_file_location, options) do |row|
-          if index.zero?
-            header_valid?(row)
-            index += 1
-            next
-          end
-          row_length_valid?(row, index)
-          auto_solution = parse_auto_solution(row)
-          terms = parse_terms(row)
-          solution = parse_solution(row, terms, auto_solution)
-          position = entities_max_position + line_count - count
-          entities_array << [terms, auto_solution, solution, position, entities_list.id]
-          if (index % BATCH_SIZE).zero?
-            Rails.logger.silence(Logger::INFO) do
-              Entity.import! columns, entities_array
+        lines_count = csv_count_lines
+        CSV.foreach(csv_file_path, csv_reader_options) do |row|
+          if $. == 1
+            validate_csv_header!(row)
+          else
+            validate_csv_row_length!(row, $. + 1)
+            entities << build_import_line_from_csv_row(
+              row,
+              max_position + lines_count - count,
+              entities_list_id
+            )
+            if ($. % 1000).zero?
+              Rails.logger.silence(Logger::INFO) do
+                Entity.import!(columns, entities)
+              end
+              entities = []
             end
-            entities_array = []
+            count += 1
           end
-          count += 1
-          index += 1
         end
         Rails.logger.silence(Logger::INFO) do
-          Entity.import! columns, entities_array unless entities_array.empty?
+          Entity.import!(columns, entities) unless entities.empty?
           update_entities_list
         end
       rescue ActiveRecord::ActiveRecordError => e
@@ -70,32 +61,64 @@ class EntitiesImport < ApplicationRecord
 
   private
 
-    def count_lines(options)
-      line_count = 0
-      CSV.foreach(get_file_location, options) do |row|
-        line_count += 1
-      end
-      line_count -= 1
-      line_count
+    def csv_reader_options
+      {
+        headers: [
+          I18n.t('activerecord.attributes.entity.terms'),
+          I18n.t('activerecord.attributes.entity.auto_solution_enabled'),
+          I18n.t('activerecord.attributes.entity.solution')
+        ],
+        skip_blanks: true,
+        encoding: 'UTF-8'
+      }
     end
 
-    def header_valid?(header_row)
+    def csv_file_path
+      if file.storage.is_a? Shrine::Storage::FileSystem
+        file.storage.path(file.id)
+      else # for test environment when Shrine uses in-memory storage
+        tempfile = File.open('temp.csv', 'w+')
+        file.open do |f|
+          tempfile.write(f.read)
+        end
+        tempfile.close
+        tempfile.path
+      end
+    end
+
+    def csv_count_lines
+      CSV.foreach(csv_file_path, csv_reader_options).count - 1
+    end
+
+    def validate_csv_header!(header_row)
       if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
         raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_header')
       end
     end
 
-    def row_length_valid?(row, row_number)
+    def validate_csv_row_length!(row, row_number)
       return if row['Terms'].present? && row['Auto solution'].present? && row['Solution'].present?
       if row['Terms'].nil? || row['Auto solution'].nil?
         raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
       end
-      if !parse_auto_solution(row) && row['Solution'].blank?
+      if !csv_auto_solution_to_auto_solution(row) && row['Solution'].blank?
         raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
       end
     end
 
-    def parse_terms(row)
+    def build_import_line_from_csv_row(row, position, entities_list_id)
+      terms = csv_terms_to_terms(row)
+      auto_solution = csv_auto_solution_to_auto_solution(row)
+      [
+        terms,
+        auto_solution,
+        csv_solution_to_solution(row, terms, auto_solution),
+        position,
+        entities_list_id
+      ]
+    end
+
+    def csv_terms_to_terms(row)
       terms = row['Terms']
       if terms.present?
         terms = terms.tr('|', "\n")
@@ -104,7 +127,7 @@ class EntitiesImport < ApplicationRecord
       terms
     end
 
-    def parse_auto_solution(row)
+    def csv_auto_solution_to_auto_solution(row)
       if row['Auto solution'].blank?
         raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution')
       end
@@ -118,7 +141,7 @@ class EntitiesImport < ApplicationRecord
       end
     end
 
-    def parse_solution(row, terms, auto_solution)
+    def csv_solution_to_solution(row, terms, auto_solution)
       solution = row['Solution']
       if terms.present? && auto_solution
         if terms.is_a? String
@@ -133,19 +156,6 @@ class EntitiesImport < ApplicationRecord
     def update_entities_list
       entities_list.agent.update_locales
       entities_list.touch
-    end
-
-    def get_file_location
-      if file.storage.is_a? Shrine::Storage::FileSystem
-        file.storage.path(file.id)
-      else # for test environment when Shrine uses in-memory storage
-        tempfile = File.open('temp.csv', 'w+')
-        file.open do |f|
-          tempfile.write(f.read)
-        end
-        tempfile.close
-        tempfile.path
-      end
     end
 
 end
