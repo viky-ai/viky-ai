@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190403120508) do
+ActiveRecord::Schema.define(version: 20190405120340) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(version: 20190403120508) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "proximity", default: 0
+    t.integer "entities_count", default: 0, null: false
     t.index ["agent_id"], name: "index_entities_lists_on_agent_id"
   end
 

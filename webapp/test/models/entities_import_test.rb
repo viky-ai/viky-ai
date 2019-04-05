@@ -92,6 +92,26 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["*", "en", "fr", "es", "ar"], elist.agent.locales
   end
 
+  test 'Entities count column is updated after import' do
+    elist = entities_lists(:weather_conditions)
+    
+    io = StringIO.new
+    io << "Terms,Auto solution,Solution\n"
+    io << "snow,false,\"{'w': 'snow'}\"\n"
+    io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
+    io << "\n"
+
+    entities_import = get_entities_import(elist, io)
+    assert_equal 2, elist.entities.count
+    assert_equal 2, elist.entities_count
+    assert entities_import.save
+    assert_equal 2, entities_import.proceed
+
+    elist.reload
+    assert_equal 4, elist.entities.count
+    assert_equal 4, elist.entities_count
+  end
+
   test 'Import entities missing header' do
     io = StringIO.new
     io << "snow,false,\"{'w': 'snow'}\"\n"

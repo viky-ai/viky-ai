@@ -1,10 +1,10 @@
 <% threshold = 2000 %>
-<div class="card card--warning" <% if @entities_list.entities.count < threshold %>style="display:none;"<% end %>>
+<div class="card card--warning" <% if @entities_list.entities_count < threshold %>style="display:none;"<% end %>>
   <div class="card-content">
     <span class="icon">
       <%= icon_alert %>
     </span>
-    <%= t('views.entities_lists.show.limit_exceeded', limit: threshold, total: @entities_list.entities.count) %>
+    <%= t('views.entities_lists.show.limit_exceeded', limit: threshold, total: @entities_list.entities_count) %>
   </div>
 </div>
 

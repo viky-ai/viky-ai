@@ -26,6 +26,7 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
     assert_equal 11, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count
+    assert_equal 3, entities_lists(:weather_conditions).entities_count
   end
 
 

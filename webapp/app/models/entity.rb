@@ -4,7 +4,7 @@ class Entity < ApplicationRecord
 
   include ActionView::Helpers::NumberHelper
 
-  belongs_to :entities_list, touch: true
+  belongs_to :entities_list, touch: true, counter_cache: true
 
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }

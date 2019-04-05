@@ -44,7 +44,7 @@ class EntitiesImport < ApplicationRecord
         end
         Rails.logger.silence(Logger::INFO) do
           Entity.import!(columns, entities) unless entities.empty?
-          update_entities_list
+          update_entities_list(count)
         end
       rescue ActiveRecord::ActiveRecordError => e
         errors[:file] << "#{e.message}"
@@ -153,8 +153,9 @@ class EntitiesImport < ApplicationRecord
       solution
     end
 
-    def update_entities_list
+    def update_entities_list(count)
       entities_list.agent.update_locales
+      EntitiesList.update_counters(entities_list.id, entities_count: count)
       entities_list.touch
     end
 
