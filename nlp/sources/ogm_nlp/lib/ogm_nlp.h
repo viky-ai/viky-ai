@@ -586,7 +586,7 @@ struct request_expression
   enum nlp_super_list_status super_list_status;
 };
 
-#define DOgMatchZoneInputPartSize 0x100
+#define DOgMatchZoneInputPartSize 0x25
 struct match_zone_input_part
 {
   int start;
