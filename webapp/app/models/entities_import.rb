@@ -1,5 +1,5 @@
 class EntitiesImport < ApplicationRecord
-  
+
   BATCH_SIZE = 1000
 
   include EntitiesImportFileUploader::Attachment.new(:file)
@@ -63,15 +63,13 @@ class EntitiesImport < ApplicationRecord
     end
     count
   end
-  
+
   private
 
     def count_lines(options)
       line_count = 0
-      file.download do |tempfile|
-        CSV.foreach(tempfile.path, options) do |row|
-          line_count += 1
-        end
+      CSV.foreach(get_file_location, options) do |row|
+        line_count += 1
       end
       line_count -= 1
       line_count
@@ -103,7 +101,9 @@ class EntitiesImport < ApplicationRecord
     end
 
     def parse_auto_solution(row)
-      raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution') if row['Auto solution'].blank?
+      if row['Auto solution'].blank?
+        raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution')
+      end
       case row['Auto solution'].downcase
         when 'true'
           true
