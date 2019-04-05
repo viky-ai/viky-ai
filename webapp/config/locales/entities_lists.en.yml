@@ -9,6 +9,7 @@ en:
             title: Import entities
             wait_message: Checking file, please wait...
             success_message: Entities will be imported shortly...
+            max_file_size: "The maximum file size allowed is 5Mo."
             mode:
               label: Import behavior
               append: Append to current entities

@@ -28,6 +28,10 @@
               <p>
                 <%= t('file_upload_label') %>
               </p>
+              <div class="help">
+                <span class="icon icon--x-small"><%= icon_information %></span>
+                <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
+              </div>
               <%= display_errors(@entities_import, :file) %>
             </div>
           </label>
