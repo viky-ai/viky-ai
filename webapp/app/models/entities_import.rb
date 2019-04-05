@@ -27,7 +27,7 @@ class EntitiesImport < ApplicationRecord
           if $. == 1
             validate_csv_header!(row)
           else
-            validate_csv_row_length!(row, $. + 1)
+            validate_csv_row_length!(row, count + 1)
             entities << build_import_line_from_csv_row(
               row,
               max_position + lines_count - count,
@@ -77,10 +77,10 @@ class EntitiesImport < ApplicationRecord
       if file.storage.is_a? Shrine::Storage::FileSystem
         file.storage.path(file.id)
       else # for test environment when Shrine uses in-memory storage
-        tempfile = File.open('temp.csv', 'w+')
-        file.open do |f|
-          tempfile.write(f.read)
-        end
+        file_path = 'tmp/test_vikyai_entities_import.csv'
+        File.delete(file_path) if File.exists? file_path
+        tempfile = File.open(file_path, 'w+')
+        file.open { |f| tempfile.write(f.read) }
         tempfile.close
         tempfile.path
       end
