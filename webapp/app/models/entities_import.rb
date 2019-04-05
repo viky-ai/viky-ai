@@ -43,14 +43,18 @@ class EntitiesImport < ApplicationRecord
           position = entities_max_position + line_count - count
           entities_array << [terms, auto_solution, solution, position, entities_list.id]
           if (index % BATCH_SIZE).zero?
-            Entity.import! columns, entities_array
+            Rails.logger.silence(Logger::INFO) do
+              Entity.import! columns, entities_array
+            end
             entities_array = []
           end
           count += 1
           index += 1
         end
-        Entity.import! columns, entities_array unless entities_array.empty?
-        update_entities_list
+        Rails.logger.silence(Logger::INFO) do
+          Entity.import! columns, entities_array unless entities_array.empty?
+          update_entities_list
+        end
       rescue ActiveRecord::ActiveRecordError => e
         errors[:file] << "#{e.message}"
         count = 0
