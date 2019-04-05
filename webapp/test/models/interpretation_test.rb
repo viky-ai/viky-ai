@@ -248,4 +248,60 @@ class InterpretationTest < ActiveSupport::TestCase
     assert interpretation.save
     assert_equal '', interpretation.expression
   end
+
+
+  test 'Limit maximum number of words in an interpretation' do
+    interpretation = interpretations(:weather_forecast_demain)
+    interpretation.expression = (['a'] * 37).join(' ')
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 37']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = 'a1.2' * 15
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 60']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = ([
+      '²', # G_UNICODE_OTHER_NUMBER (No)
+      '_', # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+      '-', # G_UNICODE_DASH_PUNCTUATION (Pd)
+      '(', # G_UNICODE_OPEN_PUNCTUATION (Ps)
+      ')', # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+      '«', # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+      '”', # G_UNICODE_FINAL_PUNCTUATION (Pf)
+      '&', # G_UNICODE_OTHER_PUNCTUATION (Po)
+      '€', # G_UNICODE_CURRENCY_SYMBOL (Sc)
+      '^', # G_UNICODE_MODIFIER_SYMBOL (Sk)
+      '=', # G_UNICODE_MATH_SYMBOL (Sm)
+      '©', # G_UNICODE_OTHER_SYMBOL (So)
+      '力', # G_UNICODE_BREAK_IDEOGRAPHIC (ID)
+      '😀', # G_UNICODE_BREAK_EMOJI_BASE (EB)
+      '🏿',  # G_UNICODE_BREAK_EMOJI_MODIFIER (EM)
+    ] * 3).join
+
+    assert !interpretation.save
+    expected = {
+      expression: ['is too long (maximum is 36 elements), found: 45']
+    }
+    assert_equal expected, interpretation.errors.messages
+
+    interpretation.expression = (['a'] * 36 + ['؀' * 2]).join(' ')
+    assert interpretation.save
+
+    interpretation.expression = (['a'] * 35 + ['après demain']).join(' ')
+    assert InterpretationAlias.new(
+      aliasname: 'when',
+      position_start: 70,
+      position_end: 82,
+      interpretation: interpretation,
+      interpretation_aliasable: entities_lists(:weather_dates)
+    ).save
+    force_reset_model_cache interpretation
+    assert interpretation.save
+  end
 end
