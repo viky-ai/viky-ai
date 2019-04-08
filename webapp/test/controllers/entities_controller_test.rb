@@ -169,8 +169,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
            },
            format: :json
          }
-    assert_response :success
-    assert_nil flash[:alert]
+    assert_redirected_to user_agent_entities_list_path(users(:admin), agents(:weather), entities_lists(:weather_conditions))
   end
 
   test "Import entities lists access-failed" do

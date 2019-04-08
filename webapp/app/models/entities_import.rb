@@ -5,6 +5,7 @@ class EntitiesImport < ApplicationRecord
   validates_presence_of :file, message: I18n.t('errors.entities_import.no_file')
   validates :mode, presence: true
   enum mode: [:append, :replace]
+  enum status: [ :running, :success, :failure ]
 
   def proceed
     count = 0
@@ -58,6 +59,7 @@ class EntitiesImport < ApplicationRecord
     end
     count
   end
+
 
   private
 

@@ -221,7 +221,8 @@ class EntitiesTest < ApplicationSystemTestCase
 
       click_button 'Import'
     end
-    assert page.has_text? 'Entities will be imported shortly...'
+    assert page.has_text? 'Uploading file, please wait...'
+    assert page.has_text? 'Processing import...'
   end
 
 
@@ -240,7 +241,8 @@ class EntitiesTest < ApplicationSystemTestCase
       choose 'Replace current entities'
       click_button 'Import'
     end
-    assert page.has_text? 'Entities will be imported shortly...'
+    assert page.has_text? 'Uploading file, please wait...'
+    assert page.has_text? 'Processing import...'
   end
 
 

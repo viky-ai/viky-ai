@@ -7,20 +7,22 @@ en:
           btn: CSV Import
           select_import:
             title: Import entities
-            wait_message: Checking file, please wait...
-            success_message: Entities will be imported shortly...
+            wait_message: Uploading file, please wait...
             max_file_size: "The maximum file size allowed is 5Mo."
             mode:
               label: Import behavior
               append: Append to current entities
               replace: Replace current entities
             submit: Import
-            success:
-              zero: "No entity imported for %{agent}"
-              one: "1 entity imported successfully for %{agent}"
-              other: "%{count} entities imported successfully for %{agent}"
-            failed: "Entity import failed for %{agent}</br> %{errors}"
             file_label: Choose a CSV file to import
+          running_html: >
+            Processing import...
+          failure_html: >
+            <strong>Import failed</strong>. At least one CSV entry is not valid. %{errors}.
+          success:
+            zero: "No entity imported."
+            one: "1 entity imported successfully."
+            other: "%{count} entities imported successfully."
         export_btn: CSV Export
       index:
         list_title: Entities lists

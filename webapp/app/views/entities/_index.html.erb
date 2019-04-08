@@ -1,3 +1,10 @@
+<% if @entities_list.entities_imports.running.any? %>
+  <div id="import-card">
+    <%= render partial: 'entities/import_running', locals: {
+    } %>
+  </div>
+<% end %>
+
 <% if current_user.can? :edit, @agent %>
   <div class="card">
     <%= render partial: 'entities/form', locals: {
@@ -17,3 +24,4 @@
     agent: @agent,
     entities_list: @entities_list
 } %>
+

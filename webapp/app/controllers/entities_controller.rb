@@ -113,7 +113,7 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if @entities_list.from_csv(@entities_import, current_user)
         format.json {
-          head :ok
+          redirect_to user_agent_entities_list_path(@owner, @agent, @entities_list)
         }
       else
         format.json {

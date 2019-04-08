@@ -7,7 +7,12 @@ App.user_notifications = App.cable.subscriptions.create "UserNotificationsChanne
 
   received: (data) ->
     App.AgentDuplicator.end()
+
+    if data.trigger
+      $("body").trigger(data.trigger.event, data.trigger.data)
+
     if data.alert
       App.Message.alert(data.alert)
-    else
+
+    if data.notice
       App.Message.notice(data.notice)
