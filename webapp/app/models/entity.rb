@@ -19,6 +19,16 @@ class Entity < ApplicationRecord
   before_validation :build_solution
   after_save :update_agent_locales
 
+  def self.search(query = nil)
+    conditions = where('1 = 1')
+    unless query.blank?
+      conditions = conditions
+        .from("entities, jsonb_array_elements_text(entities.terms) as data")
+        .where('data ilike ?', "{\"term\":%#{query}%")
+    end
+    conditions
+  end
+
   def terms_to_s
     return '' if terms.blank?
     terms.collect { |term|
