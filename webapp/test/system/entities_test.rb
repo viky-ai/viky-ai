@@ -4,23 +4,23 @@ class EntitiesTest < ApplicationSystemTestCase
 
   test 'Navigate to an entity' do
     go_to_agents_index
-    assert page.has_text?('admin/weather')
+    assert_text('admin/weather')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Entities')
+    assert_text('Entities')
     click_link 'Entities'
 
-    assert page.has_text?('weather_conditions')
+    assert_text('weather_conditions')
     click_link 'weather_conditions'
-    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
-    assert page.has_text?('Glued')
-    assert page.has_text?('Not used by any interpretation')
+    assert_text('Entities lists / weather_conditions PUBLIC')
+    assert_text('Glued')
+    assert_text('Not used by any interpretation')
   end
 
 
   test 'Update proximity for the entities list' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
-    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
-    assert page.has_text?('Glued')
+    assert_text('Entities lists / weather_conditions PUBLIC')
+    assert_text('Glued')
     assert page.has_link?('Configure')
     click_link 'Configure'
     within('.modal') do
@@ -29,9 +29,9 @@ class EntitiesTest < ApplicationSystemTestCase
       click_link 'Far'
       click_button 'Update'
     end
-    assert page.has_text?('Your entities list has been successfully updated.')
-    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
-    assert page.has_text?('Far')
+    assert_text('Your entities list has been successfully updated.')
+    assert_text('Entities lists / weather_conditions PUBLIC')
+    assert_text('Far')
   end
 
 
@@ -40,14 +40,97 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_link?('Used by...')
     click_link 'Used by...'
     within('.modal__main') do
-      assert page.has_text?('Interpretations using weather_dates')
+      assert_text('Interpretations using weather_dates')
       click_link('weather_forecast')
     end
-    assert page.has_text?('Interpretations / weather_forecast')
+    assert_text('Interpretations / weather_forecast')
   end
 
 
-  test 'Create an entity' do
+  test 'Pagination enabled or disabled' do
+    entities_list = entities_lists(:weather_conditions)
+    admin_go_to_entities_list_show(agents(:weather), entities_list)
+
+    # Only 2 entities :
+    # - Pagination in disabled
+    # - Entities are draggable
+    page.assert_selector('.card-list__item__draggable', count: 2)
+
+    (1..100).each do |i|
+      Entity.create!({
+        terms: "term_#{i}",
+        auto_solution_enabled: true,
+        entities_list: entities_list
+      })
+    end
+
+    # 102 entities:
+    # - Pagination is enabled
+    # - Entities are not draggable
+    # - Add form is only displayed on first page
+    visit user_agent_entities_list_path(users(:admin), agents(:weather), entities_list)
+
+    assert_text('term_100')
+    page.assert_no_selector('.card-list__item__draggable')
+    page.assert_selector('ul#entities-list li', count: 20)
+    page.assert_selector('#entities-form', count: 1)
+
+    within '.pagination' do
+      click_link "2"
+    end
+
+    assert_text('term_80')
+    page.assert_no_selector('.card-list__item__draggable')
+    page.assert_selector('ul#entities-list li', count: 20)
+    page.assert_no_selector('#entities-form')
+  end
+
+
+  test 'search' do
+    entities_list = entities_lists(:weather_conditions)
+    admin_go_to_entities_list_show(agents(:weather), entities_list)
+
+    # Only 2 entities :
+    # - No search
+    page.assert_selector('.entities-search-and-page-entries form', count: 0)
+
+    (1..100).each do |i|
+      Entity.create!({
+        terms: "term_#{i}",
+        auto_solution_enabled: true,
+        entities_list: entities_list
+      })
+    end
+
+    # 102 entities:
+    # - Search enabled
+    visit user_agent_entities_list_path(users(:admin), agents(:weather), entities_list)
+
+    assert_text('term_100')
+
+    within '.entities-search-and-page-entries' do
+      fill_in 'search', with: 'term'
+      first('button').click
+      assert_text("Displaying entities 1 - 20 of 100 in total")
+
+      fill_in 'search', with: 'term_100'
+      first('button').click
+      assert_text("Displaying 1 entity")
+    end
+  end
+
+
+  test 'Create an entity and failed' do
+    admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    within('.entity-form') do
+      click_button 'Add'
+    end
+    assert_text("Terms can't be blank")
+    assert_text("Solution can't be blank")
+  end
+
+
+  test 'Create an entity and succeed' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     assert page.has_no_text?('foggy')
     within('.entity-form') do
@@ -56,19 +139,21 @@ class EntitiesTest < ApplicationSystemTestCase
       fill_in_editor_field 'condition: brumeux'
       click_button 'Add'
     end
-    assert page.has_text?('foggy')
+    assert_text('foggy')
+    assert_text('Entity has been successfully created.')
   end
 
 
   test 'Create an entity with locale' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
-    assert page.has_no_text?('foggy')
+    assert_no_text('foggy')
     within('.entity-form') do
       fill_in 'Terms', with: "foggy:en\nbrumeux"
       check('Auto solution')
       click_button 'Add'
     end
-    assert page.has_text?('foggy')
+    assert_text('foggy:en')
+    assert_text('Entity has been successfully created.')
   end
 
 
@@ -77,7 +162,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_link?('soleil')
     within('#entities-list') do
       click_link 'soleil'
-      assert page.has_text?('Cancel')
+      assert_text('Cancel')
       fill_in 'Terms', with: "Canicule"
       check('Auto solution')
       click_button 'Update'
@@ -91,24 +176,24 @@ class EntitiesTest < ApplicationSystemTestCase
     assert page.has_link?('soleil')
     within('#entities-list') do
       click_link 'soleil'
-      assert page.has_text?('Cancel')
+      assert_text('Cancel')
       fill_in 'Terms', with: "Canicule:xx"
       click_button 'Update'
     end
-    assert page.has_text?("Terms uses an unauthorized locale 'xx' for this agent")
+    assert_text("Terms uses an unauthorized locale 'xx' for this agent")
   end
 
 
   test 'Show an entity with details' do
     login_as 'show_on_agent_weather@viky.ai', 'BimBamBoom'
-    assert page.has_text?('admin/weather')
+    assert_text('admin/weather')
     click_link 'My awesome weather bot admin/weather'
-    assert page.has_text?('Entities')
+    assert_text('Entities')
     click_link 'Entities'
 
-    assert page.has_text?('weather_conditions')
+    assert_text('weather_conditions')
     click_link 'weather_conditions'
-    assert page.has_text?('Entities lists / weather_conditions PUBLIC')
+    assert_text('Entities lists / weather_conditions PUBLIC')
     within('#entities-list') do
       click_link 'soleil'
       assert page.has_no_button?('Update')
@@ -118,28 +203,51 @@ class EntitiesTest < ApplicationSystemTestCase
 
   test 'Delete an entity' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+    assert_equal 2, all("#entities-list li").size
     assert page.has_link?('pluie')
+    assert page.has_link?('soleil')
+
     within('#entities-list') do
       click_link 'pluie'
-      assert page.has_text?('Delete')
+      assert_text('Delete')
       all('a').last.click
     end
-    assert page.has_no_link?('Delete')
+
+    assert_text('Entity has been successfully deleted.')
+    assert_equal 1, all("#entities-list li").size
+    assert_not page.has_link?('pluie')
+    assert page.has_link?('soleil')
   end
 
 
-  test 'Delete all entities' do
+  test 'Delete all entities and display blankstate' do
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
+
+    assert_equal 2, all("#entities-list li").size
     assert page.has_link?('pluie')
+    assert page.has_link?('soleil')
+
     within('#entities-list') do
       click_link 'pluie'
-      assert page.has_text?('Delete')
-      all('a').last.click
-      click_link 'soleil'
-      assert page.has_text?('Delete')
+      assert_text('Delete')
       all('a').last.click
     end
-    assert page.has_text?('Start adding entity')
+
+    assert_text('Entity has been successfully deleted.')
+    assert_equal 1, all("#entities-list li").size
+    assert_not page.has_link?('pluie')
+    assert page.has_link?('soleil')
+
+    within('#entities-list') do
+      click_link 'soleil'
+      assert_text('Delete')
+      all('a').last.click
+    end
+
+    assert_text('Entity has been successfully deleted.')
+    assert_not page.has_link?('pluie')
+    assert_not page.has_link?('soleil')
+    assert_text('Start adding entity')
   end
 
 
@@ -150,13 +258,13 @@ class EntitiesTest < ApplicationSystemTestCase
       check('Auto solution')
       page.execute_script %Q{ $('#terms__new_entity').trigger("click") }
       fill_in 'Terms', with: "  \nbrumeux"
-      assert page.has_text?('"brumeux"')
+      assert_text('"brumeux"')
 
       uncheck('Auto solution')
       fill_in 'Terms', with: "foggy\nbrumeux"
-      assert page.has_text?('"brumeux"')
+      assert_text('"brumeux"')
       check('Auto solution')
-      assert page.has_text?('"foggy"')
+      assert_text('"foggy"')
     end
   end
 
@@ -173,7 +281,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
     within('#entities-list') do
       click_link 'brumeux'
-      assert page.has_text?('"condition: brumeux"')
+      assert_text('"condition: brumeux"')
     end
   end
 
@@ -199,10 +307,10 @@ class EntitiesTest < ApplicationSystemTestCase
     admin_go_to_entities_list_show(agents(:weather), entities_lists(:weather_conditions))
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import entities'
-      assert page.has_no_text? 'File must be present'
+      assert_text 'Import entities'
+      assert_no_text 'File must be present'
       click_button 'Import'
-      assert page.has_text? 'File must be present'
+      assert_text 'File must be present'
     end
   end
 
@@ -212,7 +320,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import entities'
+      assert_text 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
 
       # Display import file imput in order to allow capybara attach_file
@@ -231,7 +339,7 @@ class EntitiesTest < ApplicationSystemTestCase
     assert_equal 2, all('#entities-list > li').count
     click_link 'Import'
     within('.modal') do
-      assert page.has_text? 'Import entities'
+      assert_text 'Import entities'
       file = File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv')
 
       # Display import file imput in order to allow capybara attach_file
@@ -251,7 +359,7 @@ class EntitiesTest < ApplicationSystemTestCase
     def admin_go_to_entities_list_show(agent, entities_list)
       admin_login
       visit user_agent_entities_list_path(users(:admin), agent, entities_list)
-      assert page.has_text?("#{entities_list.listname} PUBLIC")
+      assert_text("#{entities_list.listname} PUBLIC")
     end
 
     def fill_in_editor_field(text)

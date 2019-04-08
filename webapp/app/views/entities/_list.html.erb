@@ -1,24 +1,41 @@
-<% threshold = 2000 %>
-<div class="card card--warning" <% if @entities_list.entities_count < threshold %>style="display:none;"<% end %>>
-  <div class="card-content">
-    <span class="icon">
-      <%= icon_alert %>
-    </span>
-    <%= t('views.entities_lists.show.limit_exceeded', limit: threshold, total: @entities_list.entities_count) %>
+<% if @paginate_is_enabled %>
+  <div class="entities-search-and-page-entries">
+    <div>
+      <%= page_entries_info @entities %>
+    </div>
+    <form action="?">
+      <div class="field">
+        <div class="control control--merged">
+          <input type="text" value="<%= params[:search] %>" name="search"
+            placeholder="<%= t('views.entities.search.placeholder') %>" />
+          <button
+            class="btn btn--primary"
+            data-disable-with='<span class="icon icon--small icon--spin"><%= icon_loading %></span>'>
+            <span class="icon icon--small">
+              <%= icon_search %>
+            </span>
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
-</div>
+<% end %>
 
 <ul id="entities-list" class="card-list"
     data-behavior="sortable"
     data-update-positions-path="<%= update_positions_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
     data-key='ids'>
   <%= render partial: 'entities/entity',
-             collection: @entities_list.entities.order(position: :desc, created_at: :desc).limit(threshold),
+             collection: @entities,
              locals: {
                can_edit: current_user.can?(:edit, agent),
                entities_list: @entities_list,
                agent: @entities_list.agent,
-               owner: @entities_list.agent.owner
-            }
-  %>
+               owner: @entities_list.agent.owner,
+               paginate_is_enabled: @paginate_is_enabled
+            } %>
 </ul>
+
+<% if @paginate_is_enabled %>
+  <%= paginate @entities %>
+<% end %>

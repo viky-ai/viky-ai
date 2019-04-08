@@ -6,13 +6,15 @@
 <% end %>
 
 <% if current_user.can? :edit, @agent %>
-  <div class="card">
-    <%= render partial: 'entities/form', locals: {
-        agent: @agent,
-        entities_list: @entities_list,
-        entity: @entity
-    } %>
-  </div>
+  <% if (@paginate_is_enabled && @entities.current_page == 1) || !@paginate_is_enabled %>
+    <div class="card">
+      <%= render partial: 'entities/form', locals: {
+          agent: @agent,
+          entities_list: @entities_list,
+          entity: @entity
+      } %>
+    </div>
+  <% end %>
 <% end %>
 
 <%= render partial: 'entities/list', locals: {
