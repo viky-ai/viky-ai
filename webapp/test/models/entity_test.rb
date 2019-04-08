@@ -232,6 +232,18 @@ class EntityTest < ActiveSupport::TestCase
   end
 
 
+  test 'search' do
+    assert_equal 4, Entity.count
+    assert_equal 1, Entity.search('Soleil').count
+    expected = [
+      {"term" => "sun", "locale" => "en"},
+      {"term" => "soleil", "locale" => "fr"}
+    ]
+    assert_equal expected, Entity.search('Soleil').first.terms
+    assert_equal 0, Entity.search('Missing').count
+  end
+
+
   test 'Limit maximum number of words in a term entity' do
     entity = entities(:weather_sunny)
     entity.terms = [

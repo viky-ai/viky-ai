@@ -8,7 +8,7 @@ class EntitiesList < ApplicationRecord
   friendly_id :listname, use: :history, slug_column: 'listname'
 
   belongs_to :agent, touch: true
-  has_many :entities, dependent: :destroy
+  has_many :entities, dependent: :delete_all
   has_many :interpretation_aliases, as: :interpretation_aliasable, dependent: :destroy
   has_many :entities_imports, dependent: :destroy
 

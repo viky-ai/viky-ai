@@ -72,6 +72,19 @@
   }
 }
 
+.entities-search-and-page-entries{
+  display: grid;
+  grid-column-gap: 1em;
+  align-items: center;
+  @media (min-width: 650px){
+    grid-template-columns: auto 18em;
+  }
+  & > div{
+    color: #666;
+  }
+}
+
+
 .entity-show-close{
   position: absolute;
   line-height: 0;
@@ -86,3 +99,5 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+

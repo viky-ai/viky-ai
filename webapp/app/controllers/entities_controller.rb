@@ -12,19 +12,18 @@ class EntitiesController < ApplicationController
     respond_to do |format|
       if entity.save
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: Entity.new})
-          @html = render_to_string(partial: 'entity', locals: {
-            entity: entity,
-            can_edit: current_user.can?(:edit, @agent),
-            entities_list: @entities_list,
-            agent: @agent,
-            owner: @owner
-          })
-          render partial: 'create_succeed'
+          redirect_to user_agent_entities_list_path(
+              @owner, @agent, @entities_list
+            ),
+            notice: t('views.entities.new.success_message')
         end
       else
         format.js do
-          @html_form = render_to_string(partial: 'form', locals: { agent: @agent, entities_list: @entities_list, entity: entity})
+          @html_form = render_to_string(partial: 'form', locals: {
+            agent: @agent,
+            entities_list: @entities_list,
+            entity: entity
+          })
           render partial: 'create_failed', locals: { entity: entity }
         end
       end
@@ -34,13 +33,17 @@ class EntitiesController < ApplicationController
   def edit
     respond_to do |format|
       format.js {
-        @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+        @form = render_to_string(partial: 'edit.html', locals: {
+          entity: @entity,
+          paginate_is_enabled: paginate_is_enabled?
+        })
         render partial: 'edit'
       }
     end
   end
 
   def update
+    paginate_is_enabled = paginate_is_enabled?
     respond_to do |format|
       if @entity.update(entity_params)
         format.js {
@@ -49,13 +52,17 @@ class EntitiesController < ApplicationController
             can_edit: current_user.can?(:edit, @agent),
             entities_list: @entities_list,
             agent: @agent,
-            owner: @owner
+            owner: @owner,
+            paginate_is_enabled: paginate_is_enabled
           })
           render partial: 'show'
         }
       else
         format.js do
-          @form = render_to_string(partial: 'edit.html', locals: { entity: @entity })
+          @form = render_to_string(partial: 'edit.html', locals: {
+            entity: @entity,
+            paginate_is_enabled: paginate_is_enabled
+          })
           render partial: 'edit'
         end
       end
@@ -71,7 +78,8 @@ class EntitiesController < ApplicationController
           can_edit: current_user.can?(:edit, @agent),
           entities_list: @entities_list,
           agent: @agent,
-          owner: @owner
+          owner: @owner,
+          paginate_is_enabled: paginate_is_enabled?
         })
         render partial: 'show'
       }
@@ -81,7 +89,10 @@ class EntitiesController < ApplicationController
   def show_detailed
     respond_to do |format|
       format.js {
-        @show = render_to_string(partial: 'show_detailed.html', locals: { entity: @entity })
+        @show = render_to_string(
+          partial: 'show_detailed.html',
+          locals: { entity: @entity }
+        )
         render partial: 'show_detailed'
       }
     end
@@ -90,7 +101,15 @@ class EntitiesController < ApplicationController
   def destroy
     respond_to do |format|
       if @entity.destroy
-        format.js { render partial: 'destroy_succeed' }
+        format.js {
+          redirect_to user_agent_entities_list_path(
+            @owner,
+            @agent,
+            @entities_list,
+            search: params[:search]
+          ),
+          notice: t('views.entities.destroy.success_message')
+        }
       else
         format.js { render partial: 'destroy_failed' }
       end
@@ -118,7 +137,9 @@ class EntitiesController < ApplicationController
       else
         format.json {
           render json: {
-            replace_modal_content_with: render_to_string(partial: 'new_import', formats: :html),
+            replace_modal_content_with: render_to_string(
+              partial: 'new_import', formats: :html
+            ),
           }, status: 422
         }
       end
@@ -127,6 +148,10 @@ class EntitiesController < ApplicationController
 
 
   private
+
+    def paginate_is_enabled?
+      @entities_list.entities.count > 100
+    end
 
     def entity_params
       params.require(:entity).permit(:auto_solution_enabled, :terms, :solution)
