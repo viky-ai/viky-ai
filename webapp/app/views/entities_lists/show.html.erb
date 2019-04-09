@@ -1,3 +1,7 @@
+<div id="import-card" <% unless @entities_list.entities_imports.running.any? %>style="display:none;"<% end %>>
+  <%= render partial: 'entities/import_running' %>
+</div>
+
 <%= render '/agents/header', agent: @agent %>
 
 <div class="header">
@@ -34,7 +38,7 @@
     <% end %>
     <% if current_user.can?(:edit, @agent) %>
       <a href="<%= new_import_user_agent_entities_list_entities_path(@agent.owner, @agent, @entities_list) %>"
-         data-action="open-remote-modal" class="btn btn--small">
+         data-action="open-remote-modal" class="btn btn--small" id="open-import-modal">
         <span class="icon icon--x-small">
           <%= icon_upload %>
         </span>

@@ -10,6 +10,8 @@ class EntityForm
     @updateSolutionState()
     @syncSolutionWithTerms()
 
+    App.EntitiesImport.disableEdition() if App.EntitiesImport.running()
+
   setupListeners: (event) ->
     @findCheckbox().on 'change', () => @updateSolutionState()
     @findCheckbox().on 'change', () => @syncSolutionWithTerms()

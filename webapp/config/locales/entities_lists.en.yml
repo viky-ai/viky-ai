@@ -15,13 +15,14 @@ en:
             submit: Import
             file_label: Choose a CSV file to import
           running_html: >
-            Processing import...
+            Processing import... Entities editing is temporarily disabled for this entities list.
           failure_html: >
             <strong>Import failed</strong>. At least one CSV entry is not valid. %{errors}.
           success:
             zero: "No entity imported."
             one: "1 entity imported successfully."
             other: "%{count} entities imported successfully."
+          success_redirection_html: Reloading user interface, in <span class="counter">5</span> seconds...
         export_btn: CSV Export
       index:
         list_title: Entities lists

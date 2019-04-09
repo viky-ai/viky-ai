@@ -330,7 +330,6 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button 'Import'
     end
     assert page.has_text? 'Uploading file, please wait...'
-    assert page.has_text? 'Processing import...'
   end
 
 
@@ -350,7 +349,6 @@ class EntitiesTest < ApplicationSystemTestCase
       click_button 'Import'
     end
     assert page.has_text? 'Uploading file, please wait...'
-    assert page.has_text? 'Processing import...'
   end
 
 
