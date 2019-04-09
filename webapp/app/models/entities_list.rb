@@ -91,10 +91,15 @@ class EntitiesList < ApplicationRecord
     @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
   end
 
-  def entities_in_batch(batch_size = 1000)
+  def entities_in_batch(batch_size = 1_000)
     Enumerator.new do |block|
-      (0...entities.count).step(batch_size).each do |offset|
-        block << entities.where("position >= #{offset}").order(position: :asc).limit(batch_size)
+      cursor_max = entities.select(:position).order(position: :desc).first.position
+      cursor_min = entities.select(:position).order(position: :desc).last.position
+      cursor = cursor_max + 1
+      while cursor > cursor_min do
+        batch = entities.where('position < ?', cursor).order(position: :desc).limit(batch_size)
+        block << batch
+        cursor = batch.last.position
       end
     end
   end

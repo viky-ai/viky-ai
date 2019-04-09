@@ -228,9 +228,8 @@ class EntitiesListTest < ActiveSupport::TestCase
 
   test 'List entities by batch orderer by position' do
     entities_list = entities_lists(:terminator_targets)
-    targets = []
-    (0...6).each do |target_id|
-      targets << Entity.create!(
+    targets = (0...6).map do |target_id|
+      Entity.create!(
         auto_solution_enabled: true,
         solution: "target_#{target_id}",
         terms: [
@@ -244,11 +243,11 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert entities_list.save
 
     entities_list.entities_in_batch(4).each_with_index do |batch, index|
-      offset = (index * 4)
-      assert_equal "target_#{0 + offset}", batch[0].solution
-      assert_equal "target_#{1 + offset}", batch[1].solution
-      assert_equal "target_#{2 + offset}", batch[2].solution if index.zero?
-      assert_equal "target_#{3 + offset}", batch[3].solution if index.zero?
+      offset = index.zero? ? 2 : -2
+      assert_equal 3 + offset, batch[0].position
+      assert_equal 2 + offset, batch[1].position
+      assert_equal 1 + offset, batch[2].position if index.zero?
+      assert_equal 0 + offset, batch[3].position if index.zero?
     end
   end
 end
