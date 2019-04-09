@@ -64,12 +64,6 @@ class EntitiesList < ApplicationRecord
     end
   end
 
-  def to_csv
-    io = StringIO.new
-    to_csv_in_io(io)
-    io.string
-  end
-
   def from_csv(entities_import, current_user)
     if entities_import.save
       ImportEntitiesJob.perform_later(entities_import, current_user)

@@ -152,7 +152,9 @@ class EntitiesListTest < ActiveSupport::TestCase
 
   test 'Export entities_list' do
     entities_list = entities_lists(:weather_dates)
-    csv = entities_list.to_csv
+    string_io = StringIO.new
+    entities_list.to_csv_in_io(string_io)
+    csv = string_io.string
     expected = ["Terms,Auto solution,Solution",
                 "aujourd'hui:fr|tout à l'heure:fr|today:en,false,\"{\"\"date\"\": \"\"today\"\"}\"",
                 "tomorrow,false,\"{\"\"date\"\": \"\"tomorrow\"\"}\"",
@@ -168,7 +170,9 @@ class EntitiesListTest < ActiveSupport::TestCase
     sun.solution = ''
     sun.save
 
-    csv = entities_list.to_csv
+    string_io = StringIO.new
+    entities_list.to_csv_in_io(string_io)
+    csv = string_io.string
     expected = ["Terms,Auto solution,Solution",
                 "sun,true,sun",
                 "pluie:fr|rain:en,true,pluie",
