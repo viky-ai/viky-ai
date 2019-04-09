@@ -225,4 +225,30 @@ class EntitiesListTest < ActiveSupport::TestCase
     assert_equal expected, actual
   end
 
+
+  test 'List entities by batch orderer by position' do
+    entities_list = entities_lists(:terminator_targets)
+    targets = []
+    (0...6).each do |target_id|
+      targets << Entity.create!(
+        auto_solution_enabled: true,
+        solution: "target_#{target_id}",
+        terms: [
+          { term: "target_#{target_id}", locale: '*' }
+        ],
+        position: target_id,
+        entities_list: entities_list
+      )
+    end
+    entities_list.entities = targets
+    assert entities_list.save
+
+    entities_list.entities_in_batch(4).each_with_index do |batch, index|
+      offset = (index * 4)
+      assert_equal "target_#{0 + offset}", batch[0].solution
+      assert_equal "target_#{1 + offset}", batch[1].solution
+      assert_equal "target_#{2 + offset}", batch[2].solution if index.zero?
+      assert_equal "target_#{3 + offset}", batch[3].solution if index.zero?
+    end
+  end
 end

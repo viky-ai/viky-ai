@@ -91,6 +91,14 @@ class EntitiesList < ApplicationRecord
     @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
   end
 
+  def entities_in_batch(batch_size = 1000)
+    Enumerator.new do |block|
+      (0...entities.count).step(batch_size).each do |offset|
+        block << entities.where("position >= #{offset}").order(position: :asc).limit(batch_size)
+      end
+    end
+  end
+
   private
 
     def clean_listname
