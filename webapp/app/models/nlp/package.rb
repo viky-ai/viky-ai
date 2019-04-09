@@ -91,19 +91,16 @@ class Nlp::Package
 
     def build_tree(io)
       buffer = "{\n"
-      buffer << '"id":' 
+      buffer << '"id":'
       buffer << "\"#{@agent.id}\",\n"
       buffer << '"slug":'
       buffer << "\"#{@agent.slug}\",\n"
       buffer << "\"interpretations\": [\n"
       io.write(buffer)
       write_intent(io)
-      
+
       # @agent.entities_lists.order(position: :desc).each do |elist|
       #   cache_key = ['pkg', VERSION, slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-      #   interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-      #     build_internals_list_nodes(elist)
-      #   end
       #   interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
       # end
       # interpretations
@@ -121,7 +118,7 @@ class Nlp::Package
         .where(is_list: true, interpretations: { intent_id: intent.id })
         .order('interpretations.position DESC, interpretations.locale ASC')
         .order(:position_start).each_with_index do |ialias, index|
-        
+
         interpretation_hash = {}
         interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
         interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
@@ -149,7 +146,7 @@ class Nlp::Package
         expression['glue-distance'] = ialias.interpretation.proximity.get_distance
         expression['glue-strength'] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
-        
+
         interpretation_hash[:expressions] = expressions
 
         list_present = true
@@ -166,7 +163,7 @@ class Nlp::Package
 
     def build_intent(intent, io)
       buffer = "{\n"
-      buffer << '"id":' 
+      buffer << '"id":'
       buffer << "\"#{intent.id}\",\n"
       buffer << '"slug":'
       buffer << "\"#{intent.slug}\",\n"
@@ -186,14 +183,14 @@ class Nlp::Package
         expression['glue-strength'] = 'punctuation' if interpretation.proximity_accepts_punctuations?
         solution = build_interpretation_solution(interpretation)
         expression['solution']      = solution unless solution.blank?
-        
+
         buffer << "," unless index.zero?
         buffer << expression.to_json
-        
+
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
-            
+
             buffer << ",\n"
             any_node = build_any_node(ialias, expression)
             buffer << any_node.to_json
@@ -323,7 +320,7 @@ class Nlp::Package
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent, io)
         end
-        
+
         io.write(",\n") unless index.zero?
 
         Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
