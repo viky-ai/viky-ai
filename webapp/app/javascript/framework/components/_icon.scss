@@ -107,6 +107,11 @@
   }
 }
 
+.btn--disabled .icon{
+  svg{
+    opacity: 0.75;
+  }
+}
 .btn--primary.btn--outline.btn--disabled:hover .icon{
   svg{
     fill: $primary_color;

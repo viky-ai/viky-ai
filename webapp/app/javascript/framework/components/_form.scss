@@ -166,6 +166,13 @@
     resize: vertical;
   }
 
+  textarea:disabled{
+    background-color: #f9f9f9;
+    border-color: #ddd;
+    box-shadow: none;
+    opacity: .6;
+  }
+
   textarea.with-2-lines{
     height: calc(3em + 0.375em + 0.375em);
   }
