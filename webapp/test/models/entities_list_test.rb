@@ -246,6 +246,7 @@ class EntitiesListTest < ActiveSupport::TestCase
     entities_list.entities = targets
     assert entities_list.save
 
+    assert_equal 6, entities_list.entities_in_batch(4).size
     entities_list.entities_in_batch(4).each_with_index do |batch, index|
       offset = index.zero? ? 2 : -2
       assert_equal 3 + offset, batch[0].position
@@ -253,5 +254,10 @@ class EntitiesListTest < ActiveSupport::TestCase
       assert_equal 1 + offset, batch[2].position if index.zero?
       assert_equal 0 + offset, batch[3].position if index.zero?
     end
+
+    entities_list.entities = []
+    assert entities_list.save
+    assert_equal 0, entities_list.entities_in_batch(4).size
+    entities_list.entities_in_batch(4).each { |batch| assert_empty batch }
   end
 end
