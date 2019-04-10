@@ -85,7 +85,7 @@ class EntitiesList < ApplicationRecord
     @proximity ||= ExpressionProximity.new(read_attribute(:proximity))
   end
 
-  def entities_in_batch(batch_size = 1_000)
+  def entities_in_ordered_batchs(batch_size = 1_000)
     Enumerator.new(entities.count) do |block|
       if entities.exists?
         cursor_max = entities.select(:position).order(position: :desc).first.position
