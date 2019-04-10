@@ -13,6 +13,8 @@ class Nlp::Package
 
   REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
 
+  BATCH_SIZE = 1_000
+
   def initialize(agent)
     @agent = agent
   end
@@ -54,6 +56,7 @@ class Nlp::Package
     build_tree(io)
   end
 
+  # TODO change it to stream
   def full_json_export
     packages_list = full_packages_map(@agent).values
     packages_list.collect do |package|
@@ -87,8 +90,13 @@ class Nlp::Package
     end
 
     def build_tree(io)
-      interpretations = []
-      slug = @agent.slug
+      buffer = "{\n"
+      buffer << '"id":' 
+      buffer << "\"#{@agent.id}\",\n"
+      buffer << '"slug":'
+      buffer << "\"#{@agent.slug}\",\n"
+      buffer << "\"interpretations\": [\n"
+      io.write(buffer)
       write_intent(io)
       
       # @agent.entities_lists.order(position: :desc).each do |elist|
@@ -99,17 +107,21 @@ class Nlp::Package
       #   interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
       # end
       # interpretations
+      io.write("]\n}")
     end
 
-    def build_internals_list_nodes(intent)
+    def build_internals_list_nodes(intent, io)
       interpretations = []
+
+      buffer = ''
+      list_present = false
 
       InterpretationAlias
         .includes(:interpretation)
         .where(is_list: true, interpretations: { intent_id: intent.id })
         .order('interpretations.position DESC, interpretations.locale ASC')
-        .order(:position_start).each do |ialias|
-
+        .order(:position_start).each_with_index do |ialias, index|
+        
         interpretation_hash = {}
         interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
         interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
@@ -139,21 +151,30 @@ class Nlp::Package
         expressions << expression
         
         interpretation_hash[:expressions] = expressions
-        interpretations << interpretation_hash
+
+        list_present = true
+        buffer << ",\n" unless index.zero?
+        buffer << interpretation_hash.to_json
+        if (index % BATCH_SIZE).zero?
+          io.write(buffer)
+          buffer = ''
+        end
       end
-      interpretations
+      buffer << ",\n" if list_present
+      io.write(buffer) unless buffer.blank?
     end
 
-    def build_intent(intent)
-      interpretation_hash = {}
+    def build_intent(intent, io)
+      buffer = "{\n"
+      buffer << '"id":' 
+      buffer << "\"#{intent.id}\",\n"
+      buffer << '"slug":'
+      buffer << "\"#{intent.slug}\",\n"
+      buffer << '"scope":'
+      buffer << "\"#{intent.is_public? ? 'public' : 'private'}\",\n"
+      buffer << "\"expressions\": [\n"
 
-      interpretation_hash['id'] = intent.id
-      interpretation_hash['slug'] = intent.slug
-      interpretation_hash['scope'] = intent.is_public? ? 'public' : 'private'
-
-      expressions = []
-
-      intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
+      intent.interpretations.order(position: :desc, locale: :asc).each_with_index do |interpretation, index|
         expression = {}
         expression['expression']    = interpretation.expression_with_aliases
         expression['id']            = interpretation.id
@@ -163,18 +184,27 @@ class Nlp::Package
         expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
         expression['glue-distance'] = interpretation.proximity.get_distance
         expression['glue-strength'] = 'punctuation' if interpretation.proximity_accepts_punctuations?
-        expression['solution']      = build_interpretation_solution(interpretation)
-        expressions << expression
+        solution = build_interpretation_solution(interpretation)
+        expression['solution']      = solution unless solution.blank?
+        
+        buffer << "," unless index.zero?
+        buffer << expression.to_json
         
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
-          .order(position_start: :asc).each do |ialias, index|
-          
-            expressions << build_any_node(ialias, expression)
+          .order(position_start: :asc).each do |ialias|
+            
+            buffer << ",\n"
+            any_node = build_any_node(ialias, expression)
+            buffer << any_node.to_json
+        end
+        if (index % BATCH_SIZE).zero?
+          io.write(buffer)
+          buffer = ""
         end
       end
-      interpretation_hash['expressions'] = expressions
-      interpretation_hash
+      buffer << "]\n}"
+      io.write(buffer)
     end
 
     def build_entities_list(elist)
@@ -244,9 +274,8 @@ class Nlp::Package
     end
 
     def build_alias(ialias)
-      result = {
-        'alias': ialias.aliasname
-      }
+      result = {}
+      result['alias'] = ialias.aliasname
       if ialias.type_number?
         result['type'] = 'number'
       elsif ialias.type_regex?
@@ -288,16 +317,16 @@ class Nlp::Package
     end
 
     def write_intent(io)
-      interpretations = []
       slug = @agent.slug
-      @agent.intents.order(position: :desc).each do |intent|
+      @agent.intents.order(position: :desc).each_with_index do |intent, index|
         cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        interpretations += Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent)
+        Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(intent, io)
         end
-        interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent) }
+        
+        io.write(",\n") unless index.zero?
+
+        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
       end
-      # Remove the array bracket to add entities_lists
-      io.write(interpretations.to_json.chomp(']'))
     end
 end

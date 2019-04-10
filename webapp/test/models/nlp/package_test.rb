@@ -2,6 +2,7 @@ require 'test_helper'
 
 class PackageTest < ActiveSupport::TestCase
 
+  # TODO
   test "package generation" do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
@@ -147,7 +148,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
 
@@ -184,7 +187,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
 
@@ -219,7 +224,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
 
@@ -324,7 +331,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
   test 'Package generation with alias any' do
@@ -401,10 +410,12 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
-
+  # TODO
   test 'Packages with all its dependencies' do
     weather = agents(:weather)
     terminator = agents(:terminator)
@@ -683,9 +694,12 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(package.generate_json)
+    io = StringIO.new
+    package.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
+  # TODO
   test 'Package generation with different proximity values' do
     weather = agents(:weather)
     interpretation_far = interpretations(:weather_forecast_demain)
@@ -819,7 +833,9 @@ class PackageTest < ActiveSupport::TestCase
         }
       ]
     }
-    assert_equal expected, JSON.parse(p.generate_json)
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
 end
