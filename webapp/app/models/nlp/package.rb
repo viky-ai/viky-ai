@@ -211,17 +211,19 @@ class Nlp::Package
       interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
       expressions = []
 
-      elist.entities.find_each do |entity|
-        entity.terms.each do |term|
-          expression = {}
-          expression[:expression] = term['term']
-          expression[:id] = entity.id
-          expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-          expression[:solution] = build_entities_list_solution(entity)
-          expression[:keep_order] = true
-          expression[:glue_distance] = elist.proximity.get_distance
-          expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
-          expressions << expression
+      elist.entities_in_batch.each do |batch|
+        batch.each do |entity|
+          entity.terms.each do |term|
+            expression = {}
+            expression[:expression] = term['term']
+            expression[:id] = entity.id
+            expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+            expression[:solution] = build_entities_list_solution(entity)
+            expression[:keep_order] = true
+            expression[:glue_distance] = elist.proximity.get_distance
+            expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
+            expressions << expression
+          end
         end
       end
       interpretation_hash[:expressions] = expressions

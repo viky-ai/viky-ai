@@ -20,8 +20,8 @@ class PackageTest < ActiveSupport::TestCase
               "expression"    => "Quel temps fera-t-il demain ?",
               "id"            => interpretations(:weather_forecast_demain).id,
               "locale"        => "fr",
+              "glue-distance" => 20,
               "solution"      => "Quel temps fera-t-il demain ?",
-              "glue-distance" => 20
             },
             {
               "expression" => "@{question} @{when} ?",
@@ -56,8 +56,8 @@ class PackageTest < ActiveSupport::TestCase
               "expression"    => "What the weather like",
               "id"            => interpretations(:weather_question_like).id,
               "locale"        => "en",
+              "glue-distance" => 20,
               "solution"      => "What the weather like",
-              "glue-distance" => 20
             }
           ]
         },
@@ -67,40 +67,40 @@ class PackageTest < ActiveSupport::TestCase
           'scope'    => 'public',
           "expressions" => [
             {
-              "expression"    => "pluie",
-              "id"            => entities(:weather_raining).id,
-              "locale"        => "fr",
-              "solution"      => "pluie",
-              "keep-order"    => true,
-              "glue-distance" => 0,
-              "glue-strength" => "punctuation"
-            },
-            {
-              "expression" => "rain",
-              "id"         => entities(:weather_raining).id,
-              "locale"     => "en",
-              "solution"   => "pluie",
-              "keep-order" => true,
-              "glue-distance" => 0,
-              "glue-strength" => "punctuation"
-            },
-            {
               "expression" => "sun",
               "id"         => entities(:weather_sunny).id,
               "locale"     => "en",
-              "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "sun",
             },
             {
               "expression" => "soleil",
               "id"         => entities(:weather_sunny).id,
               "locale"     => "fr",
-              "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "sun",
+            },
+            {
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+              "solution"      => "pluie",
+            },
+            {
+              "expression" => "rain",
+              "id"         => entities(:weather_raining).id,
+              "locale"     => "en",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+              "solution"   => "pluie",
             }
           ]
         },
@@ -113,36 +113,36 @@ class PackageTest < ActiveSupport::TestCase
               "expression" => "aujourd'hui",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "tout à l'heure",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "today",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "en",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "tomorrow",
               "id"         => entities(:weather_dates_tomorrow).id,
-              "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
             }
           ]
         }
@@ -730,9 +730,9 @@ class PackageTest < ActiveSupport::TestCase
               "expression"    => "Quel temps fera-t-il demain ?",
               "id"            => interpretations(:weather_forecast_demain).id,
               "locale"        => "fr",
-              "solution"      => "Quel temps fera-t-il demain ?",
               "glue-distance" => 0,
-              "glue-strength" => 'punctuation'
+              "glue-strength" => 'punctuation',
+              "solution"      => "Quel temps fera-t-il demain ?",
             }
           ]
         },
@@ -756,40 +756,40 @@ class PackageTest < ActiveSupport::TestCase
           'scope'    => 'public',
           "expressions" => [
             {
-              "expression"    => "pluie",
-              "id"            => entities(:weather_raining).id,
-              "locale"        => "fr",
-              "solution"      => "pluie",
-              "keep-order"    => true,
-              "glue-distance" => 0,
-              "glue-strength" => "punctuation"
-            },
-            {
-              "expression" => "rain",
-              "id"         => entities(:weather_raining).id,
-              "locale"     => "en",
-              "solution"   => "pluie",
-              "keep-order" => true,
-              "glue-distance" => 0,
-              "glue-strength" => "punctuation"
-            },
-            {
               "expression" => "sun",
               "id"         => entities(:weather_sunny).id,
               "locale"     => "en",
-              "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "sun",
             },
             {
               "expression" => "soleil",
               "id"         => entities(:weather_sunny).id,
               "locale"     => "fr",
-              "solution"   => "sun",
               "keep-order" => true,
               "glue-distance" => 0,
-              "glue-strength" => "punctuation"
+              "glue-strength" => "punctuation",
+              "solution"   => "sun",
+            },
+            {
+              "expression"    => "pluie",
+              "id"            => entities(:weather_raining).id,
+              "locale"        => "fr",
+              "keep-order"    => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+              "solution"      => "pluie",
+            },
+            {
+              "expression" => "rain",
+              "id"         => entities(:weather_raining).id,
+              "locale"     => "en",
+              "keep-order" => true,
+              "glue-distance" => 0,
+              "glue-strength" => "punctuation",
+              "solution"   => "pluie",
             }
           ]
         },
@@ -802,32 +802,32 @@ class PackageTest < ActiveSupport::TestCase
               "expression" => "aujourd'hui",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 50
+              "glue-distance" => 50,
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "tout à l'heure",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "fr",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 50
+              "glue-distance" => 50,
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "today",
               "id"         => entities(:weather_dates_today).id,
               "locale"     => "en",
-              "solution"   => "`{\"date\": \"today\"}`",
               "keep-order" => true,
-              "glue-distance" => 50
+              "glue-distance" => 50,
+              "solution"   => "`{\"date\": \"today\"}`",
             },
             {
               "expression" => "tomorrow",
               "id"         => entities(:weather_dates_tomorrow).id,
-              "solution"   => "`{\"date\": \"tomorrow\"}`",
               "keep-order" => true,
-              "glue-distance" => 50
+              "glue-distance" => 50,
+              "solution"   => "`{\"date\": \"tomorrow\"}`",
             }
           ]
         }
