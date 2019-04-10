@@ -5,16 +5,39 @@ class EntitiesImport
     $("body").on "entities_import:start",   (event, data) => @start(event, data)
     $("body").on "entities_import:failure", (event, data) => @failure(event, data)
     $("body").on "entities_import:success", (event, data) => @success(event, data)
-    EntitiesImport.disableEdition() if EntitiesImport.running()
+    if EntitiesImport.running()
+      EntitiesImport.disableEdition()
+      @update_progression()
+
+  update_progression: ->
+    progress = 0
+    @progression = setInterval ->
+      now = Date.now() / 1000
+      duration = $("#progress").data('duration')
+      start = $("#progress").data('start')
+      if progress > 99
+        progress = progress + 0.01
+      else if progress > 98
+        progress = progress + 0.05
+      else if progress > 95
+        progress = progress + 0.1
+      else
+        progress =  (now - start) * 100 / duration
+      $("#progress .banner__progression__bar").css(width: "#{progress}%")
+    , 500
 
   start: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
       $('#import-card').html(data.html)
       $('#import-card').show()
+      @update_progression()
       EntitiesImport.disableEdition()
 
   success: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
+
+      clearInterval @progression
+
       $('#import-card').html(data.html)
       EntitiesImport.enableEdition()
 
@@ -30,6 +53,7 @@ class EntitiesImport
 
   failure: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
+      clearInterval @progression
       if data.current_user_id == $('body').data('current-user')
         $('#import-card').html(data.html)
         EntitiesImport.enableEdition()
@@ -37,7 +61,7 @@ class EntitiesImport
         $('#import-card').html("").hide()
         EntitiesImport.enableEdition()
 
-  @running: -> $('main .card--warning:visible').length == 1
+  @running: -> $('main .js-import-running:visible').length == 1
 
   @disableEdition: ->
     # Import modal link

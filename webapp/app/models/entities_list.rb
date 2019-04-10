@@ -70,15 +70,6 @@ class EntitiesList < ApplicationRecord
     io.string
   end
 
-  def from_csv(entities_import, current_user)
-    if entities_import.save
-      ImportEntitiesJob.perform_later(entities_import, current_user)
-      true
-    else
-      false
-    end
-  end
-
   def aliased_intents
     Intent.where(agent_id: agent_id)
           .joins(interpretations: :interpretation_aliases)

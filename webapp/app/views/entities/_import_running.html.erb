@@ -1,8 +1,40 @@
-<div class="card card--warning">
-  <div class="card-content">
-    <span class="icon icon--spin">
-      <%= icon_loading %>
-    </span>
-    <%= t('views.entities_lists.show.import.running_html') %>
+<div class="banner js-import-running">
+  <% estimated_duration = entities_import.estimated_duration %>
+
+  <div class="banner__content">
+    <div class="robot-float">
+      <img src='<%= asset_path("robot-idle-no-shadow.png") %>'
+           srcset='<%= asset_path("robot-idle-no-shadow.png") %> 1x,
+                   <%= asset_path("robot-idle-no-shadow@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        <%= t('views.entities_lists.show.import.running.title') %>
+      </h3>
+      <p>
+        <%= t('views.entities_lists.show.import.running.filesize_html',
+              filesize: number_to_human_size(entities_import.filesize)
+            ) %>
+        <br />
+        <%= t('views.entities_lists.show.import.running.launched_by_html',
+              user: entities_import.user.name_or_username
+            ) %>
+        <% if estimated_duration[:available] %>
+          <br />
+          <%= t('views.entities_lists.show.import.running.end_html',
+              end: l(Time.at(estimated_duration[:end]), format: :short)
+            ) %>
+        <% end %>
+      </p>
+    </div>
   </div>
+
+  <% if estimated_duration[:available] %>
+    <div class="banner__progression" id="progress"
+      data-duration="<%= estimated_duration[:duration] %>"
+      data-start="<%= estimated_duration[:start] %>">
+      <div class="banner__progression__bar"></div>
+    </div>
+  <% end %>
 </div>

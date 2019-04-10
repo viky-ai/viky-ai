@@ -19,6 +19,7 @@ class StyleGuideController < ApplicationController
       { name: "Form",                   slug: "form"          },
       { name: "Actions list",           slug: "actions_list"  },
       { name: "Table",                  slug: "table"         },
+      { name: "Banner",                 slug: "banner"        },
       { name: "Card",                   slug: "card"          },
       { name: "Card list",              slug: "card_list"     },
       { name: "Note",                   slug: "note"          },

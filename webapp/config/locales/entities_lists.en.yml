@@ -14,10 +14,14 @@ en:
               replace: Replace current entities
             submit: Import
             file_label: Choose a CSV file to import
-          running_html: >
-            Processing import... Entities editing is temporarily disabled for this entities list.
-          failure_html: >
-            <strong>Import failed</strong>. At least one CSV entry is not valid. %{errors}.
+          running:
+            title: Processing import...
+            filesize_html: Import CSV file of <strong>%{filesize}</strong>.
+            launched_by_html: Import launched by <strong>%{user}</strong>.
+            end_html: "Estimated end of the import: <strong>%{end}</strong>."
+          failure:
+            title: Import failed
+            content_html: <p>At least one CSV entry is not valid. %{errors}.</p>
           success:
             zero: "No entity imported."
             one: "1 entity imported successfully."

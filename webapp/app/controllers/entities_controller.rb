@@ -128,9 +128,11 @@ class EntitiesController < ApplicationController
   def create_import
     @entities_import = EntitiesImport.new(import_params)
     @entities_import.entities_list = @entities_list
+    @entities_import.user = current_user
 
     respond_to do |format|
-      if @entities_list.from_csv(@entities_import, current_user)
+      if @entities_import.save
+        ImportEntitiesJob.perform_later(@entities_import)
         format.json {
           head :ok
         }

@@ -14,7 +14,6 @@ class Entity < ApplicationRecord
   validate :validate_terms_length_in_bytes
   validate :check_expression_nlp_length
 
-
   before_validation :parse_terms
   before_validation :build_solution
   after_save :update_agent_locales

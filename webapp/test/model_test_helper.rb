@@ -67,18 +67,3 @@ def create_agent_regression_check_fixtures
   })
   @regression_weather_condition.save!
 end
-
-def create_entities_import_fixtures
-  file_path = File.join(Rails.root, 'test', 'fixtures', 'files', 'weather_condition_import.csv')
-  CSV.open(file_path, "wb") do |csv|
-    csv << ["terms", "auto solution", "solution"]
-    csv << ["cloudy", "True", "\"{'weather': 'cloudy'}\"\n"]
-  end
-  
-  @weather_conditions_import = EntitiesImport.new({
-    file: File.open(file_path),
-    mode: 'append',
-    entities_list: entities_lists(:weather_conditions)
-  })
-  @weather_conditions_import.save!
-end

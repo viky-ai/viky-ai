@@ -106,6 +106,8 @@ ActiveRecord::Schema.define(version: 20190408083049) do
     t.datetime "updated_at", null: false
     t.integer "status", default: 0
     t.integer "duration", default: 0
+    t.integer "filesize", default: 0
+    t.uuid "user_id"
     t.index ["entities_list_id"], name: "index_entities_imports_on_entities_list_id"
   end
 

@@ -1,9 +1,12 @@
 class EntitiesImport < ApplicationRecord
   belongs_to :entities_list
+  belongs_to :user
 
   include EntitiesImportFileUploader::Attachment.new(:file)
-  validates_presence_of :file, message: I18n.t('errors.entities_import.no_file')
+  validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
+  validate :absence_of_concurrent_import, on: :create
   validates :mode, presence: true
+
   enum mode: [:append, :replace]
   enum status: [ :running, :success, :failure ]
 
@@ -60,8 +63,32 @@ class EntitiesImport < ApplicationRecord
     count
   end
 
+  def estimated_duration
+    if EntitiesImport.success.any?
+      d = EntitiesImport.success.limit(10).average(:duration)
+      f = EntitiesImport.success.limit(10).average(:filesize)
+      estimation = ((filesize * d) / f)
+      {
+        available: true,
+        duration: estimation,
+        start: created_at.to_i,
+        end: created_at.to_i + estimation.to_i
+      }
+    else
+      {
+        available: false
+      }
+    end
+  end
+
 
   private
+
+    def absence_of_concurrent_import
+      if entities_list.entities_imports.running.any?
+        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
+      end
+    end
 
     def csv_reader_options
       {

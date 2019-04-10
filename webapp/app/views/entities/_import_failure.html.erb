@@ -1,10 +1,16 @@
-<div class="card card--alert">
-  <div class="card-content">
-    <p>
-      <span class="icon">
-        <%= icon_alert %>
-      </span>
-      <%= t('views.entities_lists.show.import.failure_html', errors: errors.join(', ')) %>
-    </p>
+<div class="banner banner--alert">
+  <div class="banner__content">
+    <div>
+      <img src='<%= asset_path("robot-confused.png") %>'
+           srcset='<%= asset_path("robot-confused.png") %> 1x,
+                   <%= asset_path("robot-confused@2x.png") %> 2x'
+           style='width: 80px'/>
+    </div>
+    <div>
+      <h3>
+        <%= t('views.entities_lists.show.import.failure.title') %>
+      </h3>
+      <%= t('views.entities_lists.show.import.failure.content_html', errors: errors.join(', ')) %>
+    </div>
   </div>
 </div>

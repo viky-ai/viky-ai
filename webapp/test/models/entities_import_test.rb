@@ -2,61 +2,87 @@ require 'test_helper'
 require 'model_test_helper'
 
 class EntitiesImportTest < ActiveSupport::TestCase
-  
-  setup do
-    create_entities_import_fixtures
-  end
+
 
   test 'Basic import creation and entities list association' do
     entities_list = entities_lists(:weather_conditions)
-    assert_equal 1, entities_list.entities_imports.count
-    
+
     IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
     entities_import = EntitiesImport.new({
       file: File.open('temp.csv'),
       mode: 'replace',
-      entities_list: entities_list
+      entities_list: entities_list,
+      user: users(:admin)
     })
     assert entities_import.save
-    assert_equal 2, entities_list.entities_imports.count
+    assert_equal 1, entities_list.entities_imports.count
   end
-  
+
+
   test 'file should be present' do
     entities_import = EntitiesImport.new({
       mode: 'replace',
-      entities_list: entities_lists(:weather_conditions)
+      entities_list: entities_lists(:weather_conditions),
+      user: users(:admin)
     })
     assert entities_import.invalid?
     assert_equal ["must be present"], entities_import.errors[:file]
   end
 
+
   test 'file should be of csv format' do
     entities_list = entities_lists(:weather_conditions)
-    assert_equal 1, entities_list.entities_imports.count
-    
+
     IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'temp.csv')
     entities_import = EntitiesImport.new({
       file: File.open('temp.csv'),
       mode: 'replace',
-      entities_list: entities_list
+      entities_list: entities_list,
+      user: users(:admin)
     })
     assert entities_import.invalid?
     assert_equal ["CSV format expected"], entities_import.errors[:file]
   end
 
+
+  test 'no concurrent import running' do
+    entities_list = entities_lists(:weather_conditions)
+
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
+    entities_import = EntitiesImport.new({
+      file: File.open('temp.csv'),
+      mode: 'replace',
+      entities_list: entities_list,
+      user: users(:admin)
+    })
+    assert entities_import.save
+
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
+    entities_import = EntitiesImport.new({
+      file: File.open('temp.csv'),
+      mode: 'replace',
+      entities_list: entities_list,
+      user: users(:admin)
+    })
+    assert_not entities_import.save
+    assert_equal ["An import is already running, please wait."], entities_import.errors.full_messages
+  end
+
+
   test 'file should have a valid csv extension' do
     entities_list = entities_lists(:weather_conditions)
-    assert_equal 1, entities_list.entities_imports.count
-    
+
     IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'temp.png')
     entities_import = EntitiesImport.new({
       file: File.open('temp.png'),
       mode: 'replace',
-      entities_list: entities_list
+      entities_list: entities_list,
+      user: users(:admin)
     })
     assert entities_import.invalid?
     assert_equal ["CSV format expected", "CSV extension expected"], entities_import.errors[:file]
   end
+
 
   test 'Import entities from CSV' do
     elist = entities_lists(:weather_conditions)
@@ -92,9 +118,10 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["*", "en", "fr", "es", "ar"], elist.agent.locales
   end
 
+
   test 'Entities count column is updated after import' do
     elist = entities_lists(:weather_conditions)
-    
+
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
@@ -111,6 +138,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 4, elist.entities.count
     assert_equal 4, elist.entities_count
   end
+
 
   test 'Import entities missing header' do
     io = StringIO.new
@@ -134,10 +162,10 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution\n"
     io << "\"\",false,hail\n"
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
-    
+
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io)
-    
+
     assert_equal 2, elist.entities.count
     assert entities_import.save
     assert_equal 0, entities_import.proceed
@@ -202,7 +230,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "cloudy,false,\"{'weather': 'cloudy'}\"\n"
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
-    
+
     assert entities_import.save
     assert_equal 1, entities_import.proceed
     elist.entities.reload
@@ -262,6 +290,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 3, Entity.all.count
   end
 
+
   test 'Import entities with non existing locale' do
     elist = entities_lists(:weather_conditions)
     assert_equal ["*", "en", "fr", "es"], elist.agent.locales
@@ -281,6 +310,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal ["Validation failed: Terms uses an unauthorized locale 'rf' for this agent"], entities_import.errors[:file]
   end
 
+
   private
 
     def get_entities_import(elist, io, mode = 'append')
@@ -288,6 +318,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
       File.open('temp.csv', 'w+') do |f|
         IO.copy_stream(io, f)
       end
-      EntitiesImport.new(file:File.open('temp.csv'), mode: mode, entities_list: elist)
+      EntitiesImport.new(
+        file:File.open('temp.csv'),
+        mode: mode,
+        entities_list: elist,
+        user: users(:admin)
+      )
     end
 end

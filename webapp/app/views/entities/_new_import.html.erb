@@ -33,6 +33,14 @@
                 <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
               </div>
               <%= display_errors(@entities_import, :file) %>
+              <% unless @entities_import.errors[:base].empty? %>
+                <div class="help help--error">
+                  <span class="icon icon--x-small">
+                    <%= icon_alert %>
+                  </span>
+                  <%= @entities_import.errors[:base].join('') %>
+                </div>
+              <% end %>
             </div>
           </label>
         </div>
