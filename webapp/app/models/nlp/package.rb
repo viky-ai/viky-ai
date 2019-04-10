@@ -59,6 +59,7 @@ class Nlp::Package
     buffer << "\"interpretations\": [\n"
     io.write(buffer)
     write_intent(io)
+    io.write(',') if @agent.intents.exists? && @agent.entities_lists.exists?
     write_entities_list(io)
     io.write("]\n}")
   end
@@ -97,9 +98,8 @@ class Nlp::Package
     end
 
     def write_intent(io)
-      slug = @agent.slug
       @agent.intents.order(position: :desc).each_with_index do |intent, index|
-        cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', VERSION, @agent.slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent, io)
         end
@@ -111,11 +111,11 @@ class Nlp::Package
     end
 
     def write_entities_list(io)
-      # @agent.entities_lists.order(position: :desc).each do |elist|
-      #   cache_key = ['pkg', VERSION, slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-      #   interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
-      # end
-      # interpretations
+      @agent.entities_lists.order(position: :desc).each_with_index do |elist, index|
+        cache_key = ['pkg', VERSION, @agent.slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        io.write(",\n") if index > 0
+        Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, io) }
+      end
     end
 
     def build_internals_list_nodes(intent, io)
@@ -215,14 +215,16 @@ class Nlp::Package
       io.write(buffer)
     end
 
-    def build_entities_list(elist)
-      interpretation_hash = {}
-      interpretation_hash[:id] = elist.id
-      interpretation_hash[:slug] = elist.slug
-      interpretation_hash[:scope] = elist.is_public? ? 'public' : 'private'
-      expressions = []
+    def build_entities_list(elist, io)
+      buffer = "{\n"
+      buffer << "\"id\": \"#{elist.id}\",\n"
+      buffer << "\"slug\": \"#{elist.slug}\",\n"
+      buffer << "\"scope\": \"#{elist.is_public? ? 'public' : 'private'}\",\n"
+      buffer << "\"expressions\": [\n"
+      io.write(buffer)
 
       elist.entities_in_ordered_batchs.each do |batch|
+        entities_buffer = []
         batch.each do |entity|
           entity.terms.each do |term|
             expression = {}
@@ -230,15 +232,15 @@ class Nlp::Package
             expression[:id] = entity.id
             expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
             expression[:solution] = build_entities_list_solution(entity)
-            expression[:keep_order] = true
-            expression[:glue_distance] = elist.proximity.get_distance
-            expression[:glue_strength] = 'punctuation' if elist.proximity_glued?
-            expressions << expression
+            expression['keep-order'] = true
+            expression['glue-distance'] = elist.proximity.get_distance
+            expression['glue-strength'] = 'punctuation' if elist.proximity_glued?
+            entities_buffer << expression.to_json
           end
         end
+        io.write(entities_buffer.join(",\n"))
       end
-      interpretation_hash[:expressions] = expressions
-      interpretation_hash
+      io.write("]}\n")
     end
 
     def build_any_node(ialias, expression)

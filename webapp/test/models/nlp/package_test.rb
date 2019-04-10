@@ -2,7 +2,6 @@ require 'test_helper'
 
 class PackageTest < ActiveSupport::TestCase
 
-  # TODO
   test "package generation" do
     weather = agents(:weather)
     p = Nlp::Package.new(weather)
@@ -527,7 +526,10 @@ class PackageTest < ActiveSupport::TestCase
           "expressions" => []
         }]
     }]
-    assert_equal expected, p.full_json_export
+
+    io = StringIO.new
+    p.generate_json(io)
+    assert_equal expected, JSON.parse(io.string)
   end
 
 
@@ -699,7 +701,6 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, JSON.parse(io.string)
   end
 
-  # TODO
   test 'Package generation with different proximity values' do
     weather = agents(:weather)
     interpretation_far = interpretations(:weather_forecast_demain)
@@ -837,5 +838,4 @@ class PackageTest < ActiveSupport::TestCase
     p.generate_json(io)
     assert_equal expected, JSON.parse(io.string)
   end
-
 end

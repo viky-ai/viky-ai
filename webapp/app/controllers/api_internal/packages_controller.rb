@@ -8,7 +8,9 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
     Rails.logger.silence(Logger::INFO) do
       time = Benchmark.measure do
         @agent = Agent.find(params[:id])
-        json = Nlp::Package.new(@agent).generate_json
+        io = StringIO.new
+        Nlp::Package.new(@agent).generate_json(io)
+        json = io.string
         headers['ETag'] = @agent.updated_at.iso8601(9)
         render body: json, content_type: "application/json"
       end
