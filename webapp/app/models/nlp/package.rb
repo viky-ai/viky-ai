@@ -64,12 +64,14 @@ class Nlp::Package
     io.write("]\n}")
   end
 
-  # TODO change it to stream
-  def full_json_export
+  def full_json_export(io)
     packages_list = full_packages_map(@agent).values
-    packages_list.collect do |package|
-      JSON.parse(Nlp::Package.new(package).generate_json)
+    io.write("[\n")
+    packages_list.each_with_index do |package, index|
+      io.write(",\n") unless index.zero?
+      Nlp::Package.new(package).generate_json(io)
     end
+    io.write("\n]")
   end
 
   def logger
@@ -163,10 +165,6 @@ class Nlp::Package
         list_present = true
         buffer << ",\n" unless index.zero?
         buffer << interpretation_hash.to_json
-        if (index % BATCH_SIZE).zero?
-          io.write(buffer)
-          buffer = ''
-        end
       end
       buffer << ",\n" if list_present
       io.write(buffer) unless buffer.blank?
@@ -205,10 +203,6 @@ class Nlp::Package
             buffer << ",\n"
             any_node = build_any_node(ialias, expression)
             buffer << any_node.to_json
-        end
-        if (index % BATCH_SIZE).zero?
-          io.write(buffer)
-          buffer = ""
         end
       end
       buffer << "]\n}"

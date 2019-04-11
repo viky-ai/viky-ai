@@ -528,7 +528,7 @@ class PackageTest < ActiveSupport::TestCase
     }]
 
     io = StringIO.new
-    p.generate_json(io)
+    p.full_json_export(io)
     assert_equal expected, JSON.parse(io.string)
   end
 
