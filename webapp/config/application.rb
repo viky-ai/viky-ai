@@ -60,5 +60,11 @@ module Webapp
     config.active_job.queue_name_delimiter = "_"
 
     config.exceptions_app = self.routes
+
+    config.after_initialize do
+      # Remove running entities imports on app boot.
+      # In order to fix locked entities imports.
+      EntitiesImport.running.delete_all
+    end
   end
 end
