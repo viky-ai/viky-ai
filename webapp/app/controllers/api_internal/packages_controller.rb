@@ -1,4 +1,5 @@
 class ApiInternal::PackagesController < ApiInternal::ApplicationController
+  include ActionController::Live
 
   def index
     @agents = Agent.all.select(:id)
@@ -8,11 +9,13 @@ class ApiInternal::PackagesController < ApiInternal::ApplicationController
     Rails.logger.silence(Logger::INFO) do
       time = Benchmark.measure do
         @agent = Agent.find(params[:id])
-        io = StringIO.new
-        Nlp::Package.new(@agent).generate_json(io)
-        json = io.string
+        response.headers['Content-Type'] = 'application/json'
         headers['ETag'] = @agent.updated_at.iso8601(9)
-        render body: json, content_type: "application/json"
+        begin
+          Nlp::Package.new(@agent).generate_json(response.stream)
+        ensure
+          response.stream.close
+        end
       end
       Rails.logger.info("  Generate package #{@agent.id} - #{@agent.slug} in #{(time.real*1000.0).round(1)} ms")
     end
