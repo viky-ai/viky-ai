@@ -64,7 +64,9 @@ module Webapp
     config.after_initialize do
       # Remove running entities imports on app boot.
       # In order to fix locked entities imports.
-      EntitiesImport.running.delete_all
+      if ActiveRecord::Base.connection.active?
+        EntitiesImport.running.delete_all
+      end
     end
   end
 end
