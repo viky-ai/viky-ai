@@ -102,12 +102,10 @@ class Nlp::Package
     def write_intent(io)
       @agent.intents.order(position: :desc).each_with_index do |intent, index|
         cache_key = ['pkg', VERSION, @agent.slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        io.write(",\n") if index > 0
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent, io)
         end
-
-        io.write(",\n") unless index.zero?
-
         Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
       end
     end
@@ -121,11 +119,7 @@ class Nlp::Package
     end
 
     def build_internals_list_nodes(intent, io)
-      interpretations = []
-
       buffer = ''
-      list_present = false
-
       InterpretationAlias
         .includes(:interpretation)
         .where(is_list: true, interpretations: { intent_id: intent.id })
@@ -162,22 +156,20 @@ class Nlp::Package
 
         interpretation_hash[:expressions] = expressions
 
-        list_present = true
-        buffer << ",\n" unless index.zero?
         buffer << interpretation_hash.to_json
+        buffer << ",\n"
+        if (index % BATCH_SIZE).zero?
+          io.write(buffer)
+          buffer = ''
+        end
       end
-      buffer << ",\n" if list_present
-      io.write(buffer) unless buffer.blank?
     end
 
     def build_intent(intent, io)
       buffer = "{\n"
-      buffer << '"id":'
-      buffer << "\"#{intent.id}\",\n"
-      buffer << '"slug":'
-      buffer << "\"#{intent.slug}\",\n"
-      buffer << '"scope":'
-      buffer << "\"#{intent.is_public? ? 'public' : 'private'}\",\n"
+      buffer << "\"id\": \"#{intent.id}\",\n"
+      buffer << "\"slug\": \"#{intent.slug}\",\n"
+      buffer << "\"scope\": \"#{intent.is_public? ? 'public' : 'private'}\",\n"
       buffer << "\"expressions\": [\n"
 
       intent.interpretations.order(position: :desc, locale: :asc).each_with_index do |interpretation, index|
@@ -193,7 +185,7 @@ class Nlp::Package
         solution = build_interpretation_solution(interpretation)
         expression['solution']      = solution unless solution.blank?
 
-        buffer << "," unless index.zero?
+        buffer << ',' unless index.zero?
         buffer << expression.to_json
 
         interpretation.interpretation_aliases
@@ -203,6 +195,10 @@ class Nlp::Package
             buffer << ",\n"
             any_node = build_any_node(ialias, expression)
             buffer << any_node.to_json
+        end
+        if (index % BATCH_SIZE).zero?
+          io.write(buffer)
+          buffer = ''
         end
       end
       buffer << "]\n}"
