@@ -10,7 +10,6 @@ class ImportEntitiesJob < ApplicationJob
 
     notify_start(entities_import)
 
-    sleep(1)
     count = entities_import.proceed
 
     if count.zero? && entities_import.errors.any?

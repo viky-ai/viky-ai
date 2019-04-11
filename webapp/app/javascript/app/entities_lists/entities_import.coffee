@@ -35,21 +35,21 @@ class EntitiesImport
 
   success: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
-
       clearInterval @progression
-
-      $('#import-card').html(data.html)
-      EntitiesImport.enableEdition()
-
-      refreshCounter = setInterval ->
-        counter = parseInt($('#import-card span.counter').html(), 10)
-        $('#import-card span.counter').html(counter - 1)
-      , 1000
-
-      setTimeout ->
-        Turbolinks.visit window.location.href
-        clearInterval(refreshCounter);
-      , 5000
+      $('#import-card').css('min-height', $('#import-card').height());
+      $('#import-card .banner').fadeTo(500, 0.25, ->
+        $('#import-card').html(data.html)
+        $('#import-card .banner').css('opacity', 0.25).fadeTo(500, 1)
+        EntitiesImport.enableEdition()
+        refreshCounter = setInterval ->
+          counter = parseInt($('#import-card span.counter').html(), 10)
+          $('#import-card span.counter').html(counter - 1)
+        , 1000
+        setTimeout ->
+          Turbolinks.visit window.location.href
+          clearInterval(refreshCounter);
+        , 5000
+      )
 
   failure: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
