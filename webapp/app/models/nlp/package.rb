@@ -53,7 +53,14 @@ class Nlp::Package
   end
 
   def generate_json(io)
-    build_tree(io)
+    buffer = "{\n"
+    buffer << "\"id\": \"#{@agent.id}\",\n"
+    buffer << "\"slug\": \"#{@agent.slug}\",\n"
+    buffer << "\"interpretations\": [\n"
+    io.write(buffer)
+    write_intent(io)
+    write_entities_list(io)
+    io.write("]\n}")
   end
 
   # TODO change it to stream
@@ -89,22 +96,26 @@ class Nlp::Package
       result
     end
 
-    def build_tree(io)
-      buffer = "{\n"
-      buffer << '"id":'
-      buffer << "\"#{@agent.id}\",\n"
-      buffer << '"slug":'
-      buffer << "\"#{@agent.slug}\",\n"
-      buffer << "\"interpretations\": [\n"
-      io.write(buffer)
-      write_intent(io)
+    def write_intent(io)
+      slug = @agent.slug
+      @agent.intents.order(position: :desc).each_with_index do |intent, index|
+        cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
+          build_internals_list_nodes(intent, io)
+        end
 
+        io.write(",\n") unless index.zero?
+
+        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
+      end
+    end
+
+    def write_entities_list(io)
       # @agent.entities_lists.order(position: :desc).each do |elist|
       #   cache_key = ['pkg', VERSION, slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
       #   interpretations << Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist) }
       # end
       # interpretations
-      io.write("]\n}")
     end
 
     def build_internals_list_nodes(intent, io)
@@ -313,19 +324,5 @@ class Nlp::Package
         result = "`#{entity.solution}`" unless entity.solution.blank?
       end
       result
-    end
-
-    def write_intent(io)
-      slug = @agent.slug
-      @agent.intents.order(position: :desc).each_with_index do |intent, index|
-        cache_key = ['pkg', VERSION, slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent, io)
-        end
-
-        io.write(",\n") unless index.zero?
-
-        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
-      end
     end
 end
