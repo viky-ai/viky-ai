@@ -63,10 +63,10 @@ class ConsoleController < ApplicationController
         now: now,
         verbose: verbose,
         client_type: 'console',
-        user_id: current_user.id,
+        user_id: current_user.id
       }
       result = Nlp::PublicInterpret.request_public_api(request_params, agent)
-      result[:package_path] = full_export_user_agent_url(agent.owner, agent, format: 'json') if current_user.admin?
+      result[:package_path] = full_export_user_agent_url(agent.owner, agent, format: 'json')
       result
     end
 end
