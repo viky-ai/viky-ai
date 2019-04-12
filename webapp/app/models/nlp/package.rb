@@ -13,8 +13,6 @@ class Nlp::Package
 
   REDIS_URL = ENV.fetch("VIKYAPP_REDIS_PACKAGE_NOTIFIER") { 'redis://localhost:6379/3' }
 
-  BATCH_SIZE = 1_000
-
   def initialize(agent)
     @agent = agent
   end
@@ -119,12 +117,12 @@ class Nlp::Package
     end
 
     def build_internals_list_nodes(intent, io)
-      buffer = ''
+      buffer = []
       InterpretationAlias
         .includes(:interpretation)
         .where(is_list: true, interpretations: { intent_id: intent.id })
         .order('interpretations.position DESC, interpretations.locale ASC')
-        .order(:position_start).each_with_index do |ialias, index|
+        .order(:position_start).each do |ialias|
 
         interpretation_hash = {}
         interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
@@ -157,22 +155,26 @@ class Nlp::Package
         interpretation_hash[:expressions] = expressions
 
         buffer << interpretation_hash.to_json
-        buffer << ",\n"
-        if (index % BATCH_SIZE).zero?
-          io.write(buffer)
-          buffer = ''
-        end
+      end
+      if buffer.present?
+        io.write(buffer.join(','))
+        io.write(',')
       end
     end
 
     def build_intent(intent, io)
-      buffer = "{\n"
-      buffer << "\"id\": \"#{intent.id}\",\n"
-      buffer << "\"slug\": \"#{intent.slug}\",\n"
-      buffer << "\"scope\": \"#{intent.is_public? ? 'public' : 'private'}\",\n"
-      buffer << "\"expressions\": [\n"
+      io.write("{\n")
+      buffer = [
+        "\"id\":\"#{intent.id}\"",
+        "\"slug\":\"#{intent.slug}\"",
+        "\"scope\":\"#{intent.is_public? ? 'public' : 'private'}\""
+      ].join(',')
+      io.write(buffer)
+      io.write(',')
+      io.write("\"expressions\": [\n")
 
-      intent.interpretations.order(position: :desc, locale: :asc).each_with_index do |interpretation, index|
+      buffer = []
+      intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
         expression = {}
         expression['expression']    = interpretation.expression_with_aliases
         expression['id']            = interpretation.id
@@ -185,24 +187,17 @@ class Nlp::Package
         solution = build_interpretation_solution(interpretation)
         expression['solution']      = solution unless solution.blank?
 
-        buffer << ',' unless index.zero?
         buffer << expression.to_json
 
         interpretation.interpretation_aliases
           .where(any_enabled: true, is_list: false)
           .order(position_start: :asc).each do |ialias|
-
-            buffer << ",\n"
-            any_node = build_any_node(ialias, expression)
-            buffer << any_node.to_json
-        end
-        if (index % BATCH_SIZE).zero?
-          io.write(buffer)
-          buffer = ''
+          any_node = build_any_node(ialias, expression)
+          buffer << any_node.to_json
         end
       end
-      buffer << "]\n}"
-      io.write(buffer)
+      io.write(buffer.join(","))
+      io.write("]\n}")
     end
 
     def build_entities_list(elist, io)
