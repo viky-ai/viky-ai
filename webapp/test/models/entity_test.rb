@@ -9,7 +9,7 @@ class EntityTest < ActiveSupport::TestCase
       solution: "{gender: 'male'}",
       auto_solution_enabled: false,
       terms: [
-        { term: 'Jacques', locale: 'fr' },
+        { term: 'Éric', locale: 'fr' },
         { term: 'James', locale: 'en' }
       ],
       position: 11,
@@ -19,10 +19,11 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal "{gender: 'male'}", entity.solution
     assert !entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
-    assert_equal 'Jacques', entity.terms.first['term']
+    assert_equal 'Éric', entity.terms.first['term']
     assert_equal 'fr', entity.terms.first['locale']
     assert_equal 'James', entity.terms.last['term']
     assert_equal 'en', entity.terms.last['locale']
+    assert_equal "eric james", entity.searchable_terms
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
     assert_equal 11, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count

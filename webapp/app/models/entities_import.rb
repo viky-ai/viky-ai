@@ -13,7 +13,7 @@ class EntitiesImport < ApplicationRecord
   def proceed
     count = 0
     entities_list_id = entities_list.id
-    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id]
+    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
     entities = []
     ActiveRecord::Base.transaction do
       if mode == 'replace'
@@ -39,7 +39,8 @@ class EntitiesImport < ApplicationRecord
             auto_solution = (row['Auto solution'].downcase == 'true')
             solution = csv_solution_to_solution(row, terms, auto_solution)
             position = max_position + lines_count - count
-            entities << [terms, auto_solution, solution, position, entities_list_id ]
+            searchable_terms = Entity.extract_searchable_terms(terms)
+            entities << [terms, auto_solution, solution, position, entities_list_id, searchable_terms]
             if (index % 1000).zero?
               batch_import(columns, entities, errors, max_position, lines_count)
               entities = []

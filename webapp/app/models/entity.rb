@@ -16,15 +16,15 @@ class Entity < ApplicationRecord
 
   before_validation :parse_terms
   before_validation :build_solution
+  before_validation :build_searchable_terms
   after_save :update_agent_locales
   after_destroy :touch_entities_list
 
   def self.search(query = nil)
     conditions = where('1 = 1')
     unless query.blank?
-      conditions = conditions
-        .from("entities, jsonb_array_elements_text(entities.terms) as data")
-        .where('data ilike ?', "{\"term\":%#{query}%")
+      query = I18n.transliterate(query).downcase
+      conditions = conditions.where('searchable_terms ilike ?', "%#{query}%")
     end
     conditions
   end
@@ -38,6 +38,16 @@ class Entity < ApplicationRecord
         "#{term['term']}:#{term['locale']}"
       end
     }.reject(&:blank?).join("\n")
+  end
+
+  def self.extract_searchable_terms(terms)
+    if terms.instance_of?(Array)
+      I18n.transliterate(
+        terms.collect { |term| term['term'] }.join(' ')
+      ).downcase
+    else
+      ""
+    end
   end
 
 
@@ -57,6 +67,10 @@ class Entity < ApplicationRecord
       else
         self.solution = self.terms.first['term']
       end
+    end
+
+    def build_searchable_terms
+      self.searchable_terms = Entity.extract_searchable_terms(self.terms)
     end
 
     def validate_locales_exists

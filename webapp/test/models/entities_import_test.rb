@@ -16,6 +16,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
     })
     assert entities_import.save
     assert_equal 1, entities_list.entities_imports.count
+
+    # Proceed import
+    assert_equal 3, entities_import.proceed
+    expected = ["nuageux cloudy", "snow", "sun spell eclaircie"]
+    assert_equal expected, entities_list.entities.order(position: :desc).pluck(:searchable_terms)
   end
 
 
