@@ -66,8 +66,8 @@ module Webapp
         # Remove running entities imports on app boot.
         # In order to fix locked entities imports.
         # Check database connection which do not exist on assets compilation rake task.
-        connected = ::ActiveRecord::Base.connection_pool.with_connection(&:active?) rescue false
-        EntitiesImport.running.delete_all if connected
+        # connected = ::ActiveRecord::Base.connection_pool.with_connection(&:active?) rescue false
+        # EntitiesImport.running.delete_all if connected
       end
     end
   end
