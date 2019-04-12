@@ -121,22 +121,20 @@ class EntitiesController < ApplicationController
   end
 
   def new_import
-    @entities_import = EntitiesImport.new
+    @entities_import = EntitiesImport.new(mode: 'append')
     render partial: 'new_import'
   end
 
   def create_import
     @entities_import = EntitiesImport.new(import_params)
+    @entities_import.entities_list = @entities_list
+    @entities_import.user = current_user
+
     respond_to do |format|
-      if @entities_list.from_csv @entities_import
+      if @entities_import.save
+        ImportEntitiesJob.perform_later(@entities_import)
         format.json {
-          redirect_to user_agent_entities_list_path(
-              @owner, @agent, @entities_list
-            ),
-            notice: t(
-              'views.entities_lists.show.import.select_import.success',
-              count: @entities_import.count
-            )
+          head :ok
         }
       else
         format.json {
@@ -154,7 +152,7 @@ class EntitiesController < ApplicationController
   private
 
     def paginate_is_enabled?
-      @entities_list.entities.count > 100
+      @entities_list.entities_count > 100
     end
 
     def entity_params

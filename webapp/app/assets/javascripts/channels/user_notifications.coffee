@@ -1,4 +1,4 @@
-App.user_notifications = App.cable.subscriptions.create "UserNotificationsChannel",
+App.cable.subscriptions.create "UserNotificationsChannel",
   connected: ->
     # Called when the subscription is ready for use on the server
 
@@ -7,7 +7,9 @@ App.user_notifications = App.cable.subscriptions.create "UserNotificationsChanne
 
   received: (data) ->
     App.AgentDuplicator.end()
+
     if data.alert
       App.Message.alert(data.alert)
-    else
+
+    if data.notice
       App.Message.notice(data.notice)

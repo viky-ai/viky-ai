@@ -282,14 +282,14 @@ class AgentRegressionChecksTest < ApplicationSystemTestCase
 
     within('.console') do
       assert page.has_content?('3 tests')
-      assert page.has_content?('1 running, 1 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 1 success, 1 failure') 
       find('#console-footer').click
       sleep 0.2 # Wait Animation
     end
 
     within('#console-ts') do
       assert page.has_content?('3 tests')
-      assert page.has_content?('1 running, 1 success, 1 failure') # TODO
+      assert page.has_content?('1 running, 1 success, 1 failure')
       click_link("What's the weather like in London?")
       assert page.has_text?('Delete')
       click_button('Delete')

@@ -9,7 +9,7 @@ class EntityTest < ActiveSupport::TestCase
       solution: "{gender: 'male'}",
       auto_solution_enabled: false,
       terms: [
-        { term: 'Jacques', locale: 'fr' },
+        { term: 'Éric', locale: 'fr' },
         { term: 'James', locale: 'en' }
       ],
       position: 11,
@@ -19,13 +19,15 @@ class EntityTest < ActiveSupport::TestCase
     assert_equal "{gender: 'male'}", entity.solution
     assert !entity.auto_solution_enabled
     assert_equal 2, entity.terms.size
-    assert_equal 'Jacques', entity.terms.first['term']
+    assert_equal 'Éric', entity.terms.first['term']
     assert_equal 'fr', entity.terms.first['locale']
     assert_equal 'James', entity.terms.last['term']
     assert_equal 'en', entity.terms.last['locale']
+    assert_equal "eric james", entity.searchable_terms
     assert_equal entities_lists(:weather_conditions).id, entity.entities_list.id
     assert_equal 11, entity.position
     assert_equal 3, entities_lists(:weather_conditions).entities.count
+    assert_equal 3, entities_lists(:weather_conditions).entities_count
   end
 
 
@@ -222,7 +224,12 @@ class EntityTest < ActiveSupport::TestCase
     new_positions = [entity_1.id, entity_2.id, entity_0.id, '132465789']
     Entity.update_positions(entities_list, new_positions)
     force_reset_model_cache([entity_0, entity_1, entity_2])
-    assert_equal [2, 1, 0], [entity_1.position, entity_2.position, entity_0.position]
+    assert_equal [1_000_003, 1_000_002, 1_000_001], [entity_1.position, entity_2.position, entity_0.position]
+
+    new_positions = [entity_0.id, entity_1.id, entity_2.id]
+    Entity.update_positions(entities_list, new_positions)
+    force_reset_model_cache([entity_0, entity_1, entity_2])
+    assert_equal [2, 1, 0], [entity_0.position, entity_1.position, entity_2.position]
   end
 
 

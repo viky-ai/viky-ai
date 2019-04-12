@@ -31,6 +31,7 @@ a.btn,
   }
   &.btn--disabled{
     background: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+    color: #444;
   }
   &.btn--disabled:active{
     transform: none;
@@ -78,6 +79,7 @@ a.btn,
         darken($primary_color, 4%) 100%
       );
       border-color: darken($primary_color, 4%);
+      color: rgba(#fff, .8);
     }
 
     &.btn--outline{
@@ -90,8 +92,9 @@ a.btn,
         background-color: $primary_color;
       }
       &.btn--disabled{
-        color: darken($primary_color, 10%);
+        color: rgba($primary_color, .9);
         background-color: transparent;
+        border-color: rgba($primary_color, .8);
       }
     }
   }
@@ -126,6 +129,7 @@ a.btn,
         darken($destructive_color, 4%) 100%
       );
       border-color: darken($destructive_color, 4%);
+      color: rgba(#fff, .8);
     }
 
     &.btn--outline{
@@ -138,7 +142,8 @@ a.btn,
         background-color: $destructive_color;
       }
       &.btn--disabled{
-        color: darken($destructive_color, 10%);
+        color: rgba($destructive_color, .8);
+        border-color: rgba($destructive_color, .8);
         background-color: transparent;
       }
     }

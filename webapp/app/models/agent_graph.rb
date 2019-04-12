@@ -56,7 +56,8 @@ class AgentGraph
     graph = direction == :successors ? to_graph(&:slug) : to_predecessors_graph(&:slug)
     image = graph.write_to_graphic_file('svg', image_name)
     svg = File.open(image, 'rb').read
-    File.delete(image, "#{image_name}.dot")
+    File.delete(image) if File.exist? image
+    File.delete("#{image_name}.dot") if File.exist? "#{image_name}.dot"
     svg
   end
 

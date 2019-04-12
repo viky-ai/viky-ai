@@ -16,10 +16,11 @@
                     id: 'import-entities-form',
                     class: 'js-import-entities-form' do |import_form| %>
 
-
         <p class="field__title">
           <%= t('views.entities_lists.show.import.select_import.file_label') %>
         </p>
+
+        <%= import_form.hidden_field :file, value: @entities_import.cached_file_data %>
         <div class="field field--upload">
           <%= import_form.file_field :file, id: :import_file, accept: 'text/csv', multiple: false %>
           <label for="import_file">
@@ -32,27 +33,31 @@
                 <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
               </div>
               <%= display_errors(@entities_import, :file) %>
+              <% unless @entities_import.errors[:base].empty? %>
+                <div class="help help--error">
+                  <span class="icon icon--x-small">
+                    <%= icon_alert %>
+                  </span>
+                  <%= @entities_import.errors[:base].join('') %>
+                </div>
+              <% end %>
             </div>
           </label>
         </div>
 
         <div class="field">
-          <p class="field__title">Import behavior</p>
-          <%= import_form.radio_button :mode, :append, id: "import__append", checked: true %>
-          <label class="radio" for="import__append">
-            <%= t('views.entities_lists.show.import.select_import.append_label') %>
-          </label>
-          &nbsp;
-          <%= import_form.radio_button :mode, :replace, id: "import__replace" %>
-          <label class="radio" for="import__replace">
-            <%= t('views.entities_lists.show.import.select_import.replace_label') %>
-          </label>
+          <p class="field__title"><%= t('views.entities_lists.show.import.select_import.mode.label') %></p>
+          <% EntitiesImport.modes.each_key do |mode| %>
+            <%= import_form.radio_button :mode, mode, id: "import_mode_#{mode}" %>
+            <%= import_form.label :mode, t("views.entities_lists.show.import.select_import.mode.#{mode}"), value: mode, class:'radio'%>
+            &nbsp;
+         <% end %>
         </div>
 
         <div class="actions">
           <%= import_form.button t('views.entities_lists.show.import.select_import.submit'),
                                  class: "btn btn--primary"%>
-          <button class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
+          <button id="close-import" class="btn btn--plain" data-action='close-modal'><%= t('cancel') %></button>
         </div>
       <% end %>
 

@@ -8,6 +8,9 @@ class EntitiesImportForm
     $("body").on "ajax:error", (event) =>
       @displayErrorMessage(event) if $(event.target).hasClass('js-import-entities-form')
 
+    $("body").on "ajax:success", (event) =>
+      $("body").trigger 'modal:kill'
+
   displayWaitMessage: (event) ->
     @getModalMain().addClass('modal__main--loading')
     @getFormAndTitle().hide();

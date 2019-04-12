@@ -15,18 +15,19 @@
     & > ul{
       padding: 0 1em;
     }
+
   }
 
   .tabs {
     padding: 1.5em 1.5em 0 1.5em;
   }
 
-  &.card--notice{
+  &.card--success{
     border: none;
     background-color: $success_color;
     color: #fff;
     .card-content{
-      padding: 1em 2em;
+      padding: 1em 1.5em;
       svg {
         fill: #fff;
       }
@@ -38,7 +39,7 @@
     background-color: $warning_color;
     color: #fff;
     .card-content{
-      padding: 1em 2em;
+      padding: 1em 1.5em;
       svg {
         fill: #fff;
       }
@@ -50,7 +51,7 @@
     background-color: $alert_color;
     color: #fff;
     .card-content{
-      padding: 1em 2em;
+      padding: 1em 1.5em;
       svg {
         fill: #fff;
       }

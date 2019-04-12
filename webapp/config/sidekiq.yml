@@ -6,4 +6,4 @@
   - webapp_default
   - webapp_bot
   - webapp_agent_regression_checks
-
+  - webapp_import_entities

@@ -4,7 +4,7 @@ class Entity < ApplicationRecord
 
   include ActionView::Helpers::NumberHelper
 
-  belongs_to :entities_list, touch: true
+  belongs_to :entities_list, touch: true, counter_cache: true
 
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
@@ -14,17 +14,17 @@ class Entity < ApplicationRecord
   validate :validate_terms_length_in_bytes
   validate :check_expression_nlp_length
 
-
   before_validation :parse_terms
   before_validation :build_solution
+  before_validation :build_searchable_terms
   after_save :update_agent_locales
+  after_destroy :touch_entities_list
 
   def self.search(query = nil)
     conditions = where('1 = 1')
     unless query.blank?
-      conditions = conditions
-        .from("entities, jsonb_array_elements_text(entities.terms) as data")
-        .where('data ilike ?', "{\"term\":%#{query}%")
+      query = I18n.transliterate(query).downcase
+      conditions = conditions.where('searchable_terms ilike ?', "%#{query}%")
     end
     conditions
   end
@@ -38,6 +38,16 @@ class Entity < ApplicationRecord
         "#{term['term']}:#{term['locale']}"
       end
     }.reject(&:blank?).join("\n")
+  end
+
+  def self.extract_searchable_terms(terms)
+    if terms.instance_of?(Array)
+      I18n.transliterate(
+        terms.collect { |term| term['term'] }.join(' ')
+      ).downcase
+    else
+      ""
+    end
   end
 
 
@@ -57,6 +67,10 @@ class Entity < ApplicationRecord
       else
         self.solution = self.terms.first['term']
       end
+    end
+
+    def build_searchable_terms
+      self.searchable_terms = Entity.extract_searchable_terms(self.terms)
     end
 
     def validate_locales_exists
@@ -102,6 +116,7 @@ class Entity < ApplicationRecord
       else
         terms_list = [terms]
       end
+      return if terms_list.collect(&:size).max < nlp_max_length
       terms_list.each do |term|
         exp = term
                 .gsub(/(\D)(\d)/, '\1 \2')
@@ -128,5 +143,11 @@ class Entity < ApplicationRecord
         actual_count = exp.split.size
         errors.add(:terms, I18n.t('errors.entity.term_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
       end
+    end
+
+    def touch_entities_list
+      # belongs_to :entities_list, touch: true, counter_cache: true
+      # Touch option fails on entity deletion.
+      entities_list.touch
     end
 end
