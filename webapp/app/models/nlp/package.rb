@@ -51,15 +51,18 @@ class Nlp::Package
   end
 
   def generate_json(io)
-    buffer = "{\n"
-    buffer << "\"id\": \"#{@agent.id}\",\n"
-    buffer << "\"slug\": \"#{@agent.slug}\",\n"
-    buffer << "\"interpretations\": [\n"
+    io.write('{')
+    buffer = [
+      "\"id\": \"#{@agent.id}\"",
+      "\"slug\": \"#{@agent.slug}\""
+    ].join(',')
     io.write(buffer)
+    io.write(',')
+    io.write("\"interpretations\": [")
     write_intent(io)
     io.write(',') if @agent.intents.exists? && @agent.entities_lists.exists?
     write_entities_list(io)
-    io.write("]\n}")
+    io.write(']}')
   end
 
   def full_json_export(io)
@@ -100,7 +103,7 @@ class Nlp::Package
     def write_intent(io)
       @agent.intents.order(position: :desc).each_with_index do |intent, index|
         cache_key = ['pkg', VERSION, @agent.slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        io.write(",\n") if index > 0
+        io.write(',') if index > 0
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent, io)
         end
@@ -111,7 +114,7 @@ class Nlp::Package
     def write_entities_list(io)
       @agent.entities_lists.order(position: :desc).each_with_index do |elist, index|
         cache_key = ['pkg', VERSION, @agent.slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-        io.write(",\n") if index > 0
+        io.write(',') if index > 0
         Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, io) }
       end
     end
@@ -163,7 +166,7 @@ class Nlp::Package
     end
 
     def build_intent(intent, io)
-      io.write("{\n")
+      io.write('{')
       buffer = [
         "\"id\":\"#{intent.id}\"",
         "\"slug\":\"#{intent.slug}\"",
@@ -171,7 +174,7 @@ class Nlp::Package
       ].join(',')
       io.write(buffer)
       io.write(',')
-      io.write("\"expressions\": [\n")
+      io.write("\"expressions\": [")
 
       buffer = []
       intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
@@ -196,17 +199,20 @@ class Nlp::Package
           buffer << any_node.to_json
         end
       end
-      io.write(buffer.join(","))
-      io.write("]\n}")
+      io.write(buffer.join(','))
+      io.write(']}')
     end
 
     def build_entities_list(elist, io)
-      buffer = "{\n"
-      buffer << "\"id\": \"#{elist.id}\",\n"
-      buffer << "\"slug\": \"#{elist.slug}\",\n"
-      buffer << "\"scope\": \"#{elist.is_public? ? 'public' : 'private'}\",\n"
-      buffer << "\"expressions\": [\n"
+      io.write('{')
+      buffer = [
+        "\"id\": \"#{elist.id}\"",
+        "\"slug\": \"#{elist.slug}\"",
+        "\"scope\": \"#{elist.is_public? ? 'public' : 'private'}\""
+      ].join(',')
       io.write(buffer)
+      io.write(',')
+      io.write("\"expressions\": [")
 
       elist.entities_in_ordered_batchs.each_with_index do |batch, index|
         entities_buffer = []
@@ -224,9 +230,9 @@ class Nlp::Package
             entities_buffer << expression.to_json
           end
         end
-        io.write(entities_buffer.join(",\n"))
+        io.write(entities_buffer.join(','))
       end
-      io.write("]}\n")
+      io.write(']}')
     end
 
     def build_any_node(ialias, expression)
