@@ -153,6 +153,7 @@ class Nlp::Package
 
         encoder.write_object interpretation_hash
       end
+      buffer
     end
 
     def build_intent(intent, encoder)
