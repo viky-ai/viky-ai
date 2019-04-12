@@ -1,6 +1,6 @@
 class EntitiesImportFileUploader < Shrine
 
-  MAX_FILE_SIZE = 5.megabytes
+  MAX_FILE_SIZE = 500.megabytes
 
   plugin :activerecord
   plugin :validation_helpers
@@ -12,7 +12,7 @@ class EntitiesImportFileUploader < Shrine
     mime_type
   end
 
-  plugin :delete_raw
+  plugin :delete_promoted
   plugin :pretty_location
 
   Attacher.validate do
