@@ -122,7 +122,7 @@ class EntitiesListsController < ApplicationController
   private
 
     def paginate_is_enabled?
-      @entities_list.entities.count > 100
+      @entities_list.entities_count > 100
     end
 
     def set_entities_list
