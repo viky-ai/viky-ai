@@ -17,6 +17,7 @@ class Entity < ApplicationRecord
   before_validation :parse_terms
   before_validation :build_solution
   after_save :update_agent_locales
+  after_destroy :touch_entities_list
 
   def self.search(query = nil)
     conditions = where('1 = 1')
@@ -127,5 +128,11 @@ class Entity < ApplicationRecord
         actual_count = exp.split.size
         errors.add(:terms, I18n.t('errors.entity.term_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
       end
+    end
+
+    def touch_entities_list
+      # belongs_to :entities_list, touch: true, counter_cache: true
+      # Touch option fails on entity deletion.
+      entities_list.touch
     end
 end
