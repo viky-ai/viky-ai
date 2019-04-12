@@ -2,6 +2,11 @@ $ = require('jquery');
 
 class EntitiesImport
   constructor: ->
+    $(document).on "turbolinks:before-visit", =>
+      $(document).off "turbolinks:before-visit"
+      clearInterval @progression    if @progression
+      clearInterval @refreshCounter if @refreshCounter
+
     $("body").on "entities_import:start",   (event, data) => @start(event, data)
     $("body").on "entities_import:failure", (event, data) => @failure(event, data)
     $("body").on "entities_import:success", (event, data) => @success(event, data)
@@ -24,7 +29,7 @@ class EntitiesImport
       else
         progress =  (now - start) * 100 / duration
       $("#progress .banner__progression__bar").css(width: "#{progress}%")
-    , 500
+    , 750
 
   start: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
@@ -37,17 +42,17 @@ class EntitiesImport
     if data.entities_list_id == $('body').data('entities-list-id')
       clearInterval @progression
       $('#import-card').css('min-height', $('#import-card').height());
-      $('#import-card .banner').fadeTo(500, 0.25, ->
+      $('#import-card .banner').fadeTo(500, 0.25, =>
         $('#import-card').html(data.html)
         $('#import-card .banner').css('opacity', 0.25).fadeTo(500, 1)
         EntitiesImport.enableEdition()
-        refreshCounter = setInterval ->
+        @refreshCounter = setInterval ->
           counter = parseInt($('#import-card span.counter').html(), 10)
           $('#import-card span.counter').html(counter - 1)
         , 1000
-        setTimeout ->
+        setTimeout =>
+          clearInterval(@refreshCounter);
           Turbolinks.visit window.location.href
-          clearInterval(refreshCounter);
         , 5000
       )
 
