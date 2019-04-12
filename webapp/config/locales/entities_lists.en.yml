@@ -21,7 +21,7 @@ en:
             end_html: "Estimated end of the import: <strong>%{end}</strong>."
           failure:
             title: Import failed
-            content_html: <p>At least one CSV entry is not valid. %{errors}.</p>
+            content: At least one CSV entry is not valid.
           success:
             zero: "No entity imported."
             one: "1 entity imported successfully."

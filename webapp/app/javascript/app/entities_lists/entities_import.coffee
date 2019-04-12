@@ -54,7 +54,7 @@ class EntitiesImport
   failure: (event, data) ->
     if data.entities_list_id == $('body').data('entities-list-id')
       clearInterval @progression
-      if data.current_user_id == $('body').data('current-user')
+      if data.import_user_id == $('body').data('current-user')
         $('#import-card').html(data.html)
         EntitiesImport.enableEdition()
       else

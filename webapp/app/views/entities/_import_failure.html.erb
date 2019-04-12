@@ -10,7 +10,14 @@
       <h3>
         <%= t('views.entities_lists.show.import.failure.title') %>
       </h3>
-      <%= t('views.entities_lists.show.import.failure.content_html', errors: errors.join(', ')) %>
+      <p>
+        <%= t('views.entities_lists.show.import.failure.content') %>
+      </p>
+      <ul>
+        <% errors.each do |error| %>
+          <li><%= error %></li>
+        <% end %>
+      </ul>
     </div>
   </div>
 </div>

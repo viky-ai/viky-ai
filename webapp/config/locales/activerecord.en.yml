@@ -123,8 +123,8 @@ en:
       wrong_format: "CSV format expected"
       wrong_extension: "CSV extension expected"
       max_file_size: "size exceeds the max size"
-      unexpected_autosolution: "Validation failed: Auto solution must be true or false"
-      missing_column: "Missing column in line %{row_number}"
+      unexpected_autosolution: "Auto solution must be true or false (line %{row_number})"
+      missing_column: "Missing column (line %{row_number})"
       missing_header: "Missing header"
     interpretation_alias:
       end_position_lower_than_start: "must be greater than position start"

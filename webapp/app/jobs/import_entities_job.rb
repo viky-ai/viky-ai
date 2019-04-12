@@ -13,15 +13,15 @@ class ImportEntitiesJob < ApplicationJob
     count = entities_import.proceed
 
     if count.zero? && entities_import.errors.any?
-      errors = entities_import.errors.full_messages
+      errors = entities_import.errors[:file]
       entities_import.status = :failure
       entities_import.save!
-      notify_failure(errors, agent.id, entities_list.id, entities_import.user.id)
+      notify_failure(errors, entities_import)
     else
       entities_import.status = :success
       entities_import.duration = DateTime.now.to_time - entities_import.created_at.to_time
       entities_import.save!
-      notify_success(count, agent.id, entities_list.id)
+      notify_success(count, entities_import)
     end
     entities_import.update(file: nil)
   end
@@ -43,35 +43,35 @@ class ImportEntitiesJob < ApplicationJob
     )
   end
 
-  def notify_failure(errors, agent_id, entities_list_id, current_user_id)
+  def notify_failure(errors, entities_import)
     html = ApplicationController.render(
       partial: 'entities/import_failure',
       locals: { errors: errors }
     )
     ActionCable.server.broadcast(
-      "agent_interface_channel_#{agent_id}",
+      "agent_interface_channel_#{entities_import.entities_list.agent.id}",
       trigger: {
         event: "entities_import:failure",
         data: {
-          entities_list_id: entities_list_id,
-          current_user_id: current_user_id,
+          entities_list_id: entities_import.entities_list.id,
+          import_user_id: entities_import.user.id,
           html: html
         }
       }
     )
   end
 
-  def notify_success(count, agent_id, entities_list_id)
+  def notify_success(count, entities_import)
     html = ApplicationController.render(
       partial: 'entities/import_success',
       locals: { count: count }
     )
     ActionCable.server.broadcast(
-      "agent_interface_channel_#{agent_id}",
+      "agent_interface_channel_#{entities_import.entities_list.agent.id}",
       trigger: {
         event: "entities_import:success",
         data: {
-          entities_list_id: entities_list_id,
+          entities_list_id: entities_import.entities_list.id,
           html: html
         }
       }

@@ -92,7 +92,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
     io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
-    io << "\n"
 
     entities_import = get_entities_import(elist, io)
 
@@ -126,7 +125,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
     io << "cloudy|غائم:ar,False,\"{'weather': 'cloudy'}\"\n"
-    io << "\n"
 
     entities_import = get_entities_import(elist, io)
     assert_equal 2, elist.entities.count
@@ -144,7 +142,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io = StringIO.new
     io << "snow,false,\"{'w': 'snow'}\"\n"
     io << "cloudy|nuageux:fr,True,\"{'weather': 'cloudy'}\"\n"
-    io << "\n"
 
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io)
@@ -170,7 +167,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms can't be blank"], entities_import.errors[:file]
+    assert_equal ["Bad entity format: Terms can't be blank (line 1)"], entities_import.errors[:file]
   end
 
 
@@ -186,7 +183,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Auto solution must be true or false"], entities_import.errors[:file]
+    assert_equal ["Bad CSV format: Auto solution must be true or false (line 1)"], entities_import.errors[:file]
   end
 
 
@@ -250,7 +247,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
     assert entities_import.save
     assert_equal 0, entities_import.proceed
-    assert_equal ['Bad CSV format: Missing column in line 1'], entities_import.errors[:file]
+    assert_equal ['Bad CSV format: Missing column (line 1)'], entities_import.errors[:file]
   end
 
 
@@ -265,7 +262,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing column in line 1'], entities_import.errors[:file]
+    assert_equal ['Bad CSV format: Missing column (line 1)'], entities_import.errors[:file]
   end
 
 
@@ -273,7 +270,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io = StringIO.new
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
-    io << "\n"
+
     elist = entities_lists(:weather_conditions)
     entities_import = get_entities_import(elist, io, 'replace')
 
@@ -299,7 +296,6 @@ class EntitiesImportTest < ActiveSupport::TestCase
     io << "Terms,Auto solution,Solution\n"
     io << "snow,false,\"{'w': 'snow'}\"\n"
     io << "cloudy:en|nuageuse:rf,False,\"{'weather': 'cloudy'}\"\n"
-    io << "\n"
 
     entities_import = get_entities_import(elist, io)
 
@@ -307,7 +303,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Validation failed: Terms uses an unauthorized locale 'rf' for this agent"], entities_import.errors[:file]
+
+    expected = [
+      "Bad entity format: Terms uses an unauthorized locale 'rf' for this agent (line 2)"
+    ]
+    assert_equal expected, entities_import.errors[:file]
   end
 
 

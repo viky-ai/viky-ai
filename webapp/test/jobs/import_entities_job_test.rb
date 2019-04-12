@@ -16,7 +16,6 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
     assert_equal 3, entities_list.reload.entities_count
     assert_nil @weather_conditions_import.file
     assert_equal "success", @weather_conditions_import.status
-    assert @weather_conditions_import.duration >= 1
   end
 
 
