@@ -102,6 +102,7 @@ class Entity < ApplicationRecord
       else
         terms_list = [terms]
       end
+      return if terms_list.collect(&:size).max < nlp_max_length
       terms_list.each do |term|
         exp = term
                 .gsub(/(\D)(\d)/, '\1 \2')
