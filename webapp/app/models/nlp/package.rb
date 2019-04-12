@@ -213,8 +213,9 @@ class Nlp::Package
       buffer << "\"expressions\": [\n"
       io.write(buffer)
 
-      elist.entities_in_ordered_batchs.each do |batch|
+      elist.entities_in_ordered_batchs.each_with_index do |batch, index|
         entities_buffer = []
+        io.write(",") unless index.zero?
         batch.each do |entity|
           entity.terms.each do |term|
             expression = {}
