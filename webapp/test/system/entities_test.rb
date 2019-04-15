@@ -329,7 +329,7 @@ class EntitiesTest < ApplicationSystemTestCase
 
       click_button 'Import'
     end
-    assert_text 'Entities will be imported shortly...'
+    assert page.has_text? 'Uploading file, please wait...'
   end
 
 
@@ -348,7 +348,7 @@ class EntitiesTest < ApplicationSystemTestCase
       choose 'Replace current entities'
       click_button 'Import'
     end
-    assert_text 'Entities will be imported shortly...'
+    assert page.has_text? 'Uploading file, please wait...'
   end
 
 

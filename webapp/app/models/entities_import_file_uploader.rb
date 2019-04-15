@@ -12,7 +12,7 @@ class EntitiesImportFileUploader < Shrine
     mime_type
   end
 
-  plugin :delete_raw
+  plugin :delete_promoted
   plugin :pretty_location
 
   Attacher.validate do

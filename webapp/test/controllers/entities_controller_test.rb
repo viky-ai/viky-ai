@@ -169,8 +169,7 @@ class InterpretationsControllerTest < ActionDispatch::IntegrationTest
            },
            format: :json
          }
-    assert_response :success
-    assert_nil flash[:alert]
+    assert_response :ok
   end
 
   test "Import entities lists access-failed" do

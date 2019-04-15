@@ -1,3 +1,11 @@
+<div id="import-card" <% unless @entities_list.entities_imports.running.any? %>style="display:none;"<% end %>>
+  <% if @entities_list.entities_imports.running.any? %>
+    <%= render partial: 'entities/import_running', locals: {
+          entities_import: @entities_list.entities_imports.running.first
+        } %>
+  <% end %>
+</div>
+
 <% if current_user.can? :edit, @agent %>
   <% if (@paginate_is_enabled && @entities.current_page == 1) || !@paginate_is_enabled %>
     <div class="card">
@@ -19,3 +27,4 @@
     agent: @agent,
     entities_list: @entities_list
 } %>
+

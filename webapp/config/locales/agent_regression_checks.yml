@@ -8,6 +8,7 @@ en:
       run: "Run"
       starting: Starting...
       indicator:
+        error: "Error while requesting NLP."
         success: "Succeed"
         failure: "Failed"
         running: "Running..."

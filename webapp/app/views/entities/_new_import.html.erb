@@ -33,6 +33,14 @@
                 <%= t('views.entities_lists.show.import.select_import.max_file_size') %>
               </div>
               <%= display_errors(@entities_import, :file) %>
+              <% unless @entities_import.errors[:base].empty? %>
+                <div class="help help--error">
+                  <span class="icon icon--x-small">
+                    <%= icon_alert %>
+                  </span>
+                  <%= @entities_import.errors[:base].join('') %>
+                </div>
+              <% end %>
             </div>
           </label>
         </div>
@@ -59,15 +67,6 @@
             <%= icon_loading %>
           </span>
           <%= t('views.entities_lists.show.import.select_import.wait_message') %>
-        </p>
-      </div>
-
-      <div id="success-message" style="display:none">
-        <p>
-          <span class="icon icon--green icon--large">
-            <%= icon_check %>
-          </span>
-          <%= t('views.entities_lists.show.import.select_import.success_message') %>
         </p>
       </div>
 

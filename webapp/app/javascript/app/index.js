@@ -52,6 +52,8 @@ import './entities_lists/main.scss';
 import './entities_lists/entities_list_form.coffee';
 import './entities_lists/entities_import_form.coffee';
 
+window.App.EntitiesImport = require('./entities_lists/entities_import');
+
 import './interpretations/main.scss';
 import './interpretations/interpretation_form.coffee';
 

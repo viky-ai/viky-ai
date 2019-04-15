@@ -1,0 +1,115 @@
+@keyframes float {
+  0% {
+    transform: translateY(5px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
+}
+@keyframes floatshadow {
+  0% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: .9;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.robot-float{
+  img{
+    animation: float 1.5s ease-in-out infinite;
+  }
+  position: relative;
+  &:after{
+    position: absolute;
+    content: " ";
+    left: calc(50% - 13px);
+    bottom: 0;
+    width: 30px;
+    height: 5px;
+    background-color: rgba(#000, .2);
+    border-radius: 30px/5px;
+    animation: floatshadow 1.5s ease-in-out infinite;
+  }
+}
+
+
+
+
+.banner{
+  border-radius: 3px;
+  box-shadow: 0 0 1px 0 rgba(black, .1), 0 2px 3px rgba(black, .1);
+  margin-bottom: 1.5em;
+  background-color: #fff;
+  overflow: hidden;
+
+  .banner__content{
+    margin: 3px;
+    padding: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    & > div{
+      margin: 0 1em;
+    }
+  }
+
+  .banner__progression{
+    margin: 0 3px 3px 3px;
+    background-color: lighten($primary_color, 25%);
+    border-radius: 2px;
+    .banner__progression__bar{
+      transition: width 0.5s ease-in-out;
+      background: linear-gradient(to top, darken($primary_color, 8%), $primary_color);
+      height: .75em;
+      width: 0;
+      max-width: 100%;
+      border-radius: 2px;
+    }
+  }
+
+
+  .banner__content{
+    background: linear-gradient(to top right, darken($primary_color, 5%), $primary_color);
+    font-weight: 400;
+    color: rgba(#fff, .95);
+    font-weight: 300;
+    h3{
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+    strong{
+      color: #fff;
+      font-weight: 400;
+    }
+    ul{
+      padding: 0 0 0 1em;
+    }
+  }
+
+
+  &.banner--success{
+    .banner__content{
+      background: linear-gradient(to top right, darken($success_color, 5%), $success_color);
+    }
+  }
+
+  &.banner--alert{
+    .banner__content{
+      background: linear-gradient(to top right, darken($alert_color, 5%), $alert_color);
+    }
+  }
+
+
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190405120340) do
+ActiveRecord::Schema.define(version: 20190412074505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20190405120340) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
+    t.text "searchable_terms"
     t.index ["entities_list_id", "position"], name: "index_entities_on_entities_list_id_and_position", unique: true
     t.index ["entities_list_id"], name: "index_entities_on_entities_list_id"
     t.index ["terms"], name: "index_entities_on_terms", using: :gin
@@ -104,6 +105,10 @@ ActiveRecord::Schema.define(version: 20190405120340) do
     t.uuid "entities_list_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.integer "duration", default: 0
+    t.integer "filesize", default: 0
+    t.uuid "user_id"
     t.index ["entities_list_id"], name: "index_entities_imports_on_entities_list_id"
   end
 

@@ -1,15 +1,19 @@
 class EntitiesImport < ApplicationRecord
   belongs_to :entities_list
+  belongs_to :user
 
   include EntitiesImportFileUploader::Attachment.new(:file)
-  validates_presence_of :file, message: I18n.t('errors.entities_import.no_file')
+  validates_presence_of :file, message: I18n.t('errors.entities_import.no_file'), on: :create
+  validate :absence_of_concurrent_import, on: :create
   validates :mode, presence: true
+
   enum mode: [:append, :replace]
+  enum status: [ :running, :success, :failure ]
 
   def proceed
     count = 0
     entities_list_id = entities_list.id
-    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id]
+    columns = [:terms, :auto_solution_enabled, :solution, :position, :entities_list_id, :searchable_terms]
     entities = []
     ActiveRecord::Base.transaction do
       if mode == 'replace'
@@ -23,29 +27,31 @@ class EntitiesImport < ApplicationRecord
 
       begin
         lines_count = csv_count_lines
+        index = 0
         CSV.foreach(csv_file_path, csv_reader_options) do |row|
-          if $. == 1
+          if index == 0
             validate_csv_header!(row)
+            index += 1
           else
-            validate_csv_row_length!(row, count + 1)
-            entities << build_import_line_from_csv_row(
-              row,
-              max_position + lines_count - count,
-              entities_list_id
-            )
-            if ($. % 1000).zero?
-              Rails.logger.silence(Logger::INFO) do
-                Entity.import!(columns, entities)
-              end
+            validate_csv_row!(row, count + 1)
+
+            terms = csv_terms_to_terms(row)
+            auto_solution = (row['Auto solution'].downcase == 'true')
+            solution = csv_solution_to_solution(row, terms, auto_solution)
+            position = max_position + lines_count - count
+            searchable_terms = Entity.extract_searchable_terms(terms)
+            entities << [terms, auto_solution, solution, position, entities_list_id, searchable_terms]
+            if (index % 1000).zero?
+              batch_import(columns, entities, errors, max_position, lines_count)
               entities = []
+              Rails.logger.info "Processing entities import #{index}/#{lines_count}"
             end
             count += 1
+            index += 1
           end
         end
-        Rails.logger.silence(Logger::INFO) do
-          Entity.import!(columns, entities) unless entities.empty?
-          update_entities_list(count)
-        end
+        batch_import(columns, entities, errors, max_position, lines_count)
+        update_entities_list(count)
       rescue ActiveRecord::ActiveRecordError => e
         errors[:file] << "#{e.message}"
         count = 0
@@ -55,11 +61,57 @@ class EntitiesImport < ApplicationRecord
         count = 0
         raise ActiveRecord::Rollback
       end
+      if errors.any?
+        count = 0
+        raise ActiveRecord::Rollback
+      end
     end
     count
   end
 
+  def estimated_duration
+    if EntitiesImport.success.any?
+      d = EntitiesImport.success.limit(10).average(:duration)
+      f = EntitiesImport.success.limit(10).average(:filesize)
+      estimation = ((filesize * d) / f)
+      {
+        available: true,
+        duration: estimation,
+        start: created_at.to_i,
+        end: created_at.to_i + estimation.to_i
+      }
+    else
+      {
+        available: false
+      }
+    end
+  end
+
+
   private
+
+    def batch_import(columns, entities, errors, max_position, lines_count)
+      unless entities.empty?
+        Rails.logger.silence(Logger::INFO) do
+          import = Entity.import(columns, entities)
+          if import.failed_instances.any? && errors.size < 100
+            import.failed_instances.each do |failed_instance|
+              line = max_position + lines_count - failed_instance.position + 1
+              msg = "Bad entity format: "
+              msg << failed_instance.errors.full_messages.join(', ')
+              msg << " (line #{line})"
+              errors[:file] << msg
+            end
+          end
+        end
+      end
+    end
+
+    def absence_of_concurrent_import
+      if entities_list.entities_imports.running.any?
+        errors.add(:base, I18n.t('errors.entities_import.concurrent_import'))
+      end
+    end
 
     def csv_reader_options
       {
@@ -96,54 +148,38 @@ class EntitiesImport < ApplicationRecord
       end
     end
 
-    def validate_csv_row_length!(row, row_number)
-      return if row['Terms'].present? && row['Auto solution'].present? && row['Solution'].present?
-      if row['Terms'].nil? || row['Auto solution'].nil?
+    def validate_csv_row!(row, row_number)
+      if row['Terms'].nil?
         raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
       end
-      if !csv_auto_solution_to_auto_solution(row) && row['Solution'].blank?
-        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
+      if row['Auto solution'].nil?
+        raise CSV::MalformedCSVError,
+          I18n.t('errors.entities_import.missing_column', row_number: row_number)
+      else
+        if ['true', 'false'].include? row['Auto solution'].downcase
+          if row['Auto solution'].downcase == 'false' && row['Solution'].blank?
+            raise CSV::MalformedCSVError,
+              I18n.t('errors.entities_import.missing_column', row_number: row_number)
+          end
+        else
+          raise CSV::MalformedCSVError,
+            I18n.t('errors.entities_import.unexpected_autosolution', row_number: row_number)
+        end
       end
-    end
-
-    def build_import_line_from_csv_row(row, position, entities_list_id)
-      terms = csv_terms_to_terms(row)
-      auto_solution = csv_auto_solution_to_auto_solution(row)
-      [
-        terms,
-        auto_solution,
-        csv_solution_to_solution(row, terms, auto_solution),
-        position,
-        entities_list_id
-      ]
     end
 
     def csv_terms_to_terms(row)
       terms = row['Terms']
       if terms.present?
-        terms = terms.tr('|', "\n")
-        terms = EntityTermsParser.new(terms).proceed
-      end
-      terms
-    end
-
-    def csv_auto_solution_to_auto_solution(row)
-      if row['Auto solution'].blank?
-        raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution')
-      end
-      case row['Auto solution'].downcase
-        when 'true'
-          true
-        when 'false'
-          false
-        else
-          raise ActiveRecord::ActiveRecordError, I18n.t('errors.entities_import.unexpected_autosolution')
+        EntityTermsParser.new(terms.tr('|', "\n")).proceed
+      else
+        terms
       end
     end
 
     def csv_solution_to_solution(row, terms, auto_solution)
       solution = row['Solution']
-      if terms.present? && auto_solution
+      if auto_solution && terms.present?
         if terms.is_a? String
           solution = terms
         else
