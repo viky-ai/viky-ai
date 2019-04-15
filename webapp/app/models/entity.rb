@@ -4,7 +4,7 @@ class Entity < ApplicationRecord
 
   include ActionView::Helpers::NumberHelper
 
-  belongs_to :entities_list, touch: true
+  belongs_to :entities_list, touch: true, counter_cache: true
 
   validates :solution, length: { maximum: 2000 }
   validates :solution, presence: true, if: -> { self.auto_solution_enabled }
@@ -12,10 +12,22 @@ class Entity < ApplicationRecord
   validate :validate_locales_exists
   validate :validate_terms_present
   validate :validate_terms_length_in_bytes
+  validate :check_expression_nlp_length
 
   before_validation :parse_terms
   before_validation :build_solution
+  before_validation :build_searchable_terms
   after_save :update_agent_locales
+  after_destroy :touch_entities_list
+
+  def self.search(query = nil)
+    conditions = where('1 = 1')
+    unless query.blank?
+      query = I18n.transliterate(query).downcase
+      conditions = conditions.where('searchable_terms ilike ?', "%#{query}%")
+    end
+    conditions
+  end
 
   def terms_to_s
     return '' if terms.blank?
@@ -26,6 +38,16 @@ class Entity < ApplicationRecord
         "#{term['term']}:#{term['locale']}"
       end
     }.reject(&:blank?).join("\n")
+  end
+
+  def self.extract_searchable_terms(terms)
+    if terms.instance_of?(Array)
+      I18n.transliterate(
+        terms.collect { |term| term['term'] }.join(' ')
+      ).downcase
+    else
+      ""
+    end
   end
 
 
@@ -45,6 +67,10 @@ class Entity < ApplicationRecord
       else
         self.solution = self.terms.first['term']
       end
+    end
+
+    def build_searchable_terms
+      self.searchable_terms = Entity.extract_searchable_terms(self.terms)
     end
 
     def validate_locales_exists
@@ -82,4 +108,46 @@ class Entity < ApplicationRecord
       end
     end
 
+    def check_expression_nlp_length
+      return if terms.nil?
+      nlp_max_length = 36
+      if terms.instance_of?(Array)
+        terms_list = terms.map { |json| json['term'] }
+      else
+        terms_list = [terms]
+      end
+      return if terms_list.collect(&:size).max < nlp_max_length
+      terms_list.each do |term|
+        exp = term
+                .gsub(/(\D)(\d)/, '\1 \2')
+                .gsub(/(\d)(\D)/, '\1 \2')
+                .gsub(/(\p{No})/, ' \1 ') # G_UNICODE_OTHER_NUMBER (No)
+                .gsub(/(\p{Pc})/, ' \1 ') # G_UNICODE_CONNECT_PUNCTUATION (Pc)
+                .gsub(/(\p{Pd})/, ' \1 ') # G_UNICODE_DASH_PUNCTUATION (Pd)
+                .gsub(/(\p{Ps})/, ' \1 ') # G_UNICODE_OPEN_PUNCTUATION (Ps)
+                .gsub(/(\p{Pe})/, ' \1 ') # G_UNICODE_CLOSE_PUNCTUATION (Pe)
+                .gsub(/(\p{Pi})/, ' \1 ') # G_UNICODE_INITIAL_PUNCTUATION (Pi)
+                .gsub(/(\p{Pf})/, ' \1 ') # G_UNICODE_FINAL_PUNCTUATION (Pf)
+                .gsub(/(\p{Po})/, ' \1 ') # G_UNICODE_OTHER_PUNCTUATION (Po)
+                .gsub(/(\p{Sc})/, ' \1 ') # G_UNICODE_CURRENCY_SYMBOL (Sc)
+                .gsub(/(\p{Sk})/, ' \1 ') # G_UNICODE_MODIFIER_SYMBOL (Sk)
+                .gsub(/(\p{Sm})/, ' \1 ') # G_UNICODE_MATH_SYMBOL (Sm)
+                .gsub(/(\p{So})/, ' \1 ') # G_UNICODE_OTHER_SYMBOL (So)
+                .gsub(/([\u4e00-\u9FFF])/, ' \1 ') # G_UNICODE_BREAK_IDEOGRAPHIC (ID) https://en.wikipedia.org/wiki/CJK_Unified_Ideographs_(Unicode_block)
+                .gsub(Unicode::Emoji::REGEX, ' emoji ') # G_UNICODE_BREAK_EMOJI_BASE (EB) https://en.wikipedia.org/wiki/Emoji#ref_U1F602_tr51
+                .gsub(/\p{Cc}/, '') # G_UNICODE_CONTROL (Cc)
+                .gsub(/\p{Cf}/, '') # G_UNICODE_FORMAT (Cf)
+                .gsub(/\p{Cn}/, '') # G_UNICODE_UNASSIGNED (Cn)
+                .gsub(/\p{Co}/, '') # G_UNICODE_PRIVATE_USE (Co)
+                .gsub(/\p{Cs}/, '') # G_UNICODE_SURROGATE (Cs)
+        actual_count = exp.split.size
+        errors.add(:terms, I18n.t('errors.entity.term_nlp_length', count: nlp_max_length, actual_count: actual_count)) if actual_count > nlp_max_length
+      end
+    end
+
+    def touch_entities_list
+      # belongs_to :entities_list, touch: true, counter_cache: true
+      # Touch option fails on entity deletion.
+      entities_list.touch
+    end
 end

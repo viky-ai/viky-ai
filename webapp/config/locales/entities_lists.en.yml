@@ -2,21 +2,31 @@ en:
   views:
     entities_lists:
       show:
-        limit_exceeded: "%{total} entities to display, only the first %{limit} are listed."
         import:
           btn: CSV Import
           select_import:
             title: Import entities
-            wait_message: Import in progress, please wait...
-            append_label: Append to current entities
-            replace_label: Replace current entities
+            wait_message: Uploading file, please wait...
+            max_file_size: "The maximum file size allowed is 5Mo."
+            mode:
+              label: Import behavior
+              append: Append to current entities
+              replace: Replace current entities
             submit: Import
-            success:
-              zero: "No entity imported"
-              one: "1 entity imported successfully"
-              other: "%{count} entities imported successfully"
-            max_file_size: The maximum file size allowed is 2Mo.
             file_label: Choose a CSV file to import
+          running:
+            title: Processing import...
+            filesize_html: Import CSV file of <strong>%{filesize}</strong>.
+            launched_by_html: Import launched by <strong>%{user}</strong>.
+            end_html: "Estimated end of the import: <strong>%{end}</strong>."
+          failure:
+            title: Import failed
+            content: At least one CSV entry is not valid.
+          success:
+            zero: "No entity imported."
+            one: "1 entity imported successfully."
+            other: "%{count} entities imported successfully."
+          success_redirection_html: Reloading user interface, in <span class="counter">5</span> seconds...
         export_btn: CSV Export
       index:
         list_title: Entities lists
@@ -68,7 +78,7 @@ en:
           close: Terms must be close.
           far: Terms can be far.
         description:
-          glued: "Entities proximity is set to \"Glued\". For an entity containing multiple terms, searched terms must be glued to be found."
-          very_close: "Entities proximity is set to \"Very close\". For an entity containing multiple terms, searched terms must be very close to be found."
-          close: "Entities proximity is set to \"Close\". For an entity containing multiple terms, searched terms must be close to be found."
-          far: "Entities proximity is set to \"Far\". For an entity containing multiple terms, searched terms can be far to be found."
+          glued: 'Entities proximity is set to "Glued". For an entity containing multiple terms, searched terms must be glued to be found.'
+          very_close: 'Entities proximity is set to "Very close". For an entity containing multiple terms, searched terms must be very close to be found.'
+          close: 'Entities proximity is set to "Close". For an entity containing multiple terms, searched terms must be close to be found.'
+          far: 'Entities proximity is set to "Far". For an entity containing multiple terms, searched terms can be far to be found.'

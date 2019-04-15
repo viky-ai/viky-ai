@@ -12,13 +12,14 @@ class EntitiesListsController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html { @entity = Entity.new }
-      format.csv do
-        filename = "#{@owner.username}_#{@agent.agentname}_#{@entities_list.listname}_#{Time.current.strftime('%Y-%m-%d')}.csv"
-        response.headers['Content-Disposition'] = 'attachment; filename="' + filename + '"'
-        render :show
-      end
+    @entity = Entity.new
+    @paginate_is_enabled = paginate_is_enabled?
+    @entities = @entities_list
+      .entities
+      .order(position: :desc, created_at: :desc)
+      .search(params[:search])
+    if @paginate_is_enabled
+      @entities = @entities.page(params[:page]).per(20)
     end
   end
 
@@ -119,6 +120,10 @@ class EntitiesListsController < ApplicationController
 
 
   private
+
+    def paginate_is_enabled?
+      @entities_list.entities_count > 100
+    end
 
     def set_entities_list
       entities_list_id = params[:entities_list_id] || params[:id]

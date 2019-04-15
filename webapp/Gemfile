@@ -78,6 +78,9 @@ gem 'premailer-rails'
 # Duplicate model
 gem 'clowne'
 
+# Emoji regex
+gem 'unicode-emoji'
+
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -87,6 +90,9 @@ gem 'webpacker'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 gem 'listen', '>= 3.0.5', '< 3.2'
+
+# Bulk inserts in active record
+gem 'activerecord-import'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

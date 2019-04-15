@@ -18,6 +18,7 @@ $(document).on('turbolinks:load', -> new ModalRouter())
 class Modal
   constructor: ->
     $("body").on 'click submit', (event) => @dispatch(event)
+    $("body").on 'modal:kill', (event) => @close()
 
   dispatch: (event) ->
     node   = $(event.target)

@@ -60,5 +60,15 @@ module Webapp
     config.active_job.queue_name_delimiter = "_"
 
     config.exceptions_app = self.routes
+
+    config.after_initialize do
+      unless Rails.env.test?
+        # Remove running entities imports on app boot.
+        # In order to fix locked entities imports.
+        # Check database connection which do not exist on assets compilation rake task.
+        # connected = ::ActiveRecord::Base.connection_pool.with_connection(&:active?) rescue false
+        # EntitiesImport.running.delete_all if connected
+      end
+    end
   end
 end

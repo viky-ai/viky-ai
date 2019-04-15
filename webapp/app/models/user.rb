@@ -29,7 +29,7 @@ class User < ApplicationRecord
     return false unless [:edit, :show].include? action
     return true  if action == :show && agent.is_public?
     return false if memberships.where(agent_id: agent.id).count == 0
-    return true  if agent.owner.id == id
+    return true if agent.owner_id == id
 
     if action == :show
       true
@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def owner?(agent)
-    agent.owner.id == id
+    agent.owner_id == id
   end
 
   def name_or_username

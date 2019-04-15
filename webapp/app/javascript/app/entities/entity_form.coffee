@@ -10,6 +10,8 @@ class EntityForm
     @updateSolutionState()
     @syncSolutionWithTerms()
 
+    App.EntitiesImport.disableEdition() if App.EntitiesImport.running()
+
   setupListeners: (event) ->
     @findCheckbox().on 'change', () => @updateSolutionState()
     @findCheckbox().on 'change', () => @syncSolutionWithTerms()
@@ -60,6 +62,6 @@ module.exports = EntityForm
 
 Setup = ->
   if $('body').data('controller-name') == "entities_lists" && $('body').data('controller-action') == "show"
-    new EntityForm('#entities-form')
+    new EntityForm('#entities-form') if $('#entities-form').length == 1
 
 $(document).on('turbolinks:load', Setup)

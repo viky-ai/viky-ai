@@ -127,6 +127,7 @@
     cursor: pointer;
   }
 
+  input[type='radio'],
   input[type='checkbox']{
     cursor: pointer;
     vertical-align: middle;
@@ -163,6 +164,13 @@
   }
   textarea{
     resize: vertical;
+  }
+
+  textarea:disabled{
+    background-color: #f9f9f9;
+    border-color: #ddd;
+    box-shadow: none;
+    opacity: .6;
   }
 
   textarea.with-2-lines{

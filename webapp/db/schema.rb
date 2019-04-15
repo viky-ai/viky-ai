@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322144120) do
+ActiveRecord::Schema.define(version: 20190412074505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,8 +93,23 @@ ActiveRecord::Schema.define(version: 20190322144120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position", default: 0
+    t.text "searchable_terms"
+    t.index ["entities_list_id", "position"], name: "index_entities_on_entities_list_id_and_position", unique: true
     t.index ["entities_list_id"], name: "index_entities_on_entities_list_id"
     t.index ["terms"], name: "index_entities_on_terms", using: :gin
+  end
+
+  create_table "entities_imports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.text "file_data"
+    t.integer "mode"
+    t.uuid "entities_list_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.integer "duration", default: 0
+    t.integer "filesize", default: 0
+    t.uuid "user_id"
+    t.index ["entities_list_id"], name: "index_entities_imports_on_entities_list_id"
   end
 
   create_table "entities_lists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -107,6 +122,7 @@ ActiveRecord::Schema.define(version: 20190322144120) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "proximity", default: 0
+    t.integer "entities_count", default: 0, null: false
     t.index ["agent_id"], name: "index_entities_lists_on_agent_id"
   end
 
@@ -245,6 +261,7 @@ ActiveRecord::Schema.define(version: 20190322144120) do
   add_foreign_key "chat_sessions", "users", on_delete: :cascade
   add_foreign_key "chat_statements", "chat_sessions", on_delete: :cascade
   add_foreign_key "entities", "entities_lists", on_delete: :cascade
+  add_foreign_key "entities_imports", "entities_lists", on_delete: :cascade
   add_foreign_key "entities_lists", "agents", on_delete: :cascade
   add_foreign_key "favorite_agents", "agents", on_delete: :cascade
   add_foreign_key "favorite_agents", "users", on_delete: :cascade

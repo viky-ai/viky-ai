@@ -52,6 +52,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
     assert page.has_text?('Your entities list has been successfully updated.')
   end
 
+
   test 'Delete an entities list' do
     go_to_agent_entities_lists('admin', 'weather')
     within '#entities_lists-list-is_public' do
@@ -167,6 +168,7 @@ class EntitiesListsTest < ApplicationSystemTestCase
       assert page.has_no_text?('Weather bot confirmed/weather')
     end
   end
+
 
   test 'aliased intents' do
     go_to_agent_entities_lists('admin', 'weather')

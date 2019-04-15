@@ -25,6 +25,13 @@
 
   <body data-controller-name="<%= controller_path %>"
         data-controller-action="<%= action_name %>"
+        data-current-user="<%= current_user.id %>"
+        <% unless @agent.nil? %>
+          data-agent-id="<%= @agent.id %>"
+        <% end %>
+        <% if controller_path == 'entities_lists' && action_name == 'show' %>
+          data-entities-list-id="<%= @entities_list.id %>"
+        <% end %>
         class="app <% if controller_path.include?('style_guide') %>sg<% end %>">
 
     <%= render 'layouts/nav' %>

@@ -526,6 +526,16 @@ static og_status NlpConsolidateExpression(og_nlp_th ctrl_nlp_th, package_t packa
   if (expression->aliases_nb == 0 && expression->input_parts_nb > 1 && expression->keep_order && expression->glue_distance == 0
       && expression->glue_strength == nlp_glue_strength_Punctuation) is_entity = TRUE;
 
+  // skip there to many word in expression to avoid DOgNlpMaxNbExpressionCombinations
+  // webapp will avoid this
+  if (expression->input_parts_nb > (DOgMatchZoneInputPartSize - 1))
+  {
+    NlpLog(DOgNlpTraceMinimal, "NlpConsolidateExpression: expression skipped : too many input_part (%d > %d) "
+        "for expression '%s' in interpretation '%s' '%s' in package '%s'", expression->input_parts_nb,
+        DOgMatchZoneInputPartSize - 1, expression->id, interpretation->slug, interpretation->id, package->id);
+    CONT;
+  }
+
   if (is_entity)
   {
     IFE(NlpConsolidateExpressionEntity(ctrl_nlp_th, package, expression));
