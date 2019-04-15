@@ -23,7 +23,7 @@
         <% if estimated_duration[:available] %>
           <br />
           <%= t('views.entities_lists.show.import.running.end_html',
-              end: l(Time.at(estimated_duration[:end]), format: :short)
+              end: l(Time.zone.at(estimated_duration[:end]), format: :short)
             ) %>
         <% end %>
       </p>
