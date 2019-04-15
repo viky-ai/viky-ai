@@ -414,7 +414,7 @@ class PackageTest < ActiveSupport::TestCase
     assert_equal expected, JSON.parse(io.string)
   end
 
-  # TODO
+
   test 'Packages with all its dependencies' do
     weather = agents(:weather)
     terminator = agents(:terminator)

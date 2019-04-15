@@ -51,28 +51,25 @@ class Nlp::Package
   end
 
   def generate_json(io)
-    io.write('{')
-    buffer = [
-      "\"id\": \"#{@agent.id}\"",
-      "\"slug\": \"#{@agent.slug}\""
-    ].join(',')
-    io.write(buffer)
-    io.write(',')
-    io.write("\"interpretations\": [")
-    write_intent(io)
-    io.write(',') if @agent.intents.exists? && @agent.entities_lists.exists?
-    write_entities_list(io)
-    io.write(']}')
+    encoder = io.instance_of?(JsonChunkEncoder) ? io : JsonChunkEncoder.new(io)
+    encoder.wrap_object do
+      encoder.write(key: 'id', value: @agent.id)
+      encoder.write(key: 'slug', value: @agent.slug)
+      encoder.wrap_array('interpretations') do
+        write_intent(encoder)
+        write_entities_list(encoder)
+      end
+    end
   end
 
   def full_json_export(io)
     packages_list = full_packages_map(@agent).values
-    io.write("[\n")
-    packages_list.each_with_index do |package, index|
-      io.write(",\n") unless index.zero?
-      Nlp::Package.new(package).generate_json(io)
+    encoder = JsonChunkEncoder.new io
+    encoder.wrap_array do
+      packages_list.each do |package|
+        Nlp::Package.new(package).generate_json(encoder)
+      end
     end
-    io.write("\n]")
   end
 
   def logger
@@ -100,27 +97,24 @@ class Nlp::Package
       result
     end
 
-    def write_intent(io)
-      @agent.intents.order(position: :desc).each_with_index do |intent, index|
+    def write_intent(encoder)
+      @agent.intents.order(position: :desc).each do |intent|
         cache_key = ['pkg', VERSION, @agent.slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        io.write(',') if index > 0
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent, io)
+          build_internals_list_nodes(intent, encoder)
         end
-        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, io) }
+        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, encoder) }
       end
     end
 
-    def write_entities_list(io)
-      @agent.entities_lists.order(position: :desc).each_with_index do |elist, index|
+    def write_entities_list(encoder)
+      @agent.entities_lists.order(position: :desc).each do |elist|
         cache_key = ['pkg', VERSION, @agent.slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-        io.write(',') if index > 0
-        Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, io) }
+        Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, encoder) }
       end
     end
 
-    def build_internals_list_nodes(intent, io)
-      buffer = []
+    def build_internals_list_nodes(intent, encoder)
       InterpretationAlias
         .includes(:interpretation)
         .where(is_list: true, interpretations: { intent_id: intent.id })
@@ -157,82 +151,66 @@ class Nlp::Package
 
         interpretation_hash[:expressions] = expressions
 
-        buffer << interpretation_hash.to_json
-      end
-      if buffer.present?
-        io.write(buffer.join(','))
-        io.write(',')
+        encoder.write object: interpretation_hash
       end
     end
 
-    def build_intent(intent, io)
-      io.write('{')
-      buffer = [
-        "\"id\":\"#{intent.id}\"",
-        "\"slug\":\"#{intent.slug}\"",
-        "\"scope\":\"#{intent.is_public? ? 'public' : 'private'}\""
-      ].join(',')
-      io.write(buffer)
-      io.write(',')
-      io.write("\"expressions\": [")
-
-      buffer = []
-      intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
-        expression = {}
-        expression['expression']    = interpretation.expression_with_aliases
-        expression['id']            = interpretation.id
-        aliases = build_aliases(interpretation)
-        expression['aliases']       = aliases unless aliases.empty?
-        expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
-        expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
-        expression['glue-distance'] = interpretation.proximity.get_distance
-        expression['glue-strength'] = 'punctuation' if interpretation.proximity_accepts_punctuations?
-        solution = build_interpretation_solution(interpretation)
-        expression['solution']      = solution unless solution.blank?
-
-        buffer << expression.to_json
-
-        interpretation.interpretation_aliases
-          .where(any_enabled: true, is_list: false)
-          .order(position_start: :asc).each do |ialias|
-          any_node = build_any_node(ialias, expression)
-          buffer << any_node.to_json
-        end
-      end
-      io.write(buffer.join(','))
-      io.write(']}')
-    end
-
-    def build_entities_list(elist, io)
-      io.write('{')
-      buffer = [
-        "\"id\": \"#{elist.id}\"",
-        "\"slug\": \"#{elist.slug}\"",
-        "\"scope\": \"#{elist.is_public? ? 'public' : 'private'}\""
-      ].join(',')
-      io.write(buffer)
-      io.write(',')
-      io.write("\"expressions\": [")
-
-      elist.entities_in_ordered_batchs.each_with_index do |batch, index|
-        entities_buffer = []
-        io.write(",") unless index.zero?
-        batch.each do |entity|
-          entity.terms.each do |term|
+    def build_intent(intent, encoder)
+      encoder.wrap_object do
+        encoder.write(key: 'id', value: intent.id)
+        encoder.write(key: 'slug', value: intent.slug)
+        encoder.write(key: 'scope', value: intent.is_public? ? 'public' : 'private')
+        encoder.wrap_array('expressions') do
+          intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
             expression = {}
-            expression[:expression] = term['term']
-            expression[:id] = entity.id
-            expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-            expression[:solution] = build_entities_list_solution(entity)
-            expression['keep-order'] = true
-            expression['glue-distance'] = elist.proximity.get_distance
-            expression['glue-strength'] = 'punctuation' if elist.proximity_glued?
-            entities_buffer << expression.to_json
+            expression['expression']    = interpretation.expression_with_aliases
+            expression['id']            = interpretation.id
+            aliases = build_aliases(interpretation)
+            expression['aliases']       = aliases unless aliases.empty?
+            expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
+            expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
+            expression['glue-distance'] = interpretation.proximity.get_distance
+            expression['glue-strength'] = 'punctuation' if interpretation.proximity_accepts_punctuations?
+            solution = build_interpretation_solution(interpretation)
+            expression['solution']      = solution unless solution.blank?
+
+            encoder.write object: expression
+
+            interpretation.interpretation_aliases
+              .where(any_enabled: true, is_list: false)
+              .order(position_start: :asc).each do |ialias|
+              any_node = build_any_node(ialias, expression)
+              encoder.write object: any_node
+            end
           end
         end
-        io.write(entities_buffer.join(','))
       end
-      io.write(']}')
+    end
+
+    def build_entities_list(elist, encoder)
+      encoder.wrap_object do
+        encoder.write(key: 'id', value: elist.id)
+        encoder.write(key: 'slug', value: elist.slug)
+        encoder.write(key: 'scope', value: elist.is_public? ? 'public' : 'private')
+        encoder.wrap_array('expressions') do
+          elist.entities_in_ordered_batchs.each do |batch|
+            batch.each do |entity|
+              entity.terms.each do |term|
+                expression = {}
+                expression[:expression] = term['term']
+                expression[:id] = entity.id
+                expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+                expression[:solution] = build_entities_list_solution(entity)
+                expression['keep-order'] = true
+                expression['glue-distance'] = elist.proximity.get_distance
+                expression['glue-strength'] = 'punctuation' if elist.proximity_glued?
+
+                encoder.write object: expression
+              end
+            end
+          end
+        end
+      end
     end
 
     def build_any_node(ialias, expression)
