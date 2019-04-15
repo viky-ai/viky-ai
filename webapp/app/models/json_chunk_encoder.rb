@@ -1,3 +1,5 @@
+require 'yajl'
+
 class JsonChunkEncoder
 
   FLUSH_THRESHOLD = 1000
@@ -10,7 +12,7 @@ class JsonChunkEncoder
 
   def write(options)
     if options[:object].present?
-      @buffer << options[:object].to_json
+      @buffer << Yajl::Encoder.encode(options[:object])
     else
       @buffer << "\"#{options[:key]}\":\"#{options[:value]}\""
     end
