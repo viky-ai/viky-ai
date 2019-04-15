@@ -44,10 +44,27 @@ module Nls
         bol = lem_package.new_interpretation('bol')
         bol << Expression.new('bol')
 
+        # en verbs
+        vdo = lem_package.new_interpretation('do')
+        vdo << Expression.new('do', locale: 'en')
+
+        be = lem_package.new_interpretation('be')
+        be << Expression.new('be', locale: 'en')
+
+        # en root
+        ladies = lem_package.new_interpretation('ladies')
+        ladies << Expression.new('ladies', locale: 'en')
+
+        tooth = lem_package.new_interpretation('tooth')
+        tooth << Expression.new('tooth', locale: 'en')
+
+        knives = lem_package.new_interpretation('knives')
+        knives << Expression.new('knives', locale: 'en')
+
         Nls.package_update(lem_package)
       end
 
-      def test_lem_root
+      def test_lem_fr_root
         check_interpret('travailler', interpretation: 'travailler', score: 1.0)
         check_interpret('travaillerions', interpretation: 'travailler', score: 0.99)
         check_interpret('chevaux', interpretation: 'cheval', score: 0.99)
@@ -65,10 +82,19 @@ module Nls
         assert exception.message.include?('Actual answer did not match on any interpretation')
       end
 
-      def test_lem_form
+      def test_lem_fr_form
         check_interpret('chiffonnier', interpretation: 'chiffonnieres', score: 0.99)
         check_interpret('bonhomme', interpretation: 'bonshommes', score: 0.99)
         check_interpret('madame', interpretation: 'mesdames', score: 0.99)
+      end
+
+      def test_lem_en
+        check_interpret('lady',  locale: 'en', interpretation: 'ladies', score: 0.99)
+        check_interpret('teeth', locale: 'en', interpretation: 'tooth',  score: 0.99)
+        check_interpret('doing', locale: 'en', interpretation: 'do',     score: 0.99)
+        check_interpret('been',  locale: 'en', interpretation: 'be',     score: 0.99)
+        check_interpret('knife', locale: 'en', interpretation: 'knives', score: 0.99)
+
       end
     end
   end

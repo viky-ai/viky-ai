@@ -1,0 +1,66 @@
+# Makefile dictionnaire de formes Pertimm Anglais
+CURRENT_MAKEFILE := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+
+include $(OG_REPO_PATH)/sources/makefile.defs.linux
+
+LC_ALL=C.UTF-8
+LANG=en_US.UTF-8
+LANGUAGE=en_US.UTF-8
+
+.PHONY: dico fullclean clean debug build redebug rebuild all
+
+REP_FR=$(OG_REPO_PATH)/resources/morphology/en
+MORPHO_UTILS=$(OG_REPO_PATH)/resources/morphology/utils
+
+SOURCES = enpertimm.txt  en_verb_be.txt  en_verb_do.txt  en_verb_have.txt
+ESOURCES = $(SOURCES:%.txt=sources/%.txt)
+
+# add utilities to path
+export PATH := $(OG_REPO_PATH)/build/debug/bin:$(OG_REPO_PATH)/build/release/bin:$(PATH)
+
+dico: build/enroot.auf build/enform.auf
+all: dico
+build: dico
+debug: dico
+redebug: rebuild
+rebuild:
+	$(MAKE) -f $(CURRENT_MAKEFILE) clean
+	$(MAKE) -f $(CURRENT_MAKEFILE) build
+
+clean:
+
+fullclean: clean
+	\rm -rf $(REP_FR)/build/
+	\rm -rf $(REP_FR)/log/
+
+build/%.auf: build/%
+	ogaut -c -auf -m $<
+
+# entotal avec les verbes
+build/entotal: $(ESOURCES)
+	@mkdir -p $(@D)
+	cat $(ESOURCES) | \
+	  grep --text -v "+Da" | \
+	  grep --text -v "+P" | \
+	  grep --text -v "+Sp" | \
+	  grep --text -v " " | \
+		sort -u > build/entotal_acc
+	cat build/entotal_acc | unaccent utf8 > build/entotal_unacc
+	cat build/entotal_acc build/entotal_unacc | sort -u > build/entotal
+
+build/entotal.root: build/entotal
+	ruby $(MORPHO_UTILS)/bin/getroot.rb build/entotal root
+
+build/enroot: build/entotal.root
+	cat build/entotal.root | sort -u > build/enroot
+
+# entotal sans les verbes
+build/entotal_no_verbs: build/entotal
+	cat build/entotal | grep -v "+V" > build/entotal_no_verbs
+
+build/entotal.form: build/entotal_no_verbs
+	ruby $(MORPHO_UTILS)/bin/getroot.rb build/entotal_no_verbs form
+	mv build/entotal_no_verbs.form build/entotal.form
+
+build/enform: build/entotal.form
+	cat build/entotal.form | sort -u > build/enform
