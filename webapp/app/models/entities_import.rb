@@ -99,7 +99,7 @@ class EntitiesImport < ApplicationRecord
               line = max_position + lines_count - failed_instance.position + 1
               msg = "Bad entity format: "
               msg << failed_instance.errors.full_messages.join(', ')
-              msg << " (line #{line})"
+              msg << " in line #{line}."
               errors[:file] << msg
             end
           end
@@ -143,27 +143,31 @@ class EntitiesImport < ApplicationRecord
     end
 
     def validate_csv_header!(header_row)
-      if header_row['Terms'].downcase != 'terms' || header_row['Auto solution'].downcase != 'auto solution' || header_row['Solution'].downcase != 'solution'
-        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_header')
+      if header_row['Terms'].downcase != 'terms' ||
+         header_row['Auto solution'].downcase != 'auto solution' ||
+         header_row['Solution'].downcase != 'solution'
+        msg = I18n.t('errors.entities_import.missing_header')
+        raise CSV::MalformedCSVError.new(msg, 0)
       end
     end
 
     def validate_csv_row!(row, row_number)
       if row['Terms'].nil?
-        raise CSV::MalformedCSVError, I18n.t('errors.entities_import.missing_column', row_number: row_number)
+        msg = I18n.t('errors.entities_import.missing_column')
+        raise CSV::MalformedCSVError.new(msg, row_number)
       end
       if row['Auto solution'].nil?
-        raise CSV::MalformedCSVError,
-          I18n.t('errors.entities_import.missing_column', row_number: row_number)
+        msg = I18n.t('errors.entities_import.missing_column')
+        raise CSV::MalformedCSVError.new(msg, row_number)
       else
         if ['true', 'false'].include? row['Auto solution'].downcase
           if row['Auto solution'].downcase == 'false' && row['Solution'].blank?
-            raise CSV::MalformedCSVError,
-              I18n.t('errors.entities_import.missing_column', row_number: row_number)
+            msg = I18n.t('errors.entities_import.missing_column')
+            raise CSV::MalformedCSVError.new(msg, row_number)
           end
         else
-          raise CSV::MalformedCSVError,
-            I18n.t('errors.entities_import.unexpected_autosolution', row_number: row_number)
+          msg = I18n.t('errors.entities_import.unexpected_autosolution')
+          raise CSV::MalformedCSVError.new(msg, row_number)
         end
       end
     end
