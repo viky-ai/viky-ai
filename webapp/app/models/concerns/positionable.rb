@@ -44,7 +44,7 @@ module Positionable
         offset = 1_000_000 if self.where(id: list).maximum(:position) <= 1_000_000
         list.each_with_index do |id, i|
           item = self.find_by_id(id)
-          item.update_columns(position: offset + list.size - i - 1) unless item.nil?
+          item.update_columns(position: offset + list.size - i - 1, updated_at: Time.zone.now) unless item.nil?
         end
       end
 
