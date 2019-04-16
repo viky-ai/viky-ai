@@ -80,6 +80,7 @@ GEM
     crass (1.0.4)
     css_parser (1.7.0)
       addressable
+    csv (3.0.9)
     debug_inspector (0.0.3)
     devise (4.3.0)
       bcrypt (~> 3.0)
@@ -370,6 +371,7 @@ DEPENDENCIES
   clowne
   coffee-rails (~> 4.2)
   commonmarker (~> 0.14)
+  csv
   devise (~> 4.3.0)
   devise_invitable (~> 1.7.2)
   dotenv-rails (~> 2.1, >= 2.1.1)
@@ -419,4 +421,4 @@ DEPENDENCIES
   webpacker
 
 BUNDLED WITH
-   1.17.2
+   1.17.3
