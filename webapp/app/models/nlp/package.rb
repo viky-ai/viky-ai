@@ -53,8 +53,8 @@ class Nlp::Package
   def generate_json(io)
     encoder = io.instance_of?(JsonChunkEncoder) ? io : JsonChunkEncoder.new(io)
     encoder.wrap_object do
-      encoder.write(key: 'id', value: @agent.id)
-      encoder.write(key: 'slug', value: @agent.slug)
+      encoder.write_value('id', @agent.id)
+      encoder.write_value('slug', @agent.slug)
       encoder.wrap_array('interpretations') do
         write_intent(encoder)
         write_entities_list(encoder)
@@ -151,15 +151,15 @@ class Nlp::Package
 
         interpretation_hash[:expressions] = expressions
 
-        encoder.write object: interpretation_hash
+        encoder.write_object interpretation_hash
       end
     end
 
     def build_intent(intent, encoder)
       encoder.wrap_object do
-        encoder.write(key: 'id', value: intent.id)
-        encoder.write(key: 'slug', value: intent.slug)
-        encoder.write(key: 'scope', value: intent.is_public? ? 'public' : 'private')
+        encoder.write_value('id', intent.id)
+        encoder.write_value('slug', intent.slug)
+        encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
             expression = {}
@@ -174,13 +174,13 @@ class Nlp::Package
             solution = build_interpretation_solution(interpretation)
             expression['solution']      = solution unless solution.blank?
 
-            encoder.write object: expression
+            encoder.write_object expression
 
             interpretation.interpretation_aliases
               .where(any_enabled: true, is_list: false)
               .order(position_start: :asc).each do |ialias|
               any_node = build_any_node(ialias, expression)
-              encoder.write object: any_node
+              encoder.write_object any_node
             end
           end
         end
@@ -189,9 +189,9 @@ class Nlp::Package
 
     def build_entities_list(elist, encoder)
       encoder.wrap_object do
-        encoder.write(key: 'id', value: elist.id)
-        encoder.write(key: 'slug', value: elist.slug)
-        encoder.write(key: 'scope', value: elist.is_public? ? 'public' : 'private')
+        encoder.write_value('id', elist.id)
+        encoder.write_value('slug', elist.slug)
+        encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           elist.entities_in_ordered_batchs.each do |batch|
             batch.each do |entity|
@@ -205,7 +205,7 @@ class Nlp::Package
                 expression['glue-distance'] = elist.proximity.get_distance
                 expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
 
-                encoder.write object: expression
+                encoder.write_object expression
               end
             end
           end

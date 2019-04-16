@@ -6,7 +6,7 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     io = StringIO.new
     encoder = JsonChunkEncoder.new io
     encoder.wrap_object do
-      encoder.write(key: 'foo', value: 'bar')
+      encoder.write_value('foo', 'bar')
     end
     expected = {
       foo: 'bar'
@@ -19,8 +19,8 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     io = StringIO.new
     encoder = JsonChunkEncoder.new io
     encoder.wrap_object do
-      encoder.write(key: 'foo1', value: 'bar1')
-      encoder.write(key: 'foo2', value: 'bar2')
+      encoder.write_value('foo1', 'bar1')
+      encoder.write_value('foo2', 'bar2')
     end
     expected = {
       foo1: 'bar1',
@@ -55,8 +55,8 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     io = StringIO.new
     encoder = JsonChunkEncoder.new io
     encoder.wrap_array do
-      encoder.write(object: { foo1: 'bar1' })
-      encoder.write(object: { foo2: 'bar2' })
+      encoder.write_object({ foo1: 'bar1' })
+      encoder.write_object({ foo2: 'bar2' })
     end
     expected = [
       { foo1: 'bar1' },
@@ -71,8 +71,8 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     encoder = JsonChunkEncoder.new io
     encoder.wrap_object do
       encoder.wrap_array('my_array') do
-        encoder.write object: 'foo'
-        encoder.write object: 'bar'
+        encoder.write_object('foo')
+        encoder.write_object('bar')
       end
     end
     expected = {
@@ -86,10 +86,10 @@ class JsonChunkEncoderTest < ActiveSupport::TestCase
     io = StringIO.new
     encoder = JsonChunkEncoder.new io
     encoder.wrap_object do
-      encoder.write(key: 'foo', value: 'bar')
+      encoder.write_value('foo', 'bar')
       encoder.wrap_array('my_array') do
-        encoder.write(object: { id: '1', value: 'one' })
-        encoder.write(object: { id: '2', value: 'two' })
+        encoder.write_object({ id: '1', value: 'one' })
+        encoder.write_object({ id: '2', value: 'two' })
       end
     end
     expected = {

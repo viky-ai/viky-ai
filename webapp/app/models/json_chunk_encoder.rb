@@ -12,12 +12,13 @@ class JsonChunkEncoder
     @buffer = []
   end
 
-  def write(options)
-    if options[:object].present?
-      @buffer << Yajl::Encoder.encode(options[:object])
-    else
-      @buffer << "\"#{options[:key]}\":\"#{options[:value]}\""
-    end
+  def write_object(object)
+    @buffer << Yajl::Encoder.encode(object)
+    flush if @buffer.size > FLUSH_THRESHOLD
+  end
+
+  def write_value(key, value)
+    @buffer << "\"#{key}\":\"#{value}\""
     flush if @buffer.size > FLUSH_THRESHOLD
   end
 
