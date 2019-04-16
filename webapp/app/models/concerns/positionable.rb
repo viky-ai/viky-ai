@@ -11,7 +11,7 @@ module Positionable
 
     def positionable_ancestor(*attributes)
       parent_name = attributes.first
-      @ancestor_classname = parent_name.to_s
+      @ancestor_classname = parent_name.to_s.freeze
       @touch_ancestor = attributes.size > 1 ? attributes.second[:touch] : true
     end
 

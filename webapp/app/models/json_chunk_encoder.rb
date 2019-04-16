@@ -4,6 +4,8 @@ class JsonChunkEncoder
 
   FLUSH_THRESHOLD = 1000
 
+  SEPARATOR = ','.freeze
+
   def initialize(io)
     @io = io
     @need_separator = false
@@ -21,7 +23,7 @@ class JsonChunkEncoder
 
   def wrap_object(key = nil)
     flush
-    @io.write(',') if @need_separator
+    @io.write(SEPARATOR) if @need_separator
     @io.write("\"#{key}\":") if key.present?
     @io.write('{')
     @need_separator = false
@@ -33,7 +35,7 @@ class JsonChunkEncoder
 
   def wrap_array(key = nil)
     flush
-    @io.write(',') if @need_separator
+    @io.write(SEPARATOR) if @need_separator
     @io.write("\"#{key}\":") if key.present?
     @io.write('[')
     @need_separator = false
@@ -47,9 +49,9 @@ class JsonChunkEncoder
 
     def flush
       return if @buffer.blank?
-      @io.write(',') if @need_separator
-      @io.write(@buffer.join(','))
-      @buffer = []
+      @io.write(SEPARATOR) if @need_separator
+      @io.write(@buffer.join(SEPARATOR))
+      @buffer.clear
       @need_separator = true
     end
 end

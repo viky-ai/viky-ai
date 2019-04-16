@@ -99,7 +99,7 @@ class Nlp::Package
 
     def write_intent(encoder)
       @agent.intents.order(position: :desc).each do |intent|
-        cache_key = ['pkg', VERSION, @agent.slug, 'intent', intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', VERSION, @agent.slug, 'intent'.freeze, intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
         Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
           build_internals_list_nodes(intent, encoder)
         end
@@ -109,7 +109,7 @@ class Nlp::Package
 
     def write_entities_list(encoder)
       @agent.entities_lists.order(position: :desc).each do |elist|
-        cache_key = ['pkg', VERSION, @agent.slug, 'entities_list', elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
+        cache_key = ['pkg', VERSION, @agent.slug, 'entities_list'.freeze, elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
         Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, encoder) }
       end
     end
@@ -135,7 +135,7 @@ class Nlp::Package
         expression['aliases'] << build_internal_alias(ialias)
         expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
         expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-        expression['glue-strength'] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
+        expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         expression = {}
@@ -146,7 +146,7 @@ class Nlp::Package
         expression['aliases'] << build_internal_alias(ialias, true)
         expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
         expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-        expression['glue-strength'] = 'punctuation' if ialias.interpretation.proximity_accepts_punctuations?
+        expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
         expressions << expression
 
         interpretation_hash[:expressions] = expressions
@@ -170,7 +170,7 @@ class Nlp::Package
             expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
             expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
             expression['glue-distance'] = interpretation.proximity.get_distance
-            expression['glue-strength'] = 'punctuation' if interpretation.proximity_accepts_punctuations?
+            expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
             solution = build_interpretation_solution(interpretation)
             expression['solution']      = solution unless solution.blank?
 
@@ -203,7 +203,7 @@ class Nlp::Package
                 expression[:solution] = build_entities_list_solution(entity)
                 expression['keep-order'] = true
                 expression['glue-distance'] = elist.proximity.get_distance
-                expression['glue-strength'] = 'punctuation' if elist.proximity_glued?
+                expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
 
                 encoder.write object: expression
               end
@@ -277,24 +277,22 @@ class Nlp::Package
     end
 
     def build_interpretation_solution(interpretation)
-      result = ''
-      if interpretation.auto_solution_enabled
-        if interpretation.interpretation_aliases.empty?
-          result = interpretation.expression
-        end
+      if interpretation.auto_solution_enabled and interpretation.interpretation_aliases.empty?
+        interpretation.expression
+      elsif interpretation.solution.present?
+        "`#{interpretation.solution}`"
       else
-        result = "`#{interpretation.solution}`" unless interpretation.solution.blank?
+        ''
       end
-      result
     end
 
     def build_entities_list_solution(entity)
-      result = ''
       if entity.auto_solution_enabled
-        result = entity.terms.first['term']
+        entity.terms.first['term']
+      elsif entity.solution.present?
+        "`#{entity.solution}`"
       else
-        result = "`#{entity.solution}`" unless entity.solution.blank?
+        ''
       end
-      result
     end
 end
