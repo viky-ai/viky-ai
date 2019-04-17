@@ -100,89 +100,109 @@ class Nlp::Package
     def write_intent(encoder)
       @agent.intents.order(position: :desc).each do |intent|
         cache_key = ['pkg', VERSION, @agent.slug, 'intent'.freeze, intent.id, (intent.updated_at.to_f * 1000).to_i].join('/')
-        Rails.cache.fetch("#{cache_key}/build_internals_list_nodes") do
-          build_internals_list_nodes(intent, encoder)
-        end
-        Rails.cache.fetch("#{cache_key}/build_node"){ build_intent(intent, encoder) }
+        build_internals_list_nodes(intent, encoder, cache_key)
+        build_intent(intent, encoder, cache_key)
       end
     end
 
     def write_entities_list(encoder)
       @agent.entities_lists.order(position: :desc).each do |elist|
         cache_key = ['pkg', VERSION, @agent.slug, 'entities_list'.freeze, elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-        Rails.cache.fetch("#{cache_key}/build_node"){ build_entities_list(elist, encoder) }
+        build_entities_list(elist, encoder)
       end
     end
 
-    def build_internals_list_nodes(intent, encoder)
-      InterpretationAlias
-        .includes(:interpretation)
-        .where(is_list: true, interpretations: { intent_id: intent.id })
-        .order('interpretations.position DESC, interpretations.locale ASC')
-        .order(:position_start).each do |ialias|
+    def build_internals_list_nodes(intent, encoder, cache_key)
+      cache_key = "#{cache_key}/build_internals_list_nodes"
+      if Rails.cache.exist?(cache_key)
+        interpretations = Rails.cache.read(cache_key)
+        interpretations.each do |interpretation_hash|
+          encoder.write_object interpretation_hash
+        end
+      else
+        interpretations = []
+        InterpretationAlias
+          .includes(:interpretation)
+          .where(is_list: true, interpretations: { intent_id: intent.id })
+          .order('interpretations.position DESC, interpretations.locale ASC')
+          .order(:position_start).each do |ialias|
 
-        interpretation_hash = {}
-        interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
-        interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
-        interpretation_hash['scope'] = 'hidden'
+          interpretation_hash = {}
+          interpretation_hash['id']   = "#{ialias.interpretation_aliasable.id}_#{ialias.id}_recursive"
+          interpretation_hash['slug'] = "#{ialias.interpretation_aliasable.slug}_#{ialias.id}_recursive"
+          interpretation_hash['scope'] = 'hidden'
 
-        expressions = []
+          expressions = []
 
-        expression = {}
-        expression['expression'] = "@{#{ialias.aliasname}}"
-        expression['id'] = ialias.interpretation.id
-        expression['aliases'] = []
-        expression['aliases'] << build_internal_alias(ialias)
-        expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-        expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
-        expressions << expression
+          expression = {}
+          expression['expression'] = "@{#{ialias.aliasname}}"
+          expression['id'] = ialias.interpretation.id
+          expression['aliases'] = []
+          expression['aliases'] << build_internal_alias(ialias)
+          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
+          expressions << expression
 
-        expression = {}
-        expression['expression'] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
-        expression['id'] = ialias.interpretation.id
-        expression['aliases'] = []
-        expression['aliases'] << build_internal_alias(ialias)
-        expression['aliases'] << build_internal_alias(ialias, true)
-        expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
-        expression['glue-distance'] = ialias.interpretation.proximity.get_distance
-        expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
-        expressions << expression
+          expression = {}
+          expression['expression'] = "@{#{ialias.aliasname}} @{#{ialias.aliasname}_recursive}"
+          expression['id'] = ialias.interpretation.id
+          expression['aliases'] = []
+          expression['aliases'] << build_internal_alias(ialias)
+          expression['aliases'] << build_internal_alias(ialias, true)
+          expression['keep-order'] = ialias.interpretation.keep_order if ialias.interpretation.keep_order
+          expression['glue-distance'] = ialias.interpretation.proximity.get_distance
+          expression['glue-strength'] = 'punctuation'.freeze if ialias.interpretation.proximity_accepts_punctuations?
+          expressions << expression
 
-        interpretation_hash[:expressions] = expressions
+          interpretation_hash[:expressions] = expressions
+          interpretations << interpretation_hash
 
-        encoder.write_object interpretation_hash
+          encoder.write_object interpretation_hash
+        end
+        Rails.cache.write(cache_key, interpretations)
       end
-      buffer
     end
 
-    def build_intent(intent, encoder)
+    def build_intent(intent, encoder, cache_key)
+      cache_key = "#{cache_key}/build_node"
       encoder.wrap_object do
         encoder.write_value('id', intent.id)
         encoder.write_value('slug', intent.slug)
         encoder.write_value('scope', intent.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
-          intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
-            expression = {}
-            expression['expression']    = interpretation.expression_with_aliases
-            expression['id']            = interpretation.id
-            aliases = build_aliases(interpretation)
-            expression['aliases']       = aliases unless aliases.empty?
-            expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
-            expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
-            expression['glue-distance'] = interpretation.proximity.get_distance
-            expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
-            solution = build_interpretation_solution(interpretation)
-            expression['solution']      = solution unless solution.blank?
-
-            encoder.write_object expression
-
-            interpretation.interpretation_aliases
-              .where(any_enabled: true, is_list: false)
-              .order(position_start: :asc).each do |ialias|
-              any_node = build_any_node(ialias, expression)
-              encoder.write_object any_node
+          if Rails.cache.exist?(cache_key)
+            expressions = Rails.cache.read(cache_key)
+            expressions.each do |expression|
+              encoder.write_object expression
             end
+          else
+            expressions = []
+            intent.interpretations.order(position: :desc, locale: :asc).each do |interpretation|
+              expression = {}
+              expression['expression']    = interpretation.expression_with_aliases
+              expression['id']            = interpretation.id
+              aliases = build_aliases(interpretation)
+              expression['aliases']       = aliases unless aliases.empty?
+              expression['locale']        = interpretation.locale unless interpretation.locale == Locales::ANY
+              expression['keep-order']    = interpretation.keep_order if interpretation.keep_order
+              expression['glue-distance'] = interpretation.proximity.get_distance
+              expression['glue-strength'] = 'punctuation'.freeze if interpretation.proximity_accepts_punctuations?
+              solution = build_interpretation_solution(interpretation)
+              expression['solution']      = solution unless solution.blank?
+              expressions << expression
+              
+              encoder.write_object expression
+
+              interpretation.interpretation_aliases
+                .where(any_enabled: true, is_list: false)
+                .order(position_start: :asc).each do |ialias|
+                any_node = build_any_node(ialias, expression)
+                expressions << any_node
+                encoder.write_object any_node
+              end
+            end
+            Rails.cache.write(cache_key, expressions)
           end
         end
       end
@@ -195,19 +215,46 @@ class Nlp::Package
         encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
         encoder.wrap_array('expressions') do
           elist.entities_in_ordered_batchs.each do |batch|
-            batch.each do |entity|
-              entity.terms.each do |term|
-                expression = {}
-                expression[:expression] = term['term']
-                expression[:id] = entity.id
-                expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-                expression[:solution] = build_entities_list_solution(entity)
-                expression['keep-order'] = true
-                expression['glue-distance'] = elist.proximity.get_distance
-                expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
+            next if batch.empty?
+            min_position = [batch[0].position, batch[batch.length-1].position].min
+            max_position = [batch[0].position, batch[batch.length-1].position].max
+            last_updated = batch.max_by(&:updated_at).updated_at
 
+            cache_key = [
+              'pkg', 
+              VERSION, 
+              @agent.slug, 
+              'entities_list'.freeze, 
+              elist.id,
+              'entities'.freeze,
+              "?from=#{min_position}&to=#{max_position}",
+              (last_updated.to_f * 1000).to_i,
+              'build_node'.freeze
+            ].join('/')
+
+            if Rails.cache.exist?(cache_key)
+              expressions = Rails.cache.read(cache_key)
+              expressions.each do |expression|
                 encoder.write_object expression
               end
+            else
+              expressions = []
+              batch.each do |entity|
+                entity.terms.each do |term|
+                  expression = {}
+                  expression[:expression] = term['term']
+                  expression[:id] = entity.id
+                  expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+                  expression[:solution] = build_entities_list_solution(entity)
+                  expression['keep-order'] = true
+                  expression['glue-distance'] = elist.proximity.get_distance
+                  expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
+                  expressions << expression
+
+                  encoder.write_object expression
+                end
+              end
+              Rails.cache.write(cache_key, expressions)
             end
           end
         end
