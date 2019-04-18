@@ -31,14 +31,10 @@ if [[ "$1" == "config" ]] || [[ "$1" == "master" ]]; then
 	# docker-compose.yml -> x-app -> environment
 	DB_POSTGRES=$(parse_url "$VIKYAPP_DB_HOST")
 	DB_REDIS=$(parse_url "$VIKYAPP_CACHE_REDIS_URL")
+	ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
 
 	echo "Waiting for postgres on $DB_POSTGRES"
 	echo "Waiting for redis on $DB_REDIS"
-
-	# Parse Elastic Search url from Env Variables
-	# docker-compose.yml -> x-app -> environment
-	ES=$(parse_url "$VIKYAPP_STATISTICS_URL")
-
 	echo "Waiting for ES on $ES"
 	/usr/local/bin/dockerize -wait tcp://$DB_POSTGRES:5432 -wait tcp://$DB_REDIS -timeout 60s -wait tcp://$ES -timeout 60s
 
