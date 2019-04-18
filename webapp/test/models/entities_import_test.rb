@@ -7,9 +7,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
   test 'Basic import creation and entities list association' do
     entities_list = entities_lists(:weather_conditions)
 
-    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'tmp/temp.csv')
     entities_import = EntitiesImport.new({
-      file: File.open('temp.csv'),
+      file: File.open('tmp/temp.csv'),
       mode: 'replace',
       entities_list: entities_list,
       user: users(:admin)
@@ -38,9 +38,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
   test 'file should be of csv format' do
     entities_list = entities_lists(:weather_conditions)
 
-    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'temp.csv')
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'tmp/temp.csv')
     entities_import = EntitiesImport.new({
-      file: File.open('temp.csv'),
+      file: File.open('tmp/temp.csv'),
       mode: 'replace',
       entities_list: entities_list,
       user: users(:admin)
@@ -53,18 +53,18 @@ class EntitiesImportTest < ActiveSupport::TestCase
   test 'no concurrent import running' do
     entities_list = entities_lists(:weather_conditions)
 
-    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'tmp/temp.csv')
     entities_import = EntitiesImport.new({
-      file: File.open('temp.csv'),
+      file: File.open('tmp/temp.csv'),
       mode: 'replace',
       entities_list: entities_list,
       user: users(:admin)
     })
     assert entities_import.save
 
-    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'temp.csv')
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'import_entities.csv'), 'tmp/temp.csv')
     entities_import = EntitiesImport.new({
-      file: File.open('temp.csv'),
+      file: File.open('tmp/temp.csv'),
       mode: 'replace',
       entities_list: entities_list,
       user: users(:admin)
@@ -77,9 +77,9 @@ class EntitiesImportTest < ActiveSupport::TestCase
   test 'file should have a valid csv extension' do
     entities_list = entities_lists(:weather_conditions)
 
-    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'temp.png')
+    IO.copy_stream(File.join(Rails.root, 'test', 'fixtures', 'files', 'avatar_upload.png'), 'tmp/temp.png')
     entities_import = EntitiesImport.new({
-      file: File.open('temp.png'),
+      file: File.open('tmp/temp.png'),
       mode: 'replace',
       entities_list: entities_list,
       user: users(:admin)
@@ -155,7 +155,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing header'], entities_import.errors[:file]
+    assert_equal ['Bad CSV format: Missing header in line 0.'], entities_import.errors[:file]
   end
 
 
@@ -172,7 +172,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Bad entity format: Terms can't be blank (line 1)"], entities_import.errors[:file]
+    assert_equal ["Bad entity format: Terms can't be blank in line 1."], entities_import.errors[:file]
   end
 
 
@@ -188,7 +188,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ["Bad CSV format: Auto solution must be true or false (line 1)"], entities_import.errors[:file]
+    assert_equal ["Bad CSV format: Auto solution must be true or false in line 1."], entities_import.errors[:file]
   end
 
 
@@ -252,7 +252,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
     assert entities_import.save
     assert_equal 0, entities_import.proceed
-    assert_equal ['Bad CSV format: Missing column (line 1)'], entities_import.errors[:file]
+    assert_equal ['Bad CSV format: Missing column in line 1.'], entities_import.errors[:file]
   end
 
 
@@ -267,7 +267,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert entities_import.save
     assert_equal 0, entities_import.proceed
     assert_equal 2, elist.entities.count
-    assert_equal ['Bad CSV format: Missing column (line 1)'], entities_import.errors[:file]
+    assert_equal ['Bad CSV format: Missing column in line 1.'], entities_import.errors[:file]
   end
 
 
@@ -310,7 +310,7 @@ class EntitiesImportTest < ActiveSupport::TestCase
     assert_equal 2, elist.entities.count
 
     expected = [
-      "Bad entity format: Terms uses an unauthorized locale 'rf' for this agent (line 2)"
+      "Bad entity format: Terms uses an unauthorized locale 'rf' for this agent in line 2."
     ]
     assert_equal expected, entities_import.errors[:file]
   end
@@ -320,11 +320,11 @@ class EntitiesImportTest < ActiveSupport::TestCase
 
     def get_entities_import(elist, io, mode = 'append')
       io.rewind
-      File.open('temp.csv', 'w+') do |f|
+      File.open('tmp/temp.csv', 'w+') do |f|
         IO.copy_stream(io, f)
       end
       EntitiesImport.new(
-        file:File.open('temp.csv'),
+        file:File.open('tmp/temp.csv'),
         mode: mode,
         entities_list: elist,
         user: users(:admin)

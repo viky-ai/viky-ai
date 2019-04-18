@@ -23,7 +23,7 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
     user = users(:admin)
     entities_list = entities_lists(:weather_conditions)
 
-    file_path = File.join(Rails.root, 'test', 'fixtures', 'files', 'weather_condition_import.csv')
+    file_path = File.join(Rails.root, 'tmp', 'weather_condition_import.csv')
     CSV.open(file_path, "wb") do |csv|
       csv << ["terms", "auto solution", "solution"]
       csv << ["cloudy", "blabla", "\"{'weather': 'cloudy'}\"\n"]
@@ -42,7 +42,7 @@ class ImportEntitiesJobTest < ActiveJob::TestCase
 
 
   def create_entities_import_fixtures
-    file_path = File.join(Rails.root, 'test', 'fixtures', 'files', 'weather_condition_import.csv')
+    file_path = File.join(Rails.root, 'tmp', 'weather_condition_import.csv')
     CSV.open(file_path, "wb") do |csv|
       csv << ["terms", "auto solution", "solution"]
       csv << ["cloudy", "True", "\"{'weather': 'cloudy'}\"\n"]

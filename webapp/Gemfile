@@ -16,6 +16,9 @@ gem 'puma', '~> 3.7'
 
 gem 'oj'
 
+# Use last version of CSV gem
+gem 'csv'
+
 # Environment variables at boostrap time
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 
