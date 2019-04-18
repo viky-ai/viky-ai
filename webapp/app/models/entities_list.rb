@@ -3,7 +3,6 @@ class EntitiesList < ApplicationRecord
   include Positionable
   positionable_ancestor :agent
   include Movable
-  include Touchable
 
   extend FriendlyId
   friendly_id :listname, use: :history, slug_column: 'listname'
@@ -22,8 +21,6 @@ class EntitiesList < ApplicationRecord
                        presence: true
 
   before_validation :clean_listname
-
-  touch :entities, if_attributes_changed: [:proximity]
 
   after_commit do
     agent.need_nlp_sync

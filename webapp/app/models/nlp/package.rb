@@ -226,6 +226,7 @@ class Nlp::Package
               @agent.slug, 
               'entities_list'.freeze, 
               elist.id,
+              elist.proximity,
               'entities'.freeze,
               "?from=#{min_position}&to=#{max_position}",
               (last_updated.to_f * 1000).to_i,
