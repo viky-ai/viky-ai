@@ -29,10 +29,14 @@ int LtracDicAdd(struct og_ctrl_ltrac *ctrl_ltrac, struct ltrac_dic_input *dic_in
 
   if (input->dictionaries_to_export & DOgLtracDictionaryTypeSwap)
   {
-    if (dic_input->frequency >= input->min_frequency_swap)
+    // limit swap to small words
+    if (dic_input->value_length <= DOgLtracSwapMaxWordsSizeUnicode)
     {
-      /* word_less_1_letter | language_code position frequency word */
-      IFE(LtracDicSwapAdd(ctrl_ltrac, dic_input));
+      if (dic_input->frequency >= input->min_frequency_swap)
+      {
+        /* word_less_1_letter | language_code position frequency word */
+        IFE(LtracDicSwapAdd(ctrl_ltrac, dic_input));
+      }
     }
   }
 

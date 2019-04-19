@@ -315,6 +315,8 @@ static og_status NlpLtracEntityAdd(og_nlp_th ctrl_nlp_th, unsigned char *word, i
 {
   if (word_length <= 0) DONE;
 
+  if (word_length >= DOgNlpMaxLtracWordSize) DONE;
+
   int uni_length;
   unsigned char uni[DPcPathSize];
   IFE(OgCpToUni(word_length, word , DPcPathSize, &uni_length, uni, DOgCodePageUTF8, 0, 0));

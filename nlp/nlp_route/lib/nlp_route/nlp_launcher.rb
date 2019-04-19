@@ -11,10 +11,13 @@ module NlpRoute
   class NlpLauncher
     @@nls_background = nil
 
+    def pidfile()
+      pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
+    end
+
     # get all package from webapp in json format and store in /nlp/import/ then start nlp
     def start(start_nlp = true)
       if start_nlp
-        pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
         FileUtils.rm(pidfile, force: true)
 
         starting = true
@@ -58,7 +61,6 @@ module NlpRoute
     end
 
     def stop
-      pidfile = "#{NlpLauncher.pwd}/ogm_nls.pid"
       `pkill --signal SIGTERM --pidfile #{pidfile}` if File.exist?(pidfile)
 
       @@nls_background.join if !@@nls_background.nil? && @@nls_background.alive?
@@ -110,7 +112,10 @@ module NlpRoute
       end
 
       duration = Time.now - start_time
-      puts "Loading all packages in #{'%.2f' % duration}s."
+
+      nls_memory = `ps -p $(cat #{pidfile}) -o rss | head -n 2 | tail -n +2`.strip.to_i rescue 0
+
+      puts "Loading all (#{packages_ids.size}) packages in #{'%.2f' % duration}s using #{nls_memory / 1024} MB memory."
 
     end
 
