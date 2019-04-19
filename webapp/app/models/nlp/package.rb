@@ -107,8 +107,14 @@ class Nlp::Package
 
     def write_entities_list(encoder)
       @agent.entities_lists.order(position: :desc).each do |elist|
-        cache_key = ['pkg', VERSION, @agent.slug, 'entities_list'.freeze, elist.id, (elist.updated_at.to_f * 1000).to_i].join('/')
-        build_entities_list(elist, encoder)
+        encoder.wrap_object do
+          encoder.write_value('id', elist.id)
+          encoder.write_value('slug', elist.slug)
+          encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
+          encoder.wrap_array('expressions') do
+            build_entities_list(elist, encoder)
+          end
+        end
       end
     end
 
@@ -209,55 +215,58 @@ class Nlp::Package
     end
 
     def build_entities_list(elist, encoder)
-      encoder.wrap_object do
-        encoder.write_value('id', elist.id)
-        encoder.write_value('slug', elist.slug)
-        encoder.write_value('scope', elist.is_public? ? 'public' : 'private')
-        encoder.wrap_array('expressions') do
-          elist.entities_in_ordered_batchs.each do |batch|
-            next if batch.empty?
-            min_position = [batch[0].position, batch[batch.length-1].position].min
-            max_position = [batch[0].position, batch[batch.length-1].position].max
-            last_updated = batch.max_by(&:updated_at).updated_at
+      unless elist.entities_count.zero?
+        cursor_max = elist.entities.select(:position).order(position: :desc).first.position
+        cursor_min = elist.entities.select(:position).order(position: :desc).last.position
+        batch_size = 1_000
+        cursor = cursor_max
+        while cursor > cursor_min
+          max_position = cursor
+          min_position = (cursor - batch_size + 1)
+          min_position = min_position < cursor_min ? cursor_min : min_position
 
-            cache_key = [
-              'pkg', 
-              VERSION, 
-              @agent.slug, 
-              'entities_list'.freeze, 
-              elist.id,
-              elist.proximity,
-              'entities'.freeze,
-              "?from=#{min_position}&to=#{max_position}",
-              (last_updated.to_f * 1000).to_i,
-              'build_node'.freeze
-            ].join('/')
-
-            if Rails.cache.exist?(cache_key)
-              expressions = Rails.cache.read(cache_key)
-              expressions.each do |expression|
+          last_updated = elist.entities.select(:updated_at).where('position BETWEEN ? AND ?', min_position, max_position).order(updated_at: :desc).first.updated_at
+  
+          cache_key = [
+            'pkg',
+            VERSION,
+            @agent.slug,
+            'entities_list',
+            elist.id,
+            elist.proximity,
+            'entities',
+            "?from=#{min_position}&to=#{max_position}",
+            (last_updated.to_f * 1000).to_i,
+            'build_node'
+          ].join('/')
+  
+          if Rails.cache.exist?(cache_key)
+            expressions = Rails.cache.read(cache_key)
+            expressions.each do |expression|
+              encoder.write_object expression
+            end
+          else
+            batch = elist.entities.where('position BETWEEN ? AND ?', min_position, max_position).order(position: :desc)
+            expressions = []
+            batch.each do |entity|
+              entity.terms.each do |term|
+                expression = {}
+                expression[:expression] = term['term']
+                expression[:id] = entity.id
+                expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
+                expression[:solution] = build_entities_list_solution(entity)
+                expression['keep-order'] = true
+                expression['glue-distance'] = elist.proximity.get_distance
+                expression['glue-strength'] = 'punctuation' if elist.proximity_glued?
+                expressions << expression
+  
                 encoder.write_object expression
               end
-            else
-              expressions = []
-              batch.each do |entity|
-                entity.terms.each do |term|
-                  expression = {}
-                  expression[:expression] = term['term']
-                  expression[:id] = entity.id
-                  expression[:locale] = term['locale'] unless term['locale'] == Locales::ANY
-                  expression[:solution] = build_entities_list_solution(entity)
-                  expression['keep-order'] = true
-                  expression['glue-distance'] = elist.proximity.get_distance
-                  expression['glue-strength'] = 'punctuation'.freeze if elist.proximity_glued?
-                  expressions << expression
-
-                  encoder.write_object expression
-                end
-              end
-              Rails.cache.write(cache_key, expressions)
             end
+            Rails.cache.write(cache_key, expressions)
           end
+          cursor = min_position - 1
+          ap cursor
         end
       end
     end
